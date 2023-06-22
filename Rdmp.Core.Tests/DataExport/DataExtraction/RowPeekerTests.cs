@@ -19,7 +19,7 @@ internal class RowPeekerTests
     [Test]
     public void Peeker()
     {
-        var dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("MyCol");
         dt.Rows.Add("fish");
         dt.Rows.Add("dish");
@@ -30,10 +30,10 @@ internal class RowPeekerTests
             .Returns(dt.Rows[0])
             .Returns(dt.Rows[1])
             .Returns(dt.Rows[2])
-            .Returns(()=>{return null;});
+            .Returns(()=> null);
 
         var p = new RowPeeker();
-        var dt2 = new DataTable();
+        using var dt2 = new DataTable();
         dt2.Columns.Add("MyCol");
 
         //Reads fish and peeks dish
@@ -43,7 +43,7 @@ internal class RowPeekerTests
         Assert.AreEqual(1,dt2.Rows.Count);
         Assert.AreEqual("fish",dt2.Rows[0]["MyCol"]);
 
-        var dt3 = new DataTable();
+        using var dt3 = new DataTable();
         dt3.Columns.Add("MyCol");
             
         //cannot add while there is a peek stored
@@ -57,7 +57,7 @@ internal class RowPeekerTests
 
         //now we can read into dt4 but the condition is false
         //Reads nothing but peeks splish
-        var dt4 = new DataTable();
+        using var dt4 = new DataTable();
         dt4.Columns.Add("MyCol");
         p.AddWhile(mock.Object, r => (string) r["MyCol"] == "fish", dt4);
 
@@ -69,7 +69,7 @@ internal class RowPeekerTests
         Assert.IsNotNull(dt5);
         Assert.AreEqual("splish",dt5.Rows[0]["MyCol"]);
 
-        var dt6 = new DataTable();
+        using var dt6 = new DataTable();
         dt6.Columns.Add("MyCol");
         p.AddWhile(mock.Object, r => (string) r["MyCol"] == "fish", dt6);
 

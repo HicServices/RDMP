@@ -44,8 +44,7 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent,IHasSummary
     }
     public int CompareTo(object obj)
     {
-        var other = obj as ArchivalFatalError;
-        if (other != null)
+        if (obj is ArchivalFatalError other)
             if (Date == other.Date)
                 return 0;
             else

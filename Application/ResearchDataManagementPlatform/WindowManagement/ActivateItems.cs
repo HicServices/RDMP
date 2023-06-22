@@ -133,9 +133,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         CommandFactory = new RDMPCombineableFactory();
         CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
 
-        ProblemProviders = new List<IProblemProvider>();
-        ProblemProviders.Add(new DataExportProblemProvider());
-        ProblemProviders.Add(new CatalogueProblemProvider());
+        ProblemProviders = new List<IProblemProvider>
+        {
+            new DataExportProblemProvider(),
+            new CatalogueProblemProvider()
+        };
         RefreshProblemProviders();
 
         RefreshBus.Subscribe(this);
@@ -177,9 +179,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             throw new Exception(
                 $"Control '{singleControlForm}' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
 
-        var c = singleControlForm as RDMPUserControl;
-            
-        if(c != null)
+        if(singleControlForm is RDMPUserControl c)
             c.SetItemActivator(this);
 
         var content = WindowFactory.Create(this,singleControlForm,name , null);
@@ -443,15 +443,12 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var c = (Control)UIObjectConstructor.Construct(instruction.UIControlType,activator,true);
 
-        var uiInstance = c as IRDMPSingleDatabaseObjectControl;
-        var uiCollection = c as IObjectCollectionControl;
-
         //it has a database object so call SetDatabaseObject
-        if (uiCollection != null)
+        if (c is IObjectCollectionControl uiCollection)
             //if we get here then Instruction wasn't for a 
             return Activate(uiCollection, instruction.ObjectCollection);
         else
-        if (uiInstance != null)
+        if (c is IRDMPSingleDatabaseObjectControl uiInstance)
         {
             var databaseObject = instruction.DatabaseObject;
 

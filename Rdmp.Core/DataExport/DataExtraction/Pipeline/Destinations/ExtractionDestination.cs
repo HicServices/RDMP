@@ -112,8 +112,7 @@ e.g. /$i/$a")]
     {
         var filename = _request.ToString();
 
-        var datasetCommand = _request as IExtractDatasetCommand;
-        if (datasetCommand != null && UseAcronymForFileNaming)
+        if (_request is IExtractDatasetCommand datasetCommand && UseAcronymForFileNaming)
         {
             filename = datasetCommand.Catalogue.Acronym;
             if (string.IsNullOrWhiteSpace(filename))
@@ -303,9 +302,7 @@ e.g. /$i/$a")]
 
     public DirectoryInfo GetDirectoryFor(IExtractCommand request)
     {
-        var cmd = request as IExtractDatasetCommand;
-
-        if(string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || cmd == null)
+        if(string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || request is not IExtractDatasetCommand cmd)
             return request.GetExtractionDirectory();
             
         var cata = cmd.SelectedDataSets.ExtractableDataSet.Catalogue;

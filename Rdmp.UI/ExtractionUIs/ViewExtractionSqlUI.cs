@@ -221,8 +221,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 
     private void olv_ItemActivate(object sender, EventArgs e)
     {
-        var o = ((ObjectListView)sender).SelectedObject as IMapsDirectlyToDatabaseTable;
-        if(o != null)
+        if(((ObjectListView)sender).SelectedObject is IMapsDirectlyToDatabaseTable o)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
     }
 

@@ -32,9 +32,7 @@ internal class ProposeExecutionWhenTargetIsCatalogue:RDMPCommandExecutionProposa
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Catalogue targetCatalogue, InsertOption insertOption = InsertOption.Default)
     {
-        var sourceFileCollection = cmd as FileCollectionCombineable;
-
-        if(sourceFileCollection != null)
+        if(cmd is FileCollectionCombineable sourceFileCollection)
             if (sourceFileCollection.IsShareDefinition)
                 return new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,targetCatalogue);
             else

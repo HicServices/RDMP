@@ -35,10 +35,8 @@ internal class ProposeExecutionWhenTargetIsAggregateConfiguration:RDMPCommandExe
         if(cmd is ContainerCombineable cc)
             return new ExecuteCommandImportFilterContainerTree(ItemActivator,targetAggregateConfiguration,cc.Container);
 
-        var sourceAggregateCommand = cmd as AggregateConfigurationCombineable;
-
         //if it is an aggregate being dragged
-        if (sourceAggregateCommand != null)
+        if (cmd is AggregateConfigurationCombineable sourceAggregateCommand)
         {
             //source and target are the same
             if (sourceAggregateCommand.Aggregate.Equals(targetAggregateConfiguration))
@@ -49,8 +47,7 @@ internal class ProposeExecutionWhenTargetIsAggregateConfiguration:RDMPCommandExe
                 return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand, targetAggregateConfiguration, insertOption);
         }
 
-        var sourceCohortAggregateContainerCommand = cmd as CohortAggregateContainerCombineable;
-        if (sourceCohortAggregateContainerCommand != null)
+        if (cmd is CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand)
         {
             //can never drag the root container elsewhere
             if (sourceCohortAggregateContainerCommand.ParentContainerIfAny == null)

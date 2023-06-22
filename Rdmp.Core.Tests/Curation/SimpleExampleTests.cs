@@ -48,7 +48,7 @@ public class SimpleExampleTests : DatabaseTests
 
         //at this point we are reading it with the credentials setup by GetCleanedServer
         Assert.AreEqual(1, tbl.GetRowCount());
-        Assert.AreEqual(1, tbl.DiscoverColumns().Count());
+        Assert.AreEqual(1, tbl.DiscoverColumns().Length);
         Assert.IsTrue(tbl.DiscoverColumn("MyCol").IsPrimaryKey);
 
         //create a reference to the table in RMDP
@@ -68,7 +68,7 @@ public class SimpleExampleTests : DatabaseTests
             
         //try re-reading the data 
         Assert.AreEqual(1, newTbl.GetRowCount());
-        Assert.AreEqual(1, newTbl.DiscoverColumns().Count());
+        Assert.AreEqual(1, newTbl.DiscoverColumns().Length);
         Assert.IsTrue(newTbl.DiscoverColumn("MyCol").IsPrimaryKey);
 
         //low priority user shouldn't be able to drop tables

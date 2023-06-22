@@ -38,10 +38,12 @@ internal class ExceptionHandlingTests
         age.AddSecondaryConstraint(ageConstraint);
         validator.AddItemValidator(age, "age", typeof(int));
 
-        var row = new Dictionary<string, object>();
-        row.Add("chi", TestConstants._INVALID_CHI_CHECKSUM);
-        row.Add("age", 31);
-        row.Add("gender", "F");
+        var row = new Dictionary<string, object>
+        {
+            { "chi", TestConstants._INVALID_CHI_CHECKSUM },
+            { "age", 31 },
+            { "gender", "F" }
+        };
 
         var result =  validator.Validate(row);
 

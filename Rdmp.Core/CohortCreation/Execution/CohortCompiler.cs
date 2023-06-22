@@ -181,20 +181,21 @@ public class CohortCompiler
         {
             if (!container.IsDisabled)
             {
-                toReturn.Add(Task.Run(()=> { return AddTask(container, globals); }));
+                toReturn.Add(Task.Run(()=> AddTask(container, globals)));
             }
         }
                 
 
         foreach (var c in container.GetOrderedContents())
         {
-            if(c is CohortAggregateContainer { IsDisabled: false } aggregateContainer)
+            switch (c)
             {
-                toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
-            }
-            if(c is AggregateConfiguration { IsDisabled: false } aggregate)
-            {
-                toReturn.Add(Task.Run(() => { return AddTask(aggregate, globals); }));
+                case CohortAggregateContainer { IsDisabled: false } aggregateContainer:
+                    toReturn.AddRange(AddTasksRecursivelyAsync(globals, aggregateContainer, addSubcontainerTasks));
+                    break;
+                case AggregateConfiguration { IsDisabled: false } aggregate:
+                    toReturn.Add(Task.Run(() => AddTask(aggregate, globals)));
+                    break;
             }
         }
 
@@ -390,8 +391,7 @@ public class CohortCompiler
         if (CohortIdentificationConfiguration.QueryCachingServer == null)
             return;
 
-        var cacheable = completedtask as ICacheableTask;
-        if (cacheable != null && cacheable.IsCacheableWhenFinished())
+        if (completedtask is ICacheableTask cacheable && cacheable.IsCacheableWhenFinished())
             CacheSingleTask(cacheable, CohortIdentificationConfiguration.QueryCachingServer);
     }
 

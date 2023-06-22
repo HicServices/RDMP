@@ -237,8 +237,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
 
     private void olvChecks_ItemActivate(object sender, EventArgs e)
     {
-        var args = olvChecks.SelectedObject as CheckEventArgs;
-        if (args != null)
+        if (olvChecks.SelectedObject is CheckEventArgs args)
             if (args.Ex != null)
                 ExceptionViewer.Show(args.Message, args.Ex);
             else

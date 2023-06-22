@@ -106,8 +106,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
 
     public int CompareTo(object obj)
     {
-        var other = obj as ArchivalDataLoadInfo;
-        if (other != null)
+        if (obj is ArchivalDataLoadInfo other)
             if (StartTime == other.StartTime)
                 return 0;
             else

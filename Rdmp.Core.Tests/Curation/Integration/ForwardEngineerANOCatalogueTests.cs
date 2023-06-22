@@ -125,8 +125,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Drop();
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
-        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
+        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
+        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
 
         Assert.AreEqual(exports, imports);
         Assert.IsTrue(exports > 0);
@@ -177,8 +177,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             
         db.Drop();
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
-        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
+        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
+        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
 
         Assert.AreEqual(exports, imports);
         Assert.IsTrue(exports > 0);
@@ -242,7 +242,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         cataEngineer2.ExecuteForwardEngineering(cata);
 
         //4 extraction informations in from Catalogue (2 from Heads and 2 from Necks)
-        Assert.AreEqual(cata.GetAllExtractionInformation(ExtractionCategory.Any).Count(),4);
+        Assert.AreEqual(cata.GetAllExtractionInformation(ExtractionCategory.Any).Length, 4);
 
         //setup ANOTable on head
         var anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOSkullColor", "C")
@@ -288,7 +288,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         Assert.IsTrue(newCata.Exists());
 
         var newCataItems = newCata.CatalogueItems;
-        Assert.AreEqual(newCataItems.Count(),4);
+        Assert.AreEqual(newCataItems.Length, 4);
 
         //should be extraction informations
         //all extraction informations should point to the new table location
@@ -350,7 +350,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //add a transform
         var eiPostcode = bulk.extractionInformations.Single(ei => ei.GetRuntimeName() == "current_postcode");
 
-        eiPostcode.SelectSQL = string.Format("LEFT(10,{0}.[current_postcode])", eiPostcode.ColumnInfo.TableInfo.Name);
+        eiPostcode.SelectSQL = $"LEFT(10,{eiPostcode.ColumnInfo.TableInfo.Name}.[current_postcode])";
         eiPostcode.Alias = "MyMutilatedColumn";
         eiPostcode.SaveToDatabase();
 
@@ -458,12 +458,13 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var anoEiPostcode = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
             
         //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
-        Assert.AreEqual(string.Format("LEFT(10,{0}.[current_postcode])", anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()),anoEiPostcode.SelectSQL);
+        Assert.AreEqual($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])",anoEiPostcode.SelectSQL);
 
         var anoEiComboCol = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("ComboColumn"));
 
         //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
-        Assert.AreEqual(string.Format("{0}.[forename] + ' ' + {0}.[surname]", anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()), anoEiComboCol.SelectSQL);
+        Assert.AreEqual(
+            $"{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[forename] + ' ' + {anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[surname]", anoEiComboCol.SelectSQL);
 
         //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
         Assert.AreEqual(2, qbdestination.TablesUsedInQuery.Count);
@@ -477,8 +478,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Drop();
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
-        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
+        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
+        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
 
         Assert.AreEqual(exports, imports);
         Assert.IsTrue(exports > 0);

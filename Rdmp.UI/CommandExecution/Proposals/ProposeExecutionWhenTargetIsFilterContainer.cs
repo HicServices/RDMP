@@ -31,10 +31,8 @@ internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionP
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, IContainer targetContainer, InsertOption insertOption = InsertOption.Default)
     {
-        var sourceFilterCommand = cmd as FilterCombineable;
-
         //drag a filter into a container
-        if (sourceFilterCommand != null)
+        if (cmd is FilterCombineable sourceFilterCommand)
         {
             //if filter is already in the target container
             if (sourceFilterCommand.ImmediateContainerIfAny?.Equals(targetContainer) ?? false)

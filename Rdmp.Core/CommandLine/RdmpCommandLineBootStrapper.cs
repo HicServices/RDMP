@@ -116,7 +116,7 @@ public class RdmpCommandLineBootStrapper
             // where RDMP objects are stored
             repositoryLocator = opts.GetRepositoryLocator();
 
-            if(repositoryLocator == null || repositoryLocator.CatalogueRepository == null)
+            if(repositoryLocator?.CatalogueRepository == null)
             {
                 listener.OnNotify(typeof(RdmpCommandLineBootStrapper), new NotifyEventArgs(ProgressEventType.Error, "No repository has been specified.  Either create a Databases.yaml file or provide repository connection strings/paths as command line arguments"));
                 return REPO_ERROR;

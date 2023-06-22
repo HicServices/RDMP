@@ -91,7 +91,7 @@ public class BackfillTests : FromToDatabaseTests
         // Set SetUp catalogue entities
         AddTableToCatalogue(DatabaseName, "Samples", "ID", out _, true);
 
-        Assert.AreEqual(5, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(5, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
     }
 
     private void Mutilate(string timeColumnName)
@@ -257,7 +257,7 @@ public class BackfillTests : FromToDatabaseTests
         tiSamples.IsPrimaryExtractionTable = true;
         tiSamples.SaveToDatabase();
 
-        Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Samples (1:M) Results join
         new JoinInfo(CatalogueRepository,ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
@@ -501,7 +501,7 @@ public class BackfillTests : FromToDatabaseTests
         tiSamples.IsPrimaryExtractionTable = true;
         tiSamples.SaveToDatabase();
 
-        Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Headers (1:M) Samples join
         new JoinInfo(CatalogueRepository,ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
@@ -826,9 +826,10 @@ public class BackfillTests : FromToDatabaseTests
         if (pkColumn == null || string.IsNullOrWhiteSpace(pkColumn))
             throw new InvalidOperationException("Primary Key column is required.");
 
-        var pkConstraint = string.Format("CONSTRAINT PK_{0} PRIMARY KEY ({1})", tableName, pkColumn);
+        var pkConstraint = $"CONSTRAINT PK_{tableName} PRIMARY KEY ({pkColumn})";
         var stagingTableDefinition = $"{columnDefinitions}, {pkConstraint}";
-        var liveTableDefinition = columnDefinitions + string.Format(", hic_validFrom DATETIME, hic_dataLoadRunID int, " + pkConstraint);
+        var liveTableDefinition =
+            $"{columnDefinitions}, hic_validFrom DATETIME, hic_dataLoadRunID int, {pkConstraint}";
 
         if (fkConstraintString != null)
         {
@@ -872,7 +873,7 @@ public class BackfillTests : FromToDatabaseTests
         var tiHeaders = AddHeaderTableToCatalogue(DatabaseName, ciSamples);
 
         // should be all entities set SetUp now
-        Assert.AreEqual(15, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
         #endregion
 
         // add data

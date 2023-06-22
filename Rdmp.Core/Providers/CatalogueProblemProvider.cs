@@ -69,48 +69,26 @@ public class CatalogueProblemProvider : ProblemProvider
     /// <inheritdoc/>
     protected override string DescribeProblemImpl(object o)
     {
-        if (o is AllGovernanceNode)
-            return DescribeProblem((AllGovernanceNode) o);
-
-        if (o is Catalogue)
-            return DescribeProblem((Catalogue)o);
-
-        if (o is CatalogueItem)
-            return DescribeProblem((CatalogueItem) o);
-
-        if (o is LoadDirectoryNode)
-            return DescribeProblem((LoadDirectoryNode) o);
-
-        if (o is ExtractionInformation)
-            return DescribeProblem((ExtractionInformation) o);
-
-        if (o is IFilter)
-            return DescribeProblem((IFilter) o);
-
-        if (o is AggregateConfiguration)
-            return DescribeProblem((AggregateConfiguration) o);
-
-        if (o is DecryptionPrivateKeyNode)
-            return DescribeProblem((DecryptionPrivateKeyNode) o);
-
-        if (o is AllCataloguesUsedByLoadMetadataNode)
-            return DescribeProblem((AllCataloguesUsedByLoadMetadataNode) o);
-
-        if (o is ISqlParameter p)
-            return DescribeProblem(p);
-
-        if (o is CohortAggregateContainer container)
-            return DescribeProblem(container);
-
-        return null;
+        return o switch
+        {
+            AllGovernanceNode node => DescribeProblem(node),
+            Catalogue catalogue => DescribeProblem(catalogue),
+            CatalogueItem item => DescribeProblem(item),
+            LoadDirectoryNode directoryNode => DescribeProblem(directoryNode),
+            ExtractionInformation information => DescribeProblem(information),
+            IFilter filter => DescribeProblem(filter),
+            AggregateConfiguration configuration => DescribeProblem(configuration),
+            DecryptionPrivateKeyNode keyNode => DescribeProblem(keyNode),
+            AllCataloguesUsedByLoadMetadataNode metadataNode => DescribeProblem(metadataNode),
+            ISqlParameter p => DescribeProblem(p),
+            CohortAggregateContainer container => DescribeProblem(container),
+            _ => null
+        };
     }
 
     public string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
     {
-        if (!allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any())
-            return "Load has no Catalogues therefore loads no tables";
-            
-        return null;
+        return !allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any() ? "Load has no Catalogues therefore loads no tables" : null;
     }
         
     public string DescribeProblem(ISqlParameter parameter)
@@ -297,7 +275,7 @@ public class CatalogueProblemProvider : ProblemProvider
         {
             // if there is a parent container
             var parents = _childProvider.GetDescendancyListIfAnyFor(container);
-            if (parents != null && parents.Last() is CohortAggregateContainer { Operation: SetOperation.EXCEPT } parentContainer)
+            if (parents?.Last() is CohortAggregateContainer { Operation: SetOperation.EXCEPT } parentContainer)
                 // which is EXCEPT
             {
                 // then something called 'inclusion criteria' should be the first among them

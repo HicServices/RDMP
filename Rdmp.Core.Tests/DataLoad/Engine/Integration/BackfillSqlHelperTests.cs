@@ -86,7 +86,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         tiHeaders.IsPrimaryExtractionTable = true;
         tiHeaders.SaveToDatabase();
 
-        Assert.AreEqual(15, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Headers (1:M) Samples join
         new JoinInfo(CatalogueRepository,ciSamples.Single(ci => ci.GetRuntimeName().Equals("HeaderID")),
@@ -106,9 +106,10 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         if (pkColumn == null || string.IsNullOrWhiteSpace(pkColumn))
             throw new InvalidOperationException("Primary Key column is required.");
 
-        var pkConstraint = string.Format("CONSTRAINT PK_{0} PRIMARY KEY ({1})", tableName, pkColumn);
+        var pkConstraint = $"CONSTRAINT PK_{tableName} PRIMARY KEY ({pkColumn})";
         var stagingTableDefinition = $"{columnDefinitions}, {pkConstraint}";
-        var liveTableDefinition = columnDefinitions + string.Format(", "+SpecialFieldNames.ValidFrom+" DATETIME, "+SpecialFieldNames.DataLoadRunID+" int, " + pkConstraint);
+        var liveTableDefinition =
+            $"{columnDefinitions}, {SpecialFieldNames.ValidFrom} DATETIME, {SpecialFieldNames.DataLoadRunID} int, {pkConstraint}";
 
         if (fkConstraintString != null)
         {

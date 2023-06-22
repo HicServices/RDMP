@@ -56,8 +56,7 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution,IAtomicCo
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        var window = target as PermissionWindow;
-        if (window != null)
+        if (target is PermissionWindow window)
             _window = window;
 
         return this;

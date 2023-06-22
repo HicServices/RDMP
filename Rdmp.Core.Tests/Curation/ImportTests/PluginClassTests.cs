@@ -100,16 +100,16 @@ public class PluginClassTests:UnitTests
         var created = sm.ImportSharedObject(list).ToArray();
 
         //There should be 3
-        Assert.AreEqual(3, created.Count());
+        Assert.AreEqual(3, created.Length);
 
-        Assert.AreEqual(3,Repository.GetAllObjects<ObjectImport>().Count());
+        Assert.AreEqual(3, Repository.GetAllObjects<ObjectImport>().Length);
 
         lma2 = (LoadModuleAssembly) created[2];
 
         //now delete lma2 only
         lma2.DeleteInDatabase();
             
-        Assert.AreEqual(2, Repository.GetAllObjects<ObjectImport>().Count());
+        Assert.AreEqual(2, Repository.GetAllObjects<ObjectImport>().Length);
 
         //import them
         var created2 = sm.ImportSharedObject(list);

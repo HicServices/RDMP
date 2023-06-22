@@ -38,8 +38,7 @@ public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparabl
 
     public int CompareTo(object obj)
     {
-        var other = obj as ArchivalProgressLog;
-        if (other != null)
+        if (obj is ArchivalProgressLog other)
             if (Date == other.Date)
                 return 0;
             else

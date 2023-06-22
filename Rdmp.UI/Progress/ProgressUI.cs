@@ -113,9 +113,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private Bitmap ImageGetter(object rowObject)
     {
-        var o = rowObject as ProgressUIEntry;
-
-        if(o != null)
+        if(rowObject is ProgressUIEntry o)
             switch (o.ProgressEventType)
             {
                 // TODO: draw a couple of new icons if required
@@ -347,9 +345,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private void olvProgressEvents_ItemActivate(object sender, EventArgs e)
     {
-        var model = olvProgressEvents.SelectedObject as ProgressUIEntry;
-
-        if (model != null)
+        if (olvProgressEvents.SelectedObject is ProgressUIEntry model)
         {
             if (model.Exception != null)
                 ExceptionViewer.Show(model.Message, model.Exception, false);
@@ -416,8 +412,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         tbTextFilter.Text = filter;
 
         //clear the renderers filter so that we don't see yellow text highlighting all over the Sender column etc.
-        var renderer = olvProgressEvents.DefaultRenderer as HighlightTextRenderer;
-        if (renderer != null)
+        if (olvProgressEvents.DefaultRenderer is HighlightTextRenderer renderer)
             renderer.Filter = null;
     }
 

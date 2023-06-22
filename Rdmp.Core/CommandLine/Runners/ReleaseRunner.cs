@@ -192,7 +192,7 @@ public class ReleaseRunner:ManyRunner
             }
 
             //if it has never been extracted
-            if (extractionResults == null || extractionResults.DestinationDescription == null)
+            if (extractionResults?.DestinationDescription == null)
                 toReturn.Add(new NoReleasePotential(RepositoryLocator, selectedDataSet)); //the potential is ZERO to release this dataset
             else
             {

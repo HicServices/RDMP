@@ -210,20 +210,14 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     private ColumnInfo FetchColumnInfo()
     {
         var ci = _knownCatalogueItem.Value;
-        if (ci == null || ci.ColumnInfo_ID == null)
-            return null;
-
-        return ci.ColumnInfo;
+        return ci?.ColumnInfo_ID == null ? null : ci.ColumnInfo;
     }
 
     private CatalogueItem FetchCatalogueItem()
     {
         var ei = _knownExtractionInformation.Value;
 
-        if (ei == null)
-            return null;
-            
-        return ei.CatalogueItem;
+        return ei?.CatalogueItem;
     }
 
     private ExtractionInformation FetchExtractionInformation()

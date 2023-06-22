@@ -220,25 +220,20 @@ public abstract class ReleasePotential:ICheckable
         
     public override string ToString()
     {
-        if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
+        if (DatasetExtractionResult?.DestinationDescription == null)
             return "Never extracted...";
 
-        switch (Assessments[DatasetExtractionResult])
+        return Assessments[DatasetExtractionResult] switch
         {
-            case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability:
-                return Exception.ToString();
-            default:
-                var toReturn = $"Dataset: {DataSet}";
-                toReturn += $" DateOfExtraction: {DateOfExtraction}";
-                toReturn += $" Status: {Assessments[DatasetExtractionResult]}";
-
-                return toReturn;
-        }
+            Releaseability.ExceptionOccurredWhileEvaluatingReleaseability => Exception.ToString(),
+            _ =>
+                $"Dataset: {DataSet} DateOfExtraction: {DateOfExtraction} Status: {Assessments[DatasetExtractionResult]}"
+        };
     }
 
     public virtual void Check(ICheckNotifier notifier)
     {
-        if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
+        if (DatasetExtractionResult?.DestinationDescription == null)
             return;
 
         // check if we have a halfway completed extraction

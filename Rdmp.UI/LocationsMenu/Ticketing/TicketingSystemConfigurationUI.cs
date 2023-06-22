@@ -155,9 +155,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
     private void btnEditCredentials_Click(object sender, EventArgs e)
     {
-        var creds = ddCredentials.SelectedItem as DataAccessCredentials;
-
-        if(creds != null)
+        if(ddCredentials.SelectedItem is DataAccessCredentials creds)
             _activator.CommandExecutionFactory.Activate(creds);
     }
 
@@ -203,9 +201,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             return;
 
 
-        var creds = ddCredentials.SelectedItem as DataAccessCredentials;
-
-        if (creds == null)
+        if (ddCredentials.SelectedItem is not DataAccessCredentials creds)
         {
             _ticketingSystemConfiguration.DataAccessCredentials_ID = null;
             _ticketingSystemConfiguration.SaveToDatabase();

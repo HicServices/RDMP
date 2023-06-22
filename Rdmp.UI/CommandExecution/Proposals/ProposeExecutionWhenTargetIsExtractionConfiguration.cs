@@ -50,9 +50,8 @@ internal class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandEx
             return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator, sourceExtractableCohortCombineable, targetExtractionConfiguration);
 
         //user is trying to add datasets to a configuration
-        var sourceExtractableDataSetCommand = cmd as ExtractableDataSetCombineable;
 
-        if (sourceExtractableDataSetCommand != null)
+        if (cmd is ExtractableDataSetCombineable sourceExtractableDataSetCommand)
             return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, sourceExtractableDataSetCommand, targetExtractionConfiguration);
 
         return null;

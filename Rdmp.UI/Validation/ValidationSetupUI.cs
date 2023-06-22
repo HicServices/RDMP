@@ -51,9 +51,8 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         
     private ItemValidator SelectedColumnItemValidator {get
     {
-        var ei = olvColumns.SelectedObject as ExtractionInformation;
         //The user has not selected a column
-        if (ei == null)
+        if (olvColumns.SelectedObject is not ExtractionInformation ei)
             return null;
 
         var c = ei.GetRuntimeName();
@@ -176,7 +175,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
         bSuppressChangeEvents = true;
 
-        if (SelectedColumnItemValidator == null || SelectedColumnItemValidator.PrimaryConstraint == null)
+        if (SelectedColumnItemValidator?.PrimaryConstraint == null)
         {
             ddPrimaryConstraints.Text = _noPrimaryConstraintText;
             ddConsequence.SelectedItem = Consequence.Missing;
@@ -184,11 +183,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         else
         {
             ddPrimaryConstraints.Text = SelectedColumnItemValidator.PrimaryConstraint.GetType().Name;
-            if (SelectedColumnItemValidator.PrimaryConstraint.Consequence.HasValue)
-                ddConsequence.SelectedItem = SelectedColumnItemValidator.PrimaryConstraint.Consequence.Value;
-            else
-                ddConsequence.SelectedItem = Consequence.Missing;
-
+            ddConsequence.SelectedItem = SelectedColumnItemValidator.PrimaryConstraint.Consequence ?? Consequence.Missing;
         }
 
         //Make consequence selection only possible if there is a priary constraint selected

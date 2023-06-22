@@ -775,8 +775,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         var children = new HashSet<object>();
 
         var isKeyMissing = false;
-        var keyLocation = _catalogueRepository.EncryptionManager as PasswordEncryptionKeyLocation;
-        if (keyLocation != null)
+        if (_catalogueRepository.EncryptionManager is PasswordEncryptionKeyLocation keyLocation)
             isKeyMissing = string.IsNullOrWhiteSpace(keyLocation.GetKeyFileLocation());
 
         children.Add(new DecryptionPrivateKeyNode(isKeyMissing));

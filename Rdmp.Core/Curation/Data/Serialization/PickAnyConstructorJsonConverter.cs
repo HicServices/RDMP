@@ -67,8 +67,7 @@ public class PickAnyConstructorJsonConverter:JsonConverter
 
         serializer.Populate(reader,instance);
 
-        var callback = instance as IPickAnyConstructorFinishedCallback;
-        if(callback != null)
+        if(instance is IPickAnyConstructorFinishedCallback callback)
             callback.AfterConstruction();
 
         return instance;

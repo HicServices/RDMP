@@ -265,8 +265,7 @@ public class CohortIdentificationConfigurationUICommon
             if (task == null)
                 return;
 
-            var c = task as CacheableTask;
-            if (c != null)
+            if (task is CacheableTask c)
                 ClearCacheFor(new ICacheableTask[] { c });
 
             Compiler.CancelTask(task, true);

@@ -83,17 +83,13 @@ public partial class KeyDropLocationUI : UserControl
 
     private ColumnInfo GetColumnInfoOrNullFromDrag(DragEventArgs e)
     {
-        var data = e.Data as OLVDataObject;
-
-        if (data == null)
+        if (e.Data is not OLVDataObject data)
             return null;
 
         if (data.ModelObjects.Count != 1)
             return null;
 
-        var ei = data.ModelObjects[0] as ExtractionInformation;
-
-        if (ei != null)
+        if (data.ModelObjects[0] is ExtractionInformation ei)
             return ei.ColumnInfo;
 
         return data.ModelObjects[0] as ColumnInfo;

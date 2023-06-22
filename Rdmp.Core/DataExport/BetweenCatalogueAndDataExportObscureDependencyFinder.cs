@@ -57,10 +57,8 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
     /// <inheritdoc/>
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        var cic = oTableWrapperObject as CohortIdentificationConfiguration;
-
         //if the object being deleted is a CohortIdentificationConfiguration (in Catalogue database) then delete the associations it has to Projects in Data Export database
-        if (cic != null)
+        if (oTableWrapperObject is CohortIdentificationConfiguration cic)
         {
             //data export functionality is not available?
             if (_serviceLocator.DataExportRepository == null)

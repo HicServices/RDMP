@@ -72,22 +72,22 @@ public class ImportFilesDataProviderTests:DatabaseTests
         provider.Fetch(job, new GracefulCancellationToken());
 
         //both files should exist
-        Assert.AreEqual(1,targetDir.GetFiles().Count());
-        Assert.AreEqual(1, sourceDir.GetFiles().Count());
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(1, sourceDir.GetFiles().Length);
 
         //simulate load failure
         provider.LoadCompletedSoDispose(ExitCodeType.Abort, new ThrowImmediatelyDataLoadJob());
 
         //both files should exist
-        Assert.AreEqual(1, targetDir.GetFiles().Count());
-        Assert.AreEqual(1, sourceDir.GetFiles().Count());
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(1, sourceDir.GetFiles().Length);
 
         //simulate load success
         provider.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadJob());
 
         //both files should exist because Delete on success is false
-        Assert.AreEqual(1, targetDir.GetFiles().Count());
-        Assert.AreEqual(1, sourceDir.GetFiles().Count());
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(1, sourceDir.GetFiles().Length);
 
         //change behaviour to delete on successful data loads
         provider.DeleteFilesOnsuccessfulLoad = true;
@@ -96,15 +96,15 @@ public class ImportFilesDataProviderTests:DatabaseTests
         provider.LoadCompletedSoDispose(ExitCodeType.Error, new ThrowImmediatelyDataLoadJob());
 
         //both files should exist
-        Assert.AreEqual(1, targetDir.GetFiles().Count());
-        Assert.AreEqual(1, sourceDir.GetFiles().Count());
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(1, sourceDir.GetFiles().Length);
 
         //simulate load success
         provider.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadJob());
 
         //only forLoading file should exist (in real life that one would be handled by archivng already)
-        Assert.AreEqual(1, targetDir.GetFiles().Count());
-        Assert.AreEqual(0, sourceDir.GetFiles().Count());
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(0, sourceDir.GetFiles().Length);
 
     }
 

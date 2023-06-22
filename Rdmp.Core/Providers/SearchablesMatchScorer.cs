@@ -301,8 +301,7 @@ public class SearchablesMatchScorer
     }
     private int CountMatchToString(List<Regex> regexes, object key)
     {
-        var s = key as ICustomSearchString;
-        var matchOn = s != null ? s.GetSearchString() : key.ToString();
+        var matchOn = key is ICustomSearchString s ? s.GetSearchString() : key.ToString();
 
         return MatchCount(regexes, matchOn);
     }
@@ -342,10 +341,8 @@ public class SearchablesMatchScorer
     /// <returns>True if the item should be shown to the user based on filters</returns>
     public static bool Filter(object modelObject, DescendancyList descendancy, bool includeInternal, bool includeDeprecated, bool includeColdStorage, bool includeProjectSpecific, bool includeNonExtractable)
     {
-        var cata = modelObject as ICatalogue;
-
         //doesn't relate to us... 
-        if (cata == null)
+        if (modelObject is not ICatalogue cata)
         {
             // or are we one of these things that can be tied to a catalogue
             cata = modelObject switch

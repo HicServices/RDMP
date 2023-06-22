@@ -63,9 +63,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
     }
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {
-        var filter = GetFilterIfAny() as ConcreteFilter;
-
-        if (filter != null)
+        if (GetFilterIfAny() is ConcreteFilter filter)
             yield return filter;
     }
 

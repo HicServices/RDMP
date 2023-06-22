@@ -346,9 +346,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
     private void olvLookupColumns_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        var c = e.Model as ColumnInfo;
-
-        if(c == null)
+        if(e.Model is not ColumnInfo c)
             return;
 
         e.MenuStrip = new ColumnInfoMenu(new RDMPContextMenuStripArgs(Activator), c);
@@ -503,9 +501,7 @@ Only define secondary columns if you really need them! if any of the key fields 
     {
         var olv = (ObjectListView)sender;
 
-        var o = olv.SelectedObject as IMapsDirectlyToDatabaseTable;
-            
-        if(o != null)
+        if(olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
 
     }

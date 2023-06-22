@@ -67,7 +67,7 @@ internal class ColumnInfoTests : DatabaseTests
            
             try
             {
-                Assert.IsTrue(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent).Count() ==1);
+                Assert.IsTrue(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent).Length == 1);
             }
             finally
             {

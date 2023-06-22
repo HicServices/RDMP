@@ -195,9 +195,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         if(_bLoading)
             return;
 
-        var cic = cbxCohortIdentificationConfiguration.SelectedItem as CohortIdentificationConfiguration;
-
-        if (cic == null)
+        if (cbxCohortIdentificationConfiguration.SelectedItem is not CohortIdentificationConfiguration cic)
             _extractionConfiguration.CohortIdentificationConfiguration_ID = null;
         else
             _extractionConfiguration.CohortIdentificationConfiguration_ID = cic.ID;

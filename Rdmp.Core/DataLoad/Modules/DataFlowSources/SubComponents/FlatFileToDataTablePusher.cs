@@ -143,8 +143,8 @@ public class FlatFileToDataTablePusher
             {
                 var hackedValue = _hackValuesFunc(lineToPush[i]);
 
-                if (hackedValue is string)
-                    hackedValue = ((string)hackedValue).Trim();
+                if (hackedValue is string value)
+                    hackedValue = value.Trim();
 
                 try
                 {

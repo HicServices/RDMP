@@ -486,8 +486,7 @@ public partial class PipelineDiagramUI : UserControl
 
     private AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
     {
-        var dataObject = e.Data as OLVDataObject;
-        if (dataObject != null)
+        if (e.Data is OLVDataObject dataObject)
         {
             if (dataObject.ModelObjects.Count == 1 &&
                 dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext)

@@ -184,7 +184,7 @@ public class CatalogueTests : UnitTests
     [Test]
     public void create_blankConstructorCatalogue_createsNewInDatabase()
     {
-        var before = Repository.GetAllObjects<Catalogue>().Count();
+        var before = Repository.GetAllObjects<Catalogue>().Length;
 
         var newCatalogue = new Catalogue(Repository, "fishing");
         var expectedID = newCatalogue.ID;
@@ -193,7 +193,7 @@ public class CatalogueTests : UnitTests
 
 
         var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
-        var after = catasAfter.Count();
+        var after = catasAfter.Length;
 
         Assert.AreEqual(before, after - 1);
 
@@ -567,8 +567,8 @@ public class CatalogueTests : UnitTests
         var tree = FolderHelper.BuildFolderTree(objects);
         Assert.IsEmpty(tree.ChildObjects, "Should be no Catalogues on the root");
 
-        Assert.AreEqual(1, tree.ChildFolders.Count());
-        Assert.AreEqual(1, tree["somefolder"].ChildFolders.Count());
+        Assert.AreEqual(1, tree.ChildFolders.Count);
+        Assert.AreEqual(1, tree["somefolder"].ChildFolders.Count);
         Assert.IsEmpty(tree["somefolder"]["somesub"].ChildFolders);
 
         Assert.Contains(cata1, tree["somefolder"].ChildObjects);

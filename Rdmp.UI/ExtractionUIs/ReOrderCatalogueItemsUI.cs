@@ -376,8 +376,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
     private void olvExtractionInformations_ItemActivate(object sender, EventArgs e)
     {
-        var o = olvExtractionInformations.SelectedObject as IMapsDirectlyToDatabaseTable;
-        if(o != null)
+        if(olvExtractionInformations.SelectedObject is IMapsDirectlyToDatabaseTable o)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
     }
 }

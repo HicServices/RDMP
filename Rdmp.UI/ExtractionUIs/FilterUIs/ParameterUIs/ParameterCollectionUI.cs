@@ -84,9 +84,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private object ParameterName_AspectGetter(object rowObject)
     {
-        var p = rowObject as ISqlParameter;
-
-        if (p == null)
+        if (rowObject is not ISqlParameter p)
             return null;
 
         try

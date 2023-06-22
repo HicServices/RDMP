@@ -199,10 +199,8 @@ public partial class UserSettingsFileUI : Form
     {
         if(!_bLoaded)
             return;
-            
-        var t = ddTheme.SelectedItem as string;
-            
-        if(t != null)
+
+        if(ddTheme.SelectedItem is string t)
             UserSettings.Theme = t;
     }
 

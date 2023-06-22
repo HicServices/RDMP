@@ -292,8 +292,7 @@ public class AutoCommentsEvaluator
                             if (t.GetProperty($"{member}_ID") != null)
                             {
                                 changes = true;
-                                sbSuggestedText.AppendLine(whitespace + string.Format("/// <inheritdoc cref=\"{0}\"/>",
-                                    $"{member}_ID"));
+                                sbSuggestedText.AppendLine(whitespace + $"/// <inheritdoc cref=\"{$"{member}_ID"}\"/>");
                             }
                             else
                             {

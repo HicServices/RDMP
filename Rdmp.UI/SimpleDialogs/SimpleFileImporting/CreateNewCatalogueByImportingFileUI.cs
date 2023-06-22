@@ -280,9 +280,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
         var factory = GetFactory();
 
-        var p = ddPipeline.SelectedItem as Pipeline;
-
-        if(p == null)
+        if(ddPipeline.SelectedItem is not Pipeline p)
             return;
         try
         {
@@ -319,9 +317,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void btnPreview_Click(object sender, EventArgs e)
     {
-        var p = ddPipeline.SelectedItem as Pipeline;
-
-        if (p == null)
+        if (ddPipeline.SelectedItem is not Pipeline p)
         {
             MessageBox.Show("No Pipeline Selected");
             return;
@@ -354,9 +350,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void btnExecute_Click(object sender, EventArgs e)
     {
-        var p = ddPipeline.SelectedItem as Pipeline;
-
-        if (p == null)
+        if (ddPipeline.SelectedItem is not Pipeline p)
         {
             MessageBox.Show("No Pipeline Selected");
             return;

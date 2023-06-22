@@ -127,10 +127,8 @@ public partial class ServerDefaultsUI : RDMPForm
         else
             throw new Exception($"Did not recognise sender:{sender}");
 
-        var selectedItem = ((ComboBox) sender).SelectedItem as ExternalDatabaseServer;
-
         //user selected nothing
-        if(selectedItem == null)
+        if(((ComboBox) sender).SelectedItem is not ExternalDatabaseServer selectedItem)
             return;
 
         defaults.SetDefault(toChange, selectedItem);

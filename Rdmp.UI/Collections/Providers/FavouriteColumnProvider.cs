@@ -61,10 +61,9 @@ public class FavouriteColumnProvider
     private void OnCellClick(object sender, CellClickEventArgs cellClickEventArgs)
     {
         var col = cellClickEventArgs.Column;
-        var o = cellClickEventArgs.Model as DatabaseEntity;
 
 
-        if (col == _olvFavourite && o != null)
+        if (col == _olvFavourite && cellClickEventArgs.Model is DatabaseEntity o)
         {
             if (_activator.FavouritesProvider.IsFavourite(o))
                 _activator.FavouritesProvider.RemoveFavourite(this, o);
@@ -84,9 +83,7 @@ public class FavouriteColumnProvider
 
     private Bitmap FavouriteImageGetter(object rowobject)
     {
-        var o = rowobject as DatabaseEntity;
-
-        if (o != null)
+        if (rowobject is DatabaseEntity o)
             return _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow;
                     
 
@@ -94,9 +91,7 @@ public class FavouriteColumnProvider
     }
     private object FavouriteAspectGetter(object rowobject)
     {
-        var o = rowobject as DatabaseEntity;
-
-        if (o != null)
+        if (rowobject is DatabaseEntity o)
             return _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0;
                     
 

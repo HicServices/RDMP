@@ -52,8 +52,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     private object CohortSourceAspectGetter(object rowObject)
     {
         //if it is a cohort or something masquerading as a cohort
-        var masquerader = rowObject as IMasqueradeAs;
-        var cohort = masquerader != null
+        var cohort = rowObject is IMasqueradeAs masquerader
             ? masquerader.MasqueradingAs() as ExtractableCohort
             : rowObject as ExtractableCohort;
 
@@ -66,17 +65,14 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     private object ProjectNumberAspectGetter(object rowObject)
     {
-        var p = rowObject as Project;
-            
         var masquerade = rowObject as IMasqueradeAs;
 
-        if (p != null)
+        if (rowObject is Project p)
             return p.ProjectNumber;
 
         if(masquerade != null)
         {
-            var c = masquerade.MasqueradingAs() as ExtractableCohort;
-            if (c != null)
+            if (masquerade.MasqueradingAs() is ExtractableCohort c)
                 return c.ExternalProjectNumber;
         }
 
@@ -85,12 +81,9 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     private object CohortVersionAspectGetter(object rowObject)
     {
-        var masquerade = rowObject as IMasqueradeAs;
-
-        if (masquerade != null)
+        if (rowObject is IMasqueradeAs masquerade)
         {
-            var c = masquerade.MasqueradingAs() as ExtractableCohort;
-            if (c != null)
+            if (masquerade.MasqueradingAs() is ExtractableCohort c)
                 return c.ExternalVersion;
         }
 

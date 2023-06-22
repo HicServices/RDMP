@@ -79,11 +79,12 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
             var sql = "CREATE TABLE RandomOrderTable (";
 
-            var leftToCreate = new List<string>();
-
-            leftToCreate.Add("name varchar(50),");
-            leftToCreate.Add("color varchar(50),");
-            leftToCreate.Add("age varchar(50),");
+            var leftToCreate = new List<string>
+            {
+                "name varchar(50),",
+                "color varchar(50),",
+                "age varchar(50),"
+            };
 
             if(createIdentity)
                 leftToCreate.Add("id int IDENTITY(1,1),");

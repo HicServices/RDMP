@@ -137,7 +137,7 @@ public class EndToEndTableValuedFunction:DatabaseTests
         _cic.CreateRootContainerIfNotExists();
             
         //turn the catalogue _nonTvfCatalogue into a cohort set and add it to the root container
-        var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,(s,e)=> { throw new Exception("Did not expect there to be more than 1!"); });
+        var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,(s,e)=> throw new Exception("Did not expect there to be more than 1!"));
 
         var root = _cic.RootCohortAggregateContainer;
         root.AddChild(newAggregate,0);
@@ -183,8 +183,7 @@ public class EndToEndTableValuedFunction:DatabaseTests
             //create the newID view
             svr.GetCommand("create view getNewID as select newid() as new_id", con).ExecuteNonQuery();
 
-            var sql = string.Format(
-                @"create function GetTopXRandom (@numberOfRecords int)
+            var sql = $@"create function GetTopXRandom (@numberOfRecords int)
 RETURNS @retTable TABLE
 ( 
 chi varchar(10),
@@ -195,12 +194,12 @@ BEGIN
 
 while(@numberOfRecords >0)
 begin
-insert into @retTable select top 1 chi,cohortDefinition_id from {0}..Cohort order by (select new_id from getNewID)
+insert into @retTable select top 1 chi,cohortDefinition_id from {cohortDatabaseName}..Cohort order by (select new_id from getNewID)
 set @numberOfRecords = @numberOfRecords - 1
 end
 return
 end
-",cohortDatabaseName);
+";
 
             svr.GetCommand(sql, con).ExecuteNonQuery();
         }
@@ -258,7 +257,7 @@ end
         var qb = new QueryBuilder("", "");
 
         //table valued function should have 2 fields (chi and definitionID)
-        Assert.AreEqual(2, _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Count());
+        Assert.AreEqual(2, _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Length);
 
         qb.AddColumnRange(_tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
@@ -377,10 +376,10 @@ end
         root.SaveToDatabase();
 
         //declare a global parameter of 1 on the aggregate
-        _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => { return null; });
+        _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => null);
             
         //it should have imported the global parameter as part of the import right?
-        Assert.AreEqual(1,_cicAggregate.GetAllParameters().Count());
+        Assert.AreEqual(1, _cicAggregate.GetAllParameters().Length);
 
         //add the new cic to the container
         root.AddChild(_cicAggregate,2);

@@ -225,9 +225,7 @@ public partial class SelectColumnUI : RDMPUserControl
 
     private void RowFormatter(OLVListItem olvItem)
     {
-        var col = olvItem.RowObject as IColumn;
-
-        if (col != null)
+        if (olvItem.RowObject is IColumn col)
         {
             olvItem.BackColor = col is AggregateCountColumn ? Color.Wheat : Color.White;
             olvItem.ForeColor = _availableColumns.Contains(col) ? Color.Gray : Color.Black;
@@ -238,8 +236,7 @@ public partial class SelectColumnUI : RDMPUserControl
     {
         if(cellClickEventArgs.Column == olvEditInPopup)
         {
-            var col = cellClickEventArgs.Model as IColumn;
-            if(col != null)
+            if(cellClickEventArgs.Model is IColumn col)
             {
                 var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCombineableFactory());
 
@@ -265,10 +262,8 @@ public partial class SelectColumnUI : RDMPUserControl
     /// </summary>
     /// <param name="col"></param>
     private void Save(IColumn col)
-    {  
-        var countCol = col as AggregateCountColumn;
-
-        if (countCol != null)
+    {
+        if (col is AggregateCountColumn countCol)
         {
             _aggregate.CountSQL = countCol.GetFullSelectLineStringForSavingIntoAnAggregate();
             _aggregate.SaveToDatabase();
@@ -286,8 +281,7 @@ public partial class SelectColumnUI : RDMPUserControl
             return;
         }
 
-        var saveable = col as ISaveable;
-        if (saveable != null)
+        if (col is ISaveable saveable)
             saveable.SaveToDatabase();
 
         _aggregate.SaveToDatabase();
