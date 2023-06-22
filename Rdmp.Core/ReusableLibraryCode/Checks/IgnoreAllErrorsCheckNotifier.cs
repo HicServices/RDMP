@@ -16,7 +16,6 @@ public class IgnoreAllErrorsCheckNotifier : ICheckNotifier
 {
     public static readonly IgnoreAllErrorsCheckNotifier Instance = new();
 
-    [Obsolete("Use the Instance")]
     public IgnoreAllErrorsCheckNotifier() { }
     public bool OnCheckPerformed(CheckEventArgs args)
     {
