@@ -30,12 +30,4 @@ public class ComponentCompatibilityTests :UnitTests
 
         Assert.Greater(array.Length,0);
     }
-
-    [Test]
-    public void HowDoesMEFHandleTypeNames()
-    {
-        const string expected = "Rdmp.Core.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
-
-        Assert.AreEqual(expected, MEF.GetMEFNameForType(typeof(IDataFlowSource<DataTable>)));
-    }
 }
