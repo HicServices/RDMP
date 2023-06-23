@@ -208,7 +208,7 @@ public class ConsoleInputManager : BasicActivateItems
                 }
             }
             sb.AppendLine();
-            sb.Append(":");
+            sb.Append(':');
         }
 
         return sb.ToString();
@@ -285,7 +285,7 @@ public class ConsoleInputManager : BasicActivateItems
                 GetPromptFor(args,true, pickers).Trim()));
 
 
-        var cli = new CommandLineObjectPicker(new[] { line }, RepositoryLocator, pickers);
+        var cli = new CommandLineObjectPicker(new[] { line }, pickers);
         return cli[0];
     }
 
