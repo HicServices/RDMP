@@ -36,22 +36,20 @@ internal class FilterManagerFromChildProvider: AggregateFilterManager
                 .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             
         var server = repository.DiscoveredServer;
-        using (var con = repository.GetConnection())
+        using var con = repository.GetConnection();
+        var r = server.GetCommand("SELECT [AggregateFilterContainer_ParentID],[AggregateFilterContainer_ChildID]  FROM [AggregateFilterSubContainer]", con).ExecuteReader();
+        while(r.Read())
         {
-            var r = server.GetCommand("SELECT [AggregateFilterContainer_ParentID],[AggregateFilterContainer_ChildID]  FROM [AggregateFilterSubContainer]", con).ExecuteReader();
-            while(r.Read())
-            {
 
-                var parentId = Convert.ToInt32(r["AggregateFilterContainer_ParentID"]);
-                var subcontainerId = Convert.ToInt32(r["AggregateFilterContainer_ChildID"]);
+            var parentId = Convert.ToInt32(r["AggregateFilterContainer_ParentID"]);
+            var subcontainerId = Convert.ToInt32(r["AggregateFilterContainer_ChildID"]);
 
-                if(!_subcontainers.ContainsKey(parentId))
-                    _subcontainers.Add(parentId,new List<AggregateFilterContainer>());
+            if(!_subcontainers.ContainsKey(parentId))
+                _subcontainers.Add(parentId,new List<AggregateFilterContainer>());
 
-                _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
-            }
-            r.Close();
+            _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
         }
+        r.Close();
     }
         
     public override IContainer[] GetSubContainers(IContainer container)

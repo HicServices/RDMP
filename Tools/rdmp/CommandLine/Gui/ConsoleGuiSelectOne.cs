@@ -57,8 +57,10 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
             return parent != null ? $"{o.ID} {o.GetType().Name} {o} ({parent})" : $"{o.ID} {o.GetType().Name} {o}";
         };
 
-        _scorer = new SearchablesMatchScorer();
-        _scorer.TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),StringComparer.CurrentCultureIgnoreCase);
+        _scorer = new SearchablesMatchScorer
+        {
+            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
+        };
 
     }
 

@@ -73,8 +73,10 @@ public partial class PerformanceCounterUI : Form
             return;                
 
         var f = new Form();
-        var ui = new PerformanceCounterResultsUI();
-        ui.Dock = DockStyle.Fill;
+        var ui = new PerformanceCounterResultsUI
+        {
+            Dock = DockStyle.Fill
+        };
 
         //remove the current counter while this UI is running (the UI is designed to be a snapshot not a realtime view
         var performanceCounter = DatabaseCommandHelper.PerformanceCounter;

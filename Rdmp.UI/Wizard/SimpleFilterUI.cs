@@ -78,11 +78,12 @@ public partial class SimpleFilterUI : UserControl
             
         for (var i = 0; i < parameters.Length; i++)
         {
-            var currentRowPanel = new Panel();
-                
-            currentRowPanel.Bounds = new Rectangle(0, 0, tableLayoutPanel1.Width, rowHeight);
-            currentRowPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            currentRowPanel.Margin = Padding.Empty;
+            var currentRowPanel = new Panel
+            {
+                Bounds = new Rectangle(0, 0, tableLayoutPanel1.Width, rowHeight),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                Margin = Padding.Empty
+            };
 
             var p = new SimpleParameterUI(activator,parameters[i]);
             currentRowPanel.Controls.Add(p);

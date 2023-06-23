@@ -434,37 +434,33 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to download SQL for global SupportingSQL {sqlTable.SQL}"));
-        using (var con = sqlTable.GetServer().GetConnection())
+        using var con = sqlTable.GetServer().GetConnection();
+        con.Open();
+
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Connection opened successfully, about to send SQL command {sqlTable.SQL}"));
+
+        using var dt = new DataTable();
+        using(var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con))
+        using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
         {
-            con.Open();
+            var sw = new Stopwatch();
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Connection opened successfully, about to send SQL command {sqlTable.SQL}"));
-
-            using (var dt = new DataTable())
-            {
-                using(var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con))
-                using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
-                {
-                    var sw = new Stopwatch();
-
-                    sw.Start();
-                    da.Fill(dt);
-                }
-                
-                dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
-                linesWritten = dt.Rows.Count;
-
-                var destinationDb = GetDestinationDatabase(listener);
-                var tbl = destinationDb.ExpectTable(dt.TableName);
-                
-                if(tbl.Exists())
-                    tbl.Drop();
-
-                destinationDb.CreateTable(dt.TableName,dt);
-                destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
-            }
+            sw.Start();
+            da.Fill(dt);
         }
+                
+        dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
+        linesWritten = dt.Rows.Count;
+
+        var destinationDb = GetDestinationDatabase(listener);
+        var tbl = destinationDb.ExpectTable(dt.TableName);
+                
+        if(tbl.Exists())
+            tbl.Drop();
+
+        destinationDb.CreateTable(dt.TableName,dt);
+        destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
     }
 
         

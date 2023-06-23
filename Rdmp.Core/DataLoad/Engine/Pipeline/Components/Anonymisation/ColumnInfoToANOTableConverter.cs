@@ -49,23 +49,21 @@ public class ColumnInfoToANOTableConverter
             throw new NotSupportedException(
                 $"Table {_tableInfo} contains {rowcount} rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
 
-        using (var con = tbl.Database.Server.GetConnection())
-        {
-            con.Open();
+        using var con = tbl.Database.Server.GetConnection();
+        con.Open();
                 
-            if (!IsOldColumnDroppable(con, notifier))
-                return false;
+        if (!IsOldColumnDroppable(con, notifier))
+            return false;
 
-            EnsureNoTriggerOnTable(tbl);
+        EnsureNoTriggerOnTable(tbl);
 
-            AddNewANOColumnInfo(shouldApplySql, con, notifier);
+        AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-            DropOldColumn(shouldApplySql, con,null);
+        DropOldColumn(shouldApplySql, con,null);
 
 
-            //synchronize again
-            new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
-        }
+        //synchronize again
+        new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
 
         return true;
     }
@@ -73,24 +71,22 @@ public class ColumnInfoToANOTableConverter
     {
         var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
 
-        using (var con = tbl.Database.Server.GetConnection())
-        {
-            con.Open();
+        using var con = tbl.Database.Server.GetConnection();
+        con.Open();
 
-            if (!IsOldColumnDroppable(con, notifier))
-                return false;
+        if (!IsOldColumnDroppable(con, notifier))
+            return false;
 
-            EnsureNoTriggerOnTable(tbl);
+        EnsureNoTriggerOnTable(tbl);
                 
-            AddNewANOColumnInfo(shouldApplySql, con, notifier);
+        AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-            MigrateExistingData(shouldApplySql,con, notifier,tbl);
+        MigrateExistingData(shouldApplySql,con, notifier,tbl);
 
-            DropOldColumn(shouldApplySql, con,null);
+        DropOldColumn(shouldApplySql, con,null);
 
-            //synchronize again
-            new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
-        }
+        //synchronize again
+        new TableInfoSynchronizer(_tableInfo).Synchronize(notifier);
 
         return true;
     }
@@ -166,8 +162,8 @@ public class ColumnInfoToANOTableConverter
         finally
         {
             //always drop the temp anomap
-            using(var dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con))
-                dropMappingTable.ExecuteNonQuery();
+            using var dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con);
+            dropMappingTable.ExecuteNonQuery();
         }
     }
 
@@ -179,8 +175,8 @@ public class ColumnInfoToANOTableConverter
 
         if (shouldApplySql(alterSql))
         {
-            using(var cmd = DatabaseCommandHelper.GetCommand(alterSql, con,transaction))
-                cmd.ExecuteNonQuery();
+            using var cmd = DatabaseCommandHelper.GetCommand(alterSql, con,transaction);
+            cmd.ExecuteNonQuery();
         }
         else
         {

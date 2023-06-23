@@ -30,8 +30,10 @@ public class AggregateDataBasedTests:DatabaseTests
 {
     private DataTable GetTestDataTable()
     {
-        var dt = new DataTable();
-        dt.TableName = "AggregateDataBasedTests";
+        var dt = new DataTable
+        {
+            TableName = "AggregateDataBasedTests"
+        };
 
         dt.Columns.Add("EventDate");
         dt.Columns.Add("Category");
@@ -93,15 +95,13 @@ public class AggregateDataBasedTests:DatabaseTests
     {
         var sql = builder.SQL;
 
-        using (var con = tbl.Database.Server.GetConnection())
-        {
-            con.Open();
-            var da = tbl.Database.Server.GetDataAdapter(sql, con);
-            var toReturn = new DataTable();
-            da.Fill(toReturn);
+        using var con = tbl.Database.Server.GetConnection();
+        con.Open();
+        var da = tbl.Database.Server.GetDataAdapter(sql, con);
+        var toReturn = new DataTable();
+        da.Fill(toReturn);
 
-            return toReturn;
-        }
+        return toReturn;
     }
         
 

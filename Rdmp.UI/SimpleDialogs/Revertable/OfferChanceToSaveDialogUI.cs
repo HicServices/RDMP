@@ -42,8 +42,10 @@ public partial class OfferChanceToSaveDialogUI : Form
         for (var index = 0; index < differences.Differences.Count; index++)
         {
             var d = differences.Differences[index];
-            var toAdd = new RevertablePropertyDifferenceUI(d);
-            toAdd.Dock = DockStyle.Fill;
+            var toAdd = new RevertablePropertyDifferenceUI(d)
+            {
+                Dock = DockStyle.Fill
+            };
             tableLayoutPanel1.Controls.Add(toAdd,0,index);
         }
 

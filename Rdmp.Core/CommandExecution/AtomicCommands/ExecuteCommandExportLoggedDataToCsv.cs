@@ -48,11 +48,10 @@ public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
             
         if (db != null)
         {
-            using (var con = server.GetConnection())
-            {
-                con.Open();
+            using var con = server.GetConnection();
+            con.Open();
 
-                var sql = string.Format(@"SELECT * FROM (
+            var sql = string.Format(@"SELECT * FROM (
 SELECT [dataLoadRunID]
       ,eventType
       ,[description]
@@ -73,13 +72,12 @@ SELECT [dataLoadRunID]
  ) as x
 order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter.GetWhereSql());
 
-                var output = BasicActivator.SelectFile("Output CSV file");
+            var output = BasicActivator.SelectFile("Output CSV file");
 
-                var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
-                    CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
+            var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
+                CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
                     
-                extract.DoExtraction();
-            }
+            extract.DoExtraction();
         }
     }
 }

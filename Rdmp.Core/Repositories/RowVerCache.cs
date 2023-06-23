@@ -124,12 +124,12 @@ FROM
         using var con = _repository.GetConnection();
         var table = _repository.DiscoveredServer.GetCurrentDatabase().ExpectTable(typeof(T).Name);
         if (table.Exists() && table.DiscoverColumns().Any(c=>c.GetRuntimeName().Equals("RowVer",StringComparison.InvariantCultureIgnoreCase)))
-            using (var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con))
-            {
-                var result = cmd.ExecuteScalar();
-                _maxRowVer = result == DBNull.Value ? null : (byte[])result;
-            }
-                    
+        {
+            using var cmd = _repository.DiscoveredServer.GetCommand($"select max(RowVer) from {typeof(T).Name}", con);
+            var result = cmd.ExecuteScalar();
+            _maxRowVer = result == DBNull.Value ? null : (byte[])result;
+        }
+
 
         using (var cmd =
                _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))

@@ -60,119 +60,117 @@ public class WordDataWriter : DocXHelper
     {
         lock (oLockOnWordUsage)
         {
-            using (var document = GetNewDocFile(new FileInfo(Path.Combine(_destination.DirectoryPopulated.FullName,
-                       $"{_destination.GetFilename()}.docx"))))
+            using var document = GetNewDocFile(new FileInfo(Path.Combine(_destination.DirectoryPopulated.FullName,
+                $"{_destination.GetFilename()}.docx")));
+            InsertHeader(document, $"{Executer.Source.Request.DatasetBundle.DataSet} Meta Data");
+
+            InsertTableOfContents(document);
+
+            InsertHeader(document,"File Data");
+
+            int rowCount;
+            if (_destination.GeneratesFiles)
+                rowCount = 10;
+            else
+                rowCount = 5;
+
+            var t = InsertTable(document, rowCount, 2);
+                    
+            var rownum = 0;
+            if (_destination.GeneratesFiles)
             {
-                InsertHeader(document, $"{Executer.Source.Request.DatasetBundle.DataSet} Meta Data");
-
-                InsertTableOfContents(document);
-
-                InsertHeader(document,"File Data");
-
-                int rowCount;
-                if (_destination.GeneratesFiles)
-                    rowCount = 10;
-                else
-                    rowCount = 5;
-
-                var t = InsertTable(document, rowCount, 2);
-                    
-                var rownum = 0;
-                if (_destination.GeneratesFiles)
-                {
-                    SetTableCell(t,rownum,0,"File Name");
-                    SetTableCell(t,rownum,1,new FileInfo(_destination.OutputFile).Name);
-                    rownum++;
-                }
-
-                var request = Executer.Source.Request;
-
-                SetTableCell(t,rownum,0,"Cohort Size (Distinct)");
-                SetTableCell(t,rownum,1, request.ExtractableCohort.CountDistinct.ToString());
+                SetTableCell(t,rownum,0,"File Name");
+                SetTableCell(t,rownum,1,new FileInfo(_destination.OutputFile).Name);
                 rownum++;
+            }
 
-                SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
-                SetTableCell(t,rownum,1, request.IsBatchResume ? "unknown (batching was used)" : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+            var request = Executer.Source.Request;
+
+            SetTableCell(t,rownum,0,"Cohort Size (Distinct)");
+            SetTableCell(t,rownum,1, request.ExtractableCohort.CountDistinct.ToString());
+            rownum++;
+
+            SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
+            SetTableCell(t,rownum,1, request.IsBatchResume ? "unknown (batching was used)" : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+            rownum++;
+                    
+            SetTableCell(t,rownum,0,"Dataset Line Count");
+            SetTableCell(t,rownum,1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
+            rownum++;
+
+            if (_destination.GeneratesFiles)
+            {
+                SetTableCell(t,rownum,0,"MD5");
+                SetTableCell(t,rownum,1,FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
                 rownum++;
                     
-                SetTableCell(t,rownum,0,"Dataset Line Count");
-                SetTableCell(t,rownum,1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
+                var f = new FileInfo(_destination.OutputFile);
+                SetTableCell(t,rownum,0,"File Size");
+                SetTableCell(t,rownum,1, $"{f.Length}bytes ({f.Length / 1024}KB)");
+                rownum++;
+            }
+
+            SetTableCell(t,rownum,0,"Extraction Date");
+            SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.EndTime.ToString());
+            rownum++;
+
+            SetTableCell(t,rownum,0,"Table Load ID (for HIC)");
+            SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.ID.ToString());
+            rownum++;
+
+            if (_destination.GeneratesFiles)
+            {
+                SetTableCell(t,rownum,0,"Separator");
+                SetTableCell(t,rownum,1,
+                    $"{Executer.Source.Request.Configuration.Separator}\t({_destination.SeparatorsStrippedOut} values stripped from data)");
                 rownum++;
 
-                if (_destination.GeneratesFiles)
-                {
-                    SetTableCell(t,rownum,0,"MD5");
-                    SetTableCell(t,rownum,1,FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
-                    rownum++;
-                    
-                    var f = new FileInfo(_destination.OutputFile);
-                    SetTableCell(t,rownum,0,"File Size");
-                    SetTableCell(t,rownum,1, $"{f.Length}bytes ({f.Length / 1024}KB)");
-                    rownum++;
-                }
-
-                SetTableCell(t,rownum,0,"Extraction Date");
-                SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.EndTime.ToString());
+                SetTableCell(t,rownum,0,"Date Format");
+                SetTableCell(t,rownum,1,_destination.DateFormat);
                 rownum++;
+            }
 
-                SetTableCell(t,rownum,0,"Table Load ID (for HIC)");
-                SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.ID.ToString());
-                rownum++;
+            if (Executer.Source.ExtractionTimeValidator != null && Executer.Source.Request.IncludeValidation)
+            {
+                InsertSectionPageBreak(document);
 
-                if (_destination.GeneratesFiles)
+                InsertHeader(document,"Validation Information");
+
+                CreateValidationRulesTable(document);
+
+                InsertSectionPageBreak(document);
+
+                CreateValidationResultsTable(document);
+            }
+
+            //if a count of date times seen exists for this extraction create a graph of the counts seen
+            if (Executer.Source.ExtractionTimeTimeCoverageAggregator != null && Executer.Source.ExtractionTimeTimeCoverageAggregator.Buckets.Any())
+            {
+                if(!request.IsBatchResume)
                 {
-                    SetTableCell(t,rownum,0,"Separator");
-                    SetTableCell(t,rownum,1,
-                        $"{Executer.Source.Request.Configuration.Separator}\t({_destination.SeparatorsStrippedOut} values stripped from data)");
-                    rownum++;
-
-                    SetTableCell(t,rownum,0,"Date Format");
-                    SetTableCell(t,rownum,1,_destination.DateFormat);
-                    rownum++;
-                }
-
-                if (Executer.Source.ExtractionTimeValidator != null && Executer.Source.Request.IncludeValidation)
-                {
-                    InsertSectionPageBreak(document);
-
-                    InsertHeader(document,"Validation Information");
-
-                    CreateValidationRulesTable(document);
-
-                    InsertSectionPageBreak(document);
-
-                    CreateValidationResultsTable(document);
-                }
-
-                //if a count of date times seen exists for this extraction create a graph of the counts seen
-                if (Executer.Source.ExtractionTimeTimeCoverageAggregator != null && Executer.Source.ExtractionTimeTimeCoverageAggregator.Buckets.Any())
-                {
-                    if(!request.IsBatchResume)
+                    try
                     {
-                        try
-                        {
-                            InsertSectionPageBreak(document);
-                            InsertHeader(document, "Dataset Timespan");
+                        InsertSectionPageBreak(document);
+                        InsertHeader(document, "Dataset Timespan");
 
-                            CreateTimespanGraph(Executer.Source.ExtractionTimeTimeCoverageAggregator);
+                        CreateTimespanGraph(Executer.Source.ExtractionTimeTimeCoverageAggregator);
 
-                        }
-                        catch (Exception e)
-                        {
-                            ExceptionsGeneratingWordFile.Add(e);
-                        }
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionsGeneratingWordFile.Add(e);
                     }
                 }
-
-                InsertSectionPageBreak(document);
-
-                AddAllCatalogueItemMetaData(document);
-
-                //technical data
-                InsertSectionPageBreak(document);
-
-                AddFiltersAndParameters(document);
             }
+
+            InsertSectionPageBreak(document);
+
+            AddAllCatalogueItemMetaData(document);
+
+            //technical data
+            InsertSectionPageBreak(document);
+
+            AddFiltersAndParameters(document);
         }
     }
 

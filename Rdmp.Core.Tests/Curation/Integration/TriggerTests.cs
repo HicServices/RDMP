@@ -228,11 +228,9 @@ public class TriggerTests :DatabaseTests
             sql = string.Format(sql,args);
 
         var svr = _database.Server;
-        using (var con = svr.GetConnection())
-        {
-            con.Open();
-            return svr.GetCommand(sql, con).ExecuteScalar();
-        }
+        using var con = svr.GetConnection();
+        con.Open();
+        return svr.GetCommand(sql, con).ExecuteScalar();
     }
 
     private void RunSQL(string sql, params string[] args)
@@ -242,10 +240,8 @@ public class TriggerTests :DatabaseTests
         if (_database == null)
             throw new Exception("You must call CreateTable first");
 
-        using (var con = _database.Server.GetConnection())
-        {
-            con.Open();
-            _database.Server.GetCommand(sql, con).ExecuteNonQuery();
-        }
+        using var con = _database.Server.GetConnection();
+        con.Open();
+        _database.Server.GetCommand(sql, con).ExecuteNonQuery();
     }
 }

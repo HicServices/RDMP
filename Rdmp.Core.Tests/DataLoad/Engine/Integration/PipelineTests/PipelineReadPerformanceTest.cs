@@ -30,22 +30,20 @@ public class PipelineReadPerformanceTest:DatabaseTests
     {
         var server = _bulkTestData.BulkDataDatabase.Server;
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            var cmd = server.GetCommand($"Select count(*) from {BulkTestsData.BulkDataTable}", con);
-            var manualCount = Convert.ToInt32(cmd.ExecuteScalar());
+        using var con = server.GetConnection();
+        con.Open();
+        var cmd = server.GetCommand($"Select count(*) from {BulkTestsData.BulkDataTable}", con);
+        var manualCount = Convert.ToInt32(cmd.ExecuteScalar());
 
-            //manual count matches expected
-            Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,manualCount);
+        //manual count matches expected
+        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,manualCount);
 
-            //now get the fast approximate rowcount
-            var fastRowcount = _bulkTestData.BulkDataDatabase
-                .ExpectTable(BulkTestsData.BulkDataTable)
-                .GetRowCount();
+        //now get the fast approximate rowcount
+        var fastRowcount = _bulkTestData.BulkDataDatabase
+            .ExpectTable(BulkTestsData.BulkDataTable)
+            .GetRowCount();
 
-            //it should also match
-            Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,fastRowcount);
-        }
+        //it should also match
+        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData,fastRowcount);
     }
 }

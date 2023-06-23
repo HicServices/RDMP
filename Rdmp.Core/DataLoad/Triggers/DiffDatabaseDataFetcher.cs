@@ -299,17 +299,13 @@ Join
 
         if (execute)
         {
-            using (var con = server.GetConnection())
-            {
-                con.Open();
+            using var con = server.GetConnection();
+            con.Open();
 
-                using (var cmd = server.GetCommand(sql, con))
-                {
-                    cmd.CommandTimeout = _timeout;
-                    using(var da = server.GetDataAdapter(cmd))
-                        da.Fill(dt);
-                }
-            }
+            using var cmd = server.GetCommand(sql, con);
+            cmd.CommandTimeout = _timeout;
+            using var da = server.GetDataAdapter(cmd);
+            da.Fill(dt);
         }
         else
             checkNotifier.OnCheckPerformed(new CheckEventArgs("User decided not to execute the SQL", CheckResult.Fail));

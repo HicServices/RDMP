@@ -78,8 +78,10 @@ internal class ConsoleGuiContextMenuFactory
 
         var withSpacers = AddSpacers(items, order);
 
-        var menu = new ContextMenu();
-        menu.MenuItems = new MenuBarItem(withSpacers);
+        var menu = new ContextMenu
+        {
+            MenuItems = new MenuBarItem(withSpacers)
+        };
 
         return menu;
     }

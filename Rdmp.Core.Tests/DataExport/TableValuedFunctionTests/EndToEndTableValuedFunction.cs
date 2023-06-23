@@ -277,22 +277,20 @@ end
         var sql = qb.SQL;
 
         var db = DataAccessPortal.GetInstance().ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
-        using (var con = db.Server.GetConnection())
+        using var con = db.Server.GetConnection();
+        con.Open();
+        var r = db.Server.GetCommand(sql, con).ExecuteReader();
+
+        var rowsReturned = 0;
+
+        while (r.Read())
         {
-            con.Open();
-            var r = db.Server.GetCommand(sql, con).ExecuteReader();
-
-            var rowsReturned = 0;
-
-            while (r.Read())
-            {
-                rowsReturned++;
-                Assert.NotNull(r["chi"]);
-                Assert.NotNull(r["definitionID"]);
-            }
-
-            Assert.AreEqual(rowsReturned,5);
+            rowsReturned++;
+            Assert.NotNull(r["chi"]);
+            Assert.NotNull(r["definitionID"]);
         }
+
+        Assert.AreEqual(rowsReturned,5);
     }
 
     private void TestUsingTvfForAggregates()
@@ -395,17 +393,15 @@ end
         var sql = qb.SQL;
 
         var db = DataAccessPortal.GetInstance().ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            var r = db.Server.GetCommand(sql, con).ExecuteReader();
+        using var con = db.Server.GetConnection();
+        con.Open();
+        var r = db.Server.GetCommand(sql, con).ExecuteReader();
 
-            //2 chi numbers should be returned
-            Assert.IsTrue(r.Read());
-            Assert.IsTrue(r.Read());
+        //2 chi numbers should be returned
+        Assert.IsTrue(r.Read());
+        Assert.IsTrue(r.Read());
 
-            Assert.IsFalse(r.Read());
-        }
+        Assert.IsFalse(r.Read());
     }
 
     private void TestDataExportOfTvf()

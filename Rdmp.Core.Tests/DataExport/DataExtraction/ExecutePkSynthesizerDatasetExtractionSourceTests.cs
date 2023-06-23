@@ -227,8 +227,10 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     {
         extractableDataSet = new ExtractableDataSet(DataExportRepository, catalogue);
 
-        project = new Project(DataExportRepository, testDbName);
-        project.ProjectNumber = 1;
+        project = new Project(DataExportRepository, testDbName)
+        {
+            ProjectNumber = 1
+        };
 
         Directory.CreateDirectory(ProjectDirectory);
         project.ExtractionDirectory = ProjectDirectory;

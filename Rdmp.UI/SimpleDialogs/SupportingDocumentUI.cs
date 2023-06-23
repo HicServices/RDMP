@@ -123,8 +123,10 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        var ofd = new OpenFileDialog();
-        ofd.CheckFileExists = true;
+        var ofd = new OpenFileDialog
+        {
+            CheckFileExists = true
+        };
         if (ofd.ShowDialog() == DialogResult.OK)
             tbUrl.Text = ofd.FileName;
     }

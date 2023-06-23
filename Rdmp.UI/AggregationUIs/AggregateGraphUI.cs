@@ -798,9 +798,11 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         
     private void MiSaveImagesClick(object sender, EventArgs e)
     {
-        var sfd = new SaveFileDialog();
-        sfd.FileName = "Chart.jpg";
-        sfd.Filter = "Jpeg|*.jpg";
+        var sfd = new SaveFileDialog
+        {
+            FileName = "Chart.jpg",
+            Filter = "Jpeg|*.jpg"
+        };
         if (sfd.ShowDialog() == DialogResult.OK)
         {
             chart1.SaveImage(sfd.FileName, ChartImageFormat.Jpeg);

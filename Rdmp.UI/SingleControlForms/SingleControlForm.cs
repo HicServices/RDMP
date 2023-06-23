@@ -29,8 +29,10 @@ public class SingleControlForm:Form
 
         if(showOkButton)
         {
-            var okButton = new Button();
-            okButton.Text = "Ok";
+            var okButton = new Button
+            {
+                Text = "Ok"
+            };
             okButton.Click += (s, e) =>
             {
                 DialogResult = DialogResult.OK;

@@ -195,8 +195,10 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void dITAExtractionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        var f = new Form();
-        f.Text = "DITA Extraction of Catalogue Metadata";
+        var f = new Form
+        {
+            Text = "DITA Extraction of Catalogue Metadata"
+        };
         var d = new DitaExtractorUI();
         d.SetItemActivator(Activator);
         f.Width = d.Width + 10;

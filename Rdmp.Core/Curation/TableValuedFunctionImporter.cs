@@ -82,11 +82,13 @@ public class TableValuedFunctionImporter : ITableInfoImporter
         var finalName =
             $"{syntax.EnsureWrapped(_database)}.{wrappedSchema}.{_tableValuedFunctionName}({string.Join(',', _parameters.Select(p => p.ParameterName))}) AS {_tableValuedFunctionName}"; //give it an alias so all the children ColumnInfos can be fully specified
 
-        tableInfoCreated = new TableInfo(_repository,finalName);
-        tableInfoCreated.Server = _server;
-        tableInfoCreated.Database = _database;
-        tableInfoCreated.IsTableValuedFunction = true;
-        tableInfoCreated.Schema = _schema;
+        tableInfoCreated = new TableInfo(_repository, finalName)
+        {
+            Server = _server,
+            Database = _database,
+            IsTableValuedFunction = true,
+            Schema = _schema
+        };
         tableInfoCreated.SaveToDatabase();
 
         columnInfosCreated = CreateColumnInfosBasedOnReturnColumnsOfFunction(tableInfoCreated);

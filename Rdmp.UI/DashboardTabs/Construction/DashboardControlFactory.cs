@@ -97,11 +97,12 @@ public class DashboardControlFactory
 
         theControlCreated.SetCollection(_activator,emptyCollection);
 
-        var host = new DashboardableControlHostPanel(_activator, dbRecord, theControlCreated);
-
-        host.Location = new Point(dbRecord.X, dbRecord.Y);
-        host.Width = dbRecord.Width;
-        host.Height = dbRecord.Height;
+        var host = new DashboardableControlHostPanel(_activator, dbRecord, theControlCreated)
+        {
+            Location = new Point(dbRecord.X, dbRecord.Y),
+            Width = dbRecord.Width,
+            Height = dbRecord.Height
+        };
 
         return host;
     }

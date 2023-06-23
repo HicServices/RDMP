@@ -75,20 +75,18 @@ internal class ConsoleGuiActivator : BasicActivateItems
         btn.Clicked += () => Application.RequestStop();
 
 
-        using (var dlg = new Dialog(title, w, h, btn) { Modal = true })
+        using var dlg = new Dialog(title, w, h, btn) { Modal = true };
+        dlg.Add(new TextView
         {
-            dlg.Add(new TextView
-            {
-                Width = Dim.Fill(),
-                Height = Dim.Fill(1),
-                Text = message.Replace("\r\n", "\n"),
-                ReadOnly = true,
-                AllowsTab = false,
-                WordWrap = true
+            Width = Dim.Fill(),
+            Height = Dim.Fill(1),
+            Text = message.Replace("\r\n", "\n"),
+            ReadOnly = true,
+            AllowsTab = false,
+            WordWrap = true
 
-            });
-            Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
-        }
+        });
+        Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
     }
     public override bool YesNo(DialogArgs args, out bool chosen)
     {

@@ -39,8 +39,10 @@ public class FavouriteColumnProvider
 
     public OLVColumn CreateColumn()
     {
-        _olvFavourite = new OLVColumn("Favourite", null);
-        _olvFavourite.Text = "Favourite";
+        _olvFavourite = new OLVColumn("Favourite", null)
+        {
+            Text = "Favourite"
+        };
         _olvFavourite.ImageGetter += FavouriteImageGetter;
         _olvFavourite.IsEditable = false;
         _olvFavourite.Sortable = true;

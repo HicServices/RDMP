@@ -223,8 +223,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
 
-        var dt1 = new DataTable();
-        dt1.TableName = "MyEmptyTable";
+        var dt1 = new DataTable
+        {
+            TableName = "MyEmptyTable"
+        };
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
@@ -500,16 +502,14 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
         Assert.AreEqual(expectedDatatypeInDatabase, db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("myCol").DataType.SQLType);
 
-        using (var con = db.Server.GetConnection())
+        using var con = db.Server.GetConnection();
+        con.Open();
+        using var cmd = DatabaseCommandHelper.GetCommand("Select * from DataTableUploadDestinationTests", con);
+        using var r = cmd.ExecuteReader();
+        foreach (var e in expectedValuesReadFromDatabase)
         {
-            con.Open();
-            using(var cmd = DatabaseCommandHelper.GetCommand("Select * from DataTableUploadDestinationTests", con))
-            using(var r = cmd.ExecuteReader())
-                foreach (var e in expectedValuesReadFromDatabase)
-                {
-                    Assert.IsTrue(r.Read());
-                    Assert.AreEqual(e, r["myCol"]);
-                }
+            Assert.IsTrue(r.Read());
+            Assert.AreEqual(e, r["myCol"]);
         }
     }
 
@@ -568,45 +568,43 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 new("StringPk",new DatabaseTypeRequest(typeof(string),50),true){IsPrimaryKey = true }
             });
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
+        using var con = server.GetConnection();
+        con.Open();
                 
-            //should not allow nulls before
-            Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
-            //do resize
-            table.DiscoverColumn("StringNotNull").DataType.Resize(500);
+        //should not allow nulls before
+        Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
+        //do resize
+        table.DiscoverColumn("StringNotNull").DataType.Resize(500);
 
-            //rediscover it to get the new state in database (it should now be 500 and still shouldn't allow nulls)
-            AssertIsStringWithLength(table.DiscoverColumn("StringNotNull"), 500);
+        //rediscover it to get the new state in database (it should now be 500 and still shouldn't allow nulls)
+        AssertIsStringWithLength(table.DiscoverColumn("StringNotNull"), 500);
 
                 
-            Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
+        Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
 
-            //do the same with the one that allows nulls
-            Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
-            table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
-            table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
-            table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
+        //do the same with the one that allows nulls
+        Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
+        table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
+        table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
+        table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
                 
-            AssertIsStringWithLength(table.DiscoverColumn("StringAllowNull"), 105);
-            Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
+        AssertIsStringWithLength(table.DiscoverColumn("StringAllowNull"), 105);
+        Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
 
-            //we should have correct understanding prior to resize
-            AssertIsStringWithLength(table.DiscoverColumn("StringPk"),50);
-            Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
-            Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
+        //we should have correct understanding prior to resize
+        AssertIsStringWithLength(table.DiscoverColumn("StringPk"),50);
+        Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
+        Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
 
-            //now we execute the resize
-            table.DiscoverColumn("StringPk").DataType.Resize(500);
+        //now we execute the resize
+        table.DiscoverColumn("StringPk").DataType.Resize(500);
 
-            AssertIsStringWithLength(table.DiscoverColumn("StringPk"), 500);
+        AssertIsStringWithLength(table.DiscoverColumn("StringPk"), 500);
 
-            Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
-            Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
+        Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
+        Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
                 
-            con.Close();
-        }
+        con.Close();
     }
 
     private void AssertIsStringWithLength(DiscoveredColumn col, int expectedLength)
@@ -874,22 +872,20 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.AreEqual(2, tbl.GetRowCount());
         Assert.AreEqual("int", tbl.DiscoverColumn("mynum").DataType.SQLType);
 
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            var r = db.Server.GetCommand(tbl.GetTopXSql(10), con).ExecuteReader();
+        using var con = db.Server.GetConnection();
+        con.Open();
+        var r = db.Server.GetCommand(tbl.GetTopXSql(10), con).ExecuteReader();
 
-            //technically these can come out in a random order
-            var numbersRead = new List<int>();
-            Assert.IsTrue(r.Read());
-            numbersRead.Add((int) r["mynum"]);
-            Assert.IsTrue(r.Read());
-            numbersRead.Add((int)r["mynum"]);
+        //technically these can come out in a random order
+        var numbersRead = new List<int>();
+        Assert.IsTrue(r.Read());
+        numbersRead.Add((int) r["mynum"]);
+        Assert.IsTrue(r.Read());
+        numbersRead.Add((int)r["mynum"]);
 
-            Assert.IsFalse(r.Read());
-            Assert.IsTrue(numbersRead.Contains(1));
-            Assert.IsTrue(numbersRead.Contains(999));
-        }
+        Assert.IsFalse(r.Read());
+        Assert.IsTrue(numbersRead.Contains(1));
+        Assert.IsTrue(numbersRead.Contains(999));
     }
 
     [TestCase(false)]
@@ -908,8 +904,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 dtAlreadyThereData.Columns.Add("Name");
                 dtAlreadyThereData.Rows.Add(new[] {"Bob"});
 
-                using(var bulk = tbl.BeginBulkInsert())
-                    bulk.Upload(dtAlreadyThereData);
+                using var bulk = tbl.BeginBulkInsert();
+                bulk.Upload(dtAlreadyThereData);
             }
             
             //create the destination component (what we want to test)
@@ -956,17 +952,21 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         destination.PreInitialize(db,ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        var dt1 = new DataTable();
-        dt1.TableName = "MyTable";
+        var dt1 = new DataTable
+        {
+            TableName = "MyTable"
+        };
         dt1.Columns.Add("Name");
         dt1.Rows.Add("Fish");
 
         dt1.PrimaryKey = dt1.Columns.Cast<DataColumn>().ToArray();
 
         destination.ProcessPipelineData(dt1, ThrowImmediatelyDataLoadEventListener.Quiet,new GracefulCancellationToken());
-            
-        var dt2 = new DataTable();
-        dt2.TableName = "MyTable";
+
+        var dt2 = new DataTable
+        {
+            TableName = "MyTable"
+        };
         dt2.Columns.Add("Name");
         dt2.Rows.Add("Fish Monkey Fish Fish"); //notice that this is longer so the column must be resized
 

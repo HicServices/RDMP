@@ -119,10 +119,12 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        var dialog = new OpenFileDialog();
-        dialog.Filter = "Executables|*.exe";
-        dialog.CheckFileExists = true;
-            
+        var dialog = new OpenFileDialog
+        {
+            Filter = "Executables|*.exe",
+            CheckFileExists = true
+        };
+
         //open the browse dialog at the location of the currently specified file
         if (!string.IsNullOrWhiteSpace(_processTask.Path))
         {

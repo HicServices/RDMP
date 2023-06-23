@@ -194,8 +194,10 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     public static Form ShowAsDialog(IActivateItems activator,ParameterCollectionUIOptions options, bool modal = false)
     {
-        var f = new Form();
-        f.Text = $"Parameters For:{options.Collector}";
+        var f = new Form
+        {
+            Text = $"Parameters For:{options.Collector}"
+        };
         var ui = new ParameterCollectionUI();
         f.Width = ui.Width;
         f.Height = ui.Height;

@@ -77,9 +77,10 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         SetItemActivator(activator);
         progressUI1.ApplyTheme(activator.Theme);
 
-        pipelineDiagram1 = new PipelineDiagramUI(activator);
-
-        pipelineDiagram1.Dock = DockStyle.Fill;
+        pipelineDiagram1 = new PipelineDiagramUI(activator)
+        {
+            Dock = DockStyle.Fill
+        };
         panel_pipelineDiagram1.Controls.Add(pipelineDiagram1);
 
         fork = new ForkDataLoadEventListener(progressUI1);

@@ -191,18 +191,14 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
     public DataTable TryGetPreview()
     {
         var chunk = new DataTable();
-        using (var con = DatabaseCommandHelper.GetConnection(_builder))
-        {
-            con.Open();
-            using (var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, con)))
-            {
-                var read = da.Fill(0, 100, chunk);
+        using var con = DatabaseCommandHelper.GetConnection(_builder);
+        con.Open();
+        using var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, con));
+        var read = da.Fill(0, 100, chunk);
                                     
-                if (read == 0)
-                    return null;
-            }
-                
-            return chunk;
-        }
+        if (read == 0)
+            return null;
+
+        return chunk;
     }
 }

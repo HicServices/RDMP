@@ -222,29 +222,26 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             throw new NotSupportedException("TableInfos come from different repositories!");
 
         var repo = (CatalogueRepository) foreignKeyTable.Repository;
-        using (var con = repo.GetConnection())
-        {
-
-            using (var cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
+        using var con = repo.GetConnection();
+        using (var cmd = DatabaseCommandHelper.GetCommand(@"SELECT * FROM [Lookup] 
   WHERE 
   (SELECT TableInfo_ID FROM ColumnInfo where ID = PrimaryKey_ID) = @primaryKeyTableID
   AND
   (SELECT TableInfo_ID FROM ColumnInfo where ID = [ForeignKey_ID]) = @foreignKeyTableID"
-                       , con.Connection, con.Transaction))
-            {
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@primaryKeyTableID", cmd));
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@foreignKeyTableID", cmd));
+                   , con.Connection, con.Transaction))
+        {
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@primaryKeyTableID", cmd));
+            cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@foreignKeyTableID", cmd));
 
-                cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
-                cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
+            cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
+            cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
 
-                using (var r = cmd.ExecuteReader())
-                    while (r.Read())
-                        toReturn.Add(new Lookup(repo, r));
-            }
-                
-            return toReturn.ToArray();
+            using (var r = cmd.ExecuteReader())
+                while (r.Read())
+                    toReturn.Add(new Lookup(repo, r));
         }
+                
+        return toReturn.ToArray();
     }
      
     /// <summary>

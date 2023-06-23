@@ -79,9 +79,11 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                 if(con.State != ConnectionState.Open)
                     con.Open();
 
-                var bulkCopy = new SqlBulkCopy(con);
-                bulkCopy.DestinationTableName = GetStagingRuntimeName();
-            
+                var bulkCopy = new SqlBulkCopy(con)
+                {
+                    DestinationTableName = GetStagingRuntimeName()
+                };
+
                 var uniqueNamesAdded = new List<string>();
 
                 //wire up the identifiers
@@ -141,78 +143,75 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 
     private void MergeStagingWithLive(string[] pks)
     {
+        using var con = _dumpDatabase.Server.GetConnection();
+        con.Open();
 
-        using (var con = _dumpDatabase.Server.GetConnection())
+        var allColumns =
+            pks.Select(col => col) //get the primary keys
+                .Union(
+                    ColumnsToRouteToSomewhereElse.Where(
+                            c => c.GoesIntoIdentifierDump()) //and the columns due to end up in the dump
+                        .Select(dump => dump.RuntimeColumnName))
+                .ToArray();
+
+        //INSERT NEW RECORDS
+        //"MERGE [Demography]..[GP_ULTRA] AS dest USING [DLE_STAGING]..[Demography_GP_ULTRA_STAGING] AS source ON (source.[gmc] = dest.[gmc] AND source.[gp_code] = dest.[gp_code] AND source.[practice_code] = dest.[practice_code] AND source.[date_into_practice] = dest.[date_into_practice]) WHEN NOT MATCHED BY TARGET THEN INSERT ([notes], [gmc], [gp_code], [gp_cksum], [practice_code], [practice_cksum], [surname], [forename], [initials], [date_into_practice], [date_out_of_practice], hic_dataLoadRunID) VALUES (source.[notes], source.[gmc], source.[gp_code], source.[gp_cksum], source.[practice_code], source.[practice_cksum], source.[surname], source.[forename], source.[initials], source.[date_into_practice], source.[date_out_of_practice], 4718) OUTPUT $action, inserted.*;"
+        var mergeSql = $"MERGE {Environment.NewLine}";
+        mergeSql += $"{GetRuntimeName()} AS dest {Environment.NewLine}";
+        mergeSql += $"USING {GetStagingRuntimeName()} AS source {Environment.NewLine}";
+        mergeSql += $"ON  ({Environment.NewLine}";
+        mergeSql = pks.Aggregate(mergeSql,(s,n)=> $"{s} source.[{n}]=dest.[{n}] AND").TrimEnd(new []{'A','N','D',' '}) + Environment.NewLine;
+        mergeSql += $") WHEN NOT MATCHED BY TARGET THEN INSERT ({Environment.NewLine}";
+        mergeSql = allColumns.Aggregate(mergeSql, (s, n) => $"{s}[{n}],").TrimEnd(new[] { ',', ' '}) + Environment.NewLine;
+        mergeSql += $") VALUES ({Environment.NewLine}";
+        mergeSql = allColumns.Aggregate(mergeSql, (s, n) => $"{s} source.[{n}],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
+        mergeSql += $");{Environment.NewLine}";
+
+        using (var cmdInsert = _dumpDatabase.Server.GetCommand(mergeSql, con))
         {
-            con.Open();
-
-            var allColumns =
-                pks.Select(col => col) //get the primary keys
-                    .Union(
-                        ColumnsToRouteToSomewhereElse.Where(
-                                c => c.GoesIntoIdentifierDump()) //and the columns due to end up in the dump
-                            .Select(dump => dump.RuntimeColumnName))
-                    .ToArray();
-
-            //INSERT NEW RECORDS
-            //"MERGE [Demography]..[GP_ULTRA] AS dest USING [DLE_STAGING]..[Demography_GP_ULTRA_STAGING] AS source ON (source.[gmc] = dest.[gmc] AND source.[gp_code] = dest.[gp_code] AND source.[practice_code] = dest.[practice_code] AND source.[date_into_practice] = dest.[date_into_practice]) WHEN NOT MATCHED BY TARGET THEN INSERT ([notes], [gmc], [gp_code], [gp_cksum], [practice_code], [practice_cksum], [surname], [forename], [initials], [date_into_practice], [date_out_of_practice], hic_dataLoadRunID) VALUES (source.[notes], source.[gmc], source.[gp_code], source.[gp_cksum], source.[practice_code], source.[practice_cksum], source.[surname], source.[forename], source.[initials], source.[date_into_practice], source.[date_out_of_practice], 4718) OUTPUT $action, inserted.*;"
-            var mergeSql = $"MERGE {Environment.NewLine}";
-            mergeSql += $"{GetRuntimeName()} AS dest {Environment.NewLine}";
-            mergeSql += $"USING {GetStagingRuntimeName()} AS source {Environment.NewLine}";
-            mergeSql += $"ON  ({Environment.NewLine}";
-            mergeSql = pks.Aggregate(mergeSql,(s,n)=> $"{s} source.[{n}]=dest.[{n}] AND").TrimEnd(new []{'A','N','D',' '}) + Environment.NewLine;
-            mergeSql += $") WHEN NOT MATCHED BY TARGET THEN INSERT ({Environment.NewLine}";
-            mergeSql = allColumns.Aggregate(mergeSql, (s, n) => $"{s}[{n}],").TrimEnd(new[] { ',', ' '}) + Environment.NewLine;
-            mergeSql += $") VALUES ({Environment.NewLine}";
-            mergeSql = allColumns.Aggregate(mergeSql, (s, n) => $"{s} source.[{n}],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
-            mergeSql += $");{Environment.NewLine}";
-
-            using (var cmdInsert = _dumpDatabase.Server.GetCommand(mergeSql, con))
-            {
-                cmdInsert.CommandTimeout = Timeout;
-                cmdInsert.ExecuteNonQuery();
-            }
+            cmdInsert.CommandTimeout = Timeout;
+            cmdInsert.ExecuteNonQuery();
+        }
             
-            //PERFORM overwrite with UPDATES
-            var updateSql = $"WITH ToUpdate AS ({Environment.NewLine}";
-            updateSql += $"SELECT stag.* FROM {GetStagingRuntimeName()} AS stag{Environment.NewLine}";
-            updateSql += $"LEFT OUTER JOIN {GetRuntimeName()} AS prod{Environment.NewLine}";
-            updateSql += $"ON ( {Environment.NewLine}";
-            updateSql += $"/*Primary Keys JOIN*/{Environment.NewLine}";
-            updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}]=prod.[{n}] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
-            updateSql += $") WHERE{Environment.NewLine}";
-            updateSql += $"/*Primary Keys not null*/{Environment.NewLine}";
-            updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}] IS NOT NULL AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
-            updateSql += $"AND EXISTS (SELECT {Environment.NewLine}";
-            updateSql += $"/*All columns in stag*/{Environment.NewLine}";
-            updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
-            updateSql += $"EXCEPT SELECT{Environment.NewLine}";
-            updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
-            updateSql += $")){Environment.NewLine}";
+        //PERFORM overwrite with UPDATES
+        var updateSql = $"WITH ToUpdate AS ({Environment.NewLine}";
+        updateSql += $"SELECT stag.* FROM {GetStagingRuntimeName()} AS stag{Environment.NewLine}";
+        updateSql += $"LEFT OUTER JOIN {GetRuntimeName()} AS prod{Environment.NewLine}";
+        updateSql += $"ON ( {Environment.NewLine}";
+        updateSql += $"/*Primary Keys JOIN*/{Environment.NewLine}";
+        updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}]=prod.[{n}] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
+        updateSql += $") WHERE{Environment.NewLine}";
+        updateSql += $"/*Primary Keys not null*/{Environment.NewLine}";
+        updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}] IS NOT NULL AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
+        updateSql += $"AND EXISTS (SELECT {Environment.NewLine}";
+        updateSql += $"/*All columns in stag*/{Environment.NewLine}";
+        updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} stag.[{n}],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
+        updateSql += $"EXCEPT SELECT{Environment.NewLine}";
+        updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}],").TrimEnd(new[] { ',', ' ' }) + Environment.NewLine;
+        updateSql += $")){Environment.NewLine}";
 
-            updateSql += Environment.NewLine;
-            updateSql += $"UPDATE prod SET{Environment.NewLine}";
-            updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}]=ToUpdate.[{n}],").TrimEnd(new[] { ',' }) + Environment.NewLine;
-            updateSql += $"FROM {GetRuntimeName()} AS prod {Environment.NewLine}";
-            updateSql += $"INNER JOIN ToUpdate ON {Environment.NewLine}";
-            updateSql += $"({Environment.NewLine}";
-            updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}]=ToUpdate.[{n}] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine; 
-            updateSql += $"){Environment.NewLine}";
+        updateSql += Environment.NewLine;
+        updateSql += $"UPDATE prod SET{Environment.NewLine}";
+        updateSql = allColumns.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}]=ToUpdate.[{n}],").TrimEnd(new[] { ',' }) + Environment.NewLine;
+        updateSql += $"FROM {GetRuntimeName()} AS prod {Environment.NewLine}";
+        updateSql += $"INNER JOIN ToUpdate ON {Environment.NewLine}";
+        updateSql += $"({Environment.NewLine}";
+        updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}]=ToUpdate.[{n}] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine; 
+        updateSql += $"){Environment.NewLine}";
 
-            using(var updateCommand = _dumpDatabase.Server.GetCommand(updateSql,con))
-            {
-                updateCommand.CommandTimeout = Timeout;
-                updateCommand.ExecuteNonQuery();
-            }
+        using(var updateCommand = _dumpDatabase.Server.GetCommand(updateSql,con))
+        {
+            updateCommand.CommandTimeout = Timeout;
+            updateCommand.ExecuteNonQuery();
+        }
 
-            using (var cmdtruncateIdentifiersArchive =
-                   _dumpDatabase.Server.GetCommand($"TRUNCATE TABLE {GetStagingRuntimeName()}", con))
-            {
-                if(!cmdtruncateIdentifiersArchive.CommandText.Contains("_STAGING"))
-                    throw new Exception("Were about to run a command that TRUNCATED a non staging table!");
-                //clear the table now
-                cmdtruncateIdentifiersArchive.ExecuteNonQuery();
-            }
+        using (var cmdtruncateIdentifiersArchive =
+               _dumpDatabase.Server.GetCommand($"TRUNCATE TABLE {GetStagingRuntimeName()}", con))
+        {
+            if(!cmdtruncateIdentifiersArchive.CommandText.Contains("_STAGING"))
+                throw new Exception("Were about to run a command that TRUNCATED a non staging table!");
+            //clear the table now
+            cmdtruncateIdentifiersArchive.ExecuteNonQuery();
         }
     }
 
@@ -329,19 +328,15 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
         if(!HasAtLeastOneColumnToStoreInDump)
             return;
 
-        using (var con = _dumpDatabase.Server.GetConnection())
-        {
-            con.Open();
-            using (var cmdDropSTAGING =
-                   _dumpDatabase.Server.GetCommand($"DROP TABLE {GetStagingRuntimeName()}", con))
-            {
-                if (!cmdDropSTAGING.CommandText.Contains("STAGING"))
-                    throw new Exception(
-                        $"Expected command {cmdDropSTAGING.CommandText} to have the word STAGING in it, do not drop a live ANO table that would be the worst of things!");
+        using var con = _dumpDatabase.Server.GetConnection();
+        con.Open();
+        using var cmdDropSTAGING =
+            _dumpDatabase.Server.GetCommand($"DROP TABLE {GetStagingRuntimeName()}", con);
+        if (!cmdDropSTAGING.CommandText.Contains("STAGING"))
+            throw new Exception(
+                $"Expected command {cmdDropSTAGING.CommandText} to have the word STAGING in it, do not drop a live ANO table that would be the worst of things!");
 
-                cmdDropSTAGING.ExecuteNonQuery();
-            }
-        }
+        cmdDropSTAGING.ExecuteNonQuery();
     }
         
     private string GetStagingRuntimeName()
@@ -356,61 +351,56 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 
     public void CreateIdentifierDumpTable(ColumnInfo[] primaryKeyColumnInfos)
     {
+        using var con = (SqlConnection)_dumpDatabase.Server.GetConnection();
+        con.Open(); 
 
-        using (var con = (SqlConnection)_dumpDatabase.Server.GetConnection())
+        var pks = new DataTable();
+        pks.Columns.Add("RuntimeName");
+        pks.Columns.Add("DataType");
+
+        foreach (var columnInfo in primaryKeyColumnInfos)
         {
-            con.Open(); 
-
-            var pks = new DataTable();
-            pks.Columns.Add("RuntimeName");
-            pks.Columns.Add("DataType");
-
-            foreach (var columnInfo in primaryKeyColumnInfos)
-            {
-                var runtimeName = columnInfo.GetRuntimeName(LoadStage.AdjustRaw);
-                var dataType = columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw);
+            var runtimeName = columnInfo.GetRuntimeName(LoadStage.AdjustRaw);
+            var dataType = columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw);
                   
-                pks.Rows.Add(new object[] { runtimeName, dataType });
-            }
-
-            var dumpColumns = new DataTable();
-            dumpColumns.Columns.Add("RuntimeName");
-            dumpColumns.Columns.Add("DataType");
-              
-            foreach (var discardedColumn in _tableInfo.PreLoadDiscardedColumns.Where(d=>d.GoesIntoIdentifierDump()))
-            {
-                if(discardedColumn.RuntimeColumnName.StartsWith("ANO"))
-                    throw new Exception(
-                        $"Why are you trying to discard column {discardedColumn.RuntimeColumnName}, it looks like an ANO column in which case it should have an ANOTable transform rather than being a dump field.");
-                  
-                if(discardedColumn.SqlDataType == null)
-                    throw new Exception(
-                        $"{discardedColumn.GetType().Name} called {discardedColumn.RuntimeColumnName} does not have an assigned type");
-                  
-                dumpColumns.Rows.Add(new object[] { discardedColumn.RuntimeColumnName, discardedColumn.SqlDataType});
-            }
-
-              
-            if(dumpColumns.Rows.Count == 0)
-                throw new Exception("Cannot create an identifier dump with no dump columns");
-              
-            var cmdCreate = new SqlCommand(
-                $"EXEC {IdentifierDumpCreatorStoredprocedure} @liveTableName,@primaryKeys,@dumpColumns",con);
-
-            cmdCreate.Parameters.AddWithValue("@liveTableName", _tableInfo.GetRuntimeName());
-
-            cmdCreate.Parameters.AddWithValue("@primaryKeys", pks);
-            cmdCreate.Parameters["@primaryKeys"].SqlDbType = SqlDbType.Structured;
-            cmdCreate.Parameters["@primaryKeys"].TypeName = "dbo.ColumnInfo";
-
-            cmdCreate.Parameters.AddWithValue("@dumpColumns", dumpColumns);
-            cmdCreate.Parameters["@dumpColumns"].SqlDbType = SqlDbType.Structured;
-            cmdCreate.Parameters["@dumpColumns"].TypeName = "dbo.ColumnInfo";
-              
-            cmdCreate.ExecuteNonQuery();
-               
+            pks.Rows.Add(new object[] { runtimeName, dataType });
         }
-            
+
+        var dumpColumns = new DataTable();
+        dumpColumns.Columns.Add("RuntimeName");
+        dumpColumns.Columns.Add("DataType");
+              
+        foreach (var discardedColumn in _tableInfo.PreLoadDiscardedColumns.Where(d=>d.GoesIntoIdentifierDump()))
+        {
+            if(discardedColumn.RuntimeColumnName.StartsWith("ANO"))
+                throw new Exception(
+                    $"Why are you trying to discard column {discardedColumn.RuntimeColumnName}, it looks like an ANO column in which case it should have an ANOTable transform rather than being a dump field.");
+                  
+            if(discardedColumn.SqlDataType == null)
+                throw new Exception(
+                    $"{discardedColumn.GetType().Name} called {discardedColumn.RuntimeColumnName} does not have an assigned type");
+                  
+            dumpColumns.Rows.Add(new object[] { discardedColumn.RuntimeColumnName, discardedColumn.SqlDataType});
+        }
+
+              
+        if(dumpColumns.Rows.Count == 0)
+            throw new Exception("Cannot create an identifier dump with no dump columns");
+              
+        var cmdCreate = new SqlCommand(
+            $"EXEC {IdentifierDumpCreatorStoredprocedure} @liveTableName,@primaryKeys,@dumpColumns",con);
+
+        cmdCreate.Parameters.AddWithValue("@liveTableName", _tableInfo.GetRuntimeName());
+
+        cmdCreate.Parameters.AddWithValue("@primaryKeys", pks);
+        cmdCreate.Parameters["@primaryKeys"].SqlDbType = SqlDbType.Structured;
+        cmdCreate.Parameters["@primaryKeys"].TypeName = "dbo.ColumnInfo";
+
+        cmdCreate.Parameters.AddWithValue("@dumpColumns", dumpColumns);
+        cmdCreate.Parameters["@dumpColumns"].SqlDbType = SqlDbType.Structured;
+        cmdCreate.Parameters["@dumpColumns"].TypeName = "dbo.ColumnInfo";
+              
+        cmdCreate.ExecuteNonQuery();
     }
 
 

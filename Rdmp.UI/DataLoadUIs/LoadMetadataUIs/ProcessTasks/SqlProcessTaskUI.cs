@@ -132,9 +132,11 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        var ofd = new OpenFileDialog();
-        ofd.Filter = "Sql Files|*.sql";
-        ofd.CheckFileExists = true;
+        var ofd = new OpenFileDialog
+        {
+            Filter = "Sql Files|*.sql",
+            CheckFileExists = true
+        };
 
         string oldFileName = null;
         //open the browse dialog at the location of the currently specified file

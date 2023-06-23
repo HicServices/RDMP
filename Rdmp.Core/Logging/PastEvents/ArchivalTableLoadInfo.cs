@@ -62,15 +62,13 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
     {
         var toReturn = new List<ArchivalDataSource>();
 
-        using (var con = _loggingDatabase.Server.GetConnection())
-        {
-            con.Open();
+        using var con = _loggingDatabase.Server.GetConnection();
+        con.Open();
 
-            using(var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM DataSource WHERE tableLoadRunID={ID}", con))
-            using(var r = cmd.ExecuteReader())
-                while (r.Read())
-                    toReturn.Add(new ArchivalDataSource(r));
-        }
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM DataSource WHERE tableLoadRunID={ID}", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(new ArchivalDataSource(r));
 
         return toReturn;
     }

@@ -106,32 +106,30 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
 
             //now look at the ids in the identifier dump and make sure they match what was in the pipeline before we sent it
             var server = IdentifierDump_Database.Server;
-            using (var con = server.GetConnection())
-            {
-                con.Open();
+            using var con = server.GetConnection();
+            con.Open();
 
-                var cmd = server.GetCommand($"Select * from ID_{BulkTestsData.BulkDataTable}", con);
-                var r = cmd.ExecuteReader();
+            var cmd = server.GetCommand($"Select * from ID_{BulkTestsData.BulkDataTable}", con);
+            var r = cmd.ExecuteReader();
                     
-                //make sure the values in the ID table match the ones we originally had in the pipeline
-                while (r.Read())
-                    if (!chiToSurnameDictionary[r["chi"].ToString()].Any())
-                        Assert.IsTrue(r["surname"] == DBNull.Value);
-                    else
-                        Assert.IsTrue(chiToSurnameDictionary[r["chi"].ToString()].Contains(r["surname"] as string),"Dictionary did not contain expected surname:" + r["surname"]);
-                r.Close();
+            //make sure the values in the ID table match the ones we originally had in the pipeline
+            while (r.Read())
+                if (!chiToSurnameDictionary[r["chi"].ToString()].Any())
+                    Assert.IsTrue(r["surname"] == DBNull.Value);
+                else
+                    Assert.IsTrue(chiToSurnameDictionary[r["chi"].ToString()].Contains(r["surname"] as string),"Dictionary did not contain expected surname:" + r["surname"]);
+            r.Close();
 
-                //leave the identifier dump in the way we found it (empty)
-                var tbl = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}");
+            //leave the identifier dump in the way we found it (empty)
+            var tbl = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}");
 
-                if(tbl.Exists())
-                    tbl.Drop();
+            if(tbl.Exists())
+                tbl.Drop();
 
-                tbl = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}_Archive");
+            tbl = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}_Archive");
 
-                if (tbl.Exists())
-                    tbl.Drop();
-            }
+            if (tbl.Exists())
+                tbl.Drop();
         }
         finally
         {

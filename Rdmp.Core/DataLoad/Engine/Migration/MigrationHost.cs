@@ -41,48 +41,46 @@ public class MigrationHost
             throw new Exception(
                 $"The source database '{_sourceDbInfo.GetRuntimeName()}' on {_sourceDbInfo.Server.Name} is empty. There is nothing to migrate.");
 
-        using (var managedConnectionToDestination = _destinationDbInfo.Server.BeginNewTransactedConnection())
+        using var managedConnectionToDestination = _destinationDbInfo.Server.BeginNewTransactedConnection();
+        try
+        {
+            // This will eventually be provided by factory/externally based on LoadMetadata (only one strategy for now)
+            _migrationStrategy = new OverwriteMigrationStrategy(managedConnectionToDestination);
+            _migrationStrategy.TableMigrationCompleteHandler += (name, inserts, updates) =>
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Migrate table {name} from STAGING to {_destinationDbInfo.GetRuntimeName()}: {inserts} inserts, {updates} updates"));
+
+            //migrate all tables (both lookups and live tables in the same way)
+            var dataColsToMigrate = _migrationConfig.CreateMigrationColumnSetFromTableInfos(job.RegularTablesToLoad, job.LookupTablesToLoad,
+                new StagingToLiveMigrationFieldProcessor(
+                    _databaseConfiguration.UpdateButDoNotDiff,
+                    _databaseConfiguration.IgnoreColumns,
+                    job.GetAllColumns().Where(c=>c.IgnoreInLoads).ToArray())
+                {
+                    NoBackupTrigger = job.LoadMetadata.IgnoreTrigger
+                });
+
+            // Migrate the data columns
+            _migrationStrategy.Execute(job,dataColsToMigrate, job.DataLoadInfo, cancellationToken);
+
+            managedConnectionToDestination.ManagedTransaction.CommitAndCloseConnection();
+            job.DataLoadInfo.CloseAndMarkComplete();
+        }
+        catch (OperationCanceledException)
+        {
+            managedConnectionToDestination.ManagedTransaction.AbandonAndCloseConnection();
+        }
+        catch (Exception ex)
         {
             try
             {
-                // This will eventually be provided by factory/externally based on LoadMetadata (only one strategy for now)
-                _migrationStrategy = new OverwriteMigrationStrategy(managedConnectionToDestination);
-                _migrationStrategy.TableMigrationCompleteHandler += (name, inserts, updates) =>
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                        $"Migrate table {name} from STAGING to {_destinationDbInfo.GetRuntimeName()}: {inserts} inserts, {updates} updates"));
-
-                //migrate all tables (both lookups and live tables in the same way)
-                var dataColsToMigrate = _migrationConfig.CreateMigrationColumnSetFromTableInfos(job.RegularTablesToLoad, job.LookupTablesToLoad,
-                    new StagingToLiveMigrationFieldProcessor(
-                        _databaseConfiguration.UpdateButDoNotDiff,
-                        _databaseConfiguration.IgnoreColumns,
-                        job.GetAllColumns().Where(c=>c.IgnoreInLoads).ToArray())
-                    {
-                        NoBackupTrigger = job.LoadMetadata.IgnoreTrigger
-                    });
-
-                // Migrate the data columns
-                _migrationStrategy.Execute(job,dataColsToMigrate, job.DataLoadInfo, cancellationToken);
-
-                managedConnectionToDestination.ManagedTransaction.CommitAndCloseConnection();
-                job.DataLoadInfo.CloseAndMarkComplete();
-            }
-            catch (OperationCanceledException)
-            {
                 managedConnectionToDestination.ManagedTransaction.AbandonAndCloseConnection();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                try
-                {
-                    managedConnectionToDestination.ManagedTransaction.AbandonAndCloseConnection();
-                }
-                catch (Exception)
-                {
-                    throw new Exception("Failed to rollback after exception, see inner exception for details of original problem",ex);
-                }
-                throw;
+                throw new Exception("Failed to rollback after exception, see inner exception for details of original problem",ex);
             }
+            throw;
         }
     }
 }

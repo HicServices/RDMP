@@ -68,36 +68,34 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         var server = AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
 
 
-        using (var con = server.GetConnection())
+        using var con = server.GetConnection();
+        con.Open();
+
+        var sql = GetSQL();
+
+        if (listener != null)
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
+
+        var dt = new DataTable();
+
+        using (var cmd = server.GetCommand(sql, con))
         {
-            con.Open();
-
-            var sql = GetSQL();
-
-            if (listener != null)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
-
-            var dt = new DataTable();
-
-            using (var cmd = server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = timeout;
+            cmd.CommandTimeout = timeout;
                     
-                using(var da = server.GetDataAdapter(cmd))
-                    da.Fill(dt);
-            }
+            using(var da = server.GetDataAdapter(cmd))
+                da.Fill(dt);
+        }
                 
 
-            dt.TableName = TableName;
+        dt.TableName = TableName;
 
-            if (listener != null)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"successfully read {dt.Rows.Count} rows from source"));
+        if (listener != null)
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"successfully read {dt.Rows.Count} rows from source"));
 
 
-            return dt;
-        }
+        return dt;
     }
     public DataTable TryGetPreview()
     {

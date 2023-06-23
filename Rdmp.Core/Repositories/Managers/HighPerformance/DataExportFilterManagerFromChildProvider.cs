@@ -34,22 +34,20 @@ internal class DataExportFilterManagerFromChildProvider : DataExportFilterManage
         _containersToFilters = childProvider.AllDeployedExtractionFilters.Where(f=>f.FilterContainer_ID.HasValue).GroupBy(f=>f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
             
         var server = repository.DiscoveredServer;
-        using (var con = repository.GetConnection())
+        using var con = repository.GetConnection();
+        var r = server.GetCommand("SELECT *  FROM FilterContainerSubcontainers", con).ExecuteReader();
+        while(r.Read())
         {
-            var r = server.GetCommand("SELECT *  FROM FilterContainerSubcontainers", con).ExecuteReader();
-            while(r.Read())
-            {
 
-                var parentId = Convert.ToInt32(r["FilterContainer_ParentID"]);
-                var subcontainerId = Convert.ToInt32(r["FilterContainerChildID"]);
+            var parentId = Convert.ToInt32(r["FilterContainer_ParentID"]);
+            var subcontainerId = Convert.ToInt32(r["FilterContainerChildID"]);
 
-                if(!_subcontainers.ContainsKey(parentId))
-                    _subcontainers.Add(parentId,new List<FilterContainer>());
+            if(!_subcontainers.ContainsKey(parentId))
+                _subcontainers.Add(parentId,new List<FilterContainer>());
 
-                _subcontainers[parentId].Add(childProvider.AllContainers[subcontainerId]);
-            }
-            r.Close();
+            _subcontainers[parentId].Add(childProvider.AllContainers[subcontainerId]);
         }
+        r.Close();
     }
         
     /// <summary>

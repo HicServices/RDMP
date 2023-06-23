@@ -60,8 +60,10 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         pbYellow.Visible = false;
         pbRed.Visible = false;
 
-        _timer = new Timer();
-        _timer.Interval = 500;
+        _timer = new Timer
+        {
+            Interval = 500
+        };
         _timer.Tick += Timer_Tick;
         _timer.Start();
     }

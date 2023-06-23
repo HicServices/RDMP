@@ -244,9 +244,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                     return;
                 }
 
-                var cbx = new ComboBox();
-                cbx.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbx.Bounds = e.CellBounds;
+                var cbx = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Bounds = e.CellBounds
+                };
                 cbx.Items.AddRange(_planManager.DilutionOperations.ToArray());
                 e.Control = cbx;
             }
@@ -260,9 +262,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                     return;
                 }
 
-                var cbx = new ComboBox();
-                cbx.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbx.Bounds = e.CellBounds;
+                var cbx = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Bounds = e.CellBounds
+                };
 
                 var list = Enum.GetValues(typeof (ExtractionCategory)).Cast<object>().Select(s=>s.ToString()).ToList();
                 list.Add("Clear");
@@ -556,8 +560,10 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     private void btnSavePlan_Click(object sender, EventArgs e)
     {
 
-        var sfd = new SaveFileDialog();
-        sfd.Filter = "Plans (*.plan)|*.plan";
+        var sfd = new SaveFileDialog
+        {
+            Filter = "Plans (*.plan)|*.plan"
+        };
         if (sfd.ShowDialog() == DialogResult.OK)
         {
             var fi = new FileInfo(sfd.FileName);
@@ -580,8 +586,10 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         try
         {
-            var ofd = new OpenFileDialog();
-            ofd.Filter = "Plans (*.plan)|*.plan";
+            var ofd = new OpenFileDialog
+            {
+                Filter = "Plans (*.plan)|*.plan"
+            };
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 var fi = new FileInfo(ofd.FileName);

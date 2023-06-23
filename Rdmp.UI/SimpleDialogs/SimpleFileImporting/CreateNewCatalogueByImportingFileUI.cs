@@ -102,8 +102,10 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        var ofd = new OpenFileDialog();
-        ofd.Filter = "Comma Separated Values|*.csv|Excel File|*.xls*|Text File|*.txt|All Files|*.*";
+        var ofd = new OpenFileDialog
+        {
+            Filter = "Comma Separated Values|*.csv|Excel File|*.xls*|Text File|*.txt|All Files|*.*"
+        };
         var result = ofd.ShowDialog();
 
         if (result == DialogResult.OK)

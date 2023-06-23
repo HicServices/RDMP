@@ -52,20 +52,15 @@ public class PatientIdentifierColumnSource:IPluginDataFlowSource<DataTable>, IPi
 
         var dt = new DataTable();
         dt.Columns.Add(colName);
-            
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            using (var cmd = server.GetCommand(qb.SQL, con))
 
-            {
-                cmd.CommandTimeout = timeout;
+        using var con = server.GetConnection();
+        con.Open();
+        using var cmd = server.GetCommand(qb.SQL, con);
+        cmd.CommandTimeout = timeout;
 
-                using(var r = cmd.ExecuteReader())
-                    while (r.Read())
-                        dt.Rows.Add(new[] { r[colName] });
-            }
-        }
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            dt.Rows.Add(new[] { r[colName] });
 
         return dt;
     }

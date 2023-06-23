@@ -90,21 +90,21 @@ public abstract class TriggerImplementer:ITriggerImplementer
         var sql = WorkOutArchiveTableCreationSQL(); 
             
         if (!skipCreatingArchive)
-            using(var con = _server.GetConnection())
-            {
-                con.Open();
+        {
+            using var con = _server.GetConnection();
+            con.Open();
                 
-                using(var cmdCreateArchive = _server.GetCommand(sql, con))
-                {
-                    cmdCreateArchive.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                    cmdCreateArchive.ExecuteNonQuery();
-                }
+            using(var cmdCreateArchive = _server.GetCommand(sql, con))
+            {
+                cmdCreateArchive.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+                cmdCreateArchive.ExecuteNonQuery();
+            }
                         
 
-                _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, UserSettings.ArchiveTriggerTimeout);
-                _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, UserSettings.ArchiveTriggerTimeout);
-                _archiveTable.AddColumn("hic_status", new DatabaseTypeRequest(typeof(string), 1), true, UserSettings.ArchiveTriggerTimeout);
-            }
+            _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, UserSettings.ArchiveTriggerTimeout);
+            _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, UserSettings.ArchiveTriggerTimeout);
+            _archiveTable.AddColumn("hic_status", new DatabaseTypeRequest(typeof(string), 1), true, UserSettings.ArchiveTriggerTimeout);
+        }
 
         return sql;
     }

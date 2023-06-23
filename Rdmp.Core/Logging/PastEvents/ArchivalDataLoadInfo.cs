@@ -119,25 +119,23 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
         var toReturn = new List<ArchivalTableLoadInfo>();
 
-        using (var con = _loggingDatabase.Server.GetConnection())
-        {
-            con.Open();
+        using var con = _loggingDatabase.Server.GetConnection();
+        con.Open();
 
-            using(var cmd =  _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con))
-            using(var r = cmd.ExecuteReader())
-                while(r.Read())
-                {
-                    var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
+        using var cmd =  _loggingDatabase.Server.GetCommand($"SELECT * FROM TableLoadRun WHERE dataLoadRunID={ID}", con);
+        using var r = cmd.ExecuteReader();
+        while(r.Read())
+        {
+            var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
                         
-                    if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        toReturn.Add(audit);
-                    }
-                }   
+            if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
+            {
+                continue;
+            }
+            else
+            {
+                toReturn.Add(audit);
+            }
         }
 
         return toReturn;
@@ -147,15 +145,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
         var toReturn = new List<ArchivalProgressLog>();
 
-        using (var con = _loggingDatabase.Server.GetConnection())
-        {
-            con.Open();
+        using var con = _loggingDatabase.Server.GetConnection();
+        con.Open();
 
-            using (var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM ProgressLog WHERE dataLoadRunID={ID}", con))
-            using (var r = cmd.ExecuteReader())
-                while (r.Read())
-                    toReturn.Add(new ArchivalProgressLog(r));
-        }
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM ProgressLog WHERE dataLoadRunID={ID}", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(new ArchivalProgressLog(r));
 
         return toReturn;
     }
@@ -164,15 +160,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
         var toReturn = new List<ArchivalFatalError>();
 
-        using (var con = _loggingDatabase.Server.GetConnection())
-        {
-            con.Open();
+        using var con = _loggingDatabase.Server.GetConnection();
+        con.Open();
 
-            using(var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM FatalError WHERE dataLoadRunID={ID}", con))
-            using(var r = cmd.ExecuteReader())
-                while (r.Read())
-                    toReturn.Add(new ArchivalFatalError(r));
-        }
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM FatalError WHERE dataLoadRunID={ID}", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(new ArchivalFatalError(r));
 
         return toReturn;
     }

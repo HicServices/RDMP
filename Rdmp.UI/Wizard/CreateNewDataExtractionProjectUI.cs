@@ -193,9 +193,11 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             ClearFile();
             return;
         }
-            
-        var ofd = new OpenFileDialog();
-        ofd.Filter = "Comma Separated Values|*.csv";
+
+        var ofd = new OpenFileDialog
+        {
+            Filter = "Comma Separated Values|*.csv"
+        };
         var result = ofd.ShowDialog();
 
         if (result == DialogResult.OK)

@@ -63,8 +63,10 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         olvChecks.UseFiltering = true;
         AllowsYesNoToAll = true;
 
-        _timer = new Timer();
-        _timer.Interval = 500;
+        _timer = new Timer
+        {
+            Interval = 500
+        };
         _timer.Tick += _timer_Tick;
         _timer.Start();
 

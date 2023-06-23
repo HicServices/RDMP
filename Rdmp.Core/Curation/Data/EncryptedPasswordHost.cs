@@ -68,8 +68,10 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     {
         if(_encryptedString is FakeEncryptedString f)
         {
-            _encryptedString = new EncryptedString(repository);
-            _encryptedString.Value = f.Value;
+            _encryptedString = new EncryptedString(repository)
+            {
+                Value = f.Value
+            };
         }            
     }
 

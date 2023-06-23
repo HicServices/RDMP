@@ -99,27 +99,25 @@ public partial class LookupBrowserUI : LookupBrowserUI_Design
     {
         var tbl = _tableInfo.Discover(DataAccessContext.InternalDataProcessing);
         var server = tbl.Database.Server;
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            var sql = GetCommand();
+        using var con = server.GetConnection();
+        con.Open();
+        var sql = GetCommand();
 
-            _scintilla.ReadOnly = false;
-            _scintilla.Text = sql;
-            _scintilla.ReadOnly = true;
+        _scintilla.ReadOnly = false;
+        _scintilla.Text = sql;
+        _scintilla.ReadOnly = true;
 
-            var da = server.GetDataAdapter(sql, con);
+        var da = server.GetDataAdapter(sql, con);
 
-            var dt = new DataTable();
-            da.Fill(dt);
+        var dt = new DataTable();
+        da.Fill(dt);
 
-            dataGridView1.DataSource = dt;
+        dataGridView1.DataSource = dt;
 
 
-            //set autosize mode
-            foreach (DataGridViewColumn column in dataGridView1.Columns)
-                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-        }
+        //set autosize mode
+        foreach (DataGridViewColumn column in dataGridView1.Columns)
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
     }
 }
 

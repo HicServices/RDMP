@@ -901,48 +901,46 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             try
             {
                 var server = DataAccessPortal.GetInstance().ExpectDistinctServer(tables, accessContext, false);
-                
-                using (var con = server.GetConnection())
+
+                using var con = server.GetConnection();
+                con.Open();
+                        
+                string sql;
+                try
                 {
-                    con.Open();
-                        
-                    string sql;
-                    try
+                    var qb = new QueryBuilder(null, null)
                     {
-                        var qb = new QueryBuilder(null, null)
-                        {
-                            TopX = 1
-                        };
-                        qb.AddColumnRange(extractionInformations);
+                        TopX = 1
+                    };
+                    qb.AddColumnRange(extractionInformations);
                     
-                        sql = qb.SQL;
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}", CheckResult.Success));
-                    }
-                    catch (Exception e)
-                    {
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs($"Could not generate extraction SQL for Catalogue {this}",
-                                CheckResult.Fail, e));
-                        return;
-                    }
-                
-                    using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
-                    {
-                        cmd.CommandTimeout = 10;
-                        using (var r = cmd.ExecuteReader())
-                        {
-                            if (r.Read())
-                                notifier.OnCheckPerformed(new CheckEventArgs(
-                                    $"successfully read a row of data from the extraction SQL of Catalogue {this}",CheckResult.Success));
-                            else
-                                notifier.OnCheckPerformed(new CheckEventArgs(
-                                    $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
-                        }
-                    }
-                        
-                    con.Close();
+                    sql = qb.SQL;
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}", CheckResult.Success));
                 }
+                catch (Exception e)
+                {
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs($"Could not generate extraction SQL for Catalogue {this}",
+                            CheckResult.Fail, e));
+                    return;
+                }
+                
+                using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = 10;
+                    using (var r = cmd.ExecuteReader())
+                    {
+                        if (r.Read())
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                                $"successfully read a row of data from the extraction SQL of Catalogue {this}",CheckResult.Success));
+                        else
+                            notifier.OnCheckPerformed(new CheckEventArgs(
+                                $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
+                    }
+                }
+                        
+                con.Close();
             }
             catch (Exception e)
             {

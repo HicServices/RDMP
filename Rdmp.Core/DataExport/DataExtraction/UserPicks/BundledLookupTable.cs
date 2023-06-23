@@ -45,15 +45,12 @@ public class BundledLookupTable : IBundledLookupTable
 
         var dt = new DataTable();
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            using (var da = server.GetDataAdapter(
-                       server.GetCommand(GetDataTableFetchSql(),con)))
-            {
-                da.Fill(dt);
-            }
-        }
+        using var con = server.GetConnection();
+        con.Open();
+        using var da = server.GetDataAdapter(
+            server.GetCommand(GetDataTableFetchSql(),con));
+        da.Fill(dt);
+
         return dt;
     }
 

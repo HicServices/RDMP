@@ -593,9 +593,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => SelectTable(allowDatabaseCreation, taskDescription));
         }
 
-        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true,this);
-        dialog.AllowTableValuedFunctionSelection = true;
-            
+        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription, true, true, this)
+        {
+            AllowTableValuedFunctionSelection = true
+        };
+
         dialog.ShowDialog();
 
         if (dialog.DialogResult != DialogResult.OK)
@@ -702,8 +704,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return rtn;
         }
 
-        var pick = new SelectDialog<T>(args,this, available, false);
-        pick.AllowMultiSelect = true;
+        var pick = new SelectDialog<T>(args, this, available, false)
+        {
+            AllowMultiSelect = true
+        };
 
         if (pick.ShowDialog() == DialogResult.OK)
         {
@@ -722,13 +726,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => SelectDirectory(prompt));
         }
 
-        using (var fb = new FolderBrowserDialog())
-        {
-            if (fb.ShowDialog() == DialogResult.OK)
-                return new DirectoryInfo(fb.SelectedPath);
+        using var fb = new FolderBrowserDialog();
+        if (fb.ShowDialog() == DialogResult.OK)
+            return new DirectoryInfo(fb.SelectedPath);
             
-            return null;
-        }
+        return null;
     }
 
     public override FileInfo SelectFile(string prompt)
@@ -750,22 +752,20 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => SelectFile(prompt, patternDescription,pattern));
         }
 
-        using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false})
+        using var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
+        if (patternDescription != null && pattern != null)
+            fb.Filter = $"{patternDescription}|{pattern}";
+
+        if (fb.ShowDialog() == DialogResult.OK)
         {
-            if (patternDescription != null && pattern != null)
-                fb.Filter = $"{patternDescription}|{pattern}";
+            // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
+            if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
+                return null;
 
-            if (fb.ShowDialog() == DialogResult.OK)
-            {
-                // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
-                if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
-                    return null;
-
-                return new FileInfo(fb.FileName);
-            }
+            return new FileInfo(fb.FileName);
+        }
             
-            return null;
-        }        
+        return null;
     }
         
     public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
@@ -776,16 +776,14 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => SelectFiles(prompt, patternDescription, pattern));
         }
 
-        using (var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true})
-        {
-            if (patternDescription != null && pattern != null)
-                fb.Filter = $"{patternDescription}|{pattern}";
+        using var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true};
+        if (patternDescription != null && pattern != null)
+            fb.Filter = $"{patternDescription}|{pattern}";
 
-            if (fb.ShowDialog() == DialogResult.OK)
-                return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
+        if (fb.ShowDialog() == DialogResult.OK)
+            return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
             
-            return null;
-        }
+        return null;
     }
 
     protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
@@ -827,9 +825,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return null;
         }
 
-        var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false);
-        selectDialog.AllowMultiSelect = true;
-            
+        var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false)
+        {
+            AllowMultiSelect = true
+        };
+
         if (selectDialog.ShowDialog() == DialogResult.OK)
         {
             var ms = selectDialog.MultiSelected.ToList();
@@ -887,9 +887,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public override IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline)
     {
-        var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
-        configureAndExecuteDialog.Dock = DockStyle.Fill;
-            
+        var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args, useCase, this)
+        {
+            Dock = DockStyle.Fill
+        };
+
         return configureAndExecuteDialog;
     }
 
@@ -920,8 +922,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription,projectSpecific,folder));
         }
 
-        var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
-        ui.TargetFolder = folder;
+        var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific)
+        {
+            TargetFolder = folder
+        };
         ui.ShowDialog();
             
         return ui.CatalogueCreatedIfAny;

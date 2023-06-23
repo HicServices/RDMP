@@ -71,15 +71,18 @@ public class RDMPControlCommonFunctionality
     public RDMPControlCommonFunctionality(IRDMPControl hostControl)
     {
         _hostControl = hostControl;
-        ToolStrip = new ToolStrip();
-            
-        ToolStrip.Location = new Point(0, 0);
-        ToolStrip.TabIndex = 1;
+        ToolStrip = new ToolStrip
+        {
+            Location = new Point(0, 0),
+            TabIndex = 1
+        };
 
         //Add the three lines dropdown for seldom used options (See AddToMenu). This starts disabled.
-        _menuDropDown = new ToolStripMenuItem();
-        _menuDropDown.Image = CatalogueIcons.Menu.ImageToBitmap();
-        _menuDropDown.Visible = false;
+        _menuDropDown = new ToolStripMenuItem
+        {
+            Image = CatalogueIcons.Menu.ImageToBitmap(),
+            Visible = false
+        };
         ToolStrip.Items.Add(_menuDropDown);
                         
         _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);

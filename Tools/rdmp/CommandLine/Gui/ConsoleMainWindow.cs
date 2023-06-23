@@ -124,12 +124,10 @@ internal class ConsoleMainWindow
             X = 0,
             Y = 0,
             Width = Dim.Fill(),
-            Height = Dim.Fill()
+            Height = Dim.Fill(),
+            // Determines how to compute children of any given branch
+            TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter)
         };
-
-
-        // Determines how to compute children of any given branch
-        _treeView.TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter);
         _treeView.AddObjects(
             new string[]{ 
                 Catalogues,

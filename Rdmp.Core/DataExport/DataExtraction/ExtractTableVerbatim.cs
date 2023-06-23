@@ -102,21 +102,19 @@ public class ExtractTableVerbatim
     {
         var linesWritten = 0;
 
-        using (var con = _server.GetConnection())
+        using var con = _server.GetConnection();
+        con.Open();
+
+        if (_specificSQL != null)
         {
-            con.Open();
-
-            if (_specificSQL != null)
-            {
-                linesWritten += ExtractSQL(_specificSQL,_specificSQLTableName,con);
-            }
-            
-            if(_tableNames != null)
-                foreach (var table in _tableNames)
-                    linesWritten += ExtractSQL($"select * from {table}", table,con);
-
-            con.Close();
+            linesWritten += ExtractSQL(_specificSQL,_specificSQLTableName,con);
         }
+            
+        if(_tableNames != null)
+            foreach (var table in _tableNames)
+                linesWritten += ExtractSQL($"select * from {table}", table,con);
+
+        con.Close();
 
         return linesWritten;
     }
@@ -125,51 +123,49 @@ public class ExtractTableVerbatim
     {
         int linesWritten;
 
-        using (var cmdExtract = _server.GetCommand(sql, con))
+        using var cmdExtract = _server.GetCommand(sql, con);
+        string filename = null;
+
+        if (_outputDirectory !=null)
         {
-            string filename = null;
+            if(!Directory.Exists(_outputDirectory.FullName))
+                Directory.CreateDirectory(_outputDirectory.FullName);
 
-            if (_outputDirectory !=null)
-            {
-                if(!Directory.Exists(_outputDirectory.FullName))
-                    Directory.CreateDirectory(_outputDirectory.FullName);
+            filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
 
-                filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
-
-                if (!filename.EndsWith(".csv"))
-                    filename += ".csv";
-            }
-
-            StreamWriter sw;
-                
-            if(_stream != null)
-                sw = new StreamWriter(_stream);
-            else
-            { 
-                if(_outputDirectory == null)
-                    throw new Exception($"{nameof(_outputDirectory)} cannot be null when using file output mode (only with an explicit stream out).");
-                    
-                if(filename == null)
-                    throw new Exception($"{nameof(filename)} cannot be null when using file output mode (only with an explicit stream out).");
-
-                OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
-                sw = new StreamWriter(OutputFilename);
-            }
-                 
-            cmdExtract.CommandTimeout = 500000;
-
-            using(var r = cmdExtract.ExecuteReader())
-            {
-                WriteHeader(sw, r, _separator, _dateTimeFormat);
-                linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat,RoundFloatsTo);
-
-                r.Close();
-            }
-                
-            sw.Flush();
-            sw.Close();
+            if (!filename.EndsWith(".csv"))
+                filename += ".csv";
         }
-            
+
+        StreamWriter sw;
+                
+        if(_stream != null)
+            sw = new StreamWriter(_stream);
+        else
+        { 
+            if(_outputDirectory == null)
+                throw new Exception($"{nameof(_outputDirectory)} cannot be null when using file output mode (only with an explicit stream out).");
+                    
+            if(filename == null)
+                throw new Exception($"{nameof(filename)} cannot be null when using file output mode (only with an explicit stream out).");
+
+            OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
+            sw = new StreamWriter(OutputFilename);
+        }
+                 
+        cmdExtract.CommandTimeout = 500000;
+
+        using(var r = cmdExtract.ExecuteReader())
+        {
+            WriteHeader(sw, r, _separator, _dateTimeFormat);
+            linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat,RoundFloatsTo);
+
+            r.Close();
+        }
+                
+        sw.Flush();
+        sw.Close();
+
         return linesWritten;
     }
 
@@ -225,10 +221,8 @@ public class ExtractTableVerbatim
             toFile.Directory.Create();
         }
 
-        using (var fs = File.OpenWrite(toFile.FullName))
-        {
-            var toRun = new ExtractTableVerbatim(db.Server, collection.GetSql(), fs, ",", null);
-            toRun.DoExtraction();
-        }
+        using var fs = File.OpenWrite(toFile.FullName);
+        var toRun = new ExtractTableVerbatim(db.Server, collection.GetSql(), fs, ",", null);
+        toRun.DoExtraction();
     }
 }

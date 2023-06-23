@@ -249,24 +249,22 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
             try
             {
                 //then execute the command
-                using (var con = server.GetConnection())
-                {
-                    con.Open();
+                using var con = server.GetConnection();
+                con.Open();
 
-                    _cmd = server.GetCommand(sql, con);
-                    _cmd.CommandTimeout = _timeoutControls.Timeout;
+                _cmd = server.GetCommand(sql, con);
+                _cmd.CommandTimeout = _timeoutControls.Timeout;
 
-                    var a = server.GetDataAdapter(_cmd);
+                var a = server.GetDataAdapter(_cmd);
                         
-                    var dt = new DataTable();
+                var dt = new DataTable();
 
-                    a.Fill(dt);
+                a.Fill(dt);
 
-                    MorphBinaryColumns(dt);
+                MorphBinaryColumns(dt);
 
-                    Invoke(new MethodInvoker(() => { dataGridView1.DataSource = dt; }));
-                    con.Close();
-                }
+                Invoke(new MethodInvoker(() => { dataGridView1.DataSource = dt; }));
+                con.Close();
             }
             catch (Exception e)
             {

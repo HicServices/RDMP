@@ -513,25 +513,23 @@ public abstract class TableRepository : ITableRepository
         if (columnWithObjectID == null)
             columnWithObjectID = $"{typeof(T).Name}_ID";
 
-        using (var opener = GetConnection())
+        using var opener = GetConnection();
+        var idsToReturn = new List<int>();
+        using (var cmd = DatabaseCommandHelper.GetCommand(selectQuery, opener.Connection, opener.Transaction))
         {
-            var idsToReturn = new List<int>();
-            using (var cmd = DatabaseCommandHelper.GetCommand(selectQuery, opener.Connection, opener.Transaction))
+            using (var r = cmd.ExecuteReader())
             {
-                using (var r = cmd.ExecuteReader())
+                while (r.Read())
                 {
-                    while (r.Read())
-                    {
-                        idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
-                    }
+                    idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
                 }
             }
-
-            if (!idsToReturn.Any())
-                return Enumerable.Empty<T>();
-
-            return GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
         }
+
+        if (!idsToReturn.Any())
+            return Enumerable.Empty<T>();
+
+        return GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
     }
     /// <summary>
     /// Runs the selectQuery (which must be a FULL QUERY) and uses @parameters for each of the kvps in the dictionary.  It expects the query result set to include
@@ -591,15 +589,13 @@ public abstract class TableRepository : ITableRepository
         
     private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
     {
-        using (var opener = GetConnection())
-        {
-            var query = CreateInsertStatement<T>(parameters);
+        using var opener = GetConnection();
+        var query = CreateInsertStatement<T>(parameters);
 
-            query += ";SELECT @@IDENTITY;";
+        query += ";SELECT @@IDENTITY;";
 
-            var cmd = PrepareCommand(query, parameters, opener.Connection, opener.Transaction);
-            return int.Parse(cmd.ExecuteScalar().ToString());
-        }
+        var cmd = PrepareCommand(query, parameters, opener.Connection, opener.Transaction);
+        return int.Parse(cmd.ExecuteScalar().ToString());
     }
 
     private string CreateInsertStatement<T>(Dictionary<string, object> parameters) where T : IMapsDirectlyToDatabaseTable
@@ -627,25 +623,21 @@ public abstract class TableRepository : ITableRepository
 
     public int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows = true)
     {
-        using (var opener = GetConnection())
-        {
-            var cmd = PrepareCommand(deleteQuery, parameters, opener.Connection, opener.Transaction);
-            var affectedRows = cmd.ExecuteNonQuery();
+        using var opener = GetConnection();
+        var cmd = PrepareCommand(deleteQuery, parameters, opener.Connection, opener.Transaction);
+        var affectedRows = cmd.ExecuteNonQuery();
                 
-            if (affectedRows == 0 && throwOnZeroAffectedRows)
-                throw new Exception($"Deleted failed, resulted in {affectedRows} affected rows");
+        if (affectedRows == 0 && throwOnZeroAffectedRows)
+            throw new Exception($"Deleted failed, resulted in {affectedRows} affected rows");
 
-            return affectedRows;
-        }
+        return affectedRows;
     }
 
     public int Update(string updateQuery, Dictionary<string, object> parameters)
     {
-        using (var opener = GetConnection())
-        {
-            var cmd = PrepareCommand(updateQuery, parameters, opener.Connection, opener.Transaction);
-            return cmd.ExecuteNonQuery();
-        }
+        using var opener = GetConnection();
+        var cmd = PrepareCommand(updateQuery, parameters, opener.Connection, opener.Transaction);
+        return cmd.ExecuteNonQuery();
     }
 
     public DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
@@ -844,13 +836,9 @@ public abstract class TableRepository : ITableRepository
 
     public int Insert(string sql, Dictionary<string, object> parameters)
     {
-        using (var opener = GetConnection())
-        {
-            using (var cmd = PrepareCommand(sql, parameters, opener.Connection, opener.Transaction))
-            {
-                return cmd.ExecuteNonQuery();
-            }
-        }
+        using var opener = GetConnection();
+        using var cmd = PrepareCommand(sql, parameters, opener.Connection, opener.Transaction);
+        return cmd.ExecuteNonQuery();
     }
 
     private Type[] _compatibleTypes;

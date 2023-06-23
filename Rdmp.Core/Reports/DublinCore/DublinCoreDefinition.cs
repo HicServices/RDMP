@@ -93,9 +93,9 @@ public class DublinCoreDefinition
             doc.Root.Add(new XElement(dcterms + "modified", new XAttribute(xsi + "type", "dcterms:W3CDTF"), Modified.Value.ToString("yyyy-MM-dd")));
 
         doc.Root.Add(new XElement(dc + "format", new XAttribute(xsi + "type", "dcterms:IMT"), Format));
-            
-        using(var sw = new StreamWriter(to))
-            sw.Write(doc.ToString(SaveOptions.None));
+
+        using var sw = new StreamWriter(to);
+        sw.Write(doc.ToString(SaveOptions.None));
     }
 
     /// <summary>

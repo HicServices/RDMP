@@ -101,9 +101,11 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 
             if (!(lineNumberMatch.Success || filenameMatch.Success) || lineIsMessageConstructor)
             {
-                var l = new Label();
-                l.Text = lines[i];
-                l.AutoSize = true;
+                var l = new Label
+                {
+                    Text = lines[i],
+                    AutoSize = true
+                };
 
                 //it is a message not a stack trace line (stack trace lines start with <whitespace>at X
                 if (!Regex.IsMatch(lines[i],@"^\s*at "))

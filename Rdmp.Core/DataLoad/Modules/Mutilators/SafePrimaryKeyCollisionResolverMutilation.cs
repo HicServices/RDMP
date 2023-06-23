@@ -71,18 +71,14 @@ False - Delete the larger value")]
   AND ({2})",
             tbl.GetRuntimeName(),join,deleteConditional);
 
-        using(var con = tbl.Database.Server.GetConnection())
-        {
-            con.Open();
-            using (var cmd = tbl.Database.Server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = Timeout;
+        using var con = tbl.Database.Server.GetConnection();
+        con.Open();
+        using var cmd = tbl.Database.Server.GetCommand(sql, con);
+        cmd.CommandTimeout = Timeout;
 
-                var affectedRows = cmd.ExecuteNonQuery();
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
-                    $"Deleted {affectedRows} rows"));
-            }
-        }
+        var affectedRows = cmd.ExecuteNonQuery();
+        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            $"Deleted {affectedRows} rows"));
     }
 
     public void Check(ICheckNotifier notifier)

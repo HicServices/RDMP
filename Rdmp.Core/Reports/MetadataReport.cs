@@ -69,106 +69,103 @@ public class MetadataReport:DocXHelper
             //if there's only one catalogue call it 'prescribing.docx' etc
             var filename = _args.Catalogues.Length == 1 ? _args.Catalogues[0].Name : "MetadataReport";
 
-            using (var document = GetNewDocFile(filename))
-            {
-                PageWidthInPixels = GetPageWidth();
+            using var document = GetNewDocFile(filename);
+            PageWidthInPixels = GetPageWidth();
                     
-                var sw = Stopwatch.StartNew();
+            var sw = Stopwatch.StartNew();
 
-                try
+            try
+            {
+                var completed = 0;
+
+
+                foreach (var c in _args.Catalogues.OrderBy(c=>c.Name))
                 {
-                    var completed = 0;
+                    listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed++, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
 
+                    var recordCount = -1;
+                    var distinctRecordCount = -1;
+                    string identifierName = null;
 
-                    foreach (var c in _args.Catalogues.OrderBy(c=>c.Name))
+                    var gotRecordCount = false;
+                    try
                     {
-                        listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed++, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
-
-                        var recordCount = -1;
-                        var distinctRecordCount = -1;
-                        string identifierName = null;
-
-                        var gotRecordCount = false;
-                        try
+                        if (_args.IncludeRowCounts)
                         {
-                            if (_args.IncludeRowCounts)
-                            {
-                                GetRecordCount(c, out recordCount, out distinctRecordCount, out identifierName);
-                                gotRecordCount = true;
-                            }
+                            GetRecordCount(c, out recordCount, out distinctRecordCount, out identifierName);
+                            gotRecordCount = true;
                         }
-                        catch (Exception e)
-                        {
-                            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,
-                                $"Error processing record count for Catalogue {c.Name}",e));
-                        }
-
-                        InsertHeader(document,c.Name);
-
-                        //assume we don't know the age of the dataset
-                        DateTime? accurateAsOf = null;
-                            
-                        //get the age of the dataset if known and output it
-                        if (_args.TimespanCalculator != null)
-                        {
-                            var timespan = _args.TimespanCalculator.GetHumanReadableTimespanIfKnownOf(c, true,out accurateAsOf);
-                            if (!string.IsNullOrWhiteSpace(timespan) && !timespan.Equals("Unknown"))
-                                InsertParagraph(document,timespan + (accurateAsOf.HasValue ? "*" :""), TextFontSize);
-                        }
-
-                        InsertParagraph(document,c.Description, TextFontSize);
-
-                        if(accurateAsOf.HasValue)
-                            InsertParagraph(document, $"* Based on DQE run on {accurateAsOf.Value}", TextFontSize-2);
-                            
-                        if (gotRecordCount)
-                        {
-                            InsertHeader(document,"Record Count", 3);
-                            CreateCountTable(document,recordCount, distinctRecordCount, identifierName);
-                        }
-
-                        if (!_args.SkipImages && RequestCatalogueImages != null)
-                        {
-                            var onRequestCatalogueImages = RequestCatalogueImages(c);
-
-                            if (onRequestCatalogueImages.Any())
-                            {
-                                InsertHeader(document,"Aggregates",2);
-                                AddImages(document,onRequestCatalogueImages);
-                            }
-
-                        }
-                                                        
-                        CreateDescriptionsTable(document,c);
-
-                        if(_args.IncludeNonExtractableItems)
-                            CreateNonExtractableColumnsTable(document,c);
-
-                        //if this is not the last Catalogue create a new page
-                        if (completed != _args.Catalogues.Length)
-                            InsertSectionPageBreak(document);
-
-                        listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
+                    }
+                    catch (Exception e)
+                    {
+                        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,
+                            $"Error processing record count for Catalogue {c.Name}",e));
                     }
 
-                    if (LookupsEncounteredToAppearInAppendix.Any())
-                        CreateLookupAppendix(document, listener);
+                    InsertHeader(document,c.Name);
 
-                    if(showFile)
-                        ShowFile(document);
+                    //assume we don't know the age of the dataset
+                    DateTime? accurateAsOf = null;
+                            
+                    //get the age of the dataset if known and output it
+                    if (_args.TimespanCalculator != null)
+                    {
+                        var timespan = _args.TimespanCalculator.GetHumanReadableTimespanIfKnownOf(c, true,out accurateAsOf);
+                        if (!string.IsNullOrWhiteSpace(timespan) && !timespan.Equals("Unknown"))
+                            InsertParagraph(document,timespan + (accurateAsOf.HasValue ? "*" :""), TextFontSize);
+                    }
 
-                    SetMargins(document,20);
+                    InsertParagraph(document,c.Description, TextFontSize);
+
+                    if(accurateAsOf.HasValue)
+                        InsertParagraph(document, $"* Based on DQE run on {accurateAsOf.Value}", TextFontSize-2);
+                            
+                    if (gotRecordCount)
+                    {
+                        InsertHeader(document,"Record Count", 3);
+                        CreateCountTable(document,recordCount, distinctRecordCount, identifierName);
+                    }
+
+                    if (!_args.SkipImages && RequestCatalogueImages != null)
+                    {
+                        var onRequestCatalogueImages = RequestCatalogueImages(c);
+
+                        if (onRequestCatalogueImages.Any())
+                        {
+                            InsertHeader(document,"Aggregates",2);
+                            AddImages(document,onRequestCatalogueImages);
+                        }
+
+                    }
+                                                        
+                    CreateDescriptionsTable(document,c);
+
+                    if(_args.IncludeNonExtractableItems)
+                        CreateNonExtractableColumnsTable(document,c);
+
+                    //if this is not the last Catalogue create a new page
+                    if (completed != _args.Catalogues.Length)
+                        InsertSectionPageBreak(document);
+
+                    listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
+                }
+
+                if (LookupsEncounteredToAppearInAppendix.Any())
+                    CreateLookupAppendix(document, listener);
+
+                if(showFile)
+                    ShowFile(document);
+
+                SetMargins(document,20);
                         
-                    AddFooter(document, $"Created on {DateTime.Now}", TextFontSize);
+                AddFooter(document, $"Created on {DateTime.Now}", TextFontSize);
 
-                    return document.FileInfo;
-                }
-                catch (ThreadInterruptedException)
-                {
-                    //user hit abort   
-                }
+                return document.FileInfo;
             }
-                
+            catch (ThreadInterruptedException)
+            {
+                //user hit abort   
+            }
         }
         catch (Exception e)
         {
@@ -254,19 +251,15 @@ public class MetadataReport:DocXHelper
     private DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
     {
         //get the contents of the lookup
-        using(var con = DataAccessPortal.GetInstance().ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection())
-        {
-            con.Open();
-               
-            using(var cmd = DatabaseCommandHelper.GetCommand($"Select * from {lookupTable.Name}", con))
-            using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
-            {
-                var dt = new DataTable();
-                da.Fill(dt);
+        using var con = DataAccessPortal.GetInstance().ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection();
+        con.Open();
 
-                return dt;
-            }
-        }
+        using var cmd = DatabaseCommandHelper.GetCommand($"Select * from {lookupTable.Name}", con);
+        using var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+        var dt = new DataTable();
+        da.Fill(dt);
+
+        return dt;
     }
 
     private void AddImages(XWPFDocument document, BitmapWithDescription[] onRequestCatalogueImages)
@@ -457,42 +450,39 @@ public class MetadataReport:DocXHelper
         var hasExtractionIdentifier = bestExtractionInformation.Any();
 
         var server = c.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, true);
-        using (var con = server.GetConnection())
-        {
+        using var con = server.GetConnection();
+        con.Open();
 
-            con.Open();
+        if (tableToQuery.Name.Contains('@'))
+            throw new Exception(
+                $"Table '{tableToQuery.Name}' looks like a table valued function so cannot be processed");
 
-            if (tableToQuery.Name.Contains('@'))
-                throw new Exception(
-                    $"Table '{tableToQuery.Name}' looks like a table valued function so cannot be processed");
+        var sql = $"SELECT {Environment.NewLine}";
+        sql += "count(*) as recordCount";
 
-            var sql = $"SELECT {Environment.NewLine}";
-            sql += "count(*) as recordCount";
-
-            //if it has extraction information and we want a distinct count
-            if (hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts)
-                sql +=
-                    $",\r\ncount(distinct {bestExtractionInformation[0].SelectSQL}) as recordCountDistinct{Environment.NewLine}";
+        //if it has extraction information and we want a distinct count
+        if (hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts)
+            sql +=
+                $",\r\ncount(distinct {bestExtractionInformation[0].SelectSQL}) as recordCountDistinct{Environment.NewLine}";
             
-            sql += $" from {Environment.NewLine}";
-            sql += tableToQuery.Name;
+        sql += $" from {Environment.NewLine}";
+        sql += tableToQuery.Name;
 
-            identifierName = hasExtractionIdentifier ? bestExtractionInformation[0].GetRuntimeName() : null;
+        identifierName = hasExtractionIdentifier ? bestExtractionInformation[0].GetRuntimeName() : null;
 
-            using (var cmd = server.GetCommand(sql, con))
+        using (var cmd = server.GetCommand(sql, con))
+        {
+            cmd.CommandTimeout = _args.Timeout;
+
+            using (var r = cmd.ExecuteReader())
             {
-                cmd.CommandTimeout = _args.Timeout;
-
-                using (var r = cmd.ExecuteReader())
-                {
-                    r.Read();
-                    count = Convert.ToInt32(r["recordCount"]);
-                    distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
-                }
+                r.Read();
+                count = Convert.ToInt32(r["recordCount"]);
+                distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
             }
-                
-            con.Close();
         }
+                
+        con.Close();
     }
 
     public void Abort()

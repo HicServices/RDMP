@@ -63,14 +63,13 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
 
             if(chosen != null)
                 foreach (var f in chosen)
-                    using (var stream = File.Open(f.FullName, FileMode.Open))
-                    {
-                        var newObjects = shareManager.ImportSharedObject(stream);
+                {
+                    using var stream = File.Open(f.FullName, FileMode.Open);
+                    var newObjects = shareManager.ImportSharedObject(stream);
 
-                        if (newObjects != null)
-                            catalogues.AddRange(newObjects.OfType<ICatalogue>());
-                    }
-                
+                    if (newObjects != null)
+                        catalogues.AddRange(newObjects.OfType<ICatalogue>());
+                }
         }
 
         var generateCatalogues = false;
