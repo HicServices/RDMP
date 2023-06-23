@@ -198,12 +198,10 @@ SET {queryHelper.BuildUpdateClauseForRow("LiveDataForUpdating", "CurrentTable")}
 FROM 
 LiveDataForUpdating LEFT JOIN {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]"} AS CurrentTable {mcsQueryHelper.BuildJoinClause("LiveDataForUpdating", "CurrentTable")}";
 
-        using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())
-        {
-            connection.Open();
-            var cmd = new SqlCommand(update, connection);
-            cmd.ExecuteNonQuery();
-        }
+        using var connection = (SqlConnection)_dbInfo.Server.GetConnection();
+        connection.Open();
+        var cmd = new SqlCommand(update, connection);
+        cmd.ExecuteNonQuery();
     }
 
     private void DeleteEntriesHavingNoChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable,
@@ -245,12 +243,10 @@ DELETE CurrentTable
 FROM {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]"} CurrentTable
 RIGHT JOIN EntriesToDelete {mcsQueryHelper.BuildJoinClause("EntriesToDelete", "CurrentTable")}";
 
-        using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())
-        {
-            connection.Open();
-            var cmd = new SqlCommand(deleteSql, connection);
-            cmd.ExecuteNonQuery();
-        }
+        using var connection = (SqlConnection)_dbInfo.Server.GetConnection();
+        connection.Open();
+        var cmd = new SqlCommand(deleteSql, connection);
+        cmd.ExecuteNonQuery();
     }
 
     /// <summary>

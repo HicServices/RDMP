@@ -120,19 +120,16 @@ public partial class ServerDatabaseTableSelector : UserControl
         var syntaxHelper = discoveredDatabase.Server.GetQuerySyntaxHelper();
         try
         {
-            using (var con = discoveredDatabase.Server.GetConnection())
-            {
-                var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
-                openTask.Wait(_workerRefreshTablesToken.Token);
+            using var con = discoveredDatabase.Server.GetConnection();
+            var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
+            openTask.Wait(_workerRefreshTablesToken.Token);
 
-                var result = new List<DiscoveredTable>();
+            var result = new List<DiscoveredTable>();
 
-                result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
-                result.AddRange(
-                    databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
+            result.AddRange(databaseHelper.ListTables(discoveredDatabase, syntaxHelper, con, database, true));
+            result.AddRange(databaseHelper.ListTableValuedFunctions(discoveredDatabase, syntaxHelper, con, database));
 
-                _listTablesAsyncResult = result;
-            }
+            _listTablesAsyncResult = result;
         }
         catch (OperationCanceledException) //user cancels
         {

@@ -99,43 +99,41 @@ public class CohortIdentificationTaskExecution : IDisposable
 
         server.EnableAsync();
 
-        using (var con = server.GetConnection())
+        using var con = server.GetConnection();
+        con.Open();
+        _cmdCount = server.GetCommand(CountSQL, con);
+        _cmdCount.CommandTimeout = commandTimeout;
+
+        var identifiersReader = _cmdCount.ExecuteReaderAsync(_cancellationTokenSource.Token);
+
+        identifiersReader.Wait(_cancellationTokenSource.Token);
+        _rIds = identifiersReader.Result;
+        Identifiers.Load(_rIds);
+        _rIds.Close();
+        _rIds.Dispose();
+
+        Task<DbDataReader> cumulativeIdentifiersRead = null;
+
+        //if there is cumulative SQL happening
+        if (!string.IsNullOrWhiteSpace(CumulativeSQL))
         {
-            con.Open();
-            _cmdCount = server.GetCommand(CountSQL, con);
-            _cmdCount.CommandTimeout = commandTimeout;
+            CumulativeIdentifiers = new DataTable();
 
-            var identifiersReader = _cmdCount.ExecuteReaderAsync(_cancellationTokenSource.Token);
-
-            identifiersReader.Wait(_cancellationTokenSource.Token);
-            _rIds = identifiersReader.Result;
-            Identifiers.Load(_rIds);
-            _rIds.Close();
-            _rIds.Dispose();
-
-            Task<DbDataReader> cumulativeIdentifiersRead = null;
-
-            //if there is cumulative SQL happening
-            if (!string.IsNullOrWhiteSpace(CumulativeSQL))
-            {
-                CumulativeIdentifiers = new DataTable();
-
-                _cmdCountCumulative = server.GetCommand(CumulativeSQL, con);
-                _cmdCountCumulative.CommandTimeout = commandTimeout;
-                cumulativeIdentifiersRead = _cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
-            }
-
-            if (cumulativeIdentifiersRead != null)
-            {
-                cumulativeIdentifiersRead.Wait(_cancellationTokenSource.Token);
-                _rCumulative = cumulativeIdentifiersRead.Result;
-                CumulativeIdentifiers.Load(_rCumulative);
-                _rCumulative.Close();
-                _rCumulative.Dispose();
-            }
-
-            IsExecuting = false;
+            _cmdCountCumulative = server.GetCommand(CumulativeSQL, con);
+            _cmdCountCumulative.CommandTimeout = commandTimeout;
+            cumulativeIdentifiersRead = _cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
         }
+
+        if (cumulativeIdentifiersRead != null)
+        {
+            cumulativeIdentifiersRead.Wait(_cancellationTokenSource.Token);
+            _rCumulative = cumulativeIdentifiersRead.Result;
+            CumulativeIdentifiers.Load(_rCumulative);
+            _rCumulative.Close();
+            _rCumulative.Dispose();
+        }
+
+        IsExecuting = false;
     }
 
     public void Dispose()

@@ -16,23 +16,19 @@ public class GetDatabaseDiagramBinaryTest : DatabaseTests
     [Test]
     public void GetBinaryText()
     {
-        using (var con = CatalogueTableRepository.GetConnection())
-        {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       "SELECT definition  FROM sysdiagrams where name = 'Catalogue_Data_Diagram' ",
-                       con.Connection, con.Transaction))
-            using (var reader = cmd.ExecuteReader())
-            {
-                //The system diagram exists
-                Assert.IsTrue(reader.Read());
+        using var con = CatalogueTableRepository.GetConnection();
+        using var cmd = DatabaseCommandHelper.GetCommand(
+            "SELECT definition  FROM sysdiagrams where name = 'Catalogue_Data_Diagram' ",
+            con.Connection, con.Transaction);
+        using var reader = cmd.ExecuteReader();
+        //The system diagram exists
+        Assert.IsTrue(reader.Read());
 
-                var bytes = (byte[])reader[0];
-                var bytesAsString = ByteArrayToString(bytes);
-
-                Console.WriteLine(bytesAsString);
-                Assert.Greater(bytesAsString.Length, 100000);
-            }
-        }
+        var bytes = (byte[]) reader[0];
+        var bytesAsString = ByteArrayToString(bytes);
+                    
+        Console.WriteLine(bytesAsString);
+        Assert.Greater(bytesAsString.Length,100000);
     }
 
     public static string ByteArrayToString(byte[] ba)

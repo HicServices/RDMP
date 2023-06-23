@@ -289,12 +289,10 @@ public class CustomMetadataReport
                         var filename = DoReplacements(new[] { fileNaming }, catalogue, null,
                             ElementIteration.NotIterating).Trim();
 
-                        using (var sw = new StreamWriter(Path.Combine(outputDirectory.FullName, filename)))
-                        {
-                            sw.Write(newContents);
-                            sw.Flush();
-                            sw.Close();
-                        }
+                        using var sw = new StreamWriter(Path.Combine(outputDirectory.FullName,filename));
+                        sw.Write(newContents);
+                        sw.Flush();
+                        sw.Close();
                     }
                 }
             }

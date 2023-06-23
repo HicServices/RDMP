@@ -46,7 +46,7 @@ public partial class OfferChanceToSaveDialogUI : Form
             {
                 Dock = DockStyle.Fill
             };
-            tableLayoutPanel1.Controls.Add(toAdd, 0, index);
+            tableLayoutPanel1.Controls.Add(toAdd,0,index);
         }
 
         for (var i = 0; i < tableLayoutPanel1.RowStyles.Count; i++)

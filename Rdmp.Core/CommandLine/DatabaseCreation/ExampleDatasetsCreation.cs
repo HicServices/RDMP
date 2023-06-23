@@ -454,11 +454,11 @@ public class ExampleDatasetsCreation
 
     private static void CreateAdmissionsViews(DiscoveredDatabase db)
     {
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            using (var cmd = db.Server.GetCommand(
-                       @"create view vConditions as
+        using var con = db.Server.GetConnection();
+        con.Open();
+        using(var cmd = db.Server.GetCommand(
+
+                  @"create view vConditions as
 
 SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Condition,Field
 FROM
@@ -469,14 +469,12 @@ FROM
 UNPIVOT 
 (
   Condition FOR Field IN (MainCondition,OtherCondition1,OtherCondition2,OtherCondition3)
-) AS up;", con))
-            {
-                cmd.ExecuteNonQuery();
-            }
+) AS up;",con))
+            cmd.ExecuteNonQuery();
 
 
-            using (var cmd = db.Server.GetCommand(
-                       @"create view vOperations as
+        using(var cmd = db.Server.GetCommand(
+                  @"create view vOperations as
 
 SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Operation,Field
 FROM
@@ -487,11 +485,8 @@ FROM
 UNPIVOT 
 (
   Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
-) AS up;", con))
-            {
-                cmd.ExecuteNonQuery();
-            }
-        }
+) AS up;",con))
+            cmd.ExecuteNonQuery();
     }
 
     private IFilter CreateFilter(ICatalogue cata, string name, string parentExtractionInformation, string whereSql,

@@ -24,15 +24,13 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
     private void TruncateDataTable()
     {
         var server = Database.Server;
-        using (var con = server.GetConnection())
-        {
-            con.Open();
+        using var con = server.GetConnection();
+        con.Open();
 
-            var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable", con);
-            cmdTruncate.ExecuteNonQuery();
+        var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable",con);
+        cmdTruncate.ExecuteNonQuery();
 
-            con.Close();
-        }
+        con.Close();
     }
 
     [Test]

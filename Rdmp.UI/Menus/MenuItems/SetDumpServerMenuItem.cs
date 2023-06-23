@@ -42,8 +42,7 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
 
         _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 
-        var miUseExisting = new ToolStripMenuItem("Use Existing...",
-            overlay.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
+        var miUseExisting = new ToolStripMenuItem("Use Existing...", overlay.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
         {
             Enabled = _availableServers.Any()
         };

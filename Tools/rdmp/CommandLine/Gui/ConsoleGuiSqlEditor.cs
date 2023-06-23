@@ -74,8 +74,6 @@ internal class ConsoleGuiSqlEditor : Window
             AllowsTab = false
         };
 
-        TabView.AddTab(queryTab = new Tab("Query", textView), true);
-
         TabView.AddTab(queryTab = new Tab("Query", textView),true);
 
         tableView = new TableView
@@ -320,33 +318,29 @@ internal class ConsoleGuiSqlEditor : Window
             var db = DataAccessPortal.ExpectDatabase(_collection.GetDataAccessPoint(),
                 DataAccessContext.InternalDataProcessing);
 
-            using (var con = db.Server.GetConnection())
-            {
-                con.Open();
-                _runSqlCmd = db.Server.GetCommand(sql, con);
-                _runSqlCmd.CommandTimeout = _timeout;
+            using var con = db.Server.GetConnection();
+            con.Open();
+            _runSqlCmd = db.Server.GetCommand(sql,con);
+            _runSqlCmd.CommandTimeout = _timeout;
 
-                using (var da = db.Server.GetDataAdapter(_runSqlCmd))
+            using var da = db.Server.GetDataAdapter(_runSqlCmd);
+            var dt = new DataTable();
+            da.Fill(dt);
+
+            Application.MainLoop.Invoke(() => { 
+                            
+                tableView.Table = dt;
+
+                // if query resulted in some data show it
+                if (dt.Columns.Count > 0)
                 {
-                    var dt = new DataTable();
-                    da.Fill(dt);
-
-                    Application.MainLoop.Invoke(() =>
-                    {
-                        tableView.Table = dt;
-
-                        // if query resulted in some data show it
-                        if (dt.Columns.Count > 0)
-                        {
-                            TabView.SelectedTab = resultTab;
-                            TabView.SetNeedsDisplay();
-                        }
-                    });
-
-
-                    OnQueryCompleted(dt);
+                    TabView.SelectedTab = resultTab;
+                    TabView.SetNeedsDisplay();
                 }
-            }
+            });
+
+
+            OnQueryCompleted(dt);
         }
         finally
         {
@@ -396,12 +390,13 @@ internal class ConsoleGuiSqlEditor : Window
 
         public SqlTextView()
         {
-            Autocomplete = new SqlAutocomplete();
-
-            Autocomplete.ColorScheme = new ColorScheme
+            Autocomplete = new SqlAutocomplete
             {
-                Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
-                Focus = Driver.MakeAttribute(Color.Black, Color.Cyan)
+                ColorScheme = new ColorScheme
+                {
+                    Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
+                    Focus = Driver.MakeAttribute(Color.Black, Color.Cyan)
+                }
             };
 
             _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);

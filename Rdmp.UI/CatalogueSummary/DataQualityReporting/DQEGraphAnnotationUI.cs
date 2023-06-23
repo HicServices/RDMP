@@ -62,6 +62,7 @@ internal class DQEGraphAnnotationUI
             AllowSelecting = true,
             Tag = this
         };
+
     }
 
     public void Delete(Chart chart)

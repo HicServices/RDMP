@@ -155,11 +155,8 @@ AND
 
         var name = cols.Single(c => c.GetRuntimeName().Equals("Name"));
 
-        using (var con = DataExportTableRepository.GetConnection())
-        {
-            DataExportTableRepository.DiscoveredServer.GetCommand(
-                $"UPDATE ExtractableColumn set CatalogueExtractionInformation_ID = {int.MaxValue} where ID = {name.ID}",
-                con).ExecuteNonQuery();
-        }
+        using var con = DataExportTableRepository.GetConnection();
+        DataExportTableRepository.DiscoveredServer.GetCommand(
+            $"UPDATE ExtractableColumn set CatalogueExtractionInformation_ID = {int.MaxValue} where ID = {name.ID}", con).ExecuteNonQuery();
     }
 }

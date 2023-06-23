@@ -160,11 +160,11 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     private void RecordNewDataLoadInDatabase(string dataLoadTaskName)
     {
-        using var con = DatabaseSettings.GetConnection();
+        using var con = _server.GetConnection();
         con.Open();
 
-        var cmd = DatabaseSettings.GetCommand("SELECT ID FROM DataLoadTask WHERE name=@name", con);
-        DatabaseSettings.AddParameterWithValueToCommand("@name", cmd, dataLoadTaskName);
+        var cmd = _server.GetCommand("SELECT ID FROM DataLoadTask WHERE name=@name", con);
+        _server.AddParameterWithValueToCommand("@name",cmd, dataLoadTaskName);
 
 
         var result = cmd.ExecuteScalar();
@@ -174,21 +174,18 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
         //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
         var parentTaskID = int.Parse(result.ToString());
+                                
+        cmd = _server.GetCommand(
+            @"INSERT INTO DataLoadRun (description,startTime,dataLoadTaskID,isTest,packageName,userAccount,suggestedRollbackCommand) VALUES (@description,@startTime,@dataLoadTaskID,@isTest,@packageName,@userAccount,@suggestedRollbackCommand);
+SELECT @@IDENTITY;", con);
 
-        cmd = DatabaseSettings.GetCommand(
-            """
-            INSERT INTO DataLoadRun (description,startTime,dataLoadTaskID,isTest,packageName,userAccount,suggestedRollbackCommand) VALUES (@description,@startTime,@dataLoadTaskID,@isTest,@packageName,@userAccount,@suggestedRollbackCommand);
-            SELECT @@IDENTITY;
-            """, con);
-
-        DatabaseSettings.AddParameterWithValueToCommand("@description", cmd, _description);
-        DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, _startTime);
-        DatabaseSettings.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
-        DatabaseSettings.AddParameterWithValueToCommand("@isTest", cmd, _isTest);
-        DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, _packageName);
-        DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount);
-        DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd,
-            _suggestedRollbackCommand ?? string.Empty);
+        _server.AddParameterWithValueToCommand("@description", cmd, _description);
+        _server.AddParameterWithValueToCommand("@startTime", cmd, _startTime);
+        _server.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
+        _server.AddParameterWithValueToCommand("@isTest",cmd, _isTest);
+        _server.AddParameterWithValueToCommand("@packageName", cmd, _packageName);
+        _server.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount);
+        _server.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand ?? string.Empty);
 
 
         //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
@@ -212,16 +209,17 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
             _endTime = DateTime.Now;
 
-            using var con = DatabaseSettings.BeginNewTransactedConnection();
+            using var con = _server.BeginNewTransactedConnection();
             try
             {
+
                 var cmdUpdateToClosed =
-                    DatabaseSettings.GetCommand("UPDATE DataLoadRun SET endTime=@endTime WHERE ID=@ID",
+                    _server.GetCommand("UPDATE DataLoadRun SET endTime=@endTime WHERE ID=@ID",
                         con);
 
-                DatabaseSettings.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed, DateTime.Now);
-                DatabaseSettings.AddParameterWithValueToCommand("@ID", cmdUpdateToClosed, ID);
-
+                _server.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed,DateTime.Now);
+                _server.AddParameterWithValueToCommand("@ID", cmdUpdateToClosed, ID);
+                        
                 var rowsAffected = cmdUpdateToClosed.ExecuteNonQuery();
 
                 if (rowsAffected != 1)
@@ -230,23 +228,22 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
                 con.ManagedTransaction.CommitAndCloseConnection();
 
-                    _isClosed = true;
-                }
-                catch (Exception)
-                {
-                    //if something goes wrong with the update, roll it back
-                    con.ManagedTransaction.AbandonAndCloseConnection();
+                _isClosed = true;
+            }
+            catch (Exception)
+            {
+                //if something goes wrong with the update, roll it back
+                con.ManagedTransaction.AbandonAndCloseConnection();
 
-                    throw;
-                }
+                throw;
+            }
 
-                //once a record has been commited to the database it is redundant and no further attempts to read/change it should be made by anyone
-                foreach (var t in TableLoads.Values)
-                {
-                    //close any table loads that have not yet completed
-                    if (!t.IsClosed)
-                        t.CloseAndArchive();
-                }
+            //once a record has been commited to the database it is redundant and no further attempts to read/change it should be made by anyone
+            foreach (var t in TableLoads.Values)
+            {
+                //close any table loads that have not yet completed
+                if (!t.IsClosed)
+                    t.CloseAndArchive();
             }
             catch (Exception)
             {
@@ -307,20 +304,19 @@ public sealed class DataLoadInfo : IDataLoadInfo
         //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
         var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
-
-        var cmdLookupStatusID = DatabaseSettings.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
-        DatabaseSettings.AddParameterWithValueToCommand("@status", cmdLookupStatusID, initialErrorStatus);
+                
+        var cmdLookupStatusID = _server.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
+        _server.AddParameterWithValueToCommand("@status",cmdLookupStatusID, initialErrorStatus);
 
         var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
-        var cmdRecordFatalError = DatabaseSettings.GetCommand(
-            @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",
-            con);
-        DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
-        DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
-        DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
-        DatabaseSettings.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
-        DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
+        var cmdRecordFatalError = _server.GetCommand(
+            @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);", con);
+        _server.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
+        _server.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
+        _server.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
+        _server.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
+        _server.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
 
         cmdRecordFatalError.ExecuteNonQuery();
 
@@ -340,16 +336,18 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
-        lock (_oLock)
-        {
-            if (_logQueue is null || _logQueue.IsAddingCompleted)
-                LogInit();
-            if (_logQueue is null)
-                throw new InvalidOperationException("LogInit failed to create new worker");
+        using var con = DatabaseSettings.GetConnection();
+        using var cmdRecordProgress = _server.GetCommand("INSERT INTO ProgressLog " +
+                                                         "(dataLoadRunID,eventType,source,description,time) " +
+                                                         "VALUES (@dataLoadRunID,@eventType,@source,@description,@time);", con);
+        con.Open();
 
-            _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
-        }
-        lock (_logWaiter)
-            Monitor.Pulse(_logWaiter);
+        _server.AddParameterWithValueToCommand("@dataLoadRunID",cmdRecordProgress, ID);
+        _server.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, pevent.ToString());
+        _server.AddParameterWithValueToCommand("@source", cmdRecordProgress, Source);
+        _server.AddParameterWithValueToCommand("@description", cmdRecordProgress, Description);
+        _server.AddParameterWithValueToCommand("@time", cmdRecordProgress, DateTime.Now);
+
+        cmdRecordProgress.ExecuteNonQuery();
     }
 }

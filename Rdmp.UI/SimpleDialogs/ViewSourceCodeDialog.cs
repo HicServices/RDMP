@@ -124,13 +124,13 @@ public partial class ViewSourceCodeDialog : Form
                 //if the zip exists
                 if (zipFile.Exists)
                     //read the entry (if it is there)
-                    using (var z = ZipFile.OpenRead(zipFile.FullName))
-                    {
-                        var readToEnd = GetEntryFromZipFile(z, toFind);
+                    using var z = ZipFile.OpenRead(zipFile.FullName);
+                    var readToEnd = GetEntryFromZipFile(z, toFind);
 
-                        if (readToEnd != null) //the entry was found and read
-                            return readToEnd;
-                    }
+                    if (readToEnd != null) //the entry was found and read
+                        return readToEnd;
+                }
+            }
         }
         catch (Exception)
         {

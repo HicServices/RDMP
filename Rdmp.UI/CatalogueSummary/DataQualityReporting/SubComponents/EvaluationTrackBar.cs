@@ -84,8 +84,10 @@ public partial class EvaluationTrackBar : UserControl
             var x = tbEvaluation.Left + (int)(ratio * tbEvaluation.Width);
             var y = tbEvaluation.Bottom - 10;
 
-            var l = new Label();
-            l.Text = Evaluations[i].DateOfEvaluation.ToString("d");
+            var l = new Label
+            {
+                Text = Evaluations[i].DateOfEvaluation.ToString("d")
+            };
             l.Location = new Point(x - l.PreferredWidth / 2, y);
               
             Controls.Add(l);

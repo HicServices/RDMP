@@ -99,34 +99,30 @@ internal class RemoteTableAttacherTests : DatabaseTests
 
         attacher.Initialize(null, db);
 
-        using (var dt = new DataTable())
-        {
-            dt.Columns.Add("Col1");
-            dt.Rows.Add("fff");
+        using var dt = new DataTable();
+        dt.Columns.Add("Col1");
+        dt.Rows.Add("fff");
 
-            var tbl1 = db.CreateTable("table1", dt);
-            var tbl2 = db.CreateTable("table2",
-                new[] { new DatabaseColumnRequest("Col1", new DatabaseTypeRequest(typeof(string), 5)) });
+        var tbl1 = db.CreateTable("table1", dt);
+        var tbl2 = db.CreateTable("table2", new []{new DatabaseColumnRequest("Col1",new DatabaseTypeRequest(typeof(string),5))});
 
-            Assert.AreEqual(1, tbl1.GetRowCount());
-            Assert.AreEqual(0, tbl2.GetRowCount());
+        Assert.AreEqual(1,tbl1.GetRowCount());
+        Assert.AreEqual(0,tbl2.GetRowCount());
 
-            var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
+        var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
-            var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
-            lmd.CatalogueRepository.Returns(CatalogueRepository);
-            logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
+        var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
+        Mock.Get(lmd).Setup(p=>p.CatalogueRepository).Returns(CatalogueRepository);
+        logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
-            var dbConfiguration = new HICDatabaseConfiguration(lmd,
-                RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
+        var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
-            var job = new DataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),ThrowImmediatelyDataLoadEventListener.Quiet,dbConfiguration);
-            job.StartLogging();
-            attacher.Attach(job, new GracefulCancellationToken());
+        var job = new DataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),ThrowImmediatelyDataLoadEventListener.Quiet,dbConfiguration);
+        job.StartLogging();
+        attacher.Attach(job, new GracefulCancellationToken());
 
-            Assert.AreEqual(1, tbl1.GetRowCount());
-            Assert.AreEqual(1, tbl2.GetRowCount());
-        }
+        Assert.AreEqual(1,tbl1.GetRowCount());
+        Assert.AreEqual(1,tbl2.GetRowCount());
     }
 
     private void RunAttachStageWithLoadProgressJob(RemoteTableAttacher attacher, DiscoveredDatabase db,
@@ -143,54 +139,52 @@ internal class RemoteTableAttacherTests : DatabaseTests
 
         attacher.Initialize(null, db);
 
-        using (var dt = new DataTable())
-        {
-            dt.Columns.Add("Col1");
-            dt.Columns.Add("DateCol");
+        using var dt = new DataTable();
+        dt.Columns.Add("Col1");
+        dt.Columns.Add("DateCol");
 
-            dt.Rows.Add("fff", new DateTime(2000, 1, 1));
-            dt.Rows.Add("fff", new DateTime(2001, 1, 1));
-            dt.Rows.Add("fff", new DateTime(2002, 1, 1));
-
-
-            var tbl1 = db.CreateTable("table1", dt);
-            var tbl2 = db.CreateTable("table2", new[]
-            {
-                new DatabaseColumnRequest("Col1", new DatabaseTypeRequest(typeof(string), 5)),
-                new DatabaseColumnRequest("DateCol", new DatabaseTypeRequest(typeof(DateTime)))
-            });
-
-            Assert.AreEqual(3, tbl1.GetRowCount());
-            Assert.AreEqual(0, tbl2.GetRowCount());
-
-            var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
-
-            var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
-            lmd.CatalogueRepository.Returns(CatalogueRepository);
-            logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
-
-            var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"))
- {
-     OriginDate = new DateTime(2001,1,1)
- };
-            attacher.Progress = lp;
-            attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo {Strategy = DataLoadProgressUpdateStrategy.DoNothing};
+        dt.Rows.Add("fff",new DateTime(2000,1,1));
+        dt.Rows.Add("fff",new DateTime(2001,1,1));
+        dt.Rows.Add("fff",new DateTime(2002,1,1));
             
-            var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
-            var job = new ScheduledDataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),ThrowImmediatelyDataLoadEventListener.Quiet,dbConfiguration)
-                {
-                    LoadProgress = mismatchProgress
-                        ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))
-                        : lp,
-                    DatesToRetrieve = new List<DateTime>{new(2001,01,01)}
-                };
+        var tbl1 = db.CreateTable("table1", dt);
+        var tbl2 = db.CreateTable("table2", new []
+        {
+            new DatabaseColumnRequest("Col1",new DatabaseTypeRequest(typeof(string),5)),
+            new DatabaseColumnRequest("DateCol",new DatabaseTypeRequest(typeof(DateTime)))
+        });
 
-            job.StartLogging();
-            attacher.Attach(job, new GracefulCancellationToken());
+        Assert.AreEqual(3,tbl1.GetRowCount());
+        Assert.AreEqual(0,tbl2.GetRowCount());
 
-            Assert.AreEqual(3, tbl1.GetRowCount());
-            Assert.AreEqual(mismatchProgress ? 0 : 1, tbl2.GetRowCount());
-        }
+        var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
+
+        var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
+        Mock.Get(lmd).Setup(p=>p.CatalogueRepository).Returns(CatalogueRepository);
+        logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
+
+        var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"))
+        {
+            OriginDate = new DateTime(2001,1,1)
+        };
+        attacher.Progress = lp;
+        attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo {Strategy = DataLoadProgressUpdateStrategy.DoNothing};
+            
+        var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
+
+        var job = new ScheduledDataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),ThrowImmediatelyDataLoadEventListener.Quiet,dbConfiguration)
+        {
+            LoadProgress = mismatchProgress
+                ? new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffsdf"))
+                : lp,
+            DatesToRetrieve = new List<DateTime>{new(2001,01,01)}
+        };
+
+        job.StartLogging();
+        attacher.Attach(job, new GracefulCancellationToken());
+
+        Assert.AreEqual(3,tbl1.GetRowCount());
+        Assert.AreEqual(mismatchProgress ? 0 : 1,tbl2.GetRowCount());
     }
 }

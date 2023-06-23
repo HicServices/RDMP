@@ -711,13 +711,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false) return _mainDockPanel.Invoke(() => SelectDirectory(prompt));
 
-        using (var fb = new FolderBrowserDialog())
-        {
-            if (fb.ShowDialog() == DialogResult.OK)
-                return new DirectoryInfo(fb.SelectedPath);
-
-            return null;
-        }
+        using var fb = new FolderBrowserDialog();
+        if (fb.ShowDialog() == DialogResult.OK)
+            return new DirectoryInfo(fb.SelectedPath);
+            
+        return null;
     }
 
     public override FileInfo SelectFile(string prompt)
@@ -734,22 +732,20 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (_mainDockPanel?.InvokeRequired ?? false)
             return _mainDockPanel.Invoke(() => SelectFile(prompt, patternDescription, pattern));
 
-        using (var fb = new OpenFileDialog { CheckFileExists = false, Multiselect = false })
+        using var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
+        if (patternDescription != null && pattern != null)
+            fb.Filter = $"{patternDescription}|{pattern}";
+
+        if (fb.ShowDialog() == DialogResult.OK)
         {
-            if (patternDescription != null && pattern != null)
-                fb.Filter = $"{patternDescription}|{pattern}";
+            // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
+            if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
+                return null;
 
-            if (fb.ShowDialog() == DialogResult.OK)
-            {
-                // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
-                if (string.Equals(Path.GetFileName(fb.FileName), "null", StringComparison.CurrentCultureIgnoreCase))
-                    return null;
-
-                return new FileInfo(fb.FileName);
-            }
-
-            return null;
+            return new FileInfo(fb.FileName);
         }
+            
+        return null;
     }
 
     public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
@@ -758,16 +754,14 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (_mainDockPanel?.InvokeRequired ?? false)
             return _mainDockPanel.Invoke(() => SelectFiles(prompt, patternDescription, pattern));
 
-        using (var fb = new OpenFileDialog { CheckFileExists = false, Multiselect = true })
-        {
-            if (patternDescription != null && pattern != null)
-                fb.Filter = $"{patternDescription}|{pattern}";
+        using var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = true};
+        if (patternDescription != null && pattern != null)
+            fb.Filter = $"{patternDescription}|{pattern}";
 
-            if (fb.ShowDialog() == DialogResult.OK)
-                return fb.FileNames.Select(f => new FileInfo(f)).ToArray();
-
-            return null;
-        }
+        if (fb.ShowDialog() == DialogResult.OK)
+            return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
+            
+        return null;
     }
 
     protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)

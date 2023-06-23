@@ -446,26 +446,24 @@ public abstract class Argument : DatabaseEntity, IArgument
     {
         var instance = (IDictionary)Activator.CreateInstance(type);
 
-        using (var sr = new StringReader(value))
+        using var sr = new StringReader(value);
+        var doc = XDocument.Load(sr);
+        var dict = doc.Element("dictionary");
+        foreach (var xElement in dict.Elements("entry"))
         {
-            var doc = XDocument.Load(sr);
-            var dict = doc.Element("dictionary");
-            foreach (var xElement in dict.Elements("entry"))
-            {
-                var kElement = xElement.Element("key");
-                var kType = kElement.Attribute("type").Value;
-                var kValue = kElement.Attribute("o").Value;
+            var kElement = xElement.Element("key");
+            var kType = kElement.Attribute("type").Value;
+            var kValue = kElement.Attribute("o").Value;
 
-                var keyInstance = Deserialize(kValue, kType);
+            var keyInstance = Deserialize(kValue, kType);
 
-                var vElement = xElement.Element("value");
-                var vType = vElement.Attribute("type").Value;
-                var vValue = vElement.Attribute("o").Value;
+            var vElement = xElement.Element("value");
+            var vType = vElement.Attribute("type").Value;
+            var vValue = vElement.Attribute("o").Value;
 
-                var valueInstance = Deserialize(vValue, vType);
+            var valueInstance = Deserialize(vValue, vType);
 
-                instance.Add(keyInstance, valueInstance);
-            }
+            instance.Add(keyInstance,valueInstance);
         }
 
         return instance;
@@ -473,64 +471,58 @@ public abstract class Argument : DatabaseEntity, IArgument
 
     private string SerializeDictionary(IDictionary dictionary)
     {
-        using (var sw = new StringWriter())
+        using var sw = new StringWriter();
+        using (var xmlWriter = XmlWriter.Create(sw))
         {
-            using (var xmlWriter = XmlWriter.Create(sw))
+            // Build Xml with xw.
+
+            xmlWriter.WriteStartDocument();
+            xmlWriter.WriteStartElement("dictionary");
+                    
+            foreach (DictionaryEntry entry in dictionary)
             {
-                // Build Xml with xw.
+                var keyObject = entry.Key;
+                var keyObjectType = keyObject.GetType().ToString();
 
-                xmlWriter.WriteStartDocument();
-                xmlWriter.WriteStartElement("dictionary");
+                var valueObject = entry.Value;
+                var valueObjectType = valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
+                        
+                xmlWriter.WriteStartElement("entry");
+                        
+                xmlWriter.WriteStartElement("key");
+                xmlWriter.WriteAttributeString("type", keyObjectType);
+                xmlWriter.WriteAttributeString("o", Serialize(keyObject,keyObjectType));
+                xmlWriter.WriteEndElement();
 
-                foreach (DictionaryEntry entry in dictionary)
-                {
-                    var keyObject = entry.Key;
-                    var keyObjectType = keyObject.GetType().ToString();
+                xmlWriter.WriteStartElement("value");
+                xmlWriter.WriteAttributeString("type", valueObjectType);
+                xmlWriter.WriteAttributeString("o", Serialize(valueObject, valueObjectType));
+                xmlWriter.WriteEndElement();
 
-                    var valueObject = entry.Value;
-                    var valueObjectType =
-                        valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
-
-                    xmlWriter.WriteStartElement("entry");
-
-                    xmlWriter.WriteStartElement("key");
-                    xmlWriter.WriteAttributeString("type", keyObjectType);
-                    xmlWriter.WriteAttributeString("o", Serialize(keyObject, keyObjectType));
-                    xmlWriter.WriteEndElement();
-
-                    xmlWriter.WriteStartElement("value");
-                    xmlWriter.WriteAttributeString("type", valueObjectType);
-                    xmlWriter.WriteAttributeString("o", Serialize(valueObject, valueObjectType));
-                    xmlWriter.WriteEndElement();
-
-                    xmlWriter.WriteEndElement();
-                }
-
-                xmlWriter.WriteEndDocument();
-                xmlWriter.Close();
+                xmlWriter.WriteEndElement();
             }
+                    
+            xmlWriter.WriteEndDocument();
+            xmlWriter.Close();
 
-            return sw.ToString();
         }
+        return sw.ToString();
     }
 
+    //regex to match the two types referenced in the Dictionary
+    private static readonly Regex DictionaryType = new (
+        @"System\.Collections\.Generic\.Dictionary`2\[(.*),(.*)]"
+    );
     private bool IsDictionary(string type, out Type kType, out Type vType)
     {
         kType = null;
         vType = null;
 
-        //regex to match the two types referenced in the Dictionary
-        var r = new Regex(
-            string.Format("{0}{1},{1}{2}",
-                Regex.Escape("System.Collections.Generic.Dictionary`2["),
-                "(.*)",
-                Regex.Escape("]"))
-        );
 
         if (type == null)
             return false;
 
-        var match = r.Match(type);
+        var match = DictionaryType.Match(type);
 
         if (!match.Success)
             return false;

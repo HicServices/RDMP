@@ -25,6 +25,7 @@ namespace Rdmp.Core.Repositories;
 /// </summary>
 public class MEF
 {
+    // TODO: Cache/preload this for AOT later; figure out generic support
     private static Lazy<ReadOnlyDictionary<string, Type>> _types;
     private static Lazy<ReadOnlyDictionary<Type, Type[]>> _allTypes;
 
@@ -215,8 +216,12 @@ public class MEF
     /// <param name="genericType"></param>
     /// <param name="typeOfT"></param>
     /// <returns></returns>
-    public IEnumerable<Type> GetGenericTypes(Type genericType, Type typeOfT) =>
-        GetTypes(genericType.MakeGenericType(typeOfT));
+    public IEnumerable<Type> GetGenericTypes(Type genericType, Type typeOfT)
+    {
+        var target = genericType.MakeGenericType(typeOfT);
+        return _types.Value.Values.Where(t => !t.IsAbstract && !t.IsGenericType && target.IsAssignableFrom(t));
+        //return GetTypes(genericType.MakeGenericType(typeOfT));
+    }
 
     public IEnumerable<Type> GetAllTypes()
     {

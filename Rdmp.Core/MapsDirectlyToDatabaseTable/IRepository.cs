@@ -196,7 +196,7 @@ public interface IRepository
     bool SupportsObjectType(Type type);
 
     /// <summary>
-    /// Throw an Exception if the repository persists to a location that is currently innaccessible (e.g. a database)
+    /// Throw an Exception if the repository persists to a location that is currently inaccessible (e.g. a database)
     /// </summary>
     void TestConnection();
 

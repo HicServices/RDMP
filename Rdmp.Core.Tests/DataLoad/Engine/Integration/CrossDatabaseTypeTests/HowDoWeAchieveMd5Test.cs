@@ -31,19 +31,17 @@ internal class HowDoWeAchieveMd5Test:DatabaseTests
             $"SELECT {tbl.GetQuerySyntaxHelper().HowDoWeAchieveMd5(col.GetFullyQualifiedName())} FROM {tbl.GetFullyQualifiedName()}";
 
 
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            var cmd = db.Server.GetCommand(sql, con);
-            var value = cmd.ExecuteScalar();
+        using var con = db.Server.GetConnection();
+        con.Open();
+        var cmd = db.Server.GetCommand(sql, con);
+        var value = cmd.ExecuteScalar();
 
 
-            Console.WriteLine($"Value was:{value}");
+        Console.WriteLine($"Value was:{value}");
 
-            Assert.IsNotNull(value);
-            Assert.AreNotEqual("Fish", value);
-            Assert.GreaterOrEqual(value.ToString().Length, 32);
-        }
+        Assert.IsNotNull(value);
+        Assert.AreNotEqual("Fish",value);
+        Assert.GreaterOrEqual(value.ToString().Length,32);
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -68,17 +66,15 @@ internal class HowDoWeAchieveMd5Test:DatabaseTests
             $"SELECT {tbl.GetQuerySyntaxHelper().HowDoWeAchieveMd5(col.GetFullyQualifiedName())} FROM {tbl.GetFullyQualifiedName()}";
 
 
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
-            var cmd = db.Server.GetCommand(sql, con);
-            var value = cmd.ExecuteScalar();
+        using var con = db.Server.GetConnection();
+        con.Open();
+        var cmd = db.Server.GetCommand(sql, con);
+        var value = cmd.ExecuteScalar();
 
 
-            Console.WriteLine($"Value was:{value}");
+        Console.WriteLine($"Value was:{value}");
 
-            Assert.IsNotNull(value);
-            Assert.GreaterOrEqual(value.ToString().Length, 32);
-        }
+        Assert.IsNotNull(value);
+        Assert.GreaterOrEqual(value.ToString().Length, 32);
     }
 }

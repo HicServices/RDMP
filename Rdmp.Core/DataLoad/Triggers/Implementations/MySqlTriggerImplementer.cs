@@ -31,18 +31,16 @@ internal class MySqlTriggerImplementer : TriggerImplementer
 
         try
         {
-            using (var con = _server.GetConnection())
+            using var con = _server.GetConnection();
+            con.Open();
+
+            using(var cmd = _server.GetCommand($"DROP TRIGGER {GetTriggerName()}", con))
             {
-                con.Open();
-
-                using (var cmd = _server.GetCommand($"DROP TRIGGER {GetTriggerName()}", con))
-                {
-                    cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                    cmd.ExecuteNonQuery();
-                }
-
-                thingsThatWorkedDroppingTrigger = $"Dropped trigger {GetTriggerName()}";
+                cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+                cmd.ExecuteNonQuery();
             }
+
+            thingsThatWorkedDroppingTrigger = $"Dropped trigger {GetTriggerName()}";
         }
         catch (Exception exception)
         {
@@ -58,16 +56,12 @@ internal class MySqlTriggerImplementer : TriggerImplementer
         var sql = $@"CREATE TRIGGER {GetTriggerName()} BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
 {CreateTriggerBody()};";
 
-        using (var con = _server.GetConnection())
-        {
-            con.Open();
+        using var con = _server.GetConnection();
+        con.Open();
 
-            using (var cmd = _server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                cmd.ExecuteNonQuery();
-            }
-        }
+        using var cmd = _server.GetCommand(sql, con);
+        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+        cmd.ExecuteNonQuery();
 
         return creationSql;
     }
@@ -85,11 +79,9 @@ internal class MySqlTriggerImplementer : TriggerImplementer
 
     public static bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
     {
-        using (var con = table.Database.Server.GetConnection())
-        {
-            con.Open();
-            return UseOldDateTimeDefaultMethod(table.GetCommand("SELECT VERSION()", con).ExecuteScalar()?.ToString());
-        }
+        using var con = table.Database.Server.GetConnection();
+        con.Open();
+        return UseOldDateTimeDefaultMethod(table.GetCommand("SELECT VERSION()", con).ExecuteScalar()?.ToString());
     }
 
     public static bool UseOldDateTimeDefaultMethod(string version)
@@ -131,16 +123,15 @@ internal class MySqlTriggerImplementer : TriggerImplementer
 
     protected virtual string GetTriggerBody()
     {
-        using (var con = _server.GetConnection())
-        {
-            con.Open();
+        using var con = _server.GetConnection();
+        con.Open();
 
-            using(var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con))
-            using(var r = cmd.ExecuteReader())
-                while (r.Read())
-                    if (r["Trigger"].Equals(GetTriggerName()))
-                        return (string)r["Statement"];
-            }
+        using var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+        {
+            if (r["Trigger"].Equals(GetTriggerName()))
+                return (string) r["Statement"];
         }
 
         return null;

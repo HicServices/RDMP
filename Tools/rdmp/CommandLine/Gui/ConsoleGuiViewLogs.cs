@@ -116,9 +116,9 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
             X = 0,
             Y = Pos.Bottom(lblFilter),
             Width = Dim.Fill(),
-            Height = Dim.Fill(1)
+            Height = Dim.Fill(1),
+            TreeBuilder = this
         };
-        _treeView.TreeBuilder = this;
         _treeView.ObjectActivated += _treeView_ObjectActivated;
         Add(_treeView);
 

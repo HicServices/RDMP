@@ -60,11 +60,13 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     /// <param name="repository"></param>
     public void SetRepository(ICatalogueRepository repository)
     {
-        if (_encryptedString is FakeEncryptedString f)
+        if(_encryptedString is FakeEncryptedString f)
+        {
             _encryptedString = new EncryptedString(repository)
             {
                 Value = f.Value
             };
+        }            
     }
 
     /// <inheritdoc/>

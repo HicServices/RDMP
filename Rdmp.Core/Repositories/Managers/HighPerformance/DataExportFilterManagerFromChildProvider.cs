@@ -36,22 +36,20 @@ internal class DataExportFilterManagerFromChildProvider : DataExportFilterManage
             .GroupBy(f => f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
 
         var server = repository.DiscoveredServer;
-        using (var con = repository.GetConnection())
+        using var con = repository.GetConnection();
+        var r = server.GetCommand("SELECT *  FROM FilterContainerSubcontainers", con).ExecuteReader();
+        while(r.Read())
         {
-            var r = server.GetCommand("SELECT *  FROM FilterContainerSubcontainers", con).ExecuteReader();
-            while (r.Read())
-            {
-                var parentId = Convert.ToInt32(r["FilterContainer_ParentID"]);
-                var subcontainerId = Convert.ToInt32(r["FilterContainerChildID"]);
 
-                if (!_subcontainers.ContainsKey(parentId))
-                    _subcontainers.Add(parentId, new List<FilterContainer>());
+            var parentId = Convert.ToInt32(r["FilterContainer_ParentID"]);
+            var subcontainerId = Convert.ToInt32(r["FilterContainerChildID"]);
 
-                _subcontainers[parentId].Add(childProvider.AllContainers[subcontainerId]);
-            }
+            if(!_subcontainers.ContainsKey(parentId))
+                _subcontainers.Add(parentId,new List<FilterContainer>());
 
-            r.Close();
+            _subcontainers[parentId].Add(childProvider.AllContainers[subcontainerId]);
         }
+        r.Close();
     }
 
     /// <summary>

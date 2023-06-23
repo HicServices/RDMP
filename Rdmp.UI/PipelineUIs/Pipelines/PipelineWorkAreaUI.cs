@@ -31,7 +31,6 @@ public partial class PipelineWorkAreaUI : UserControl
     private PipelineDiagramUI _pipelineDiagram;
     private ArgumentCollectionUI _arumentsCollection1;
     private readonly IActivateItems _activator;
-    private IPipeline _pipeline;
     private List<AdvertisedPipelineComponentTypeUnderContext> _allComponents;
     private readonly IPipelineUseCase _useCase;
     private readonly ICatalogueRepository _catalogueRepository;
@@ -41,7 +40,6 @@ public partial class PipelineWorkAreaUI : UserControl
         ICatalogueRepository catalogueRepository)
     {
         _activator = activator;
-        _pipeline = pipeline;
         _useCase = useCase;
         _catalogueRepository = catalogueRepository;
 

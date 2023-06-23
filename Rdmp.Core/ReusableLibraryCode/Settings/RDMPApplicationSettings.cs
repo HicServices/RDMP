@@ -78,13 +78,11 @@ internal class RDMPApplicationSettings : ISettings
                 string oldValue = null;
 
                 if (store.FileExists(key))
-                    using (var stream = store.OpenFile(key, FileMode.Open))
-                    {
-                        using (var sr = new StreamReader(stream))
-                        {
-                            oldValue = sr.ReadToEnd();
-                        }
-                    }
+                {
+                    using var stream = store.OpenFile(key, FileMode.Open);
+                    using var sr = new StreamReader(stream);
+                    oldValue = sr.ReadToEnd();
+                }
 
                 using (var stream = store.OpenFile(key, FileMode.Create, FileAccess.Write))
                 {
@@ -119,13 +117,11 @@ internal class RDMPApplicationSettings : ISettings
 
                 // If the key exists, retrieve the value.
                 if (store.FileExists(key))
-                    using (var stream = store.OpenFile(key, FileMode.Open))
-                    {
-                        using (var sr = new StreamReader(stream))
-                        {
-                            str = sr.ReadToEnd();
-                        }
-                    }
+                {
+                    using var stream = store.OpenFile(key, FileMode.Open);
+                    using var sr = new StreamReader(stream);
+                    str = sr.ReadToEnd();
+                }
 
                 if (str == null)
                     return defaultValue;

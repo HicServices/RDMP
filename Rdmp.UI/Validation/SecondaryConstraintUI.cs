@@ -99,8 +99,8 @@ public partial class SecondaryConstraintUI : UserControl
             };
 
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
-
-            tableLayoutPanel1.Controls.Add(currentRowPanel, 0, i + 1);
+                
+            tableLayoutPanel1.Controls.Add(currentRowPanel,0,i+1);
 
 
             var lblName = new Label
@@ -122,8 +122,7 @@ public partial class SecondaryConstraintUI : UserControl
                     Checked = (bool)currentValue
                 };
 
-                boolControl.CheckStateChanged += (s, e) =>
-                    _requiredProperties[(int)boolControl.Tag].SetValue(SecondaryConstriant, boolControl.Checked, null);
+                boolControl.CheckStateChanged += (s, e) => _requiredProperties[(int) boolControl.Tag].SetValue(SecondaryConstriant, boolControl.Checked,null);
                 currentRowPanel.Controls.Add(boolControl);
             }
             else if (_requiredProperties[i].PropertyType == typeof(PredictionRule)) //Hard Typed property PredictionRule
@@ -245,7 +244,7 @@ public partial class SecondaryConstraintUI : UserControl
                     Text = desc.Description
                 };
 
-                lbl.Font = new Font(lbl.Font, FontStyle.Italic);
+                lbl.Font = new Font(lbl.Font,FontStyle.Italic);
 
                 //make some space for it
                 inflation += lbl.Height - 7;

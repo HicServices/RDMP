@@ -86,7 +86,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         {
             Checked = getProp(_collection)
         };
-        btn.CheckedChanged += (sender, e) => { setProp(_collection, ((ToolStripMenuItem)sender).Checked); };
+        btn.CheckedChanged += (sender,e) =>{setProp(_collection,((ToolStripMenuItem)sender).Checked);};
         btn.CheckedChanged += (s, e) => GenerateChart();
         btn.CheckOnClick = true;
         _flagOptions.Add(btn);

@@ -71,37 +71,34 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
             AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
 
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
+        using var con = server.GetConnection();
+        con.Open();
 
-            var sql = GetSQL();
+        var sql = GetSQL();
 
-            listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        if (listener != null)
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
 
-            var dt = new DataTable();
-            dt.BeginLoadData();
-            using (var cmd = server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = timeout;
+        var dt = new DataTable();
 
-                using (var da = server.GetDataAdapter(cmd))
-                {
-                    da.Fill(dt);
-                }
-            }
+        using (var cmd = server.GetCommand(sql, con))
+        {
+            cmd.CommandTimeout = timeout;
+                    
+            using(var da = server.GetDataAdapter(cmd))
+                da.Fill(dt);
+        }
+                
 
+        dt.TableName = TableName;
 
-            dt.TableName = TableName;
-            dt.EndLoadData();
-
-            listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        if (listener != null)
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"successfully read {dt.Rows.Count} rows from source"));
 
 
-            return dt;
-        }
+        return dt;
     }
 
     public DataTable TryGetPreview() => GetDataTable(10, null);

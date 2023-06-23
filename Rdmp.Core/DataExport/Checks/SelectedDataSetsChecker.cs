@@ -205,50 +205,50 @@ public class SelectedDataSetsChecker : ICheckable
             //Try to fetch TOP 1 data
             try
             {
-                using (var con = server.BeginNewTransactedConnection())
+                using var con = server.BeginNewTransactedConnection();
+                //incase user somehow manages to write a filter/transform that nukes data or something
+
+                DbCommand cmd;
+
+                try
                 {
-                    //in case user somehow manages to write a filter/transform that nukes data or something
-                    DbCommand cmd;
-
-                    try
-                    {
-                        cmd = server.GetCommand(request.QueryBuilder.SQL, con);
-                        cmd.CommandTimeout = timeout;
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs(
-                                $"/*About to send Request SQL :*/{Environment.NewLine}{request.QueryBuilder.SQL}",
-                                CheckResult.Success));
-                    }
-                    catch (QueryBuildingException e)
-                    {
-                        notifier.OnCheckPerformed(new CheckEventArgs($"Failed to assemble query for dataset {ds}",
-                            CheckResult.Fail, e));
-                        return;
-                    }
-
-                    try
-                    {
-                        using (var r = cmd.ExecuteReader())
-                        {
-                            if (r.Read())
-                                notifier.OnCheckPerformed(new CheckEventArgs(
-                                    $"Read at least 1 row successfully from dataset {ds}",
-                                    CheckResult.Success));
-                            else
-                                notifier.OnCheckPerformed(new CheckEventArgs(
-                                    $"Dataset {ds} is completely empty (when linked with the cohort). Extraction may fail if the Source does not allow empty extractions",
-                                    CheckResult.Warning));
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        notifier.OnCheckPerformed(server.GetQuerySyntaxHelper().IsTimeout(e)
-                            ? new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking, e, timeout)
-                            : new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e, ds));
-                    }
-
-                    con.ManagedTransaction.AbandonAndCloseConnection();
+                    cmd = server.GetCommand(request.QueryBuilder.SQL, con);
+                    cmd.CommandTimeout = timeout;
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            $"/*About to send Request SQL :*/{Environment.NewLine}{request.QueryBuilder.SQL}",
+                            CheckResult.Success));
                 }
+                catch (QueryBuildingException e)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Failed to assemble query for dataset {ds}",
+                        CheckResult.Fail, e));
+                    return;
+                }
+                    
+                try
+                {
+                    using var r = cmd.ExecuteReader();
+                    if (r.Read())
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"Read at least 1 row successfully from dataset {ds}",
+                            CheckResult.Success));
+                    else
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"Dataset {ds} is completely empty (when linked with the cohort). Extraction may fail if the Source does not allow empty extractions",
+                            CheckResult.Warning));
+                }
+                catch (Exception e)
+                {
+                    if (server.GetQuerySyntaxHelper().IsTimeout(e))
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking,e,timeout));
+                    }
+                    else
+                        notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e,ds));
+                }
+
+                con.ManagedTransaction.AbandonAndCloseConnection();
             }
             catch (Exception e)
             {

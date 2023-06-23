@@ -102,31 +102,26 @@ public class AllKeywordsDescribedTest : DatabaseTests
 
     private static IEnumerable<string> GetForeignKeys(DiscoveredServer server)
     {
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con)
-                .ExecuteReader();
+        using var con = server.GetConnection();
+        con.Open();
+        var r = server.GetCommand(@"select name from sys.foreign_keys where delete_referential_action = 0", con).ExecuteReader();
 
-            while (r.Read())
-                yield return (string)r["name"];
-        }
+        while (r.Read())
+            yield return (string)r["name"];
     }
 
     private static IEnumerable<string> GetIndexes(DiscoveredServer server)
     {
-        using (var con = server.GetConnection())
-        {
-            con.Open();
-            var r = server.GetCommand(@"select si.name from sys.indexes si 
+        using var con = server.GetConnection();
+        con.Open();
+        var r = server.GetCommand(@"select si.name from sys.indexes si 
   JOIN sys.objects so ON si.[object_id] = so.[object_id]
   WHERE
   so.type = 'U'  AND is_primary_key = 0
   and si.name is not null
 and so.name <> 'sysdiagrams'", con).ExecuteReader();
 
-            while (r.Read())
-                yield return (string)r["name"];
-        }
+        while (r.Read())
+            yield return (string)r["name"];
     }
 }

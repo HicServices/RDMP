@@ -18,70 +18,60 @@ public class ANOStoreFunctionalityTests : TestsRequiringFullAnonymisationSuite
     public void CanAccessANODatabase_Directly()
     {
         var server = ANOStore_Database.Server;
-        using (var con = server.GetConnection())
-        {
-            con.Open();
+        using var con = server.GetConnection();
+        con.Open();
 
-            var cmd = server.GetCommand("Select version from RoundhousE.Version", con);
-            var version = new Version(cmd.ExecuteScalar().ToString());
+        var cmd = server.GetCommand("Select version from RoundhousE.Version", con);
+        var version = new Version(cmd.ExecuteScalar().ToString());
 
-            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+        Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
 
-            con.Close();
-        }
+        con.Close();
     }
 
     [Test]
     public void CanAccessANODatabase_ViaExternalServerPointer()
     {
-        using (var connection = DataAccessPortal
-                   .ExpectServer(ANOStore_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection())
+        using var connection = DataAccessPortal.GetInstance().ExpectServer(ANOStore_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection();
+        connection.Open();
+
+        using (var cmd =
+               DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
         {
-            connection.Open();
-
-            using (var cmd =
-                   DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
-            {
-                var version = new Version(cmd.ExecuteScalar().ToString());
-                Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
-            }
-
-            connection.Close();
+            var version = new Version(cmd.ExecuteScalar().ToString());
+            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
         }
+                
+        connection.Close();
     }
 
     [Test]
     public void CanAccessIdentifierDumpDatabase_Directly()
     {
-        using (var con = IdentifierDump_Database.Server.GetConnection())
-        {
-            con.Open();
+        using var con = IdentifierDump_Database.Server.GetConnection();
+        con.Open();
 
-            var cmd = IdentifierDump_Database.Server.GetCommand("Select version from RoundhousE.Version", con);
-            var version = new Version(cmd.ExecuteScalar().ToString());
+        var cmd = IdentifierDump_Database.Server.GetCommand("Select version from RoundhousE.Version", con);
+        var version = new Version(cmd.ExecuteScalar().ToString());
 
-            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+        Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
 
-            con.Close();
-        }
+        con.Close();
     }
 
     [Test]
     public void CanAccessIdentifierDumpDatabase_ViaExternalServerPointer()
     {
-        using (var connection = DataAccessPortal
-                   .ExpectServer(IdentifierDump_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection())
+        using var connection = DataAccessPortal.GetInstance().ExpectServer(IdentifierDump_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection();
+        connection.Open();
+
+        using (var cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
         {
-            connection.Open();
-
-            using (var cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
-            {
-                var version = new Version(cmd.ExecuteScalar().ToString());
-                Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
-            }
-
-
-            connection.Close();
+            var version = new Version(cmd.ExecuteScalar().ToString());
+            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
         }
+                
+
+        connection.Close();
     }
 }

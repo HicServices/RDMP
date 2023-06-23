@@ -141,38 +141,34 @@ FROM
     {
         var server = DataAccessPortal.ExpectServer(_parent, DataAccessContext.InternalDataProcessing);
 
-        using (var con = server.GetConnection())
-        {
-            con.Open();
+        var server = DataAccessPortal.GetInstance().ExpectServer(_parent, DataAccessContext.InternalDataProcessing);
 
-            using (var cmd = server.GetCommand(
-                       SqlToCountLetters
-                           .Replace("FIELDTOEVALUATE", _columnInfo.GetRuntimeName())
-                           .Replace("TABLETOEVALUATE", _parent.Name)
-                       , con))
-            {
-                cmd.CommandTimeout = timeoutInMilliseconds;
-                using (var reader = cmd.ExecuteReader())
-                {
-                    reader.Read();
+        using var con = server.GetConnection();
+        con.Open();
 
-                    var longestString = int.Parse(reader[0].ToString());
-                    var largestNumberOfCharactersSpotted = int.Parse(reader[1].ToString());
+        using var cmd = server.GetCommand(
+            SqlToCountLetters
+                .Replace("FIELDTOEVALUATE", _columnInfo.GetRuntimeName())
+                .Replace("TABLETOEVALUATE", _parent.Name)
+            , con);
+        cmd.CommandTimeout = timeoutInMilliseconds;
+        using var reader = cmd.ExecuteReader();
+        reader.Read();
 
-                    var resultPattern = "";
+        var longestString = int.Parse(reader[0].ToString());
+        var largestNumberOfCharactersSpotted = int.Parse(reader[1].ToString());
 
-                    for (var i = 0; i < largestNumberOfCharactersSpotted; i++)
-                        resultPattern += 'Z';
+        var resultPattern = "";
 
-                    for (var i = 0; i < longestString - largestNumberOfCharactersSpotted; i++)
-                        resultPattern += '9';
+        for (var i = 0; i < largestNumberOfCharactersSpotted; i++)
+            resultPattern += 'Z';
 
-                    //double up on the first character type (ask chris hall about this)
-                    resultPattern = resultPattern.ToCharArray()[0] + resultPattern;
+        for (var i = 0; i < longestString - largestNumberOfCharactersSpotted; i++)
+            resultPattern += '9';
 
-                    return resultPattern;
-                }
-            }
-        }
+        //double up on the first character type (ask chris hall about this)
+        resultPattern = resultPattern.ToCharArray()[0] + resultPattern;
+
+        return resultPattern;
     }
 }

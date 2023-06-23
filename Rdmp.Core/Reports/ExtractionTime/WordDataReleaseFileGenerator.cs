@@ -56,34 +56,31 @@ public class WordDataReleaseFileGenerator : DocXHelper
             : new FileInfo(saveAsFilename);
 
         // Create an instance of Word  and make it visible.=
-        using (var document = GetNewDocFile(f))
-        {
-            //actually changes it to landscape :)
-            SetLandscape(document);
+        using var document = GetNewDocFile(f);
+        //actually changes it to landscape :)
+        SetLandscape(document);
+                               
+        InsertHeader(document, $"Project:{Project.Name}",1);
+        InsertHeader(document, Configuration.Name,2);
+                
+        var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
-            InsertHeader(document, $"Project:{Project.Name}", 1);
-            InsertHeader(document, Configuration.Name, 2);
+        if(disclaimer != null)
+            InsertParagraph(document,disclaimer);
 
-            var disclaimer =
-                _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
+        CreateTopTable1(document);
 
-            if (disclaimer != null)
-                InsertParagraph(document, disclaimer);
+        InsertParagraph(document, Environment.NewLine);
 
-            CreateTopTable1(document);
+        CreateCohortDetailsTable(document);
 
-            InsertParagraph(document, Environment.NewLine);
+        InsertParagraph(document,Environment.NewLine);
 
-            CreateCohortDetailsTable(document);
-
-            InsertParagraph(document, Environment.NewLine);
-
-            CreateFileSummary(document);
-
-            //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
-            if (string.IsNullOrWhiteSpace(saveAsFilename))
-                ShowFile(f);
-        }
+        CreateFileSummary(document);
+                                
+        //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
+        if (string.IsNullOrWhiteSpace(saveAsFilename))
+            ShowFile(f);
     }
 
     private void CreateTopTable1(XWPFDocument document)
@@ -128,19 +125,15 @@ public class WordDataReleaseFileGenerator : DocXHelper
         var ect = Cohort.ExternalCohortTable;
 
         var db = ect.Discover();
-        using (var con = db.Server.GetConnection())
-        {
-            con.Open();
+        using var con = db.Server.GetConnection();
+        con.Open();
 
-            var sql =
-                $"SELECT  TOP 1 LEFT({Cohort.GetReleaseIdentifier()},3) FROM {ect.TableName} WHERE {Cohort.WhereSQL()}";
+        var sql =
+            $"SELECT  TOP 1 LEFT({Cohort.GetReleaseIdentifier()},3) FROM {ect.TableName} WHERE {Cohort.WhereSQL()}";
 
-            using (var cmd = db.Server.GetCommand(sql, con))
-            {
-                cmd.CommandTimeout = CohortCountTimeoutInSeconds;
-                return (string)cmd.ExecuteScalar();
-            }
-        }
+        using var cmd = db.Server.GetCommand(sql, con);
+        cmd.CommandTimeout = CohortCountTimeoutInSeconds;
+        return (string)cmd.ExecuteScalar();
     }
 
     private void CreateCohortDetailsTable(XWPFDocument document)

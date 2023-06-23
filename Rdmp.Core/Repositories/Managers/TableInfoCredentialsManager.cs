@@ -164,36 +164,31 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 
         var toReturn = new Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>();
 
-        using (var con = _repository.GetConnection())
+        using var con = _repository.GetConnection();
+        using var cmd = DatabaseCommandHelper.GetCommand(
+            "SELECT DataAccessCredentials_ID,TableInfo_ID,Context FROM DataAccessCredentials_TableInfo",
+            con.Connection, con.Transaction);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
         {
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       "SELECT DataAccessCredentials_ID,TableInfo_ID,Context FROM DataAccessCredentials_TableInfo",
-                       con.Connection, con.Transaction))
-            {
-                using (var r = cmd.ExecuteReader())
-                {
-                    while (r.Read())
-                    {
-                        //get the context
-                        var context = GetContext(r);
+            //get the context
+            var context = GetContext(r);
 
-                        var tid = Convert.ToInt32(r["TableInfo_ID"]);
-                        var cid = Convert.ToInt32(r["DataAccessCredentials_ID"]);
+            var tid = Convert.ToInt32(r["TableInfo_ID"]);
+            var cid = Convert.ToInt32(r["DataAccessCredentials_ID"]);
+                    
+            //async error? someone created a new credential usage between the allCredentials array being fetched and us reaching this methods execution?
+            if (!allTablesDictionary.ContainsKey(tid) || !allCredentialsDictionary.ContainsKey(cid))
+                continue;//should be super rare never gonna happen
 
-                        //async error? someone created a new credential usage between the allCredentials array being fetched and us reaching this methods execution?
-                        if (!allTablesDictionary.ContainsKey(tid) || !allCredentialsDictionary.ContainsKey(cid))
-                            continue; //should be super rare never gonna happen
+            var t = allTablesDictionary[tid];
+            var c = allCredentialsDictionary[cid];
 
-                        var t = allTablesDictionary[tid];
-                        var c = allCredentialsDictionary[cid];
+            if(!toReturn.ContainsKey(t))
+                toReturn.Add(t,new List<DataAccessCredentialUsageNode>());
 
-                        if (!toReturn.ContainsKey(t))
-                            toReturn.Add(t, new List<DataAccessCredentialUsageNode>());
+            toReturn[t].Add(new DataAccessCredentialUsageNode(c,t,context));
 
-                        toReturn[t].Add(new DataAccessCredentialUsageNode(c, t, context));
-                    }
-                }
-            }
         }
 
         return toReturn;

@@ -55,9 +55,9 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
 
         _scorer = new SearchablesMatchScorer
         {
-            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),
-                StringComparer.CurrentCultureIgnoreCase)
+            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
         };
+
     }
 
     protected override void AddMoreButtonsAfter(Window win, Button btnCancel)

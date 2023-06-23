@@ -94,10 +94,8 @@ public class DublinCoreDefinition
 
         doc.Root.Add(new XElement(dc + "format", new XAttribute(xsi + "type", "dcterms:IMT"), Format));
 
-        using (var sw = new StreamWriter(to))
-        {
-            sw.Write(doc.ToString(SaveOptions.None));
-        }
+        using var sw = new StreamWriter(to);
+        sw.Write(doc.ToString(SaveOptions.None));
     }
 
     /// <summary>

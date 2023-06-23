@@ -15,9 +15,8 @@ namespace Rdmp.Core.Repositories;
 /// </summary>
 public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 {
-    public ICatalogueRepository CatalogueRepository { get; protected set; }
-    public IDataExportRepository DataExportRepository { get; protected set; }
-    private readonly Dictionary<string, Type> _cachedTypesByNameDictionary = new();
+    public ICatalogueRepository CatalogueRepository { get; protected init; }
+    public IDataExportRepository DataExportRepository { get; protected init; }
 
     /// <summary>
     /// Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the Catalogue/Data export databases only.
@@ -74,30 +73,9 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
     }
 
-    private object oLockDictionary = new();
     private Type GetTypeByName(string s, Type expectedBaseClassType)
     {
-        Type toReturn;
-        lock (oLockDictionary)
-        {
-            if (_cachedTypesByNameDictionary.TryGetValue(s, out var type))
-                return type;
-
-            toReturn = CatalogueRepository.MEF.GetType(s, expectedBaseClassType);
-
-            if (toReturn == null)
-                throw new TypeLoadException($"Could not find Type called '{s}'");
-
-            if (expectedBaseClassType != null)
-                if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                    throw new TypeLoadException(
-                        $"Found Type '{s}' which we managed to find but it did not match an expected base Type ({expectedBaseClassType})");
-
-            //cache known type to not hammer reflection all the time!
-            _cachedTypesByNameDictionary.Add(s, toReturn);
-        }
-
-        return toReturn;
+        return CatalogueRepository.MEF.GetType(s, expectedBaseClassType) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
     }
 
     /// <inheritdoc/>
@@ -113,10 +91,10 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     /// <inheritdoc/>
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
     {
-        if (CatalogueRepository.SupportsObjectType(t))
-            return CatalogueRepository.GetObjectByID(t, value);
-        if (DataExportRepository.SupportsObjectType(t))
-            return DataExportRepository.GetObjectByID(t, value);
+        if(CatalogueRepository.SupportsObjectType(t))
+            return CatalogueRepository.GetObjectByID(t,value);
+        if(DataExportRepository.SupportsObjectType(t))
+            return DataExportRepository.GetObjectByID(t,value);
         throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
     }
 

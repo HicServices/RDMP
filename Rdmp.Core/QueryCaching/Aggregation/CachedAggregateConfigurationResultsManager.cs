@@ -105,33 +105,27 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
         var syntax = _database.Server.GetQuerySyntaxHelper();
         var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
-        using (var con = _server.GetConnection())
-        {
-            con.Open();
+        using var con = _server.GetConnection();
+        con.Open();
 
-            using (var cmd = DatabaseCommandHelper.GetCommand(
-                       $@"Select 
+        using var cmd = DatabaseCommandHelper.GetCommand(
+            $@"Select 
 {syntax.EnsureWrapped("TableName")},
 {syntax.EnsureWrapped("SqlExecuted")} 
 from {mgrTable.GetFullyQualifiedName()} 
 WHERE 
 {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID} AND
-{syntax.EnsureWrapped("Operation")} = '{operation}'", con))
+{syntax.EnsureWrapped("Operation")} = '{operation}'", con);
+        using var r = cmd.ExecuteReader();
+        if (r.Read())
+        {
+            if (IsMatchOnSqlExecuted(r, currentSql))
             {
-                using (var r = cmd.ExecuteReader())
-                {
-                    if (r.Read())
-                    {
-                        if (IsMatchOnSqlExecuted(r, currentSql))
-                        {
-                            var tableName = r["TableName"].ToString();
-                            return _database.ExpectTable(tableName);
-                        }
-
-                        return null; //this means that there was outdated SQL, we could show this to user at some point
-                    }
-                }
+                var tableName = r["TableName"].ToString();
+                return _database.ExpectTable(tableName);
             }
+
+            return null; //this means that there was outdated SQL, we could show this to user at some point
         }
 
         return null;
@@ -167,38 +161,36 @@ WHERE
         //Do not change Types of source columns unless there is an explicit override
         arguments.Results.SetDoNotReType(true);
 
-        using (var con = _server.GetConnection())
+        using var con = _server.GetConnection();
+        con.Open();
+                
+        var nameWeWillGiveTableInCache = $"{operation}_AggregateConfiguration{configuration.ID}";
+
+        //either it has no name or it already has name we want so its ok
+        arguments.Results.TableName = nameWeWillGiveTableInCache;
+
+        //add explicit types
+        var tbl = _database.ExpectTable(nameWeWillGiveTableInCache);
+        if(tbl.Exists())
+            tbl.Drop();
+
+        tbl = _database.CreateTable(nameWeWillGiveTableInCache, arguments.Results, arguments.ExplicitColumns);
+
+        if (!tbl.Exists())
+            throw new Exception("Cache table did not exist even after CreateTable completed without error!");
+
+        var mgrTable = _database.ExpectTable(ResultsManagerTable);
+
+        mgrTable.Insert(new Dictionary<string, object>
         {
-            con.Open();
+            { "Committer", Environment.UserName},
+            { "AggregateConfiguration_ID", configuration.ID},
+            { "SqlExecuted", arguments.SQL.Trim()},
+            { "Operation", operation.ToString()},
+            { "TableName", tbl.GetRuntimeName()}
+        });
 
-            var nameWeWillGiveTableInCache = $"{operation}_AggregateConfiguration{configuration.ID}";
-
-            //either it has no name or it already has name we want so its ok
-            arguments.Results.TableName = nameWeWillGiveTableInCache;
-
-            //add explicit types
-            var tbl = _database.ExpectTable(nameWeWillGiveTableInCache);
-            if (tbl.Exists())
-                tbl.Drop();
-
-            tbl = _database.CreateTable(nameWeWillGiveTableInCache, arguments.Results, arguments.ExplicitColumns);
-
-            if (!tbl.Exists())
-                throw new Exception("Cache table did not exist even after CreateTable completed without error!");
-
-            var mgrTable = _database.ExpectTable(ResultsManagerTable);
-
-            mgrTable.Insert(new Dictionary<string, object>
-            {
-                { "Committer", Environment.UserName},
-                { "AggregateConfiguration_ID", configuration.ID},
-                { "SqlExecuted", arguments.SQL.Trim()},
-                { "Operation", operation.ToString()},
-                { "TableName", tbl.GetRuntimeName()}
-            });
-
-            arguments.CommitTableDataCompleted(tbl);
-        }
+        arguments.CommitTableDataCompleted(tbl);
     }
 
     /// <summary>
@@ -214,26 +206,23 @@ WHERE
         var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
         if (table != null)
-            using (var con = _server.GetConnection())
-            {
-                con.Open();
+        {
+            using var con = _server.GetConnection();
+            con.Open();
 
-                //drop the data
-                _database.ExpectTable(table.GetRuntimeName()).Drop();
+            //drop the data
+            _database.ExpectTable(table.GetRuntimeName()).Drop();
+                    
+            //delete the record!
+            using var cmd = DatabaseCommandHelper.GetCommand(
+                $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'", con);
+            var deletedRows = cmd.ExecuteNonQuery();
+            if(deletedRows != 1)
+                throw new Exception(
+                    $"Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation {operation} but there were {deletedRows} affected records");
 
-                //delete the record!
-                using (var cmd = DatabaseCommandHelper.GetCommand(
-                           $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'",
-                           con))
-                {
-                    var deletedRows = cmd.ExecuteNonQuery();
-                    if (deletedRows != 1)
-                        throw new Exception(
-                            $"Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation {operation} but there were {deletedRows} affected records");
-                }
-
-                return true;
-            }
+            return true;
+        }
 
         return false;
     }

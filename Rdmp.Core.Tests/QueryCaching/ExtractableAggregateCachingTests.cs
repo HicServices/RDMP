@@ -105,18 +105,13 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
         dim.DeleteInDatabase();
 
 
-        using (var con = DataAccessPortal
-                   .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
-        {
-            var table = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.ExtractableAggregateResults);
-
-            con.Open();
-            using (var cmd = DatabaseCommandHelper.GetCommand($"Select * from {table.GetFullyQualifiedName()}", con))
-            using (var r = cmd.ExecuteReader())
-            {
-                Assert.IsTrue(r.Read());
-                Assert.AreEqual("fishy!", r["Col1"]);
-            }
-        }
+        using var con = DataAccessPortal.GetInstance().ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection();
+        var table = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.ExtractableAggregateResults);
+    
+        con.Open();
+        using var cmd = DatabaseCommandHelper.GetCommand($"Select * from {table.GetFullyQualifiedName()}", con);
+        using var r = cmd.ExecuteReader();
+        Assert.IsTrue(r.Read());
+        Assert.AreEqual("fishy!",r["Col1"]);
     }
 }

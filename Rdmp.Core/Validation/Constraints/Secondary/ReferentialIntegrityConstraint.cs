@@ -165,12 +165,10 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             con.Open();
             try
             {
-                using (var cmd = DatabaseCommandHelper.GetCommand(
-                           $"SELECT TOP 1 {OtherColumnInfo} FROM {tableInfo} WHERE {OtherColumnInfo} IS NOT NULL", con))
-                {
-                    cmd.CommandTimeout = 5;
-                    itemToValidate = cmd.ExecuteScalar();
-                }
+                using var cmd = DatabaseCommandHelper.GetCommand(
+                    $"SELECT TOP 1 {OtherColumnInfo} FROM {tableInfo} WHERE {OtherColumnInfo} IS NOT NULL", con);
+                cmd.CommandTimeout = 5;
+                itemToValidate = cmd.ExecuteScalar();
             }
             catch (Exception e)
             {
@@ -218,36 +216,31 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         var sqlToFetchValues = $"Select distinct {OtherColumnInfo} from {tableInfo}";
 
         //open connection
-        using (var con = GetConnectionToOtherTable(tableInfo))
+        using var con = GetConnectionToOtherTable(tableInfo);
+        con.Open();
+        try
         {
-            con.Open();
-            try
-            {
-                //send the select
-                using (var cmd = DatabaseCommandHelper.GetCommand(sqlToFetchValues, con))
-                using (var reader = cmd.ExecuteReader())
-                {
-                    var runtimeName = OtherColumnInfo.GetRuntimeName();
+            //send the select
+            using var cmd = DatabaseCommandHelper.GetCommand(sqlToFetchValues, con);
+            using var reader = cmd.ExecuteReader();
+            var runtimeName = OtherColumnInfo.GetRuntimeName();
 
-                    //store the values in the HashSet
-                    while (reader.Read())
-                    {
-                        var obj = reader[runtimeName];
-                        if (obj != null && obj != DBNull.Value)
-                        {
-                            var strValue = obj.ToString();
-                            if (!string.IsNullOrWhiteSpace(strValue))
-                                _uniqueValues.Add(strValue);
-                        }
-                    }
+            //store the values in the HashSet
+            while (reader.Read())
+            {
+                var obj = reader[runtimeName];
+                if(obj != null && obj != DBNull.Value)
+                {
+                    var strValue = obj.ToString();
+                    if(!string.IsNullOrWhiteSpace(strValue))
+                        _uniqueValues.Add(strValue);
                 }
             }
-            catch (Exception e)
-            {
-                throw new Exception(
-                    $"Failed to execute SQL '{sqlToFetchValues}' under context {DataAccessContext.InternalDataProcessing}",
-                    e);
-            }
+        }
+        catch (Exception e)
+        {
+            throw new Exception(
+                $"Failed to execute SQL '{sqlToFetchValues}' under context {DataAccessContext.InternalDataProcessing}",e);
         }
     }
 

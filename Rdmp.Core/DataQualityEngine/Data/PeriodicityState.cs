@@ -59,10 +59,9 @@ public class PeriodicityState
 
         var t = evaluation.DQERepository;
 
-        using (var con = evaluation.DQERepository.GetConnection())
-        {
-            var sql =
-                @$"SELECT 
+        using var con = evaluation.DQERepository.GetConnection();
+        var sql = 
+            @$"SELECT 
       {t.Wrap("Year")}
       ,{t.Wrap("Month")}
       ,RowEvaluation
@@ -71,26 +70,26 @@ public class PeriodicityState
     where
   Evaluation_ID = ${evaluation.ID} and PivotCategory = 'ALL' ORDER BY {t.Wrap("Year")},{t.Wrap("Month")}";
 
-            using var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
-            using var r = cmd.ExecuteReader();
-            while (r.Read())
+        using var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+        {
+            var date = new DateTime((int) r["Year"], (int) r["Month"], 1);
+
+            switch (discardOutliers)
             {
-                var date = new DateTime((int) r["Year"], (int) r["Month"], 1);
+                //discard outliers before start
+                case true when result.Item1.HasValue && date < result.Item1.Value:
+                //discard outliers after end
+                case true when result.Item2.HasValue && date > result.Item2.Value:
+                    continue;
+            }
 
-                switch (discardOutliers)
-                {
-                    //discard outliers before start
-                    case true when result.Item1.HasValue && date < result.Item1.Value:
-                    //discard outliers after end
-                    case true when result.Item2.HasValue && date > result.Item2.Value:
-                        continue;
-                }
+            toReturn.TryAdd(date, new ArchivalPeriodicityCount());
 
-                toReturn.TryAdd(date, new ArchivalPeriodicityCount());
+            var toIncrement = toReturn[date];
 
-                var toIncrement = toReturn[date];
-
-                /*
+            /*
                          *
      Correct
      InvalidatesRow
@@ -98,21 +97,20 @@ public class PeriodicityState
      Wrong
                          * */
 
-                switch ((string)r["RowEvaluation"])
-                {
-                    case "Correct": 
-                        toIncrement.CountGood += (int) r["CountOfRecords"];
-                        toIncrement.Total += (int)r["CountOfRecords"];
-                        break;
-                    case "InvalidatesRow": toIncrement.Total += (int)r["CountOfRecords"];
-                        break;
-                    case "Missing": toIncrement.Total += (int)r["CountOfRecords"];
-                        break;
-                    case "Wrong": toIncrement.Total += (int)r["CountOfRecords"];
-                        break;
-                    default:throw new ArgumentOutOfRangeException(
-                        $"Unexpected RowEvaluation '{r["RowEvaluation"]}'");
-                }
+            switch ((string)r["RowEvaluation"])
+            {
+                case "Correct": 
+                    toIncrement.CountGood += (int) r["CountOfRecords"];
+                    toIncrement.Total += (int)r["CountOfRecords"];
+                    break;
+                case "InvalidatesRow": toIncrement.Total += (int)r["CountOfRecords"];
+                    break;
+                case "Missing": toIncrement.Total += (int)r["CountOfRecords"];
+                    break;
+                case "Wrong": toIncrement.Total += (int)r["CountOfRecords"];
+                    break;
+                default:throw new ArgumentOutOfRangeException(
+                    $"Unexpected RowEvaluation '{r["RowEvaluation"]}'");
             }
         }
 
@@ -131,59 +129,59 @@ public class PeriodicityState
     public static DataTable GetPeriodicityForDataTableForEvaluation(Evaluation evaluation, string pivotCategoryValue,
         bool pivot)
     {
-        using (var con = evaluation.DQERepository.GetConnection())
-        {
-            var sql = pivot
-                ? string.Format(PeriodicityPivotSql, evaluation.ID, pivotCategoryValue)
-                : $@"Select [Evaluation_ID]
+        using var con = evaluation.DQERepository.GetConnection();
+        var sql = "";
+
+        if (pivot)
+            sql = string.Format(PeriodicityPivotSql, evaluation.ID, pivotCategoryValue);
+        else
+            sql = $@"Select [Evaluation_ID]
       ,CAST([Year] as varchar(4)) + '-' + datename(month,dateadd(month, [Month] - 1, 0)) as YearMonth
       ,[CountOfRecords]
       ,[RowEvaluation] from PeriodicityState where Evaluation_ID={evaluation.ID} AND PivotCategory = '{pivotCategoryValue}'";
 
 
-            using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
-            using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
-            {
-                var dt = new DataTable();
-                da.Fill(dt);
+        using var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
+        using var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+        var dt = new DataTable();
+        da.Fill(dt);
 
-                // if there are no rows (table is empty) return null instead
-                if (dt.Columns.Count == 0 || dt.Rows.Count == 0) return null;
-
-                if (pivot)
-                {
-                    dt.Columns["Correct"].SetOrdinal(3);
-                    dt.Columns["Wrong"].SetOrdinal(4);
-                    dt.Columns["Missing"].SetOrdinal(5);
-                    dt.Columns["InvalidatesRow"].SetOrdinal(6);
-                }
-
-                return dt;
-            }
+        // if there are no rows (table is empty) return null instead
+        if(dt.Columns.Count == 0 || dt.Rows.Count == 0)
+        {
+            return null;
         }
+
+        if(pivot)
+        {
+            dt.Columns["Correct"].SetOrdinal(3);
+            dt.Columns["Wrong"].SetOrdinal(4);
+            dt.Columns["Missing"].SetOrdinal(5);
+            dt.Columns["InvalidatesRow"].SetOrdinal(6);
+        }
+
+        return dt;
     }
 
     public void Commit(Evaluation evaluation, string pivotCategory)
     {
-        using (var con = evaluation.DQERepository.GetConnection())
+        using var con = evaluation.DQERepository.GetConnection();
+        if (IsCommitted)
+            throw new NotSupportedException("PeriodicityState was already committed");
+
+        var t = evaluation.DQERepository;
+
+        var sql =
+            $"INSERT INTO PeriodicityState(Evaluation_ID,{t.Wrap("Year")},{t.Wrap("Month")},CountOfRecords,RowEvaluation,PivotCategory)VALUES({evaluation.ID},{Year},{Month},{CountOfRecords},@RowEvaluation,@PivotCategory)";
+
+        using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
         {
-            if (IsCommitted)
-                throw new NotSupportedException("PeriodicityState was already committed");
-
-            var t = evaluation.DQERepository;
-
-            var sql =
-                $"INSERT INTO PeriodicityState(Evaluation_ID,{t.Wrap("Year")},{t.Wrap("Month")},CountOfRecords,RowEvaluation,PivotCategory)VALUES({evaluation.ID},{Year},{Month},{CountOfRecords},@RowEvaluation,@PivotCategory)";
-
-            using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
-            {
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@RowEvaluation", cmd, RowEvaluation);
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@PivotCategory", cmd, pivotCategory);
-                cmd.ExecuteNonQuery();
-            }
-
-            IsCommitted = true;
+            DatabaseCommandHelper.AddParameterWithValueToCommand("@RowEvaluation", cmd, RowEvaluation);
+            DatabaseCommandHelper.AddParameterWithValueToCommand("@PivotCategory", cmd, pivotCategory);
+            cmd.ExecuteNonQuery();
         }
+
+        IsCommitted = true;
     }
 
     private const string PeriodicityPivotSql = @"

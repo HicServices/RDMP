@@ -104,18 +104,15 @@ public class DocXHelper
 
     protected static XWPFPicture GetPicture(XWPFRun run, Image bmp)
     {
-        using (var ms = new MemoryStream())
-        {
-            bmp.SaveAsPng(ms);
-
-            ms.Seek(0, 0);
-
-            // Add an image into the document.
-            var picture = run.AddPicture(ms, PICTURE_TYPE_PNG, "", Units.ToEMU(bmp.Width * PICTURE_SCALING),
-                Units.ToEMU(bmp.Height * PICTURE_SCALING));
-
-            return picture;
-        }
+        using var ms = new MemoryStream();
+        bmp.SaveAsPng(ms);
+                
+        ms.Seek(0, 0);
+                
+        // Add an image into the document.
+        var picture = run.AddPicture(ms,PICTURE_TYPE_PNG,"",Units.ToEMU(bmp.Width * PICTURE_SCALING), Units.ToEMU(bmp.Height *PICTURE_SCALING));
+                
+        return picture;
     }
 
     protected static XWPFTable InsertTable(XWPFDocument document, int rowCount, int colCount)

@@ -54,8 +54,7 @@ public class RDMPSingleControlTabMenu : ContextMenuStrip
         Items.Add("Refresh", FamFamFamIcons.arrow_refresh.ImageToBitmap(),
             (s, e) => _tab.HandleUserRequestingTabRefresh(activator));
 
-        var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(),
-            (s, e) => _tab.ShowHelp(activator))
+        var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(), (s, e) => _tab.ShowHelp(activator))
         {
             ShortcutKeys = Keys.F1
         };

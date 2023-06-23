@@ -439,6 +439,13 @@ public partial class ChoosePlatformDatabasesUI : Form
                 InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName
             };
 
+            if (sfd.ShowDialog() == DialogResult.OK)
+            {
+                Filter = "Yaml|*.yaml",
+                Title = "Save yaml",
+                InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName
+            };
+
             if (sfd.ShowDialog() == DialogResult.OK) File.WriteAllText(sfd.FileName, yaml);
         }
         catch (Exception ex)

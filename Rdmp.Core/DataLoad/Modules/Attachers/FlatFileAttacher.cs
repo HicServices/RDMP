@@ -116,67 +116,63 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     private void LoadFile(DiscoveredTable tableToLoad, FileInfo fileToLoad, DiscoveredDatabase dbInfo, Stopwatch timer,
         IDataLoadJob job, GracefulCancellationToken token)
     {
-        using (var con = dbInfo.Server.GetConnection())
+        using var con = dbInfo.Server.GetConnection();
+        var dt = tableToLoad.GetDataTable(0);
+
+        using var insert = tableToLoad.BeginBulkInsert(Culture);
+        // setup bulk insert it into destination
+        insert.Timeout = 500000;
+
+        //if user wants to use a specific explicit format for datetimes
+        if(ExplicitDateTimeFormat != null)
+            insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[]{ExplicitDateTimeFormat};
+
+        //bulk insert ito destination
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to open file {fileToLoad.FullName}"));
+        OpenFile(fileToLoad,job,token);
+
+        //confirm the validity of the headers
+        ConfirmFlatFileHeadersAgainstDataTable(dt,job);
+
+        con.Open();
+
+        //now we will read data out of the file in batches
+        var batchNumber = 1;
+        var maxBatchSize = 10000;
+        var recordsCreatedSoFar = 0;
+                
+        try
         {
-            var dt = tableToLoad.GetDataTable(0);
-
-            using (var insert = tableToLoad.BeginBulkInsert(Culture))
+            //while there is data to be loaded into table 
+            while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize,token) != 0)
             {
-                // setup bulk insert it into destination
-                insert.Timeout = 500000;
-
-                //if user wants to use a specific explicit format for datetimes
-                if (ExplicitDateTimeFormat != null)
-                    insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[] { ExplicitDateTimeFormat };
-
-                //bulk insert ito destination
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"About to open file {fileToLoad.FullName}"));
-                OpenFile(fileToLoad, job, token);
-
-                //confirm the validity of the headers
-                ConfirmFlatFileHeadersAgainstDataTable(dt, job);
-
-                con.Open();
-
-                //now we will read data out of the file in batches
-                var batchNumber = 1;
-                var maxBatchSize = 10000;
-                var recordsCreatedSoFar = 0;
-
+                DropEmptyColumns(dt);
+                ConfirmFitToDestination(dt, tableToLoad, job);
                 try
                 {
-                    //while there is data to be loaded into table 
-                    while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize, token) != 0)
-                    {
-                        DropEmptyColumns(dt);
-                        ConfirmFitToDestination(dt, tableToLoad, job);
-                        try
-                        {
-                            recordsCreatedSoFar += insert.Upload(dt);
+                    recordsCreatedSoFar += insert.Upload(dt); 
+                                
+                    dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
 
-                            dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
-
-                            job.OnProgress(this,
-                                new ProgressEventArgs(tableToLoad.GetFullyQualifiedName(),
-                                    new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
-                        }
-                        catch (Exception e)
-                        {
-                            throw new Exception(
-                                $"Error processing batch number {batchNumber} (of batch size {maxBatchSize})", e);
-                        }
-                    }
+                    job.OnProgress(this,
+                        new ProgressEventArgs(tableToLoad.GetFullyQualifiedName(),
+                            new ProgressMeasurement(recordsCreatedSoFar, ProgressType.Records), timer.Elapsed));
                 }
                 catch (Exception e)
                 {
-                    throw new FlatFileLoadException($"Error processing file {fileToLoad}", e);
-                }
-                finally
-                {
-                    CloseFile();
-                }
+                    throw new Exception(
+                        $"Error processing batch number {batchNumber} (of batch size {maxBatchSize})",e);
+                } 
             }
+        }
+        catch (Exception e)
+        {
+            throw new FlatFileLoadException($"Error processing file {fileToLoad}", e);
+        }
+        finally
+        {
+            CloseFile();
         }
     }
 

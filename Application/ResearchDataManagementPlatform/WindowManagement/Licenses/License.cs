@@ -35,13 +35,9 @@ public class License
     /// <returns></returns>
     public string GetHashOfLicense()
     {
-        using (var hashProvider = SHA512.Create())
-        {
-            using (var stream = GetStream())
-            {
-                return BitConverter.ToString(hashProvider.ComputeHash(stream));
-            }
-        }
+        using var hashProvider = SHA512.Create();
+        using var stream = GetStream();
+        return BitConverter.ToString(hashProvider.ComputeHash(stream));
     }
 
     /// <summary>
@@ -50,10 +46,8 @@ public class License
     /// <returns></returns>
     public string GetLicenseText()
     {
-        using (var stream = GetStream())
-        {
-            return new StreamReader(stream).ReadToEnd();
-        }
+        using var stream = GetStream();
+        return new StreamReader(stream).ReadToEnd();
     }
 
     private Stream GetStream()

@@ -236,27 +236,22 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public bool IDExistsInCohortTable(int originID)
     {
-        var server = DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport);
+        var server = DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport);
 
-        using (var con = server.GetConnection())
+        using var con = server.GetConnection();
+        con.Open();
+
+        var sql = $@"select count(*) from {DefinitionTableName} where id = {originID}";
+
+        using var cmdGetDescriptionOfCohortFromConsus = server.GetCommand(sql, con);
+        try
         {
-            con.Open();
-
-            var sql = $@"select count(*) from {DefinitionTableName} where id = {originID}";
-
-            using (var cmdGetDescriptionOfCohortFromConsus = server.GetCommand(sql, con))
-            {
-                try
-                {
-                    return int.Parse(cmdGetDescriptionOfCohortFromConsus.ExecuteScalar().ToString()) >= 1;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(
-                        $"Could not connect to server {Server} (Database '{Database}') which is the data source of ExternalCohortTable (source) called '{Name}' (ID={ID})",
-                        e);
-                }
-            }
+            return int.Parse(cmdGetDescriptionOfCohortFromConsus.ExecuteScalar().ToString()) >= 1;
+        }
+        catch (Exception e)
+        {
+            throw new Exception(
+                $"Could not connect to server {Server} (Database '{Database}') which is the data source of ExternalCohortTable (source) called '{Name}' (ID={ID})", e);
         }
     }
 

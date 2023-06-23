@@ -775,23 +775,25 @@ delete from {1}..Project
         var syntax = database.Server.GetQuerySyntaxHelper();
 
         if (database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
-            using (var con = database.Server.GetConnection())
+        {
+            using var con = database.Server.GetConnection();
+            con.Open();
+            foreach (var t in database.DiscoverTables(false))
             {
-                con.Open();
-                foreach (var t in database.DiscoverTables(false))
-                    //disable system versioning on any temporal tables otherwise drop fails
-                    try
-                    {
-                        t.Database.Server.GetCommand(
-                            $@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
+                //disable system versioning on any temporal tables otherwise drop fails
+                try
+                {
+                    t.Database.Server.GetCommand(
+                        $@"IF OBJECTPROPERTY(OBJECT_ID('{syntax.EnsureWrapped(t.GetRuntimeName())}'), 'TableTemporalType') = 2
         ALTER TABLE {t.GetFullyQualifiedName()} SET (SYSTEM_VERSIONING = OFF)", con).ExecuteNonQuery();
-                    }
-                    catch (Exception)
-                    {
-                        TestContext.Out.WriteLine(
-                            $"Failed to generate disable System Versioning check for table {t} (never mind)");
-                    }
+                }
+                catch (Exception)
+                {
+                    TestContext.Out.WriteLine(
+                        $"Failed to generate disable System Versioning check for table {t} (never mind)");
+                }
             }
+        }
 
         var tables = new RelationshipTopologicalSort(database.DiscoverTables(true));
 
