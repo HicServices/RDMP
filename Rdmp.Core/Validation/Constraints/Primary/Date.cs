@@ -32,26 +32,27 @@ public class Date : PrimaryConstraint
     /// <param name="value"></param>
     public override ValidationFailure Validate(object value)
     {
-        if (value is DateTime)
-            return null;
-
-        if (value == null)
-            return null;
-            
-        try
+        switch (value)
         {
-            var s = (string)value;
-            DateTime.Parse(s, _ukCulture.DateTimeFormat);
+            case DateTime:
+            case null:
+                return null;
+            default:
+                try
+                {
+                    var s = (string)value;
+                    DateTime.Parse(s, _ukCulture.DateTimeFormat);
 
-            if (NotAFullySpecifiedDate(s)) 
-                return new ValidationFailure("Partial dates not allowed.",this);
-        }
-        catch (FormatException ex)
-        {
-            return new ValidationFailure(ex.Message,this);
-        }
+                    if (NotAFullySpecifiedDate(s)) 
+                        return new ValidationFailure("Partial dates not allowed.",this);
+                }
+                catch (FormatException ex)
+                {
+                    return new ValidationFailure(ex.Message,this);
+                }
 
-        return null;
+                return null;
+        }
     }
 
     private static bool NotAFullySpecifiedDate(string s)

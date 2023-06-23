@@ -29,11 +29,15 @@ internal class ProposeExecutionWhenTargetIsProcessTask:RDMPCommandExecutionPropo
         if (processTask.IsPluginType())
             ItemActivator.Activate<PluginProcessTaskUI, ProcessTask>(processTask);
 
-        if (processTask.ProcessTaskType == ProcessTaskType.Executable)
-            ItemActivator.Activate<ExeProcessTaskUI, ProcessTask>(processTask);
-
-        if (processTask.ProcessTaskType == ProcessTaskType.SQLFile)
-            ItemActivator.Activate<SqlProcessTaskUI, ProcessTask>(processTask);
+        switch (processTask.ProcessTaskType)
+        {
+            case ProcessTaskType.Executable:
+                ItemActivator.Activate<ExeProcessTaskUI, ProcessTask>(processTask);
+                break;
+            case ProcessTaskType.SQLFile:
+                ItemActivator.Activate<SqlProcessTaskUI, ProcessTask>(processTask);
+                break;
+        }
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTask target, InsertOption insertOption = InsertOption.Default)

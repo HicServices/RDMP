@@ -42,14 +42,13 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
         _bubble = bubble;
         ColumnName = _column.GetRuntimeName(_bubble.ToLoadStage());
 
-        if (_column is PreLoadDiscardedColumn preLoadDiscarded)
-            _expectedDataType = preLoadDiscarded.SqlDataType;
-        else
-        if (_column is ColumnInfo colInfo)
-            _expectedDataType = colInfo.GetRuntimeDataType(_bubble.ToLoadStage());
-        else
-            throw new Exception(
-                $"Expected _column to be ColumnInfo or PreLoadDiscardedColumn but it was:{_column.GetType().Name}");
+        _expectedDataType = _column switch
+        {
+            PreLoadDiscardedColumn preLoadDiscarded => preLoadDiscarded.SqlDataType,
+            ColumnInfo colInfo => colInfo.GetRuntimeDataType(_bubble.ToLoadStage()),
+            _ => throw new Exception(
+                $"Expected _column to be ColumnInfo or PreLoadDiscardedColumn but it was:{_column.GetType().Name}")
+        };
     }
 
     public bool IsDynamicColumn

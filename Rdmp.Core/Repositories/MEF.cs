@@ -251,7 +251,7 @@ public class MEF
 
     public void AddTypeToCatalogForTesting(Type p0)
     {
-        if (!_types.Value.ContainsKey(p0.Name))
-            throw new Exception($"Type {p0.Name} was not preloaded");
+        if (!_types.Value.ContainsKey(p0.FullName ?? throw new ArgumentNullException(nameof(p0))))
+            throw new Exception($"Type {p0.FullName} was not preloaded");
     }
 }

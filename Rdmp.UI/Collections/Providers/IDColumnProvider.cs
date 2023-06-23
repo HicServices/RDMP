@@ -14,32 +14,20 @@ namespace Rdmp.UI.Collections.Providers;
 /// Handles creating the ID column in a tree list view where the ID is populated for all models of Type IMapsDirectlyToDatabaseTable and null
 /// for all others
 /// </summary>
-public class IDColumnProvider
+public static class IDColumnProvider
 {
-    private readonly TreeListView _tree;
-
-    public IDColumnProvider(TreeListView tree)
+    private static object IDColumnAspectGetter(object rowObject)
     {
-        _tree = tree;
+        return rowObject switch
+        {
+            // unwrap masqueraders to see if underlying object has an ID
+            IMasqueradeAs m => IDColumnAspectGetter(m.MasqueradingAs()),
+            IMapsDirectlyToDatabaseTable maps => maps.ID,
+            _ => null
+        };
     }
 
-    private object IDColumnAspectGetter(object rowObject)
-    {
-        // unwrap masqueraders to see if underlying object has an ID
-        if(rowObject is IMasqueradeAs m)
-        {
-            return IDColumnAspectGetter(m.MasqueradingAs());
-        }
-
-        if (rowObject is IMapsDirectlyToDatabaseTable imaps)
-        {
-            return imaps.ID;
-        }
-
-        return null;
-    }
-
-    public OLVColumn CreateColumn()
+    public static OLVColumn CreateColumn()
     {
         var toReturn = new OLVColumn
         {

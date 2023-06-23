@@ -286,7 +286,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             //We have an interface that matches the input object, let's call it
             var preInit = interfaceToInvokeIfAny.GetMethod("PreInitialize");
                 
-            //but first document the fact that we have foundit
+            //but first document the fact that we have found it
             if (!initializedComponents.ContainsKey(component))
                 initializedComponents.Add(component, new Dictionary<MethodInfo, object>());
 
@@ -309,13 +309,18 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     /// <inheritdoc/>
     public void PreInitializeGeneric(IDataLoadEventListener listener, object component, params object[] initializationObjects)
     {
-        if(component is IDataFlowSource<T>)
-            PreInitialize(listener, (IDataFlowSource<T>)component, initializationObjects);
-        else if (component is IDataFlowComponent<T>)
-            PreInitialize(listener, (IDataFlowComponent<T>) component, initializationObjects);
-        else
-            throw new NotSupportedException(
-                $"It looks like you attempted to pre initialize using PreInitializeGeneric but your object was type '{GetFullName(component.GetType())}' and we expected either a source or a component <T> where <T> is:{GetFullName(typeof(T))}");
+        switch (component)
+        {
+            case IDataFlowSource<T> source:
+                PreInitialize(listener, source, initializationObjects);
+                break;
+            case IDataFlowComponent<T> flowComponent:
+                PreInitialize(listener, flowComponent, initializationObjects);
+                break;
+            default:
+                throw new NotSupportedException(
+                    $"It looks like you attempted to pre initialize using PreInitializeGeneric but your object was type '{GetFullName(component.GetType())}' and we expected either a source or a component <T> where <T> is:{GetFullName(typeof(T))}");
+        }
     }
 
       
@@ -325,15 +330,10 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             return t.Name;
         var sb = new StringBuilder();
 
-        sb.Append(t.Name[..t.Name.LastIndexOf("`")]);
-        sb.Append(t.GetGenericArguments().Aggregate("<",
-
-            delegate(string aggregate, Type type)
-            {
-                return aggregate + (aggregate == "<" ? "" : ",") + GetFullName(type);
-            }
-        ));
-        sb.Append(">");
+        sb.Append(t.Name[..t.Name.LastIndexOf("`", StringComparison.Ordinal)]);
+        sb.Append('<');
+        sb.AppendJoin(',', t.GetGenericArguments().Select(GetFullName));
+        sb.Append('>');
 
         return sb.ToString();
     }

@@ -67,15 +67,13 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
             var context = _useCaseIfAny?.GetContext();
             var offer = new List<Type>();
 
-            TypeFilter filter = (t, o) => t.IsGenericType &&
-                                          (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
-                                           t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
+            bool Filter(Type t, object o) => t.IsGenericType && (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) || t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
 
             //get any source and flow components compatible with any context
             offer.AddRange(
                 mef.GetAllTypes()
                     .Where(t => !t.IsInterface && !t.IsAbstract)
-                    .Where(t => t.FindInterfaces(filter, null).Any())
+                    .Where(t => t.FindInterfaces(Filter, null).Any())
                     .Where(t=> context == null || context.IsAllowable(t))
             );
 
@@ -87,13 +85,11 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         if (add == null) return;
 
         // check if it is a source or destination (or if both are false it is a middle component)
-        TypeFilter sourceFilter = (t, o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
-        TypeFilter destFilter = (t, o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
+        bool SourceFilter(Type t, object o) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
+        bool DestFilter(Type t, object o) => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
 
-        var isSource = add.FindInterfaces(sourceFilter, null).Any();
-        var isDest = add.FindInterfaces(destFilter, null).Any();
+        var isSource = add.FindInterfaces(SourceFilter, null).Any();
+        var isDest = add.FindInterfaces(DestFilter, null).Any();
 
         if (isSource)
         {

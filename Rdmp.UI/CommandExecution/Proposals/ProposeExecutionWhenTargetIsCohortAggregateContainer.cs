@@ -38,28 +38,24 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
            
         //Target is a cohort container (UNION / INTERSECT / EXCEPT)
 
-        //source is catalogue
-        if (cmd is CatalogueCombineable sourceCatalogueCombineable)
-            return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,sourceCatalogueCombineable, targetCohortAggregateContainer);
-
-        //source is aggregate
-
-        if (cmd is AggregateConfigurationCombineable sourceAggregateCommand)
+        switch (cmd)
         {
+            //source is catalogue
+            case CatalogueCombineable sourceCatalogueCombineable:
+                return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,sourceCatalogueCombineable, targetCohortAggregateContainer);
+            //source is aggregate
             //if it is not already involved in cohort identification 
-            if(!sourceAggregateCommand.Aggregate.IsCohortIdentificationAggregate)
+            case AggregateConfigurationCombineable sourceAggregateCommand when !sourceAggregateCommand.Aggregate.IsCohortIdentificationAggregate:
                 return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
-
-                
-            var cic = sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
-
-            if(cic != null && !cic.Equals(targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
+            case AggregateConfigurationCombineable sourceAggregateCommand:
             {
-                //its a cic aggregate but it is one outside of our tree so instead offer adding (not moving/reordering)
-                return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,sourceAggregateCommand, targetCohortAggregateContainer);
-            }
-            else
-            {
+                var cic = sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
+
+                if(cic != null && !cic.Equals(targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
+                {
+                    //its a cic aggregate but it is one outside of our tree so instead offer adding (not moving/reordering)
+                    return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,sourceAggregateCommand, targetCohortAggregateContainer);
+                }
                 //we are dragging around inside our own tree
 
                 //it is involved in cohort identification already, presumably it's a reorder?
@@ -77,28 +73,21 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
                 //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
                 return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
             }
-        }
-
-        //source is another container (UNION / INTERSECT / EXCEPT)
-
-        if (cmd is CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand)
-        {
+            //source is another container (UNION / INTERSECT / EXCEPT)
             //can never drag the root container elsewhere
-            if (sourceCohortAggregateContainerCommand.ParentContainerIfAny == null)
+            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand when sourceCohortAggregateContainerCommand.ParentContainerIfAny == null:
                 return null;
-
             //they are trying to drag it onto its current parent
-            if (sourceCohortAggregateContainerCommand.ParentContainerIfAny.Equals(targetCohortAggregateContainer))
+            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand when sourceCohortAggregateContainerCommand.ParentContainerIfAny.Equals(targetCohortAggregateContainer):
                 return null;
-
             //its being dragged into a container (move into new container)
-            if(insertOption == InsertOption.Default)
+            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand when insertOption == InsertOption.Default:
                 return new ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(ItemActivator, sourceCohortAggregateContainerCommand, targetCohortAggregateContainer);
-                
             //its being dragged above/below a container (reorder)
-            return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand, targetCohortAggregateContainer, insertOption);
-                
+            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand:
+                return new ExecuteCommandReOrderAggregateContainer(ItemActivator, sourceCohortAggregateContainerCommand, targetCohortAggregateContainer, insertOption);
+            default:
+                return null;
         }
-        return null;
     }
 }

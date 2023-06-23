@@ -22,11 +22,15 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
     {
         _nameable = nameable;
 
-        if(nameable is ITableInfo)
-            SetImpossible("TableInfos cannot not be renamed");
-            
-        if (nameable is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
-            SetImpossible(reason);
+        switch (nameable)
+        {
+            case ITableInfo:
+                SetImpossible("TableInfos cannot not be renamed");
+                break;
+            case IMightBeReadOnly ro when ro.ShouldBeReadOnly(out var reason):
+                SetImpossible(reason);
+                break;
+        }
 
         Weight = 50.2f;
     }

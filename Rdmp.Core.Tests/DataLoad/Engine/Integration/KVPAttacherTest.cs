@@ -50,7 +50,7 @@ public class KVPAttacherTest:DatabaseTests
         var filepk2 = "kvpTestFilePK2.csv";
         var fileNoPk = "kvpTestFile_NoPK.csv";
 
-        if (testCase == KVPAttacherTestCase.OneFileWithPrimaryKey || testCase == KVPAttacherTestCase.TwoFilesWithPrimaryKey)
+        if (testCase is KVPAttacherTestCase.OneFileWithPrimaryKey or KVPAttacherTestCase.TwoFilesWithPrimaryKey)
             CopyToBin(projectDir, filepk);
 
         if (testCase == KVPAttacherTestCase.TwoFilesWithPrimaryKey)
@@ -76,8 +76,7 @@ public class KVPAttacherTest:DatabaseTests
         var remnantPipeline =
             CatalogueRepository.GetAllObjects<Pipeline>().SingleOrDefault(p=>p.Name.Equals("KVPAttacherTestPipeline"));
 
-        if(remnantPipeline != null)
-            remnantPipeline.DeleteInDatabase();
+        remnantPipeline?.DeleteInDatabase();
 
         //Setup the Pipeline
         var p = new Pipeline(CatalogueRepository, "KVPAttacherTestPipeline");

@@ -53,21 +53,22 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 
         var obs = objectsToPickFrom.ToArray();
 
-        //no objects!
-        if (obs.Length == 0)
-            SetImpossible("No objects found");
-        else
-        if (obs.Length == 1)
+        switch (obs.Length)
         {
-            //one object only
-            _objectToShow = objectsToPickFrom.Single();
-            _objectType = _objectToShow.GetType();
-        }
-        else
-        {
-            //many objects, let's assume they are of the same type for display purposes
-            _objectType = objectsToPickFrom.First().GetType();
-            _objectsToPickFrom = obs;
+            //no objects!
+            case 0:
+                SetImpossible("No objects found");
+                break;
+            case 1:
+                //one object only
+                _objectToShow = obs.Single();
+                _objectType = _objectToShow.GetType();
+                break;
+            default:
+                //many objects, let's assume they are of the same type for display purposes
+                _objectType = obs.First().GetType();
+                _objectsToPickFrom = obs;
+                break;
         }
 
         _expansionDepth = expansionDepth;

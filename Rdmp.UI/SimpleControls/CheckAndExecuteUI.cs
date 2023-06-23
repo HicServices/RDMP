@@ -104,7 +104,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         try
         {
             var command = CommandGetter(CommandLineActivity.check);    
-            runner = _factory.CreateRunner(Activator,command);
+            runner = RunnerFactory.CreateRunner(Activator,command);
         }
         catch (Exception ex)
         {
@@ -168,7 +168,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         try
         {
             var command = CommandGetter(CommandLineActivity.run);
-            runner = _factory.CreateRunner(Activator,command);
+            runner = RunnerFactory.CreateRunner(Activator,command);
         }
         catch (Exception ex)
         {

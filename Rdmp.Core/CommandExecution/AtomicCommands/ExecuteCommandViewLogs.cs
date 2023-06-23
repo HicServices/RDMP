@@ -42,15 +42,17 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         if (picker[0].HasValueOfType(typeof(DatabaseEntity)))
         {
             var obj = picker[0].GetValueForParameterOfType(typeof(DatabaseEntity));
-                
-            if(obj is ILoggedActivityRootObject root)
-                RootObject =  root;
-            else
-            if(obj is ExternalDatabaseServer eds)
-                _loggingServers = new ExternalDatabaseServer[]{eds};
-            else
+
+            switch (obj)
             {
-                throw new Exception($"'{obj}' is of type '{obj.GetType().Name}' which is not '{nameof(ILoggedActivityRootObject)}' so cannot be used with this command.");
+                case ILoggedActivityRootObject root:
+                    RootObject =  root;
+                    break;
+                case ExternalDatabaseServer eds:
+                    _loggingServers = new ExternalDatabaseServer[]{eds};
+                    break;
+                default:
+                    throw new Exception($"'{obj}' is of type '{obj.GetType().Name}' which is not '{nameof(ILoggedActivityRootObject)}' so cannot be used with this command.");
             }
         }
 

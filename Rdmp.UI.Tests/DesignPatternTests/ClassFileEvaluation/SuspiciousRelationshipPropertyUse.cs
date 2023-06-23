@@ -39,7 +39,7 @@ public class SuspiciousRelationshipPropertyUse
 
         foreach (var type in types)
         {
-            //if it's a spont object ignore it
+            //if it's a spontaneous object ignore it
             if(typeof(SpontaneousObject).IsAssignableFrom(type) || type == typeof(SpontaneouslyInventedColumn) || type == typeof(SpontaneouslyInventedFilter))
                 continue;
 

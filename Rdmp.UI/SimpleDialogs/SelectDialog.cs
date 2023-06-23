@@ -583,7 +583,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.KeyCode == Keys.Enter && olv.SelectedObject != null)
         {
             DialogResult = DialogResult.OK;
-            Selected = olv.SelectedObject is T s ? s : default;
+            Selected = olv.SelectedObject as T;
 
             // if there are some multi selected items already
             if(AllowMultiSelect && MultiSelected.Any())
