@@ -37,7 +37,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <para>A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
 /// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]</para>
 /// </summary>
-public abstract class DatabaseEntity : IRevertable, INotifyPropertyChanged, ICanBeSummarised
+public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
 {
     /// <summary>
     /// The maximum length for any given line in return value of <see cref="GetSummary"/>

@@ -6,12 +6,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using System.Threading;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Repositories;
 
@@ -24,14 +25,89 @@ namespace Rdmp.Core.Repositories;
 /// </summary>
 public class MEF
 {
+    private static Lazy<ReadOnlyDictionary<string, Type>> _types;
+    private static Lazy<ReadOnlyDictionary<Type, Type[]>> _allTypes;
+
+    static MEF()
+    {
+        AppDomain.CurrentDomain.AssemblyLoad += Flush;
+        Flush(null,null);
+    }
+
+    private static void Flush(object _1, AssemblyLoadEventArgs ale)
+    {
+        Console.Error.WriteLine($"Flushing MEF cache due to {ale?.LoadedAssembly.FullName ?? "Anonymous"}");
+        _types = new Lazy<ReadOnlyDictionary<string, Type>>(PopulateUnique, LazyThreadSafetyMode.ExecutionAndPublication);
+        _allTypes = new Lazy<ReadOnlyDictionary<Type, Type[]>>(PopulateAll, LazyThreadSafetyMode.ExecutionAndPublication);
+    }
+
+    /*private static string prefix(string name)
+    {
+        return name.Split('.')[0];
+    }*/
+    private static ReadOnlyDictionary<Type, Type[]> PopulateAll()
+    {
+        var sw = Stopwatch.StartNew();
+        try
+        {
+            var allTypes = _types.Value.Values.Where(t=>!ExcludeAssembly.IsMatch(t.FullName??"<")).Distinct().ToArray();
+            /*foreach (var prefix in allTypes.Select(t=>t.FullName).GroupBy(t => prefix(t),(prefix,xs)=> $"{prefix}:{ xs.Count() }"))
+            {
+                Console.Error.WriteLine($"Type: {prefix}");
+            }*/
+            var values=allTypes.Where(t=>!t.IsAbstract && !t.IsInterface).ToArray();
+            return new ReadOnlyDictionary<Type, Type[]>(allTypes.ToDictionary(t => t,
+                t => values.Where(t.IsAssignableFrom).ToArray()));
+        }
+        finally
+        {
+            Console.Error.WriteLine($"PopulateAll took {sw.ElapsedMilliseconds}ms");
+        }
+    }
+
+    private static readonly Regex ExcludeAssembly = new(@"^(<|Interop\+|Microsoft|System|MongoDB|NPOI|SixLabors|NUnit|OracleInternal|Npgsql|Amazon|Castle|Newtonsoft|SharpCompress|Terminal|YamlDotNet|Moq|BrightIdeasSoftware|MySqlConnector|Azure|ZstdSharp|CommandLine|FAnsi|Internal|Mono|DnsClient|Oracle|MS|NuGet|Unix)", RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static ReadOnlyDictionary<string, Type> PopulateUnique()
+    {
+        var sw = Stopwatch.StartNew();
+        var typeByName =new Dictionary<string, Type>();
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            if (assembly.FullName?.StartsWith("CommandLine", StringComparison.Ordinal)!=false) continue;
+            try
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    foreach (var alias in new []{Tail(type.FullName),type.FullName,Tail(type.FullName).ToUpperInvariant(),type.FullName?.ToUpperInvariant()}.Where(x=>x is not null).Distinct())
+                        if (!typeByName.TryAdd(alias, type) &&
+                            type.FullName?.StartsWith("Rdmp.Core", StringComparison.OrdinalIgnoreCase) == true)
+                        {
+                            // Simple hack so Rdmp.Core types like ColumnInfo take precedence over others like System.Data.Select+ColumnInfo
+                            typeByName.Remove(alias);
+                            typeByName.Add(alias,type);
+                        }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+        }
+        Console.Error.WriteLine($"PopulateUnique took {sw.ElapsedMilliseconds}ms");
+        return new ReadOnlyDictionary<string, Type>(typeByName);
+    }
+
+    private static string Tail(string full)
+    {
+        var off = full.LastIndexOf(".", StringComparison.Ordinal) + 1;
+        return off==0?full:full[off..];
+    }
+
     public bool HaveDownloadedAllAssemblies;
     public SafeDirectoryCatalog SafeDirectoryCatalog;
 
     public MEF()
     {
     }
-          
-    private readonly HashSet<string> TypeNotKnown = new();
 
     /// <summary>
     /// Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup"/>).  Returns null
@@ -47,76 +123,12 @@ public class MEF
         if (string.IsNullOrWhiteSpace(type))
             throw new ArgumentNullException(nameof(type));
 
-        if (TypeNotKnown.Contains(type))
-            return null;
-
-        if (SafeDirectoryCatalog.TypesByName.TryGetValue(type, out var type1)) return type1;
-        var toReturn = Type.GetType(type);
-
-        //If they are looking for the Type name without the namespace that's bad
-        if (toReturn == null)
-            if (!type.Contains('.'))
-            {
-                //can we find one in Core with that name e.g. "Plugin" or "plugin"
-                toReturn =
-                    typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t => t.Name.Equals(type))
-                    ?? typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t =>
-                        t.Name.Equals(type, StringComparison.InvariantCultureIgnoreCase));
-
-                //no, anyone else got one?
-                if (toReturn == null)
-                {
-                    var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t => t.Name.Equals(type)).ToArray();
-
-                    //try caseless
-                    if (matches.Length == 0)
-                        matches = SafeDirectoryCatalog.TypesByName.Values.Where(t =>
-                            t.Name.Equals(type, StringComparison.InvariantCultureIgnoreCase)).ToArray();
-
-                    //great there's only one
-                    if (matches.Length == 1)
-                        toReturn = matches[0];
-                    else if (matches.Length > 1) //nope looks like everyone has a class called MyClass
-                        throw new AmbiguousTypeException($"Found {matches.Length} Types called '{type}'");
-                }
-            }
-            else
-            {
-                //ok they are lying about the Type.  It's not MyLib.Myclass but maybe we still have a Myclass in Rdmp.Core?
-                var name = type[(type.LastIndexOf('.') + 1)..];
-                toReturn =
-                    typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t => t.Name.Equals(name))
-                    ?? typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t =>
-                        t.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
-
-                //no, anyone else got one?
-                if (toReturn == null)
-                {
-                    var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t => t.Name.Equals(name)).ToArray();
-
-                    //try caseless
-                    if (matches.Length == 0)
-                        matches = SafeDirectoryCatalog.TypesByName.Values.Where(t =>
-                            t.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).ToArray();
-
-                    //great there's only one
-                    if (matches.Length == 1)
-                        toReturn = matches[0];
-                    else if (matches.Length > 1) //nope looks like everyone has a class called MyClass
-                        throw new AmbiguousTypeException($"Found {matches.Length} Types called '{type}'");
-                }
-            }
-
-        if (toReturn == null)
-        {
-            TypeNotKnown.Add(type);
-            return null;
-        }
-
-        //we know about it now!
-        SafeDirectoryCatalog.AddType(toReturn, type);
-
-        return toReturn;
+        // Try for exact match, then caseless match, then tail match, then tail caseless match
+        if (_types.Value.TryGetValue(type, out var type1)) return type1;
+        if (_types.Value.TryGetValue(type.ToUpperInvariant(), out var type3)) return type3;
+        if (_types.Value.TryGetValue(Tail(type), out var type2)) return type2;
+        if (_types.Value.TryGetValue(Tail(type).ToUpperInvariant(), out var type4)) return type4;
+        return null;
     }
 
     public Type GetType(string type, Type expectedBaseClass)
@@ -125,8 +137,7 @@ public class MEF
 
         if (!expectedBaseClass.IsAssignableFrom(t))
             throw new Exception(
-                $"Found Type '{type}' did not implement expected base class/interface '{expectedBaseClass}'");
-
+                $"Found Type {t?.FullName} for '{type}' did not implement expected base class/interface '{expectedBaseClass}'");
 
         return t;
     }
@@ -142,19 +153,7 @@ public class MEF
         if (!HaveDownloadedAllAssemblies)
             throw new NotSupportedException("MEF was not loaded by Startup?!!");
     }
-
-    /// <summary>
-    /// Makes the given Type appear as a MEF exported class.  Can be used to test your types without
-    /// building and committing an actual <see cref="Plugin"/>
-    /// </summary>
-    /// <param name="type"></param>
-    public void AddTypeToCatalogForTesting(Type type)
-    {
-        SetupMEFIfRequired();
-
-        SafeDirectoryCatalog.AddType(type);
-    }
-
+        
     public Dictionary<string, Exception> ListBadAssemblies()
     {
         SetupMEFIfRequired();
@@ -186,11 +185,6 @@ public class MEF
         return $"{genericTypeName}<{underlyingType}>";
     }
 
-    [Obsolete("MEF dead",true)]
-    public void CheckForVersionMismatches(ICheckNotifier notifier)
-    {
-    }
-
     public IEnumerable<Type> GetTypes<T>()
     {
         SetupMEFIfRequired();
@@ -210,17 +204,9 @@ public class MEF
     public IEnumerable<Type> GetTypes(Type type)
     {
         SetupMEFIfRequired();
-
-        lock (_cachedImplementationsLock)
-        {
-            if(_cachedImplementations.TryGetValue(type, out var types))
-                return types;
-
-            var results = SafeDirectoryCatalog.GetAllTypes()
-                .Where(t => type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
-            _cachedImplementations.Add(type, results);
-            return results;
-        }
+        var candidates = _allTypes.Value.TryGetValue(type, out var r) ? r : Type.EmptyTypes;
+        // If it's a generic, we need to filter out the ones that don't match the generic type parameter(s)
+        return type.IsGenericType ? _types.Value.Values.Where(type.IsAssignableFrom).ToArray() : candidates;
     }
 
     /// <summary>
@@ -256,5 +242,11 @@ public class MEF
         var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
                 $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
         return instance;
+    }
+
+    public void AddTypeToCatalogForTesting(Type p0)
+    {
+        if (!_types.Value.ContainsKey(p0.Name))
+            throw new Exception($"Type {p0.Name} was not preloaded");
     }
 }

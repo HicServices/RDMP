@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
@@ -48,10 +47,8 @@ public class CommandLineObjectPicker
     /// Constructs a picker with only the passed format(s) (<paramref name="pickers"/>) and immediately parse the provided <paramref name="args"/>
     /// </summary>
     /// <param name="args"></param>
-    /// <param name="repositoryLocator"></param>
     /// <param name="pickers"></param>
-    public CommandLineObjectPicker(string[] args, IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        IEnumerable<PickObjectBase> pickers)
+    public CommandLineObjectPicker(string[] args, IEnumerable<PickObjectBase> pickers)
     {
         foreach (var p in pickers)
             _pickers.Add(p);
