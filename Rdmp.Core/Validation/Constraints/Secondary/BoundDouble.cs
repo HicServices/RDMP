@@ -28,13 +28,14 @@ public class BoundDouble : Bound
 
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
-        //nulls are fine
-        if (value == null)
-            return null;
-
-        //nulls are also fine if we are passed blanks
-        if (value is string s && string.IsNullOrWhiteSpace(s))
-            return null;
+        switch (value)
+        {
+            //nulls are fine
+            case null:
+            //nulls are also fine if we are passed blanks
+            case string s when string.IsNullOrWhiteSpace(s):
+                return null;
+        }
 
         double v;
 

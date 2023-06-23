@@ -35,19 +35,16 @@ public class GlobalsBundle : Bundle
 
     protected override void OnDropContent(object toDrop)
     {
-        if (toDrop is SupportingDocument item)
+        switch (toDrop)
         {
-            Documents.Remove(item);
-            return;
+            case SupportingDocument item:
+                Documents.Remove(item);
+                return;
+            case SupportingSQLTable drop:
+                SupportingSQL.Remove(drop);
+                return;
+            default:
+                throw new NotSupportedException($"Did not know how to drop object of type {toDrop.GetType()}");
         }
-
-        if (toDrop is SupportingSQLTable drop)
-        {
-            SupportingSQL.Remove(drop);
-            return;
-        }
-
-
-        throw new NotSupportedException($"Did not know how to drop object of type {toDrop.GetType()}");
     }
 }

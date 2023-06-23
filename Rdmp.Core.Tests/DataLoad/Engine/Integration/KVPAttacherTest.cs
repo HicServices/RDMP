@@ -49,8 +49,7 @@ public class KVPAttacherTest : DatabaseTests
         var filepk2 = "kvpTestFilePK2.csv";
         var fileNoPk = "kvpTestFile_NoPK.csv";
 
-        if (testCase == KVPAttacherTestCase.OneFileWithPrimaryKey ||
-            testCase == KVPAttacherTestCase.TwoFilesWithPrimaryKey)
+        if (testCase is KVPAttacherTestCase.OneFileWithPrimaryKey or KVPAttacherTestCase.TwoFilesWithPrimaryKey)
             CopyToBin(projectDir, filepk);
 
         if (testCase == KVPAttacherTestCase.TwoFilesWithPrimaryKey)

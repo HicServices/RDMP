@@ -21,7 +21,6 @@ internal class CommandLineParser
         cmd = null;
         buf = null;
         i = -1;
-        return;
     }
 
     public IEnumerable<string> Parse(string commandLine)

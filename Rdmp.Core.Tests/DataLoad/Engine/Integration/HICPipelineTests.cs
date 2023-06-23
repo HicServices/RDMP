@@ -263,14 +263,13 @@ public class HICPipelineTests : DatabaseTests
             };
 
             //run checks (with ignore errors if we are sending dodgy credentials)
-            new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, 
+            RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, 
                 sendDodgyCredentials?
                     (ICheckNotifier) IgnoreAllErrorsCheckNotifier.Instance: new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
             //run load
             options.Command = CommandLineActivity.run;
-            var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator), options);
-
+            var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options);
 
             if (sendDodgyCredentials)
             {

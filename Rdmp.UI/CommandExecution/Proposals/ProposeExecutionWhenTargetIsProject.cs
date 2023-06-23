@@ -30,20 +30,22 @@ internal class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project,
         InsertOption insertOption = InsertOption.Default)
     {
-        //drop a cic on a Project to associate it with that project
-        if(cmd is CohortIdentificationConfigurationCommand cicCommand)
-            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
-
-        if (cmd is CatalogueCombineable cataCommand)
-            return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
-
-        if(cmd is FileCollectionCombineable file && file.Files.Length == 1)
-            return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator,file.Files[0]).SetTarget(project);
-
-        if(cmd is AggregateConfigurationCombineable aggCommand)
-            return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,aggCommand.Aggregate).SetTarget(project);
-
-
-        return null;
+        return cmd switch
+        {
+            //drop a cic on a Project to associate it with that project
+            CohortIdentificationConfigurationCommand cicCommand =>
+                new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator)
+                    .SetTarget(cicCommand.CohortIdentificationConfiguration)
+                    .SetTarget(project),
+            CatalogueCombineable cataCommand => new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator)
+                .SetTarget(cataCommand.Catalogue)
+                .SetTarget(project),
+            FileCollectionCombineable file when file.Files.Length == 1 =>
+                new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator, file.Files[0]).SetTarget(project),
+            AggregateConfigurationCombineable aggCommand =>
+                new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,
+                    aggCommand.Aggregate).SetTarget(project),
+            _ => null
+        };
     }
 }

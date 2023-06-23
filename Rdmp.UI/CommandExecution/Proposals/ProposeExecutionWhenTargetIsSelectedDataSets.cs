@@ -29,15 +29,13 @@ internal class ProposeExecutionWhenTargetIsSelectedDataSets:RDMPCommandExecution
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SelectedDataSets target,
         InsertOption insertOption = InsertOption.Default)
     {
-        // if use drops a reusable template aggregate (e.g. from Cohort Builder)
-        if(cmd is AggregateConfigurationCombineable { IsTemplate: true } ac && ac.Aggregate.RootFilterContainer_ID != null)
+        return cmd switch
         {
-            // offer to import the WHERE containers
-            return new ExecuteCommandImportFilterContainerTree(ItemActivator, target, ac.Aggregate);
-
-        if (cmd is ContainerCombineable cc)
-            return new ExecuteCommandImportFilterContainerTree(ItemActivator, target, cc.Container);
-
-        return null;
+            // if use drops a reusable template aggregate (e.g. from Cohort Builder)
+            AggregateConfigurationCombineable { IsTemplate: true } ac when ac.Aggregate.RootFilterContainer_ID != null
+                => new ExecuteCommandImportFilterContainerTree(ItemActivator, target, ac.Aggregate),
+            ContainerCombineable cc => new ExecuteCommandImportFilterContainerTree(ItemActivator, target, cc.Container),
+            _ => null
+        };
     }
 }

@@ -73,7 +73,7 @@ internal class PluginProcessTaskUITests : UITests
         AndLaunch<PluginProcessTaskUI>(pt);
         AssertNoErrors(ExpectedErrorType.Any);
 
-        //there should be a text box with our argumetn value in it
+        //there should be a text box with our argument value in it
         var tb = GetControl<TextBox>().Single(t => t.Text.Contains("2001"));
 
         //set the text to something nasty that won't compile

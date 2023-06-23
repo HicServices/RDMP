@@ -65,15 +65,21 @@ internal class RDMPApplicationSettings : ISettings
         {
             lock (locker)
             {
-                if (value is decimal)
-                    return AddOrUpdateValue(key,
-                        Convert.ToString(Convert.ToDecimal(value), System.Globalization.CultureInfo.InvariantCulture));
+                string str;
 
-                if (value is DateTime)
-                    return AddOrUpdateValue(key,
-                        Convert.ToString(-Convert.ToDateTime(value).ToUniversalTime().Ticks,
-                            System.Globalization.CultureInfo.InvariantCulture));
-                var str = Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
+                switch (value)
+                {
+                    case decimal:
+                        return AddOrUpdateValue(key,
+                            Convert.ToString(Convert.ToDecimal(value), System.Globalization.CultureInfo.InvariantCulture));
+                    case DateTime:
+                        return AddOrUpdateValue(key,
+                            Convert.ToString(-Convert.ToDateTime(value).ToUniversalTime().Ticks,
+                                System.Globalization.CultureInfo.InvariantCulture));
+                    default:
+                        str = Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
+                        break;
+                }
 
                 string oldValue = null;
 
@@ -86,10 +92,8 @@ internal class RDMPApplicationSettings : ISettings
 
                 using (var stream = store.OpenFile(key, FileMode.Create, FileAccess.Write))
                 {
-                    using (var sw = new StreamWriter(stream))
-                    {
-                        sw.Write(str);
-                    }
+                    using var sw = new StreamWriter(stream);
+                    sw.Write(str);
                 }
 
                 return oldValue != str;

@@ -40,8 +40,7 @@ public class SuspiciousRelationshipPropertyUse
         foreach (var type in types)
         {
             //if it's a spontaneous object ignore it
-            if (typeof(SpontaneousObject).IsAssignableFrom(type) || type == typeof(SpontaneouslyInventedColumn) ||
-                type == typeof(SpontaneouslyInventedFilter))
+            if(typeof(SpontaneousObject).IsAssignableFrom(type) || type == typeof(SpontaneouslyInventedColumn) || type == typeof(SpontaneouslyInventedFilter))
                 continue;
 
             //Find the C sharp code for the class

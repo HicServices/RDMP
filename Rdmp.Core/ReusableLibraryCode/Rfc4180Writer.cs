@@ -34,11 +34,7 @@ public static class Rfc4180Writer
 
         foreach (DataRow row in sourceTable.Rows)
         {
-            var line = new List<string>();
-
-            foreach (DataColumn col in sourceTable.Columns)
-                line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
-                
+            var line = (from DataColumn col in sourceTable.Columns select QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper))).ToList();
             writer.WriteLine(string.Join(",", line));
         }
 
@@ -50,13 +46,13 @@ public static class Rfc4180Writer
         if (o == null || o == DBNull.Value)
             return null;
 
-        if (o is string s && allowDates)
+        switch (o)
         {
-            if (DateTime.TryParse(s, out var dt))
+            case string s when allowDates && DateTime.TryParse(s, out var dt):
                 return GetStringRepresentation(dt);
-
-        if (o is DateTime time)
-            return GetStringRepresentation(time);
+            case DateTime dateTime:
+                return GetStringRepresentation(dateTime);
+        }
 
         var str = o.ToString();
 
@@ -67,17 +63,11 @@ public static class Rfc4180Writer
 
     private static string GetStringRepresentation(DateTime dt)
     {
-        if (dt.TimeOfDay == TimeSpan.Zero)
-            return dt.ToString("yyyy-MM-dd");
-
-        return dt.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        return dt.ToString(dt.TimeOfDay == TimeSpan.Zero ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss.fff");
     }
 
     private static string QuoteValue(string value)
     {
-        if (value == null)
-            return "NULL";
-
-        return $"\"{value}\"";
+        return value == null ? "NULL" : $"\"{value}\"";
     }
 }

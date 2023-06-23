@@ -189,7 +189,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             "Other People To Investigate",
             "Dennis,Hes ok,35");
 
-        void adjust(DelimitedFlatFileDataFlowSource a)
+        void Adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = strategy;
             a.AttemptToResolveNewLinesInRecords = tryToResolve;
@@ -199,15 +199,15 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
         switch (strategy)
         {
             case BadDataHandlingStrategy.ThrowException:
-                var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, adjust));
+                var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, Adjust));
                 StringAssert.StartsWith("Bad data found on line 4", ex.Message);
                 break;
             case BadDataHandlingStrategy.IgnoreRows:
-                var dt = RunGetChunk(file, adjust);
+                var dt = RunGetChunk(file, Adjust);
                 Assert.AreEqual(2, dt.Rows.Count);
                 break;
             case BadDataHandlingStrategy.DivertRows:
-                var dt2 = RunGetChunk(file, adjust);
+                var dt2 = RunGetChunk(file, Adjust);
                 Assert.AreEqual(2, dt2.Rows.Count);
 
                 AssertDivertFileIsExactly($"Other People To Investigate{Environment.NewLine}");
@@ -229,7 +229,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             "Frank,Is the greatest,100",
             "Bob");
 
-        void adjust(DelimitedFlatFileDataFlowSource a)
+        void Adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = strategy;
             a.AttemptToResolveNewLinesInRecords = tryToResolve;
@@ -239,15 +239,15 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
         switch (strategy)
         {
             case BadDataHandlingStrategy.ThrowException:
-                var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, adjust));
+                var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, Adjust));
                 StringAssert.StartsWith("Bad data found on line 3", ex.Message);
                 break;
             case BadDataHandlingStrategy.IgnoreRows:
-                var dt = RunGetChunk(file, adjust);
+                var dt = RunGetChunk(file, Adjust);
                 Assert.AreEqual(1, dt.Rows.Count);
                 break;
             case BadDataHandlingStrategy.DivertRows:
-                var dt2 = RunGetChunk(file, adjust);
+                var dt2 = RunGetChunk(file, Adjust);
                 Assert.AreEqual(1, dt2.Rows.Count);
 
                 AssertDivertFileIsExactly($"Bob{Environment.NewLine}");
