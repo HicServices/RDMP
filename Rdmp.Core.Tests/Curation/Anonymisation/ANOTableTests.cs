@@ -36,7 +36,7 @@ public class ANOTableTests : TestsRequiringANOStore
         Assert.AreEqual("ANOMyTable", anoTable.TableName);
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 20;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 20;
-        anoTable.PushToANOServerAsNewTable(datatypeForPush, ThrowImmediatelyCheckNotifier.Quiet());
+        anoTable.PushToANOServerAsNewTable(datatypeForPush, ThrowImmediatelyCheckNotifier.Quiet);
 
         var discoveredTable = ANOStore_Database.DiscoverTables(false)
             .SingleOrDefault(t => t.GetRuntimeName().Equals("ANOMyTable"));
@@ -148,7 +148,7 @@ public class ANOTableTests : TestsRequiringANOStore
         var anoTable = GetANOTable();
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
-        anoTable.PushToANOServerAsNewTable("varchar(10)",ThrowImmediatelyCheckNotifier.Quiet());
+        anoTable.PushToANOServerAsNewTable("varchar(10)",ThrowImmediatelyCheckNotifier.Quiet);
 
 
         var dt = new DataTable();
@@ -237,7 +237,7 @@ public class ANOTableTests : TestsRequiringANOStore
         var anoTable = GetANOTable();
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
-        anoTable.PushToANOServerAsNewTable("varchar(10)", ThrowImmediatelyCheckNotifier.Quiet());
+        anoTable.PushToANOServerAsNewTable("varchar(10)", ThrowImmediatelyCheckNotifier.Quiet);
 
 
         var sw = new Stopwatch();

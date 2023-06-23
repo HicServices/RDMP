@@ -195,7 +195,7 @@ public class MDFAttacherTests : DatabaseTests
         mdf.Initialize(hicProjDir, db);
         try
         {
-            var memory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet());
+            var memory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
             mdf.Check(memory);
             Assert.IsTrue(memory.Messages.Any(m =>
                 m.Message.Contains("Found server DATA folder") && m.Result == CheckResult.Success));
@@ -207,7 +207,7 @@ public class MDFAttacherTests : DatabaseTests
                 throw;
         }
 
-        var memory2 = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet());
+        var memory2 = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
         mdf.OverrideMDFFileCopyDestination = TestContext.CurrentContext.WorkDirectory;
         mdf.Check(memory2);
         Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,

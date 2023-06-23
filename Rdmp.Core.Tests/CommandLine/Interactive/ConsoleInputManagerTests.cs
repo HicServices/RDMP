@@ -17,7 +17,7 @@ internal class ConsoleInputManagerTests : UnitTests
     [Test]
     public void TestDisallowInput()
     {
-        var manager = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet())
+        var manager = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
  {
      DisallowInput = true
  };

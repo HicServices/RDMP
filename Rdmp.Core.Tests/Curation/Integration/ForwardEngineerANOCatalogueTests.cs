@@ -57,7 +57,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
  };
 
         //no operations are as yet configured
-        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         //create a table with the same name in the endpoint database to confirm that that's a problem
         db.CreateTable(bulk.tableInfo.GetRuntimeName(), new DatabaseColumnRequest[]
@@ -66,24 +66,24 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         });
 
         //throws because table already exists
-        Assert.Throws<Exception>(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.Throws<Exception>(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         db.ExpectTable(bulk.tableInfo.GetRuntimeName()).Drop();
 
         //back to being fine again
-        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         //setup test rules for migrator
         CreateMigrationRules(planManager, bulk);
 
         //rules should pass
-        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         var chi = bulk.GetColumnInfo("chi");
         Assert.Throws<Exception>(() =>
             {
                 planManager.GetPlanForColumnInfo(chi).Plan = Plan.Drop;
-                planManager.GetPlanForColumnInfo(chi).Check(ThrowImmediatelyCheckNotifier.Quiet());
+                planManager.GetPlanForColumnInfo(chi).Check(ThrowImmediatelyCheckNotifier.Quiet);
 
             }
             , "Should not be able to drop primary key column");
@@ -114,7 +114,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         CreateMigrationRules(planManager, bulk);
 
         //rules should pass checks
-        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
         engine.Execute();
@@ -161,7 +161,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         planManager.Plans[nameCol].Plan = Plan.Drop;
 
         //rules should pass checks
-        planManager.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        planManager.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
         engine.Execute();
@@ -249,7 +249,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
                 NumberOfCharactersToUseInAnonymousRepresentation = 10
             };
         anoTable.SaveToDatabase();
-        anoTable.PushToANOServerAsNewTable("varchar(10)",ThrowImmediatelyCheckNotifier.Quiet());
+        anoTable.PushToANOServerAsNewTable("varchar(10)",ThrowImmediatelyCheckNotifier.Quiet);
          
         //////////////////The actual test!/////////////////
         var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, cata);
@@ -429,7 +429,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         CreateMigrationRules(planManager, bulk);
 
         //rules should pass checks
-        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.DoesNotThrow(() => planManager.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
         engine.Execute();
@@ -518,7 +518,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
                 NumberOfCharactersToUseInAnonymousRepresentation = 1
             };
         anoChi.SaveToDatabase();
-        anoChi.PushToANOServerAsNewTable(chi.Data_type,ThrowImmediatelyCheckNotifier.Quiet());
+        anoChi.PushToANOServerAsNewTable(chi.Data_type,ThrowImmediatelyCheckNotifier.Quiet);
 
         planManager.GetPlanForColumnInfo(chi).Plan = Plan.ANO;
         planManager.GetPlanForColumnInfo(chi).ANOTable = anoChi;

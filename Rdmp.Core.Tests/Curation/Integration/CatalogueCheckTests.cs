@@ -25,7 +25,7 @@ public class CatalogueCheckTests : DatabaseTests
             Name = @"c:\bob.txt#"
         };
 
-        var ex = Assert.Throws<Exception>(()=>cata.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        var ex = Assert.Throws<Exception>(()=>cata.Check(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.IsTrue(ex.Message.Contains("The following invalid characters were found:'\\','.','#'"));
 
         cata.DeleteInDatabase();

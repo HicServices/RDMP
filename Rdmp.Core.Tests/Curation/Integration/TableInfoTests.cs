@@ -152,7 +152,7 @@ internal class TableInfoTests : DatabaseTests
 
             Assert.AreEqual(TriggerStatus.Missing, impl.GetTriggerStatus());
 
-            impl.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet());
+            impl.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
             Assert.AreEqual(TriggerStatus.Enabled, impl.GetTriggerStatus());
 
@@ -173,7 +173,7 @@ internal class TableInfoTests : DatabaseTests
             Assert.AreEqual("Omg", tvfTi.Schema);
 
             var syncTvf = new TableInfoSynchronizer(tvfTi);
-            syncTvf.Synchronize(ThrowImmediatelyCheckNotifier.Quiet());
+            syncTvf.Synchronize(ThrowImmediatelyCheckNotifier.Quiet);
 
             StringAssert.EndsWith("[Omg].Fish_Legacy(@index) AS Fish_Legacy", tvfTi.Name);
         }
@@ -223,7 +223,7 @@ FROM {1}",
         Import(view, out var viewInfo, out _);
 
         var sync = new TableInfoSynchronizer(viewInfo);
-        sync.Synchronize(ThrowImmediatelyCheckNotifier.Quiet());
+        sync.Synchronize(ThrowImmediatelyCheckNotifier.Quiet);
             
         Assert.IsTrue(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
         Assert.AreEqual(TableType.View, viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);

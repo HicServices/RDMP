@@ -62,7 +62,7 @@ public class TriggerTests : DatabaseTests
     {
         CreateTable(dbType);
 
-        var ex = Assert.Throws<TriggerException>(() => GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet()));
+        var ex = Assert.Throws<TriggerException>(() => GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet));
         Assert.AreEqual("There must be at least 1 primary key", ex.Message);
     }
 
@@ -72,7 +72,7 @@ public class TriggerTests : DatabaseTests
         CreateTable(dbType);
 
         _table.CreatePrimaryKey(new []{_table.DiscoverColumn("name")});
-        GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet());
+        GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.AreEqual(TriggerStatus.Enabled, GetImplementer().GetTriggerStatus());
         Assert.AreEqual(true, GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
@@ -89,7 +89,7 @@ public class TriggerTests : DatabaseTests
             new("Group By Meeee Colll trollolol",new DatabaseTypeRequest(typeof(int)))
         });
 
-        GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet());
+        GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.AreEqual(TriggerStatus.Enabled, GetImplementer().GetTriggerStatus());
         Assert.AreEqual(true, GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
@@ -112,7 +112,7 @@ public class TriggerTests : DatabaseTests
         implementer.DropTrigger(out var problemsDroppingTrigger, out _);
         Assert.IsEmpty(problemsDroppingTrigger);
 
-        implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet());
+        implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.AreEqual(true, implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
     }
@@ -175,7 +175,7 @@ public class TriggerTests : DatabaseTests
 
         _table.CreatePrimaryKey(_table.DiscoverColumn("name"));
             
-        GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet());
+        GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
             
         _table.Insert(new Dictionary<string, object>
         {
@@ -223,7 +223,7 @@ public class TriggerTests : DatabaseTests
 
         var implementer = new MicrosoftSQLTriggerImplementer(_table);
 
-        implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet());
+        implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
         implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
     }
 

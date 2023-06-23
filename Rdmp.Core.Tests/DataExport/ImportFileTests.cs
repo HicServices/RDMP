@@ -49,7 +49,7 @@ public class ImportFileTests : DatabaseTests
             };
 
             source.PreInitialize(new FlatFileToLoad(new FileInfo(file)), ThrowImmediatelyDataLoadEventListener.Quiet);//this is the file we want to load
-            source.Check(ThrowImmediatelyCheckNotifier.Quiet());
+            source.Check(ThrowImmediatelyCheckNotifier.Quiet);
                 
             var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
             var database = server.ExpectDatabase(databaseName);

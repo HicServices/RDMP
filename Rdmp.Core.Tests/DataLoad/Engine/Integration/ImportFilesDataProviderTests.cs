@@ -46,19 +46,19 @@ public class ImportFilesDataProviderTests : DatabaseTests
         var provider = new ImportFilesDataProvider();
 
         //it doesn't know what to load yet
-        Assert.Throws<Exception>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.Throws<Exception>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
             
         //now it does
         provider.DirectoryPath = sourceDir.FullName;
 
         //but it doesn't have a file pattern
-        Assert.Throws<Exception>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.Throws<Exception>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         //now it does but its not a matching one
         provider.FilePattern = "cannonballs.bat";
 
         //either way it passes checking
-        Assert.DoesNotThrow(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.DoesNotThrow(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         //execute the provider
         provider.Fetch(job, new GracefulCancellationToken());

@@ -36,7 +36,7 @@ internal class DocumentationReportDatabaseEntitiesTests:UnitTests
 
         var iconProvider = Mock.Of<IIconProvider>(m=>m.GetImage(It.IsAny<object>(),It.IsAny<OverlayKind>()) == img);
 
-        reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet(), iconProvider, MEF,false);
+        reporter.GenerateReport(store, ThrowImmediatelyCheckNotifier.Quiet, iconProvider, MEF,false);
 
         var iconProvider = Substitute.For<IIconProvider>();
         iconProvider.GetImage(Arg.Any<object>(), Arg.Any<OverlayKind>()).Returns(img);

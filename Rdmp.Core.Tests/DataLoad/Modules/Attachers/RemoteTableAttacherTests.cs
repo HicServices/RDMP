@@ -95,7 +95,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
         attacher.RemoteTableName = "table1";
         attacher.RAWTableName = "table2";
 
-        attacher.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        attacher.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         attacher.Initialize(null, db);
 
@@ -139,7 +139,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             $"SELECT * FROM table1 WHERE {syntax.EnsureWrapped("DateCol")} >= @startDate AND {syntax.EnsureWrapped("DateCol")} <= @endDate";
         attacher.RAWTableName = "table2";
 
-        attacher.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        attacher.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         attacher.Initialize(null, db);
 

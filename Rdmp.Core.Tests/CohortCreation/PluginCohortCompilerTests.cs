@@ -28,7 +28,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_PopulatesCacheCorrectly()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet()) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true };
 
         // create a cohort config
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
@@ -88,7 +88,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_TestCloneCic()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet()) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true };
 
         // create a cohort config
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
@@ -123,7 +123,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_APIsCantHavePatientIndexTables()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet()) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true };
 
         // create a cohort config
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
@@ -166,7 +166,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
     [Test]
     public void TestIPluginCohortCompiler_AsPatientIndexTable()
     {
-        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet()) { DisallowInput = true };
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet) { DisallowInput = true };
 
         // Create a regular normal boring old table that will join into the results of the API call
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);

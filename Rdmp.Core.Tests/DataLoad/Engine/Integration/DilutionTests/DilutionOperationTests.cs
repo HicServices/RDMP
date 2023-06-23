@@ -206,7 +206,7 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
         };
 
         dilution.Initialize(db,LoadStage.AdjustStaging);
-        dilution.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        dilution.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server, namer), ti);
 

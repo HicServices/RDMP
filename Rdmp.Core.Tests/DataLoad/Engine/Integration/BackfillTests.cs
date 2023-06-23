@@ -108,7 +108,7 @@ public class BackfillTests : FromToDatabaseTests
         };
 
         mutilator.Initialize(From, LoadStage.AdjustStaging);
-        mutilator.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        mutilator.Check(ThrowImmediatelyCheckNotifier.Quiet);
         mutilator.Mutilate(new ThrowImmediatelyDataLoadJob(To.Server));
     }
 
@@ -1007,7 +1007,7 @@ public class BackfillTests : FromToDatabaseTests
         };
 
         mutilator.Initialize(From, LoadStage.AdjustStaging);
-        mutilator.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        mutilator.Check(ThrowImmediatelyCheckNotifier.Quiet);
         mutilator.Mutilate(new ThrowImmediatelyDataLoadJob());
 
         #region Assert
