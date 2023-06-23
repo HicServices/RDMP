@@ -36,7 +36,8 @@ internal class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionPro
 
         if (sourceFileTaskCommand?.Files.Length == 1)
         {
-            switch (sourceFileTaskCommand.Files.Single().Extension)
+            var f = sourceFileTaskCommand.Files.Single();
+            switch (f.Extension)
             {
                 case ".sql":
                     return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,targetStage.LoadMetadata, targetStage.LoadStage,f);
