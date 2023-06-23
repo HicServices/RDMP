@@ -103,7 +103,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         if (cachedb.Exists())
             cachedb.Drop();
 
-        new MasterDatabaseScriptExecutor(cachedb).CreateAndPatchDatabase(p, ThrowImmediatelyCheckNotifier.Quiet());
+        new MasterDatabaseScriptExecutor(cachedb).CreateAndPatchDatabase(p, ThrowImmediatelyCheckNotifier.Quiet);
         queryCacheServer.SetProperties(cachedb);
             
         //Create a Cohort Identification configuration (query) that will identify the cohort

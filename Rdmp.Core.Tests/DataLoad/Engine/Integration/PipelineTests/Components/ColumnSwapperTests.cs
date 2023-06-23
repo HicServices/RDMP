@@ -52,7 +52,7 @@ internal class ColumnSwapperTests:DatabaseTests
             KeepInputColumnToo = keepInputColumnToo
         };
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 
@@ -111,7 +111,7 @@ internal class ColumnSwapperTests:DatabaseTests
             KeepInputColumnToo = keepInputColumnToo
         };
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 
@@ -179,7 +179,7 @@ internal class ColumnSwapperTests:DatabaseTests
             KeepInputColumnToo = keepInputColumnToo
         };
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 
@@ -235,7 +235,7 @@ internal class ColumnSwapperTests:DatabaseTests
             AliasResolutionStrategy = strategy
         };
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 
@@ -300,7 +300,7 @@ internal class ColumnSwapperTests:DatabaseTests
         };
         swapper.WHERELogic = $"{swapper.MappingToColumn.GetFullyQualifiedName()} < 2"; //throws out all rows but A
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 
@@ -351,7 +351,7 @@ internal class ColumnSwapperTests:DatabaseTests
         // initialize with a mock that returns ProjectNumber 1
         swapper.PreInitialize(GetMockExtractDatasetCommand(), ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 
@@ -396,7 +396,7 @@ internal class ColumnSwapperTests:DatabaseTests
             MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"))
         };
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 
@@ -442,7 +442,7 @@ internal class ColumnSwapperTests:DatabaseTests
             MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"))
         };
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 
@@ -496,7 +496,7 @@ internal class ColumnSwapperTests:DatabaseTests
             MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"))
         };
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 
@@ -540,7 +540,7 @@ internal class ColumnSwapperTests:DatabaseTests
             MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"))
         };
 
-        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        swapper.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         using var dtToSwap = new DataTable();
 

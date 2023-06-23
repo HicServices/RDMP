@@ -75,7 +75,7 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
 
         //put the backup trigger on the live table (this will also create the needed hic_ columns etc)
         var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(toTbl);
-        triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet());
+        triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
         var configuration = new MigrationConfiguration(From, LoadBubble.Staging, LoadBubble.Live,
             new FixedStagingDatabaseNamer(toTbl.Database.GetRuntimeName(), fromTbl.Database.GetRuntimeName()));

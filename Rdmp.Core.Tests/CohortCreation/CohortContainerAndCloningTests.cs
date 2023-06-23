@@ -227,7 +227,7 @@ sex=@sex
 
         try
         {
-            var clone = cohortIdentificationConfiguration.CreateClone(ThrowImmediatelyCheckNotifier.Quiet());
+            var clone = cohortIdentificationConfiguration.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
 
             //the objects should be different
             Assert.AreNotEqual(cohortIdentificationConfiguration.ID, clone.ID);

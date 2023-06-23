@@ -78,7 +78,7 @@ public class LoadMetadataTests : DatabaseTests
 
         var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl);
         var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(db.Server));
-        var ex = Assert.Throws<Exception>(()=>checker.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        var ex = Assert.Throws<Exception>(()=>checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         StringAssert.IsMatch("Table '.*Imaginary.*' does not exist", ex.Message);
     }
@@ -94,7 +94,7 @@ public class LoadMetadataTests : DatabaseTests
 
         var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(f.TableInfoCreated);
         var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(db.Server));
-        var ex = Assert.Throws<Exception>(() => checker.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        var ex = Assert.Throws<Exception>(() => checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         StringAssert.IsMatch("Table '.*MyAwesomeFunction.*' is a TableValuedFunction", ex.Message);
     }

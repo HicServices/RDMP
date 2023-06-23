@@ -34,7 +34,7 @@ public abstract class CommandCliTests : UnitTests
 
     protected CommandInvoker GetInvoker()
     {
-        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet())
+        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet)
         {
             DisallowInput = true
         });
@@ -67,6 +67,6 @@ public abstract class CommandCliTests : UnitTests
 
         var runner = new ExecuteCommandRunner(opts);
         return runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
-            ThrowImmediatelyCheckNotifier.Quiet(), new GracefulCancellationToken());
+            ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
     }
 }

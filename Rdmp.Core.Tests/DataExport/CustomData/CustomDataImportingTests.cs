@@ -352,7 +352,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         DataFlowPipelineEngine<DataTable> engine = new DataFlowPipelineEngine<DataTable>(context, source, destination, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         engine.Initialize(_extractableCohort,new FlatFileToLoad(new FileInfo(filename)));
-        source.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        source.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         return engine;
     }

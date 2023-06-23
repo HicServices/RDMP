@@ -35,7 +35,7 @@ internal class CommitCohortExample: DatabaseTests
         //create the cohort store table
         var wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository,DataExportRepository,false);
         var privateColumn = new PrivateIdentifierPrototype("chi", privateDataType);
-        var externalCohortTable = wizard.CreateDatabase(privateColumn,ThrowImmediatelyCheckNotifier.Quiet());
+        var externalCohortTable = wizard.CreateDatabase(privateColumn,ThrowImmediatelyCheckNotifier.Quiet);
 
         Assert.AreEqual(dbType,externalCohortTable.DatabaseType);
 

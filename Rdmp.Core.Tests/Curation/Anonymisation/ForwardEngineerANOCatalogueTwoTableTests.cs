@@ -104,7 +104,7 @@ GO";
                 NumberOfCharactersToUseInAnonymousRepresentation = 10
             };
         _anoTable.SaveToDatabase();
-        _anoTable.PushToANOServerAsNewTable("int",ThrowImmediatelyCheckNotifier.Quiet());
+        _anoTable.PushToANOServerAsNewTable("int",ThrowImmediatelyCheckNotifier.Quiet);
             
         _comboCata = new Catalogue(CatalogueRepository, "Combo Catalogue");
             
@@ -146,7 +146,7 @@ GO";
         testIdHeadPlan.Plan = Plan.ANO;
         testIdHeadPlan.ANOTable = _anoTable;
 
-        plan1.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        plan1.Check(ThrowImmediatelyCheckNotifier.Quiet);
             
         var engine1 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, plan1);
         engine1.Execute();
@@ -162,7 +162,7 @@ GO";
         //tell it to skip table 1 (Tests) and only anonymise Results
         plan2.SkippedTables.Add(t1);
         plan2.TargetDatabase = _destinationDatabase;
-        plan2.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        plan2.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         //Run the anonymisation
         var engine2 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator,plan2);

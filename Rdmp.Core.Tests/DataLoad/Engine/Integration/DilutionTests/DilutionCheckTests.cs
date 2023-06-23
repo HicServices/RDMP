@@ -21,7 +21,7 @@ public class DilutionCheckTests
     public void TestChecking_RoundDateToMiddleOfQuarter_NoColumnSet()
     {
         var dil = new RoundDateToMiddleOfQuarter();
-        Assert.Throws<DilutionColumnNotSetException>(() => dil.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.Throws<DilutionColumnNotSetException>(() => dil.Check(ThrowImmediatelyCheckNotifier.Quiet));
     }
 
     [TestCase("varchar(10)")]
@@ -36,7 +36,7 @@ public class DilutionCheckTests
             ColumnToDilute = col
         };
 
-        Assert.Throws<Exception>(() => dil.Check(ThrowImmediatelyCheckNotifier.Quiet()));
+        Assert.Throws<Exception>(() => dil.Check(ThrowImmediatelyCheckNotifier.Quiet));
     }
 
     [TestCase("date")]
@@ -50,6 +50,6 @@ public class DilutionCheckTests
             ColumnToDilute = col
         };
 
-        dil.Check(ThrowImmediatelyCheckNotifier.Quiet());
+        dil.Check(ThrowImmediatelyCheckNotifier.Quiet);
     }
 }
