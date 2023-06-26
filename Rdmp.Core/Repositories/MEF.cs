@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -27,6 +28,7 @@ public class MEF
 {
     // TODO: Cache/preload this for AOT later; figure out generic support
     private static Lazy<ReadOnlyDictionary<string, Type>> _types;
+    private static readonly ConcurrentDictionary<Type, Type[]> TypeCache=new();
 
     static MEF()
     {
@@ -38,6 +40,7 @@ public class MEF
     {
         Console.Error.WriteLine($"Flushing MEF cache due to {ale?.LoadedAssembly.FullName ?? "Anonymous"}");
         _types = new Lazy<ReadOnlyDictionary<string, Type>>(PopulateUnique, LazyThreadSafetyMode.ExecutionAndPublication);
+        TypeCache.Clear();
     }
 
     //private static readonly Regex ExcludeAssembly = new(@"^(<|Interop\+|Microsoft|System|MongoDB|NPOI|SixLabors|NUnit|OracleInternal|Npgsql|Amazon|Castle|Newtonsoft|SharpCompress|Terminal|YamlDotNet|Moq|BrightIdeasSoftware|MySqlConnector|Azure|ZstdSharp|CommandLine|FAnsi|Internal|Mono|DnsClient|Oracle|MS|NuGet|Unix)", RegexOptions.Compiled|RegexOptions.CultureInvariant);
@@ -176,7 +179,7 @@ public class MEF
     public IEnumerable<Type> GetTypes(Type type)
     {
         SetupMEFIfRequired();
-        return _types.Value.Values.Where(t=>!t.IsInterface && !t.IsAbstract).Where(type.IsAssignableFrom).ToArray();
+        return TypeCache.GetOrAdd(type,target=> _types.Value.Values.Where(t => !t.IsInterface && !t.IsAbstract).Where(target.IsAssignableFrom).Distinct().ToArray());
     }
 
     /// <summary>
@@ -188,7 +191,7 @@ public class MEF
     public IEnumerable<Type> GetGenericTypes(Type genericType, Type typeOfT)
     {
         var target = genericType.MakeGenericType(typeOfT);
-        return _types.Value.Values.Where(t => !t.IsAbstract && !t.IsGenericType && target.IsAssignableFrom(t));
+        return _types.Value.Values.Where(t => !t.IsAbstract && !t.IsGenericType && target.IsAssignableFrom(t)).Distinct();
         //return GetTypes(genericType.MakeGenericType(typeOfT));
     }
 
@@ -196,7 +199,7 @@ public class MEF
     {
         SetupMEFIfRequired();
 
-        return _types.Value.Values.AsEnumerable();
+        return _types.Value.Values.Distinct().AsEnumerable();
     }
 
     /// <summary>

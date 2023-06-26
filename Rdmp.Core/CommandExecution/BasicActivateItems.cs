@@ -388,64 +388,64 @@ public abstract class BasicActivateItems : IBasicActivateItems
     protected virtual bool InteractiveDelete(IDeleteable deleteable)
     {
         var databaseObject = deleteable as DatabaseEntity;
-
-        //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
-
-        if (databaseObject is Catalogue c)
-            if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
-            {
-                if (YesNo(
-                        "Catalogue must first be made non extractable before it can be deleted, mark non extractable?",
-                        "Make Non Extractable"))
-                {
-                    var cmd = new ExecuteCommandChangeExtractability(this, c);
-                    cmd.Execute();
-                }
-                else
-                {
-                    return false;
-                }
-            }
-
-        if (databaseObject is ExtractionFilter f)
+            
+        switch (databaseObject)
         {
-            var children = f.ExtractionFilterParameterSets;
-
-            if (children.Any())
+            case Catalogue c:
             {
-                if (!YesNo(
-                        $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
-                        "Delete"))
-                    return false;
+                if(c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+                {
+                    if(YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?","Make Non Extractable"))
+                    {
+                        var cmd = new ExecuteCommandChangeExtractability(this,c);
+                        cmd.Execute();
+                    }
+                    else
+                        return false;
+                }
 
-                foreach (var child in children) child.DeleteInDatabase();
+                break;
+            }
+            case ExtractionFilter f:
+            {
+                var children = f.ExtractionFilterParameterSets;
 
-                f.ClearAllInjections();
+                if (children.Any())
+                {
+                    if (!YesNo(
+                            $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
+                            "Delete"))
+                        return false;
+                    
+                    foreach (var child in children)
+                    {
+                        child.DeleteInDatabase();
+                    }
 
-                f.DeleteInDatabase();
-                return true;
+                    f.ClearAllInjections();
+
+                    f.DeleteInDatabase();
+                    return true;
+                }
+
+                break;
+            }
+            case AggregateConfiguration ac when ac.IsJoinablePatientIndexTable():
+            {
+                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u=>u.AggregateConfiguration);
+                if(users != null)
+                {
+                    users = users.ToArray();
+                    if(users.Any())
+                    {
+                        Show($"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
+                        return false;
+                    }                       
+                }
+
+                break;
             }
         }
-
-        if (databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
-        {
-            var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u => u.AggregateConfiguration);
-            if (users != null)
-            {
-                users = users.ToArray();
-                if (users.Any())
-                {
-                    Show(
-                        $"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine, users)}");
-                    return false;
-                }
-            }
-        }
-
-        string overrideConfirmationText = null;
-
-        if (deleteable is IDeletableWithCustomMessage customMessageDeletable)
-            overrideConfirmationText = $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?";
 
         //it has already been deleted before
         if (databaseObject != null && !databaseObject.Exists())
@@ -469,10 +469,14 @@ public abstract class BasicActivateItems : IBasicActivateItems
                     return false;
         }
 
+        var overrideConfirmationText =
+            //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
+            deleteable is IDeletableWithCustomMessage customMessageDeletable
+            ? $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?"
+            : $"Are you sure you want to delete '{deleteable}'?{Environment.NewLine}({deleteable.GetType().Name}{idText})";
         if (
             YesNo(
-                overrideConfirmationText??
-                $"{$"Are you sure you want to delete '{deleteable}'?"}{Environment.NewLine}({deleteable.GetType().Name}{idText})",
+                overrideConfirmationText,
                 $"Delete {deleteable.GetType().Name}"))
         {
             deleteable.DeleteInDatabase();
@@ -484,8 +488,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
                     databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
             }
 
-            if (deleteable is IMasqueradeAs)
-                databaseObject ??= ((IMasqueradeAs)deleteable).MasqueradingAs() as DatabaseEntity;
+            if (deleteable is IMasqueradeAs masqueradeAs)
+                databaseObject ??= masqueradeAs.MasqueradingAs() as DatabaseEntity;
 
             if (databaseObject == null)
                 throw new NotSupportedException(
