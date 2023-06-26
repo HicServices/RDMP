@@ -616,10 +616,4 @@ public class SafeDirectoryCatalog
             _types.Add(type);
         }
     }
-
-    public IEnumerable<Type> GetAllTypes()
-    {
-        lock(_oTypesLock)
-            return _types.AsEnumerable();
-    }
 }
