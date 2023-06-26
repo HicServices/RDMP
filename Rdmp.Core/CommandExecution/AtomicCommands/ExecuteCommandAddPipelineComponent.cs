@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using SixLabors.ImageSharp;
 using System.Linq;
-using System.Reflection;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 
