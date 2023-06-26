@@ -27,7 +27,6 @@ public class MEF
 {
     // TODO: Cache/preload this for AOT later; figure out generic support
     private static Lazy<ReadOnlyDictionary<string, Type>> _types;
-    private static Lazy<ReadOnlyDictionary<Type, Type[]>> _allTypes;
 
     static MEF()
     {
@@ -39,34 +38,9 @@ public class MEF
     {
         Console.Error.WriteLine($"Flushing MEF cache due to {ale?.LoadedAssembly.FullName ?? "Anonymous"}");
         _types = new Lazy<ReadOnlyDictionary<string, Type>>(PopulateUnique, LazyThreadSafetyMode.ExecutionAndPublication);
-        _allTypes = new Lazy<ReadOnlyDictionary<Type, Type[]>>(PopulateAll, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
-    /*private static string prefix(string name)
-    {
-        return name.Split('.')[0];
-    }*/
-    private static ReadOnlyDictionary<Type, Type[]> PopulateAll()
-    {
-        var sw = Stopwatch.StartNew();
-        try
-        {
-            var allTypes = _types.Value.Values.Where(t=>!ExcludeAssembly.IsMatch(t.FullName??"<")).Distinct().ToArray();
-            /*foreach (var prefix in allTypes.Select(t=>t.FullName).GroupBy(t => prefix(t),(prefix,xs)=> $"{prefix}:{ xs.Count() }"))
-            {
-                Console.Error.WriteLine($"Type: {prefix}");
-            }*/
-            var values=allTypes.Where(t=>!t.IsAbstract && !t.IsInterface).ToArray();
-            return new ReadOnlyDictionary<Type, Type[]>(allTypes.ToDictionary(t => t,
-                t => values.Where(t.IsAssignableFrom).ToArray()));
-        }
-        finally
-        {
-            Console.Error.WriteLine($"PopulateAll took {sw.ElapsedMilliseconds}ms");
-        }
-    }
-
-    private static readonly Regex ExcludeAssembly = new(@"^(<|Interop\+|Microsoft|System|MongoDB|NPOI|SixLabors|NUnit|OracleInternal|Npgsql|Amazon|Castle|Newtonsoft|SharpCompress|Terminal|YamlDotNet|Moq|BrightIdeasSoftware|MySqlConnector|Azure|ZstdSharp|CommandLine|FAnsi|Internal|Mono|DnsClient|Oracle|MS|NuGet|Unix)", RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    //private static readonly Regex ExcludeAssembly = new(@"^(<|Interop\+|Microsoft|System|MongoDB|NPOI|SixLabors|NUnit|OracleInternal|Npgsql|Amazon|Castle|Newtonsoft|SharpCompress|Terminal|YamlDotNet|Moq|BrightIdeasSoftware|MySqlConnector|Azure|ZstdSharp|CommandLine|FAnsi|Internal|Mono|DnsClient|Oracle|MS|NuGet|Unix)", RegexOptions.Compiled|RegexOptions.CultureInvariant);
     private static ReadOnlyDictionary<string, Type> PopulateUnique()
     {
         var sw = Stopwatch.StartNew();
@@ -193,9 +167,6 @@ public class MEF
         return GetTypes(typeof(T));
     }
 
-    private readonly object _cachedImplementationsLock = new();
-    private readonly Dictionary<Type,Type[]> _cachedImplementations = new();
-
     /// <summary>
     /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see
     /// all exported implementers
@@ -205,9 +176,7 @@ public class MEF
     public IEnumerable<Type> GetTypes(Type type)
     {
         SetupMEFIfRequired();
-        var candidates = _allTypes.Value.TryGetValue(type, out var r) ? r : Type.EmptyTypes;
-        // If it's a generic, we need to filter out the ones that don't match the generic type parameter(s)
-        return type.IsGenericType ? _types.Value.Values.Where(type.IsAssignableFrom).ToArray() : candidates;
+        return _types.Value.Values.Where(t=>!t.IsInterface && !t.IsAbstract).Where(type.IsAssignableFrom).ToArray();
     }
 
     /// <summary>
@@ -227,7 +196,7 @@ public class MEF
     {
         SetupMEFIfRequired();
 
-        return SafeDirectoryCatalog.GetAllTypes();
+        return _types.Value.Values.AsEnumerable();
     }
                 
     /// <summary>
