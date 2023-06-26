@@ -17,7 +17,6 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
@@ -89,7 +88,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     {
         if (m?.ShouldBeReadOnly(out var reason)==true)
         {
-            SetImpossible($"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly because:{reason}");
+            SetImpossible($"{(m is IContainer ? "Container" : $"'{m}'")} is readonly because:{reason}");
         }
     }
     public BasicCommandExecution()
