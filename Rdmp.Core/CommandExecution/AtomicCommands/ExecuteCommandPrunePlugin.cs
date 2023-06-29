@@ -24,7 +24,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// dll at runtime and so these dlls will just bloat your plugin.  Use this command to prune out
 /// those files.
 /// </summary>
-public class ExecuteCommandPrunePlugin : BasicCommandExecution
+public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
 {
     private string _file;
 
@@ -56,24 +56,23 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
         var logger = LogManager.GetCurrentClassLogger();
 
-        Regex main = new ($@"/{EnvironmentInfo.MainSubDir}/.*\.dll$",RegexOptions.Compiled|RegexOptions.CultureInvariant);
-        Regex windows = new($@"/{EnvironmentInfo.WindowsSubDir}/.*\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        var main = MainRegex();
+        var windows = WinRegex();
         AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin),true);
         using (var zf = ZipFile.Open(_file, ZipArchiveMode.Update))
         {
-            var current = UsefulStuff.GetExecutableDirectory();
-
-            logger.Info($"Reading RDMP core dlls in directory '{current}'");
-
-            var rdmpCoreFiles = current.GetFiles("*.dll");
-
+            var rdmpCoreFiles = UsefulStuff.GetExecutableDirectory().GetFiles("*.dll");
             var inMain = new List<ZipArchiveEntry>();
             var inWindows = new List<ZipArchiveEntry>();
 
             foreach (var e in zf.Entries.ToArray())
             {
-                if (!e.Name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
+                if (!e.Name.EndsWith(".dll", StringComparison.Ordinal) && !e.Name.EndsWith(".nuspec",StringComparison.Ordinal))
+                {
+                    logger.Info($"Deleting '{e.FullName}' (non-DLL)");
+                    e.Delete();
                     continue;
+                }
                 Assembly assembly;
                 if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) ||
                     rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
@@ -125,4 +124,9 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
         BasicActivator?.Show("Prune Completed");
     }
+
+    [GeneratedRegex("/main/.*\\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex MainRegex();
+    [GeneratedRegex("/windows/.*\\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex WinRegex();
 }

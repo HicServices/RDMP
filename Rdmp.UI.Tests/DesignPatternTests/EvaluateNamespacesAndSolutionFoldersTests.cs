@@ -96,7 +96,6 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         var noMappingToDatabaseComments = new AutoCommentsEvaluator();
         AutoCommentsEvaluator.FindProblems(CatalogueRepository.MEF, _csFilesFound);
 
-        var copyrightHeaderEvaluator = new CopyrightHeaderEvaluator();
         CopyrightHeaderEvaluator.FindProblems(_csFilesFound);
 
         //foreach (var file in slndir.EnumerateFiles("*.cs", SearchOption.AllDirectories))
@@ -288,7 +287,6 @@ public class AutoCommentsEvaluator
                         if (m.Success)
                         {
                             var whitespace = m.Groups[1].Value;
-                            var type = m.Groups[2].Value;
                             var member = m.Groups[3].Value;
 
                             Assert.IsTrue(string.IsNullOrWhiteSpace(whitespace));
