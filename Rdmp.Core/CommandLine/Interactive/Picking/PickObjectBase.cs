@@ -85,7 +85,8 @@ public abstract class PickObjectBase
         return t != null
                && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
     }
-    protected Type GetTypeFromShortCodeIfAny(string possibleShortCode)
+
+    private static Type GetTypeFromShortCodeIfAny(string possibleShortCode)
     {
         return SearchablesMatchScorer.ShortCodes.TryGetValue(possibleShortCode, out var code) ?
             code :

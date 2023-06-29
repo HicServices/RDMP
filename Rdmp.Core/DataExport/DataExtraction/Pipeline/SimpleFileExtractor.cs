@@ -55,10 +55,10 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
     {
         base.Check(notifier);
 
-        if(PerPatient && Pattern.IndexOf("$p") == -1)
+        if(PerPatient && !Pattern.Contains("$p"))
             notifier.OnCheckPerformed(new CheckEventArgs($"PerPatient is true but Pattern {Pattern} did not contain token $p",CheckResult.Fail));
 
-        if(!PerPatient && Pattern.IndexOf("$p") != -1)
+        if(!PerPatient && Pattern.IndexOf("$p", StringComparison.Ordinal) != -1)
             notifier.OnCheckPerformed(new CheckEventArgs($"PerPatient is false but Pattern {Pattern} contains token $p.  This token will never be matched in MoveAll mode",CheckResult.Fail));
 
         try

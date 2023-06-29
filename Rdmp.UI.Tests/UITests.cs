@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using MongoDB.Driver;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -270,29 +271,33 @@ public class UITests : UnitTests
 
     private List<string> GetAllErrorProviderErrorsShown()
     {
-
+        var controls = GetControl<Control>().ToArray();
         var errorProviders =
             //get all controls with ErrorProvider fields
-            GetControl<Control>().SelectMany(GetErrorProviders)
+            controls.SelectMany(GetErrorProviders)
                 //and any we registered through the BinderWithErrorProviderFactory
                 .Union(ItemActivator.Results.RegisteredRules.Select(r => r.ErrorProvider))
                 .ToList();
 
         //get the error messages that have been shown from any of these
-        return errorProviders.SelectMany(GetErrorProviderErrorsShown).ToList();
+
+        return errorProviders.SelectMany(GetErrors).ToList();
     }
 
-    private List<string> GetErrorProviderErrorsShown(ErrorProvider errorProvider)
+
+    static FieldInfo _items;
+    private IEnumerable<string> GetErrors(ErrorProvider ep)
     {
-        //https://referencesource.microsoft.com/#system.windows.forms/winforms/Managed/System/WinForms/ErrorProvider.cs.html,11db4fca371f280c
-
-        var hashtable = (Hashtable) typeof (ErrorProvider).GetField("_items",BindingFlags.Instance | BindingFlags.NonPublic).GetValue(errorProvider);
-
-        return hashtable.Values.Cast<object>()
-            .Select(entry =>
-                (string)entry.GetType()
-                    .GetField("_error", BindingFlags.Instance | BindingFlags.NonPublic)
-                    .GetValue(entry)).ToList();
+        _items ??= typeof(ErrorProvider).GetField("_items", BindingFlags.NonPublic|BindingFlags.Instance) ?? throw new Exception("ErrorProvider _items field missing?!");
+        var itemsV = _items.GetValue(ep) ?? throw new Exception("EP had missing _items");
+        var itemsValues = _items.FieldType.GetProperty("Values") ?? throw new Exception("No _items.Values");
+        var values = (ICollection)itemsValues.GetValue(itemsV) ?? throw new Exception("No Values");
+        foreach (var iv in values)
+        {
+            var s=iv.GetType().GetField("_error", BindingFlags.NonPublic|BindingFlags.Instance)?.GetValue(iv) as string;
+            if (!string.IsNullOrWhiteSpace(s))
+                yield return s;
+        }
     }
 
     private List<ErrorProvider> GetErrorProviders(Control arg)

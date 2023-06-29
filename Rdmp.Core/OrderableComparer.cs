@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core;
 
@@ -53,14 +53,10 @@ public class OrderableComparer : IComparer, IComparer<object>
             return -yOrder.Value;
 
         //or use whatever the model is
-        if (_nestedComparer != null)
-            return _nestedComparer.Compare(x, y);
-
-
-        return string.Compare(x.ToString(), y.ToString());
+        return _nestedComparer?.Compare(x, y) ?? string.Compare(x?.ToString(), y?.ToString(),StringComparison.CurrentCulture);
     }
 
-    private int? GetOrderIfAny(object o)
+    private static int? GetOrderIfAny(object o)
     {
         return o switch
         {
@@ -68,15 +64,5 @@ public class OrderableComparer : IComparer, IComparer<object>
             ISqlParameter => -5000,
             _ => null
         };
-    }
-
-    /// <summary>
-    /// Return true if the object should never be reordered and always ordered alphabetically based on its <see cref="INamed.Name"/>
-    /// </summary>
-    /// <param name="x"></param>
-    /// <returns></returns>
-    private bool ShouldSortByName(object x)
-    {
-        return x is INamed and not IProject;
     }
 }
