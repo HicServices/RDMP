@@ -30,11 +30,9 @@ public class ToMemoryDataLoadEventListener : IDataLoadEventListener
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        if (e.ProgressEventType == ProgressEventType.Error && _throwOnErrorEvents)
-            if (e.Exception != null)
-                throw e.Exception;
-            else
-                throw new Exception(e.Message);
+
+        if(e.ProgressEventType == ProgressEventType.Error && _throwOnErrorEvents)
+            throw e.Exception ?? new Exception(e.Message);
 
 
         if (!EventsReceivedBySender.ContainsKey(sender))
@@ -45,10 +43,7 @@ public class ToMemoryDataLoadEventListener : IDataLoadEventListener
 
     public void OnProgress(object sender, ProgressEventArgs e)
     {
-        if (!LastProgressRecieivedByTaskName.ContainsKey(e.TaskDescription))
-            LastProgressRecieivedByTaskName.Add(e.TaskDescription, e); //add progress on new item
-        else
-            LastProgressRecieivedByTaskName[e.TaskDescription] = e; //replace last progress
+        LastProgressRecieivedByTaskName[e.TaskDescription] = e;
     }
 
     public override string ToString()

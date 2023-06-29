@@ -866,9 +866,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public int CompareTo(object obj)
     {
         if (obj is Catalogue)
-        {
-            return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
-        }
+            return -string.Compare(obj.ToString(), ToString(),
+                StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
@@ -889,7 +888,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                 CheckResult.Success));
 
         var tables = GetTableInfoList(true);
-        foreach (TableInfo t in tables)
+        foreach (var t in tables)
             t.Check(notifier);
 
         var extractionInformations = GetAllExtractionInformation(ExtractionCategory.Core);
@@ -948,15 +947,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                 using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
                 {
                     cmd.CommandTimeout = 10;
-                    using (var r = cmd.ExecuteReader())
-                    {
-                        if (r.Read())
-                            notifier.OnCheckPerformed(new CheckEventArgs(
-                                $"successfully read a row of data from the extraction SQL of Catalogue {this}",CheckResult.Success));
-                        else
-                            notifier.OnCheckPerformed(new CheckEventArgs(
-                                $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
-                    }
+                    using var r = cmd.ExecuteReader();
+                    if (r.Read())
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"successfully read a row of data from the extraction SQL of Catalogue {this}",CheckResult.Success));
+                    else
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
                 }
                         
                 con.Close();

@@ -524,10 +524,7 @@ public class ShareManager
                     }
 
                     //get the ID of the local import of the parent
-                    if (propertiesDictionary.ContainsKey(property.Name))
-                        propertiesDictionary[property.Name] = newValue;
-                    else
-                        propertiesDictionary.Add(property.Name, newValue);
+                    propertiesDictionary[property.Name] = newValue;
                 }
             }
 

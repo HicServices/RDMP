@@ -192,7 +192,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
 
         //order is inverted where name comes out at the end column (index 2)
-        var dt1 = new DataTable();
+        using var dt1 = new DataTable();
         dt1.Columns.Add("age", typeof(string));
         dt1.Columns.Add("color", typeof(string));
         dt1.Columns.Add("name", typeof(string));
@@ -203,9 +203,9 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
         var exceptionMessage = ex.InnerException.Message;
-        var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<") + ": ".Length)..];
+        var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<", StringComparison.Ordinal) + 2)..];
 
-        var expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
+        const string expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
         StringAssert.Contains(expectedErrorMessage, interestingBit);
             
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);

@@ -250,7 +250,7 @@ public class CopyrightHeaderEvaluator
     }
 }
 
-public class AutoCommentsEvaluator
+public partial class AutoCommentsEvaluator
 {
     public static void FindProblems(MEF mef, List<string> csFilesFound)
     {
@@ -283,7 +283,7 @@ public class AutoCommentsEvaluator
                     {
                         var next = text[i + 1];
 
-                        var m = Regex.Match(next, @"(.*)public\b(.*)\s+(.*)\b");
+                        var m = PublicRegex().Match(next);
                         if (m.Success)
                         {
                             var whitespace = m.Groups[1].Value;
@@ -343,7 +343,7 @@ public class AutoCommentsEvaluator
                         sbSuggestedText.AppendLine(text[i]);
 
                         //add the para tag
-                        var nextLine = text[i + 1].Insert(text[i + 1].IndexOf("///") + 4, "<para>");
+                        var nextLine = text[i + 1].Insert(text[i+1].IndexOf("///", StringComparison.Ordinal)+4,"<para>");
                         sbSuggestedText.AppendLine(nextLine);
                         i++;
                         paraOpened = true;
@@ -381,4 +381,7 @@ public class AutoCommentsEvaluator
             _ => typename
         };
     }
+
+    [GeneratedRegex("(.*)public\\b(.*)\\s+(.*)\\b")]
+    private static partial Regex PublicRegex();
 }

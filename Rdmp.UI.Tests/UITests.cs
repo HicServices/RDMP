@@ -287,6 +287,7 @@ public class UITests : UnitTests
             controls.SelectMany(GetErrorProviders)
                 //and any we registered through the BinderWithErrorProviderFactory
                 .Union(ItemActivator.Results.RegisteredRules.Select(r => r.ErrorProvider))
+                .Distinct()
                 .ToList();
 
         //get the error messages that have been shown from any of these
@@ -295,8 +296,8 @@ public class UITests : UnitTests
     }
 
 
-    static FieldInfo _items;
-    private IEnumerable<string> GetErrors(ErrorProvider ep)
+    private static FieldInfo _items;
+    private static IEnumerable<string> GetErrors(ErrorProvider ep)
     {
         if (!ep.HasErrors) yield break;
         _items ??= typeof(ErrorProvider).GetField("_items", BindingFlags.NonPublic|BindingFlags.Instance) ?? throw new Exception("ErrorProvider _items field missing?!");

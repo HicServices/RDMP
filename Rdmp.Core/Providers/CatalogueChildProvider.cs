@@ -1720,9 +1720,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            return AllMasqueraders.TryGetValue(o, out var result)
-                ? (IEnumerable<IMasqueradeAs>)result
-                : Array.Empty<IMasqueradeAs>();
+            return AllMasqueraders.TryGetValue(o,out var result) ?
+                result:Array.Empty<IMasqueradeAs>();
         }
     }
 

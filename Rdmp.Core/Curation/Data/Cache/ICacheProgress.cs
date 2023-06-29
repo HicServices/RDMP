@@ -13,7 +13,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Curation.Data.Cache;
 
-/// <inheritdoc/>
+/// <inheritdoc cref="ILoggedActivityRootObject" />
 public interface ICacheProgress : INamed, ILoggedActivityRootObject
 {
     /// <summary>
