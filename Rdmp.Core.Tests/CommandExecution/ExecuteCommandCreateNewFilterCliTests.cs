@@ -14,7 +14,7 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.Tests.CommandExecution;
 
 /// <summary>
-/// Tests for <see cref="ExecuteCommandCreateNewFilter">
+/// Tests for <see cref="ExecuteCommandCreateNewFilter" />
 /// </summary>
 internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
 {

@@ -23,9 +23,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
 {
     private readonly LoadBubble _bubble;
     private readonly DiscoveredDatabase _database;
-    private readonly TableInfo[] _loadTables;
-    private readonly HICDatabaseConfiguration _config;
-    private string _description;
+    private readonly string _description;
         
     public string ErrorDescription { get; private set; }
 
@@ -36,27 +34,19 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config)
         :base(database.Server.Name,database.Server.DatabaseType, loadTables)
     {
-
         _bubble = bubble;
         _database = database;
-        _loadTables = loadTables;
-        _config = config;
+        var loadTables1 = loadTables;
+        var config1 = config;
         var serverName = database.Server.Name;
 
-        switch (bubble)
+        _description = bubble switch
         {
-            case LoadBubble.Raw:
-                _description = $"RAW Server:{serverName}";
-                break;
-            case LoadBubble.Staging:
-                _description = $"STAGING Server:{serverName}";
-                break;
-            case LoadBubble.Live:
-                _description = $"LIVE Server:{serverName}";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(bubble));
-        }
+            LoadBubble.Raw => $"RAW Server:{serverName}",
+            LoadBubble.Staging => $"STAGING Server:{serverName}",
+            LoadBubble.Live => $"LIVE Server:{serverName}",
+            _ => throw new ArgumentOutOfRangeException(nameof(bubble))
+        };
 
         //Live can have multiple databases (for lookups)
         if (_bubble == LoadBubble.Live)
@@ -69,20 +59,20 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
                     $"The TableInfo collection that underlie the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
             }
 
-            var databases = _loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
+            var databases = loadTables1.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
 
             _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 
             foreach (var dbname in databases)
-                _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),_loadTables.Where(t => t.GetDatabaseRuntimeName().Equals(dbname,StringComparison.CurrentCultureIgnoreCase)).ToArray());
+                _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),loadTables1.Where(t => t.GetDatabaseRuntimeName().Equals(dbname,StringComparison.CurrentCultureIgnoreCase)).ToArray());
         }
 
         //if it is live yield all the lookups
         if(_bubble == LoadBubble.Live)
             foreach (var kvp in _liveDatabaseDictionary)
-                Children.Add(new LoadDiagramDatabaseNode(_bubble,kvp.Key,kvp.Value,_config));
+                Children.Add(new LoadDiagramDatabaseNode(_bubble,kvp.Key,kvp.Value,config1));
         else
-            Children.Add(new LoadDiagramDatabaseNode(_bubble,_database,_loadTables,_config));
+            Children.Add(new LoadDiagramDatabaseNode(_bubble,_database,loadTables1,config1));
     }
 
     public IEnumerable<LoadDiagramDatabaseNode> GetChildren()

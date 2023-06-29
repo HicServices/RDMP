@@ -1665,7 +1665,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         lock(WriteLock)
         {
             return AllMasqueraders.TryGetValue(o,out var result) ?
-                (IEnumerable<IMasqueradeAs>) result:Array.Empty<IMasqueradeAs>();
+                result:Array.Empty<IMasqueradeAs>();
         }
     }
 

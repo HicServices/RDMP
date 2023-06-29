@@ -742,13 +742,10 @@ public abstract class TableRepository : ITableRepository
         ongoingTransaction = toReturn.ManagedTransaction;
         ongoingTransactions[Thread.CurrentThread] = ongoingTransaction;
 
-        if (!ongoingConnections.ContainsKey(Thread.CurrentThread))
-            ongoingConnections.Add(Thread.CurrentThread,toReturn);
-        else
-            ongoingConnections[Thread.CurrentThread] = toReturn;
+        ongoingConnections[Thread.CurrentThread] = toReturn;
         if (DiscoveredServer.DatabaseType == DatabaseType.MicrosoftSQLServer)
         {
-            var cmd = toReturn.Connection.CreateCommand();
+            using var cmd = toReturn.Connection.CreateCommand();
             cmd.Transaction = toReturn.Transaction;
             cmd.CommandText = "SET TRANSACTION ISOLATION LEVEL READ COMMITTED";
             cmd.ExecuteNonQuery();

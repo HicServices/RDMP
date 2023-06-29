@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
@@ -257,7 +258,7 @@ public class ANOTableTests:TestsRequiringANOStore
         {
             var val = r.NextDouble() * 9999999999;
             val = Math.Round(val);
-            var valAsString = val.ToString();
+            var valAsString = val.ToString(CultureInfo.InvariantCulture);
                 
             while (valAsString.Length < 10)
                 valAsString = $"0{valAsString}";

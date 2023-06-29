@@ -21,12 +21,12 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
         if (throwOnEmpty)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, BadDataHandlingStrategy.ThrowException, throwOnEmpty));
-            Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex.Message);
+            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
+            Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex?.Message);
         }
         else
         {
-            Assert.IsNull(RunGetChunk(file, BadDataHandlingStrategy.ThrowException, throwOnEmpty));
+            Assert.IsNull(RunGetChunk(file, BadDataHandlingStrategy.ThrowException, false));
         }
     }
 
@@ -40,12 +40,12 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
         if(throwOnEmpty)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, BadDataHandlingStrategy.ThrowException, throwOnEmpty));
-            StringAssert.StartsWith("File DelimitedFileSourceTests.txt is empty", ex.Message);
+            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, BadDataHandlingStrategy.ThrowException, true));
+            StringAssert.StartsWith("File DelimitedFileSourceTests.txt is empty", ex?.Message);
         }
         else
         {
-            Assert.IsNull(RunGetChunk(file, BadDataHandlingStrategy.ThrowException,throwOnEmpty));
+            Assert.IsNull(RunGetChunk(file, BadDataHandlingStrategy.ThrowException,false));
         }
     }
 

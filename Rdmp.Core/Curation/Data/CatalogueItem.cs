@@ -319,9 +319,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     public int CompareTo(object obj)
     {
         if (obj is CatalogueItem)
-        {
-            return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
-        }
+            return -string.Compare(obj.ToString(), ToString(),
+                StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }

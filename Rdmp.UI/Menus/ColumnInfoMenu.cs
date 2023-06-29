@@ -11,7 +11,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-internal class ColumnInfoMenu : RDMPContextMenuStrip
+internal sealed class ColumnInfoMenu : RDMPContextMenuStrip
 {
     public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo) : base(args, columnInfo)
     {            

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -586,24 +587,21 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         try
         {
-            var ofd = new OpenFileDialog
+            using var ofd = new OpenFileDialog
             {
                 Filter = "Plans (*.plan)|*.plan"
             };
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                var fi = new FileInfo(ofd.FileName);
-                var json = File.ReadAllText(fi.FullName);
-                _planManager = (ForwardEngineerANOCataloguePlanManager)
-                    JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), Activator.RepositoryLocator);
+            if (ofd.ShowDialog() != DialogResult.OK) return;
+            var fi = new FileInfo(ofd.FileName);
+            var json = File.ReadAllText(fi.FullName);
+            _planManager = (ForwardEngineerANOCataloguePlanManager)
+                JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), Activator.RepositoryLocator);
 
-                if (_planManager.StartDate != null)
-                    tbStartDate.Text = _planManager.StartDate.Value.ToString();
+            if (_planManager.StartDate != null)
+                tbStartDate.Text = _planManager.StartDate.Value.ToString(CultureInfo.CurrentCulture);
 
-                cbDateBasedLoad.Checked = _planManager.DateColumn != null;
-                ddDateColumn.SelectedItem = _planManager.DateColumn;
-
-            }
+            cbDateBasedLoad.Checked = _planManager.DateColumn != null;
+            ddDateColumn.SelectedItem = _planManager.DateColumn;
         }
         catch (Exception exception)
         {
