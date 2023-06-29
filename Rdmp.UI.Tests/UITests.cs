@@ -288,6 +288,7 @@ public class UITests : UnitTests
     static FieldInfo _items;
     private IEnumerable<string> GetErrors(ErrorProvider ep)
     {
+        if (!ep.HasErrors) yield break;
         _items ??= typeof(ErrorProvider).GetField("_items", BindingFlags.NonPublic|BindingFlags.Instance) ?? throw new Exception("ErrorProvider _items field missing?!");
         var itemsV = _items.GetValue(ep) ?? throw new Exception("EP had missing _items");
         var itemsValues = _items.FieldType.GetProperty("Values") ?? throw new Exception("No _items.Values");

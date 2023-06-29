@@ -98,7 +98,6 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         var noMappingToDatabaseComments = new AutoCommentsEvaluator();
         noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, _csFilesFound);
 
-        var copyrightHeaderEvaluator = new CopyrightHeaderEvaluator();
         CopyrightHeaderEvaluator.FindProblems(_csFilesFound);
 
         //foreach (var file in slndir.EnumerateFiles("*.cs", SearchOption.AllDirectories))
@@ -283,7 +282,6 @@ public class AutoCommentsEvaluator
                         {
                                 
                             var whitespace = m.Groups[1].Value;
-                            var type = m.Groups[2].Value;
                             var member = m.Groups[3].Value;
 
                             Assert.IsTrue(string.IsNullOrWhiteSpace(whitespace));
@@ -363,14 +361,13 @@ public class AutoCommentsEvaluator
             File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
     }
 
-    private string GetUniqueTypeName(string typename)
+    private static string GetUniqueTypeName(string typename)
     {
-        switch (typename)
+        return typename switch
         {
-            case "ColumnInfo": return "Rdmp.Core.Curation.Data.ColumnInfo";
-            case "IFilter": return "Rdmp.Core.Curation.Data.IFilter";
-        }
-
-        return typename;
+            "ColumnInfo" => "Rdmp.Core.Curation.Data.ColumnInfo",
+            "IFilter" => "Rdmp.Core.Curation.Data.IFilter",
+            _ => typename
+        };
     }
 }
