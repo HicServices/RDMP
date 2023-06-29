@@ -50,7 +50,7 @@ public class Patch : IComparable
     {
         var lines = EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 
-        var idx = lines[0].IndexOf(VersionKey);
+        var idx = lines[0].IndexOf(VersionKey, StringComparison.Ordinal);
 
         if (idx == -1)
             throw new InvalidPatchException(locationInAssembly, $"Script does not start with {VersionKey}");
@@ -70,7 +70,7 @@ public class Patch : IComparable
 
         if (lines.Length >= 2)
         {
-            idx = lines[1].IndexOf(DescriptionKey);
+            idx = lines[1].IndexOf(DescriptionKey, StringComparison.Ordinal);
 
             if (idx == -1)
                 throw new InvalidPatchException(locationInAssembly,
