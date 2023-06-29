@@ -104,7 +104,7 @@ public abstract class PickObjectBase
         return repo.GetAllObjects(type);
     }
 
-    private Dictionary<string,Regex> patternDictionary = new();
+    private readonly Dictionary<string,Regex> patternDictionary = new();
 
     /// <summary>
     /// Returns true if the <paramref name="pattern"/> (which is a simple non regex e.g. "Bio*") matches the ToString of <paramref name="o"/>
@@ -127,7 +127,7 @@ public abstract class PickObjectBase
     /// <param name="key"></param>
     /// <param name="keyValueString"></param>
     /// <returns></returns>
-    protected string Trim(string key, string keyValueString)
+    protected static string Trim(string key, string keyValueString)
     {
         if (string.IsNullOrWhiteSpace(keyValueString))
             return null;

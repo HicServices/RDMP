@@ -79,16 +79,14 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     private readonly DockPanel _mainDockPanel;
     private readonly WindowManager _windowManager;
 
-    public WindowFactory WindowFactory { get; private set; }
+    private WindowFactory WindowFactory { get; }
 
 
-    public ITheme Theme { get; private set; }
+    public ITheme Theme { get; }
 
-    public RefreshBus RefreshBus { get; private set; }
+    public RefreshBus RefreshBus { get; }
 
-    private readonly UIObjectConstructor _constructor = new();
-
-    public IArrangeWindows WindowArranger { get; private set; }
+    public IArrangeWindows WindowArranger { get; }
         
     public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
     {
@@ -108,11 +106,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         WideMessageBox.Show(title,message,Environment.StackTrace,true,null,WideMessageBoxTheme.Help);
     }
 
-    public ICombineableFactory CommandFactory { get; private set; }
-    public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
-    public HistoryProvider HistoryProvider { get; private set; }
+    public ICombineableFactory CommandFactory { get; }
+    public ICommandExecutionFactory CommandExecutionFactory { get; }
+    public HistoryProvider HistoryProvider { get; }
 
-    public List<IProblemProvider> ProblemProviders { get; private set; }
+    private List<IProblemProvider> ProblemProviders { get; }
 
     public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
     {
@@ -175,12 +173,15 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             ? singleControlForm.Name ?? singleControlForm.GetType().Name//or worst case scenario use the type name!
             : singleControlForm.Text;
 
-        if(singleControlForm is Form && asDocument)
-            throw new Exception(
-                $"Control '{singleControlForm}' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
-
-        if(singleControlForm is RDMPUserControl c)
-            c.SetItemActivator(this);
+        switch (singleControlForm)
+        {
+            case Form when asDocument:
+                throw new Exception(
+                    $"Control '{singleControlForm}' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
+            case RDMPUserControl c:
+                c.SetItemActivator(this);
+                break;
+        }
 
         var content = WindowFactory.Create(this,singleControlForm,name , null);
             
@@ -205,12 +206,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         //ensure a relevant Toolbox is available
         var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(request.ObjectToEmphasise);
-        object root = null;
 
-        if (descendancy != null)
-            root = descendancy.Parents.FirstOrDefault();
-        else
-            root = request.ObjectToEmphasise; //assume maybe o is a root object itself?
+        var root = descendancy != null
+            ? descendancy.Parents.FirstOrDefault()
+            : request.ObjectToEmphasise; //assume maybe o is a root object itself?
 
         if (root is CohortIdentificationConfiguration cic)
             Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
@@ -270,7 +269,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
     {
-        //if the collection an arbitrary one then it is definetly not the root collection for anyone
+        //if the collection an arbitrary one then it is definitely not the root collection for anyone
         if (collection == RDMPCollection.None)
             return false;
 
@@ -443,39 +442,39 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var c = (Control)UIObjectConstructor.Construct(instruction.UIControlType,activator,true);
 
-        //it has a database object so call SetDatabaseObject
-        if (c is IObjectCollectionControl uiCollection)
+        switch (c)
+        {
+            //it has a database object so call SetDatabaseObject
             //if we get here then Instruction wasn't for a 
-            return Activate(uiCollection, instruction.ObjectCollection);
-        else
-        if (c is IRDMPSingleDatabaseObjectControl uiInstance)
-        {
-            var databaseObject = instruction.DatabaseObject;
-
-            //the database object is gone? deleted maybe
-            if (databaseObject == null)
-                return null;
-
-            DockContent floatable = WindowFactory.Create(this,RefreshBus, uiInstance,CoreIconProvider.GetImage(databaseObject), databaseObject);
-
-            floatable.Show(_mainDockPanel, DockState.Document);
-            try
+            case IObjectCollectionControl uiCollection:
+                return Activate(uiCollection, instruction.ObjectCollection);
+            case IRDMPSingleDatabaseObjectControl uiInstance:
             {
-                uiInstance.SetDatabaseObject(this,(DatabaseEntity) databaseObject);
-                SetTabText(floatable,uiInstance);
-            }
-            catch (Exception e)
-            {
-                floatable.Close();
-                throw new Exception(
-                    $"SetDatabaseObject failed on Control of Type '{instruction.UIControlType.Name}', control closed, see inner Exception for details",e);
-            }
+                var databaseObject = instruction.DatabaseObject;
 
-            return floatable;
-        }
-        else
-        {
-            return (DockContent)activator.ShowWindow(c, true);
+                //the database object is gone? deleted maybe
+                if (databaseObject == null)
+                    return null;
+
+                DockContent floatable = WindowFactory.Create(this,RefreshBus, uiInstance,CoreIconProvider.GetImage(databaseObject), databaseObject);
+
+                floatable.Show(_mainDockPanel, DockState.Document);
+                try
+                {
+                    uiInstance.SetDatabaseObject(this,(DatabaseEntity) databaseObject);
+                    SetTabText(floatable,uiInstance);
+                }
+                catch (Exception e)
+                {
+                    floatable.Close();
+                    throw new Exception(
+                        $"SetDatabaseObject failed on Control of Type '{instruction.UIControlType.Name}', control closed, see inner Exception for details",e);
+                }
+
+                return floatable;
+            }
+            default:
+                return (DockContent)activator.ShowWindow(c, true);
         }
     }
 
@@ -489,7 +488,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         // set tool tip to the full tab name or custom representation
         floatable.ToolTipText = string.IsNullOrEmpty(tabToolTipText) ? tabText : tabToolTipText;
 
-        if (floatable != null && floatable.ParentForm != null)
+        if (floatable.ParentForm != null)
             floatable.ParentForm.Text = $"{tabText} - RDMP";
     }
 
@@ -531,21 +530,13 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         var dr = MessageBox.Show(args.TaskDescription ?? args.EntryLabel, args.WindowTitle, MessageBoxButtons.YesNo);
-
-        if (dr == DialogResult.Yes)
+        chosen = dr == DialogResult.Yes;
+        return dr switch
         {
-            chosen = true;
-            return true;
-        }
-
-        if (dr == DialogResult.No)
-        {
-            chosen = false;
-            return true;
-        }
-
-        chosen = false;
-        return false;
+            DialogResult.Yes => true,
+            DialogResult.No => true,
+            _ => false
+        };
     }
 
     public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
@@ -576,13 +567,9 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return  _mainDockPanel.Invoke(() => SelectDatabase(allowDatabaseCreation,taskDescription));
         }
 
-        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true,this);
+        using var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true,this);
         dialog.ShowDialog();
-            
-        if (dialog.DialogResult != DialogResult.OK)
-            return null;
-
-        return dialog.SelectedDatabase;
+        return dialog.DialogResult == DialogResult.OK ? dialog.SelectedDatabase : null;
     }
 
     public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
@@ -593,17 +580,14 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => SelectTable(allowDatabaseCreation, taskDescription));
         }
 
-        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription, true, true, this)
+        using var dialog = new ServerDatabaseTableSelectorDialog(taskDescription, true, true, this)
         {
             AllowTableValuedFunctionSelection = true
         };
 
         dialog.ShowDialog();
 
-        if (dialog.DialogResult != DialogResult.OK)
-            return null;
-
-        return dialog.SelectedTable;
+        return dialog.DialogResult == DialogResult.OK ? dialog.SelectedTable : null;
     }
 
     public override void ShowException(string errorText, Exception exception)
@@ -727,10 +711,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         using var fb = new FolderBrowserDialog();
-        if (fb.ShowDialog() == DialogResult.OK)
-            return new DirectoryInfo(fb.SelectedPath);
-            
-        return null;
+        return fb.ShowDialog() == DialogResult.OK ? new DirectoryInfo(fb.SelectedPath) : null;
     }
 
     public override FileInfo SelectFile(string prompt)
@@ -780,10 +761,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (patternDescription != null && pattern != null)
             fb.Filter = $"{patternDescription}|{pattern}";
 
-        if (fb.ShowDialog() == DialogResult.OK)
-            return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
-            
-        return null;
+        return fb.ShowDialog() == DialogResult.OK ? fb.FileNames.Select(f=>new FileInfo(f)).ToArray() : null;
     }
 
     protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
@@ -825,23 +803,20 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return null;
         }
 
-        var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false)
+        using var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false)
         {
             AllowMultiSelect = true
         };
 
-        if (selectDialog.ShowDialog() == DialogResult.OK)
-        {
-            var ms = selectDialog.MultiSelected.ToList();
-            var toReturn = Array.CreateInstance(arrayElementType, ms.Count);
+        if (selectDialog.ShowDialog() != DialogResult.OK) return null;
+        var ms = selectDialog.MultiSelected.ToList();
+        var toReturn = Array.CreateInstance(arrayElementType, ms.Count);
 
-            for(var i = 0;i<ms.Count;i++)
-                toReturn.SetValue(ms[i],i);
+        for(var i = 0;i<ms.Count;i++)
+            toReturn.SetValue(ms[i],i);
                 
-            return toReturn.Cast<IMapsDirectlyToDatabaseTable>().ToArray();
-        }
+        return toReturn.Cast<IMapsDirectlyToDatabaseTable>().ToArray();
 
-        return null;
     }
 
     public override List<CommandInvokerDelegate> GetDelegates()
@@ -908,10 +883,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
             ui.CohortDescription = $"{cohortInitialDescription} ({Environment.UserName} - {DateTime.Now})";
 
-        if (ui.ShowDialog() != DialogResult.OK)
-            return null;
-
-        return ui.Result;
+        return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
     }
 
     public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
@@ -955,14 +927,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var wizard = new CreateNewCohortIdentificationConfigurationUI(this);
 
-        if (wizard.ShowDialog() == DialogResult.OK)
-        {
-            cic = wizard.CohortIdentificationCriteriaCreatedIfAny;
-        }
-        else
-        {
-            cic = null;
-        }
+        cic = wizard.ShowDialog() == DialogResult.OK ? wizard.CohortIdentificationCriteriaCreatedIfAny : null;
 
         // Wizard was shown so that's a thing
         return true;

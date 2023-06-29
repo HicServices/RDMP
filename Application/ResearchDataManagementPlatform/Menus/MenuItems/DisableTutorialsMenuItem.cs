@@ -15,18 +15,18 @@ namespace ResearchDataManagementPlatform.Menus.MenuItems;
 /// Disables displaying Tutorials in RDMP
 /// </summary>
 [System.ComponentModel.DesignerCategory("")]
-public class DisableTutorialsMenuItem : ToolStripMenuItem
+public sealed class DisableTutorialsMenuItem : ToolStripMenuItem
 {
     private readonly TutorialTracker _tracker;
 
     public DisableTutorialsMenuItem(ToolStripMenuItem parent, TutorialTracker tracker)
     {
-        parent.DropDownOpened += parent_DropDownOpened;
+        parent.DropDownOpened += Parent_DropDownOpened;
         _tracker = tracker;
         Text = "Disable Tutorials";
     }
 
-    private void parent_DropDownOpened(object sender, EventArgs e)
+    private void Parent_DropDownOpened(object sender, EventArgs e)
     {
         Checked = UserSettings.DisableTutorials;
     }

@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
-public class AllImportantClassesDocumented
+public partial class AllImportantClassesDocumented
 {
     private List<string> _csFilesList;
     private List<string> problems = new();
@@ -31,13 +31,13 @@ public class AllImportantClassesDocumented
 
         //todo resolve the following:
         "ReleasePipeline.cs", //needs refactoring
-        "ReleaseUseCase.cs",//needs refactoring
-        "FixedDataReleaseSource.cs",//needs refactoring
+        "ReleaseUseCase.cs", //needs refactoring
+        "FixedDataReleaseSource.cs", //needs refactoring
         "CacheFetchRequestProvider.cs", //why do we need this class?
-            
+
         "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
-        "Relationship.cs",//deprecated by the anonymisation object sharing framework?
-        "RelationshipMap.cs"//deprecated by the anonymisation object sharing framework?
+        "Relationship.cs", //deprecated by the anonymisation object sharing framework?
+        "RelationshipMap.cs" //deprecated by the anonymisation object sharing framework?
 
     };
 
@@ -47,44 +47,44 @@ public class AllImportantClassesDocumented
 
         foreach (var f in _csFilesList)
         {
-            if(excusedClassFileNames.Contains(Path.GetFileName(f)))
+            if (excusedClassFileNames.Contains(Path.GetFileName(f)))
                 continue;
-                
+
             var text = File.ReadAllText(f);
 
-            var startAt = text.IndexOf("public class");
-            if(startAt == -1)
-                startAt = text.IndexOf("public interface");
+            var startAt = text.IndexOf("public class", StringComparison.Ordinal);
+            if (startAt == -1)
+                startAt = text.IndexOf("public interface", StringComparison.Ordinal);
 
             if (startAt != -1)
             {
                 var beforeDeclaration = text[..startAt];
 
-                var mNamespace = Regex.Match(beforeDeclaration, "namespace (.*)");
+                var mNamespace = NamespaceRegex().Match(beforeDeclaration);
 
-                if(!mNamespace.Success)
-                    Assert.Fail($"No namespace found in class file {f}");//no namespace in class!
-                    
-                var nameSpace= mNamespace.Groups[1].Value;
+                if (!mNamespace.Success)
+                    Assert.Fail($"No namespace found in class file {f}"); //no namespace in class!
+
+                var nameSpace = mNamespace.Groups[1].Value;
 
                 //skip tests
                 if (nameSpace.Contains("Tests"))
                     continue;
 
-                if (nameSpace.Contains("TestData.Relational"))//this has never been tested / used
+                if (nameSpace.Contains("TestData.Relational")) //this has never been tested / used
                     continue;
 
-                if (nameSpace.Contains("CohortManagerLibrary.FreeText"))//this has never been tested / used
+                if (nameSpace.Contains("CohortManagerLibrary.FreeText")) //this has never been tested / used
                     continue;
 
-                if (nameSpace.Contains("CatalogueWebService"))//this has never been tested / used
+                if (nameSpace.Contains("CatalogueWebService")) //this has never been tested / used
                     continue;
 
                 if (nameSpace.Contains("CommitAssemblyEmptyAssembly"))
                     continue;
 
-                var match = Regex.Match(beforeDeclaration, "<summary>(.*)</summary>", RegexOptions.Singleline);
-                var matchInherit = Regex.Match(beforeDeclaration, "<inheritdoc", RegexOptions.Singleline);
+                var match = SummaryTagRegex().Match(beforeDeclaration);
+                var matchInherit = InheritDocRegex().Match(beforeDeclaration);
 
                 //are there comments?
                 if (!match.Success && !matchInherit.Success)
@@ -97,7 +97,7 @@ public class AllImportantClassesDocumented
                             continue;
                         if (nameSpace.Contains("CommandExecution"))
                             continue;
-                            
+
                         if (nameSpace.Contains("Copying"))
                             continue;
                         if (nameSpace.Contains("Icons"))
@@ -111,9 +111,10 @@ public class AllImportantClassesDocumented
 
                         if (nameSpace.Contains("MapsDirectlyToDatabaseTableUI"))
                             continue;
-                            
+
                         //Provider specific implementations of stuff that is documented at interface level
-                        if (nameSpace.Contains(".Discovery.Microsoft") ||nameSpace.Contains(".Discovery.Oracle") ||nameSpace.Contains(".Discovery.MySql"))
+                        if (nameSpace.Contains(".Discovery.Microsoft") || nameSpace.Contains(".Discovery.Oracle") ||
+                            nameSpace.Contains(".Discovery.MySql"))
                             continue;
                     }
 
@@ -127,19 +128,29 @@ public class AllImportantClassesDocumented
                 }
                 else
                 {
-                    var lines = match.Groups[1].Value.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
+                    var lines = match.Groups[1].Value
+                        .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
                     commentLineCount += lines;
                     commentedCount++;
                 }
             }
         }
-            
+
         foreach (var fail in problems)
             Console.WriteLine(fail);
 
         Console.WriteLine($"Total Documented Classes:{commentedCount}");
         Console.WriteLine($"Total Lines of Classes Documentation:{commentLineCount}");
-            
+
         Assert.AreEqual(0, problems.Count);
     }
+
+    [GeneratedRegex("namespace (.*)")]
+    private static partial Regex NamespaceRegex();
+
+    [GeneratedRegex("<summary>(.*)</summary>", RegexOptions.Singleline)]
+    private static partial Regex SummaryTagRegex();
+
+    [GeneratedRegex("<inheritdoc", RegexOptions.Singleline)]
+    private static partial Regex InheritDocRegex();
 }

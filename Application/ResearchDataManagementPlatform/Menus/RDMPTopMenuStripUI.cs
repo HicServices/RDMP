@@ -106,7 +106,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
 
         // also add yaml files from wherever they got their original yaml file 
-        if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory.FullName))
+        if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory?.FullName))
         {
             AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
         }
@@ -123,13 +123,13 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
             var isSameAsCurrent = origYamlFile?.FileLoaded != null && yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
 
-            var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { LaunchNew(connectionStrings); })
+            var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (_, _) => { LaunchNew(connectionStrings); })
             {
                 Checked = isSameAsCurrent,
                 ToolTipText = connectionStrings.Description ?? yaml.FullName
             };
 
-            var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { SwitchTo(connectionStrings); })
+            var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (_, _) => { SwitchTo(connectionStrings); })
             {
                 Enabled = !isSameAsCurrent,
                 Checked = isSameAsCurrent,
@@ -422,7 +422,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         Activator.SelectAnythingThen(new DialogArgs
         {
             WindowTitle = "Open"
-        }, (o) => Activator.WindowArranger.SetupEditAnything(this, o));
+        }, o => Activator.WindowArranger.SetupEditAnything(this, o));
     }
 
     private void findToolStripMenuItem_Click(object sender, EventArgs e)
@@ -434,7 +434,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             IsFind = true,
             TaskDescription = "Enter the name of an object or part of the name or the dataset/project it is in."
 
-        }, (o) => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
+        }, o => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
     }
 
     private void closeToolStripMenuItem_Click(object sender, EventArgs e)

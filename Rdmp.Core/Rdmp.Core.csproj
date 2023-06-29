@@ -13,7 +13,7 @@
     <description>Core package for plugin development</description>
     <copyright>Copyright 2018-2019</copyright>
 
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     
