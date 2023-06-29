@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>13825638-5252-413c-98bc-1aef3b1cb9e4</ProjectGuid>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <AssemblyTitle>Rdmp.Core.Tests</AssemblyTitle>
     <Product>Rdmp.Core.Tests</Product>
     <Copyright>Copyright ©  2019</Copyright>

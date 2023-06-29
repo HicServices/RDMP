@@ -14,7 +14,7 @@ namespace ResearchDataManagementPlatform.Menus.MenuItems;
 /// Clears all user progress on Tutorials
 /// </summary>
 [System.ComponentModel.DesignerCategory("")]
-public class ResetTutorialsMenuItem : ToolStripMenuItem
+public sealed class ResetTutorialsMenuItem : ToolStripMenuItem
 {
     private readonly TutorialTracker _tracker;
 

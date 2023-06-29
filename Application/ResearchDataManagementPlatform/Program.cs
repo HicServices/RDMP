@@ -32,7 +32,7 @@ internal static class Program
         {
             // if user has the command line built and runnable from the windows
             // client then don't load the dlls (or we end up with 2 copies!).
-            SafeDirectoryCatalog.IgnoreDll = (f) => Path.GetFileName(f.DirectoryName)?.Equals("cli")==true;
+            SafeDirectoryCatalog.IgnoreDll = f => Path.GetFileName(f.DirectoryName)?.Equals("cli")==true;
 
     /// <summary>
     /// The main entry point for the application.
@@ -57,7 +57,7 @@ internal static class Program
 
         UsefulStuff.GetParser()
             .ParseArguments<ResearchDataManagementPlatformOptions>(args)
-            .MapResult(RunApp, err => -1);
+            .MapResult(RunApp, _ => -1);
     }
 
     private static object RunApp(ResearchDataManagementPlatformOptions arg)

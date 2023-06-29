@@ -38,7 +38,7 @@ namespace ResearchDataManagementPlatform;
 public partial class RDMPMainForm : RDMPForm
 {
     private readonly PersistenceDecisionFactory _persistenceFactory = new();
-    private ITheme _theme;
+    private readonly ITheme _theme;
     private IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
     /// <summary>

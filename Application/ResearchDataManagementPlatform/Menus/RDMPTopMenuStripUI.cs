@@ -102,8 +102,9 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var exeDir = UsefulStuff.GetExecutableDirectory();
         AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
 
-        // also add yaml files from wherever they got their original yaml file
-        if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory.FullName))
+        // also add yaml files from wherever they got their original yaml file 
+        if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory?.FullName))
+        {
             AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
     }
 
@@ -118,15 +119,13 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
             var isSameAsCurrent = origYamlFile?.FileLoaded != null && yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
 
-            var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null,
-                (s, e) => { LaunchNew(connectionStrings); })
+            var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (_, _) => { LaunchNew(connectionStrings); })
             {
                 Checked = isSameAsCurrent,
                 ToolTipText = connectionStrings.Description ?? yaml.FullName
             };
 
-            var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null,
-                (s, e) => { SwitchTo(connectionStrings); })
+            var switchTo = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (_, _) => { SwitchTo(connectionStrings); })
             {
                 Enabled = !isSameAsCurrent,
                 Checked = isSameAsCurrent,
@@ -433,6 +432,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             InitialSearchTextGuid = new Guid("00a0733b-848f-4bf3-bcde-7028fe159050"),
             IsFind = true,
             TaskDescription = "Enter the name of an object or part of the name or the dataset/project it is in."
+
         }, o => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
     }
 

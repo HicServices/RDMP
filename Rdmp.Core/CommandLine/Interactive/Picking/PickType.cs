@@ -11,9 +11,10 @@ using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
-internal class PickType : PickObjectBase
+internal partial class PickType : PickObjectBase
 {
-    public PickType(IBasicActivateItems activator) : base(activator, new Regex(".*"))
+    private static readonly Regex NonEmptyRegex= MyRegex();
+    public PickType(IBasicActivateItems activator) : base(activator, NonEmptyRegex)
     {
     }
 
@@ -43,4 +44,7 @@ internal class PickType : PickObjectBase
             return null;
         }
     }
+
+    [GeneratedRegex(".*")]
+    private static partial Regex MyRegex();
 }

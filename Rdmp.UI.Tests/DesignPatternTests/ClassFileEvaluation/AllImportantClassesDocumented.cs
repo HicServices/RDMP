@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
-public class AllImportantClassesDocumented
+public partial class AllImportantClassesDocumented
 {
     private List<string> _csFilesList;
     private List<string> problems = new();
@@ -38,6 +38,10 @@ public class AllImportantClassesDocumented
         "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
         "Relationship.cs", //deprecated by the anonymisation object sharing framework?
         "RelationshipMap.cs" //deprecated by the anonymisation object sharing framework?
+
+        "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
+        "Relationship.cs", //deprecated by the anonymisation object sharing framework?
+        "RelationshipMap.cs" //deprecated by the anonymisation object sharing framework?
     };
 
     public void FindProblems(List<string> csFilesList)
@@ -51,15 +55,15 @@ public class AllImportantClassesDocumented
 
             var text = File.ReadAllText(f);
 
-            var startAt = text.IndexOf("public class");
+            var startAt = text.IndexOf("public class", StringComparison.Ordinal);
             if (startAt == -1)
-                startAt = text.IndexOf("public interface");
+                startAt = text.IndexOf("public interface", StringComparison.Ordinal);
 
             if (startAt != -1)
             {
                 var beforeDeclaration = text[..startAt];
 
-                var mNamespace = Regex.Match(beforeDeclaration, "namespace (.*)");
+                var mNamespace = NamespaceRegex().Match(beforeDeclaration);
 
                 if (!mNamespace.Success)
                     Assert.Fail($"No namespace found in class file {f}"); //no namespace in class!
@@ -82,8 +86,8 @@ public class AllImportantClassesDocumented
                 if (nameSpace.Contains("CommitAssemblyEmptyAssembly"))
                     continue;
 
-                var match = Regex.Match(beforeDeclaration, "<summary>(.*)</summary>", RegexOptions.Singleline);
-                var matchInherit = Regex.Match(beforeDeclaration, "<inheritdoc", RegexOptions.Singleline);
+                var match = SummaryTagRegex().Match(beforeDeclaration);
+                var matchInherit = InheritDocRegex().Match(beforeDeclaration);
 
                 //are there comments?
                 if (!match.Success && !matchInherit.Success)
@@ -127,7 +131,8 @@ public class AllImportantClassesDocumented
                 }
                 else
                 {
-                    var lines = match.Groups[1].Value.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
+                    var lines = match.Groups[1].Value
+                        .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
                     commentLineCount += lines;
                     commentedCount++;
                 }
@@ -142,4 +147,13 @@ public class AllImportantClassesDocumented
 
         Assert.AreEqual(0, problems.Count);
     }
+
+    [GeneratedRegex("namespace (.*)")]
+    private static partial Regex NamespaceRegex();
+
+    [GeneratedRegex("<summary>(.*)</summary>", RegexOptions.Singleline)]
+    private static partial Regex SummaryTagRegex();
+
+    [GeneratedRegex("<inheritdoc", RegexOptions.Singleline)]
+    private static partial Regex InheritDocRegex();
 }

@@ -13,18 +13,18 @@ using NUnit.Framework;
 
 namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
-public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
+public partial class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 {
-    private List<string> _fails = new();
+    private readonly List<string> _fails = new();
+    private static readonly Regex TestPattern = ContainsTestRegex();
 
     public void FindProblems(List<string> csFilesFound)
     {
         const string checkMethodSignature = @"void Check(ICheckNotifier notifier)";
-        var testPattern = new Regex(@"(\b|[a-z])Test(\b|[A-Z])");
 
         foreach (var file in csFilesFound)
         {
-            if (testPattern.IsMatch(file))
+            if (TestPattern.IsMatch(file))
                 continue;
 
             var contents = File.ReadAllText(file);
@@ -35,7 +35,7 @@ public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 
             Console.WriteLine($"Found Demander:{file}");
 
-            var index = contents.IndexOf(checkMethodSignature);
+            var index = contents.IndexOf(checkMethodSignature, StringComparison.Ordinal);
 
             if (index == -1)
             {
@@ -77,4 +77,7 @@ public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 
         Assert.AreEqual(0, _fails.Count);
     }
+
+    [GeneratedRegex("(\\b|[a-z])Test(\\b|[A-Z])")]
+    private static partial Regex ContainsTestRegex();
 }
