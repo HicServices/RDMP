@@ -510,8 +510,7 @@ public abstract class TableRepository : ITableRepository
 
     public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID= null) where T : IMapsDirectlyToDatabaseTable
     {
-        if (columnWithObjectID == null)
-            columnWithObjectID = $"{typeof(T).Name}_ID";
+        columnWithObjectID ??= $"{typeof(T).Name}_ID";
 
         using var opener = GetConnection();
         var idsToReturn = new List<int>();
@@ -845,22 +844,16 @@ public abstract class TableRepository : ITableRepository
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Deleting;
     public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
     {
-        var toReturn = new List<IMapsDirectlyToDatabaseTable>();
+        _compatibleTypes ??= GetCompatibleTypes();
 
-        if (_compatibleTypes == null)
-            _compatibleTypes = GetCompatibleTypes();
-
-        foreach (var type in _compatibleTypes)
-            try
-            {
-                toReturn.AddRange(GetAllObjects(type));
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Failed to GetAllObjects of Type '{type}'",e);
-            }
-
-        return toReturn.ToArray();
+        try
+        {
+            return _compatibleTypes.SelectMany(GetAllObjects).ToArray();
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Failed to GetAllObjects of Type '{string.Join(',',_compatibleTypes.Select(t=>t.FullName))}'",e);
+        }
     }
 
         

@@ -61,10 +61,8 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         splitContainer1.Panel2.Controls.Add(QueryEditorAfter);
             
         //compute difference
-        if (textBefore == null)
-            textBefore = "";
-        if (textAfter == null)
-            textAfter = "";
+        textBefore ??= "";
+        textAfter ??= "";
 
         var diff = new Diff();
 

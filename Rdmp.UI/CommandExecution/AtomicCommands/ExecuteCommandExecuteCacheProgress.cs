@@ -53,8 +53,7 @@ public class ExecuteCommandExecuteCacheProgress:BasicUICommandExecution,IAtomicC
     {
         base.Execute();
 
-        if (_cp == null)
-            _cp = SelectOne<CacheProgress>(Activator.RepositoryLocator.CatalogueRepository);
+        _cp ??= SelectOne<CacheProgress>(Activator.RepositoryLocator.CatalogueRepository);
             
         if(_cp == null)
             return;

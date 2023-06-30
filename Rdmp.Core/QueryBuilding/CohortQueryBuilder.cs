@@ -122,9 +122,8 @@ public class CohortQueryBuilder
     }
     private void SetChildProviderIfNull()
     {
-        if (_childProvider == null)
-            _childProvider = new CatalogueChildProvider(
-                configuration?.CatalogueRepository ?? container.CatalogueRepository, null, null,null);
+        _childProvider ??= new CatalogueChildProvider(
+            configuration?.CatalogueRepository ?? container.CatalogueRepository, null, null, null);
     }
 
 

@@ -53,8 +53,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
     {
         base.Execute();
 
-        if (_catalogue == null)
-            _catalogue = SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
+        _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
 
         var toAddTo = SelectOne(new DialogArgs { 
             WindowTitle = "Associated Column",

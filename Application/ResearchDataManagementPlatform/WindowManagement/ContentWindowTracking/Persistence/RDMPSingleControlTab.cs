@@ -80,8 +80,7 @@ public class RDMPSingleControlTab:DockContent,IRefreshBusSubscriber
         foreach (var c in Controls)
             if (typeDocs.ContainsKey(c.GetType().Name))
             {
-                if (firstMatch == null)
-                    firstMatch = c.GetType().Name;
+                firstMatch ??= c.GetType().Name;
 
                 sb.AppendLine(typeDocs.GetDocumentationIfExists(c.GetType().Name,false,true));
                 sb.AppendLine();

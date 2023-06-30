@@ -40,11 +40,9 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
 
     public ValidationXMLObscureDependencyFinder(ICatalogueRepositoryServiceLocator catalogueRepositoryServiceLocator)
     {
-        if (Validator.LocatorForXMLDeserialization == null)
-            Validator.LocatorForXMLDeserialization = catalogueRepositoryServiceLocator;
-           
+        Validator.LocatorForXMLDeserialization ??= catalogueRepositoryServiceLocator;
+
         _mef = catalogueRepositoryServiceLocator.CatalogueRepository.MEF;
-            
     }
 
     private bool initialized;
