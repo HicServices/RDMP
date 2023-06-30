@@ -94,8 +94,7 @@ public class CachingPreExecutionChecker : ICheckable
                 notifier.OnCheckPerformed(new CheckEventArgs("Could not create IDataFlowPipelineEngine", CheckResult.Fail, e));
             }
 
-            if(engine != null)
-                engine.Check(notifier);
+            engine?.Check(notifier);
         }
         catch (Exception e)
         {

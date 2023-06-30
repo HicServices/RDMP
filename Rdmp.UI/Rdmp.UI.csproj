@@ -248,27 +248,17 @@
     <Compile Update="UserControl1.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.cs" />
+    <Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs" />
     <Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="SimpleDialogs\PerformanceCounterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs" />
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs" />
+    <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs" />
     <Compile Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -282,12 +272,8 @@
     <Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Logging\LoggingTabUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs" />
+    <Compile Update="Logging\LoggingTabUI.cs" />
     <Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -297,12 +283,8 @@
     <Compile Update="UserControl1.Designer.cs">
       <DependentUpon>UserControl1.cs</DependentUpon>
     </Compile>
-    <Compile Update="SubComponents\CohortIdentificationConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Validation\ValidationSetupUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="SubComponents\CohortIdentificationConfigurationUI.cs" />
+    <Compile Update="Validation\ValidationSetupUI.cs" />
     <Compile Update="SimpleDialogs\WaitUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -315,9 +297,7 @@
     <Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs" />
     <Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -330,9 +310,7 @@
       <Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs" />
     <Compile Update="Versioning/PatchingUI.cs">
       <SubType>Form</SubType>
     </Compile>
