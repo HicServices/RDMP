@@ -79,8 +79,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
     private DataTable GetDataTable(IDataLoadEventListener listener)
     {
-        if(listener == null)
-            listener = ThrowImmediatelyDataLoadEventListener.Quiet;
+        listener ??= ThrowImmediatelyDataLoadEventListener.Quiet;
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to lookup which server to interrogate for CohortIdentificationConfiguration {_cohortIdentificationConfiguration}"));

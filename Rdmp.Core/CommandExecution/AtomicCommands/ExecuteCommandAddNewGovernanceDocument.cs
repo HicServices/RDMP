@@ -54,8 +54,7 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution,IAto
             }
         }
 
-        if (f == null) 
-            f = BasicActivator.SelectFile("Document to add");
+        f ??= BasicActivator.SelectFile("Document to add");
 
         if(f == null)
             return;

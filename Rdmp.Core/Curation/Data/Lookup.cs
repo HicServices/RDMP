@@ -96,43 +96,20 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version 
     /// </summary>
     [NoMappingToDatabase]
-    public ColumnInfo Description
-    {
-        get
-        {
-            if (_description == null)
-                _description = Repository.GetObjectByID<ColumnInfo>(Description_ID);
-            return _description;
-        }
-    }
+    public ColumnInfo Description => _description ??= Repository.GetObjectByID<ColumnInfo>(Description_ID);
 
     /// <summary>
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version 
     /// </summary>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey
-    {
-        get
-        {
-            if (_foreignKey == null)
-                _foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
-            return _foreignKey;
-        }
-    }
+    public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <summary>
     /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version 
     /// </summary>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey
-    {
-        get
-        {
-            if (_primaryKey == null)
-                _primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
-            return _primaryKey;
-        }
-    }
+    public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
+
     #endregion
 
     public Lookup()

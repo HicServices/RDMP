@@ -91,8 +91,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             //Get a new request for the source they are trying to populate
             var req = BasicActivator.GetCohortCreationRequest(ect, Project, auditLogDescription);
 
-            if (Project == null)
-                Project = req?.Project;
+            Project ??= req?.Project;
 
             return req;
         }

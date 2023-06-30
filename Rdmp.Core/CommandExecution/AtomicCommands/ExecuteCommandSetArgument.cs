@@ -70,9 +70,8 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
             return;
         }
 
-        var host = picker[0].GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable)) as IArgumentHost;
-            
-        if(host == null)
+
+        if (picker[0].GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable)) is not IArgumentHost host)
         {
             SetImpossible("First parameter must be an IArgumentHost");
             return;

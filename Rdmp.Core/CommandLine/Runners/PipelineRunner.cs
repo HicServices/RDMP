@@ -36,8 +36,7 @@ public class PipelineRunner : IPipelineRunner
     public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
         // if we have no listener use a throw immediately one (generate exceptions if it went badly)
-        if(listener == null)
-            listener = ThrowImmediatelyDataLoadEventListener.Quiet;
+        listener ??= ThrowImmediatelyDataLoadEventListener.Quiet;
                         
         // whatever happens we want a listener to record the worst result for the return code (even if theres ignore all errors listeners being used)
         var toMemory = new ToMemoryDataLoadEventListener(false);

@@ -42,8 +42,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         if(_catalogue == null) 
             SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository));
 
-        if(_project == null)
-            _project = SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
+        _project ??= SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
 
         if(_project == null || _catalogue == null)
             return;

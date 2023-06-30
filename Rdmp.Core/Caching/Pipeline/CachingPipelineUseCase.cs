@@ -52,14 +52,10 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
         else
             _permissionWindow = cacheProgress.PermissionWindow;
             
-        if(_providerIfAny == null)
+        _providerIfAny ??= new CacheFetchRequestProvider(_cacheProgress)
         {
-            _providerIfAny = new CacheFetchRequestProvider(_cacheProgress)
-            {
-                PermissionWindow = _permissionWindow
-            };
-                
-        }
+            PermissionWindow = _permissionWindow
+        };
 
         _pipeline = _cacheProgress.Pipeline;
 

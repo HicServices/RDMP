@@ -167,8 +167,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <param name="name"></param>
     public LoadMetadata(ICatalogueRepository repository, string name = null)
     {
-        if (name == null)
-            name = $"NewLoadMetadata{Guid.NewGuid()}";
+        name ??= $"NewLoadMetadata{Guid.NewGuid()}";
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"Name",name},
