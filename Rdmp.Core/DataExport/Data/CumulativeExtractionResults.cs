@@ -189,7 +189,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// <inheritdoc/>
     public Type GetDestinationType()
     {
-        return ((IDataExportRepository)Repository).CatalogueRepository.MEF.GetType(_destinationType);
+        return MEF.GetType(_destinationType);
     }
 
     /// <inheritdoc/>

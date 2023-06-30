@@ -56,7 +56,7 @@ namespace Tests.Common;
 [TestFixture]
 [NonParallelizable]
 [Category("Database")]
-public class DatabaseTests
+public partial class DatabaseTests
 {
     protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
     protected static TestDatabasesSettings TestDatabaseSettings;
@@ -687,10 +687,10 @@ delete from {1}..Project
     /// </summary>
     /// <param name="sql"></param>
     /// <returns></returns>
-    protected string CollapseWhitespace(string sql)
+    protected static string CollapseWhitespace(string sql)
     {
         //replace all whitespace with single spaces
-        return Regex.Replace(sql, @"\s+", " ").Trim();
+        return Spaces().Replace(sql, " ").Trim();
     }
 
     private HashSet<DiscoveredDatabase> forCleanup = new();
@@ -970,14 +970,14 @@ GO
         throw new NotImplementedException();
     }
 
-    protected void Clear(LoadDirectory loadDirectory)
+    protected static void Clear(LoadDirectory loadDirectory)
     {
         DeleteFilesIn(loadDirectory.ForLoading);
         DeleteFilesIn(loadDirectory.ForArchiving);
         DeleteFilesIn(loadDirectory.Cache);
     }
 
-    protected void DeleteFilesIn(DirectoryInfo dir)
+    protected static void DeleteFilesIn(DirectoryInfo dir)
     {
         foreach (var f in dir.GetFiles())
             f.Delete();
@@ -986,6 +986,8 @@ GO
             d.Delete(true);
     }
 
+    [GeneratedRegex("\\s+")]
+    private static partial Regex Spaces();
 }
 
 

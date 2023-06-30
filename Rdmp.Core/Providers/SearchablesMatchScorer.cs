@@ -167,7 +167,7 @@ public class SearchablesMatchScorer
             
         return searchables.ToDictionary(
             s => s,
-            score => ScoreMatches(score, regexes,explicitTypesRequested, cancellationToken)
+            score => _ScoreMatches(score, regexes,explicitTypesRequested, cancellationToken)
         );
     }
 
@@ -180,7 +180,7 @@ public class SearchablesMatchScorer
         _showNonExtractableCatalogues = !RespectUserSettings || UserSettings.ShowNonExtractableCatalogues;
     }
 
-    private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, string[] explicitTypeNames, CancellationToken cancellationToken)
+    private int _ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, string[] explicitTypeNames, CancellationToken cancellationToken)
     {
         var score = 0;
 

@@ -180,7 +180,7 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     /// <inheritdoc/>
     public Type GetDestinationType()
     {
-        return ((IDataExportRepository)Repository).CatalogueRepository.MEF.GetType(DestinationType);
+        return MEF.GetType(DestinationType);
     }
 
     /// <inheritdoc/>
