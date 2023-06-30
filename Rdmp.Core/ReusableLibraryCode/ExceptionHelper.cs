@@ -54,8 +54,8 @@ public static class ExceptionHelper
     [Pure]
     public static T GetExceptionIfExists<T>(this Exception e) where T : Exception
     {
-        if (e is T exception)
-            return exception;
+        if (e is T t)
+            return t;
 
         if (e.InnerException != null)
             return GetExceptionIfExists<T>(e.InnerException);

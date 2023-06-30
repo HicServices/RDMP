@@ -111,8 +111,8 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         base.SetTarget(target);
 
-        if (target is CohortIdentificationConfiguration configuration)
-            _cic = configuration;
+        if (target is CohortIdentificationConfiguration cohortIdentificationConfiguration)
+            _cic = cohortIdentificationConfiguration;
 
         return this;
     }

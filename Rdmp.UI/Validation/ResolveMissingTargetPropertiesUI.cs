@@ -102,8 +102,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
     {
         var indexFromPoint = lbAvailableColumns.IndexFromPoint(lbAvailableColumns.PointToClient(new Point(e.X, e.Y)));
 
-        if (indexFromPoint != ListBox.NoMatches &&
-            e.Data.GetData(typeof(ItemValidator)) is ItemValidator missingReference)
+        if (indexFromPoint != ListBox.NoMatches && e.Data?.GetData(typeof (ItemValidator)) is ItemValidator missingReference)
         {
             var oldName = missingReference.TargetProperty;
             var newName = (string)lbAvailableColumns.Items[indexFromPoint];

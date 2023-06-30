@@ -116,7 +116,7 @@ public class ExtractionRunner : ManyRunner
                 ? new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand))
                 : new ForkDataLoadEventListener(logging, listener);
 
-        if (runnable is ExtractGlobalsCommand globalCommand)
+        if(runnable is ExtractGlobalsCommand globalCommand)
         {
             var useCase = new ExtractionPipelineUseCase(_activator, _project, _globalsCommand, _pipeline, dataLoadInfo)
                 { Token = Token };
@@ -159,12 +159,10 @@ public class ExtractionRunner : ManyRunner
 
         foreach (var runnable in GetRunnables())
         {
-            var datasetCommand = runnable as ExtractDatasetCommand;
-
             if (runnable is ExtractGlobalsCommand globalsCommand)
-                checkables.Add(new GlobalExtractionChecker(_activator,_configuration, globalsCommand, _pipeline));
+                checkables.Add(new GlobalExtractionChecker(_activator, _configuration, globalsCommand, _pipeline));
 
-            if (datasetCommand != null)
+            if (runnable is ExtractDatasetCommand datasetCommand)
                 checkables.Add(new SelectedDataSetsChecker(_activator,datasetCommand.SelectedDataSets,  false, _pipeline));
         }
 

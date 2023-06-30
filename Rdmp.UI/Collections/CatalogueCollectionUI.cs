@@ -277,25 +277,25 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
         var o = e.Object;
 
-        if (o is GovernancePeriod || o is GovernanceDocument)
-            tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
-
-        if (o is Catalogue cata)
+        switch (o)
         {
-            //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
-            if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
-                RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
-            else
+            case GovernancePeriod or GovernanceDocument:
+                tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
+                break;
+            case Catalogue cata:
+            {
+                //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
+                if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
+                    RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
+                else
+                    RefreshUIFromDatabase(o);
+                return;
+            }
+            case CatalogueItem or AggregateConfiguration or ColumnInfo or TableInfo or ExtractionFilter or ExtractionFilterParameter or ExtractionFilterParameterSet or ExtractionInformation or AggregateFilterContainer or AggregateFilter or AggregateFilterParameter:
+                //then refresh us
                 RefreshUIFromDatabase(o);
-            return;
+                break;
         }
-
-        if (o is CatalogueItem || o is AggregateConfiguration ||
-            o is ColumnInfo || o is TableInfo || o is ExtractionFilter || o is ExtractionFilterParameter ||
-            o is ExtractionFilterParameterSet || o is ExtractionInformation ||
-            o is AggregateFilterContainer || o is AggregateFilter || o is AggregateFilterParameter)
-            //then refresh us
-            RefreshUIFromDatabase(o);
 
         ApplyFilters();
     }

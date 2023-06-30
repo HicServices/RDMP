@@ -164,7 +164,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
                 _forcedJoins.Remove(ti);
             }
 
-            if (rowobject is JoinableCohortAggregateConfigurationUse patientIndexTableUse)
+            if(rowobject is JoinableCohortAggregateConfigurationUse patientIndexTableUse)
             {
                 var joinable = patientIndexTableUse.JoinableCohortAggregateConfiguration;
 
@@ -262,18 +262,20 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
     {
         e.Column.PutAspectByName(e.RowObject, e.NewValue);
 
-        if (e.RowObject is AggregateCountColumn countColumn)
+        switch (e.RowObject)
         {
-            _aggregate.CountSQL = countColumn.SelectSQL + (countColumn.Alias != null ? $" as {countColumn.Alias}" : "");
-        }
-        else if (e.RowObject is IRevertable revertable)
-        {
-            if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                revertable.SaveToDatabase();
-        }
-        else
-        {
-            throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
+            case AggregateCountColumn countColumn:
+                _aggregate.CountSQL =
+                    $"{countColumn.SelectSQL}{(countColumn.Alias != null ? $" as {countColumn.Alias}" : "")}";
+                break;
+            case IRevertable revertable:
+            {
+                if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                    revertable.SaveToDatabase();
+                break;
+            }
+            default:
+                throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
         }
     }
 

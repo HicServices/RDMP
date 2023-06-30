@@ -291,9 +291,15 @@ public class SearchablesMatchScorer
         return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
-    private static int CountMatchType(List<Regex> regexes, object key) => MatchCount(regexes, key.GetType().Name);
+    private Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
+    {
+        if (kvp.Key is Catalogue catalogue)
+            return catalogue;
 
-    private static int CountMatchToString(List<Regex> regexes, object key)
+        return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
+    }
+
+    private int CountMatchType(List<Regex> regexes, object key)
     {
         return MatchCount(regexes, key.GetType().Name);
     }

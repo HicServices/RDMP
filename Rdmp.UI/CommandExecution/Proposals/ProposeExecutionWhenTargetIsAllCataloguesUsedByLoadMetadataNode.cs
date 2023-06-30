@@ -30,19 +30,13 @@ internal class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode :
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
         AllCataloguesUsedByLoadMetadataNode target, InsertOption insertOption = InsertOption.Default)
     {
-        ICommandExecution cmdExecution = null;
-
-        if (cmd is CatalogueCombineable cata)
-            cmdExecution =
-                new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator, target.LoadMetadata).SetTarget(new[]
-                    { cata.Catalogue });
-
-        if (cmd is ManyCataloguesCombineable manyCata)
-            cmdExecution =
-                new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator, target.LoadMetadata).SetTarget(
-                    manyCata.Catalogues);
-
-
-        return cmdExecution;
+        return cmd switch
+        {
+            CatalogueCombineable cata => new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,
+                target.LoadMetadata).SetTarget(new[] { cata.Catalogue }),
+            ManyCataloguesCombineable manyCata => new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,
+                target.LoadMetadata).SetTarget(manyCata.Catalogues),
+            _ => null
+        };
     }
 }

@@ -145,7 +145,7 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
 
         if (!_commonFunctionality1.IsSetup)
         {
-            _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage,activator,olvUsedIn,null,
+            _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage, activator, olvUsedIn, null,
                 new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddCheckColumn = false,
@@ -168,7 +168,7 @@ public partial class ExtractableCohortUI : ExtractableCohortUI_Design, ISaveable
                 }
             );
 
-        if (Activator.CoreChildProvider is DataExportChildProvider dx)
+        if(Activator.CoreChildProvider is DataExportChildProvider dx)
         {
             tlvCohortUsage.ClearObjects();
             tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e => e.Cohort_ID == _extractableCohort.ID)

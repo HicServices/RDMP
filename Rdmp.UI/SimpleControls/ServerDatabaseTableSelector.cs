@@ -148,10 +148,8 @@ public partial class ServerDatabaseTableSelector : UserControl
         }
         else if (!e.Cancelled)
         {
-            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(static t => t is not DiscoveredTableValuedFunction)
-                .ToArray());
-            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult
-                .Where(static t => t is DiscoveredTableValuedFunction).ToArray());
+            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(t => t is not DiscoveredTableValuedFunction).ToArray());
+            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(t => t is DiscoveredTableValuedFunction).ToArray());
         }
 
 
@@ -433,9 +431,8 @@ public partial class ServerDatabaseTableSelector : UserControl
     public DiscoveredTable GetDiscoveredTable()
     {
         //if user selected a specific object from the drop down properly
-        var tblValuedFunction = cbxTableValueFunctions.SelectedItem as DiscoveredTableValuedFunction;
 
-        if(cbxTable.SelectedItem is DiscoveredTable tbl)
+        if (cbxTable.SelectedItem is DiscoveredTable tbl)
             return tbl;
 
         if (cbxTableValueFunctions.SelectedItem is DiscoveredTableValuedFunction tblValuedFunction)

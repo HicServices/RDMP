@@ -19,19 +19,14 @@ public class FilterUIOptionsFactory
 {
     public static FilterUIOptions Create(IFilter filter)
     {
-        var deployedExtractionFilter = filter as DeployedExtractionFilter;
-        var masterCatalogueFilter = filter as ExtractionFilter;
-
-        if (filter is AggregateFilter aggregateFilter)
-            return new AggregateFilterUIOptions(aggregateFilter);
-
-        if (filter is DeployedExtractionFilter deployedExtractionFilter)
-            return new DeployedExtractionFilterUIOptions(deployedExtractionFilter);
-
-        if (filter is ExtractionFilter masterCatalogueFilter)
-            return new ExtractionFilterUIOptions(masterCatalogueFilter);
-
-        throw new Exception(
-            $"Expected IFilter '{filter}' to be either an AggregateFilter, DeployedExtractionFilter or a master ExtractionFilter but it was {filter.GetType().Name}");
+        return filter switch
+        {
+            AggregateFilter aggregateFilter => new AggregateFilterUIOptions(aggregateFilter),
+            DeployedExtractionFilter deployedExtractionFilter => new DeployedExtractionFilterUIOptions(
+                deployedExtractionFilter),
+            ExtractionFilter masterCatalogueFilter => new ExtractionFilterUIOptions(masterCatalogueFilter),
+            _ => throw new Exception(
+                $"Expected IFilter '{filter}' to be either an AggregateFilter, DeployedExtractionFilter or a master ExtractionFilter but it was {filter.GetType().Name}")
+        };
     }
 }

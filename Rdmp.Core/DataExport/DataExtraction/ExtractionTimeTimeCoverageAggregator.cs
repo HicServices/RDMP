@@ -19,7 +19,7 @@ namespace Rdmp.Core.DataExport.DataExtraction;
 /// Counts the number of unique patients / records encountered while executing an ExtractionConfiguration's dataset (linked to the project cohort).  The input
 /// to this is a DataRow rather than an SQL query because the class is used at extraction time as we are writing records out to the ExtractionDirectory.
 /// </summary>
-public class ExtractionTimeTimeCoverageAggregator
+public partial class ExtractionTimeTimeCoverageAggregator
 {
     public int countOfBrokenDates { get; private set; }
     public int countOfNullsSeen { get; private set; }
@@ -108,6 +108,7 @@ public class ExtractionTimeTimeCoverageAggregator
         {
             if (value is string s)
             {
+                    
                 if (string.IsNullOrWhiteSpace(s))
                 {
                     countOfNullsSeen++;
@@ -115,10 +116,10 @@ public class ExtractionTimeTimeCoverageAggregator
                 }
                 else
                 {
-                    var valueAsString = (string) value;
+                    var valueAsString = s;
                         
                     //trim off times
-                    if (Regex.IsMatch(valueAsString,"[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"))
+                    if (TimeRegex().IsMatch(valueAsString))
                         valueAsString = valueAsString[..^"00:00:00".Length].Trim();
 
                 var valueAsString = s;
@@ -133,6 +134,8 @@ public class ExtractionTimeTimeCoverageAggregator
             {
                 key = time;
             }
+            else if (value is DateTime dateTime)
+                key = dateTime;
             else
             {
                 key = Convert.ToDateTime(value);
@@ -211,4 +214,7 @@ public class ExtractionTimeTimeCoverageAggregator
     {
         return Reader.GetSchemaTable().Rows.Cast<DataRow>().Any(row => row["ColumnName"].ToString() == ColumnName);
     }
+
+    [GeneratedRegex("[0-2][0-9]:[0-5][0-9]:[0-5][0-9]")]
+    private static partial Regex TimeRegex();
 }

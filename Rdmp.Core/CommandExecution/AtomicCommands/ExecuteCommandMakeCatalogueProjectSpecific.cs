@@ -75,11 +75,15 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is Catalogue catalogue)
-            SetCatalogue(catalogue);
-
-        if (target is Project project)
-            _project = project;
+        switch (target)
+        {
+            case Catalogue catalogue:
+                SetCatalogue(catalogue);
+                break;
+            case Project project:
+                _project = project;
+                break;
+        }
 
         return this;
     }

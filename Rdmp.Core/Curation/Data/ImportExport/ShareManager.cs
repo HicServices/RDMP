@@ -548,9 +548,10 @@ public class ShareManager
 
         if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
             if (propertyType == typeof(Uri))
-                value = value is string s ? new Uri(s) : (Uri)value;
-            else if (typeof(Enum).IsAssignableFrom(propertyType))
-                value = Enum.ToObject(propertyType, value); //if the property is an enum
+                value = value is string s ? new Uri(s):(Uri) value;
+            else
+            if (typeof(Enum).IsAssignableFrom(propertyType))
+                value = Enum.ToObject(propertyType, value);//if the property is an enum
             else
                 value = UsefulStuff.ChangeType(value, propertyType); //the property is not an enum
 

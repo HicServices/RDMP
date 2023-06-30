@@ -123,8 +123,9 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                 e.SubItem.ForeColor = Color.Red;
         }
 
-        if (e.Column == olvState && e.CellValue is LoadDiagramState state)
-            e.SubItem.ForeColor = state switch
+        if (e.Column == olvState && e.CellValue is LoadDiagramState loadDiagramState)
+        {
+            e.SubItem.ForeColor = loadDiagramState switch
             {
                 LoadDiagramState.Anticipated => Color.LightGray,
                 LoadDiagramState.Found => Color.Green,
@@ -135,30 +136,35 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                 LoadDiagramState.New => Color.Red,
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
     }
 
     private object olvState_AspectGetter(object rowobject)
     {
-        var stateHaver = rowobject as IHasLoadDiagramState;
-
-        if (rowobject is DiscoveredTable || rowobject is DiscoveredColumn)
-            return LoadDiagramState.New;
-
-        return stateHaver?.State;
+        return rowobject switch
+        {
+            DiscoveredTable or DiscoveredColumn => LoadDiagramState.New,
+            IHasLoadDiagramState stateHaver => stateHaver.State,
+            _ => null
+        };
     }
 
     private object olvDataType_AspectGetter(object rowobject)
     {
-        var discCol = rowobject as DiscoveredColumn;
-
-        if (rowobject is LoadDiagramColumnNode colNode)
-            return colNode.GetDataType();
-
-        return discCol?.DataType.SQLType;
+        return rowobject switch
+        {
+            LoadDiagramColumnNode colNode => colNode.GetDataType(),
+            DiscoveredColumn discCol => discCol.DataType.SQLType,
+            _ => null
+        };
     }
 
-    private string CellToolTipGetter(OLVColumn column, object modelObject) =>
-        (modelObject as LoadDiagramServerNode)?.ErrorDescription;
+    private string CellToolTipGetter(OLVColumn column, object modelObject)
+    {
+        return modelObject is LoadDiagramServerNode loadDiagramServerNode
+            ? loadDiagramServerNode.ErrorDescription
+            : null;
+    }
 
     private Bitmap ImageGetter(object rowObject)
     {
@@ -171,9 +177,10 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                 .ImageToBitmap(),
             DiscoveredColumn => Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem)
                 .ImageToBitmap(),
-            LoadDiagramServerNode node => string.IsNullOrWhiteSpace(node.ErrorDescription)
-                ? Activator.CoreIconProvider.GetImage(node).ImageToBitmap()
-                : Activator.CoreIconProvider.GetImage(node, OverlayKind.Problem).ImageToBitmap(),
+            LoadDiagramServerNode loadDiagramServerNode =>
+                string.IsNullOrWhiteSpace(loadDiagramServerNode.ErrorDescription)
+                    ? Activator.CoreIconProvider.GetImage(loadDiagramServerNode).ImageToBitmap()
+                    : Activator.CoreIconProvider.GetImage(loadDiagramServerNode, OverlayKind.Problem).ImageToBitmap(),
             LoadDiagramDatabaseNode db => db.GetImage(Activator.CoreIconProvider),
             LoadDiagramTableNode => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap(),
             LoadDiagramColumnNode col => col.GetImage(Activator.CoreIconProvider),
@@ -183,44 +190,26 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private IEnumerable ChildrenGetter(object model)
     {
-        var database = model as LoadDiagramDatabaseNode;
-        var table = model as LoadDiagramTableNode;
-        var unplannedTable = model as UnplannedTable;
-
-        if (model is LoadDiagramServerNode server)
-            return server.GetChildren();
-
-        if (database != null)
-            return database.GetChildren();
-
-        if (table != null)
-            return table.GetChildren(cbOnlyShowDynamicColumns.Checked);
-
-        if (unplannedTable != null)
-            return unplannedTable.Columns;
-
-        return null;
+        return model switch
+        {
+            LoadDiagramServerNode server => server.GetChildren(),
+            LoadDiagramDatabaseNode database => database.GetChildren(),
+            LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked),
+            UnplannedTable unplannedTable => unplannedTable.Columns,
+            _ => null
+        };
     }
 
     private bool CanExpandGetter(object model)
     {
-        var database = model as LoadDiagramDatabaseNode;
-        var table = model as LoadDiagramTableNode;
-        var unplannedTable = model as UnplannedTable;
-
-        if (model is LoadDiagramServerNode server)
-            return server.GetChildren().Any();
-
-        if (database != null)
-            return database.GetChildren().Any();
-
-        if (table != null)
-            return table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any();
-
-        if (unplannedTable != null)
-            return true;
-
-        return false;
+        return model switch
+        {
+            LoadDiagramServerNode server => server.GetChildren().Any(),
+            LoadDiagramDatabaseNode database => database.GetChildren().Any(),
+            LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any(),
+            UnplannedTable unplannedTable => true,
+            _ => false
+        };
     }
 
     public void RefreshUIFromDatabase()

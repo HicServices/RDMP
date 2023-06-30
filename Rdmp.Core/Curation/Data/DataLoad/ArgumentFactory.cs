@@ -62,7 +62,6 @@ public class ArgumentFactory
             if (attribute.DefaultValue != null)
                 argument.SetValue(attribute.DefaultValue);
 
-
             if (argument is ISaveable saveable)
                 saveable.SaveToDatabase();
 

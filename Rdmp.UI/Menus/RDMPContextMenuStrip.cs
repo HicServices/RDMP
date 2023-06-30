@@ -281,9 +281,7 @@ public class RDMPContextMenuStrip : ContextMenuStrip
         if (commonFunctionality.CheckColumnProvider != null)
         {
             if (_o is DatabaseEntity databaseEntity)
-                Add(
-                    new ExecuteCommandCheckAsync(_activator, databaseEntity,
-                        commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
+                Add(new ExecuteCommandCheckAsync(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
 
             var checkAll = new ToolStripMenuItem("Check All", null,
                 (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables())

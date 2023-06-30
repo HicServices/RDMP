@@ -69,7 +69,7 @@ public class TransparentHelpForm : Form
 
         //if the host is a Form and it closes we should close too
         if (host is Form form)
-            form.FormClosed += (s, e) => Close();
+            form.FormClosed +=(s,e)=> Close();
     }
 
     private void UpdateLocation()

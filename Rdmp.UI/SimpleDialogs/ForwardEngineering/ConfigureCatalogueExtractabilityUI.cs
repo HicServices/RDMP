@@ -714,7 +714,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 node.ExtractionInformation.SaveToDatabase();
             }
 
-        //we cleared them all, now did they want one selected (i.e. they selected anythign except <<None>>)
+        //we cleared them all, now did they want one selected (i.e. they selected anything except <<None>>)
         if (ddIsExtractionIdentifier.SelectedItem is ColPair n)
         {
             if (n.ExtractionInformation == null)

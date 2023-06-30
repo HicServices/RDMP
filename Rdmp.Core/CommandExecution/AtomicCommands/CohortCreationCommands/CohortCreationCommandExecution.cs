@@ -120,7 +120,10 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         var version = 1;
 
         // If the user has used this description before then we can just bump the version by 1
-        if (existing != null && existing.Any()) version = existing.Max(v => v.Version) + 1;
+        if (existing.Any())
+        {
+            version = existing.Max(v => v.Version) + 1;
+        }
 
         return new CohortCreationRequest(Project,
             new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ect),
@@ -129,11 +132,15 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
     public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is Project project)
-            Project = project;
-
-        if (target is ExternalCohortTable table)
-            ExternalCohortTable = table;
+        switch (target)
+        {
+            case Project project:
+                Project = project;
+                break;
+            case ExternalCohortTable externalCohortTable:
+                ExternalCohortTable = externalCohortTable;
+                break;
+        }
 
         return this;
     }

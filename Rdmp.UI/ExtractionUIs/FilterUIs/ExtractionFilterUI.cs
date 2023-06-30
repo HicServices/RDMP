@@ -216,14 +216,13 @@ public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSu
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        if (e.Object is not IFilter filter)
+        if(e.Object is not IFilter filter || !filter.Equals(_extractionFilter))
             return;
 
-        if (e.Object.Equals(_extractionFilter))
-            if (!e.Object.Exists()) //its deleted
-                ParentForm.Close();
-            else
-                _extractionFilter = filter;
+        if (!filter.Exists()) //it's deleted
+            ParentForm?.Close();
+        else
+            _extractionFilter = filter;
     }
 }
 

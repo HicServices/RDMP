@@ -229,13 +229,13 @@ public class ParameterManager
         var desc2 = $"(Type:{parameter2.Parameter.GetType()}";
 
 
-        if (parameter1.Parameter is IMapsDirectlyToDatabaseTable concrete1)
+        if(parameter1.Parameter is IMapsDirectlyToDatabaseTable concrete1)
         {
             concreteObjects.Add(concrete1);
             desc1 += $" ID:{concrete1.ID}";
         }
 
-        if (parameter2.Parameter is IMapsDirectlyToDatabaseTable concrete2)
+        if(parameter2.Parameter is IMapsDirectlyToDatabaseTable concrete2)
         {
             concreteObjects.Add(concrete2);
             desc2 += $" ID:{concrete2.ID}";
