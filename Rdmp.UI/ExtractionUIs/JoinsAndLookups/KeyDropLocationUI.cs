@@ -67,8 +67,7 @@ public partial class KeyDropLocationUI : UserControl
         if(IsValidGetter != null && !IsValidGetter(col))
             return;
             
-        if(col != null)
-            e.Effect = DragDropEffects.Copy;
+        e.Effect = DragDropEffects.Copy;
     }
 
     private void tbPk1_DragDrop(object sender, DragEventArgs e)
@@ -77,8 +76,7 @@ public partial class KeyDropLocationUI : UserControl
         tbPk1.Text = SelectedColumn.ToString();
         btnClear.Enabled = true;
 
-        if (SelectedColumnChanged != null)
-            SelectedColumnChanged();
+        SelectedColumnChanged?.Invoke();
     }
 
     private ColumnInfo GetColumnInfoOrNullFromDrag(DragEventArgs e)

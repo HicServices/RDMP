@@ -64,7 +64,7 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
         using (var zf = ZipFile.Open(_file, ZipArchiveMode.Update))
         {
             var rdmpCoreFiles = UsefulStuff.GetExecutableDirectory().GetFiles("*.dll");
-            var inMain = new List<ZipArchiveEntry>();
+            var inMain = new HashSet<string>();
             var inWindows = new List<ZipArchiveEntry>();
 
             foreach (var e in zf.Entries.ToArray())
@@ -90,7 +90,7 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
                 catch (Exception exception)
                 {
-                    logger.Error(exception,$"Deleting corrupt or non-.Net file {e.FullName} due to {exception.Message}");
+                    logger.Info(exception,$"Deleting corrupt or non-.Net file {e.FullName} due to {exception.Message}");
                     e.Delete();
                     continue;
                 }
@@ -104,7 +104,7 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
 
                 if (main.IsMatch(e.FullName))
                 {
-                    inMain.Add(e);
+                    inMain.Add(e.Name);
                 }
                 else if (windows.IsMatch(e.FullName))
                 {
@@ -116,7 +116,7 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
             }
 
-            foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))))
+            foreach (var dup in inWindows.Where(e => inMain.Contains(e.Name)))
             {
                 logger.Info($"Deleting '{dup.FullName}' because it is already in 'main' subdir");
                 dup.Delete();
