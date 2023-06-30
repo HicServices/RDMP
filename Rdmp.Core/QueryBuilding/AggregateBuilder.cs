@@ -329,9 +329,9 @@ public class AggregateBuilder : ISqlQueryBuilder
             try
             {
                 _pivotDimension = SelectColumns.Single(
-                    qtc => qtc.IColumn is AggregateDimension 
+                    qtc => qtc.IColumn is AggregateDimension aggregateDimension 
                            &&
-                           ((AggregateDimension)qtc.IColumn).ID == _pivotID);
+                           aggregateDimension.ID == _pivotID);
             }
             catch (Exception e)
             {

@@ -457,14 +457,13 @@ public partial class PipelineDiagramUI : UserControl
         for (var i = 0; i < flpPipelineDiagram.Controls.Count; i++)
         {
             var controlAtIndex = flpPipelineDiagram.Controls[i];
-            var pipelineComponentVisAtIndex = flpPipelineDiagram.Controls[i] as PipelineComponentVisualisation;
 
             //do not set the order on the thing being reordered! note that this is null in the case of newly dragged in controls so will never execute continue for new drop operations
             if (controlAtIndex == beingReorderedIfAny)
                 continue;
 
             //found pipeline component
-            if (pipelineComponentVisAtIndex != null)
+            if (flpPipelineDiagram.Controls[i] is PipelineComponentVisualisation pipelineComponentVisAtIndex)
             {
                 //increment the order
                 pipelineComponentVisAtIndex.PipelineComponent.Order = newOrder;
@@ -486,14 +485,9 @@ public partial class PipelineDiagramUI : UserControl
 
     private AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
     {
-        if (e.Data is OLVDataObject dataObject)
-        {
-            if (dataObject.ModelObjects.Count == 1 &&
-                dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext)
-                return (AdvertisedPipelineComponentTypeUnderContext)dataObject.ModelObjects[0];
-
-            return null;
-        }
+        if (e.Data is OLVDataObject dataObject && dataObject.ModelObjects.Count == 1 &&
+            dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext context)
+            return context;
         return null;
     }
 }

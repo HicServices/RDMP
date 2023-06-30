@@ -57,35 +57,22 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             : rowObject as ExtractableCohort;
 
         //serve up the ExternalCohortTable name
-        if (cohort != null)
-            return cohort.ExternalCohortTable.Name;
-
-        return null;
+        return cohort?.ExternalCohortTable.Name;
     }
 
     private object ProjectNumberAspectGetter(object rowObject)
     {
-        var masquerade = rowObject as IMasqueradeAs;
-
-        if (rowObject is Project p)
-            return p.ProjectNumber;
-
-        if(masquerade != null)
+        return rowObject switch
         {
-            if (masquerade.MasqueradingAs() is ExtractableCohort c)
-                return c.ExternalProjectNumber;
-        }
-
-        return null;
+            Project p => p.ProjectNumber,
+            IMasqueradeAs masquerade when masquerade.MasqueradingAs() is ExtractableCohort c => c.ExternalProjectNumber,
+            _ => null
+        };
     }
 
     private object CohortVersionAspectGetter(object rowObject)
     {
-        if (rowObject is IMasqueradeAs masquerade)
-        {
-            if (masquerade.MasqueradingAs() is ExtractableCohort c)
-                return c.ExternalVersion;
-        }
+        if (rowObject is IMasqueradeAs masquerade && masquerade.MasqueradingAs() is ExtractableCohort c) return c.ExternalVersion;
 
         return null;
     }

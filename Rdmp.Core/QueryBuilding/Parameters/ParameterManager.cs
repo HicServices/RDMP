@@ -212,22 +212,19 @@ public class ParameterManager
 
     private void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1, ParameterFoundAtLevel parameter2)
     {
-        var concrete1 = parameter1.Parameter as IMapsDirectlyToDatabaseTable;
-        var concrete2 = parameter2.Parameter as IMapsDirectlyToDatabaseTable;
-
         var concreteObjects = new List<IMapsDirectlyToDatabaseTable>();
 
         var desc1 = $"(Type:{parameter1.Parameter.GetType()}";
         var desc2 = $"(Type:{parameter2.Parameter.GetType()}";
 
 
-        if(concrete1 != null)
+        if(parameter1.Parameter is IMapsDirectlyToDatabaseTable concrete1)
         {
             concreteObjects.Add(concrete1);
             desc1 += $" ID:{concrete1.ID}";
         }
 
-        if(concrete2 != null)
+        if(parameter2.Parameter is IMapsDirectlyToDatabaseTable concrete2)
         {
 
             concreteObjects.Add(concrete2);

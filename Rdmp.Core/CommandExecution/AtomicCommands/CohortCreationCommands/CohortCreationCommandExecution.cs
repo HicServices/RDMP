@@ -48,15 +48,13 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <param name="pipeline"></param>
     protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, string cohortName, Project project, IPipeline pipeline) : base(activator)
     {
-        var dataExport = activator.CoreChildProvider as DataExportChildProvider;
-
         //May be null
         _explicitCohortName = cohortName;
         ExternalCohortTable = externalCohortTable;
         Project = project;
         Pipeline = pipeline;
 
-        if (dataExport == null)
+        if (activator.CoreChildProvider is not DataExportChildProvider dataExport)
         {
             SetImpossible("No data export repository available");
             return;
@@ -121,7 +119,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         var version = 1;
 
         // If the user has used this description before then we can just bump the version by 1
-        if (existing != null && existing.Any())
+        if (existing.Any())
         {
             version = existing.Max(v => v.Version) + 1;
         }
@@ -131,11 +129,15 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
     public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is Project)
-            Project = (Project)target;
-
-        if (target is ExternalCohortTable)
-            ExternalCohortTable = (ExternalCohortTable)target;
+        switch (target)
+        {
+            case Project project:
+                Project = project;
+                break;
+            case ExternalCohortTable externalCohortTable:
+                ExternalCohortTable = externalCohortTable;
+                break;
+        }
 
         return this;
     }

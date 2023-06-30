@@ -30,24 +30,18 @@ internal class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecu
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
     {
-        var tableInfo = cmd as TableInfoCombineable;
-
-        if (cmd is ColumnInfoCombineable colInfo)
-            return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, colInfo) { Category = target.Category };
-            
-        if (tableInfo != null)
-            return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, tableInfo.TableInfo.ColumnInfos) { Category = target.Category };
-
-        // when dropping onto Core or Supplemental etc
-        if(cmd is CatalogueItemCombineable ciCombine && target.Category != null)
+        return cmd switch
         {
-            // drag to a new category to change the extractability
-            return new ExecuteCommandChangeExtractionCategory(ItemActivator, 
-                ciCombine.CatalogueItems.Select(ci => ci.ExtractionInformation)
-                    .Where(e => e != null).ToArray(),
-                target.Category);
-        }
-
-        return null;
+            ColumnInfoCombineable colInfo => new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue,
+                colInfo) { Category = target.Category },
+            TableInfoCombineable tableInfo => new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue,
+                tableInfo.TableInfo.ColumnInfos) { Category = target.Category },
+            // when dropping onto Core or Supplemental etc
+            CatalogueItemCombineable ciCombine when target.Category != null => new
+                ExecuteCommandChangeExtractionCategory(ItemActivator,
+                    ciCombine.CatalogueItems.Select(ci => ci.ExtractionInformation).Where(e => e != null).ToArray(),
+                    target.Category),
+            _ => null
+        };
     }
 }

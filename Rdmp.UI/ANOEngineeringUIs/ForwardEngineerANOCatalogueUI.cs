@@ -51,9 +51,9 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         serverDatabaseTableSelector1.HideTableComponents();
 
 
-        olvSuffix.AspectGetter = (o) => o is ANOTable ? ((ANOTable) o).Suffix : null;
-        olvNumberOfCharacters.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfCharactersToUseInAnonymousRepresentation: null;
-        olvNumberOfDigits.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfIntegersToUseInAnonymousRepresentation : null;
+        olvSuffix.AspectGetter = (o) => o is ANOTable anoTable ? anoTable.Suffix : null;
+        olvNumberOfCharacters.AspectGetter = (o) => o is ANOTable anoTable ? anoTable.NumberOfCharactersToUseInAnonymousRepresentation: null;
+        olvNumberOfDigits.AspectGetter = (o) => o is ANOTable anoTable ? anoTable.NumberOfIntegersToUseInAnonymousRepresentation : null;
 
         olvMigrationPlan.AspectGetter += MigrationPlanAspectGetter;
             
@@ -149,10 +149,9 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object DestinationTypeAspectGetter(object rowobject)
     {
-        var ci = rowobject as ColumnInfo;
         try
         {
-            if (ci != null)
+            if (rowobject is ColumnInfo ci)
                 return _planManager.GetPlanForColumnInfo(ci).GetEndpointDataType();
         }
         catch (Exception)
@@ -166,17 +165,13 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object DestinationExtractionCategoryAspectGetter(object rowobject)
     {
-        var ci = rowobject as ColumnInfo;
         try
         {
-            if (ci != null)
+            if (rowobject is ColumnInfo ci)
             {
                 var plan = _planManager.GetPlanForColumnInfo(ci);
 
-                if (plan.ExtractionCategoryIfAny.HasValue)
-                    return plan.ExtractionCategoryIfAny;
-
-                return null;
+                return plan.ExtractionCategoryIfAny;
             }
         }
         catch (Exception)
@@ -198,12 +193,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         if (e.Column == olvDestinationType)
             e.Cancel = true;
 
-        var col = e.RowObject as ColumnInfo;
 
         if (e.Column == olvMigrationPlan)
             e.Control.Bounds = e.CellBounds;
 
-        if (col != null)
+        if (e.RowObject is ColumnInfo col)
         {
             var plan = _planManager.GetPlanForColumnInfo(col);
 

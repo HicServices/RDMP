@@ -116,30 +116,19 @@ public class ParameterCollectionUIOptionsFactory
 
     public ParameterCollectionUIOptions Create(ICollectSqlParameters host, ICoreChildProvider coreChildProvider)
     {
-        if (host is TableInfo)
-            return Create((TableInfo)host);
-
-        if (host is ExtractionFilterParameterSet)
-            return Create((ExtractionFilterParameterSet)host);
-
-        if (host is AggregateConfiguration)
-            return Create((AggregateConfiguration)host, coreChildProvider);
-
-        if (host is IFilter)
+        return host switch
         {
-            var factory = new FilterUIOptionsFactory();
-            var globals = factory.Create((IFilter)host).GetGlobalParametersInFilterScope();
-
-            return Create((IFilter)host, globals);
-        }
-
-        if (host is CohortIdentificationConfiguration)
-            return Create((CohortIdentificationConfiguration)host, coreChildProvider);
-
-        if (host is ExtractionConfiguration)
-            return Create((ExtractionConfiguration)host);
-
-        throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", nameof(host));
+            TableInfo tableInfo => Create(tableInfo),
+            ExtractionFilterParameterSet extractionFilterParameterSet => Create(extractionFilterParameterSet),
+            AggregateConfiguration aggregateConfiguration => Create(aggregateConfiguration, coreChildProvider),
+            IFilter filter => Create(filter,
+                new FilterUIOptionsFactory().Create(filter).GetGlobalParametersInFilterScope()),
+            CohortIdentificationConfiguration cohortIdentificationConfiguration => Create(
+                cohortIdentificationConfiguration, coreChildProvider),
+            ExtractionConfiguration extractionConfiguration => Create(extractionConfiguration),
+            _ => throw new ArgumentException(
+                "Host Type was not recognised as one of the Types we know how to deal with", nameof(host))
+        };
     }
 
     private ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)

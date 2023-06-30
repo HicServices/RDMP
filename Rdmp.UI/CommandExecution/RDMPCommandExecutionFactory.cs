@@ -129,26 +129,19 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 
     private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, IFolderNode targetFolder)
     {
-        var sourceManyCatalogues = cmd as ManyCataloguesCombineable;
-        var file = cmd as FileCollectionCombineable;
-
-        if (cmd is IHasFolderCombineable sourceFolderable)
-            return new ExecuteCommandPutIntoFolder(_activator, sourceFolderable, targetFolder.FullName);
-            
-        if (sourceManyCatalogues != null)
-            return new ExecuteCommandPutIntoFolder(_activator, sourceManyCatalogues, targetFolder.FullName);
-
-        if(file != null)
-            if(file.Files.Length == 1)
-            {
-                var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator,file.Files[0])
-                    {
-                        TargetFolder = targetFolder.FullName
-                    };
-                return toReturn;
-            }
-
-        return null;
+        return cmd switch
+        {
+            IHasFolderCombineable sourceFolderable => new ExecuteCommandPutIntoFolder(_activator, sourceFolderable,
+                targetFolder.FullName),
+            ManyCataloguesCombineable sourceManyCatalogues => new ExecuteCommandPutIntoFolder(_activator,
+                sourceManyCatalogues, targetFolder.FullName),
+            FileCollectionCombineable file when file.Files.Length == 1 => new
+                ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator, file.Files[0])
+                {
+                    TargetFolder = targetFolder.FullName
+                },
+            _ => null
+        };
     }
 
     private ICommandExecution CreateWhenTargetIsATableInfo(ICombineToMakeCommand cmd, TableInfo targetTableInfo)

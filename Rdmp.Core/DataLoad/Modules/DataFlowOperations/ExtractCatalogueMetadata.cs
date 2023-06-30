@@ -72,16 +72,16 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
         tblName = tblName.Replace("$c", _request.Configuration.Name);
 
-        if (_request is ExtractDatasetCommand)
+        switch (_request)
         {
-            tblName = tblName.Replace("$d", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Name);
-            tblName = tblName.Replace("$a", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Acronym);
-        }
-
-        if (_request is ExtractGlobalsCommand)
-        {
-            tblName = tblName.Replace("$d", ExtractionDirectory.GLOBALS_DATA_NAME);
-            tblName = tblName.Replace("$a", "G");
+            case ExtractDatasetCommand extractDatasetCommand:
+                tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
+                tblName = tblName.Replace("$a", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Acronym);
+                break;
+            case ExtractGlobalsCommand:
+                tblName = tblName.Replace("$d", ExtractionDirectory.GLOBALS_DATA_NAME);
+                tblName = tblName.Replace("$a", "G");
+                break;
         }
 
         return tblName;

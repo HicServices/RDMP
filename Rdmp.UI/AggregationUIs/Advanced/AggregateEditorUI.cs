@@ -127,11 +127,9 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
     { 
         var ti = rowobject as TableInfo;
-        var patientIndexTable = rowobject as JoinableCohortAggregateConfiguration;
-        var patientIndexTableUse = rowobject as JoinableCohortAggregateConfigurationUse;
 
         var joiner = _aggregate.CatalogueRepository.AggregateForcedJoinManager;
-            
+
         //user is trying to use a joinable something
         if (newvalue == CheckState.Checked)
         {
@@ -143,7 +141,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
             }
 
             // user is trying to join to a Patient Index table
-            if (patientIndexTable != null)
+            if (rowobject is JoinableCohortAggregateConfiguration patientIndexTable)
             {
                 if(_aggregate.Catalogue.IsApiCall())
                 {
@@ -172,7 +170,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
                 _forcedJoins.Remove(ti);
             }
 
-            if(patientIndexTableUse != null)
+            if(rowobject is JoinableCohortAggregateConfigurationUse patientIndexTableUse)
             {
                 var joinable = patientIndexTableUse.JoinableCohortAggregateConfiguration;
 
@@ -270,20 +268,23 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
                
     private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)
     {
-        var revertable = e.RowObject as IRevertable;
-        var countColumn = e.RowObject as AggregateCountColumn;
+        e.Column.PutAspectByName(e.RowObject, e.NewValue);
 
-        e.Column.PutAspectByName(e.RowObject,e.NewValue);
-
-        if (countColumn != null)
-            _aggregate.CountSQL = countColumn.SelectSQL + (countColumn.Alias != null ? $" as {countColumn.Alias}" : "");
-        else if (revertable != null)
+        switch (e.RowObject)
         {
-            if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                revertable.SaveToDatabase();
+            case AggregateCountColumn countColumn:
+                _aggregate.CountSQL =
+                    $"{countColumn.SelectSQL}{(countColumn.Alias != null ? $" as {countColumn.Alias}" : "")}";
+                break;
+            case IRevertable revertable:
+            {
+                if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                    revertable.SaveToDatabase();
+                break;
+            }
+            default:
+                throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
         }
-        else
-            throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
     }
         
     #region Having

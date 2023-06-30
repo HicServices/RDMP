@@ -88,13 +88,12 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void tlvLoadedTables_ItemActivate(object sender, EventArgs e)
     {
-        var tableNode = tlvLoadedTables.SelectedObject as LoadDiagramTableNode;
         var table = tlvLoadedTables.SelectedObject as DiscoveredTable;
 
         if (tlvLoadedTables.SelectedObject is UnplannedTable unplannedTable)
             table = unplannedTable.Table;
 
-        if (tableNode != null)
+        if (tlvLoadedTables.SelectedObject is LoadDiagramTableNode tableNode)
             if (tableNode.Bubble == LoadBubble.Live)
             {
                 //for live just use the TableInfo!
@@ -116,64 +115,47 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                 e.SubItem.ForeColor = Color.Red;
         }
 
-        if (e.Column == olvState)
+        if (e.Column == olvState && e.CellValue is LoadDiagramState loadDiagramState)
         {
-            if(e.CellValue is LoadDiagramState)
-                switch ((LoadDiagramState)e.CellValue)
-                {
-                    case LoadDiagramState.Anticipated:
-                        e.SubItem.ForeColor = Color.LightGray;
-                        break;
-                    case LoadDiagramState.Found:
-                        e.SubItem.ForeColor = Color.Green;
-                        break;
-                    case LoadDiagramState.NotFound:
-                        e.SubItem.ForeColor = loadStateUI1.State == LoadStateUI.LoadState.StartedOrCrashed ? Color.Red : Color.LightGray;
-                        break;
-                    case LoadDiagramState.Different:
-                        e.SubItem.ForeColor = Color.Red;
-                        break;
-                    case LoadDiagramState.New:
-                        e.SubItem.ForeColor = Color.Red;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+            e.SubItem.ForeColor = loadDiagramState switch
+            {
+                LoadDiagramState.Anticipated => Color.LightGray,
+                LoadDiagramState.Found => Color.Green,
+                LoadDiagramState.NotFound => loadStateUI1.State == LoadStateUI.LoadState.StartedOrCrashed
+                    ? Color.Red
+                    : Color.LightGray,
+                LoadDiagramState.Different => Color.Red,
+                LoadDiagramState.New => Color.Red,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 
     private object olvState_AspectGetter(object rowobject)
     {
-        var stateHaver = rowobject as IHasLoadDiagramState;
-
-        if (rowobject is DiscoveredTable || rowobject is DiscoveredColumn)
-            return LoadDiagramState.New;
-
-        if (stateHaver != null)
-            return stateHaver.State;
-
-        return null;
+        return rowobject switch
+        {
+            DiscoveredTable or DiscoveredColumn => LoadDiagramState.New,
+            IHasLoadDiagramState stateHaver => stateHaver.State,
+            _ => null
+        };
     }
 
     private object olvDataType_AspectGetter(object rowobject)
     {
-        var discCol = rowobject as DiscoveredColumn;
-
-        if (rowobject is LoadDiagramColumnNode colNode)
-            return colNode.GetDataType();
-
-        if (discCol != null)
-            return discCol.DataType.SQLType;
-
-        return null;
+        return rowobject switch
+        {
+            LoadDiagramColumnNode colNode => colNode.GetDataType(),
+            DiscoveredColumn discCol => discCol.DataType.SQLType,
+            _ => null
+        };
     }
 
     private string CellToolTipGetter(OLVColumn column, object modelObject)
     {
-        if(modelObject is LoadDiagramServerNode)
-            return ((LoadDiagramServerNode) modelObject).ErrorDescription;
-
-        return null;
+        return modelObject is LoadDiagramServerNode loadDiagramServerNode
+            ? loadDiagramServerNode.ErrorDescription
+            : null;
     }
 
     private Bitmap ImageGetter(object rowObject)
@@ -181,73 +163,45 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (Activator == null)
             return null;
 
-        var db = rowObject as LoadDiagramDatabaseNode;
-        var col = rowObject as LoadDiagramColumnNode;
-
-        if (rowObject is UnplannedTable)
-            return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem).ImageToBitmap();
-
-        if (rowObject is DiscoveredColumn)
-            return Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem).ImageToBitmap();
-            
-        if (rowObject is LoadDiagramServerNode)
-            if (string.IsNullOrWhiteSpace(((LoadDiagramServerNode) rowObject).ErrorDescription))
-                return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
-            else
-                return Activator.CoreIconProvider.GetImage(rowObject, OverlayKind.Problem).ImageToBitmap();
-
-        if (db != null)
-            return db.GetImage(Activator.CoreIconProvider);
-
-        if(rowObject is LoadDiagramTableNode)
-            return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap();
-
-        if (col != null)
-            return col.GetImage(Activator.CoreIconProvider);
-            
-        return null;
+        return rowObject switch
+        {
+            UnplannedTable => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem)
+                .ImageToBitmap(),
+            DiscoveredColumn => Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem)
+                .ImageToBitmap(),
+            LoadDiagramServerNode loadDiagramServerNode =>
+                string.IsNullOrWhiteSpace(loadDiagramServerNode.ErrorDescription)
+                    ? Activator.CoreIconProvider.GetImage(loadDiagramServerNode).ImageToBitmap()
+                    : Activator.CoreIconProvider.GetImage(loadDiagramServerNode, OverlayKind.Problem).ImageToBitmap(),
+            LoadDiagramDatabaseNode db => db.GetImage(Activator.CoreIconProvider),
+            LoadDiagramTableNode => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap(),
+            LoadDiagramColumnNode col => col.GetImage(Activator.CoreIconProvider),
+            _ => null
+        };
     }
 
     private IEnumerable ChildrenGetter(object model)
     {
-        var database = model as LoadDiagramDatabaseNode;
-        var table = model as LoadDiagramTableNode;
-        var unplannedTable = model as UnplannedTable;
-
-        if (model is LoadDiagramServerNode server)
-            return server.GetChildren();
-
-        if (database != null)
-            return database.GetChildren();
-
-        if (table != null)
-            return table.GetChildren(cbOnlyShowDynamicColumns.Checked);
-
-        if (unplannedTable != null)
-            return unplannedTable.Columns;
-
-        return null;
+        return model switch
+        {
+            LoadDiagramServerNode server => server.GetChildren(),
+            LoadDiagramDatabaseNode database => database.GetChildren(),
+            LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked),
+            UnplannedTable unplannedTable => unplannedTable.Columns,
+            _ => null
+        };
     }
 
     private bool CanExpandGetter(object model)
     {
-        var database = model as LoadDiagramDatabaseNode;
-        var table = model as LoadDiagramTableNode;
-        var unplannedTable = model as UnplannedTable;
-
-        if (model is LoadDiagramServerNode server)
-            return server.GetChildren().Any();
-
-        if (database != null)
-            return database.GetChildren().Any();
-
-        if (table != null)
-            return table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any();
-
-        if (unplannedTable != null)
-            return true;
-
-        return false;
+        return model switch
+        {
+            LoadDiagramServerNode server => server.GetChildren().Any(),
+            LoadDiagramDatabaseNode database => database.GetChildren().Any(),
+            LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any(),
+            UnplannedTable unplannedTable => true,
+            _ => false
+        };
     }
 
     public void RefreshUIFromDatabase()

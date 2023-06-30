@@ -317,15 +317,14 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
         foreach (var content in contents)
         {
             var order = content.Order;
-            var container = content as CohortAggregateContainer;
 
             //its a config, clone the config and add it to the clone container
-            if(content is AggregateConfiguration config)
+            if (content is AggregateConfiguration config)
             {
-                var configClone = clone.ImportAggregateConfigurationAsIdentifierList(config, null,false);
+                var configClone = clone.ImportAggregateConfigurationAsIdentifierList(config, null, false);
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Created clone dataset {configClone} with ID {configClone.ID}",CheckResult.Success));
-                cloneContainer.AddChild(configClone,order);
+                    $"Created clone dataset {configClone} with ID {configClone.ID}", CheckResult.Success));
+                cloneContainer.AddChild(configClone, order);
 
                 //if the original used any joinable patient index tables
                 var usedJoins = config.PatientIndexJoinablesUsed;
@@ -334,7 +333,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
                 foreach (var j in usedJoins)
                 {
                     //for some reason the CohortIdentificationConfiguration didn't properly clone the joinable permission or didn't add it to the dictionary
-                    if(!parentToCloneJoinablesDictionary.ContainsKey(j.JoinableCohortAggregateConfiguration))
+                    if (!parentToCloneJoinablesDictionary.ContainsKey(j.JoinableCohortAggregateConfiguration))
                         throw new KeyNotFoundException(
                             $"Configuration {configClone} uses Patient Index Table {j.AggregateConfiguration} but our dictionary did not have the key, why was that joinable not cloned?");
 
@@ -359,12 +358,12 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
                             clonedFilter.SaveToDatabase();
                         }
                     }
-                        
+
                 }
             }
 
             //its another container (a subcontainer), recursively call the clone operation on it and add that subtree to teh clone container
-            if (container != null)
+            if (content is CohortAggregateContainer container)
             {
                 var cloneSubContainer = container.CloneEntireTreeRecursively(notifier, original, clone,parentToCloneJoinablesDictionary);
 

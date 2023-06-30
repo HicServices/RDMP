@@ -46,8 +46,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
     private bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
     {
         //see if we need to display the dialog that lets the user sync up descriptions of multiuse columns e.g. CHI
-        bool shouldDialogBeDisplayed;
-        var propagate = new PropagateCatalogueItemChangesToSimilarNamedUI(Activator,_catalogueItem, out shouldDialogBeDisplayed);
+        var propagate = new PropagateCatalogueItemChangesToSimilarNamedUI(Activator,_catalogueItem, out var shouldDialogBeDisplayed);
 
         //there are other CatalogueItems that share the same name as this one so give the user the option to propagate his changes to those too
         if (shouldDialogBeDisplayed)

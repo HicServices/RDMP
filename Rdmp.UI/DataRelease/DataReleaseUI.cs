@@ -119,30 +119,17 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private object GetState(object rowObject)
     {
-        var sds = rowObject as ISelectedDataSets;
-        var configuration = rowObject as IExtractionConfiguration;
-        var supportingDocument = rowObject as SupportingDocument;
-        var supportingSqlTable = rowObject as SupportingSQLTable;
-
         if (checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner)
             return null;
 
-        if (configuration != null)
-            return releaseRunner.GetState(configuration);
-
-        if (sds != null)
-            return releaseRunner.GetState(sds);
-
-        if (supportingDocument != null)
-            return releaseRunner.GetState(supportingDocument);
-
-        if (supportingSqlTable != null)
-            return releaseRunner.GetState(supportingSqlTable);
-
-        if (rowObject.Equals(_globalsNode))
-            return releaseRunner.GetGlobalReleaseState();
-
-        return null;
+        return rowObject switch
+        {
+            IExtractionConfiguration configuration => releaseRunner.GetState(configuration),
+            ISelectedDataSets sds => releaseRunner.GetState(sds),
+            SupportingDocument supportingDocument => releaseRunner.GetState(supportingDocument),
+            SupportingSQLTable supportingSqlTable => releaseRunner.GetState(supportingSqlTable),
+            _ => rowObject.Equals(_globalsNode) ? releaseRunner.GetGlobalReleaseState() : null
+        };
     }
 
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
@@ -163,23 +150,18 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private string ToIdList(int[] ints)
     {
-        return string.Join(",", ints.Select(i => i.ToString()).ToArray());
+        return string.Join(",", ints.Select(i => i.ToString()));
     }
 
     private IEnumerable ChildrenGetter(object model)
     {
-        var ec = model as ExtractionConfiguration;
-
-        if (model is Project p)
-            return _configurations = _childProvider.GetActiveConfigurationsOnly(p);
-
-        if (ec != null)
-            return _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
-
-        if (Equals(model, _globalsNode))
-            return _globals;
-
-        return null;
+        return model switch
+        {
+            Project p => _configurations = _childProvider.GetActiveConfigurationsOnly(p),
+            ExtractionConfiguration ec =>
+                _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>(),
+            _ => Equals(model, _globalsNode) ? _globals : null
+        };
     }
     private bool CanExpandGetter(object model)
     {

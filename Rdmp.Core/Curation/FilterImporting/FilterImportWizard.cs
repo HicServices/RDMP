@@ -182,36 +182,34 @@ public class FilterImportWizard
 
     private void GetGlobalsAndFilters(IContainer containerToImportOneInto, out ISqlParameter[] globals, out IFilter[] otherFilters)
     {
-        var filtercontainer = containerToImportOneInto as FilterContainer;
-
-
-        if (containerToImportOneInto is AggregateFilterContainer aggregatecontainer)
+        switch (containerToImportOneInto)
         {
-            var aggregate = aggregatecontainer.GetAggregate();
-            var factory = new AggregateBuilderOptionsFactory();
-            var options = factory.Create(aggregate);
+            case AggregateFilterContainer aggregatecontainer:
+            {
+                var aggregate = aggregatecontainer.GetAggregate();
+                var factory = new AggregateBuilderOptionsFactory();
+                var options = factory.Create(aggregate);
 
-            globals = options.GetAllParameters(aggregate);
-            var root = aggregate.RootFilterContainer;
-            otherFilters = root == null ? Array.Empty<IFilter>() : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
-            return;
+                globals = options.GetAllParameters(aggregate);
+                var root = aggregate.RootFilterContainer;
+                otherFilters = root == null ? Array.Empty<IFilter>() : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+                return;
+            }
+            case FilterContainer filtercontainer:
+            {
+                var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ?? throw new Exception($"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
+                var config = selectedDataSet.ExtractionConfiguration;
+                var root = selectedDataSet.RootFilterContainer;
+
+                globals = config.GlobalExtractionFilterParameters;
+                otherFilters = root == null ? Array.Empty<IFilter>() : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+
+                return;
+            }
+            default:
+                throw new Exception(
+                    $"Container {containerToImportOneInto} was an unexpected Type:{containerToImportOneInto.GetType().Name}");
         }
-
-        if (filtercontainer != null)
-        {
-            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ?? throw new Exception($"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
-            var config = selectedDataSet.ExtractionConfiguration;
-            var root = selectedDataSet.RootFilterContainer;
-
-            globals = config.GlobalExtractionFilterParameters;
-            otherFilters = root == null ? Array.Empty<IFilter>() : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
-
-            return;
-        }
-
-
-        throw new Exception(
-            $"Container {containerToImportOneInto} was an unexpected Type:{containerToImportOneInto.GetType().Name}");
     }
 
     private List<IFilter> GetAllFiltersRecursively(IContainer currentContainer, List<IFilter> foundSoFar)

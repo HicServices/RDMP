@@ -120,8 +120,7 @@ public class LoadProgressSummaryReport:ICheckable
         //Now rename the columns from ID to the catalogue name
         foreach (DataColumn col in CataloguesPeriodictiyData.Columns)
         {
-            int cataId;
-            if (int.TryParse(col.ColumnName, out cataId))
+            if (int.TryParse(col.ColumnName, out var cataId))
                 col.ColumnName = CataloguesWithDQERuns.Keys.Single(c => c.ID == cataId).Name;
         }
 

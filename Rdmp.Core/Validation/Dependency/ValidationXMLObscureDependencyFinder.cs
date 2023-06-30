@@ -107,12 +107,10 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
 
         var repository = oTableWrapperObject.Repository;
 
-        var treeObject = oTableWrapperObject as IHasDependencies;
-
-        if (depth >= 5)//its fine
+        if (depth >= 5)//it's fine
             return;
 
-        if (treeObject != null)
+        if (oTableWrapperObject is IHasDependencies treeObject)
         {
             IHasDependencies[] dependants;
 
@@ -132,7 +130,7 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
                     ThrowIfDeleteDisallowed(child, depth + 1);
         }
 
-        //these regular expressions will let us identifiy suspicious Catalogues based on the validation
+        //these regular expressions will let us identify suspicious Catalogues based on the validation
         var checkers = new List<Regex>();
 
         foreach (var suspect in TheUsualSuspects)

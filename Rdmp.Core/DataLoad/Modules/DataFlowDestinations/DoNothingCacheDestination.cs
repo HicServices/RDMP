@@ -29,10 +29,9 @@ public class DoNothingCacheDestination : CacheFilesystemDestination
         //if(toProcess != null)
         //    throw new NotSupportedException("Expected only to be passed null chunks or never to get called, this destination is not valid for use when sources are actually sending/reading data");
 
-        var chunk = toProcess as DoNothingCacheChunk;
 
         var run = 0;
-        if (chunk != null)
+        if (toProcess is DoNothingCacheChunk chunk)
         {
             run = chunk.RunIteration;
         }

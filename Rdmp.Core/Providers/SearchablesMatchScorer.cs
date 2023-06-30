@@ -286,13 +286,10 @@ public class SearchablesMatchScorer
 
     private Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
     {
-        if (kvp.Key is Catalogue)
-            return (Catalogue) kvp.Key;
+        if (kvp.Key is Catalogue catalogue)
+            return catalogue;
 
-        if (kvp.Value != null)
-            return (Catalogue)kvp.Value.Parents.FirstOrDefault(p => p is Catalogue);
-
-        return null;
+        return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
     private int CountMatchType(List<Regex> regexes, object key)

@@ -282,11 +282,9 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
     private void PopulateChecksMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem inspectionMenuItem)
     {
-        var databaseEntity = _o as DatabaseEntity;
-
         if (commonFunctionality.CheckColumnProvider != null)
         {
-            if (databaseEntity != null)
+            if (_o is DatabaseEntity databaseEntity)
                 Add(new ExecuteCommandCheckAsync(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
 
             var checkAll = new ToolStripMenuItem("Check All", null, (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables())
@@ -299,7 +297,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
             };
             inspectionMenuItem.DropDownItems.Add(checkAll);
         }
-            
+
         // disable menu if checking is not supported in the collection or objects clicked are not checkable
         inspectionMenuItem.Enabled = inspectionMenuItem.HasDropDown && inspectionMenuItem.DropDownItems.OfType<ToolStripMenuItem>().Any(m=>m.Enabled);
     }

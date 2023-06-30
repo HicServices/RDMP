@@ -358,23 +358,23 @@ public class CohortIdentificationConfigurationUICommon
     /// <param name="o"></param>
     public void ExecuteOrCancel(object o)
     {
-        var aggregate = o as AggregateConfiguration;
-        var container = o as CohortAggregateContainer;
-
         Task.Run(() =>
         {
-            if (aggregate != null)
+            switch (o)
             {
-                var joinable = aggregate.JoinableCohortAggregateConfiguration;
+                case AggregateConfiguration aggregate:
+                {
+                    var joinable = aggregate.JoinableCohortAggregateConfiguration;
 
-                if (joinable != null)
-                    OrderActivity(GetNextOperation(GetState(joinable)), joinable);
-                else
-                    OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
-            }
-            if (container != null)
-            {
-                OrderActivity(GetNextOperation(GetState(container)), container);
+                    if (joinable != null)
+                        OrderActivity(GetNextOperation(GetState(joinable)), joinable);
+                    else
+                        OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
+                    break;
+                }
+                case CohortAggregateContainer container:
+                    OrderActivity(GetNextOperation(GetState(container)), container);
+                    break;
             }
         });
     }

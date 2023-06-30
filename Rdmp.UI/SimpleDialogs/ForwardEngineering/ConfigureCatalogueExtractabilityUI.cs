@@ -682,7 +682,6 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             return;
         }
 
-        var n = ddIsExtractionIdentifier.SelectedItem as ColPair;
 
         //turn off all IsExtractionIdentifierness
         foreach (var node in ddIsExtractionIdentifier.Items.OfType<ColPair>())
@@ -694,8 +693,8 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             }
         }
 
-        //we cleared them all, now did they want one selected (i.e. they selected anythign except <<None>>)
-        if (n != null)
+        //we cleared them all, now did they want one selected (i.e. they selected anything except <<None>>)
+        if (ddIsExtractionIdentifier.SelectedItem is ColPair n)
         {
             if(n.ExtractionInformation == null)
                 MakeExtractable(n, true, ExtractionCategory.Core);

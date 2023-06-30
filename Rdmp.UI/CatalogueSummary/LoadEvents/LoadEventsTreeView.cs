@@ -324,15 +324,14 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     {
         var RightClickMenu = new ContextMenuStrip();
 
-        var tli = e.Model as ArchivalTableLoadInfo;
 
         if (e.Model is LoadEventsTreeView_Category category)
         {
-            var cmd = new ExecuteCommandViewLogs(Activator,new LogViewerFilter(category.AssociatedTable){Run = category.RunId});
+            var cmd = new ExecuteCommandViewLogs(Activator, new LogViewerFilter(category.AssociatedTable) { Run = category.RunId });
             RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, Activator));
         }
 
-        if (tli != null && Collection?.RootObject is LoadMetadata lmd)
+        if (e.Model is ArchivalTableLoadInfo tli && Collection?.RootObject is LoadMetadata lmd)
         {
             //if it is not a freaky temp table
             if (!tli.TargetTable.EndsWith("_STAGING") && !tli.TargetTable.EndsWith("_RAW"))

@@ -295,8 +295,7 @@ public class CohortQueryBuilderResult
         }
 
         //or you yourself are disabled
-        var dis = arg as IDisableable;
-        return dis == null || !dis.IsDisabled;
+        return arg is not IDisableable { IsDisabled: true };
     }
 
     /// <summary>
@@ -307,23 +306,14 @@ public class CohortQueryBuilderResult
     /// <returns></returns>
     protected virtual string GetSetOperationSql(SetOperation currentContainerOperation,DatabaseType dbType)
     {
-        if (dbType == DatabaseType.MySql)
-            throw new NotSupportedException("INTERSECT / UNION / EXCEPT are not supported by MySql caches");
-
-        switch (currentContainerOperation)
+        return currentContainerOperation switch
         {
-            case SetOperation.UNION:
-                return "UNION";
-            case SetOperation.INTERSECT:
-                return "INTERSECT";
-            case SetOperation.EXCEPT:
-                if (dbType == DatabaseType.Oracle)
-                    return "MINUS";
-
-                return "EXCEPT";
-            default:
-                throw new ArgumentOutOfRangeException(nameof(currentContainerOperation), currentContainerOperation, null);
-        }
+            SetOperation.UNION => "UNION",
+            SetOperation.INTERSECT => "INTERSECT",
+            SetOperation.EXCEPT => dbType == DatabaseType.Oracle ? "MINUS" : "EXCEPT",
+            _ => throw new ArgumentOutOfRangeException(nameof(currentContainerOperation), currentContainerOperation,
+                null)
+        };
     }
 
     private string BuildSql(CohortQueryBuilderDependency dependency,ParameterManager parameterManager)

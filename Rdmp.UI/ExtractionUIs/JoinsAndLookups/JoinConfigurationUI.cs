@@ -239,21 +239,15 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private TableInfo GetTableInfoOrNullFromDrag(DragEventArgs e)
     {
-        if (e.Data is not OLVDataObject data)
+        if (e.Data is not OLVDataObject data || data.ModelObjects.Count != 1)
             return null;
 
-        if (data.ModelObjects.Count != 1)
-            return null;
-
-        var ticmd = data.ModelObjects[0] as TableInfoCombineable;
-
-        if (data.ModelObjects[0] is TableInfo ti)
-            return ti;
-
-        if (ticmd != null)
-            return ticmd.TableInfo;
-
-        return null;
+        return data.ModelObjects[0] switch
+        {
+            TableInfo ti => ti,
+            TableInfoCombineable ticmd => ticmd.TableInfo,
+            _ => null
+        };
     }
 
     private void tbCollation_Leave(object sender, EventArgs e)

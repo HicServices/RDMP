@@ -288,10 +288,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
         tblName = tblName.Replace("$c", _request.Configuration.Name);
 
-        if (_request is ExtractDatasetCommand)
+        if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
-            tblName = tblName.Replace("$d", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Name);
-            tblName = tblName.Replace("$a", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Acronym);
+            tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
+            tblName = tblName.Replace("$a", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Acronym);
         }
 
         if (_request is ExtractGlobalsCommand)
