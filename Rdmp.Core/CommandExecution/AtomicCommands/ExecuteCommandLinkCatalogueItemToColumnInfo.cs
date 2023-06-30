@@ -52,8 +52,7 @@ public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution
     {
         base.Execute();
 
-        _columnInfo ??=
-            SelectOne<ColumnInfo>(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogueItem.Name);
+        _columnInfo ??= SelectOne<ColumnInfo>(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogueItem.Name);
 
         if (_columnInfo == null)
             return;

@@ -52,7 +52,7 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
             _permissionWindow = new SpontaneouslyInventedPermissionWindow(_cacheProgress);
         else
             _permissionWindow = cacheProgress.PermissionWindow;
-
+            
         _providerIfAny ??= new CacheFetchRequestProvider(_cacheProgress)
         {
             PermissionWindow = _permissionWindow
