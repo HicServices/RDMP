@@ -52,9 +52,9 @@ public partial class SQLBeforeAndAfterViewer : Form
 
         //compute difference
         var highlighter = new ScintillaLineHighlightingHelper();
-        ScintillaLineHighlightingHelper.ClearAll(QueryEditorAfter);
-        ScintillaLineHighlightingHelper.ClearAll(QueryEditorBefore);
-
+        highlighter.ClearAll(QueryEditorAfter);
+        highlighter.ClearAll(QueryEditorBefore);
+            
         sqlBefore ??= "";
         sqlAfter ??= "";
 

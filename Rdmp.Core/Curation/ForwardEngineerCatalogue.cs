@@ -72,7 +72,6 @@ public class ForwardEngineerCatalogue
         var repo = _tableInfo.CatalogueRepository;
 
         //if user did not specify an existing catalogue to supplement 
-        //create a new (empty) catalogue and treat that as the new target
         intoExistingCatalogue ??= new Catalogue(repo, _tableInfo.GetRuntimeName());
 
         catalogue = intoExistingCatalogue;

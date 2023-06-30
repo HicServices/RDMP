@@ -848,21 +848,16 @@ public abstract class TableRepository : ITableRepository
 
     public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
     {
-        var toReturn = new List<IMapsDirectlyToDatabaseTable>();
-
         _compatibleTypes ??= GetCompatibleTypes();
 
-        foreach (var type in _compatibleTypes)
-            try
-            {
-                toReturn.AddRange(GetAllObjects(type));
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Failed to GetAllObjects of Type '{type}'", e);
-            }
-
-        return toReturn.ToArray();
+        try
+        {
+            return _compatibleTypes.SelectMany(GetAllObjects).ToArray();
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Failed to GetAllObjects of Type '{string.Join(',',_compatibleTypes.Select(t=>t.FullName))}'",e);
+        }
     }
 
 
