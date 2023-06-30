@@ -27,7 +27,7 @@ namespace Rdmp.Core.Repositories;
 public class MEF
 {
     // TODO: Cache/preload this for AOT later; figure out generic support
-    private static Lazy<ReadOnlyDictionary<string, Type>> _types;
+    private static Lazy<ReadOnlyDictionary<string, Type>> _types=null;
     private static readonly ConcurrentDictionary<Type, Type[]> TypeCache=new();
 
     static MEF()
@@ -38,7 +38,7 @@ public class MEF
 
     private static void Flush(object _1, AssemblyLoadEventArgs ale)
     {
-        if (_types.IsValueCreated)
+        if (_types?.IsValueCreated!=false)
             _types = new Lazy<ReadOnlyDictionary<string, Type>>(PopulateUnique, LazyThreadSafetyMode.ExecutionAndPublication);
         TypeCache.Clear();
     }
