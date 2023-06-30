@@ -185,8 +185,10 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     }
 
     /// <inheritdoc/>
-    public Type GetDestinationType() =>
-        ((IDataExportRepository)Repository).CatalogueRepository.MEF.GetType(DestinationType);
+    public Type GetDestinationType()
+    {
+        return MEF.GetType(DestinationType);
+    }
 
     /// <inheritdoc/>
     public void CompleteAudit(Type destinationType, string destinationDescription, int distinctIdentifiers,

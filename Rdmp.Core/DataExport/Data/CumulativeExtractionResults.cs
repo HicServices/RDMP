@@ -202,8 +202,10 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     }
 
     /// <inheritdoc/>
-    public Type GetDestinationType() =>
-        ((IDataExportRepository)Repository).CatalogueRepository.MEF.GetType(_destinationType);
+    public Type GetDestinationType()
+    {
+        return MEF.GetType(_destinationType);
+    }
 
     /// <inheritdoc/>
     public bool IsReferenceTo(Type t) => t == typeof(ExtractableDataSet);
