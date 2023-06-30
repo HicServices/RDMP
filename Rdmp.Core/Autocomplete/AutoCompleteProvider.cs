@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using SixLabors.ImageSharp;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
@@ -63,8 +64,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     {
         //     yield return arg;
 
-        foreach (Match m in Regex.Matches(arg, @"\b\w*\b"))
-            yield return m.Value;
+        return Regex.Matches(arg, @"\b\w*\b").Select(m => m.Value);
     }
 
     public void Add(ITableInfo tableInfo)
