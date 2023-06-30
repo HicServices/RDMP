@@ -296,13 +296,6 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         runner.Run(new CancellationToken());
 
-        if (dbType == DatabaseType.MySql)
-        {
-            var crashed = compiler.Tasks.Single(t => t.Key.State == CompilationState.Crashed);    
-            StringAssert.Contains("INTERSECT / UNION / EXCEPT are not supported by MySql", crashed.Key.CrashMessage.Message);
-            return;
-        }
-            
         AssertNoErrors(compiler);
 
 
