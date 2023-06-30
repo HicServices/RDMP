@@ -61,9 +61,8 @@ public partial class KeyDropLocationUI : UserControl
 
         if (IsValidGetter != null && !IsValidGetter(col))
             return;
-
-        if (col != null)
-            e.Effect = DragDropEffects.Copy;
+            
+        e.Effect = DragDropEffects.Copy;
     }
 
     private void tbPk1_DragDrop(object sender, DragEventArgs e)
