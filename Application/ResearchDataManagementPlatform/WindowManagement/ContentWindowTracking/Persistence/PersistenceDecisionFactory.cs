@@ -120,8 +120,11 @@ public class PersistenceDecisionFactory
     private static Type GetTypeByName(string s, Type expectedBaseClassType,
         IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        var toReturn = repositoryLocator.CatalogueRepository.MEF.GetType(s) ??
-                       throw new TypeLoadException($"Could not find Type called '{s}'");
+        var toReturn = MEF.GetType(s);
+
+        if (toReturn == null)
+            throw new TypeLoadException($"Could not find Type called '{s}'");
+
         if (expectedBaseClassType != null)
             if (!expectedBaseClassType.IsAssignableFrom(toReturn))
                 throw new TypeLoadException(

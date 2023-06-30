@@ -276,7 +276,7 @@ public partial class AutoCommentsEvaluator
                 {
                     var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
 
-                    var t = mef.GetType(currentClassName);
+                    var t = MEF.GetType(currentClassName);
 
                     //if the previous line isn't a summary comment
                     if (!text[i - 1].Trim().StartsWith("///"))

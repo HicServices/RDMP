@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
@@ -69,7 +70,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         var mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
 
         cbxType.Items.Clear();
-        cbxType.Items.AddRange(mef.GetTypes<ITicketingSystem>().Select(t => t.FullName).ToArray());
+        cbxType.Items.AddRange(MEF.GetTypes<ITicketingSystem>().Select(t=>t.FullName).ToArray());
 
         ddCredentials.Items.Clear();
         ddCredentials.Items.Add(NoneText);

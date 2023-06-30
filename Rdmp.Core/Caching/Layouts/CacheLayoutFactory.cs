@@ -50,8 +50,8 @@ public class CacheLayoutFactory
             if (!task.ProcessTaskType.Equals(ProcessTaskType.DataProvider))
                 continue;
 
-
-            var type = task.CatalogueRepository.MEF.GetType(task.Path);
+                
+            var type = Repositories.MEF.GetType(task.Path);
 
             if (typeof(ICachedDataProvider).IsAssignableFrom(type))
                 compatibleProviders.Add(task);

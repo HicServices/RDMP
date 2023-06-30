@@ -73,7 +73,7 @@ public class CacheFetchRequest : ICacheFetchRequest
         }
         else
         {
-            new CacheFetchFailure((ICatalogueRepository)Repository, CacheProgress, Start, End, e);
+            _=new CacheFetchFailure((ICatalogueRepository) Repository, CacheProgress,Start,End, e);
         }
     }
 

@@ -49,7 +49,7 @@ internal class Patch68FixNamespacesTest:UnitTests
             foreach (var kvp in substitutions)
                 newClass = newClass.Replace(kvp.Key, kvp.Value);
 
-            var foundNow = MEF.GetType(newClass);
+            var foundNow = Core.Repositories.MEF.GetType(newClass);
 
             Assert.IsNotNull(foundNow,
                 "Patch did not work correctly for Type '" + oldClass + "' which after renaming became '" + newClass +

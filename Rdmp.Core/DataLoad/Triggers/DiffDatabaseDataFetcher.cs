@@ -290,8 +290,7 @@ Join
         foreach (var sharedColumn in _sharedColumns)
         {
             sb.AppendLine();
-            sb.Append(
-                $"{tableName}.{sharedColumn.GetRuntimeName()} {columnAliasPrefix}{sharedColumn.GetRuntimeName()}");
+            sb.Append($"{tableName}.{sharedColumn.GetRuntimeName()} {columnAliasPrefix}{sharedColumn.GetRuntimeName()}");
             sb.Append(',');
         }
 

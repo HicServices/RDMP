@@ -42,7 +42,7 @@ public class DashboardControlFactory
     /// <returns></returns>
     public DashboardableControlHostPanel Create(DashboardControl toCreate)
     {
-        var controlType = _activator.RepositoryLocator.CatalogueRepository.MEF.GetType(toCreate.ControlType);
+        var controlType = Core.Repositories.MEF.GetType(toCreate.ControlType);
 
         var instance = CreateControl(controlType);
 

@@ -107,16 +107,10 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     }
 
     /// <inheritdoc/>
-    public IEnumerable<IArgument> GetAllArguments() => PipelineComponentArguments;
-
-    /// <inheritdoc/>
-    public IArgument CreateNewArgument() => new PipelineComponentArgument((ICatalogueRepository)Repository, this);
-
-    /// <inheritdoc/>
-    public string GetClassNameWhoArgumentsAreFor() => Class;
-
-    /// <inheritdoc/>
-    public Type GetClassAsSystemType() => CatalogueRepository.MEF.GetType(Class);
+    public Type GetClassAsSystemType()
+    {
+        return MEF.GetType(Class);
+    }
 
     /// <inheritdoc/>
     public string GetClassNameLastPart()

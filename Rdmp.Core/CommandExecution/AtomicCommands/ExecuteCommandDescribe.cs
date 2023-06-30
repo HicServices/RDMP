@@ -373,5 +373,6 @@ public class ExecuteCommandDescribe : BasicCommandExecution
 
         sb.Append(BasicCommandExecution.GetCommandName(commandType.Name));
         sb.Append(' ');
+
     }
 }

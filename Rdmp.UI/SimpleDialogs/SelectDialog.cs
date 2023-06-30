@@ -504,8 +504,18 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList()
         };
 
-        var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
-
+        if (_lblId != null && int.TryParse(_lblId.Text, out var requireId))
+        {
+            scorer.ID = requireId;
+        }
+                
+        if (AlwaysFilterOn != null)
+        {
+            showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
+        }
+                
+        var scores = scorer.ScoreMatches(_searchables, text, showOnlyTypes, cancellationToken);
+            
         if (scores == null)
         {
             stateChanged = true;

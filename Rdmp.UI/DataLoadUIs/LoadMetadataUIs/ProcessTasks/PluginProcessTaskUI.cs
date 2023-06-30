@@ -77,7 +77,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 
             try
             {
-                _underlyingType = repo.MEF.GetType(className);
+                _underlyingType = Core.Repositories.MEF.GetType(className);
 
                 if (_underlyingType == null)
                     activator.KillForm(ParentForm, new Exception(

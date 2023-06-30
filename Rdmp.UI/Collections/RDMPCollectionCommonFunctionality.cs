@@ -731,7 +731,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 
 
         //now find the first RDMPContextMenuStrip with a compatible constructor
-        foreach (var menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
+        foreach (var menuType in MEF.GetTypes<RDMPContextMenuStrip>())
         {
             if (menuType.IsAbstract || menuType.IsInterface || menuType == typeof(RDMPContextMenuStrip))
                 continue;

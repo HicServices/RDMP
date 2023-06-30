@@ -159,7 +159,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         top += lbConflictResolutionColumns.AutoScrollOffset.Y;
 
-        //this seems to count up the number of items that have been skipped rather than the pixels... wierdo crazy
+        //this seems to count up the number of items that have been skipped rather than the pixels... weird
         var barpos = NativeMethods.GetScrollPos(lbConflictResolutionColumns.Handle, Orientation.Vertical);
         barpos *= lbConflictResolutionColumns.Font.Height;
         top -= barpos;
@@ -169,7 +169,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         var left = new Point(0, top);
         var right = new Point(lbConflictResolutionColumns.Width, top);
 
-        //draw over the old one in the background colour (incase it has moved) - we don't want to leave trails
+        //draw over the old one in the background colour (in case it has moved) - we don't want to leave trails
         g.DrawLine(new Pen(lbConflictResolutionColumns.BackColor, 2), draggingOldLeftPoint,
             draggingOldRightPoint);
         g.DrawLine(new Pen(Color.Black, 2), left, right);
