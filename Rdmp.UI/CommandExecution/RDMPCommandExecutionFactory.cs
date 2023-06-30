@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -32,7 +33,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         _activator = activator;
 
-        foreach (var proposerType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<ICommandExecutionProposal>())
+        foreach (var proposerType in MEF.GetTypes<ICommandExecutionProposal>())
         {
             try
             {

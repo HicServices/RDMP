@@ -27,7 +27,7 @@ public class MEFCheckerTests:UnitTests
     [Test]
     public void FindClass_WrongCase_FoundAnyway()
     {
-        Assert.AreEqual(typeof(Catalogue),Repository.MEF.GetType("catalogue"));
+        Assert.AreEqual(typeof(Catalogue), Core.Repositories.MEF.GetType("catalogue"));
     }
 
     [Test]

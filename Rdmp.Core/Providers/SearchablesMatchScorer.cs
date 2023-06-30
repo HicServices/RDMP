@@ -114,10 +114,12 @@ public class SearchablesMatchScorer
     /// </summary>
     /// <param name="searchables">All available objects that can be searched (see <see cref="ICoreChildProvider.GetAllSearchables"/>)</param>
     /// <param name="searchText">Tokens to use separated by space e.g. "chi biochemistry CatalogueItem"</param>
-    /// <param name="cancellationToken">Token for cancelling match scoring.  This method will return null if cancellation is detected</param>
     /// <param name="showOnlyTypes">Optional (can be null) list of types to return results from.  Not respected if <paramref name="searchText"/> includes type names</param>
+    /// <param name="cancellationToken">Token for cancelling match scoring.  This method will return null if cancellation is detected</param>
     /// <returns></returns>
-    public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken, List<Type> showOnlyTypes)
+    public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(
+        Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText,
+        List<Type> showOnlyTypes, CancellationToken cancellationToken)
     {
         SetupRespectUserSettings();
 
@@ -366,7 +368,7 @@ public class SearchablesMatchScorer
     }
 
     /// <summary>
-    /// Shortlists the output of <see cref="ScoreMatches(Dictionary{IMapsDirectlyToDatabaseTable, DescendancyList}, string, CancellationToken, List{Type})"/>
+    /// Shortlists the output of <see cref="ScoreMatches"/>
     /// producing a list of results up to the supplied length (<paramref name="take"/>).
     /// </summary>
     /// <param name="scores"></param>

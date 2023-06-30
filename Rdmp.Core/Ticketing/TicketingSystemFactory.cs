@@ -27,7 +27,7 @@ public class TicketingSystemFactory
 
     public Type[] GetAllKnownTicketingSystems()
     {
-        return _repository.MEF.GetTypes<ITicketingSystem>().ToArray();
+        return MEF.GetTypes<ITicketingSystem>().ToArray();
     }
 
     //public ITicketingSystem Create(string )

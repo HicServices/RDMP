@@ -211,7 +211,7 @@ public class FTPDownloader : IPluginDataProvider
             while (line != null)
             {
                 result.Append(line);
-                result.Append("\n");
+                result.Append('\n');
                 line = reader.ReadLine();
             }
             // to remove the trailing '\n'

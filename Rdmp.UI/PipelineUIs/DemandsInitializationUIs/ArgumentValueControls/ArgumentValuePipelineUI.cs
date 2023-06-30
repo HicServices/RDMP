@@ -36,7 +36,7 @@ public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
 
         var typeName = parent.GetClassNameWhoArgumentsAreFor();
 
-        _typeOfUnderlyingClass = catalogueRepository.MEF.GetType(typeName);
+        _typeOfUnderlyingClass = MEF.GetType(typeName);
 
         if (_typeOfUnderlyingClass == null)
             throw new Exception($"Could not identify a Type called {typeName} in any loaded assemblies");

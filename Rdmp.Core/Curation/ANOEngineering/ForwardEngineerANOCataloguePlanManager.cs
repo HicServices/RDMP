@@ -72,7 +72,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             
         DilutionOperations = new List<IDilutionOperation>();
 
-        foreach (var operationType in repositoryLocator.CatalogueRepository.MEF.GetTypes<IDilutionOperation>())
+        foreach (var operationType in MEF.GetTypes<IDilutionOperation>())
             DilutionOperations.Add((IDilutionOperation)ObjectConstructor.Construct(operationType));
     }
 

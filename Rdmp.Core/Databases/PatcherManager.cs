@@ -42,7 +42,7 @@ public class PatcherManager
 
     public IEnumerable<PluginPatcher> GetTier3Patchers(MEF mef,PluginPatcherFoundHandler events)
     {
-        foreach (var patcherType in mef.GetTypes<PluginPatcher>().Where(type => type.IsPublic))
+        foreach (var patcherType in MEF.GetTypes<PluginPatcher>().Where(type => type.IsPublic))
         {
             PluginPatcher instance = null;
                 

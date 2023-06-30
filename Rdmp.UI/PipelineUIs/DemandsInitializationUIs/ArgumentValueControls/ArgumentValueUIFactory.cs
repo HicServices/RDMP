@@ -115,7 +115,7 @@ public class ArgumentValueUIFactory
         //if it is an interface e.g. IExternalDatabaseServer look for ExternalDatabaseServer
         if (argumentType.IsInterface)
         {
-            var implementationType = args.CatalogueRepository.MEF.GetType(args.Type.Name[1..]);
+            var implementationType = MEF.GetType(args.Type.Name[1..]);
             if (implementationType != null)
                 argumentType = implementationType;
         }

@@ -142,6 +142,7 @@ public class CohortIdentificationTaskExecution: IDisposable
 
     public void Dispose()
     {
+        GC.SuppressFinalize(this);
         Identifiers?.Dispose();
         CumulativeIdentifiers?.Dispose();
         _rIds?.Dispose();

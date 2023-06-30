@@ -192,7 +192,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         PluginUserInterfaces = new List<IPluginUserInterface>();
 
-        foreach (var pluginType in RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginUserInterface>())
+        foreach (var pluginType in MEF.GetTypes<IPluginUserInterface>())
         {
             try
             {

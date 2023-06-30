@@ -271,7 +271,7 @@ Join
         {
             sb.AppendLine();
             sb.Append($"{tableName}.{sharedColumn.GetRuntimeName()} {columnAliasPrefix}{sharedColumn.GetRuntimeName()}");
-            sb.Append(",");
+            sb.Append(',');
         }
 
         return sb.ToString().TrimEnd(',');
@@ -285,7 +285,7 @@ Join
         {
             sb.AppendLine();
             sb.Append($"{tableName}.{sharedColumn.GetRuntimeName()}");
-            sb.Append(",");
+            sb.Append(',');
         }
 
         return sb.ToString().TrimEnd(',');

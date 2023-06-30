@@ -70,7 +70,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     [Test]
     public void Test_CatalogueItems_NonExtractedPrimaryKey_AreRespected()
     {
-        var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", new string[] { }, pkColumnInfos: new [] { "DateOfBirth" });
+        var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", System.Array.Empty<string>(), pkColumnInfos: new [] { "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -88,7 +88,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     [Test]
     public void Test_CatalogueItems_NonExtractedPrimaryKey_MultiTable_PksAreMerged()
     {
-        var request = SetupExtractDatasetCommand("MultiTable_PksAreMerged", new string[] { }, new[] { "DateOfBirth" }, true, true);
+        var request = SetupExtractDatasetCommand("MultiTable_PksAreMerged", System.Array.Empty<string>(), new[] { "DateOfBirth" }, true, true);
             
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -109,7 +109,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     [Test]
     public void Test_CatalogueItems_NonExtractedPrimaryKey_LookupsOnly_IsRespected()
     {
-        var request = SetupExtractDatasetCommand("LookupsOnly_IsRespected", new string[] { }, pkColumnInfos: new[] { "DateOfBirth" }, withLookup: true);
+        var request = SetupExtractDatasetCommand("LookupsOnly_IsRespected", System.Array.Empty<string>(), pkColumnInfos: new[] { "DateOfBirth" }, withLookup: true);
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);

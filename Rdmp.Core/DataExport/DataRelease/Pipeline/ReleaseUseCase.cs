@@ -47,8 +47,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
             ExplicitSource = new NullReleaseSource();
         else
         {
-            var destinationType = catalogueRepository.MEF
-                .GetType(
+            var destinationType = MEF.GetType(
                     releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
                     typeof (IExecuteDatasetExtractionDestination));
             var destinationUsedAtExtraction =

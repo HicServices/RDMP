@@ -126,7 +126,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     /// <inheritdoc/>
     public Type GetClassAsSystemType()
     {
-        return CatalogueRepository.MEF.GetType(Class);
+        return MEF.GetType(Class);
     }
 
     /// <inheritdoc/>

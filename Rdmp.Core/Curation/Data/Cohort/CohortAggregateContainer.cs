@@ -96,7 +96,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     }
 
     /// <summary>
-    /// Creates a new container (which starts out as an oprhan) with the given <see cref="SetOperation"/>.  You should either set a
+    /// Creates a new container (which starts out as an orphan) with the given <see cref="SetOperation"/>.  You should either set a
     ///  <see cref="CohortIdentificationConfiguration.RootCohortAggregateContainer_ID"/> to this.<see cref="IMapsDirectlyToDatabaseTable.ID"/> to make this container the root container
     /// or use <see cref="AddChild(CohortAggregateContainer)"/>  on another container to make this a subcontainer of it.
     /// </summary>

@@ -55,11 +55,11 @@ internal class FilterManagerFromChildProvider: AggregateFilterManager
     public override IContainer[] GetSubContainers(IContainer container)
     {
         return _subcontainers.TryGetValue(container.ID, out var result) ? result.ToArray() :
-            new AggregateFilterContainer[0];
+            Array.Empty<IContainer>();
     }
 
     public override IFilter[] GetFilters(IContainer container)
     {
-        return _containersToFilters.TryGetValue(container.ID,out var result) ? result.ToArray() : new AggregateFilter[0];
+        return _containersToFilters.TryGetValue(container.ID,out var result) ? result.ToArray() : Array.Empty<IFilter>();
     }
 }

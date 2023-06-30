@@ -40,9 +40,9 @@ internal partial class PickType : PickObjectBase
         try
         {
             return
-                Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
+                Repositories.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
                 ??
-                Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(arg);
+                Repositories.MEF.GetType(arg);
         }
         catch (Exception)
         {

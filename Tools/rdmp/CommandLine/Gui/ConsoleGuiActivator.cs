@@ -221,7 +221,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
     public override FileInfo SelectFile(string prompt)
     {
-        var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
+        using var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
             
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
@@ -232,7 +232,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
     {
-        var openDir = new OpenDialog(prompt,"File")
+        using var openDir = new OpenDialog(prompt,"File")
         {
             AllowsMultipleSelection = false,
             AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}

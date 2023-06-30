@@ -143,7 +143,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             if (string.IsNullOrWhiteSpace(value))
                 return null;
             else
-                return CatalogueRepository.MEF.GetType(value);
+                return MEF.GetType(value);
 
         if (type.Equals(typeof(CatalogueRepository).ToString()) || type.Equals(typeof(ICatalogueRepository).ToString()))
             return Repository;
@@ -268,7 +268,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             try
             {
-                var t = CatalogueRepository.MEF.GetType(concreteType.FullName);
+                var t = MEF.GetType(concreteType.FullName);
 
                 result = (ICustomUIDrivenClass) ObjectConstructor.Construct(t, (ICatalogueRepository) Repository);
                      
@@ -321,7 +321,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             var elementTypeAsString = arrayMatch.Groups[1].Value;
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-            var elementType = CatalogueRepository.MEF.GetType(elementTypeAsString) ?? throw new Exception(
+            var elementType = MEF.GetType(elementTypeAsString) ?? throw new Exception(
                     $"Could not figure out what SystemType to use for elementType = '{elementTypeAsString}' of Type '{type}'");
             return Array.CreateInstance(elementType, 0).GetType();
         }
@@ -334,7 +334,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         }
 
         //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-        var anyType = CatalogueRepository.MEF.GetType(type) ?? throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
+        var anyType = MEF.GetType(type) ?? throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
         return anyType;
     }
 
@@ -352,7 +352,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         //if it is interface e.g. ITableInfo fetch instead the TableInfo object
         if (type.IsInterface && type.Name.StartsWith("I"))
         {
-            var candidate = CatalogueRepository.MEF.GetType(type.Name[1..]); // chop the 'I' off
+            var candidate = MEF.GetType(type.Name[1..]); // chop the 'I' off
 
             if (!candidate.IsAbstract)
                 return candidate;

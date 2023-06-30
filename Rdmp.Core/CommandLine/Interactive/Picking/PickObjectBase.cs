@@ -55,7 +55,7 @@ public abstract class PickObjectBase
 
     protected Type ParseDatabaseEntityType(string objectType, string arg, int idx)
     {
-        var t = (GetTypeFromShortCodeIfAny(objectType) ?? Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(objectType)) ?? throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
+        var t = (GetTypeFromShortCodeIfAny(objectType) ?? Repositories.MEF.GetType(objectType)) ?? throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
         if (!typeof(DatabaseEntity).IsAssignableFrom(t))
             throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity",idx,arg);
 
@@ -74,7 +74,7 @@ public abstract class PickObjectBase
         var mef = Activator.RepositoryLocator.CatalogueRepository.MEF ?? throw new Exception("MEF not loaded yet, program may not have loaded startup");
         try
         {
-            t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? mef.GetType(possibleTypeName);
+            t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? Repositories.MEF.GetType(possibleTypeName);
         }
         catch (Exception)
         {

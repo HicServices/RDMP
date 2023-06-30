@@ -22,7 +22,7 @@ public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
     public PipelineSetter Setter { get; private set; }
 
     public PluginPipelineUser(RequiredPropertyInfo demand, ArgumentValueUIArgs args, object demanderInstance)
-        : base(new Type[] { }) //makes it a design time use case
+        : base(Type.EmptyTypes) //makes it a design time use case
     {
         Getter = () =>
         {

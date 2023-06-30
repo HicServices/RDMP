@@ -38,8 +38,8 @@ public class MEF
 
     private static void Flush(object _1, AssemblyLoadEventArgs ale)
     {
-        Console.Error.WriteLine($"Flushing MEF cache due to {ale?.LoadedAssembly.FullName ?? "Anonymous"}");
-        _types = new Lazy<ReadOnlyDictionary<string, Type>>(PopulateUnique, LazyThreadSafetyMode.ExecutionAndPublication);
+        if (_types.IsValueCreated)
+            _types = new Lazy<ReadOnlyDictionary<string, Type>>(PopulateUnique, LazyThreadSafetyMode.ExecutionAndPublication);
         TypeCache.Clear();
     }
 
@@ -70,7 +70,6 @@ public class MEF
                 Console.WriteLine(e);
             }
         }
-        Console.Error.WriteLine($"PopulateUnique took {sw.ElapsedMilliseconds}ms");
         return new ReadOnlyDictionary<string, Type>(typeByName);
     }
 
@@ -96,7 +95,7 @@ public class MEF
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public Type GetType(string type)
+    public static Type GetType(string type)
     {            
         if(string.IsNullOrWhiteSpace(type))
             throw new ArgumentNullException(nameof(type));
@@ -109,7 +108,7 @@ public class MEF
         return null;
     }
 
-    public Type GetType(string type, Type expectedBaseClass)
+    public static Type GetType(string type, Type expectedBaseClass)
     {
         var t = GetType(type);
 
@@ -163,10 +162,8 @@ public class MEF
 
     }
 
-    public IEnumerable<Type> GetTypes<T>()
+    public static IEnumerable<Type> GetTypes<T>()
     {
-        SetupMEFIfRequired();
-
         return GetTypes(typeof(T));
     }
 
@@ -176,9 +173,8 @@ public class MEF
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public IEnumerable<Type> GetTypes(Type type)
+    private static IEnumerable<Type> GetTypes(Type type)
     {
-        SetupMEFIfRequired();
         return TypeCache.GetOrAdd(type,target=> _types.Value.Values.Where(t => !t.IsInterface && !t.IsAbstract).Where(target.IsAssignableFrom).Distinct().ToArray());
     }
 

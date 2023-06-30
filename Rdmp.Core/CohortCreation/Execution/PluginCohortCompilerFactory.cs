@@ -22,8 +22,7 @@ internal class PluginCohortCompilerFactory
 
     internal IReadOnlyCollection<IPluginCohortCompiler> CreateAll()
     {
-        return _mef
-            .GetTypes<IPluginCohortCompiler>()
+        return MEF.GetTypes<IPluginCohortCompiler>()
             .Select(Activator.CreateInstance)
             .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
     }

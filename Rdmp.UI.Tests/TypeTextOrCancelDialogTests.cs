@@ -37,7 +37,7 @@ internal class TypeTextOrCancelDialogTests : UITests
 
         //send TypeTextOrCancelDialog a million characters
         for (var i = 0; i < 1_000_000; i++)
-            sb.Append("f");
+            sb.Append('f');
 
         var s = sb.ToString();
 

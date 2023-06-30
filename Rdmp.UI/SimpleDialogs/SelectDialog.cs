@@ -524,7 +524,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
         }
                 
-        var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
+        var scores = scorer.ScoreMatches(_searchables, text, showOnlyTypes, cancellationToken);
             
         if (scores == null)
         {

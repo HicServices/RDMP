@@ -76,7 +76,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 
     private Type GetTypeByName(string s, Type expectedBaseClassType)
     {
-        return CatalogueRepository.MEF.GetType(s, expectedBaseClassType) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
+        return MEF.GetType(s, expectedBaseClassType) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
     }
 
     /// <inheritdoc/>

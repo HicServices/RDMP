@@ -39,7 +39,7 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
 
     private void AddMenu<T>(string menuName, Func<Type, bool> filterTypes)
     {
-        var types = _mef.GetTypes<T>().Where(filterTypes).ToArray();
+        var types = MEF.GetTypes<T>().Where(filterTypes).ToArray();
         var menu = new ToolStripMenuItem(menuName);
 
         ProcessTaskType taskType;

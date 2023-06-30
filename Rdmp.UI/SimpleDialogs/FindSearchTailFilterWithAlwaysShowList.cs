@@ -40,7 +40,7 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
             {
                 TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
             };
-            var matches = scorer.ScoreMatches(searchThese, text, cancellationToken,null);
+            var matches = scorer.ScoreMatches(searchThese, text,null, cancellationToken);
 
             // we were cancelled
             if (matches == null)

@@ -42,7 +42,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
 
             var expectedUIClassName = $"{t.FullName}UI";
 
-            _uiType = _args.CatalogueRepository.MEF.GetType(expectedUIClassName);
+            _uiType = Core.Repositories.MEF.GetType(expectedUIClassName);
 
             //if we did not find one with the exact name (including namespace), try getting it just by the end of its name (omit namespace)
             if (_uiType == null)
