@@ -58,6 +58,7 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
 
         var main = MainRegex();
         var windows = WinRegex();
+        var keep = KeepRegex();
         AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin),true);
         using (var zf = ZipFile.Open(_file, ZipArchiveMode.Update))
         {
@@ -67,12 +68,18 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
 
             foreach (var e in zf.Entries.ToArray())
             {
-                if (!e.Name.EndsWith(".dll", StringComparison.Ordinal) && !e.Name.EndsWith(".nuspec",StringComparison.Ordinal))
+                // Purge anything but directories, DLLs and plugin metadata
+                if (!keep.IsMatch(e.Name))
                 {
                     logger.Info($"Deleting '{e.FullName}' (non-DLL)");
                     e.Delete();
                     continue;
                 }
+
+                // Now we filter the DLLs to keep only .NET assemblies, and de-duplicate those too
+                if (!e.Name.EndsWith(".dll", StringComparison.Ordinal))
+                    continue;
+
                 Assembly assembly;
                 if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) ||
                     rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
@@ -130,4 +137,6 @@ public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
     private static partial Regex MainRegex();
     [GeneratedRegex("/windows/.*\\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
     private static partial Regex WinRegex();
+    [GeneratedRegex("(.nuspec|.dll|.rdmp|/)$",RegexOptions.CultureInvariant)]
+    private static partial Regex KeepRegex();
 }
