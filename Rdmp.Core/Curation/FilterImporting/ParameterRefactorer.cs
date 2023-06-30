@@ -59,8 +59,7 @@ public class ParameterRefactorer : IParameterRefactorer
         filter.WhereSQL = after;
         filter.SaveToDatabase();
 
-        if (!RefactoredFilters.Contains(filter))
-            RefactoredFilters.Add(filter);
+        RefactoredFilters.Add(filter);
 
         return true;
     }

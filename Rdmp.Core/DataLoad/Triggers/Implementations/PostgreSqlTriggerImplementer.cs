@@ -20,7 +20,6 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 /// </summary>
 public class PostgreSqlTriggerImplementer : TriggerImplementer
 {
-    private string _schema;
     private string _triggerRuntimeName;
     private string _procedureNameFullyQualified;
     private string _procedureRuntimeName;
@@ -28,11 +27,11 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
     /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
     public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso):base(table,createDataLoadRunIDAlso)
     {
-        _schema = string.IsNullOrWhiteSpace(_table.Schema) ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny():_table.Schema;
+        var schema = string.IsNullOrWhiteSpace(_table.Schema) ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny():_table.Schema;
         _triggerRuntimeName = $"{_table.GetRuntimeName()}_OnUpdate";
             
         _procedureRuntimeName = $"{_table.GetRuntimeName()}_OnUpdateProc";
-        _procedureNameFullyQualified = $"{_schema}.\"{_procedureRuntimeName}\"";
+        _procedureNameFullyQualified = $"{schema}.\"{_procedureRuntimeName}\"";
     }
 
     public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
