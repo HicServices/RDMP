@@ -16,17 +16,17 @@ namespace Rdmp.Core.DataExport.Data;
 /// <summary>
 /// Generates and parses strings recorded in <see cref="ExtractableCohort.AuditLog"/>
 /// </summary>
-public class ExtractableCohortAuditLogBuilder
+public partial class ExtractableCohortAuditLogBuilder
 {
-    private Regex _regexGetID = new(@"\(ID=(\d+)\)");
-    private Regex _regexGetFilePath = new(@$"{InFile} '(.*)'");
-    private Regex _regexGetColumn = new(@$"{InColumn} '(.*)'");
+    private static readonly Regex RegexGetID = GetId();
+    private static readonly Regex RegexGetFilePath = GetFilePath();
+    private static readonly Regex RegexGetColumn = GetColumn();
 
     /// <summary>
     /// regex for picking up <see cref="CohortIdentificationConfiguration"/> IDs from audit log based on a legacy way of
     /// writing that ID into the <see cref="ExtractableCohort.AuditLog"/>
     /// </summary>
-    private Regex _legacyCic = new(@"Created by running cic ([\d]+)");
+    private static readonly Regex LegacyCic = GetLegacyCic();
 
     private const string InFile = "Patient identifiers in file";
     private const string InColumn = "Patient identifiers in column ";
@@ -90,9 +90,9 @@ public class ExtractableCohortAuditLogBuilder
             return null;
         }
 
-        if(_legacyCic.IsMatch(audit))
+        if(LegacyCic.IsMatch(audit))
         {
-            return GetObjectFromLog<CohortIdentificationConfiguration>(_legacyCic.Match(audit), repositoryLocator.CatalogueRepository);
+            return GetObjectFromLog<CohortIdentificationConfiguration>(LegacyCic.Match(audit), repositoryLocator.CatalogueRepository);
         }
 
         if(audit.Contains(InCohortIdentificationConfiguration))
@@ -107,7 +107,7 @@ public class ExtractableCohortAuditLogBuilder
 
         if (audit.Contains(InFile))
         {
-            var m = _regexGetFilePath.Match(audit);
+            var m = RegexGetFilePath.Match(audit);
             if(m.Success)
             {
                 try
@@ -123,7 +123,7 @@ public class ExtractableCohortAuditLogBuilder
         }
         if (audit.Contains(InColumn))
         {
-            var m = _regexGetColumn.Match(audit);
+            var m = RegexGetColumn.Match(audit);
             if (m.Success)
             {
                 return m.Groups[1].Value;
@@ -135,7 +135,7 @@ public class ExtractableCohortAuditLogBuilder
 
     private T GetObjectFromLog<T>(string audit, IRepository repository) where T: class, IMapsDirectlyToDatabaseTable
     {
-        var m = _regexGetID.Match(audit);
+        var m = RegexGetID.Match(audit);
 
         // If the ID bit is  missing
         return !m.Success ? null : GetObjectFromLog<T>(m, repository);
@@ -155,4 +155,13 @@ public class ExtractableCohortAuditLogBuilder
             return null;
         }
     }
+
+    [GeneratedRegex("\\(ID=(\\d+)\\)")]
+    private static partial Regex GetId();
+    [GeneratedRegex("Patient identifiers in file '(.*)'")]
+    private static partial Regex GetFilePath();
+    [GeneratedRegex("Patient identifiers in column  '(.*)'")]
+    private static partial Regex GetColumn();
+    [GeneratedRegex("Created by running cic ([\\d]+)")]
+    private static partial Regex GetLegacyCic();
 }
