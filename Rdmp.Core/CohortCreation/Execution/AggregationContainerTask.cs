@@ -73,25 +73,21 @@ public class AggregationContainerTask : Compileable, IOrderable
 
     public string DescribeOperation()
     {
-        switch (((CohortAggregateContainer)Child).Operation)
+        return ((CohortAggregateContainer)Child).Operation switch
         {
-            case SetOperation.UNION:
-                return
-                    @"Includes ALL patients which appear in any of the sets in this container.  If there are subcontainers
+            SetOperation.UNION =>
+                @"Includes ALL patients which appear in any of the sets in this container.  If there are subcontainers
 (i.e. other UNION/INTERSECT/EXCEPT blocks under this one) then the UNION operation will be applied to the
-result of the subcontainer.";
-            case SetOperation.INTERSECT:
-                return
-                    @"Only includes patients which appear in EVERY set in this container.  This means that for a patient to
-returned by this operation they must be in all the sets under this (including the results of any subcontainers)";
-            case SetOperation.EXCEPT:
-                return
-                    @"Includes ALL patients in the FIRST set (or subcontainer) under this container but ONLY if they DO NOT
+result of the subcontainer.",
+            SetOperation.INTERSECT =>
+                @"Only includes patients which appear in EVERY set in this container.  This means that for a patient to
+returned by this operation they must be in all the sets under this (including the results of any subcontainers)",
+            SetOperation.EXCEPT =>
+                @"Includes ALL patients in the FIRST set (or subcontainer) under this container but ONLY if they DO NOT
 APPEAR in any of the sets that come after the FIRST.  This means that you get everyone in the first set
-EXCEPT anyone appearing in any of the other sets that follow the FIRST.";
-            default:
-                throw new ArgumentOutOfRangeException(
-                    $"Did not know what tool tip to return for set operation {ToString()}");
-        }
+EXCEPT anyone appearing in any of the other sets that follow the FIRST.",
+            _ => throw new ArgumentOutOfRangeException(
+                $"Did not know what tool tip to return for set operation {ToString()}")
+        };
     }
 }
