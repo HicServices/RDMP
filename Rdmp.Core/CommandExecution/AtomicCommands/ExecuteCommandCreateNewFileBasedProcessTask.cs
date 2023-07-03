@@ -107,25 +107,22 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
     public override string GetCommandName()
     {
-        switch (_taskType)
+        return _taskType switch
         {
-            case ProcessTaskType.Executable:
-                return "Add Run .exe File Task";
-            case ProcessTaskType.SQLFile:
-                return "Add Run SQL Script Task";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ProcessTaskType.Executable => "Add Run .exe File Task",
+            ProcessTaskType.SQLFile => "Add Run SQL Script Task",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        if(_taskType == ProcessTaskType.SQLFile)
-            return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);
-
-        if(_taskType == ProcessTaskType.Executable)
-            return new IconOverlayProvider().GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add);
-
-        return null;
+        return _taskType switch
+        {
+            ProcessTaskType.SQLFile => iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add),
+            ProcessTaskType.Executable => new IconOverlayProvider().GetOverlayNoCache(
+                Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add),
+            _ => null
+        };
     }
 }
