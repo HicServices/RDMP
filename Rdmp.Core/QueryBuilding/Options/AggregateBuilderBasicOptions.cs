@@ -68,7 +68,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
     {
         var availableTables = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
             .Select(e => e.ColumnInfo?.TableInfo)
-            .Where(t => t != null)
+            .Where( t=> t != null)
             .Distinct();
 
         var implicitJoins =

@@ -35,7 +35,7 @@ public class ShareManager
 
     private readonly ICatalogueRepository _catalogueRepository;
 
-    private const char PersistenceSeparator = "|";
+    private const char PersistenceSeparator = '|';
 
     /// <summary>
     /// Delegate method for populating environment specific properties e.g. <see cref="ICatalogue.LiveLoggingServer_ID"/> when importing

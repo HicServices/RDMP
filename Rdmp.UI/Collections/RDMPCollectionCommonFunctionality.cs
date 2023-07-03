@@ -418,8 +418,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private static void TreeOnAfterSorting(object sender, AfterSortingEventArgs e, Guid collectionGuid)
     {
-        UserSettings.SetLastColumnSortForCollection(collectionGuid, e.ColumnToSort?.Text,
-            e.SortOrder == SortOrder.Ascending);
+        UserSettings.SetLastColumnSortForCollection(collectionGuid, e.ColumnToSort?.Text, e.SortOrder == SortOrder.Ascending);
     }
 
     private void CreateColorIndicator(TreeListView tree, RDMPCollection collection)
