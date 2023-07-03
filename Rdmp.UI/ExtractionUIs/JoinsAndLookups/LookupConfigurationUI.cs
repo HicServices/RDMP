@@ -226,7 +226,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         for (var i = 0; i < lines.Length; i++)
             e.Graphics.DrawString(lines[i], Font, Brushes.Black,new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight*i));
 
-        var bulletLineIndex = _currentStage switch
+        int bulletLineIndex = _currentStage switch
         {
             LookupCreationStage.ChooseLookupTable => 1,
             LookupCreationStage.DragAPrimaryKey => 2,

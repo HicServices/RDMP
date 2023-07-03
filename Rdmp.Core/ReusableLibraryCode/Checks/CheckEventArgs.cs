@@ -91,22 +91,13 @@ public partial class CheckEventArgs : IHasSummary
 
     public NotifyEventArgs ToNotifyEventArgs()
     {
-        ProgressEventType status;
-
-        switch (Result)
+        ProgressEventType status = Result switch
         {
-            case CheckResult.Success:
-                status = ProgressEventType.Information;
-                break;
-            case CheckResult.Warning:
-                status = ProgressEventType.Warning;
-                break;
-            case CheckResult.Fail:
-                status = ProgressEventType.Error;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            CheckResult.Success => ProgressEventType.Information,
+            CheckResult.Warning => ProgressEventType.Warning,
+            CheckResult.Fail => ProgressEventType.Error,
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         return new NotifyEventArgs(status, Message, Ex);
     }

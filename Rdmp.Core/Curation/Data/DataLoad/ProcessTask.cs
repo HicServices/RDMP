@@ -376,19 +376,13 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     {
         return type switch
         {
-            case ProcessTaskType.Executable:
-                return true;
-            case ProcessTaskType.SQLFile:
-                return stage != LoadStage.GetFiles;
-            case ProcessTaskType.Attacher:
-                return stage == LoadStage.Mounting;
-            case ProcessTaskType.DataProvider:
-                return true;
-            case ProcessTaskType.MutilateDataTable:
-                return stage != LoadStage.GetFiles;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(type));
-        }
+            ProcessTaskType.Executable => true,
+            ProcessTaskType.SQLFile => stage != LoadStage.GetFiles,
+            ProcessTaskType.Attacher => stage == LoadStage.Mounting,
+            ProcessTaskType.DataProvider => true,
+            ProcessTaskType.MutilateDataTable => stage != LoadStage.GetFiles,
+            _ => throw new ArgumentOutOfRangeException(nameof(type))
+        };
     }
 
     /// <summary>

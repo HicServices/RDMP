@@ -207,7 +207,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             LoadDiagramServerNode server => server.GetChildren().Any(),
             LoadDiagramDatabaseNode database => database.GetChildren().Any(),
             LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any(),
-            UnplannedTable unplannedTable => true,
+            UnplannedTable => true,
             _ => false
         };
     }

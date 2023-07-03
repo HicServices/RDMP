@@ -87,7 +87,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
         {
             ExtractionCategory.Internal => IncludeInternalCatalogueItems,
             ExtractionCategory.Deprecated => IncludeDeprecatedCatalogueItems,
-            _ => true
+            _ => returnValue
         };
     }
 

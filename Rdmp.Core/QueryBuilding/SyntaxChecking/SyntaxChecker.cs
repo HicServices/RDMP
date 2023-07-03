@@ -69,7 +69,7 @@ public abstract class SyntaxChecker : ICheckable
 
             if (matchValue.Success && matchLength.Success)
             {
-                var userSpecifiedLength = int.Parse(matchLength.Value.Substring(1, matchLength.Value.Length - 2));
+                var userSpecifiedLength = int.Parse(matchLength.Value[1..^1]);
                 var actualLength = matchValue.Value.Trim().Length - 2;
 
                 if (actualLength > userSpecifiedLength)

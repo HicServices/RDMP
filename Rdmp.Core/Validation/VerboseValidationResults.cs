@@ -76,7 +76,7 @@ public class VerboseValidationResults
                         ReasonsRowsInvalidated.Add(
                             $"{subException.SourceItemValidator.TargetProperty}|{subException.SourceConstraint.GetType().Name}");
 
-                if (worstConsequences.TryGetValue(subException.SourceItemValidator, out var oldConsequence))
+                if (worstConsequences.TryGetValue(subException.SourceItemValidator,out var oldConsequence))
                 {
                     //see if situation got worse
                     var newConsequence = subException.SourceConstraint.Consequence.Value;

@@ -214,7 +214,14 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
             var str = consoleOutput[item];
 
-            str = str.Length > width ? str[..width] : str.PadRight(width, ' ');
+            if (str.Length > width)
+            {
+                str = str[..width];
+            }
+            else
+            {
+                str = str.PadRight(width,' ');
+            }
 
             _results.Move(col, line);
 

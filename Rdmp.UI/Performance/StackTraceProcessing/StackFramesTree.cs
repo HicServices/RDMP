@@ -84,8 +84,8 @@ internal class StackFramesTree
             return;
 
         //we know about the child
-        if (Children.TryGetValue(lines[1], out var child))
-            child.AddSubframes(lines.Skip(1).ToArray(), query); //tell child to audit the relevant subframes
+        if (Children.TryGetValue(lines[1],out var child))
+            child.AddSubframes(lines.Skip(1).ToArray(), query);//tell child to audit the relevant subframes
         else
             Children.Add(lines[1], new StackFramesTree(lines.Skip(1).ToArray(), query, IsInDatabaseAccessAssembly));
     }

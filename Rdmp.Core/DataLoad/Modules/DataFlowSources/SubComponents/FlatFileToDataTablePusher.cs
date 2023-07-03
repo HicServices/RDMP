@@ -130,8 +130,8 @@ public class FlatFileToDataTablePusher
             //if we are ignoring this header
             if (_headers.IgnoreColumnsList.Contains(_headers[i]))
                 continue;
-
-            //its an empty header, don't bother populating it
+                
+            //it's an empty header, don't bother populating it
             if (_headers[i].IsBasicallyNull())
                 if (!lineToPush[i].IsBasicallyNull())
                     throw new FileLoadException(
@@ -153,9 +153,8 @@ public class FlatFileToDataTablePusher
 
                 try
                 {
-                    if (hackedValue is string s &&
-                        typeDeciderFactory.Dictionary.TryGetValue(dt.Columns[_headers[i]].DataType, out var decider))
-                        hackedValue = decider.Parse(s);
+                    if (hackedValue is string s && typeDeciderFactory.Dictionary.TryGetValue(dt.Columns[_headers[i]].DataType,out var typer))
+                        hackedValue = typer.Parse(s);
 
                     rowValues.Add(_headers[i], hackedValue);
                 }
@@ -305,9 +304,12 @@ public class FlatFileToDataTablePusher
         if (typeChangeNeeded)
         {
             foreach (DataRow row in workingTable.Rows)
-                dtCloned.Rows.Add(row.ItemArray.Select((v, idx) =>
-                    deciders.TryGetValue(idx, out var decider) && v is string s ? decider.Parse(s) : v).ToArray());
-            dtCloned.EndLoadData();
+                dtCloned.Rows.Add(row.ItemArray.Select((v,idx)=>
+
+                    deciders.TryGetValue(idx,out var typer) && v is string s? 
+                        typer.Parse(s) :
+                        v).ToArray());
+                
             return dtCloned;
         }
 

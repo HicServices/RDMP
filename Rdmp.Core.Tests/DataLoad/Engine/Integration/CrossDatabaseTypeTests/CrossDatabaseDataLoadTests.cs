@@ -460,16 +460,12 @@ internal class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesD
         //RAW is AA, Staging is BB
         return convention switch
         {
-            case LoadBubble.Raw:
-                return "AA_RAW";
-            case LoadBubble.Staging:
-                return "BB_STAGING";
-            case LoadBubble.Live:
-            case LoadBubble.Archive:
-                return rootDatabaseName;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(convention));
-        }
+            LoadBubble.Raw => "AA_RAW",
+            LoadBubble.Staging => "BB_STAGING",
+            LoadBubble.Live => rootDatabaseName,
+            LoadBubble.Archive => rootDatabaseName,
+            _ => throw new ArgumentOutOfRangeException(nameof(convention))
+        };
     }
 
     public string GetName(string tableName, LoadBubble convention)

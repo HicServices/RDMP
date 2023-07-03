@@ -106,32 +106,27 @@ public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramSt
         return Equals((LoadDiagramColumnNode) obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(_bubble, _tableNode, ColumnName);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_bubble, _tableNode, ColumnName);
+    }
 
     public string WhatIsThis()
     {
-        switch (State)
+        return State switch
         {
-            case LoadDiagramState.Different:
-            case LoadDiagramState.Anticipated:
-            case LoadDiagramState.Found:
-                return _bubble switch
-                {
-                    LoadBubble.Raw =>
-                        "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)",
-                    LoadBubble.Staging =>
-                        "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE",
-                    _ => "A Column that is involved in the load (based on the Catalogues associated with the load)"
-                };
-            case LoadDiagramState.NotFound:
-                return
-                    "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
-            case LoadDiagramState.New:
-                return
-                    "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            LoadDiagramState.Different or LoadDiagramState.Anticipated or LoadDiagramState.Found => _bubble switch
+            {
+                LoadBubble.Raw =>
+                    "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)",
+                LoadBubble.Staging =>
+                    "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE",
+                _ => "A Column that is involved in the load (based on the Catalogues associated with the load)"
+            },
+            LoadDiagramState.NotFound => "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.",
+            LoadDiagramState.New => "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load",
+            _ => throw new ArgumentOutOfRangeException(),
+        };
     }
 
     #endregion

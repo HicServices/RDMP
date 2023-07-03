@@ -324,17 +324,13 @@ END
 
             var result = Convert.ToInt32(cmd.ExecuteScalar());
 
-            switch (result)
+            return result switch
             {
-                case 0: 
-                    return TriggerStatus.Enabled;
-                case 1:
-                    return TriggerStatus.Disabled;
-                case -1: 
-                    return TriggerStatus.Missing;
-                default:
-                    throw new NotSupportedException($"Query returned unexpected value:{result}");
-            }
+                0 => TriggerStatus.Enabled,
+                1 => TriggerStatus.Disabled,
+                -1 => TriggerStatus.Missing,
+                _ => throw new NotSupportedException($"Query returned unexpected value:{result}")
+            };
         }
         catch (Exception e)
         {

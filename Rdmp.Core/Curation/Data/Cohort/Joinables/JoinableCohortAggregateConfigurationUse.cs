@@ -114,17 +114,13 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     /// <returns></returns>
     public string GetJoinDirectionSQL()
     {
-        switch (JoinType)
+        return JoinType switch
         {
-            case ExtractionJoinType.Left:
-                return "LEFT";
-            case ExtractionJoinType.Right:
-                return "RIGHT";
-            case ExtractionJoinType.Inner:
-                return "INNER";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ExtractionJoinType.Left => "LEFT",
+            ExtractionJoinType.Right => "RIGHT",
+            ExtractionJoinType.Inner => "INNER",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
 

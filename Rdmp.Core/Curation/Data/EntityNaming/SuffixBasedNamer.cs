@@ -28,15 +28,11 @@ public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
     {
         return stage switch
         {
-            case LoadBubble.Raw:
-                return $"{rootDatabaseName}_RAW";
-            case LoadBubble.Staging:
-                return $"{rootDatabaseName}_STAGING";
-            case LoadBubble.Live:
-                return rootDatabaseName;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(stage));
-        }
+            LoadBubble.Raw => $"{rootDatabaseName}_RAW",
+            LoadBubble.Staging => $"{rootDatabaseName}_STAGING",
+            LoadBubble.Live => rootDatabaseName,
+            _ => throw new ArgumentOutOfRangeException(nameof(stage))
+        };
     }
 
     /// <inheritdoc/>

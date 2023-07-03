@@ -141,17 +141,16 @@ public class MemoryRepository : IRepository
         var prop1 = typeof(T).GetProperty(property1);
         var prop2 = typeof(T).GetProperty(property2);
 
-        switch (operand)
+        return operand switch
         {
-            case ExpressionType.AndAlso:
-                return GetAllObjects<T>()
-                    .Where(o => Equals(prop1.GetValue(o), value1) && Equals(prop2.GetValue(o), value2)).ToArray();
-            case ExpressionType.OrElse:
-                return GetAllObjects<T>()
-                    .Where(o => Equals(prop1.GetValue(o), value1) || Equals(prop2.GetValue(o), value2)).ToArray();
-            default:
-                throw new NotSupportedException("operand");
-        }
+            ExpressionType.AndAlso => GetAllObjects<T>()
+                .Where(o => Equals(prop1.GetValue(o), value1) && Equals(prop2.GetValue(o), value2))
+                .ToArray(),
+            ExpressionType.OrElse => GetAllObjects<T>()
+                .Where(o => Equals(prop1.GetValue(o), value1) || Equals(prop2.GetValue(o), value2))
+                .ToArray(),
+            _ => throw new NotSupportedException("operand")
+        };
     }
 
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)

@@ -93,20 +93,15 @@ public class ReleaseEnvironmentPotential : ICheckable
 
     private static CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)
     {
-        switch (assesment)
+        return assesment switch
         {
-            case TicketingReleaseabilityEvaluation.TicketingLibraryCrashed:
-            case TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer:
-            case TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer:
-            case TicketingReleaseabilityEvaluation.NotReleaseable:
-                return CheckResult.Fail;
-            case TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly:
-                return CheckResult.Warning;
-            case TicketingReleaseabilityEvaluation.Releaseable:
-                return CheckResult.Success;
-
-            default:
-                throw new ArgumentOutOfRangeException(nameof(assesment));
-        }
+            TicketingReleaseabilityEvaluation.TicketingLibraryCrashed => CheckResult.Fail,
+            TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer => CheckResult.Fail,
+            TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer => CheckResult.Fail,
+            TicketingReleaseabilityEvaluation.NotReleaseable => CheckResult.Fail,
+            TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly => CheckResult.Warning,
+            TicketingReleaseabilityEvaluation.Releaseable => CheckResult.Success,
+            _ => throw new ArgumentOutOfRangeException(nameof(assesment))
+        };
     }
 }

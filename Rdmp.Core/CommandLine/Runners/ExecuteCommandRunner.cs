@@ -99,10 +99,10 @@ internal class ExecuteCommandRunner:IRunner
 
     private void RunCommand(string command)
     {
-        if (_commands.TryGetValue(command, out var runner))
+        if(_commands.TryGetValue(command,out var commandType))
         {
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"Running Command '{runner.Name}'"));
-            _invoker.ExecuteCommand(runner, _picker);
+            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Trace,$"Running Command '{commandType.Name}'"));
+            _invoker.ExecuteCommand(commandType,_picker);
         }
         else
         {

@@ -84,19 +84,14 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
     /// <inheritdoc/>
     public bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate)
     {
-        switch (section)
+        return section switch
         {
-            case AggregateEditorSection.Extractable:
-                return false;
-            case AggregateEditorSection.TOPX:
-                return false;
-            case AggregateEditorSection.PIVOT:
-                return false;
-            case AggregateEditorSection.AXIS:
-                return false;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(section));
-        }
+            AggregateEditorSection.Extractable => false,
+            AggregateEditorSection.TOPX => false,
+            AggregateEditorSection.PIVOT => false,
+            AggregateEditorSection.AXIS => false,
+            _ => throw new ArgumentOutOfRangeException(nameof(section))
+        };
     }
 
     /// <inheritdoc/>

@@ -120,20 +120,16 @@ public class TableInfoImporter : ITableInfoImporter
 
         var tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
-        switch (_type)
+        tableName += _type switch
         {
-            case DatabaseType.MicrosoftSQLServer:
-            case DatabaseType.PostgreSql:
-                tableName +=
-                    $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.";
-                break;
-            case DatabaseType.MySql:
-            case DatabaseType.Oracle:
-                tableName += ".";
-                break;
-            default:
-                throw new NotSupportedException($"Unknown Type:{_type}");
-        }
+            DatabaseType.MicrosoftSQLServer =>
+                $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.",
+            DatabaseType.PostgreSql =>
+                $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.",
+            DatabaseType.MySql => ".",
+            DatabaseType.Oracle => ".",
+            _ => throw new NotSupportedException($"Unknown Type:{_type}")
+        };
 
         tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
         var databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);

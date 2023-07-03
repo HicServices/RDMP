@@ -26,7 +26,7 @@ public class TransparentHelpForm : Form
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     [DllImport("dwmapi.dll", PreserveSig = false)]
-    public static extern bool DwmIsCompositionEnabled();
+    private static extern bool DwmIsCompositionEnabled();
 
     private const uint SW_SHOWNOACTIVATE = 4;
     private const uint WM_NCHITTEST = 0x0084;

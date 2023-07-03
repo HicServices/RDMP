@@ -106,15 +106,12 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
 
     public override string GetCommandName()
     {
-        switch (_viewType)
+        return _viewType switch
         {
-            case ViewType.TOP_100:
-                return "View Extract";
-            case ViewType.Aggregate:
-                return "View Aggregate";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ViewType.TOP_100 => "View Extract",
+            ViewType.Aggregate => "View Aggregate",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     protected override IViewSQLAndResultsCollection GetCollection()

@@ -103,17 +103,12 @@ public class CacheLagPeriod
             return;
         }
 
-        switch (type)
+        Type = type switch
         {
-            case "m":
-                Type = PeriodType.Month;
-                break;
-            case "d":
-                Type = PeriodType.Day;
-                break;
-            default:
-                throw new Exception("Period type must be either Month (m) or Day (d)");
-        }
+            "m" => PeriodType.Month,
+            "d" => PeriodType.Day,
+            _ => throw new Exception("Period type must be either Month (m) or Day (d)")
+        };
     }
 
     /// <summary>

@@ -22,7 +22,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
 {
     public int Top
     {
-        get => _arguments.TryGetValue(TopKey, out var value) ? int.Parse(value) : 100;
+        get => _arguments.TryGetValue(TopKey,out var t) ? int.Parse(t) : 100;
         set => _arguments[TopKey] = value.ToString();
     }
 

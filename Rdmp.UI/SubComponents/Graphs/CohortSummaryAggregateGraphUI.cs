@@ -80,19 +80,14 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
     {
         var orig = base.GetDescription();
 
-        var restriction = _collection.Adjustment switch
+        string restriction = _collection.Adjustment switch
         {
-            case CohortSummaryAdjustment.WhereExtractionIdentifiersIn:
-                restriction =
-                    $"Only showing records for people in cohort set '{_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny}')";
-                break;
-            case CohortSummaryAdjustment.WhereRecordsIn:
-                restriction =
-                    $"Only showing records returned by the query defining cohort set '{_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny}')";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            CohortSummaryAdjustment.WhereExtractionIdentifiersIn =>
+                $"Only showing records for people in cohort set '{_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny}')",
+            CohortSummaryAdjustment.WhereRecordsIn =>
+                $"Only showing records returned by the query defining cohort set '{_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny}')",
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         if (_collection.SingleFilterOnly != null)
             restriction += $". Only showing Filter {_collection.SingleFilterOnly}.";
@@ -110,13 +105,10 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
     {
         return adjustment switch
         {
-            case CohortSummaryAdjustment.WhereExtractionIdentifiersIn:
-                return "Graphing All Records For Patients";
-            case CohortSummaryAdjustment.WhereRecordsIn:
-                return "Graphing Cohort Query Result";
-            default:
-                throw new ArgumentOutOfRangeException(nameof(adjustment));
-        }
+            CohortSummaryAdjustment.WhereExtractionIdentifiersIn => "Graphing All Records For Patients",
+            CohortSummaryAdjustment.WhereRecordsIn => "Graphing Cohort Query Result",
+            _ => throw new ArgumentOutOfRangeException(nameof(adjustment))
+        };
     }
 
     protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration summary)

@@ -61,14 +61,14 @@ public class DocXHelper
 
     private static int GetSize(int headSize)
     {
-        switch (headSize)
+        return headSize switch
         {
-            case 1: return H1Size;
-            case 2: return H2Size;
-            case 3: return H3Size;
-            case 4: return H4Size;
-            default: throw new ArgumentOutOfRangeException();
-        }
+            1 => H1Size,
+            2 => H2Size,
+            3 => H3Size,
+            4 => H4Size,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     protected static void SetTableCell(XWPFTable table, int row, int col, string value, int fontSize = -1)

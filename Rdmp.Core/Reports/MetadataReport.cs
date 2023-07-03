@@ -381,7 +381,7 @@ public class MetadataReport : DocXHelper
             ExtractionCategory.Internal => _args.IncludeInternalItems,
             ExtractionCategory.Deprecated => _args.IncludeDeprecatedItems,
             ExtractionCategory.ProjectSpecific => true,
-            _ => throw new ArgumentOutOfRangeException(nameof(arg.ExtractionCategory))
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
 

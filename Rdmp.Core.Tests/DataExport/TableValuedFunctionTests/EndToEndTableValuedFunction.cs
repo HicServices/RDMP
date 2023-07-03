@@ -447,7 +447,7 @@ end
         Assert.AreEqual("ReleaseId", dt.Columns[0].ColumnName);
 
         //should be a guid
-        Assert.IsTrue(dt.Rows[0][0].ToString().Length > 10);
+        Assert.IsTrue(dt.Rows[0][0].ToString().Length>10);
         Assert.IsTrue(dt.Rows[0][0].ToString().Contains('-'));
 
         selected.DeleteInDatabase();

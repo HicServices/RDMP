@@ -146,7 +146,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
 
             var exceptionMessage = ex.InnerException.Message;
             var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<") + ": ".Length)..];
-
+                
             var expectedErrorMessage =
                 $"<<{errorColumn}>> which had value <<{dt1.Rows[0][errorColumn]}>> destination data type was <<varchar(1)>>";
             StringAssert.Contains(expectedErrorMessage, interestingBit);

@@ -202,9 +202,8 @@ public class WindowManager
     /// <param name="collection"></param>
     public void Pop(RDMPCollection collection)
     {
-        if (!_visibleToolboxes.TryGetValue(collection, out var dockContent)) return;
-
-        dockContent.DockState = dockContent.DockState switch
+        if (!_visibleToolboxes.TryGetValue(collection, out var content)) return;
+        content.DockState = content.DockState switch
         {
             DockState.DockLeftAutoHide => DockState.DockLeft,
             DockState.DockRightAutoHide => DockState.DockRight,
@@ -213,7 +212,7 @@ public class WindowManager
             _ => _visibleToolboxes[collection].DockState
         };
 
-        dockContent.Activate();
+        content.Activate();
     }
 
     /// <summary>
