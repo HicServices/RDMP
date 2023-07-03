@@ -420,7 +420,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <param name="columnInfo"></param>
     public void SetColumnInfo(ColumnInfo columnInfo)
     {
-        ColumnInfo_ID = columnInfo == null ? (int?) null : columnInfo.ID;
+        ColumnInfo_ID = columnInfo?.ID;
         SaveToDatabase();
         InjectKnown(columnInfo);
     }

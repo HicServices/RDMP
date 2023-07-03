@@ -42,7 +42,7 @@ public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicComman
                 return;
         }
 
-        _loadMetadata.OverrideRAWServer_ID = _server == null ? null : (int?)_server.ID;
+        _loadMetadata.OverrideRAWServer_ID = _server?.ID;
         _loadMetadata.SaveToDatabase();
 
         Publish(_loadMetadata);

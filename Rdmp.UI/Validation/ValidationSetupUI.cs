@@ -372,12 +372,12 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     }
     private void SetTimePeriod(ExtractionInformation selected)
     {
-        _catalogue.TimeCoverage_ExtractionInformation_ID = selected != null ? selected.ID : (int?)null;
+        _catalogue.TimeCoverage_ExtractionInformation_ID = selected?.ID;
     }
 
     private void SetPivot(ExtractionInformation selected)
     {
-        _catalogue.PivotCategory_ExtractionInformation_ID = selected != null ? selected.ID : (int?)null;
+        _catalogue.PivotCategory_ExtractionInformation_ID = selected?.ID;
     }
 
     private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)

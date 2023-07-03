@@ -111,6 +111,6 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var t = TableInfo;
-        return t != null ? t.GetQuerySyntaxHelper() : null;
+        return t?.GetQuerySyntaxHelper();
     }
 }

@@ -47,7 +47,7 @@ public class FilterContainer : ConcreteContainer, IContainer
     public override Catalogue GetCatalogueIfAny()
     {
         var sel = GetSelectedDataSetIfAny();
-        return sel != null ? (Catalogue)sel.ExtractableDataSet.Catalogue : null;
+        return (Catalogue)sel?.ExtractableDataSet.Catalogue;
     }
 
     public override bool ShouldBeReadOnly(out string reason)

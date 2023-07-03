@@ -70,7 +70,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     public override Catalogue GetCatalogueIfAny()
     {
         var agg = GetAggregate();
-        return agg != null?agg.Catalogue:null;
+        return agg?.Catalogue;
     }
 
     /// <summary>

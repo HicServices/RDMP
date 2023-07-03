@@ -59,7 +59,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
     {
         var verb = GetDeleteVerbIfAny();
 
-        return verb != null ? verb : base.GetCommandName();
+        return verb ?? base.GetCommandName();
     }
 
     private string GetDeleteVerbIfAny()
