@@ -27,10 +27,14 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// <summary>
 /// Contains lots of generically useful static methods
 /// </summary>
-public static class UsefulStuff
+public static partial class UsefulStuff
 {
-    public static readonly Regex RegexThingsThatAreNotNumbersOrLetters =
-        new("[^0-9A-Za-z]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    public static readonly Regex RegexThingsThatAreNotNumbersOrLetters = NonAlphaNumeric();
+
+    public static readonly Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores =
+        NonAlphaNumericUnderscore();
+
+    private static readonly Regex NullWithSpaces = NullInSpace();
 
     public static readonly Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores =
         new("[^0-9A-Za-z_]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
@@ -180,9 +184,8 @@ public static class UsefulStuff
 
     public static bool CHIisOK(string sCHI)
     {
-        if (!long.TryParse(sCHI, NumberStyles.None, CultureInfo.InvariantCulture, out _) ||
-            sCHI.Length != 10) return false;
-        return DateTime.TryParse($"{sCHI[..2]}/{sCHI[2..4]}/{sCHI[4..6]}", out _) && GetCHICheckDigit(sCHI) == sCHI[^1];
+        return long.TryParse(sCHI, NumberStyles.None, CultureInfo.InvariantCulture, out _) && sCHI.Length == 10 &&
+               DateTime.TryParse($"{sCHI[..2]}/{sCHI[2..4]}/{sCHI[4..6]}", out _) && GetCHICheckDigit(sCHI) == sCHI[^1];
     }
 
     private static char GetCHICheckDigit(string sCHI)
@@ -193,7 +196,7 @@ public static class UsefulStuff
         var sum = 0;
         var c = (int)'0';
         for (var i = 0; i < lsCHI - 1; i++)
-            sum += ((int)sCHI[i] - c) * (lsCHI - i);
+            sum += (sCHI[i] - c) * (lsCHI - i);
         sum %= 11;
 
         c = 11 - sum;
@@ -390,7 +393,11 @@ public static class UsefulStuff
         return task.Wait(timeout) && task.Result;
     }
 
-    public static bool VerifyFileExists(Uri uri, int timeout) => VerifyFileExists(uri.LocalPath, timeout);
+    public static bool VerifyFileExists(Uri uri, int timeout)
+    {
+        return VerifyFileExists(uri.LocalPath, timeout);
+
+    }
 
     public static string DataTableToHtmlDataTable(DataTable dt)
     {
@@ -570,15 +577,21 @@ public static class UsefulStuff
     {
         var t = Nullable.GetUnderlyingType(conversionType) ?? conversionType;
 
-        if (t == typeof(DateTime) && value is string s)
-            return string.Equals(s, "now", StringComparison.InvariantCultureIgnoreCase)
+        return t == typeof(DateTime) && value is string s
+            ? string.Equals(s, "now", StringComparison.InvariantCultureIgnoreCase)
                 ? DateTime.Now
                 :
                 //Convert.ChangeType doesn't handle dates, so let's deal with that
-                DateTime.Parse(s);
-
-        return value == null || (value is string sval && string.IsNullOrWhiteSpace(sval))
-            ? null
-            : Convert.ChangeType(value, t);
+                DateTime.Parse(s)
+            : value == null || value is string sval && string.IsNullOrWhiteSpace(sval)
+                ? null
+                : Convert.ChangeType(value, t);
     }
+
+    [GeneratedRegex("[^0-9A-Za-z]+", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex NonAlphaNumeric();
+    [GeneratedRegex("[^0-9A-Za-z_]+", RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex NonAlphaNumericUnderscore();
+    [GeneratedRegex("^\\s*null\\s*$", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant)]
+    private static partial Regex NullInSpace();
 }

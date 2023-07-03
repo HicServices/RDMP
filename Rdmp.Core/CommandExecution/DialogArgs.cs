@@ -98,8 +98,6 @@ public class DialogArgs
         if (!string.IsNullOrEmpty(EntryLabel))
             sb.AppendLine($"Label:{EntryLabel}");
 
-        if (sb.Length == 0) return "Undefined DialogArgs";
-
-        return sb.ToString();
+        return sb.Length == 0 ? "Undefined DialogArgs" : sb.ToString();
     }
 }

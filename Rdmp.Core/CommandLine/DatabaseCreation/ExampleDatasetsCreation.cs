@@ -42,7 +42,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation;
 /// <summary>
 /// Handles the creation of example RDMP datasets and metadata object (catalogues, cohorts , projects etc).
 /// </summary>
-public class ExampleDatasetsCreation
+public partial class ExampleDatasetsCreation
 {
     private IRDMPPlatformRepositoryServiceLocator _repos;
     private IBasicActivateItems _activator;
@@ -211,10 +211,9 @@ public class ExampleDatasetsCreation
         {
             con.Open();
             //delete half the records (so we can simulate cohort refresh)
-            using(var cmd = cohortTable.Database.Server.GetCommand(
-                      $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con))
-                cmd.ExecuteNonQuery();
-            }
+            using var cmd = cohortTable.Database.Server.GetCommand(
+                      $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con);
+            cmd.ExecuteNonQuery();
         }
 
         var ec1 = CreateExtractionConfiguration(project, cohort, "First Extraction (2016 - project 123)", true,
@@ -594,21 +593,19 @@ UNPIVOT
 
     private static DatabaseColumnRequest[] GetExplicitColumnDefinitions<T>() where T : IDataGenerator
     {
-        if (typeof(T) == typeof(HospitalAdmissions))
-            return new[]
-            {
-                new DatabaseColumnRequest("MainOperation", new DatabaseTypeRequest(typeof(string), 4)),
-                new DatabaseColumnRequest("MainOperationB", new DatabaseTypeRequest(typeof(string), 4)),
-                new DatabaseColumnRequest("OtherOperation1", new DatabaseTypeRequest(typeof(string), 4)),
-                new DatabaseColumnRequest("OtherOperation1B", new DatabaseTypeRequest(typeof(string), 4)),
-                new DatabaseColumnRequest("OtherOperation2", new DatabaseTypeRequest(typeof(string), 4)),
-                new DatabaseColumnRequest("OtherOperation2B", new DatabaseTypeRequest(typeof(string), 4)),
-                new DatabaseColumnRequest("OtherOperation3", new DatabaseTypeRequest(typeof(string), 4)),
-                new DatabaseColumnRequest("OtherOperation3B", new DatabaseTypeRequest(typeof(string), 4))
-            };
 
-
-        return null;
+        return typeof(T) == typeof(HospitalAdmissions)
+            ? (new []{
+                new DatabaseColumnRequest("MainOperation",new DatabaseTypeRequest(typeof(string),4)),
+                new DatabaseColumnRequest("MainOperationB",new DatabaseTypeRequest(typeof(string),4)),
+                new DatabaseColumnRequest("OtherOperation1",new DatabaseTypeRequest(typeof(string),4)),
+                new DatabaseColumnRequest("OtherOperation1B",new DatabaseTypeRequest(typeof(string),4)),
+                new DatabaseColumnRequest("OtherOperation2",new DatabaseTypeRequest(typeof(string),4)),
+                new DatabaseColumnRequest("OtherOperation2B",new DatabaseTypeRequest(typeof(string),4)),
+                new DatabaseColumnRequest("OtherOperation3",new DatabaseTypeRequest(typeof(string),4)),
+                new DatabaseColumnRequest("OtherOperation3B",new DatabaseTypeRequest(typeof(string),4))
+            })
+            : null;
     }
 
     private ITableInfo ImportTableInfo(DiscoveredTable tbl)
@@ -662,6 +659,9 @@ UNPIVOT
             return null;
 
         //replace 2+ tabs and spaces with single spaces
-        return Regex.Replace(s, @"[ \t]{2,}", " ").Trim();
+        return SpaceTabs().Replace(s, " ").Trim();
     }
+
+    [GeneratedRegex("[ \\t]{2,}")]
+    private static partial Regex SpaceTabs();
 }

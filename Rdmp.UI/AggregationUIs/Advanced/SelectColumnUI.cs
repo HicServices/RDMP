@@ -188,10 +188,7 @@ public partial class SelectColumnUI : RDMPUserControl
             return _add;
 
         //if we are getting an icon for the count(*) column and it cannot be removed then don't show the icon for removal
-        if (_countColumnRequirement == CountColumnRequirement.MustHaveOne && rowObject is AggregateCountColumn)
-            return null;
-
-        return _delete;
+        return _countColumnRequirement == CountColumnRequirement.MustHaveOne && rowObject is AggregateCountColumn ? null : _delete;
     }
 
     private void CellEditFinished(object sender, CellEditEventArgs cellEditEventArgs)

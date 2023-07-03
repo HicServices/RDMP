@@ -176,10 +176,9 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
         var type = parent.GetType();
 
-        if (!AnyTableSqlParameter.IsSupportedType(type))
-            throw new NotSupportedException($"This table does not support parents of type {type.Name}");
-
-        return GetReferencesTo<AnyTableSqlParameter>(parent);
+        return !AnyTableSqlParameter.IsSupportedType(type)
+            ? throw new NotSupportedException($"This table does not support parents of type {type.Name}")
+            : (IEnumerable<AnyTableSqlParameter>)GetReferencesTo<AnyTableSqlParameter>(parent);
     }
 
     /// <inheritdoc/>

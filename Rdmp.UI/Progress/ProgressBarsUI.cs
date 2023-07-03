@@ -93,10 +93,7 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 
     private int GetRowYForNewProgressBar()
     {
-        if (!progressBars.Any())
-            return ragSmiley1.Bottom;
-
-        return progressBars.Max(kvp => kvp.Value.Bottom);
+        return !progressBars.Any() ? ragSmiley1.Bottom : progressBars.Max(kvp => kvp.Value.Bottom);
     }
 
     private void UpdateProgressBar(ProgressBar progressBar, ProgressEventArgs progressEventArgs)

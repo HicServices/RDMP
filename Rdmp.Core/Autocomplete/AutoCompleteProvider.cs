@@ -24,7 +24,7 @@ namespace Rdmp.Core.Autocomplete;
 /// <summary>
 /// Creates autocomplete strings based on RDMP objects (e.g. <see cref="TableInfo"/>)
 /// </summary>
-public class AutoCompleteProvider : IAutoCompleteProvider
+public partial class AutoCompleteProvider : IAutoCompleteProvider
 {
     public HashSet<string> Items { get; set; } = new();
 
@@ -62,9 +62,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     /// <returns></returns>
     public static IEnumerable<string> GetBits(string arg)
     {
-        //     yield return arg;
-
-        return Regex.Matches(arg, @"\b\w*\b").Select(m => m.Value);
+        return Words().Matches(arg).Select(m => m.Value);
     }
 
     public void Add(ITableInfo tableInfo)
@@ -222,4 +220,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
         foreach (var ei in catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
             Add(ei);
     }
+
+    [GeneratedRegex("\\b\\w*\\b")]
+    private static partial Regex Words();
 }

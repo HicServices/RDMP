@@ -107,9 +107,7 @@ public class CheckColumnProvider
     {
         lock (checkResultsDictionary)
         {
-            checkResultsDictionary.Remove(o);
-
-            checkResultsDictionary.Add(o, result);
+            checkResultsDictionary[o] = result;
 
             if (_tree.IndexOf(o) != -1)
                 _tree.RefreshObject(o);

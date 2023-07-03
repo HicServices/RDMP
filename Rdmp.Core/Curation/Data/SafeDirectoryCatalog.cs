@@ -583,10 +583,7 @@ public class SafeDirectoryCatalog
         if (newOneVersion.FileMinorPart < existingOneVersion.FileMinorPart)
             return false;
 
-        if (newOneVersion.FileBuildPart > existingOneVersion.FileBuildPart)
-            return true;
-
-        return false;
+        return newOneVersion.FileBuildPart > existingOneVersion.FileBuildPart;
     }
 
     private void AddBadAssembly(FileInfo f, Exception ex, ICheckNotifier listener)

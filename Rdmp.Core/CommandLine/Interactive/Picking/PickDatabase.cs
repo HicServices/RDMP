@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 /// <summary>
 /// Determines if a command line argument provided was a reference to a <see cref="DiscoveredDatabase"/>
 /// </summary>
-public class PickDatabase : PickObjectBase
+public partial class PickDatabase : PickObjectBase
 {
     public override string Format => "DatabaseType:{DatabaseType}:[Name:{DatabaseName}:]{ConnectionString}";
 
@@ -37,7 +37,7 @@ ConnectionString (Required)";
     };
 
     public PickDatabase() : base(null,
-        new Regex("^DatabaseType:([A-Za-z]+):(Name:[^:]+:)?(.*)$", RegexOptions.IgnoreCase))
+        PickDbRegex()) 
     {
     }
 
@@ -51,15 +51,11 @@ ConnectionString (Required)";
 
         var server = new DiscoveredServer(connectionString, dbType);
 
-        DiscoveredDatabase db;
+        var db = string.IsNullOrWhiteSpace(dbName) ? server.GetCurrentDatabase() : server.ExpectDatabase(dbName);
 
-        db = string.IsNullOrWhiteSpace(dbName) ? server.GetCurrentDatabase() : server.ExpectDatabase(dbName);
-
-        if (db == null)
-            throw new CommandLineObjectPickerParseException(
-                "Missing database name parameter, it was not in connection string or specified explicitly", idx, arg);
-
-        return new CommandLineObjectPickerArgumentValue(arg, idx, db);
+        return db == null
+            ? throw new CommandLineObjectPickerParseException("Missing database name parameter, it was not in connection string or specified explicitly",idx,arg)
+            : new CommandLineObjectPickerArgumentValue(arg,idx,db);
     }
 
     public override IEnumerable<string> GetAutoCompleteIfAny()
@@ -67,4 +63,7 @@ ConnectionString (Required)";
         yield return "DatabaseType:";
         yield return "Oracle";
     }
+
+    [GeneratedRegex("^DatabaseType:([A-Za-z]+):(Name:[^:]+:)?(.*)$", RegexOptions.IgnoreCase, "en-US")]
+    private static partial Regex PickDbRegex();
 }

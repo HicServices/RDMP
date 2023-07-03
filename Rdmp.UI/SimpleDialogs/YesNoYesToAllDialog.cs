@@ -69,10 +69,7 @@ public class YesNoYesToAllDialog : WideMessageBox
         if (YesToAllClicked)
             return DialogResult.Yes;
 
-        if (NoToAllClicked)
-            return DialogResult.No;
-
-        return base.ShowDialog();
+        return NoToAllClicked ? DialogResult.No : base.ShowDialog();
     }
 
     public DialogResult ShowDialog(string message, string caption)

@@ -13,8 +13,8 @@ namespace Rdmp.Core.Providers.Nodes;
 
 public class TableInfoDatabaseNode : Node
 {
-    public TableInfoServerNode Server { get; private set; }
-    public string DatabaseName { get; private set; }
+    public TableInfoServerNode Server { get; }
+    public string DatabaseName { get; }
     public TableInfo[] Tables { get; }
 
     public const string NullDatabaseNode = "Null Database";
@@ -36,8 +36,7 @@ public class TableInfoDatabaseNode : Node
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((TableInfoDatabaseNode)obj);
+        return obj.GetType() == GetType() && Equals((TableInfoDatabaseNode)obj);
     }
 
     public override int GetHashCode() => HashCode.Combine(Server, DatabaseName);

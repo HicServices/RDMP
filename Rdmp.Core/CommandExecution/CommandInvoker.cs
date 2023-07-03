@@ -384,10 +384,7 @@ public class CommandInvoker
         {
             var constructor = GetConstructor(t, new CommandLineObjectPicker(Array.Empty<string>(), _basicActivator));
 
-            if (constructor == null)
-                return "No constructor";
-
-            return WhyCommandNotSupported(constructor);
+            return constructor == null ? "No constructor" : WhyCommandNotSupported(constructor);
         }
         catch (Exception e)
         {
@@ -427,10 +424,7 @@ public class CommandInvoker
             importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute)))
                 .ToArray();
 
-        if (importDecorated.Any())
-            return importDecorated[0];
-
-        return constructors[0];
+        return importDecorated.Any() ? importDecorated[0] : constructors[0];
     }
 
     private IMapsDirectlyToDatabaseTable[] GetAllObjectsOfType(Type type)
@@ -439,10 +433,9 @@ public class CommandInvoker
             return _basicActivator.GetAll(type).ToArray();
 
         if (_repositoryLocator.CatalogueRepository.SupportsObjectType(type))
-            return _repositoryLocator.CatalogueRepository.GetAllObjects(type).ToArray();
-        if (_repositoryLocator.DataExportRepository.SupportsObjectType(type))
-            return _repositoryLocator.DataExportRepository.GetAllObjects(type).ToArray();
-
-        return null;
+            return  _repositoryLocator.CatalogueRepository.GetAllObjects(type).ToArray();
+        return _repositoryLocator.DataExportRepository.SupportsObjectType(type)
+            ? _repositoryLocator.DataExportRepository.GetAllObjects(type).ToArray()
+            : null;
     }
 }

@@ -64,10 +64,9 @@ public partial class OfferChanceToSaveDialogUI : Form
 
         var differences = revertable.HasLocalChanges();
 
-        if (differences.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-            return new OfferChanceToSaveDialogUI(revertable, differences).ShowDialog();
-
-        return null;
+        return differences.Evaluation == ChangeDescription.DatabaseCopyDifferent
+            ? new OfferChanceToSaveDialogUI(revertable,differences).ShowDialog()
+            : null;
     }
 
     private void btnYesSave_Click(object sender, EventArgs e)

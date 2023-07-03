@@ -140,10 +140,7 @@ public class BasicCohortDestination : IPluginCohortDestination
 
     private static bool IsNull(object o)
     {
-        if (o == null || o == DBNull.Value)
-            return true;
-
-        return string.IsNullOrWhiteSpace(o.ToString());
+        return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
     }
 
     /// <summary>

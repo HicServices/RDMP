@@ -62,10 +62,7 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
             return
                 $"Create New {UsefulStuff.PascalCaseStringToHumanReadable(_defaultToSet.ToString().Replace("_ID", "").Replace("Live", "").Replace("ANO", "Anonymisation"))} Server...";
 
-        if (_patcher != null)
-            return $"Create New {_patcher.Name} Server...";
-
-        return base.GetCommandName();
+        return _patcher != null ? $"Create New {_patcher.Name} Server..." : base.GetCommandName();
     }
 
     public override string GetCommandHelp()

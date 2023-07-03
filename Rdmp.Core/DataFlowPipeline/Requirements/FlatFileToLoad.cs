@@ -35,9 +35,6 @@ public class FlatFileToLoad
     /// <returns></returns>
     public override string ToString()
     {
-        if (File == null)
-            return base.ToString();
-
-        return File.Name;
+        return File == null ? base.ToString() : File.Name;
     }
 }

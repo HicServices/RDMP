@@ -95,11 +95,13 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDiagramServerNode) obj);
+        return obj.GetType() == GetType() && Equals((LoadDiagramServerNode) obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), _bubble, _database);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(base.GetHashCode(), _bubble, _database);
+    }
 
     public string WhatIsThis()
     {

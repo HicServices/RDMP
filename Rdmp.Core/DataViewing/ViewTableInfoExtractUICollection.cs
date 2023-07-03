@@ -88,10 +88,9 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
         var sql = qb.SQL;
 
-        if (ViewType == ViewType.Aggregate)
-            throw new NotSupportedException("ViewType.Aggregate can only be applied to ColumnInfos not TableInfos");
-
-        return sql;
+        return ViewType == ViewType.Aggregate
+            ? throw new NotSupportedException("ViewType.Aggregate can only be applied to ColumnInfos not TableInfos")
+            : sql;
     }
 
     public string GetTabName() => $"{TableInfo}({ViewType})";

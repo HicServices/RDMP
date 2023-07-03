@@ -194,9 +194,6 @@ public static class PersistStringHelper
     /// <returns></returns>
     public static bool GetBool(Dictionary<string, string> dict, string key, bool valueIfMissing)
     {
-        if (dict == null || !dict.ContainsKey(key))
-            return valueIfMissing;
-
-        return bool.Parse(dict[key]);
+        return dict == null || !dict.ContainsKey(key) ? valueIfMissing : bool.Parse(dict[key]);
     }
 }

@@ -112,8 +112,9 @@ public partial class ChecksUI : UserControl, ICheckNotifier
 
     private Bitmap ImageGetter(object rowObject)
     {
-        if (rowObject is not CheckEventArgs e) return null;
-        return e.Result switch
+        return rowObject is not CheckEventArgs e
+            ? null
+            : e.Result switch
         {
             CheckResult.Success => _tick,
             CheckResult.Warning => e.Ex == null ? _warning : _warningEx,

@@ -94,12 +94,9 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 
         var tableInfo = OtherColumnInfo.TableInfo;
 
-        if (InvertLogic)
-            return
-                $"Fetches all the values held in {OtherColumnInfo} on server {tableInfo.Server} and confirms that the values in this field ARE NOT in that collection";
-
-        return
-            $"Fetches all the values held in {OtherColumnInfo} on server {tableInfo.Server} and confirms that the values in this field are also in that collection";
+        return InvertLogic
+            ? $"Fetches all the values held in {OtherColumnInfo} on server {tableInfo.Server} and confirms that the values in this field ARE NOT in that collection"
+            : $"Fetches all the values held in {OtherColumnInfo} on server {tableInfo.Server} and confirms that the values in this field are also in that collection";
     }
 
     /// <summary>

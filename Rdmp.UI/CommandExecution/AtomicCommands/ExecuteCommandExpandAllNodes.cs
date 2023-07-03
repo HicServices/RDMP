@@ -37,9 +37,7 @@ public class ExecuteCommandExpandAllNodes : BasicUICommandExecution, IAtomicComm
 
     public override string GetCommandName()
     {
-        if (_rootToExpandFrom is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName)) return "Expand All";
-
-        return base.GetCommandName();
+        return _rootToExpandFrom is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName) ? "Expand All" : base.GetCommandName();
     }
 
     public override void Execute()

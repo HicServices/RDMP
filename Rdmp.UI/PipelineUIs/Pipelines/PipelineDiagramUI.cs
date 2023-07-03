@@ -366,10 +366,7 @@ public partial class PipelineDiagramUI : UserControl
         var vis = (PipelineComponentVisualisation)arg.Data.GetData(typeof(PipelineComponentVisualisation));
 
         //only middle components can be reordered
-        if (vis.GetRole() == PipelineComponentRole.Middle)
-            return DragDropEffects.Move;
-
-        return DragDropEffects.None;
+        return vis.GetRole() == PipelineComponentRole.Middle ? DragDropEffects.Move : DragDropEffects.None;
     }
 
     private void divider_DragDrop(object sender, DragEventArgs e)
@@ -494,9 +491,9 @@ public partial class PipelineDiagramUI : UserControl
 
     private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
     {
-        if (e.Data is OLVDataObject dataObject && dataObject.ModelObjects.Count == 1 &&
-            dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext context)
-            return context;
-        return null;
+        return e.Data is OLVDataObject dataObject && dataObject.ModelObjects.Count == 1 &&
+            dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext context
+            ? context
+            : null;
     }
 }

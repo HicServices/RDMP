@@ -59,10 +59,7 @@ public class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicC
 
     public override string GetCommandName()
     {
-        if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-            return OverrideCommandName;
-
-        return $"Set {PropertyName}";
+        return !string.IsNullOrWhiteSpace(OverrideCommandName) ? OverrideCommandName : $"Set {PropertyName}";
     }
 
     public override void Execute()

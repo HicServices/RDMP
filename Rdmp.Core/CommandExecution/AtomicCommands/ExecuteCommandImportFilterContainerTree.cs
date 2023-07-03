@@ -227,11 +227,10 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     /// <returns></returns>
     private IEnumerable<AggregateConfiguration> GetEligibleChildren(CohortIdentificationConfiguration arg)
     {
-        if (arg.RootCohortAggregateContainer_ID == null)
-            return Array.Empty<AggregateConfiguration>();
-
-        return arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
-            .Where(ac => ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
+        return arg.RootCohortAggregateContainer_ID == null
+            ? Array.Empty<AggregateConfiguration>()
+            : arg.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
+            .Where(ac=>ac.Catalogue_ID == _catalogue.ID && ac.RootFilterContainer_ID != null);
     }
 
     /// <summary>

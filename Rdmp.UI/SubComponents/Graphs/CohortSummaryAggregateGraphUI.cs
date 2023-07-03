@@ -72,10 +72,7 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
         if (_collection.CohortIfAny != null)
             return $"Cohort Graph {_collection.CohortIfAny}({_collection.Adjustment})";
 
-        if (_collection.CohortContainerIfAny != null)
-            return $"Cohort Container Graph {_collection.CohortContainerIfAny}";
-
-        return "Loading...";
+        return _collection.CohortContainerIfAny != null ? $"Cohort Container Graph {_collection.CohortContainerIfAny}" : "Loading...";
     }
 
     protected override string GetDescription()

@@ -98,10 +98,7 @@ internal class ConsoleGuiBigListBox<T>
 
         public override bool Equals(object obj)
         {
-            if (obj is ListViewObject<T2> other)
-                return Object.Equals(other.Object);
-
-            return false;
+            return obj is ListViewObject<T2> other && Object.Equals(other.Object);
         }
     }
 
@@ -305,10 +302,6 @@ internal class ConsoleGuiBigListBox<T>
 
     protected virtual IList<T> GetInitialSource()
     {
-        if (_publicCollection == null)
-            throw new InvalidOperationException(
-                "When using the protected constructor derived classes must override this method ");
-
-        return _publicCollection;
+        return _publicCollection ?? throw new InvalidOperationException("When using the protected constructor derived classes must override this method ");
     }
 }

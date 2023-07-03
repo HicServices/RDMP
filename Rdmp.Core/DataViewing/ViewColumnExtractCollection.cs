@@ -107,9 +107,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     private ITableInfo GetTableInfo()
     {
-        if (ExtractionInformation != null) return ExtractionInformation.ColumnInfo?.TableInfo;
-
-        return ColumnInfo?.TableInfo;
+        return ExtractionInformation != null ? (ExtractionInformation.ColumnInfo?.TableInfo) : (ITableInfo)(ColumnInfo?.TableInfo);
     }
 
     public string GetSql()
@@ -151,10 +149,11 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     private IColumn GetIColumn()
     {
-        if (ExtractionInformation != null) return ExtractionInformation;
-        if (ColumnInfo != null) return new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo);
-
-        return null;
+        if(ExtractionInformation != null)
+        {
+            return ExtractionInformation;
+        }
+        return ColumnInfo != null ? new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo) : (IColumn)null;
     }
 
     private void AddDistributionColumns(QueryBuilder qb)

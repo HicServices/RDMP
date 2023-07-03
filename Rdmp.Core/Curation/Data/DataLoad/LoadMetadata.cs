@@ -241,11 +241,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         var catalogue = GetAllCatalogues().ToArray();
 
-        if (!catalogue.Any())
-            throw new NotSupportedException(
-                $"LoadMetaData '{ToString()} (ID={ID}) does not have any Catalogues associated with it so it is not possible to fetch its LoggingDatabaseSettings");
-
-        return catalogue.Select(c => c.LiveLoggingServer).ToArray();
+        return !catalogue.Any()
+            ? throw new NotSupportedException(
+                $"LoadMetaData '{ToString()} (ID={ID}) does not have any Catalogues associated with it so it is not possible to fetch its LoggingDatabaseSettings")
+            : (IDataAccessPoint[])catalogue.Select(c => c.LiveLoggingServer).ToArray();
     }
 
     /// <summary>
@@ -266,11 +265,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
                 $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
 
         var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
-        if(distinctLoggingTasks.Length>= 2)
-            throw new Exception(
-                $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={ID})");
-
-        return distinctLoggingTasks[0];
+        return distinctLoggingTasks.Length>= 2
+            ? throw new Exception(
+                $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={ID})")
+            : distinctLoggingTasks[0];
     }
 
     /// <summary>
@@ -307,11 +305,11 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
 
         if (normalTables.Any())
-            return DataAccessPortal.ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad, true);
+            return DataAccessPortal.GetInstance().ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad,true);
 
-        if (lookupTables.Any())
-            return DataAccessPortal.ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad, true);
-
+        return lookupTables.Any()
+            ? DataAccessPortal.GetInstance().ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true)
+            :
         throw new Exception(
             $"LoadMetadata {this} has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");
     }
@@ -362,11 +360,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var syntax = GetAllCatalogues().Select(c => c.GetQuerySyntaxHelper()).Distinct().ToArray();
-        if (syntax.Length > 1)
-            throw new Exception(
-                $"LoadMetadata '{this}' has multiple underlying Catalogue Live Database Type(s) - not allowed");
-
-        return syntax.SingleOrDefault();
+        return syntax.Length > 1
+            ? throw new Exception(
+                $"LoadMetadata '{this}' has multiple underlying Catalogue Live Database Type(s) - not allowed")
+            : syntax.SingleOrDefault();
     }
 
     /// <summary>

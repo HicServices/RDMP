@@ -56,8 +56,7 @@ public class HistoryEntry : IMasqueradeAs
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((HistoryEntry) obj);
+        return obj.GetType() == GetType() && Equals((HistoryEntry) obj);
     }
 
     public override int GetHashCode()

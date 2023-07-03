@@ -104,12 +104,11 @@ public abstract class ReleasePotential : ICheckable
 
         var finalAssessment = GetSpecificAssessment(extractionResults);
 
-        if (finalAssessment == Releaseability.Undefined)
-            return SqlDifferencesVsLiveCatalogue()
+        return finalAssessment == Releaseability.Undefined
+            ? SqlDifferencesVsLiveCatalogue()
                 ? Releaseability.ColumnDifferencesVsCatalogue
-                : Releaseability.Releaseable;
-
-        return finalAssessment;
+                : Releaseability.Releaseable
+            : finalAssessment;
     }
 
     private bool ExtractionProgressIsIncomplete(ICheckNotifier notifier)
@@ -149,12 +148,11 @@ public abstract class ReleasePotential : ICheckable
 
         var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
 
-        if (finalAssessment == Releaseability.Undefined)
-            return extractedObject.Name != supplementalExtractionResults.ExtractedName
+        return finalAssessment == Releaseability.Undefined
+            ? extractedObject.Name != supplementalExtractionResults.ExtractedName
                 ? Releaseability.ExtractionSQLDesynchronisation
-                : Releaseability.Releaseable;
-
-        return finalAssessment;
+                : Releaseability.Releaseable
+            : finalAssessment;
     }
 
     protected abstract Releaseability GetSupplementalSpecificAssessment(
@@ -226,10 +224,9 @@ public abstract class ReleasePotential : ICheckable
 
     public override string ToString()
     {
-        if (DatasetExtractionResult?.DestinationDescription == null)
-            return "Never extracted...";
-
-        return Assessments[DatasetExtractionResult] switch
+        return DatasetExtractionResult?.DestinationDescription == null
+            ? "Never extracted..."
+            : Assessments[DatasetExtractionResult] switch
         {
             Releaseability.ExceptionOccurredWhileEvaluatingReleaseability => Exception.ToString(),
             _ =>

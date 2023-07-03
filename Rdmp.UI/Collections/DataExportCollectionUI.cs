@@ -72,9 +72,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     private object CohortVersionAspectGetter(object rowObject)
     {
-        if (rowObject is IMasqueradeAs masquerade && masquerade.MasqueradingAs() is ExtractableCohort c) return c.ExternalVersion;
-
-        return null;
+        return rowObject is IMasqueradeAs masquerade && masquerade.MasqueradingAs() is ExtractableCohort c ? c.ExternalVersion : (object)null;
     }
 
     public override void SetItemActivator(IActivateItems activator)

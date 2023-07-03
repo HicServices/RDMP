@@ -226,11 +226,9 @@ public partial class HeatmapUI : UserControl
         if (dataTableRow >= _dataTable.Rows.Count)
             return _dataTable.Columns[dataTableCol].ColumnName;
 
-        if (dataTableCol == 0)
-            return _dataTable.Rows[dataTableRow][dataTableCol];
-
-        return
-            $"{_dataTable.Rows[dataTableRow][0]}:{_dataTable.Columns[dataTableCol].ColumnName}{Environment.NewLine}{_dataTable.Rows[dataTableRow][dataTableCol]}";
+        return dataTableCol == 0
+            ? _dataTable.Rows[dataTableRow][dataTableCol]
+            : $"{_dataTable.Rows[dataTableRow][0]}:{_dataTable.Columns[dataTableCol].ColumnName}{Environment.NewLine}{_dataTable.Rows[dataTableRow][dataTableCol]}";
     }
 
     protected override void OnPaint(PaintEventArgs e)

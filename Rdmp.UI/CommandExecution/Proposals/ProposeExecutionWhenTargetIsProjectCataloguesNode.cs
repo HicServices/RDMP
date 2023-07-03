@@ -31,10 +31,8 @@ internal class ProposeExecutionWhenTargetIsProjectCataloguesNode : RDMPCommandEx
     {
         //use the same drop options as Project except for this one
 
-        if (cmd is CohortIdentificationConfigurationCommand)
-            return null;
-
-
-        return _projectFunctionality.ProposeExecution(cmd, target.Project, insertOption);
+        return cmd is CohortIdentificationConfigurationCommand
+            ? null
+            : _projectFunctionality.ProposeExecution(cmd, target.Project, insertOption);
     }
 }

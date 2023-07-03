@@ -39,28 +39,16 @@ public static class VersionExtensions
         }
 
         if (version.Major != otherVersion.Major && significantParts >= 1)
-            if (version.Major > otherVersion.Major)
-                return 1;
-            else
-                return -1;
+            return version.Major > otherVersion.Major ? 1 : -1;
 
         if (version.Minor != otherVersion.Minor && version.Minor != -1 && significantParts >= 2)
-            if (version.Minor > otherVersion.Minor)
-                return 1;
-            else
-                return -1;
+            return version.Minor > otherVersion.Minor ? 1 : -1;
 
         if (version.Build != otherVersion.Build && version.Build != -1 && significantParts >= 3)
-            if (version.Build > otherVersion.Build)
-                return 1;
-            else
-                return -1;
+            return version.Build > otherVersion.Build ? 1 : -1;
 
         if (version.Revision != otherVersion.Revision && version.Revision != -1 && significantParts >= 4)
-            if (version.Revision > otherVersion.Revision)
-                return 1;
-            else
-                return -1;
+            return version.Revision > otherVersion.Revision ? 1 : -1;
 
         return 0;
     }

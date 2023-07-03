@@ -39,10 +39,7 @@ public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        if (_o == null)
-            return null;
-
-        return iconProvider.GetImage(_o, OverlayKind.Edit);
+        return _o == null ? null : iconProvider.GetImage(_o, OverlayKind.Edit);
     }
 
     public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.Activate;

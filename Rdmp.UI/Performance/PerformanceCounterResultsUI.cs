@@ -61,20 +61,14 @@ public partial class PerformanceCounterResultsUI : UserControl
     {
         var treeNode = (StackFramesTree)model;
 
-        if (!treeNode.Children.Any())
-            return null;
-
-        return treeNode.Children.Values.Where(c => !c.IsInDatabaseAccessAssembly);
+        return !treeNode.Children.Any() ? null : (IEnumerable)treeNode.Children.Values.Where(c=>!c.IsInDatabaseAccessAssembly);
     }
 
     private bool CanExpandGetter(object model)
     {
         var treeNode = (StackFramesTree)model;
 
-        if (!treeNode.Children.Any())
-            return false;
-
-        return treeNode.Children.Values.Any(c => !c.IsInDatabaseAccessAssembly);
+        return treeNode.Children.Any() && treeNode.Children.Values.Any(c=>!c.IsInDatabaseAccessAssembly);
     }
 
     private List<StackFramesTree> Roots;

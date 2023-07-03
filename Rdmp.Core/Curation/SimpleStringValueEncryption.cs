@@ -116,9 +116,6 @@ public class SimpleStringValueEncryption : IEncryptStrings
 
     public bool IsStringEncrypted(string value)
     {
-        if (value == null || string.IsNullOrWhiteSpace(value))
-            return false;
-
-        return value.StartsWith("$js1$") || value.Count(c => c == '-') >= 47;
+        return value != null && !string.IsNullOrWhiteSpace(value) && (value.StartsWith("$js1$") || value.Count(c => c == '-') >= 47);
     }
 }

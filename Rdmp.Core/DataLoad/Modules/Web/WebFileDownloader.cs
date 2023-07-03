@@ -85,11 +85,9 @@ public class WebFileDownloader : IPluginDataProvider
         using var response = httpClient.GetAsync(url).Result;
         if (response.IsSuccessStatusCode)
             return response.Content.ReadAsStreamAsync().Result;
-        if (!useCredentials && response.Headers.WwwAuthenticate.Any(h =>
-                h.Scheme.Equals("basic", StringComparison.OrdinalIgnoreCase) &&
-                h.Parameter?.Equals("realm=\"Websense\"", StringComparison.OrdinalIgnoreCase) == true))
-            return CreateNewRequest(response.Headers.Location?.AbsoluteUri, credentials, true);
-        throw new Exception($"Could not get response from {url} - {response.StatusCode} - {response.ReasonPhrase}");
+        return !useCredentials && response.Headers.WwwAuthenticate.Any(h => h.Scheme.Equals("basic", StringComparison.OrdinalIgnoreCase) && h.Parameter?.Equals("realm=\"Websense\"",StringComparison.OrdinalIgnoreCase)==true)
+            ? CreateNewRequest(response.Headers.Location?.AbsoluteUri, credentials, true)
+            : throw new Exception($"Could not get response from {url} - {response.StatusCode} - {response.ReasonPhrase}");
     }
 
     public string GetDescription()
@@ -104,11 +102,11 @@ public class WebFileDownloader : IPluginDataProvider
 
     public bool Validate(ILoadDirectory _)
     {
-        if (string.IsNullOrWhiteSpace(UriToFile?.PathAndQuery))
-            throw new MissingFieldException(
-                "PathToFile is null or white space - should be populated externally as a parameter");
-        return true;
+        return string.IsNullOrWhiteSpace(UriToFile?.PathAndQuery)
+            ? throw new MissingFieldException("PathToFile is null or white space - should be populated externally as a parameter")
+            : true;
     }
+
 
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)

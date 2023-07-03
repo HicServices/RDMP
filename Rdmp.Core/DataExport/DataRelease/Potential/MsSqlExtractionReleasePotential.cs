@@ -28,16 +28,14 @@ public class MsSqlExtractionReleasePotential : ReleasePotential
         IExtractionResults supplementalExtractionResults)
     {
         if (supplementalExtractionResults.IsReferenceTo(typeof(SupportingDocument)))
-            if (File.Exists(supplementalExtractionResults.DestinationDescription))
-                return Releaseability.Undefined;
-            else
-                return Releaseability.ExtractFilesMissing;
+            return File.Exists(supplementalExtractionResults.DestinationDescription)
+                ? Releaseability.Undefined
+                : Releaseability.ExtractFilesMissing;
 
-        if (supplementalExtractionResults.IsReferenceTo(typeof(SupportingSQLTable)) ||
-            supplementalExtractionResults.IsReferenceTo(typeof(TableInfo)))
-            return GetSpecificAssessment(supplementalExtractionResults);
-
-        return Releaseability.Undefined;
+        return supplementalExtractionResults.IsReferenceTo(typeof (SupportingSQLTable)) ||
+            supplementalExtractionResults.IsReferenceTo(typeof(TableInfo))
+            ? GetSpecificAssessment(supplementalExtractionResults)
+            : Releaseability.Undefined;
     }
 
     protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults)
@@ -55,8 +53,6 @@ public class MsSqlExtractionReleasePotential : ReleasePotential
         var database = server.ExpectDatabase(dbName);
         if (!database.Exists()) return Releaseability.ExtractFilesMissing;
         var foundTable = database.ExpectTable(tblName);
-        if (!foundTable.Exists()) return Releaseability.ExtractFilesMissing;
-
-        return Releaseability.Undefined;
+        return !foundTable.Exists() ? Releaseability.ExtractFilesMissing : Releaseability.Undefined;
     }
 }

@@ -45,20 +45,17 @@ public class BoundDate : Bound
 
         var d = (DateTime)value;
 
-        if (value != null && !IsWithinRange(d))
-            return new ValidationFailure(CreateViolationReportUsingDates(d), this);
+        if (value != null && !IsWithinRange(d)) 
+            return new ValidationFailure(CreateViolationReportUsingDates(d),this);
 
-        if (value != null && !IsWithinRange(d, otherColumns, otherColumnNames))
-            return new ValidationFailure(CreateViolationReportUsingFieldNames(d), this);
-
-        return null;
+        return value != null && !IsWithinRange(d,otherColumns, otherColumnNames)
+            ? new ValidationFailure(CreateViolationReportUsingFieldNames(d),this)
+            : null;
     }
 
     private bool IsWithinRange(DateTime d)
     {
-        if (Inclusive)
-            return !(d<Lower) && !(d>Upper);
-        return !(d<=Lower) && !(d>=Upper);
+        return Inclusive ? !(d<Lower) && !(d>Upper) : !(d<=Lower) && !(d>=Upper);
     }
 
     private bool IsWithinRange(DateTime d, object[] otherColumns, string[] otherColumnNames)
@@ -91,10 +88,9 @@ public class BoundDate : Bound
         if (lookupFieldNamed == null)
             return null;
 
-        if (lookupFieldNamed == DBNull.Value)
-            return null;
-
-        return lookupFieldNamed switch
+        return lookupFieldNamed == DBNull.Value
+            ? null
+            : lookupFieldNamed switch
         {
             DateTime dateTime => dateTime,
             string named when string.IsNullOrWhiteSpace(named) => null,
@@ -112,10 +108,7 @@ public class BoundDate : Bound
         if (Lower != null)
             return GreaterThanMessage(d, Lower.ToString());
 
-        if (Upper != null)
-            return LessThanMessage(d, Upper.ToString());
-
-        throw new InvalidOperationException("Illegal state.");
+        return Upper != null ? LessThanMessage(d, Upper.ToString()) : throw new InvalidOperationException("Illegal state.");
     }
 
     private string CreateViolationReportUsingFieldNames(DateTime d)
@@ -126,10 +119,9 @@ public class BoundDate : Bound
         if (!string.IsNullOrWhiteSpace(LowerFieldName))
             return GreaterThanMessage(d, LowerFieldName);
 
-        if (!string.IsNullOrWhiteSpace(UpperFieldName))
-            return LessThanMessage(d, UpperFieldName);
-
-        throw new InvalidOperationException("Illegal state.");
+        return !string.IsNullOrWhiteSpace(UpperFieldName)
+            ? LessThanMessage(d, UpperFieldName)
+            : throw new InvalidOperationException("Illegal state.");
     }
 
     private string BetweenMessage(DateTime d, string l, string u) =>

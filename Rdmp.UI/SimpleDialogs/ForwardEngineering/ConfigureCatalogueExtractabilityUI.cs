@@ -258,10 +258,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var n = (ColPair)rowObject;
 
-        if (n.ExtractionInformation == null)
-            return false;
-
-        return n.ExtractionInformation.IsExtractionIdentifier;
+        return n.ExtractionInformation == null ? false : (object)n.ExtractionInformation.IsExtractionIdentifier;
     }
 
 
@@ -285,10 +282,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var n = (ColPair)rowObject;
 
-        if (n.ExtractionInformation == null)
-            return false;
-
-        return n.ExtractionInformation.HashOnDataRelease;
+        return n.ExtractionInformation == null ? false : (object)n.ExtractionInformation.HashOnDataRelease;
     }
 
     private void MakeExtractable(object o, bool shouldBeExtractable, ExtractionCategory? category = null)
@@ -344,10 +338,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var n = (ColPair)rowobject;
 
-        if (n.ExtractionInformation == null)
-            return "Not Extractable";
-
-        return n.ExtractionInformation.ExtractionCategory;
+        return n.ExtractionInformation == null ? "Not Extractable" : n.ExtractionInformation.ExtractionCategory;
     }
 
 

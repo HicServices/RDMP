@@ -50,11 +50,9 @@ public abstract class Runner : IRunner
         }
 
         var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
-        if (!picker[0].HasValueOfType(typeof(T)))
-            throw new ArgumentException(
-                $"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
-
-        return (T)picker[0].GetValueForParameterOfType(typeof(T));
+        return !picker[0].HasValueOfType(typeof(T))
+            ? throw new ArgumentException($"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.")
+            : (T)picker[0].GetValueForParameterOfType(typeof(T));
     }
 
     protected static IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator,
@@ -71,10 +69,8 @@ public abstract class Runner : IRunner
         }
 
         var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
-        if (!picker[0].HasValueOfType(typeof(T[])))
-            throw new ArgumentException(
-                $"Could not translate '{arg}' into a valid objects of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
-
-        return (T[])picker[0].GetValueForParameterOfType(typeof(T[])) ?? Enumerable.Empty<T>();
+        return !picker[0].HasValueOfType(typeof(T[]))
+            ? throw new ArgumentException($"Could not translate '{arg}' into a valid objects of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.")
+            : (T[])picker[0].GetValueForParameterOfType(typeof(T[])) ?? Enumerable.Empty<T>();
     }
 }

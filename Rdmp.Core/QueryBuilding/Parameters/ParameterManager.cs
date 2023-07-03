@@ -469,11 +469,9 @@ public class ParameterManager
     /// <returns></returns>
     public ParameterLevel? GetLevelForParameter(ISqlParameter parameter)
     {
-        if (!ParametersFoundSoFarInQueryGeneration.Any(k => k.Value.Contains(parameter)))
-            return null;
-
-        return
-            ParametersFoundSoFarInQueryGeneration
+        return !ParametersFoundSoFarInQueryGeneration.Any(k => k.Value.Contains(parameter))
+            ? null
+            : ParametersFoundSoFarInQueryGeneration
                 //take the bottom most level it was found at
                 .OrderBy(kvp => kvp.Key)
                 .First(k => k.Value.Contains(parameter)).Key;

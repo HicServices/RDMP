@@ -18,16 +18,7 @@ public class CollectionNavigation : INavigation
 {
     public IMapsDirectlyToDatabaseTable Object { get; }
 
-    public bool IsAlive
-    {
-        get
-        {
-            if (Object is IMightNotExist o)
-                return o.Exists();
-
-            return true;
-        }
-    }
+    public bool IsAlive => Object is not IMightNotExist o || o.Exists();
 
     public CollectionNavigation(IMapsDirectlyToDatabaseTable Object)
     {

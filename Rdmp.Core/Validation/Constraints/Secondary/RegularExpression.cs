@@ -56,10 +56,7 @@ public class RegularExpression : SecondaryConstraint
         var text = (string)value;
         var match = Regex.Match(text, _pattern);
 
-        if (!match.Success)
-            return new ValidationFailure($"Failed to match text [{value}] to regular expression /{_pattern}/", this);
-
-        return null;
+        return !match.Success ? new ValidationFailure($"Failed to match text [{value}] to regular expression /{_pattern}/",this) : null;
     }
 
     public override void RenameColumn(string originalName, string newName)

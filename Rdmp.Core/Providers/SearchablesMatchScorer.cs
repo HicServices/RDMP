@@ -164,10 +164,9 @@ public class SearchablesMatchScorer
             explicitTypesRequested = Array.Empty<string>();
         }
 
-        if (cancellationToken.IsCancellationRequested)
-            return null;
-
-        return searchables.ToDictionary(
+        return cancellationToken.IsCancellationRequested
+            ? null
+            : searchables.ToDictionary(
             s => s,
             score => _ScoreMatches(score, regexes,explicitTypesRequested, cancellationToken)
         );
@@ -292,10 +291,7 @@ public class SearchablesMatchScorer
 
     private Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
     {
-        if (kvp.Key is Catalogue catalogue)
-            return catalogue;
-
-        return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
+        return kvp.Key is Catalogue catalogue ? catalogue : (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
     private int CountMatchType(List<Regex> regexes, object key)

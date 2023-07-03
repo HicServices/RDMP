@@ -592,20 +592,14 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private IEnumerable ChildrenGetter(object model)
     {
-        if (AxeChildren != null && AxeChildren.Contains(model.GetType()))
-            return Array.Empty<object>();
-
-        return CoreChildProvider.GetChildren(model);
+        return AxeChildren != null && AxeChildren.Contains(model.GetType()) ? Array.Empty<object>() : (IEnumerable)CoreChildProvider.GetChildren(model);
     }
 
     private bool CanExpandGetter(object model)
     {
         var result = ChildrenGetter(model);
 
-        if (result == null)
-            return false;
-
-        return result.Cast<object>().Any();
+        return result?.Cast<object>().Any() == true;
     }
 
     private Bitmap ImageGetter(object rowObject)

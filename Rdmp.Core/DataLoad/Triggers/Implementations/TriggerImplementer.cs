@@ -202,9 +202,6 @@ public abstract class TriggerImplementer : ITriggerImplementer
         if (t1.Equals(t2, StringComparison.CurrentCultureIgnoreCase))
             return true;
 
-        if (t1.ToLower().Contains("identity"))
-            return t1.ToLower().Replace("identity", "").Trim().Equals(t2.ToLower().Trim());
-
-        return false;
+        return t1.ToLower().Contains("identity") && t1.ToLower().Replace("identity", "").Trim().Equals(t2.ToLower().Trim());
     }
 }

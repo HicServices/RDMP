@@ -56,10 +56,7 @@ public class AggregationTask : CacheableTask
 
         var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
 
-        if (name.StartsWith(expectedTrimStart))
-            return name[expectedTrimStart.Length..];
-
-        return name;
+        return name.StartsWith(expectedTrimStart) ? name[expectedTrimStart.Length..] : name;
     }
 
     public override IDataAccessPoint[] GetDataAccessPoints() => Aggregate.Catalogue.GetTableInfoList(false);

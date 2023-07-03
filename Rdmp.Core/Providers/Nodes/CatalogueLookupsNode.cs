@@ -13,7 +13,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class CatalogueLookupsNode : Node
 {
-    public Catalogue Catalogue { get; set; }
+    public Catalogue Catalogue { get; }
     public Lookup[] Lookups { get; set; }
 
     public CatalogueLookupsNode(Catalogue catalogue, Lookup[] lookups)
@@ -30,12 +30,11 @@ public class CatalogueLookupsNode : Node
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != typeof(CatalogueLookupsNode)) return false;
-        return Equals((CatalogueLookupsNode)obj);
+        return obj.GetType() == typeof(CatalogueLookupsNode) && Equals((CatalogueLookupsNode)obj);
     }
 
     public override int GetHashCode()
     {
-        return Catalogue != null ? Catalogue.GetHashCode() : 0;
+        return System.HashCode.Combine(Catalogue);
     }
 }

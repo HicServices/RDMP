@@ -91,10 +91,8 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
             pattern = StandardRegex.Regex;
 
 
-        if (string.IsNullOrWhiteSpace(pattern))
-            throw new Exception(
-                "You must specify either a pattern in CrashIfAnyColumnMatches or pick an existing StandardRegex with a pattern to match on");
-
-        return pattern;
+        return string.IsNullOrWhiteSpace(pattern)
+            ? throw new Exception("You must specify either a pattern in CrashIfAnyColumnMatches or pick an existing StandardRegex with a pattern to match on")
+            : pattern;
     }
 }

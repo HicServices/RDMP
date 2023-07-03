@@ -34,8 +34,11 @@ public class ProgressUIEntry
         Exception = args.Exception;
         Args = args;
     }
-
-    private static string FormatSender(object sender) => sender as string ?? sender?.GetType().Name ?? "Unknown";
+        
+    private string FormatSender(object sender)
+    {
+        return sender == null ? "Unknown" : sender as string ?? sender.GetType().Name;
+    }
 
     public WideMessageBoxTheme GetTheme()
     {

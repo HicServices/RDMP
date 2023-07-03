@@ -78,18 +78,14 @@ public class ExecuteCommandDescribe : BasicCommandExecution
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        if (_nonDatabaseObjectToDescribe != null)
-            return iconProvider.GetImage(_nonDatabaseObjectToDescribe);
-
-        return base.GetImage(iconProvider);
+        return _nonDatabaseObjectToDescribe != null ? iconProvider.GetImage(_nonDatabaseObjectToDescribe) : base.GetImage(iconProvider);
     }
 
     public override string GetCommandName()
     {
-        if (_nonDatabaseObjectToDescribe != null)
-            return _nonDatabaseObjectToDescribe is Type t ? t.Name : _nonDatabaseObjectToDescribe.ToString();
-
-        return base.GetCommandName();
+        return _nonDatabaseObjectToDescribe != null
+            ? _nonDatabaseObjectToDescribe is Type t ? t.Name : _nonDatabaseObjectToDescribe.ToString()
+            : base.GetCommandName();
     }
 
     public override string GetCommandHelp()

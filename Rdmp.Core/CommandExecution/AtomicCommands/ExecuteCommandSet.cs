@@ -126,9 +126,7 @@ public class ExecuteCommandSet : BasicCommandExecution
     {
         if (!string.IsNullOrEmpty(OverrideCommandName)) return OverrideCommandName;
 
-        if (_property != null) return $"Set {_property.Name}";
-
-        return base.GetCommandName();
+        return _property != null ? $"Set {_property.Name}" : base.GetCommandName();
     }
 
     public override void Execute()
@@ -208,10 +206,9 @@ public class ExecuteCommandSet : BasicCommandExecution
         if (DialogArgs != null)
             return DialogArgs;
 
-        if (on is ISqlParameter p && _property.Name.Equals(nameof(ISqlParameter.Value)))
-            return AnyTableSqlParameter.GetValuePromptDialogArgs(p);
-
-        return new DialogArgs
+        return on is ISqlParameter p && _property.Name.Equals(nameof(ISqlParameter.Value))
+            ? AnyTableSqlParameter.GetValuePromptDialogArgs(p)
+            : new DialogArgs
         {
             WindowTitle = $"Set value for '{_property.Name}'",
             EntryLabel = _property.Name

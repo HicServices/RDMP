@@ -234,8 +234,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
             streamA.Seek(-4096, SeekOrigin.End);
             streamB.Seek(-4096, SeekOrigin.End);
             if (streamA.Read(bufferA, 0, 4096) != 4096 || streamB.Read(bufferB, 0, 4096) != 4096) return false;
-            if (!bufferA.SequenceEqual(bufferB)) return false;
-            return true;
+            return bufferA.SequenceEqual(bufferB);
         }
         catch (Exception e)
         {
@@ -300,9 +299,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
                     "Looking up DATA directory on server returned null (user may not have permissions to read from relevant sys tables)");
 
             var end = result.LastIndexOfAny(@"\/".ToCharArray());
-            if (end == -1)
-                throw new Exception($"No directory delimiter found in DB file location '{result}'");
-            return result[..end];
+            return end == -1 ? throw new Exception($"No directory delimiter found in DB file location '{result}'") : result[..end];
         }
         catch (SqlException e)
         {

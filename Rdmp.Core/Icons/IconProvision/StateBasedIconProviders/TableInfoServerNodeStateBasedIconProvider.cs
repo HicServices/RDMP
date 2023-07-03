@@ -28,9 +28,8 @@ public class TableInfoServerNodeStateBasedIconProvider : IObjectStateBasedIconPr
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is not TableInfoServerNode node)
-            return null;
-
-        return _overlayProvider.GetOverlay(_serverNode, _databaseTypeIconProvider.GetOverlay(node.DatabaseType));
+        return o is not TableInfoServerNode node
+            ? null
+            : _overlayProvider.GetOverlay(_serverNode, _databaseTypeIconProvider.GetOverlay(node.DatabaseType));
     }
 }

@@ -143,10 +143,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
     private object Issues_AspectGetter(object rowObject)
     {
-        if (rowObject is ExtractableColumn ec && ec.IsOutOfSync())
-            return "Different";
-
-        return "None";
+        return rowObject is ExtractableColumn ec && ec.IsOutOfSync() ? "Different" : (object)"None";
     }
 
     private object SelectedCatalogue_AspectGetter(object rowObject)
@@ -560,10 +557,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         var n = (AvailableForceJoinNode)rowobject;
 
         //it is jecked if there is a forced join or if the columns make it a requirement
-        if (n.IsIncludedInQuery)
-            return CheckState.Checked;
-
-        return CheckState.Unchecked;
+        return n.IsIncludedInQuery ? CheckState.Checked : CheckState.Unchecked;
     }
 
     private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
@@ -761,10 +755,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
     {
         var node = (AvailableForceJoinNode)rowObject;
 
-        if (node.JoinInfos.Any())
-            return "Show";
-
-        return "Configure";
+        return node.JoinInfos.Any() ? "Show" : (object)"Configure";
     }
 
     #endregion

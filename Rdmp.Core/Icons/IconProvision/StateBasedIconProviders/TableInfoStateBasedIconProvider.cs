@@ -23,9 +23,6 @@ public class TableInfoStateBasedIconProvider : IObjectStateBasedIconProvider
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is not TableInfo tableInfo)
-            return null;
-
-        return tableInfo.IsTableValuedFunction ? _tableInfoTableValuedFunction : _tableInfo;
+        return o is not TableInfo tableInfo ? null : tableInfo.IsTableValuedFunction ? _tableInfoTableValuedFunction : _tableInfo;
     }
 }

@@ -80,18 +80,18 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
                 problemsDroppingTrigger += $"Failed to drop Archive Index:{exception.Message}{Environment.NewLine}";
             }
 
-        using(var cmdDropArchiveLegacyView = _server.GetCommand($"DROP FUNCTION {_table.GetRuntimeName()}_Legacy", con))
-            try
-            {
-                cmdDropArchiveLegacyView.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                cmdDropArchiveLegacyView.ExecuteNonQuery();
-                thingsThatWorkedDroppingTrigger += $"Dropped Legacy Table View successfully{Environment.NewLine}";
-            }
-            catch (Exception exception)
-            {
-                problemsDroppingTrigger +=
-                    $"Failed to drop Legacy Table View:{exception.Message}{Environment.NewLine}";
-            }
+        using var cmdDropArchiveLegacyView = _server.GetCommand($"DROP FUNCTION {_table.GetRuntimeName()}_Legacy", con);
+        try
+        {
+            cmdDropArchiveLegacyView.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+            cmdDropArchiveLegacyView.ExecuteNonQuery();
+            thingsThatWorkedDroppingTrigger += $"Dropped Legacy Table View successfully{Environment.NewLine}";
+        }
+        catch (Exception exception)
+        {
+            problemsDroppingTrigger +=
+                $"Failed to drop Legacy Table View:{exception.Message}{Environment.NewLine}";
+        }
     }
 
     public override string CreateTrigger(ICheckNotifier notifier)

@@ -179,11 +179,9 @@ internal class DublinCoreTests
             def1.WriteXml(outStream);
         }
 
-        using (var inStream = fi.OpenRead())
-        {
-            var def2 = new DublinCoreDefinition();
-            var doc = XDocument.Load(inStream);
-            def2.LoadFrom(doc.Root);
-        }
+        using var inStream = fi.OpenRead();
+        var def2 = new DublinCoreDefinition();
+        var doc = XDocument.Load(inStream);
+        def2.LoadFrom(doc.Root);
     }
 }

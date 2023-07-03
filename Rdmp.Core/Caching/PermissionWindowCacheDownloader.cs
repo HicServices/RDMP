@@ -231,10 +231,6 @@ public class PermissionWindowCacheDownloader
 
     public override string ToString()
     {
-        if (_permissionWindow == null)
-            return "Downloader (Any Time)";
-
-
-        return $"Downloader for {_permissionWindow.Name}";
+        return _permissionWindow == null ? "Downloader (Any Time)" : $"Downloader for {_permissionWindow.Name}";
     }
 }

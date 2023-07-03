@@ -294,7 +294,7 @@ public class SuggestComboBox : ComboBox
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        if (e.KeyData == Keys.Enter || e.KeyData == Keys.Escape)
+        if (e.KeyData is Keys.Enter or Keys.Escape)
         {
             e.SuppressKeyPress = true;
             return;
@@ -306,10 +306,8 @@ public class SuggestComboBox : ComboBox
     private static readonly Keys[] KeysToHandle = { Keys.Down, Keys.Up, Keys.Enter, Keys.Escape };
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-        // the keysstrokes of our interest should not be processed be base class:
-        if (_suggLb.Visible && KeysToHandle.Contains(keyData))
-            return true;
-        return base.ProcessCmdKey(ref msg, keyData);
+        // the keystrokes of interest should not be processed by base class:
+        return _suggLb.Visible && KeysToHandle.Contains(keyData) || base.ProcessCmdKey(ref msg, keyData);
     }
 
     #endregion

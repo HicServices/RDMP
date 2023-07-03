@@ -117,9 +117,7 @@ public class ExtractableCohortAuditLogBuilder
         var m = _regexGetID.Match(audit);
 
         // If the ID bit is  missing
-        if (!m.Success) return null;
-
-        return GetObjectFromLog<T>(m, repository);
+        return !m.Success ? null : GetObjectFromLog<T>(m, repository);
     }
 
     private static T GetObjectFromLog<T>(Match m, IRepository repository) where T : class, IMapsDirectlyToDatabaseTable

@@ -162,12 +162,9 @@ public class SqlQueryBuilderHelper
             }
         }
 
-        if (qb.PrimaryExtractionTable != null && qb.TablesUsedInQuery.Contains(qb.PrimaryExtractionTable) == false)
-            throw new QueryBuildingException(
-                "Specified PrimaryExtractionTable was not found amongst the chosen extraction columns");
-
-
-        return Joins;
+        return qb.PrimaryExtractionTable != null && qb.TablesUsedInQuery.Contains(qb.PrimaryExtractionTable) == false
+            ? throw new QueryBuildingException("Specified PrimaryExtractionTable was not found amongst the chosen extraction columns")
+            : Joins;
     }
 
     /// <summary>
@@ -658,11 +655,10 @@ public class SqlQueryBuilderHelper
 
 
         var databaseTypes = tablesUsedInQuery.Select(t => t.DatabaseType).Distinct().ToArray();
-        if (databaseTypes.Length > 1)
-            throw new QueryBuildingException(
-                $"Cannot build query because there are multiple DatabaseTypes involved in the query:{string.Join(",", tablesUsedInQuery.Select(t => $"{t.GetRuntimeName()}({t.DatabaseType})"))}");
-
-        return DatabaseCommandHelper.For(databaseTypes.Single()).GetQuerySyntaxHelper();
+        return databaseTypes.Length > 1
+            ? throw new QueryBuildingException(
+                $"Cannot build query because there are multiple DatabaseTypes involved in the query:{string.Join(",", tablesUsedInQuery.Select(t => $"{t.GetRuntimeName()}({t.DatabaseType})"))}")
+            : DatabaseCommandHelper.For(databaseTypes.Single()).GetQuerySyntaxHelper();
     }
 
     /// <summary>

@@ -168,8 +168,6 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
 
         var unescaped = Uri.UnescapeDataString(URL.AbsolutePath);
 
-        if (URL.IsUnc) return new FileInfo($@"\\{URL.Host}{unescaped}");
-
-        return new FileInfo(unescaped);
+        return URL.IsUnc ? new FileInfo($@"\\{URL.Host}{unescaped}") : new FileInfo(unescaped);
     }
 }

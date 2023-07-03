@@ -19,8 +19,8 @@ namespace Rdmp.Core.Providers.Nodes;
 public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasqueradeAs
 {
     private readonly IExtractableDataSetPackageManager _contents;
-    public IExtractableDataSetPackage Package { get; set; }
-    public IExtractableDataSet DataSet { get; set; }
+    public IExtractableDataSetPackage Package { get; }
+    public IExtractableDataSet DataSet { get; }
 
     public PackageContentNode(IExtractableDataSetPackage package, IExtractableDataSet dataSet,
         IExtractableDataSetPackageManager contents)
@@ -38,8 +38,7 @@ public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasquerade
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((PackageContentNode) obj);
+        return obj.GetType() == GetType() && Equals((PackageContentNode) obj);
     }
 
     public override int GetHashCode()

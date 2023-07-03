@@ -347,9 +347,7 @@ public class Validator
                     $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in dictionary.");
             }
 
-        if (eList.Count > 0) return new ValidationFailure("There are validation errors.", eList);
-
-        return null;
+        return eList.Count > 0 ? new ValidationFailure("There are validation errors.", eList) : null;
     }
 
     private ValidationFailure ValidateAgainstDomainObject()
@@ -450,9 +448,7 @@ public class Validator
             }
         }
 
-        if (eList.Count > 0) return new ValidationFailure("There are validation errors.", eList);
-
-        return null;
+        return eList.Count > 0 ? new ValidationFailure("There are validation errors.", eList) : null;
     }
 
     private static Dictionary<string, object> DomainObjectPropertiesToDictionary(object o)

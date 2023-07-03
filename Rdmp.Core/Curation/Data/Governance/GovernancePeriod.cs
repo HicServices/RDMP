@@ -193,9 +193,6 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     /// <returns></returns>
     public bool IsExpired()
     {
-        if (EndDate == null)
-            return false;
-
-        return DateTime.Now.Date > EndDate.Value.Date;
+        return EndDate != null && DateTime.Now.Date > EndDate.Value.Date;
     }
 }

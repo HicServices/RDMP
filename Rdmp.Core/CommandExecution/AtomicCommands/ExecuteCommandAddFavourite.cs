@@ -30,10 +30,9 @@ public class ExecuteCommandAddFavourite : BasicCommandExecution
 
     public override string GetCommandName()
     {
-        if (_databaseEntity == null)
-            return base.GetCommandName();
-
-        return BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity) ? "UnFavourite" : "Favourite";
+        return _databaseEntity == null
+            ? base.GetCommandName()
+            : BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity) ? "UnFavourite" : "Favourite";
     }
 
     public override void Execute()
@@ -62,9 +61,8 @@ public class ExecuteCommandAddFavourite : BasicCommandExecution
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        if (_databaseEntity != null && BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity))
-            return Image.Load<Rgba32>(CatalogueIcons.StarHollow);
-
-        return iconProvider.GetImage(RDMPConcept.Favourite, OverlayKind.Add);
+        return _databaseEntity != null && BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity)
+            ? Image.Load<Rgba32>(CatalogueIcons.StarHollow)
+            : iconProvider.GetImage(RDMPConcept.Favourite, OverlayKind.Add);
     }
 }

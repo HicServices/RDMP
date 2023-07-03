@@ -220,11 +220,9 @@ public abstract class TableRepository : ITableRepository
 
     public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
     {
-        if (typeof(T).IsInterface)
-            throw new Exception(
-                "GetObjectByID<T> requires a proper class not an interface so that it can access the correct table");
-
-        return (T)GetObjectByID(typeof(T), id);
+        return typeof(T).IsInterface
+            ? throw new Exception("GetObjectByID<T> requires a proper class not an interface so that it can access the correct table")
+            : (T) GetObjectByID(typeof (T), id);
     }
 
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
@@ -366,10 +364,9 @@ public abstract class TableRepository : ITableRepository
     {
         var inList = string.Join(",", ids);
 
-        if (string.IsNullOrWhiteSpace(inList))
-            return Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
-
-        return GetAllObjects(elementType, $" WHERE ID in ({inList})");
+        return string.IsNullOrWhiteSpace(inList)
+            ? Enumerable.Empty<IMapsDirectlyToDatabaseTable>()
+            : GetAllObjects(elementType, $" WHERE ID in ({inList})");
     }
 
     /// <inheritdoc/>
@@ -385,11 +382,7 @@ public abstract class TableRepository : ITableRepository
             throw new NotSupportedException(
                 "Why are you comparing two null things against one another with this method?");
 
-        if (obj1.GetType() == obj2.GetType())
-            return obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID &&
-                   obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
-
-        return false;
+        return obj1.GetType() == obj2.GetType() && (obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID && obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository);
     }
 
     /// <inheritdoc/>
@@ -503,19 +496,14 @@ public abstract class TableRepository : ITableRepository
         var idsToReturn = new List<int>();
         using (var cmd = DatabaseCommandHelper.GetCommand(selectQuery, opener.Connection, opener.Transaction))
         {
-            using (var r = cmd.ExecuteReader())
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
             {
-                while (r.Read())
-                {
-                    idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
-                }
+                idsToReturn.Add(Convert.ToInt32(r[columnWithObjectID]));
             }
         }
 
-        if (!idsToReturn.Any())
-            return Enumerable.Empty<T>();
-
-        return GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
+        return !idsToReturn.Any() ? Enumerable.Empty<T>() : GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
     }
 
     /// <summary>
@@ -615,11 +603,10 @@ public abstract class TableRepository : ITableRepository
         using var opener = GetConnection();
         var cmd = PrepareCommand(deleteQuery, parameters, opener.Connection, opener.Transaction);
         var affectedRows = cmd.ExecuteNonQuery();
-                
-        if (affectedRows == 0 && throwOnZeroAffectedRows)
-            throw new Exception($"Deleted failed, resulted in {affectedRows} affected rows");
 
-        return affectedRows;
+        return affectedRows == 0 && throwOnZeroAffectedRows
+            ? throw new Exception($"Deleted failed, resulted in {affectedRows} affected rows")
+            : affectedRows;
     }
 
     public int Update(string updateQuery, Dictionary<string, object> parameters)
@@ -633,9 +620,7 @@ public abstract class TableRepository : ITableRepository
         DbTransaction transaction = null)
     {
         var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction);
-        if (parameters == null) return cmd;
-
-        return PrepareCommand(cmd, parameters);
+        return parameters == null ? cmd : PrepareCommand(cmd, parameters);
     }
 
     public static DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
@@ -784,18 +769,12 @@ public abstract class TableRepository : ITableRepository
 
     public int? ObjectToNullableInt(object o)
     {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return int.Parse(o.ToString());
+        return o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
     }
 
     public DateTime? ObjectToNullableDateTime(object o)
     {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return (DateTime)o;
+        return o == null || o == DBNull.Value ? null : (DateTime)o;
     }
 
     private Dictionary<Type,bool> _knownSupportedTypes = new();

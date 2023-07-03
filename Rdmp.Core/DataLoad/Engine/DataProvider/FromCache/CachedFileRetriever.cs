@@ -192,11 +192,9 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             throw new NullReferenceException(
                 $"Destination {destination.RootPath.FullName} does not have a 'Cache' folder");
 
-        if (!destination.Cache.Exists)
-            throw new DirectoryNotFoundException(destination.Cache.FullName);
-
-        return true;
+        return !destination.Cache.Exists ? throw new DirectoryNotFoundException(destination.Cache.FullName) : true;
     }
+
 
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)

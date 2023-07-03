@@ -31,10 +31,9 @@ public class DataExportIconProvider : CatalogueIconProvider
         if (concept is LinkedCohortNode)
             return base.GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Link);
 
-        if (concept as Type == typeof(SelectedDataSets))
-            return base.GetImageImpl(RDMPConcept.ExtractableDataSet);
-
-        return concept switch
+        return concept as Type == typeof(SelectedDataSets)
+            ? base.GetImageImpl(RDMPConcept.ExtractableDataSet)
+            : concept switch
         {
             SelectedDataSets sds => base.GetImageImpl(sds.ExtractableDataSet),
             PackageContentNode pcn => base.GetImageImpl(pcn.DataSet),

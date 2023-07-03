@@ -160,7 +160,7 @@ public partial class ScintillaTextEditorFactory
         scintilla.IndicatorCurrent = 8;
         scintilla.IndicatorClearRange(0, scintilla.TextLength);
 
-        foreach (Match m in WordRegex().Matches(scintilla.Text))
+        foreach (Match m in Words().Matches(scintilla.Text))
             if (!hunspell.Check(m.Value))
                 scintilla.IndicatorFillRange(m.Index, m.Length);
     }
@@ -297,5 +297,5 @@ public partial class ScintillaTextEditorFactory
     }
 
     [GeneratedRegex("\\b\\w*\\b")]
-    private static partial Regex WordRegex();
+    private static partial Regex Words();
 }

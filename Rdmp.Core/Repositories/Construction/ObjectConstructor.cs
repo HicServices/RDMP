@@ -266,12 +266,10 @@ public class ObjectConstructor
         if (constructors.Count == 1)
             return constructors[0].Invoke(parameters);
 
-        var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute)))
-            .ToArray();
-        if (importDecorated.Length == 1)
-            return importDecorated[0].Invoke(parameters);
-
-        throw new ObjectLacksCompatibleConstructorException(
+        var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof (UseWithObjectConstructorAttribute))).ToArray();
+        return importDecorated.Length == 1
+            ? importDecorated[0].Invoke( parameters)
+            : throw new ObjectLacksCompatibleConstructorException(
             $"Could not pick the correct constructor between:{Environment.NewLine}{string.Join($"{Environment.NewLine}", constructors.Select(c => $"{c.Name}({string.Join(",", c.GetParameters().Select(p => p.ParameterType))}"))}");
     }
 
@@ -341,10 +339,9 @@ public class ObjectConstructor
             .Where(@t => @t.parameters.Any(p => typeof(IRepository).IsAssignableFrom(p.ParameterType)))
             .Select(@t => @t.constructorInfo).ToList();
 
-        if (compatible.Count == 1)
-            return compatible.Single();
-
-        throw new ObjectLacksCompatibleConstructorException(
+        return compatible.Count == 1
+            ? compatible.Single()
+            : throw new ObjectLacksCompatibleConstructorException(
             $"No best constructor found for Type {type} (found {compatible.Count})");
     }
 }

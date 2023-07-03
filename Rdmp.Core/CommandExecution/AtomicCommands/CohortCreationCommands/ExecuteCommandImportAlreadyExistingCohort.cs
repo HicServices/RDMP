@@ -96,9 +96,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         }
 
         // pick which one to import
-        if (BasicActivator.SelectObject("Import Cohort", available, out var cd)) return cd.ID;
-
-        return null;
+        return BasicActivator.SelectObject("Import Cohort",available, out var cd) ? cd.ID : null;
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

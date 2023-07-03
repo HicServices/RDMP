@@ -136,11 +136,7 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        if (_syntaxHelper == null)
-            throw new NotSupportedException(
-                "Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
-
-        return _syntaxHelper;
+        return _syntaxHelper ?? throw new NotSupportedException("Global extraction parameters are multi database type (depending on which ExtractableDataSet they are being used with)");
     }
 
     /// <inheritdoc/>

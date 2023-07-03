@@ -155,10 +155,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         if (memberName.StartsWith("T:"))
             return GetLastTokens(memberName, 1);
 
-        if (memberName.StartsWith("M:"))
-            return GetLastTokens(memberName, 2);
-
-        return memberName;
+        return memberName.StartsWith("M:") ? GetLastTokens(memberName, 2) : memberName;
     }
 
     public static StringBuilder TrimEndSpace(StringBuilder sb)
@@ -229,10 +226,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
         maxLength = Math.Max(10, maxLength - 3);
 
-        if (docs.Length <= maxLength)
-            return docs;
-
-        return $"{docs[..maxLength]}...";
+        return docs.Length <= maxLength ? docs : $"{docs[..maxLength]}...";
     }
 
     /// <inheritdoc cref="GetTypeDocumentationIfExists(int,Type,bool,bool)"/>
@@ -251,10 +245,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     {
         var match = GetDocumentationKeywordIfExists(word, fuzzyMatch);
 
-        if (match == null)
-            return null;
-
-        return formatAsParagraphs ? FormatAsParagraphs(this[match]) : this[match];
+        return match == null ? null : formatAsParagraphs ? FormatAsParagraphs(this[match]) : this[match];
     }
 
     /// <summary>

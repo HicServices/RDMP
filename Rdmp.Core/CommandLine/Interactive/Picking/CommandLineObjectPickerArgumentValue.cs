@@ -177,10 +177,7 @@ public class CommandLineObjectPickerArgumentValue
         if (basicType.IsValueType && !typeof(Enum).IsAssignableFrom(basicType))
             return UsefulStuff.ChangeType(RawValue, basicType);
 
-        if (basicType.IsEnum)
-            return Enum.Parse(basicType, RawValue, true);
-
-        return null;
+        return basicType.IsEnum ? Enum.Parse(basicType, RawValue,true) : null;
     }
 
     private object GetOneDatabaseEntity<T>()

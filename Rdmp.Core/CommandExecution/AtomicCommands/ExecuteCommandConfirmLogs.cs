@@ -130,9 +130,6 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution
         if (!RequireLoadedRows || LogRootObject is not ILoadMetadata lmd)
             return true;
 
-        var excludeStaging = new Regex("_STAGING");
-        var excludeRaw = new Regex("_RAW");
-
         var liveTableNames = lmd.GetAllCatalogues()
             .SelectMany(c => c.GetTableInfoList(true))
             .Select(t => new Regex($"\\b{Regex.Escape(t.GetRuntimeName())}\\b"))
@@ -141,7 +138,7 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution
         // tables where there was at least 1 insert or update and it wasn't in a RAW or STAGING table
         var loadedTables = arg.TableLoadInfos
             .Where(l => l.Inserts > 0 || l.Updates > 0)
-            .Where(l => !excludeRaw.IsMatch(l.TargetTable) && !excludeStaging.IsMatch(l.TargetTable));
+            .Where(l => !l.TargetTable.Contains("_RAW",StringComparison.Ordinal) && !l.TargetTable.Contains("_STAGING",StringComparison.Ordinal));
 
         // of those they must match the live table name
         return loadedTables.Any(l =>

@@ -66,10 +66,7 @@ internal class StackFramesTree
 
     public override string ToString()
     {
-        if (!HasSourceCode)
-            return CurrentFrame;
-
-        return $"{Path.GetFileNameWithoutExtension(Filename)}.{Method}";
+        return !HasSourceCode ? CurrentFrame : $"{Path.GetFileNameWithoutExtension(Filename)}.{Method}";
     }
 
     public void AddSubframes(string[] lines, QueryPerformed query)

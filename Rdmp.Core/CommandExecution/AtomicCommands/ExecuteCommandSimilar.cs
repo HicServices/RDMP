@@ -117,9 +117,7 @@ public class ExecuteCommandSimilar : BasicCommandExecution
     private bool IsSimilar(IMapsDirectlyToDatabaseTable other)
     {
         // objects are not similar to themselves!
-        if (Equals(_to, other)) return false;
-
-        return _to switch
+        return !Equals(_to, other) && _to switch
         {
             INamed named when other is INamed otherNamed => SimilarWord(named.Name, otherNamed.Name,
                 StringComparison.CurrentCultureIgnoreCase),
@@ -134,10 +132,7 @@ public class ExecuteCommandSimilar : BasicCommandExecution
 
     private static bool SimilarWord(string name1, string name2, StringComparison comparisonType)
     {
-        if (string.IsNullOrWhiteSpace(name1) || string.IsNullOrWhiteSpace(name2))
-            return false;
-
-        return string.Equals(
+        return !string.IsNullOrWhiteSpace(name1) && !string.IsNullOrWhiteSpace(name2) && string.Equals(
             name1[Math.Max(0,name1.LastIndexOf('.'))..].Trim(trimChars),
             name2[Math.Max(0,name2.LastIndexOf('.'))..].Trim(trimChars),
             comparisonType);

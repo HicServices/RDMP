@@ -90,8 +90,8 @@ public partial class ChoosePlatformDatabasesUI : Form
                             _repositoryLocator is UserSettingsRepositoryFinder;
 
         //yes
-        tbCatalogueConnectionString.Text = cataDb == null ? null : cataDb.ConnectionString;
-        tbDataExportManagerConnectionString.Text = dataExportDb == null ? null : dataExportDb.ConnectionString;
+        tbCatalogueConnectionString.Text = cataDb?.ConnectionString;
+        tbDataExportManagerConnectionString.Text = dataExportDb?.ConnectionString;
 
         tbRowCount.Text = ExampleDatasetsCreation.NumberOfRowsPerDataset.ToString();
         tbPeopleCount.Text = ExampleDatasetsCreation.NumberOfPeople.ToString();

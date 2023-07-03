@@ -146,18 +146,16 @@ public class KVPAttacher : FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDes
 
     private string[] GetPKs()
     {
-        if (string.IsNullOrWhiteSpace(PrimaryKeyColumns))
-            return Array.Empty<string>();
-
-        return PrimaryKeyColumns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        return string.IsNullOrWhiteSpace(PrimaryKeyColumns)
+            ? Array.Empty<string>()
+            : PrimaryKeyColumns.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
     }
 
     #endregion
 
     #region IDataFlowDestination Members
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         BatchesReadyForProcessing.Add(toProcess.Copy());
         return null;

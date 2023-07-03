@@ -259,10 +259,13 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// <inheritdoc/>
     public bool WasCreatedBy(IPatcher patcher)
     {
-        if (string.IsNullOrWhiteSpace(CreatedByAssembly))
-            return false;
+        return !string.IsNullOrWhiteSpace(CreatedByAssembly) && (patcher.Name == CreatedByAssembly || patcher.LegacyName == CreatedByAssembly);
+    }
 
-        return patcher.Name == CreatedByAssembly || patcher.LegacyName == CreatedByAssembly;
+    /// <inheritdoc/>
+    public DiscoveredDatabase Discover(DataAccessContext context)
+    {
+        return _selfCertifyingDataAccessPoint.Discover(context);
     }
 
     /// <inheritdoc/>

@@ -256,10 +256,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
 
     public override string ToString()
     {
-        if (NewCohortDefinition == null)
-            return base.ToString();
-
-        return NewCohortDefinition.Description;
+        return NewCohortDefinition == null ? base.ToString() : NewCohortDefinition.Description;
     }
 
     public string GetSummary(bool includeName, bool includeId)

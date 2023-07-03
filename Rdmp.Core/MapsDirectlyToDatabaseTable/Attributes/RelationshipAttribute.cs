@@ -56,11 +56,12 @@ public class RelationshipAttribute : Attribute
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((RelationshipAttribute) obj);
+        return obj.GetType() == GetType() && Equals((RelationshipAttribute) obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), Cref, PropertyName);
-
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(base.GetHashCode(), Cref, PropertyName);
+    }
     #endregion
 }

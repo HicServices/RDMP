@@ -75,10 +75,7 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     {
         get
         {
-            if (OrderByDimensionIfAny_ID == null)
-                return null;
-
-            return Repository.GetObjectByID<AggregateDimension>(OrderByDimensionIfAny_ID.Value);
+            return OrderByDimensionIfAny_ID == null ? null : Repository.GetObjectByID<AggregateDimension>(OrderByDimensionIfAny_ID.Value);
         }
     }
 

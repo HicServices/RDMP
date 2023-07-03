@@ -60,10 +60,9 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         // we have a cohort so can only create an ExtractionConfiguration for Projects that share
         // the cohorts project number
 
-        if (BasicActivator.CoreChildProvider is DataExportChildProvider dx)
-            return dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber);
-
-        return Enumerable.Empty<Project>();
+        return BasicActivator.CoreChildProvider is DataExportChildProvider dx
+            ? dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber)
+            : Enumerable.Empty<Project>();
     }
 
     [UseWithObjectConstructor]
@@ -114,7 +113,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
                     WindowTitle = "New Extraction Configuration",
                     TaskDescription = "Enter a name for the new Extraction Configuration",
                     EntryLabel = "Name"
-                }, 255, $"{p.ProjectNumber} {DateTime.Now.ToString("yyyy-MM-dd")} Extraction".Trim(), out name, false))
+                }, 255, $"{p.ProjectNumber} {DateTime.Now:yyyy-MM-dd} Extraction".Trim(), out name, false))
                 return;
 
         // create the new config
@@ -149,10 +148,8 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
 
     private string GetTaskDescription()
     {
-        if (CohortIfAny == null)
-            return "Select which Project to create the ExtractionConfiguration under";
-
-        return
-            $"Select which Project to create the ExtractionConfiguration under.  Only Projects with ProjectNumber {CohortIfAny.ExternalProjectNumber} are shown.  This is because you are using ExtractableCohort '{CohortIfAny}' for this operation.";
+        return CohortIfAny == null
+            ? "Select which Project to create the ExtractionConfiguration under"
+            : $"Select which Project to create the ExtractionConfiguration under.  Only Projects with ProjectNumber {CohortIfAny.ExternalProjectNumber} are shown.  This is because you are using ExtractableCohort '{CohortIfAny}' for this operation.";
     }
 }

@@ -4,12 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+
 namespace Rdmp.UI.CommandExecution;
 
 internal class CachedDropTarget
 {
-    public object Target { get; private set; }
-    public InsertOption RelativeLocation { get; private set; }
+    public object Target { get; }
+    public InsertOption RelativeLocation { get; }
 
     public CachedDropTarget(object target, InsertOption relativeLocation)
     {
@@ -24,15 +26,11 @@ internal class CachedDropTarget
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((CachedDropTarget) obj);
+        return obj.GetType() == GetType() && Equals((CachedDropTarget) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return ((Target != null ? Target.GetHashCode() : 0) * 397) ^ (int)RelativeLocation;
-        }
+        return HashCode.Combine(Target, RelativeLocation);
     }
 }

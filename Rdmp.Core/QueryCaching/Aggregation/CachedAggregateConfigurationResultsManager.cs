@@ -35,7 +35,7 @@ namespace Rdmp.Core.QueryCaching.Aggregation;
 /// <para> CachedAggregateConfigurationResultsManager can cache any CacheCommitArguments (includes not just patient identifier lists but also aggregate graphs and
 /// patient index tables).</para>
 /// </summary>
-public class CachedAggregateConfigurationResultsManager
+public partial class CachedAggregateConfigurationResultsManager
 {
     private readonly DiscoveredServer _server;
     private DiscoveredDatabase _database;
@@ -67,23 +67,20 @@ public class CachedAggregateConfigurationResultsManager
         using (var con = _server.GetConnection())
         {
             con.Open();
-            using (var cmd = DatabaseCommandHelper.GetCommand(
+            using var cmd = DatabaseCommandHelper.GetCommand(
                        $@"Select 
 {syntax.EnsureWrapped("TableName")},
 {syntax.EnsureWrapped("SqlExecuted")} from {mgrTable.GetFullyQualifiedName()}
 WHERE {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID}
-AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
+AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con);
+            using var r = cmd.ExecuteReader();
+            if (r.Read())
             {
-                using (var r = cmd.ExecuteReader())
-                {
-                    if (r.Read())
-                    {
-                        var tableName = r["TableName"].ToString();
-                        sql = r["SqlExecuted"] as string;
-                        return _database.ExpectTable(tableName);
-                    }
-                }
+                var tableName = r["TableName"].ToString();
+                sql = r["SqlExecuted"] as string;
+                return _database.ExpectTable(tableName);
             }
+
         }
 
         sql = null;
@@ -133,22 +130,20 @@ WHERE
 
     private bool IsMatchOnSqlExecuted(DbDataReader r, string currentSql)
     {
-        //replace all whitespace with single whitespace 
-        var standardisedDatabaseSql = Regex.Replace(r["SqlExecuted"].ToString(), @"\s+", " ");
-        var standardisedUsersSql = Regex.Replace(currentSql, @"\s+", " ");
+        //replace all white space with single space 
+        var standardisedDatabaseSql = Spaces().Replace(r["SqlExecuted"].ToString(),  " ");
+        var standardisedUsersSql = Spaces().Replace(currentSql, " ");
 
         var match = standardisedDatabaseSql.ToLower().Trim().Equals(standardisedUsersSql.ToLower().Trim());
 
-        if (!match)
-        {
-            _logger.Info("Cache Miss:");
-            _logger.Info("Current Sql:");
-            _logger.Info(standardisedUsersSql);
-            _logger.Info("Cached Sql:");
-            _logger.Info(standardisedDatabaseSql);
-        }
+        if (match) return true;
 
-        return match;
+        _logger.Info("Cache Miss:");
+        _logger.Info("Current Sql:");
+        _logger.Info(standardisedUsersSql);
+        _logger.Info("Cached Sql:");
+        _logger.Info(standardisedDatabaseSql);
+        return false;
     }
 
     public void CommitResults(CacheCommitArguments arguments)
@@ -217,13 +212,15 @@ WHERE
             using var cmd = DatabaseCommandHelper.GetCommand(
                 $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'", con);
             var deletedRows = cmd.ExecuteNonQuery();
-            if(deletedRows != 1)
-                throw new Exception(
-                    $"Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation {operation} but there were {deletedRows} affected records");
-
-            return true;
+            return deletedRows != 1
+                ? throw new Exception(
+                    $"Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation {operation} but there were {deletedRows} affected records")
+                : true;
         }
 
         return false;
     }
+
+    [GeneratedRegex("\\s+")]
+    private static partial Regex Spaces();
 }

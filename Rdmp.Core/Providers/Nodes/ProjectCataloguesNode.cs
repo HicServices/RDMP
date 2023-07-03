@@ -15,13 +15,8 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class ProjectCataloguesNode : Node, IOrderable
 {
-    public Project Project { get; set; }
-
-    public int Order
-    {
-        get => 5;
-        set { }
-    }
+    public Project Project { get; }
+    public int Order { get => 5; set{ } }
 
     public ProjectCataloguesNode(Project project)
     {
@@ -36,9 +31,11 @@ public class ProjectCataloguesNode : Node, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectCataloguesNode) obj);
+        return obj.GetType() == GetType() && Equals((ProjectCataloguesNode) obj);
     }
 
-    public override int GetHashCode() => Project.GetHashCode();
+    public override int GetHashCode()
+    {
+        return System.HashCode.Combine(Project);
+    }
 }

@@ -94,9 +94,9 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
     public static bool IsRootObject(object root)
     {
         // The root CohortIdentificationConfiguration FolderNode is a root element in this tree
-        if (root is FolderNode<CohortIdentificationConfiguration> f) return f.Name == FolderHelper.Root;
-
-        return root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode;
+        return root is FolderNode<CohortIdentificationConfiguration> f
+            ? f.Name == FolderHelper.Root
+            : root is AllOrphanAggregateConfigurationsNode or AllTemplateAggregateConfigurationsNode;
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -105,8 +105,6 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
 
     private string FrozenAspectGetter(object o)
     {
-        if (o is CohortIdentificationConfiguration cic)
-            return cic.Frozen ? "Yes" : "No";
-        return null;
+        return o is CohortIdentificationConfiguration cic ? cic.Frozen ? "Yes" : "No" : null;
     }
 }

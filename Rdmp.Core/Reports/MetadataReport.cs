@@ -365,10 +365,7 @@ public class MetadataReport : DocXHelper
         if (x.IsExtractionIdentifier && !y.IsExtractionIdentifier)
             return -1;
 
-        if (y.IsExtractionIdentifier is true and true)
-            return 1;
-
-        return x.Order - y.Order;
+        return y.IsExtractionIdentifier is true and true ? 1 : x.Order - y.Order;
     }
 
     private bool Include(ExtractionInformation arg)
@@ -471,12 +468,10 @@ public class MetadataReport : DocXHelper
         {
             cmd.CommandTimeout = _args.Timeout;
 
-            using (var r = cmd.ExecuteReader())
-            {
-                r.Read();
-                count = Convert.ToInt32(r["recordCount"]);
-                distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
-            }
+            using var r = cmd.ExecuteReader();
+            r.Read();
+            count = Convert.ToInt32(r["recordCount"]);
+            distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
         }
                 
         con.Close();

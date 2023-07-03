@@ -15,7 +15,7 @@ namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 /// </summary>
 public class ProjectSavedCohortsNode : Node, IOrderable
 {
-    public Project Project { get; set; }
+    public Project Project { get; }
 
     public ProjectSavedCohortsNode(Project project)
     {
@@ -30,13 +30,12 @@ public class ProjectSavedCohortsNode : Node, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectSavedCohortsNode) obj);
+        return obj.GetType() == GetType() && Equals((ProjectSavedCohortsNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return Project != null ? Project.GetHashCode() : 0;
+        return System.HashCode.Combine(Project);
     }
 
     public int Order

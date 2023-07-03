@@ -34,9 +34,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     public string ToShortString()
     {
         var s = ToString();
-        if (s.Length > MaxDescriptionLength)
-            return $"{s[..MaxDescriptionLength]}...";
-        return s;
+        return s.Length > MaxDescriptionLength ? $"{s[..MaxDescriptionLength]}..." : s;
     }
 
     public override string ToString()
@@ -106,10 +104,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     public int CompareTo(object obj)
     {
         if (obj is ArchivalDataLoadInfo other)
-            if (StartTime == other.StartTime)
-                return 0;
-            else
-                return StartTime > other.StartTime ? 1 : -1;
+            return StartTime == other.StartTime ? 0 : StartTime > other.StartTime ? 1 : -1;
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }

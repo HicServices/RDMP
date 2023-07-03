@@ -82,10 +82,7 @@ public partial class KeyDropLocationUI : UserControl
         if (data.ModelObjects.Count != 1)
             return null;
 
-        if (data.ModelObjects[0] is ExtractionInformation ei)
-            return ei.ColumnInfo;
-
-        return data.ModelObjects[0] as ColumnInfo;
+        return data.ModelObjects[0] is ExtractionInformation ei ? ei.ColumnInfo : data.ModelObjects[0] as ColumnInfo;
     }
 
     private void btnClear_Click(object sender, EventArgs e)

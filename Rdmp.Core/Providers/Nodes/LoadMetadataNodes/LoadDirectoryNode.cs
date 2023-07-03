@@ -12,7 +12,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; set; }
+    public LoadMetadata LoadMetadata { get; }
 
     public LoadDirectoryNode(LoadMetadata loadMetadata)
     {
@@ -28,10 +28,7 @@ public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 
     public DirectoryInfo GetDirectoryInfoIfAny()
     {
-        if (string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles))
-            return null;
-
-        return new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
+        return string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles ) ? null : new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
     }
 
     protected bool Equals(LoadDirectoryNode other) => Equals(LoadMetadata, other.LoadMetadata);
@@ -40,13 +37,12 @@ public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDirectoryNode) obj);
+        return obj.GetType() == GetType() && Equals((LoadDirectoryNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+        return System.HashCode.Combine(LoadMetadata);
     }
 
     public int Order

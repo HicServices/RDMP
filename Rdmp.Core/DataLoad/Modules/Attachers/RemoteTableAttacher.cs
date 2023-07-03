@@ -502,9 +502,6 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         var endSQL = declareEndDateParameter + Environment.NewLine;
         endSQL += $"SET {EndDateParameter} = '{max:yyyy-MM-dd HH:mm:ss}';{Environment.NewLine}";
 
-        if (min > DateTime.Now)
-            throw new Exception($"{FutureLoadMessage} (min is {min})");
-
-        return startSql + endSQL + Environment.NewLine;
+        return min > DateTime.Now ? throw new Exception($"{FutureLoadMessage} (min is {min})") : startSql + endSQL + Environment.NewLine;
     }
 }

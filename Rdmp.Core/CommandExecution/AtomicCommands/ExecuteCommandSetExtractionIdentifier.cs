@@ -54,12 +54,7 @@ public class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSett
             return true;
 
         // if multiple selected warn user
-        if (selected.Length > 1)
-            return YesNo(
-                "Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?",
-                "Multiple IsExtractionIdentifier columns?");
-
-        return true;
+        return selected.Length <= 1 || YesNo("Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?", "Multiple IsExtractionIdentifier columns?");
     }
 
     protected override bool Getter(ConcreteColumn c) => c.IsExtractionIdentifier;

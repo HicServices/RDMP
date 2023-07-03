@@ -116,10 +116,7 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     public static bool IsRootObject(object root)
     {
         // The root LoadMetadata FolderNode is a root element in this tree
-        if (root is FolderNode<LoadMetadata> f) return f.Name == FolderHelper.Root;
-
-        return
-            root is AllPermissionWindowsNode;
+        return root is FolderNode<LoadMetadata> f ? f.Name == FolderHelper.Root : root is AllPermissionWindowsNode;
     }
 
     public void BuildCommandList()

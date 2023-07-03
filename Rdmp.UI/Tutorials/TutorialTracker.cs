@@ -52,10 +52,7 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
     public bool ShouldShowUserWorkflow(HelpWorkflow workflow)
     {
         //all tutorials disabled
-        if (UserSettings.DisableTutorials)
-            return false;
-
-        return !UserSettings.GetTutorialDone(GetTutorialGuidFromWorkflow(workflow));
+        return !UserSettings.DisableTutorials && !UserSettings.GetTutorialDone(GetTutorialGuidFromWorkflow(workflow));
     }
 
     private Guid GetTutorialGuidFromWorkflow(HelpWorkflow workflow)
@@ -67,10 +64,7 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
         //workflow is associated with a specific Command, so it should have a Tutorial Available
         var tutorial = TutorialsAvailable.FirstOrDefault(t => t.CommandType == workflow.Command.GetType());
 
-        if (tutorial == null)
-            return Guid.Empty;
-
-        return tutorial.Guid;
+        return tutorial?.Guid ?? Guid.Empty;
     }
 
     public void Completed(HelpWorkflow helpWorkflow)

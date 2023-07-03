@@ -208,14 +208,12 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
             updateCommand.ExecuteNonQuery();
         }
 
-        using (var cmdtruncateIdentifiersArchive =
-               _dumpDatabase.Server.GetCommand($"TRUNCATE TABLE {GetStagingRuntimeName()}", con))
-        {
-            if(!cmdtruncateIdentifiersArchive.CommandText.Contains("_STAGING"))
-                throw new Exception("Were about to run a command that TRUNCATED a non staging table!");
-            //clear the table now
-            cmdtruncateIdentifiersArchive.ExecuteNonQuery();
-        }
+        using var cmdtruncateIdentifiersArchive =
+               _dumpDatabase.Server.GetCommand($"TRUNCATE TABLE {GetStagingRuntimeName()}", con);
+        if (!cmdtruncateIdentifiersArchive.CommandText.Contains("_STAGING"))
+            throw new Exception("Were about to run a command that TRUNCATED a non staging table!");
+        //clear the table now
+        cmdtruncateIdentifiersArchive.ExecuteNonQuery();
     }
 
     public void CreateSTAGINGTable()

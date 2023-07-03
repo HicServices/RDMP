@@ -56,10 +56,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
     {
         var c = (Catalogue)rowObject;
 
-        if (!_report.CataloguesWithDQERuns.ContainsKey(c))
-            return "Never";
-
-        return _report.CataloguesWithDQERuns[c].DateOfEvaluation;
+        return !_report.CataloguesWithDQERuns.ContainsKey(c) ? "Never" : _report.CataloguesWithDQERuns[c].DateOfEvaluation;
     }
 
     public void SetLoadProgress(LoadProgress lp, IActivateItems activator)

@@ -126,12 +126,10 @@ public class Evaluation : DatabaseEntity
 
         using (var con = DQERepository.GetConnection())
         {
-            using (var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction))
-            using (var r = cmd.ExecuteReader())
-            {
-                while (r.Read())
-                    toReturn.Add((string)r["PivotCategory"]);
-            }
+            using var cmd = DatabaseCommandHelper.GetCommand(sql, con.Connection, con.Transaction);
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+                toReturn.Add((string)r["PivotCategory"]);
         }
 
         return toReturn.ToArray();
@@ -153,9 +151,7 @@ public class Evaluation : DatabaseEntity
     {
         var state = ColumnStates?.FirstOrDefault();
 
-        if (state == null) return null;
-
-        return state.CountCorrect + state.CountMissing + state.CountWrong + state.CountInvalidatesRow;
+        return state == null ? null : state.CountCorrect + state.CountMissing + state.CountWrong + state.CountInvalidatesRow;
     }
 
     private void LoadRowAndColumnStates()

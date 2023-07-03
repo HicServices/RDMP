@@ -168,10 +168,9 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private Bitmap ImageGetter(object rowObject)
     {
-        if (Activator == null)
-            return null;
-
-        return rowObject switch
+        return Activator == null
+            ? null
+            : rowObject switch
         {
             UnplannedTable => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem)
                 .ImageToBitmap(),

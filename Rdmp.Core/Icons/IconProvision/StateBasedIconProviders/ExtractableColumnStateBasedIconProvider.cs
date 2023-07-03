@@ -44,9 +44,9 @@ public class ExtractableColumnStateBasedIconProvider : IObjectStateBasedIconProv
         var ei = col.CatalogueExtractionInformation;
 
         //its parent ExtractionInformation still exists then we can determine its category
-        if (ei == null) return toReturn;
-
-        return ei.ExtractionCategory switch
+        return ei == null
+            ? toReturn
+            : ei.ExtractionCategory switch
         {
             ExtractionCategory.ProjectSpecific =>
                 _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),

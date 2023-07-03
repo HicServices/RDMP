@@ -95,10 +95,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
 
         var cols = _alreadyMarked ?? _alreadyMarkedInConfiguration;
 
-        if (cols == null || cols.Length == 0)
-            return _commandName;
-
-        return $"{_commandName} ({string.Join(",", cols.Select(e => e.GetRuntimeName()))})";
+        return cols == null || cols.Length == 0 ? _commandName : $"{_commandName} ({string.Join(",", cols.Select(e => e.GetRuntimeName()))})";
     }
 
     public override void Execute()

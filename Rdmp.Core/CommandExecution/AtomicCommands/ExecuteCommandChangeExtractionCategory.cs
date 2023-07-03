@@ -53,10 +53,9 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
 
     public override string GetCommandName()
     {
-        if (_extractionInformations == null || _extractionInformations.Length <= 1)
-            return "Set ExtractionCategory";
-
-        return "Set ALL to ExtractionCategory";
+        return _extractionInformations == null || _extractionInformations.Length <= 1
+            ? "Set ExtractionCategory"
+            : "Set ALL to ExtractionCategory";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

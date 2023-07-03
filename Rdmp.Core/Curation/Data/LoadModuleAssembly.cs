@@ -200,10 +200,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 
     private static bool AreEqual(byte[] readAllBytes, byte[] dll)
     {
-        if (readAllBytes.Length != dll.Length)
-            return false;
-
-        return !dll.Where((t, i) => !readAllBytes[i].Equals(t)).Any();
+        return readAllBytes.Length == dll.Length && !dll.Where((t, i) => !readAllBytes[i].Equals(t)).Any();
     }
 
     public void InjectKnown(Plugin instance)

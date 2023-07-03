@@ -29,10 +29,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
     {
         var result = GetMachineReadableTimespanIfKnownOf(catalogue, discardOutliers, out accurateAsOf);
 
-        if (result.Item1 == null || result.Item2 == null)
-            return "Unknown";
-
-        return $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
+        return result.Item1 == null || result.Item2 == null ? "Unknown" : $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
     }
 
     public static Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation,
@@ -61,10 +58,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
                 break;
             }
 
-        if (maxMonth == null || minMonth == null)
-            return Unknown();
-
-        return Tuple.Create(minMonth, maxMonth);
+        return maxMonth == null || minMonth == null ? Unknown() : Tuple.Create(minMonth, maxMonth);
     }
 
     public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers,

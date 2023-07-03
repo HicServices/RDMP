@@ -52,10 +52,7 @@ public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
     /// <returns></returns>
     public static DateTime? ObjectToNullableDateTime(object o)
     {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return (DateTime)o;
+        return o == null || o == DBNull.Value ? null : (DateTime)o;
     }
 
     /// <summary>

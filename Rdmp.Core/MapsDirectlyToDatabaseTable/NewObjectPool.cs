@@ -51,10 +51,7 @@ public static class NewObjectPool
     {
         lock (currentScopeLock)
         {
-            if (CurrentScope != null)
-                throw new Exception("An existing session is already underway");
-
-            return CurrentScope = new Scope();
+            return CurrentScope != null ? throw new Exception("An existing session is already underway") : (IDisposable)(CurrentScope = new Scope());
         }
     }
 

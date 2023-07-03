@@ -224,12 +224,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         get
         {
-            if (DefaultPipeline_ID == null)
-                return null;
-
-            return
-                ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(
-                    DefaultPipeline_ID.Value);
+            return DefaultPipeline_ID == null
+                ? null
+                : (IPipeline)((IDataExportRepository) Repository).CatalogueRepository.GetObjectByID<Pipeline>(DefaultPipeline_ID.Value);
         }
     }
 
@@ -240,12 +237,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         get
         {
-            if (CohortIdentificationConfiguration_ID == null)
-                return null;
-
-            return
-                ((IDataExportRepository)Repository).CatalogueRepository
-                .GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID.Value);
+            return CohortIdentificationConfiguration_ID == null
+                ? null
+                : ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID.Value);
         }
     }
 
@@ -255,12 +249,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     {
         get
         {
-            if (CohortRefreshPipeline_ID == null)
-                return null;
-
-            return
-                ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(CohortRefreshPipeline_ID
-                    .Value);
+            return CohortRefreshPipeline_ID == null
+                ? null
+                : (IPipeline)((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<Pipeline>(CohortRefreshPipeline_ID.Value);
         }
     }
 
@@ -534,10 +525,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// <inheritdoc/>
     public IExtractableCohort GetExtractableCohort()
     {
-        if (Cohort_ID == null)
-            return null;
-
-        return Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
+        return Cohort_ID == null ? null : (IExtractableCohort)Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
     }
 
     /// <inheritdoc/>

@@ -57,9 +57,6 @@ public static class ExceptionHelper
         if (e is T t)
             return t;
 
-        if (e.InnerException != null)
-            return GetExceptionIfExists<T>(e.InnerException);
-
-        return null;
+        return e.InnerException != null ? GetExceptionIfExists<T>(e.InnerException) : null;
     }
 }

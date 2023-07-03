@@ -70,7 +70,7 @@ internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsB
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        void Adjust(DelimitedFlatFileDataFlowSource a)
+        static void Adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
             a.ThrowOnEmptyFiles = true;

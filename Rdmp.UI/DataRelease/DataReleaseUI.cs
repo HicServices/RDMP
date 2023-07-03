@@ -117,10 +117,9 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private object GetState(object rowObject)
     {
-        if (checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner)
-            return null;
-
-        return rowObject switch
+        return checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner
+            ? null
+            : rowObject switch
         {
             IExtractionConfiguration configuration => releaseRunner.GetState(configuration),
             ISelectedDataSets sds => releaseRunner.GetState(sds),

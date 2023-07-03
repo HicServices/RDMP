@@ -30,10 +30,9 @@ public class ExtractCommandStateBasedIconProvider : IObjectStateBasedIconProvide
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is not ExtractCommandState ecs)
-            return null;
-
-        return ecs switch
+        return o is not ExtractCommandState ecs
+            ? null
+            : ecs switch
         {
             ExtractCommandState.NotLaunched => _waiting,
             ExtractCommandState.WaitingForSQLServer => _waiting,

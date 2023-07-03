@@ -265,10 +265,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
     {
         //if the collection an arbitrary one then it is definitely not the root collection for anyone
-        if (collection == RDMPCollection.None)
-            return false;
-
-        return _windowManager.GetCollectionForRootObject(rootObject) == collection;
+        return collection != RDMPCollection.None && _windowManager.GetCollectionForRootObject(rootObject) == collection;
     }
 
     /// <summary>
@@ -300,9 +297,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public DialogResult ShowDialog(Form form)
     {
         // if on wrong Thread
-        if (_mainDockPanel?.InvokeRequired ?? false) return _mainDockPanel.Invoke(() => ShowDialog(form));
-
-        return form.ShowDialog();
+        return _mainDockPanel?.InvokeRequired ?? false ? _mainDockPanel.Invoke(() => ShowDialog(form)) : form.ShowDialog();
     }
 
     public void KillForm(Form f, Exception reason)
@@ -704,9 +699,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public override FileInfo SelectFile(string prompt)
     {
         // if on wrong Thread
-        if (_mainDockPanel?.InvokeRequired ?? false) return _mainDockPanel.Invoke(() => SelectFile(prompt));
-
-        return SelectFile(prompt, null, null);
+        return _mainDockPanel?.InvokeRequired ?? false ? _mainDockPanel.Invoke(() => SelectFile(prompt)) : SelectFile(prompt, null, null);
     }
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
@@ -722,12 +715,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (fb.ShowDialog() == DialogResult.OK)
         {
             // entering "null" in a winforms file dialog will return something like "D:\Blah\null"
-            if (string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase))
-                return null;
-
-            return new FileInfo(fb.FileName);
+            return string.Equals(Path.GetFileName(fb.FileName),"null", StringComparison.CurrentCultureIgnoreCase)
+                ? null
+                : new FileInfo(fb.FileName);
         }
-            
+
         return null;
     }
 

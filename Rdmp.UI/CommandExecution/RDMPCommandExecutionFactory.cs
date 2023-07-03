@@ -123,11 +123,9 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     private ICommandExecution CreateWhenTargetIsProcessTask(ICombineToMakeCommand cmd, ProcessTask targetProcessTask,
         InsertOption insertOption)
     {
-        if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
-            return new ExecuteCommandReOrderProcessTask(_activator, sourceProcessTaskCommand, targetProcessTask,
-                insertOption);
-
-        return null;
+        return cmd is ProcessTaskCombineable sourceProcessTaskCommand
+            ? new ExecuteCommandReOrderProcessTask(_activator,sourceProcessTaskCommand, targetProcessTask, insertOption)
+            : (ICommandExecution)null;
     }
 
 
@@ -150,11 +148,9 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 
     private ICommandExecution CreateWhenTargetIsATableInfo(ICombineToMakeCommand cmd, TableInfo targetTableInfo)
     {
-        if (cmd is DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable)
-            return new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,
-                sourceDataAccessCredentialsCombineable.DataAccessCredentials, targetTableInfo);
-
-        return null;
+        return cmd is DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable
+            ? new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,sourceDataAccessCredentialsCombineable.DataAccessCredentials, targetTableInfo)
+            : (ICommandExecution)null;
     }
 
 
@@ -166,21 +162,17 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
                 return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,
                     sourceAggregateConfigurationCombineable, targetJoinableCollectionNode.Configuration);
 
-        if (cmd is CatalogueCombineable sourceCatalogueCombineable)
-            return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,
-                sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration);
-
-        return null;
+        return cmd is CatalogueCombineable sourceCatalogueCombineable
+            ? new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration)
+            : (ICommandExecution)null;
     }
 
 
     private ICommandExecution CreateWhenTargetIsPreLoadDiscardedColumnsNode(ICombineToMakeCommand cmd,
         PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
     {
-        if (cmd is ColumnInfoCombineable sourceColumnInfoCombineable)
-            return new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator,
-                targetPreLoadDiscardedColumnsNode.TableInfo, sourceColumnInfoCombineable);
-
-        return null;
+        return cmd is ColumnInfoCombineable sourceColumnInfoCombineable
+            ? new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator,targetPreLoadDiscardedColumnsNode.TableInfo,sourceColumnInfoCombineable)
+            : (ICommandExecution)null;
     }
 }

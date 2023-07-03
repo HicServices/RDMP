@@ -118,9 +118,7 @@ public class ExecutableRuntimeTask : RuntimeTask
     private static ExitCodeType ParseExitCode(int value)
     {
         var success = Enum.TryParse(value.ToString(), out ExitCodeType exitCode);
-        if (!success)
-            throw new ArgumentException($"Could not parse exit code from value: {value}");
-        return exitCode;
+        return !success ? throw new ArgumentException($"Could not parse exit code from value: {value}") : exitCode;
     }
 
     public override bool Exists() => File.Exists(ExeFilepath);

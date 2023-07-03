@@ -288,10 +288,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
     private ColumnInfo FetchColumnInfoIfAny()
     {
-        if (!ColumnInfo_ID.HasValue)
-            return null;
-
-        return Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
+        return !ColumnInfo_ID.HasValue ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
     }
 
     /// <inheritdoc/>

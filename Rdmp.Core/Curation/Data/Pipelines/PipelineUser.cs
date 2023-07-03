@@ -82,10 +82,7 @@ public class PipelineUser : IPipelineUser
     {
         var id = (int?)_property.GetValue(User);
 
-        if (id == null)
-            return null;
-
-        return _catalogueRepository.GetObjectByID<Pipeline>(id.Value);
+        return id == null ? null : _catalogueRepository.GetObjectByID<Pipeline>(id.Value);
     }
 
     private void Set(Pipeline newPipelineOrNull)

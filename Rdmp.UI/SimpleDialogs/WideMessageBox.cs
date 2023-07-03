@@ -185,10 +185,7 @@ public partial class WideMessageBox : Form
                 sb.AppendLine($"{c.Name}:{stringval}");
             }
 
-        if (sb.Length >= MAX_LENGTH_BODY)
-            return sb.ToString(0, MAX_LENGTH_BODY);
-
-        return sb.ToString();
+        return sb.Length >= MAX_LENGTH_BODY ? sb.ToString(0, MAX_LENGTH_BODY) : sb.ToString();
     }
 
     public static void Show(string title, string message, string environmentDotStackTrace = null,
@@ -331,10 +328,7 @@ public partial class WideMessageBox : Form
 
         var keyword = CommentStore.GetDocumentationKeywordIfExists(word.Trim(), true);
 
-        if (keyword == keywordNotToAdd)
-            return null;
-
-        return keyword;
+        return keyword == keywordNotToAdd ? null : keyword;
     }
 
     private static void ShowHelpSection(HelpSection hs)

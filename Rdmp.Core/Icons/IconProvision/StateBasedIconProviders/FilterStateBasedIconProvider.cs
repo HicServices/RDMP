@@ -36,9 +36,6 @@ public class FilterStateBasedIconProvider : IObjectStateBasedIconProvider
             return _basicIcon;
         }
 
-        if (CatalogueIconProvider.ConceptIs(typeof(IFilter), o))
-            return _basicIcon;
-
-        return null;
+        return CatalogueIconProvider.ConceptIs(typeof(IFilter), o) ? _basicIcon : null;
     }
 }

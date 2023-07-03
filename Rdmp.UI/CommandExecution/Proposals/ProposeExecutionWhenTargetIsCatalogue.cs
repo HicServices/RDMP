@@ -31,11 +31,9 @@ internal class ProposeExecutionWhenTargetIsCatalogue:RDMPCommandExecutionProposa
         InsertOption insertOption = InsertOption.Default)
     {
         if(cmd is FileCollectionCombineable sourceFileCollection)
-            if (sourceFileCollection.IsShareDefinition)
-                return new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,
-                    targetCatalogue);
-            else
-                return new ExecuteCommandAddNewSupportingDocument(ItemActivator, sourceFileCollection, targetCatalogue);
+            return sourceFileCollection.IsShareDefinition
+                ? new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,targetCatalogue)
+                : new ExecuteCommandAddNewSupportingDocument(ItemActivator, sourceFileCollection, targetCatalogue);
 
         return null;
     }

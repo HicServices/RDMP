@@ -41,10 +41,12 @@ internal class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
             .FilterCompatiblePipelines(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
             .ToArray();
 
-        if (!compatible.Any()) throw new Exception("No compatible pipelines");
+        if (!compatible.Any())
+        {
+            throw new Exception("No compatible pipelines");
+        }
 
-        var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true) ??
-                   throw new OperationCanceledException();
+        var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true) ?? throw new OperationCanceledException();
         opts.Pipeline = pipe.ID.ToString();
         opts.Configurations = string.Join(",", configs.Select(c => c.ID.ToString()).ToArray());
         opts.ReleaseGlobals = true;

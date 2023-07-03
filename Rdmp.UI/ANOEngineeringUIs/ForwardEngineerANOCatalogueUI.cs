@@ -88,18 +88,12 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         if (rowobject is ColumnInfo col)
             return _planManager.GetPlanForColumnInfo(col).Plan;
 
-        if (_planManager.SkippedTables.Contains(table))
-            return "Already Exists";
-
-        return null;
+        return _planManager.SkippedTables.Contains(table) ? "Already Exists" : (object)null;
     }
 
     private Image PickedANOTable_ImageGetter(object rowObject)
     {
-        if (rowObject is ColumnInfo ci && _planManager.GetPlanForColumnInfo(ci).ANOTable != null)
-            return imageList1.Images["ANOTable"];
-
-        return null;
+        return rowObject is ColumnInfo ci && _planManager.GetPlanForColumnInfo(ci).ANOTable != null ? imageList1.Images["ANOTable"] : null;
     }
 
     private object PickedANOTableAspectGetter(object rowobject)

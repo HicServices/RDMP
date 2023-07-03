@@ -91,11 +91,9 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
             c.TableInfo.GetRuntimeName().Equals(field.Table.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase)
         );
 
-        if (match != null && field.IsPrimaryKey)
-            throw new NotSupportedException(
-                $"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted");
-
-        return match != null;
+        return match != null && field.IsPrimaryKey
+            ? throw new NotSupportedException($"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted")
+            : match != null;
     }
 
     private bool Ignore(DiscoveredColumn field)
@@ -106,11 +104,10 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
         //its a global ignore based on regex ignore pattern?
         var match = _ignore.IsMatch(field.GetRuntimeName());
 
-        if (match && field.IsPrimaryKey)
-            throw new NotSupportedException(
-                $"Ignore Pattern {_ignore} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted");
-
-        return match;
+        return match && field.IsPrimaryKey
+            ? throw new NotSupportedException(
+                $"Ignore Pattern {_ignore} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted")
+            : match;
     }
 
     private bool UpdateOnly(DiscoveredColumn field)
@@ -121,10 +118,9 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
         //its a supplemental ignore e.g. MessageGuid
         var match = _updateButDoNotDiffExtended.IsMatch(field.GetRuntimeName());
 
-        if (match && field.IsPrimaryKey)
-            throw new NotSupportedException(
-                $"UpdateButDoNotDiff Pattern {_updateButDoNotDiffExtended} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted");
-
-        return match;
+        return match && field.IsPrimaryKey
+            ? throw new NotSupportedException(
+                $"UpdateButDoNotDiff Pattern {_updateButDoNotDiffExtended} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted")
+            : match;
     }
 }

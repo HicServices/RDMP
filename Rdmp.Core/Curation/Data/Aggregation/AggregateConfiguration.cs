@@ -325,10 +325,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             }
 
             //not within any containers
-            if (_orderWithinKnownContainer == null)
-                return 0;
-
-            return (int)_orderWithinKnownContainer;
+            return _orderWithinKnownContainer == null ? 0 : (int)_orderWithinKnownContainer;
         }
 
         set
@@ -762,12 +759,9 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             return
                 @"This is an AggregateConfiguration running as a 'Joinable PatientIndex Table'.  its role is to produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)";
 
-        if (IsCohortIdentificationAggregate)
-            return
-                @"This is an AggregateConfiguration running as a 'Cohort Aggregate'.  its role is to produce a list of unique patient identifiers from a single dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')";
-
-        return
-            @"This is an AggregateConfiguration running as an 'Aggregate Graph'.  its role is to produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard";
+        return IsCohortIdentificationAggregate
+            ? @"This is an AggregateConfiguration running as a 'Cohort Aggregate'.  its role is to produce a list of unique patient identifiers from a single dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')"
+            : @"This is an AggregateConfiguration running as an 'Aggregate Graph'.  its role is to produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard";
     }
 
     public AggregateConfiguration ShallowClone()

@@ -18,7 +18,7 @@ using NUnit.Framework.Internal.Commands;
 namespace Rdmp.UI.Tests;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-internal class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
+internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 {
     private readonly int _timeout;
 
@@ -46,14 +46,14 @@ internal class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
             _timeout = timeout;
         }
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, IntPtr lParam);
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, IntPtr lParam);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
         private string YesNoDialog = "#32770";
 
@@ -122,10 +122,7 @@ internal class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                 if (threadException != null)
                     throw threadException;
 
-                if (result == null)
-                    throw new Exception("UI test did not produce a result");
-
-                return result;
+                return result ?? throw new Exception("UI test did not produce a result");
             }
             catch (AggregateException ae)
             {

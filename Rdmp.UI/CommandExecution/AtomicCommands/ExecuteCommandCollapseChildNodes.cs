@@ -37,10 +37,7 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution, IAtomic
 
     public override string GetCommandName()
     {
-        if (_rootToCollapseTo is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName))
-            return "Collapse All";
-
-        return base.GetCommandName();
+        return _rootToCollapseTo is RDMPCollection && string.IsNullOrWhiteSpace(OverrideCommandName) ? "Collapse All" : base.GetCommandName();
     }
 
     public override void Execute()

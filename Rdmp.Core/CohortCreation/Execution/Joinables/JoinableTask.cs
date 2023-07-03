@@ -58,10 +58,12 @@ public class JoinableTask : CacheableTask
 
         var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
 
-        if (name.StartsWith(expectedTrimStart))
-            return name[expectedTrimStart.Length..];
+        return name.StartsWith(expectedTrimStart) ? name[expectedTrimStart.Length..] : name;
+    }
 
-        return name;
+    public override AggregateConfiguration GetAggregateConfiguration()
+    {
+        return Joinable.AggregateConfiguration;
     }
 
     public override AggregateConfiguration GetAggregateConfiguration() => Joinable.AggregateConfiguration;

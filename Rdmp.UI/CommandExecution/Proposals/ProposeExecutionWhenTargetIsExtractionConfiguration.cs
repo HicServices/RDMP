@@ -40,11 +40,10 @@ internal class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandEx
                 var dataExportChildProvider = (DataExportChildProvider)ItemActivator.CoreChildProvider;
                 var eds = dataExportChildProvider.ExtractableDataSets.SingleOrDefault(ds => ds.Catalogue_ID == sourceCatalogueCombineable.Catalogue.ID);
 
-                if (eds == null)
-                    return new ImpossibleCommand("Catalogue is not Extractable");
-                
-                return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds,targetExtractionConfiguration);
-            }
+                    return eds == null
+                    ? new ImpossibleCommand("Catalogue is not Extractable")
+                    : new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, eds,targetExtractionConfiguration);
+                }
             case ExtractableCohortCombineable sourceExtractableCohortCombineable:
                 return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator, sourceExtractableCohortCombineable, targetExtractionConfiguration);
             //user is trying to add datasets to a configuration

@@ -43,10 +43,9 @@ public class DataExportProblemProvider : ProblemProvider
 
     private string DescribeProblem(ExternalCohortTable externalCohortTable)
     {
-        if (_exportChildProvider != null && _exportChildProvider.ForbidListedSources.Contains(externalCohortTable))
-            return "Cohort Source database was unreachable";
-
-        return null;
+        return _exportChildProvider != null && _exportChildProvider.ForbidListedSources.Contains(externalCohortTable)
+            ? "Cohort Source database was unreachable"
+            : null;
     }
 
     private string DescribeProblem(ExtractionConfiguration extractionConfiguration)
@@ -67,10 +66,7 @@ public class DataExportProblemProvider : ProblemProvider
         if (_exportChildProvider.IsMissingExtractionIdentifier(selectedDataSets))
             return "There are no IsExtractionIdentifier columns in dataset";
 
-        if (selectedDataSets.GetCatalogue()?.IsDeprecated ?? false)
-            return "Dataset is deprecated";
-
-        return null;
+        return selectedDataSets.GetCatalogue()?.IsDeprecated ?? false ? "Dataset is deprecated" : null;
     }
 
     private string DescribeProblem(ExtractionConfigurationsNode extractionConfigurationsNode)
@@ -85,19 +81,15 @@ public class DataExportProblemProvider : ProblemProvider
 
     private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode)
     {
-        if (_exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project))
-            return
-                "Project has no Cohorts. Commit new Cohort(s) from File/Cohort Query Builder to use with this Project's ExtractionConfigurations";
-
-        return null;
+        return _exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project)
+            ? "Project has no Cohorts. Commit new Cohort(s) from File/Cohort Query Builder to use with this Project's ExtractionConfigurations"
+            : null;
     }
 
 
     private static string DescribeProblem(ExtractionDirectoryNode edn)
     {
-        if (edn.GetDirectoryInfoIfAny() == null) return "No Extraction Directory has been specified";
-
-        return null;
+        return edn.GetDirectoryInfoIfAny() == null ? "No Extraction Directory has been specified" : null;
     }
 
     private static string DescribeProblem(Project project)
@@ -105,9 +97,6 @@ public class DataExportProblemProvider : ProblemProvider
         if (project.ProjectNumber == null)
             return "Project has no ProjectNumber";
 
-        if (string.IsNullOrWhiteSpace(project.ExtractionDirectory))
-            return "Project has no Extraction Directory configured";
-
-        return null;
+        return string.IsNullOrWhiteSpace(project.ExtractionDirectory) ? "Project has no Extraction Directory configured" : null;
     }
 }

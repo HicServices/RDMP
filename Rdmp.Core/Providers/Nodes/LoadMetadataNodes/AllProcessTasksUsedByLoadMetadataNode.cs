@@ -11,7 +11,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 public class AllProcessTasksUsedByLoadMetadataNode : Node, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; private set; }
+    public LoadMetadata LoadMetadata { get; }
 
     public AllProcessTasksUsedByLoadMetadataNode(LoadMetadata loadMetadata)
     {
@@ -26,13 +26,12 @@ public class AllProcessTasksUsedByLoadMetadataNode : Node, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((AllProcessTasksUsedByLoadMetadataNode) obj);
+        return obj.GetType() == GetType() && Equals((AllProcessTasksUsedByLoadMetadataNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+        return System.HashCode.Combine(LoadMetadata);
     }
 
     public int Order

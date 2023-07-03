@@ -29,22 +29,19 @@ internal class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTa
         if (currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()))
             return null;
 
-        if (
-            Activator.CoreChildProvider.GetAllSearchables()
+        return Activator.CoreChildProvider.GetAllSearchables()
             .Keys.OfType<T>()
             .Except(new[] { ToTest })
             .Where(t => t.GetType() == typeToTest)
-            .Any(v => AreEqual(v, currentValue)))
-            return _problemDescription;
-
-        return null;
+            .Any(v => AreEqual(v, currentValue))
+            ? _problemDescription
+            : null;
     }
 
     private bool AreEqual(T arg, object currentValue)
     {
-        if (currentValue is string s)
-            return string.Equals(s, PropertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase);
-
-        return Equals(currentValue, PropertyToCheck(arg));
+        return currentValue is string s
+            ? string.Equals(s, PropertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase)
+            : Equals(currentValue, PropertyToCheck(arg));
     }
 }

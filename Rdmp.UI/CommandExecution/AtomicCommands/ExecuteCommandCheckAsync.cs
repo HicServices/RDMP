@@ -42,8 +42,7 @@ internal class ExecuteCommandCheckAsync : BasicUICommandExecution, IAtomicComman
 
     public override string GetCommandName()
     {
-        if (_checkable == null) return "Check";
-        return $"Check '{_checkable}'";
+        return _checkable == null ? "Check" : $"Check '{_checkable}'";
     }
 
     public override string GetCommandHelp() =>

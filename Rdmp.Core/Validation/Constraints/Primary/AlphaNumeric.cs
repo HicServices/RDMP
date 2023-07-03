@@ -23,10 +23,7 @@ public class AlphaNumeric : PrimaryConstraint
         var text = (string)value;
         var match = Regex.Match(text, RegExp);
 
-        if (!match.Success)
-            return new ValidationFailure($"Value [{value}] contains characters other than alphanumeric", this);
-
-        return null;
+        return !match.Success ? new ValidationFailure($"Value [{value}] contains characters other than alphanumeric",this) : null;
     }
 
     public override void RenameColumn(string originalName, string newName)

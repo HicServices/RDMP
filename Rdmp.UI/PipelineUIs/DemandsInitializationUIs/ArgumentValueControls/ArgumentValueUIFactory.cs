@@ -149,28 +149,22 @@ public class ArgumentValueUIFactory
         if (parent is ProcessTask pt)
             return pt.GetTableInfos();
 
-        if (parent is LoadMetadata lmd)
-            return lmd.GetDistinctTableInfoList(true);
-
-        return repository.GetAllObjects<TableInfo>();
+        return parent is LoadMetadata lmd ? lmd.GetDistinctTableInfoList(true) : (IEnumerable<TableInfo>)repository.GetAllObjects<TableInfo>();
     }
 
 
-    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
+    private IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
     {
-        if (parent is ProcessTask || parent is LoadMetadata)
-            return GetTableInfosInScope(repository, parent).SelectMany(ti => ti.ColumnInfos);
-
-        return repository.GetAllObjects<ColumnInfo>();
+        return parent is ProcessTask || parent is LoadMetadata
+            ? GetTableInfosInScope(repository,parent).SelectMany(ti => ti.ColumnInfos)
+            : repository.GetAllObjects<ColumnInfo>();
     }
 
-    private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(
-        ICatalogueRepository repository, IArgumentHost parent)
+    private IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
-        if (parent is ProcessTask || parent is LoadMetadata)
-            return GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns);
-
-        return repository.GetAllObjects<PreLoadDiscardedColumn>();
+        return parent is ProcessTask || parent is LoadMetadata
+            ? GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns)
+            : repository.GetAllObjects<PreLoadDiscardedColumn>();
     }
 
     /// <summary>

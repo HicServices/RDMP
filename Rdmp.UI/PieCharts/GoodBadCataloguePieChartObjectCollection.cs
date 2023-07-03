@@ -80,10 +80,9 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     {
         var ei = ci.ExtractionInformation;
 
-        if (ei == null)
-            return IncludeNonExtractableCatalogueItems;
-
-        return ei.ExtractionCategory switch
+        return ei == null
+            ? IncludeNonExtractableCatalogueItems
+            : ei.ExtractionCategory switch
         {
             ExtractionCategory.Internal => IncludeInternalCatalogueItems,
             ExtractionCategory.Deprecated => IncludeDeprecatedCatalogueItems,

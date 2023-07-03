@@ -91,10 +91,9 @@ public class PickAnyConstructorJsonConverter : JsonConverter
         if (constructors.Count == 0)
             return false;
 
-        if (constructors.Count == 1)
-            return true;
-
-        throw new ObjectLacksCompatibleConstructorException(
+        return constructors.Count == 1
+            ? true
+            : throw new ObjectLacksCompatibleConstructorException(
             $"There were {constructors.Count} compatible constructors for the constructorObjects provided");
     }
 

@@ -284,10 +284,9 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     /// <inheritdoc/>
     public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
     {
-        if (context == DataAccessContext.Any)
-            throw new Exception("You cannot ask for any credentials, you must supply a usage context.");
-
-        return _knownCredentials[context].Value;
+        return context == DataAccessContext.Any
+            ? throw new Exception("You cannot ask for any credentials, you must supply a usage context.")
+            : _knownCredentials[context].Value;
     }
 
     /// <summary>
@@ -451,10 +450,9 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     {
         var db = DataAccessPortal.ExpectDatabase(this, context);
 
-        if (IsTableValuedFunction)
-            return db.ExpectTableValuedFunction(GetRuntimeName(), Schema);
-
-        return db.ExpectTable(GetRuntimeName(), Schema, IsView ? TableType.View : TableType.Table);
+        return IsTableValuedFunction
+            ? db.ExpectTableValuedFunction(GetRuntimeName(), Schema)
+            : db.ExpectTable(GetRuntimeName(),Schema, IsView?TableType.View : TableType.Table);
     }
 
     /// <inheritdoc/>

@@ -1538,15 +1538,14 @@ public class CatalogueChildProvider : ICoreChildProvider
             var exactMatches = GetAllSearchables().Keys.Where(t=>t is not IMasqueradeAs).Where(type.IsInstanceOfType);
 
             //Union the unwrapped masqueraders
-            if (unwrapMasqueraders)
-                return exactMatches.Union(
+            return unwrapMasqueraders
+                ? exactMatches.Union(
                         AllMasqueraders
                             .Select(kvp => kvp.Key)
                             .OfType<IMapsDirectlyToDatabaseTable>()
                             .Where(type.IsInstanceOfType))
-                    .Distinct();
-
-            return exactMatches;
+                    .Distinct()
+                : exactMatches;
         }
     }
 
@@ -1565,10 +1564,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             var descendancy = GetDescendancyListIfAnyFor(objectToEmphasise);
 
-            if (descendancy != null && descendancy.Parents.Any())
-                return descendancy.Parents[0];
-
-            return objectToEmphasise;
+            return descendancy != null && descendancy.Parents.Any() ? descendancy.Parents[0] : objectToEmphasise;
         }
     }
 

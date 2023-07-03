@@ -270,8 +270,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
 
         var tbl = GetPushedTable();
 
-        if (tbl != null && tbl.Exists())
-            if (!tbl.IsEmpty())
+        if (tbl?.Exists() == true)
+            if(!tbl.IsEmpty())
                 throw new Exception(
                     $"Cannot delete ANOTable because it references {TableName} which is a table on server {Server} which contains rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
             else

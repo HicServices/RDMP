@@ -157,10 +157,7 @@ public partial class ViewSourceCodeDialog : Form
     {
         var entry = z.Entries.FirstOrDefault(e => e.Name == toFind);
 
-        if (entry == null)
-            return null;
-
-        return new StreamReader(entry.Open()).ReadToEnd();
+        return entry == null ? null : new StreamReader(entry.Open()).ReadToEnd();
     }
 
     private void textBox1_TextChanged(object sender, EventArgs e)

@@ -185,11 +185,10 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     /// <returns></returns>
     public DiscoveredServer GetServer()
     {
-        if (ExternalDatabaseServer_ID == null)
-            throw new NotSupportedException(
-                $"No external database server has been selected for SupportingSQL table called :{ToString()} (ID={ID}).  The SupportingSQLTable currently belongs to Catalogue {Catalogue.Name}");
-
-        return ExternalDatabaseServer.Discover(DataAccessContext.DataExport).Server;
+        return ExternalDatabaseServer_ID == null
+            ? throw new NotSupportedException(
+                $"No external database server has been selected for SupportingSQL table called :{ToString()} (ID={ID}).  The SupportingSQLTable currently belongs to Catalogue {Catalogue.Name}")
+            : ExternalDatabaseServer.Discover(DataAccessContext.DataExport).Server;
     }
 }
 

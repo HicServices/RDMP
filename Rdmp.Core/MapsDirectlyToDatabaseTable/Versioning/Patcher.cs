@@ -16,7 +16,7 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <inheritdoc/>
-public abstract class Patcher : IPatcher
+public abstract partial class Patcher:IPatcher
 {
     public const string InitialScriptName = "Initial Create";
 
@@ -66,9 +66,7 @@ public abstract class Patcher : IPatcher
         var assembly = GetDbAssembly();
         var subdirectory = ResourceSubdirectory;
 
-        var initialCreationRegex = string.IsNullOrWhiteSpace(subdirectory)
-            ? new Regex(@".*\.runAfterCreateDatabase\..*\.sql")
-            : new Regex($@".*\.{Regex.Escape(subdirectory)}\.runAfterCreateDatabase\..*\.sql");
+        var initialCreationRegex = string.IsNullOrWhiteSpace(subdirectory) ? AfterCreateRegex() : new Regex($@".*\.{Regex.Escape(subdirectory)}\.runAfterCreateDatabase\..*\.sql");
 
         var candidates = assembly.GetManifestResourceNames().Where(r => initialCreationRegex.IsMatch(r)).ToArray();
 
@@ -100,12 +98,8 @@ public abstract class Patcher : IPatcher
     {
         var assembly = GetDbAssembly();
         var subdirectory = ResourceSubdirectory;
-        Regex upgradePatchesRegexPattern;
 
-        if (string.IsNullOrWhiteSpace(subdirectory))
-            upgradePatchesRegexPattern = new Regex(@".*\.up\.(.*\.sql)");
-        else
-            upgradePatchesRegexPattern = new Regex($@".*\.{Regex.Escape(subdirectory)}\.up\.(.*\.sql)");
+        var upgradePatchesRegexPattern = string.IsNullOrWhiteSpace(subdirectory) ? UpRegex() : new Regex($@".*\.{Regex.Escape(subdirectory)}\.up\.(.*\.sql)");
 
         var files = new SortedDictionary<string, Patch>();
 
@@ -120,4 +114,9 @@ public abstract class Patcher : IPatcher
 
         return files;
     }
+
+    [GeneratedRegex(".*\\.up\\.(.*\\.sql)")]
+    private static partial Regex UpRegex();
+    [GeneratedRegex(".*\\.runAfterCreateDatabase\\..*\\.sql")]
+    private static partial Regex AfterCreateRegex();
 }

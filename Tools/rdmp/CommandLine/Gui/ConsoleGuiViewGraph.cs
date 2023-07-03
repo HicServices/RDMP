@@ -332,10 +332,9 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
     }
     private static string FormatValue(float val, float min)
     {
-        if (val < min)
-            return "";
-
-        return val switch
+        return val < min
+            ? ""
+            : val switch
         {
             > 1 => val.ToString("N0"),
             >= 0.01f => val.ToString("N2"),

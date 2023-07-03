@@ -44,23 +44,14 @@ public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
 
     protected override IViewSQLAndResultsCollection GetCollection()
     {
-        var collection = new ViewSupportingSqlCollection(SupportingSQLTable);
-
-        // windows GUI client needs to confirm dangerous queries (don't want missclicks to do bad things)
+        // windows GUI client needs to confirm dangerous queries (don't want misclicks to do bad things)
         if (!string.IsNullOrWhiteSpace(SupportingSQLTable.SQL) &&
-            BasicActivator.IsWinForms)
-        {
-            // does the query look dangerous, if so give them a choice to back out
-            var requireConfirm = RiskySql().IsMatch(SupportingSQLTable.SQL);
-
-            if (requireConfirm)
-                if (!BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
-                    return null;
-        }
-
-        return collection;
+            BasicActivator.IsWinForms &&
+            RiskySqlRegex().IsMatch(SupportingSQLTable.SQL) && !BasicActivator.YesNo("Running this SQL may make changes to your database, really run?", "Run SQL"))
+            return null;
+        return new ViewSupportingSqlCollection(SupportingSQLTable);
     }
 
     [GeneratedRegex("\\b(update|delete|drop|truncate)\\b", RegexOptions.IgnoreCase, "en-US")]
-    private static partial Regex RiskySql();
+    private static partial Regex RiskySqlRegex();
 }

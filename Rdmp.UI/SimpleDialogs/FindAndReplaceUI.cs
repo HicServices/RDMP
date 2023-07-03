@@ -117,10 +117,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private Bitmap ImageGetter(object rowObject)
     {
-        if (rowObject == null)
-            return null;
-
-        return Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
+        return rowObject == null ? null : Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
     }
 
 

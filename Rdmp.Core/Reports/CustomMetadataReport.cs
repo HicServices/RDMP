@@ -20,7 +20,7 @@ namespace Rdmp.Core.Reports;
 /// <summary>
 /// Create a custom report e.g. markdown, xml etc by taking a template file and replicating it with replacements for each <see cref="Catalogue"/> property
 /// </summary>
-public class CustomMetadataReport
+public partial class CustomMetadataReport
 {
     /// <summary>
     /// Substitutions that are used during template value replacement e.g. $Name => Catalogue.Name
@@ -202,9 +202,7 @@ public class CustomMetadataReport
         var total = columnStats.CountCorrect + columnStats.CountInvalidatesRow + columnStats.CountMissing +
                     columnStats.CountWrong;
 
-        if (total == 0) return null;
-
-        return $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
+        return total == 0 ? null : $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
     }
 
     private Evaluation GetEvaluation(CatalogueItem ci) => GetEvaluation(ci.Catalogue);
@@ -334,12 +332,10 @@ public class CustomMetadataReport
                 // is it a loop Catalogues
             if (str.Trim().Equals(LoopCatalogues))
             {
-                if (currentSection != null)
-                    if (currentSection.IsPlainText)
-                        yield return currentSection;
-                    else
-                        throw new CustomMetadataReportException(
-                            $"Unexpected '{str}' before the end of the last one on line {i + 1}", i + 1);
+                if(currentSection != null)
+                    yield return currentSection.IsPlainText
+                        ? currentSection
+                        : throw new CustomMetadataReportException($"Unexpected '{str}' before the end of the last one on line {i+1}",i+1);
 
                 // start new section looping Catalogues
                 currentSection = new CatalogueSection(false, i);
@@ -381,13 +377,11 @@ public class CustomMetadataReport
                 currentSection.Body.Add(str);
             }
         }
-
-        if (currentSection != null)
-            if (currentSection.IsPlainText)
-                yield return currentSection;
-            else
-                throw new CustomMetadataReportException(
-                    $"Reached end of template without finding an expected {EndLoop}", templateBody.Length);
+            
+        if(currentSection != null)
+            yield return currentSection.IsPlainText
+                ? currentSection
+                : throw new CustomMetadataReportException($"Reached end of template without finding an expected {EndLoop}",templateBody.Length);
     }
 
     private class CatalogueSection
@@ -509,17 +503,12 @@ public class CustomMetadataReport
     /// <returns></returns>
     private string ValueToString(object v)
     {
-        if (v is ExtractionInformation ei) return ei.GetRuntimeName();
-
-        return ReplaceNewlines(v?.ToString() ?? "");
+        return v is ExtractionInformation ei ? ei.GetRuntimeName() : ReplaceNewlines(v?.ToString() ?? "");
     }
 
     public string ReplaceNewlines(string input)
     {
-        if (input != null && NewlineSubstitution != null)
-            return Regex.Replace(input, "[\r]?\n", NewlineSubstitution);
-
-        return input;
+        return input != null && NewlineSubstitution != null ? Newline().Replace(input, NewlineSubstitution) : input;
     }
 
     /// <summary>
@@ -550,4 +539,7 @@ public class CustomMetadataReport
             throw new CustomMetadataReportException(
                 $"Unexpected use of {Comma} outside of an iteration ($foreach) block", -1);
     }
+
+    [GeneratedRegex("[\r]?\n")]
+    private static partial Regex Newline();
 }

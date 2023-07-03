@@ -57,10 +57,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         if (rowobject is PreLoadDiscardedColumn p)
             return p.Data_type;
 
-        if (rowobject is PipelineComponentArgument a)
-            return a.Type;
-
-        return null;
+        return rowobject is PipelineComponentArgument a ? a.Type : (object)null;
     }
 
     private void tlvTableInfos_ItemActivate(object sender, EventArgs e)

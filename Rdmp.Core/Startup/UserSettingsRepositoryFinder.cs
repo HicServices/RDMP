@@ -30,11 +30,9 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
             if (_linkedRepositoryProvider == null)
                 RefreshRepositoriesFromUserSettings();
 
-            if (_linkedRepositoryProvider == null)
-                throw new Exception(
-                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
-
-            return _linkedRepositoryProvider.CatalogueRepository;
+            return _linkedRepositoryProvider == null
+                ? throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
+                : _linkedRepositoryProvider.CatalogueRepository;
         }
     }
 
@@ -45,11 +43,9 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
             if (_linkedRepositoryProvider == null)
                 RefreshRepositoriesFromUserSettings();
 
-            if (_linkedRepositoryProvider == null)
-                throw new Exception(
-                    "RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ");
-
-            return _linkedRepositoryProvider.DataExportRepository;
+            return _linkedRepositoryProvider == null
+                ? throw new Exception("RefreshRepositoriesFromUserSettings failed to populate_linkedRepositoryProvider as expected ")
+                : _linkedRepositoryProvider.DataExportRepository;
         }
     }
 

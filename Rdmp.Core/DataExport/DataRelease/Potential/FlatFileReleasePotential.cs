@@ -30,10 +30,9 @@ public class FlatFileReleasePotential : ReleasePotential
     protected override Releaseability GetSupplementalSpecificAssessment(
         IExtractionResults supplementalExtractionResults)
     {
-        if (File.Exists(supplementalExtractionResults.DestinationDescription))
-            return Releaseability.Undefined;
-
-        return Releaseability.ExtractFilesMissing;
+        return File.Exists(supplementalExtractionResults.DestinationDescription)
+            ? Releaseability.Undefined
+            : Releaseability.ExtractFilesMissing;
     }
 
     protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults)
@@ -74,11 +73,10 @@ public class FlatFileReleasePotential : ReleasePotential
             !(d.Name.Equals("Lookups") || d.Name.Equals("SupportingDocuments") ||
               d.Name.Equals(SupportingSQLTable.ExtractionFolderName)));
 
-        if (unexpectedDirectory != null)
-            throw new Exception(
-                $"Unexpected directory found in extraction directory {unexpectedDirectory.FullName} (pollution of extract directory is not permitted)");
-
-        return false;
+        return unexpectedDirectory != null
+            ? throw new Exception(
+                $"Unexpected directory found in extraction directory {unexpectedDirectory.FullName} (pollution of extract directory is not permitted)")
+            : false;
     }
 
     private void ThrowIfPollutionFoundInConfigurationRootExtractionFolder()

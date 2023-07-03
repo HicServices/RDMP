@@ -15,7 +15,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class PreLoadDiscardedColumnsNode : Node
 {
-    public TableInfo TableInfo { get; private set; }
+    public TableInfo TableInfo { get; }
 
     public PreLoadDiscardedColumnsNode(TableInfo tableInfo)
     {
@@ -30,8 +30,7 @@ public class PreLoadDiscardedColumnsNode : Node
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((PreLoadDiscardedColumnsNode) obj);
+        return obj.GetType() == GetType() && Equals((PreLoadDiscardedColumnsNode) obj);
     }
 
     public override int GetHashCode()

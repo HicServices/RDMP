@@ -11,8 +11,8 @@ namespace Rdmp.Core.Providers.Nodes;
 
 public class LinkedColumnInfoNode : Node, IDeleteable, IMasqueradeAs
 {
-    public CatalogueItem CatalogueItem { get; set; }
-    public ColumnInfo ColumnInfo { get; set; }
+    public CatalogueItem CatalogueItem { get; }
+    public ColumnInfo ColumnInfo { get; }
 
     public LinkedColumnInfoNode(CatalogueItem catalogueItem, ColumnInfo columnInfo)
     {
@@ -29,17 +29,12 @@ public class LinkedColumnInfoNode : Node, IDeleteable, IMasqueradeAs
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((LinkedColumnInfoNode) obj);
+        return obj.GetType() == GetType() && Equals((LinkedColumnInfoNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return ((CatalogueItem != null ? CatalogueItem.GetHashCode() : 0) * 397) ^
-                   (ColumnInfo != null ? ColumnInfo.GetHashCode() : 0);
-        }
+        return System.HashCode.Combine(CatalogueItem, ColumnInfo);
     }
 
     public object MasqueradingAs() => ColumnInfo;

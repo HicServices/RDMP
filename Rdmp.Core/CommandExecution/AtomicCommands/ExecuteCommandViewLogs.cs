@@ -116,11 +116,10 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
 
     public override string GetCommandName()
     {
-        if (!string.IsNullOrWhiteSpace(OverrideCommandName)) return OverrideCommandName;
-
-        return
-            _filter != null
-                ? UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString())
+        return !string.IsNullOrWhiteSpace(OverrideCommandName)
+            ? OverrideCommandName
+            : _filter != null ?
+                UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString())
                 : base.GetCommandName();
     }
 

@@ -122,19 +122,13 @@ public class DublinCoreDefinition
     private static DateTime? GetElementDateTime(XElement[] descendants, string tagLocalName, bool mandatory)
     {
         var stringValue = GetElement(descendants, tagLocalName, mandatory);
-        if (string.IsNullOrWhiteSpace(stringValue))
-            return null;
-
-        return DateTime.Parse(stringValue);
+        return string.IsNullOrWhiteSpace(stringValue) ? null : DateTime.Parse(stringValue);
     }
 
     private static Uri GetElementUri(XElement[] descendants, string tagLocalName, bool mandatory)
     {
         var stringValue = GetElement(descendants, tagLocalName, mandatory);
-        if (string.IsNullOrWhiteSpace(stringValue))
-            return null;
-
-        return new Uri(stringValue);
+        return string.IsNullOrWhiteSpace(stringValue) ? null : new Uri(stringValue);
     }
 
     private static string GetElement(XElement[] descendants, string tagLocalName, bool mandatory)
@@ -143,10 +137,7 @@ public class DublinCoreDefinition
             e.Name.LocalName.Equals(tagLocalName, StringComparison.CurrentCultureIgnoreCase));
 
         if (match == null)
-            if (mandatory)
-                throw new XmlSyntaxException($"Failed to find mandatory tag {tagLocalName}");
-            else
-                return null;
+            return mandatory ? throw new XmlSyntaxException($"Failed to find mandatory tag {tagLocalName}") : null;
 
         return match.Value.Trim();
     }

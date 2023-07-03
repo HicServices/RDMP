@@ -11,8 +11,8 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 public class LoadStageNode : Node, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; private set; }
-    public LoadStage LoadStage { get; private set; }
+    public LoadMetadata LoadMetadata { get; }
+    public LoadStage LoadStage { get; }
 
     //prevent reordering
     public int Order
@@ -36,15 +36,11 @@ public class LoadStageNode : Node, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((LoadStageNode) obj);
+        return obj.GetType() == GetType() && Equals((LoadStageNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return ((LoadMetadata != null ? LoadMetadata.GetHashCode() : 0) * 397) ^ (int)LoadStage;
-        }
+        return System.HashCode.Combine(LoadMetadata, LoadStage);
     }
 }

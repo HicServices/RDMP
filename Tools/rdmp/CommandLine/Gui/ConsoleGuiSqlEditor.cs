@@ -25,7 +25,7 @@ using Rune = System.Rune;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-internal class ConsoleGuiSqlEditor : Window
+internal partial class ConsoleGuiSqlEditor : Window
 {
     protected readonly IBasicActivateItems Activator;
     private readonly IViewSQLAndResultsCollection _collection;
@@ -360,7 +360,7 @@ internal class ConsoleGuiSqlEditor : Window
         }
     }
 
-    private class SqlTextView : TextView
+    private partial class SqlTextView : TextView
     {
         private readonly HashSet<string> _keywords = new(
             new[]
@@ -422,16 +422,12 @@ internal class ConsoleGuiSqlEditor : Window
         {
             var word = IdxToWord(line, idx);
 
-            if (string.IsNullOrWhiteSpace(word)) return false;
-
-            return _keywords.Contains(word);
+            return !string.IsNullOrWhiteSpace(word) && _keywords.Contains(word);
         }
 
         private static string IdxToWord(IEnumerable<Rune> line, int idx)
         {
-            var words = Regex.Split(
-                string.Join("", line),
-                "\\b");
+            var words = WordBoundaries().Split(string.Join("", line));
 
             var count = 0;
             string current = null;
@@ -445,5 +441,8 @@ internal class ConsoleGuiSqlEditor : Window
 
             return current?.Trim();
         }
+
+        [GeneratedRegex("\\b")]
+        private static partial Regex WordBoundaries();
     }
 }

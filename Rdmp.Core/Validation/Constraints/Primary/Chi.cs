@@ -25,10 +25,7 @@ public partial class Chi : PrimaryConstraint
             return new ValidationFailure(
                 $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}", this);
 
-        if (!IsValidChi(valueAsString, out var reason))
-            return new ValidationFailure(reason,this);
-           
-        return null;
+        return !IsValidChi(valueAsString, out var reason) ? new ValidationFailure(reason,this) : null;
     }
 
 
@@ -132,11 +129,8 @@ public partial class Chi : PrimaryConstraint
         if (strChi is not { Length: 10 })
             return false;
 
-        var r = TenDigits();
-        if (!r.IsMatch(strChi))
-            return false;
-
-        return true;
+        var r = new Regex("^[0-9]{10}$");
+        return r.IsMatch(strChi);
     }
 
     private static int ComputeChecksum(string chi)

@@ -93,10 +93,7 @@ public class ExtractionDirectory : IExtractionDirectory
         //The configuration number matches but directory isn't the currently configured Project extraction directory
         var p = configuration.Project;
 
-        if (directory.Parent.FullName != Path.Combine(p.ExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME))
-            return false;
-
-        return directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
+        return directory.Parent.FullName == Path.Combine(p.ExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME) && directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
     }
 
     public DirectoryInfo GetDirectoryForCohortCustomData() =>

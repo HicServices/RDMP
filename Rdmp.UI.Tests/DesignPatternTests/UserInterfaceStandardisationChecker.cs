@@ -212,11 +212,9 @@ public class UserInterfaceStandardisationChecker
             return expectedClassName;
 
         //expected Filter but found IFilter - acceptable
-        if (_csFilesList.Any(f =>
-                Path.GetFileName(f).Equals($"I{expectedClassName}.cs", StringComparison.InvariantCultureIgnoreCase)))
-            return $"I{expectedClassName}";
-
-        return null;
+        return _csFilesList.Any(f => Path.GetFileName(f).Equals($"I{expectedClassName}.cs", StringComparison.InvariantCultureIgnoreCase))
+            ? $"I{expectedClassName}"
+            : null;
     }
 
     private void ConfirmFileHasText(Type type, string expectedString, bool mustHaveText = true)

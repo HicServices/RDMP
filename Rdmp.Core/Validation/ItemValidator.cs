@@ -54,10 +54,7 @@ public class ItemValidator
 
         var result = ValidatePrimaryConstraint(columnValue);
 
-        if (result != null)
-            return result;
-
-        return ValidateSecondayConstraints(columnValue, otherColumns, otherColumnNames);
+        return result ?? ValidateSecondaryConstraints(columnValue, otherColumns, otherColumnNames);
     }
 
     private ValidationFailure ValidatePrimaryConstraint(object columnValue)
@@ -76,8 +73,7 @@ public class ItemValidator
         }
     }
 
-    private ValidationFailure ValidateSecondayConstraints(object columnValue, object[] otherColumns,
-        string[] otherColumnNames)
+    private ValidationFailure ValidateSecondaryConstraints(object columnValue, object[] otherColumns, string[] otherColumnNames)
     {
         foreach (ISecondaryConstraint secondaryConstraint in SecondaryConstraints)
             try

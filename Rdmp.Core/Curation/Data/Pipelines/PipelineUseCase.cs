@@ -26,11 +26,8 @@ public abstract class PipelineUseCase : IPipelineUseCase
     /// <inheritdoc/>
     public IDataFlowPipelineContext GetContext()
     {
-        if (_context == null)
-            throw new Exception(
-                $"Context has not been initialized yet for use case {GetType()} make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
-
-        return _context;
+        return _context ?? throw new Exception(
+            $"Context has not been initialized yet for use case {GetType()} make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
     }
 
     /// <summary>

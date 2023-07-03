@@ -110,10 +110,7 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
     private IContainer GetRootContainerOrSelf(IContainer container)
     {
         var parent = container.GetParentContainerIfAny();
-        if (parent != null)
-            return GetRootContainerOrSelf(parent);
-
-        return container;
+        return parent != null ? GetRootContainerOrSelf(parent) : container;
     }
 
     /// <inheritdoc/>

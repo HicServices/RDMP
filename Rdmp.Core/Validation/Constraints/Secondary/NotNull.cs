@@ -20,10 +20,9 @@ public class NotNull : SecondaryConstraint
         if (value == null || value == DBNull.Value)
             return new ValidationFailure("Value cannot be null", this);
 
-        if (value is string && string.IsNullOrWhiteSpace(value.ToString()))
-            return new ValidationFailure("Value cannot be whitespace only", this);
-
-        return null;
+        return value is string && string.IsNullOrWhiteSpace(value.ToString())
+            ? new ValidationFailure("Value cannot be whitespace only", this)
+            : null;
     }
 
     public override void RenameColumn(string originalName, string newName)

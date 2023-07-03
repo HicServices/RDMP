@@ -471,9 +471,6 @@ internal class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesD
     public string GetName(string tableName, LoadBubble convention)
     {
         //all tables get called CC
-        if (convention < LoadBubble.Live)
-            return "CC";
-
-        return tableName;
+        return convention < LoadBubble.Live ? "CC" : tableName;
     }
 }

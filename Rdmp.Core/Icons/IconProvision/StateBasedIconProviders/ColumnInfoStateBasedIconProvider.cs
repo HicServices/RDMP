@@ -32,9 +32,6 @@ public class ColumnInfoStateBasedIconProvider : IObjectStateBasedIconProvider
 
         var basicIcon = columnInfo.ANOTable_ID != null ? _columnInfoWithANO : _columnInfo;
 
-        if (columnInfo.IsPrimaryKey)
-            return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Key);
-
-        return basicIcon;
+        return columnInfo.IsPrimaryKey ? _overlayProvider.GetOverlay(basicIcon, OverlayKind.Key) : basicIcon;
     }
 }

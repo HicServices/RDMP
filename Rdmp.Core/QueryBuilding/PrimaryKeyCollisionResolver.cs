@@ -223,17 +223,16 @@ WHERE DuplicateCount > 1";
         if (dataType.Contains("binary") || dataType.Contains("image"))
             return ValueType.Binary;
 
-        if (dataType.Equals("cursor") ||
+        return dataType.Equals("cursor") ||
             dataType.Contains("timestamp") ||
             dataType.Contains("hierarchyid") ||
             dataType.Contains("uniqueidentifier") ||
             dataType.Contains("sql_variant") ||
             dataType.Contains("xml") ||
             dataType.Contains("table") ||
-            dataType.Contains("spacial"))
-            return ValueType.Freaky;
-
-        throw new Exception($"Could not figure out the ValueType of SQL Type \"{dataType}\"");
+            dataType.Contains("spacial")
+            ? ValueType.Freaky
+            : throw new Exception($"Could not figure out the ValueType of SQL Type \"{dataType}\"");
     }
 
     /// <summary>
@@ -246,34 +245,19 @@ WHERE DuplicateCount > 1";
     {
         //technically these can go lower (real and float) but how realistic is that espcially when SqlServer plays fast and loose with very small numbers in floats...
         if (datatype.Equals("bigint") || datatype.Equals("real") || datatype.StartsWith("float"))
-            if (min)
-                return "-9223372036854775808";
-            else
-                return "9223372036854775807";
+            return min ? "-9223372036854775808" : "9223372036854775807";
 
         if (datatype.Equals("int"))
-            if (min)
-                return "-2147483648";
-            else
-                return "2147483647";
+            return min ? "-2147483648" : "2147483647";
 
         if (datatype.Equals("smallint"))
-            if (min)
-                return "-32768";
-            else
-                return "32767";
+            return min ? "-32768" : "32767";
 
         if (datatype.Equals("tinyint"))
-            if (min)
-                return "- 1.79E+308";
-            else
-                return "255";
+            return min ? "- 1.79E+308" : "255";
 
         if (datatype.Equals("bit"))
-            if (min)
-                return "0";
-            else
-                return "1";
+            return min ? "0" : "1";
 
         if (datatype.Contains("decimal") || datatype.Contains("numeric"))
         {

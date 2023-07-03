@@ -169,10 +169,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         if (model == _projectSpecificDatasetsFolder)
             return _datasets.Where(sds => sds.ExtractableDataSet.Project_ID != null);
 
-        if (_bundledStuff != null && model is ISelectedDataSets sds2)
-            return _bundledStuff.Where(s => s.User.Equals(sds2));
-
-        return null;
+        return _bundledStuff != null && model is ISelectedDataSets sds2 ? _bundledStuff.Where(s => s.User.Equals(sds2)) : (IEnumerable)null;
     }
 
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
@@ -194,10 +191,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         if (rowObject == _globalsFolder && extractionRunner != null)
             return extractionRunner.GetGlobalsState();
 
-        if (extractionRunner != null && rowObject is SelectedDataSets sds) 
-            return extractionRunner.GetState(sds.ExtractableDataSet);
-
-        return null;
+        return extractionRunner != null && rowObject is SelectedDataSets sds ? extractionRunner.GetState(sds.ExtractableDataSet) : null;
     }
 
     private ToMemoryCheckNotifier GetCheckNotifier(object rowObject)
@@ -207,10 +201,9 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         if (rowObject == _globalsFolder && extractionRunner != null)
             return extractionRunner.GetGlobalCheckNotifier();
 
-        if (extractionRunner != null && rowObject is SelectedDataSets sds) 
-            return extractionRunner.GetCheckNotifier(sds.ExtractableDataSet);
-
-        return null;
+        return extractionRunner != null && rowObject is SelectedDataSets sds
+            ? extractionRunner.GetCheckNotifier(sds.ExtractableDataSet)
+            : null;
     }
 
     private object State_AspectGetter(object rowobject)

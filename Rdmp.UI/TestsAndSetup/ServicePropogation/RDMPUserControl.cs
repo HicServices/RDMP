@@ -63,9 +63,6 @@ public abstract class RDMPUserControl : UserControl, IRDMPControl
 
     private IRDMPControl GetTopmostRDMPUserControl(Control c, RDMPUserControl found)
     {
-        if (c.Parent == null)
-            return found;
-
-        return GetTopmostRDMPUserControl(c.Parent, c.Parent as RDMPUserControl ?? found);
+        return c.Parent == null ? found : GetTopmostRDMPUserControl(c.Parent, c.Parent as RDMPUserControl ?? found);
     }
 }
