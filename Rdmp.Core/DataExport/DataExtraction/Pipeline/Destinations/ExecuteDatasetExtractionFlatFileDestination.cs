@@ -188,8 +188,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 
             // also close off the cumulative extraction result
             var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
-            if (result != null) 
-                result.CompleteAudit(GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume, failed);
+            result?.CompleteAudit(GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume, failed);
         }
         catch (Exception e)
         {

@@ -369,8 +369,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
     {
-        var o = CohortContainerContents.SelectMany(kvp => kvp.Value)
-            .SingleOrDefault(c => c.Orderable.Equals(configuration));
+        var o = CohortContainerContents.SelectMany(kvp => kvp.Value).SingleOrDefault(c => c.Orderable.Equals(configuration));
 
         return o?.Order;
     }

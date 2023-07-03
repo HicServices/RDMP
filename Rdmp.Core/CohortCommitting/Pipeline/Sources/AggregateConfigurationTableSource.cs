@@ -76,9 +76,8 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
         var sql = GetSQL();
 
-        if (listener != null)
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
+        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
 
         var dt = new DataTable();
 
@@ -93,9 +92,8 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
         dt.TableName = TableName;
 
-        if (listener != null)
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"successfully read {dt.Rows.Count} rows from source"));
+        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"successfully read {dt.Rows.Count} rows from source"));
 
 
         return dt;

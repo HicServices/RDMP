@@ -87,6 +87,7 @@ public class ExecuteCommandRename : BasicCommandExecution, IAtomicCommand
         {
             var cic = aggregate.GetCohortIdentificationConfigurationIfAny();
 
-        cic?.EnsureNamingConvention(aggregate);
+            cic?.EnsureNamingConvention(aggregate);
+        }
     }
 }

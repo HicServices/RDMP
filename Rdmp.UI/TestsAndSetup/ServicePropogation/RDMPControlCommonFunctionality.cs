@@ -446,8 +446,7 @@ public class RDMPControlCommonFunctionality
 
         ((Control)_hostControl).Controls.Add(ToolStrip);
 
-        if(ToolStripAddedToHost != null)
-            ToolStripAddedToHost(this,EventArgs.Empty);
+        ToolStripAddedToHost?.Invoke(this,EventArgs.Empty);
     }
 
     /// <summary>

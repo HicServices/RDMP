@@ -639,7 +639,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             chart1.SaveImage(imgSavePath, ChartImageFormat.Png);
             notifier.OnCheckPerformed(new CheckEventArgs($"Saved chart image to {imgSavePath}", CheckResult.Success));
 
-            graphSaveLocations?.Add(this, imgSavePath);
+            graphSaveLocations?.Add(this,imgSavePath);
         }
         catch (Exception e)
         {

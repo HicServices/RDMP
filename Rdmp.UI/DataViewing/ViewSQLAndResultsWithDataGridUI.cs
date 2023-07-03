@@ -101,8 +101,10 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     {
         //if we don't exist!
         if (_collection.DatabaseObjects.Any())
-            if (!((IRevertable)_collection.DatabaseObjects[0]).Exists())
+            if(!((IRevertable)_collection.DatabaseObjects[0]).Exists())
+            {
                 ParentForm?.Close();
+            }
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)

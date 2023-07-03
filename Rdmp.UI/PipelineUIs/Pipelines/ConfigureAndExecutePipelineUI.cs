@@ -185,7 +185,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         //clear any old results
         progressUI1.Clear();
 
-        PipelineExecutionStarted?.Invoke(this, new PipelineEngineEventArgs(pipeline));
+        PipelineExecutionStarted?.Invoke(this,new PipelineEngineEventArgs(pipeline));
 
         progressUI1.ShowRunning(true);
 
@@ -213,7 +213,8 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
             if (success)
                 //if it successfully got here then Thread has run the engine to completion successfully
                 PipelineExecutionFinishedsuccessfully?.Invoke(this, new PipelineEngineEventArgs(pipeline));
-
+            }
+                
             progressUI1.ShowRunning(false);
 
             btnExecute.Text = "Execute"; //make it so user can execute again

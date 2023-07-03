@@ -46,7 +46,9 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
         _collection.RevertIfMatchedInCollectionObjects(e.Object,out var shouldCloseInstead);
 
         if (shouldCloseInstead)
+        {
             ParentForm?.Close();
+        }
         else
             //now reload the graph because the change was to a relevant object
             LoadGraphAsync();

@@ -64,7 +64,10 @@ public class ExecuteCommandResetExtractionProgress : BasicCommandExecution
     {
         var progress = sds.ExtractionProgressIfAny;
 
-        if (progress?.ProgressDate != null) _toClear.Add(progress);
+        if(progress?.ProgressDate != null)
+        {
+            _toClear.Add(progress);
+        }
     }
 
     public override void Execute()

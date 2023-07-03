@@ -34,13 +34,6 @@ public class ANOMigrationTests : TestsRequiringANOStore
 
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
-        BlitzMainDataTables();
-
-        DeleteANOEndpoint();
-
-        var remnantANO = CatalogueRepository.GetAllObjects<ANOTable>()
-            .SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
-
         remnantANO?.DeleteInDatabase();
 
         //cleanup

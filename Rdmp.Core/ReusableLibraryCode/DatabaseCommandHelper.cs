@@ -78,7 +78,7 @@ public class DatabaseCommandHelper
     {
         var cmd = For(con).GetCommand(s, con, transaction);
 
-        PerformanceCounter?.AddAudit(cmd, Environment.StackTrace.ToString());
+        PerformanceCounter?.AddAudit(cmd,Environment.StackTrace.ToString());
 
         cmd.CommandTimeout = GlobalTimeout;
         return cmd;

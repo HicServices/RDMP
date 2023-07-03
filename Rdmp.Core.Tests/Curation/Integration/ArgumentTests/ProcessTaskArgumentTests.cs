@@ -78,7 +78,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
             .SingleOrDefault(t => t.Name.Equals(tableInfoName));
         var toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
             .SingleOrDefault(c => c.RuntimeColumnName.Equals(preLoadDiscardedColumnName));
-
+            
         //must delete pre load discarded first
         toCleanupCol?.DeleteInDatabase();
 

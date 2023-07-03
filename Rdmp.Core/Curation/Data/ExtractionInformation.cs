@@ -258,7 +258,10 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => ColumnInfo?.GetQuerySyntaxHelper();
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return ColumnInfo?.GetQuerySyntaxHelper();
+    }
 
     public override string GetSummary(bool includeName, bool includeID)
     {

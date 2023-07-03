@@ -636,7 +636,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         //it is not part of a container, maybe it is a joinable?
         var joinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
 
-        //it is a joinable (Patient Index Table) so return it
+        //it is a joinable (Patient Index Table) so return it 
         return joinable?.CohortIdentificationConfiguration;
     }
 

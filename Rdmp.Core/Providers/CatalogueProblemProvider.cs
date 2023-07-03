@@ -212,21 +212,19 @@ public class CatalogueProblemProvider : ProblemProvider
         if (catalogue != null)
         {
             //if we know the Catalogue extractability
-
+                    
             //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
             //otherwise it's a Problem
 
             if (catalogue.IsProjectSpecific(null))
             {
-                if (extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
+                if(extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
                     return
                         $"Catalogue {catalogue} is Project Specific Catalogue so all ExtractionCategory should be {ExtractionCategory.ProjectSpecific}";
             }
-            else if (extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
-            {
+            else if( extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
                 return
                     $"ExtractionCategory is only valid when the Catalogue ('{catalogue}') is also ProjectSpecific";
-            }
         }
 
         return null;

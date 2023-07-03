@@ -72,7 +72,10 @@ public partial class DataGeneratorUI : UserControl
         var percentProgress = e.RowsWritten / (double)sizeAtBeginGeneration * 100.0;
         progressBar1.Value = (int)percentProgress;
 
-        if (e.IsFinished) Completed?.Invoke();
+        if (e.IsFinished)
+        {
+            Completed?.Invoke();
+        }
     }
 
     private void trackBar1_MouseUp(object sender, MouseEventArgs e)

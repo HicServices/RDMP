@@ -135,6 +135,7 @@ public class ExtractionInformationTests : DatabaseTests
         finally
         {
             extractInfo?.DeleteInDatabase();
+
         }
     }
 }

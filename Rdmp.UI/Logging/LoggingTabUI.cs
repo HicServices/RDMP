@@ -307,7 +307,7 @@ public class LoggingTabUI : LoggingTab_Design
 
         //push the old filter
         _navigationTrack?.Append(Filter);
-        if (_back != null)
+        if(_back != null)
             _back.Enabled = _navigationTrack.CanBack();
 
         if (filter.IsEmpty)

@@ -152,6 +152,7 @@ public class FilterContainer : ConcreteContainer, IContainer
 
         //our parent must be the root container maybe? recursive
         return parent?.GetSelectedDataSetsRecursively();
+
     }
 
     public override IFilterFactory GetFilterFactory() => new DeployedExtractionFilterFactory(DataExportRepository);

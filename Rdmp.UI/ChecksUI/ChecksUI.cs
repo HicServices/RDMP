@@ -182,7 +182,7 @@ public partial class ChecksUI : UserControl, ICheckNotifier
 
         CheckingInProgress = false;
 
-        AllChecksComplete?.Invoke(this, new AllChecksCompleteHandlerArgs(listener));
+        AllChecksComplete?.Invoke(this,new AllChecksCompleteHandlerArgs(listener));
     }
 
 

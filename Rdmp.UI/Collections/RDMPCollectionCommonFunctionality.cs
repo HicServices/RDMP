@@ -492,7 +492,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         if (_lastMenuObject == Tree.SelectedObject && DateTime.Now.Subtract(_lastMenuBuilt) < TimeSpan.FromSeconds(2))
             return;
 
-        //clear the old menu strip first so old shortcuts cannot be activated during
+        //clear the old menu strip first so old shortcuts cannot be activated during 
         _menu?.Dispose();
 
         _menu = Tree.SelectedObjects.Count <= 1
