@@ -195,10 +195,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
         con.Open();
         using var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, con));
         var read = da.Fill(0, 100, chunk);
-                                    
-        if (read == 0)
-            return null;
 
-        return chunk;
+        return read == 0 ? null : chunk;
     }
 }

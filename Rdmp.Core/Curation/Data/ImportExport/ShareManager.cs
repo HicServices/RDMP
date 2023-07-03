@@ -158,10 +158,7 @@ public class ShareManager
     public bool IsImported(string sharingUID)
     {
         //empty guids are never imported
-        if (Guid.Empty.ToString().Equals(sharingUID))
-            return false;
-
-        return _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
+        return !Guid.Empty.ToString().Equals(sharingUID) && _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
     }
 
     /// <summary>
@@ -178,11 +175,10 @@ public class ShareManager
             return existingExport;
 
         var existingImport = _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsReferenceTo(o));
-            
-        if (existingImport != null)
-            return new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid);
 
-        return new ObjectExport(_catalogueRepository, o,Guid.NewGuid());
+        return existingImport != null
+            ? new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid)
+            : new ObjectExport(_catalogueRepository, o,Guid.NewGuid());
     }
 
 
@@ -385,11 +381,10 @@ public class ShareManager
             throw new Exception(
                 $"Relationship was of Type {relationshipAttribute.Type} expected {RelationshipType.LocalReference}");
 
-        if(LocalReferenceGetter == null)
-            throw new Exception(
-                $"No LocalReferenceGetter has been set, cannot populate Property {property.Name}  on class {property.DeclaringType.Name}");
-
-        return LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
+        return LocalReferenceGetter == null
+            ? throw new Exception(
+                $"No LocalReferenceGetter has been set, cannot populate Property {property.Name}  on class {property.DeclaringType.Name}")
+            : LocalReferenceGetter(property, relationshipAttribute, shareDefinition);
     }
 
     /// <summary>

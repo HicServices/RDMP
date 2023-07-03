@@ -110,10 +110,9 @@ internal class Program
                         (ExecuteCommandOptions opts) => RdmpCommandLineBootStrapper.RunCmd(opts),
                         (errs) =>
                         {
-                            if (HasHelpArguments(args))
-                                return returnCode = 0;
-                            else
-                                return returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
+                            return HasHelpArguments(args)
+                                ? (returnCode = 0)
+                                : (returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger));
                         });
 
             logger.Info($"Exiting with code {returnCode}");

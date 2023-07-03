@@ -20,10 +20,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
     /// <inheritdoc/>
     public string GetTitleTextPrefix(AggregateConfiguration aggregate)
     {
-        if(aggregate.IsExtractable)
-            return "Extractable 'Group By' Aggregate:";
-
-        return "'Group By' Aggregate:";
+        return aggregate.IsExtractable ? "Extractable 'Group By' Aggregate:" : "'Group By' Aggregate:";
     }
 
     /// <inheritdoc/>

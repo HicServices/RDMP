@@ -66,10 +66,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         if (rowobject is CatalogueItem ci)
             return ci.ExtractionInformation?.Order;
 
-        if (rowobject is ConcreteColumn o)
-            return o.Order;
-
-        return null;
+        return rowobject is ConcreteColumn o ? o.Order : (object)null;
     }
 
     protected override void OnEnter(EventArgs e)

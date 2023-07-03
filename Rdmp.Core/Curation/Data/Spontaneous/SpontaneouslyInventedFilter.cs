@@ -70,10 +70,7 @@ public class SpontaneouslyInventedFilter:ConcreteFilter
     {
         get
         {
-            if (FilterContainer_ID.HasValue)
-                return _repo.GetObjectByID<IContainer>(FilterContainer_ID.Value);
-
-            return null;
+            return FilterContainer_ID.HasValue ? _repo.GetObjectByID<IContainer>(FilterContainer_ID.Value) : null;
         }
     }
 

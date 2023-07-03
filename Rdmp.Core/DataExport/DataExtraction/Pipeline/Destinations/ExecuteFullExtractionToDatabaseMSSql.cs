@@ -321,11 +321,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         //otherwise, fetch and cache answer
         var cachedGetTableNameAnswer = syntax.GetSensibleEntityNameFromString(tblName);
 
-        if (string.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
-            throw new Exception(
-                $"TableNamingPattern '{TableNamingPattern}' resulted in an empty string for request '{_request}'");
-
-        return cachedGetTableNameAnswer;
+        return string.IsNullOrWhiteSpace(cachedGetTableNameAnswer)
+            ? throw new Exception(
+                $"TableNamingPattern '{TableNamingPattern}' resulted in an empty string for request '{_request}'")
+            : cachedGetTableNameAnswer;
     }
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -400,10 +399,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private string GetDestinationDescription(string suffix = "")
     {
         if (_toProcess == null)
-            if (_request is ExtractGlobalsCommand)
-                return "Globals";
-            else
-                throw new Exception("Could not describe destination because _toProcess was null");
+            return _request is ExtractGlobalsCommand
+                ? "Globals"
+                : throw new Exception("Could not describe destination because _toProcess was null");
 
         var tblName = _toProcess.TableName;
         var dbName = GetDatabaseName();

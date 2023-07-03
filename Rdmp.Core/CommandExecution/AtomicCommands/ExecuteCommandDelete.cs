@@ -101,11 +101,9 @@ public class ExecuteCommandDelete : BasicCommandExecution
 
     private string GetDescription()
     {
-        if (_deletables.Count == 1)
-            return $"Delete '{_deletables.Single()}'";
-
-
-        return $"Delete {_deletables.Count} objects ({_deletables.ToBeautifulString()})";
+        return _deletables.Count == 1
+            ? $"Delete '{_deletables.Single()}'"
+            : $"Delete {_deletables.Count} objects ({_deletables.ToBeautifulString()})";
     }
 
     private void ExecuteImpl()

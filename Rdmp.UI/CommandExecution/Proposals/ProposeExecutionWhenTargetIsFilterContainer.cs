@@ -58,12 +58,11 @@ internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionP
                 return null;
 
             //is it a movement within the current container tree
-            if (sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
-                return new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand, targetContainer);
-
-            return new ExecuteCommandImportFilterContainerTree(ItemActivator,targetContainer,sourceContainerCommand.Container);
+            return sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer)
+                ? new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand, targetContainer)
+                : new ExecuteCommandImportFilterContainerTree(ItemActivator,targetContainer,sourceContainerCommand.Container);
         }
-            
+
         return null;
         
 

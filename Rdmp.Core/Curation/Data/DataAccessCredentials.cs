@@ -136,10 +136,9 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
     /// <inheritdoc/>
     public string GetDecryptedPassword()
     {
-        if (_encryptedPasswordHost == null)
-            throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
-
-        return _encryptedPasswordHost.GetDecryptedPassword() ?? "";
+        return _encryptedPasswordHost == null
+            ? throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
+            : _encryptedPasswordHost.GetDecryptedPassword() ?? "";
     }
 
     /// <inheritdoc/>
@@ -158,10 +157,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
     {
         var p = GetDecryptedPassword();
 
-        if (string.IsNullOrWhiteSpace(p))
-            return string.IsNullOrWhiteSpace(password);
-
-        return p.Equals(password);
+        return string.IsNullOrWhiteSpace(p) ? string.IsNullOrWhiteSpace(password) : p.Equals(password);
     }
 
     internal void SetRepository(ICatalogueRepository repository)

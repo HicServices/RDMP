@@ -36,10 +36,9 @@ internal class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBasedIconP
         if (o is not CatalogueItemsNode cin)
             return null;
 
-        if (cin.Category == null)
-            return _basic;
-
-        return cin.Category.Value switch
+        return cin.Category == null
+            ? _basic
+            : cin.Category.Value switch
         {
             Curation.Data.ExtractionCategory.Core => _core,
             Curation.Data.ExtractionCategory.Supplemental => _supplemental,

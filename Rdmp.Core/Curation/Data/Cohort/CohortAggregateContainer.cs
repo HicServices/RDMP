@@ -458,10 +458,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     public bool IsRootContainer()
     {
         var cic = GetCohortIdentificationConfiguration();
-        if (cic != null)
-            return cic.RootCohortAggregateContainer_ID == ID;
-
-        return false;
+        return cic?.RootCohortAggregateContainer_ID == ID;
     }
 
     /// <summary>

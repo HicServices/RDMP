@@ -611,10 +611,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private string GetSeriesName(object o)
     {
-        if (o == null || o == DBNull.Value)
-            return "NULL";
-
-        return o.ToString();
+        return o == null || o == DBNull.Value ? "NULL" : o.ToString();
     }
 
     public void SaveTo(DirectoryInfo subdir, string nameOfFile, ICheckNotifier notifier, Dictionary<AggregateGraphUI, string> graphSaveLocations = null)

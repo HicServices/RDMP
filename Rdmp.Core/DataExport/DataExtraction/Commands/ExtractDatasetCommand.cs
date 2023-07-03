@@ -147,18 +147,12 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     public override string ToString()
     {
-        if (this == EmptyCommand)
-            return "EmptyCommand";
-
-        return DatasetBundle.DataSet.ToString();
+        return this == EmptyCommand ? "EmptyCommand" : DatasetBundle.DataSet.ToString();
     }
 
     public override DirectoryInfo GetExtractionDirectory()
     {
-        if (this == EmptyCommand)
-            return new DirectoryInfo(Path.GetTempPath());
-
-        return Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
+        return this == EmptyCommand ? new DirectoryInfo(Path.GetTempPath()) : Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
     }
     public override string DescribeExtractionImplementation()
     {

@@ -80,10 +80,9 @@ public class DataLoadJob : IDataLoadJob
                 $"The catalogues to be loaded do not share the same logging task: {string.Join(", ", distinctLoggingTasks)}");
 
         _loggingTask = distinctLoggingTasks.First();
-        if (string.IsNullOrWhiteSpace(_loggingTask))
-            throw new Exception("There is no logging task specified for this load (the name is blank)");
-
-        return _loggingTask;
+        return string.IsNullOrWhiteSpace(_loggingTask)
+            ? throw new Exception("There is no logging task specified for this load (the name is blank)")
+            : _loggingTask;
     }
 
     private void CreateDataLoadInfo()

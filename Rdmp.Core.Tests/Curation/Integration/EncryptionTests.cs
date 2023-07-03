@@ -183,11 +183,11 @@ public class EncryptionTests : DatabaseTests
             //update the database to an unencrypted password (like would be the case before software patch)
             using (var con = CatalogueTableRepository.GetConnection())
             {
-                using (var cmd = DatabaseCommandHelper.GetCommand(
+                using var cmd = DatabaseCommandHelper.GetCommand(
                            "UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection,
-                           con.Transaction))
-                    Assert.AreEqual(1, cmd.ExecuteNonQuery());
-                    
+                           con.Transaction);
+                Assert.AreEqual(1, cmd.ExecuteNonQuery());
+
             }
 
             var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);

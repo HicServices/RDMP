@@ -48,10 +48,9 @@ public class ExecuteCommandChangeExtractability:BasicCommandExecution,IAtomicCom
     public override string GetCommandHelp()
     {
 
-        if (!_markExtractable)
-            return "Prevent dataset from being released in Project extracts.  This fails if it is already part of any ExtractionConfigurations";
-            
-        return @"Enable dataset linkage\extraction in Project extracts.  This requires that at least one column be marked IsExtractionIdentifier";
+        return !_markExtractable
+            ? "Prevent dataset from being released in Project extracts.  This fails if it is already part of any ExtractionConfigurations"
+            : @"Enable dataset linkage\extraction in Project extracts.  This requires that at least one column be marked IsExtractionIdentifier";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

@@ -31,10 +31,9 @@ public class ColumnDropper : IPluginDataFlowComponent<DataTable>
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         if (!toProcess.Columns.Contains(ColumnNameToDrop))
-            if (RelaxedMode)
-                return toProcess;
-            else
-                throw new InvalidOperationException(
+            return RelaxedMode
+                ? toProcess
+                : throw new InvalidOperationException(
                     $"The column to be dropped ({ColumnNameToDrop}) does not exist in the supplied data table and RelaxedMode is off. Check that this component is configured correctly, or if any upstream components are removing this column unexpectedly.");
 
         toProcess.Columns.Remove(ColumnNameToDrop);

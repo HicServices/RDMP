@@ -124,39 +124,31 @@ public class ColumnInfoToANOTableConverter
             using (var dt = new DataTable())
             {
                 //get the existing data
-                using (var cmdGetExistingData =
+                using var cmdGetExistingData =
                        DatabaseCommandHelper.GetCommand(
-                           $"SELECT {from},{to} from {tbl.GetFullyQualifiedName()}", con))
-                {
-                    using (var da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData))
-                    {
-                        da.Fill(dt);//into memory
+                           $"SELECT {from},{to} from {tbl.GetFullyQualifiedName()}", con);
+                using var da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData);
+                da.Fill(dt);//into memory
 
-                        //transform it in memory
-                        var transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
-                        transformer.Transform(dt,dt.Columns[0],dt.Columns[1]);
+                //transform it in memory
+                var transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
+                transformer.Transform(dt, dt.Columns[0], dt.Columns[1]);
 
-                        var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
+                var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
 
-                        using(var insert = tempAnoMapTbl.BeginBulkInsert())
-                        {
-                            insert.Upload(dt);
-                        }
-                    }
-                }
+                using var insert = tempAnoMapTbl.BeginBulkInsert();
+                insert.Upload(dt);
             }
-                
+
 
             //create an empty table for the anonymised data
-            using (var cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
+            using var cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
                        string.Format(
                            "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
-                           from, to, tbl.GetFullyQualifiedName()), con))
-            {
-                if (!shouldApplySql(cmdUpdateMainTable.CommandText))
-                    throw new Exception("User decided not to perform update on table");
-                cmdUpdateMainTable.ExecuteNonQuery();
-            }
+                           from, to, tbl.GetFullyQualifiedName()), con);
+            if (!shouldApplySql(cmdUpdateMainTable.CommandText))
+                throw new Exception("User decided not to perform update on table");
+            cmdUpdateMainTable.ExecuteNonQuery();
 
         }
         finally

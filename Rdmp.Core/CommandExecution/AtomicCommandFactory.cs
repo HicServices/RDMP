@@ -122,16 +122,11 @@ public class AtomicCommandFactory : CommandFactoryBase
                     Weight = -99.0010f,
                     SuggestedCategory = Extraction };
 
-                if(c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository))
-                {
-                    yield return new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c){
-                        Weight = -99.0009f,SuggestedCategory = Extraction };
-                }
-                else
-                {
-                    yield return new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null) {
+                yield return c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository)
+                    ? new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, c){
+                        Weight = -99.0009f,SuggestedCategory = Extraction }
+                    : new ExecuteCommandMakeCatalogueProjectSpecific(_activator, c, null) {
                         Weight = -99.0009f, SuggestedCategory = Extraction };
-                }
 
                 yield return new ExecuteCommandSetExtractionIdentifier(_activator, c, null, null) {
                     Weight = -99.0008f, SuggestedCategory = Extraction };
@@ -233,23 +228,18 @@ public class AtomicCommandFactory : CommandFactoryBase
             if(ac.IsCohortIdentificationAggregate)
             {
                 yield return new ExecuteCommandSetAggregateDimension(_activator, ac);
-                    
-                if(_activator.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate,ac)
-                   .Any(v=>v.Value.Equals("true")))
-                {
-                    yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)
+
+                yield return _activator.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate,ac)
+                   .Any(v=>v.Value.Equals("true"))
+                    ? new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, null)
                     {
                         OverrideCommandName = "Make Non Template"
-                    };
-                }
-                else
-                {
-                    yield return new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, "true")
+                    }
+                    : (IAtomicCommand)new ExecuteCommandSetExtendedProperty(_activator, new[] { ac }, ExtendedProperty.IsTemplate, "true")
                     {
                         OverrideCommandName = "Make Reusable Template"
                     };
-                }
-                    
+
             }
 
             // graph options
@@ -637,10 +627,9 @@ public class AtomicCommandFactory : CommandFactoryBase
                 
             yield return new ExecuteCommandGenerateReleaseDocument(_activator, ec) { Weight = -99.4f};
 
-            if (ec.IsReleased)
-                yield return new ExecuteCommandUnfreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
-            else
-                yield return new ExecuteCommandFreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
+            yield return ec.IsReleased
+                ? new ExecuteCommandUnfreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f }
+                : new ExecuteCommandFreezeExtractionConfiguration(_activator, ec) { Weight = 1.2f };
 
             yield return new ExecuteCommandCloneExtractionConfiguration(_activator, ec) { Weight = 1.3f };
 

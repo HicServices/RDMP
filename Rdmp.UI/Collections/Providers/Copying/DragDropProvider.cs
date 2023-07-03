@@ -215,10 +215,7 @@ public class DragDropProvider:SimpleDragSource
         if (e.DropTargetLocation == DropTargetLocation.AboveItem)
             return InsertOption.InsertAbove;
 
-        if (e.DropTargetLocation == DropTargetLocation.BelowItem)
-            return InsertOption.InsertBelow;
-
-        return InsertOption.Default;
+        return e.DropTargetLocation == DropTargetLocation.BelowItem ? InsertOption.InsertBelow : InsertOption.Default;
     }
 
 }

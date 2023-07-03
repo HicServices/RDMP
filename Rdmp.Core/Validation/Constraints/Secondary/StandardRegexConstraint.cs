@@ -87,13 +87,11 @@ public class StandardRegexConstraint : SecondaryConstraint
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
-        if (CatalogueStandardRegex != null)
-            return
-                $"Checks that the value conforms to the agency specific StandardRegex concept '{CatalogueStandardRegex.ConceptName}' defined in the Catalogue";
-
-        return "Checks that values match the supplied agency specific StandardRegex defined in the Catalogue for core concepts (e.g. Gender)";
+        return CatalogueStandardRegex != null
+            ? $"Checks that the value conforms to the agency specific StandardRegex concept '{CatalogueStandardRegex.ConceptName}' defined in the Catalogue"
+            : "Checks that values match the supplied agency specific StandardRegex defined in the Catalogue for core concepts (e.g. Gender)";
     }
-        
+
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
         if (value == null || value == DBNull.Value)
@@ -102,12 +100,10 @@ public class StandardRegexConstraint : SecondaryConstraint
         if(string.IsNullOrWhiteSpace(value.ToString()))
             return null;
 
-        if (_regex.IsMatch(value.ToString()))
-            return null;
-
-        return new ValidationFailure(
+        return _regex.IsMatch(value.ToString())
+            ? null
+            : new ValidationFailure(
             $"Value {value} did not match pattern for StandardRegex concept '{CatalogueStandardRegex.ConceptName}'", this);
-            
     }
 
 }

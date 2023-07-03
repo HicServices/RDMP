@@ -13,10 +13,9 @@ public class ValuePredictsOtherValueNullity : PredictionRule
 {
     public override ValidationFailure Predict(IConstraint parent, object value, object targetValue)
     {
-        if(value == null != (targetValue == null))
-            return new ValidationFailure(
-                $"Nullity did not match, when one value is null, the other must be null.  When one value has a value the other must also have a value.  Nullity of ConstrainedColumn:{value == null}. Nullity of TargetColumn:{targetValue == null}",parent);
-
-        return null;
+        return value == null != (targetValue == null)
+            ? new ValidationFailure(
+                $"Nullity did not match, when one value is null, the other must be null.  When one value has a value the other must also have a value.  Nullity of ConstrainedColumn:{value == null}. Nullity of TargetColumn:{targetValue == null}",parent)
+            : null;
     }
 }

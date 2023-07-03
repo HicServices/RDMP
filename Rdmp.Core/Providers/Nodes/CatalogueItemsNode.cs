@@ -35,10 +35,9 @@ public class CatalogueItemsNode : Node, IOrderable
 
     public override string ToString()
     {
-        if(Category == null)
-            return "Non Extractable";
-
-        return Category switch
+        return Category == null
+            ? "Non Extractable"
+            : Category switch
         {
             ExtractionCategory.Core => "Core Items",
             ExtractionCategory.Supplemental => "Supplemental Items",
@@ -56,17 +55,13 @@ public class CatalogueItemsNode : Node, IOrderable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != typeof (CatalogueItemsNode)) return false;
-        return Equals((CatalogueItemsNode) obj);
+        return obj.GetType() == typeof (CatalogueItemsNode) && Equals((CatalogueItemsNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return Catalogue.GetHashCode() * (Category?.GetHashCode() ?? -12342);
-        }
+        return System.HashCode.Combine(Catalogue, Category);
     }
 }

@@ -133,17 +133,11 @@ public abstract class Argument : DatabaseEntity, IArgument
         //bool
         if (type.Equals(typeof(bool).ToString()))
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return false;
-
-            return Convert.ToBoolean(value);
+            return string.IsNullOrWhiteSpace(value) ? false : (object)Convert.ToBoolean(value);
         }
 
         if (type.Equals(typeof(Type).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return MEF.GetType(value);
+            return string.IsNullOrWhiteSpace(value) ? null : (object)MEF.GetType(value);
 
         if (type.Equals(typeof(CatalogueRepository).ToString()) || type.Equals(typeof(ICatalogueRepository).ToString()))
             return Repository;
@@ -151,38 +145,23 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         //float?
         if (type.Equals(typeof(float?).ToString()) || type.Equals(typeof(float).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return float.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : float.Parse(value);
 
         //double?
         if (type.Equals(typeof(double?).ToString()) || type.Equals(typeof(double).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return double.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : double.Parse(value);
 
         //int?
         if (type.Equals(typeof(int?).ToString()) || type.Equals(typeof(int).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return int.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : int.Parse(value);
 
         //char?
         if (type.Equals(typeof(char?).ToString()) || type.Equals(typeof(char).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return char.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : char.Parse(value);
 
         //DateTime?
         if (type.Equals(typeof(DateTime?).ToString()) || type.Equals(typeof(DateTime).ToString()))
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-            else
-                return DateTime.Parse(value);
+            return string.IsNullOrWhiteSpace(value) ? null : DateTime.Parse(value);
 
         //null
         if (string.IsNullOrWhiteSpace(value))
@@ -250,10 +229,9 @@ public abstract class Argument : DatabaseEntity, IArgument
         if (type.Equals(typeof(EncryptedString).ToString()))
             return new EncryptedString(CatalogueRepository) { Value = value };
 
-        if(type.Equals(typeof(CultureInfo).ToString()))
-            return new CultureInfo(value);
-
-        throw new NotSupportedException($"Custom arguments cannot be of type {type}");
+        return type.Equals(typeof(CultureInfo).ToString())
+            ? (object)new CultureInfo(value)
+            : throw new NotSupportedException($"Custom arguments cannot be of type {type}");
     }
 
     private bool HandleIfICustomUIDrivenClass(string value, Type concreteType, out object answer)
@@ -411,9 +389,9 @@ public abstract class Argument : DatabaseEntity, IArgument
         if (type != null && typeof(Array).IsAssignableFrom(type))
         {
             var arr = (Array)o;
-            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType()))
-                return string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID));
-                
+            return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType())
+                ? string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID))
+                :
             throw new NotSupportedException(
                 $"DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was {type}");
         }
@@ -447,10 +425,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             }
         }
 
-        if (o is IMapsDirectlyToDatabaseTable mapped)
-            return mapped.ID.ToString();
-            
-        return o.ToString();
+        return o is IMapsDirectlyToDatabaseTable mapped ? mapped.ID.ToString() : o.ToString();
     }
 
     #region Dictionary Handling

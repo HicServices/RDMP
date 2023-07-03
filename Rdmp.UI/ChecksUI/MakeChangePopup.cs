@@ -34,10 +34,9 @@ public class MakeChangePopup:ICheckNotifier
         message += Environment.NewLine;
         message += "Would you like to apply this fix?";
 
-        if (dialog == null)
-            return MessageBox.Show(message, "Apply Fix?", MessageBoxButtons.YesNo) == DialogResult.Yes;
-
-        return dialog.ShowDialog(message, "Apply Fix?") == DialogResult.Yes;
+        return dialog == null
+            ? MessageBox.Show(message, "Apply Fix?", MessageBoxButtons.YesNo) == DialogResult.Yes
+            : dialog.ShowDialog(message, "Apply Fix?") == DialogResult.Yes;
     }
 
     public bool OnCheckPerformed(CheckEventArgs args)

@@ -21,15 +21,14 @@ public static class EnumExtensions
     /// <returns></returns>
     public static string S(this Enum e)
     {
-        if(e is TriggerStatus ts)
-            return ts switch
+        return e is TriggerStatus ts
+            ? ts switch
             {
                 TriggerStatus.Enabled => GlobalStrings.Enabled,
                 TriggerStatus.Disabled => GlobalStrings.Disabled,
                 TriggerStatus.Missing => GlobalStrings.Missing,
                 _ => throw new ArgumentOutOfRangeException()
-            };
-
-        return e.ToString();
+            }
+            : e.ToString();
     }
 }

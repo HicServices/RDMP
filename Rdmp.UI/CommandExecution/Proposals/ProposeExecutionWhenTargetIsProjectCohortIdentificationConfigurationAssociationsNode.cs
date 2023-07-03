@@ -31,11 +31,8 @@ internal class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurat
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCohortIdentificationConfigurationAssociationsNode target,
         InsertOption insertOption = InsertOption.Default)
     {
-        if (cmd is CohortIdentificationConfigurationCommand cicCommand)
-        {
-            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
-        }
-
-        return null;
+        return cmd is CohortIdentificationConfigurationCommand cicCommand
+            ? new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project)
+            : (ICommandExecution)null;
     }
 }

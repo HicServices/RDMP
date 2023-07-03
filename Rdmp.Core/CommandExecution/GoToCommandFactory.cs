@@ -70,9 +70,9 @@ public class GoToCommandFactory : CommandFactoryBase
         {
             yield return new ExecuteCommandShow(_activator, () =>
             {
-                if (_activator.CoreChildProvider is DataExportChildProvider { AllProjectAssociatedCics: not null } dx) return dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID).Select(a => a.Project).Distinct();
-
-                return Array.Empty<CohortIdentificationConfiguration>();
+                return _activator.CoreChildProvider is DataExportChildProvider { AllProjectAssociatedCics: not null } dx
+                    ? dx.AllProjectAssociatedCics.Where(a => a.CohortIdentificationConfiguration_ID == cic.ID).Select(a => a.Project).Distinct()
+                    : Array.Empty<CohortIdentificationConfiguration>();
             })
             {
                 OverrideCommandName = "Project(s)",
@@ -142,11 +142,11 @@ public class GoToCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandShow(_activator, () =>
             {
-                if (_activator.CoreChildProvider is DataExportChildProvider dx)
-                    return dx.SelectedDataSets.Where(s => s.ExtractableDataSet_ID == eds.ID).Select(s => s.ExtractionConfiguration);
-
-                return Array.Empty<SelectedDataSets>();
-            }){ OverrideCommandName = "Extraction Configuration(s)", OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration) };
+                return _activator.CoreChildProvider is DataExportChildProvider dx
+                    ? dx.SelectedDataSets.Where(s => s.ExtractableDataSet_ID == eds.ID).Select(s => s.ExtractionConfiguration)
+                    : Array.Empty<SelectedDataSets>();
+            })
+            { OverrideCommandName = "Extraction Configuration(s)", OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration) };
         }
 
         if (Is(forObject, out GovernancePeriod period))
@@ -273,10 +273,9 @@ public class GoToCommandFactory : CommandFactoryBase
         {
             yield return new ExecuteCommandShow(_activator, () =>
             {
-                if (_activator.CoreChildProvider is DataExportChildProvider dx)
-                    return dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID);
-
-                return Array.Empty<ExtractionConfiguration>();
+                return _activator.CoreChildProvider is DataExportChildProvider dx
+                    ? dx.ExtractionConfigurations.Where(ec => ec.Cohort_ID == cohort.ID)
+                    : (IEnumerable<IMapsDirectlyToDatabaseTable>)Array.Empty<ExtractionConfiguration>();
             })
             {
                 OverrideCommandName = "Extraction Configuration(s)",
@@ -285,10 +284,9 @@ public class GoToCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandShow(_activator, () =>
             {
-                if (_activator.CoreChildProvider is DataExportChildProvider dx)
-                    return dx.Projects.Where(p => p.ProjectNumber == cohort.ExternalProjectNumber);
-
-                return Array.Empty<Project>();
+                return _activator.CoreChildProvider is DataExportChildProvider dx
+                    ? dx.Projects.Where(p => p.ProjectNumber == cohort.ExternalProjectNumber)
+                    : (IEnumerable<IMapsDirectlyToDatabaseTable>)Array.Empty<Project>();
             })
             {
                 OverrideCommandName = "Project(s)",
@@ -319,10 +317,9 @@ public class GoToCommandFactory : CommandFactoryBase
             .GetAllObjectsWhere<ExtendedProperty>("Name",ExtendedProperty.ReplacedBy)
             .FirstOrDefault(r=>r.IsReferenceTo(mt));
 
-        if(replacement == null)
-            return Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
-
-        return new []{mt.Repository.GetObjectByID(mt.GetType(),int.Parse(replacement.Value))};
+        return replacement == null
+            ? Enumerable.Empty<IMapsDirectlyToDatabaseTable>()
+            : (new []{mt.Repository.GetObjectByID(mt.GetType(),int.Parse(replacement.Value))});
     }
 
     private Image<Rgba32> GetImage(RDMPConcept concept)

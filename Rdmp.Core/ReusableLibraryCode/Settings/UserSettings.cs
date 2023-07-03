@@ -446,12 +446,9 @@ public static class UserSettings
 
     public static bool GetTutorialDone(Guid tutorialGuid)
     {
-        if(tutorialGuid == Guid.Empty)
-            return false;
-
-        return AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false); 
+        return tutorialGuid != Guid.Empty && AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false);
     }
-        
+
     public static void SetTutorialDone(Guid tutorialGuid,bool value)
     {
         if(tutorialGuid == Guid.Empty)
@@ -488,10 +485,7 @@ public static class UserSettings
 
     public static int GetColumnWidth(Guid columnGuid)
     {
-        if (columnGuid == Guid.Empty)
-            return 100;
-
-        return GetColumnWidth(columnGuid.ToString("N"));
+        return columnGuid == Guid.Empty ? 100 : GetColumnWidth(columnGuid.ToString("N"));
     }
     public static int GetColumnWidth(string colIdentifier)
     {
@@ -500,10 +494,7 @@ public static class UserSettings
 
     public static bool GetColumnVisible(Guid columnGuid)
     {
-        if (columnGuid == Guid.Empty)
-            return true;
-
-        return GetColumnVisible(columnGuid.ToString("N"));
+        return columnGuid == Guid.Empty || GetColumnVisible(columnGuid.ToString("N"));
     }
 
     public static bool GetColumnVisible(string colIdentifier)

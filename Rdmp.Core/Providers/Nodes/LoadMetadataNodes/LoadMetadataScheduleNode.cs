@@ -11,7 +11,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 public class LoadMetadataScheduleNode : Node,IOrderable
 {
-    public LoadMetadata LoadMetadata { get; private set; }
+    public LoadMetadata LoadMetadata { get; }
 
     public LoadMetadataScheduleNode(LoadMetadata loadMetadata)
     {
@@ -30,15 +30,14 @@ public class LoadMetadataScheduleNode : Node,IOrderable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((LoadMetadataScheduleNode) obj);
+        return obj.GetType() == GetType() && Equals((LoadMetadataScheduleNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+        return System.HashCode.Combine(LoadMetadata);
     }
 
     public int Order { get => 0;

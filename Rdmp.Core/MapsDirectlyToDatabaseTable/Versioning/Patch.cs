@@ -40,11 +40,9 @@ public class Patch : IComparable
         if (string.IsNullOrWhiteSpace(Description))
             return $"Patch {DatabaseVersionNumber}";
 
-        if(Description.Length> 100)
-            return $"Patch {DatabaseVersionNumber}({Description[..100]}...)";
-
-        return $"Patch {DatabaseVersionNumber}({Description})";
-
+        return Description.Length> 100
+            ? $"Patch {DatabaseVersionNumber}({Description[..100]}...)"
+            : $"Patch {DatabaseVersionNumber}({Description})";
     }
 
     private void ExtractDescriptionAndVersionFromScriptContents()
@@ -108,9 +106,9 @@ public class Patch : IComparable
         if (!equal)
             return false;
 
-        if (x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber))
-            return true;
-        throw new InvalidPatchException(x.locationInAssembly,
+        return x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber)
+            ? true
+            : throw new InvalidPatchException(x.locationInAssembly,
             $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Version numbers", null);
     }
     public int CompareTo(object obj)

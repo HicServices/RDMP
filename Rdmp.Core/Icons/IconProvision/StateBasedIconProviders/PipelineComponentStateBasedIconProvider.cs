@@ -28,10 +28,6 @@ public class PipelineComponentStateBasedIconProvider : IObjectStateBasedIconProv
 
         if (pc.Class != null && pc.Class.EndsWith("Source"))
             return _source;
-        if (pc.Class != null && pc.Class.EndsWith("Destination"))
-            return _destination;
-
-        return _component;
-
+        return pc.Class != null && pc.Class.EndsWith("Destination") ? _destination : _component;
     }
 }

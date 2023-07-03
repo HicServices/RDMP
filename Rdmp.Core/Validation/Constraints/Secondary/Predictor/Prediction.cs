@@ -51,11 +51,10 @@ public class Prediction : SecondaryConstraint
 
         var i = Array.IndexOf(otherColumnNames,TargetColumn);
 
-        if (i == -1)
-            throw new MissingFieldException(
-                $"Could not find TargetColumn '{TargetColumn}' for Prediction validation constraint.  Supplied column name collection was:({string.Join(",", otherColumnNames)})");
-
-        return Rule.Predict(this,value,otherColumns[i]);
+        return i == -1
+            ? throw new MissingFieldException(
+                $"Could not find TargetColumn '{TargetColumn}' for Prediction validation constraint.  Supplied column name collection was:({string.Join(",", otherColumnNames)})")
+            : Rule.Predict(this,value,otherColumns[i]);
     }
 
 

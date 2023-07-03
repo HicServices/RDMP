@@ -61,10 +61,7 @@ public partial class SimpleSetOperation : UserControl
 
     private SetOperation GetSetOperation()
     {
-        if((string) ddSetOperation.SelectedItem == _intersectText)
-            return SetOperation.INTERSECT;
-
-        return SetOperation.UNION;
+        return (string) ddSetOperation.SelectedItem == _intersectText ? SetOperation.INTERSECT : SetOperation.UNION;
     }
 
     public CohortAggregateContainer CreateCohortAggregateContainer(CohortAggregateContainer rootContainer)

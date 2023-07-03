@@ -232,21 +232,19 @@ public class CohortSummaryQueryBuilder
         if (_cohort != null)
             return _cohort.GetCohortIdentificationConfigurationIfAny().QueryCachingServer;
 
-        if (_cohortContainer != null)
-            return _cohortContainer.GetCohortIdentificationConfiguration().QueryCachingServer;
-
-        throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
+        return _cohortContainer != null
+            ? _cohortContainer.GetCohortIdentificationConfiguration().QueryCachingServer
+            : throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
     }
 
     private CohortQueryBuilder GetBuilder()
     {
         if(_cohort != null)
             return new CohortQueryBuilder(_cohort, _globals,_childProvider);
-            
-        if(_cohortContainer != null)
-            return new CohortQueryBuilder(_cohortContainer,_globals,_childProvider);
 
-        throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
+        return _cohortContainer != null
+            ? new CohortQueryBuilder(_cohortContainer,_globals,_childProvider)
+            : throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
     }
 
     public static AggregateConfiguration[] GetAllCompatibleSummariesForCohort(AggregateConfiguration cohort)

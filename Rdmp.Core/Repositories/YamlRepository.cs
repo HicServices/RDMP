@@ -144,10 +144,7 @@ public class YamlRepository : MemoryDataExportRepository
         if (arg == typeof(Rdmp.Core.Curation.Data.Plugin))
             return 1;
 
-        if (arg == typeof(LoadModuleAssembly))
-            return 2;
-
-        return 3;
+        return arg == typeof(LoadModuleAssembly) ? 2 : 3;
     }
 
 
@@ -605,12 +602,9 @@ public class YamlRepository : MemoryDataExportRepository
                 return new CohortContainerContent(repository.GetObjectByID<AggregateConfiguration>(ID), Order);
             }
 
-            if (Type.Equals(nameof(CohortAggregateContainer)))
-            {
-                return new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order);
-            }
-
-            throw new Exception($"Unexpected IOrderable Type name '{Type}'");
+            return Type.Equals(nameof(CohortAggregateContainer))
+                ? new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order)
+                : throw new Exception($"Unexpected IOrderable Type name '{Type}'");
         }
     }
 

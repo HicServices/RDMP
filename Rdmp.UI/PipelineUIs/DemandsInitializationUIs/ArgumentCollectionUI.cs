@@ -241,10 +241,7 @@ public partial class ArgumentCollectionUI : UserControl
 
     private string GetSystemTypeName(Type type)
     {
-        if (typeof(Enum).IsAssignableFrom(type))
-            return "Enum";
-
-        return type?.Name;
+        return typeof(Enum).IsAssignableFrom(type) ? "Enum" : (type?.Name);
     }
 
     private void btnViewSourceCode_Click(object sender, EventArgs e)

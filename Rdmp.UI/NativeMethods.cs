@@ -12,8 +12,8 @@ namespace Rdmp.UI;
 /// <summary>
 /// Static class for DllImport methods.
 /// </summary>
-public class NativeMethods
+public partial class NativeMethods
 {
-    [DllImport("user32.dll", CharSet = CharSet.Auto)]
-    public static extern int GetScrollPos(IntPtr hWnd, System.Windows.Forms.Orientation nBar);
+    [LibraryImport("user32.dll")]
+    public static partial int GetScrollPos(IntPtr hWnd, System.Windows.Forms.Orientation nBar);
 }

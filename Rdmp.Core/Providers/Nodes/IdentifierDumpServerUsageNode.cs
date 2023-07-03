@@ -15,8 +15,8 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class IdentifierDumpServerUsageNode:Node,IDeleteable
 {
-    public TableInfo TableInfo { get; private set; }
-    public ExternalDatabaseServer IdentifierDumpServer { get; private set; }
+    public TableInfo TableInfo { get; }
+    public ExternalDatabaseServer IdentifierDumpServer { get; }
 
     public IdentifierDumpServerUsageNode(TableInfo tableInfo, ExternalDatabaseServer identifierDumpServer)
     {
@@ -36,15 +36,14 @@ public class IdentifierDumpServerUsageNode:Node,IDeleteable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((IdentifierDumpServerUsageNode) obj);
+        return obj.GetType() == GetType() && Equals((IdentifierDumpServerUsageNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return TableInfo != null ? TableInfo.GetHashCode() : 0;
+        return System.HashCode.Combine(TableInfo);
     }
 
     public void DeleteInDatabase()

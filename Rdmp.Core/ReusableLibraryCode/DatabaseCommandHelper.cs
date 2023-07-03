@@ -70,10 +70,9 @@ public class DatabaseCommandHelper
             return _dbConHelpersByType[DatabaseType.Oracle].GetServerHelper();
         if (cmd is MySqlCommand)
             return _dbConHelpersByType[DatabaseType.MySql].GetServerHelper();
-        if (cmd is NpgsqlCommand)
-            return _dbConHelpersByType[DatabaseType.PostgreSql].GetServerHelper();
-
-        throw new NotSupportedException($"Didn't know what helper to use for DbCommand Type {cmd.GetType()}");
+        return cmd is NpgsqlCommand
+            ? _dbConHelpersByType[DatabaseType.PostgreSql].GetServerHelper()
+            : throw new NotSupportedException($"Didn't know what helper to use for DbCommand Type {cmd.GetType()}");
         //todo: add this method to implementation in FAnsi
         //return _dbConHelpersByType.Values.Single(i => i.IsFor(cmd)).GetServerHelper();
     }

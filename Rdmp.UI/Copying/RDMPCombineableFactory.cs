@@ -112,10 +112,7 @@ public class RDMPCombineableFactory:ICombineableFactory
         var catalogues = IsArrayOf<Catalogue>(modelObject);
             
         if (catalogues != null)
-            if(catalogues.Length == 1)
-                return new CatalogueCombineable(catalogues[0]);
-            else
-                return new ManyCataloguesCombineable(catalogues);
+            return catalogues.Length == 1 ? new CatalogueCombineable(catalogues[0]) : new ManyCataloguesCombineable(catalogues);
 
         //filters
         if (modelObject is IFilter filter)
@@ -158,10 +155,7 @@ public class RDMPCombineableFactory:ICombineableFactory
         if (cic != null || cicAssociation != null)
             return new CohortIdentificationConfigurationCommand(cic ?? cicAssociation.CohortIdentificationConfiguration);
 
-        if (modelObject is ICombineableSource commandSource)
-            return commandSource.GetCombineable();
-
-        return null;
+        return modelObject is ICombineableSource commandSource ? commandSource.GetCombineable() : null;
     }
 
     private T[] IsArrayOf<T>(object modelObject)

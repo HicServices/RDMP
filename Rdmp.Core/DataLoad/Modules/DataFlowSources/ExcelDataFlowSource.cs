@@ -268,10 +268,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     private bool IsDateFormat(string formatString)
     {
-        if (string.IsNullOrWhiteSpace(formatString))
-            return false;
-
-        return formatString.Contains('/') || formatString.Contains('\\') || formatString.Contains(':');
+        return !string.IsNullOrWhiteSpace(formatString) && (formatString.Contains('/') || formatString.Contains('\\') || formatString.Contains(':'));
     }
 
     /*
@@ -319,12 +316,9 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     private bool IsNull(object o)
     {
-        if (o == null || o == DBNull.Value)
-            return true;
-
-        return string.IsNullOrWhiteSpace(o.ToString());
+        return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
     }
-        
+
     public void Check(ICheckNotifier notifier)
     {
         if (_fileToLoad != null)

@@ -85,18 +85,12 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private object ViewLogAspectGetter(object rowObject)
     {
-        if (rowObject is ExtractableCohortDescription ecd && !string.IsNullOrWhiteSpace(ecd.Cohort.AuditLog))
-            return "View Log";
-
-        return null;
+        return rowObject is ExtractableCohortDescription ecd && !string.IsNullOrWhiteSpace(ecd.Cohort.AuditLog) ? "View Log" : (object)null;
     }
 
     private object IDAspectGetter(object rowObject)
     {
-        if (rowObject is ExtractableCohortDescription ecd)
-            return ecd.Cohort.ID;
-
-        return null;
+        return rowObject is ExtractableCohortDescription ecd ? ecd.Cohort.ID : (object)null;
     }
 
     private bool haveSubscribed;

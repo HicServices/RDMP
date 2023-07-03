@@ -104,10 +104,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     /// <inheritdoc/>
     public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
     {
-        if (!PermissionWindowPeriods.Any())
-            return true;
-
-        return PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
+        return !PermissionWindowPeriods.Any() || PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
     }
 
     public PermissionWindow()

@@ -432,10 +432,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         if (string.IsNullOrWhiteSpace(cbxServer.Text))
             return null;
 
-        if (string.IsNullOrWhiteSpace(cbxDatabase.Text))
-            return null;
-
-        return new DiscoveredServer(GetBuilder()).ExpectDatabase(cbxDatabase.Text);
+        return string.IsNullOrWhiteSpace(cbxDatabase.Text) ? null : new DiscoveredServer(GetBuilder()).ExpectDatabase(cbxDatabase.Text);
     }
 
     public DiscoveredTable GetDiscoveredTable()

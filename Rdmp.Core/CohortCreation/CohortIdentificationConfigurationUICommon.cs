@@ -82,20 +82,14 @@ public class CohortIdentificationConfigurationUICommon
     {
         var key = GetKey(rowobject);
 
-        if (key != null)
-            return Configuration.QueryCachingServer_ID == null ? "No Cache" : key.GetCachedQueryUseCount();
-
-        return null;
+        return key != null ? Configuration.QueryCachingServer_ID == null ? "No Cache" : key.GetCachedQueryUseCount() : (object)null;
     }
 
     public object Count_AspectGetter(object rowobject)
     {
         var key = GetKey(rowobject);
 
-        if (key is { State: CompilationState.Finished })
-            return key.FinalRowCount.ToString("N0");
-
-        return null;
+        return key is { State: CompilationState.Finished } ? key.FinalRowCount.ToString("N0") : (object)null;
     }
     public object Catalogue_AspectGetter(object rowobject)
     {
@@ -113,10 +107,7 @@ public class CohortIdentificationConfigurationUICommon
         {
             var plannedOp = GetNextOperation(GetState((IMapsDirectlyToDatabaseTable)rowObject));
 
-            if (plannedOp == Operation.None)
-                return null;
-
-            return plannedOp;
+            return plannedOp == Operation.None ? null : plannedOp;
         }
 
         return null;
@@ -128,10 +119,7 @@ public class CohortIdentificationConfigurationUICommon
         {
             var task = GetTaskIfExists(o);
 
-            if (task == null)
-                return CompilationState.NotScheduled;
-
-            return task.State;
+            return task == null ? CompilationState.NotScheduled : task.State;
         }
     }
     public bool IsExecutingGlobalOperations()

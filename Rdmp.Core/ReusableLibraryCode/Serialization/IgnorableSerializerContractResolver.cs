@@ -51,9 +51,7 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
         if (!Ignores.ContainsKey(type)) return false;
 
         // if no properties provided, ignore the type entirely
-        if (Ignores[type].Count == 0) return true;
-
-        return Ignores[type].Contains(propertyName);
+        return Ignores[type].Count == 0 || Ignores[type].Contains(propertyName);
     }
 
     /// <summary>

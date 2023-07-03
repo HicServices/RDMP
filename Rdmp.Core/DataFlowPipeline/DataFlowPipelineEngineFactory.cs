@@ -225,10 +225,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         var source = pipeline.Source;
 
         //there is no configured destination
-        if (source == null)
-            return null;
-
-        return CreateComponent(source);
+        return source == null ? null : CreateComponent(source);
     }
 
     /// <summary>

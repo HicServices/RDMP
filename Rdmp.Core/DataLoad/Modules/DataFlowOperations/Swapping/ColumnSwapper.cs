@@ -271,38 +271,34 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
             con.Open();
             var sql = GetMappingTableSql();
 
-            using (var cmd = server.GetCommand(sql, con))
+            using var cmd = server.GetCommand(sql, con);
+            cmd.CommandTimeout = Timeout;
+
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
             {
-                cmd.CommandTimeout = Timeout;
+                var keyVal = r[fromColumnName];
 
-                using (var r = cmd.ExecuteReader())
+                if (keyVal != DBNull.Value)
                 {
-                    while (r.Read())
+                    if (_keyType == null)
+                        _keyType = keyVal.GetType();
+                    else
                     {
-                        var keyVal = r[fromColumnName];
-
-                        if(keyVal != DBNull.Value)
-                        {
-                            if(_keyType == null)
-                                _keyType = keyVal.GetType();
-                            else
-                            {
-                                if(_keyType != keyVal.GetType())
-                                    throw new Exception($"Database mapping table Keys were of mixed Types {_keyType} and {keyVal.GetType()}");
-                            }
-                        }
-                        else
-                        {
-                            nulls++;
-                            continue;
-                        }
-
-                        if(!_mappingTable.ContainsKey(keyVal))
-                            _mappingTable.Add(keyVal,new List<object>());
-
-                        _mappingTable[keyVal].Add(r[toColumnName]);
+                        if (_keyType != keyVal.GetType())
+                            throw new Exception($"Database mapping table Keys were of mixed Types {_keyType} and {keyVal.GetType()}");
                     }
                 }
+                else
+                {
+                    nulls++;
+                    continue;
+                }
+
+                if (!_mappingTable.ContainsKey(keyVal))
+                    _mappingTable.Add(keyVal, new List<object>());
+
+                _mappingTable[keyVal].Add(r[toColumnName]);
             }
         }
 

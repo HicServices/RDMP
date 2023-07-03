@@ -60,13 +60,12 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
 
                 //it is involved in cohort identification already, presumably it's a reorder?
                 if(sourceAggregateCommand.ContainerIfAny != null)
-                    if(insertOption == InsertOption.Default)
-                        return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
-                    else
-                        return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer, insertOption);
-                
-                //it's a patient index table
-                if (sourceAggregateCommand.IsPatientIndexTable)
+                        return insertOption == InsertOption.Default
+                        ? new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer)
+                        : new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer, insertOption);
+
+                    //it's a patient index table
+                    if (sourceAggregateCommand.IsPatientIndexTable)
                     return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
                 
                 

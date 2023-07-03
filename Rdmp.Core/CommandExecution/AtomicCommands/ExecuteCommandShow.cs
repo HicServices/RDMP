@@ -105,10 +105,9 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 
     public override string GetCommandName()
     {
-        if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-            return base.GetCommandName();
-
-        return UseIconAndTypeName && _objectType != null ? $"Show {_objectType.Name}(s)" : base.GetCommandName();
+        return !string.IsNullOrWhiteSpace(OverrideCommandName)
+            ? base.GetCommandName()
+            : UseIconAndTypeName && _objectType != null ? $"Show {_objectType.Name}(s)" : base.GetCommandName();
     }
 
     public override void Execute()
@@ -163,10 +162,9 @@ public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        if (OverrideIcon != null)
-            return base.GetImage(iconProvider);
-
-        return UseIconAndTypeName && 
+        return OverrideIcon != null
+            ? base.GetImage(iconProvider)
+            : UseIconAndTypeName &&
                // if there is something to show
                (_objectType != null || _objectToShow != null) ?
             // return its icon

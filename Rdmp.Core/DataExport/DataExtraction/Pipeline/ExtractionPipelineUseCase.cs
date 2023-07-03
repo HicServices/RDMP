@@ -175,10 +175,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     {
         var progress = extractDatasetCommand.SelectedDataSets.ExtractionProgressIfAny;
 
-        if (progress == null)
-            return false;
-
-        return progress.ApplyRetryWaitStrategy(Token,listener, totalFailureCount, consecutiveFailureCount);
+        return progress?.ApplyRetryWaitStrategy(Token,listener, totalFailureCount, consecutiveFailureCount) == true;
     }
 
 

@@ -281,12 +281,9 @@ public class WindowManager
         if(TableInfoCollectionUI.IsRootObject(root))
             return RDMPCollection.Tables;
 
-        if(SavedCohortsCollectionUI.IsRootObject(root))
-            return RDMPCollection.SavedCohorts;
-
-        return RDMPCollection.None;
+        return SavedCohortsCollectionUI.IsRootObject(root) ? RDMPCollection.SavedCohorts : RDMPCollection.None;
     }
-        
+
     /// <summary>
     /// Displays the HomeUI tab or brings it to the front if it is already open
     /// </summary>
@@ -410,12 +407,11 @@ public class WindowManager
     /// <returns></returns>
     public bool AlreadyActive(Type windowType, IMapsDirectlyToDatabaseTable databaseObject)
     {
-        if (!typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(windowType))
-            throw new ArgumentException("windowType must be a Type derrived from RDMPSingleControlTab");
-
-        return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t => t.Control.GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
+        return !typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(windowType)
+            ? throw new ArgumentException("windowType must be a Type derrived from RDMPSingleControlTab")
+            : _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t => t.Control.GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
     }
-        
+
     /// <summary>
     /// Closes all Tracked windows except the specified tab
     /// </summary>

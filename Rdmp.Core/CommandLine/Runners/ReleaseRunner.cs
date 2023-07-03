@@ -270,10 +270,7 @@ public class ReleaseRunner:ManyRunner
     {
         var matches = GetCheckerResults<ReleaseEnvironmentPotential>((rp) => rp.Configuration.Equals(configuration));
 
-        if (matches.Length == 0)
-            return null;
-
-        return ((ReleaseEnvironmentPotential) matches.Single().Key).Assesment;
+        return matches.Length == 0 ? null : ((ReleaseEnvironmentPotential) matches.Single().Key).Assesment;
     }
 
     public object GetState(ISelectedDataSets selectedDataSets)
@@ -317,10 +314,7 @@ public class ReleaseRunner:ManyRunner
     {
         var matches = GetCheckerResults<GlobalReleasePotential>(rp => rp.RelatedGlobal.Equals(global));
 
-        if (matches.Length == 0)
-            return null;
-
-        return ((GlobalReleasePotential) matches.Single().Key).Releasability;
+        return matches.Length == 0 ? null : ((GlobalReleasePotential) matches.Single().Key).Releasability;
     }
 
     public CheckResult? GetGlobalReleaseState()

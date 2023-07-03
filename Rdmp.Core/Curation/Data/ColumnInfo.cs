@@ -360,10 +360,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     ///<inheritdoc/>
     public string GetRuntimeName()
     {
-        if (Name == null)
-            return null;
-
-        return GetQuerySyntaxHelper().GetRuntimeName(Name);
+        return Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);
     }
 
     ///<inheritdoc/>
@@ -418,11 +415,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
             //The column exists both in the live database and in the identifier dump.  This is because it goes through horrendous bitcrushing operations e.g. Load RAW with full
             //postcode varchar(8) and ship postcode off to identifier dump but also let it go through to live but only as the first 4 letters varchar(4).  so the datatype of the column
             //in RAW is varchar(8) but in Live is varchar(4)
-            if (discard != null)
-                return discard.Data_type;
-                    
-            return Data_type;
-                
+            return discard != null ? discard.Data_type : Data_type;
         }
 
         //The user is asking about a stage other than RAW so tell them about the final column type state
@@ -510,10 +503,10 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         if (type == LookupType.Description)
             return Repository.GetAllObjectsWhere<Lookup>("Description_ID", ID);
         if (type == LookupType.AnyKey)
-            return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID,ExpressionType.OrElse,"PrimaryKey_ID",ID);      
-        if (type == LookupType.ForeignKey)
-            return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID);
-            
+            return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID,ExpressionType.OrElse,"PrimaryKey_ID",ID);
+        return type == LookupType.ForeignKey
+            ? Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID)
+            :
         throw new NotImplementedException($"Unrecognised LookupType {type}");
     }
 

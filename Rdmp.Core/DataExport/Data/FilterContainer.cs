@@ -123,10 +123,7 @@ public class FilterContainer : ConcreteContainer, IContainer
     {
         var root = GetRootContainerOrSelf();
 
-        if (root == null)
-            return null;
-
-        return Repository.GetAllObjectsWhere<SelectedDataSets>("RootFilterContainer_ID", root.ID).SingleOrDefault();
+        return root == null ? null : Repository.GetAllObjectsWhere<SelectedDataSets>("RootFilterContainer_ID", root.ID).SingleOrDefault();
     }
 
 

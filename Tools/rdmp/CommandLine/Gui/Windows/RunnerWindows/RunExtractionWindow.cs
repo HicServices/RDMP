@@ -44,13 +44,7 @@ internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
             throw new Exception("No compatible pipelines");
         }
 
-        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true);
-
-        if (pipe == null)
-        {
-            throw new OperationCanceledException();
-        }
-
+        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true) ?? throw new OperationCanceledException();
         opts.Pipeline = pipe.ID.ToString();
     }
 }

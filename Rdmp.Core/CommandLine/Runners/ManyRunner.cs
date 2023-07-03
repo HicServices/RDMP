@@ -158,10 +158,7 @@ public abstract class ManyRunner: Runner
             if (arr.Length == 0)
                 return null;
 
-            if (arr.Length == 1)
-                return arr[0].Value;
-
-            throw new InvalidOperationException($"There were {arr.Length} Checkers of type {typeof(T)}");
+            return arr.Length == 1 ? arr[0].Value : throw new InvalidOperationException($"There were {arr.Length} Checkers of type {typeof(T)}");
         }
     }
 

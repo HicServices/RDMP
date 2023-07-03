@@ -272,9 +272,6 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     protected override string FormatPropertyNameForSummary(PropertyInfo prop)
     {
         // rebrand this property so it is clearer to the user that it applies only on extraction
-        if (prop.Name == nameof(IsPrimaryKey))
-            return "Is Extraction Primary Key";
-
-        return base.FormatPropertyNameForSummary(prop);
+        return prop.Name == nameof(IsPrimaryKey) ? "Is Extraction Primary Key" : base.FormatPropertyNameForSummary(prop);
     }
 }

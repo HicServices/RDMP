@@ -104,19 +104,17 @@ public class MEF
         if (_types.Value.TryGetValue(type, out var type1)) return type1;
         if (_types.Value.TryGetValue(type.ToUpperInvariant(), out var type3)) return type3;
         if (_types.Value.TryGetValue(Tail(type), out var type2)) return type2;
-        if (_types.Value.TryGetValue(Tail(type).ToUpperInvariant(), out var type4)) return type4;
-        return null;
+        return _types.Value.TryGetValue(Tail(type).ToUpperInvariant(), out var type4) ? type4 : null;
     }
 
     public static Type GetType(string type, Type expectedBaseClass)
     {
         var t = GetType(type);
 
-        if(!expectedBaseClass.IsAssignableFrom(t))
-            throw new Exception(
-                $"Found Type {t?.FullName} for '{type}' did not implement expected base class/interface '{expectedBaseClass}'");
-
-        return t;
+        return !expectedBaseClass.IsAssignableFrom(t)
+            ? throw new Exception(
+                $"Found Type {t?.FullName} for '{type}' did not implement expected base class/interface '{expectedBaseClass}'")
+            : t;
     }
     public void Setup(SafeDirectoryCatalog result)
     {

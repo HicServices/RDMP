@@ -80,10 +80,9 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     {
         get
         {
-            if (_encryptedString is FakeEncryptedString)
-                throw new Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
-
-            return _encryptedString.Value;
+            return _encryptedString is FakeEncryptedString
+                ? throw new Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}")
+                : _encryptedString.Value;
         }
         set => _encryptedString.Value = value;
     }
@@ -91,9 +90,8 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     /// <inheritdoc/>
     public string GetDecryptedPassword()
     {
-        if (_encryptedString == null)
-            throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
-
-        return _encryptedString.GetDecryptedValue() ?? "";
+        return _encryptedString == null
+            ? throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
+            : _encryptedString.GetDecryptedValue() ?? "";
     }
 }

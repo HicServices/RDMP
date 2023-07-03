@@ -30,9 +30,6 @@ public class DatabaseVersionProvider
                 r["version"] == DBNull.Value ? new Version(0, 0, 0, 0) : new Version(r["version"].ToString()))
             .ToArray();
 
-        if (versions.Length == 0)
-            return new Version(0, 0, 0, 0);
-
-        return versions.Max();
+        return versions.Length == 0 ? new Version(0, 0, 0, 0) : versions.Max();
     }
 }

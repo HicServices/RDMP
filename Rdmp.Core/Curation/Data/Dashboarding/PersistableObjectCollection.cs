@@ -36,23 +36,13 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((PersistableObjectCollection) obj);
+        return obj.GetType() == GetType() && Equals((PersistableObjectCollection) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return
-                (397 * (DatabaseObjects != null ?
-                        DatabaseObjects.Aggregate(0, (old, curr) =>
-                            (old * 397) ^ (curr != null ? curr.GetHashCode() : 0)) :
-                        0)
-                ) ^
-                (SaveExtraText() != null ? SaveExtraText().GetHashCode() : 0);
-        } 
+        return System.HashCode.Combine(DatabaseObjects, SaveExtraText());
     }
 }

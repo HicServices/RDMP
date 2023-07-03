@@ -295,7 +295,7 @@ public partial class StartupUI : Form, ICheckNotifier
         }
             
         //if the message starts with a percentage translate it into the progress bars movement
-        var progressHackMessage = new Regex("^(\\d+)%");
+        var progressHackMessage = Percentage();
         var match = progressHackMessage.Match(args.Message);
 
         if (match.Success)
@@ -350,4 +350,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         ragSmiley1.ShowMessagesIfAny();
     }
+
+    [GeneratedRegex("^(\\d+)%")]
+    private static partial Regex Percentage();
 }

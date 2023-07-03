@@ -124,11 +124,10 @@ public class CSVOutputFormat : FileOutputFormat
             separatorsStrippedOut++;
         }
 
-        if (o is string s)
-            return ThingsToStripOut.Aggregate(s,
-                (current, cToStripOut) => current.Replace(cToStripOut, _illegalCharactersReplacement)).Trim();
-
-        return o.ToString().Trim();
+        return o is string s
+            ? ThingsToStripOut.Aggregate(s,
+                (current, cToStripOut) => current.Replace(cToStripOut, _illegalCharactersReplacement)).Trim()
+            : o.ToString().Trim();
     }
 
 }

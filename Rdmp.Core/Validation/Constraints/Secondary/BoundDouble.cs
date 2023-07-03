@@ -120,10 +120,7 @@ public class BoundDouble :  Bound
         if (Lower.HasValue)
             return GreaterThanMessage(d, Lower.ToString());
 
-        if (Upper.HasValue)
-            return LessThanMessage(d, Upper.ToString());
-
-        throw new InvalidOperationException("Illegal state.");
+        return Upper.HasValue ? LessThanMessage(d, Upper.ToString()) : throw new InvalidOperationException("Illegal state.");
     }
 
     private string CreateViolationReportUsingFieldNames(double d)
@@ -134,10 +131,9 @@ public class BoundDouble :  Bound
         if (!string.IsNullOrWhiteSpace(LowerFieldName))
             return GreaterThanMessage(d, LowerFieldName);
 
-        if (!string.IsNullOrWhiteSpace(UpperFieldName))
-            return LessThanMessage(d, UpperFieldName);
-
-        throw new InvalidOperationException("Illegal state.");
+        return !string.IsNullOrWhiteSpace(UpperFieldName)
+            ? LessThanMessage(d, UpperFieldName)
+            : throw new InvalidOperationException("Illegal state.");
     }
 
     private string BetweenMessage(double d, string l, string u)

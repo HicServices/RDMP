@@ -273,12 +273,7 @@ public class MemoryRepository : IRepository
         if (obj1 == null && obj2 == null)
             throw new NotSupportedException("Why are you comparing two null things against one another with this method?");
 
-        if (obj1.GetType() == obj2.GetType())
-        {
-            return ((IMapsDirectlyToDatabaseTable)obj1).ID == ((IMapsDirectlyToDatabaseTable)obj2).ID;
-        }
-
-        return false;
+        return obj1.GetType() == obj2.GetType() && obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID;
     }
 
     /// <inheritdoc/>

@@ -192,12 +192,9 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     /// <returns></returns>
     public override string ToString()
     {
-        if(!string.IsNullOrWhiteSpace(Alias))
-            return Alias;
-
-        return SelectSQL;
+        return !string.IsNullOrWhiteSpace(Alias) ? Alias : SelectSQL;
     }
-        
+
     /// <summary>
     /// Returns true if the underlying column (<see cref="Curation.Data.ColumnInfo"/>) referenced by this class has disapeared since its creation.
     /// </summary>

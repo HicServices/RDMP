@@ -465,14 +465,11 @@ public class CohortCompiler
             
         var sourceSyntax = server.GetQuerySyntaxHelper();
         var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
-            
-        //if we have a change in syntax e.g. read from Oracle write to Sql Server
-        if (sourceSyntax.DatabaseType != destinationSyntax.DatabaseType)
-        {
-            return sourceSyntax.TypeTranslater.TranslateSQLDBType(data_type, destinationSyntax.TypeTranslater);
-        }
 
-        return data_type;
+        //if we have a change in syntax e.g. read from Oracle write to Sql Server
+        return sourceSyntax.DatabaseType != destinationSyntax.DatabaseType
+            ? sourceSyntax.TypeTranslater.TranslateSQLDBType(data_type, destinationSyntax.TypeTranslater)
+            : data_type;
     }
 
     /// <summary>

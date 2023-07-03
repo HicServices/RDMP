@@ -105,8 +105,8 @@ public class TableInfoCloneOperation
         using (var con = destDatabaseInfo.Server.GetConnection())
         {
             con.Open();
-            using(var cmd = destDatabaseInfo.Server.GetCommand(sql, con))
-                cmd.ExecuteNonQuery();
+            using var cmd = destDatabaseInfo.Server.GetCommand(sql, con);
+            cmd.ExecuteNonQuery();
         }
 
         if (!newTable.Exists())

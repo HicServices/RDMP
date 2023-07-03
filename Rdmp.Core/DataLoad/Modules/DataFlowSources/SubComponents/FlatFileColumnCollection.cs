@@ -213,11 +213,10 @@ public class FlatFileColumnCollection
             
         UnamedColumns = new ReadOnlyCollection<DataColumn>(unamedColumns);
 
-        if (duplicateHeaders.Any())
-            throw new FlatFileLoadException(
-                $"Found the following duplicate headers in file '{_toLoad.File}':{string.Join(",", duplicateHeaders)}");
-
-        return dt;
+        return duplicateHeaders.Any()
+            ? throw new FlatFileLoadException(
+                $"Found the following duplicate headers in file '{_toLoad.File}':{string.Join(",", duplicateHeaders)}")
+            : dt;
     }
 
     /// <summary>

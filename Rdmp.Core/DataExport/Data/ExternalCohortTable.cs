@@ -68,18 +68,16 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         //they sent us something like "bob" for a table/column name, let's fully qualify it with the Database etc
         var syntax = GetQuerySyntaxHelper();
 
-        if(col == null)
-            return  syntax.EnsureFullyQualified(
+        return col == null
+            ? syntax.EnsureFullyQualified(
                 syntax.GetRuntimeName(db ?? string.Empty),
                 null /*no schema*/,
-                syntax.GetRuntimeName(tbl ?? string.Empty));
-
-        return  syntax.EnsureFullyQualified(
+                syntax.GetRuntimeName(tbl ?? string.Empty))
+            : syntax.EnsureFullyQualified(
             syntax.GetRuntimeName(db ?? string.Empty),
             null /*no schema*/,
             syntax.GetRuntimeName(tbl ?? string.Empty),
             syntax.GetRuntimeName(col));
-
     }
 
     /// <inheritdoc/>

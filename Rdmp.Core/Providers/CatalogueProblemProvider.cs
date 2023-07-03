@@ -139,10 +139,7 @@ public class CatalogueProblemProvider : ProblemProvider
 
     public string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
     {
-        if (decryptionPrivateKeyNode.KeyNotSpecified)
-            return "No RSA encryption key has been created yet";
-
-        return null;
+        return decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
     }
 
     public string DescribeProblem(AggregateConfiguration aggregateConfiguration)
@@ -151,28 +148,19 @@ public class CatalogueProblemProvider : ProblemProvider
             if (!_usedJoinables.Contains(aggregateConfiguration.JoinableCohortAggregateConfiguration.ID))
                 return "Patient Index Table is not joined to any cohort sets";
 
-        if(!aggregateConfiguration.Catalogue.IsApiCall() && !aggregateConfiguration.AggregateDimensions.Any())
-        {
-            return "Aggregate has no dimensions.  Set an AggregateDimension to specify which column is fetched by the query.";
-        }
-
-        return null;
+        return !aggregateConfiguration.Catalogue.IsApiCall() && !aggregateConfiguration.AggregateDimensions.Any()
+            ? "Aggregate has no dimensions.  Set an AggregateDimension to specify which column is fetched by the query."
+            : null;
     }
 
     public string DescribeProblem(IFilter filter)
     {
-        if (string.IsNullOrWhiteSpace(filter.WhereSQL))
-            return "Filter is blank";
-
-        return null;
+        return string.IsNullOrWhiteSpace(filter.WhereSQL) ? "Filter is blank" : null;
     }
 
     public string DescribeProblem(Catalogue catalogue)
     {
-        if (!Catalogue.IsAcceptableName(catalogue.Name, out var reason))
-            return $"Invalid Name:{reason}";
-
-        return null;
+        return !Catalogue.IsAcceptableName(catalogue.Name, out var reason) ? $"Invalid Name:{reason}" : null;
     }
 
     /// <summary>
@@ -242,10 +230,7 @@ public class CatalogueProblemProvider : ProblemProvider
 
     private string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
     {
-        if (LoadDirectoryNode.IsEmpty)
-            return "No Project Directory has been specified for the load";
-
-        return null;
+        return LoadDirectoryNode.IsEmpty ? "No Project Directory has been specified for the load" : null;
     }
 
     public string DescribeProblem(CatalogueItem catalogueItem)
@@ -257,10 +242,7 @@ public class CatalogueProblemProvider : ProblemProvider
             j.PrimaryKey_ID == catalogueItem.ColumnInfo_ID ||
             j.ForeignKey_ID == catalogueItem.ColumnInfo_ID);
 
-        if (badJoin != null)
-            return $"Columns in joins declared on this column have mismatched collations ({badJoin})";
-
-        return null;
+        return badJoin != null ? $"Columns in joins declared on this column have mismatched collations ({badJoin})" : null;
     }
 
     public string DescribeProblem(CohortAggregateContainer container)

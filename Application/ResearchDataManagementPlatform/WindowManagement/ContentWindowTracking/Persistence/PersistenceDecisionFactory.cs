@@ -60,10 +60,9 @@ public class PersistenceDecisionFactory
 
     public RDMPCollection? ShouldCreateCollection(string persistString)
     {
-        if (!persistString.StartsWith(PersistableToolboxDockContent.Prefix))
-            return null;
-
-        return PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
+        return !persistString.StartsWith(PersistableToolboxDockContent.Prefix)
+            ? null
+            : PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
     }
 
     public DeserializeInstruction ShouldCreateSingleObjectControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
@@ -117,15 +116,10 @@ public class PersistenceDecisionFactory
 
     private Type GetTypeByName(string s, Type expectedBaseClassType,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        var toReturn = MEF.GetType(s);
-
-        if (toReturn == null)
-            throw new TypeLoadException($"Could not find Type called '{s}'");
-
-        if (expectedBaseClassType != null)
-            if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                throw new TypeLoadException(
-                    $"Persistence string included a reference to Type '{s}' which we managed to find but it did not match an expected base Type ({expectedBaseClassType})");
+        var toReturn = MEF.GetType(s) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
+        if (expectedBaseClassType?.IsAssignableFrom(toReturn) == false)
+            throw new TypeLoadException(
+                $"Persistence string included a reference to Type '{s}' which we managed to find but it did not match an expected base Type ({expectedBaseClassType})");
 
         return toReturn;
     }

@@ -352,13 +352,7 @@ public class Validator
             }
         }
 
-        if (eList.Count > 0)
-        {
-            return new ValidationFailure("There are validation errors.", eList);
-        }
-
-        return null;
-
+        return eList.Count > 0 ? new ValidationFailure("There are validation errors.", eList) : null;
     }
 
     private ValidationFailure ValidateAgainstDomainObject()
@@ -461,12 +455,7 @@ public class Validator
             }
         }
 
-        if (eList.Count > 0)
-        {
-            return new ValidationFailure("There are validation errors.", eList);
-        }
-
-        return null;
+        return eList.Count > 0 ? new ValidationFailure("There are validation errors.", eList) : null;
     }
 
     private Dictionary<string, object> DomainObjectPropertiesToDictionary(object o)

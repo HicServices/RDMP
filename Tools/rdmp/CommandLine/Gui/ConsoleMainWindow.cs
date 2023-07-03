@@ -271,11 +271,9 @@ internal class ConsoleMainWindow
             return d.IsDisabled ? $"{d} (Disabled)" : d.ToString();
         }
 
-        if (model is IArgument arg)
-        {
-            return $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})";
-        }
-        return model?.ToString() ?? "Null Object";
+        return model is IArgument arg
+            ? $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})"
+            : model?.ToString() ?? "Null Object";
     }
 
     private void Publish()
@@ -422,10 +420,9 @@ internal class ConsoleMainWindow
 
     private IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
     {
-        if(o is IMasqueradeAs masquerade)
-            return masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
-            
-        return o as IMapsDirectlyToDatabaseTable;
+        return o is IMasqueradeAs masquerade
+            ? masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable
+            : o as IMapsDirectlyToDatabaseTable;
     }
 
 
@@ -515,10 +512,7 @@ internal class ConsoleMainWindow
 
         if(type == typeof(ExtractableCohort))
             return BuiltCohorts;
-        if (GetOtherCategoryChildren().Any(a=>a.Equals(o)))
-            return Other;
-
-        return null;
+        return GetOtherCategoryChildren().Any(a=>a.Equals(o)) ? Other : null;
     }
     private void Run()
     {

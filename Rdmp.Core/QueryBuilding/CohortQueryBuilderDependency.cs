@@ -294,9 +294,6 @@ public class CohortQueryBuilderDependency
         if (SqlPartiallyCached != null)
             return "Partially Cached";
 
-        if (SqlCacheless != null)
-            return "Not Cached";
-
-        return "Not Built";
+        return SqlCacheless != null ? "Not Cached" : "Not Built";
     }
 }

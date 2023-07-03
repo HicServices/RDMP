@@ -84,11 +84,7 @@ public class DatabaseEntityJsonConverter:JsonConverter
         reader.Read();
 
         //read the end object
-        if(reader.TokenType != JsonToken.EndObject)
-            throw new JsonReaderException("Did not find EndObject");
-
-
-        return o;
+        return reader.TokenType != JsonToken.EndObject ? throw new JsonReaderException("Did not find EndObject") : (object)o;
     }
 
     /// <summary>

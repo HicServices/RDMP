@@ -508,10 +508,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         get
         {
-            if (LoadMetadata_ID == null)
-                return null;
-
-            return Repository.GetObjectByID<LoadMetadata>((int) LoadMetadata_ID);
+            return LoadMetadata_ID == null ? null : Repository.GetObjectByID<LoadMetadata>((int) LoadMetadata_ID);
         }
     }
 
@@ -958,10 +955,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         GetTableInfos(out var normalTables, out var lookupTables);
 
-        if (includeLookupTables)
-            return normalTables.Union(lookupTables).ToArray();
-
-        return normalTables.ToArray();
+        return includeLookupTables ? normalTables.Union(lookupTables).ToArray() : normalTables.ToArray();
     }
 
     /// <inheritdoc/>
@@ -994,10 +988,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     private IEnumerable<ColumnInfo> GetColumnInfos()
     {
-        if (CatalogueItems.All(ci => ci.IsColumnInfoCached()))
-            return CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null);
-
-        return Repository.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue).Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
+        return CatalogueItems.All(ci => ci.IsColumnInfoCached())
+            ? CatalogueItems.Select(ci => ci.ColumnInfo).Where(col => col != null)
+            : Repository.GetAllObjectsInIDList<ColumnInfo>(CatalogueItems.Where(ci => ci.ColumnInfo_ID.HasValue).Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
     }
 
     /// <inheritdoc/>

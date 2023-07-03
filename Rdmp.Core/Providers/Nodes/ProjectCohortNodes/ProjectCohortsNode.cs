@@ -33,10 +33,9 @@ public class ProjectCohortsNode:Node,IOrderable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectCohortsNode) obj);
+        return obj.GetType() != GetType() ? false : Equals((ProjectCohortsNode) obj);
     }
 
     public override int GetHashCode()

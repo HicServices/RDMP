@@ -31,7 +31,7 @@ public enum SyntaxLanguage
 /// <summary>
 /// Factory for creating instances of <see cref="Scintilla"/> with a consistent look and feel and behaviour (e.g. drag and drop).
 /// </summary>
-public class ScintillaTextEditorFactory
+public partial class ScintillaTextEditorFactory
 {
     private static WordList hUnSpell;
     private static bool DictionaryExceptionShown;
@@ -152,7 +152,7 @@ public class ScintillaTextEditorFactory
         scintilla.IndicatorCurrent = 8;
         scintilla.IndicatorClearRange(0, scintilla.TextLength);
 
-        foreach (Match m in Regex.Matches(scintilla.Text, @"\b\w*\b"))
+        foreach (Match m in Words().Matches(scintilla.Text))
             if (!hunspell.Check(m.Value))
             {
                 scintilla.IndicatorFillRange(m.Index, m.Length);
@@ -286,4 +286,7 @@ public class ScintillaTextEditorFactory
 
         scintilla.LexerName = lexer;
     }
+
+    [GeneratedRegex("\\b\\w*\\b")]
+    private static partial Regex Words();
 }

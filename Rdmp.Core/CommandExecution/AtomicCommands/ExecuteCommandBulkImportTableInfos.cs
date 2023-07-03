@@ -166,11 +166,9 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
 
     private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
     {
-        if (property.Name.EndsWith("LoggingServer_ID"))
-            return _loggingServer.ID;
-
-
-        throw new SharingException($"Could not figure out a sensible value to assign to Property {property}");
+        return property.Name.EndsWith("LoggingServer_ID")
+            ? _loggingServer.ID
+            : throw new SharingException($"Could not figure out a sensible value to assign to Property {property}");
     }
 
 

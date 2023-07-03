@@ -112,19 +112,12 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
             return
                 $"{ti.TargetTable}(I={WithCommas(ti.Inserts)} U={WithCommas(ti.Updates)} D={WithCommas(ti.Deletes)})";
 
-        if (rowObject is ArchivalProgressLog pr)
-            return pr.Description;
-
-        throw new NotSupportedException();
+        return rowObject is ArchivalProgressLog pr ? (object)pr.Description : throw new NotSupportedException();
     }
 
     private string WithCommas(int? i)
     {
-        if (!i.HasValue)
-            return @"N\A";
-
-        return i.Value.ToString("N0");
-
+        return !i.HasValue ? @"N\A" : i.Value.ToString("N0");
     }
 
     private object olvDate_AspectGetter(object rowObject)
@@ -141,10 +134,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         if (rowObject is ArchivalTableLoadInfo ti)
             return ti.Start;
 
-        if (rowObject is ArchivalProgressLog pr)
-            return pr.Date;
-            
-        throw new NotSupportedException();
+        return rowObject is ArchivalProgressLog pr ? (object)pr.Date : throw new NotSupportedException();
     }
 
     private void treeView1_FormatRow(object sender, FormatRowEventArgs e)
@@ -176,10 +166,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
                 children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.OrderByDescending(d => d.Start).ToArray(),LoggingTables.TableLoadRun, dli.ID));
         }
 
-        if (model is LoadEventsTreeView_Category category)
-            return category.Children;
-
-        return children;
+        return model is LoadEventsTreeView_Category category ? category.Children : (IEnumerable)children;
     }
 
     private class LoadEventsTreeView_Category

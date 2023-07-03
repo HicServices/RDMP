@@ -50,10 +50,9 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
 
     private HashSet<int> GetColumnInfos(Catalogue catalogue)
     {
-        if (catalogue == null)
-            return null;
-
-        return new HashSet<int>(catalogue.CatalogueItems.Select(ci => ci.ColumnInfo_ID).Where(col => col.HasValue).Select(v => v.Value).Distinct().ToArray());
+        return catalogue == null
+            ? null
+            : new HashSet<int>(catalogue.CatalogueItems.Select(ci => ci.ColumnInfo_ID).Where(col => col.HasValue).Select(v => v.Value).Distinct().ToArray());
     }
 
     public override string GetCommandHelp()

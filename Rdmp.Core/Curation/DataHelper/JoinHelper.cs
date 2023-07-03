@@ -176,11 +176,7 @@ public class JoinHelper
     /// <returns></returns>
     public static string GetLookupTableAlias(int aliasNumber, bool requirePrefix = false)
     {
-        if (requirePrefix)
-            return $" AS lookup_{aliasNumber}";
-
-        return $"lookup_{aliasNumber}";
-
+        return requirePrefix ? $" AS lookup_{aliasNumber}" : $"lookup_{aliasNumber}";
     }
 
 
@@ -226,9 +222,6 @@ public class JoinHelper
     [Pure]
     private static string AppendCollation(string sql, string collation)
     {
-        if (!string.IsNullOrWhiteSpace(collation))
-            return $"{sql} collate {collation}";
-
-        return sql;
+        return !string.IsNullOrWhiteSpace(collation) ? $"{sql} collate {collation}" : sql;
     }
 }

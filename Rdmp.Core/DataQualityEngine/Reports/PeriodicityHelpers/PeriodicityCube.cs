@@ -31,10 +31,7 @@ public class PeriodicityCube
     }
     public PeriodicityState GetStateForConsequence(Consequence? consequence)
     {
-        if (consequence == null)
-            return _passingValidation;
-
-        return _consequenceCube[(Consequence)consequence];
+        return consequence == null ? _passingValidation : _consequenceCube[(Consequence)consequence];
     }
 
     public void CommitToDatabase(Evaluation evaluation, string pivotCategory)

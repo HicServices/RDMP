@@ -78,9 +78,6 @@ public class CommandLineObjectPicker
     public bool HasArgumentOfType(int idx, Type paramType)
     {
         //if the index is greater than the number of arguments we have
-        if (idx >= Arguments.Count)
-            return false;
-
-        return Arguments.ElementAt(idx).HasValueOfType(paramType);
+        return idx < Arguments.Count && Arguments.ElementAt(idx).HasValueOfType(paramType);
     }
 }

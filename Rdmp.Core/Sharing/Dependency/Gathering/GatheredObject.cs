@@ -26,8 +26,8 @@ namespace Rdmp.Core.Sharing.Dependency.Gathering;
 /// </summary>
 public class GatheredObject : IHasDependencies, IMasqueradeAs
 {
-    public IMapsDirectlyToDatabaseTable Object { get; set; } 
-    public List<GatheredObject> Children { get; private set; }
+    public IMapsDirectlyToDatabaseTable Object { get; } 
+    public List<GatheredObject> Children { get; }
 
     public GatheredObject(IMapsDirectlyToDatabaseTable o)
     {
@@ -138,15 +138,14 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((GatheredObject) obj);
+        return obj.GetType() == GetType() && Equals((GatheredObject) obj);
     }
 
     public override int GetHashCode()
     {
-        return Object != null ? Object.GetHashCode() : 0;
+        return HashCode.Combine(Object);
     }
 
     public object MasqueradingAs()

@@ -19,9 +19,7 @@ public class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
     {
         if (ReferenceEquals(x, y))
             return true;
-        if (x == null || y == null)
-            return false;
-        return x.FullName == y.FullName;
+        return x != null && y != null && x.FullName == y.FullName;
     }
 
     public int GetHashCode(DirectoryInfo obj)

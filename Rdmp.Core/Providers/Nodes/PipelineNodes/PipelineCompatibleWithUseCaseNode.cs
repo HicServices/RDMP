@@ -20,9 +20,9 @@ namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 /// </summary>
 public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeAs
 {
-    public Pipeline Pipeline { get; set; }
-    public PipelineUseCase UseCase { get; set; }
-    private Type _useCaseType;
+    public Pipeline Pipeline { get; }
+    public PipelineUseCase UseCase { get; }
+    private readonly Type _useCaseType;
 
     public PipelineCompatibleWithUseCaseNode(MemoryRepository repo, Pipeline pipeline, PipelineUseCase useCase):base(null)
     {
@@ -55,23 +55,19 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
     #region Equality
     protected bool Equals(PipelineCompatibleWithUseCaseNode other)
     {
-        return _useCaseType.Equals(other._useCaseType) && Pipeline.Equals(other.Pipeline);
+        return _useCaseType == other._useCaseType && Pipeline.Equals(other.Pipeline);
     }
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((PipelineCompatibleWithUseCaseNode) obj);
+        return obj.GetType() == GetType() && Equals((PipelineCompatibleWithUseCaseNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return (_useCaseType.GetHashCode()*397) ^ Pipeline.GetHashCode();
-        }
+        return HashCode.Combine(_useCaseType, Pipeline);
     }
     #endregion
 }

@@ -126,9 +126,8 @@ public class ChartLookAndFeelSetter
 
         var matchMonthDigit = Regex.Match(yearMonth, @"\d+-(\d+)");
 
-        if (!matchMonthDigit.Success)
-            throw new Exception("Regex did not match expected YYYY-MM!");
-
-        return int.Parse(matchMonthDigit.Groups[1].Value);
+        return !matchMonthDigit.Success
+            ? throw new Exception("Regex did not match expected YYYY-MM!")
+            : int.Parse(matchMonthDigit.Groups[1].Value);
     }
 }

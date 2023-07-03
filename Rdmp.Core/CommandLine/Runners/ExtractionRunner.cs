@@ -194,10 +194,7 @@ public class ExtractionRunner : ManyRunner
             {
                 var sds = ExtractCommands.Keys.FirstOrDefault(k => k.ExtractableDataSet_ID == extractableData.ID);
 
-                if (sds == null)
-                    return null;
-
-                return ExtractCommands[sds].State;
+                return sds == null ? null : ExtractCommands[sds].State;
             }
         }
             
@@ -213,11 +210,7 @@ public class ExtractionRunner : ManyRunner
             return g?.GetWorst();
         }
 
-        if (_options.Command == CommandLineActivity.run && _globalsCommand != null)
-            return _globalsCommand.State;
-
-        return null;
-            
+        return _options.Command == CommandLineActivity.run && _globalsCommand != null ? _globalsCommand.State : null;
     }
 
     private DataLoadInfo StartAudit()
@@ -247,9 +240,6 @@ public class ExtractionRunner : ManyRunner
     {
         var previouslyReleasedStuff = _configuration.ReleaseLog;
 
-        if (previouslyReleasedStuff.Any())
-            return true;
-
-        return false;
+        return previouslyReleasedStuff.Any();
     }
 }

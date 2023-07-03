@@ -158,10 +158,7 @@ public class RdmpCommandLineBootStrapper
         if (listener.Worst >= LogLevel.Error || checker.Worst >= LogLevel.Error)
             return -1;
 
-        if (opts.FailOnWarnings && (listener.Worst >= LogLevel.Warn || checker.Worst >= LogLevel.Warn))
-            return 1;
-
-        return 0;
+        return opts.FailOnWarnings && (listener.Worst >= LogLevel.Warn || checker.Worst >= LogLevel.Warn) ? 1 : 0;
     }
 
     /// <summary>

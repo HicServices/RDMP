@@ -278,9 +278,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     public virtual string GetTabName()
     {
-        if (DatabaseObject is INamed named)
-            return named.Name;
-        return DatabaseObject?.ToString() ?? "Unnamed Tab";
+        return DatabaseObject is INamed named ? named.Name : DatabaseObject?.ToString() ?? "Unnamed Tab";
     }
 
     public virtual string GetTabToolTip()

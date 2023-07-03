@@ -128,10 +128,7 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
         if (_container != null)
             collection = new ViewColumnExtractCollection(_columnInfo, _viewType, _container);
 
-        if (collection == null)
-            throw new Exception("ViewFilterMatchData Command had no filter or container");
-
-        return collection;
+        return collection == null ? throw new Exception("ViewFilterMatchData Command had no filter or container") : (IViewSQLAndResultsCollection)collection;
     }
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {

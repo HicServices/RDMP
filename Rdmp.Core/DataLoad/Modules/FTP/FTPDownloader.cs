@@ -157,11 +157,7 @@ public class FTPDownloader : IPluginDataProvider
                 return SkipReason.DidNotMatchPattern; //skip because it did not match pattern
 
         //if the file on the FTP already exists in the forLoading directory, skip it
-        if (destination.ForLoading.GetFiles(file).Any())
-            return SkipReason.InForLoading;
-
-         
-        return SkipReason.DoNotSkip;
+        return destination.ForLoading.GetFiles(file).Any() ? SkipReason.InForLoading : SkipReason.DoNotSkip;
     }
 
 

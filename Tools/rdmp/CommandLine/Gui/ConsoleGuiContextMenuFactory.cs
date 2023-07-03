@@ -160,11 +160,9 @@ internal class ConsoleGuiContextMenuFactory
             };
         }
 
-        if (o == null)
-            return Array.Empty<IAtomicCommand>();
-
-        return
-            GetExtraCommands(activator, o)
+        return o == null
+            ? Array.Empty<IAtomicCommand>()
+            : GetExtraCommands(activator, o)
                 .Union(factory.CreateCommands(o))
                 .Union(activator.PluginUserInterfaces.SelectMany(p => p.GetAdditionalRightClickMenuItems(o)))
                 .OrderBy(c => c.Weight);

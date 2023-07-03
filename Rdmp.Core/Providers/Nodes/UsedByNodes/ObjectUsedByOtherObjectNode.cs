@@ -66,10 +66,7 @@ public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObject
     /// <returns></returns>
     public override string ToString()
     {
-        if (IsEmptyNode)
-            return EmptyRepresentation;
-
-        return ObjectBeingUsed.ToString();
+        return IsEmptyNode ? EmptyRepresentation : ObjectBeingUsed.ToString();
     }
 
     #region Equality
@@ -86,19 +83,15 @@ public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObject
     /// <inheritdoc/>
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((ObjectUsedByOtherObjectNode<T, T2>) obj);
+        return obj.GetType() == GetType() && Equals((ObjectUsedByOtherObjectNode<T, T2>) obj);
     }
 
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return (EqualityComparer<T>.Default.GetHashCode(User)*397) ^ EqualityComparer<T2>.Default.GetHashCode(ObjectBeingUsed);
-        }
+        return System.HashCode.Combine(User, ObjectBeingUsed);
     }
     #endregion
 }

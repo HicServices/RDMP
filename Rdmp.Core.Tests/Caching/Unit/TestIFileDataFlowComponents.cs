@@ -71,11 +71,9 @@ public class FilesystemCacheDestination : IFileDataFlowDestination, IPipelineReq
         // would be in CacheLayout, with it being a component
         // ? where does the date come from?
         // either going to be CacheFillProgress or CacheFillProgress + period, depending on fetch logic
-        if (CacheProgress.CacheFillProgress == null)
-            throw new Exception("Should throw, but currently on first cache it is valid for the CacheFIllProgress to be null");
-            
-
-        return toProcess;
+        return CacheProgress.CacheFillProgress == null
+            ? throw new Exception("Should throw, but currently on first cache it is valid for the CacheFIllProgress to be null")
+            : toProcess;
     }
 
     public void Dispose(IDataLoadEventListener listener)

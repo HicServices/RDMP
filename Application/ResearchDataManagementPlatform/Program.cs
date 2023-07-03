@@ -18,11 +18,10 @@ using Rdmp.UI.TestsAndSetup;
 
 namespace ResearchDataManagementPlatform;
 
-internal static class Program
+internal static partial class Program
 {
-    [DllImport("kernel32.dll")]
-    [return: MarshalAs(UnmanagedType.Bool)]
-    private static extern bool AttachConsole([MarshalAs(UnmanagedType.U4)] int dwProcessId);
+    [LibraryImport("kernel32.dll")]
+    private static partial void AttachConsole(int dwProcessId);
   
         /// <summary>
         /// The main entry point for the application.

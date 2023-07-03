@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -17,7 +18,7 @@ namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 /// </summary>
 public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
 {
-    public LoadMetadata LoadMetadata { get; private set; }
+    public LoadMetadata LoadMetadata { get; }
     public int Order { get => 1;
         set { } }
     public List<Catalogue> UsedCatalogues { get; set; }
@@ -39,14 +40,13 @@ public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((AllCataloguesUsedByLoadMetadataNode) obj);
+        return obj.GetType() == GetType() && Equals((AllCataloguesUsedByLoadMetadataNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
+        return HashCode.Combine(LoadMetadata);
     }
 }

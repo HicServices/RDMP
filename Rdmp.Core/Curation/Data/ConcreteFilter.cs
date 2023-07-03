@@ -155,10 +155,7 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
         else
             _cachedDatabaseTypeAnswer = GetCatalogue().GetDistinctLiveDatabaseServerType();
 
-        if (!_cachedDatabaseTypeAnswer.HasValue)
-            throw new AmbiguousDatabaseTypeException($"Unable to determine DatabaseType for Filter '{this}'");
-            
-        return _cachedDatabaseTypeAnswer.Value;
+        return _cachedDatabaseTypeAnswer ?? throw new AmbiguousDatabaseTypeException($"Unable to determine DatabaseType for Filter '{this}'");
     }
 
     /// <summary>

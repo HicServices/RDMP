@@ -33,10 +33,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
     /// <inheritdoc/>
     public string GetTitleTextPrefix(AggregateConfiguration aggregate)
     {
-        if (aggregate.IsJoinablePatientIndexTable())
-            return "Patient Index Table:";
-
-        return "Cohort Identification Set:";
+        return aggregate.IsJoinablePatientIndexTable() ? "Patient Index Table:" : "Cohort Identification Set:";
     }
 
     /// <inheritdoc/>

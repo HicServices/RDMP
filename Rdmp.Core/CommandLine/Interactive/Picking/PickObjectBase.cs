@@ -41,10 +41,7 @@ public abstract class PickObjectBase
     {
         var match = Regex.Match(arg);
 
-        if(!match.Success)
-            throw new InvalidOperationException("Regex did not match, no value could be parsed");
-
-        return match;
+        return !match.Success ? throw new InvalidOperationException("Regex did not match, no value could be parsed") : match;
     }
 
     public PickObjectBase(IBasicActivateItems activator,Regex regex)
@@ -56,10 +53,9 @@ public abstract class PickObjectBase
     protected Type ParseDatabaseEntityType(string objectType, string arg, int idx)
     {
         var t = (GetTypeFromShortCodeIfAny(objectType) ?? Repositories.MEF.GetType(objectType)) ?? throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
-        if (!typeof(DatabaseEntity).IsAssignableFrom(t))
-            throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity",idx,arg);
-
-        return t;
+        return !typeof(DatabaseEntity).IsAssignableFrom(t)
+            ? throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity",idx,arg)
+            : t;
     }
 
     /// <summary>
@@ -133,10 +129,9 @@ public abstract class PickObjectBase
         if (string.IsNullOrWhiteSpace(keyValueString))
             return null;
 
-        if(!keyValueString.StartsWith(key,StringComparison.CurrentCultureIgnoreCase))
-            throw new ArgumentException($"Provided value '{keyValueString}' did not start with expected key '{key}'");
-
-        return keyValueString[key.Length..].Trim(':');
+        return !keyValueString.StartsWith(key,StringComparison.CurrentCultureIgnoreCase)
+            ? throw new ArgumentException($"Provided value '{keyValueString}' did not start with expected key '{key}'")
+            : keyValueString[key.Length..].Trim(':');
     }
 
     public virtual IEnumerable<string> GetAutoCompleteIfAny()

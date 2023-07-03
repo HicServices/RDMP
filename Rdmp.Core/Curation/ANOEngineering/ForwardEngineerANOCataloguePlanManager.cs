@@ -86,10 +86,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
     public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col)
     {
-        if(!Plans.ContainsKey(col))
-            throw new Exception($"No plan found for column {col}");
-
-        return Plans[col];
+        return !Plans.ContainsKey(col) ? throw new Exception($"No plan found for column {col}") : Plans[col];
     }
 
     public IExternalDatabaseServer GetIdentifierDumpServer()

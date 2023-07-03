@@ -40,10 +40,10 @@ public class BackfillSqlHelperTests : FromToDatabaseTests
     {
         ThreeTableSetupWhereTimePeriodIsGrandparent();
 
-        var ciTimePeriodicity = CatalogueRepository.GetAllObjects<ColumnInfo>().SingleOrDefault(c => c.GetRuntimeName().Equals("HeaderDate"));
-        if (ciTimePeriodicity == null)
+        var ciTimePeriodicity =
+            CatalogueRepository.GetAllObjects<ColumnInfo>()
+                .SingleOrDefault(c => c.GetRuntimeName().Equals("HeaderDate")) ??
             throw new InvalidOperationException("Could not find TimePeriodicity column");
-
         var sqlHelper = new BackfillSqlHelper(ciTimePeriodicity, From, To);
 
         var tiHeader = CatalogueRepository.GetAllObjects<TableInfo>().Single(t=>t.GetRuntimeName().Equals("Headers"));

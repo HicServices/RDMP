@@ -14,8 +14,8 @@ namespace Rdmp.UI.SimpleDialogs;
 internal class FindAndReplaceNode:IMasqueradeAs
 {
     private object _currentValue;
-    public IMapsDirectlyToDatabaseTable Instance { get; set; }
-    public PropertyInfo Property { get; set; }
+    public IMapsDirectlyToDatabaseTable Instance { get; }
+    public PropertyInfo Property { get; }
     public string PropertyName { get; private set; }
 
     public FindAndReplaceNode(IMapsDirectlyToDatabaseTable instance, PropertyInfo property)
@@ -63,18 +63,14 @@ internal class FindAndReplaceNode:IMasqueradeAs
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((FindAndReplaceNode) obj);
+        return obj.GetType() == GetType() && Equals((FindAndReplaceNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return (Instance.GetHashCode()*397) ^ Property.GetHashCode();
-        }
+        return HashCode.Combine(Instance, Property);
     }
     #endregion
 }

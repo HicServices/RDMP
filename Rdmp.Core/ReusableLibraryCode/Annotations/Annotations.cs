@@ -344,7 +344,9 @@ public enum ImplicitUseKindFlags
 public enum ImplicitUseTargetFlags
 {
     Default = Itself,
+#pragma warning disable CA1069 // Enums values should not be duplicated
     Itself = 1,
+#pragma warning restore CA1069 // Enums values should not be duplicated
     /// <summary>Members of entity marked with attribute are considered used</summary>
     Members = 2,
     /// <summary>Entity marked with attribute and all its members considered used</summary>

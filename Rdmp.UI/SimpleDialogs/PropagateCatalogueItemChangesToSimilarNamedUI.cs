@@ -135,10 +135,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
             var beingChanged = pi[0].GetValue(_catalogueItemBeingSaved);
 
-            if (beingChanged != null && r.Equals(beingChanged))
-                return "Identical";
-
-            return "Different";
+            return beingChanged != null && r.Equals(beingChanged) ? "Identical" : (object)"Different";
         }
 
         return null;

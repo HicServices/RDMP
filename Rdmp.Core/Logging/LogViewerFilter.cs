@@ -78,10 +78,7 @@ public class LogViewerFilter
         if (Table != null)
             sb.Append($"TableLoadRun={Table}");
 
-        if (sb.Length == 0)
-            return "No filter";
-
-        return sb.ToString();
+        return sb.Length == 0 ? "No filter" : sb.ToString();
     }
 
     public string GetWhereSql()

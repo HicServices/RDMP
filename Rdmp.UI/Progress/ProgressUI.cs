@@ -113,8 +113,8 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private Bitmap ImageGetter(object rowObject)
     {
-        if(rowObject is ProgressUIEntry o)
-            return o.ProgressEventType switch
+        return rowObject is ProgressUIEntry o
+            ? o.ProgressEventType switch
             {
                 // TODO: draw a couple of new icons if required
                 ProgressEventType.Debug => _information,
@@ -123,9 +123,8 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 ProgressEventType.Warning => o.Exception == null ? _warning : _warningEx,
                 ProgressEventType.Error => o.Exception == null ? _fail : _failEx,
                 _ => throw new ArgumentOutOfRangeException()
-            };
-
-        return null;
+            }
+            : null;
     }
 
     private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)

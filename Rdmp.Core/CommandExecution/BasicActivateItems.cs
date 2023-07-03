@@ -110,10 +110,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public bool Confirm(DialogArgs args)
     {
         // auto confirm if not in user interactive mode
-        if (!IsInteractive)
-            return true;
-
-        return YesNo(args);
+        return !IsInteractive || YesNo(args);
     }
 
     /// <inheritdoc/>
@@ -523,10 +520,10 @@ public abstract class BasicActivateItems : IBasicActivateItems
             if (deleteable is IMasqueradeAs masqueradeAs)
                 databaseObject ??= masqueradeAs.MasqueradingAs() as DatabaseEntity;
 
-            if (databaseObject == null)
-                throw new NotSupportedException(
-                    $"IDeletable {deleteable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)");
-            return true;
+            return databaseObject == null
+                ? throw new NotSupportedException(
+                    $"IDeletable {deleteable} was not a DatabaseObject and it did not have a Parent in its tree which was a DatabaseObject (DescendancyList)")
+                : true;
         }
 
         return false;

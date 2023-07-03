@@ -132,12 +132,9 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     /// <inheritdoc/>
     public string GetClassNameLastPart()
     {
-        if (string.IsNullOrWhiteSpace(Class))
-            return Class;
-
-        return Class[(Class.LastIndexOf('.') + 1)..];
+        return string.IsNullOrWhiteSpace(Class) ? Class : Class[(Class.LastIndexOf('.') + 1)..];
     }
-        
+
     /// <inheritdoc/>
     public PipelineComponent Clone(Pipeline intoTargetPipeline)
     {
@@ -231,9 +228,8 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         if (IsGenericType(componentType, typeof(IDataFlowDestination<>)))
             return PipelineComponentRole.Destination;
 
-        if (IsGenericType(componentType, typeof(IDataFlowComponent<>)))
-            return PipelineComponentRole.Middle;
-
-        throw new ArgumentException($"Object must be an IDataFlowComponent<> but was {componentType}");
+        return IsGenericType(componentType, typeof(IDataFlowComponent<>))
+            ? PipelineComponentRole.Middle
+            : throw new ArgumentException($"Object must be an IDataFlowComponent<> but was {componentType}");
     }
 }

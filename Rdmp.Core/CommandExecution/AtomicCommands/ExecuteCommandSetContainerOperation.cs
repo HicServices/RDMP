@@ -44,10 +44,7 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
 
     public override string GetCommandName()
     {
-        if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-            return OverrideCommandName;
-
-        return $"Set operation {_operation}";
+        return !string.IsNullOrWhiteSpace(OverrideCommandName) ? OverrideCommandName : $"Set operation {_operation}";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

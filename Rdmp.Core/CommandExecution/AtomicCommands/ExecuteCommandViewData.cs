@@ -200,15 +200,11 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         if (!string.IsNullOrWhiteSpace(OverrideCommandName))
             return OverrideCommandName;
 
-        if (_obj is CohortIdentificationConfiguration)
-        {
-            return _useCache ?
+        return _obj is CohortIdentificationConfiguration
+            ? _useCache ?
                 "Query Builder SQL/Results" :
-                "Query Builder SQL/Results (No Cache)";
-
-        }
-
-        return $"View {_viewType.ToString().Replace("_", " ")}";
+                "Query Builder SQL/Results (No Cache)"
+            : $"View {_viewType.ToString().Replace("_", " ")}";
     }
     protected override IViewSQLAndResultsCollection GetCollection()
     {

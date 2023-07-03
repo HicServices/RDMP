@@ -239,10 +239,9 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private TableInfo GetTableInfoOrNullFromDrag(DragEventArgs e)
     {
-        if (e.Data is not OLVDataObject data || data.ModelObjects.Count != 1)
-            return null;
-
-        return data.ModelObjects[0] switch
+        return e.Data is not OLVDataObject data || data.ModelObjects.Count != 1
+            ? null
+            : data.ModelObjects[0] switch
         {
             TableInfo ti => ti,
             TableInfoCombineable ticmd => ticmd.TableInfo,

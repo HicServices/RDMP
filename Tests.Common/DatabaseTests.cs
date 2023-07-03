@@ -881,10 +881,9 @@ delete from {1}..Project
             return oIsNull == o2IsNull;
 
         //they are not null so tostring them deals with int vs long etc that DbDataAdapters can be a bit flaky on
-        if (handleSlashRSlashN)
-            return string.Equals(o.ToString().Replace("\r","").Replace("\n",""), o2.ToString().Replace("\r","").Replace("\n",""));
-            
-        return string.Equals(o.ToString(), o2.ToString());
+        return handleSlashRSlashN
+            ? string.Equals(o.ToString().Replace("\r","").Replace("\n",""), o2.ToString().Replace("\r","").Replace("\n",""))
+            : string.Equals(o.ToString(), o2.ToString());
     }
 
 

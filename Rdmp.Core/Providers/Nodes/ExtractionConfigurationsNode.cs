@@ -14,7 +14,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public class ExtractionConfigurationsNode:Node,IOrderable
 {
-    public Project Project { get; set; }
+    public Project Project { get; }
 
     public ExtractionConfigurationsNode(Project project)
     {
@@ -33,15 +33,14 @@ public class ExtractionConfigurationsNode:Node,IOrderable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((ExtractionConfigurationsNode) obj);
+        return obj.GetType() == GetType() && Equals((ExtractionConfigurationsNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return Project != null ? Project.GetHashCode() : 0;
+        return System.HashCode.Combine(Project);
     }
 
     public int Order { get => 3;

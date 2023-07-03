@@ -31,7 +31,7 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
         
     public LoadDiagramState State { get; set; }
 
-    public string DatabaseName { get; private set; }
+    public string DatabaseName { get; }
 
     public List<LoadDiagramTableNode> _anticipatedChildren = new();
     public List<UnplannedTable> _unplannedChildren = new();
@@ -105,18 +105,14 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((LoadDiagramDatabaseNode) obj);
+        return obj.GetType() == GetType() && Equals((LoadDiagramDatabaseNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            return ((DatabaseName != null ? DatabaseName.GetHashCode() : 0)*397) ^ (int) _bubble;
-        }
+        return HashCode.Combine(DatabaseName, _bubble);
     }
 
     public string WhatIsThis()

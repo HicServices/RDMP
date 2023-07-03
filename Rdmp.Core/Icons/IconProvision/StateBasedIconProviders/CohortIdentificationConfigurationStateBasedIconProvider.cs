@@ -22,10 +22,8 @@ public class CohortIdentificationConfigurationStateBasedIconProvider : IObjectSt
     }
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is not CohortIdentificationConfiguration cic)
-            return null;
-
-        return cic.Frozen ? _frozenCohortIdentificationConfiguration : _cohortIdentificationConfiguration;
-
+        return o is not CohortIdentificationConfiguration cic
+            ? null
+            : cic.Frozen ? _frozenCohortIdentificationConfiguration : _cohortIdentificationConfiguration;
     }
 }

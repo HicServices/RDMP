@@ -48,9 +48,6 @@ public class CohortCreationRunner : Runner
     {
         var previouslyReleasedStuff = _configuration.ReleaseLog;
 
-        if (previouslyReleasedStuff.Any())
-            return true;
-
-        return false;
+        return previouslyReleasedStuff.Any();
     }
 }

@@ -271,10 +271,7 @@ public class LogManager : ILogManager
 
         using var cmd = Server.GetCommand(sql, conn);
         var result = cmd.ExecuteScalar();
-        if (result == null || result == DBNull.Value)
-            return 0;
-
-        return int.Parse(result.ToString());
+        return result == null || result == DBNull.Value ? 0 : int.Parse(result.ToString());
     }
 
     public void ResolveFatalErrors(int[] ids, DataLoadInfo.FatalErrorStates newState, string newExplanation)

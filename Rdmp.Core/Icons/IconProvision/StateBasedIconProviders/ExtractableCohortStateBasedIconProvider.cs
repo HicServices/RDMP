@@ -25,11 +25,10 @@ public class ExtractableCohortStateBasedIconProvider : IObjectStateBasedIconProv
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is ExtractableCohort cohort)
-            return cohort.IsDeprecated
+        return o is ExtractableCohort cohort
+            ? cohort.IsDeprecated
                 ? _overlayProvider.GetOverlay(_basicIcon, OverlayKind.Deprecated)
-                : _basicIcon;
-
-        return null;
+                : _basicIcon
+            : null;
     }
 }

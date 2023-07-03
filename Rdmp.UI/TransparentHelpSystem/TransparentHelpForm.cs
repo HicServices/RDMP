@@ -17,16 +17,17 @@ namespace Rdmp.UI.TransparentHelpSystem;
 /// </summary>
 [TechnicalUI]
 [System.ComponentModel.DesignerCategory("")]
-public class TransparentHelpForm:Form
+public partial class TransparentHelpForm:Form
 {
     private readonly Control _host;
     private Control _highlight;
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    [LibraryImport("user32.dll", SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     [DllImport("dwmapi.dll", PreserveSig = false)]
-    private static extern bool DwmIsCompositionEnabled();
+    static extern bool DwmIsCompositionEnabled();
 
     private const uint SW_SHOWNOACTIVATE = 4;
     private const uint WM_NCHITTEST = 0x0084;
@@ -234,12 +235,6 @@ public class TransparentHelpForm:Form
             return new Point(0, _host.ClientRectangle.Height - _currentHelpBox.Height);
 
         //there is space to the right or left so put it in whichever is greater
-        if (spaceToRight > spaceToLeft)
-            return highlightTopRight;
-            
-        return new Point(highlightTopLeft.X - _currentHelpBox.Width,0);
-
-
-
+        return spaceToRight > spaceToLeft ? highlightTopRight : new Point(highlightTopLeft.X - _currentHelpBox.Width,0);
     }
 }

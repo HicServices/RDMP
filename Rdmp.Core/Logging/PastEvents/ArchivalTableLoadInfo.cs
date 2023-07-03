@@ -74,13 +74,9 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
     }
     private int? ToNullableInt(object i)
     {
-        if (i == null || i == DBNull.Value)
-            return null;
-
-        return Convert.ToInt32(i);
-
+        return i == null || i == DBNull.Value ? null : Convert.ToInt32(i);
     }
-        
+
     public override string ToString()
     {
         return $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
@@ -89,10 +85,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
     public int CompareTo(object obj)
     {
         if (obj is ArchivalTableLoadInfo other)
-            if (Start == other.Start)
-                return 0;
-            else
-                return Start > other.Start ? 1 : -1;
+            return Start == other.Start ? 0 : Start > other.Start ? 1 : -1;
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }

@@ -74,10 +74,9 @@ public class CatalogueIconProvider : ICoreIconProvider
 
     public virtual Image<Rgba32> GetImage(object concept, OverlayKind kind = OverlayKind.None)
     {
-        if (concept is IDisableable { IsDisabled: true })
-            return OverlayProvider.GetGrayscale(GetImageImpl(concept, kind));
-
-        return GetImageImpl(concept, kind);
+        return concept is IDisableable { IsDisabled: true }
+            ? OverlayProvider.GetGrayscale(GetImageImpl(concept, kind))
+            : GetImageImpl(concept, kind);
     }
 
     protected virtual Image<Rgba32> GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
@@ -256,10 +255,7 @@ public class CatalogueIconProvider : ICoreIconProvider
         if (t.IsInstanceOfType(concept))
             return true;
 
-        if (concept is Type type && t.IsAssignableFrom(type))
-            return true;
-
-        return false;
+        return concept is Type type && t.IsAssignableFrom(type);
     }
 
 
@@ -286,9 +282,6 @@ public class CatalogueIconProvider : ICoreIconProvider
 
     private Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind)
     {
-        if (kind == OverlayKind.None)
-            return img;
-
-        return OverlayProvider.GetOverlay(img, kind);
+        return kind == OverlayKind.None ? img : OverlayProvider.GetOverlay(img, kind);
     }
 }

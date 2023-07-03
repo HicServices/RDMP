@@ -77,10 +77,7 @@ public class QueryTimeColumn: IComparable
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        if (IColumn == null)
-            return -1;
-
-        return IColumn.ID;
+        return IColumn == null ? -1 : IColumn.ID;
     }
 
     /// <inheritdoc/>
@@ -97,13 +94,10 @@ public class QueryTimeColumn: IComparable
     /// <inheritdoc/>
     public int CompareTo(object obj)
     {
-        if (obj is QueryTimeColumn)
-        {
-            return IColumn.Order -
-                   (obj as QueryTimeColumn).IColumn.Order;
-        }
-
-        return 0;
+        return obj is QueryTimeColumn
+            ? IColumn.Order -
+                   (obj as QueryTimeColumn).IColumn.Order
+            : 0;
     }
 
     /// <summary>

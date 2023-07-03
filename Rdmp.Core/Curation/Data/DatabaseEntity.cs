@@ -112,10 +112,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     {
         var uri = r[fieldName];
 
-        if (uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString()))
-            return null;
-
-        return new Uri(uri.ToString());
+        return uri == null || uri == DBNull.Value || string.IsNullOrWhiteSpace(uri.ToString()) ? null : new Uri(uri.ToString());
     }
 
     /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)"/>
@@ -170,10 +167,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <returns></returns>
     protected DateTime? ObjectToNullableDateTime(object o)
     {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return (DateTime)o;
+        return o == null || o == DBNull.Value ? null : (DateTime)o;
     }
 
     /// <summary>
@@ -183,10 +177,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <returns></returns>
     protected int? ObjectToNullableInt(object o)
     {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return int.Parse(o.ToString());
+        return o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
     }
 
     /// <summary>
@@ -196,10 +187,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <returns></returns>
     protected bool? ObjectToNullableBool(object o)
     {
-        if (o == null || o == DBNull.Value)
-            return null;
-
-        return Convert.ToBoolean(o);
+        return o == null || o == DBNull.Value ? null : Convert.ToBoolean(o);
     }
 
     /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged"/>
@@ -388,11 +376,6 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <returns></returns>
     protected string FormatForSummary(object val)
     {
-        if(val is bool b)
-        {
-            return b ? "Yes" : "No";
-        }
-
-        return val.ToString()?.Trim();
+        return val is bool b ? b ? "Yes" : "No" : (val.ToString()?.Trim());
     }
 }

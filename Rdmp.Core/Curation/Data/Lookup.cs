@@ -213,9 +213,9 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             cmd.Parameters["@primaryKeyTableID"].Value = primaryKeyTable.ID;
             cmd.Parameters["@foreignKeyTableID"].Value = foreignKeyTable.ID;
 
-            using (var r = cmd.ExecuteReader())
-                while (r.Read())
-                    toReturn.Add(new Lookup(repo, r));
+            using var r = cmd.ExecuteReader();
+            while (r.Read())
+                toReturn.Add(new Lookup(repo, r));
         }
                 
         return toReturn.ToArray();

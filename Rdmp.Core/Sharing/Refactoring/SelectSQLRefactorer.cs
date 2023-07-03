@@ -133,11 +133,9 @@ public class SelectSQLRefactorer
             
         var fullyQualifiedName = ci.TableInfo.GetFullyQualifiedName();
 
-        if (!column.SelectSQL.Contains(fullyQualifiedName))
-            return
-                $"IColumn '{column}' did not contain the fully specified table name ('{fullyQualifiedName}') during refactoring";
-
-        return null;
+        return !column.SelectSQL.Contains(fullyQualifiedName)
+            ? $"IColumn '{column}' did not contain the fully specified table name ('{fullyQualifiedName}') during refactoring"
+            : null;
     }
 
     /// <summary>
@@ -172,11 +170,9 @@ public class SelectSQLRefactorer
         if(!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
             return $"Table with Name '{table.Name}' has incorrect database property '{table.Database}'";
 
-        if(table.Name != table.GetFullyQualifiedName())
-            return
-                $"Table name '{table.Name}' did not match the expected fully qualified name '{table.GetFullyQualifiedName()}'";
-
-        return null;
+        return table.Name != table.GetFullyQualifiedName()
+            ? $"Table name '{table.Name}' did not match the expected fully qualified name '{table.GetFullyQualifiedName()}'"
+            : null;
     }
 
     /// <summary>

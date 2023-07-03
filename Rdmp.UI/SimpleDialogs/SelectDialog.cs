@@ -358,7 +358,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         {
             if (_searchables?.TryGetValue(m, out var descendancy)==true)
                 return descendancy != null
-                    ? Regex.Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\\\+", "\\").Trim('\\')
+                    ? Backslashes().Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\").Trim('\\')
                     : null;
         }   
 
@@ -497,11 +497,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     {
         if (!AllowMultiSelect)
             return null;
-            
-        if (rowObject == null)
-            return false;
 
-        return MultiSelected.Contains((T)rowObject);
+        return rowObject == null ? false : (object)MultiSelected.Contains((T)rowObject);
     }
 
     private void FetchMatches(string text, CancellationToken cancellationToken)
@@ -835,4 +832,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         MultiSelected = new HashSet<T>(toSelect);
         tbFilter_TextChanged(null,null);
     }
+
+    [GeneratedRegex("\\\\+")]
+    private static partial Regex Backslashes();
 }

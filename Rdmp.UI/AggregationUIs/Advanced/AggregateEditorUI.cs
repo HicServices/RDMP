@@ -113,10 +113,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
     private object JoinDirectionGetter(object rowobject)
     {
-        if (rowobject is JoinableCohortAggregateConfigurationUse j)
-            return j.JoinType;
-
-        return null;
+        return rowobject is JoinableCohortAggregateConfigurationUse j ? j.JoinType : (object)null;
     }
 
     private Bitmap ImageGetter(object rowObject)
@@ -198,11 +195,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         if (rowObject is JoinableCohortAggregateConfiguration)
             return CheckState.Unchecked;
 
-        if (rowObject is JoinableCohortAggregateConfigurationUse)
-            return CheckState.Checked;
-            
-        return CheckState.Indeterminate;
-
+        return rowObject is JoinableCohortAggregateConfigurationUse ? CheckState.Checked : CheckState.Indeterminate;
     }
 
     protected override void SetBindings(BinderWithErrorProviderFactory rules, AggregateConfiguration databaseObject)

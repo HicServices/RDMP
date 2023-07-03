@@ -238,9 +238,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         if (!CredentialsDictionary.TryGetValue(tableInfo, out var credentialsList)) return null;
         if (credentialsList.TryGetValue(context,out var credentials))
             return credentials;
-        if (credentialsList.TryGetValue(DataAccessContext.Any,out credentials))
-            return credentials;
-        return null;
+        return credentialsList.TryGetValue(DataAccessContext.Any,out credentials) ? credentials : null;
     }
 
     public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
@@ -294,10 +292,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         if (UserSettings.AlwaysJoinEverything)
             everyone = configuration.Catalogue.GetTableInfosIdeallyJustFromMainTables();
 
-        if (!ForcedJoins.ContainsKey(configuration))
-            return everyone.ToArray();
-
-        return ForcedJoins[configuration].Union(everyone).ToArray();
+        return !ForcedJoins.ContainsKey(configuration) ? everyone.ToArray() : ForcedJoins[configuration].Union(everyone).ToArray();
     }
 
     public virtual void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
@@ -323,10 +318,9 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public CohortAggregateContainer GetParent(AggregateConfiguration child)
     {
         //if it is in the contents of a container
-        if (CohortContainerContents.Any(kvp => kvp.Value.Select(c=>c.Orderable).Contains(child)))
-            return CohortContainerContents.Single(kvp => kvp.Value.Select(c => c.Orderable).Contains(child)).Key;
-
-        return null;
+        return CohortContainerContents.Any(kvp => kvp.Value.Select(c=>c.Orderable).Contains(child))
+            ? CohortContainerContents.Single(kvp => kvp.Value.Select(c => c.Orderable).Contains(child)).Key
+            : null;
     }
 
     public virtual void Add(CohortAggregateContainer parent,AggregateConfiguration child,int order)
@@ -366,19 +360,15 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public IOrderable[] GetChildren(CohortAggregateContainer parent)
     {
-        if (!CohortContainerContents.ContainsKey(parent))
-            return Array.Empty<IOrderable>();
-
-        return CohortContainerContents[parent].OrderBy(o => o.Order).Select(o => o.Orderable).ToArray();
+        return !CohortContainerContents.ContainsKey(parent)
+            ? Array.Empty<IOrderable>()
+            : CohortContainerContents[parent].OrderBy(o => o.Order).Select(o => o.Orderable).ToArray();
     }
-        
+
     public CohortAggregateContainer GetParent(CohortAggregateContainer child)
     {
         var match = CohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child))).Select(kvp=>kvp.Key).ToArray();
-        if (match.Length > 0)
-            return match.Single();
-            
-        return null;
+        return match.Length > 0 ? match.Single() : null;
     }
 
     public virtual void Remove(CohortAggregateContainer parent, CohortAggregateContainer child)
@@ -416,10 +406,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         
     public IContainer[] GetSubContainers(IContainer container)
     {
-        if(!WhereSubContainers.ContainsKey(container))
-            return Array.Empty<IContainer>();
-
-        return WhereSubContainers[container].ToArray();
+        return !WhereSubContainers.ContainsKey(container) ? Array.Empty<IContainer>() : WhereSubContainers[container].ToArray();
     }
 
     public virtual void MakeIntoAnOrphan(IContainer container)
@@ -432,10 +419,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public IContainer GetParentContainerIfAny(IContainer container)
     {
         var match = WhereSubContainers.Where(k => k.Value.Contains(container)).ToArray();
-        if (match.Length != 0)
-            return match[0].Key;
-
-        return null;
+        return match.Length != 0 ? match[0].Key : null;
     }
 
     public IFilter[] GetFilters(IContainer container)
@@ -487,16 +471,13 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod)
     {
-        if (!GovernanceCoverage.ContainsKey(governancePeriod))
-            return Enumerable.Empty<ICatalogue>();
-
-        return GovernanceCoverage[governancePeriod];
+        return !GovernanceCoverage.ContainsKey(governancePeriod) ? Enumerable.Empty<ICatalogue>() : GovernanceCoverage[governancePeriod];
     }
 
     #endregion
 
     #region IEncryptionManager
-     
+
     public virtual void SetEncryptionKeyPath(string fullName)
     {
         EncryptionKeyPath = fullName;

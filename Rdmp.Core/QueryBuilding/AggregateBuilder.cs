@@ -632,13 +632,12 @@ public class AggregateBuilder : ISqlQueryBuilder
     private string GetOrderBySQL(IAggregateTopX aggregateTopX)
     {
         var dimension = aggregateTopX.OrderByColumn;
-        if (dimension == null)
-            return GetGroupOrOrderByCustomLineBasedOn(_countColumn.SelectSQL,_countColumn.Alias)
+        return dimension == null
+            ? GetGroupOrOrderByCustomLineBasedOn(_countColumn.SelectSQL,_countColumn.Alias)
                    + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
                        ? " asc"
-                       : " desc");
-        
-        return GetGroupOrOrderByCustomLineBasedOn(dimension.SelectSQL, dimension.Alias)
+                       : " desc")
+            : GetGroupOrOrderByCustomLineBasedOn(dimension.SelectSQL, dimension.Alias)
                + (aggregateTopX.OrderByDirection == AggregateTopXOrderByDirection.Ascending
                    ? " asc"
                    : " desc");

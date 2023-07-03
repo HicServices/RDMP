@@ -165,12 +165,9 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
     /// <returns></returns>
     public string GetSearchString()
     {
-        if (ProjectNumber == null)
-            return Name;
-
-        return $"{ProjectNumber}_{Name}_{MasterTicket}";
+        return ProjectNumber == null ? Name : $"{ProjectNumber}_{Name}_{MasterTicket}";
     }
-        
+
     /// <summary>
     /// Returns all <see cref="CohortIdentificationConfiguration"/> which are associated with the <see cref="IProject"/> (usually because
     /// they have been used to create <see cref="ExtractableCohort"/> used by the <see cref="IProject"/>).
@@ -208,14 +205,11 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable,
     /// <inheritdoc/>
     public ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory c)
     {
-        if(childProvider is DataExportChildProvider dx)
-        {
-            return dx.ExtractableDataSets.Where(eds => eds.Project_ID == ID)
+        return childProvider is DataExportChildProvider dx
+            ? dx.ExtractableDataSets.Where(eds => eds.Project_ID == ID)
                 .Select(e => dx.AllCataloguesDictionary[e.Catalogue_ID])
-                .SelectMany(cata=>cata.GetAllExtractionInformation(c)).ToArray();
-        }
-
-        return GetAllProjectCatalogueColumns(c);
+                .SelectMany(cata=>cata.GetAllExtractionInformation(c)).ToArray()
+            : GetAllProjectCatalogueColumns(c);
     }
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()

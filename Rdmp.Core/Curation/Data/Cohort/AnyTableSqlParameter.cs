@@ -168,10 +168,9 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
         if (type == typeof (AggregateConfiguration))
             return "SQLParameters at this level are intended for fulfilling table valued function parameters and centralising parameter declarations across multiple AggregateFilter(s) within a single AggregateConfiguration (note that while these are 'global' with respect to the filters, if the AggregateConfiguration is part of a multiple configuration CohortIdentificationConfiguration then this is less 'global' than those declared at that level)";
 
-        if (type == typeof(TableInfo))
-            return "SQLParameters at this level are intended for fulfilling table valued function parameters, note that these should/can be overridden later on e.g. in Extraction/Cohort generation.  This value is intended to give a baseline result which can be run through DataQualityEngine and Checking etc";
-
-        return null;
+        return type == typeof(TableInfo)
+            ? "SQLParameters at this level are intended for fulfilling table valued function parameters, note that these should/can be overridden later on e.g. in Extraction/Cohort generation.  This value is intended to give a baseline result which can be run through DataQualityEngine and Checking etc"
+            : null;
     }
 
 
@@ -207,10 +206,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        if (GetOwnerIfAny() is IHasDependencies parent)
-            return new[] {parent};
-
-        return Array.Empty<IHasDependencies>();
+        return GetOwnerIfAny() is IHasDependencies parent ? (new[] {parent}) : Array.Empty<IHasDependencies>();
     }
 
     /// <summary>
