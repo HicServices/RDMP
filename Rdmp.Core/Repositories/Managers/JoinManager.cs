@@ -52,17 +52,19 @@ public class JoinManager : IJoinManager
     {
         var ids = new HashSet<int>(tableInfo.ColumnInfos.Select(c => c.ID));
 
-        switch (type)
+        return type switch
         {
-            case JoinInfoType.AnyKey:
-                return _repository.GetAllObjects<JoinInfo>().Where(j => ids.Contains(j.ForeignKey_ID) || ids.Contains(j.PrimaryKey_ID)).ToArray();
-            case JoinInfoType.ForeignKey:
-                return _repository.GetAllObjects<JoinInfo>().Where(j => ids.Contains(j.ForeignKey_ID)).ToArray();
-            case JoinInfoType.PrimaryKey:
-                return _repository.GetAllObjects<JoinInfo>().Where(j => ids.Contains(j.PrimaryKey_ID)).ToArray();
-            default:
-                throw new ArgumentOutOfRangeException(nameof(type));
-        }
+            JoinInfoType.AnyKey => _repository.GetAllObjects<JoinInfo>()
+                .Where(j => ids.Contains(j.ForeignKey_ID) || ids.Contains(j.PrimaryKey_ID))
+                .ToArray(),
+            JoinInfoType.ForeignKey => _repository.GetAllObjects<JoinInfo>()
+                .Where(j => ids.Contains(j.ForeignKey_ID))
+                .ToArray(),
+            JoinInfoType.PrimaryKey => _repository.GetAllObjects<JoinInfo>()
+                .Where(j => ids.Contains(j.PrimaryKey_ID))
+                .ToArray(),
+            _ => throw new ArgumentOutOfRangeException(nameof(type))
+        };
     }
         
 }

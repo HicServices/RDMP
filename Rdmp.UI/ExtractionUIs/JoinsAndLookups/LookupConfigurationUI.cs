@@ -218,26 +218,15 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         for (var i = 0; i < lines.Length; i++)
             e.Graphics.DrawString(lines[i], Font, Brushes.Black,new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight*i));
 
-        int bulletLineIndex;
-
-        switch (_currentStage)
+        int bulletLineIndex = _currentStage switch
         {
-            case LookupCreationStage.ChooseLookupTable:
-                bulletLineIndex = 1;
-                break;
-            case LookupCreationStage.DragAPrimaryKey:
-                bulletLineIndex = 2;
-                break;
-            case LookupCreationStage.DragAForeignKey:
-                bulletLineIndex = 3;
-                break;
-            case LookupCreationStage.DragADescription:
-                bulletLineIndex = 4;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-            
+            LookupCreationStage.ChooseLookupTable => 1,
+            LookupCreationStage.DragAPrimaryKey => 2,
+            LookupCreationStage.DragAForeignKey => 3,
+            LookupCreationStage.DragADescription => 4,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
         DrawArrows(e.Graphics);
 
         var triangleBasePoints = new[]

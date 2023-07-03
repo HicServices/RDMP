@@ -20,20 +20,14 @@ public static class LoadStageExtensions
     /// <returns></returns>
     public static LoadBubble ToLoadBubble(this LoadStage loadStage)
     {
-        switch (loadStage)
+        return loadStage switch
         {
-            case LoadStage.GetFiles:
-                return LoadBubble.Raw;
-            case LoadStage.Mounting:
-                return LoadBubble.Raw;
-            case LoadStage.AdjustRaw:
-                return LoadBubble.Raw;
-            case LoadStage.AdjustStaging:
-                return LoadBubble.Staging;
-            case LoadStage.PostLoad:
-                return LoadBubble.Live;
-            default:
-                throw new ArgumentOutOfRangeException($"Unknown value for LoadStage: {loadStage}");
-        }
+            LoadStage.GetFiles => LoadBubble.Raw,
+            LoadStage.Mounting => LoadBubble.Raw,
+            LoadStage.AdjustRaw => LoadBubble.Raw,
+            LoadStage.AdjustStaging => LoadBubble.Staging,
+            LoadStage.PostLoad => LoadBubble.Live,
+            _ => throw new ArgumentOutOfRangeException($"Unknown value for LoadStage: {loadStage}")
+        };
     }
 }

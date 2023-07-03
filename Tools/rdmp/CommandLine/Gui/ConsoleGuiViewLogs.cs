@@ -236,8 +236,8 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
     private class Category
     {
-        private LoggingTables _type;
-        private ArchivalDataLoadInfo _dli;
+        private readonly LoggingTables _type;
+        private readonly ArchivalDataLoadInfo _dli;
 
         public Category(ArchivalDataLoadInfo dli, LoggingTables type)
         {
@@ -246,26 +246,24 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
         }
         public override string ToString()
         {
-            switch (_type)
+            return _type switch
             {
-                case LoggingTables.FatalError: return $"Errors ({_dli.Errors.Count:N0})";
-                case LoggingTables.TableLoadRun: return $"Tables Loaded ({_dli.TableLoadInfos.Count:N0})";
-                case LoggingTables.ProgressLog: return $"Progress Log ({_dli.Progress.Count:N0})";
-            }
-
-            return base.ToString();
+                LoggingTables.FatalError => $"Errors ({_dli.Errors.Count:N0})",
+                LoggingTables.TableLoadRun => $"Tables Loaded ({_dli.TableLoadInfos.Count:N0})",
+                LoggingTables.ProgressLog => $"Progress Log ({_dli.Progress.Count:N0})",
+                _ => base.ToString()
+            };
         }
 
         internal IEnumerable<object> GetChildren()
         {
-            switch (_type)
+            return _type switch
             {
-                case LoggingTables.FatalError: return _dli.Errors;
-                case LoggingTables.TableLoadRun: return _dli.TableLoadInfos;
-                case LoggingTables.ProgressLog: return _dli.Progress;
-            }
-
-            return Enumerable.Empty<object>();
+                LoggingTables.FatalError => _dli.Errors,
+                LoggingTables.TableLoadRun => _dli.TableLoadInfos,
+                LoggingTables.ProgressLog => _dli.Progress,
+                _ => Enumerable.Empty<object>()
+            };
         }
     }
 }

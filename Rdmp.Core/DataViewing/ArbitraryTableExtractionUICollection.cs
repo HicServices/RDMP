@@ -94,17 +94,13 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
 
         var response = _table.GetQuerySyntaxHelper().HowDoWeAchieveTopX(100);
 
-        switch (response.Location)
+        return response.Location switch
         {
-            case QueryComponent.SELECT:
-                return $"Select {response.SQL} * from {_table.GetFullyQualifiedName()}";
-            case QueryComponent.WHERE:
-                return $"Select * from {_table.GetFullyQualifiedName()} WHERE {response.SQL}";
-            case QueryComponent.Postfix:
-                return $"Select * from {_table.GetFullyQualifiedName()} {response.SQL}";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            QueryComponent.SELECT => $"Select {response.SQL} * from {_table.GetFullyQualifiedName()}",
+            QueryComponent.WHERE => $"Select * from {_table.GetFullyQualifiedName()} WHERE {response.SQL}",
+            QueryComponent.Postfix => $"Select * from {_table.GetFullyQualifiedName()} {response.SQL}",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     public string GetTabName()

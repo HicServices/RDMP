@@ -135,19 +135,14 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private DateTime GetUserPickedStartDate()
     {
-        switch (_collection.ShowPeriod)
+        return _collection.ShowPeriod switch
         {
-            case RacewayShowPeriod.AllTime:
-                return DateTime.MinValue;
-            case RacewayShowPeriod.LastDecade:
-                return DateTime.Now.AddYears(-10);
-            case RacewayShowPeriod.LastYear:
-                return DateTime.Now.AddYears(-1);
-            case RacewayShowPeriod.LastSixMonths:
-                return DateTime.Now.AddMonths(-6);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            RacewayShowPeriod.AllTime => DateTime.MinValue,
+            RacewayShowPeriod.LastDecade => DateTime.Now.AddYears(-10),
+            RacewayShowPeriod.LastYear => DateTime.Now.AddYears(-1),
+            RacewayShowPeriod.LastSixMonths => DateTime.Now.AddMonths(-6),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
 

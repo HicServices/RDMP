@@ -45,20 +45,14 @@ public class ProgressUIEntry
 
     public WideMessageBoxTheme GetTheme()
     {
-        switch (ProgressEventType)
+        return ProgressEventType switch
         {
-            case ProgressEventType.Trace:
-                return WideMessageBoxTheme.Help;
-            case ProgressEventType.Debug:
-                return WideMessageBoxTheme.Help;
-            case ProgressEventType.Information:
-                return WideMessageBoxTheme.Help;
-            case ProgressEventType.Warning:
-                return WideMessageBoxTheme.Warning;
-            case ProgressEventType.Error:
-                return WideMessageBoxTheme.Exception;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ProgressEventType.Trace => WideMessageBoxTheme.Help,
+            ProgressEventType.Debug => WideMessageBoxTheme.Help,
+            ProgressEventType.Information => WideMessageBoxTheme.Help,
+            ProgressEventType.Warning => WideMessageBoxTheme.Warning,
+            ProgressEventType.Error => WideMessageBoxTheme.Exception,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

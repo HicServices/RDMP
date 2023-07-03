@@ -116,7 +116,7 @@ internal class DatabaseOperationTests : DatabaseTests
         foreach (var col in columnInfos)
         {
             //create it with the same name
-            var cataItem = new CatalogueItem(CatalogueRepository, cat, col.Name.Substring(col.Name.LastIndexOf(".") + 1).Trim('[', ']', '`'));
+            var cataItem = new CatalogueItem(CatalogueRepository, cat, col.Name[(col.Name.LastIndexOf(".") + 1)..].Trim('[', ']', '`'));
             toCleanUp.Push(cataItem);
 
             cataItem.SetColumnInfo(col);

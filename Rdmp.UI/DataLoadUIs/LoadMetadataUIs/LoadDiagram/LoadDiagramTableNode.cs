@@ -160,15 +160,14 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
             case LoadDiagramState.Different:
             case LoadDiagramState.Anticipated:
             case LoadDiagramState.Found:
-                switch (Bubble)
+                return Bubble switch
                 {
-                    case LoadBubble.Raw:
-                        return
-                            "A Table that will be created in the RAW bubble when the load is run, this table will not have any constraints (not nulls, referential integrity ect)";
-                    case LoadBubble.Staging:
-                        return "A Table that will be created in the STAGING bubble when the load is run, this table will have normal constraints that match LIVE";
-                }
-                return "A Table that is involved in the load (based on the Catalogues associated with the load)";
+                    LoadBubble.Raw =>
+                        "A Table that will be created in the RAW bubble when the load is run, this table will not have any constraints (not nulls, referential integrity ect)",
+                    LoadBubble.Staging =>
+                        "A Table that will be created in the STAGING bubble when the load is run, this table will have normal constraints that match LIVE",
+                    _ => "A Table that is involved in the load (based on the Catalogues associated with the load)"
+                };
             case LoadDiagramState.NotFound:
                 return "A Table that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
             case LoadDiagramState.New:

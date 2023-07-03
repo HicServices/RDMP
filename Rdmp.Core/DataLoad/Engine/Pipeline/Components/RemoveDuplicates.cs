@@ -24,7 +24,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     private int totalRecordsProcessed;
     private int totalDuplicatesFound;
 
-    private Dictionary<int, List<DataRow>> unqiueHashesSeen = new();
+    private Dictionary<int, List<DataRow>> _uniqueHashesSeen = new();
         
     /// <summary>
     /// Turns off notify messages about number of duplicates found/replaced
@@ -43,21 +43,21 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
             totalRecordsProcessed++;
             var hashOfItems = GetHashCode(row.ItemArray);
 
-            if (unqiueHashesSeen.ContainsKey(hashOfItems))
+            if (_uniqueHashesSeen.TryGetValue(hashOfItems,out var hashList))
             {
-                //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just incase.
-                if (unqiueHashesSeen[hashOfItems].Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
+                //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just in case.
+                if (hashList.Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
                 {
                     totalDuplicatesFound++;
                     continue; //it's a duplicate
                 }
 
-                unqiueHashesSeen[hashOfItems].Add(row);
+                hashList.Add(row);
             }
             else
             {
-                //its not a duplicate hashcode so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
-                unqiueHashesSeen.Add(hashOfItems, new List<DataRow>(new[] { row }));
+                //it's not a duplicate hash so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
+                _uniqueHashesSeen.Add(hashOfItems, new List<DataRow>(new[] { row }));
             }
 
             toReturn.Rows.Add(row.ItemArray);

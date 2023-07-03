@@ -121,17 +121,16 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
 
     public string WhatIsThis()
     {
-        switch (_bubble)
+        return _bubble switch
         {
-            case LoadBubble.Raw:
-                return "Depicts what database will be used for the RAW database and the tables/columns that are anticipated/found in that server currently";
-            case LoadBubble.Staging:
-                return "Depicts what database will be used for the STAGING database and the tables/columns that are anticipated/found in that server currently";
-            case LoadBubble.Live:
-                return "Depicts the current live database(s) that the load will target (based on which Catalogues are associated with the load)";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            LoadBubble.Raw =>
+                "Depicts what database will be used for the RAW database and the tables/columns that are anticipated/found in that server currently",
+            LoadBubble.Staging =>
+                "Depicts what database will be used for the STAGING database and the tables/columns that are anticipated/found in that server currently",
+            LoadBubble.Live =>
+                "Depicts the current live database(s) that the load will target (based on which Catalogues are associated with the load)",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     #endregion

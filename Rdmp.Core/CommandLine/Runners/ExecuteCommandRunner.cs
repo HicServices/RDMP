@@ -106,10 +106,10 @@ internal class ExecuteCommandRunner:IRunner
 
     private void RunCommand(string command)
     {
-        if(_commands.ContainsKey(command))
+        if(_commands.TryGetValue(command,out var commandType))
         {
-            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Trace,$"Running Command '{_commands[command].Name}'"));
-            _invoker.ExecuteCommand(_commands[command],_picker);
+            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Trace,$"Running Command '{commandType.Name}'"));
+            _invoker.ExecuteCommand(commandType,_picker);
         }
         else
         {

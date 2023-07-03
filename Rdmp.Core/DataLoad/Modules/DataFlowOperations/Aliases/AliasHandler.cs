@@ -59,7 +59,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
             
         foreach (DataRow r in toProcess.Rows)
         {
-            if(_aliasDictionary.ContainsKey(r[AliasColumnInInputDataTables]))
+            if(_aliasDictionary.TryGetValue(r[AliasColumnInInputDataTables],out var aliasList))
             {
                 matchesFound++;
                 switch (ResolutionStrategy)
@@ -71,7 +71,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                     case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
                             
                         //Get all aliases for the input value
-                        foreach (var alias in _aliasDictionary[r[AliasColumnInInputDataTables]])
+                        foreach (var alias in aliasList)
                         {
                             //Create a copy of the input row
                             var newRow = new object[elements];

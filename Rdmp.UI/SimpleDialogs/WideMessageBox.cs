@@ -340,17 +340,13 @@ public partial class WideMessageBox : Form
 
     public static WideMessageBoxTheme GetTheme(CheckResult result)
     {
-        switch (result)
+        return result switch
         {
-            case CheckResult.Success:
-                return WideMessageBoxTheme.Help;
-            case CheckResult.Warning:
-                return WideMessageBoxTheme.Warning;
-            case CheckResult.Fail:
-                return WideMessageBoxTheme.Exception;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(result));
-        }
+            CheckResult.Success => WideMessageBoxTheme.Help,
+            CheckResult.Warning => WideMessageBoxTheme.Warning,
+            CheckResult.Fail => WideMessageBoxTheme.Exception,
+            _ => throw new ArgumentOutOfRangeException(nameof(result))
+        };
     }
 
     private void WideMessageBox_Load(object sender, EventArgs e)

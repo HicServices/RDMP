@@ -340,10 +340,10 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                         var good = 0;
                         var total = 0;
 
-                        if (dictionary.ContainsKey(_buckets[i]))
+                        if (dictionary.TryGetValue(_buckets[i],out var counter))
                         {   
-                            good = dictionary[_buckets[i]].CountGood;
-                            total = dictionary[_buckets[i]].Total;
+                            good = counter.CountGood;
+                            total = counter.Total;
 
                             var ratioGood = (float)good / total;
 

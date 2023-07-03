@@ -189,26 +189,17 @@ public class WindowManager
     /// <param name="collection"></param>
     public void Pop(RDMPCollection collection)
     {
-        if (_visibleToolboxes.ContainsKey(collection))
+        if (!_visibleToolboxes.TryGetValue(collection, out var content)) return;
+        content.DockState = content.DockState switch
         {
-            switch (_visibleToolboxes[collection].DockState)
-            {
-                case DockState.DockLeftAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockLeft;
-                    break;
-                case DockState.DockRightAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockRight;
-                    break;
-                case DockState.DockTopAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockTop;
-                    break;
-                case DockState.DockBottomAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockBottom;
-                    break;
-            }
+            DockState.DockLeftAutoHide => DockState.DockLeft,
+            DockState.DockRightAutoHide => DockState.DockRight,
+            DockState.DockTopAutoHide => DockState.DockTop,
+            DockState.DockBottomAutoHide => DockState.DockBottom,
+            _ => _visibleToolboxes[collection].DockState
+        };
 
-            _visibleToolboxes[collection].Activate();
-        }
+        content.Activate();
     }
 
     /// <summary>

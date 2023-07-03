@@ -290,11 +290,9 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             if (!initializedComponents.ContainsKey(component))
                 initializedComponents.Add(component, new Dictionary<MethodInfo, object>());
 
-            if (initializedComponents[component].ContainsKey(preInit))
+            if (!initializedComponents[component].TryAdd(preInit, value))
                 throw new MultipleMatchingImplmentationException(
                     $"Interface {GetFullName(interfaceToInvokeIfAny)} matches both input objects '{initializedComponents[component][preInit]}' ('{initializedComponents[component][preInit].GetType().Name}') and '{value}' ('{value.GetType().Name}')");
-            else
-                initializedComponents[component].Add(preInit, value);
                 
             //invoke it
             preInit.Invoke(component, new[] {value, listener});

@@ -507,10 +507,8 @@ public class CohortCompiler
     {
         lock(Tasks)
         {
-            if (Tasks.ContainsKey(compileable))
+            if (Tasks.TryGetValue(compileable,out var execution))
             {
-                var execution = Tasks[compileable];
-
                 if (execution is { IsExecuting: true })
                 {
                     execution.Cancel();
@@ -518,8 +516,7 @@ public class CohortCompiler
 
                 // cancel the source
                 if(
-                    compileable.State == CompilationState.Building ||
-                    compileable.State == CompilationState.Executing)
+                    compileable.State is CompilationState.Building or CompilationState.Executing)
                 {
                     compileable.CancellationTokenSource.Cancel();
                 }

@@ -86,23 +86,14 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         tbTimeout.Visible = setvisible;
         lblTimeout.Visible = setvisible;
 
-        switch (selected)
+        lblWarning.Text = selected switch
         {
-            case DataLoadProgressUpdateStrategy.UseMaxRequestedDay:
-                lblWarning.Text = "";
-                break;
-            case DataLoadProgressUpdateStrategy.DoNothing:
-                lblWarning.Text = "";
-                break;
-            case DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW:
-                lblWarning.Text = WarningRAW;
-                break;
-            case DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE:
-                lblWarning.Text = WarningLIVE;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            DataLoadProgressUpdateStrategy.UseMaxRequestedDay => "",
+            DataLoadProgressUpdateStrategy.DoNothing => "",
+            DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW => WarningRAW,
+            DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE => WarningLIVE,
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         CheckObject();
     }

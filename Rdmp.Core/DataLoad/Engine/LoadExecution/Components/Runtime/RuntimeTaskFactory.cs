@@ -31,20 +31,14 @@ public class RuntimeTaskFactory
         var args = new RuntimeArgumentCollection(task.GetAllArguments().ToArray(), stageArgs);
 
         //Create an instance of the the appropriate ProcessTaskType
-        switch (task.ProcessTaskType)
+        return task.ProcessTaskType switch
         {
-            case ProcessTaskType.Executable:
-                return new ExecutableRuntimeTask(task, args);
-            case ProcessTaskType.SQLFile:
-                return new ExecuteSqlFileRuntimeTask(task, args);
-            case ProcessTaskType.Attacher:
-                return new AttacherRuntimeTask(task, args, _repository.MEF);
-            case ProcessTaskType.DataProvider:
-                return new DataProviderRuntimeTask(task, args,_repository.MEF);
-            case ProcessTaskType.MutilateDataTable:
-                return new MutilateDataTablesRuntimeTask(task, args, _repository.MEF);
-            default:
-                throw new Exception($"Cannot create runtime task: Unknown process task type '{task.ProcessTaskType}'");
-        }
+            ProcessTaskType.Executable => new ExecutableRuntimeTask(task, args),
+            ProcessTaskType.SQLFile => new ExecuteSqlFileRuntimeTask(task, args),
+            ProcessTaskType.Attacher => new AttacherRuntimeTask(task, args, _repository.MEF),
+            ProcessTaskType.DataProvider => new DataProviderRuntimeTask(task, args, _repository.MEF),
+            ProcessTaskType.MutilateDataTable => new MutilateDataTablesRuntimeTask(task, args, _repository.MEF),
+            _ => throw new Exception($"Cannot create runtime task: Unknown process task type '{task.ProcessTaskType}'")
+        };
     }
 }

@@ -36,7 +36,7 @@ internal class ANOTableUITests : UITests
         srv.CreatedByAssembly = null;
         srv.SaveToDatabase();
 
-        var ui = AndLaunch<ANOTableUI>(anoTable);
+        AndLaunch<ANOTableUI>(anoTable);
             
         //should be an error on the server showing that it is misconfigured
         AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Server is not an ANO server");

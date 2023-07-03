@@ -128,7 +128,7 @@ public class UserInterfaceStandardisationChecker
             }
 
 
-            var toLookFor = menuClass.Name.Substring(0, menuClass.Name.Length - "Menu".Length);
+            var toLookFor = menuClass.Name[..^"Menu".Length];
             var expectedClassName = GetExpectedClassOrInterface(toLookFor);
 
             if(expectedClassName == null)
@@ -170,7 +170,7 @@ public class UserInterfaceStandardisationChecker
                 continue;
             }
 
-            var toLookFor = proposalClass.Name.Substring("ProposeExecutionWhenTargetIs".Length);
+            var toLookFor = proposalClass.Name["ProposeExecutionWhenTargetIs".Length..];
             var expectedClassName = GetExpectedClassOrInterface(toLookFor);
 
             if (expectedClassName == null)

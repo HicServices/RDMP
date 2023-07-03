@@ -114,22 +114,16 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     private Bitmap ImageGetter(object rowObject)
     {
         if(rowObject is ProgressUIEntry o)
-            switch (o.ProgressEventType)
+            return o.ProgressEventType switch
             {
                 // TODO: draw a couple of new icons if required
-                case ProgressEventType.Debug:
-                    return _information;
-                case ProgressEventType.Trace:
-                    return _information;
-                case ProgressEventType.Information:
-                    return _information;
-                case ProgressEventType.Warning:
-                    return o.Exception == null ? _warning : _warningEx;
-                case ProgressEventType.Error:
-                    return o.Exception == null ? _fail : _failEx;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                ProgressEventType.Debug => _information,
+                ProgressEventType.Trace => _information,
+                ProgressEventType.Information => _information,
+                ProgressEventType.Warning => o.Exception == null ? _warning : _warningEx,
+                ProgressEventType.Error => o.Exception == null ? _fail : _failEx,
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
         return null;
     }
@@ -169,11 +163,11 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         lock (oProgressQueLock)
         {
             //we have received an update to this message 
-            if (ProgressQueue.ContainsKey(args.TaskDescription))
+            if (ProgressQueue.TryGetValue(args.TaskDescription,out var entry))
             {
-                ProgressQueue[args.TaskDescription].DateTime = DateTime.Now;
-                ProgressQueue[args.TaskDescription].ProgressEventArgs = args;
-                ProgressQueue[args.TaskDescription].Sender = sender;
+                entry.DateTime = DateTime.Now;
+                entry.ProgressEventArgs = args;
+                entry.Sender = sender;
             }
             else
                 ProgressQueue.Add(args.TaskDescription,new QueuedProgressMessage(DateTime.Now, args, sender));

@@ -42,8 +42,7 @@ public class PluginClassTests:UnitTests
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Blah.zip"));
         File.WriteAllBytes(fi.FullName, new byte[] { 0x1, 0x2 });
 
-        var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-        var tripart = new Version(version);
+        var version = FileVersionInfo.GetVersionInfo(typeof(PluginClassTests).Assembly.Location).FileVersion ?? throw new Exception($"No file version in {typeof(PluginClassTests).Assembly.Location}");
 
         var lma1 = WhenIHaveA<LoadModuleAssembly>();
         var lma2 = WhenIHaveA<LoadModuleAssembly>();

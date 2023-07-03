@@ -27,17 +27,12 @@ public partial class KeyDropLocationUI : UserControl
         set
         {
             _keyType = value;
-            switch (KeyType)
+            label.Text = KeyType switch
             {
-                case JoinKeyType.PrimaryKey:
-                    label.Text = "(Primary Key)";
-                    break;
-                case JoinKeyType.ForeignKey:
-                    label.Text = "(Foreign Key)";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                JoinKeyType.PrimaryKey => "(Primary Key)",
+                JoinKeyType.ForeignKey => "(Foreign Key)",
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 

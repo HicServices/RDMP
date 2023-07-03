@@ -55,17 +55,17 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
             var proposition = new CachedDropTarget(targetModel, insertOption);
 
             //typically user might start a drag and then drag it all over the place so cache answers to avoid hammering database/loading donuts
-            if (_cachedAnswers.ContainsKey(cmd))
+            if (_cachedAnswers.TryGetValue(cmd,out var cacheLine))
             {
                 //if we already have a cached execution for the command and the target
-                if (_cachedAnswers[cmd].ContainsKey(proposition))
-                    return _cachedAnswers[cmd][proposition];//return from cache
+                if (cacheLine.TryGetValue(proposition,out var hit))
+                    return hit;//return from cache
             }
             else
-                _cachedAnswers.Add(cmd, new Dictionary<CachedDropTarget, ICommandExecution>()); //novel command
+                _cachedAnswers.Add(cmd, cacheLine=new Dictionary<CachedDropTarget, ICommandExecution>()); //novel command
 
             var result  = CreateNoCache(cmd, targetModel, insertOption);
-            _cachedAnswers[cmd].Add(new CachedDropTarget(targetModel,insertOption), result);
+            cacheLine.Add(new CachedDropTarget(targetModel,insertOption), result);
 
             return result;
         }

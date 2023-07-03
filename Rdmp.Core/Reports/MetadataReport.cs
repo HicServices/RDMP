@@ -373,23 +373,16 @@ public class MetadataReport:DocXHelper
 
     private bool Include(ExtractionInformation arg)
     {
-        switch (arg.ExtractionCategory)
+        return arg.ExtractionCategory switch
         {
-            case ExtractionCategory.Core:
-                return true;
-            case ExtractionCategory.Supplemental:
-                return true;
-            case ExtractionCategory.SpecialApprovalRequired:
-                return true;
-            case ExtractionCategory.Internal:
-                return _args.IncludeInternalItems;
-            case ExtractionCategory.Deprecated:
-                return _args.IncludeDeprecatedItems;
-            case ExtractionCategory.ProjectSpecific:
-                return true;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ExtractionCategory.Core => true,
+            ExtractionCategory.Supplemental => true,
+            ExtractionCategory.SpecialApprovalRequired => true,
+            ExtractionCategory.Internal => _args.IncludeInternalItems,
+            ExtractionCategory.Deprecated => _args.IncludeDeprecatedItems,
+            ExtractionCategory.ProjectSpecific => true,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     private void CreateCountTable(XWPFDocument document, int recordCount, int distinctCount, string identifierName)

@@ -22,18 +22,13 @@ public static class EnumExtensions
     public static string S(this Enum e)
     {
         if(e is TriggerStatus ts)
-            switch (ts)
+            return ts switch
             {
-                case TriggerStatus.Enabled:
-                    return GlobalStrings.Enabled;
-                case TriggerStatus.Disabled:
-                    return GlobalStrings.Disabled;
-                case TriggerStatus.Missing:
-                    return GlobalStrings.Missing;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
+                TriggerStatus.Enabled => GlobalStrings.Enabled,
+                TriggerStatus.Disabled => GlobalStrings.Disabled,
+                TriggerStatus.Missing => GlobalStrings.Missing,
+                _ => throw new ArgumentOutOfRangeException()
+            };
 
         return e.ToString();
     }

@@ -55,7 +55,7 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
         //if there isn't a group by
         return insertionPoint == -1 ? $"{sql}{Environment.NewLine}{impromptuSql}" :
             //there is a group by
-            $"{sql[..insertionPoint]}{Environment.NewLine}{impromptuSql}{Environment.NewLine}{sql.Substring(insertionPoint, sql.Length - insertionPoint)}";
+            $"{sql[..insertionPoint]}{Environment.NewLine}{impromptuSql}{Environment.NewLine}{sql[insertionPoint..]}";
     }
         
     public void PreInitialize(ExtractableCohort value, IDataLoadEventListener listener)

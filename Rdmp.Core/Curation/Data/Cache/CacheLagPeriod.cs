@@ -103,17 +103,12 @@ public class CacheLagPeriod
             return;
         }
 
-        switch (type)
+        Type = type switch
         {
-            case "m": 
-                Type = PeriodType.Month;
-                break;
-            case "d":
-                Type = PeriodType.Day;
-                break;
-            default:
-                throw new Exception("Period type must be either Month (m) or Day (d)");
-        }
+            "m" => PeriodType.Month,
+            "d" => PeriodType.Day,
+            _ => throw new Exception("Period type must be either Month (m) or Day (d)")
+        };
     }
 
     /// <summary>
@@ -124,17 +119,12 @@ public class CacheLagPeriod
     public override string ToString()
     {
         var s = Duration.ToString();
-        switch (Type)
+        s += Type switch
         {
-            case PeriodType.Month:
-                s += "m";
-                break;
-            case PeriodType.Day:
-                s += "d";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            PeriodType.Month => "m",
+            PeriodType.Day => "d",
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         return s;
     }
@@ -146,15 +136,12 @@ public class CacheLagPeriod
     /// <returns></returns>
     internal DateTime CalculateStartOfLagPeriodFrom(DateTime dt)
     {
-        switch (Type)
+        return Type switch
         {
-            case PeriodType.Month:
-                return dt.AddMonths(Duration*-1);
-            case PeriodType.Day:
-                return dt.AddDays(Duration*-1d);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            PeriodType.Month => dt.AddMonths(Duration * -1),
+            PeriodType.Day => dt.AddDays(Duration * -1d),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     /// <summary>

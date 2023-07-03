@@ -195,7 +195,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    public string this[string index] => _dictionary.ContainsKey(index) ? _dictionary[index] : null; // Indexer declaration  
+    public string this[string index] => _dictionary.TryGetValue(index,out var r) ? r : null; // Indexer declaration  
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
     {

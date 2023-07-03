@@ -14,16 +14,12 @@ public static class CheckEventArgsExtensions
 {
     public static LogLevel ToLogLevel(this CheckEventArgs args)
     {
-        switch (args.Result)
+        return args.Result switch
         {
-            case CheckResult.Success:
-                return LogLevel.Info;
-            case CheckResult.Warning:
-                return LogLevel.Warn;
-            case CheckResult.Fail:
-                return LogLevel.Error;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            CheckResult.Success => LogLevel.Info,
+            CheckResult.Warning => LogLevel.Warn,
+            CheckResult.Fail => LogLevel.Error,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

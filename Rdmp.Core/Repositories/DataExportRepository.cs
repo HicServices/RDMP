@@ -173,8 +173,13 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     /// <param name="dataSet"></param>
     public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
-        if (_packageContentsDictionary.Value.ContainsKey(package.ID) && _packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", nameof(dataSet));
+        if (_packageContentsDictionary.Value.TryGetValue(package.ID,out var contents))
+        {
+            if (contents.Contains(dataSet.ID))
+                throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", nameof(dataSet));
+        }
+        else
+            _packageContentsDictionary.Value.Add(package.ID, new List<int>());
 
         using (var con = GetConnection())
         {
@@ -182,9 +187,6 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
                 $"INSERT INTO ExtractableDataSetPackage_ExtractableDataSet(ExtractableDataSetPackage_ID,ExtractableDataSet_ID) VALUES ({package.ID},{dataSet.ID})",
                 con).ExecuteNonQuery();
         }
-
-        if (!_packageContentsDictionary.Value.ContainsKey(package.ID))
-            _packageContentsDictionary.Value.Add(package.ID, new List<int>());
 
         _packageContentsDictionary.Value[package.ID].Add(dataSet.ID);
     }

@@ -207,15 +207,12 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     /// <inheritdoc/>
     public ExtractionJoinType GetInvertedJoinType()
     {
-        switch (ExtractionJoinType)
+        return ExtractionJoinType switch
         {
-            case ExtractionJoinType.Left:
-                return ExtractionJoinType.Right;
-            case ExtractionJoinType.Right:
-                return ExtractionJoinType.Left;
-            default:
-                return ExtractionJoinType;
-        }
+            ExtractionJoinType.Left => ExtractionJoinType.Right,
+            ExtractionJoinType.Right => ExtractionJoinType.Left,
+            _ => ExtractionJoinType
+        };
     }
 
     private class QueryTimeComboJoin :ISupplementalJoin
