@@ -94,10 +94,7 @@ To add support for dropping an object with an existing `ICombineToMakeCommand` y
 ```csharp
 public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
 {
-	if(cmd is CatalogueCombineable sourceCatalogueCombineable)
-		return new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue);
-
-	return null;
+	return cmd is CatalogueCombineable sourceCatalogueCombineable ? new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue) : (ICommandExecution)null;
 }
 ```
 
