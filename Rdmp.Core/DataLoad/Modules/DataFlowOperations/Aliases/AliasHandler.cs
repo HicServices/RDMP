@@ -106,8 +106,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        if (_aliasDictionary != null)
-            _aliasDictionary.Clear();//Free up memory
+        _aliasDictionary?.Clear();//Free up memory
     }
 
     public void Abort(IDataLoadEventListener listener)

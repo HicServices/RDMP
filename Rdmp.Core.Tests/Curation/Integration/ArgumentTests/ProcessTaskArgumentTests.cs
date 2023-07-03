@@ -78,11 +78,9 @@ public class ProcessTaskArgumentTests:DatabaseTests
             .SingleOrDefault(c => c.RuntimeColumnName.Equals(preLoadDiscardedColumnName));
             
         //must delete pre load discarded first
-        if (toCleanupCol != null)
-            toCleanupCol.DeleteInDatabase();
+        toCleanupCol?.DeleteInDatabase();
 
-        if (toCleanup != null)
-            toCleanup.DeleteInDatabase();
+        toCleanup?.DeleteInDatabase();
 
         var lmd = new LoadMetadata(CatalogueRepository);
 
@@ -128,8 +126,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
-        if (toCleanup != null)
-            toCleanup.DeleteInDatabase();
+        toCleanup?.DeleteInDatabase();
 
         var lmd = new LoadMetadata(CatalogueRepository);
 
@@ -170,8 +167,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
-        if (toCleanup != null)
-            toCleanup.DeleteInDatabase();
+        toCleanup?.DeleteInDatabase();
 
         var lmd = new LoadMetadata(CatalogueRepository);
 
@@ -235,8 +231,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
                 processTask.DeleteInDatabase();
             }
 
-            if (lmd != null)
-                lmd.DeleteInDatabase();
+            lmd?.DeleteInDatabase();
         }
     }
 

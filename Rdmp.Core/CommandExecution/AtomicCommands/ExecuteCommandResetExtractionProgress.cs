@@ -70,11 +70,8 @@ public class ExecuteCommandResetExtractionProgress : BasicCommandExecution
     private void AddClearTarget(ISelectedDataSets sds)
     {
         var progress = sds.ExtractionProgressIfAny;
-            
-        if (progress == null)
-            return;
 
-        if(progress.ProgressDate != null)
+        if(progress?.ProgressDate != null)
         {
             _toClear.Add(progress);
         }

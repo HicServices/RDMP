@@ -99,8 +99,7 @@ public partial class KeyDropLocationUI : UserControl
         SelectedColumn = null;
         btnClear.Enabled = false;
 
-        if (SelectedColumnChanged != null)
-            SelectedColumnChanged();
+        SelectedColumnChanged?.Invoke();
     }
 }
 public enum JoinKeyType

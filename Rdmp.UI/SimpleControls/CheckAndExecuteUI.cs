@@ -204,9 +204,8 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
                         loadProgressUI1.SetSuccess();
                     }
 
-                    if(ExecutionFinished != null)
-                        ExecutionFinished(this, new ExecutionEventArgs(exitCode));
-                    
+                    ExecutionFinished?.Invoke(this, new ExecutionEventArgs(exitCode));
+
                     //adjust the buttons accordingly
                     SetButtonStates();
                 }
@@ -237,8 +236,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     private void SetButtonStates()
     {
         var h = StateChanged;
-        if (h != null)
-            h(this, EventArgs.Empty);
+        h?.Invoke(this, EventArgs.Empty);
 
         if (!ChecksPassed)
         {

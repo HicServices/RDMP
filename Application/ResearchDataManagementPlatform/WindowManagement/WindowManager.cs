@@ -143,8 +143,7 @@ public class WindowManager
 
         collection.SetItemActivator(ActivateItems);
 
-        if(CollectionCreated != null)
-            CollectionCreated(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
+        CollectionCreated?.Invoke(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
 
         collection.CommonTreeFunctionality.Tree.SelectionChanged += (s,e)=>
         {    
@@ -356,10 +355,9 @@ public class WindowManager
             Navigation.Append(new TabNavigation(newTab));
             newTab.ParentForm.Text = $"{newTab.TabText} - RDMP";
         }
-                
 
-        if (TabChanged != null)
-            TabChanged(sender, newTab);
+
+        TabChanged?.Invoke(sender, newTab);
     }
 
 
@@ -451,8 +449,7 @@ public class WindowManager
         {
             Navigation.Current.Close();
 
-            if (Navigation.Current != null)
-                Navigation.Current.Activate(ActivateItems);
+            Navigation.Current?.Activate(ActivateItems);
         }
         finally
         {

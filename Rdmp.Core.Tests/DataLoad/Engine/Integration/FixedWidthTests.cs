@@ -153,8 +153,7 @@ public class FixedWidthTests :DatabaseTests
         var parentDir = workingDir.CreateSubdirectory("FixedWidthTests");
 
         var toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("TestHeaderMatching"));
-        if (toCleanup != null)
-            toCleanup.Delete(true);
+        toCleanup?.Delete(true);
 
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "TestHeaderMatching");
 

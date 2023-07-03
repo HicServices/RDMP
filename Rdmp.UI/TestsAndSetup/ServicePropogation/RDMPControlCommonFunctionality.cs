@@ -232,8 +232,7 @@ public class RDMPControlCommonFunctionality
     {
         var args = new CheckEventArgs(s, CheckResult.Fail, exception);
 
-        if (OnFatal != null)
-            OnFatal(this, args);
+        OnFatal?.Invoke(this, args);
 
         _ragSmileyToolStrip.OnCheckPerformed(args);
     }
@@ -432,8 +431,7 @@ public class RDMPControlCommonFunctionality
 
         ((Control)_hostControl).Controls.Add(ToolStrip);
 
-        if(ToolStripAddedToHost != null)
-            ToolStripAddedToHost(this,EventArgs.Empty);
+        ToolStripAddedToHost?.Invoke(this,EventArgs.Empty);
     }
 
     /// <summary>

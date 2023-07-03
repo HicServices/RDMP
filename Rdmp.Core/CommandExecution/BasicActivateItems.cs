@@ -386,13 +386,10 @@ public abstract class BasicActivateItems : IBasicActivateItems
             {
                 var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(publish);
 
-                if (descendancy != null)
-                {
-                    var parent = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
+                var parent = descendancy?.Parents.OfType<DatabaseEntity>().LastOrDefault();
 
-                    if (parent != null)
-                        Publish(parent);
-                }
+                if (parent != null)
+                    Publish(parent);
             }
         }
     }

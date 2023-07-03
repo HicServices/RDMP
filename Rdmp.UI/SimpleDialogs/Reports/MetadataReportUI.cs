@@ -156,8 +156,7 @@ public partial class MetadataReportUI : RDMPForm
 
     private void ConfigureMetadataReport_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if(_report != null)
-            _report.Abort();
+        _report?.Abort();
 
         aggregateGraph1.AbortLoadGraph();
     }

@@ -59,10 +59,9 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
             TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw, job.Configuration.DatabaseNamer);
         }
-                
 
-        if(TableName != null)
-            TableName = TableName.Trim();
+
+        TableName = TableName?.Trim();
 
         var timer = new Stopwatch();
         timer.Start();

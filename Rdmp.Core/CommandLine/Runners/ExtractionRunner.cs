@@ -185,10 +185,7 @@ public class ExtractionRunner : ManyRunner
         {
             var sds = GetCheckNotifier(extractableData);
 
-            if (sds == null)
-                return null;
-
-            return sds.GetWorst();
+            return sds?.GetWorst();
         }
 
         if(_options.Command == CommandLineActivity.run)
@@ -212,11 +209,8 @@ public class ExtractionRunner : ManyRunner
         if (_options.Command == CommandLineActivity.check)
         {
             var g = GetSingleCheckerResults<GlobalExtractionChecker>();
-                
-            if (g == null)
-                return null;
 
-            return g.GetWorst();
+            return g?.GetWorst();
         }
 
         if (_options.Command == CommandLineActivity.run && _globalsCommand != null)

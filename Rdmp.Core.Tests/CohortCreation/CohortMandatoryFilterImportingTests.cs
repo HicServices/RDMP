@@ -162,8 +162,7 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
         }
         finally
         {
-            if(global != null)
-                global.DeleteInDatabase();
+            global?.DeleteInDatabase();
 
             filter.DeleteInDatabase();
 

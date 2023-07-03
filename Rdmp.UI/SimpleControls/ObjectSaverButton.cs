@@ -136,8 +136,7 @@ public partial class ObjectSaverButton
 
         SetReadyToUndo();
 
-        if(AfterSave != null)
-            AfterSave();
+        AfterSave?.Invoke();
     }
         
     private void btnSave_Click(object sender, EventArgs e)

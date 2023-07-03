@@ -81,9 +81,8 @@ public class DatabaseCommandHelper
     public static DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null)
     {
         var cmd = For(con).GetCommand(s, con, transaction);
-            
-        if(PerformanceCounter != null)
-            PerformanceCounter.AddAudit(cmd,Environment.StackTrace.ToString());
+
+        PerformanceCounter?.AddAudit(cmd,Environment.StackTrace.ToString());
 
         cmd.CommandTimeout = GlobalTimeout;
         return cmd;

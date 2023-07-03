@@ -99,10 +99,9 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
             Assert.IsTrue(joinable.Users.Length == 1);
             Assert.AreEqual(aggregate2,joinable.Users[0].AggregateConfiguration);
         }
-        finally 
+        finally
         {
-            if (joinable != null) 
-                joinable.DeleteInDatabase();
+            joinable?.DeleteInDatabase();
         }
     }
 

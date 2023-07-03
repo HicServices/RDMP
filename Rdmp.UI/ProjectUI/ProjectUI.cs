@@ -121,10 +121,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private DataTable LoadDatagridFor(Project value)
     {
-        if (value == null)
-            return null;
-
-        var configurations = value.ExtractionConfigurations;
+        var configurations = value?.ExtractionConfigurations;
 
         if (configurations == null || configurations.Length == 0)
             return null;

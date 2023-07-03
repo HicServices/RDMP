@@ -109,10 +109,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
             return ExtractionInformation.ColumnInfo?.TableInfo;
         }
 
-        if (ColumnInfo != null)
-            return ColumnInfo.TableInfo;
-
-        return null;
+        return ColumnInfo?.TableInfo;
     }
 
     public string GetSql()

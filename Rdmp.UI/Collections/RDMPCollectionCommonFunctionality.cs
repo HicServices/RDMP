@@ -495,8 +495,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             return;
 
         //clear the old menu strip first so old shortcuts cannot be activated during 
-        if(_menu != null)
-            _menu.Dispose();
+        _menu?.Dispose();
 
         if(Tree.SelectedObjects.Count <= 1)
             _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObject);

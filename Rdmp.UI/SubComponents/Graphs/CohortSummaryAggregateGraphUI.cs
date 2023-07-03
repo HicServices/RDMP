@@ -47,8 +47,7 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
         if (shouldCloseInstead)
         {
-            if(ParentForm != null)
-                ParentForm.Close();
+            ParentForm?.Close();
         }
         else
             //now reload the graph because the change was to a relevant object

@@ -39,8 +39,7 @@ public class ANOMigrationTests : TestsRequiringANOStore
             
         var remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
 
-        if (remnantANO != null)
-            remnantANO.DeleteInDatabase();
+        remnantANO?.DeleteInDatabase();
 
         //cleanup
         foreach (var remnant in CatalogueRepository.GetAllObjects<TableInfo>().Where(t => t.GetRuntimeName().Equals(TableName)))

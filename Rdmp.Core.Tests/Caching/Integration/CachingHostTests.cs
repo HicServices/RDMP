@@ -117,7 +117,7 @@ internal class ExpectedNotificationListener : IDataLoadEventListener
     protected virtual void OnReceivedMessage()
     {
         var handler = ReceivedMessage;
-        if (handler != null) handler();
+        handler?.Invoke();
     }
 
     public ExpectedNotificationListener(string expectedNotificationString)

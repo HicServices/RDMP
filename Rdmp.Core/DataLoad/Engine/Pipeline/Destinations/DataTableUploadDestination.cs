@@ -432,8 +432,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private void EndAuditIfExists()
     {
         //user is auditing
-        if (_loggingDatabaseListener != null)
-            _loggingDatabaseListener.FinalizeTableLoadInfos();
+        _loggingDatabaseListener?.FinalizeTableLoadInfos();
     }
 
     public void Check(ICheckNotifier notifier)

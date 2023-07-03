@@ -232,8 +232,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     {
         var selected = lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription node ? null : node.Cohort;
 
-        if (SelectedCohortChanged != null)
-            SelectedCohortChanged(this, selected);
+        SelectedCohortChanged?.Invoke(this, selected);
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

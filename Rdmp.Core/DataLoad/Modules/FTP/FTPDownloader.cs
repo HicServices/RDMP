@@ -220,11 +220,9 @@ public class FTPDownloader : IPluginDataProvider
         }
         finally
         {
-            if (reader != null)
-                reader.Close();
+            reader?.Close();
 
-            if (response != null)
-                response.Close();
+            response?.Close();
         }
     }
 

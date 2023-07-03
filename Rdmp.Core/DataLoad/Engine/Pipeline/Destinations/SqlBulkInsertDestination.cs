@@ -150,11 +150,9 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         _isDisposed = true;
         try
         {
-            if (TableLoadInfo != null)
-                TableLoadInfo.CloseAndArchive();
+            TableLoadInfo?.CloseAndArchive();
 
-            if (_copy != null)
-                _copy.Dispose();
+            _copy?.Dispose();
 
             if (_recordsWritten == 0)
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
