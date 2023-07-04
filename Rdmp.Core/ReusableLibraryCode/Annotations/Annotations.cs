@@ -6,6 +6,13 @@
 
 using System;
 
+// ReSharper disable UnusedMember.Global
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedAutoPropertyAccessor.Global
+// ReSharper disable IntroduceOptionalParameters.Global
+// ReSharper disable MemberCanBeProtected.Global
+// ReSharper disable InconsistentNaming
+
 namespace Rdmp.Core.ReusableLibraryCode.Annotations;
 
 /// <summary>
@@ -150,4 +157,61 @@ public enum ImplicitUseTargetFlags
 
     /// <summary>Entity marked with attribute and all its members considered used</summary>
     WithMembers = Itself | Members
+}
+
+/// <summary>
+/// This attribute is intended to mark publicly available API
+/// which should not be removed and so is treated as used
+/// </summary>
+[MeansImplicitUse]
+public sealed class PublicAPIAttribute : Attribute
+{
+    public PublicAPIAttribute() { }
+    public PublicAPIAttribute([NotNull] string comment)
+    {
+        Comment = comment;
+    }
+
+    [NotNull] public string Comment { get; private set; }
+}
+
+/// <summary>
+/// Tells code analysis engine if the parameter is completely handled
+/// when the invoked method is on stack. If the parameter is a delegate,
+/// indicates that delegate is executed while the method is executed.
+/// If the parameter is an enumerable, indicates that it is enumerated
+/// while the method is executed
+/// </summary>
+[AttributeUsage(AttributeTargets.Parameter, Inherited = true)]
+public sealed class InstantHandleAttribute : Attribute { }
+
+/// <summary>
+/// Indicates that a method does not make any observable state changes.
+/// The same as <c>System.Diagnostics.Contracts.PureAttribute</c>
+/// </summary>
+/// <example><code>
+/// [Pure] private int Multiply(int x, int y) { return x * y; }
+/// public void Foo() {
+///   const int a = 2, b = 2;
+///   Multiply(a, b); // Warning: Return value of pure method is not used
+/// }
+/// </code></example>
+[AttributeUsage(AttributeTargets.Method, Inherited = true)]
+public sealed class PureAttribute : Attribute { }
+
+/// <summary>
+/// Indicates that a parameter is a path to a file or a folder
+/// within a web project. Path can be relative or absolute,
+/// starting from web root (~)
+/// </summary>
+[AttributeUsage(AttributeTargets.Parameter)]
+public class PathReferenceAttribute : Attribute
+{
+    public PathReferenceAttribute() { }
+    public PathReferenceAttribute([PathReference] string basePath)
+    {
+        BasePath = basePath;
+    }
+
+    [NotNull] public string BasePath { get; private set; }
 }

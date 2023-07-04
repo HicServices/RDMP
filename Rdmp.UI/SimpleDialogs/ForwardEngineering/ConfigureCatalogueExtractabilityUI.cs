@@ -317,8 +317,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             if (!shouldBeExtractable) //it's already not extractable job done
                 return;
             //make it extractable
-            var newExtractionInformation = new ExtractionInformation((ICatalogueRepository)n.ColumnInfo.Repository,
-                n.CatalogueItem, n.ColumnInfo, n.ColumnInfo.Name);
+            var newExtractionInformation = new ExtractionInformation((ICatalogueRepository) n.ColumnInfo.Repository, n.CatalogueItem, n.ColumnInfo,n.ColumnInfo.Name);
 
             if (category.HasValue)
             {

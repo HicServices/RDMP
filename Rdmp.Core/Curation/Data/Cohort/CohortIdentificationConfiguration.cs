@@ -420,6 +420,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                     throw;
                 }
             }
+        }
 
         return CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
     }

@@ -40,19 +40,13 @@ public class RuntimeTaskPackager
 
     public List<IRuntimeTask> GetRuntimeTasksForStage(LoadStage loadStage)
     {
-        var runtimeTasks = new List<IRuntimeTask>();
         var tasksForThisLoadStage = ProcessTasks.Where(task => task.LoadStage == loadStage).ToList();
 
         if (!tasksForThisLoadStage.Any())
-            return runtimeTasks;
+            return new List<IRuntimeTask>();
 
         var factory = new RuntimeTaskFactory(_repository);
-        foreach (var processTask in tasksForThisLoadStage)
-            runtimeTasks.Add(factory.Create(processTask, _loadArgsDictionary[processTask.LoadStage]));
-
-
-        runtimeTasks = runtimeTasks.OrderBy(task => task.ProcessTask.Order).ToList();
-        return runtimeTasks;
+        return tasksForThisLoadStage.Select(processTask => factory.Create(processTask, _loadArgsDictionary[processTask.LoadStage])).Cast<IRuntimeTask>().OrderBy(task => task.ProcessTask.Order).ToList();
     }
 
     public IEnumerable<IRuntimeTask> GetAllRuntimeTasks()

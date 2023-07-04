@@ -111,7 +111,7 @@ public partial class StartupUI : Form, ICheckNotifier
             Invoke(new MethodInvoker(StartupComplete));
             return;
         }
-
+            
         if (_startup is { RepositoryLocator.CatalogueRepository: not null })
             WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
 

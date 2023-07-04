@@ -180,7 +180,7 @@ internal class ConsoleGuiBigListBox<T>
 
             win.Add(_mainInput);
             _mainInput.SetFocus();
-
+                
             _mainInput.TextChanged += s =>
             {
                 // Don't update the UI while user is hammering away on the keyboard
@@ -278,8 +278,8 @@ internal class ConsoleGuiBigListBox<T>
     {
         var toReturn = listOfT.Select(o => new ListViewObject<T>(o, AspectGetter)).ToList();
 
-        if (_addNull)
-            toReturn.Add(new ListViewObject<T>((T)(object)null, o => "Null"));
+        if(_addNull)
+            toReturn.Add(new ListViewObject<T>((T)(object)null,o=>"Null"));
 
         return toReturn;
     }

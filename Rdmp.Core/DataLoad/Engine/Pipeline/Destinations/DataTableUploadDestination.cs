@@ -508,8 +508,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             return columnRequest;
         }
 
-        columnRequest = new DatabaseColumnRequest(columnName, explicitType,
-            !columnFlags.IsPrimaryKey && !columnFlags.IsAutoIncrement)
+        columnRequest = new DatabaseColumnRequest(columnName, explicitType, !columnFlags.IsPrimaryKey && !columnFlags.IsAutoIncrement)
         {
             IsPrimaryKey = columnFlags.IsPrimaryKey,
             IsAutoIncrement = columnFlags.IsAutoIncrement,

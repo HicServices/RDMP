@@ -50,18 +50,8 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
   </ItemValidators>
 </Validator>";
 
-        var kaizerSoze = false;
-        foreach (var suspect in finder.TheUsualSuspects)
-        {
-            var pattern = string.Format(suspect.Pattern, 10029);
-
-            kaizerSoze = Regex.IsMatch(testXML, pattern, RegexOptions.Singleline);
-
-            if (kaizerSoze)
-                break;
-        }
-
-        Assert.IsTrue(kaizerSoze);
+        Assert.IsTrue(finder.TheUsualSuspects.Select(suspect => string.Format(suspect.Pattern, 10029))
+            .Any(pattern => Regex.IsMatch(testXML, pattern, RegexOptions.Singleline)));
     }
 
 

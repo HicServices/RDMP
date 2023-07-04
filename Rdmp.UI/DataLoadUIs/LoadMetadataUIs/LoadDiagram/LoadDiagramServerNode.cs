@@ -37,7 +37,6 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
     {
         _bubble = bubble;
         _database = database;
-        var loadTables1 = loadTables;
         var config1 = config;
         var serverName = database.Server.Name;
 
@@ -60,12 +59,12 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
                     $"The TableInfo collection that underlie the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
             }
 
-            var databases = loadTables1.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
+            var databases = loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
 
             _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 
             foreach (var dbname in databases)
-                _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),loadTables1.Where(t => t.GetDatabaseRuntimeName().Equals(dbname,StringComparison.CurrentCultureIgnoreCase)).ToArray());
+                _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),loadTables.Where(t => t.GetDatabaseRuntimeName().Equals(dbname,StringComparison.CurrentCultureIgnoreCase)).ToArray());
         }
 
         //if it is live yield all the lookups
@@ -73,7 +72,7 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
             foreach (var kvp in _liveDatabaseDictionary)
                 Children.Add(new LoadDiagramDatabaseNode(_bubble,kvp.Key,kvp.Value,config1));
         else
-            Children.Add(new LoadDiagramDatabaseNode(_bubble,_database,loadTables1,config1));
+            Children.Add(new LoadDiagramDatabaseNode(_bubble,_database,loadTables,config1));
     }
 
     public IEnumerable<LoadDiagramDatabaseNode> GetChildren() => Children;

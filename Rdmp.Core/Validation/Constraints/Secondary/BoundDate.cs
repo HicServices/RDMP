@@ -135,6 +135,11 @@ public class BoundDate : Bound
 
     private static string Wrap(string s) => $"[{s}]";
 
+    private static string Wrap(string s)
+    {
+        return $"[{s}]";
+    }
+        
     public override string GetHumanReadableDescriptionOfValidation()
     {
         var result = "Checks that a date is within a given set of bounds.  This field is currently configured to be ";

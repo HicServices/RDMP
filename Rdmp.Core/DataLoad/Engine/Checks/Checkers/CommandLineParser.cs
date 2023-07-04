@@ -33,14 +33,20 @@ internal class CommandLineParser
         {
             var ch = cmd[i];
 
-            if (char.IsWhiteSpace(ch)) throw new InvalidOperationException();
+            if (char.IsWhiteSpace(ch)) { throw new InvalidOperationException(); }
 
-            if (ch == '\\')
-                ParseEscapeSequence();
-            else if (ch == '"')
-                ParseQuotedWord();
-            else
-                ParseBareWord();
+            switch (ch)
+            {
+                case '\\':
+                    ParseEscapeSequence();
+                    break;
+                case '"':
+                    ParseQuotedWord();
+                    break;
+                default:
+                    ParseBareWord();
+                    break;
+            }
 
             if (i >= cmd.Length || char.IsWhiteSpace(cmd[i]))
             {
@@ -98,8 +104,6 @@ internal class CommandLineParser
 
             ++i;
         }
-
-        return;
     }
 
     /// <summary>

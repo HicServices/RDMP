@@ -92,7 +92,7 @@ public partial class ConsoleGuiUserSettings {
         cb.Checked = (bool)prop.GetValue(null);
 
         // register callback
-        cb.Toggled += c => CheckboxCheckedChanged(cb, c);
+        cb.Toggled += c=>CheckboxCheckedChanged(cb,c);
 
         // add help
         AddTooltip(cb, propertyName);

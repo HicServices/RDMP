@@ -20,8 +20,7 @@ internal class ForEachUITests : UITests
     [UITimeout(50000)]
     public void ForEachUI_Test_GetTabName()
     {
-        ForEachUI(ui =>
-        {
+        ForEachUI(ui=>{
             Assert.NotNull(ui);
             Assert.IsFalse(string.IsNullOrWhiteSpace(ui.GetTabName()));
         });

@@ -25,7 +25,7 @@ public partial class PopupChecksUI : Form, ICheckNotifier
         if (!showOnlyWhenError)
         {
             Show();
-            haveDemandedVisibility = true;
+            _haveDemandedVisibility = true;
         }
         else
             CreateHandle(); //let windows get a handle on the situation ;)
@@ -35,16 +35,12 @@ public partial class PopupChecksUI : Form, ICheckNotifier
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-        if (keyData == (Keys.Control | Keys.W))
-        {
-            Close();
-            return true;
-        }
-
-        return base.ProcessCmdKey(ref msg, keyData);
+        if (keyData != (Keys.Control | Keys.W)) return base.ProcessCmdKey(ref msg, keyData);
+        Close();
+        return true;
     }
 
-    private bool haveDemandedVisibility;
+    private bool _haveDemandedVisibility;
     private CheckResult _worstSeen = CheckResult.Success;
 
     public bool OnCheckPerformed(CheckEventArgs args)
@@ -52,19 +48,18 @@ public partial class PopupChecksUI : Form, ICheckNotifier
         if (_worstSeen < args.Result)
             _worstSeen = args.Result;
 
-        if (args.Result == CheckResult.Fail || args.Result == CheckResult.Warning)
-            if (!haveDemandedVisibility)
-            {
-                haveDemandedVisibility = true;
-                Invoke(new MethodInvoker(Show));
-            }
+        if(args.Result is CheckResult.Fail or CheckResult.Warning && !_haveDemandedVisibility)
+        {
+            _haveDemandedVisibility = true;
+            Invoke(new MethodInvoker(Show));
+        }
 
         return checksUI1.OnCheckPerformed(args);
     }
 
     protected override void OnClosed(EventArgs e)
     {
-        if (haveDemandedVisibility)
+        if (_haveDemandedVisibility)
             checksUI1.TerminateWithExtremePrejudice();
 
         base.OnClosed(e);

@@ -54,7 +54,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
     {
         InitializeComponent();
 
-        suggestComboBox1.PropertySelector = s => s.Cast<object>().Select(o => o == null ? "<None>>" : o.ToString());
+        suggestComboBox1.PropertySelector = s => s.Cast<object>().Select(o => o == null ? "<None>>": o.ToString());
         suggestComboBox1.SelectedIndexChanged += suggestComboBox1_SelectedIndexChanged;
     }
 

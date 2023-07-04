@@ -113,17 +113,21 @@ public class CatalogueProblemProvider : ProblemProvider
         var v = parameter.Value;
 
         var g = new Guesser();
-
-        if (Culture != null)
+                
+        if(Culture != null)
             g.Culture = Culture;
 
         g.AdjustToCompensateForValue(v);
 
         // if user has entered a date as the value
         if (g.Guess.CSharpType == typeof(DateTime))
+        {
             // and there are no delimiters
-            if (v.All(c => c != '\'' && c != '"'))
+            if(v.All(c=>c != '\'' && c != '"'))
+            {
                 return "Parameter value looks like a date but is not surrounded by quotes";
+            }
+        }
 
         return null;
     }

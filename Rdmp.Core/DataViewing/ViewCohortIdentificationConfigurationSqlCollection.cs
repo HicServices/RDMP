@@ -51,7 +51,8 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     {
         var cache = GetCacheServer();
 
-        if (UseQueryCache && cache != null) return cache;
+        if (UseQueryCache && cache != null)
+            return cache;
 
         var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
         builder.RegenerateSQL();

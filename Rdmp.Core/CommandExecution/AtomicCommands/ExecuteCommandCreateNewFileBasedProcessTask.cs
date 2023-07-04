@@ -22,7 +22,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
     private readonly ProcessTaskType _taskType;
     private readonly LoadMetadata _loadMetadata;
     private readonly LoadStage _loadStage;
-    private LoadDirectory _LoadDirectory;
+    private readonly LoadDirectory _loadDirectory;
     private FileInfo _file;
 
     public ExecuteCommandCreateNewFileBasedProcessTask(IBasicActivateItems activator, ProcessTaskType taskType,
@@ -34,14 +34,14 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
         try
         {
-            _LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
+            _loadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
         }
         catch (Exception)
         {
             SetImpossible("Could not construct LoadDirectory");
         }
-
-        if (!(taskType == ProcessTaskType.SQLFile || taskType == ProcessTaskType.Executable))
+            
+        if(taskType is not (ProcessTaskType.SQLFile or ProcessTaskType.Executable))
             SetImpossible("Only SQLFile and Executable task types are supported by this command");
 
         if (!ProcessTask.IsCompatibleStage(taskType, loadStage))
@@ -61,7 +61,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
                 if (BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",
                         out var selected, false))
                 {
-                    var target = Path.Combine(_LoadDirectory.ExecutablesPath.FullName, selected);
+                    var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
 
                     if (!target.EndsWith(".sql"))
                         target += ".sql";

@@ -153,7 +153,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         graphView.CellSize = new PointF(xIncrement, yIncrement);
 
-        graphView.AxisY.LabelGetter = (v) => FormatValue(v.Value,minY);
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value,minY);
         graphView.MarginLeft = (uint)Math.Max(FormatValue(maxY, minY).Length, FormatValue(minY, minY).Length) + 1;
 
         var legend = GetLegend(dt, boundsWidth, boundsHeight);
@@ -234,7 +234,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // work out how to space x axis without scrolling
         graphView.AxisX.Increment = 10 * xIncrement;
         graphView.AxisX.ShowLabelsEvery = 1;
-        graphView.AxisX.LabelGetter = (v) => FormatValue(v.Value, min);
+        graphView.AxisX.LabelGetter = v => FormatValue(v.Value, min);
         graphView.AxisX.Text = countColumnName;
 
         graphView.AxisY.Increment = 1;
@@ -322,7 +322,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // work out how to space x axis without scrolling
         graphView.AxisY.Increment = yIncrement * 5;
         graphView.AxisY.ShowLabelsEvery = 1;
-        graphView.AxisY.LabelGetter = (v) => FormatValue(v.Value, min);
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value, min);
         graphView.AxisY.Text = countColumnName;
 
         graphView.AxisX.Increment = numberOfBars + 1;

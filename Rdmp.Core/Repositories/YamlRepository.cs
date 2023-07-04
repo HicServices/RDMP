@@ -72,9 +72,7 @@ public class YamlRepository : MemoryDataExportRepository
         {
             var respect = TableRepository.GetPropertyInfos(type);
 
-            foreach (var prop in type.GetProperties())
-                if (!respect.Contains(prop))
-                    builder = builder.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute());
+            builder = type.GetProperties().Where(prop => !respect.Contains(prop)).Aggregate(builder, (current, prop) => current.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute()));
         }
 
         return builder.Build();

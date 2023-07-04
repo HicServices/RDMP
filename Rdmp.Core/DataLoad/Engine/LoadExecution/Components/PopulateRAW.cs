@@ -53,19 +53,22 @@ public class PopulateRAW : CompositeDataLoadComponent
     {
         var attachingProcesses = Components.OfType<AttacherRuntimeTask>().ToArray();
 
-        //we do not have any attaching processes ... magically the data must appear somehow in our RAW database so better create it -- maybe an executable is going to populate it or something
-        if (attachingProcesses.Length == 0)
-            return true;
-
-        if (attachingProcesses.Length > 1)
+        switch (attachingProcesses.Length)
         {
-            // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
-            var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
-            var numAttachersRequiringDbCreation = attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
+            //we do not have any attaching processes ... magically the data must appear somehow in our RAW database so better create it -- maybe an executable is going to populate it or something
+            case 0:
+                return true;
+            case > 1:
+            {
+                // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
+                var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
+                var numAttachersRequiringDbCreation = attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
 
-            if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
-                throw new Exception(
-                    $"If there are multiple attachers then they should all agree on whether they require database creation or not: {attachers.Aggregate("", (s, attacher) => $"{s} {attacher.GetType().Name}:{attacher.RequestsExternalDatabaseCreation}")}");
+                if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
+                    throw new Exception(
+                        $"If there are multiple attachers then they should all agree on whether they require database creation or not: {attachers.Aggregate("", (s, attacher) => $"{s} {attacher.GetType().Name}:{attacher.RequestsExternalDatabaseCreation}")}");
+                break;
+            }
         }
 
         return attachingProcesses[0].Attacher.RequestsExternalDatabaseCreation;

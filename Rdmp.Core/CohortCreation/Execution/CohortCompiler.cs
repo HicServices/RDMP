@@ -301,6 +301,7 @@ public class CohortCompiler
                 if (c.CancellationTokenSource == source)
                     // it's already added, no worries just return the already existing one
                     return c;
+                }
 
                 CancelTask(c, true);
             }

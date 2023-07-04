@@ -13,7 +13,7 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// A 'table' that is being loaded as part of a logged activity (See DataLoadInfo).  While it is called a table you can actualy audit any endpoint for records
+/// A 'table' that is being loaded as part of a logged activity (See DataLoadInfo).  While it is called a table you can actually audit any endpoint for records
 /// e.g. a targetTable of 'bob.csv' would be absolutely fine.  As long as the count of inserts is useful and you want to preserve the information then go ahead
 /// and create a TableLoadInfo.
 /// 
@@ -23,14 +23,12 @@ namespace Rdmp.Core.Logging;
 /// </summary>
 public class TableLoadInfo : ITableLoadInfo
 {
-    private bool _isClosed;
-
-    public bool IsClosed => _isClosed;
+    public bool IsClosed { get; private set; }
 
     private int _errorRows; // incremented only through RowErrorLogging class
-    private string _suggestedRollbackCommand;
+    private readonly string _suggestedRollbackCommand;
     private int _id;
-    private DateTime _startTime;
+    private readonly DateTime _startTime;
     private DateTime _endTime;
     public DataLoadInfo DataLoadInfoParent { get; private set; }
 
@@ -39,22 +37,21 @@ public class TableLoadInfo : ITableLoadInfo
 
     #region Database Connection Setup
 
-    private DiscoveredServer _databaseSettings;
     private string _notes;
 
-    public DiscoveredServer DatabaseSettings => _databaseSettings;
+    public DiscoveredServer DatabaseSettings { get; }
 
     #endregion
 
     /// <param name="parent"></param>
-    /// <param name="suggestedRollbackCommand">Human readible text indicating how this load might be rolled back, may contain specific SQL or just general advice.</param>
+    /// <param name="suggestedRollbackCommand">Human readable text indicating how this load might be rolled back, may contain specific SQL or just general advice.</param>
     /// <param name="destinationTable"></param>
     /// <param name="sources"></param>
     /// <param name="expectedInserts"></param>
     public TableLoadInfo(DataLoadInfo parent, string suggestedRollbackCommand, string destinationTable,
         DataSource[] sources, int expectedInserts)
     {
-        _databaseSettings = parent.DatabaseSettings;
+        DatabaseSettings = parent.DatabaseSettings;
 
         _startTime = DateTime.Now;
         Inserts = 0;
@@ -67,7 +64,7 @@ public class TableLoadInfo : ITableLoadInfo
 
         DataLoadInfoParent = parent;
 
-        var md5Col = _databaseSettings.GetCurrentDatabase().ExpectTable("DataSource").DiscoverColumn("MD5");
+        var md5Col = DatabaseSettings.GetCurrentDatabase().ExpectTable("DataSource").DiscoverColumn("MD5");
 
         IsLegacyLoggingSchema = md5Col.DataType.SQLType.Contains("binary");
 
@@ -79,17 +76,17 @@ public class TableLoadInfo : ITableLoadInfo
     private void RecordNewTableLoadInDatabase(DataLoadInfo parent, string destinationTable, DataSource[] sources,
         int expectedInserts)
     {
-        using var con = _databaseSettings.GetConnection();
-        using var cmd = _databaseSettings.GetCommand("INSERT INTO TableLoadRun (startTime,dataLoadRunID,targetTable,expectedInserts,suggestedRollbackCommand) " +
+        using var con = DatabaseSettings.GetConnection();
+        using var cmd = DatabaseSettings.GetCommand("INSERT INTO TableLoadRun (startTime,dataLoadRunID,targetTable,expectedInserts,suggestedRollbackCommand) " +
                                                      "VALUES (@startTime,@dataLoadRunID,@targetTable,@expectedInserts,@suggestedRollbackCommand); " +
                                                      "SELECT @@IDENTITY;", con);
         con.Open();
 
-        _databaseSettings.AddParameterWithValueToCommand("@startTime", cmd, DateTime.Now);
-        _databaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmd, parent.ID);
-        _databaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable);
-        _databaseSettings.AddParameterWithValueToCommand("@expectedInserts", cmd, expectedInserts);
-        _databaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand);
+        DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, DateTime.Now);
+        DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmd, parent.ID);
+        DatabaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable);
+        DatabaseSettings.AddParameterWithValueToCommand("@expectedInserts", cmd, expectedInserts);
+        DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand);
 
 
         //get the ID, can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
@@ -101,11 +98,11 @@ public class TableLoadInfo : ITableLoadInfo
         //for each of the sources, create them in the DataSource table
         foreach (var s in DataSources)
         {
-            using var cmdInsertDs = _databaseSettings.GetCommand("INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
+            using var cmdInsertDs = DatabaseSettings.GetCommand("INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
                                                                  "VALUES (@source,@tableLoadRunID,@originDate,@MD5); SELECT @@IDENTITY;", con);
-            _databaseSettings.AddParameterWithValueToCommand("@source", cmdInsertDs, s.Source);
-            _databaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, _id);
-            _databaseSettings.AddParameterWithValueToCommand("@originDate", cmdInsertDs, s.UnknownOriginDate ? DBNull.Value : s.OriginDate);
+            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdInsertDs, s.Source);
+            DatabaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, _id);
+            DatabaseSettings.AddParameterWithValueToCommand("@originDate", cmdInsertDs, s.UnknownOriginDate ? DBNull.Value : s.OriginDate);
 
             // old logging schema used binary[128] for the MD5 column
             if (IsLegacyLoggingSchema)
@@ -120,7 +117,7 @@ public class TableLoadInfo : ITableLoadInfo
             else
             {
                 // now logging schema uses string for easier usability and FAnsiSql compatibility
-                _databaseSettings.AddParameterWithValueToCommand("@MD5", cmdInsertDs, s.MD5 != null ? s.MD5 : DBNull.Value);
+                DatabaseSettings.AddParameterWithValueToCommand("@MD5", cmdInsertDs, s.MD5 != null ? s.MD5 : DBNull.Value);
             }
 
             s.ID = int.Parse(cmdInsertDs.ExecuteScalar().ToString());
@@ -177,18 +174,18 @@ public class TableLoadInfo : ITableLoadInfo
 
     public void CloseAndArchive()
     {
-        using var con = _databaseSettings.BeginNewTransactedConnection();
-        using var cmdCloseRecord = _databaseSettings.GetCommand("UPDATE TableLoadRun SET endTime=@endTime,inserts=@inserts,updates=@updates,deletes=@deletes,errorRows=@errorRows,duplicates=@duplicates, notes=@notes WHERE ID=@ID", con.Connection, con.ManagedTransaction);
+        using var con = DatabaseSettings.BeginNewTransactedConnection();
+        using var cmdCloseRecord = DatabaseSettings.GetCommand("UPDATE TableLoadRun SET endTime=@endTime,inserts=@inserts,updates=@updates,deletes=@deletes,errorRows=@errorRows,duplicates=@duplicates, notes=@notes WHERE ID=@ID", con.Connection, con.ManagedTransaction);
         try
         {
-            _databaseSettings.AddParameterWithValueToCommand("@endTime",cmdCloseRecord, DateTime.Now);
-            _databaseSettings.AddParameterWithValueToCommand("@inserts", cmdCloseRecord, Inserts);
-            _databaseSettings.AddParameterWithValueToCommand("@updates", cmdCloseRecord, Updates);
-            _databaseSettings.AddParameterWithValueToCommand("@deletes", cmdCloseRecord, Deletes);
-            _databaseSettings.AddParameterWithValueToCommand("@errorRows", cmdCloseRecord, ErrorRows);
-            _databaseSettings.AddParameterWithValueToCommand("@duplicates", cmdCloseRecord, DiscardedDuplicates);
-            _databaseSettings.AddParameterWithValueToCommand("@notes", cmdCloseRecord, string.IsNullOrWhiteSpace(Notes) ? DBNull.Value : Notes);
-            _databaseSettings.AddParameterWithValueToCommand("@ID", cmdCloseRecord, ID);
+            DatabaseSettings.AddParameterWithValueToCommand("@endTime",cmdCloseRecord, DateTime.Now);
+            DatabaseSettings.AddParameterWithValueToCommand("@inserts", cmdCloseRecord, Inserts);
+            DatabaseSettings.AddParameterWithValueToCommand("@updates", cmdCloseRecord, Updates);
+            DatabaseSettings.AddParameterWithValueToCommand("@deletes", cmdCloseRecord, Deletes);
+            DatabaseSettings.AddParameterWithValueToCommand("@errorRows", cmdCloseRecord, ErrorRows);
+            DatabaseSettings.AddParameterWithValueToCommand("@duplicates", cmdCloseRecord, DiscardedDuplicates);
+            DatabaseSettings.AddParameterWithValueToCommand("@notes", cmdCloseRecord, string.IsNullOrWhiteSpace(Notes) ? DBNull.Value : Notes);
+            DatabaseSettings.AddParameterWithValueToCommand("@ID", cmdCloseRecord, ID);
 
             var affectedRows = cmdCloseRecord.ExecuteNonQuery();
 
@@ -202,7 +199,7 @@ public class TableLoadInfo : ITableLoadInfo
             con.ManagedTransaction.CommitAndCloseConnection();
 
             _endTime = DateTime.Now;
-            _isClosed = true;
+            IsClosed = true;
         }
         catch (Exception)
         {
@@ -217,10 +214,10 @@ public class TableLoadInfo : ITableLoadInfo
         if (string.IsNullOrEmpty(ds.Archive))
             return;
 
-        using var cmdSetArchived = _databaseSettings.GetCommand("UPDATE DataSource SET archive=@archive, source = @source WHERE ID=@ID", con.Connection, con.ManagedTransaction);
-        _databaseSettings.AddParameterWithValueToCommand("@archive", cmdSetArchived,ds.Archive);
-        _databaseSettings.AddParameterWithValueToCommand("@source", cmdSetArchived, ds.Source);
-        _databaseSettings.AddParameterWithValueToCommand("@ID", cmdSetArchived, ds.ID);
+        using var cmdSetArchived = DatabaseSettings.GetCommand("UPDATE DataSource SET archive=@archive, source = @source WHERE ID=@ID", con.Connection, con.ManagedTransaction);
+        DatabaseSettings.AddParameterWithValueToCommand("@archive", cmdSetArchived,ds.Archive);
+        DatabaseSettings.AddParameterWithValueToCommand("@source", cmdSetArchived, ds.Source);
+        DatabaseSettings.AddParameterWithValueToCommand("@ID", cmdSetArchived, ds.ID);
 
         cmdSetArchived.ExecuteNonQuery();
     }

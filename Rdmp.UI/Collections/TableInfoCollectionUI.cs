@@ -45,20 +45,19 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
 
         tlvTableInfos.ItemActivate += tlvTableInfos_ItemActivate;
         olvDataType.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
-        olvValue.AspectGetter = s => (s as IArgument)?.Value;
+        olvValue.AspectGetter = s=> (s as IArgument)?.Value;
+
     }
 
 
-    private object tlvTableInfos_DataTypeAspectGetter(object rowobject)
-    {
-        if (rowobject is ColumnInfo c)
-            return c.Data_type;
-
-        if (rowobject is PreLoadDiscardedColumn p)
-            return p.Data_type;
-
-        return rowobject is PipelineComponentArgument a ? a.Type : (object)null;
-    }
+    private object tlvTableInfos_DataTypeAspectGetter(object rowobject) =>
+        rowobject switch
+        {
+            ColumnInfo c => c.Data_type,
+            PreLoadDiscardedColumn p => p.Data_type,
+            PipelineComponentArgument a => a.Type,
+            _ => null
+        };
 
     private void tlvTableInfos_ItemActivate(object sender, EventArgs e)
     {
@@ -107,8 +106,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             _isFirstTime = false;
         }
 
-
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=> new IAtomicCommand[]
         {
             new ExecuteCommandImportTableInfo(a, null, false),
             new ExecuteCommandBulkImportTableInfos(a)

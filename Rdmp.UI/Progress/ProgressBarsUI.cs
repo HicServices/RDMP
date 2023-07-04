@@ -20,8 +20,8 @@ namespace Rdmp.UI.Progress;
 /// </summary>
 public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 {
-    private Dictionary<string,ProgressBar> progressBars = new();
-    private ToolTip tt = new();
+    private readonly Dictionary<string,ProgressBar> _progressBars = new();
+    private readonly ToolTip _tt = new();
 
     public float EmSize = 9f;
 
@@ -41,13 +41,12 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
     {
         btnClose.Enabled = true;
 
-        foreach (var pb in progressBars.Values)
-            if (pb.Style == ProgressBarStyle.Marquee)
-            {
-                pb.Style = ProgressBarStyle.Continuous;
-                pb.Maximum = 1;
-                pb.Value = 1;
-            }
+        foreach (var pb in _progressBars.Values.Where(pb => pb.Style == ProgressBarStyle.Marquee))
+        {
+            pb.Style = ProgressBarStyle.Continuous;
+            pb.Maximum = 1;
+            pb.Value = 1;
+        }
     }
 
     public void OnNotify(object sender, NotifyEventArgs e)
@@ -63,7 +62,7 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
             return;
         }
 
-        if (progressBars.TryGetValue(e.TaskDescription, out var bar))
+        if (_progressBars.TryGetValue(e.TaskDescription, out var bar))
             UpdateProgressBar(bar, e);
         else
         {
@@ -87,20 +86,20 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 
             UpdateProgressBar(pb, e);
 
-            progressBars.Add(e.TaskDescription, pb);
+            _progressBars.Add(e.TaskDescription,pb);
         }
     }
 
     private int GetRowYForNewProgressBar()
     {
-        return !progressBars.Any() ? ragSmiley1.Bottom : progressBars.Max(kvp => kvp.Value.Bottom);
+        return !_progressBars.Any() ? ragSmiley1.Bottom : _progressBars.Max(kvp => kvp.Value.Bottom);
     }
 
     private void UpdateProgressBar(ProgressBar progressBar, ProgressEventArgs progressEventArgs)
     {
         var text = $"{progressEventArgs.Progress.Value} {progressEventArgs.Progress.UnitOfMeasurement}";
 
-        tt.SetToolTip(progressBar, text);
+        _tt.SetToolTip(progressBar,text);
 
         if (progressEventArgs.Progress.KnownTargetValue != 0)
         {
@@ -127,7 +126,7 @@ public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
             Controls.Remove(pb);
 
         //clear our record of them
-        progressBars.Clear();
+        _progressBars.Clear();
 
         //reset the smiley
         ragSmiley1.Reset();

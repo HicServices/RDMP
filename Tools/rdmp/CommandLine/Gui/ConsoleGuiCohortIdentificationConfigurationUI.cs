@@ -44,7 +44,10 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
         Common.Configuration = cic;
         Common.Compiler.CohortIdentificationConfiguration = cic;
 
-        cbCumulativeTotals.Toggled += e => { Common.SetShowCumulativeTotals(cbCumulativeTotals.Checked); };
+        cbCumulativeTotals.Toggled += e =>
+        {
+            Common.SetShowCumulativeTotals(cbCumulativeTotals.Checked);
+        };
         btnClearCache.Clicked += () =>
         {
             var cmd = new ExecuteCommandClearQueryCache(activator, Common.Configuration);

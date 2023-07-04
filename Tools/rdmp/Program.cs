@@ -109,8 +109,8 @@ internal class Program
                         errs =>
                         {
                             return HasHelpArguments(args)
-                                ? (returnCode = 0)
-                                : (returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger));
+                                ? returnCode = 0
+                                : returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
                         });
 
             logger.Info($"Exiting with code {returnCode}");

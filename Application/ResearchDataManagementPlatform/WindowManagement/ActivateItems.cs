@@ -793,7 +793,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         return new List<CommandInvokerDelegate>
         {
-            new(typeof(IActivateItems),true,(p)=>this)
+            new(typeof(IActivateItems),true,p=>this)
         };
     }
 

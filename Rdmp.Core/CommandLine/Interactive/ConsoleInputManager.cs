@@ -350,6 +350,8 @@ public class ConsoleInputManager : BasicActivateItems
                 : dir.GetFiles(searchPattern).ToArray();
         }
 
+        return new[]{ new FileInfo(file) };
+
         return new[] { new FileInfo(file) };
     }
 

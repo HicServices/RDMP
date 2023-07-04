@@ -307,7 +307,10 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
         }
         catch (TargetInvocationException ex)
         {
-            if (ex.InnerException is NotSupportedException) return;
+            if(ex.InnerException is NotSupportedException)
+            {
+                return;
+            }
 
             throw;
         }
@@ -351,6 +354,6 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <returns></returns>
     protected static string FormatForSummary(object val)
     {
-        return val is bool b ? b ? "Yes" : "No" : (val.ToString()?.Trim());
+        return val is bool b ? b ? "Yes" : "No" : val.ToString()?.Trim();
     }
 }

@@ -56,10 +56,9 @@ public class CommandInvoker
 
         AddDelegate(typeof(ICatalogueRepository), true, p => _repositoryLocator.CatalogueRepository);
         AddDelegate(typeof(IDataExportRepository), true, p => _repositoryLocator.DataExportRepository);
-        AddDelegate(_basicActivator.GetType(), true, p => _basicActivator);
+        AddDelegate(_basicActivator.GetType() , true, p => _basicActivator);
         AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator), true, p => _repositoryLocator);
-        AddDelegate(typeof(DirectoryInfo), false,
-            p => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
+        AddDelegate(typeof(DirectoryInfo), false, p => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
         AddDelegate(typeof(FileInfo), false, p => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
 
         // Is the Global Check Notifier the best here? 
@@ -70,7 +69,7 @@ public class CommandInvoker
 
         AddDelegate(typeof(string), false, SelectText);
 
-        AddDelegate(typeof(Type), false, p =>
+        AddDelegate(typeof(Type), false,p => 
             _basicActivator.SelectType(
                 new DialogArgs
                 {
@@ -80,10 +79,10 @@ public class CommandInvoker
                 ? chosen
                 : throw new OperationCanceledException());
 
-        AddDelegate(typeof(DiscoveredDatabase), false, p => _basicActivator.SelectDatabase(true, GetPromptFor(p)));
-        AddDelegate(typeof(DiscoveredTable), false, p => _basicActivator.SelectTable(true, GetPromptFor(p)));
+        AddDelegate(typeof(DiscoveredDatabase),false,p=>_basicActivator.SelectDatabase(true,GetPromptFor(p)));
+        AddDelegate(typeof(DiscoveredTable),false,p=>_basicActivator.SelectTable(true,GetPromptFor(p)));
 
-        AddDelegate(typeof(DatabaseEntity), false, p =>
+        AddDelegate(typeof(DatabaseEntity), false, p => 
             _basicActivator.SelectOne(
                 new DialogArgs
                 {
@@ -102,15 +101,14 @@ public class CommandInvoker
         AddDelegate(typeof(ICollectSqlParameters), false, SelectOne<ICollectSqlParameters>);
         AddDelegate(typeof(IRootFilterContainerHost), false, SelectOne<IRootFilterContainerHost>);
 
-        AddDelegate(typeof(Enum), false, p => _basicActivator.SelectEnum(
-            new DialogArgs
-            {
+        AddDelegate(typeof(Enum),false,p=>_basicActivator.SelectEnum(
+            new DialogArgs { 
                 WindowTitle = GetPromptFor(p),
                 InitialSearchText = p.DefaultValue?.ToString()
             } , p.Type, out var chosen)?chosen:null);
 
 
-        _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable), false, p =>
+        _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable),false,p=>
         {
             var available = GetAllObjectsOfType(p.Type.GetElementType());
             var result = _basicActivator.SelectMany(
@@ -134,7 +132,7 @@ public class CommandInvoker
 
 
         AddDelegate(typeof(ICheckable), false,
-            p => _basicActivator.SelectOne(GetPromptFor(p),
+            p=>_basicActivator.SelectOne(GetPromptFor(p), 
                 _basicActivator.GetAll<ICheckable>()
                     .Where(p.Type.IsInstanceOfType)
                     .Cast<IMapsDirectlyToDatabaseTable>()
@@ -148,7 +146,7 @@ public class CommandInvoker
                     .Where(p.Type.IsInstanceOfType)
                     .ToArray()));
 
-        AddDelegate(typeof(IPatcher), false, p =>
+        AddDelegate(typeof(IPatcher),false, p =>
             {
                 if (!_basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher), out var patcherType))
                     throw new OperationCanceledException();
@@ -167,9 +165,9 @@ public class CommandInvoker
             }
         );
 
-        _argumentDelegates.Add(new CommandInvokerValueTypeDelegate(p =>
-            _basicActivator.SelectValueType(GetPromptFor(p), p.Type, p.DefaultValue, out var chosen)
-                ? chosen
+        _argumentDelegates.Add(new CommandInvokerValueTypeDelegate(p=>
+            _basicActivator.SelectValueType(GetPromptFor(p), p.Type, p.DefaultValue, out var chosen) 
+                ? chosen 
                 : throw new OperationCanceledException()));
     }
 
@@ -266,7 +264,7 @@ public class CommandInvoker
                 }
 
                 // if user has not typed anything in for this parameter and it has a default value
-                if (picker.Length <= idx && parameterInfo.HasDefaultValue)
+                if(picker.Length <= idx && parameterInfo.HasDefaultValue)
                 {
                     // then we should use the default value
                     parameterValues.Add(parameterInfo.DefaultValue);
@@ -274,8 +272,7 @@ public class CommandInvoker
                     continue;
                 }
 
-                throw new Exception(
-                    $"Expected parameter at index {idx} to be a {parameterInfo.ParameterType} (for parameter '{parameterInfo.Name}') but it was {(idx >= picker.Length ? "Missing" : picker[idx].RawValue)}");
+                throw new Exception($"Expected parameter at index {idx} to be a {parameterInfo.ParameterType} (for parameter '{parameterInfo.Name}') but it was {(idx >= picker.Length ? "Missing":picker[idx].RawValue)}");
             }
             else
             {

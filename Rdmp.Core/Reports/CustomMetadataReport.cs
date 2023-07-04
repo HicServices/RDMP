@@ -99,6 +99,7 @@ public partial class CustomMetadataReport
         foreach (var prop in typeof(TableInfo).GetProperties())
             // if it's not already a property of Catalogue
             Replacements.TryAdd($"${prop.Name}", c => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
+        }
 
         AddDQEReplacements();
 
@@ -111,8 +112,8 @@ public partial class CustomMetadataReport
         //add basic properties ColumnInfo
         foreach (var prop in typeof(ColumnInfo).GetProperties())
             // if it's not already a property of CatalogueItem
-            ReplacementsCatalogueItem.TryAdd($"${prop.Name}",
-                s => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
+            ReplacementsCatalogueItem.TryAdd($"${prop.Name}", s => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
+        }
 
         try
         {

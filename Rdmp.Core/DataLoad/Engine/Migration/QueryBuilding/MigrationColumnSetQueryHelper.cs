@@ -25,16 +25,8 @@ public class MigrationColumnSetQueryHelper
 
     public string BuildSelectListForAllColumnsExceptStandard(string tableAlias = "")
     {
-        var sql = "";
-
-        foreach (var col in _migrationColumnSet.FieldsToDiff)
-        {
-            //if it is hic_ or identity specification
-            if (SpecialFieldNames.IsHicPrefixed(col) || col.IsAutoIncrement)
-                continue;
-
-            sql += $"{tableAlias}[{col.GetRuntimeName()}],";
-        }
+        var sql = _migrationColumnSet.FieldsToDiff.Where(col => !SpecialFieldNames.IsHicPrefixed(col) && !col.IsAutoIncrement).Aggregate("", (current, col) =>
+            $"{current}{tableAlias}[{col.GetRuntimeName()}],");
 
         return sql.TrimEnd(',');
     }

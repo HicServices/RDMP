@@ -79,9 +79,8 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             olvName,
             olvName);
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
-            { new ExecuteCommandCreateNewLoadMetadata(a) };
-
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
+            
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
 

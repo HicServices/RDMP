@@ -52,15 +52,10 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
 
             var recordsDeleted = 0;
 
-            foreach (var configuration in _releaseData.ConfigurationsForRelease.Keys)
+            foreach (var (configuration,potentials) in _releaseData.ConfigurationsForRelease)
             {
-                var current = configuration;
-                var currentResults = configuration.CumulativeExtractionResults;
-
                 //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
-                foreach (var redundantResult in currentResults.Where(r =>
-                             _releaseData.ConfigurationsForRelease[current]
-                                 .All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
+                foreach (var redundantResult in configuration.CumulativeExtractionResults.Where(r => potentials.All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
                 {
                     redundantResult.DeleteInDatabase();
                     recordsDeleted++;

@@ -71,7 +71,7 @@ public partial class CommitsUI : CommitsUI_Design
         var commitsInvolvingObject = activator.RepositoryLocator.CatalogueRepository
             .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
             .Where(m => m.IsReferenceTo(o))
-            .Select(m => m.Commit_ID)
+            .Select(m=>m.Commit_ID)
             .Distinct()
             .ToList();
 

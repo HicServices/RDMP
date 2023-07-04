@@ -215,12 +215,12 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
         if (args.ProposedFix != null)
             return MakeChangePopup.ShowYesNoMessageBoxToApplyFix(null, args.Message, args.ProposedFix);
         //if it is sucessful user doesn't need to be spammed with messages
-        if (args.Result == CheckResult.Success)
+        if(args.Result == CheckResult.Success)
             return true;
 
         //its a warning or an error possibly with an exception attached
         if (args.Ex != null)
-            ExceptionViewer.Show(args.Message, args.Ex);
+            ExceptionViewer.Show(args.Message,args.Ex);
         else
             MessageBox.Show(args.Message);
 

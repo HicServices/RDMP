@@ -279,9 +279,10 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <returns></returns>
     public static string FormatAsParagraphs(string message)
     {
-        message = Regex.Replace(message, $"{Environment.NewLine}\\s*", Environment.NewLine + Environment.NewLine);
+            
+        message = Regex.Replace(message, $"{Environment.NewLine}\\s*",Environment.NewLine + Environment.NewLine);
         message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", m => m.Groups[2].Value);
-
+            
         return message;
     }
 }

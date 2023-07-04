@@ -79,7 +79,7 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
     {
         var orig = base.GetDescription();
 
-        string restriction = _collection.Adjustment switch
+        var restriction = _collection.Adjustment switch
         {
             CohortSummaryAdjustment.WhereExtractionIdentifiersIn =>
                 $"Only showing records for people in cohort set '{_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny}')",

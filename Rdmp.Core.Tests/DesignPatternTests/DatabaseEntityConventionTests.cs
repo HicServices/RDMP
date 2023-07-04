@@ -26,17 +26,13 @@ public class DatabaseEntityConventionTests : UnitTests
     {
         SetupMEF();
 
-        var problems = new List<string>();
-
-        foreach (var type in MEF.GetAllTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
-        foreach (var constructorInfo in type.GetConstructors())
-        {
-            var parameters = constructorInfo.GetParameters();
-
-            if (parameters.Any(p => p.ParameterType == typeof(IRepository)))
-                problems.Add(
-                    $"Constructor found on Type {type} that takes {nameof(IRepository)}, it should take either {nameof(IDataExportRepository)} or {nameof(ICatalogueRepository)}");
-        }
+        var problems = MEF.GetAllTypes()
+            .Where(t => typeof(DatabaseEntity).IsAssignableFrom(t))
+            .SelectMany(type => type.GetConstructors(), (type, constructorInfo) => new { type, constructorInfo })
+            .Select(t1 => new { t1, parameters = t1.constructorInfo.GetParameters() })
+            .Where(t1 => t1.parameters.Any(p => p.ParameterType == typeof(IRepository)))
+            .Select(t1 =>
+                $"Constructor found on Type {t1.t1.type} that takes {nameof(IRepository)}, it should take either {nameof(IDataExportRepository)} or {nameof(ICatalogueRepository)}").ToList();
 
         foreach (var problem in problems)
             TestContext.Out.WriteLine(problem);

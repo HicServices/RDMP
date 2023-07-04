@@ -24,7 +24,7 @@ public class GlobalExceptionHandler
 
     public GlobalExceptionHandler()
     {
-        Handler = e => ExceptionViewer.Show(e, false);
+        Handler = e=>ExceptionViewer.Show(e,false);
     }
 
     internal void Handle(object sender, UnhandledExceptionEventArgs args)

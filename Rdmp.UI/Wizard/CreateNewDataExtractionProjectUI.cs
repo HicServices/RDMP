@@ -39,7 +39,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private Project[] _existingProjects;
     private int _projectNumber;
     private FileInfo _cohortFile;
-    private Project _project;
     private ExtractionConfiguration _configuration;
     private ExtractableCohort _cohortCreated;
 
@@ -51,7 +50,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private bool _bLoading;
 
     public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
-    public Project ProjectCreatedIfAny => _project;
+    public Project ProjectCreatedIfAny { get; private set; }
 
     public CreateNewDataExtractionProjectUI(IActivateItems activator) : base(activator)
     {
@@ -292,20 +291,20 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             ragExecute.Reset();
 
             //create the project
-            _project ??= new Project(Activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
+            ProjectCreatedIfAny ??= new Project(Activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
 
-            _project.ProjectNumber = int.Parse(tbProjectNumber.Text);
-            _project.ExtractionDirectory = tbExtractionDirectory.Text;
+            ProjectCreatedIfAny.ProjectNumber = int.Parse(tbProjectNumber.Text);
+            ProjectCreatedIfAny.ExtractionDirectory = tbExtractionDirectory.Text;
 
-            if (!Directory.Exists(_project.ExtractionDirectory))
-                Directory.CreateDirectory(_project.ExtractionDirectory);
+            if (!Directory.Exists(ProjectCreatedIfAny.ExtractionDirectory))
+                Directory.CreateDirectory(ProjectCreatedIfAny.ExtractionDirectory);
 
-            _project.SaveToDatabase();
+            ProjectCreatedIfAny.SaveToDatabase();
 
             if (_configuration == null && cbDefineCohort.Checked)
             {
                 _configuration = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository,
-                    _project)
+                    ProjectCreatedIfAny)
                 {
                     Name = "Cases"
                 };
@@ -319,11 +318,11 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
             if (_cohortCreated == null && cbDefineCohort.Checked)
             {
-                var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1, _project.ProjectNumber.Value,
-                    (ExternalCohortTable)ddCohortSources.SelectedItem);
+                var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1, ProjectCreatedIfAny.ProjectNumber.Value,
+                    (ExternalCohortTable) ddCohortSources.SelectedItem);
 
                 //execute the cohort creation bit
-                var cohortRequest = new CohortCreationRequest(_project, cohortDefinition,
+                var cohortRequest = new CohortCreationRequest(ProjectCreatedIfAny, cohortDefinition,
                     Activator.RepositoryLocator.DataExportRepository, tbCohortName.Text);
 
                 ComboBox dd;
@@ -342,9 +341,8 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
 
                     //since we are about to execute a cic and store the results we should associate it with the Project (if successful)
-                    cmdAssociateCicWithProject =
-                        new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(
-                            _project).SetTarget(cohortRequest.CohortIdentificationConfiguration);
+                    cmdAssociateCicWithProject = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(
+                        ProjectCreatedIfAny).SetTarget(cohortRequest.CohortIdentificationConfiguration);
                 }
 
                 var engine = cohortRequest.GetEngine((Pipeline) dd.SelectedItem,ThrowImmediatelyDataLoadEventListener.Quiet);

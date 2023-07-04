@@ -369,7 +369,7 @@ public class GoToCommandFactory : CommandFactoryBase
 
         return replacement == null
             ? Enumerable.Empty<IMapsDirectlyToDatabaseTable>()
-            : (new []{mt.Repository.GetObjectByID(mt.GetType(),int.Parse(replacement.Value))});
+            : new []{mt.Repository.GetObjectByID(mt.GetType(),int.Parse(replacement.Value))};
     }
 
     private Image<Rgba32> GetImage(RDMPConcept concept) => _activator.CoreIconProvider.GetImage(concept);

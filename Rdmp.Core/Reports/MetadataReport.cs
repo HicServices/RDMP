@@ -314,8 +314,7 @@ public class MetadataReport : DocXHelper
 
                 var lookupTable = _repository.GetObjectByID<TableInfo>(pkTableId);
 
-                if (!LookupsEncounteredToAppearInAppendix.Contains(lookupTable))
-                    LookupsEncounteredToAppearInAppendix.Add(lookupTable);
+                LookupsEncounteredToAppearInAppendix.Add(lookupTable);
 
                 description += $"References Lookup Table {lookupTable.GetRuntimeName()}";
             }

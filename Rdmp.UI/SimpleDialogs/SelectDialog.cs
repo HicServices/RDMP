@@ -360,8 +360,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         _typeNames = new HashSet<string>(_types.Select(t => t.Name));
 
         foreach (var t in StartingEasyFilters.SelectMany(v => v.Value))
-            if (!_typeNames.Contains(t.Name))
-                _typeNames.Add(t.Name);
+        {
+            _typeNames.Add(t.Name);
+        }
         Type[] startingFilters = null;
 
         if (focusedCollection != RDMPCollection.None && StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
@@ -399,16 +400,11 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         if (UserSettings.AdvancedFindFilters)
         {
-            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues,
-                v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
-            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues,
-                v => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
-            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues,
-                v => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
-            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues,
-                v => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
-            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues,
-                v => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
+            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
+            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, v => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
+            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, v => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
+            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, v => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
+            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, v => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
         }
     }
 

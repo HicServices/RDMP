@@ -16,6 +16,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.UI.ScintillaHelper;
+using System.Runtime.InteropServices;
 
 namespace Rdmp.UI.SimpleDialogs;
 
@@ -160,7 +161,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         top += lbConflictResolutionColumns.AutoScrollOffset.Y;
 
         //this seems to count up the number of items that have been skipped rather than the pixels... weird
-        var barpos = NativeMethods.GetScrollPos(lbConflictResolutionColumns.Handle, Orientation.Vertical);
+        var barpos = GetScrollPos(lbConflictResolutionColumns.Handle, Orientation.Vertical);
         barpos *= lbConflictResolutionColumns.Font.Height;
         top -= barpos;
 
@@ -363,4 +364,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 .Distinct()
                 .Count() == 1; //if count of distinct directions is 1 then they are all in the same direction
     }
+
+    [LibraryImport("user32.dll")]
+    private static partial int GetScrollPos(IntPtr hWnd, Orientation nBar);
 }
