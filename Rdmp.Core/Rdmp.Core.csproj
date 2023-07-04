@@ -299,8 +299,8 @@
     </PackageReference>
     <PackageReference Include="MongoDB.Driver" Version="2.20.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NLog" Version="5.2.0" />
     <PackageReference Include="NPOI" Version="2.6.0" />
+    <PackageReference Include="NLog" Version="5.2.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.1" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta15" />
     <PackageReference Include="Spectre.Console" Version="0.47.0" />
