@@ -609,12 +609,9 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         SelectedDataSet.GetCatalogue().GetTableInfos(Activator.CoreChildProvider, out var normal, out _);
             
         // Add all tables as optional joins that the Catalogue has
-        foreach (var t in normal)
+        foreach (var node in normal.Select(t => new AvailableForceJoinNode((TableInfo)t, false)))
         {
-            var node = new AvailableForceJoinNode((TableInfo)t, false);
-
-            if (!nodes.Contains(node))
-                nodes.Add(node);
+            nodes.Add(node);
         }
 
         // Add all tables under other ProjectSpecific Catalogues that are associated with this Project
@@ -624,14 +621,10 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             projectCatalogue.GetTableInfos(Activator.CoreChildProvider,out var projNormal, out _);
 
             // that are not lookups
-            foreach (TableInfo projectSpecificTables in projNormal)
+            foreach (var node in projNormal.Cast<TableInfo>()
+                         .Select(projectSpecificTables => new AvailableForceJoinNode(projectSpecificTables, false)))
             {
-                // add the potential to join to them
-                var node = new AvailableForceJoinNode(projectSpecificTables, false);
-
-                //.Equals works on TableInfo so we avoid double adding
-                if (!nodes.Contains(node))
-                    nodes.Add(node);
+                nodes.Add(node);
             }
         }
                 

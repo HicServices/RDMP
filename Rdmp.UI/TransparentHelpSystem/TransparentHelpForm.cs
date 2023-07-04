@@ -26,9 +26,6 @@ public partial class TransparentHelpForm:Form
     [return: MarshalAs(UnmanagedType.Bool)]
     private static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-    [DllImport("dwmapi.dll", PreserveSig = false)]
-    static extern bool DwmIsCompositionEnabled();
-
     private const uint SW_SHOWNOACTIVATE = 4;
     private const uint WM_NCHITTEST = 0x0084;
     private const int HTTRANSPARENT = -1;
@@ -48,16 +45,8 @@ public partial class TransparentHelpForm:Form
         ShowInTaskbar = false;
         TopMost = true;
 
-        if(Environment.OSVersion.Version.Major >= 6 && DwmIsCompositionEnabled())
-        {
-            _transparencyColor = Color.Magenta;
-            Opacity = 0.5f;
-        }
-        else
-        {
-            _transparencyColor = Color.White;
-            Opacity = 0.25f;
-        }
+        _transparencyColor = Color.Magenta;
+        Opacity = 0.5f;
 
         _highlightBrush = new SolidBrush(_transparencyColor);
         BackColor = _transparencyColor;
@@ -216,7 +205,8 @@ public partial class TransparentHelpForm:Form
             *********************************************/
             return highlightBottomLeft with { X = Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width) };
         }
-        else if (currentHelpBox.Height < availableSpaceAboveHighlight)
+
+        if (currentHelpBox.Height < availableSpaceAboveHighlight)
         {
             //No space below so go above it
             return _currentHelpBox.Width < availableSpaceHorizontally ? highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height } :

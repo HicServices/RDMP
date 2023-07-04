@@ -38,12 +38,10 @@ public class RDMPFormInitializationTests
             DealWithRDMPForms(readToEnd);
             DealWithRDMPUserControls(readToEnd);
         }
-            
-        var rdmpFormClassNames = _rdmpFormClassNames;
 
         //look for "new (myclass1|myclass2)\s*\("
         var sbFindInstantiations = new StringBuilder("new (");
-        sbFindInstantiations.AppendJoin("|", rdmpFormClassNames.Select(Regex.Escape));
+        sbFindInstantiations.AppendJoin("|", _rdmpFormClassNames.Select(Regex.Escape));
         sbFindInstantiations.Append(")\\s*\\(");
 
         if(_fails.Any())
@@ -117,7 +115,7 @@ public class RDMPFormInitializationTests
     private void ComplainIfUsesVisualStudioDesignerDetectionMagic(string readToEnd)
     {
         if (!readToEnd.Contains("LicenseManager.UsageMode")) return;
-        var lineNumber = readToEnd[..readToEnd.IndexOf("LicenseManager.UsageMode")].Count(c => c == '\n');
+        var lineNumber = readToEnd[..readToEnd.IndexOf("LicenseManager.UsageMode", StringComparison.Ordinal)].Count(c => c == '\n');
 
         var msg =
             $"FAIL: Use protected variable VisualStudioDesignMode instead of LicenseManager.UsageMode (line number:{lineNumber})";

@@ -300,10 +300,8 @@ public class CohortCompiler
                     // it's already added, no worries just return the already existing one
                     return c;
                 }
-                else
-                {
-                    CancelTask(c, true);
-                }
+
+                CancelTask(c, true);
             }
 
             Tasks.Add(task, null);

@@ -25,18 +25,10 @@ public class FilterStateBasedIconProvider : IObjectStateBasedIconProvider
     }
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        if (o is ExtractionFilter f)
-        {
-            // has known parameter values?
-            if(f.ExtractionFilterParameterSets.Any())
-            {
-                return _overlayProvider.GetOverlay(_basicIcon, OverlayKind.Parameter);
-            }
-
+        if (o is not ExtractionFilter f) return CatalogueIconProvider.ConceptIs(typeof(IFilter), o) ? _basicIcon : null;
+        // has known parameter values?
+        return f.ExtractionFilterParameterSets.Any() ? _overlayProvider.GetOverlay(_basicIcon, OverlayKind.Parameter) :
             // just a regular filter then
-            return _basicIcon;
-        }
-
-        return CatalogueIconProvider.ConceptIs(typeof(IFilter), o) ? _basicIcon : null;
+            _basicIcon;
     }
 }

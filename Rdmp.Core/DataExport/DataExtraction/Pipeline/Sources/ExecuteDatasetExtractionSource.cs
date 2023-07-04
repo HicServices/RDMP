@@ -307,8 +307,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                         else
                             continue; //there are multiple extraction identifiers thats fine if one or two are null
 
-                    if (!UniqueReleaseIdentifiersEncountered.Contains(r[idx]))
-                        UniqueReleaseIdentifiersEncountered.Add(r[idx]);
+                    UniqueReleaseIdentifiersEncountered.Add(r[idx]);
                 }
 
                 listener.OnProgress(this,new ProgressEventArgs("Calculating Distinct Release Identifiers",new ProgressMeasurement(UniqueReleaseIdentifiersEncountered.Count, ProgressType.Records),_timeSpentCalculatingDISTINCT.Elapsed ));

@@ -45,14 +45,11 @@ internal class Patch68FixNamespacesTest:UnitTests
 
         foreach (var oldClass in ExpectedClasses)
         {
-            var newClass = oldClass;
-
-            foreach (var kvp in substitutions)
-                newClass = newClass.Replace(kvp.Key, kvp.Value);
+            var newClass = substitutions.Aggregate(oldClass, (current, kvp) => current.Replace(kvp.Key, kvp.Value));
 
             var foundNow = Core.Repositories.MEF.GetType(newClass);
 
-            Assert.IsNotNull(foundNow,"Patch did not work correctly for Type '" + oldClass +"' which after renaming became '" + newClass +"'");
+            Assert.IsNotNull(foundNow,"Patch did not work correctly for Type '{0}' which after renaming became '{1}'", oldClass, newClass);
 
         }
                 

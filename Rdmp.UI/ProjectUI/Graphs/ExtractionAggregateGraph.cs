@@ -96,7 +96,7 @@ public sealed class ExtractionAggregateGraphUI:AggregateGraphUI ,IObjectCollecti
         
     protected override object[] GetRibbonObjects()
     {
-        return _collection == null ? base.GetRibbonObjects() : (new object[] { Request.Configuration,"Graphing Extraction Query"});
+        return _collection == null ? base.GetRibbonObjects() : new object[] { Request.Configuration,"Graphing Extraction Query"};
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

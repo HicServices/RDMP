@@ -80,7 +80,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
         ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
-        olvName.ImageGetter = (o) => Activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+        olvName.ImageGetter = o => Activator.CoreIconProvider.GetImage(o).ImageToBitmap();
     }       
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)

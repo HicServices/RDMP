@@ -108,11 +108,11 @@ internal class Program
                         (ReleaseOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
                         (CohortCreationOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
                         (ExecuteCommandOptions opts) => RdmpCommandLineBootStrapper.RunCmd(opts),
-                        (errs) =>
+                        errs =>
                         {
                             return HasHelpArguments(args)
-                                ? (returnCode = 0)
-                                : (returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger));
+                                ? returnCode = 0
+                                : returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
                         });
 
             logger.Info($"Exiting with code {returnCode}");
@@ -181,7 +181,7 @@ internal class Program
                 case Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching:
                 {
                     var mds = new MasterDatabaseScriptExecutor(db);
-                    mds.PatchDatabase(e.Patcher, checker, (p) => true, () => opts.BackupDatabase);
+                    mds.PatchDatabase(e.Patcher, checker, p => true, () => opts.BackupDatabase);
                     break;
                 }
                 case <= Startup.Events.RDMPPlatformDatabaseStatus.Broken:

@@ -356,10 +356,8 @@ public class ConsoleInputManager : BasicActivateItems
                 ? throw new DirectoryNotFoundException($"Could not find directory:{dirStr}")
                 : dir.GetFiles(searchPattern).ToArray();
         }
-        else
-        {
-            return new[]{ new FileInfo(file) };
-        }
+
+        return new[]{ new FileInfo(file) };
 
     }
         

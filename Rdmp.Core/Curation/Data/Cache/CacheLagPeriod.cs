@@ -31,7 +31,7 @@ public class CacheLagPeriod
         /// Specifies that the <see cref="Duration"/> is a count of Days
         /// </summary>
         Day
-    };
+    }
 
     /// <summary>
     /// The number of Days/Months etc (See <see cref="Type"/>) to wait before the associated CacheProgress should be run.  This specifies a window of time

@@ -26,7 +26,7 @@ public enum SyntaxLanguage
     CSharp,
     XML,
     LogFile
-};
+}
 
 /// <summary>
 /// Factory for creating instances of <see cref="Scintilla"/> with a consistent look and feel and behaviour (e.g. drag and drop).

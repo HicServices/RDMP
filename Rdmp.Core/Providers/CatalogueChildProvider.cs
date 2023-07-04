@@ -464,7 +464,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After CatalogueItem Dictionary building");
 
         //Inject known ColumnInfos into CatalogueItems
-        Parallel.ForEach(AllCatalogueItems, (ci) =>
+        Parallel.ForEach(AllCatalogueItems, ci =>
         {
             if (ci.ColumnInfo_ID != null && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
                 ci.InjectKnown(col);

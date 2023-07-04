@@ -184,7 +184,7 @@ public class ColumnInfoToANOTableConverter
             var transaction = con.BeginTransaction();
 
             //try dropping it within a transaction
-            DropOldColumn((s) => true, con, transaction);
+            DropOldColumn(s => true, con, transaction);
 
             //it is droppable - rollback that drop!
             transaction.Rollback();

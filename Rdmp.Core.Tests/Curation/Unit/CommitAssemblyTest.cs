@@ -28,5 +28,5 @@ public class CommitAssemblyTest
         Override,
         Test,
         Continuous
-    };
+    }
 }

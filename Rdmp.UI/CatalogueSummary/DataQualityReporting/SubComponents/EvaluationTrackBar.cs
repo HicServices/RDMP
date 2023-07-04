@@ -51,7 +51,8 @@ public partial class EvaluationTrackBar : UserControl
             Enabled = false;
             return;
         }
-        else if (Evaluations.Length == 1)
+
+        if (Evaluations.Length == 1)
         {
             //there is only 1 
             Enabled = false;

@@ -148,14 +148,14 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
             //work out a suitable anonymous method for converting between the Types
             if(_keyType == typeof(string))
-                typeConversion = (a)=>a.ToString();
+                typeConversion = a=>a.ToString();
             else
             {
                 try
                 {
                     var deciderFactory = new TypeDeciderFactory(Culture);
                     var decider = deciderFactory.Create(_keyType);
-                    typeConversion = (a)=>decider.Parse(a.ToString());
+                    typeConversion = a=>decider.Parse(a.ToString());
                 }
                 catch (Exception ex)
                 {

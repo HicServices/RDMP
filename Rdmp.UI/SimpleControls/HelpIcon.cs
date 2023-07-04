@@ -20,14 +20,12 @@ public partial class HelpIcon : UserControl
     /// <summary>
     /// Returns the text that will be displayed when the user hovers over the control (this may be truncated if the text provided to <see cref="SetHelpText"/> was very long)
     /// </summary>
-    public string HoverText => _hoverText;
-
-    private string _hoverText;
+    public string HoverText { get; private set; }
 
     private string _title;
     private HelpWorkflow _workFlow;
     private string _originalHoverText;
-    private ToolTip tt;
+    private ToolTip _tt;
     public bool SuppressClick{get;set;}
 
     public HelpIcon()
@@ -39,14 +37,14 @@ public partial class HelpIcon : UserControl
     {
         _workFlow = workflow;
         _title = title;
-        _hoverText = hoverText;
+        HoverText = hoverText;
         _originalHoverText = hoverText;
-        Visible = !string.IsNullOrWhiteSpace(_hoverText);
+        Visible = !string.IsNullOrWhiteSpace(HoverText);
 
-        _hoverText = GetShortText(_hoverText);
+        HoverText = GetShortText(HoverText);
 
         //If TT is null create new tooltip
-        tt ??= new ToolTip
+        _tt ??= new ToolTip
         {
             AutoPopDelay = 15000,  // Warning! MSDN states this is Int32, but anything over 32767 will fail.
             ShowAlways = true,
@@ -55,7 +53,7 @@ public partial class HelpIcon : UserControl
             ReshowDelay = 200,
             UseAnimation = true
         };
-        tt.SetToolTip(this, _hoverText);
+        _tt.SetToolTip(this, HoverText);
         Cursor = Cursors.Hand;
     }
     public void ClearHelpText()
@@ -65,7 +63,7 @@ public partial class HelpIcon : UserControl
 
     private string GetShortText(string hoverText)
     {
-        if(string.IsNullOrWhiteSpace(_hoverText))
+        if(string.IsNullOrWhiteSpace(HoverText))
             return null;
 
         if (hoverText.Length <= MaxHoverTextLength)

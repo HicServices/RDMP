@@ -54,7 +54,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
     public object GetDataObject()
     {
-        return DatabaseObjects.Single(o => o is ColumnInfo || o is TableInfo);
+        return DatabaseObjects.Single(o => o is ColumnInfo or Curation.Data.TableInfo);
     }
 
     public IFilter GetFilterIfAny()

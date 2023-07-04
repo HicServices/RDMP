@@ -265,9 +265,9 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
             //there are 0 that match on password
             return null;
         }
-        else
-            //did not find an existing credential that matched on username
-            return null;
+
+        //did not find an existing credential that matched on username
+        return null;
     }
     private DataAccessContext GetContext(DbDataReader r)
     {

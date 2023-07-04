@@ -102,7 +102,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
                 if (errorIsInColumnOrder == j)
                 {
                     sql += colSql.Replace("(50)", "(1)");
-                    errorColumn = colSql[..colSql.IndexOf(" ")];
+                    errorColumn = colSql[..colSql.IndexOf(" ", StringComparison.Ordinal)];
 
                     if (errorColumn == "id")
                         invalid = true;
@@ -132,7 +132,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
             destination.PreInitialize(db, toConsole);
 
             //order is inverted where name comes out at the end column (index 2)
-            var dt1 = new DataTable();
+            using var dt1 = new DataTable();
             dt1.Columns.Add("age", typeof (string));
             dt1.Columns.Add("color", typeof (string));
             dt1.Columns.Add("name", typeof (string));
@@ -143,7 +143,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
             var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
             var exceptionMessage = ex.InnerException.Message;
-            var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<") + ": ".Length)..];
+            var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<", StringComparison.Ordinal) + ": ".Length)..];
                 
             var expectedErrorMessage =
                 $"<<{errorColumn}>> which had value <<{dt1.Rows[0][errorColumn]}>> destination data type was <<varchar(1)>>";
@@ -1104,7 +1104,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dest.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
         dest.Adjuster = typeof(AdjustColumnDelegater);
 
-        AdjustColumnDelegater.AdjusterDelegate = (s) =>
+        AdjustColumnDelegater.AdjusterDelegate = s =>
         {
             var col = s.Single(c => c.ColumnName.Equals("hb_extract"));
 

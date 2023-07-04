@@ -58,7 +58,7 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
 
     public override string GetCommandName()
     {
-        return _extractionInformations == null || _extractionInformations.Length <= 1
+        return _extractionInformations is not { Length: > 1 }
             ? "Set ExtractionCategory"
             : "Set ALL to ExtractionCategory";
     }

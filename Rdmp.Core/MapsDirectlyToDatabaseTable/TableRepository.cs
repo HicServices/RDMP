@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -169,9 +170,7 @@ public abstract class TableRepository : ITableRepository
             var propValue = prop.GetValue(oTableWrapperObject, null);
                 
             //if it is a complex type but IConvertible e.g. CatalogueFolder
-            if(!prop.PropertyType.IsValueType && propValue is IConvertible c)
-                if(c.GetTypeCode() == TypeCode.String)
-                    propValue = c.ToString();
+            if(!prop.PropertyType.IsValueType && propValue is IConvertible c && c.GetTypeCode() == TypeCode.String) propValue = c.ToString(CultureInfo.CurrentCulture);
 
             SetParameterToValue(p, propValue);
         }
@@ -391,7 +390,7 @@ public abstract class TableRepository : ITableRepository
         if(obj1 == null && obj2 == null)
             throw new NotSupportedException("Why are you comparing two null things against one another with this method?");
 
-        return obj1.GetType() == obj2.GetType() && (obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID && obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository);
+        return obj1.GetType() == obj2.GetType() && obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID && obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
     }
 
     /// <inheritdoc/>

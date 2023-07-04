@@ -327,10 +327,8 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
             {
                 return;
             }
-            else
-            {
-                throw;
-            }
+
+            throw;
         }
 
         // skip properties marked with 'do not extract'
@@ -376,6 +374,6 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     /// <returns></returns>
     protected string FormatForSummary(object val)
     {
-        return val is bool b ? b ? "Yes" : "No" : (val.ToString()?.Trim());
+        return val is bool b ? b ? "Yes" : "No" : val.ToString()?.Trim();
     }
 }

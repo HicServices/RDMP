@@ -415,6 +415,6 @@ public class MasterDatabaseScriptExecutor
 
         //get everything in the /up/ folder that is .sql
         var patches = patcher.GetAllPatchesInAssembly(Database);
-        PatchDatabase(patches,notifier,(p)=>true);//apply all patches without question
+        PatchDatabase(patches,notifier,p=>true);//apply all patches without question
     }
 }

@@ -28,4 +28,4 @@ public interface INameDatabasesAndTablesDuringLoads
     /// <param name="convention">The stage for which you want to know the corresponding tables name, this may not change at all depending on implementation</param>
     /// <returns></returns>
     string GetName(string tableName, LoadBubble convention);
-};
+}

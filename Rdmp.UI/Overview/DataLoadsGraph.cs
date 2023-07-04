@@ -43,7 +43,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
         olvDataLoads.UseCellFormatEvents = true;
         olvDataLoads.FormatCell += olvDataLoads_FormatCell;
 
-        olvViewLog.AspectGetter += (s) => "View Log";
+        olvViewLog.AspectGetter += s => "View Log";
 
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvName, new Guid("4a651e11-62f5-4d8f-8fe5-4db488ee7f3a"));
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvLastRun, new Guid("1aadf2e8-798d-4e85-8abc-7f45edb839b7"));

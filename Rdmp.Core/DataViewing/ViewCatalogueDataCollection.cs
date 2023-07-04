@@ -70,12 +70,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 
         builder.AddColumnRange(cols);
 
-        var filters = new List<ExtractionFilter>();
-
-        foreach (ExtractionFilter f in Filters)
-            filters.Add(f);
-
-        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,filters.ToArray(),FilterContainerOperation.AND);
+        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,Filters,FilterContainerOperation.AND);
         builder.RegenerateSQL();
     }
 

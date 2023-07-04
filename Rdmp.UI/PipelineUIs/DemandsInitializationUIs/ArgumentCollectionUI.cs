@@ -183,7 +183,7 @@ public partial class ArgumentCollectionUI : UserControl
             
         args.Required = required;
         args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
-        args.Setter = (v) =>
+        args.Setter = v =>
         {
             ragSmiley.Reset();
                 
@@ -241,7 +241,7 @@ public partial class ArgumentCollectionUI : UserControl
 
     private string GetSystemTypeName(Type type)
     {
-        return typeof(Enum).IsAssignableFrom(type) ? "Enum" : (type?.Name);
+        return typeof(Enum).IsAssignableFrom(type) ? "Enum" : type?.Name;
     }
 
     private void btnViewSourceCode_Click(object sender, EventArgs e)

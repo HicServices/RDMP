@@ -51,28 +51,22 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
 
     protected override void OnDropContent(object toDrop)
     {
-        if(toDrop is ExtractableDataSet)
-            throw new NotSupportedException(
-                $"Cannot drop {toDrop} from Bundle {this}, you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
-
-        if (toDrop is SupportingDocument drop)
+        switch (toDrop)
         {
-            Documents.Remove(drop);
-            return;
+            case ExtractableDataSet:
+                throw new NotSupportedException(
+                    $"Cannot drop {toDrop} from Bundle {this}, you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
+            case SupportingDocument drop:
+                Documents.Remove(drop);
+                return;
+            case SupportingSQLTable item:
+                SupportingSQL.Remove(item);
+                return;
+            case BundledLookupTable table:
+                LookupTables.Remove(table);
+                return;
+            default:
+                throw new NotSupportedException($"Did not know how to drop object of type {toDrop}");
         }
-
-        if (toDrop is SupportingSQLTable item)
-        {
-            SupportingSQL.Remove(item);
-            return;
-        }
-
-        if (toDrop is BundledLookupTable table)
-        {
-            LookupTables.Remove(table);
-            return;
-        }
-
-        throw new NotSupportedException($"Did not know how to drop object of type {toDrop}");
     }
 }

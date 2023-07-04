@@ -6,6 +6,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
@@ -139,20 +140,20 @@ public class BoundDouble :  Bound
     private string BetweenMessage(double d, string l, string u)
     {
         return
-            $"Value {Wrap(d.ToString())} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
+            $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
     }
 
     private string GreaterThanMessage(double d, string s)
     {
-        return $"Value {Wrap(d.ToString())} out of range. Expected a value greater than {Wrap(s)}.";
+        return $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value greater than {Wrap(s)}.";
     }
 
     private string LessThanMessage(double d, string s)
     {
-        return $"Value {Wrap(d.ToString())} out of range. Expected a value less than {Wrap(s)}.";
+        return $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value less than {Wrap(s)}.";
     }
 
-    private string Wrap(string s)
+    private static string Wrap(string s)
     {
         return $"[{s}]";
     }

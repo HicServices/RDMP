@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.DataExport.Data;
@@ -153,7 +154,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         SetTableCell(table,tableLine, 0, Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
         SetTableCell(table,tableLine, 1, $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})");//description fetched from remote table
 
-        var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString() : "Never";
+        var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString(CultureInfo.CurrentCulture) : "Never";
         SetTableCell(table,tableLine, 2, lastExtracted);
         SetTableCell(table,tableLine, 3, Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
     }

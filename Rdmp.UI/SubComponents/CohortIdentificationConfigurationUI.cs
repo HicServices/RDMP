@@ -87,7 +87,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         tlvCic.RowHeight = 19;
         olvExecute.AspectGetter += Common.ExecuteAspectGetter;
         tlvCic.ButtonClick += tlvCic_ButtonClick;
-        olvOrder.AspectGetter += (o)=> o switch
+        olvOrder.AspectGetter += o=> o switch
         {
             JoinableCollectionNode => null,
             ISqlParameter => null,

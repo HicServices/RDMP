@@ -49,14 +49,9 @@ public class SuspiciousRelationshipPropertyUse
             var expectedFileName = $"{type.Name}.cs";
             var files = csFilesFound.Where(f => f.EndsWith($"\\{expectedFileName}",StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
-            if (files.Length == 0)
+            if(files.Length != 1)
             {
-                _fails.Add($"FAIL: Could not find a csFile called '{expectedFileName}'");
-                continue;
-            }
-            if(files.Length > 1)
-            {
-                _fails.Add($"FAIL: found multiple csFiles called '{expectedFileName}'");
+                _fails.Add($"FAIL: found {files.Length} csFiles called '{expectedFileName}' but need exactly 1");
                 continue;
             }
 

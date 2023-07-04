@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -111,7 +112,7 @@ public class WordDataWriter : DocXHelper
             }
 
             SetTableCell(t,rownum,0,"Extraction Date");
-            SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.EndTime.ToString());
+            SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.EndTime.ToString(CultureInfo.CurrentCulture));
             rownum++;
 
             SetTableCell(t,rownum,0,"Table Load ID (for HIC)");

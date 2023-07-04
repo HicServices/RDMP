@@ -196,7 +196,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         //start at cancel so if they hit the X nothing is selected
         DialogResult = DialogResult.Cancel;
 
-        olvID.AspectGetter = (m) => (m as IMapsDirectlyToDatabaseTable)?.ID ?? null;
+        olvID.AspectGetter = m => (m as IMapsDirectlyToDatabaseTable)?.ID ?? null;
 
         // don't add the ID column if we aren't talking about database objects
         if (!IsDatabaseObjects())
@@ -204,7 +204,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             olv.AllColumns.Remove(olvID);
         }
 
-        olvName.AspectGetter = (m) => m?.ToString();
+        olvName.AspectGetter = m => m?.ToString();
         olvHierarchy.AspectGetter = GetHierarchy;
         olvHierarchy.IsVisible = IsDatabaseObjects();
         olvHierarchy.ImageGetter = GetHierarchyImage;
@@ -372,8 +372,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         foreach (var t in StartingEasyFilters.SelectMany(v => v.Value))
         {
-            if (!_typeNames.Contains(t.Name))
-                _typeNames.Add(t.Name);
+            _typeNames.Add(t.Name);
         }
         Type[] startingFilters = null;
 
@@ -415,11 +414,11 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         if (UserSettings.AdvancedFindFilters)
         {
-            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, (v) => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
-            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, (v) => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
-            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, (v) => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
-            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, (v) => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
-            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, (v) => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
+            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
+            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, v => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
+            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, v => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
+            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, v => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
+            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, v => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
         }
     }
 
@@ -657,7 +656,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         _lastFetchTask = Task.Run(() => FetchMatches(toFind, _lastCancellationToken.Token))
             .ContinueWith(
-                (s) =>
+                s =>
                 {
 
                     if(Interlocked.Decrement(ref _runCount) == 0)

@@ -40,10 +40,8 @@ public class ArgumentFactory
         Type underlyingClassTypeForWhichArgumentsWillPopulate,IArgumentHost host,
         IArgument[] existingArguments)
     {
-        var classType = underlyingClassTypeForWhichArgumentsWillPopulate;
-
         //get all the properties that must be set on AnySeparatorFileAttacher (Those marked with the attribute DemandsInitialization
-        var propertiesWeHaveToSet = GetRequiredProperties(classType);
+        var propertiesWeHaveToSet = GetRequiredProperties(underlyingClassTypeForWhichArgumentsWillPopulate);
 
         foreach (var required in propertiesWeHaveToSet)
         {

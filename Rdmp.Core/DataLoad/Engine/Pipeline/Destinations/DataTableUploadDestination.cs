@@ -489,17 +489,15 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             ExplicitTypes.Add(columnRequest);
             return columnRequest;
         }
-        else
-        {
-            columnRequest = new DatabaseColumnRequest(columnName, explicitType, !columnFlags.IsPrimaryKey && !columnFlags.IsAutoIncrement)
-            {
-                IsPrimaryKey = columnFlags.IsPrimaryKey,
-                IsAutoIncrement = columnFlags.IsAutoIncrement,
-                Collation = columnFlags.Collation
-            };
 
-            ExplicitTypes.Add(columnRequest);
-            return columnRequest;
-        }
+        columnRequest = new DatabaseColumnRequest(columnName, explicitType, !columnFlags.IsPrimaryKey && !columnFlags.IsAutoIncrement)
+        {
+            IsPrimaryKey = columnFlags.IsPrimaryKey,
+            IsAutoIncrement = columnFlags.IsAutoIncrement,
+            Collation = columnFlags.Collation
+        };
+
+        ExplicitTypes.Add(columnRequest);
+        return columnRequest;
     }
 }

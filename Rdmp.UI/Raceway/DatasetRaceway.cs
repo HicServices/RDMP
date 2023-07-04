@@ -176,7 +176,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         if(isFirstTime)
         {
             isFirstTime = false;
-            racewayRenderArea.RequestDeletion += (c) =>
+            racewayRenderArea.RequestDeletion += c =>
             {
                 _collection.RemoveCatalogue(c);
                 SaveCollectionChanges();

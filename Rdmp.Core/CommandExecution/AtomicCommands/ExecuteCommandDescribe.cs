@@ -229,10 +229,10 @@ public class ExecuteCommandDescribe:BasicCommandExecution
                 sbParameters.AppendLine(FormatParameterDescription(req, commandCtor));
             }
 
-            anySyntaxes = ShowSyntax("Pick Database",sbSyntaxes, parameters ,(p) => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase()) || anySyntaxes;
-            anySyntaxes = ShowSyntax("Pick Table",sbSyntaxes, parameters, (p) => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable()) || anySyntaxes;
+            anySyntaxes = ShowSyntax("Pick Database",sbSyntaxes, parameters ,p => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase()) || anySyntaxes;
+            anySyntaxes = ShowSyntax("Pick Table",sbSyntaxes, parameters, p => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable()) || anySyntaxes;
 
-            anySyntaxes = ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, (p) => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType) || anySyntaxes,
+            anySyntaxes = ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType) || anySyntaxes,
                 new PickObjectByID(BasicActivator),
                 new PickObjectByName(BasicActivator),
                 new PickObjectByQuery(BasicActivator)) || anySyntaxes;
@@ -292,20 +292,17 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
                 if (string.IsNullOrWhiteSpace(desc))
                     return $"{name} {type}";
-                else
-                {
-                    var availableWidth = Console.WindowWidth;
-                    var occupied = nameColWidth + 1 + typeColWidth + 1;
+                var availableWidth = Console.WindowWidth;
+                var occupied = nameColWidth + 1 + typeColWidth + 1;
 
-                    var availableDescriptionWidth = availableWidth - occupied;
+                var availableDescriptionWidth = availableWidth - occupied;
 
-                    if(availableDescriptionWidth < 0)
-                        return $"{name} {type}";
+                if(availableDescriptionWidth < 0)
+                    return $"{name} {type}";
 
-                    var wrappedDesc = Wrap(desc,availableDescriptionWidth,occupied);
+                var wrappedDesc = Wrap(desc,availableDescriptionWidth,occupied);
 
-                    return $"{name} {type} {wrappedDesc}";
-                }
+                return $"{name} {type} {wrappedDesc}";
 
             }
 
@@ -318,7 +315,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         return $"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}";
     }
         
-    private string Wrap(string longString, int width, int indent)
+    private static string Wrap(string longString, int width, int indent)
     {
         var words = longString.Split(' ');
 

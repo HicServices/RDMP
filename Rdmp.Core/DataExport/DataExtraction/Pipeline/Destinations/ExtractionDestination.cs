@@ -163,8 +163,7 @@ e.g. /$i/$a")]
         if (TableLoadInfo.IsClosed)
             throw new Exception(
                 $"TableLoadInfo was closed so could not write number of rows ({LinesWritten}) to audit object - most likely the extraction crashed?");
-        else
-            TableLoadInfo.Inserts = LinesWritten;
+        TableLoadInfo.Inserts = LinesWritten;
 
         Flush(job, cancellationToken,stopwatch);
         stopwatch.Stop();

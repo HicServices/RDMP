@@ -7,13 +7,13 @@
 
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
-//important to keep these in order of severity from least sever to most severe so > opeartions can be applied to Enum
+//important to keep these in order of severity from least sever to most severe so > operations can be applied to Enum
 public enum CheckResult
 {
     Success,
     Warning,
     Fail
-};
+}
 
 /// <summary>
 /// An object that can check its own state for problems and summarise this through the Checking Events system (See CheckEventArgs)

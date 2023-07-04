@@ -51,41 +51,37 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         _obj = obj;
         _useCache = useCache;
 
-        if (obj is TableInfo ti)
+        switch (obj)
         {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = new ViewTableInfoExtractUICollection(ti, _viewType);
+            case TableInfo ti:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = new ViewTableInfoExtractUICollection(ti, _viewType);
+                break;
+            case ColumnInfo col:
+                _collection = CreateCollection(col);
+                break;
+            case ExtractionInformation ei:
+                _collection = CreateCollection(ei);
+                break;
+            case Catalogue cata:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(cata);
+                break;
+            case CohortIdentificationConfiguration cic:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(cic);
+                break;
+            case ExtractableCohort ec:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(ec);
+                break;
+            case AggregateConfiguration ac:
+                ThrowIfNotSimpleSelectViewType();
+                _collection = CreateCollection(ac);
+                break;
+            default:
+                throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
         }
-        else if (obj is ColumnInfo col)
-        {
-            _collection = CreateCollection(col);
-        }
-        else if (obj is ExtractionInformation ei)
-        {
-            _collection = CreateCollection(ei);
-        }
-        else if (obj is Catalogue cata)
-        {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = CreateCollection(cata);
-        }
-        else if (obj is CohortIdentificationConfiguration cic)
-        {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = CreateCollection(cic);
-        }
-        else if (obj is ExtractableCohort ec)
-        {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = CreateCollection(ec);
-        }
-        else if (obj is AggregateConfiguration ac)
-        {
-            ThrowIfNotSimpleSelectViewType();
-            _collection = CreateCollection(ac);
-        }
-        else
-            throw new ArgumentException($"Object '{obj}' was not an object type compatible with this command");
 
     }
 

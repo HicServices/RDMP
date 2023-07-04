@@ -69,14 +69,12 @@ public class StandardRegexConstraint : SecondaryConstraint
                 _regex = null;
                 return;
             }
-            else
-            {
-                _regex = new Regex(value.Regex);
 
-                //check is not redundant because assigning the field has repercusions and would result in circular reference! (Blame XMLSerialization for this cluster F*)
-                if(StandardRegexID != value.ID)
-                    StandardRegexID = value.ID;
-            }
+            _regex = new Regex(value.Regex);
+
+            //check is not redundant because assigning the field has repercusions and would result in circular reference! (Blame XMLSerialization for this cluster F*)
+            if(StandardRegexID != value.ID)
+                StandardRegexID = value.ID;
         }
     }
 

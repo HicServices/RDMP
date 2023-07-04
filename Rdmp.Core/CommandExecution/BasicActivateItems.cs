@@ -405,13 +405,11 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
             return didDelete;
         }
-        else
-        {
-            deleteable.DeleteInDatabase();
-            PublishNearest(deleteable);
 
-            return true;
-        }
+        deleteable.DeleteInDatabase();
+        PublishNearest(deleteable);
+
+        return true;
     }
 
     protected virtual bool InteractiveDelete(IDeleteable deleteable)

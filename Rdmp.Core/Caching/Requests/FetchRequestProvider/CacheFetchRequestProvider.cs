@@ -65,7 +65,7 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
     /// <returns></returns>
     public ICacheFetchRequest GetNext(IDataLoadEventListener listener)
     {
-        return _initialRequest == null ? (Current = _initialRequest = CreateInitialRequest()) : (Current = CreateNext());
+        return _initialRequest == null ? Current = _initialRequest = CreateInitialRequest() : Current = CreateNext();
     }
 
     private ICacheFetchRequest CreateNext()

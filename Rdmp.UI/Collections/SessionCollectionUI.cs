@@ -38,7 +38,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     {
         InitializeComponent();
 
-        olvName.AspectGetter = (o)=>o.ToString();
+        olvName.AspectGetter = o=>o.ToString();
         CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration)};
     }
 

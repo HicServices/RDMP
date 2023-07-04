@@ -27,14 +27,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 /// </summary>
 public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 {
-    public ITableInfo TableInfo
-    {
-        get => _tableInfo;
-        set => _tableInfo = value;
-    }
+    public ITableInfo TableInfo { get; }
 
-    public List<PreLoadDiscardedColumn> ColumnsToRouteToSomewhereElse { get; set; }
-    private ITableInfo _tableInfo;
+    public List<PreLoadDiscardedColumn> ColumnsToRouteToSomewhereElse { get; }
 
     private ExternalDatabaseServer _externalDatabaseServer;
     private DiscoveredDatabase _dumpDatabase;
@@ -274,7 +269,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
         if(!HasAtLeastOneColumnToStoreInDump)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"No columns require dumping from TableInfo {_tableInfo} so checking is not needed", CheckResult.Success, null));
+                $"No columns require dumping from TableInfo {TableInfo} so checking is not needed", CheckResult.Success, null));
             return;
         }
             
@@ -299,7 +294,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                 $"Confirmed absence of Table  {GetStagingRuntimeName()}(this will be created during load)",CheckResult.Success, null));
 
         //confirm that there is a ColumnInfo for every Dilute column
-        var columnInfos = _tableInfo.ColumnInfos.ToArray();
+        var columnInfos = TableInfo.ColumnInfos.ToArray();
         foreach (var dilutedColumn in ColumnsToRouteToSomewhereElse.Where(c=>c.Destination == DiscardedColumnDestination.Dilute))
         {
             if(!columnInfos.Any(c=>c.GetRuntimeName().Equals(dilutedColumn.RuntimeColumnName)))
@@ -339,12 +334,12 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
         
     private string GetStagingRuntimeName()
     {
-        return $"ID_{_tableInfo.GetRuntimeName()}_STAGING";
+        return $"ID_{TableInfo.GetRuntimeName()}_STAGING";
     }
 
     public string GetRuntimeName()
     {
-        return $"ID_{_tableInfo.GetRuntimeName()}";
+        return $"ID_{TableInfo.GetRuntimeName()}";
     }
 
     public void CreateIdentifierDumpTable(ColumnInfo[] primaryKeyColumnInfos)
@@ -368,7 +363,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
         dumpColumns.Columns.Add("RuntimeName");
         dumpColumns.Columns.Add("DataType");
               
-        foreach (var discardedColumn in _tableInfo.PreLoadDiscardedColumns.Where(d=>d.GoesIntoIdentifierDump()))
+        foreach (var discardedColumn in TableInfo.PreLoadDiscardedColumns.Where(d=>d.GoesIntoIdentifierDump()))
         {
             if(discardedColumn.RuntimeColumnName.StartsWith("ANO"))
                 throw new Exception(
@@ -388,7 +383,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
         var cmdCreate = new SqlCommand(
             $"EXEC {IdentifierDumpCreatorStoredprocedure} @liveTableName,@primaryKeys,@dumpColumns",con);
 
-        cmdCreate.Parameters.AddWithValue("@liveTableName", _tableInfo.GetRuntimeName());
+        cmdCreate.Parameters.AddWithValue("@liveTableName", TableInfo.GetRuntimeName());
 
         cmdCreate.Parameters.AddWithValue("@primaryKeys", pks);
         cmdCreate.Parameters["@primaryKeys"].SqlDbType = SqlDbType.Structured;

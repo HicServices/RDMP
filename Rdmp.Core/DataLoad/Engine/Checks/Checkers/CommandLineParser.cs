@@ -34,9 +34,19 @@ internal class CommandLineParser
             var ch = cmd[i];
 
             if (char.IsWhiteSpace(ch)) { throw new InvalidOperationException(); }
-            else if (ch == '\\') { ParseEscapeSequence(); }
-            else if (ch == '"') { ParseQuotedWord(); }
-            else { ParseBareWord(); }
+
+            switch (ch)
+            {
+                case '\\':
+                    ParseEscapeSequence();
+                    break;
+                case '"':
+                    ParseQuotedWord();
+                    break;
+                default:
+                    ParseBareWord();
+                    break;
+            }
 
             if (i >= cmd.Length || char.IsWhiteSpace(cmd[i]))
             {
@@ -84,14 +94,13 @@ internal class CommandLineParser
         {
             var ch = cmd[i];
             if (char.IsWhiteSpace(ch)) break; // whitespace terminates a bareword
-            else if (ch == '"') break; // lead-in quote starts a quoted word
-            else if (ch == '\\') break; // escape sequence terminates the bareword
+            if (ch == '"') break; // lead-in quote starts a quoted word
+            if (ch == '\\') break; // escape sequence terminates the bareword
 
             buf.Append(ch); // otherwise, keep reading this word                
 
             ++i;
         }
-        return;
     }
 
     /// <summary>

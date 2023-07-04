@@ -835,14 +835,14 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             var dep = many.Cast<IMightBeDeprecated>().ToArray();
 
-            if(dep.All((d)=>d.IsDeprecated))
+            if(dep.All(d=>d.IsDeprecated))
             {
                 yield return new ExecuteCommandDeprecate(_activator,dep,false )
                 {
                     SuggestedShortcut = "UnDeprecate" 
                 };
             }
-            else if (dep.All((d)=>!d.IsDeprecated))
+            else if (dep.All(d=>!d.IsDeprecated))
             {
                 yield return new ExecuteCommandDeprecate(_activator, dep, true)
                 {

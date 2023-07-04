@@ -42,13 +42,10 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 {
-    private RDMPCollection _collection;
-
-
     /// <summary>
     /// The collection if any that this <see cref="Tree"/> represents in the UI
     /// </summary>
-    public RDMPCollection Collection => _collection;
+    public RDMPCollection Collection { get; private set; }
 
     private IActivateItems _activator;
     public TreeListView Tree;
@@ -181,7 +178,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn, OLVColumn renameableColumn,RDMPCollectionCommonFunctionalitySettings settings)
     {
         Settings = settings;
-        _collection = collection;
+        Collection = collection;
         IsSetup = true;
         _activator = activator;
         _activator.RefreshBus.Subscribe(this);
@@ -326,7 +323,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             body = problem;
             return true;
         }
-        else
+
         if (model is ICanBeSummarised sum)
         {
             isBad = false;
@@ -681,7 +678,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(defaultMenu,o));
                 return Sort(defaultMenu);
             }
-            else
+
             {
                 //it's a right click in whitespace (nothing right clicked)
 

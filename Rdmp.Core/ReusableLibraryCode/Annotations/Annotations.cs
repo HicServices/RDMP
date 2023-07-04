@@ -6,7 +6,6 @@
 
 using System;
 
-#pragma warning disable 1591
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -387,7 +386,7 @@ public sealed class InstantHandleAttribute : Attribute { }
 /// [Pure] private int Multiply(int x, int y) { return x * y; }
 /// public void Foo() {
 ///   const int a = 2, b = 2;
-///   Multiply(a, b); // Waring: Return value of pure method is not used
+///   Multiply(a, b); // Warning: Return value of pure method is not used
 /// }
 /// </code></example>
 [AttributeUsage(AttributeTargets.Method, Inherited = true)]

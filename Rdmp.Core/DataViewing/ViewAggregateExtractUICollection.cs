@@ -49,7 +49,7 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
     private ExternalDatabaseServer GetCacheServer()
     {
         var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
-        return cic is { QueryCachingServer_ID: { } } ? cic.QueryCachingServer : null;
+        return cic is { QueryCachingServer_ID: not null } ? cic.QueryCachingServer : null;
     }
 
     public IDataAccessPoint GetDataAccessPoint()

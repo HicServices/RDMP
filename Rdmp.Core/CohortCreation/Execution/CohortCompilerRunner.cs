@@ -82,7 +82,7 @@ public class CohortCompilerRunner
 
             SetPhase(Phase.RunningJoinableTasks);
 
-            Parallel.ForEach(_cic.GetAllJoinables(), (j) => Compiler.AddTask(j, globals));
+            Parallel.ForEach(_cic.GetAllJoinables(), j => Compiler.AddTask(j, globals));
 
             Compiler.CancelAllTasks(false);
 
@@ -95,7 +95,7 @@ public class CohortCompilerRunner
             SetPhase(Phase.RunningAggregateTasks);
 
             // Add all aggregates
-            Parallel.ForEach(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), (c) => Compiler.AddTask(c, globals)); 
+            Parallel.ForEach(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), c => Compiler.AddTask(c, globals)); 
 
             Compiler.CancelAllTasks(false);
 
@@ -114,7 +114,7 @@ public class CohortCompilerRunner
                 Parallel.ForEach(
                     _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(
                         c=>CohortQueryBuilderResult.IsEnabled(c,Compiler.CoreChildProvider)),
-                    (a)=>Compiler.AddTask(a, globals));
+                    a=>Compiler.AddTask(a, globals));
             }
                         
 

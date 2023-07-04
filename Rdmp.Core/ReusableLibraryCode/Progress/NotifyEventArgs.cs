@@ -55,7 +55,7 @@ public class NotifyEventArgs
 
     public CheckEventArgs ToCheckEventArgs()
     {
-        CheckResult result = ProgressEventType switch
+        var result = ProgressEventType switch
         {
             ProgressEventType.Trace => CheckResult.Success,
             ProgressEventType.Debug => CheckResult.Success,

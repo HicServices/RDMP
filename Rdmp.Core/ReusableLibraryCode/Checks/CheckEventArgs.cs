@@ -96,7 +96,7 @@ public partial class CheckEventArgs : IHasSummary
 
     public NotifyEventArgs ToNotifyEventArgs()
     {
-        ProgressEventType status = Result switch
+        var status = Result switch
         {
             CheckResult.Success => ProgressEventType.Information,
             CheckResult.Warning => ProgressEventType.Warning,

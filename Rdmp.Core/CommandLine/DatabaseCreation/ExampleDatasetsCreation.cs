@@ -563,7 +563,7 @@ UNPIVOT
     {
 
         return typeof(T) == typeof(HospitalAdmissions)
-            ? (new []{
+            ? new []{
                 new DatabaseColumnRequest("MainOperation",new DatabaseTypeRequest(typeof(string),4)),
                 new DatabaseColumnRequest("MainOperationB",new DatabaseTypeRequest(typeof(string),4)),
                 new DatabaseColumnRequest("OtherOperation1",new DatabaseTypeRequest(typeof(string),4)),
@@ -572,7 +572,7 @@ UNPIVOT
                 new DatabaseColumnRequest("OtherOperation2B",new DatabaseTypeRequest(typeof(string),4)),
                 new DatabaseColumnRequest("OtherOperation3",new DatabaseTypeRequest(typeof(string),4)),
                 new DatabaseColumnRequest("OtherOperation3B",new DatabaseTypeRequest(typeof(string),4))
-            })
+            }
             : null;
     }
 

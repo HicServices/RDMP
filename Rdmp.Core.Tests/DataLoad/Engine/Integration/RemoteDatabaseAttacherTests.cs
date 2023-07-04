@@ -44,10 +44,10 @@ public class RemoteDatabaseAttacherTests:DatabaseTests
         var tbl = db.CreateTable("MyTable",dt);
 
         Assert.AreEqual(1, tbl.GetRowCount());
-        Import(tbl, out var ti, out var cols);
+        Import(tbl, out var ti, out _);
 
         //Create a virtual RAW column
-        if (scenario == Scenario.MissingPreLoadDiscardedColumn || scenario == Scenario.MissingPreLoadDiscardedColumnButSelectStar)
+        if (scenario is Scenario.MissingPreLoadDiscardedColumn or Scenario.MissingPreLoadDiscardedColumnButSelectStar)
             new PreLoadDiscardedColumn(CatalogueRepository, ti, "MyMissingCol");
 
         var externalServer = new ExternalDatabaseServer(CatalogueRepository, "MyFictionalRemote",null);
@@ -56,7 +56,7 @@ public class RemoteDatabaseAttacherTests:DatabaseTests
         var attacher = new RemoteDatabaseAttacher();
         attacher.Initialize(null,db);
 
-        attacher.LoadRawColumnsOnly = scenario == Scenario.AllRawColumns || scenario == Scenario.MissingPreLoadDiscardedColumn;
+        attacher.LoadRawColumnsOnly = scenario is Scenario.AllRawColumns or Scenario.MissingPreLoadDiscardedColumn;
         attacher.RemoteSource = externalServer;
             
         var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));

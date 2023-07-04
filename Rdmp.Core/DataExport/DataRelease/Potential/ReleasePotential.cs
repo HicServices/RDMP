@@ -287,7 +287,7 @@ public abstract class ReleasePotential:ICheckable
 
         foreach (var kvp in Assessments)
         {
-            CheckResult checkResult = kvp.Value switch
+            var checkResult = kvp.Value switch
             {
                 Releaseability.ColumnDifferencesVsCatalogue => CheckResult.Warning,
                 Releaseability.Releaseable => CheckResult.Success,

@@ -131,7 +131,7 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
             },
             LoadDiagramState.NotFound => "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.",
             LoadDiagramState.New => "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load",
-            _ => throw new ArgumentOutOfRangeException(),
+            _ => throw new ArgumentOutOfRangeException()
         };
     }
 

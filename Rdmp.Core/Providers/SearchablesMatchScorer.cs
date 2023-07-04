@@ -199,8 +199,7 @@ public class SearchablesMatchScorer
 
             if (obj.ID != ID.Value)
                 return 0;
-            else
-                score += 10;
+            score += 10;
         }
 
         if(RespectUserSettings && ScoreZeroBecauseOfUserSettings(kvp))
@@ -251,7 +250,7 @@ public class SearchablesMatchScorer
 
                 var parent = parents[^i];
 
-                if (parent is { } and not IContainer)
+                if (parent is not null and not IContainer)
                 {
                     score += Weights[i] * CountMatchToString(regexes, parent);
                     score += Weights[i] * CountMatchType(regexes, parent);

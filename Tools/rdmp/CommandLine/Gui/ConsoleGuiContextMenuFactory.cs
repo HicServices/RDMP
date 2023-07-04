@@ -41,10 +41,7 @@ internal class ConsoleGuiContextMenuFactory
             .Where(c => !string.IsNullOrWhiteSpace(c))
             .Distinct();
 
-        Dictionary<string, List<MenuItem>> miCategories = new();
-
-        foreach (var category in categories)
-            miCategories.Add(category, new List<MenuItem>());
+        var miCategories = categories.ToDictionary(category => category, _ => new List<MenuItem>());
 
         List<MenuItem> items = new();
 

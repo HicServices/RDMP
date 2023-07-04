@@ -50,7 +50,7 @@ public class ExecuteCommandAddFavourite : BasicCommandExecution
         {
                 
             BasicActivator.SelectAnythingThen("Add Favourite",
-                (a) =>
+                a =>
                 {
                     if (BasicActivator.FavouritesProvider.IsFavourite(a))
                         Show($"'{a}' is already a Favourite");

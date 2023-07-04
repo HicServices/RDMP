@@ -115,11 +115,9 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
             splitContainer1.Panel2Collapsed = true;
             return;
         }
-        else
-        {
-            cataloguesRowCountChart.Visible = true;
-            splitContainer1.Panel2Collapsed = _loadProgress.CacheProgress == null;
-        }
+
+        cataloguesRowCountChart.Visible = true;
+        splitContainer1.Panel2Collapsed = _loadProgress.CacheProgress == null;
 
         cataloguesRowCountChart.Palette = ChartColorPalette.None;
         cataloguesRowCountChart.PaletteCustomColors = new[]

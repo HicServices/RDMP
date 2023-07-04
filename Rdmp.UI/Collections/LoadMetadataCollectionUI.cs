@@ -64,7 +64,7 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     {
         InitializeComponent();
         tlvLoadMetadata.RowHeight = 19;
-        olvValue.AspectGetter = (s) => (s as IArgument)?.Value;
+        olvValue.AspectGetter = s => (s as IArgument)?.Value;
     }
         
     public override void SetItemActivator(IActivateItems activator) 
@@ -79,7 +79,7 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             olvName,
             olvName);
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
             
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
