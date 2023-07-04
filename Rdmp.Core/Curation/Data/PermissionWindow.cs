@@ -78,11 +78,11 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     [NoMappingToDatabase]
     public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
 
+    private static readonly XmlSerializer Serializer = new(typeof(List<PermissionWindowPeriod>));
     private string SerializePermissionWindowPeriods()
     {
-        var serializer = new XmlSerializer(typeof(List<PermissionWindowPeriod>));
         using var output = new StringWriter();
-        serializer.Serialize(output, PermissionWindowPeriods);
+        Serializer.Serialize(output, PermissionWindowPeriods);
         return output.ToString();
     }
 
@@ -94,9 +94,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
         }
         else
         {
-            var deserializer = new XmlSerializer(typeof(List<PermissionWindowPeriod>));
-            PermissionWindowPeriods =
-                deserializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
+            PermissionWindowPeriods = Serializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
         }
     }
 
