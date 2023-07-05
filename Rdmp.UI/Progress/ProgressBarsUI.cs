@@ -20,8 +20,8 @@ namespace Rdmp.UI.Progress;
 /// </summary>
 public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
 {
-    Dictionary<string,ProgressBar> progressBars = new Dictionary<string, ProgressBar>();
-    ToolTip tt = new ToolTip();
+    private Dictionary<string,ProgressBar> progressBars = new Dictionary<string, ProgressBar>();
+    private ToolTip tt = new ToolTip();
 
     public float EmSize = 9f;
 

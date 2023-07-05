@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTests;
 
-class QueryBuilderUnitTests:UnitTests
+internal class QueryBuilderUnitTests:UnitTests
 {
     [Test]
     public void Test_IsPrimaryExtractionTable_TwoTables()

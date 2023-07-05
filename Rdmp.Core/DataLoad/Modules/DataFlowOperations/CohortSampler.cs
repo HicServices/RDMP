@@ -26,7 +26,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
 {
     private IExternalCohortTable _ect;
     private IProject _project;
-    bool _firstBatch = true;
+    private bool _firstBatch = true;
 
     [DemandsInitialization("The number of unique patient identifiers you want returned from the input data",DefaultValue = 100)]
     public int SampleSize { get; set; } = 100;

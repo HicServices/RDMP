@@ -11,7 +11,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus;
 
-class LoadDirectoryNodeMenu : RDMPContextMenuStrip
+internal class LoadDirectoryNodeMenu : RDMPContextMenuStrip
 {
     public LoadDirectoryNodeMenu(RDMPContextMenuStripArgs args,LoadDirectoryNode node) : base(args, node)
     {

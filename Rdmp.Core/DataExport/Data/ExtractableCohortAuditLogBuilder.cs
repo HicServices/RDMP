@@ -18,20 +18,19 @@ namespace Rdmp.Core.DataExport.Data;
 /// </summary>
 public class ExtractableCohortAuditLogBuilder
 {
-    Regex _regexGetID = new Regex(@"\(ID=(\d+)\)");
-    Regex _regexGetFilePath = new Regex(@$"{InFile} '(.*)'");
-    Regex _regexGetColumn = new Regex(@$"{InColumn} '(.*)'");
+    private Regex _regexGetID = new Regex(@"\(ID=(\d+)\)");
+    private Regex _regexGetFilePath = new Regex(@$"{InFile} '(.*)'");
+    private Regex _regexGetColumn = new Regex(@$"{InColumn} '(.*)'");
 
     /// <summary>
     /// regex for picking up <see cref="CohortIdentificationConfiguration"/> IDs from audit log based on a legacy way of
     /// writing that ID into the <see cref="ExtractableCohort.AuditLog"/>
     /// </summary>
-    Regex _legacyCic = new Regex(@"Created by running cic ([\d]+)");
-
-    const string InFile = "Patient identifiers in file";
-    const string InColumn = "Patient identifiers in column ";
-    const string InCohortIdentificationConfiguration = "Patients in CohortIdentificationConfiguration";
-    const string InExtractionInformation = "All patient identifiers in ExtractionInformation";
+    private Regex _legacyCic = new Regex(@"Created by running cic ([\d]+)");
+    private const string InFile = "Patient identifiers in file";
+    private const string InColumn = "Patient identifiers in column ";
+    private const string InCohortIdentificationConfiguration = "Patients in CohortIdentificationConfiguration";
+    private const string InExtractionInformation = "All patient identifiers in ExtractionInformation";
 
     /// <summary>
     /// Returns a human readable description recording that an <see cref="ExtractableCohort"/>

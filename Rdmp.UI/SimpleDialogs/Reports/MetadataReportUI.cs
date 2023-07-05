@@ -41,9 +41,9 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 /// </summary>
 public partial class MetadataReportUI : RDMPForm
 {
-    MetadataReport _report;
+    private MetadataReport _report;
     private readonly Catalogue[] _catalogues;
-    bool _firstTime = true;
+    private bool _firstTime = true;
 
     public MetadataReportUI(IActivateItems activator,ICatalogue[] initialSelection = null):base(activator)
     {

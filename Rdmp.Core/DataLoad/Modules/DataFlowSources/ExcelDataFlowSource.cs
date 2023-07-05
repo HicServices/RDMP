@@ -47,8 +47,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     public string AddFilenameColumnNamed { get; set; }
 
     private FlatFileToLoad _fileToLoad;
-
-    DataTable dataReadFromFile;
+    private DataTable dataReadFromFile;
     private bool haveDispatchedDataTable = false;
         
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)

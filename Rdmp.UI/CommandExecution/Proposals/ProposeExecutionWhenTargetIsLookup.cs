@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsLookup : RDMPCommandExecutionProposal<Lookup>
+internal class ProposeExecutionWhenTargetIsLookup : RDMPCommandExecutionProposal<Lookup>
 {
     public ProposeExecutionWhenTargetIsLookup(IActivateItems itemActivator) : base(itemActivator)
     {

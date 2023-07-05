@@ -22,9 +22,9 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-class DatabaseOperationTests : DatabaseTests
+internal class DatabaseOperationTests : DatabaseTests
 {
-    Stack<IDeleteable> toCleanUp = new Stack<IDeleteable>();
+    private Stack<IDeleteable> toCleanUp = new Stack<IDeleteable>();
 
     [Test]
     // This no longer copies between servers, but the original test didn't guarantee that would happen anyway

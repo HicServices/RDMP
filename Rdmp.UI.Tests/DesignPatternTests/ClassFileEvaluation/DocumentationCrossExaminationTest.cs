@@ -14,7 +14,7 @@ using NUnit.Framework;
 
 namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
-class DocumentationCrossExaminationTest
+internal class DocumentationCrossExaminationTest
 {
     private readonly DirectoryInfo _slndir;
     private static readonly Regex MatchComments = new Regex(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);

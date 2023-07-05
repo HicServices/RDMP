@@ -14,7 +14,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.UI.Tests.CohortBuilding;
 
-class CohortIdentificationConfigurationUnitTests:UITests
+internal class CohortIdentificationConfigurationUnitTests:UITests
 {
     private void GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic)
     {

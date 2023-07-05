@@ -24,7 +24,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         
     public DatabaseType DatabaseType { get; set; }
 
-    Dictionary<string, string> _arguments = new Dictionary<string, string>();
+    private Dictionary<string, string> _arguments = new Dictionary<string, string>();
     private const string DatabaseKey = "Database";
     private const string ServerKey = "Server";
     private const string TableKey = "Table";

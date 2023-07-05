@@ -42,8 +42,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
         _databaseConfiguration = databaseConfiguration;
     }
 
-
-    DataFlowPipelineEngine<DataTable> _pipeline;
+    private DataFlowPipelineEngine<DataTable> _pipeline;
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         if(_pipeline != null)

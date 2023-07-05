@@ -48,8 +48,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     /// This is a collection of all the items found in the desired order and their offset in the desired order relative to the first one
     /// </summary>
     private List<ExtractionInformation> itemsToReOrderAndOffsetRelativeToFirst;
-
-    List<int> desiredColumnIndexesNotFound;
+    private List<int> desiredColumnIndexesNotFound;
     private int indexOfStartOfReordingInNewOrderListbox;
 
     public ReOrderCatalogueItemsUI()
@@ -262,7 +261,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         }
     }
 
-    object oDrawLock = new object();
+    private object oDrawLock = new object();
         
 
     private void lbDesiredOrder_DrawItem(object sender, DrawItemEventArgs e)

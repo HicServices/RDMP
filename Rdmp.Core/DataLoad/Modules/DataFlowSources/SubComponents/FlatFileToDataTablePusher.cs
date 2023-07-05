@@ -32,7 +32,7 @@ public class FlatFileToDataTablePusher
     private readonly bool _attemptToResolveNewlinesInRecords;
     private readonly CultureInfo _culture;
     private readonly string _explicitDateTimeFormat;
-    TypeDeciderFactory typeDeciderFactory;
+    private TypeDeciderFactory typeDeciderFactory;
 
     /// <summary>
     /// Used in the event of reading too few cells for the current line.  The pusher will peek at the next lines to see if they

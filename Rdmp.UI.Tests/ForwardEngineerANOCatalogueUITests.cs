@@ -11,7 +11,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Tests;
 
-class ForwardEngineerANOCatalogueUITests : UITests
+internal class ForwardEngineerANOCatalogueUITests : UITests
 {
     [Test,UITimeout(50000)]
     public void Test_ForwardEngineerANOCatalogueUI_NormalState()

@@ -16,7 +16,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;
 
-class RdmpScriptTests : UnitTests
+internal class RdmpScriptTests : UnitTests
 {
     [TestCase("NewObject Catalogue 'trog dor'","trog dor")]
     [TestCase("NewObject Catalogue \"trog dor\"","trog dor")]

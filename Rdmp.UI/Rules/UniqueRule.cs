@@ -12,7 +12,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Rules;
 
-class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
+internal class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 {
     private readonly string _problemDescription;
 

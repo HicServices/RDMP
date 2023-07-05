@@ -49,8 +49,8 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
 
     /// <inheritdoc/>
     public MEF MEF { get; set; }
-        
-    readonly ObjectConstructor _constructor = new ObjectConstructor();
+
+    private readonly ObjectConstructor _constructor = new ObjectConstructor();
 
     /// <inheritdoc/>
     public CommentStore CommentStore { get; set; }

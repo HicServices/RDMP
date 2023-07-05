@@ -17,8 +17,7 @@ public class NavigationTrack<T>
 {
     private Stack<T> _navigationStack = new Stack<T>();
     private Stack<T> _forward = new Stack<T>();
-
-    const int MaxHistory = 10;
+    private const int MaxHistory = 10;
     private bool _suspended = false;
 
     /// <summary>
@@ -195,7 +194,7 @@ public class NavigationTrack<T>
         return _navigationStack.ToArray().Skip(1).Take(maxToReturn).ToArray();
     }
 
-    Func<T, bool> _isAlive;
+    private Func<T, bool> _isAlive;
     private readonly Action<T> _activate;
 
     /// <summary>

@@ -53,7 +53,7 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
         _lastSelected = evaluation;
     }
 
-    void dqePivotCategorySelector1_PivotCategorySelectionChanged()
+    private void dqePivotCategorySelector1_PivotCategorySelectionChanged()
     {
         if(_lastSelected ==  null)
             return;

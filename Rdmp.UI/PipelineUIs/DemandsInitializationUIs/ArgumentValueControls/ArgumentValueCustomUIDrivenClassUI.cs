@@ -24,7 +24,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 [TechnicalUI]
 public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgumentValueUI
 {
-    Type _uiType;
+    private Type _uiType;
     private ArgumentValueUIArgs _args;
 
     public ArgumentValueCustomUIDrivenClassUI()

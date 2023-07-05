@@ -10,7 +10,7 @@ using System;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandDeleteTestsCli : CommandCliTests
+internal class ExecuteCommandDeleteTestsCli : CommandCliTests
 {
     [Test]
     public void TestDeletingACatalogue_NoneInDbIsFine()

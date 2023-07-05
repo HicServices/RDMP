@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Modules.DataFlowOperations;
 
-class SetNullTests
+internal class SetNullTests
 {
     [Test]
     public void TestSetNull_OneCell()

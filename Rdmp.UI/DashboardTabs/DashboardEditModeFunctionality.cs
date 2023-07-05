@@ -110,7 +110,7 @@ public class DashboardEditModeFunctionality
         _actionUnderwayOnControl = null;
     }
 
-    void control_MouseDown(object sender, MouseEventArgs e)
+    private void control_MouseDown(object sender, MouseEventArgs e)
     {
         if (_plannedAction != EditModeAction.None)
         {
@@ -119,7 +119,7 @@ public class DashboardEditModeFunctionality
         }
     }
 
-    void control_MouseLeave(object sender, EventArgs e)
+    private void control_MouseLeave(object sender, EventArgs e)
     {
         //if there is no action underway
         if(_actionUnderway == EditModeAction.None)
@@ -130,8 +130,8 @@ public class DashboardEditModeFunctionality
             _plannedControl = null;
         }
     }
-        
-    void control_MouseMove(object sender, MouseEventArgs e)
+
+    private void control_MouseMove(object sender, MouseEventArgs e)
     {
 
         var s = (UserControl) sender;
@@ -224,8 +224,8 @@ public class DashboardEditModeFunctionality
     {
         return e.X > sender.Width - 20 && e.Y > sender.Height - 20;
     }
-        
-    enum EditModeAction
+
+    private enum EditModeAction
     {
         None=0,
         Move,

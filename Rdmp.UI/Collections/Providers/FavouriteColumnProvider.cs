@@ -21,7 +21,7 @@ public class FavouriteColumnProvider
 {
     private readonly IActivateItems _activator;
     private readonly TreeListView _tlv;
-    OLVColumn _olvFavourite;
+    private OLVColumn _olvFavourite;
 
     private Bitmap _starFull;
     private Bitmap _starHollow;

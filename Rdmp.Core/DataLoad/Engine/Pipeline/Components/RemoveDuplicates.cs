@@ -20,11 +20,10 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 /// </summary>
 public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
 {
-    Stopwatch sw = new Stopwatch();
+    private Stopwatch sw = new Stopwatch();
     private int totalRecordsProcessed = 0;
     private int totalDuplicatesFound = 0;
-
-    Dictionary<int, List<DataRow>> unqiueHashesSeen = new Dictionary<int, List<DataRow>>();
+    private Dictionary<int, List<DataRow>> unqiueHashesSeen = new Dictionary<int, List<DataRow>>();
         
     /// <summary>
     /// Turns off notify messages about number of duplicates found/replaced

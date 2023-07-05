@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
-class SetNull : IPluginDataFlowComponent<DataTable>
+internal class SetNull : IPluginDataFlowComponent<DataTable>
 {
     [DemandsInitialization("Looks for a column with exactly this name", Mandatory = true)]
     public string ColumnNameToFind { get; set; }

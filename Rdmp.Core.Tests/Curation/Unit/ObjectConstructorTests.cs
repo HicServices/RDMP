@@ -92,20 +92,20 @@ public class ObjectConstructorTests : UnitTests
         Console.WriteLine($"Found compatible constructors on {countCompatible} objects");
     }
 
-    class TestClassDefaultConstructor
+    private class TestClassDefaultConstructor
     {
             
     }
 
-
-    class TestClass1
+    private class TestClass1
     {
         public TestClass1(object o)
         {
                 
         }
     }
-    class TestClass2
+
+    private class TestClass2
     {
         public TestArg A { get; set; }
 
@@ -114,7 +114,8 @@ public class ObjectConstructorTests : UnitTests
             A = a;
         }
     }
-    class TestClass3
+
+    private class TestClass3
     {
         public TestArg2 A { get; set; }
 
@@ -124,7 +125,7 @@ public class ObjectConstructorTests : UnitTests
         }
     }
 
-    class TestClass4
+    private class TestClass4
     {
         public TestArg A { get; set; }
 
@@ -139,8 +140,7 @@ public class ObjectConstructorTests : UnitTests
         }
     }
 
-
-    class TestClass5
+    private class TestClass5
     {
         public TestArg A { get; set; }
 
@@ -154,16 +154,18 @@ public class ObjectConstructorTests : UnitTests
             A = a;
         }
     }
-    class TestArg
+
+    private class TestArg
     {
         public string Text { get; set; }
     }
 
-    class TestArg2:TestArg
+    private class TestArg2:TestArg
     {
              
     }
-    class TestArg3 : TestArg2
+
+    private class TestArg3 : TestArg2
     {
 
     }

@@ -23,16 +23,15 @@ public class TransparentHelpForm:Form
     private Control _highlight;
 
     [DllImport("user32.dll", SetLastError = true)]
-    static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     [DllImport("dwmapi.dll", PreserveSig = false)]
     public static extern bool DwmIsCompositionEnabled();
 
-    const UInt32 SW_SHOWNOACTIVATE = 4;
+    private const UInt32 SW_SHOWNOACTIVATE = 4;
     private const UInt32 WM_NCHITTEST = 0x0084;
     private const int HTTRANSPARENT = -1;
-
-    Timer timer = new Timer();
+    private Timer timer = new Timer();
     private Color _transparencyColor;
     private SolidBrush _highlightBrush;
         

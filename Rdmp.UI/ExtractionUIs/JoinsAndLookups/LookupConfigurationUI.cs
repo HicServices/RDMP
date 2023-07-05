@@ -100,7 +100,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         UpdateValidityAssesment(false);
     }
 
-    void fk1_SelectedColumnChanged()
+    private void fk1_SelectedColumnChanged()
     {
         SetStage(pk1.SelectedColumn == null ? LookupCreationStage.DragAForeignKey:LookupCreationStage.DragADescription);
         UpdateValidityAssesment();
@@ -188,7 +188,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         Invalidate(true);
     }
 
-    enum LookupCreationStage
+    private enum LookupCreationStage
     {
         ChooseLookupTable,
         DragAPrimaryKey,
@@ -196,7 +196,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         DragAForeignKey
     }
 
-    LookupCreationStage _currentStage = LookupCreationStage.ChooseLookupTable;
+    private LookupCreationStage _currentStage = LookupCreationStage.ChooseLookupTable;
 
     private void LookupConfiguration_Paint(object sender, PaintEventArgs e)
     {
@@ -256,7 +256,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         e.Graphics.FillPolygon(Brushes.Black,triangleBasePoints);
 
     }
-    void DrawArrows(Graphics graphics)
+
+    private void DrawArrows(Graphics graphics)
     {
         var arrowPen = new Pen(Color.DarkGray,2);
 

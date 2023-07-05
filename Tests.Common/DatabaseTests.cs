@@ -696,8 +696,8 @@ delete from {1}..Project
         //replace all whitespace with single spaces
         return Regex.Replace(sql, @"\s+", " ").Trim();
     }
-        
-    HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
+
+    private HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
 
     /// <summary>
     /// Gets an empty database on the test server of the appropriate DBMS

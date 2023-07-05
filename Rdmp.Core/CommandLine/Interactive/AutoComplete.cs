@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Interactive;
 
-class AutoComplete
+internal class AutoComplete
 {
     private readonly string[] autocompletes;
 

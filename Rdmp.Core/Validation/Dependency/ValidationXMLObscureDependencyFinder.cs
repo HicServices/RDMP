@@ -35,9 +35,7 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
     /// Catalogues whose ValidationXML doesn't resolve properly
     /// </summary>
     public List<Catalogue> CataloguesWithBrokenValidationXml = new List<Catalogue>();
-
-
-    readonly MEF _mef;
+    private readonly MEF _mef;
 
     public ValidationXMLObscureDependencyFinder(ICatalogueRepositoryServiceLocator catalogueRepositoryServiceLocator)
     {

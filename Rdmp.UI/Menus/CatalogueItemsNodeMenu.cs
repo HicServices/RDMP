@@ -9,7 +9,7 @@ using Rdmp.Core.Providers.Nodes;
 
 namespace Rdmp.UI.Menus;
 
-class CatalogueItemsNodeMenu : RDMPContextMenuStrip
+internal class CatalogueItemsNodeMenu : RDMPContextMenuStrip
 {
     public CatalogueItemsNodeMenu(RDMPContextMenuStripArgs args, CatalogueItemsNode node): base(args, node)
     {

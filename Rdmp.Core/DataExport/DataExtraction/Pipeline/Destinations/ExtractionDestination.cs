@@ -60,7 +60,7 @@ e.g. /$i/$a")]
     //state variables
     protected bool haveOpened = false;
     private bool haveWrittenBundleContents = false;
-    Stopwatch stopwatch = new Stopwatch();
+    private Stopwatch stopwatch = new Stopwatch();
 
     public TableLoadInfo TableLoadInfo { get; private set; }
 

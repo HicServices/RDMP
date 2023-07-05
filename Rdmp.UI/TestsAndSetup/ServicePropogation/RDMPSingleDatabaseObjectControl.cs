@@ -178,7 +178,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, new CommitInProgressSettings(DatabaseObject));
         }
     }
-    void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
+
+    private void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
     {
         if (_colorIndicator != null)
             _colorIndicator.SendToBack();

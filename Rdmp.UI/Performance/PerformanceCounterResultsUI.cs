@@ -75,9 +75,8 @@ public partial class PerformanceCounterResultsUI : UserControl
         return treeNode.Children.Values.Any(c=>!c.IsInDatabaseAccessAssembly);
     }
 
-    List<StackFramesTree> Roots;
-
-    bool collapseToMethod = false;
+    private List<StackFramesTree> Roots;
+    private bool collapseToMethod = false;
     private ComprehensiveQueryPerformanceCounter _performanceCounter;
         
     private int _worstOffenderCount;

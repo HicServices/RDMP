@@ -113,7 +113,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         }
     }
 
-    sealed class NoWordMeansShowAllAutocomplete : TextFieldAutocomplete
+    private sealed class NoWordMeansShowAllAutocomplete : TextFieldAutocomplete
     {
         public NoWordMeansShowAllAutocomplete(TextField tb)
         {

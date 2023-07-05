@@ -8,7 +8,7 @@ using System;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess;
 
-interface IDataLoadOperation
+internal interface IDataLoadOperation
 {
     ExitCodeType? ExitCode { get; }
     Exception Exception { get; }

@@ -47,8 +47,8 @@ public class CatalogueConstraintReport : DataQualityReport
     private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new Dictionary<string, PeriodicityCubesOverTime>();
 
     private IExternalDatabaseServer _loggingServer;
-    string _loggingTask;
-    LogManager _logManager;
+    private string _loggingTask;
+    private LogManager _logManager;
 
     /// <summary>
     /// Set this property to use an explicit DQE results store database instead of the

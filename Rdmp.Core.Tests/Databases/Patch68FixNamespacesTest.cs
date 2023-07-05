@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Databases;
 
-class Patch68FixNamespacesTest:UnitTests
+internal class Patch68FixNamespacesTest:UnitTests
 {
 
     /// <summary>

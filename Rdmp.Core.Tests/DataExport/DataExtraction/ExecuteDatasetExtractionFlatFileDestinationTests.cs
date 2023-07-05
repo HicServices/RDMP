@@ -17,7 +17,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
-class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiringAnExtractionConfiguration
+internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiringAnExtractionConfiguration
 {
     [TestCase(true)]
     [TestCase(false)]

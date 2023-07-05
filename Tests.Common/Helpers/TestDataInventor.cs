@@ -22,7 +22,7 @@ namespace Tests.Common.Helpers;
 /// </summary>
 public class TestDataInventor : CacheSource<TestDataWriterChunk>
 {
-    Random r = new Random();
+    private Random r = new Random();
         
     /// <summary>
     /// The path in which to create random files

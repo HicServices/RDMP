@@ -239,7 +239,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         RefreshUIFromDatabase(activator.CoreChildProvider.CatalogueRootFolder);
     }
 
-    void _activator_Emphasise(object sender, EmphasiseEventArgs args)
+    private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
     {
         //user wants this object emphasised
         var c = args.Request.ObjectToEmphasise as Catalogue;

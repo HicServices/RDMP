@@ -18,7 +18,7 @@ namespace Rdmp.Core.Repositories.Managers;
 /// 
 /// <para>Values are stored in the ConfigurationProperties table in the Data Export Database.</para>
 /// </summary>
-class DataExportPropertyManager : IDataExportPropertyManager
+internal class DataExportPropertyManager : IDataExportPropertyManager
 {
     private readonly bool _allowCaching;
     private readonly DataExportRepository _repository;

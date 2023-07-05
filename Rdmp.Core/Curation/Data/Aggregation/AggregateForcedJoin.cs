@@ -11,7 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Curation.Data.Aggregation;
 
-class AggregateForcedJoin : IAggregateForcedJoinManager
+internal class AggregateForcedJoin : IAggregateForcedJoinManager
 {
     private readonly CatalogueRepository _repository;
 

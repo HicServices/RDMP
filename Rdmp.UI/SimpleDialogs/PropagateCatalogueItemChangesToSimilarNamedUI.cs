@@ -107,8 +107,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProperties, olvPropertyName, new Guid("b56adceb-2cd5-4f77-9be7-07fb38baad18"));
     }
 
-
-    void olvCatalogues_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+    private void olvCatalogues_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
     {
         var ci = olvCatalogues.SelectedObject as CatalogueItem;
         if(ci == null)

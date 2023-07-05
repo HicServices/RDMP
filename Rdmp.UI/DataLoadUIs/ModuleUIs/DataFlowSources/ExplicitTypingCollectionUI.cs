@@ -34,7 +34,7 @@ public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTyping
         DialogResult = DialogResult.Cancel;
     }
 
-    List<ExplicitColumnTypeUI> types = new List<ExplicitColumnTypeUI>();
+    private List<ExplicitColumnTypeUI> types = new List<ExplicitColumnTypeUI>();
 
     private void btnAddColumn_Click(object sender, EventArgs e)
     {

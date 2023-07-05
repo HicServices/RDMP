@@ -13,7 +13,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.Tests.CommandExecution;
 
-class ExecuteCommandDeleteTests : UITests
+internal class ExecuteCommandDeleteTests : UITests
 {
 
     [Test]

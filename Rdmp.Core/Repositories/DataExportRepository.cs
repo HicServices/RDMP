@@ -42,8 +42,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
 
     public IDataExportPropertyManager DataExportPropertyManager { get; private set; }
 
-
-    Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
+    private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
 
     public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) : base(null, connectionString)
     {
@@ -79,8 +78,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
             $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
     }
 
-
-    readonly ObjectConstructor _constructor = new ObjectConstructor();
+    private readonly ObjectConstructor _constructor = new ObjectConstructor();
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
         if (Constructors.ContainsKey(t))

@@ -27,8 +27,7 @@ public class PersistableToolboxDockContent:DockContent
     public const string Prefix = "Toolbox";
 
     public readonly RDMPCollection CollectionType;
-
-    PersistStringHelper persistStringHelper = new PersistStringHelper();
+    private PersistStringHelper persistStringHelper = new PersistStringHelper();
 
     public PersistableToolboxDockContent(RDMPCollection collectionType)
     {

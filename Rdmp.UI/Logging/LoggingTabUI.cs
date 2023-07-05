@@ -55,8 +55,7 @@ public class LoggingTabUI : LoggingTab_Design
     private string _freeTextFilter;
     private Panel pFilter;
     private LogManager LogManager;
-        
-    NavigationTrack<LogViewerFilter> _navigationTrack;
+    private NavigationTrack<LogViewerFilter> _navigationTrack;
     private Panel panel1;
     private ToolStripButton _back;
 
@@ -123,7 +122,7 @@ public class LoggingTabUI : LoggingTab_Design
         }
     }
 
-    void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+    private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
     {
         if (e.RowIndex == -1)
             return;

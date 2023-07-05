@@ -73,7 +73,7 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
             
     }
 
-    bool haveLateLoaded = false;
+    private bool haveLateLoaded = false;
     private void LateLoad(object[] objectsForComboBox)
     {
         if(haveLateLoaded)

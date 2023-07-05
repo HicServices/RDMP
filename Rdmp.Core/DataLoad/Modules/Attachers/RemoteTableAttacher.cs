@@ -85,8 +85,8 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
     [DemandsInitialization("The database type you are attempting to connect to",DefaultValue=DatabaseType.MicrosoftSQLServer)]
     public DatabaseType DatabaseType { get; set; }
 
-    const string StartDateParameter = "@startDate";
-    const string EndDateParameter = "@endDate";
+    private const string StartDateParameter = "@startDate";
+    private const string EndDateParameter = "@endDate";
         
     private DiscoveredDatabase _remoteDatabase;
 

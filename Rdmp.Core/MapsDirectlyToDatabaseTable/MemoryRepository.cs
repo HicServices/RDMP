@@ -29,9 +29,7 @@ public class MemoryRepository : IRepository
     /// This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
     /// </summary>
     protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects = new ();
-
-
-    readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
+    private readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
 
     public event EventHandler<SaveEventArgs> Saving;
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
@@ -91,7 +89,8 @@ public class MemoryRepository : IRepository
         else
             prop.SetValue(toCreate, Convert.ChangeType(val, type));
     }
-    void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
+
+    private void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         var changes = (PropertyChangedExtendedEventArgs)e;
         var onObject = (IMapsDirectlyToDatabaseTable)sender;

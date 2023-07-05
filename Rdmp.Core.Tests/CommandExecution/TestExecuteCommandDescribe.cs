@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestExecuteCommandDescribe : UnitTests
+internal class TestExecuteCommandDescribe : UnitTests
 {
     [Test]
     public void TestDescribeCatalogue()

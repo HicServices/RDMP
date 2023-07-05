@@ -78,7 +78,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
     private bool _tableDidNotExistAtStartOfLoad;
     private bool _isTableAlreadyNamed;
-    DataTable _toProcess;
+    private DataTable _toProcess;
         
     public ExecuteFullExtractionToDatabaseMSSql():base(false)
     {

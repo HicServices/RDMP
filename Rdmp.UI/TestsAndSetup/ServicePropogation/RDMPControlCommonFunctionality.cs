@@ -461,7 +461,7 @@ public class RDMPControlCommonFunctionality
         }
     }
 
-    Dictionary<Scintilla,Color> _oldColours = new Dictionary<Scintilla, Color>();
+    private Dictionary<Scintilla,Color> _oldColours = new Dictionary<Scintilla, Color>();
     /// <summary>
     /// Sets the text color in the <paramref name="queryEditor"/> to red (or back to normal if <paramref name="red"/> is false).
     /// </summary>

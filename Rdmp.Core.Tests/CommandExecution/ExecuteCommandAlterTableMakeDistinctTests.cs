@@ -16,7 +16,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
+internal class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
 {
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]

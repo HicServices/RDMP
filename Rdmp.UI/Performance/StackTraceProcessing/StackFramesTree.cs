@@ -13,7 +13,7 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Performance.StackTraceProcessing;
 
-class StackFramesTree
+internal class StackFramesTree
 {
     public string CurrentFrame { get; private set; }
     public int QueryCount{ get; private set; }

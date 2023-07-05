@@ -63,7 +63,7 @@ public class ArchiveFiles : DataLoadComponent
         return ExitCodeType.Success;
     }
 
-    static readonly string[] DirsToIgnore = { TempArchiveDirName, HiddenFromArchiver };
+    private static readonly string[] DirsToIgnore = { TempArchiveDirName, HiddenFromArchiver };
 
     private static bool FoundFilesOrDirsToArchive(IDataLoadJob job)
     {

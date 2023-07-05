@@ -22,7 +22,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-class TableInfoTests : DatabaseTests
+internal class TableInfoTests : DatabaseTests
 {
     [Test]
     public void GetAllTableInfos_moreThan1_pass()

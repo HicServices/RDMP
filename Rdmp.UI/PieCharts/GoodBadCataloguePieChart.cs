@@ -161,7 +161,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
             
     }
 
-    bool _bLoading;
+    private bool _bLoading;
     private bool firstTime = true;
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)

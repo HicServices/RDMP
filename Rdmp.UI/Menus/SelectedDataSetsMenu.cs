@@ -14,7 +14,7 @@ using Rdmp.UI.ProjectUI.Graphs;
 
 namespace Rdmp.UI.Menus;
 
-class SelectedDataSetsMenu : RDMPContextMenuStrip
+internal class SelectedDataSetsMenu : RDMPContextMenuStrip
 {
     private readonly SelectedDataSets _selectedDataSet;
     private IExtractionConfiguration _extractionConfiguration;

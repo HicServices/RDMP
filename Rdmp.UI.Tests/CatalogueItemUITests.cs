@@ -15,7 +15,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Tests;
 
 [SupportedOSPlatform("windows7.0")]
-class CatalogueItemUITests : UITests
+internal class CatalogueItemUITests : UITests
 {
     [Test, UITimeout(20000)]
     public void Test_CatalogueItemUI_NormalState()

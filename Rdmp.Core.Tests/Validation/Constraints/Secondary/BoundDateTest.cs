@@ -14,7 +14,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Secondary;
 
 [Category("Unit")]
-class BoundDateTest
+internal class BoundDateTest
 {
     [Test]
     public void Validate_IsValid_Succeeds()

@@ -12,7 +12,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionProposal<IContainer>
+internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionProposal<IContainer>
 {
     public ProposeExecutionWhenTargetIsFilterContainer(IActivateItems itemActivator) : base(itemActivator)
     {

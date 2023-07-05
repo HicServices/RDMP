@@ -8,7 +8,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.UI.Menus;
 
-class JoinInfoMenu : RDMPContextMenuStrip
+internal class JoinInfoMenu : RDMPContextMenuStrip
 {
     public JoinInfoMenu(RDMPContextMenuStripArgs args, JoinInfo j) : base(args, j)
     {

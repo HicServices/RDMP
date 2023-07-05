@@ -10,7 +10,7 @@ using Rdmp.Core.ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.Tests;
 
-class CommentStoreTests
+internal class CommentStoreTests
 {
     [Test]
     public void Test_CommentStoreXmlDoc_Basic()

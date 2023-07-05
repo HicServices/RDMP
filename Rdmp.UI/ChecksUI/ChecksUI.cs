@@ -41,9 +41,8 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
     private Bitmap _warningEx;
     private Bitmap _fail;
     private Bitmap _failEx;
-
-    ConcurrentBag<CheckEventArgs> _results = new ConcurrentBag<CheckEventArgs>();
-    bool outOfDate = false;
+    private ConcurrentBag<CheckEventArgs> _results = new ConcurrentBag<CheckEventArgs>();
+    private bool outOfDate = false;
 
     public ChecksUI()
     {
@@ -123,8 +122,8 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
     private Timer _timer;
 
     public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
-        
-    Thread _checkingThread; 
+
+    private Thread _checkingThread; 
     private YesNoYesToAllDialog yesNoYesToAllDialog;
         
     protected override void OnLoad(EventArgs e)
@@ -173,7 +172,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         _checkingThread.Start();
     }
 
-    void checker_AllChecksFinished(ToMemoryCheckNotifier listener)
+    private void checker_AllChecksFinished(ToMemoryCheckNotifier listener)
     {
         _results.Add(new CheckEventArgs("All Checks Complete",CheckResult.Success));
         outOfDate = true;
@@ -235,7 +234,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         yesNoYesToAllDialog = new YesNoYesToAllDialog();
     }
 
-    void olvChecks_ItemActivate(object sender, EventArgs e)
+    private void olvChecks_ItemActivate(object sender, EventArgs e)
     {
         var args = olvChecks.SelectedObject as CheckEventArgs;
         if (args != null)

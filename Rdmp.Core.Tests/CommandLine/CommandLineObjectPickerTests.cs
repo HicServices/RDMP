@@ -16,7 +16,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;
 
-class CommandLineObjectPickerTests : UnitTests
+internal class CommandLineObjectPickerTests : UnitTests
 {
 
     [OneTimeSetUp]

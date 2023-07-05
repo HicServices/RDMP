@@ -74,12 +74,12 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     //menu item setup
     private ContextMenuStrip menu = new ContextMenuStrip();
-    ToolStripMenuItem mi_SetDescription = new ToolStripMenuItem("Set Description");
+    private ToolStripMenuItem mi_SetDescription = new ToolStripMenuItem("Set Description");
 
     /// <summary>
     /// Set when the user right clicks a row, so that we can reference the row in the handlers of the ToolStripMenuItems
     /// </summary>
-    int _rightClickedRowExtractionConfigurationID = -1;
+    private int _rightClickedRowExtractionConfigurationID = -1;
 
         
 
@@ -205,12 +205,12 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
         return dtToReturn;
     }
-        
+
     #region Right Click Context Menu
 
     #region Menu Items
-        
-    void mi_SetDescription_Click(object sender, EventArgs e)
+
+    private void mi_SetDescription_Click(object sender, EventArgs e)
     {
         var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
@@ -229,7 +229,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         }
     }
 
-    void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
+    private void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
     {
         var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
@@ -362,7 +362,8 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         }
             
     }
-    void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)
+
+    private void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)
     {
         _project.MasterTicket = tcMasterTicket.TicketText;
     }

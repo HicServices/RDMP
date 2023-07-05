@@ -63,7 +63,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private List<T> _objectsToDisplay = new List<T>();
     private List<IMapsDirectlyToDatabaseTable> _tempMatches;
     private List<IMapsDirectlyToDatabaseTable> _matches;
-    bool stateChanged = true;
+    private bool stateChanged = true;
 
     private bool _isClosed;
     private RecentHistoryOfControls recentHistoryOfSearches;
@@ -336,7 +336,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
     }
 
-    IconOverlayProvider provider = new IconOverlayProvider();
+    private IconOverlayProvider provider = new IconOverlayProvider();
 
     private Bitmap GetHierarchyImage(object rowObject)
     {

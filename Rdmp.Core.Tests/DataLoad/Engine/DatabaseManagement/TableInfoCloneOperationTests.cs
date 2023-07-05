@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.DatabaseManagement;
 
-class TableInfoCloneOperationTests : DatabaseTests
+internal class TableInfoCloneOperationTests : DatabaseTests
 {
     [Test]
     public void Test_CloneTable()

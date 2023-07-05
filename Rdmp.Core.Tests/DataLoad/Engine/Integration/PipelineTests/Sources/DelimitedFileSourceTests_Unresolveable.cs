@@ -11,7 +11,7 @@ using Rdmp.Core.DataLoad.Modules.Exceptions;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources;
 
-class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
+internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
 {
 
     [TestCase(BadDataHandlingStrategy.DivertRows)]

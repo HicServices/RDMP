@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-class RunDataQualityEngineWindow : RunEngineWindow<DqeOptions>
+internal class RunDataQualityEngineWindow : RunEngineWindow<DqeOptions>
 {
     public RunDataQualityEngineWindow(IBasicActivateItems activator, Catalogue c)
         : base(activator, () => GetCommand(c))

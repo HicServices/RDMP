@@ -23,7 +23,7 @@ public class ArgumentTypeTests:UnitTests
         base.SetupMEF();
     }
 
-    object[] _expectedAnswers = new object[]
+    private object[] _expectedAnswers = new object[]
     {
         5,
         new CultureInfo("en-us"),
@@ -52,7 +52,7 @@ public class ArgumentTypeTests:UnitTests
 
     }
 
-    class TestClassDemandingDouble
+    private class TestClassDemandingDouble
     {
         [DemandsInitialization("some field",defaultValue:1)]
         public double MyVar { get; set; }

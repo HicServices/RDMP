@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Logging;
 
-class FatalErrorLoggingTest : DatabaseTests
+internal class FatalErrorLoggingTest : DatabaseTests
 {
     [TestCase]
     public void CreateNewDataLoadTask()

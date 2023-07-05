@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-class ExecutableProcessTaskTests : DatabaseTests
+internal class ExecutableProcessTaskTests : DatabaseTests
 {
     [Test]
     public void TestConstructionFromProcessTaskUsingDatabase()

@@ -12,7 +12,7 @@ using System;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
+internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
 {
     [Test]
     public void TestSetExtractionIdentifier_Catalogue()

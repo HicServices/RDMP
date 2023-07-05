@@ -96,7 +96,7 @@ public partial class DataFlowComponentVisualisation : UserControl
         this.Width = lblText.PreferredWidth + 80;
     }
 
-    ToolTip _toolTip = new ToolTip();
+    private ToolTip _toolTip = new ToolTip();
 
     private void GenerateToolTipBasedOnProperties(object value)
     {
@@ -125,7 +125,7 @@ public partial class DataFlowComponentVisualisation : UserControl
     }
 
     protected bool _isEmpty ;
-    Pen _emptyPen = new Pen(new SolidBrush(Color.Black));
+    private Pen _emptyPen = new Pen(new SolidBrush(Color.Black));
     protected Pen _fullPen = new Pen(new SolidBrush(Color.Black));
         
 

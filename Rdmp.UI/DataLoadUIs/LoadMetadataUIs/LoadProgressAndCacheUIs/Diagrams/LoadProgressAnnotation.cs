@@ -17,7 +17,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams;
 /// Line on a <see cref="Chart"/> indicating how much progress has been made towards various <see cref="LoadProgress"/> / <see cref="CacheProgressUI"/>
 /// goals.
 /// </summary>
-class LoadProgressAnnotation
+internal class LoadProgressAnnotation
 {
     private readonly LoadProgress _lp;
     private readonly DataTable _dt;

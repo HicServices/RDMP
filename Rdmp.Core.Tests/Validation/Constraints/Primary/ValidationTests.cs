@@ -9,7 +9,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
-class ValidationTests : UnitTests
+internal class ValidationTests : UnitTests
 {
     [OneTimeSetUp]
     public void SetupMEFForValidator()

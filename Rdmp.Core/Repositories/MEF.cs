@@ -29,7 +29,7 @@ public class MEF
 
     public bool HaveDownloadedAllAssemblies;
     public SafeDirectoryCatalog SafeDirectoryCatalog;
-    readonly ObjectConstructor o = new();
+    private readonly ObjectConstructor o = new();
                 
     private readonly string _localPath = null;
 
@@ -260,8 +260,8 @@ public class MEF
         return GetTypes(typeof(T));
     }
 
-    object _cachedImplementationsLock = new object();
-    Dictionary<Type,Type[]> _cachedImplementations = new Dictionary<Type, Type[]>();
+    private object _cachedImplementationsLock = new object();
+    private Dictionary<Type,Type[]> _cachedImplementations = new Dictionary<Type, Type[]>();
 
     /// <summary>
     /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see

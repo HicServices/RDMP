@@ -11,7 +11,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Tests.CommandExecution;
 
-class ExecuteCommandClearFavouritesTests : UITests
+internal class ExecuteCommandClearFavouritesTests : UITests
 {
     [Test, UITimeout(50000)]
     public void Test_NoFavourites()

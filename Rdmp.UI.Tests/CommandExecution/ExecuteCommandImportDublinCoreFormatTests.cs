@@ -12,7 +12,7 @@ using Rdmp.Core.Reports.DublinCore;
 
 namespace Rdmp.UI.Tests.CommandExecution;
 
-class ExecuteCommandImportDublinCoreFormatTests
+internal class ExecuteCommandImportDublinCoreFormatTests
 {
 
     /// <summary>

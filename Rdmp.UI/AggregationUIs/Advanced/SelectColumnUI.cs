@@ -86,7 +86,7 @@ public partial class SelectColumnUI : RDMPUserControl
 
     }
 
-    void olvSelectColumns_CellClick(object sender, CellClickEventArgs e)
+    private void olvSelectColumns_CellClick(object sender, CellClickEventArgs e)
     {
         if (e.Column == olvAddRemove)
         {

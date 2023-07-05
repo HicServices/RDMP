@@ -11,7 +11,7 @@ using Rdmp.UI.Validation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsStandardRegex:RDMPCommandExecutionProposal<StandardRegex>
+internal class ProposeExecutionWhenTargetIsStandardRegex:RDMPCommandExecutionProposal<StandardRegex>
 {
     public ProposeExecutionWhenTargetIsStandardRegex(IActivateItems itemActivator) : base(itemActivator)
     {

@@ -56,7 +56,7 @@ public partial class ImportSQLTableUI : RDMPForm
         serverDatabaseTableSelector1.SetItemActivator(activator);
     }
 
-    void serverDatabaseTableSelector1_SelectionChanged()
+    private void serverDatabaseTableSelector1_SelectionChanged()
     {
         AdjustImporter();
     }

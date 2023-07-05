@@ -49,7 +49,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests;
     ALTER ROLE [db_datawriter] ADD MEMBER [minion]
 */
 
-class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
+internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
 {
     public enum TestCase
     {
@@ -433,7 +433,7 @@ MrMurder,2001-01-01,Yella");
 
 }
 
-class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
+internal class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
 {
     public string GetDatabaseName(string rootDatabaseName, LoadBubble convention)
     {

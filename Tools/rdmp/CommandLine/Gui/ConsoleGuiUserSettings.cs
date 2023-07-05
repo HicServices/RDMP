@@ -17,8 +17,7 @@ using Terminal.Gui;
 namespace Rdmp.Core.CommandLine.Gui;
 
 public partial class ConsoleGuiUserSettings {
-
-    Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
+    private Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
 
     public IBasicActivateItems _activator { get; }
 

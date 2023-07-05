@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Rdmp.Core.Tests.CohortCreation;
 
-class CohortIdentificationConfigurationMergerTests : CohortIdentificationTests
+internal class CohortIdentificationConfigurationMergerTests : CohortIdentificationTests
 {
     [Test]
     public void TestSimpleMerge()

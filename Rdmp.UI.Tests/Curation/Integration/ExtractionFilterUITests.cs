@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.UI.Tests.Curation.Integration;
 
-class ExtractionFilterUITests : UITests
+internal class ExtractionFilterUITests : UITests
 {
 
     [Test]

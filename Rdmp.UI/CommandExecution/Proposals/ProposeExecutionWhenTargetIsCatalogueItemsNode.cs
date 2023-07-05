@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecutionProposal<CatalogueItemsNode>
+internal class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecutionProposal<CatalogueItemsNode>
 {
     public ProposeExecutionWhenTargetIsCatalogueItemsNode(IActivateItems itemActivator) : base(itemActivator)
     {

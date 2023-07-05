@@ -11,7 +11,7 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestExecuteCommandDescribeCommand : CommandCliTests
+internal class TestExecuteCommandDescribeCommand : CommandCliTests
 {
         
     /// <summary>

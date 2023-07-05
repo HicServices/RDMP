@@ -65,7 +65,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         UseCommitSystem = true;
     }
 
-    void QueryEditor_TextChanged(object sender, EventArgs e)
+    private void QueryEditor_TextChanged(object sender, EventArgs e)
     {
         if (_loading)
             return;

@@ -76,17 +76,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public event DataTableHandler GraphTableRetrieved;
 
     private AggregateConfiguration _aggregateConfiguration;
-
-    ToolStripMenuItem miSaveImages = new ToolStripMenuItem("Save Image", FamFamFamIcons.disk.ImageToBitmap());
-
-    ToolStripMenuItem miCopyToClipboard = new ToolStripMenuItem("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
-    ToolStripMenuItem miClipboardWord = new ToolStripMenuItem("Word Format");
-    ToolStripMenuItem miClipboardCsv = new ToolStripMenuItem("Comma Separated Format");
-    ToolStripMenuItem btnCache = new ToolStripMenuItem("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
-
-    ToolStripButton btnResendQuery = new ToolStripButton("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
-
-    readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
+    private ToolStripMenuItem miSaveImages = new ToolStripMenuItem("Save Image", FamFamFamIcons.disk.ImageToBitmap());
+    private ToolStripMenuItem miCopyToClipboard = new ToolStripMenuItem("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
+    private ToolStripMenuItem miClipboardWord = new ToolStripMenuItem("Word Format");
+    private ToolStripMenuItem miClipboardCsv = new ToolStripMenuItem("Comma Separated Format");
+    private ToolStripMenuItem btnCache = new ToolStripMenuItem("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
+    private ToolStripButton btnResendQuery = new ToolStripButton("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+    private readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
         
         
     public AggregateGraphUI()
@@ -211,9 +207,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             : AggregateConfiguration.Description;
     }
 
-    DbCommand _cmd;
-
-    ChartDashStyle[] StyleList = new ChartDashStyle[]
+    private DbCommand _cmd;
+    private ChartDashStyle[] StyleList = new ChartDashStyle[]
     {
         ChartDashStyle.Solid,
         ChartDashStyle.Dash,

@@ -13,7 +13,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<AllCataloguesUsedByLoadMetadataNode>
+internal class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<AllCataloguesUsedByLoadMetadataNode>
 {
     public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(itemActivator)
     {

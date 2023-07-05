@@ -52,8 +52,8 @@ public class MDFAttacher : Attacher,IPluginAttacher
     {
              
     }
-        
-    MdfFileAttachLocations _locations;
+
+    private MdfFileAttachLocations _locations;
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {

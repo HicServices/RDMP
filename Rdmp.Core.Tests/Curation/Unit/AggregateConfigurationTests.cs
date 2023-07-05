@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Unit;
 
-class AggregateConfigurationTests : UnitTests
+internal class AggregateConfigurationTests : UnitTests
 {
     [Test]
     public void TestStripZeroSeries_EmptyTable()

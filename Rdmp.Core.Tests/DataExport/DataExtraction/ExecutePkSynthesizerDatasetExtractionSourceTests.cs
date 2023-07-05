@@ -27,7 +27,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAnExtractionConfiguration
 {
     //C24D365B7C271E2C1BC884B5801C2961
-    Regex reghex = new Regex(@"^HASHED: [A-F\d]{32}");
+    private Regex reghex = new Regex(@"^HASHED: [A-F\d]{32}");
         
     [SetUp]
     protected override void SetUp()

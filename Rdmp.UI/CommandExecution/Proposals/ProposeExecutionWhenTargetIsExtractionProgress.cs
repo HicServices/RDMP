@@ -11,7 +11,7 @@ using Rdmp.UI.MainFormUITabs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsExtractionProgress : RDMPCommandExecutionProposal<ExtractionProgress>
+internal class ProposeExecutionWhenTargetIsExtractionProgress : RDMPCommandExecutionProposal<ExtractionProgress>
 {
     public ProposeExecutionWhenTargetIsExtractionProgress(IActivateItems itemActivator) : base(itemActivator)
     {

@@ -9,7 +9,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution;
 
-class PluginCohortCompilerTask : AggregationTask
+internal class PluginCohortCompilerTask : AggregationTask
 {
     public IPluginCohortCompiler PluginCompiler { get; }
 

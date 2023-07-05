@@ -145,7 +145,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         }
     }
 
-    void QueryEditor_TextChanged(object sender, EventArgs e)
+    private void QueryEditor_TextChanged(object sender, EventArgs e)
     {
         CheckObject();
     }

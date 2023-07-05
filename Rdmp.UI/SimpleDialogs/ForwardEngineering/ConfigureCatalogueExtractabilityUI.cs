@@ -75,14 +75,13 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     public string TargetFolder { get; set; }
 
     private BinderWithErrorProviderFactory _binder;
-        
-    ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
+    private ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
         
     /// <summary>
     /// True if we are making programatic changes to values and shouldn't respond to control events (e.g. dropdown changes)
     /// </summary>
     private bool isLoading;
-    const string None = "<<None>>";
+    private const string None = "<<None>>";
 
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfo tableInfo,string initialDescription, IProject projectSpecificIfAny):this(activator)
     {
@@ -622,7 +621,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         helpIcon1.SetHelpText("Configure Extractability", "Click for tutorial", _workflow);
     }
 
-    class ColPair
+    private class ColPair
     {
         public CatalogueItem CatalogueItem;
         public ColumnInfo ColumnInfo;

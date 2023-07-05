@@ -11,7 +11,7 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsSupportingDocument : RDMPCommandExecutionProposal<SupportingDocument>
+internal class ProposeExecutionWhenTargetIsSupportingDocument : RDMPCommandExecutionProposal<SupportingDocument>
 {
     public ProposeExecutionWhenTargetIsSupportingDocument(IActivateItems itemActivator)
         : base(itemActivator)

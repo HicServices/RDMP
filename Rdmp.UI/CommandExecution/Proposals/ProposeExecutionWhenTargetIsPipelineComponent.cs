@@ -11,7 +11,7 @@ using Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsPipelineComponent : RDMPCommandExecutionProposal<PipelineComponent>
+internal class ProposeExecutionWhenTargetIsPipelineComponent : RDMPCommandExecutionProposal<PipelineComponent>
 {
     public ProposeExecutionWhenTargetIsPipelineComponent(IActivateItems itemActivator) : base(itemActivator)
     {

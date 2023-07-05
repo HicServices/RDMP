@@ -13,7 +13,7 @@ namespace Rdmp.UI.ProjectUI;
 
 internal class ExtractCommandStateMonitor
 {
-    Dictionary<IExtractCommand,ExtractCommandState> CommandStates = new Dictionary<IExtractCommand, ExtractCommandState>();
+    private Dictionary<IExtractCommand,ExtractCommandState> CommandStates = new Dictionary<IExtractCommand, ExtractCommandState>();
     private Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>> CommandSubStates = new Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>>();
 
     private Dictionary<object, ExtractCommandState> GlobalsStates = new Dictionary<object, ExtractCommandState>();

@@ -13,7 +13,7 @@ using Rdmp.Core.Startup;
 
 namespace Rdmp.Core.Tests.Repositories;
 
-class CatalogueRepositoryTests
+internal class CatalogueRepositoryTests
 {
     /// <summary>
     /// Tests that when a <see cref="CatalogueRepository"/> fails connection testing that the password is not exposed but that

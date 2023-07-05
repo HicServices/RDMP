@@ -34,7 +34,7 @@ public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDest
     [DemandsInitialization("Pipeline for reading from the flat file",Mandatory = true)]
     public Pipeline PipelineForReadingFromFlatFile { get; set; }
 
-    List<DataTable> BatchesReadyForProcessing = new List<DataTable>();
+    private List<DataTable> BatchesReadyForProcessing = new List<DataTable>();
 
     [DemandsInitialization("A comma separated list of column names that make up the primary key of the KVP table (in most cases this is only one column).  These must appear in the file",Mandatory = true)]
     public string PrimaryKeyColumns { get; set; }

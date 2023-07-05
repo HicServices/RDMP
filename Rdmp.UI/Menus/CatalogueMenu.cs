@@ -17,9 +17,9 @@ using Rdmp.UI.Menus.MenuItems;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class CatalogueMenu:RDMPContextMenuStrip
+internal class CatalogueMenu:RDMPContextMenuStrip
 {
-    const string CatalogueItems = "Catalogue Items";
+    private const string CatalogueItems = "Catalogue Items";
 
     public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
     {

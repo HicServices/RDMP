@@ -33,10 +33,9 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
     private IPipeline _pipeline;
     public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
-    GracefulCancellationTokenSource cancellation;
+    private GracefulCancellationTokenSource cancellation;
     private int? exitCode;
-
-    HashSet<IDataLoadEventListener> additionals = new HashSet<IDataLoadEventListener>();
+    private HashSet<IDataLoadEventListener> additionals = new HashSet<IDataLoadEventListener>();
     private PipelineRunner runner;
     private PipelineEngineEventArgs successArgs;
     private DataTable progressDataTable;

@@ -27,7 +27,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
+internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 {
     [TestCase(DatabaseType.MySql)]
     [TestCase(DatabaseType.MicrosoftSQLServer)]

@@ -198,8 +198,9 @@ public class ANOTransformer
     }
 
     //for some reason this method seems to get sent the same message twice every time
-    string lastMessage;
-    void _con_InfoMessage(object sender, SqlInfoMessageEventArgs e)
+    private string lastMessage;
+
+    private void _con_InfoMessage(object sender, SqlInfoMessageEventArgs e)
     {
         if(string.IsNullOrWhiteSpace(e.Message))
             return;

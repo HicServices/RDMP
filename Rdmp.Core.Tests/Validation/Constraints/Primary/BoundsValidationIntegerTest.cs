@@ -13,7 +13,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-class BoundsValidationIntegerTest : ValidationTests
+internal class BoundsValidationIntegerTest : ValidationTests
 {
 
     [Test]

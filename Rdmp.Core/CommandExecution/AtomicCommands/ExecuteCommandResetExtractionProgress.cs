@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandResetExtractionProgress : BasicCommandExecution
 {
-    List<IExtractionProgress> _toClear = new List<IExtractionProgress>();
+    private List<IExtractionProgress> _toClear = new List<IExtractionProgress>();
 
     /// <summary>
     /// Clears one or more <see cref="ExtractionProgress"/> on a single <see cref="ExtractionConfiguration"/>

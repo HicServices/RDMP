@@ -17,7 +17,7 @@ using Rdmp.UI.DataViewing;
 
 namespace Rdmp.UI.Menus;
 
-class ExternalDatabaseServerMenu : RDMPContextMenuStrip
+internal class ExternalDatabaseServerMenu : RDMPContextMenuStrip
 {
     private readonly ExternalDatabaseServer _server;
 

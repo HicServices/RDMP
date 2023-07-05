@@ -14,7 +14,7 @@ using LogManager = Rdmp.Core.Logging.LogManager;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
-class MetadataLoggingConfigurationChecks : ICheckable
+internal class MetadataLoggingConfigurationChecks : ICheckable
 {
     private readonly ILoadMetadata _loadMetadata;
 

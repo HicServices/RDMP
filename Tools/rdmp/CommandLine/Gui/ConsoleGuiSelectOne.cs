@@ -15,7 +15,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
+internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
 {
     private readonly IBasicActivateItems _activator;
     private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _masterCollection;

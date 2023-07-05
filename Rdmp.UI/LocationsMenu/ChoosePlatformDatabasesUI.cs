@@ -50,10 +50,9 @@ public partial class ChoosePlatformDatabasesUI : Form
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
     public bool ChangesMade = false;
-
-    int _seed = 500;
-    int _peopleCount = ExampleDatasetsCreation.NumberOfPeople;
-    int _rowCount = ExampleDatasetsCreation.NumberOfRowsPerDataset;
+    private int _seed = 500;
+    private int _peopleCount = ExampleDatasetsCreation.NumberOfPeople;
+    private int _rowCount = ExampleDatasetsCreation.NumberOfRowsPerDataset;
 
     public ChoosePlatformDatabasesUI(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {

@@ -19,7 +19,7 @@ using Color = SixLabors.ImageSharp.Color;
 
 namespace Rdmp.Core.Tests.Reports;
 
-class DocumentationReportDatabaseEntitiesTests:UnitTests
+internal class DocumentationReportDatabaseEntitiesTests:UnitTests
 {
     [Test]
     public void Test_DocumentationReportDatabaseEntities_Normal()

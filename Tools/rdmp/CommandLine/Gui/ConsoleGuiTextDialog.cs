@@ -9,7 +9,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleGuiTextDialog
+internal class ConsoleGuiTextDialog
 {
     private readonly DialogArgs _args;
     private readonly string _initialValue;

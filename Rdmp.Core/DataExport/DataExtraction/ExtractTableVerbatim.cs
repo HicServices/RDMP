@@ -34,7 +34,7 @@ public class ExtractTableVerbatim
     /// <summary>
     /// The number of decimal places to round floating point numbers to.  This only applies to data which is hard typed Float and not to string values
     /// </summary>
-    int? RoundFloatsTo { get; set; }
+    private int? RoundFloatsTo { get; set; }
 
     public string OutputFilename { get; private set; }
 

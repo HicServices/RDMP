@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.DatabaseManagement.EntityNaming;
 
-class HICDatabaseConfigurationTests: UnitTests
+internal class HICDatabaseConfigurationTests: UnitTests
 {
 
     /// <summary>

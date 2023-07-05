@@ -8,7 +8,7 @@ using System;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 
-class NullAllocateReleaseIdentifiers : IAllocateReleaseIdentifiers
+internal class NullAllocateReleaseIdentifiers : IAllocateReleaseIdentifiers
 {
     public object AllocateReleaseIdentifier(object privateIdentifier)
     {

@@ -43,12 +43,10 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
     private ArchivalDataLoadInfo[] _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
     private CancellationTokenSource _populateLoadHistoryCancel;
-        
-
-    readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
-    readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
-    readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox() { Text = "1000" };
-    readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
+    private readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
+    private readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
+    private readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox() { Text = "1000" };
+    private readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
 
     private int _toFetch = 1000;
 
@@ -82,8 +80,8 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDescription, new Guid("6b09f39c-2b88-41ed-a396-42a2d2288952"));
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDate, new Guid("d0caf588-cff8-4e49-b755-ed9aaf320f1a"));
     }
-        
-    void TbToFetchTextChanged(object sender, EventArgs e)
+
+    private void TbToFetchTextChanged(object sender, EventArgs e)
     {
         try
         {
@@ -158,7 +156,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         throw new NotSupportedException();
     }
 
-    void treeView1_FormatRow(object sender, FormatRowEventArgs e)
+    private void treeView1_FormatRow(object sender, FormatRowEventArgs e)
     {
         var dli = e.Model as ArchivalDataLoadInfo;
 
@@ -233,7 +231,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         return false;
     }
 
-    void _populateLoadHistory_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    private void _populateLoadHistory_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
         llLoading.Visible = false;
         pbLoading.Visible = false;
@@ -260,8 +258,9 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         treeView1.ClearObjects();
     }
 
-    LogManager _logManager;
-    void _populateLoadHistory_DoWork(object sender, DoWorkEventArgs e)
+    private LogManager _logManager;
+
+    private void _populateLoadHistory_DoWork(object sender, DoWorkEventArgs e)
     {
         ArchivalDataLoadInfo[] results;
         try

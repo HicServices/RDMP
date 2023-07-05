@@ -16,7 +16,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-class DitaExtractorTests : DatabaseTests
+internal class DitaExtractorTests : DatabaseTests
 {
     private Exception _setupException = null;
 

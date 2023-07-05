@@ -50,8 +50,7 @@ abstract public class TableRepository : ITableRepository
     protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>>();
 
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-
-    Lazy<DiscoveredTable[]> _tables;
+    private Lazy<DiscoveredTable[]> _tables;
 
     //If you are calling this constructor then make sure to set the connection strings in your derived class constructor
     public TableRepository()
@@ -823,8 +822,8 @@ abstract public class TableRepository : ITableRepository
         return (DateTime)o;
     }
 
-    Dictionary<Type,bool> _knownSupportedTypes = new Dictionary<Type,bool>();
-    object oLockKnownTypes = new object();
+    private Dictionary<Type,bool> _knownSupportedTypes = new Dictionary<Type,bool>();
+    private object oLockKnownTypes = new object();
 
     public bool SupportsObjectType(Type type)
     {

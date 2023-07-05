@@ -228,7 +228,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         }
     }
 
-    void serverDatabaseTableSelector1_SelectionChanged()
+    private void serverDatabaseTableSelector1_SelectionChanged()
     {
         btnConfirmDatabase.Enabled = serverDatabaseTableSelector1.GetDiscoveredDatabase() != null;
     }

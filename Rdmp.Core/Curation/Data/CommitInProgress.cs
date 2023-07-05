@@ -21,7 +21,7 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class CommitInProgress : IDisposable
 {
-    Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
+    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new ();
 
     public CommitInProgressSettings Settings { get; }
 

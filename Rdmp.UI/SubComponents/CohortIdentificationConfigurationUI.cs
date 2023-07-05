@@ -64,17 +64,14 @@ namespace Rdmp.UI.SubComponents;
 /// </summary>
 public partial class CohortIdentificationConfigurationUI : CohortIdentificationConfigurationUI_Design,IRefreshBusSubscriber
 {
-    ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
-    ToolTip tt = new ToolTip();
-                
-    readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout() { Timeout = 3000 };
-    RDMPCollectionCommonFunctionality _commonFunctionality;
-
-    Timer timer = new Timer();
+    private ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
+    private ToolTip tt = new ToolTip();
+    private readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout() { Timeout = 3000 };
+    private RDMPCollectionCommonFunctionality _commonFunctionality;
+    private Timer timer = new Timer();
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
-
-    CohortIdentificationConfigurationUICommon Common = new ();
+    private CohortIdentificationConfigurationUICommon Common = new ();
 
     public CohortIdentificationConfigurationUI()
     {
@@ -270,8 +267,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         e.Cancel = Common.ConsultAboutClosing();
     }
 
-
-    void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
+    private void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
     {
         Common.ExecuteOrCancel(e.Model);
     }

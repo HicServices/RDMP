@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Reports;
 
-class CustomMetadataReportTests : UnitTests
+internal class CustomMetadataReportTests : UnitTests
 {
     [OneTimeSetUp]
     public void Init()

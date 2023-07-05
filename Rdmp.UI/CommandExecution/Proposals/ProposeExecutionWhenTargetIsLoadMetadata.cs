@@ -11,7 +11,7 @@ using Rdmp.UI.LoadExecutionUIs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsLoadMetadata : RDMPCommandExecutionProposal<LoadMetadata>
+internal class ProposeExecutionWhenTargetIsLoadMetadata : RDMPCommandExecutionProposal<LoadMetadata>
 {
     public ProposeExecutionWhenTargetIsLoadMetadata(IActivateItems itemActivator) : base(itemActivator)
     {

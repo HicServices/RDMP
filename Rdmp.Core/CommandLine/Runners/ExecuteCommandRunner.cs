@@ -24,7 +24,7 @@ using Spectre.Console;
 
 namespace Rdmp.Core.CommandLine.Runners;
 
-class ExecuteCommandRunner:IRunner
+internal class ExecuteCommandRunner:IRunner
 {
     private readonly ExecuteCommandOptions _options;
     private ConsoleInputManager _input;

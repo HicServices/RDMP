@@ -14,10 +14,10 @@ public class ExtractionInformationTests : DatabaseTests
 {
     ///////////////Create the things that we are going to create relationships between /////////////////
 
-    Catalogue cata;
-    CatalogueItem cataItem;
-    TableInfo ti;
-    ColumnInfo columnInfo;
+    private Catalogue cata;
+    private CatalogueItem cataItem;
+    private TableInfo ti;
+    private ColumnInfo columnInfo;
 
     [SetUp]
     protected override void SetUp()

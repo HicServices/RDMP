@@ -12,7 +12,7 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.Repositories.Managers;
 
-class DataExportFilterManager : IFilterManager
+internal class DataExportFilterManager : IFilterManager
 {
     private readonly DataExportRepository _dataExportRepository;
 

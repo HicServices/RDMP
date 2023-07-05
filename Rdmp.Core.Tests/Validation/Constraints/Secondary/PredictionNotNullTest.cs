@@ -10,7 +10,7 @@ using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 namespace Rdmp.Core.Tests.Validation.Constraints.Secondary;
 
 [Category("Unit")]
-class PredictionNotNullTest
+internal class PredictionNotNullTest
 {
 
     [Test]

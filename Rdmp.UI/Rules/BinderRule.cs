@@ -12,7 +12,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Rules;
 
-abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDatabaseTable
+internal abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDatabaseTable
 {
     protected readonly IActivateItems Activator;
     protected readonly T ToTest;

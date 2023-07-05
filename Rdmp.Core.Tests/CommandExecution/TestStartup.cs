@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestStartup : UnitTests
+internal class TestStartup : UnitTests
 {
     [Test]
     public void TestStartupWithMemoryRepository()

@@ -158,7 +158,7 @@ public class AbstractBaseRunnerTests : UnitTests
         Assert.Contains(c2, results);
     }
 
-    class TestRunner : Runner
+    private class TestRunner : Runner
     {
         new public T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
         {

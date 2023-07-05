@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Modules.DataFlowOperations;
 
-class RowDeleterTests
+internal class RowDeleterTests
 {
     [Test]
     public void TestRowDeleter_OneCell()

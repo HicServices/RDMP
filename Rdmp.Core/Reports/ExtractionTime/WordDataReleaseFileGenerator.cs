@@ -27,7 +27,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     protected IExtractableCohort Cohort { get; set; }
     protected IProject Project { get; set; }
 
-    const int CohortCountTimeoutInSeconds = 600; // 10 minutes
+    private const int CohortCountTimeoutInSeconds = 600; // 10 minutes
 
     public WordDataReleaseFileGenerator(IExtractionConfiguration configuration, IDataExportRepository repository)
     {

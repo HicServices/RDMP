@@ -64,11 +64,10 @@ public class AggregateBuilder : ISqlQueryBuilder
 
 
     private AggregateCountColumn _countColumn;
-        
-    QueryTimeColumn _pivotDimension = null;
-    AggregateContinuousDateAxis _axis = null;
-    AggregateDimension _axisAppliesToDimension = null;
-    bool _isCohortIdentificationAggregate;
+    private QueryTimeColumn _pivotDimension = null;
+    private AggregateContinuousDateAxis _axis = null;
+    private AggregateDimension _axisAppliesToDimension = null;
+    private bool _isCohortIdentificationAggregate;
 
     /// <summary>
     /// Optional, SQL to apply a HAVING clause to the GROUP BY query generated
@@ -123,7 +122,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// <inheritdoc/>
     public ParameterManager ParameterManager { get; private set; }
 
-    string _sql;
+    private string _sql;
     /// <inheritdoc/>
     public bool SQLOutOfDate { get; set; }
 

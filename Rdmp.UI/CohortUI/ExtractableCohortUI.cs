@@ -45,10 +45,9 @@ namespace Rdmp.UI.CohortUI;
 /// </summary>
 public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableUI
 {
-    private ExtractableCohort _extractableCohort; 
-        
-    RDMPCollectionCommonFunctionality _commonFunctionality1 = new RDMPCollectionCommonFunctionality();
-    RDMPCollectionCommonFunctionality _commonFunctionality2 = new RDMPCollectionCommonFunctionality();
+    private ExtractableCohort _extractableCohort;
+    private RDMPCollectionCommonFunctionality _commonFunctionality1 = new RDMPCollectionCommonFunctionality();
+    private RDMPCollectionCommonFunctionality _commonFunctionality2 = new RDMPCollectionCommonFunctionality();
 
     private void GenerateSQLPreview()
     {

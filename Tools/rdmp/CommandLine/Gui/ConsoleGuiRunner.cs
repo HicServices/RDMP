@@ -15,7 +15,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleGuiRunner : IRunner
+internal class ConsoleGuiRunner : IRunner
 {
     private readonly ConsoleGuiOptions options;
     private ConsoleGuiActivator _activator;

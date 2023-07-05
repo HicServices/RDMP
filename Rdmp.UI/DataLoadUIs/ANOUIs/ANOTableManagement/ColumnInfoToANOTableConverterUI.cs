@@ -179,7 +179,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         GeneratePreviews();
     }
 
-    DataTable preview;
+    private DataTable preview;
     private ANOTable _anoTable;
 
     private void GeneratePreviews()

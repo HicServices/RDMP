@@ -23,7 +23,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 public class SuspiciousRelationshipPropertyUse
 {
     private readonly MEF mef;
-    List<string>  _fails = new List<string>();
+    private List<string>  _fails = new List<string>();
 
     public SuspiciousRelationshipPropertyUse(MEF mef)
     {

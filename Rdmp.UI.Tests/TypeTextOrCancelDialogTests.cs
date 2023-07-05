@@ -11,7 +11,7 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Tests;
 
-class TypeTextOrCancelDialogTests : UITests
+internal class TypeTextOrCancelDialogTests : UITests
 {
     [Test]
     public void Test_TypeTextOrCancelDialog_TinyStrings()

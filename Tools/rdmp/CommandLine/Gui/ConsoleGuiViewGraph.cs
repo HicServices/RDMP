@@ -21,7 +21,7 @@ using PointF = Terminal.Gui.PointF;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
+internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 {
     private readonly AggregateConfiguration aggregate;
     private GraphView graphView;

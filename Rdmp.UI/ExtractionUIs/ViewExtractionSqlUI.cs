@@ -40,13 +40,11 @@ namespace Rdmp.UI.ExtractionUIs;
 public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 {
     private Catalogue _catalogue;
-        
-    ToolStripButton rbCore = new ToolStripButton("Core");
-    ToolStripButton rbSupplemental = new ToolStripButton("Supplemental"){Checked = true};
-    ToolStripButton rbSpecialApproval = new ToolStripButton("Special Approval");
-    ToolStripButton rbInternal = new ToolStripButton("Internal");
-
-    ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
+    private ToolStripButton rbCore = new ToolStripButton("Core");
+    private ToolStripButton rbSupplemental = new ToolStripButton("Supplemental"){Checked = true};
+    private ToolStripButton rbSpecialApproval = new ToolStripButton("Special Approval");
+    private ToolStripButton rbInternal = new ToolStripButton("Internal");
+    private ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
         
     private Scintilla QueryPreview;
     public ViewExtractionSqlUI()

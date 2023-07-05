@@ -21,7 +21,7 @@ namespace Rdmp.Core.QueryBuilding;
 /// </summary>
 public class ColumnInfoToIColumn :SpontaneousObject, IColumn
 {
-    static Random r = new Random();
+    private static Random r = new Random();
 
     /// <summary>
     /// Allows the given <see cref="ColumnInfo"/> to act as an <see cref="IColumn"/> giving it an Order and setting extraction flags (e.g. <see cref="HashOnDataRelease"/>)to sensible defaults.

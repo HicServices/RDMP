@@ -75,7 +75,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
     public bool DoNotContinue { get; set; }
 
-    void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
+    private void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
     {
         if(IsDisposed || !IsHandleCreated)
             return;
@@ -145,7 +145,7 @@ public partial class StartupUI : Form, ICheckNotifier
         pbLoadProgress.Value = 1000;
     }
 
-    void TimerTick(object sender, EventArgs e)
+    private void TimerTick(object sender, EventArgs e)
     {
         var t = (Timer) sender;
             
@@ -224,7 +224,7 @@ public partial class StartupUI : Form, ICheckNotifier
         t.Start();
     }
 
-    RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
+    private RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
     private ChoosePlatformDatabasesUI _choosePlatformsUI;
     private bool _haveWarnedAboutOutOfDate = false;
 

@@ -12,7 +12,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.Data;
 
-class ExtractableCohortTests : TestsRequiringACohort
+internal class ExtractableCohortTests : TestsRequiringACohort
 {
     [Test]
     public void TestExtractableCohort_Identifiable()

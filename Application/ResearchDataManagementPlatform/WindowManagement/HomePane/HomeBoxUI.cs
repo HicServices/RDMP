@@ -27,7 +27,7 @@ public partial class HomeBoxUI : UserControl
     private bool _doneSetup = false;
     private Type _openType;
 
-    RDMPCollectionCommonFunctionality CommonTreeFunctionality { get;} = new RDMPCollectionCommonFunctionality();
+    private RDMPCollectionCommonFunctionality CommonTreeFunctionality { get;} = new RDMPCollectionCommonFunctionality();
 
     public HomeBoxUI()
     {

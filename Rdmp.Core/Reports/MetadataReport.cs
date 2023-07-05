@@ -37,8 +37,7 @@ public class MetadataReport:DocXHelper
 {
     private readonly ICatalogueRepository _repository;
     private readonly MetadataReportArgs _args;
-        
-    HashSet<TableInfo> LookupsEncounteredToAppearInAppendix = new HashSet<TableInfo>();
+    private HashSet<TableInfo> LookupsEncounteredToAppearInAppendix = new HashSet<TableInfo>();
 
     public float PageWidthInPixels { get; private set; }
         
@@ -54,7 +53,7 @@ public class MetadataReport:DocXHelper
         _args = args;
     }
 
-    Thread thread;
+    private Thread thread;
 
     public void GenerateWordFileAsync(IDataLoadEventListener listener, bool showFile)
     {

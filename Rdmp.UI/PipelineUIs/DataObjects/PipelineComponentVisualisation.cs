@@ -23,7 +23,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects;
 /// itself is stored as a reusable resource in the Catalogue Database. </para>
 /// </summary>
 [TechnicalUI]
-class PipelineComponentVisualisation:DataFlowComponentVisualisation
+internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
 {
     private bool _isSelected;
 

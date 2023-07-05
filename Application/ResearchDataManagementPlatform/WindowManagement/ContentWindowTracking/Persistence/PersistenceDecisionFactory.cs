@@ -23,7 +23,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 /// </summary>
 public class PersistenceDecisionFactory
 {
-    PersistStringHelper _persistStringHelper = new PersistStringHelper();
+    private PersistStringHelper _persistStringHelper = new PersistStringHelper();
 
     public PersistenceDecisionFactory()
     {

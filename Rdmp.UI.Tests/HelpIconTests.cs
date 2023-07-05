@@ -10,7 +10,7 @@ using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
 
 namespace Rdmp.UI.Tests;
 
-class HelpIconTests
+internal class HelpIconTests
 {
     [Test]
     public void TestNullInputs_HelpIcon()

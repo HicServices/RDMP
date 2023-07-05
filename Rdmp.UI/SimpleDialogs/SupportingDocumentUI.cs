@@ -115,8 +115,8 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
             tb.ForeColor = Color.Red;
         }
     }
-        
-    void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
+
+    private void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
     {
         if (_supportingDocument != null)
             _supportingDocument.Ticket = ticketingControl1.TicketText;

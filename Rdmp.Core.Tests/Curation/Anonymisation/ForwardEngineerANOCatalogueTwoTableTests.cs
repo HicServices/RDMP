@@ -21,12 +21,10 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation;
 
 public class ForwardEngineerANOCatalogueTwoTableTests : TestsRequiringANOStore
 {
-
-    ITableInfo t1;
-    ColumnInfo[] c1;
-
-    ITableInfo t2;
-    ColumnInfo[] c2;
+    private ITableInfo t1;
+    private ColumnInfo[] c1;
+    private ITableInfo t2;
+    private ColumnInfo[] c2;
 
     private ICatalogue cata1;
     private ICatalogue cata2;

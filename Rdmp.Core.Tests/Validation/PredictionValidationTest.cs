@@ -14,7 +14,7 @@ using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 namespace Rdmp.Core.Tests.Validation;
 
 [Category("Unit")]
-class PredictionValidationTest
+internal class PredictionValidationTest
 {
 
     #region Test arguments

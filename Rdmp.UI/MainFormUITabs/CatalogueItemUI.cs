@@ -43,7 +43,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         ci_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
     }
 
-    bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
+    private bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
     {
         //see if we need to display the dialog that lets the user sync up descriptions of multiuse columns e.g. CHI
         bool shouldDialogBeDisplayed;

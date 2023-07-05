@@ -13,7 +13,7 @@ using Rdmp.UI.AggregationUIs.Advanced;
 
 namespace Rdmp.UI.Tests;
 
-class AggregateEditorUITests:UITests
+internal class AggregateEditorUITests:UITests
 {
     [Test, UITimeout(50000)]
     public void Test_AggregateEditorUI_NormalState()

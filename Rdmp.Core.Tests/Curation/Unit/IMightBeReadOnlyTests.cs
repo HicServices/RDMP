@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Unit;
 
-class IMightBeReadOnlyTests : UnitTests
+internal class IMightBeReadOnlyTests : UnitTests
 {
     [Test]
     public void IsReadonly_AggregateFilterContainer()

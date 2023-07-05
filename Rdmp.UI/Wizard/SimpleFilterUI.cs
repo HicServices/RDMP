@@ -34,7 +34,7 @@ public partial class SimpleFilterUI : UserControl
         
     public event Action RequestDeletion;
 
-    int rowHeight = 30;
+    private int rowHeight = 30;
 
     public IFilter Filter => _filter;
 
@@ -60,7 +60,7 @@ public partial class SimpleFilterUI : UserControl
         }
     }
 
-    List<SimpleParameterUI>  parameterUis = new List<SimpleParameterUI>();
+    private List<SimpleParameterUI>  parameterUis = new List<SimpleParameterUI>();
     private bool _mandatory;
 
     public SimpleFilterUI(IActivateItems activator,ExtractionFilter filter)

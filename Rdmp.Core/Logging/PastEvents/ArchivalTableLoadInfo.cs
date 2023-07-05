@@ -33,7 +33,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
 
     public List<ArchivalDataSource> DataSources => _knownDataSource.Value;
 
-    readonly Lazy<List<ArchivalDataSource>> _knownDataSource;
+    private readonly Lazy<List<ArchivalDataSource>> _knownDataSource;
 
     public ArchivalTableLoadInfo(ArchivalDataLoadInfo parent, DbDataReader r,DiscoveredDatabase loggingDatabase)
     {

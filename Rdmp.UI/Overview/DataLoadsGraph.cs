@@ -86,7 +86,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
         };
     }
 
-    void olvDataLoads_FormatCell(object sender, FormatCellEventArgs e)
+    private void olvDataLoads_FormatCell(object sender, FormatCellEventArgs e)
     {
         if (e.ColumnIndex == olvStatus.Index)
             e.SubItem.ForeColor = ((DataLoadsGraphResult) e.Model).Status != DataLoadsGraphResultStatus.Succeeding

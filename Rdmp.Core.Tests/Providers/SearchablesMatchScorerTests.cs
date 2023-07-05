@@ -19,7 +19,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Providers;
 
-class SearchablesMatchScorerTests : UnitTests
+internal class SearchablesMatchScorerTests : UnitTests
 {
     [Test]
     public void Find_ExactMatch_ScoresHigher()

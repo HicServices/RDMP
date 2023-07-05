@@ -26,7 +26,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         set => _arguments[TopKey] = value.ToString();
     }
 
-    Dictionary<string, string> _arguments = new Dictionary<string, string>();
+    private Dictionary<string, string> _arguments = new Dictionary<string, string>();
     private const string TopKey = "Top";
 
     private const string IncludeCohortIDKey = "IncludeCohortID";

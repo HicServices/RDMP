@@ -24,10 +24,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-class TestTemporalTables : DataLoadEngineTestsBase
+internal class TestTemporalTables : DataLoadEngineTestsBase
 {
-
-    string sql = @"CREATE TABLE dbo.Employee
+    private string sql = @"CREATE TABLE dbo.Employee
 (
   [EmployeeID] int NOT NULL PRIMARY KEY CLUSTERED
   , [Name] nvarchar(100) NOT NULL

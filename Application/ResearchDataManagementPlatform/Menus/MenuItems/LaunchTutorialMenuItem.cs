@@ -31,7 +31,7 @@ public class LaunchTutorialMenuItem : ToolStripMenuItem
         UpdateText();
     }
 
-    void parent_DropDownOpening(object sender, EventArgs e)
+    private void parent_DropDownOpening(object sender, EventArgs e)
     {
         UpdateText();
     }

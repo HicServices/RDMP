@@ -21,12 +21,11 @@ namespace Rdmp.Core.Reports;
 /// <para>Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding paragraphs/pictures/tables.</para>
 /// </summary>
 public class DocXHelper
-{        
-        
-    const int H1Size = 16;
-    const int H2Size = 13;
-    const int H3Size = 12;  
-    const int H4Size = 11;
+{
+    private const int H1Size = 16;
+    private const int H2Size = 13;
+    private const int H3Size = 12;
+    private const int H4Size = 11;
 
     /// <summary>
     /// <see cref="Units.ToEMU(double)"/> seems to result in word showing images at 133% size.  This constant fixes that
