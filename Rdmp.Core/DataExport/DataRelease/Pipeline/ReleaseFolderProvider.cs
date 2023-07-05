@@ -26,7 +26,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
     private ReleaseData _releaseData;
     private DirectoryInfo _releaseFolder;
 
-    [DemandsNestedInitialization()]
+    [DemandsNestedInitialization]
     public ReleaseFolderSettings FolderSettings { get; set; }
 
     public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
