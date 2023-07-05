@@ -333,7 +333,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         {
             {"projectNumber",newCohortDefinition.ProjectNumber},
             {"version",newCohortDefinition.Version},
-            {"description",newCohortDefinition.Description},
+            {"description",newCohortDefinition.Description}
         },connection.ManagedTransaction);
     }
     #endregion

@@ -17,7 +17,7 @@ public enum PluginFolders
 {
     None = 0,
     Main = 1,
-    Windows = 4,
+    Windows = 4
 }
 
 /// <summary>

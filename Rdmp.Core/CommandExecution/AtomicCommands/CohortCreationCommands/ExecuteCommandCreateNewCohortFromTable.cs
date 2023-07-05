@@ -55,7 +55,7 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
             {
                 EntryLabel = "Patient Identifier Column",
                 TaskDescription = $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
-                AllowAutoSelect = true,
+                AllowAutoSelect = true
             }, tbl.DiscoverColumns(), out var col))
         {
             // user cancelled selecting a column
@@ -78,7 +78,7 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         {
             DatabaseType = tbl.Database.Server.DatabaseType,
             Database = tbl.Database.GetRuntimeName(),
-            Server = tbl.Database.Server.Name,
+            Server = tbl.Database.Server.Name
         };
         var fakeColumnInfo = new ColumnInfo(m, col.GetFullyQualifiedName(), col.DataType.ToString(), fakeTableInfo);
         var fakeExtractionInformation = new ExtractionInformation(m, fakeCatalogueItem, fakeColumnInfo,

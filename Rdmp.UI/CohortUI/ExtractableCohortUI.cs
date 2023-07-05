@@ -190,7 +190,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(activator, null)
         {
             CohortIfAny = databaseObject,
-            OverrideCommandName = "New Extraction Configuration using Cohort",
+            OverrideCommandName = "New Extraction Configuration using Cohort"
         });
 
         AssociatedCollection = RDMPCollection.SavedCohorts;

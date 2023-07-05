@@ -234,7 +234,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     private void btnAddCatalogue_Click(object sender, EventArgs e)
     {
         if(_activator.SelectObjects(new DialogArgs { 
-                   TaskDescription = "Choose which new Catalogues should be represented in the diagram.",
+                   TaskDescription = "Choose which new Catalogues should be represented in the diagram."
                },
                _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
                    .Except(_collection.GetCatalogues())
@@ -271,7 +271,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
         if(Activator.SelectObject(new DialogArgs
            {
-               TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram.",
+               TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
 
            }, dataExportChildProvider.AllPackages,out var packageToAdd))
         {

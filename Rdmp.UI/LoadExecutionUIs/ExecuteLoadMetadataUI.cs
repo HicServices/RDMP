@@ -134,7 +134,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
             DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
             DoNotArchiveData = debugOpts != DebugOptions.RunNormally,
             StopAfterRAW = debugOpts == DebugOptions.StopAfterRAW,
-            StopAfterSTAGING = debugOpts == DebugOptions.StopAfterRAW || debugOpts == DebugOptions.StopAfterSTAGING,
+            StopAfterSTAGING = debugOpts == DebugOptions.StopAfterRAW || debugOpts == DebugOptions.StopAfterSTAGING
         };
 
         if (lp != null)

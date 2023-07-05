@@ -63,7 +63,7 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
             if (clipboard == null)
                 if (!BasicActivator.TypeText(new DialogArgs
                     {
-                        WindowTitle = "Paste Columns",
+                        WindowTitle = "Paste Columns"
 
                     }, int.MaxValue, null, out clipboard, false))
                 {

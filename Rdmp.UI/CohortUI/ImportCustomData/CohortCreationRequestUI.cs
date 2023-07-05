@@ -61,7 +61,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         pbCohortSource.Image = CatalogueIcons.ExternalCohortTable.ImageToBitmap();
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
-            TaskDescription = "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in.",
+            TaskDescription = "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in."
         });
     }
 

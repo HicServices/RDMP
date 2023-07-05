@@ -206,7 +206,7 @@ public partial class WideMessageBox : Form
             WideMessageBoxTheme.Exception => (Image)Images.ErrorIcon.ImageToBitmap(),
             WideMessageBoxTheme.Warning => (Image)Images.WarningIcon.ImageToBitmap(),
             WideMessageBoxTheme.Help => (Image)Images.InformationIcon.ImageToBitmap(),
-            _ => throw new ArgumentOutOfRangeException(nameof(theme)),
+            _ => throw new ArgumentOutOfRangeException(nameof(theme))
         };
 
         Icon = IconFactory.Instance.GetIcon(pbIcon.Image.LegacyToImage());

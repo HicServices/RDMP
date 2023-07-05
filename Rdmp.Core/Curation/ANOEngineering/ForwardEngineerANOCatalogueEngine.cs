@@ -297,7 +297,7 @@ public class ForwardEngineerANOCatalogueEngine
                         new[]
                         {
                             new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} >= @startDate","After batch start date","",null),
-                            new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} <= @endDate","Before batch end date","",null),
+                            new SpontaneouslyInventedFilter(memoryRepo,null, $"{_planManager.DateColumn} <= @endDate","Before batch end date","",null)
                         }
                         ,FilterContainerOperation.AND);
                 }

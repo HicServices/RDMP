@@ -108,7 +108,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             {ParameterLevel.Global.ToString(),0},
             {ParameterLevel.CompositeQueryLevel.ToString(),1},
             {ParameterLevel.QueryLevel.ToString(),2},
-            {ParameterLevel.TableInfo.ToString(),3},
+            {ParameterLevel.TableInfo.ToString(),3}
         };
 
         foreach (var g in e.Groups)

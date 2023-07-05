@@ -56,7 +56,7 @@ public class ColorSettings
         Normal = new Attribute(RedForegroundNormal, RedBackgroundNormal),
         Focus = new Attribute(RedForegroundFocus, RedBackgroundFocus),
         Disabled = new Attribute(RedForegroundDisabled, RedBackgroundDisabled),
-        HotFocus = new Attribute(RedForegroundHotFocus, RedBackgroundHotFocus),
+        HotFocus = new Attribute(RedForegroundHotFocus, RedBackgroundHotFocus)
     };     
     public Color RedForegroundNormal { get; set; }
     public Color RedBackgroundNormal { get; set; }
@@ -74,7 +74,7 @@ public class ColorSettings
         Normal = new Attribute(YellowForegroundNormal, YellowBackgroundNormal),
         Focus = new Attribute(YellowForegroundFocus, YellowBackgroundFocus),
         Disabled = new Attribute(YellowForegroundDisabled, YellowBackgroundDisabled),
-        HotFocus = new Attribute(YellowForegroundHotFocus, YellowBackgroundHotFocus),
+        HotFocus = new Attribute(YellowForegroundHotFocus, YellowBackgroundHotFocus)
     };
     public Color YellowForegroundNormal { get; set; }
     public Color YellowBackgroundNormal { get; set; }
@@ -92,7 +92,7 @@ public class ColorSettings
         Normal = new Attribute(WhiteForegroundNormal, WhiteBackgroundNormal),
         Focus = new Attribute(WhiteForegroundFocus, WhiteBackgroundFocus),
         Disabled = new Attribute(WhiteForegroundDisabled, WhiteBackgroundDisabled),
-        HotFocus = new Attribute(WhiteForegroundHotFocus, WhiteBackgroundHotFocus),
+        HotFocus = new Attribute(WhiteForegroundHotFocus, WhiteBackgroundHotFocus)
     };
     public Color WhiteForegroundNormal { get; set; }
     public Color WhiteBackgroundNormal { get; set; }

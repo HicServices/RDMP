@@ -63,7 +63,7 @@ public class FlatFileColumnCollection
     {
         Start,
         AfterHeadersRead,
-        AfterTableGenerated,
+        AfterTableGenerated
     }
 
     private State _state = State.Start;

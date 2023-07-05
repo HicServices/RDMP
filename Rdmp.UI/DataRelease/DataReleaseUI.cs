@@ -158,7 +158,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
                 _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? Array.Empty<int>() : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
             ),
             Command = activityRequested,
-            ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
+            ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode)
         };
     }
 

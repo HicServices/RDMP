@@ -176,7 +176,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
                 SuppressActivate = true,
                 AddFavouriteColumn = false,
                 AddCheckColumn = false,
-                AllowSorting =  true, //important, we need sorting on so that we can override sort order with our OrderableComparer
+                AllowSorting =  true //important, we need sorting on so that we can override sort order with our OrderableComparer
             });
             _commonFunctionality.MenuBuilt += MenuBuilt;
             tlvCic.AddObject(databaseObject);

@@ -87,7 +87,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
             new HelpStage(btnRunChecks,
                 "Once you are happy with the selections, use this button to run the checks for the selected options."),
             new HelpStage(btnExecute, "This button will execute the required operation in the RDMP UI.\r\n" +
-                                      "Results will be shown below."),
+                                      "Results will be shown below.")
         };
             
         return stages;

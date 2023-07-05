@@ -864,7 +864,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
                 TaskDescription = "Pick which objects you want added to the session window.  You can always add more later",
                 InitialSearchText = initialSearch,
 
-                IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle),
+                IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle)
             },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
 
             if(initialObjects == null || initialObjects.Count() == 0)

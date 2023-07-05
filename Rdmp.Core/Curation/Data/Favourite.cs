@@ -68,7 +68,7 @@ public class Favourite:ReferenceOtherObjectDatabaseEntity
             {"ReferencedObjectType",objectToFavourite.GetType().Name},
             {"ReferencedObjectRepositoryType",objectToFavourite.Repository.GetType().Name},
             {"Username", Environment.UserName},
-            {"FavouritedDate", DateTime.Now},
+            {"FavouritedDate", DateTime.Now}
         });
     }
 }

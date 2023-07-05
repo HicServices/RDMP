@@ -190,7 +190,7 @@ WHERE
                 { "AggregateConfiguration_ID", configuration.ID},
                 { "SqlExecuted", arguments.SQL.Trim()},
                 { "Operation", operation.ToString()},
-                { "TableName", tbl.GetRuntimeName()},
+                { "TableName", tbl.GetRuntimeName()}
             });
 
             arguments.CommitTableDataCompleted(tbl);

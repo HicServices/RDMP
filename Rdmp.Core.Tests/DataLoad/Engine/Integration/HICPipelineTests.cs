@@ -138,7 +138,7 @@ public class HICPipelineTests : DatabaseTests
                 new Tuple<string, string, Type>("MaximumErrorsToReport", "0", typeof (int)),
                 new Tuple<string, string, Type>("IgnoreColumns", null, typeof (string)),
                 new Tuple<string, string, Type>("IgnoreBadReads", "false", typeof (bool)),
-                new Tuple<string, string, Type>("AddFilenameColumnNamed", null, typeof (string)),
+                new Tuple<string, string, Type>("AddFilenameColumnNamed", null, typeof (string))
 
             };
                 

@@ -95,7 +95,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         {RDMPCollection.SavedCohorts,new Guid("6d0e4560-9357-4ee1-91b6-a182a57f7a6f")},
         {RDMPCollection.Cohort,new Guid("5c7cceb3-4202-47b1-b271-e2eed869d9ef")},
         {RDMPCollection.Favourites,new Guid("39d37439-ac7a-4346-8c79-9867384db92e")},
-        {RDMPCollection.DataLoad,new Guid("600aad33-df6c-4013-ad92-65de19d494cf")},
+        {RDMPCollection.DataLoad,new Guid("600aad33-df6c-4013-ad92-65de19d494cf")}
     };
 
     /// <summary>

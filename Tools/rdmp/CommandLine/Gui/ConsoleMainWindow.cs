@@ -87,16 +87,16 @@ internal class ConsoleMainWindow
                 new MenuItem ("_User Settings...", "", () => ShowUserSettings()),
                 new MenuItem ("_Run...", "", () => Run()),
                 new MenuItem ("_Refresh...", "", () => Publish()),
-                new MenuItem ("_Quit", "", () => Quit()),
+                new MenuItem ("_Quit", "", () => Quit())
             }),
             new MenuBarItem ("_Diagnostics", new MenuItem [] {
                 mi_default = new MenuItem (){Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
-                mi_default = new MenuItem (){Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))},
+                mi_default = new MenuItem (){Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))}
             }),
             new MenuBarItem ("_Color Scheme", new MenuItem [] {
                 mi_default = new MenuItem (){Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
-                mi_green = new MenuItem (){Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
-            }),
+                mi_green = new MenuItem (){Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)}
+            })
         });
         top.Add (menu);
                 
@@ -114,7 +114,7 @@ internal class ConsoleMainWindow
             Focus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
             HotFocus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
             HotNormal = Application.Driver.MakeAttribute(Color.BrightYellow, Color.Black),
-            Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+            Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black)
         };
 
 
@@ -153,7 +153,7 @@ internal class ConsoleMainWindow
             new StatusItem(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
             new StatusItem(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
             new StatusItem(Key.N | Key.CtrlMask, "~^N~ New", () => New()),
-            new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
+            new StatusItem(Key.F5, "~F5~ Refresh", () => Publish())
         });
 
         top.Add (statusBar);

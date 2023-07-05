@@ -173,7 +173,7 @@ internal class ConsoleGuiBigListBox<T>
             var searchLabel = new Label("Search:")
             {
                 X = 0,
-                Y = Pos.Bottom(_listView),
+                Y = Pos.Bottom(_listView)
             };
 
             win.Add(searchLabel);
@@ -181,7 +181,7 @@ internal class ConsoleGuiBigListBox<T>
             _mainInput = new TextField ("") {
                 X = Pos.Right(searchLabel),
                 Y = Pos.Bottom(_listView),
-                Width = 30,
+                Width = 30
             };
 
             btnOk.X = 38;

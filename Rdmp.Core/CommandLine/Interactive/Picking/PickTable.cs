@@ -34,8 +34,8 @@ ConnectionString (Required)";
     public override IEnumerable<string> Examples => new[]
     {
         "Table:MyTable:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;",
-        "Table:MyTable2:Schema:dbo:IsView:True:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;",
-            
+        "Table:MyTable2:Schema:dbo:IsView:True:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;"
+
     };
 
 

@@ -60,7 +60,7 @@ public class UnitTests
         "ExtractableCohort",
         "DQEGraphAnnotation",
         "Evaluation",
-        "WindowLayout",
+        "WindowLayout"
     });
         
         

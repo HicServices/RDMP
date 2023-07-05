@@ -27,7 +27,7 @@ internal class RunDleWindow : RunEngineWindow<DleOptions>
         return new DleOptions()
         {
             LoadMetadata = lmd.ID.ToString(),
-            Iterative = false,
+            Iterative = false
         };
     }
 

@@ -31,5 +31,5 @@ public enum ParameterLevel
     /// <summary>
     /// highest, these are added to the QueryBuilder by the code and should always be preserved, e.g. CohortID is explicitly added by the data export manager.
     /// </summary>
-    Global,
+    Global
 }

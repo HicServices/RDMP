@@ -128,7 +128,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         {typeof (CohortIdentificationConfiguration),RDMPCollection.Cohort},
         {typeof (TableInfo),RDMPCollection.Tables},
         {typeof (ColumnInfo),RDMPCollection.Tables},
-        {typeof (LoadMetadata),RDMPCollection.DataLoad},
+        {typeof (LoadMetadata),RDMPCollection.DataLoad}
     };
 
 

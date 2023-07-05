@@ -332,7 +332,7 @@ public enum ImplicitUseKindFlags
     /// </summary>
     InstantiatedWithFixedConstructorSignature = 4,
     /// <summary>Indicates implicit instantiation of a type</summary>
-    InstantiatedNoFixedConstructorSignature = 8,
+    InstantiatedNoFixedConstructorSignature = 8
 }
 
 /// <summary>

@@ -47,7 +47,7 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
         {
             // suppress publishing so we don't just go back into a refresh
             // and find it missing again
-            NoPublish = true,
+            NoPublish = true
         };
             
         Assert.IsFalse(cmd.IsImpossible);

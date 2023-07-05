@@ -34,7 +34,7 @@ public class EndToEndDLETest : TestsRequiringADle
         var tbl = db.CreateTable("Troll Select * Loll",new DatabaseColumnRequest[]
         {
             new DatabaseColumnRequest("group by",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey = true}, 
-            new DatabaseColumnRequest(",,,,",new DatabaseTypeRequest(typeof(string))), 
+            new DatabaseColumnRequest(",,,,",new DatabaseTypeRequest(typeof(string)))
         });
 
         CreateFileInForLoading("Troll.csv", new string[]

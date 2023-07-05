@@ -38,7 +38,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
         var lblToFetch = new Label("Max:")
         {
-            X = Pos.Right(lbl) + 1,
+            X = Pos.Right(lbl) + 1
         };
 
         Add(lblToFetch);
@@ -116,7 +116,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
             X = 0,
             Y = Pos.Bottom(lblFilter),
             Width = Dim.Fill(),
-            Height = Dim.Fill(1),
+            Height = Dim.Fill(1)
         };
         _treeView.TreeBuilder = this;
         _treeView.ObjectActivated += _treeView_ObjectActivated; ;

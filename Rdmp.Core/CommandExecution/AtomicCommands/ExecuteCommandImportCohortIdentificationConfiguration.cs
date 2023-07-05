@@ -58,7 +58,7 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
             if(!BasicActivator.SelectObjects(new DialogArgs
                {
                    WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
-                   TaskDescription = $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported.",
+                   TaskDescription = $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported."
 
                },BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>(),out import))
                 return;

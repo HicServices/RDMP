@@ -35,7 +35,7 @@ public class DatabaseCommandHelper
         {DatabaseType.MySql,new MySqlImplementation()},
         {DatabaseType.Oracle,new OracleImplementation()},
         {DatabaseType.MicrosoftSQLServer,new MicrosoftSQLImplementation()},
-        {DatabaseType.PostgreSql,new PostgreSqlImplementation()},
+        {DatabaseType.PostgreSql,new PostgreSqlImplementation()}
     };
 
     public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;

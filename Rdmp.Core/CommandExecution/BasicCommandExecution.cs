@@ -295,7 +295,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     {
         return SelectOne(new DialogArgs { 
             InitialSearchText = initialSearchText,
-            AllowAutoSelect = allowAutoSelect,
+            AllowAutoSelect = allowAutoSelect
         },availableObjects, out var selected) ? selected : null;
 
     }
@@ -324,7 +324,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     {
         return SelectOne(new DialogArgs { 
             InitialSearchText = initialSearchText,
-            AllowAutoSelect = allowAutoSelect,
+            AllowAutoSelect = allowAutoSelect
         },repository.GetAllObjects<T>().ToList(),out var answer) ? answer: null;
     }
 
@@ -360,7 +360,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
         return SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
-            AllowAutoSelect = allowAutoSelect,
+            AllowAutoSelect = allowAutoSelect
         },availableObjects,out selected);
     }
 

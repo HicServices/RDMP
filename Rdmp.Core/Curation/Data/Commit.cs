@@ -74,7 +74,7 @@ public class Commit : DatabaseEntity
             {"Transaction",transaction.ToString("N")},
             {"Username", Environment.UserName},
             {"Date", DateTime.Now},
-            {"Description",description},
+            {"Description",description}
         });
     }
 

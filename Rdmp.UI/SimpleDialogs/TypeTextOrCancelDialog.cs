@@ -37,7 +37,7 @@ public partial class TypeTextOrCancelDialog : Form
         : this(new DialogArgs
         {
             WindowTitle = title,
-            EntryLabel = prompt,
+            EntryLabel = prompt
         },maxCharacters,startingTextForInputBox,allowBlankText,multiLine)
     {
             

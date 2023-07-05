@@ -241,7 +241,7 @@ public class CatalogueIconProvider : ICoreIconProvider
             RDMPCollection.Favourites => RDMPConcept.Favourite,
             RDMPCollection.Cohort => RDMPConcept.CohortIdentificationConfiguration,
             RDMPCollection.DataLoad => RDMPConcept.LoadMetadata,
-            _ => throw new ArgumentOutOfRangeException(nameof(rdmpCollection)),
+            _ => throw new ArgumentOutOfRangeException(nameof(rdmpCollection))
         };
     }
 

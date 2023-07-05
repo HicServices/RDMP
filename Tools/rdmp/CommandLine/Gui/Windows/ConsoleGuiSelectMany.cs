@@ -58,7 +58,7 @@ public class ConsoleGuiSelectMany : Window
         var lblSearch = new Label
         {
             Text = "Search:",
-            Y = Pos.Bottom(lv),
+            Y = Pos.Bottom(lv)
         };
         Add(lblSearch);
 

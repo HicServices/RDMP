@@ -540,7 +540,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             new DialogArgs
             {
                 WindowTitle = $"Enter value for {prompt}",
-                EntryLabel = prompt,
+                EntryLabel = prompt
             },paramType,initialValue,out chosen);
     }
 
@@ -623,7 +623,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return SelectMany(new DialogArgs()
         {
             WindowTitle = prompt,
-            InitialSearchText = initialSearchText,
+            InitialSearchText = initialSearchText
         },arrayElementType,availableObjects);
     }
 
@@ -665,7 +665,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return SelectObjects<T>(new DialogArgs
         {
             WindowTitle = prompt,
-            InitialSearchText = initialSearchText,
+            InitialSearchText = initialSearchText
         }, available, out selected);
     }
     public abstract bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected) where T : class;

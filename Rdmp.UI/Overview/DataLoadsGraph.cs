@@ -145,7 +145,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                         var loadSummary = new DataLoadsGraphResult
                         {
                             ID = metadata.ID,
-                            Name = metadata.Name,
+                            Name = metadata.Name
                         };
 
                         if (archivalDataLoadInfo == null)

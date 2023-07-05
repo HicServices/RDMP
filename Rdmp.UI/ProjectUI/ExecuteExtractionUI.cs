@@ -96,7 +96,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             new IAtomicCommand[]
             {
                 new ExecuteCommandAddDatasetsToConfiguration(Activator,_extractionConfiguration),
-                new ExecuteCommandAddPackageToConfiguration(Activator,_extractionConfiguration),
+                new ExecuteCommandAddPackageToConfiguration(Activator,_extractionConfiguration)
             };
             
         RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvName, new Guid("57c60bc1-9935-49b2-bb32-58e4c20ad666"));

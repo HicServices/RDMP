@@ -268,7 +268,7 @@ internal class DocumentationCrossExaminationTest
         "MakeAnonymous",
         "ReleaseIdentifierAllocation",
         "SocialSecurityNumber",
-        "BuildInParallel",
+        "BuildInParallel"
     };
     #endregion
     public DocumentationCrossExaminationTest(DirectoryInfo slndir)

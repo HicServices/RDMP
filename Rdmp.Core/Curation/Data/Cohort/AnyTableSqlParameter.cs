@@ -112,7 +112,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
             {"ReferencedObjectID",parent.ID},
             {"ReferencedObjectType",parent.GetType().Name},
             {"ReferencedObjectRepositoryType",parent.Repository.GetType().Name},
-            {"ParameterSQL", parameterSQL},
+            {"ParameterSQL", parameterSQL}
         });
     }
 
