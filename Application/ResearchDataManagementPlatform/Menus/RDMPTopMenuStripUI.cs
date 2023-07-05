@@ -422,7 +422,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         Activator.SelectAnythingThen(new DialogArgs
         {
             WindowTitle = "Open"
-        }, (o) => Activator.WindowArranger.SetupEditAnything(this, o));
+        }, o => Activator.WindowArranger.SetupEditAnything(this, o));
     }
 
     private void findToolStripMenuItem_Click(object sender, EventArgs e)
@@ -434,7 +434,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             IsFind = true,
             TaskDescription = "Enter the name of an object or part of the name or the dataset/project it is in."
 
-        }, (o) => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
+        }, o => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
     }
 
     private void closeToolStripMenuItem_Click(object sender, EventArgs e)

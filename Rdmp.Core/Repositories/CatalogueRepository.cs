@@ -190,7 +190,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new ConcurrentDictionary<Type, IRowVerCache>();
     public override T[] GetAllObjects<T>()
     {
-        return _caches.GetOrAdd(typeof(T),(t)=> new RowVerCache<T>(this))
+        return _caches.GetOrAdd(typeof(T),t=> new RowVerCache<T>(this))
             .GetAllObjects<T>();
     }
 

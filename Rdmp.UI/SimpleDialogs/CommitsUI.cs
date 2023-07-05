@@ -33,8 +33,8 @@ public partial class CommitsUI : CommitsUI_Design
 
         treeListView1.FullRowSelect = true;
         treeListView1.ItemActivate += TreeListView1_ItemActivate;
-        treeListView1.CanExpandGetter = (m) => m is Commit;
-        treeListView1.ChildrenGetter = (m) => m is Commit c ? c.Mementos : null;
+        treeListView1.CanExpandGetter = m => m is Commit;
+        treeListView1.ChildrenGetter = m => m is Commit c ? c.Mementos : null;
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public partial class CommitsUI : CommitsUI_Design
         // TODO: move this to a helper class
         var commitsInvolvingObject = activator.RepositoryLocator.CatalogueRepository
             .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
-            .Where((m) => m.IsReferenceTo(o))
+            .Where(m => m.IsReferenceTo(o))
             .Select(m=>m.Commit_ID)
             .Distinct()
             .ToList();

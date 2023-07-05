@@ -188,7 +188,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
         _runningTask
             //then on the main UI thread (after load completes with success/error
-            .ContinueWith((t) =>
+            .ContinueWith(t =>
                 {
                     //reset the system state because the execution has completed
                     ChecksPassed = false;

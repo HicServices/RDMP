@@ -48,7 +48,7 @@ public class FavouriteColumnProvider
         // setup value of column as 1 (favourite) or 0 (not favourite)
         _olvFavourite.AspectGetter = FavouriteAspectGetter;
         // but don't actually write that value when rendering (just use for sort etc)
-        _olvFavourite.AspectToStringConverter = (st) => "";
+        _olvFavourite.AspectToStringConverter = st => "";
 
         _tlv.CellClick += OnCellClick;
             

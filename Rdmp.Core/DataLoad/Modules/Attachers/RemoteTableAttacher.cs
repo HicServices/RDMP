@@ -366,7 +366,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
         //For Oracle / Postgres we have to add the parameters to the DbCommand directly
         if (_minDateParam.HasValue && _maxDateParam.HasValue && !syntax.SupportsEmbeddedParameters())
         {
-            source.CommandAdjuster = (cmd) =>
+            source.CommandAdjuster = cmd =>
             {
                 var pmin = cmd.CreateParameter();
                 pmin.Value = _minDateParam.Value;

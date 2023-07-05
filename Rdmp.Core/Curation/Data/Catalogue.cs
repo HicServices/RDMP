@@ -988,13 +988,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
     {
-        GetAllTableInfos((t) => t.IsLookupTable(), out normalTables, out lookupTables);
+        GetAllTableInfos(t => t.IsLookupTable(), out normalTables, out lookupTables);
     }
 
     /// <inheritdoc/>
     public void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
     {
-        GetAllTableInfos((t) => t.IsLookupTable(provider), out normalTables, out lookupTables);
+        GetAllTableInfos(t => t.IsLookupTable(provider), out normalTables, out lookupTables);
     }
 
     private void GetAllTableInfos(Func<ITableInfo, bool> isLookupTableDelegate, out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)

@@ -96,13 +96,13 @@ public class CustomMetadataReport
 
         //add basic properties
         foreach (var prop in typeof(Catalogue).GetProperties())
-            Replacements.Add($"${prop.Name}", (c) => prop.GetValue(c));
+            Replacements.Add($"${prop.Name}", c => prop.GetValue(c));
 
         //add basic properties TableInfo
         foreach (var prop in typeof(TableInfo).GetProperties())
         {
             // if it's not already a property of Catalogue
-            Replacements.TryAdd($"${prop.Name}", (c) => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
+            Replacements.TryAdd($"${prop.Name}", c => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
         }
 
         AddDQEReplacements();
@@ -111,13 +111,13 @@ public class CustomMetadataReport
 
         //add basic properties CatalogueItem
         foreach (var prop in typeof(CatalogueItem).GetProperties())
-            ReplacementsCatalogueItem.Add($"${prop.Name}", (s) => prop.GetValue(s));
+            ReplacementsCatalogueItem.Add($"${prop.Name}", s => prop.GetValue(s));
 
         //add basic properties ColumnInfo
         foreach (var prop in typeof(ColumnInfo).GetProperties())
         {
             // if it's not already a property of CatalogueItem
-            ReplacementsCatalogueItem.TryAdd($"${prop.Name}", (s) => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
+            ReplacementsCatalogueItem.TryAdd($"${prop.Name}", s => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
         }
 
         try
@@ -141,47 +141,47 @@ public class CustomMetadataReport
     {
         // Catalogue level shortcuts
         Replacements.Add("$DQE_StartDate",
-            (c) => GetStartDate(c)?.ToString());
+            c => GetStartDate(c)?.ToString());
         Replacements.Add("$DQE_EndDate",
-            (c) => GetEndDate(c)?.ToString());
+            c => GetEndDate(c)?.ToString());
         Replacements.Add("$DQE_DateRange",
-            (c) => TimespanCalculator?.GetHumanReadableTimespanIfKnownOf(c, true, out _));
+            c => TimespanCalculator?.GetHumanReadableTimespanIfKnownOf(c, true, out _));
 
         Replacements.Add("$DQE_StartYear",
-            (c) => GetStartDate(c)?.ToString("yyyy"));
+            c => GetStartDate(c)?.ToString("yyyy"));
         Replacements.Add("$DQE_StartMonth",
-            (c) => GetStartDate(c)?.ToString("MM"));
+            c => GetStartDate(c)?.ToString("MM"));
         Replacements.Add("$DQE_StartDay",
-            (c) => GetStartDate(c)?.ToString("dd"));
+            c => GetStartDate(c)?.ToString("dd"));
 
         Replacements.Add("$DQE_EndYear",
-            (c) => GetEndDate(c)?.ToString("yyyy"));
+            c => GetEndDate(c)?.ToString("yyyy"));
         Replacements.Add("$DQE_EndMonth",
-            (c) => GetEndDate(c)?.ToString("MM"));
+            c => GetEndDate(c)?.ToString("MM"));
         Replacements.Add("$DQE_EndDay",
-            (c) => GetEndDate(c)?.ToString("dd"));
+            c => GetEndDate(c)?.ToString("dd"));
 
         Replacements.Add("$DQE_DateOfEvaluation",
-            (c) => GetFromEvaluation(c, (e) => e.DateOfEvaluation));
+            c => GetFromEvaluation(c, e => e.DateOfEvaluation));
         Replacements.Add("$DQE_CountTotal",
-            (c) => GetFromEvaluation(c, (e) => e.GetRecordCount()));
+            c => GetFromEvaluation(c, e => e.GetRecordCount()));
 
         ReplacementsCatalogueItem.Add("$DQE_PercentNull",
-            (ci) => GetPercentNull(ci));
+            ci => GetPercentNull(ci));
 
         ReplacementsCatalogueItem.Add("$DQE_CountCorrect",
-            (ci) => GetFromColumnState(ci, (s) => s.CountCorrect));
+            ci => GetFromColumnState(ci, s => s.CountCorrect));
         ReplacementsCatalogueItem.Add("$DQE_CountInvalidatesRow",
-            (ci) => GetFromColumnState(ci, (s) => s.CountInvalidatesRow));
+            ci => GetFromColumnState(ci, s => s.CountInvalidatesRow));
         ReplacementsCatalogueItem.Add("$DQE_CountMissing",
-            (ci) => GetFromColumnState(ci, (s) => s.CountMissing));
+            ci => GetFromColumnState(ci, s => s.CountMissing));
         ReplacementsCatalogueItem.Add("$DQE_CountWrong",
-            (ci) => GetFromColumnState(ci, (s) => s.CountWrong));
+            ci => GetFromColumnState(ci, s => s.CountWrong));
         ReplacementsCatalogueItem.Add("$DQE_CountTotal",
-            (ci) => GetFromColumnState(ci, (s) => s.CountCorrect + s.CountMissing + s.CountWrong + s.CountInvalidatesRow));
+            ci => GetFromColumnState(ci, s => s.CountCorrect + s.CountMissing + s.CountWrong + s.CountInvalidatesRow));
 
         ReplacementsCatalogueItem.Add("$DQE_CountDBNull",
-            (ci) => GetFromColumnState(ci, (s) => s.CountDBNull));
+            ci => GetFromColumnState(ci, s => s.CountDBNull));
     }
 
     private object GetFromEvaluation(Catalogue c, Func<Evaluation, object> func)

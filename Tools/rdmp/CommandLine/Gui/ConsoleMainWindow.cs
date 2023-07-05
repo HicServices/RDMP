@@ -530,7 +530,7 @@ internal class ConsoleMainWindow
             
         var commands = commandInvoker.GetSupportedCommands();
 
-        var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),(t)=>BasicCommandExecution.GetCommandName(t.Name),false);
+        var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),t=>BasicCommandExecution.GetCommandName(t.Name),false);
         if (dlg.ShowDialog())
             try
             {

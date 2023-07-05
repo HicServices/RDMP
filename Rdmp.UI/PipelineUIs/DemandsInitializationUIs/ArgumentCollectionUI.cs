@@ -179,7 +179,7 @@ public partial class ArgumentCollectionUI : UserControl
             
         args.Required = required;
         args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
-        args.Setter = (v) =>
+        args.Setter = v =>
         {
             ragSmiley.Reset();
                 

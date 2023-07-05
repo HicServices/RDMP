@@ -1093,7 +1093,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
         dest.Adjuster = typeof(AdjustColumnDelegater);
 
-        AdjustColumnDelegater.AdjusterDelegate = (s) =>
+        AdjustColumnDelegater.AdjusterDelegate = s =>
         {
             var col = s.Single(c => c.ColumnName.Equals("hb_extract"));
 

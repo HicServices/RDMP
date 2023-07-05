@@ -47,7 +47,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
 
     private void SetAspectGet(ICoreChildProvider childProvider)
     {
-        AspectGetter = (o) =>
+        AspectGetter = o =>
         {
             if (o == null)
                 return "Null";

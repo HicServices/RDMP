@@ -73,7 +73,7 @@ public class CheckColumnProvider
         EnsureChecksColumnVisible();
         checkingTask.ContinueWith(
             //now load images to UI
-            (t) => _tree.RebuildColumns(), TaskScheduler.FromCurrentSynchronizationContext());
+            t => _tree.RebuildColumns(), TaskScheduler.FromCurrentSynchronizationContext());
 
         checkingTask.Start();
     }

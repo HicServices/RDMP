@@ -84,7 +84,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         tlvCic.RowHeight = 19;
         olvExecute.AspectGetter += Common.ExecuteAspectGetter;
         tlvCic.ButtonClick += tlvCic_ButtonClick;
-        olvOrder.AspectGetter += (o)=> o is JoinableCollectionNode ? null : o is ISqlParameter ? null : (o as IOrderable)?.Order;
+        olvOrder.AspectGetter += o=> o is JoinableCollectionNode ? null : o is ISqlParameter ? null : (o as IOrderable)?.Order;
         olvOrder.IsEditable = false;
         tlvCic.ItemActivate += TlvCic_ItemActivate;
         AssociatedCollection = RDMPCollection.Cohort;

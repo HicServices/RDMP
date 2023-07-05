@@ -20,7 +20,7 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
     [Test]
     public void ExtractNormally()
     {
-        AdjustPipelineComponentDelegate = (p) =>
+        AdjustPipelineComponentDelegate = p =>
         {
             if (p.Class.Contains("ExecuteDatasetExtractionSource"))
             {

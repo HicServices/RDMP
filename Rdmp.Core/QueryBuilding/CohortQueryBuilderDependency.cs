@@ -240,7 +240,7 @@ public class CohortQueryBuilderDependency
         IHasFullyQualifiedNameToo existingTable;
 
         // since we might make a plugin API run call we had better lock this to
-        var oLock = AggregateLocks.GetOrAdd(aggregate.ID, (i) => new object());
+        var oLock = AggregateLocks.GetOrAdd(aggregate.ID, i => new object());
         lock (oLock)
         {
             // unless it is a plugin driven aggregate we need to assemble the SQL to check if the cache is stale

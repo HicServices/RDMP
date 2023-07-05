@@ -45,7 +45,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
 
         tlvTableInfos.ItemActivate += tlvTableInfos_ItemActivate;
         olvDataType.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
-        olvValue.AspectGetter = (s)=> (s as IArgument)?.Value;
+        olvValue.AspectGetter = s=> (s as IArgument)?.Value;
 
     }
 
@@ -112,7 +112,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         }
             
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=> new IAtomicCommand[]
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=> new IAtomicCommand[]
         {
             new ExecuteCommandImportTableInfo(a,null,false),
             new ExecuteCommandBulkImportTableInfos(a)

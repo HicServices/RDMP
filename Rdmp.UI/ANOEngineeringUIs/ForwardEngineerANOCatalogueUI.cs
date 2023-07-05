@@ -50,9 +50,9 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         serverDatabaseTableSelector1.HideTableComponents();
 
 
-        olvSuffix.AspectGetter = (o) => o is ANOTable ? ((ANOTable) o).Suffix : null;
-        olvNumberOfCharacters.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfCharactersToUseInAnonymousRepresentation: null;
-        olvNumberOfDigits.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfIntegersToUseInAnonymousRepresentation : null;
+        olvSuffix.AspectGetter = o => o is ANOTable ? ((ANOTable) o).Suffix : null;
+        olvNumberOfCharacters.AspectGetter = o => o is ANOTable ? (object) ((ANOTable)o).NumberOfCharactersToUseInAnonymousRepresentation: null;
+        olvNumberOfDigits.AspectGetter = o => o is ANOTable ? (object) ((ANOTable)o).NumberOfIntegersToUseInAnonymousRepresentation : null;
 
         olvMigrationPlan.AspectGetter += MigrationPlanAspectGetter;
             

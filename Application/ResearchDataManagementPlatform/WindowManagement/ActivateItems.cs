@@ -850,7 +850,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         return new List<CommandInvokerDelegate>
         {
-            new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
+            new CommandInvokerDelegate(typeof(IActivateItems),true,p=>this)
         };
     }
     public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects, string initialSearch)

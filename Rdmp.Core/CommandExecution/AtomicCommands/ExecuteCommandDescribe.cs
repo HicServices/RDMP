@@ -235,10 +235,10 @@ public class ExecuteCommandDescribe:BasicCommandExecution
                 sbParameters.AppendLine(FormatParameterDescription(req, commandCtor));
             }
 
-            anySyntaxes = ShowSyntax("Pick Database",sbSyntaxes, parameters ,(p) => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase()) || anySyntaxes;
-            anySyntaxes = ShowSyntax("Pick Table",sbSyntaxes, parameters, (p) => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable()) || anySyntaxes;
+            anySyntaxes = ShowSyntax("Pick Database",sbSyntaxes, parameters ,p => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase()) || anySyntaxes;
+            anySyntaxes = ShowSyntax("Pick Table",sbSyntaxes, parameters, p => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable()) || anySyntaxes;
 
-            anySyntaxes = ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, (p) => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType) || anySyntaxes,
+            anySyntaxes = ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType) || anySyntaxes,
                 new PickObjectByID(BasicActivator),
                 new PickObjectByName(BasicActivator),
                 new PickObjectByQuery(BasicActivator)) || anySyntaxes;

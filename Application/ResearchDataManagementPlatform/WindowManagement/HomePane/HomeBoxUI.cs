@@ -79,7 +79,7 @@ public partial class HomeBoxUI : UserControl
                 btnNewDropdown.DropDownItems.AddRange(newCommands.Select(factory.CreateMenuItem).Cast<ToolStripItem>().ToArray());    
             }
 
-            olvName.AspectGetter = (o) => ((HistoryEntry)o).Object.ToString();
+            olvName.AspectGetter = o => ((HistoryEntry)o).Object.ToString();
             CommonTreeFunctionality.SetUp(RDMPCollection.None,olvRecent,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings
             {
                 SuppressChildrenAdder = true

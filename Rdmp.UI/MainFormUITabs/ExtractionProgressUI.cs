@@ -93,17 +93,17 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
     {
         if(sender == tbStartDate)
         {
-            SetDate(tbStartDate, (v) => ExtractionProgress.StartDate = v);
+            SetDate(tbStartDate, v => ExtractionProgress.StartDate = v);
         }
 
         if (sender == tbEndDate)
         {
-            SetDate(tbEndDate, (v) => ExtractionProgress.EndDate = v);
+            SetDate(tbEndDate, v => ExtractionProgress.EndDate = v);
         }
 
         if (sender == tbProgress)
         {
-            SetDate(tbProgress, (v) => ExtractionProgress.ProgressDate = v);
+            SetDate(tbProgress, v => ExtractionProgress.ProgressDate = v);
         }
 
     }

@@ -127,7 +127,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.AxisX.Increment = xIncrement * 10;
         graphView.AxisX.ShowLabelsEvery = 1;
         graphView.AxisX.Text = axis.AxisIncrement.ToString();
-        graphView.AxisX.LabelGetter = (v) =>
+        graphView.AxisX.LabelGetter = v =>
         {
             var x = (int)v.Value;
             return x < 0 || x >= dt.Rows.Count ? "" : dt.Rows[x][0].ToString();
@@ -162,7 +162,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         graphView.CellSize = new PointF(xIncrement, yIncrement);
 
-        graphView.AxisY.LabelGetter = (v) => FormatValue(v.Value,minY,maxY);
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value,minY,maxY);
         graphView.MarginLeft = (uint)Math.Max(FormatValue(maxY, minY, maxY).Length, FormatValue(minY, minY, maxY).Length) + 1;
 
         var legend = GetLegend(dt,boundsWidth,boundsHeight);
@@ -248,7 +248,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // work out how to space x axis without scrolling
         graphView.AxisX.Increment = 10 * xIncrement;
         graphView.AxisX.ShowLabelsEvery = 1;
-        graphView.AxisX.LabelGetter = (v) => FormatValue(v.Value, min, max);
+        graphView.AxisX.LabelGetter = v => FormatValue(v.Value, min, max);
         graphView.AxisX.Text = countColumnName;
 
         graphView.AxisY.Increment = 1;
@@ -344,7 +344,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // work out how to space x axis without scrolling
         graphView.AxisY.Increment = yIncrement*5;
         graphView.AxisY.ShowLabelsEvery = 1;
-        graphView.AxisY.LabelGetter = (v) => FormatValue(v.Value, min, max);
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value, min, max);
         graphView.AxisY.Text = countColumnName;
 
         graphView.AxisX.Increment = numberOfBars+1;

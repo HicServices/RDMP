@@ -72,7 +72,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
         _catalogue = databaseObject;
 
-        olvColumns.ImageGetter += (s) => activator.CoreIconProvider.GetImage(s).ImageToBitmap();
+        olvColumns.ImageGetter += s => activator.CoreIconProvider.GetImage(s).ImageToBitmap();
         olvExtractionInformations.RowHeight = 19;
         ((SimpleDropSink)olvExtractionInformations.DropSink).AcceptableLocations = DropTargetLocation.BetweenItems;
         RefreshUIFromDatabase();

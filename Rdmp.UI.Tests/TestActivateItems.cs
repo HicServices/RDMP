@@ -256,7 +256,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     {
         return new List<CommandInvokerDelegate>
         {
-            new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
+            new CommandInvokerDelegate(typeof(IActivateItems),true,p=>this)
         };
     }
 

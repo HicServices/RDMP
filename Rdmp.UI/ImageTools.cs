@@ -21,7 +21,7 @@ public static class ImageTools
 
     public static Bitmap ImageToBitmap(this Image<Rgba32> img)
     {
-        return ImageToBitmapCacheRgba32.GetOrAdd(img, (k) =>
+        return ImageToBitmapCacheRgba32.GetOrAdd(img, k =>
         {
             using var stream = new MemoryStream();
             k.SaveAsPng(stream);
@@ -35,7 +35,7 @@ public static class ImageTools
 
     public static Bitmap ImageToBitmap(this byte [] img)
     {
-        return ImageToBitmapCacheByteArray.GetOrAdd(img, (k) =>
+        return ImageToBitmapCacheByteArray.GetOrAdd(img, k =>
         {
             using var ms = new MemoryStream(k);
             return new Bitmap(ms);

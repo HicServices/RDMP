@@ -37,7 +37,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         CommonTreeFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,Activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings());
         CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
-            (a) => new IAtomicCommand[]
+            a => new IAtomicCommand[]
             {
                 new ExecuteCommandAddFavourite(a),
                 new ExecuteCommandClearFavourites(a)

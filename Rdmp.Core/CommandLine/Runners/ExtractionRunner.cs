@@ -178,7 +178,7 @@ public class ExtractionRunner : ManyRunner
 
     public ToMemoryCheckNotifier GetCheckNotifier(IExtractableDataSet extractableData)
     {
-        return GetSingleCheckerResults<SelectedDataSetsChecker>((sds) => sds.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
+        return GetSingleCheckerResults<SelectedDataSetsChecker>(sds => sds.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
     }
 
     public object GetState(IExtractableDataSet extractableData)

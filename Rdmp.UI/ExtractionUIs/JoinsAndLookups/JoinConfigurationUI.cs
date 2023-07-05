@@ -70,8 +70,8 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     {
         base.SetDatabaseObject(activator, databaseObject);
 
-        olvLeftColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-        olvRightColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+        olvLeftColumnNames.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+        olvRightColumnNames.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
 
         _leftTableInfo = databaseObject;
         tbLeftTableInfo.Text = _leftTableInfo.ToString();

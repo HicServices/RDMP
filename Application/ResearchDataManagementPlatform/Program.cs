@@ -32,7 +32,7 @@ internal static class Program
         {
             // if user has the command line built and runnable from the windows
             // client then don't load the dlls (or we end up with 2 copies!).
-            SafeDirectoryCatalog.IgnoreDll = (f) => Path.GetFileName(f.DirectoryName)?.Equals("cli")==true;
+            SafeDirectoryCatalog.IgnoreDll = f => Path.GetFileName(f.DirectoryName)?.Equals("cli")==true;
 
             try
             {

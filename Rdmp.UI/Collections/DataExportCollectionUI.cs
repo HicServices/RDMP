@@ -94,7 +94,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             olvName
         );
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a) => GetWhitespaceRightClickMenu();
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => GetWhitespaceRightClickMenu();
             
         CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(FolderNode<Project>)};
 

@@ -177,7 +177,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             "Other People To Investigate",
             "Dennis,Hes ok,35");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+        Action<DelimitedFlatFileDataFlowSource> adjust = a =>
         {
             a.BadDataHandlingStrategy = strategy;
             a.AttemptToResolveNewLinesInRecords = tryToResolve;
@@ -217,7 +217,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             "Frank,Is the greatest,100",
             "Bob");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+        Action<DelimitedFlatFileDataFlowSource> adjust = a =>
         {
             a.BadDataHandlingStrategy = strategy;
             a.AttemptToResolveNewLinesInRecords = tryToResolve;

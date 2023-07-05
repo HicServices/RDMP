@@ -66,14 +66,14 @@ public class WindowManager
         _windowFactory = new WindowFactory(repositoryLocator,this);
         ActivateItems = new ActivateItems(theme,refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
 
-        GlobalExceptionHandler.Instance.Handler = (e)=>globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message,CheckResult.Fail,e));
+        GlobalExceptionHandler.Instance.Handler = e=>globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message,CheckResult.Fail,e));
 
         _mainDockPanel = mainDockPanel;
             
         MainForm = mainForm;
         RepositoryLocator = repositoryLocator;
 
-        Navigation = new NavigationTrack<INavigation>(c=>c.IsAlive,(c)=>c.Activate(ActivateItems));
+        Navigation = new NavigationTrack<INavigation>(c=>c.IsAlive,c=>c.Activate(ActivateItems));
         mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
         ActivateItems.Emphasise += RecordEmphasis;
     }

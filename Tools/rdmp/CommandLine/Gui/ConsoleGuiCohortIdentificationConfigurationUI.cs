@@ -40,7 +40,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         Common.Configuration = cic;
         Common.Compiler.CohortIdentificationConfiguration = cic;
 
-        cbCumulativeTotals.Toggled += (e) =>
+        cbCumulativeTotals.Toggled += e =>
         {
             Common.SetShowCumulativeTotals(cbCumulativeTotals.Checked);
         };
@@ -53,7 +53,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
 
         tableview1.CellActivated += Tableview1_CellActivated;
         tableview1.KeyPress += Tableview1_KeyPress;
-        tbTimeout.TextChanged += (s) =>
+        tbTimeout.TextChanged += s =>
         {
             if (int.TryParse(tbTimeout.Text.ToString(), out var t))
             {

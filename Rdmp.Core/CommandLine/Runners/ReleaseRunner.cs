@@ -268,7 +268,7 @@ public class ReleaseRunner:ManyRunner
 
     public object GetState(IExtractionConfiguration configuration)
     {
-        var matches = GetCheckerResults<ReleaseEnvironmentPotential>((rp) => rp.Configuration.Equals(configuration));
+        var matches = GetCheckerResults<ReleaseEnvironmentPotential>(rp => rp.Configuration.Equals(configuration));
 
         if (matches.Length == 0)
             return null;

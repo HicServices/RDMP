@@ -29,7 +29,7 @@ internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsB
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+        Action<DelimitedFlatFileDataFlowSource> adjust = a =>
         {
             a.BadDataHandlingStrategy = strategy;
             a.ThrowOnEmptyFiles = true;
@@ -70,7 +70,7 @@ internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsB
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+        Action<DelimitedFlatFileDataFlowSource> adjust = a =>
         {
             a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
             a.ThrowOnEmptyFiles = true;
