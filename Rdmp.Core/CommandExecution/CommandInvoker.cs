@@ -89,7 +89,7 @@ public class CommandInvoker
                     WindowTitle = GetPromptFor(p),
                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m ? new IMapsDirectlyToDatabaseTable[] { m } : null,
                     InitialSearchText = p.DefaultValue?.ToString()
-                }, GetAllObjectsOfType(p.Type))); ;
+                }, GetAllObjectsOfType(p.Type)));
 
         AddDelegate(typeof(IPipeline), false, SelectPipeline);
         AddDelegate(typeof(IMightBeDeprecated),false, SelectOne<IMightBeDeprecated>, true);

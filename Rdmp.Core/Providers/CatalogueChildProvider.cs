@@ -277,8 +277,6 @@ public class CatalogueChildProvider : ICoreChildProvider
             Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
         );
 
-        ;
-
         ReportProgress("After credentials");
 
         TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
@@ -804,7 +802,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
-        };
+        }
 
         //add catalogues in folder
         foreach(var c in folder.ChildObjects)
@@ -824,7 +822,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
-        };
+        }
 
         //add loads in folder
         foreach(var lmd in folder.ChildObjects)
@@ -844,7 +842,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
-        };
+        }
 
         //add cics in folder
         foreach(var cic in folder.ChildObjects)

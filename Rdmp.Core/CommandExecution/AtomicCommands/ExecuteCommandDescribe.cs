@@ -243,7 +243,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
                 new PickObjectByName(BasicActivator),
                 new PickObjectByQuery(BasicActivator)) || anySyntaxes;
 
-        };
+        }
 
 
         sb.AppendLine();
