@@ -269,10 +269,8 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         if (cata != null)
         {
-            var oldFolder = tlvCatalogues.GetParent(cata) as string;
-
             //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
-            if (oldFolder == null || !oldFolder.Equals(cata.Folder))
+            if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
                 RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
             else
                 RefreshUIFromDatabase(o);

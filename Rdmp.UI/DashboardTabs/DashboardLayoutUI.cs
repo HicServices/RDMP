@@ -127,9 +127,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 
     private void btnAddDashboardControl_Click(object sender, EventArgs e)
     {
-        var type = cbxAvailableControls.SelectedItem as Type;
-
-        if(type == null)
+        if(cbxAvailableControls.SelectedItem is not Type type)
             return;
 
         var db = _controlFactory.Create(_layout, type, out var control);

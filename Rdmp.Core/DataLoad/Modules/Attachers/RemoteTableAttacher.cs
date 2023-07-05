@@ -436,10 +436,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
     private string GetScheduleParameterDeclarations(IDataLoadJob job, out bool scheduleMismatch)
     {
-
-        var jobAsScheduledJob = job as ScheduledDataLoadJob;
-
-        if(jobAsScheduledJob == null)
+        if(job is not ScheduledDataLoadJob jobAsScheduledJob)
             throw new NotSupportedException(
                 $"Job must be of type {typeof(ScheduledDataLoadJob).Name} because you have specified a LoadProgress");
 

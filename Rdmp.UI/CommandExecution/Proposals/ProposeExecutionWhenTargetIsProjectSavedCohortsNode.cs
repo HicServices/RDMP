@@ -32,23 +32,19 @@ internal class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandEx
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target, InsertOption insertOption = InsertOption.Default)
     {
         //drop a cic on a Saved Cohorts Node to commit it to that project
-        var cicCommand = cmd as CohortIdentificationConfigurationCommand;
-        if (cicCommand != null)
+        if (cmd is CohortIdentificationConfigurationCommand cicCommand)
             return
                 new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator,null).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
             
         //drop a file on the SavedCohorts node to commit it
-        var fileCommand = cmd as FileCollectionCombineable;
-        if(fileCommand != null && fileCommand.Files.Length == 1)
+        if(cmd is FileCollectionCombineable fileCommand && fileCommand.Files.Length == 1)
             return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0],null).SetTarget(target.Project);
 
         //drop a Project Specific Catalogue onto it
         if (cmd is CatalogueCombineable catalogueCombineable)
             return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue).SetTarget(target.Project);
 
-        var columnCommand = cmd as ColumnCombineable;
-
-        if (columnCommand != null && columnCommand.Column is ExtractionInformation)
+        if (cmd is ColumnCombineable columnCommand && columnCommand.Column is ExtractionInformation)
             return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
 
         return null;

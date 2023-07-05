@@ -42,9 +42,7 @@ internal class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTa
 
     private bool AreEqual(T arg, object currentValue)
     {
-        var s = currentValue as string;
-
-        if (s != null)
+        if (currentValue is string s)
             return string.Equals(s, PropertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase);
 
         return Equals(currentValue, PropertyToCheck(arg));

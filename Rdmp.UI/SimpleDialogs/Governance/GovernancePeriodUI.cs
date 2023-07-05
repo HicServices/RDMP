@@ -158,9 +158,7 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
     {
         if (e.KeyCode == Keys.Delete)
         {
-            var toDelete = olvCatalogues.SelectedObject as Catalogue;
-
-            if(toDelete != null)
+            if(olvCatalogues.SelectedObject is Catalogue toDelete)
                 if(Activator.YesNo(
                        $"Are you sure you want to erase the fact that '{_governancePeriod.Name}' provides governance over Catalogue '{toDelete}'","Confirm Deleting Governance Relationship?"))
                 {
@@ -216,8 +214,7 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
 
     private void olvCatalogues_ItemActivate(object sender, EventArgs e)
     {
-        var cata = olvCatalogues.SelectedObject as Catalogue;
-        if(cata != null)
+        if(olvCatalogues.SelectedObject is Catalogue cata)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(cata));
     }
 

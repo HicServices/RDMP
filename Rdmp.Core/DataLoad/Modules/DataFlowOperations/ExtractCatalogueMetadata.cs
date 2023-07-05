@@ -46,8 +46,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         toProcess.TableName = GetTableName();
         toProcess.ExtendedProperties.Add("ProperlyNamed", true);
 
-        var extractDatasetCommand = _request as ExtractDatasetCommand;
-        if (extractDatasetCommand != null)
+        if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
             var catalogue = extractDatasetCommand.Catalogue;
             
@@ -105,9 +104,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
     {
         if (MetadataNamingPattern != null && MetadataNamingPattern.Contains("$a"))
         {
-            var dsRequest = _request as ExtractDatasetCommand;
-
-            if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+            if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but MetadataNamingPattern contains $a", CheckResult.Fail));
         }

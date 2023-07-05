@@ -138,9 +138,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper;
-
-        if (parentWithQuerySyntaxHelper == null)
+        if (GetOwnerIfAny() is not IHasQuerySyntaxHelper parentWithQuerySyntaxHelper)
             throw new AmbiguousDatabaseTypeException($"Could not figure out what the query syntax helper is for {this}");
 
         return parentWithQuerySyntaxHelper.GetQuerySyntaxHelper();
@@ -211,9 +209,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        var parent = GetOwnerIfAny() as IHasDependencies;
-
-        if (parent != null)
+        if (GetOwnerIfAny() is IHasDependencies parent)
             return new[] {parent};
 
         return Array.Empty<IHasDependencies>();

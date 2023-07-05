@@ -137,9 +137,7 @@ public partial class AggregateTopXUI : RDMPUserControl
         if(_topX == null || ddOrderByDimension.SelectedItem == null)
             return;
 
-        var dimension = ddOrderByDimension.SelectedItem as AggregateDimension;
-
-        if (dimension != null)
+        if (ddOrderByDimension.SelectedItem is AggregateDimension dimension)
             _topX.OrderByDimensionIfAny_ID = dimension.ID;
         else
             _topX.OrderByDimensionIfAny_ID = null; //means use count column 

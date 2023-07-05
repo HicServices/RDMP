@@ -392,8 +392,7 @@ public class CohortCompiler
         if (CohortIdentificationConfiguration.QueryCachingServer == null)
             return;
 
-        var cacheable = completedtask as ICacheableTask;
-        if (cacheable != null && cacheable.IsCacheableWhenFinished())
+        if (completedtask is ICacheableTask cacheable && cacheable.IsCacheableWhenFinished())
             CacheSingleTask(cacheable, CohortIdentificationConfiguration.QueryCachingServer);
     }
 

@@ -60,9 +60,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     }
     private object CreatedFromAspectGetter(object rowObject)
     {
-        var ecd = rowObject as ExtractableCohortDescription;
-
-        if (ecd != null)
+        if (rowObject is ExtractableCohortDescription ecd)
         {
             var obj = _auditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
             return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;
@@ -81,17 +79,13 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private void lbCohortDatabaseTable_ButtonClick(object sender, CellClickEventArgs e)
     {
-        var ecd = e.Model as ExtractableCohortDescription;
-
-        if (e.Column == olvViewLog && ecd != null)
+        if (e.Column == olvViewLog && e.Model is ExtractableCohortDescription ecd)
             WideMessageBox.Show("Cohort audit log",ecd.Cohort.AuditLog,WideMessageBoxTheme.Help);
     }
 
     private object ViewLogAspectGetter(object rowObject)
     {
-        var ecd = rowObject as ExtractableCohortDescription;
-            
-        if (ecd != null && !string.IsNullOrWhiteSpace(ecd.Cohort.AuditLog))
+        if (rowObject is ExtractableCohortDescription ecd && !string.IsNullOrWhiteSpace(ecd.Cohort.AuditLog))
             return "View Log";
 
         return null;
@@ -236,8 +230,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private void lbCohortDatabaseTable_SelectionChanged(object sender, EventArgs e)
     {
-        var node = lbCohortDatabaseTable.SelectedObject as ExtractableCohortDescription;
-        var selected = node == null ? null : node.Cohort;
+        var selected = lbCohortDatabaseTable.SelectedObject is not ExtractableCohortDescription node ? null : node.Cohort;
 
         SelectedCohortChanged?.Invoke(this, selected);
     }

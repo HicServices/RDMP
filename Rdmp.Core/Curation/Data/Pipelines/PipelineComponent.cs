@@ -202,8 +202,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
     public override void DeleteInDatabase()
     {
-        var parent = Pipeline as Pipeline;
-        if(parent != null)
+        if(Pipeline is Pipeline parent)
         {
             if(parent.SourcePipelineComponent_ID == ID)
             {

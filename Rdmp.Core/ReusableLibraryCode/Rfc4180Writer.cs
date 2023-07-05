@@ -49,8 +49,7 @@ public static class Rfc4180Writer
         if (o == null || o == DBNull.Value)
             return null;
 
-        var s = o as string;
-        if (s != null && allowDates)
+        if (o is string s && allowDates)
         {
             if (DateTime.TryParse(s, out var dt))
                 return GetStringRepresentation(dt);

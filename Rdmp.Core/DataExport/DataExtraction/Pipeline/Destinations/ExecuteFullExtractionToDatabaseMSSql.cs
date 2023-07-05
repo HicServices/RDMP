@@ -195,9 +195,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private void PrimeDestinationTypesBasedOnCatalogueTypes(IDataLoadEventListener listener, DataTable toProcess)
     { 
         //if the extraction is of a Catalogue
-        var datasetCommand = _request as IExtractDatasetCommand;
-            
-        if(datasetCommand == null)
+
+        if(_request is not IExtractDatasetCommand datasetCommand)
             return;
 
         //for every extractable column in the Catalogue
@@ -579,9 +578,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         if (TableNamingPattern != null && TableNamingPattern.Contains("$a"))
         {
-            var dsRequest = _request as ExtractDatasetCommand;
-
-            if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+            if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a", CheckResult.Fail));
         }

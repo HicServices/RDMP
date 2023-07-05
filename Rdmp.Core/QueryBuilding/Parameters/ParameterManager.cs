@@ -154,10 +154,9 @@ public class ParameterManager
         if(emptyParameter != null)
         {
             var exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
-            var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable;
-                
+
             //problem was in a freaky parameter e.g. a constant one that doesn't come from database (rare to happen I would expect)
-            if(asConcreteObject == null)
+            if(emptyParameter.Parameter is not IMapsDirectlyToDatabaseTable asConcreteObject)
                 throw new QueryBuildingException(exceptionMessage);
                 
             //problem was from a user one from their Catalogue Database, tell them the ProblemObject aswell

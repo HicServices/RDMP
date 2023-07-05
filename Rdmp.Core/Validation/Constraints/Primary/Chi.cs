@@ -21,9 +21,7 @@ public class Chi : PrimaryConstraint
             return null;
 
 
-        var valueAsString = value as string;
-
-        if(valueAsString == null)
+        if(value is not string valueAsString)
             return new ValidationFailure(
                 $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}",this);
 

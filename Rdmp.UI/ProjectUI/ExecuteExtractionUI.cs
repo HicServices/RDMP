@@ -193,9 +193,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         if (rowObject == _globalsFolder && extractionRunner != null)
             return extractionRunner.GetGlobalsState();
 
-        var sds = rowObject as SelectedDataSets;
-
-        if (extractionRunner != null && sds != null) 
+        if (extractionRunner != null && rowObject is SelectedDataSets sds) 
             return extractionRunner.GetState(sds.ExtractableDataSet);
             
         return null;
@@ -208,9 +206,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         if (rowObject == _globalsFolder && extractionRunner != null)
             return extractionRunner.GetGlobalCheckNotifier();
 
-        var sds = rowObject as SelectedDataSets;
-
-        if (extractionRunner != null && sds != null) 
+        if (extractionRunner != null && rowObject is SelectedDataSets sds) 
             return extractionRunner.GetCheckNotifier(sds.ExtractableDataSet);
             
         return null;
@@ -374,8 +370,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
     private void olvDatasets_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var sds =  tlvDatasets.SelectedObject as SelectedDataSets;
-        checkAndExecuteUI1.GroupBySender(sds != null ? sds.ToString() : null);
+        checkAndExecuteUI1.GroupBySender(tlvDatasets.SelectedObject is SelectedDataSets sds ? sds.ToString() : null);
     }
 
     public void TickAllFor(SelectedDataSets selectedDataSet)

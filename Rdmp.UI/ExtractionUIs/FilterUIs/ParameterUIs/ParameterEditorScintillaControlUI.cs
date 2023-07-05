@@ -184,8 +184,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 
             IsBroken = true;
 
-            var exception = ex as QueryBuildingException;
-            if (exception != null)
+            if (ex is QueryBuildingException exception)
             {
                 foreach (var p in exception.ProblemObjects.OfType<ISqlParameter>()) ProblemObjects.TryAdd(p, ex);
 

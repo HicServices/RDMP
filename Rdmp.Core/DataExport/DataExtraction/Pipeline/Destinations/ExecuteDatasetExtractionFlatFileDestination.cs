@@ -230,9 +230,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             notifier.OnCheckPerformed(new CheckEventArgs($"DateFormat '{DateFormat}' was invalid",CheckResult.Fail, e));
         }
 
-        var dsRequest = _request as ExtractDatasetCommand;
-
-        if (UseAcronymForFileNaming && dsRequest != null)
+        if (UseAcronymForFileNaming && _request is ExtractDatasetCommand dsRequest)
         {
             if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(

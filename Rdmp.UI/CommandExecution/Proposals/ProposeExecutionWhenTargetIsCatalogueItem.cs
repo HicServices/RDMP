@@ -31,9 +31,7 @@ internal class ProposeExecutionWhenTargetIsCatalogueItem:RDMPCommandExecutionPro
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItem target, InsertOption insertOption = InsertOption.Default)
     {
-        var sourceColumnInfo = cmd as ColumnInfoCombineable;
-
-        if (sourceColumnInfo != null)
+        if (cmd is ColumnInfoCombineable sourceColumnInfo)
             return new ExecuteCommandLinkCatalogueItemToColumnInfo(ItemActivator, sourceColumnInfo, target);
 
         return null;

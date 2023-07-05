@@ -24,9 +24,7 @@ public class DublinCoreTranslater
     /// <param name="fillWith"></param>
     public static void Fill<T>(T toFill,DublinCoreDefinition fillWith)
     {
-        var c = toFill as Catalogue;
-
-        if (c != null)
+        if (toFill is Catalogue c)
         {
             //only overwritte name if Catalogue has default blank name
             if (c.Name != null && c.Name.StartsWith("New Catalogue ",StringComparison.CurrentCultureIgnoreCase))
@@ -57,9 +55,7 @@ public class DublinCoreTranslater
     {
         var toReturn = new DublinCoreDefinition();
 
-        var c = generateFrom as Catalogue;
-
-        if (c != null)
+        if (generateFrom is Catalogue c)
         {
             toReturn.Title = c.Name;
             toReturn.Description = c.Description;

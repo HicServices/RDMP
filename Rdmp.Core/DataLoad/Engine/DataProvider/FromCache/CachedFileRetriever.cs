@@ -67,9 +67,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     protected static ScheduledDataLoadJob ConvertToScheduledJob(IDataLoadJob dataLoadJob)
     {
-        var scheduledJob = dataLoadJob as ScheduledDataLoadJob;
-
-        if (scheduledJob == null)
+        if (dataLoadJob is not ScheduledDataLoadJob scheduledJob)
             throw new Exception("CachedFileRetriever can only be used in conjunction with a ScheduledDataLoadJob");
 
         return scheduledJob;

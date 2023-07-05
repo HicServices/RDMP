@@ -52,9 +52,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         if(_project == null || _project.ProjectNumber == null)
             return;
 
-        var dxChildProvider = Activator.CoreChildProvider as DataExportChildProvider;
-
-        if(dxChildProvider == null)
+        if(Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
         {
             return;
         }

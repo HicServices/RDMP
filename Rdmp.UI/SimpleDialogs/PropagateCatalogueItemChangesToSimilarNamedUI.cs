@@ -109,8 +109,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
     private void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        var ci = olvCatalogues.SelectedObject as CatalogueItem;
-        if(ci == null)
+        if(olvCatalogues.SelectedObject is not CatalogueItem ci)
             return;
 
         var menu =  new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(Activator), ci);
@@ -173,9 +172,8 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     {
             
         var pi = olvProperties.SelectedObject as PropertyInfo;
-        var ci  = olvCatalogues.SelectedObject as CatalogueItem;
 
-        if (pi != null && ci != null)
+        if (pi != null && olvCatalogues.SelectedObject is CatalogueItem ci)
         {
             previewOldValue.ReadOnly = false;
             previewOldValue.Text = Convert.ToString(pi.GetValue(ci, null));

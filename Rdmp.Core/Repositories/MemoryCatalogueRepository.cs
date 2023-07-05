@@ -53,10 +53,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         set
         {
             _mef = value;
-            var odf =  ObscureDependencyFinder as CatalogueObscureDependencyFinder;
-            var dxm = this as IDataExportRepository;
 
-            if(odf != null && dxm != null)
+            if(ObscureDependencyFinder is CatalogueObscureDependencyFinder odf && this is IDataExportRepository dxm)
                 odf.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(new RepositoryProvider(dxm));
         }
     }
@@ -105,10 +103,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
 
         var dependencyFinder = new CatalogueObscureDependencyFinder(this);
-            
-        var dxm = this as IDataExportRepository;
 
-        if(dxm !=  null)
+        if(this is IDataExportRepository dxm)
         {
             dependencyFinder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(new RepositoryProvider(dxm));
             dependencyFinder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(new RepositoryProvider(dxm));

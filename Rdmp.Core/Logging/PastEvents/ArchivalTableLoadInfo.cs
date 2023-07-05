@@ -90,8 +90,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
 
     public int CompareTo(object obj)
     {
-        var other = obj as ArchivalTableLoadInfo;
-        if (other != null)
+        if (obj is ArchivalTableLoadInfo other)
             if (Start == other.Start)
                 return 0;
             else

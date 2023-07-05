@@ -239,18 +239,15 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
 
     private static TableInfo GetTableInfoOrNullFromDrag(DragEventArgs e)
     {
-        var data = e.Data as OLVDataObject;
-
-        if (data == null)
+        if (e.Data is not OLVDataObject data)
             return null;
 
         if (data.ModelObjects.Count != 1)
             return null;
 
-        var ti = data.ModelObjects[0] as TableInfo;
         var ticmd = data.ModelObjects[0] as TableInfoCombineable;
 
-        if (ti != null)
+        if (data.ModelObjects[0] is TableInfo ti)
             return ti;
 
         return ticmd?.TableInfo;
@@ -266,9 +263,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     {
         var olv = (ObjectListView)sender;
 
-        var o = olv.SelectedObject as IMapsDirectlyToDatabaseTable;
-            
-        if(o != null)
+        if(olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
     }
 }

@@ -97,25 +97,20 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
     private object olvDescription_AspectGetter(object rowObject)
     {
-        var adi = rowObject as ArchivalDataLoadInfo;
-        if (adi != null)
+        if (rowObject is ArchivalDataLoadInfo adi)
             return adi.ToString();
 
-        var cat = rowObject as LoadEventsTreeView_Category;
-        if (cat != null)
+        if (rowObject is LoadEventsTreeView_Category cat)
             return cat.ToString();
 
-        var fe = rowObject as ArchivalFatalError;
-        if (fe != null)
+        if (rowObject is ArchivalFatalError fe)
             return fe.ToShortString();
 
-        var ti = rowObject as ArchivalTableLoadInfo;
-        if (ti != null)
+        if (rowObject is ArchivalTableLoadInfo ti)
             return
                 $"{ti.TargetTable}(I={WithCommas(ti.Inserts)} U={WithCommas(ti.Updates)} D={WithCommas(ti.Deletes)})";
 
-        var pr = rowObject as ArchivalProgressLog;
-        if (pr != null)
+        if (rowObject is ArchivalProgressLog pr)
             return pr.Description;
 
         throw new NotSupportedException();
@@ -132,25 +127,19 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
     private object olvDate_AspectGetter(object rowObject)
     {
-        var adi = rowObject as ArchivalDataLoadInfo;
-            
-        if(adi != null)
+        if(rowObject is ArchivalDataLoadInfo adi)
             return adi.StartTime;
 
-        var cat = rowObject as LoadEventsTreeView_Category;
-        if (cat != null)
+        if (rowObject is LoadEventsTreeView_Category cat)
             return null;
 
-        var fe = rowObject as ArchivalFatalError;
-        if (fe != null)
+        if (rowObject is ArchivalFatalError fe)
             return fe.Date;
 
-        var ti = rowObject as ArchivalTableLoadInfo;
-        if (ti != null)
+        if (rowObject is ArchivalTableLoadInfo ti)
             return ti.Start;
 
-        var pr = rowObject as ArchivalProgressLog;
-        if (pr != null)
+        if (rowObject is ArchivalProgressLog pr)
             return pr.Date;
             
         throw new NotSupportedException();
@@ -158,10 +147,8 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
     private void treeView1_FormatRow(object sender, FormatRowEventArgs e)
     {
-        var dli = e.Model as ArchivalDataLoadInfo;
-
         //if it is a data load info thing
-        if (dli != null)
+        if (e.Model is ArchivalDataLoadInfo dli)
             if (dli.HasErrors)
                 e.Item.ForeColor = Color.DarkOrange;
             else if (dli.EndTime == null) //did not end
@@ -174,9 +161,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     {
         var children = new List<object>();
 
-        var dli = model as ArchivalDataLoadInfo;
-
-        if (dli != null)
+        if (model is ArchivalDataLoadInfo dli)
         {
 
             if(dli.Errors.Any())
@@ -189,8 +174,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
                 children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.OrderByDescending(d => d.Start).ToArray(),LoggingTables.TableLoadRun, dli.ID));
         }
 
-        var category = model as LoadEventsTreeView_Category;
-        if (category != null)
+        if (model is LoadEventsTreeView_Category category)
             return category.Children;
 
         return children;
@@ -338,9 +322,8 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         var RightClickMenu = new ContextMenuStrip();
 
         var tli = e.Model as ArchivalTableLoadInfo;
-        var category = e.Model as LoadEventsTreeView_Category;
 
-        if (category != null)
+        if (e.Model is LoadEventsTreeView_Category category)
         {
             var cmd = new ExecuteCommandViewLogs(Activator,new LogViewerFilter(category.AssociatedTable){Run = category.RunId});
             RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, Activator));
@@ -366,9 +349,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
             }
         }
 
-        var fatalError = e.Model as ArchivalFatalError;
-
-        if (fatalError != null && _logManager != null)
+        if (e.Model is ArchivalFatalError fatalError && _logManager != null)
         {
             var toResolve = treeView1.SelectedObjects.OfType<ArchivalFatalError>().ToArray();
             RightClickMenu.Items.Add("Resolve Fatal Error(s)", null, (a, b) =>

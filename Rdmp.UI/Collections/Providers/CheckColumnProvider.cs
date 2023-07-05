@@ -116,8 +116,7 @@ public class CheckColumnProvider
 
     private Bitmap CheckImageGetter(object rowobject)
     {
-        var checkable = rowobject as ICheckable;
-        if (checkable == null)
+        if (rowobject is not ICheckable checkable)
             return null;
 
         lock (ocheckResultsDictionaryLock)

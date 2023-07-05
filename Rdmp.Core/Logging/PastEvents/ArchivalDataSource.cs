@@ -54,8 +54,7 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 
     public int CompareTo(object obj)
     {
-        var other = obj as ArchivalDataSource;
-        if (other != null)
+        if (obj is ArchivalDataSource other)
             if (OriginDate == other.OriginDate)
                 return 0;
             else

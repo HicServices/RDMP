@@ -84,9 +84,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private object ParameterName_AspectGetter(object rowObject)
     {
-        var p = rowObject as ISqlParameter;
-
-        if (p == null)
+        if (rowObject is not ISqlParameter p)
             return null;
 
         try
@@ -320,9 +318,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
                 if (Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
                 {
                     var owner = parameter.GetOwnerIfAny();
-                    var toRefresh = (owner ?? (object)parameter) as DatabaseEntity;
-                        
-                    if(toRefresh != null)
+
+                    if((owner ?? (object)parameter) is DatabaseEntity toRefresh)
                         Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(toRefresh));
                 }
                         
@@ -464,10 +461,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void olvParameters_CellEditStarting(object sender, CellEditEventArgs e)
     {
-        var p = e.RowObject as ISqlParameter;
-
         //cancel cell editting if it is readonly
-        if (p != null && Options.ShouldBeReadOnly(p))
+        if (e.RowObject is ISqlParameter p && Options.ShouldBeReadOnly(p))
             e.Cancel = true;
     }
         

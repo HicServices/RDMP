@@ -201,10 +201,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     /// <param name="updateMode"></param>
     protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter, bool formattingEnabled = true,DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
     {
-        var box = c as ComboBox;
-
         //workaround for only comitting lists on loose focus
-        if (box != null && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
+        if (c is ComboBox box && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
         {
             box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
         }
@@ -281,9 +279,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     public virtual string GetTabName()
     {
-        var named = DatabaseObject as INamed;
-
-        if (named != null)
+        if (DatabaseObject is INamed named)
             return named.Name;
 
 

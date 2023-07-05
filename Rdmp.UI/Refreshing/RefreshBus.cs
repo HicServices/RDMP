@@ -100,10 +100,9 @@ public class RefreshBus
 
     public void EstablishLifetimeSubscription(ILifetimeSubscriber c) 
     {
-        var subscriber = c as IRefreshBusSubscriber;
         var containerControl = c as ContainerControl;
 
-        if(subscriber == null)
+        if(c is not IRefreshBusSubscriber subscriber)
             throw new ArgumentException("Control must be an IRefreshBusSubscriber to establish a lifetime subscription", nameof(c));
 
         //ignore double requests for subscription

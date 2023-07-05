@@ -176,9 +176,7 @@ public partial class PerformanceCounterResultsUI : UserControl
 
     private void tlvLocations_ItemActivate(object sender, EventArgs e)
     {
-        var model = tlvLocations.SelectedObject as StackFramesTree;
-
-        if (model != null)
+        if (tlvLocations.SelectedObject is StackFramesTree model)
         {
             if(model.HasSourceCode)
             {

@@ -38,8 +38,7 @@ public class CohortRefreshEngine
         var engine = Request.GetEngine(_configuration.CohortRefreshPipeline,_listener);
 
         //if the refresh pipeline is a cic source
-        var cicSource = engine.SourceObject as CohortIdentificationConfigurationSource;
-        if (cicSource != null)
+        if (engine.SourceObject is CohortIdentificationConfigurationSource cicSource)
         {
             //a cohort identification configuration is a complex query possibly with many cached subqueries, if we are refreshing the cic we will want to clear (and recache) identifiers
             //from the live tables

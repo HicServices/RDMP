@@ -27,10 +27,8 @@ public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
     {
         _o = o;
 
-        var masquerader = _o as IMasqueradeAs;
-
         //if we have a masquerader and we cannot activate the masquerader, maybe we can activate what it is masquerading as?
-        if (masquerader != null && !BasicActivator.CanActivate(masquerader))
+        if (_o is IMasqueradeAs masquerader && !BasicActivator.CanActivate(masquerader))
             _o = masquerader.MasqueradingAs();
 
         if (!BasicActivator.CanActivate(_o))

@@ -255,8 +255,7 @@ public partial class RDMPTaskBarUI : UserControl
         else
             throw new Exception("Unexpected sender");
 
-        var d = cbx.SelectedItem as IDeleteable;
-        if (d != null)
+        if (cbx.SelectedItem is IDeleteable d)
         {
             _manager.ActivateItems.DeleteWithConfirmation(d);
             ReCreateDropDowns();
@@ -265,8 +264,7 @@ public partial class RDMPTaskBarUI : UserControl
 
     private void btnSaveWindowLayout_Click(object sender, EventArgs e)
     {
-        var layout = cbxLayouts.SelectedItem as WindowLayout;
-        if(layout != null)
+        if(cbxLayouts.SelectedItem is WindowLayout layout)
         {
             var xml = _manager.MainForm.GetCurrentLayoutXml();
 

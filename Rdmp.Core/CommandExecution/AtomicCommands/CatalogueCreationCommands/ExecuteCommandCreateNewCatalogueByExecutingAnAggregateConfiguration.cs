@@ -109,12 +109,10 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     {
         base.SetTarget(target);
 
-        var configuration = target as AggregateConfiguration;
-        if (configuration != null)
+        if (target is AggregateConfiguration configuration)
             _aggregateConfiguration = configuration;
 
-        var cohort = target as ExtractableCohort;
-        if (cohort != null)
+        if (target is ExtractableCohort cohort)
             _cohort = cohort;
 
         return this;

@@ -88,9 +88,8 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     {
         var tableNode = tlvLoadedTables.SelectedObject as LoadDiagramTableNode;
         var table = tlvLoadedTables.SelectedObject as DiscoveredTable;
-        var unplannedTable = tlvLoadedTables.SelectedObject as UnplannedTable;
 
-        if (unplannedTable != null)
+        if (tlvLoadedTables.SelectedObject is UnplannedTable unplannedTable)
             table = unplannedTable.Table;
 
         if (tableNode != null)
@@ -111,8 +110,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     {
         if (e.Column == olvDataType)
         {
-            var colNode = e.Model as LoadDiagramColumnNode;
-            if (colNode != null && colNode.State == LoadDiagramState.Different)
+            if (e.Model is LoadDiagramColumnNode colNode && colNode.State == LoadDiagramState.Different)
                 e.SubItem.ForeColor = Color.Red;
         }
 
@@ -154,10 +152,9 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private object olvDataType_AspectGetter(object rowobject)
     {
-        var colNode = rowobject as LoadDiagramColumnNode;
         var discCol = rowobject as DiscoveredColumn;
 
-        if (colNode != null)
+        if (rowobject is LoadDiagramColumnNode colNode)
             return colNode.GetDataType();
 
         return discCol?.DataType.SQLType;
@@ -199,12 +196,11 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private IEnumerable ChildrenGetter(object model)
     {
-        var server = model as LoadDiagramServerNode;
         var database = model as LoadDiagramDatabaseNode;
         var table = model as LoadDiagramTableNode;
         var unplannedTable = model as UnplannedTable;
 
-        if (server != null)
+        if (model is LoadDiagramServerNode server)
             return server.GetChildren();
 
         if (database != null)
@@ -218,12 +214,11 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private bool CanExpandGetter(object model)
     {
-        var server = model as LoadDiagramServerNode;
         var database = model as LoadDiagramDatabaseNode;
         var table = model as LoadDiagramTableNode;
         var unplannedTable = model as UnplannedTable;
 
-        if (server != null)
+        if (model is LoadDiagramServerNode server)
             return server.GetChildren().Any();
 
         if (database != null)

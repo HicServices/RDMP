@@ -29,8 +29,7 @@ public class TreeNodeParentFinder
             return default;//return null
             
         //if parent is correct type return it
-        var correctType = parent as T;
-        if (correctType != null)
+        if (parent is T correctType)
             return correctType;
 
         //otherwise explore upwards on parent to get parent of correct type
@@ -47,8 +46,7 @@ public class TreeNodeParentFinder
             return lastOneFound;//return what we found (if any)
 
         //found a parent of the correct type
-        var correctType = parent as T;
-        if (correctType != null)
+        if (parent is T correctType)
             lastOneFound = correctType;
 
         //but either way we need to look further up for the last one

@@ -263,9 +263,7 @@ internal class MarkdownCodeBlockTests
             #region 59f55fa3ef50404291c7ae3996772635
             public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
             {
-                var sourceCatalogueCombineable = cmd as CatalogueCombineable;
-        
-                if(sourceCatalogueCombineable != null)
+                if(cmd is CatalogueCombineable sourceCatalogueCombineable)
                     return new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue);
 
                 return null;

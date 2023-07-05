@@ -241,8 +241,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     {
         try
         {
-            var checkableSource = Source as ICheckable;
-            if (checkableSource != null)
+            if (Source is ICheckable checkableSource)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"About to start checking Source component {checkableSource}",
@@ -257,9 +256,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
 
             foreach (var component in Components)
             {
-                var checkable = component as ICheckable;
-
-                if (checkable != null)
+                if (component is ICheckable checkable)
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs($"About to start checking component {component}", CheckResult.Success));
                     checkable.Check(notifier);
@@ -271,8 +268,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                             CheckResult.Warning));
             }
 
-            var checkableDestination = Destination as ICheckable;
-            if (checkableDestination != null)
+            if (Destination is ICheckable checkableDestination)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"About to start checking Destination component {checkableDestination}",

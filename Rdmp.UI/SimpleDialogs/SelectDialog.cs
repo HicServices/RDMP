@@ -578,8 +578,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     }
     private void listBox1_KeyUp(object sender, KeyEventArgs e)
     {
-        var deletable = olv.SelectedObject as IDeleteable;
-        if (e.KeyCode == Keys.Delete && _allowDeleting && deletable != null)
+        if (e.KeyCode == Keys.Delete && _allowDeleting && olv.SelectedObject is IDeleteable deletable)
         {
             if (MessageBox.Show($"Confirm deleting {deletable}", "Really delete?", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
             {

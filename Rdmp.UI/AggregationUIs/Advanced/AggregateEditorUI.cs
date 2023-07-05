@@ -336,9 +336,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         if(isRefreshing)
             return;
 
-        var dimension = ddPivotDimension.SelectedItem as AggregateDimension;
-
-        if (dimension != null && _aggregate != null)
+        if (ddPivotDimension.SelectedItem is AggregateDimension dimension && _aggregate != null)
         {
             EnsureCountHasAlias();
             EnsurePivotHasAlias(dimension);
@@ -428,9 +426,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         if(isRefreshing)
             return;
 
-        var selectedDimension = ddAxisDimension.SelectedItem as AggregateDimension;
-
-        if(selectedDimension == null)
+        if(ddAxisDimension.SelectedItem is not AggregateDimension selectedDimension)
             return;
             
         //is there already an axis? if so keep the old start/end dates
@@ -558,8 +554,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
     private void olvJoin_ItemActivate(object sender, EventArgs e)
     {
-        var t = olvJoin.SelectedObject as TableInfo;
-        if(t != null)
+        if(olvJoin.SelectedObject is TableInfo t)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(t));
     }
 }

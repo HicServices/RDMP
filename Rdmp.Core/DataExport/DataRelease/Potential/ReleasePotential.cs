@@ -132,12 +132,10 @@ public abstract class ReleasePotential:ICheckable
 
     private Releaseability MakeSupplementalAssesment(ISupplementalExtractionResults supplementalExtractionResults)
     {
-        var extractedObject = _repositoryLocator.GetArbitraryDatabaseObject(
-            supplementalExtractionResults.ReferencedObjectRepositoryType,
-            supplementalExtractionResults.ReferencedObjectType,
-            supplementalExtractionResults.ReferencedObjectID) as INamed;
-
-        if (extractedObject == null)
+        if (_repositoryLocator.GetArbitraryDatabaseObject(
+                supplementalExtractionResults.ReferencedObjectRepositoryType,
+                supplementalExtractionResults.ReferencedObjectType,
+                supplementalExtractionResults.ReferencedObjectID) is not INamed extractedObject)
             return Releaseability.Undefined;
 
         if (extractedObject is SupportingSQLTable)

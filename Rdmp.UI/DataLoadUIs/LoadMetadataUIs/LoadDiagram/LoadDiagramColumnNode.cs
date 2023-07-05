@@ -41,14 +41,11 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
         _column = column;
         _bubble = bubble;
         ColumnName = _column.GetRuntimeName(_bubble.ToLoadStage());
-            
-        var colInfo = _column as ColumnInfo;
-        var preLoadDiscarded = _column as PreLoadDiscardedColumn;
 
-        if (preLoadDiscarded != null)
+        if (_column is PreLoadDiscardedColumn preLoadDiscarded)
             _expectedDataType = preLoadDiscarded.SqlDataType;
         else
-        if (colInfo != null)
+        if (_column is ColumnInfo colInfo)
             _expectedDataType = colInfo.GetRuntimeDataType(_bubble.ToLoadStage());
         else
             throw new Exception(

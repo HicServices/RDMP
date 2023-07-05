@@ -170,8 +170,7 @@ public partial class ViewSourceCodeDialog : Form
 
     private void olvSourceFiles_ItemActivate(object sender, EventArgs e)
     {
-        var str = olvSourceFiles.SelectedObject as string;
-        if (str != null)
+        if (olvSourceFiles.SelectedObject is string str)
             LoadSourceCode(str, -1, Color.White);
     }
 

@@ -64,9 +64,8 @@ public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCom
         {
             title = GetTypeName(_args.Model.GetType());
 
-            var knows = _args.Model as IKnowWhatIAm;
             //does the class have state dependent alternative to xmldoc?
-            if (knows != null)
+            if (_args.Model is IKnowWhatIAm knows)
                 docs = knows.WhatIsThis(); //yes
             else
                 docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Model.GetType());

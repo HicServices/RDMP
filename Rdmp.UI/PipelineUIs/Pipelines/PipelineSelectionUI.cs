@@ -227,9 +227,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     private void btnClonePipeline_Click(object sender, EventArgs e)
     {
-        var p = ddPipelines.SelectedItem as Pipeline;
-
-        if (p != null)
+        if (ddPipelines.SelectedItem is Pipeline p)
         {
             var clone = p.Clone();
             RefreshPipelineList();

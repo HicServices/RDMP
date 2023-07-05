@@ -43,9 +43,8 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
             return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,sourceCatalogueCombineable, targetCohortAggregateContainer);
 
         //source is aggregate
-        var sourceAggregateCommand = cmd as AggregateConfigurationCombineable;
 
-        if (sourceAggregateCommand != null)
+        if (cmd is AggregateConfigurationCombineable sourceAggregateCommand)
         {
             //if it is not already involved in cohort identification 
             if(!sourceAggregateCommand.Aggregate.IsCohortIdentificationAggregate)
@@ -78,9 +77,8 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
         }
 
         //source is another container (UNION / INTERSECT / EXCEPT)
-        var sourceCohortAggregateContainerCommand = cmd as CohortAggregateContainerCombineable;
 
-        if (sourceCohortAggregateContainerCommand != null)
+        if (cmd is CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand)
         {
             //can never drag the root container elsewhere
             if (sourceCohortAggregateContainerCommand.ParentContainerIfAny == null)

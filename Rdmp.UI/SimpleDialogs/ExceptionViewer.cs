@@ -23,9 +23,7 @@ public class ExceptionViewer : WideMessageBox
     {
         _exception = exception;
 
-        var aggregateException = _exception as AggregateException;
-
-        if (aggregateException != null)
+        if (_exception is AggregateException aggregateException)
         {
             _exception = aggregateException.Flatten();
 

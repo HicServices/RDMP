@@ -94,10 +94,8 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
     {
         shouldClose = false;
 
-        var matchingObject = DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) as IRevertable;
-
         //matched object in our collection
-        if(matchingObject != null)
+        if(DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) is IRevertable matchingObject)
             if (matchingObject.Exists()) 
                 matchingObject.RevertToDatabaseState();
             else

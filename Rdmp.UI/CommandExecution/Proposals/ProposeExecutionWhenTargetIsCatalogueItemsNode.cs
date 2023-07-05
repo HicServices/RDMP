@@ -30,10 +30,9 @@ internal class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecu
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
     {
-        var colInfo = cmd as ColumnInfoCombineable;
         var tableInfo = cmd as TableInfoCombineable;
 
-        if (colInfo != null)
+        if (cmd is ColumnInfoCombineable colInfo)
             return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, colInfo) { Category = target.Category };
             
         if (tableInfo != null)

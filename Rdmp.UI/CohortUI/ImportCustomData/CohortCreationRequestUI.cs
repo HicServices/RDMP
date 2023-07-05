@@ -101,9 +101,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         }
         else if (rbRevisedCohort.Checked)
         {
-
-            var existing = ddExistingCohort.SelectedItem as ExtractableCohort;
-            if (existing == null)
+            if (ddExistingCohort.SelectedItem is not ExtractableCohort existing)
             {
                 MessageBox.Show("You must select an existing cohort");
                 return;
@@ -175,9 +173,7 @@ public partial class CohortCreationRequestUI : RDMPForm
 
     private void ddExistingCohort_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var cohort = ddExistingCohort.SelectedItem as ExtractableCohort;
-
-        if (cohort != null)
+        if (ddExistingCohort.SelectedItem is ExtractableCohort cohort)
         {
             lblNewVersionNumber.Text = (cohort.ExternalVersion + 1).ToString();
             tbExistingCohortSource.Text = cohort.ExternalCohortTable.Name;

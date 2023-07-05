@@ -110,9 +110,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
     private void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        var ec = e.Model as ExtractableColumn;
-
-        if (ec != null && ec.IsOutOfSync())
+        if (e.Model is ExtractableColumn ec && ec.IsOutOfSync())
         {
             var ms = new ContextMenuStrip();
             ms.Items.Add(
@@ -136,9 +134,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
     private object Issues_AspectGetter(object rowObject)
     {
-        var ec = rowObject as ExtractableColumn;
-
-        if (ec != null && ec.IsOutOfSync())
+        if (rowObject is ExtractableColumn ec && ec.IsOutOfSync())
             return "Different";
 
         return "None";
@@ -381,10 +377,8 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             {
                 //make sure it is up to date with database
 
-                var r = c as IRevertable;
-
                 //if the column is out of date
-                if (r != null && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                if (c is IRevertable r && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
                     r.RevertToDatabaseState();//get a fresh copy
 
                 //add to the config
@@ -806,8 +800,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             return;
 
         //if an ExtractionInformation is being refreshed
-        var ei = e.Object as ExtractionInformation;
-        if (ei != null)
+        if (e.Object is ExtractionInformation ei)
         {
             //We should clear any old cached values for this ExtractionInformation amongst selected column
             foreach (var c in olvSelected.Objects.OfType<ExtractableColumn>().ToArray())

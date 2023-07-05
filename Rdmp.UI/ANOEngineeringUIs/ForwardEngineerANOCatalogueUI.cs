@@ -83,10 +83,9 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object MigrationPlanAspectGetter(object rowobject)
     {
-        var col = rowobject as ColumnInfo;
         var table = rowobject as TableInfo;
 
-        if (col != null)
+        if (rowobject is ColumnInfo col)
             return _planManager.GetPlanForColumnInfo(col).Plan;
 
         if (_planManager.SkippedTables.Contains(table))
@@ -97,9 +96,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private Image PickedANOTable_ImageGetter(object rowObject)
     {
-        var ci = rowObject as ColumnInfo;
-
-        if (ci != null && _planManager.GetPlanForColumnInfo(ci).ANOTable != null)
+        if (rowObject is ColumnInfo ci && _planManager.GetPlanForColumnInfo(ci).ANOTable != null)
             return imageList1.Images["ANOTable"];
 
         return null;
@@ -107,9 +104,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object PickedANOTableAspectGetter(object rowobject)
     {
-        var col = rowobject as ColumnInfo;
-
-        if (col != null)
+        if (rowobject is ColumnInfo col)
         {
             var plan = _planManager.GetPlanForColumnInfo(col);
 
@@ -125,9 +120,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object DilutionAspectGetter(object rowobject)
     {
-        var col = rowobject as ColumnInfo;
-
-        if (col != null)
+        if (rowobject is ColumnInfo col)
         {
             var plan = _planManager.GetPlanForColumnInfo(col);
 
@@ -142,9 +135,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     }
     private string Dilution_ImageGetter(object rowobject)
     {
-        var col = rowobject as ColumnInfo;
-
-        if (col != null)
+        if (rowobject is ColumnInfo col)
         {
             var plan = _planManager.GetPlanForColumnInfo(col);
 
@@ -287,9 +278,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         try
         {
-            var col = e.RowObject as ColumnInfo;
-
-            if(col == null)
+            if(e.RowObject is not ColumnInfo col)
                 return;
 
             var plan = _planManager.GetPlanForColumnInfo(col);
@@ -396,10 +385,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private void tlvTableInfoMigrations_FormatCell(object sender, FormatCellEventArgs e)
     {
-            
-        var ci = e.Model as ColumnInfo;
-
-        if (ci != null)
+        if (e.Model is ColumnInfo ci)
             if (_planManager.GetPlanForColumnInfo(ci).IsMandatory)
                 e.SubItem.BackColor = lblMandatory.BackColor;
 
