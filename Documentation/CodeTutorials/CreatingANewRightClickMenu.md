@@ -79,7 +79,7 @@ The preferred way of adding menu items is to use abstract base class `RDMPContex
 
 <!--- f243e95a6dc94b3486f44b8f0bb0ed7d --->
 ```csharp
-class AllServersNodeMenu : RDMPContextMenuStrip
+private class AllServersNodeMenu : RDMPContextMenuStrip
 {
     public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
     {
