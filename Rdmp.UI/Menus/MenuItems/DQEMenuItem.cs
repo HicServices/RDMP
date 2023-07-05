@@ -43,8 +43,7 @@ internal class DQEMenuItem:RDMPToolStripMenuItem
         }
         else
         {
-            Exception ex;
-            if (!_dqeServer.Discover(DataAccessContext.InternalDataProcessing).Server.RespondsWithinTime(5, out ex))
+            if (!_dqeServer.Discover(DataAccessContext.InternalDataProcessing).Server.RespondsWithinTime(5, out var ex))
                 ExceptionViewer.Show(ex);
             else
                 new ExecuteCommandRunDQEOnCatalogue(_activator, _catalogue).Execute();

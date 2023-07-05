@@ -210,8 +210,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             return Enum.Parse(concreteType, value);
 
         //is it ICustomUIDrivenClass
-        object customType;
-        if (HandleIfICustomUIDrivenClass(value, concreteType, out customType))
+        if (HandleIfICustomUIDrivenClass(value, concreteType, out var customType))
             return customType;
 
         if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(concreteType))
@@ -333,9 +332,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             return Array.CreateInstance(elementType, 0).GetType();
         }
 
-        Type kType;
-        Type vType;
-        if (IsDictionary(type, out kType, out vType))
+        if (IsDictionary(type, out var kType, out var vType))
         {
             var genericClass = typeof(Dictionary<,>);
             var constructedClass = genericClass.MakeGenericType(kType,vType);

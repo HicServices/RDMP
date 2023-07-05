@@ -80,11 +80,10 @@ public class EmptyDataExtractionTests:TestsRequiringAnExtractionConfiguration
         AllowEmptyExtractions = true;
 
         ExtractionPipelineUseCase execute;
-        IExecuteDatasetExtractionDestination result;
 
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
 
-        Execute(out execute, out result);
+        Execute(out execute, out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 

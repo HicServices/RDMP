@@ -36,16 +36,12 @@ internal class LoadProgressAnnotation
         _lp = lp;
         _dt = dt;
 
-        LineAnnotation line;
-        TextAnnotation text;
-        GetAnnotations("OriginDate",0.9,lp.OriginDate, chart, out line, out text);
+        GetAnnotations("OriginDate",0.9,lp.OriginDate, chart, out var line, out var text);
         LineAnnotationOrigin = line;
         TextAnnotationOrigin = text;
 
 
-        LineAnnotation line2;
-        TextAnnotation text2;
-        GetAnnotations("Progress", 0.7, lp.DataLoadProgress, chart, out line2, out text2);
+        GetAnnotations("Progress", 0.7, lp.DataLoadProgress, chart, out var line2, out var text2);
         LineAnnotationFillProgress = line2;
         TextAnnotationFillProgress = text2;
 
@@ -53,9 +49,7 @@ internal class LoadProgressAnnotation
 
         if(cp != null)
         {
-            LineAnnotation line3;
-            TextAnnotation text3;
-            GetAnnotations("Cache Fill", 0.50, cp.CacheFillProgress, chart, out line3, out text3);
+            GetAnnotations("Cache Fill", 0.50, cp.CacheFillProgress, chart, out var line3, out var text3);
             LineAnnotationCacheProgress = line3;
             TextAnnotationCacheProgress = text3;
         }

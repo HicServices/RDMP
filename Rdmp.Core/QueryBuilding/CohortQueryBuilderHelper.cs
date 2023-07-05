@@ -38,8 +38,7 @@ public class CohortQueryBuilderHelper
         var isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
 
         //make sure it is a valid configuration
-        string reason;
-        if (!aggregate.IsAcceptableAsCohortGenerationSource(out reason))
+        if (!aggregate.IsAcceptableAsCohortGenerationSource(out var reason))
             throw new QueryBuildingException(
                 $"Cannot generate a cohort using AggregateConfiguration {aggregate} because:{reason}");
 

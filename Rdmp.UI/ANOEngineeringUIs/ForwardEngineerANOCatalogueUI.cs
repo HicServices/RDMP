@@ -310,8 +310,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                     plan.ExtractionCategoryIfAny = null;
                 else
                 {
-                    ExtractionCategory c;
-                    Enum.TryParse((string) cbx.SelectedItem, out c);
+                    Enum.TryParse((string) cbx.SelectedItem, out ExtractionCategory c);
                     plan.ExtractionCategoryIfAny = c;
                 }
                         

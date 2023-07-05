@@ -174,10 +174,9 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
                 new CheckEventArgs(
                     $"Project {Project} has ProjectNumber={Project.ProjectNumber} but the CohortCreationRequest.ProjectNumber is {NewCohortDefinition.ProjectNumber}",
                     CheckResult.Fail));
-            
-            
-        string matchDescription;
-        if (!NewCohortDefinition.IsAcceptableAsNewCohort(out matchDescription))
+
+
+        if (!NewCohortDefinition.IsAcceptableAsNewCohort(out var matchDescription))
             notifier.OnCheckPerformed(new CheckEventArgs($"Cohort failed novelness check:{matchDescription}",
                 CheckResult.Fail));
         else
@@ -191,8 +190,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
 
     public void PushToServer(IManagedConnection connection)
     {
-        string reason;
-        if(!NewCohortDefinition.IsAcceptableAsNewCohort(out reason))
+        if(!NewCohortDefinition.IsAcceptableAsNewCohort(out var reason))
             throw new Exception(reason);
 
         NewCohortDefinition.LocationOfCohort.PushToServer(NewCohortDefinition, connection);

@@ -39,8 +39,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Project_NoDirectory()
     {
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfig(out config);
+        var p = GetProjectWithConfig(out var config);
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
         Assert.AreEqual("Project does not have an ExtractionDirectory", ex.Message);
             
@@ -52,8 +51,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [TestCase(@"Z:\WizardOfOz")]
     public void Project_NonExistentDirectory(string dir)
     {
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfig(out config);
+        var p = GetProjectWithConfig(out var config);
            
         p.ExtractionDirectory = dir;
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
@@ -64,8 +62,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Project_DodgyCharactersInExtractionDirectoryName()
     {
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfig(out config);
+        var p = GetProjectWithConfig(out var config);
         p.ExtractionDirectory = @"C:\|||";
 
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
@@ -75,9 +72,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void ConfigurationFrozen_Remnants()
     {
-        DirectoryInfo dir;
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfigDirectory(out config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out var dir);
 
         //create remnant directory (empty)
         var remnantDir = dir.CreateSubdirectory($"Extr_{config.ID}20011225");
@@ -113,9 +108,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void ConfigurationFrozen_RemnantsWithFiles()
     {
-        DirectoryInfo dir;
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfigDirectory(out config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out var dir);
 
         //create remnant directory (empty)
         var remnantDir = dir.CreateSubdirectory($"Extr_{config.ID}20011225");
@@ -147,8 +140,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     public void Configuration_NoDatasets()
     {
         DirectoryInfo dir;
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfigDirectory(out config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out dir);
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
         StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",ex.Message);
 
@@ -159,8 +151,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     public void Configuration_NoProjectNumber()
     {
         DirectoryInfo dir;
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfigDirectory(out config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out dir);
         p.ProjectNumber = null;
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
         StringAssert.Contains("Project does not have a Project Number, this is a number which is meaningful to you (as opposed to ID which is the ",ex.Message);

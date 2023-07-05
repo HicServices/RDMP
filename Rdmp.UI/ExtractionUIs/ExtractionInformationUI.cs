@@ -111,11 +111,8 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
 
         try
         {
-            string sql;
-            string alias;
-                
             //ensure it's all on one line
-            _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(QueryEditor.Text, out sql, out alias);
+            _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(QueryEditor.Text, out var sql, out var alias);
 
             ExtractionInformation.SelectSQL = sql;
             ExtractionInformation.Alias = alias;

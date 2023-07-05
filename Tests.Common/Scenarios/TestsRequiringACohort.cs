@@ -188,12 +188,10 @@ GO
 
         CustomTable = _cohortDatabase.CreateTable("custTable99", dt);
 
-        ColumnInfo[] cols;
-        new TableInfoImporter(CatalogueRepository, CustomTable).DoImport(out CustomTableInfo, out cols);
+        new TableInfoImporter(CatalogueRepository, CustomTable).DoImport(out CustomTableInfo, out var cols);
             
         CatalogueItem[] cis;
-        ExtractionInformation[] eis;
-        new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out cis, out eis);
+        new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out cis, out var eis);
 
         CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, CustomCatalogue);
             

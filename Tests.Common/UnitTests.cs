@@ -262,8 +262,7 @@ public class UnitTests
             
         if (typeof (T) == typeof(ObjectImport))
         {
-            ShareManager sm;
-            var export = WhenIHaveA<ObjectExport>(repository, out sm);
+            var export = WhenIHaveA<ObjectExport>(repository, out var sm);
             return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
         }
             
@@ -304,9 +303,8 @@ public class UnitTests
             
         if (typeof (T) == typeof(AggregateContinuousDateAxis))
         {
-            ExtractionInformation dateEi;
             ExtractionInformation otherEi;
-            var config = WhenIHaveA<AggregateConfiguration>(repository, out dateEi,out otherEi);
+            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi,out otherEi);
                 
             //remove the other Ei
             config.AggregateDimensions[0].DeleteInDatabase();
@@ -382,19 +380,14 @@ public class UnitTests
 
         if (typeof (T) == typeof(JoinInfo))
         {
-            ColumnInfo col1;
-            ColumnInfo col2;
             ColumnInfo col3;
-            WhenIHaveTwoTables(repository, out col1,out col2,out col3);
+            WhenIHaveTwoTables(repository, out var col1,out var col2,out col3);
                 
             return (T)(object)new JoinInfo(repository,col1,col2,ExtractionJoinType.Left, null);
         }
         if (typeof (T) == typeof(Lookup))
         {
-            ColumnInfo col1;
-            ColumnInfo col2;
-            ColumnInfo col3;
-            WhenIHaveTwoTables(repository, out col1,out col2,out col3);
+            WhenIHaveTwoTables(repository, out var col1,out var col2,out var col3);
                 
             return (T)(object)new Lookup(repository,col3,col1,col2,ExtractionJoinType.Left, null);
         }

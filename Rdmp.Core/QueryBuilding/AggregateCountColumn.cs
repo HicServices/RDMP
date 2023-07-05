@@ -46,11 +46,9 @@ public class AggregateCountColumn:SpontaneousObject,IColumn
     public void SetQuerySyntaxHelper(IQuerySyntaxHelper syntaxHelper, bool ensureAliasExists)
     {
         _syntaxHelper = syntaxHelper;
-        string select;
-        string alias;
 
         //if alias exists
-        if (_syntaxHelper.SplitLineIntoSelectSQLAndAlias(_sql, out select, out alias))
+        if (_syntaxHelper.SplitLineIntoSelectSQLAndAlias(_sql, out var select, out var alias))
             Alias = alias; //use the users explicit alias
         else
             Alias = ensureAliasExists ? DefaultAliasName : null;//set an alias of MyCount

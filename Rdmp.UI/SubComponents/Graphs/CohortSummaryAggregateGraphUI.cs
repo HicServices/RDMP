@@ -43,8 +43,7 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        bool shouldCloseInstead;
-        _collection.RevertIfMatchedInCollectionObjects(e.Object,out shouldCloseInstead);
+        _collection.RevertIfMatchedInCollectionObjects(e.Object,out var shouldCloseInstead);
 
         if (shouldCloseInstead)
         {

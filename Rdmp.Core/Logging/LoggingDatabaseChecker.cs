@@ -171,11 +171,8 @@ public class LoggingDatabaseChecker : ICheckable
         }
 
         //now reconcile what is in the database with what we expect
-        Dictionary<int, string> missing;
-        Dictionary<int, string> collisions;
-        List<string> misnomers;
 
-        ExpectedLookupsValuesArePresent(expected, actual, out missing, out collisions, out misnomers);
+        ExpectedLookupsValuesArePresent(expected, actual, out var missing, out var collisions, out var misnomers);
             
         if(!missing.Any() && !collisions.Any() && !misnomers.Any())
         {

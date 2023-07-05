@@ -64,10 +64,8 @@ public class ReleaseEnvironmentPotential : ICheckable
 
         try
         {
-            Exception e;
-            string reason;
             Assesment = ticketingSystem.GetDataReleaseabilityOfTicket(Project.MasterTicket,
-                Configuration.RequestTicket, Configuration.ReleaseTicket, out reason, out e);
+                Configuration.RequestTicket, Configuration.ReleaseTicket, out var reason, out var e);
             Exception = e;
             Reason = reason;
         }

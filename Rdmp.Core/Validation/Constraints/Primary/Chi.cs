@@ -27,9 +27,7 @@ public class Chi : PrimaryConstraint
             return new ValidationFailure(
                 $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}",this);
 
-        string reason;
-
-        if (!IsValidChi(valueAsString, out reason))
+        if (!IsValidChi(valueAsString, out var reason))
             return new ValidationFailure(reason,this);
            
         return null;

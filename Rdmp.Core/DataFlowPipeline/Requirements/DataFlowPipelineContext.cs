@@ -140,9 +140,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     {
         foreach (var component in pipeline.PipelineComponents)
         {
-            Type forbiddenType;
-
-            if (!IsAllowable(component.GetClassAsSystemType(), out forbiddenType))
+            if (!IsAllowable(component.GetClassAsSystemType(), out Type forbiddenType))
             {
                 reason =
                     $"Component {component.Name} implements a forbidden type ({GetFullName(forbiddenType)}) under the pipeline usage context";

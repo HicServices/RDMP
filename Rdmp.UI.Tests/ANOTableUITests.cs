@@ -32,8 +32,7 @@ internal class ANOTableUITests : UITests
     [Test, UITimeout(50000)]
     public void Test_ANOTableUI_ServerWrongType()
     {
-        ExternalDatabaseServer srv;
-        var anoTable = WhenIHaveA<ANOTable>(Repository, out srv);
+        var anoTable = WhenIHaveA<ANOTable>(Repository, out var srv);
         srv.CreatedByAssembly = null;
         srv.SaveToDatabase();
 

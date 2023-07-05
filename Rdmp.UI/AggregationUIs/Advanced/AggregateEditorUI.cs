@@ -362,10 +362,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
     private void EnsureCountHasAlias()
     {
-        string col;
-        string alias;
-
-        _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(_aggregate.CountSQL, out col, out alias);
+        _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(_aggregate.CountSQL, out var col, out var alias);
 
         if (string.IsNullOrWhiteSpace(alias))
             _aggregate.CountSQL = $"{col}{_querySyntaxHelper.AliasPrefix} MyCount";

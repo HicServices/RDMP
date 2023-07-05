@@ -131,10 +131,7 @@ public class TriggerChecks : ICheckable
 
         if (shouldCreate)
         {
-            string problemsDroppingTrigger;
-            string thingsThatWorkedDroppingTrigger;
-
-            microsoftSQLTrigger.DropTrigger(out problemsDroppingTrigger,out thingsThatWorkedDroppingTrigger);
+            microsoftSQLTrigger.DropTrigger(out var problemsDroppingTrigger,out var thingsThatWorkedDroppingTrigger);
 
             if (!string.IsNullOrWhiteSpace(thingsThatWorkedDroppingTrigger))
                 notifier.OnCheckPerformed(new CheckEventArgs(thingsThatWorkedDroppingTrigger, CheckResult.Success, null));

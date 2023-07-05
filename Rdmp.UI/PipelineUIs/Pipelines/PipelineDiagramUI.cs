@@ -225,10 +225,8 @@ public partial class PipelineDiagramUI : UserControl
 
     private void AddPipelineComponent(IPipelineComponent toRealize, PipelineComponentRole role)
     {
-        Exception exConstruction;
-            
         //create the pipeline realization (might fail
-        var value = _pipelineFactory.TryCreateComponent(toRealize, out exConstruction);
+        var value = _pipelineFactory.TryCreateComponent(toRealize, out var exConstruction);
 
         if (role != PipelineComponentRole.Source)
             AddDividerIfReorderingAvailable();

@@ -69,8 +69,7 @@ public class ExtractionDirectory : IExtractionDirectory
             throw new Exception(
                 $"You cannot call a dataset '{CUSTOM_COHORT_DATA_FOLDER_NAME}' because this string is reserved for cohort custom data the system spits out itself");
 
-        string reason;
-        if(!Catalogue.IsAcceptableName(dataset.Catalogue.Name,out reason))
+        if(!Catalogue.IsAcceptableName(dataset.Catalogue.Name,out var reason))
             throw new NotSupportedException(
                 $"Cannot extract dataset {dataset} because it points at Catalogue with an invalid name, name is invalid because:{reason}");
 

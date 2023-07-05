@@ -65,9 +65,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// <inheritdoc/>
     public IDataFlowPipelineEngine Create(IPipeline pipeline, IDataLoadEventListener listener)
     {
-        string reason;
-
-        if (!_context.IsAllowable(pipeline, out reason))
+        if (!_context.IsAllowable(pipeline, out var reason))
             throw new Exception($"Cannot create pipeline because: {reason}");
 
         var destination = GetBest(_useCase.ExplicitDestination, CreateDestinationIfExists(pipeline),"destination");

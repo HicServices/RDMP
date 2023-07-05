@@ -125,8 +125,7 @@ public class SourceTests:DatabaseTests
         component.Name = "TestPipeComponent";
         component.SaveToDatabase();
 
-        string reason;
-        var rejection = context.IsAllowable(pipeline, out reason);
+        var rejection = context.IsAllowable(pipeline, out var reason);
 
         Console.WriteLine(reason);
 

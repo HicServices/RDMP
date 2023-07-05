@@ -159,10 +159,7 @@ WHERE DuplicateCount > 1";
     /// <returns></returns>
     public string GeneratePreviewSQL()
     {
-            
-        ColumnInfo[] pks;
-        List<IResolveDuplication> resolvers;
-        var basicSQL = GenerateSQL(out pks, out resolvers);
+        var basicSQL = GenerateSQL(out var pks, out var resolvers);
 
         var commaSeparatedPKs = string.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
         var commaSeparatedCols = string.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));

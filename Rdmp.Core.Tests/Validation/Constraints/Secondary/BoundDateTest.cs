@@ -114,8 +114,7 @@ internal class BoundDateTest
         d.Keys.CopyTo(keys, 0);
         d.Values.CopyTo(vals, 0);
 
-        object o;
-        d.TryGetValue(targetProperty, out o);
+        d.TryGetValue(targetProperty, out var o);
 
         return b.Validate(o, vals, keys);
     }

@@ -734,9 +734,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             Type = CatalogueType.Unknown;
         else
         {
-            CatalogueType typeAsEnum;
-
-            if (Enum.TryParse(type.ToString(), true, out typeAsEnum))
+            if (Enum.TryParse(type.ToString(), true, out CatalogueType typeAsEnum))
                 Type = typeAsEnum;
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
@@ -749,9 +747,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             Periodicity = CataloguePeriodicity.Unknown;
         else
         {
-            CataloguePeriodicity periodicityAsEnum;
-
-            if (Enum.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
+            if (Enum.TryParse(periodicity.ToString(), true, out CataloguePeriodicity periodicityAsEnum))
                 Periodicity = periodicityAsEnum;
             else
             {
@@ -765,9 +761,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             Granularity = CatalogueGranularity.Unknown;
         else
         {
-            CatalogueGranularity granularityAsEnum;
-
-            if (Enum.TryParse(granularity.ToString(), true, out granularityAsEnum))
+            if (Enum.TryParse(granularity.ToString(), true, out CatalogueGranularity granularityAsEnum))
                 Granularity = granularityAsEnum;
             else
                 throw new Exception(
@@ -868,9 +862,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        string reason;
-
-        if (!IsAcceptableName(Name, out reason))
+        if (!IsAcceptableName(Name, out var reason))
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Catalogue name {Name} (ID={ID}) does not follow naming conventions reason:{reason}",
@@ -967,8 +959,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public ITableInfo[] GetTableInfoList(bool includeLookupTables)
     {
-        List<ITableInfo> normalTables, lookupTables;
-        GetTableInfos(out normalTables, out lookupTables);
+        GetTableInfos(out var normalTables, out var lookupTables);
 
         if (includeLookupTables)
             return normalTables.Union(lookupTables).ToArray();
@@ -979,8 +970,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public ITableInfo[] GetLookupTableInfoList()
     {
-        List<ITableInfo> normalTables, lookupTables;
-        GetTableInfos(out normalTables, out lookupTables);
+        List<ITableInfo> normalTables;
+        GetTableInfos(out normalTables, out var lookupTables);
 
         return lookupTables.ToArray();
     }

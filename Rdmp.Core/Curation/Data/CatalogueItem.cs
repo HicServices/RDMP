@@ -248,9 +248,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             Periodicity = Catalogue.CataloguePeriodicity.Unknown;
         else
         {
-            Catalogue.CataloguePeriodicity periodicityAsEnum;
-
-            if(Enum.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
+            if(Enum.TryParse(periodicity.ToString(), true, out Catalogue.CataloguePeriodicity periodicityAsEnum))
                 Periodicity = periodicityAsEnum;
             else
                 Periodicity = Catalogue.CataloguePeriodicity.Unknown;

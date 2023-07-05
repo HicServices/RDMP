@@ -101,8 +101,7 @@ public partial class AggregateTopXUI : RDMPUserControl
         }
 
         //user is typing something illegal like 'ive got a lovely bunch o coconuts'
-        int i;
-        if (!int.TryParse(tbTopX.Text, out i))
+        if (!int.TryParse(tbTopX.Text, out var i))
         {
             //not an int
             tbTopX.ForeColor = Color.Red;

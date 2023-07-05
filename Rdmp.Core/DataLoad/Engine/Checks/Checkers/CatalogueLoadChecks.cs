@@ -115,8 +115,7 @@ internal class CatalogueLoadChecks:ICheckable
             if(!_loadMetadata.IgnoreTrigger)
             {
                 //if trigger is created as part of this check then it is likely to have resulted in changes to the underlying table (e.g. added hic_validFrom field) in which case we should resynch the TableInfo to pickup these new columns
-                bool runSynchronizationAgain;
-                CheckTriggerIntact(liveTable,notifier,out runSynchronizationAgain);
+                CheckTriggerIntact(liveTable,notifier,out var runSynchronizationAgain);
 
                 if(runSynchronizationAgain)
                     CheckTableInfoSynchronization(tableInfo, notifier);

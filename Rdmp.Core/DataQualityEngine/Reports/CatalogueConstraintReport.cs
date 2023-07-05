@@ -520,11 +520,10 @@ public class CatalogueConstraintReport : DataQualityReport
         states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder);
 
         //ask the validator to validate! 
-        Consequence? worstConsequence;
         _validator.ValidateVerboseAdditive(
             r,//validate the data reader
             states.ColumnValidationFailuresByDataLoadRunID[dataLoadRunIDOfCurrentRecord],//additively adjust the validation failures dictionary
-            out worstConsequence);//and tell us what the worst consequence in the row was 
+            out var worstConsequence);//and tell us what the worst consequence in the row was 
 
 
         //increment the time periodicity hypercube!

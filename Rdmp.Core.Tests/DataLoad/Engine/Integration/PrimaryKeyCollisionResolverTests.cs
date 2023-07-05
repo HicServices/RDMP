@@ -20,11 +20,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void PrimaryKeyCollisionResolverMultilation_Check_Passes()
     {
-        TableInfo t;
-        ColumnInfo c1;
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2, out c3);
+        SetupTableInfos(out var t, out var c1, out var c2, out var c3);
         try
         {
             var mutilation = new PrimaryKeyCollisionResolverMutilation();
@@ -54,11 +50,10 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNoColumnOrderConfigured()
     {
-        TableInfo t;
         ColumnInfo c1;
         ColumnInfo c2;
         ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2,out c3);
+        SetupTableInfos(out var t, out c1, out c2,out c3);
         try
         {
             var mutilation = new PrimaryKeyCollisionResolverMutilation();
@@ -93,11 +88,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]     
     public void GenerateSQL_OrderCorrect()
     {
-        TableInfo t;
-        ColumnInfo c1;
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2,out c3);
+        SetupTableInfos(out var t, out var c1, out var c2,out var c3);
         try
         {
             c1.IsPrimaryKey = true;
@@ -134,11 +125,9 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void NoColumnOrdersConfigured_ThrowsException()
     {
-        TableInfo t;
-        ColumnInfo c1;
         ColumnInfo c2;
         ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2, out c3);
+        SetupTableInfos(out var t, out var c1, out c2, out c3);
         try
         {
             c1.IsPrimaryKey = true;
@@ -157,11 +146,10 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void NoPrimaryKeys_ThrowsException()
     {
-        TableInfo t;
         ColumnInfo c1;
         ColumnInfo c2;
         ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2,out c3);
+        SetupTableInfos(out var t, out c1, out c2,out c3);
            
         try
         {

@@ -305,9 +305,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
         foreach (var catalogue in GetAllCatalogues())
         {
-            List<ITableInfo> normal;
-            List<ITableInfo> lookup;
-            catalogue.GetTableInfos(out normal, out lookup);
+            catalogue.GetTableInfos(out var normal, out var lookup);
 
             foreach (var n in normal)
                 normalTables.Add(n);

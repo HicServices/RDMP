@@ -27,10 +27,8 @@ public class CohortCompilerRunnerTests:DatabaseTests
     public void CacheIdentifierListWithRunner_SimpleCase()
     {
         DiscoveredDatabase db;
-        CohortIdentificationConfiguration cic;
-        DataTable dt;
 
-        SetupCohort(out db,out cic,out dt);
+        SetupCohort(out db,out var cic,out var dt);
 
         var compiler = new CohortCompiler(cic);
 
@@ -51,11 +49,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
     [Test]
     public void CacheIdentifierListWithRunner_WithCaching()
     {
-        DiscoveredDatabase db;
-        CohortIdentificationConfiguration cic;
-        DataTable dt;
-
-        SetupCohort(out db, out cic, out dt);
+        SetupCohort(out var db, out var cic, out var dt);
             
         var e = new MasterDatabaseScriptExecutor(db);
         var p = new QueryCachingPatcher();
