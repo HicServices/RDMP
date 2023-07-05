@@ -497,7 +497,6 @@ public class MetadataReport:DocXHelper
 
     public void Abort()
     {
-        if(thread != null)
-            thread.Interrupt();
+        thread?.Interrupt();
     }
 }

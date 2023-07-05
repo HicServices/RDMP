@@ -162,8 +162,7 @@ public partial class DataFlowComponentVisualisation : UserControl
     {
         try
         {
-            if (_checkable != null)
-                _checkable.Check(ragSmiley1);
+            _checkable?.Check(ragSmiley1);
         }
         catch (Exception e)
         {
@@ -175,8 +174,7 @@ public partial class DataFlowComponentVisualisation : UserControl
     {
         try
         {
-            if (_mandatoryChecker != null)
-                _mandatoryChecker.Check(ragSmiley1);
+            _mandatoryChecker?.Check(ragSmiley1);
         }
         catch (Exception e)
         {

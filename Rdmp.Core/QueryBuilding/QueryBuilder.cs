@@ -253,9 +253,8 @@ public class QueryBuilder : ISqlQueryBuilder
         {
             //if the parameter is one that needs to be told what the query syntax helper is e.g. if it's a global parameter designed to work on multiple datasets
             var needsToldTheSyntaxHelper = parameter as IInjectKnown<IQuerySyntaxHelper>;
-            if(needsToldTheSyntaxHelper != null)
-                needsToldTheSyntaxHelper.InjectKnown(QuerySyntaxHelper);
-                
+            needsToldTheSyntaxHelper?.InjectKnown(QuerySyntaxHelper);
+
             if(CheckSyntax)
                 parameter.Check(checkNotifier);
 

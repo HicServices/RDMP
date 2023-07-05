@@ -50,8 +50,7 @@ public class CohortDescriptionDataTableAsyncFetch
 
         Task.ContinueWith(s =>
         {
-            if (Finished != null)
-                Finished();
+            Finished?.Invoke();
         });
 
         Task.Start();

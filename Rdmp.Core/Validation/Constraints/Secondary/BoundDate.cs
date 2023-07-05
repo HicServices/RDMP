@@ -54,23 +54,19 @@ public class BoundDate : Bound
     {
         if (Inclusive)
         {
-            if(Lower != null)
-                if (d < Lower)
-                    return false;
+            if (d < Lower)
+                return false;
 
-            if(Upper != null)
-                if (d > Upper)
-                    return false;
+            if (d > Upper)
+                return false;
         }
         else
         {
-            if (Lower != null)
-                if (d <= Lower)
-                    return false;
+            if (d <= Lower)
+                return false;
 
-            if (Upper != null)
-                if (d >= Upper)
-                    return false;
+            if (d >= Upper)
+                return false;
         }
 
         return true;

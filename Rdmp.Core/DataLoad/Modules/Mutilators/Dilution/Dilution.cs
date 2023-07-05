@@ -73,8 +73,7 @@ public class Dilution : IPluginMutilateDataTables
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Dilution can ONLY occur in load stage AdjustStaging, it is currently configured as load stage: {_loadStage}", CheckResult.Fail));
 
-        if(instance != null)
-            instance.Check(notifier);
+        instance?.Check(notifier);
     }
 
         

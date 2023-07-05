@@ -93,20 +93,15 @@ public class HICPipelineTests : DatabaseTests
 
         public void Dispose()
         {
-            if (Catalogue != null)
-                Catalogue.DeleteInDatabase();
+            Catalogue?.DeleteInDatabase();
 
-            if (LoadMetadata != null)
-                LoadMetadata.DeleteInDatabase();
+            LoadMetadata?.DeleteInDatabase();
 
-            if (ColumnInfo != null)
-                ColumnInfo.DeleteInDatabase();
+            ColumnInfo?.DeleteInDatabase();
 
-            if (TableInfo != null)
-                TableInfo.DeleteInDatabase();
+            TableInfo?.DeleteInDatabase();
 
-            if (Credentials != null)
-                Credentials.DeleteInDatabase();
+            Credentials?.DeleteInDatabase();
         }
 
         private void SetupLoadProcessTasks(ICatalogueRepository catalogueRepository)
@@ -289,8 +284,7 @@ public class HICPipelineTests : DatabaseTests
             //reset the original RAW server
             defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, oldDefault);
 
-            if (external != null)
-                external.DeleteInDatabase();
+            external?.DeleteInDatabase();
 
             testDir.Delete(true);
 

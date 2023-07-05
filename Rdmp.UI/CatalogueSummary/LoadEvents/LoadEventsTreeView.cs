@@ -317,8 +317,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         if (_populateLoadHistory.IsBusy)
             _populateLoadHistory.CancelAsync();
 
-        if (_populateLoadHistoryCancel != null)
-            _populateLoadHistoryCancel.Cancel();
+        _populateLoadHistoryCancel?.Cancel();
     }
 
     private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

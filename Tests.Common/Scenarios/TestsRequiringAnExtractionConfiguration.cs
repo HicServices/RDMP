@@ -185,8 +185,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         }
         finally
         {
-            if(pipeline != null)
-                pipeline.DeleteInDatabase();
+            pipeline?.DeleteInDatabase();
         }
 
         results =  pipelineUseCase.Destination;

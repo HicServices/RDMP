@@ -144,8 +144,7 @@ internal class CatalogueItemTests : DatabaseTests
         }
         finally 
         {
-            if (cloneChild != null)
-                cloneChild.DeleteInDatabase();
+            cloneChild?.DeleteInDatabase();
 
             child.DeleteInDatabase();
             parent.DeleteInDatabase();

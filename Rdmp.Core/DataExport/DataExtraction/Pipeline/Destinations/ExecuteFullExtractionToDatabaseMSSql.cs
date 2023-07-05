@@ -386,8 +386,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
     public override void Abort(IDataLoadEventListener listener)
     {
-        if(_destination != null)
-            _destination.Abort(listener);
+        _destination?.Abort(listener);
     }
     protected override void PreInitializeImpl(IExtractCommand value, IDataLoadEventListener listener)
     {

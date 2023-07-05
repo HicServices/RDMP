@@ -287,8 +287,7 @@ public partial class SelectColumnUI : RDMPUserControl
         }
 
         var saveable = col as ISaveable;
-        if (saveable != null)
-            saveable.SaveToDatabase();
+        saveable?.SaveToDatabase();
 
         _aggregate.SaveToDatabase();
         Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));

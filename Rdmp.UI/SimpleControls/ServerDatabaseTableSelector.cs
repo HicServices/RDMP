@@ -243,15 +243,13 @@ public partial class ServerDatabaseTableSelector : UserControl
         if (_workerRefreshDatabases.IsBusy)
         {
             _workerRefreshDatabases.CancelAsync();
-            if(_workerRefreshDatabasesToken != null)
-                _workerRefreshDatabasesToken.Cancel();
+            _workerRefreshDatabasesToken?.Cancel();
         }
 
         if (_workerRefreshTables.IsBusy)
         {
             _workerRefreshTables.CancelAsync();
-            if(_workerRefreshTablesToken != null)
-                _workerRefreshTablesToken.Cancel();
+            _workerRefreshTablesToken?.Cancel();
         }
     }
     #endregion
@@ -313,8 +311,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         _clearingTable = true;
 
         cbxTableValueFunctions.Text = null;
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
 
         _clearingTable = false;
     }
@@ -327,8 +324,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
         _clearingTable = true;
         cbxTable.Text = null;
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
 
         _clearingTable = false;
     }
@@ -351,8 +347,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         if (string.IsNullOrWhiteSpace(cbxServer.Text) || string.IsNullOrWhiteSpace(cbxDatabase.Text))
             return;
 
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
 
         AbortWorkers();
 
@@ -385,8 +380,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
         SetLoading(true);
 
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
 
 
         if(!_workerRefreshDatabases.IsBusy)
@@ -427,14 +421,12 @@ public partial class ServerDatabaseTableSelector : UserControl
 
         oldUsername = tbUsername.Text;
 
-        if (SelectionChanged != null)
-            SelectionChanged.Invoke();
+        SelectionChanged?.Invoke();
     }
 
     private void tbPassword_TextChanged(object sender, EventArgs e)
     {
-        if (SelectionChanged != null)
-            SelectionChanged.Invoke();
+        SelectionChanged?.Invoke();
     }
 
     public DiscoveredDatabase GetDiscoveredDatabase()
@@ -534,8 +526,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     private void cbxDatabase_TextChanged(object sender, EventArgs e)
     {
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
     }
 
     private void databaseTypeUI1_DatabaseTypeChanged(object sender, EventArgs e)

@@ -194,8 +194,7 @@ public partial class SecondaryConstraintUI : UserControl
                     var v = _requiredProperties[i].GetValue(SecondaryConstriant, null) as IRevertable;
 
                     //It has a value, this is a dropdown control right here though so if the revertable state out of date then it means someone else made a change to the database while we were picking columns
-                    if(v != null)
-                        v.RevertToDatabaseState(); 
+                    v?.RevertToDatabaseState();
 
                     valueControl = dd;
 

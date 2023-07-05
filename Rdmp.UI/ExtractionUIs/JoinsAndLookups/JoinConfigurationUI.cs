@@ -253,10 +253,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         if (ti != null)
             return ti;
 
-        if (ticmd != null)
-            return ticmd.TableInfo;
-
-        return null;
+        return ticmd?.TableInfo;
     }
 
     private void tbCollation_Leave(object sender, EventArgs e)

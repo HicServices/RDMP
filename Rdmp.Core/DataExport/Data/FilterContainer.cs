@@ -151,11 +151,9 @@ public class FilterContainer : ConcreteContainer, IContainer
         var parent = (FilterContainer)GetParentContainerIfAny();
 
         //it doesn't
-        if (parent == null)
-            return null; //boo hoo, we are an orphan somehow
 
         //our parent must be the root container maybe? recursive
-        return parent.GetSelectedDataSetsRecursively();
+        return parent?.GetSelectedDataSetsRecursively();
 
     }
 

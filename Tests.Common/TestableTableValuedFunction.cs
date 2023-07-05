@@ -89,8 +89,7 @@ END
 
         TableInfoCreated.DeleteInDatabase();
 
-        if(credentials != null)
-            credentials.DeleteInDatabase();
+        credentials?.DeleteInDatabase();
 
         Cata.DeleteInDatabase();
     }

@@ -499,8 +499,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             return;
 
         //clear the old menu strip first so old shortcuts cannot be activated during 
-        if(_menu != null)
-            _menu.Dispose();
+        _menu?.Dispose();
 
         if(Tree.SelectedObjects.Count <= 1)
             _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObject);
@@ -785,9 +784,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         //parameter 2 must be object compatible Type
 
         var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(type, args, o);
-            
-        if(menu != null)
-            menu.AddCommonMenuItems(this);
+
+        menu?.AddCommonMenuItems(this);
 
         return menu;
     }

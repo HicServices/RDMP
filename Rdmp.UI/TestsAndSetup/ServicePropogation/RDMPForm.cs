@@ -66,8 +66,7 @@ public class RDMPForm : Form, IRDMPControl
         {
             var saveable = this as ISaveableUI;
 
-            if (saveable != null)
-                saveable.GetObjectSaverButton().Save();
+            saveable?.GetObjectSaverButton().Save();
         }
     }
 

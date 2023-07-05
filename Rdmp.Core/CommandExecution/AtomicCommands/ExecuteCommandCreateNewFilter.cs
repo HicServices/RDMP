@@ -237,8 +237,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
             f = _factory.CreateNewFilter($"New Filter {Guid.NewGuid()}");
         }
 
-        if (container != null)
-            container.AddChild(f);
+        container?.AddChild(f);
 
         if (!string.IsNullOrWhiteSpace(Name))
         {

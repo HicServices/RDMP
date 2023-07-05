@@ -147,10 +147,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
 
         var parentContainer = GetParentContainerIfAny();
 
-        if (parentContainer == null)
-            return null;
-
-        return ((AggregateFilterContainer)parentContainer).GetAggregate();
+        return ((AggregateFilterContainer)parentContainer)?.GetAggregate();
     }
 
     public override IFilterFactory GetFilterFactory()

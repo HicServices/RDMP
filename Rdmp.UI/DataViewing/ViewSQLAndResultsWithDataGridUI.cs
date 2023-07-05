@@ -105,8 +105,9 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         //if we don't exist!
         if (_collection.DatabaseObjects.Any())
             if(!((IRevertable)_collection.DatabaseObjects[0]).Exists())
-                if(ParentForm != null)
-                    ParentForm.Close();
+            {
+                ParentForm?.Close();
+            }
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
@@ -324,8 +325,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
     private void llCancel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        if(_cmd != null)
-            _cmd.Cancel();
+        _cmd?.Cancel();
     }
 
     private void _scintilla_TextChanged(object sender, EventArgs e)

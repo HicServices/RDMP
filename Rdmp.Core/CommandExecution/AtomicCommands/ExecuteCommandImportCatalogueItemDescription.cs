@@ -79,8 +79,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
         }
 
         var s = to as ISaveable;
-        if (s != null)
-            s.SaveToDatabase();
+        s?.SaveToDatabase();
     }
 
 }

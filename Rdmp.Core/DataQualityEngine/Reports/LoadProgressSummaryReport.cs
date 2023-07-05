@@ -76,11 +76,10 @@ public class LoadProgressSummaryReport:ICheckable
                 //Catalogue has never been run in the DQE
                 CataloguesMissingDQERuns.Add(catalogue);
 
-                if (notifier != null)
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            $"Catalogue '{catalogue}' does not have any DQE evaluations on it in the DQE Repository.  You should run the DQE on the dataset",
-                            CheckResult.Warning));
+                notifier?.OnCheckPerformed(
+                    new CheckEventArgs(
+                        $"Catalogue '{catalogue}' does not have any DQE evaluations on it in the DQE Repository.  You should run the DQE on the dataset",
+                        CheckResult.Warning));
             }
             else
             {

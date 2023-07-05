@@ -327,9 +327,6 @@ public class ReleaseRunner:ManyRunner
     {
         var result = GetSingleCheckerResults<GlobalsReleaseChecker>();
 
-        if (result == null)
-            return null;
-
-        return result.GetWorst();
+        return result?.GetWorst();
     }
 }

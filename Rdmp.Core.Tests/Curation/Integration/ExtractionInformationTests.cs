@@ -95,16 +95,12 @@ public class ExtractionInformationTests : DatabaseTests
         }
         finally
         {
-
-            if (parameter != null)
-                parameter.DeleteInDatabase();
+            parameter?.DeleteInDatabase();
 
             //filters are children of extraction info with CASCADE DELETE so have to delete this one first if we want to test it programatically (although we could just skip deleting it since SQL will handle it anyway)
-            if (filterFastThings != null)
-                filterFastThings.DeleteInDatabase();
+            filterFastThings?.DeleteInDatabase();
 
-            if(extractInfo != null)
-                extractInfo.DeleteInDatabase();
+            extractInfo?.DeleteInDatabase();
         }
             
 
@@ -143,12 +139,10 @@ public class ExtractionInformationTests : DatabaseTests
             Assert.AreEqual( extractInfo2_CameFromLinker.ExtractionCategory,ExtractionCategory.Supplemental);
 
         }
-        finally 
+        finally
         {
-                
-            if (extractInfo != null)
-                extractInfo.DeleteInDatabase();
-                
+            extractInfo?.DeleteInDatabase();
+
         }
     }
 }

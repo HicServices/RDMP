@@ -58,10 +58,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             : rowObject as ExtractableCohort;
 
         //serve up the ExternalCohortTable name
-        if (cohort != null)
-            return cohort.ExternalCohortTable.Name;
-
-        return null;
+        return cohort?.ExternalCohortTable.Name;
     }
 
     private object ProjectNumberAspectGetter(object rowObject)
@@ -73,28 +70,16 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         if (p != null)
             return p.ProjectNumber;
 
-        if(masquerade != null)
-        {
-            var c = masquerade.MasqueradingAs() as ExtractableCohort;
-            if (c != null)
-                return c.ExternalProjectNumber;
-        }
-
-        return null;
+        var c = masquerade?.MasqueradingAs() as ExtractableCohort;
+        return c?.ExternalProjectNumber;
     }
 
     private object CohortVersionAspectGetter(object rowObject)
     {
         var masquerade = rowObject as IMasqueradeAs;
 
-        if (masquerade != null)
-        {
-            var c = masquerade.MasqueradingAs() as ExtractableCohort;
-            if (c != null)
-                return c.ExternalVersion;
-        }
-
-        return null;
+        var c = masquerade?.MasqueradingAs() as ExtractableCohort;
+        return c?.ExternalVersion;
     }
 
     public override void SetItemActivator(IActivateItems activator)

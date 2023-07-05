@@ -460,8 +460,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private void btnClearAxis_Click(object sender, EventArgs e)
     {
         var existing = _aggregate.GetAxisIfAny();
-        if(existing != null)
-            existing.DeleteInDatabase();
+        existing?.DeleteInDatabase();
 
         //also clear the pivot
         btnClearPivotDimension_Click(this,e);
@@ -557,8 +556,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
             
         var cic = _aggregate.GetCohortIdentificationConfigurationIfAny();
 
-        if (cic != null)
-            cic.EnsureNamingConvention(_aggregate);
+        cic?.EnsureNamingConvention(_aggregate);
     }
 
     private void olvJoin_ItemActivate(object sender, EventArgs e)

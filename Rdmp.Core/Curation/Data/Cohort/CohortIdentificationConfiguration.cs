@@ -231,8 +231,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             //make sure to do the obscure cross server/database cascade activities too
 
             //if the repository has obscure dependencies
-            if (CatalogueRepository.ObscureDependencyFinder != null)
-                CatalogueRepository.ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(this);
+            CatalogueRepository.ObscureDependencyFinder?.HandleCascadeDeletesForDeletedObject(this);
         }
     }
 

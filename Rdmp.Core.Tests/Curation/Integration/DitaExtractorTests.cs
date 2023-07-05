@@ -76,8 +76,7 @@ internal class DitaExtractorTests : DatabaseTests
 
         //get rid of any old copies lying around
         var oldCatalogueVersion = CatalogueRepository.GetAllObjects<Catalogue>().SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
-        if(oldCatalogueVersion != null)
-            oldCatalogueVersion.DeleteInDatabase();
+        oldCatalogueVersion?.DeleteInDatabase();
 
         var ditaTestCatalogue = new Catalogue(CatalogueRepository, "DitaExtractorConstructor_ExtractTestCatalogue_FilesExist");//name of Catalogue
 

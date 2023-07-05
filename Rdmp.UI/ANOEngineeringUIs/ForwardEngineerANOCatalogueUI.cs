@@ -181,10 +181,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
             {
                 var plan = _planManager.GetPlanForColumnInfo(ci);
 
-                if (plan.ExtractionCategoryIfAny.HasValue)
-                    return plan.ExtractionCategoryIfAny;
-
-                return null;
+                return plan.ExtractionCategoryIfAny;
             }
         }
         catch (Exception)

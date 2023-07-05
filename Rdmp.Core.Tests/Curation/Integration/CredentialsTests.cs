@@ -340,8 +340,7 @@ public class CredentialsTests : DatabaseTests
         finally 
         {
             t.DeleteInDatabase();
-            if(cred != null)
-                cred.DeleteInDatabase();
+            cred?.DeleteInDatabase();
             c.DeleteInDatabase();//no need to delete ci because of cascades
                 
         }

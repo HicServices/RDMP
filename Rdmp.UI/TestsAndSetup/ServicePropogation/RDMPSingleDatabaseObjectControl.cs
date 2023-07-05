@@ -181,8 +181,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     private void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
     {
-        if (_colorIndicator != null)
-            _colorIndicator.SendToBack();
+        _colorIndicator?.SendToBack();
     }
 
     protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)

@@ -236,10 +236,7 @@ public partial class ArgumentCollectionUI : UserControl
         if (typeof(Enum).IsAssignableFrom(type))
             return "Enum";
 
-        if (type == null)
-            return null;
-
-        return type.Name;
+        return type?.Name;
     }
 
     private void btnViewSourceCode_Click(object sender, EventArgs e)

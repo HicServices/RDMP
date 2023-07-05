@@ -59,8 +59,7 @@ public abstract class DelimitedFileSourceTestsBase
         source.StronglyTypeInput = true;//makes the source interpret the file types properly
         source.StronglyTypeInputBatchSize = 100;
         source.AttemptToResolveNewLinesInRecords = true; //maximise potential for conflicts
-        if (adjust != null)
-            adjust(source);
+        adjust?.Invoke(source);
 
         try
         {

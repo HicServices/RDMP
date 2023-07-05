@@ -149,10 +149,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (rowobject is DiscoveredTable || rowobject is DiscoveredColumn)
             return LoadDiagramState.New;
 
-        if (stateHaver != null)
-            return stateHaver.State;
-
-        return null;
+        return stateHaver?.State;
     }
 
     private object olvDataType_AspectGetter(object rowobject)
@@ -163,18 +160,12 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (colNode != null)
             return colNode.GetDataType();
 
-        if (discCol != null)
-            return discCol.DataType.SQLType;
-
-        return null;
+        return discCol?.DataType.SQLType;
     }
 
     private string CellToolTipGetter(OLVColumn column, object modelObject)
     {
-        if(modelObject is LoadDiagramServerNode)
-            return ((LoadDiagramServerNode) modelObject).ErrorDescription;
-
-        return null;
+        return (modelObject as LoadDiagramServerNode)?.ErrorDescription;
     }
 
     private Bitmap ImageGetter(object rowObject)
@@ -203,10 +194,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if(rowObject is LoadDiagramTableNode)
             return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap();
 
-        if (col != null)
-            return col.GetImage(Activator.CoreIconProvider);
-            
-        return null;
+        return col?.GetImage(Activator.CoreIconProvider);
     }
 
     private IEnumerable ChildrenGetter(object model)
@@ -225,10 +213,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (table != null)
             return table.GetChildren(cbOnlyShowDynamicColumns.Checked);
 
-        if (unplannedTable != null)
-            return unplannedTable.Columns;
-
-        return null;
+        return unplannedTable?.Columns;
     }
 
     private bool CanExpandGetter(object model)

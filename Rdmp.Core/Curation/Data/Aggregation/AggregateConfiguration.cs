@@ -654,10 +654,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         var joinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
 
         //it is a joinable (Patient Index Table) so return it 
-        if (joinable != null)
-            return joinable.CohortIdentificationConfiguration;
-
-        return null;
+        return joinable?.CohortIdentificationConfiguration;
     }
 
     /// <summary>

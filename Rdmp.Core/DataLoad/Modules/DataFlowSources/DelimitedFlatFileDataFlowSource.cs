@@ -264,8 +264,7 @@ This will not help you avoid bad data as the full file structure must still be r
         catch (Exception )
         {
             //make sure file is closed if it crashes
-            if(_reader != null)
-                _reader.Dispose();
+            _reader?.Dispose();
             throw;
         }
 

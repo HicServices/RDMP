@@ -44,7 +44,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
     protected virtual void OnCacheFileNotFound(string message, Exception ex)
     {
         var handler = CacheFileNotFound;
-        if (handler != null) handler(this, message, ex);
+        handler?.Invoke(this, message, ex);
     }
     #endregion
 

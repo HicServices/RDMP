@@ -101,10 +101,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     {
         var ecd = rowObject as ExtractableCohortDescription;
 
-        if (ecd != null)
-            return ecd.Cohort.ID;
-
-        return null;
+        return ecd?.Cohort.ID;
     }
 
     private bool haveSubscribed = false;
@@ -212,20 +209,14 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     {
         var model = e.Model as ExtractableCohortDescription;
 
-        if (model == null)
-            return;
-
-        if (model.Exception != null)
+        if (model?.Exception != null)
             e.Item.BackColor = Color.Red;
     }
     private void lbCohortDatabaseTable_ItemActivate(object sender, EventArgs e)
     {
         var model = lbCohortDatabaseTable.SelectedObject as ExtractableCohortDescription;
 
-        if(model == null)
-            return;
-
-        if(model.Exception != null)
+        if(model?.Exception != null)
             ExceptionViewer.Show(model.Exception);
     }
 
@@ -248,8 +239,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         var node = lbCohortDatabaseTable.SelectedObject as ExtractableCohortDescription;
         var selected = node == null ? null : node.Cohort;
 
-        if (SelectedCohortChanged != null)
-            SelectedCohortChanged(this, selected);
+        SelectedCohortChanged?.Invoke(this, selected);
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

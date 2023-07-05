@@ -43,8 +43,7 @@ public class FlatFileAttacherTests : DatabaseTests
         parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
 
         var toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("Test_CSV_Attachment"));
-        if(toCleanup != null)
-            toCleanup.Delete(true);
+        toCleanup?.Delete(true);
 
         LoadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
             

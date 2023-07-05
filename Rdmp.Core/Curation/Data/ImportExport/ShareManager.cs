@@ -62,10 +62,8 @@ public class ShareManager
         if(property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
         {
             var server = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
-            if (server == null)
-                return null;
 
-            return server.ID;
+            return server?.ID;
         }
 
         throw new SharingException(
@@ -202,10 +200,7 @@ public class ShareManager
     {
         var import = GetExistingImport(sharingUID);
 
-        if (import == null)
-            return null;
-
-        return import.GetReferencedObject(RepositoryLocator);
+        return import?.GetReferencedObject(RepositoryLocator);
     }
 
     /// <inheritdoc cref="GetExistingImportObject(string)"/>
@@ -224,10 +219,7 @@ public class ShareManager
     {
         var export = GetExistingExport(sharingUID);
 
-        if (export == null)
-            return null;
-
-        return export.GetReferencedObject(RepositoryLocator);
+        return export?.GetReferencedObject(RepositoryLocator);
     }
 
     /// <inheritdoc cref="GetExistingExportObject(string)"/>
@@ -363,8 +355,7 @@ public class ShareManager
                 if (deleteExisting)
                 {
                     var actual = (IMapsDirectlyToDatabaseTable)GetExistingImportObject(sd.SharingGuid);
-                    if (actual != null)
-                        actual.DeleteInDatabase();
+                    actual?.DeleteInDatabase();
                 }
                 var objectConstructor = new ObjectConstructor();
                 var instance = (IMapsDirectlyToDatabaseTable) objectConstructor.ConstructIfPossible(sd.Type, this, sd);

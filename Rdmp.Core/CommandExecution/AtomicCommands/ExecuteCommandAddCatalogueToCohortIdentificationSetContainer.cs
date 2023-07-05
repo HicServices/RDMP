@@ -36,10 +36,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
     {
         get
         {
-            if (_postImportCommand == null)
-                return null;
-
-            return _postImportCommand.AggregateCreatedIfAny;
+            return _postImportCommand?.AggregateCreatedIfAny;
         }
     }
         

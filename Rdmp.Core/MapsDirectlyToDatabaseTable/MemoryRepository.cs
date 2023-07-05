@@ -222,8 +222,7 @@ public class MemoryRepository : IRepository
     {
         //Mark any cached data as out of date
         var inject = mapsDirectlyToDatabaseTable as IInjectKnown;
-        if (inject != null)
-            inject.ClearAllInjections();
+        inject?.ClearAllInjections();
 
         if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
             return;

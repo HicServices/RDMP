@@ -59,8 +59,7 @@ public abstract class ManyRunner: Runner
 
                 foreach (var runnable in runnables)
                 {
-                    if (semaphore != null)
-                        semaphore.WaitOne();
+                    semaphore?.WaitOne();
 
                     var r = runnable;
                     tasks.Add(Task.Run(() =>
@@ -71,8 +70,7 @@ public abstract class ManyRunner: Runner
                         }
                         finally
                         {
-                            if (semaphore != null)
-                                semaphore.Release();
+                            semaphore?.Release();
                         }
                     }));
                 }
@@ -86,8 +84,7 @@ public abstract class ManyRunner: Runner
                 var checkables = GetCheckables(checkNotifier);
                 foreach (var checkable in checkables)
                 {
-                    if (semaphore != null)
-                        semaphore.WaitOne();
+                    semaphore?.WaitOne();
 
                     var checkable1 = checkable;
                     var memory = new ToMemoryCheckNotifier(checkNotifier);
@@ -103,8 +100,7 @@ public abstract class ManyRunner: Runner
                         }
                         finally
                         {
-                            if (semaphore != null)
-                                semaphore.Release();
+                            semaphore?.Release();
                         }
                     }));
                 }

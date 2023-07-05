@@ -614,8 +614,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     public void RemoveDatasetFromConfiguration(IExtractableDataSet extractableDataSet)
     {
         var match = SelectedDataSets.SingleOrDefault(s => s.ExtractableDataSet_ID == extractableDataSet.ID);
-        if(match != null)
-            match.DeleteInDatabase();
+        match?.DeleteInDatabase();
     }
 
     /// <summary>

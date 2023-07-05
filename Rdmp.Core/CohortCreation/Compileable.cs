@@ -50,8 +50,7 @@ public abstract class Compileable:ICompileable
         {
             _state = value;
             var h = StateChanged;
-            if(h != null)
-                h(this,new EventArgs());
+            h?.Invoke(this,new EventArgs());
         }
         get => _state;
     }
@@ -79,10 +78,7 @@ public abstract class Compileable:ICompileable
     public TimeSpan? ElapsedTime {
         get
         {
-            if (Stopwatch == null)
-                return null;
-
-            return Stopwatch.Elapsed;
+            return Stopwatch?.Elapsed;
         }
     }
 

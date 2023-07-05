@@ -165,8 +165,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
                 listener.OnCheckPerformed(new CheckEventArgs("Entire checking process crashed", CheckResult.Fail, e));
                 CheckingInProgress = false;
 
-                if (AllChecksComplete != null)
-                    AllChecksComplete(this, new AllChecksCompleteHandlerArgs(listener));
+                AllChecksComplete?.Invoke(this, new AllChecksCompleteHandlerArgs(listener));
             }
         });
         _checkingThread.Start();
@@ -179,8 +178,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
             
         CheckingInProgress = false;
 
-        if(AllChecksComplete!= null)
-            AllChecksComplete(this,new AllChecksCompleteHandlerArgs(listener));
+        AllChecksComplete?.Invoke(this,new AllChecksCompleteHandlerArgs(listener));
     }
 
 

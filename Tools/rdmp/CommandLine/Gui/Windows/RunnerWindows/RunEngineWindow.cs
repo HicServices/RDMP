@@ -105,8 +105,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
     {
         try
         {
-            if (process != null)
-                process.Kill();
+            process?.Kill();
         }
         catch (Exception ex)
         {

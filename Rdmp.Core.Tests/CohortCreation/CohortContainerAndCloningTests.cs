@@ -82,8 +82,7 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
 
             rootcontainer.RemoveChild(clone);
 
-            if (clone.RootFilterContainer != null)
-                clone.RootFilterContainer.DeleteInDatabase();
+            clone.RootFilterContainer?.DeleteInDatabase();
 
             clone.DeleteInDatabase();
         }

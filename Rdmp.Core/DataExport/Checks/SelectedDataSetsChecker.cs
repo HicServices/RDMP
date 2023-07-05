@@ -274,12 +274,10 @@ public class SelectedDataSetsChecker : ICheckable
             
         // no problem, changing cohort mid way through extraction is only a problem
         // if we are doing an iterative partial set of extractions
-        if (progress == null)
-            return;
 
         // it's the first batch, thats good - user reset the progress after they changed the cohort
         // so extraction should begin at the start date correctly and cleanup any remnants
-        if(progress.ProgressDate == null)
+        if(progress?.ProgressDate == null)
         {
             return;
         }

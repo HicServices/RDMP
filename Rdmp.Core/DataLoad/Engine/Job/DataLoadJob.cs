@@ -125,8 +125,7 @@ public class DataLoadJob : IDataLoadJob
 
     public void CloseLogging()
     {
-        if (DataLoadInfo != null)
-            DataLoadInfo.CloseAndMarkComplete();
+        DataLoadInfo?.CloseAndMarkComplete();
     }
 
     public void LogInformation(string senderName, string message)

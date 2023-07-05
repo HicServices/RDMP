@@ -256,10 +256,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        if (ColumnInfo == null)
-            return null;
-
-        return ColumnInfo.GetQuerySyntaxHelper();
+        return ColumnInfo?.GetQuerySyntaxHelper();
     }
 
     public override string GetSummary(bool includeName, bool includeID)

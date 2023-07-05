@@ -385,10 +385,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
     {
         var o = CohortContainerContents.SelectMany(kvp => kvp.Value).SingleOrDefault(c => c.Orderable.Equals(configuration));
-        if (o == null)
-            return null;
 
-        return o.Order;
+        return o?.Order;
     }
 
     public IOrderable[] GetChildren(CohortAggregateContainer parent)

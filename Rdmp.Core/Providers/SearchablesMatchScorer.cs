@@ -295,10 +295,7 @@ public class SearchablesMatchScorer
         if (kvp.Key is Catalogue)
             return (Catalogue) kvp.Key;
 
-        if (kvp.Value != null)
-            return (Catalogue)kvp.Value.Parents.FirstOrDefault(p => p is Catalogue);
-
-        return null;
+        return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
     private int CountMatchType(List<Regex> regexes, object key)

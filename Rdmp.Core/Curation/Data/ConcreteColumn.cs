@@ -51,8 +51,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,ICompa
         set
         {
             //never allow annoying whitespace on this field
-            if (value != null)
-                value = value.Trim();
+            value = value?.Trim();
 
             SetField(ref _selectSql, value);
         }

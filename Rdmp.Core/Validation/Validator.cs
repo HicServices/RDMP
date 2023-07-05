@@ -513,8 +513,7 @@ public class Validator
             if (itemValidator.TargetProperty == oldName)
                 itemValidator.TargetProperty = newName;
 
-            if(itemValidator.PrimaryConstraint != null)
-                itemValidator.PrimaryConstraint.RenameColumn(oldName,newName);
+            itemValidator.PrimaryConstraint?.RenameColumn(oldName,newName);
 
             foreach (ISecondaryConstraint constraint in itemValidator.SecondaryConstraints)
                 constraint.RenameColumn(oldName, newName);

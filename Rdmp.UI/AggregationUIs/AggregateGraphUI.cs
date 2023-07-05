@@ -285,8 +285,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     Invoke(new MethodInvoker(() => heatmapUI.Clear()));
 
 
-                if (GraphTableRetrieved != null)
-                    GraphTableRetrieved(this, _dt);
+                GraphTableRetrieved?.Invoke(this, _dt);
 
                 if (_dt.Columns.Count < 2)
                     throw new NotSupportedException("Aggregates must have 2 columns at least");
@@ -633,8 +632,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             chart1.SaveImage(imgSavePath, ChartImageFormat.Png);
             notifier.OnCheckPerformed(new CheckEventArgs($"Saved chart image to {imgSavePath}", CheckResult.Success));
 
-            if(graphSaveLocations != null)
-                graphSaveLocations.Add(this,imgSavePath);
+            graphSaveLocations?.Add(this,imgSavePath);
         }
         catch (Exception e)
         {

@@ -120,9 +120,8 @@ public partial class PipelineDiagramUI : UserControl
         _useCase = useCase;
 
         _pipeline = pipeline;
-        if (_pipeline != null)
-            _pipeline.ClearAllInjections();
-            
+        _pipeline?.ClearAllInjections();
+
         //clear the diagram
         flpPipelineDiagram.Controls.Clear();
             

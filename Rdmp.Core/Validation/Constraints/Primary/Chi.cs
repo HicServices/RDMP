@@ -142,7 +142,7 @@ public class Chi : PrimaryConstraint
 
     private static bool isWellFormedChi(string strChi)
     {
-        if (strChi == null || strChi.Length != 10)
+        if (strChi is not { Length: 10 })
             return false;
 
         var r = new Regex("^[0-9]{10}$");

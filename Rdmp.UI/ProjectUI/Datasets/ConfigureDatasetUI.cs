@@ -149,10 +149,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         var c = (ExtractableColumn) rowObject;
         var ei = c.CatalogueExtractionInformation;
 
-        if (ei == null)
-            return null;
-
-        return ei.CatalogueItem.Catalogue.Name;
+        return ei?.CatalogueItem.Catalogue.Name;
     }
 
     private object SelectedCategory_AspectGetter(object rowObject)

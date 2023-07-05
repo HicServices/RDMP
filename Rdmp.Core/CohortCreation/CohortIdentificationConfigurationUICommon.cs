@@ -226,8 +226,7 @@ public class CohortIdentificationConfigurationUICommon
     public void CancelAll()
     {
         //don't start any more global operations if your midway through
-        if (_cancelGlobalOperations != null)
-            _cancelGlobalOperations.Cancel();
+        _cancelGlobalOperations?.Cancel();
 
         Compiler.CancelAllTasks(true);
         RecreateAllTasks();

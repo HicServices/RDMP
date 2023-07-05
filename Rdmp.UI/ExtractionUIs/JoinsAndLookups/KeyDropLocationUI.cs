@@ -77,8 +77,7 @@ public partial class KeyDropLocationUI : UserControl
         tbPk1.Text = SelectedColumn.ToString();
         btnClear.Enabled = true;
 
-        if (SelectedColumnChanged != null)
-            SelectedColumnChanged();
+        SelectedColumnChanged?.Invoke();
     }
 
     private ColumnInfo GetColumnInfoOrNullFromDrag(DragEventArgs e)
@@ -110,8 +109,7 @@ public partial class KeyDropLocationUI : UserControl
         SelectedColumn = null;
         btnClear.Enabled = false;
 
-        if (SelectedColumnChanged != null)
-            SelectedColumnChanged();
+        SelectedColumnChanged?.Invoke();
     }
 }
 public enum JoinKeyType

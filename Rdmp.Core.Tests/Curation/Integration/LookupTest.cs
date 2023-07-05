@@ -200,9 +200,8 @@ public class LookupTest : DatabaseTests
         finally
         {
             //cleanup
-            if(composite != null)
-                composite.DeleteInDatabase();
-    
+            composite?.DeleteInDatabase();
+
             lookup?.DeleteInDatabase();
 
             desc?.DeleteInDatabase();
@@ -270,8 +269,7 @@ public class LookupTest : DatabaseTests
         finally
         {
             //cleanup
-            if (composite != null)
-                composite.DeleteInDatabase();
+            composite?.DeleteInDatabase();
 
             lookup?.DeleteInDatabase();
 

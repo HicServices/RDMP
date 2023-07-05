@@ -34,20 +34,14 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     {
         var c = rowObject as ExtractableCohort;
 
-        if (c != null)
-            return c.ExternalVersion;
-
-        return null;
+        return c?.ExternalVersion;
     }
 
     private object AspectGetter_ProjectNumber(object rowObject)
     {
         var c = rowObject as ExtractableCohort;
 
-        if (c != null)
-            return c.ExternalProjectNumber;
-
-        return null;
+        return c?.ExternalProjectNumber;
     }
 
     public override void SetItemActivator(IActivateItems activator)

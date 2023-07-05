@@ -111,7 +111,6 @@ public class RemotePushingService
 
         await Task.WhenAll(tasks);
 
-        if (callback != null)
-            callback();
+        callback?.Invoke();
     }
 }

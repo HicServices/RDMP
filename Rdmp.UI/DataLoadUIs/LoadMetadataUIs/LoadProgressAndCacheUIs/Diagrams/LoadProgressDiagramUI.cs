@@ -190,8 +190,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
 
     private void cataloguesRowCountChart_AnnotationPositionChanged(object sender, EventArgs e)
     {
-        if(_annotations != null)
-            _annotations.OnAnnotationPositionChanged(sender, e);
+        _annotations?.OnAnnotationPositionChanged(sender, e);
 
         LoadProgressChanged();
     }

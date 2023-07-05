@@ -52,8 +52,6 @@ public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicComman
             }
         }
 
-        if (ses == null)
-            return;
-        ses.Add(_toAdd);
+        ses?.Add(_toAdd);
     }
 }

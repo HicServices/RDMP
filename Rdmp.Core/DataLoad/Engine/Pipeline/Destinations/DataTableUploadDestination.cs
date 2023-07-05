@@ -388,15 +388,13 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back sucessfully"));
 
-                    if (_bulkcopy != null)
-                        _bulkcopy.Dispose();
+                    _bulkcopy?.Dispose();
                 }
                 else
                 {
                     _managedConnection.ManagedTransaction.CommitAndCloseConnection();
 
-                    if (_bulkcopy != null)
-                        _bulkcopy.Dispose();
+                    _bulkcopy?.Dispose();
 
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
                 }
@@ -435,8 +433,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private void EndAuditIfExists()
     {
         //user is auditing
-        if (_loggingDatabaseListener != null)
-            _loggingDatabaseListener.FinalizeTableLoadInfos();
+        _loggingDatabaseListener?.FinalizeTableLoadInfos();
     }
 
     public void Check(ICheckNotifier notifier)

@@ -62,6 +62,6 @@ abstract public class DatabaseMigrationStrategy
 
     protected virtual void OnTableMigrationCompleteHandler(string tableName, int numInserts, int numUpdates)
     {
-        if (TableMigrationCompleteHandler != null) TableMigrationCompleteHandler(tableName, numInserts, numUpdates);
+        TableMigrationCompleteHandler?.Invoke(tableName, numInserts, numUpdates);
     }
 }

@@ -87,8 +87,7 @@ public partial class TicketingControlUI : RDMPUserControl
         }
 
         var h = TicketTextChanged;
-        if(h != null)
-            h(sender, e);
+        h?.Invoke(sender, e);
     }
 
     private void btnShowTicket_Click(object sender, EventArgs e)

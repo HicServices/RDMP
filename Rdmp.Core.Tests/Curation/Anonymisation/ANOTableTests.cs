@@ -330,8 +330,7 @@ public class ANOTableTests:TestsRequiringANOStore
 
         var toCleanup = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals(name));
 
-        if (toCleanup != null)
-            toCleanup.DeleteInDatabase();
+        toCleanup?.DeleteInDatabase();
 
         return new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, name, "A");
     }

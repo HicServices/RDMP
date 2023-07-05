@@ -50,8 +50,7 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
             
         //make sure it is not part of any folders
         var parent = sourceAggregate.GetCohortAggregateContainerIfAny();
-        if (parent != null)
-            parent.RemoveChild(sourceAggregate);
+        parent?.RemoveChild(sourceAggregate);
 
         //create a new patient index table usage allowance for this aggregate
         new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, _cohortIdentificationConfiguration, sourceAggregate);

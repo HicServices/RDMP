@@ -178,9 +178,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
                 $"Control '{singleControlForm}' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
 
         var c = singleControlForm as RDMPUserControl;
-            
-        if(c != null)
-            c.SetItemActivator(this);
+
+        c?.SetItemActivator(this);
 
         var content = WindowFactory.Create(this,singleControlForm,name , null);
             

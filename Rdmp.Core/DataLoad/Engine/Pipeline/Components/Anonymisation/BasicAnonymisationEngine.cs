@@ -89,12 +89,9 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
            
         //Process ANO Identifier Substitutions
         //for each column with an ANOTrasformer
-        foreach (var kvp in columnsToAnonymise)
+        foreach (var (column, transformer) in columnsToAnonymise)
         {
             didAno = true;
-
-            var column = kvp.Key;
-            var transformer = kvp.Value;
 
             //add an ANO version
             var ANOColumn = new DataColumn(ANOTable.ANOPrefix + column);

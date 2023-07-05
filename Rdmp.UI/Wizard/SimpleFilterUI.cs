@@ -136,8 +136,7 @@ public partial class SimpleFilterUI : UserControl
 
     private void btnDelete_Click(object sender, EventArgs e)
     {
-        if(RequestDeletion != null)
-            RequestDeletion();
+        RequestDeletion?.Invoke();
     }
 
     private void lblFilterName_Click(object sender, EventArgs e)
