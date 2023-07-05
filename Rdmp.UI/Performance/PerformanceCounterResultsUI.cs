@@ -115,7 +115,7 @@ public partial class PerformanceCounterResultsUI : UserControl
                 
             if(collapseToMethod)
             {
-                    
+
                 var uniqueMethodLines = new List<string>();
 
                 var lastMethodName = StackFramesTree.GetMethodName(lines[0]);

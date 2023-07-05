@@ -101,12 +101,12 @@ public partial class SecondaryConstraintUI : UserControl
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
                 
             tableLayoutPanel1.Controls.Add(currentRowPanel,0,i+1);
-                
-                
+
+
             var lblName = new Label();
             lblName.Text = _requiredProperties[i].Name;
             lblName.AutoSize = true;
-                
+
             var currentValue = _requiredProperties[i].GetValue(SecondaryConstriant, null);
 
 

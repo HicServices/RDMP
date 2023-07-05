@@ -142,7 +142,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         //persist user sort orders
         if (collectionGuid == Guid.Empty) return;
-            
+
         //if we know the sort order for this collection last time
         var lastSort = UserSettings.GetLastColumnSortForCollection(collectionGuid);
 
@@ -292,7 +292,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     }
 
     public static void Tree_CellToolTipShowing(IActivateItems activator, ToolTipShowingEventArgs e)
-    {            
+    {
         var model = e.Model;
 
         if (model is IMasqueradeAs m)
@@ -539,7 +539,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
     {
         var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
-                        
+
         //get the parental hierarchy
         var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
             
@@ -776,7 +776,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private RDMPContextMenuStrip ConstructMenu(ObjectConstructor objectConstructor, Type type, RDMPContextMenuStripArgs args, object o)
     {
         //there is a compatible menu Type known
-            
+
         //parameter 1 must be args
         //parameter 2 must be object compatible Type
 
@@ -814,7 +814,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
 
         coll.Clear();
-            
+
         var buckets = itemsByBucket.OrderBy(kvp => kvp.Key).ToArray();
 
         for(var i =0;i< buckets.Length;i++)

@@ -79,7 +79,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
             else//no there are tables just not the one we were looking for
                 throw new FlatFileLoadException($"RAW database did not have a table called:{TableName}");
 
-            
+
         //load the flat file
         var filepattern = FilePattern ?? "*";
 

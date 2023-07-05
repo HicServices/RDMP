@@ -125,7 +125,7 @@ public partial class HeatmapUI : UserControl
             for (var y = 1; y < _dataTable.Columns.Count; y++)
             {
 
-                var cellValue = ToDouble(_dataTable.Rows[x][y]);
+                    var cellValue = ToDouble(_dataTable.Rows[x][y]);
 
                 if (cellValue < _minValueInDataTable)
                     _minValueInDataTable = cellValue;
@@ -289,7 +289,7 @@ public partial class HeatmapUI : UserControl
                         e.Graphics.FillRectangle(brush, (float)(x * heatPixelWidth), (float)(y * heatPixelHeight), (float)heatPixelWidth, (float)heatPixelHeight);
                     }
                 }
-                
+
                 var labelStartX = Width - _currentLabelsWidth;
                 
                 
@@ -297,7 +297,7 @@ public partial class HeatmapUI : UserControl
                 for (var i = 1; i < _dataTable.Columns.Count; i++)
                 {
                     var labelStartY = i*heatPixelHeight;
-                    
+
                     var name = _dataTable.Columns[i].ColumnName;
 
                     e.Graphics.DrawString(name, font, Brushes.Black, new PointF((float)labelStartX, (float)labelStartY));
@@ -307,8 +307,8 @@ public partial class HeatmapUI : UserControl
                 double lastAxisLabelWidth = -500;
 
                 var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : this.GetVisibleArea();
-                    
-                    
+
+
                 var visibleClipBoundsTop = visibleArea.Top;
 
                 //now draw the axis 
@@ -327,7 +327,7 @@ public partial class HeatmapUI : UserControl
                         continue;
 
                     lastAxisStart = axisXStart;
-                    
+
                     var label = _dataTable.Rows[i][0].ToString();
 
                     //draw the axis label text with 1 pixel left and right so that there is space for the axis black line
@@ -418,7 +418,7 @@ public partial class HeatmapUI : UserControl
         var h = Math.Min(maxHeight,Height);
 
         var isClipped = maxHeight < Height;
-            
+
         var bmp = new Bitmap(Width, h);
 
         _useEntireControlAsVisibleArea = true;

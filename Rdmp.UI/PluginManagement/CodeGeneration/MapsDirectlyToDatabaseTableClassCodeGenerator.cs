@@ -30,7 +30,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
         if (!columns.Any(c => c.GetRuntimeName().Equals("ID")))
             throw new CodeGenerationException("Table must have an ID automnum column to become an IMapsDirectlyToDatabaseTable class");
-            
+
         var classStart = new StringBuilder();
 
         classStart.Append($"public class {_table.GetRuntimeName()}: DatabaseEntity");

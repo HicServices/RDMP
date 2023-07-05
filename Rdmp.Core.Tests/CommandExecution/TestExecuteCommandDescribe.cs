@@ -20,10 +20,10 @@ internal class TestExecuteCommandDescribe : UnitTests
     {
         var mock = new Mock<IBasicActivateItems>();
         mock.Setup(m => m.Show(It.IsAny<string>()));
-            
+
         var c = WhenIHaveA<Catalogue>();
         c.Description = "fish";
-            
+
         var describe = new ExecuteCommandDescribe(mock.Object,new []{c});
         Assert.IsFalse(describe.IsImpossible,describe.ReasonCommandImpossible);
 

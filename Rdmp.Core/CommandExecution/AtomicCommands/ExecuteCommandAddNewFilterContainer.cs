@@ -61,7 +61,7 @@ public class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-            
+
         var factory = _container?.GetFilterFactory() ?? _host?.GetFilterFactory();
 
         if(factory == null)

@@ -63,7 +63,7 @@ public class JoinableTask:CacheableTask
 
     public override string ToString()
     {
-            
+
         var name = _aggregate.Name;
 
         var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();

@@ -72,7 +72,7 @@ public class MetadataReport:DocXHelper
             using (var document = GetNewDocFile(filename))
             {
                 PageWidthInPixels = GetPageWidth();
-                    
+
                 var sw = Stopwatch.StartNew();
 
                 try
@@ -402,7 +402,7 @@ public class MetadataReport:DocXHelper
     private void CreateCountTable(XWPFDocument document, int recordCount, int distinctCount, string identifierName)
     {
         var table = InsertTable(document,2, identifierName != null && _args.IncludeDistinctIdentifierCounts ? 2 : 1);
-            
+
         var tableLine = 0;
 
         SetTableCell(table,tableLine, 0, "Records",TextFontSize);

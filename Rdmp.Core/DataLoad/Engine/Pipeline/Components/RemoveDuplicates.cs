@@ -33,7 +33,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         sw.Start();
-            
+
         var toReturn = toProcess.Clone();
 
         //now sort rows

@@ -321,13 +321,13 @@ public class Diff {
 
         // vector for the (u,v) to (N,M) search
         var UpVector = new int[2 * MAX + 2];
-      
+
         // The vectors in the publication accepts negative indexes. the vectors implemented here are 0-based
         // and are access using a specific offset: UpOffset UpVector and DownOffset for DownVektor
         var DownOffset = MAX - DownK;
         var UpOffset = MAX - UpK;
-	
-        var  MaxD = (UpperA - LowerA + UpperB - LowerB) / 2 + 1;
+
+        var MaxD = (UpperA - LowerA + UpperB - LowerB) / 2 + 1;
 		
         // Debug.Write(2, "SMS", String.Format("Search the box: A[{0}-{1}] to B[{2}-{3}]", LowerA, UpperA, LowerB, UpperB));
 

@@ -70,7 +70,7 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         //user choose to cancel the cohort creation request dialogue
         if (request == null)
             return;
-            
+
         var m = new MemoryCatalogueRepository();
         var fakeCatalogue = new Catalogue(m, tbl.GetFullyQualifiedName());
         var fakeCatalogueItem = new CatalogueItem(m, fakeCatalogue, col.GetRuntimeName());

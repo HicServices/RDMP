@@ -337,7 +337,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             throw new ArgumentException("Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
 
         var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, Name);
-            
+
         //Get all the properties           
         var propertyInfo = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 

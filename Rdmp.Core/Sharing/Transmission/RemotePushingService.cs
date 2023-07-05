@@ -77,7 +77,7 @@ public class RemotePushingService
 
                 var remote1 = remote;
                 var toSend1 = toSend;
-                               
+
                 var sender = new Task(() =>
                 {
                     using (var client = new HttpClient(handler))

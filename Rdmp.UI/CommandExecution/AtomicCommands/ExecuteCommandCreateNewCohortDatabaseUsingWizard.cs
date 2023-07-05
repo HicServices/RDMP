@@ -28,7 +28,7 @@ public class ExecuteCommandCreateNewCohortDatabaseUsingWizard : BasicUICommandEx
 
     public override void Execute()
     {
-        base.Execute(); 
+        base.Execute();
 
         var wizard = new CreateNewCohortDatabaseWizardUI(Activator);
         wizard.SetItemActivator(Activator);

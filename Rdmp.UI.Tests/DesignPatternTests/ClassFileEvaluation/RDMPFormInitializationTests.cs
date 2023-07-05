@@ -37,7 +37,7 @@ public class RDMPFormInitializationTests
             DealWithRDMPForms(readToEnd);
             DealWithRDMPUserControls(readToEnd);
         }
-            
+
         var rdmpFormClassNames = _rdmpFormClassNames;
 
         //look for "new (myclass1|myclass2)\s*\("

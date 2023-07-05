@@ -86,11 +86,11 @@ public class ForwardEngineerCatalogue
         foreach (var col in _columnInfos)
         {
             order++;
-                
+
             //create it with the same name
             var cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name[(col.Name.LastIndexOf(".") + 1)..].Trim('[', ']', '`','"'));
             catalogueItemsCreated.Add(cataItem);
-                                
+
             var newExtractionInfo = new ExtractionInformation(repo, cataItem, col, col.Name);
             newExtractionInfo.Order = order;
             newExtractionInfo.SaveToDatabase();

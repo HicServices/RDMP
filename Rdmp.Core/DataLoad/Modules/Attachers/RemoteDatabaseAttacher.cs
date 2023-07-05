@@ -110,7 +110,7 @@ False - Trigger an error reporting the missing table(s)
             var source = new DbDataCommandDataFlowSource(sql, $"Fetch data from {dbFrom} to populate RAW table {table}", dbFrom.Server.Builder, Timeout == 0 ? 50000 : Timeout);
 
             var destination = new SqlBulkInsertDestination(_dbInfo, table, Enumerable.Empty<string>());
-                
+
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
             var context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo | PipelineUsage.FixedDestination);
 

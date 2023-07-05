@@ -136,7 +136,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
     private Dictionary<object, List<object>> GenerateAliasTable(int timeoutInSeconds)
     {
         const string expectation = "(expected the query to return 2 columns, the first one being the input column the second being known aliases)";
-            
+
         var toReturn = new Dictionary<object, List<object>>();
 
         var server = DataAccessPortal.GetInstance().ExpectServer(ServerToExecuteQueryOn, DataAccessContext);

@@ -215,7 +215,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             autoComplete.RegisterForEvents(QueryEditor);
             isFirstTimeSetupCalled = false;
         }
-            
+
         var colInfo = ExtractionInformation.ColumnInfo;
 
         //deal with empty values in database (shouldn't be any but could be)

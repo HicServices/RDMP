@@ -22,7 +22,7 @@ internal class ExceptionHandlingTests
     public void Validate_WhenMultipleErrors_ReturnsAllErrors()
     {
         var validator = new Validator();
-            
+
         var chi = new ItemValidator();
         chi.PrimaryConstraint = (PrimaryConstraint) Validator.CreateConstraint("chi",Consequence.Wrong);
         var prediction = new Prediction(new ChiSexPredictor(), "gender");

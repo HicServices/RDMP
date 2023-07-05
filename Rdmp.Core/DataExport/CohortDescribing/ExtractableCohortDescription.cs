@@ -159,7 +159,7 @@ public class ExtractableCohortDescription
 
             if (Fetch.DataTable == null)
                 throw new Exception($"IsFaulted was false but DataTable was not populated for fetch {Fetch.Source}");
-            
+
             var row = Fetch.DataTable.Rows.Cast<DataRow>().FirstOrDefault(r => Convert.ToInt32(r["OriginID"]) == OriginID);
              
             if(row == null)

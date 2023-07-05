@@ -47,7 +47,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
             ei.Alias = "YearOfBirth";
             ei.ExtractionCategory = ExtractionCategory.Core;
             ei.SaveToDatabase();
-            
+
             //make it part of the ExtractionConfiguration
             var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet, (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL);
             newColumn.Alias = ei.Alias;
@@ -62,7 +62,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         {
             _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
             _configuration.SaveToDatabase();
-                
+
             var dbname = TestDatabaseNames.GetConsistentName($"{_project.Name}_{_project.ProjectNumber}");
             dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
             if (dbToExtractTo.Exists())
@@ -111,7 +111,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         doc.URL = new Uri($"file://{filename}");
         doc.Extractable = true;
         doc.SaveToDatabase();
-                
+
         //an extractable global file (comes out regardless of datasets)
         var filename2 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob2.txt");
 
@@ -132,8 +132,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         sql.SQL = $"SELECT * FROM {tbl.GetFullyQualifiedName()}";
         sql.Extractable = true;
         sql.SaveToDatabase();
-            
-            
+
+
         //an supplemental (global) table in the database (not linked against cohort)
         var tbl2 = CreateDataset<HospitalAdmissions>(Database,500, 1000, new Random(50));
 
@@ -180,7 +180,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
         //create a pipeline
         _pipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
-            
+
         //set the destination pipeline
         var component = new PipelineComponent(CatalogueRepository, _pipeline, typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>().ToList();
@@ -196,7 +196,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         argumentTblNamePattern.SetValue("$c_$d");
         argumentTblNamePattern.SaveToDatabase();
         AdjustPipelineComponentDelegate?.Invoke(component);
-            
+
         var component2 = new PipelineComponent(CatalogueRepository, _pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
         var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();
         arguments2.Single(a=>a.Name.Equals("AllowEmptyExtractions")).SetValue(false);

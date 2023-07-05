@@ -133,7 +133,7 @@ public class DiffDatabaseDataFetcher
         var qb = new QueryBuilder(null, null, new[] {_tableInfo});
         qb.TopX = _batchSize;
         qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository,c)).ToArray());
-            
+
         //where
         var filter1 = new SpontaneouslyInventedFilter(memoryRepository,null,
             $"{syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID)} = {_dataLoadRunID}", "DataLoadRunID matches", null, null);
@@ -157,13 +157,13 @@ select 1 from {0} where {1} {2} < {3}
         const string zzArchive = "zzarchivezz";
 
         var syntaxHelper = server.GetQuerySyntaxHelper();
-            
+
         var tableName = _tableInfo.Name;
         var archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema,
             $"{_tableInfo.GetRuntimeName()}_Archive");
 
         var whereStatement = string.Join(" AND ",_pks.Select(pk=>string.Format("{0}.{1} = {2}.{1} ", tableName, pk.GetRuntimeName(),archiveTableName)));
-            
+
         //hold onto your hats ladies and gentlemen, we start by selecting every column twice with a cross apply:
         //once from the main table e.g. Col1,Col2,Col3
         //then once from the archive e.g. zzArchivezzCol1, zzArchivezzCol2, zzArchivezzCol3 -- notice this is a query alias not affecting anything underlying

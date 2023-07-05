@@ -47,7 +47,7 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
         base.Execute();
 
         var sourceAggregate = _sourceAggregateConfigurationCombineable.Aggregate;
-            
+
         //make sure it is not part of any folders
         var parent = sourceAggregate.GetCohortAggregateContainerIfAny();
         parent?.RemoveChild(sourceAggregate);

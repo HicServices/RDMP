@@ -103,7 +103,7 @@ public class WordCatalogueExtractor: DocXHelper
             //allocate extra space for supplementalData
             if(supplementalData != null)
                 requiredRowsCount += supplementalData[catalogueItem].Length;
-                
+
             //create a new table
             var t = InsertTable(_document, requiredRowsCount, 2);
                 
@@ -118,7 +118,7 @@ public class WordCatalogueExtractor: DocXHelper
     {
         var propertyInfo =
             o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            
+
         var count = 0;
         //generate a row for each property
         foreach (var property in propertyInfo )

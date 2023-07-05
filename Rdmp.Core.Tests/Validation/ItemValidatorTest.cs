@@ -46,7 +46,7 @@ public class ItemValidatorTest
     {
         _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
         _v.ExpectedType = typeof(DateTime);
-            
+
         var result = _v.ValidateAll(DateTime.Now, Array.Empty<object>(), Array.Empty<string>());
 
         Assert.IsNotNull(result);

@@ -130,8 +130,8 @@ public static class UsefulStuff
 
         //trim off [db]..[tbl] 1 
         for (var i = 0; i < split.Length; i++)
-            split[i] = Regex.Replace(split[i], @"\s+[\d\s]*$", "");    
-            
+            split[i] = Regex.Replace(split[i], @"\s+[\d\s]*$", "");
+
         //identifies the last word in a collection of multiple words (requires you .Trim() so we don't get ending whitespace match)
         var regexLastWord = new Regex("\\s[^\\s]*$");
         foreach (var s in split)
@@ -141,7 +141,7 @@ public static class UsefulStuff
             var toAdd = s.Trim();
             if (toAdd.Contains("."))
                 toAdd = toAdd[(toAdd.LastIndexOf(".", StringComparison.Ordinal) + 1)..];
-                
+
             var gotDelimitedMatch = false;
 
             // if user has really horrible names like with spaces and stuff
@@ -359,7 +359,7 @@ public static class UsefulStuff
     public static string GetHumanReadableByteSize(long len)
     {
         string[] sizes = { "bytes", "KB", "MB", "GB", "TB", "PB" };
-            
+
         var order = 0;
         while (len >= 1024 && order + 1 < sizes.Length)
         {

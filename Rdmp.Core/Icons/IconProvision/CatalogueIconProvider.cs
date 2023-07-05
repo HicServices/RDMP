@@ -188,8 +188,8 @@ public class CatalogueIconProvider : ICoreIconProvider
             //if the object is masquerading as something else
             case IMasqueradeAs @as:
             {
-                //get what it's masquerading as
-                var masqueradingAs = @as.MasqueradingAs();
+                    //get what it's masquerading as
+                    var masqueradingAs = @as.MasqueradingAs();
 
                 //provided we don't have a circular reference here!
                 if (masqueradingAs is not IMasqueradeAs)

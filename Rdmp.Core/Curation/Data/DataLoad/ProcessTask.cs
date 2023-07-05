@@ -220,9 +220,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                 //process task belongs in that stage anyway so nothing is prohibited
                 if (stage == (LoadStage == LoadStage.Mounting? LoadStage.AdjustRaw:LoadStage))
                     continue;
-                        
-                //figure out what is prohibited
-                var prohibitedSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage),null, tableInfo.GetRuntimeName(stage));
+
+                    //figure out what is prohibited
+                    var prohibitedSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage),null, tableInfo.GetRuntimeName(stage));
 
                 //if we reference it, complain
                 if (sql.Contains(prohibitedSql))

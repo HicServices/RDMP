@@ -55,13 +55,10 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     /// </summary>
     private void RefreshPipelineList()
     {
-
-        var before = ddPipelines.SelectedItem as Pipeline;
-
         ddPipelines.Items.Clear();
-            
+
         var context = _useCase.GetContext();
-            
+
         //add pipelines sorted alphabetically
         var allPipelines = _repository.GetAllObjects<Pipeline>().OrderBy(p=>p.Name).ToArray();
 
@@ -74,7 +71,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             ddPipelines.Items.AddRange(allPipelines.Where(o => !_useCase.IsAllowable(o)).ToArray());
 
         //reselect if it is still there
-        if (before != null)
+        if (ddPipelines.SelectedItem is Pipeline before)
         {
             var toReselect = ddPipelines.Items.OfType<Pipeline>().SingleOrDefault(p => p.ID == before.ID);
 
@@ -115,7 +112,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
     {
         e.DrawBackground();
-            
+
         var italic = new Font(ddPipelines.Font, FontStyle.Italic);
 
         if (e.Index == -1)

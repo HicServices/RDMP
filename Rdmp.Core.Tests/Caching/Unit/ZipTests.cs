@@ -40,12 +40,12 @@ internal class ZipTests
         var _listener = new ThrowImmediatelyDataLoadEventListener();
         var when = DateTime.Now;
         var targetzip = _zt.GetArchiveFileInfoForDate(when, _listener);
-        var files=new List<FileInfo>();
+        var files =new List<FileInfo>();
 
         // First create a zip file with one item in
         File.Delete(targetzip.FullName);
         files.Add(new FileInfo(Path.Combine(_dir, Path.GetRandomFileName())));
-        using (var sw=new StreamWriter(files[0].FullName))
+        using (var sw =new StreamWriter(files[0].FullName))
             sw.WriteLine("Example data file");
         _zt.ArchiveFiles(files.ToArray(), when, _listener);
         using (var zip = ZipFile.Open(targetzip.FullName, ZipArchiveMode.Read))
@@ -56,7 +56,7 @@ internal class ZipTests
         using (var sw = new StreamWriter(files[1].FullName))
             sw.WriteLine("Another example data file");
         _zt.ArchiveFiles(files.ToArray(), when, _listener);
-        using (var zip= ZipFile.Open(targetzip.FullName,ZipArchiveMode.Read))
+        using (var zip = ZipFile.Open(targetzip.FullName,ZipArchiveMode.Read))
             Assert.True(zip.Entries.Count==2);
 
         // Re-add just the first file: resulting zip should still contain both files

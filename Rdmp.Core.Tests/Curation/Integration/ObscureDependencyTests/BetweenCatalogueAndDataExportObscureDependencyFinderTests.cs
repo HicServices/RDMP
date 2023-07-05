@@ -28,7 +28,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
 
         //there is a new dataset which is linked to Catalogue
         var dataset = new ExtractableDataSet(DataExportRepository,cata);
-            
+
         //and suddenly we cannot delete the catalogue
         var ex = Assert.Throws<Exception>(() => obscura.ThrowIfDeleteDisallowed(cata));
         Assert.IsTrue(ex.Message.Contains("Cannot delete Catalogue MyCata because there are ExtractableDataSets which depend on them "));

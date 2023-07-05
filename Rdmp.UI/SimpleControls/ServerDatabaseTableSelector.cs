@@ -92,7 +92,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         _workerRefreshTables.DoWork += UpdateTablesListAsync;
         _workerRefreshTables.WorkerSupportsCancellation = true;
         _workerRefreshTables.RunWorkerCompleted += UpdateTablesAsyncCompleted;
-            
+
         var r = new RecentHistoryOfControls(cbxServer, new Guid("01ccc304-0686-4145-86a5-cc0468d40027"));
         RecentHistoryOfControls.AddHistoryAsItemsToComboBox(cbxServer);
 
@@ -443,12 +443,11 @@ public partial class ServerDatabaseTableSelector : UserControl
     public DiscoveredTable GetDiscoveredTable()
     {
         //if user selected a specific object from the drop down properly
-        var tblValuedFunction = cbxTableValueFunctions.SelectedItem as DiscoveredTableValuedFunction;
 
-        if(cbxTable.SelectedItem is DiscoveredTable tbl)
+        if (cbxTable.SelectedItem is DiscoveredTable tbl)
             return tbl;
 
-        if (tblValuedFunction != null)
+        if (cbxTableValueFunctions.SelectedItem is DiscoveredTableValuedFunction tblValuedFunction)
             return tblValuedFunction;
 
         //Did they at least pick a database

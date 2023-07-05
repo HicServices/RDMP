@@ -30,7 +30,7 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
             c=> c.LoggingDataTask == "NothingTask" && 
                 c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
                 c.GetLookupTableInfoList() == Array.Empty<TableInfo>());
-            
+
         var lmd = Mock.Of<ILoadMetadata>(m => m.GetAllCatalogues() == new[] { cata });
 
         _job = new ScheduledDataLoadJob(null,"fish", Mock.Of<ILogManager>(), lmd, null, new ThrowImmediatelyDataLoadJob(),null);
@@ -74,7 +74,7 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     {
         var updateInfo = new DataLoadProgressUpdateInfo();
         updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
-            
+
         var ex = Assert.Throws<Exception>(()=>updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
         Assert.IsTrue(ex.Message.StartsWith("Strategy is ExecuteScalarSQLInRAW but there is no ExecuteScalarSQL"));

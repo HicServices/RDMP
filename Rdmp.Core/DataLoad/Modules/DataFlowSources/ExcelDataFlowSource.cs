@@ -240,7 +240,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                 return cell.NumericCellValue;
             case CellType.String:
-                    
+
                 var v = cell.StringCellValue;
 
                 //if it is blank or 'null' then leave it null

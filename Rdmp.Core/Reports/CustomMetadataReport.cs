@@ -257,7 +257,7 @@ public class CustomMetadataReport
     {
         if(catalogues == null || !catalogues.Any())
             return;
-            
+
         var templateBody = File.ReadAllLines(template.FullName);
 
         var outname = DoReplacements(new []{fileNaming},catalogues.First(),null,ElementIteration.NotIterating).Trim();
@@ -281,7 +281,7 @@ public class CustomMetadataReport
                         }
                         else
                         {
-                            for (var i=0;i<catalogues.Length;i++)
+                            for (var i =0;i<catalogues.Length;i++)
                             {
                                 var element = 
                                     i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
@@ -332,7 +332,7 @@ public class CustomMetadataReport
         CatalogueSection currentSection = null;
         var depth = 0;
 
-        for(var i=0;i< templateBody.Length ;i++)
+        for(var i =0;i< templateBody.Length ;i++)
         {
             var str = templateBody[i];
 
@@ -507,7 +507,7 @@ public class CustomMetadataReport
         if(!blockTerminated)
             throw new CustomMetadataReportException($"Expected {EndLoop} to match $foreach which started on line {index+1+sectionOffset}",index+1+sectionOffset);
 
-        for(var j=0;j< catalogueItems.Length; j++)
+        for(var j =0;j< catalogueItems.Length; j++)
         {
             sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
                 j < catalogueItems.Length -1 ? 

@@ -58,7 +58,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         //set the time periodicity field
         var toBeTimePeriodicityCol = testData.catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
         testData.catalogue.TimeCoverage_ExtractionInformation_ID = toBeTimePeriodicityCol.ID;
-            
+
         //do the validation
         var report = new CatalogueConstraintReport(testData.catalogue, SpecialFieldNames.DataLoadRunID)
         {
@@ -85,8 +85,8 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         Assert.IsTrue(listener.EventsReceivedBySender[report].All(m => m.Exception == null),
             string.Join(Environment.NewLine,
                 listener.EventsReceivedBySender[report].Where(m => m.Exception != null).Select(m=>m.Exception)));//all messages must have null exceptions
-            
-            
+
+
         //get the results now
         var results = dqeRepository.GetMostRecentEvaluationFor(testData.catalogue);
 
@@ -222,7 +222,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
         _catalogue.ValidatorXML = validColumnXML;
-            
+
         //set the time periodicity field
         var toBeTimePeriodicityCol = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("PrivateID"));
         _catalogue.TimeCoverage_ExtractionInformation_ID = toBeTimePeriodicityCol.ID;

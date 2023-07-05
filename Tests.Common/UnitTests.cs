@@ -381,13 +381,13 @@ public class UnitTests
         if (typeof (T) == typeof(JoinInfo))
         {
             ColumnInfo col3;
-            WhenIHaveTwoTables(repository, out var col1,out var col2,out col3);
+            WhenIHaveTwoTables(repository, out var col1, out var col2,out col3);
                 
             return (T)(object)new JoinInfo(repository,col1,col2,ExtractionJoinType.Left, null);
         }
         if (typeof (T) == typeof(Lookup))
         {
-            WhenIHaveTwoTables(repository, out var col1,out var col2,out var col3);
+            WhenIHaveTwoTables(repository, out var col1, out var col2, out var col3);
                 
             return (T)(object)new Lookup(repository,col3,col1,col2,ExtractionJoinType.Left, null);
         }
@@ -477,7 +477,7 @@ public class UnitTests
         {
             var file = Path.Combine(TestContext.CurrentContext.TestDirectory,"myDataset.csv");
             File.WriteAllText(file,"omg rows");
-                
+
             var sds = WhenIHaveA<SelectedDataSets>(repository);
             new CumulativeExtractionResults(repository,sds.ExtractionConfiguration,sds.ExtractableDataSet,"SELECT * FROM ANYWHERE");
             var potential = new FlatFileReleasePotential(new RepositoryProvider(repository), sds);

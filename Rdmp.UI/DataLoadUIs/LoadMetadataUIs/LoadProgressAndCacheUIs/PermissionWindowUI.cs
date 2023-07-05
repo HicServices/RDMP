@@ -39,7 +39,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
     {
         base.SetDatabaseObject(activator, databaseObject);
         _permissionWindow = databaseObject;
-            
+
         var periods = _permissionWindow.PermissionWindowPeriods;
         var periodsByDay = new Dictionary<int, List<PermissionWindowPeriod>>();
         foreach (var period in periods)

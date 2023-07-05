@@ -93,7 +93,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         if(_pipeline == null)
         {
             var pipelines = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
-                
+
             var compatible = UploadFileUseCase.DesignTime().FilterCompatiblePipelines(pipelines).ToArray();
 
             _pipeline = (IPipeline)BasicActivator.SelectOne("File Upload Pipeline", compatible);

@@ -239,7 +239,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
             _activator.Show("Enter all database details before trying to create");
             return;
         }
-               
+
         var open = new LoadingDialog($"Creating Database '{db}'");
         string message = null;
 

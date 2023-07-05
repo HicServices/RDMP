@@ -77,7 +77,7 @@ public partial class CreatePlatformDatabase : Form
             MessageBox.Show("Setup already underaway");
             return;
         }
-            
+
         var createSql = _patcher.GetInitialCreateScriptContents(db);
         var patches = _patcher.GetAllPatchesInAssembly(db);
 

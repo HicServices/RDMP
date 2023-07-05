@@ -381,7 +381,7 @@ public class Validator
         #region work out other column values
         string[] names = null;
         object[] values = null;
-            
+
         var o = _domainObject;
 
         if (o is DbDataReader)

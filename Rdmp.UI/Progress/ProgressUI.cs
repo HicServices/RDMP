@@ -218,7 +218,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             {
                 var message = ProgressQueue.First();
                 var args = message.Value.ProgressEventArgs;
-                    
+
                 var label = "";
                 switch (args.Progress.UnitOfMeasurement)
                 {
@@ -443,7 +443,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     /// <returns></returns>
     public NotifyEventArgs GetWorst()
     {
-            
+
         var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
             
         if(worstEntry == null)

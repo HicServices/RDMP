@@ -26,7 +26,7 @@ public abstract class CacheableTask : Compileable, ICacheableTask
     {
         if (!_compiler.Tasks.ContainsKey(this))
             return false;
-            
+
         var execution = _compiler.Tasks[this];
         if(execution == null)
         {

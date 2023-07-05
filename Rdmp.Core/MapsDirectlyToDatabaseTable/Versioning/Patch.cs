@@ -98,10 +98,9 @@ public class Patch : IComparable
     }
     public override bool Equals(object obj)
     {
-        var y = obj as Patch;
         var x = this;
 
-        if (y == null)
+        if (obj is not Patch y)
             return false;
 
         var equal = x.locationInAssembly.Equals(y.locationInAssembly);

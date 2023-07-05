@@ -37,7 +37,7 @@ public class ParameterCreatorTests
     {
         var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
-            
+
         var factory = Mock.Of<IFilterFactory>(m => m.CreateNewParameter(f,"DECLARE @bob AS varchar(50);")==null);
 
         var creator = new ParameterCreator(factory, null, null);
@@ -58,7 +58,7 @@ public class ParameterCreatorTests
 
         var factory = new Mock<IFilterFactory>();
         factory.Setup(m => m.CreateNewParameter(f,"DECLARE @bob AS varchar(50);")).Returns(p.Object);
-            
+
         var creator = new ParameterCreator(factory.Object, null, null);
         creator.CreateAll(f,null);
 
@@ -83,7 +83,7 @@ public class ParameterCreatorTests
             x.GetAllParameters() == new[] {existingParameter});
 
         var factory = new Mock<IFilterFactory>();
-            
+
         var creator = new ParameterCreator(factory.Object, null, null);
         creator.CreateAll(f,null);
         creator.CreateAll(f, null);
@@ -119,10 +119,10 @@ public class ParameterCreatorTests
         f.WhereSQL = "@bob = 'bob'";
 
         var global = Mock.Of<ISqlParameter>(x => x.ParameterName=="@bob");
-            
+
         var factory = new Mock<IFilterFactory>();
         factory.Setup<ISqlParameter>(m => m.CreateNewParameter(f, "DECLARE @bob AS varchar(50);")).Returns(Mock.Of<ISqlParameter>);
-            
+
         var creator = new ParameterCreator(factory.Object, null, null);
         creator.CreateAll(f,null);
 
@@ -136,7 +136,7 @@ public class ParameterCreatorTests
     {
         //The constructor returns
         var pstub = Mock.Of<ISqlParameter>();
-            
+
         //The filter that requires that the parameters be created
         var f = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         f.WhereSQL = "@bob = 'bob'";
@@ -150,7 +150,7 @@ public class ParameterCreatorTests
 
         var factory = new Mock<IFilterFactory>();
         factory.Setup(m => m.CreateNewParameter(f, "DECLARE @bob AS int")).Returns(pstub);
-            
+
         var creator = new ParameterCreator(factory.Object, null, new []{template});
         creator.CreateAll(f,null);
 

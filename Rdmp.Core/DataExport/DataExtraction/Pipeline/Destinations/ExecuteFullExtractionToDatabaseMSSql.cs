@@ -226,7 +226,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             }
 
             var destinationType = GetDestinationDatabaseType(extractionInformation);
-                
+
             //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
             //transform but it is a good starting point.  We don't want to create a varchar(10) column in the destination if the origin dataset (Catalogue) is a varchar(100)
             //since it will just confuse the user.  Bear in mind these data types can be degraded later by the destination

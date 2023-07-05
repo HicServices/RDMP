@@ -50,7 +50,7 @@ public class DleRunner:Runner
             
         if(loadProgress != null && loadProgress.LoadMetadata_ID != loadMetadata.ID)
             throw new ArgumentException("The supplied LoadProgress does not belong to the supplied LoadMetadata load");
-            
+
         var databaseConfiguration = new HICDatabaseConfiguration(loadMetadata);
         var flags = new HICLoadConfigurationFlags();
             
@@ -63,10 +63,10 @@ public class DleRunner:Runner
         switch (_options.Command)
         {
             case CommandLineActivity.run:
-                    
+
                 var loggingServer = loadMetadata.GetDistinctLoggingDatabase();
                 var logManager = new LogManager(loggingServer);
-                    
+
                 // Create the pipeline to pass into the DataLoadProcess object
                 var dataLoadFactory = new HICDataLoadFactory(loadMetadata, databaseConfiguration,flags,locator.CatalogueRepository, logManager);
 

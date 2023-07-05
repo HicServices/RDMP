@@ -254,7 +254,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         if (_selectedFile.Extension.StartsWith(".xls"))
         {
             _context.MustHaveSource = typeof(ExcelDataFlowSource);
-        }   
+        }
 
         var compatiblePipelines = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().Where(_context.IsAllowable).ToArray();
 
@@ -373,7 +373,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
             var dest = (DataTableUploadDestination) engine.DestinationObject;
             dest.TableNamerDelegate = () => tbTableName.Text;
-                
+
             var cts = new CancellationTokenSource();
             var t =Task.Run(() =>
                 {

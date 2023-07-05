@@ -104,7 +104,7 @@ public class FixedWidthTests :DatabaseTests
             streamWriter.WriteLine("002705600000SHAW                LENA                LC 852251978100119941031");
             streamWriter.Flush();
             streamWriter.Close();
-                
+
             var dataTable = formatFile.GetDataTableFromFlatFile(new FileInfo(tempFileToCreate));
             Assert.AreEqual(dataTable.Rows.Count,2);
             Assert.AreEqual("0026440", dataTable.Rows[0]["gmc"]);

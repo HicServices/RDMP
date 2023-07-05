@@ -24,11 +24,11 @@ public class JsonSerializationTests:DatabaseTests
             Assert.Inconclusive("This test does not apply for non db repos");
 
         var c = new Catalogue(RepositoryLocator.CatalogueRepository,"Fish");
-            
+
         var mySerializeable = new MySerializeableTestClass(new ShareManager(RepositoryLocator));
         mySerializeable.SelectedCatalogue = c;
         mySerializeable.Title = "War and Pieces";
-            
+
         var dbConverter = new DatabaseEntityJsonConverter(RepositoryLocator);
         var lazyConverter = new PickAnyConstructorJsonConverter(RepositoryLocator);
 

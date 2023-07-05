@@ -86,7 +86,7 @@ internal class CatalogueItemTests : DatabaseTests
         };
 
         child.SaveToDatabase();
-            
+
         var childAfter = CatalogueRepository.GetObjectByID<CatalogueItem>(child.ID);
 
         Assert.IsTrue(child.Name == childAfter.Name);

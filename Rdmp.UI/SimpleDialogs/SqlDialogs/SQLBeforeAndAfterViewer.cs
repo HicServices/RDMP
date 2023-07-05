@@ -47,7 +47,7 @@ public partial class SQLBeforeAndAfterViewer : Form
 
         splitContainer1.Panel2.Controls.Add(QueryEditorAfter);
 
-            
+
         //compute difference
         var highlighter = new ScintillaLineHighlightingHelper();
         ScintillaLineHighlightingHelper.ClearAll(QueryEditorAfter);

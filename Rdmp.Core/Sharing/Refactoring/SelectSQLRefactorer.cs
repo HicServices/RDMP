@@ -134,7 +134,7 @@ public class SelectSQLRefactorer
         if (!column.SelectSQL.Contains(ci.Name))
             return
                 $"IColumn '{column}' did not contain the fully specified column name of its underlying ColumnInfo ('{ci.Name}') during refactoring";
-            
+
         var fullyQualifiedName = ci.TableInfo.GetFullyQualifiedName();
 
         if (!column.SelectSQL.Contains(fullyQualifiedName))
@@ -201,7 +201,7 @@ public class SelectSQLRefactorer
     {
         if(!IsRefactorable(tableInfo))
             throw new RefactoringException(string.Format("TableInfo {0} is not refactorable because {1}",tableInfo, GetReasonNotRefactorable(tableInfo)));
-                        
+
         var updatesMade = 0;
             
         //if it's a new name
@@ -256,7 +256,7 @@ public class SelectSQLRefactorer
     private static int RefactorTableNameImpl(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
         var updatesMade = 0;
-                        
+
         var extractionInformations = columnInfo.ExtractionInformations.ToArray();
 
         foreach (var extractionInformation in extractionInformations)

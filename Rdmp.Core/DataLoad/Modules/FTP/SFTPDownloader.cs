@@ -31,7 +31,7 @@ public class SFTPDownloader:FTPDownloader
     {
         if (file.Contains("/") || file.Contains("\\"))
             throw new Exception("Was not expecting a relative path here");
-            
+
         var s = new Stopwatch();
         s.Start();
             
@@ -44,10 +44,10 @@ public class SFTPDownloader:FTPDownloader
 
             sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
             sftp.Connect();
-                
+
             //if there is a specified remote directory then reference it otherwise reference it locally (or however we were told about it from GetFileList())
             var fullFilePath = !string.IsNullOrWhiteSpace(RemoteDirectory) ? Path.Combine(RemoteDirectory, file) : file;
-                
+
             var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
             //register for events

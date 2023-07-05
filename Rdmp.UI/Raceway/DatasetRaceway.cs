@@ -76,7 +76,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     public void GenerateChart()
     {
         CommonFunctionality.ResetChecks();
-            
+
         var allCatalogues = _collection.GetCatalogues();
 
         var cataloguesToAdd = new Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>>();
@@ -104,7 +104,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
             cataloguesToAdd.Add(cata, dictionary);
         }
-            
+
         //every month seen in every dataset ever
         var buckets = GetBuckets(cataloguesToAdd);
 

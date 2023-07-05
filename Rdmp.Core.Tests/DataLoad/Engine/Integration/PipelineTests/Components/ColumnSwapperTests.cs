@@ -43,7 +43,7 @@ internal class ColumnSwapperTests:DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             
-        Import(db.CreateTable("Map", dt),out var map,out var mapCols);
+        Import(db.CreateTable("Map", dt),out var map, out var mapCols);
 
         var swapper = new ColumnSwapper();
         swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
@@ -485,7 +485,7 @@ internal class ColumnSwapperTests:DatabaseTests
         dtToSwap.Columns.Add("In");
         dtToSwap.Columns.Add("Name");
         dtToSwap.Rows.Add(1 /*int*/, "Dave");
-            
+
         var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(1, resultDt.Rows.Count);
@@ -527,7 +527,7 @@ internal class ColumnSwapperTests:DatabaseTests
         dtToSwap.Columns.Add("In");
         dtToSwap.Columns.Add("Name");
         dtToSwap.Rows.Add("1" /*string*/, "Dave");
-            
+
         var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(1, resultDt.Rows.Count);

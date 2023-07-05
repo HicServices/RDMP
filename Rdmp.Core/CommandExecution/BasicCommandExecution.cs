@@ -440,9 +440,9 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
         IEnumerable<CommandLineObjectPickerArgumentValue> pickerArgsIfAny = null)
     {
         var objectConstructor = new ObjectConstructor();
-            
+
         var invoker = new CommandInvoker(BasicActivator);
-            
+
         var constructor = constructorSelector(objectConstructor);
 
         var constructorValues = new List<object>();

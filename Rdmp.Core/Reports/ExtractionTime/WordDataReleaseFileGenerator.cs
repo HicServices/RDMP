@@ -66,7 +66,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
                                
             InsertHeader(document, $"Project:{Project.Name}",1);
             InsertHeader(document, Configuration.Name,2);
-                
+
             var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
             if(disclaimer != null)
@@ -101,7 +101,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             requiredRows++;
         if (hasTicket)
             requiredRows++;
-            
+
         var table = InsertTable(document, requiredRows, 2);
 
         if(hasTicket)
@@ -149,7 +149,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     private void CreateCohortDetailsTable(XWPFDocument document)
     {
         var table = InsertTable(document, 2, 4);
-            
+
         var tableLine = 0;
 
         SetTableCell(table,tableLine, 0, "Version");
@@ -169,7 +169,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     private void CreateFileSummary(XWPFDocument document)
     {
         var table = InsertTable(document, ExtractionResults.Length + 1, 5);
-            
+
         var tableLine = 0;
 
         SetTableCell(table,tableLine, 0, "Data Requirement");

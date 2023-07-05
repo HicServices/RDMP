@@ -25,7 +25,7 @@ public class CommitInProgressTests : DatabaseTests
         c.SaveToDatabase();
         c.SaveToDatabase();
         c.SaveToDatabase();
-            
+
         var activator = new ThrowImmediatelyActivator(RepositoryLocator);
             
         Assert.IsNull(start.TryFinish(activator),"No changes made to Catalogue so expected no commit");

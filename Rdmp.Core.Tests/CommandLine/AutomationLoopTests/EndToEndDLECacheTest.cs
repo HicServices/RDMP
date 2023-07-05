@@ -26,7 +26,7 @@ public class EndToEndDLECacheTest:TestsRequiringADle
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         var timeoutInMilliseconds = 120000;
-            
+
         var lmd = TestLoadMetadata;
 
         var lp = new LoadProgress(CatalogueRepository,lmd);
@@ -66,7 +66,7 @@ public class EndToEndDLECacheTest:TestsRequiringADle
         Assert.AreEqual(0,LoadDirectory.Cache.GetFiles().Count());
         Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Count());
         Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Count());
-            
+
         var archiveFile = LoadDirectory.ForArchiving.GetFiles()[0];
         Assert.AreEqual(".zip",archiveFile.Extension);
 

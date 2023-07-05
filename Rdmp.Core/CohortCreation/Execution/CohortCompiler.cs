@@ -332,8 +332,8 @@ public class CohortCompiler
         }
 
         task.Log = queryBuilder?.Results?.Log;
-                        
-      
+
+
         var isResultsForRootContainer = container != null && container.ID == CohortIdentificationConfiguration.RootCohortAggregateContainer_ID;
 
 
@@ -405,7 +405,7 @@ public class CohortCompiler
 
             if (sql.Trim().StartsWith(CachedAggregateConfigurationResultsManager.CachingPrefix))
                 return;
-                
+
             var manager = new CachedAggregateConfigurationResultsManager(queryCachingServer);
 
             var explicitTypes = new List<DatabaseColumnRequest>();
@@ -470,7 +470,7 @@ public class CohortCompiler
         var accessPoints = cacheableTask.GetDataAccessPoints();
 
         var server = DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.DataExport, false);
-            
+
         var sourceSyntax = server.GetQuerySyntaxHelper();
         var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
             

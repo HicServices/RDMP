@@ -59,7 +59,7 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
 
         try
         {
-                
+
             var wasSynchedsuccessfully = syncher.Synchronize(listener);
 
             if (wasSynchedsuccessfully)

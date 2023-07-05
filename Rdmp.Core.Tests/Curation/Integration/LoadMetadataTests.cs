@@ -27,7 +27,7 @@ public class LoadMetadataTests : DatabaseTests
                 
             loadMetadata.LocationOfFlatFiles = TestContext.CurrentContext.TestDirectory;
             loadMetadata.SaveToDatabase();
-                
+
             var loadMetadataWithIdAfterwards = CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
             Assert.AreEqual(loadMetadataWithIdAfterwards.LocationOfFlatFiles, TestContext.CurrentContext.TestDirectory);
         }

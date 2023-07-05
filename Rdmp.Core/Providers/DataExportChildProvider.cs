@@ -108,7 +108,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
         ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
-            
+
         //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
         var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
         foreach (var ds in ExtractableDataSets)
@@ -290,7 +290,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         children.Add(extractionConfigurationsNode);
 
         AddChildren(extractionConfigurationsNode,descendancy.Add(extractionConfigurationsNode));
-            
+
         var folder = new ExtractionDirectoryNode(project);
         children.Add(folder);
         AddToDictionaries(children,descendancy);
@@ -302,7 +302,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         foreach (var projectSpecificEds in ExtractableDataSets.Where(eds=>eds.Project_ID == projectCataloguesNode.Project.ID))
         {
-                
+
             var cata = (Catalogue)projectSpecificEds.Catalogue;
                 
             // cata will be null if it has been deleted from the database

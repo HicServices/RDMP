@@ -29,7 +29,7 @@ public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-            
+
         var dir = BasicActivator.SelectDirectory("Extraction Directory");
 
         if (dir != null)

@@ -41,7 +41,7 @@ public class CatalogueProblemProvider : ProblemProvider
     public override void RefreshProblems(ICoreChildProvider childProvider)
     {
         _childProvider = childProvider;
-            
+
         //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
         var orphans = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null);
             

@@ -88,7 +88,7 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         {
             r.DeleteInDatabase();
         }
-                
+
 
         // audit has SQL is good, it contains the correct cohort
         var audit = new CumulativeExtractionResults(DataExportRepository, _configuration, _selectedDataSet.ExtractableDataSet,

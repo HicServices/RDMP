@@ -27,11 +27,11 @@ public class TestDemographyCreation
         people.GeneratePeople(100,r);
 
         var f =new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPeople.csv"));
-            
+
         var finished = false;
         var finishedWithRecords = -1;
-            
-            
+
+
         var demog = new Demography(r);
         demog.RowsGenerated += (s, e) =>
         {

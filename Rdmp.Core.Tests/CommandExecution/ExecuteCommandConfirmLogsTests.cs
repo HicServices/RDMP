@@ -53,7 +53,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         // we mark it as completed successfully - this is a good, happy log entry
         logEntry.CloseAndMarkComplete();
 
-            
+
         var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator),
             //within last 10 hours
             lmd, withinTime ? "10:00:00":null);
@@ -74,7 +74,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
 
         // we have created log entry but it did not have an end time.  This is a sad entry because it never completed
         lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
-            
+
         var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd);
         var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd.Execute());
 

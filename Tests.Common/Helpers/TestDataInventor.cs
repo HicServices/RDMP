@@ -38,7 +38,7 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
             return null;
 
         var currentDay = Request.Start;
-            
+
         var toReturn = new List<FileInfo>();
 
         while(currentDay <= Request.End)

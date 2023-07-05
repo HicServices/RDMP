@@ -41,7 +41,7 @@ public class SqlSyntaxHelperTests
     {
         var syntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
-        syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count(*)",out var method,out var contents);
+        syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count(*)",out var method, out var contents);
             
         Assert.AreEqual("count",method);
         Assert.AreEqual("*",contents);

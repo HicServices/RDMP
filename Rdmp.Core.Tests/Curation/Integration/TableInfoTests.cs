@@ -124,7 +124,7 @@ internal class TableInfoTests : DatabaseTests
 
             Assert.IsTrue(tbl.Exists());
 
-            Import(tbl,out var ti,out var cols);
+            Import(tbl,out var ti, out var cols);
 
             Assert.AreEqual("Omg",ti.Schema);
             var tbl2 = ti.Discover(DataAccessContext.InternalDataProcessing);
@@ -163,7 +163,7 @@ internal class TableInfoTests : DatabaseTests
             Assert.IsTrue(tvf.Exists());
 
             var importerTvf = new TableValuedFunctionImporter(CatalogueRepository, tvf);
-            importerTvf.DoImport(out var tvfTi,out var tvfCols);
+            importerTvf.DoImport(out var tvfTi, out var tvfCols);
 
             Assert.AreEqual("Omg",tvfTi.Schema);
 

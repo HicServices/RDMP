@@ -63,7 +63,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             else
                 return;
         }
-                
+
         #region Fix missing LoggingDataTask
         var missingTasks = catalogues.Where(c=>string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
         var potentialTasks = catalogues.Except(missingTasks).Select(c=>c.LoggingDataTask).Distinct().ToArray();
@@ -105,7 +105,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             }
             else
             {
-                    
+
                 var defaults = _loadMetadata.CatalogueRepository;
                 var defaultLoggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 

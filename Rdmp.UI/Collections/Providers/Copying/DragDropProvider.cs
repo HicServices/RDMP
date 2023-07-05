@@ -166,7 +166,7 @@ public class DragDropProvider:SimpleDragSource
         {
             //get the drag operation data object olv does
             var toReturn = (OLVDataObject)base.StartDrag(olv, button, item);
-                
+
             //can we process it into a command?
             var command = _commandFactory.Create(toReturn);
 

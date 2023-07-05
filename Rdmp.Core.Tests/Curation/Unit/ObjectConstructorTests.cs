@@ -27,7 +27,7 @@ public class ObjectConstructorTests : UnitTests
         //anyone can construct on object!
         constructor.Construct(typeof(TestClass1),testarg);
         constructor.Construct(typeof(TestClass1), testarg2);
-            
+
         //basic case - identical Type parameter
         var instance = (TestClass2)constructor.Construct(typeof(TestClass2), testarg);
         Assert.AreEqual(instance.A.Text, "amagad");
@@ -69,7 +69,7 @@ public class ObjectConstructorTests : UnitTests
     public void GetRepositoryConstructor_AllDatabaseEntities_OneWinningConstructor()
     {
         SetupMEF();
-            
+
         var countCompatible = 0;
 
         var badTypes = new Dictionary<Type,Exception>();

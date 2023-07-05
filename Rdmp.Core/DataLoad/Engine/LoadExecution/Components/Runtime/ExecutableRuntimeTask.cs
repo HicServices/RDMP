@@ -153,7 +153,7 @@ public class ExecutableRuntimeTask : RuntimeTask
                     CheckResult.Fail));
             return;
         }
-            
+
         var parser = new CommandLineParser();
 
         //see if we can find what their executable is

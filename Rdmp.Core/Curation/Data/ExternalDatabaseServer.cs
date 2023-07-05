@@ -130,7 +130,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         {
             if (Equals(_selfCertifyingDataAccessPoint.DatabaseType, value))
                 return;
-                
+
             var old = _selfCertifyingDataAccessPoint.DatabaseType;
             _selfCertifyingDataAccessPoint.DatabaseType = value;
             OnPropertyChanged(old, value);

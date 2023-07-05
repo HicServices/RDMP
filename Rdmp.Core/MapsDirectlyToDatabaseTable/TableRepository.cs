@@ -164,7 +164,7 @@ abstract public class TableRepository : ITableRepository
         foreach (DbParameter p in cmd.Parameters)
         {
             var prop = oTableWrapperObject.GetType().GetProperty(p.ParameterName.Trim('@'));
-                
+
             var propValue = prop.GetValue(oTableWrapperObject, null);
                 
             //if it is a complex type but IConvertible e.g. CatalogueFolder

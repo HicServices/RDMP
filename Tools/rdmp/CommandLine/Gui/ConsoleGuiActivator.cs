@@ -196,7 +196,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
     }
 
     public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
-    {  
+    {
         var dlg = new ConsoleGuiSelectMany(this, args.WindowTitle, available);
         Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
 

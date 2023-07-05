@@ -152,7 +152,7 @@ public class DitaCatalogueExtractor : ICheckable
         if(File.Exists(saveLocation))
             throw new Exception(
                 $"Attempted to create Catalogue named {saveLocation} but it already existed (possibly you have two Catalogues with the same name");
-            
+
         var xml = "";
 
         xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
@@ -317,7 +317,7 @@ public class DitaCatalogueExtractor : ICheckable
         }
 
         //acronym collisions
-        for(var i=0;i<catas.Length;i++)
+        for(var i =0;i<catas.Length;i++)
         {
             var acronym = catas[i].Acronym;
 

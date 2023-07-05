@@ -54,11 +54,11 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
             _catalogue.SaveToDatabase();
             _extractableDataSet.RevertToDatabaseState();
 
-                
+
             var extractionDirectory = new ExtractionDirectory(TestContext.CurrentContext.WorkDirectory, _configuration);
 
-            
-            var ex = Assert.Throws<NotSupportedException>(() => {var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet); });
+
+            var ex = Assert.Throws<NotSupportedException>(() => { var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet); });
 
             Assert.AreEqual("Cannot extract dataset Fish;#:::FishFish because it points at Catalogue with an invalid name, name is invalid because:The following invalid characters were found:'#'", ex.Message);
         }

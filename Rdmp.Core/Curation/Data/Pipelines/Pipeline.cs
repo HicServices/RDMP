@@ -110,7 +110,7 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     {
         Name = r["Name"].ToString();
 
-        var o=  r["DestinationPipelineComponent_ID"];
+        var o =  r["DestinationPipelineComponent_ID"];
         if (o == DBNull.Value)
             DestinationPipelineComponent_ID = null;
         else

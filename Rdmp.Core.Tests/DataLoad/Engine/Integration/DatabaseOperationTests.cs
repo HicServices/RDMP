@@ -31,7 +31,7 @@ internal class DatabaseOperationTests : DatabaseTests
     public void CloneDatabaseAndTable()
     {
         var testLiveDatabaseName = TestDatabaseNames.GetConsistentName("TEST");
-            
+
         var testDb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testLiveDatabaseName);
         var raw = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase($"{testLiveDatabaseName}_RAW");
 
@@ -48,16 +48,16 @@ internal class DatabaseOperationTests : DatabaseTests
         Assert.IsTrue(testDb.Exists());
 
         testDb.CreateTable("Table_1", new[] {new DatabaseColumnRequest("Id", "int")});
-            
+
 
         //clone the builder
         var builder = new SqlConnectionStringBuilder(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString)
         {
             InitialCatalog = testLiveDatabaseName
         };
-            
+
         var dbConfiguration = new HICDatabaseConfiguration(new DiscoveredServer(builder),null,CatalogueRepository);
-            
+
         var cloner = new DatabaseCloner(dbConfiguration);
         try
         {

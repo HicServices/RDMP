@@ -36,7 +36,7 @@ public class ANOMigrationTests : TestsRequiringANOStore
         BlitzMainDataTables();
             
         DeleteANOEndpoint();
-            
+
         var remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
 
         remnantANO?.DeleteInDatabase();

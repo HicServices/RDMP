@@ -44,7 +44,7 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
         if (_releaseData.ReleaseState == ReleaseState.DoingPatch)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
-                    
+
             var recordsDeleted = 0;
 
             foreach (var configuration in _releaseData.ConfigurationsForRelease.Keys)

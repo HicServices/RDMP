@@ -62,7 +62,7 @@ public class MigrationConfiguration
 
             columnSet.Add(new MigrationColumnSet(fromTable,toTable, migrationFieldProcessor));
         }
-            
+
         var sorter = new RelationshipTopologicalSort(columnSet.Select(c => c.DestinationTable));
         columnSet = columnSet.OrderBy(s => ((ReadOnlyCollection<DiscoveredTable>)sorter.Order).IndexOf(s.DestinationTable)).ToList();
 

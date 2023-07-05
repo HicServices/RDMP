@@ -53,7 +53,7 @@ public class FlatFileAttacherTests : DatabaseTests
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
-                
+
             var cmdCreateTable = _database.Server.GetCommand(
                 $"CREATE Table {_database.GetRuntimeName()}..Bob([name] [varchar](500),[name2] [varchar](500))",con);
             cmdCreateTable.ExecuteNonQuery();
@@ -69,7 +69,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(",",true)]
     public void Test_CSV_Attachment(string separator, bool overrideHeaders)
     {
-            
+
         var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
@@ -170,7 +170,7 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.TableName = "Bob";
         attacher.ExplicitDateTimeFormat = "yyyyddMM";
 
-            
+
         var table = _database.ExpectTable("Bob");
         table.Truncate();
 
@@ -383,7 +383,7 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.FilePattern = "bob*";
         attacher.TableToLoad = ti;
         attacher.IgnoreColumns = "address";
-            
+
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
@@ -453,7 +453,7 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.TableName = tbl.GetRuntimeName();
         attacher.Culture = new CultureInfo(attacherCulture);
         attacher.Initialize(LoadDirectory, db);
-            
+
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null),ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
@@ -471,7 +471,7 @@ public class FlatFileAttacherTests : DatabaseTests
     public void Test_TableToLoad_IDNotInLoadMetadata()
     {
         var source = new AnySeparatorFileAttacher();
-                        
+
         var tiInLoad = new TableInfo(CatalogueRepository,"TableInLoad");
         var tiNotInLoad = new TableInfo(CatalogueRepository, "TableNotInLoad");
 

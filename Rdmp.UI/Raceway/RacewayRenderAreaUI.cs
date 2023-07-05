@@ -283,7 +283,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
         //draw the tracks
         lock (oPeriodicityDictionaryLock)
         {
-                
+
             var eachRaceLaneHasThisMuchYSpace = Math.Max(MinimumRowHeight,Math.Min(MaximumRaceLaneRenderSpace, (float)Height/(_periodicityDictionary.Count +1)));
 
 
@@ -492,7 +492,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
     private float DrawErrorText(string text, bool underLine, PaintEventArgs e, float startDrawingLaneAtY, float eachRaceLaneHasThisMuchYSpace, double middleLineOfCatalogueLabelY)
     {
-            
+
         var redGradientBrush = new LinearGradientBrush(
             new Point(0, (int) startDrawingLaneAtY),
             new Point((int) Width, (int) eachRaceLaneHasThisMuchYSpace)

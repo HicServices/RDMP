@@ -106,12 +106,11 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
 
         var repository = oTableWrapperObject.Repository;
 
-        var treeObject = oTableWrapperObject as IHasDependencies;
 
         if (depth >= 5)//its fine
             return;
 
-        if (treeObject != null)
+        if (oTableWrapperObject is IHasDependencies treeObject)
         {
             IHasDependencies[] dependants;
 

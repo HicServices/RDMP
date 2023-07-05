@@ -131,16 +131,13 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 
     private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, IFolderNode targetFolder)
     {
-        var sourceManyCatalogues = cmd as ManyCataloguesCombineable;
-        var file = cmd as FileCollectionCombineable;
-
         if (cmd is IHasFolderCombineable sourceFolderable)
             return new ExecuteCommandPutIntoFolder(_activator, sourceFolderable, targetFolder.FullName);
-            
-        if (sourceManyCatalogues != null)
+
+        if (cmd is ManyCataloguesCombineable sourceManyCatalogues)
             return new ExecuteCommandPutIntoFolder(_activator, sourceManyCatalogues, targetFolder.FullName);
 
-        if(file != null)
+        if(cmd is FileCollectionCombineable file)
             if(file.Files.Length == 1)
             {
                 var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator,file.Files[0]);

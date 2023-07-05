@@ -56,7 +56,7 @@ public partial class ArgumentCollectionUI : UserControl
         _parent = parent;
         _argumentsAreFor = argumentsAreForUnderlyingType;
         _activator = activator;
-            
+
         var typeLoadable = !(_argumentsAreFor == null);
 
         lblTypeUnloadable.Visible = !typeLoadable;

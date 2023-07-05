@@ -564,7 +564,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var p in AllCompatiblePlugins)
             children.Add(p);
-        
+
         var expiredPluginsNode = new AllExpiredPluginsNode(); 
         children.Add(expiredPluginsNode);
         AddChildren(expiredPluginsNode,descendancy.Add(expiredPluginsNode));
@@ -694,7 +694,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     private IEnumerable<Pipeline> AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
-            
+
         var repo = new MemoryRepository();
 
         //Could be an issue here if a pipeline becomes compatible with multiple use cases.
@@ -734,7 +734,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(PipelineComponent pipelineComponent, DescendancyList descendancy)
     {
         var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID).ToArray();
-            
+
         var children = new HashSet<object>(components);
 
         AddToDictionaries(children, descendancy);
@@ -1026,7 +1026,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //do we have any foreign key fields into this lookup table
         var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
-            
+
         var docs = AllSupportingDocuments.Where(d => d.Catalogue_ID == c.ID).ToArray();
         var sql = AllSupportingSQL.Where(d => d.Catalogue_ID == c.ID).ToArray();
 
@@ -1231,7 +1231,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         //it has an associated query cache
         if (cic.QueryCachingServer_ID != null)
             children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
-            
+
         var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
         foreach(var p in parameters)
         {
@@ -1376,7 +1376,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
             children.Add(new IdentifierDumpServerUsageNode(tableInfo, server));
         }
-            
+
         //get the discarded columns in this table
         var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Where(c => c.TableInfo_ID == tableInfo.ID));
 
@@ -1447,7 +1447,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         if(list.IsEmpty)
             throw new ArgumentException("DescendancyList cannot be empty",nameof(list));
-         
+
         //document that the last parent has these as children
         var parent = list.Last();
 
@@ -1598,7 +1598,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         lock(WriteLock)
         {
             var newObjectsFound = new HashSet<object>();
-            
+
             var sw = new Stopwatch();
 
             var providers = _pluginChildProviders.Except(_blockedPlugins).ToArray();

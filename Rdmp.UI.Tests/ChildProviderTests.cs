@@ -92,7 +92,7 @@ internal class ChildProviderTests : UITests
 
         // Now call UpdateTo to make cp1 look like cp2
         cp1.UpdateTo(cp2);
-            
+
         var badProps = new List<string>();
 
         foreach(var prop in typeof(DataExportChildProvider).GetProperties().Where(p=>!skip.Contains(p.Name)))
@@ -106,7 +106,7 @@ internal class ChildProviderTests : UITests
             }
 
         Assert.IsEmpty(badProps);
-                        
+
         var badFields = new List<string>();
             
         foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))

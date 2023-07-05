@@ -99,7 +99,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
     {
         if (string.IsNullOrWhiteSpace(version))
             return false;
-            
+
         var match = Regex.Match(version,@"(\d+)\.(\d+)");
 
         //If the version string doesn't start with numbers we have bigger problems than creating a default constraint

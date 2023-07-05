@@ -230,7 +230,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private void TlvCic_ItemActivate(object sender, EventArgs e)
     {
-            
+
         var o = tlvCic.SelectedObject;
         if (o != null)
         {

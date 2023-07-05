@@ -101,7 +101,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
             //get the lines that make up the selection (freetext sql)
             for (var i = section.LineStart; i <= section.LineEnd; i++)
                 sql += QueryEditor.Lines[i].Text;
-                
+
             //pass the section its sql text an it will tell us if it is borked or changed or unchanged
             var changed = section.CheckForChanges(sql);
 
@@ -159,7 +159,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 {
                     ProblemObjects.TryAdd(parameter, errorException);
                 }
-                    
+
 
                 var toAdd = QueryBuilder.GetParameterDeclarationSQL(parameter);
 

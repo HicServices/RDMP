@@ -54,7 +54,7 @@ public abstract class ManyRunner: Runner
             case CommandLineActivity.none:
                 break;
             case CommandLineActivity.run:
-                        
+
                 var runnables = GetRunnables();
 
                 foreach (var runnable in runnables)

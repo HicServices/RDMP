@@ -55,7 +55,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         if (olvColumns.SelectedObject is not ExtractionInformation ei)
             return null;
 
-        var c = ei.GetRuntimeName();
+            var c = ei.GetRuntimeName();
 
         //The validator can contains all the columns in the Catalogue (Dataset) but columns which don't have any validation on them yet might not be in its ItemValidators collection
         if (!Validator.ItemValidators.Any(iv => iv.TargetProperty.Equals(c)))
@@ -100,7 +100,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
             Validator = new Validator();
         else
             Validator = Validator.LoadFromXml(databaseObject.ValidatorXML);
-            
+
         var extractionInformations = databaseObject.GetAllExtractionInformation(ExtractionCategory.Any).ToArray();
         Array.Sort(extractionInformations);
 
@@ -269,7 +269,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     private void AddSecondaryConstraintControl(SecondaryConstraint secondaryConstriant)
     {
         tableLayoutPanel1.RowCount++;
-            
+
         var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository,secondaryConstriant,olvColumns.Objects.Cast<ExtractionInformation>().Select(c=>c.GetRuntimeName()).ToArray());
 
         toAdd.Width = splitContainer1.Panel2.Width;

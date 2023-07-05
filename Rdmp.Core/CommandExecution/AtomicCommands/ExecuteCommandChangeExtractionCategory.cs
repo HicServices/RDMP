@@ -72,7 +72,7 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-            
+
         var c = _category;
 
         if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out var category))

@@ -35,7 +35,7 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
         var config2 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_2");
         config2.CountSQL = null;
         config2.SaveToDatabase();
-            
+
         var cic = new CohortIdentificationConfiguration(CatalogueRepository,"CohortGenerationDifferingTableValuedParametersTest");
             
         cic.EnsureNamingConvention(config1);
@@ -52,7 +52,7 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
             new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config2);
 
             Assert.IsNull(cic.RootCohortAggregateContainer_ID);
-                
+
             //create a root container for it
             var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
 
@@ -99,7 +99,7 @@ SET @name='fish';
             var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);");
             param1.Value = "'lobster'";
             param1.SaveToDatabase();
-                
+
             var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);");
             param2.Value = "'monkey'";
             param2.SaveToDatabase();

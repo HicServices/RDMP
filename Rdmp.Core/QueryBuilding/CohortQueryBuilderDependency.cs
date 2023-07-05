@@ -124,7 +124,7 @@ public class CohortQueryBuilderDependency
         cancellationToken.ThrowIfCancellationRequested();
 
         var isSolitaryPatientIndexTable = CohortSet.IsJoinablePatientIndexTable();
-            
+
         // if it is a plugin aggregate we only want to ever serve up the cached SQL
         var pluginCohortCompiler = _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(CohortSet));
         var joinedToPluginCohortCompiler = JoinedTo == null ? null : _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(JoinedTo)); 

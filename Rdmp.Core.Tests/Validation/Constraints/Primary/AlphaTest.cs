@@ -49,7 +49,7 @@ internal class AlphaTest : ValidationTests
     [Test]
     public void Validate_Invalid_ExceptionContainsRequiredInfo()
     {
-            
+
         var result = _alpha.Validate("9");
             
         Assert.NotNull(result.SourceConstraint);

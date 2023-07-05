@@ -484,7 +484,7 @@ where
         var haveWarnedAboutTop1AlreadyCount = 10;
 
         var syntax = ExternalCohortTable.GetQuerySyntaxHelper();
-            
+
         var privateIdentifier = syntax.GetRuntimeName(GetPrivateIdentifier());
         var releaseIdentifier = syntax.GetRuntimeName(GetReleaseIdentifier());
 
@@ -494,7 +494,7 @@ where
 
             var map = FetchEntireCohort();
 
-                
+
             var sw = new Stopwatch();
             sw.Start();
             //dictionary of released values (for the cohort) back to private values
@@ -532,7 +532,7 @@ where
         }
         var nullsFound = 0;
         var substitutions = 0;
-            
+
         var sw2 = new Stopwatch();
         sw2.Start();
 

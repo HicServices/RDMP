@@ -50,7 +50,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
         if(_files == null)
         {
-                
+
             var f = BasicActivator.SelectFile("Plugin to add",
                 $"Plugins (*{PackPluginRunner.PluginPackageSuffix})", $"*{PackPluginRunner.PluginPackageSuffix}");
             if(f != null)

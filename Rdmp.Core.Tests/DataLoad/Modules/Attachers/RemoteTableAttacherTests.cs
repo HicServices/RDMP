@@ -144,7 +144,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             dt.Rows.Add("fff",new DateTime(2000,1,1));
             dt.Rows.Add("fff",new DateTime(2001,1,1));
             dt.Rows.Add("fff",new DateTime(2002,1,1));
-            
+
 
             var tbl1 = db.CreateTable("table1", dt);
             var tbl2 = db.CreateTable("table2", new []
@@ -166,7 +166,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             lp.OriginDate = new DateTime(2001,1,1);
             attacher.Progress = lp;
             attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo {Strategy = DataLoadProgressUpdateStrategy.DoNothing};
-            
+
             var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
             var job = new ScheduledDataLoadJob(RepositoryLocator,"test job",logManager,lmd,new TestLoadDirectory(),new ThrowImmediatelyDataLoadEventListener(),dbConfiguration);

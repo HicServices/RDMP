@@ -38,17 +38,17 @@ public class PipelineRunner : IPipelineRunner
         // if we have no listener use a throw immediately one (generate exceptions if it went badly)
         if(listener == null)
             listener = new ThrowImmediatelyDataLoadEventListener();
-                        
+
         // whatever happens we want a listener to record the worst result for the return code (even if theres ignore all errors listeners being used)
         var toMemory = new ToMemoryDataLoadEventListener(false);
 
         // User might have some additional listeners registered
         listener = new ForkDataLoadEventListener(AdditionalListeners.Union(new []{ toMemory, listener}).ToArray());
-           
+
         // build the engine and run it
         var engine = UseCase.GetEngine(Pipeline,listener);            
         engine.ExecutePipeline(token ?? new GracefulCancellationToken());
-            
+
         // return code of -1 if it went badly otherwise 0
         var exitCode = toMemory.GetWorst() >= ProgressEventType.Error ? -1:0;
 

@@ -28,7 +28,7 @@ internal class ExecutableProcessTaskTests
 
         var processTask = Mock.Of<IProcessTask>();
         var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
-            
+
         var argString = task.CreateArgString();
         var expectedArgString = $"--database-name={db}";
 

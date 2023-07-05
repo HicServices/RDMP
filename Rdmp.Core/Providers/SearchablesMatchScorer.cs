@@ -145,7 +145,7 @@ public class SearchablesMatchScorer
             return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();
 
         var tokens = (searchText??"").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            
+
         var regexes = new List<Regex>();
             
         //any token that 100% matches a type name is an explicitly typed token

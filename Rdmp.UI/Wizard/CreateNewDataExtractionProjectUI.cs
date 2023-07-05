@@ -174,7 +174,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         try
         {
             _projectNumber = int.Parse(tbProjectNumber.Text);
-                
+
             var collisionProject = _existingProjects.FirstOrDefault(p => p.ProjectNumber == _projectNumber);
             if(collisionProject != null)
                 ragProjectNumber.Warning(new Exception(
@@ -193,7 +193,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             ClearFile();
             return;
         }
-            
+
         var ofd = new OpenFileDialog();
         ofd.Filter = "Comma Separated Values|*.csv";
         var result = ofd.ShowDialog();

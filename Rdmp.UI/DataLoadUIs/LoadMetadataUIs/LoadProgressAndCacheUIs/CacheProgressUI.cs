@@ -95,7 +95,7 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
         _bLoading = true;
 
         SetCacheProgressTextBox();
-            
+
         var cacheLagPeriod = cacheProgress.GetCacheLagPeriod();
         if (cacheLagPeriod != null)
         {

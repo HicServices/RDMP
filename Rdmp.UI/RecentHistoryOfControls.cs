@@ -96,7 +96,7 @@ public class RecentHistoryOfControls
     public static void AddHistoryAsItemsToComboBox(ComboBox c)
     {
         if (c.AutoCompleteCustomSource.Count <= 0) return;
-        var items=new string[c.AutoCompleteCustomSource.Count];
+        var items =new string[c.AutoCompleteCustomSource.Count];
         c.AutoCompleteCustomSource.CopyTo(items, 0);
         c.Items.AddRange(items.Cast<object>().ToArray());
     }

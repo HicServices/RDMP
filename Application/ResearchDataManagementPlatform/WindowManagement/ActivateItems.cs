@@ -442,13 +442,12 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var c = (Control)_constructor.Construct(instruction.UIControlType,activator,true);
 
-        var uiInstance = c as IRDMPSingleDatabaseObjectControl;
 
         //it has a database object so call SetDatabaseObject
         if (c is IObjectCollectionControl uiCollection)
             //if we get here then Instruction wasn't for a 
             return Activate(uiCollection, instruction.ObjectCollection);
-        if (uiInstance != null)
+        if (c is IRDMPSingleDatabaseObjectControl uiInstance)
         {
             var databaseObject = instruction.DatabaseObject;
 

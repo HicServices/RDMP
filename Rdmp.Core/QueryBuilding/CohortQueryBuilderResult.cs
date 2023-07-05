@@ -226,7 +226,7 @@ public class CohortQueryBuilderResult
         Dictionary<CohortQueryBuilderDependency, string> sqlDictionary, int tabs)
     {
         var sql = "";
-            
+
         //Things we need to output
         var toWriteOut = container.GetOrderedContents().Where(IsEnabled).ToArray();
 
@@ -292,8 +292,7 @@ public class CohortQueryBuilderResult
         }
 
         //or you yourself are disabled
-        var dis = arg as IDisableable;
-        return dis == null || !dis.IsDisabled;
+        return arg is not IDisableable dis || !dis.IsDisabled;
     }
 
     /// <summary>
@@ -379,7 +378,7 @@ public class CohortQueryBuilderResult
             {
                 throw new Exception($"No PluginCohortCompilers claimed to support '{cohortSet}' in their ShouldRun method");
             }
-        }    
+        }
 
         var join = ChildProvider.AllJoinUses.Where(j => j.AggregateConfiguration_ID == cohortSet.ID).ToArray();
 
@@ -434,7 +433,7 @@ public class CohortQueryBuilderResult
                 //if there's no cache server that's a problem!
                 if(CacheServer == null)
                     throw new QueryBuildingException($"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
-                    
+
                 //there is a cache server, perhaps we can dodge 'dependantTable' by going to cache instead
                 var canUseCacheForDependantTable =
                     (isPatientIndexTable ? dependency.SqlJoinableCached : dependency.SqlFullyCached)

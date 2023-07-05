@@ -151,7 +151,7 @@ public class ProcessTaskCheckingTests:DatabaseTests
             _task.LoadStage = LoadStage.Mounting;
             _task.Path = typeof(AnySeparatorFileAttacher).FullName;
             _task.SaveToDatabase();
-                
+
             //create the arguments
             var args = ProcessTaskArgument.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>(_task);
 
@@ -166,7 +166,7 @@ public class ProcessTaskCheckingTests:DatabaseTests
             var separator = (ProcessTaskArgument)args.Single(a => a.Name.Equals("Separator"));
             separator.Value = ",";
             separator.SaveToDatabase();
-                
+
             var results = new ToMemoryCheckNotifier();
             _checker.Check(results);
 

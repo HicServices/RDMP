@@ -70,7 +70,7 @@ public partial class PipelineWorkAreaUI : UserControl
         {
             //middle and destination components
             var allComponentTypes = _catalogueRepository.MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
-                
+
             //source components (list of all types with MEF exports of )
             var allSourceTypes = _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
@@ -131,7 +131,7 @@ public partial class PipelineWorkAreaUI : UserControl
     private void olvComponents_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         var model = (AdvertisedPipelineComponentTypeUnderContext)e.Model;
-            
+
         var RightClickMenu = new ContextMenuStrip();
             
         if (model != null)

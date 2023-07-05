@@ -48,7 +48,7 @@ public class ExtractionQueryBuilder
 
         if(request.ExtractableCohort == null)
             throw new NullReferenceException("No Cohort selected");
-            
+
         var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();
 
         if(databaseType == null)
@@ -77,7 +77,7 @@ public class ExtractionQueryBuilder
                     substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository, columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true,syntaxHelper));
                 break;
         }
-            
+
         var hashingAlgorithm = _repository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
         if (string.IsNullOrWhiteSpace(hashingAlgorithm))
             hashingAlgorithm = null;
@@ -109,7 +109,7 @@ public class ExtractionQueryBuilder
 
         //add the users selected filters
         queryBuilder.RootFilterContainer = request.Configuration.GetFilterContainerFor(request.DatasetBundle.DataSet);
-            
+
         var externalCohortTable = _repository.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
 
         if (request.ExtractableCohort != null)
@@ -158,7 +158,7 @@ public class ExtractionQueryBuilder
 
         var ei = batch.ExtractionInformation;
 
-            
+
         var end = start.AddDays(batch.NumberOfDaysPerBatch);
 
         // Don't load into the future / past end of dataset

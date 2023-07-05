@@ -39,12 +39,12 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl,out var ti,out var cis);
+        Import(tbl,out var ti, out var cis);
 
         var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
         pk.IsPrimaryKey = true;
         pk.SaveToDatabase();
-            
+
         var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
         var mutilation = new SafePrimaryKeyCollisionResolverMutilation();

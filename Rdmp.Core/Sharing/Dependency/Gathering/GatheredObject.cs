@@ -120,7 +120,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     private List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager, List<ShareDefinition> branchParents)
     {
         var me = ToShareDefinition(shareManager, branchParents);
-            
+
         var toReturn = new List<ShareDefinition>();
         var parents = new List<ShareDefinition>(branchParents)
         {

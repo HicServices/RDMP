@@ -49,7 +49,7 @@ public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI
         {
             tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             tbText.AutoCompleteSource = AutoCompleteSource.CustomSource;
-                
+
             var collection = new AutoCompleteStringCollection();
             collection.AddRange(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(c=>c.Name).ToArray());
 

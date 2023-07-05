@@ -140,7 +140,7 @@ public class MasterDatabaseScriptExecutor
             con.Open();
             UsefulStuff.ExecuteBatchNonQuery(kvp.Value.GetScriptBody(), con,null, DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds);
         }
-            
+
         var now = DateTime.Now;
 
         Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
@@ -350,7 +350,7 @@ public class MasterDatabaseScriptExecutor
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Patch evaluation failed", CheckResult.Fail, exception));
             stop = true;
-        }            
+        }
 
         //if any of the patches we are trying to apply are earlier than the latest in the database
         var missedOpportunities = toApply.Values.Where(p => p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
@@ -386,7 +386,7 @@ public class MasterDatabaseScriptExecutor
 
 
     public Patch[] GetPatchesRun()
-    { 
+    {
         var toReturn = new List<Patch>();
 
         var scriptsRun = Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName);

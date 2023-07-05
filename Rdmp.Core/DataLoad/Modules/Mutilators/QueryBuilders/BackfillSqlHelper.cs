@@ -56,7 +56,7 @@ public class BackfillSqlHelper
 
         if (joinPath[joinPath.Count - 1].ForeignKey.TableInfo_ID != _tiWithTimeColumn.ID && joinPath[joinPath.Count - 1].PrimaryKey.TableInfo_ID != _tiWithTimeColumn.ID)
             throw new InvalidOperationException("The TimePeriodicity table is not at the beginning or end of the join path.");
-            
+
         var sql = string.Format(@"SELECT {0}.*, {1}.{2} AS TimePeriodicityField 
 FROM {3} {4}",
             tableAlias, timePeriodTableAlias, _timePeriodicityField.GetRuntimeName(),

@@ -110,7 +110,7 @@ public class CommandInvoker
 
         _argumentDelegates.Add(new CommandInvokerArrayDelegate(typeof(IMapsDirectlyToDatabaseTable),false,p=>
         {
-            var available = GetAllObjectsOfType(p.Type.GetElementType());                
+            var available = GetAllObjectsOfType(p.Type.GetElementType());
             var result = _basicActivator.SelectMany(
                 new DialogArgs
                 {
@@ -121,9 +121,9 @@ public class CommandInvoker
                 
             if(result == null)
                 return null;
-                
+
             var typedArray = Array.CreateInstance(p.Type.GetElementType(),result.Length);
-            for(var i=0;i<typedArray.Length;i++)
+            for(var i =0;i<typedArray.Length;i++)
                 typedArray.SetValue(result[i],i);
                      
             return typedArray;
@@ -230,7 +230,7 @@ public class CommandInvoker
         foreach (var parameterInfo in constructorInfo.GetParameters())
         {
             var required = new RequiredArgument(parameterInfo);
-                
+
             var argDelegate = GetDelegate(required);
 
             //if it is an easy one to automatically fill e.g. IBasicActivateItems

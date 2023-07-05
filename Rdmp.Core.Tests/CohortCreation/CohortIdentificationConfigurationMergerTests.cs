@@ -34,7 +34,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
 
         Assert.AreEqual(1,cic1.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
         Assert.AreEqual(1,cic2.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
-            
+
         var numberOfCicsBefore = CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Count();
 
         var result = merger.Merge(new []{cic1,cic2 },SetOperation.UNION);
@@ -96,7 +96,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
         sub1.AddChild(aggregate1,0);
         sub2.AddChild(aggregate2,0);
         sub2.AddChild(aggregate3,1);
-            
+
         var numberOfCicsBefore = CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Count();
 
         var results = merger.UnMerge(root);
@@ -139,7 +139,7 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
 
         Assert.AreEqual(1,cic1.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
         Assert.AreEqual(1,cic2.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively().Count);
-            
+
         var numberOfCicsBefore = CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>().Count();
 
         //import 2 into 1

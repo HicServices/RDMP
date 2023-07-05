@@ -39,7 +39,7 @@ public class UpdateCommandStore
         var syntax = ImplementationManager.GetImplementation(builder).GetQuerySyntaxHelper();
 
         var command = DatabaseCommandHelper.GetCommand($"UPDATE {syntax.EnsureWrapped(o.Name)} SET {{0}} WHERE ID=@ID;", connection, transaction);
-                        
+
         var props = TableRepository.GetPropertyInfos(o);
 
         foreach(var p in props)

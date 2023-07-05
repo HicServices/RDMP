@@ -64,7 +64,7 @@ internal class BoundDateTest
 
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
-            
+
         var result = CallValidateOnInvalidData("admission_date", b);
 
         if(result == null)
@@ -87,7 +87,7 @@ internal class BoundDateTest
 
         var cols = new object[] { DBNull.Value};
 
-        var names= new string[]{"appointmentDate"};
+        var names = new string[]{"appointmentDate"};
 
         b.Validate(null,cols,names);
     }

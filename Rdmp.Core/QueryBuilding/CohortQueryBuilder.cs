@@ -135,7 +135,7 @@ public class CohortQueryBuilder
     {
         if(configuration == null)
             throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
-            
+
         //Show the user all the fields (*) unless there is a HAVING or it is a Patient Index Table.
         var selectList = 
             string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable() ? "*" : null;
@@ -143,7 +143,7 @@ public class CohortQueryBuilder
         RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX),CancellationToken.None);
 
         Results.BuildFor(configuration,ParameterManager);
-            
+
         var sampleSQL = Results.Sql;
 
         var parameterSql = "";
@@ -180,7 +180,7 @@ public class CohortQueryBuilder
             Results.BuildFor(configuration,ParameterManager);//user constructed us without a container, he only cares about 1 aggregate
 
         _sql = Results.Sql;
-  
+
         //Still finalise the ParameterManager even if we are not writing out the parameters so that it is in the Finalized state
         var finalParameters = ParameterManager.GetFinalResolvedParametersList();
 

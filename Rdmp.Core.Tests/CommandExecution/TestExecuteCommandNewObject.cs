@@ -19,7 +19,7 @@ internal class TestExecuteCommandNewObject : CommandCliTests
     [Test]
     public void Test_NewObjectCommand_NoArguments()
     {
-            
+
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),
             new CommandLineObjectPicker(Array.Empty<string>(), GetActivator())));
 

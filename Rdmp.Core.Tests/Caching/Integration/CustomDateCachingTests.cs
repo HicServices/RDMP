@@ -55,7 +55,7 @@ public class CustomDateCachingTests : DatabaseTests
             p.Destination==destinationComponent &&
             p.Repository == CatalogueRepository &&
             p.PipelineComponents==Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
-            
+
         var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme",true);
 
         var lmd = Mock.Of<ILoadMetadata>();

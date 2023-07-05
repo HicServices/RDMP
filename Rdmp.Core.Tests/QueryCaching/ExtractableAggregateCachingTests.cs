@@ -61,7 +61,7 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
 
                 
         Assert.IsTrue(ex.Message.StartsWith("The DataTable that you claimed was an ExtractableAggregateResults had zero columns and therefore cannot be cached"));
-            
+
         var dt = new DataTable();
         dt.Columns.Add("Col1");
         dt.Rows.Add("fishy!");
@@ -102,7 +102,7 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
 
         using (var con = DataAccessPortal.GetInstance().ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
         {
-                
+
             var table = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.ExtractableAggregateResults);
     
             con.Open();

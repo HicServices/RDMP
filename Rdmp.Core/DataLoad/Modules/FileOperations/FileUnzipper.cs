@@ -85,7 +85,7 @@ public class FileUnzipper : IPluginDataProvider
         //create a task 
         var entryDestination = Path.Combine(destination.ForLoading.FullName, entry.Name);
         var unzipJob = Task.Factory.StartNew(() => entry.ExtractToFile(entryDestination, true));
-            
+
         //create a stopwatch to time how long bits take
         var s = new Stopwatch();
         s.Start();

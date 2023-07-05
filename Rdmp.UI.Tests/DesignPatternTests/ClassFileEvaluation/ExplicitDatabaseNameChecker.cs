@@ -18,7 +18,7 @@ public class ExplicitDatabaseNameChecker
     {
         var problemFiles = new Dictionary<string, string>();
         var prohibitedStrings = new List<string>();
-            
+
         var ignoreList = new List<string>();
         ignoreList.Add("ExplicitDatabaseNameChecker.cs"); //us obviously since we do contain that text!
         ignoreList.Add("DatabaseCreationProgramOptions.cs"); //allowed because it is the usage text for the program.
@@ -52,7 +52,7 @@ public class ExplicitDatabaseNameChecker
         {
             if (ignoreList.Any(str=>str.Equals(Path.GetFileName(file))))
                 continue;
-                
+
             var contents = File.ReadAllText(file);
                 
             foreach (var prohibited in prohibitedStrings)

@@ -49,7 +49,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
             var catalogue = extractDatasetCommand.Catalogue;
-            
+
             var sourceFolder = _request.GetExtractionDirectory();
             if (sourceFolder == null)
                 throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");

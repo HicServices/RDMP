@@ -240,7 +240,7 @@ public class LoadProgressSummaryReport:ICheckable
             try
             {
                 var cacheFileSystem = new CachingPipelineUseCase(_cacheProgress).CreateDestinationOnly(new FromCheckNotifierToDataLoadEventListener(notifier));
-                    
+
                 var layout = cacheFileSystem.CreateCacheLayout();
                 availableFiles = layout.GetSortedDateQueue(new ThrowImmediatelyDataLoadEventListener()).ToArray();
                 ResolvedCachePath = layout.GetLoadCacheDirectory(new FromCheckNotifierToDataLoadEventListener(notifier));

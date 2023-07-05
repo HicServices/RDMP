@@ -142,7 +142,7 @@ public class CredentialsTests : DatabaseTests
                 
             //now create the association as Any
             tableInfo.SetCredentials(creds, DataAccessContext.Any);
-                
+
             //because the credential is liscenced to be used under ANY context, you can make requests under any of the specific contexts and be served the Any result
             var creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             Assert.NotNull(creds2);
@@ -308,7 +308,7 @@ public class CredentialsTests : DatabaseTests
         var ci = new CatalogueItem(CatalogueRepository, c,"GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
         var t = new TableInfo(CatalogueRepository, "Test");
         var col = new ColumnInfo(CatalogueRepository, "[mydatabase].[dbo].test.col","varchar(10)", t);
-            
+
         var extractionInformation = new ExtractionInformation(CatalogueRepository, ci, col, col.Name);
 
         DataAccessCredentials cred = null;

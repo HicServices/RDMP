@@ -102,7 +102,7 @@ public static class FolderHelper
                 {
                     throw new Exception($"Unable to build folder groups.  Current group was not a child of the current branch.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
                 }
-                    
+
                 var subFolders = g.Key[idx..];
                 var nextFolder = subFolders.Split('\\',StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
 

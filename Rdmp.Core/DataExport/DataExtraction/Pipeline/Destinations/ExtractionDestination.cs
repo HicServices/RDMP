@@ -303,7 +303,7 @@ e.g. /$i/$a")]
     {
         if(string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || request is not IExtractDatasetCommand cmd)
             return request.GetExtractionDirectory();
-            
+
         var cata = cmd.SelectedDataSets.ExtractableDataSet.Catalogue;
 
         if (ExtractionSubdirectoryPattern.Contains("$a") && string.IsNullOrWhiteSpace(cata.Acronym))
@@ -426,7 +426,7 @@ e.g. /$i/$a")]
             var target = Path.Combine(directory.FullName, $"{sql.Name}.csv");
             var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", target, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
 
-            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten,out var description);
+            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten, out var description);
                 
             sw.Stop();
 

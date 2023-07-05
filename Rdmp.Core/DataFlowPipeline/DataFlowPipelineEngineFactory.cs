@@ -87,7 +87,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
             //if it is the source do not add it
             if (toBuild.ID == pipeline.SourcePipelineComponent_ID)
                 continue;
-                
+
             //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
             var component = CreateComponent(toBuild);
                 

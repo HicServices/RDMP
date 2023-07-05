@@ -32,7 +32,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
-            
+
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof (string));
         dt1.Rows.Add(new []{"Fish"});
@@ -143,7 +143,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
             var exceptionMessage = ex.InnerException.Message;
             var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<") + ": ".Length)..];
-                
+
             var expectedErrorMessage =
                 $"<<{errorColumn}>> which had value <<{dt1.Rows[0][errorColumn]}>> destination data type was <<varchar(1)>>";
             StringAssert.Contains(expectedErrorMessage,interestingBit);
@@ -184,7 +184,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             con.Open();
             db.Server.GetCommand(sql, con).ExecuteNonQuery();
         }
-            
+
         //the bulk insert is
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
@@ -333,7 +333,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         try
         {
             destination.ProcessPipelineData(dt1, toConsole, token);
-            
+
             var dt2 = new DataTable();
             dt2.Columns.Add("mycol");
             dt2.Rows.Add(new object[] { batch2Value });
@@ -481,7 +481,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
-            
+
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
 
@@ -522,7 +522,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
-            
+
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
@@ -661,7 +661,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             DBNull.Value,   //StringAllowNull
             "f"             //StringPk
         );
-            
+
         var dt2 = dt.Clone();
         dt2.Rows.Clear();
         dt2.Rows.Add("1",    //MyInteger
@@ -697,7 +697,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var dt = new DataTable("TestFreeText");
         dt.Columns.Add("MyFreeText");
         dt.Rows.Add(testValue);
-            
+
         var dest = new DataTableUploadDestination();
         dest.AllowResizingColumnsAtUploadTime = true;
         dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
@@ -788,7 +788,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void MySqlTest_Simple()
     {
         var token = new GracefulCancellationToken();
-            
+
         var db = GetCleanedServer(DatabaseType.MySql);
 
         var toConsole = new ThrowImmediatelyDataLoadEventListener();
@@ -796,7 +796,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
-            
+
         var dt = new DataTable();
         dt.Columns.Add("mystringcol", typeof(string));
         dt.Columns.Add("mynum", typeof(string));
@@ -906,12 +906,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 using(var bulk = tbl.BeginBulkInsert())
                     bulk.Upload(dtAlreadyThereData);
             }
-            
+
             //create the destination component (what we want to test)
             var destinationComponent = new DataTableUploadDestination();
             destinationComponent.AllowResizingColumnsAtUploadTime = true;
             destinationComponent.AllowLoadingPopulatedTables = true;
-            
+
             //create the simulated chunk that will be dispatched
             var dt = new DataTable("TestDestinationAlreadyExistingIsOk");
             dt.Columns.Add("Name");
@@ -955,7 +955,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.PrimaryKey = dt1.Columns.Cast<DataColumn>().ToArray();
 
         destination.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
-            
+
         var dt2 = new DataTable();
         dt2.TableName = "MyTable";
         dt2.Columns.Add("Name");
@@ -991,7 +991,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         try
         {
-                
+
             //upload a single row of already existing data
             var dtAlreadyThereData = new DataTable();
             dtAlreadyThereData.Columns.Add("Name");
@@ -1000,7 +1000,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
             using (var bulk = tbl.BeginBulkInsert())
                 bulk.Upload(dtAlreadyThereData);
-                
+
             //create the destination component (what we want to test)
             var destinationComponent = new DataTableUploadDestination();
             destinationComponent.AllowResizingColumnsAtUploadTime = true;

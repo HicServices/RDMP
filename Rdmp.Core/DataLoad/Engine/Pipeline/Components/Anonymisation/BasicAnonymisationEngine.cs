@@ -89,7 +89,7 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
            
         //Process ANO Identifier Substitutions
         //for each column with an ANOTrasformer
-        foreach (var (column, transformer) in columnsToAnonymise)
+        foreach ((var column, var transformer) in columnsToAnonymise)
         {
             didAno = true;
 

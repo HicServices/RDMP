@@ -121,7 +121,7 @@ internal class CsProjFileTidy
         }
         else
         {
-                
+
             var firstClassNameInFile = classes[0].Groups[2].Value;
 
             if (firstClassNameInFile.Contains("_Design"))

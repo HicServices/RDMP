@@ -65,7 +65,7 @@ public class AggregateDataBasedTests:DatabaseTests
     private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out ICatalogue catalogue, out ExtractionInformation[] extractionInformations, out ITableInfo tableinfo)
     {
         var listener = new ThrowImmediatelyDataLoadEventListener();
-            
+
         var db = GetCleanedServer(type);
 
         var data = GetTestDataTable();
@@ -114,7 +114,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         var ORContainer = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.OR);
         var constParam = new ConstantParameter(declaration, "'T'", "T Category Only", syntaxHelper);
-            
+
         //this is deliberately duplication, it tests that the parameter compiles as well as that any dynamic sql doesn't get thrown by quotes
         var filter1 = new SpontaneouslyInventedFilter(repo,ORContainer, "(Category=@category OR Category = 'T')", "Category Is @category",
             "ensures the records belong to the category @category", new ISqlParameter[] { constParam });
@@ -294,7 +294,7 @@ public class AggregateDataBasedTests:DatabaseTests
     public void GroupBy_AxisWithSum_Correct(DatabaseType type)
     {
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
-            
+
         //setup the aggregate with axis
         var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
 
@@ -579,7 +579,7 @@ public class AggregateDataBasedTests:DatabaseTests
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
         configuration.SaveToDatabase();
-            
+
         var topx = new AggregateTopX(CatalogueRepository, configuration, 2);
         topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
         topx.OrderByDimensionIfAny_ID = pivotDimension.ID;

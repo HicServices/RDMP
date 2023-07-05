@@ -73,7 +73,7 @@ public class PostgreSqlTriggerImplementer : TriggerImplementer
         var creationSql = base.CreateTrigger(notifier);
 
         CreateProcedure(notifier);
-            
+
         var sql = string.Format(@"CREATE TRIGGER ""{0}"" BEFORE UPDATE ON {1} FOR EACH ROW
 EXECUTE PROCEDURE {2}();", 
             _triggerRuntimeName,

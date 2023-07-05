@@ -398,7 +398,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         //We are being asked to store a Type e.g. MyPlugins.MyCustomSQLHacker instead of an instance so easy, we just store the Type as a full name
         if (o is Type)
             return o.ToString();
-                    
+
         //get the system type
         var type = GetSystemType(asType);
 

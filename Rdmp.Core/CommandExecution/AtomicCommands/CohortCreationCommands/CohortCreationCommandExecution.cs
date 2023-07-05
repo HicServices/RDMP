@@ -48,15 +48,13 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <param name="pipeline"></param>
     protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, string cohortName, Project project, IPipeline pipeline) : base(activator)
     {
-        var dataExport = activator.CoreChildProvider as DataExportChildProvider;
-
         //May be null
         _explicitCohortName = cohortName;
         ExternalCohortTable = externalCohortTable;
         Project = project;
         Pipeline = pipeline;
 
-        if (dataExport == null)
+        if (activator.CoreChildProvider is not DataExportChildProvider dataExport)
         {
             SetImpossible("No data export repository available");
             return;

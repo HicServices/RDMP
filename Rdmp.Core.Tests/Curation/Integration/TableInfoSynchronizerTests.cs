@@ -40,7 +40,7 @@ public class TableInfoSynchronizerTests:DatabaseTests
         }
 
         var tbl = _database.ExpectTable("TableInfoSynchronizerTests");
-            
+
         var importer = new TableInfoImporter(CatalogueRepository,tbl);
         importer.DoImport(out tableInfoCreated,out columnInfosCreated);
     }
@@ -49,7 +49,7 @@ public class TableInfoSynchronizerTests:DatabaseTests
     public void SynchronizationTests_NoChanges()
     {
         Assert.AreEqual(TABLE_NAME , tableInfoCreated.GetRuntimeName());
-            
+
         var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
         Assert.AreEqual(true,synchronizer.Synchronize(new ThrowImmediatelyCheckNotifier()));
     }
@@ -64,7 +64,7 @@ public class TableInfoSynchronizerTests:DatabaseTests
         var table = _database.ExpectTable(TABLE_NAME);
         var colToDrop = table.DiscoverColumn("Address");
         table.DropColumn(colToDrop);
-            
+
         var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
 
         if (acceptChanges)
@@ -128,7 +128,7 @@ public class TableInfoSynchronizerTests:DatabaseTests
                 con.Open();
                 _server.GetCommand($"ALTER TABLE {TABLE_NAME} ADD Birthday datetime not null", con).ExecuteNonQuery();
             }
-            
+
             var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
 
             if (acceptChanges)

@@ -49,7 +49,7 @@ public class AllImportantClassesDocumented
         {
             if(excusedClassFileNames.Contains(Path.GetFileName(f)))
                 continue;
-                
+
             var text = File.ReadAllText(f);
 
             var startAt = text.IndexOf("public class");
@@ -64,8 +64,8 @@ public class AllImportantClassesDocumented
 
                 if(!mNamespace.Success)
                     Assert.Fail($"No namespace found in class file {f}");//no namespace in class!
-                    
-                var nameSpace= mNamespace.Groups[1].Value;
+
+                var nameSpace = mNamespace.Groups[1].Value;
 
                 //skip tests
                 if (nameSpace.Contains("Tests"))

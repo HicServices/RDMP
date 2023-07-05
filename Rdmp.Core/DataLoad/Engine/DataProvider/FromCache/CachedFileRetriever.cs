@@ -139,7 +139,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "ForLoading already has files, skipping extraction"));
             return;
         }
-            
+
         var layout = CreateCacheLayout((ScheduledDataLoadJob)dataLoadJob);
 
         //extract all the jobs into the forLoading directory

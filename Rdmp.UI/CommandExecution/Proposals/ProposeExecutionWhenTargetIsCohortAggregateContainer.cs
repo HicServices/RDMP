@@ -50,7 +50,7 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
             if(!sourceAggregateCommand.Aggregate.IsCohortIdentificationAggregate)
                 return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
 
-                
+
             var cic = sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
 
             if(cic != null && !cic.Equals(targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))

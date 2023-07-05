@@ -83,7 +83,7 @@ public class TestsRequiringACohort : TestsRequiringA
             DeleteTables(_cohortDatabase);
         else
             _cohortDatabase.Create();
-            
+
         var sql = @"
 
 CREATE TABLE [dbo].[Cohort](

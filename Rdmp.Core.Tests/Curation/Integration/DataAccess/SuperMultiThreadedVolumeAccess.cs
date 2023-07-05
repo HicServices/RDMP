@@ -130,9 +130,9 @@ public class SuperMultiThreadedVolumeAccess:DatabaseTests
         if (CatalogueRepository is not TableRepository)
             Assert.Inconclusive("We don't have to test this for yaml repos");
 
-            
+
         var exes = new List<Exception>();
-            
+
 
         var ts = new List<Thread>();
 

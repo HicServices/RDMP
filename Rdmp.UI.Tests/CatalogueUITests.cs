@@ -83,7 +83,7 @@ public class CatalogueUITests : UITests
         cata2.Name = "fish";
         cata2.Acronym = null;
         cata2.SaveToDatabase();
-            
+
         var ui = AndLaunch<CatalogueUI>(cata1);
         AssertNoErrors(ExpectedErrorType.Any);
 

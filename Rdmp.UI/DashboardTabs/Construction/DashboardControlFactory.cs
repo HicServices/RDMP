@@ -65,7 +65,7 @@ public class DashboardControlFactory
     public DashboardControl Create(DashboardLayout forLayout, Type t, out DashboardableControlHostPanel theControlCreated)
     {
         var instance = CreateControl(t);
-            
+
         //get the default size requirements of the control as it exists post construction
         var w = instance.Width;
         var h = instance.Height;

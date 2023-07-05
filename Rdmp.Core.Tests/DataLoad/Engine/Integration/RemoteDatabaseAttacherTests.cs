@@ -52,13 +52,13 @@ public class RemoteDatabaseAttacherTests:DatabaseTests
 
         var externalServer = new ExternalDatabaseServer(CatalogueRepository, "MyFictionalRemote",null);
         externalServer.SetProperties(db);
-            
+
         var attacher = new RemoteDatabaseAttacher();
         attacher.Initialize(null,db);
 
         attacher.LoadRawColumnsOnly = scenario == Scenario.AllRawColumns || scenario == Scenario.MissingPreLoadDiscardedColumn;
         attacher.RemoteSource = externalServer;
-            
+
         var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         lm.CreateNewLoggingTaskIfNotExists("amagad");
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);

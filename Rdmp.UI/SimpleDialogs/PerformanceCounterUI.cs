@@ -70,7 +70,7 @@ public partial class PerformanceCounterUI : Form
 
         //if there aren't any results don't show
         if (DatabaseCommandHelper.PerformanceCounter == null || !DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Any())
-            return;                
+            return;
 
         var f = new Form();
         var ui = new PerformanceCounterResultsUI();

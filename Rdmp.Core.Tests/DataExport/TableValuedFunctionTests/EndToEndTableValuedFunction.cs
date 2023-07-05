@@ -71,7 +71,7 @@ public class EndToEndTableValuedFunction:DatabaseTests
 
         //create a normal catalogue
         CreateANormalCatalogue();
-            
+
         //create a cohort database using wizard
         var cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase,CatalogueRepository,DataExportRepository,false);
             
@@ -135,7 +135,7 @@ public class EndToEndTableValuedFunction:DatabaseTests
         //create a cohort identification configuration (identifies people from datasets using set operations - see CohortManager)
         _cic = new CohortIdentificationConfiguration(CatalogueRepository, "TbvfCIC");
         _cic.CreateRootContainerIfNotExists();
-            
+
         //turn the catalogue _nonTvfCatalogue into a cohort set and add it to the root container
         var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,(s,e)=> { throw new Exception("Did not expect there to be more than 1!"); });
 
@@ -144,7 +144,7 @@ public class EndToEndTableValuedFunction:DatabaseTests
 
         //create a pipeline for executing this CIC and turning it into a cohort
         _pipe = new Pipeline(CatalogueRepository, "CREATE COHORT:By Executing CIC");
-            
+
         var source = new PipelineComponent(CatalogueRepository, _pipe,typeof (CohortIdentificationConfigurationSource), 0, "CIC Source");
             
         _project = new Project(DataExportRepository, "TvfProject");
@@ -204,7 +204,7 @@ end
         var tblvf = _database.ExpectTableValuedFunction("GetTopXRandom");
 
         var importer = new TableValuedFunctionImporter(CatalogueRepository, tblvf);
-        importer.DoImport(out var tbl,out var cols);
+        importer.DoImport(out var tbl, out var cols);
 
         var engineer = new ForwardEngineerCatalogue(tbl, cols);
         engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
@@ -235,10 +235,10 @@ end
             _database.GetRuntimeName(), "NonTVFTable",
             DatabaseType.MicrosoftSQLServer,_database.Server.ExplicitUsernameIfAny,_database.Server.ExplicitPasswordIfAny);
 
-        importer.DoImport(out var tbl,out var cols);
+        importer.DoImport(out var tbl, out var cols);
 
         var engineer = new ForwardEngineerCatalogue(tbl, cols);
-        engineer.ExecuteForwardEngineering(out var cata,out var cis, out var eis);
+        engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
             
         _nonTvfExtractionIdentifier  = eis.Single();
         _nonTvfExtractionIdentifier.IsExtractionIdentifier = true;
@@ -264,7 +264,7 @@ end
 
     private void TestWithParameterValueThatRowsAreReturned()
     {
-        var  p = _tvfTableInfo.GetAllParameters().Single();
+        var p = _tvfTableInfo.GetAllParameters().Single();
         p.Value = "5";
         p.SaveToDatabase();
 
@@ -307,7 +307,7 @@ end
         p.SaveToDatabase();
 
         var qb = _aggregate.GetQueryBuilder();
-            
+
         //Query should be something like :
         /*
          * DECLARE @numberOfRecords AS int;
@@ -328,7 +328,7 @@ end
          * */
 
         var sql = qb.SQL;
-            
+
         var db = DataAccessPortal.GetInstance().ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
         using (var con = db.Server.GetConnection())
         {
@@ -424,7 +424,7 @@ end
         var globalP = new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;");
         globalP.Value = "1";
         globalP.SaveToDatabase();
-            
+
         var extractionCommand = new ExtractDatasetCommand(config, new ExtractableDatasetBundle(tvfExtractable));
 
         var source = new ExecuteDatasetExtractionSource();

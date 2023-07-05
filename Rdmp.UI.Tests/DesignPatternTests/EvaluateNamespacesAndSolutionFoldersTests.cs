@@ -94,7 +94,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
 
         var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
         ExplicitDatabaseNameChecker.FindProblems(_csFilesFound);
-            
+
         var noMappingToDatabaseComments = new AutoCommentsEvaluator();
         noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, _csFilesFound);
 
@@ -281,7 +281,7 @@ public class AutoCommentsEvaluator
                         var m = Regex.Match(next, @"(.*)public\b(.*)\s+(.*)\b");
                         if (m.Success)
                         {
-                                
+
                             var whitespace = m.Groups[1].Value;
                             var type = m.Groups[2].Value;
                             var member = m.Groups[3].Value;
@@ -339,7 +339,7 @@ public class AutoCommentsEvaluator
                         changes = true;
                             
                         //add current line
-                        sbSuggestedText.AppendLine(text[i]); 
+                        sbSuggestedText.AppendLine(text[i]);
 
                         //add the para tag
                         var nextLine = text[i + 1].Insert(text[i+1].IndexOf("///")+4,"<para>");

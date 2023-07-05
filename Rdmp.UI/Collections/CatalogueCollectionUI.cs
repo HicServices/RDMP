@@ -262,12 +262,11 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
         var o = e.Object;
-        var cata = o as Catalogue;
 
-        if(o is GovernancePeriod || o is GovernanceDocument)
+        if (o is GovernancePeriod || o is GovernanceDocument)
             tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
 
-        if (cata != null)
+        if (o is Catalogue cata)
         {
             //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
             if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))

@@ -96,7 +96,7 @@ public class BasicCohortDestination : IPluginCohortDestination
                 //already handled these folks?
                 if (_cohortDictionary.ContainsKey(priv) || IsNull(priv))
                     continue;
-                        
+
                 //and the release id specified in the input table
                 var release = row[_releaseIdentifier];
                         
@@ -226,7 +226,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     public virtual void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
     {
         Request = value;
-            
+
         var target = Request.NewCohortDefinition.LocationOfCohort;
 
         var syntax = target.GetQuerySyntaxHelper();

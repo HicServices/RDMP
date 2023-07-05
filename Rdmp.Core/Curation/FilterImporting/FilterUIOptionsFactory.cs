@@ -19,16 +19,13 @@ public class FilterUIOptionsFactory
 {
     public static FilterUIOptions Create(IFilter filter)
     {
-        var deployedExtractionFilter = filter as DeployedExtractionFilter;
-        var masterCatalogueFilter = filter as ExtractionFilter;
-
         if (filter is AggregateFilter aggregateFilter)
             return new AggregateFilterUIOptions(aggregateFilter);
 
-        if (deployedExtractionFilter != null)
+        if (filter is DeployedExtractionFilter deployedExtractionFilter)
             return new DeployedExtractionFilterUIOptions(deployedExtractionFilter);
 
-        if (masterCatalogueFilter != null)
+        if (filter is ExtractionFilter masterCatalogueFilter)
             return new ExtractionFilterUIOptions(masterCatalogueFilter);
 
         throw new Exception(

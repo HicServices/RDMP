@@ -161,7 +161,7 @@ SELECT @@IDENTITY;", con);
 
                     _server.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed,DateTime.Now);
                     _server.AddParameterWithValueToCommand("@ID", cmdUpdateToClosed, ID);
-                        
+
                     var rowsAffected = cmdUpdateToClosed.ExecuteNonQuery();
 
                     if (rowsAffected != 1)
@@ -236,7 +236,7 @@ SELECT @@IDENTITY;", con);
             //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
             var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
-                
+
             var cmdLookupStatusID = _server.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
             _server.AddParameterWithValueToCommand("@status",cmdLookupStatusID, initialErrorStatus);
 

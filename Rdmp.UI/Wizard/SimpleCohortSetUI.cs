@@ -231,7 +231,7 @@ public partial class SimpleCohortSetUI : UserControl
         cmd.Execute();
 
         var aggregate = cmd.AggregateCreatedIfAny;
-            
+
         var filterOp = (FilterContainerOperation) ddAndOr.SelectedItem;
 
         IContainer filterContainer;

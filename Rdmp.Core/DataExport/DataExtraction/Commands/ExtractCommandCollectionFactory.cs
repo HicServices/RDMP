@@ -22,7 +22,7 @@ public class ExtractCommandCollectionFactory
     {
         var cohort = configuration.Cohort;
         var datasets = configuration.GetAllExtractableDataSets();
-            
+
         var datasetBundles = datasets.Select(ds => CreateDatasetCommand(repositoryLocator, ds, configuration));
 
         return new ExtractCommandCollection(datasetBundles);

@@ -34,7 +34,7 @@ internal class FilterManagerFromChildProvider: AggregateFilterManager
             childProvider.AllAggregateFilters.Where(f=>f.FilterContainer_ID.HasValue)
                 .GroupBy(f=>f.FilterContainer_ID.Value)
                 .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
-            
+
         var server = repository.DiscoveredServer;
         using (var con = repository.GetConnection())
         {

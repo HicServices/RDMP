@@ -122,7 +122,7 @@ public class ConsoleInputManager : BasicActivateItems
     public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
     {
         if (DisallowInput)
-            throw new InputDisallowedException($"Value required for '{args}'"); 
+            throw new InputDisallowedException($"Value required for '{args}'");
 
         var chosenStr = GetString(args, available.Select(t=>t.Name).ToList());
 
@@ -146,7 +146,7 @@ public class ConsoleInputManager : BasicActivateItems
     {
         var value = ReadLineWithAuto(args,new PickObjectBase[]
             {new PickObjectByID(this), new PickObjectByName(this)});
-            
+
         var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
         if(unavailable.Any())
@@ -253,7 +253,7 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
     {
-        for(var i=0;i<available.Length;i++)
+        for(var i =0;i<available.Length;i++)
         {
             Console.WriteLine($"{i}:{available[i]}");
         }
@@ -360,7 +360,7 @@ public class ConsoleInputManager : BasicActivateItems
 
             var searchPattern = file[(idxLastSlash+1)..];
             var dirStr = file[..idxLastSlash];
-                    
+
             var dir = new DirectoryInfo(dirStr);
 
             if(!dir.Exists)
@@ -415,7 +415,7 @@ public class ConsoleInputManager : BasicActivateItems
 
         var logger = NLog.LogManager.GetCurrentClassLogger();
         logger.Trace($"About to ShowData from Query:{Environment.NewLine}{sql}");
-            
+
         var toRun = new ExtractTableVerbatim(db.Server,sql,Console.OpenStandardOutput(),",",null);
         toRun.DoExtraction();
     }
@@ -469,7 +469,7 @@ public class ConsoleInputManager : BasicActivateItems
             return true;
         }
 
-        for(var i=0;i < available.Length; i++)
+        for(var i =0;i < available.Length; i++)
         {
             Console.WriteLine($"{i}:{available[i]}");
         }

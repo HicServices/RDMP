@@ -154,7 +154,7 @@ order by
             ? AggregateTopXOrderByDirection.Ascending
             : AggregateTopXOrderByDirection.Descending;
         topX.SaveToDatabase();
-            
+
         var builder = _configuration.GetQueryBuilder();
 
         Assert.AreEqual(CollapseWhitespace($@"/*MyConfig*/

@@ -144,7 +144,7 @@ public class UserInterfaceStandardisationChecker
             //public AutomationServerSlotsMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
             var expectedConstructorSignature = $"{menuClass.Name}(RDMPContextMenuStripArgs args,{expectedClassName}";
             ConfirmFileHasText(menuClass,expectedConstructorSignature);
-                
+
             var fields = menuClass.GetFields(
                 BindingFlags.NonPublic |
                 BindingFlags.Instance);

@@ -240,7 +240,7 @@ public class QueryBuilder : ISqlQueryBuilder
 
         //declare parameters
         ParameterManager.AddParametersFor(Filters);
-            
+
         #endregion
 
         /////////////////////////////////////////////Assemble Query///////////////////////////////

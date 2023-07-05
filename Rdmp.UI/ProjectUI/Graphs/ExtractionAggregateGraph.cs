@@ -47,7 +47,7 @@ public sealed class ExtractionAggregateGraphUI:AggregateGraphUI ,IObjectCollecti
 
         //we are hijacking the query builder creation for this graph
         var toReturn =  base.GetQueryBuilder(aggregateConfiguration);
-            
+
         //instead of only filtering on the filters of the Aggregate, also filter on the configurations data extraction filters AND on the cohort ID
         var spontedContainer = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
 

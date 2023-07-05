@@ -80,7 +80,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         try
         {
             dumper.Check(new AcceptAllCheckNotifier());
-                
+
             var dt = _bulkData.GetDataTable(1000);
 
             Assert.AreEqual(1000,dt.Rows.Count);
@@ -199,7 +199,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             using (var con = server.GetConnection())
             {
                 con.Open();
-                    
+
                 //leave the identifier dump in the way we found it (empty)
                 var cmdDrop = server.GetCommand($"DROP TABLE ID_{BulkTestsData.BulkDataTable}", con);
                 cmdDrop.ExecuteNonQuery();
@@ -295,7 +295,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         //give it the WRONG server
         tableInfoCreated.IdentifierDumpServer_ID = ANOStore_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
-            
+
         var dumper = new IdentifierDumper(tableInfoCreated);
         try
         {

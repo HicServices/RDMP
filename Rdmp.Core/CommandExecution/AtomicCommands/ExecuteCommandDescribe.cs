@@ -181,7 +181,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         PopulateBasicCommandInfo(sb,commandType);
 
         var dynamicCtorAttribute = commandCtor?.GetCustomAttribute<UseWithCommandLineAttribute>();
-            
+
         //it is a basic command, one that expects a fixed number of proper objects
         var sbParameters = new StringBuilder();
         sbParameters.AppendLine();
@@ -284,10 +284,10 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         try
         {
             if(BasicActivator is ConsoleInputManager)
-            {              
+            {
                 var name = req.Name.Length < nameColWidth ? req.Name.PadRight(nameColWidth) : req.Name[..nameColWidth];
                 var type = req.Type.Name.Length < typeColWidth ? req.Type.Name.PadRight(typeColWidth) : req.Type.Name[..typeColWidth];
-                    
+
                 var desc = req.DemandIfAny?.Description;
 
 
@@ -363,7 +363,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         {
             sb.AppendLine($"Aliases:{string.Join(',', aliases.Select(a => a.Name).ToArray())}");
         }
-                
+
         var helpText = help.GetTypeDocumentationIfExists(commandType);
 
         if(helpText != null)

@@ -33,7 +33,7 @@ public class MEFCheckerTests:UnitTests
     [Test]
     public void FindClass_EmptyString()
     {
-        var m = new MEFChecker(Repository.MEF, "", s => Assert.Fail()); 
+        var m = new MEFChecker(Repository.MEF, "", s => Assert.Fail());
         var ex =  Assert.Throws<Exception>(()=>m.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual("MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty",ex.Message);
     }

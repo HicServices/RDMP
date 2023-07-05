@@ -420,25 +420,24 @@ public abstract class BasicActivateItems : IBasicActivateItems
     protected virtual bool InteractiveDelete(IDeleteable deleteable)
     {
         var databaseObject = deleteable as DatabaseEntity;
-                        
+
         //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
-        var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
-            
-        if(databaseObject is Catalogue c)
+
+        if (databaseObject is Catalogue c)
         {
-            if(c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+            if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
             {
-                if(YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?","Make Non Extractable"))
+                if (YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?", "Make Non Extractable"))
                 {
-                    var cmd = new ExecuteCommandChangeExtractability(this,c);
+                    var cmd = new ExecuteCommandChangeExtractability(this, c);
                     cmd.Execute();
                 }
                 else
                     return false;
             }
         }
-            
-        if(databaseObject is ExtractionFilter f)
+
+        if (databaseObject is ExtractionFilter f)
         {
             var children = f.ExtractionFilterParameterSets;
 
@@ -477,7 +476,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         string overrideConfirmationText = null;
 
-        if (customMessageDeletable != null)
+        if (deleteable is IDeletableWithCustomMessage customMessageDeletable)
             overrideConfirmationText = $"Are you sure you want to {customMessageDeletable.GetDeleteMessage()}?";
 
         //it has already been deleted before

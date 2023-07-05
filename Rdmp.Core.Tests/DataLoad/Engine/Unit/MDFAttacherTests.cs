@@ -74,7 +74,7 @@ public class MDFAttacherTests : DatabaseTests
 
             //create an already existing file in the 'data' directory (imitates the copy to location)
             File.WriteAllText(Path.Combine(data.FullName, "MyFile.mdf"), "fish");
-                
+
 
             var attacher = new MDFAttacher
             {
@@ -82,7 +82,7 @@ public class MDFAttacherTests : DatabaseTests
             };
 
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
-                
+
             //should be a warning since overwriting is default behaviour
             var ex = Assert.Throws<Exception>(()=>
                 attacher.Attach(
@@ -153,7 +153,7 @@ public class MDFAttacherTests : DatabaseTests
 
         var mdf1 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile1.mdf");
         var mdf2 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile2.mdf");
-            
+
         var ldf1 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile1_log.ldf");
         var ldf2 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile2_log.ldf");
         try
@@ -316,7 +316,7 @@ public class MDFAttacherTests : DatabaseTests
 
         try
         {
-                
+
             var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 

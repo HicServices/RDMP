@@ -76,9 +76,9 @@ internal class ExecuteSqlInDleStage
             throw new ExecuteSqlFileRuntimeTaskException(
                 $"Error performing substitution in Sql File, Failed to replace match {match.Value} due to parse expectations",e);
         }
-            
+
         var tables = _job.RegularTablesToLoad.Union(_job.LookupTablesToLoad);
-            
+
         var namer = _job.Configuration.DatabaseNamer;
 
         switch (entity)

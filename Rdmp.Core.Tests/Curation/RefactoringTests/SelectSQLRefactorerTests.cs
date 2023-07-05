@@ -20,7 +20,7 @@ public class SelectSQLRefactorerTests:UnitTests
     {
         var columnInfo = WhenIHaveA<ColumnInfo>();
         columnInfo.Name = "[database]..[table].[column]";
-            
+
         var tableInfo = columnInfo.TableInfo;
         tableInfo.Database = "database";
         tableInfo.Name = "[database]..[table]";
@@ -38,11 +38,11 @@ public class SelectSQLRefactorerTests:UnitTests
         ei.SelectSQL = "UPPER([database]..[table].[column])";
         ei.Alias = "MyCatalogueItem";
         ei.SaveToDatabase();
-            
+
         var ci = ei.ColumnInfo;
         ci.Name = "[database]..[table].[column]";
         ci.SaveToDatabase();
-            
+
         var tableInfo = ei.ColumnInfo.TableInfo;
         tableInfo.Database = "database";
         tableInfo.Name = "[database]..[table]";
@@ -75,7 +75,7 @@ public class SelectSQLRefactorerTests:UnitTests
         tableInfo.Database = "database";
         tableInfo.Name = "[database]..[table]";
         tableInfo.SaveToDatabase();
-            
+
         var refactorer = new SelectSQLRefactorer();
             
         Assert.AreEqual(expectedToBeRefactorable,refactorer.IsRefactorable(ei));
@@ -96,7 +96,7 @@ public class SelectSQLRefactorerTests:UnitTests
 
         foreach(IDeleteable d in ti.ColumnInfos)
             d.DeleteInDatabase();
-            
+
         var refactorer = new SelectSQLRefactorer();
         Assert.IsTrue(refactorer.IsRefactorable(ti));
 
@@ -114,7 +114,7 @@ public class SelectSQLRefactorerTests:UnitTests
 
         foreach(IDeleteable d in ti.ColumnInfos)
             d.DeleteInDatabase();
-            
+
         var refactorer = new SelectSQLRefactorer();
         Assert.IsFalse(refactorer.IsRefactorable(ti));
 

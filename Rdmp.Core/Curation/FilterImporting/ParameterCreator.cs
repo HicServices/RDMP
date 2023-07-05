@@ -85,7 +85,7 @@ public class ParameterCreator
                 //now we might be in the process of cloning another IFilter in which case we want the filters to match the templates ones
                 if (_importFromIfAny != null)
                     matchingTemplateFilter = _importFromIfAny.SingleOrDefault(t => t.ParameterName.Equals(requiredParameterName));
-                    
+
                 var proposedNewParameterName = requiredParameterName;
                 var proposedAliasNumber = 2;
 

@@ -318,7 +318,7 @@ public class AggregateBuilder : ISqlQueryBuilder
             //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
             _countColumn.SetQuerySyntaxHelper(QuerySyntaxHelper,!_isCohortIdentificationAggregate);
         }
-            
+
 
         var aggregateHelper = QuerySyntaxHelper.AggregateHelper;
             
@@ -497,7 +497,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                         //was added with skip for group by enabled
                         if (_skipGroupByForThese.Contains(col.IColumn))
                             continue;
-                            
+
                         var line = new CustomLine($"{GetGroupOrOrderByCustomLineBasedOn(col)},", QueryComponent.OrderBy);
 
                         FlagLineBasedOnIcolumn(line,col.IColumn);

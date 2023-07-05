@@ -36,14 +36,14 @@ public class MissingFieldsChecker : ICheckable
             notifier.OnCheckPerformed(new CheckEventArgs("Could not reach server",CheckResult.Fail));
             return;
         }
-                
+
         var db = server.GetCurrentDatabase();
         if(!db.Exists())
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"Could not find database {db}",CheckResult.Fail));
             return;
         }
-                
+
         var tables = db.DiscoverTables(false);
 
         foreach (var type in _repository.GetCompatibleTypes())
@@ -85,8 +85,8 @@ public class MissingFieldsChecker : ICheckable
         }
             
         notifier.OnCheckPerformed(new CheckEventArgs($"Found Table {type.Name}", CheckResult.Success, null));
-            
-            
+
+
         //get columns from underlying database table
         var columns = table.DiscoverColumns();
 

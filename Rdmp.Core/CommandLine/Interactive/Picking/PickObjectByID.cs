@@ -58,7 +58,7 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
         var objectId = objByID.Groups[2].Value;
 
         var dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
-                
+
         var objs = objectId.Split(',').Select(id=>GetObjectByID(dbObjectType,int.Parse(id))).Distinct();
                 
         return new CommandLineObjectPickerArgumentValue(arg,idx,objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());

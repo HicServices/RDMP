@@ -332,7 +332,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
             sql = RemoteSelectSQL;
         else
             sql = $"Select * from {syntax.EnsureWrapped(RemoteTableName)}";
-            
+
         var scheduleMismatch = false;
 
         //if there is a load progress 
@@ -390,7 +390,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
         {
             rawTableName = RAWTableName;
         }
-                        
+
         var destination = new SqlBulkInsertDestination(_dbInfo, rawTableName, Enumerable.Empty<string>());
 
         var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
@@ -442,7 +442,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
         //if the currently scheduled job is not our Schedule then it is a mismatch and we should skip it
         scheduleMismatch = !jobAsScheduledJob.LoadProgress.Equals(Progress);
-            
+
         var min = jobAsScheduledJob.DatesToRetrieve.Min();
         var max = jobAsScheduledJob.DatesToRetrieve.Max();
 
@@ -468,7 +468,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
         var declareStartDateParameter = syntaxHelper.GetParameterDeclaration(StartDateParameter, new DatabaseTypeRequest(typeof (DateTime)));
         var declareEndDateParameter = syntaxHelper.GetParameterDeclaration(EndDateParameter,new DatabaseTypeRequest(typeof (DateTime)));
-            
+
         var startSql = declareStartDateParameter + Environment.NewLine;
         startSql += $"SET {StartDateParameter} = '{min:yyyy-MM-dd HH:mm:ss}';{Environment.NewLine}";
 

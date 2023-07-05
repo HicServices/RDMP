@@ -73,7 +73,7 @@ GO
 ALTER TABLE [dbo].[Results]  WITH CHECK ADD  CONSTRAINT [FK_Results_Tests] FOREIGN KEY([TestId])
 REFERENCES [dbo].[Tests] ([TestId])
 GO";
-            
+
         var server = From.Server;
         using (var con = server.GetConnection())
         {
@@ -105,7 +105,7 @@ GO";
         _anoTable.PushToANOServerAsNewTable("int",new ThrowImmediatelyCheckNotifier());
             
         _comboCata = new Catalogue(CatalogueRepository, "Combo Catalogue");
-            
+
         //pk
         var ciTestId = new CatalogueItem(CatalogueRepository, _comboCata, "TestId");
         var colTestId = c1.Single(c => c.GetRuntimeName().Equals("TestId"));
@@ -145,7 +145,7 @@ GO";
         testIdHeadPlan.ANOTable = _anoTable;
 
         plan1.Check(new ThrowImmediatelyCheckNotifier());
-            
+
         var engine1 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, plan1);
         engine1.Execute();
 

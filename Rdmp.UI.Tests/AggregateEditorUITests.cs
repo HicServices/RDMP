@@ -23,7 +23,7 @@ internal class AggregateEditorUITests:UITests
 
         //The selected columns ui
         var colsUi = ui.selectColumnUI1;
-            
+
         //should show two available columns
         var available = colsUi.AvailableColumns;
         Assert.AreEqual(2,available.Count);
@@ -63,8 +63,8 @@ internal class AggregateEditorUITests:UITests
     [Test, UITimeout(50000)]
     public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
     {
-        var config = GetAggregateConfigurationWithNoDimensions(out var dateEi,out var otherEi);
-            
+        var config = GetAggregateConfigurationWithNoDimensions(out var dateEi, out var otherEi);
+
         var dimDate = new AggregateDimension(Repository, dateEi, config);
         var dimOther = new AggregateDimension(Repository, otherEi, config);
         config.ClearAllInjections();
@@ -100,7 +100,7 @@ internal class AggregateEditorUITests:UITests
         var cmd = new ExecuteCommandAddNewAggregateGraph(ItemActivator, cata);
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.Contains("no extractable columns",cmd.ReasonCommandImpossible);
-            
+
         //and if the broken config is activated
         var ui = AndLaunch<AggregateEditorUI>(config);
 

@@ -77,7 +77,7 @@ public class WordDataWriter : DocXHelper
                     rowCount = 5;
 
                 var t = InsertTable(document, rowCount, 2);
-                    
+
                 var rownum = 0;
                 if (_destination.GeneratesFiles)
                 {
@@ -105,7 +105,7 @@ public class WordDataWriter : DocXHelper
                     SetTableCell(t,rownum,0,"MD5");
                     SetTableCell(t,rownum,1, FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
                     rownum++;
-                    
+
                     var f = new FileInfo(_destination.OutputFile);
                     SetTableCell(t,rownum,0,"File Size");
                     SetTableCell(t,rownum,1, $"{f.Length}bytes ({f.Length / 1024}KB)");
@@ -187,14 +187,14 @@ public class WordDataWriter : DocXHelper
         var result  = new StringBuilder();
 
         var sr = new StringReader(s);
-            
+
         var buff = new char[23];
 
         while(sr.Read(buff,0,23) > 0)
         {
             result.Append(buff);
             result.Append(" ");
-                
+
             //skip a character (should be a -, if not something has gone badly wrong)
             var skipped = sr.Read();
             if(!(skipped == '-' || skipped == -1))
@@ -278,7 +278,7 @@ public class WordDataWriter : DocXHelper
     {
         var cata = Executer.Source.Request.Catalogue;
         var catalogueMetaData = new WordCatalogueExtractor(cata,document);
-            
+
         var supplementalData = new Dictionary<CatalogueItem, Tuple<string, string>[]>();
 
         foreach (var value in Executer.Source.ExtractTimeTransformationsObserved.Values)
@@ -467,7 +467,7 @@ public class WordDataWriter : DocXHelper
         var results = Executer.Source.ExtractionTimeValidator.Results;
 
         var t = InsertTable(document,results.DictionaryOfFailure.Count + 1, 4);
-            
+
         var tableLine = 0;
 
         SetTableCell(t,tableLine, 0, "");

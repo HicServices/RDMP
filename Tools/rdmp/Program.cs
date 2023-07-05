@@ -32,7 +32,7 @@ internal class Program
     private static int Main(string[] args)
     {
         try
-        {    
+        {
             var nlog = Path.Combine(AppContext.BaseDirectory ,"NLog.config");
 
             if (File.Exists(nlog))
@@ -173,14 +173,14 @@ internal class Program
         var badTimes = false;
 
         start.DatabaseFound += (s,e)=>{
-                
+
             var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
                      
             switch (e.Status)
             {
                 case Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching:
                 {
-                    var mds = new MasterDatabaseScriptExecutor(db);
+                        var mds = new MasterDatabaseScriptExecutor(db);
                     mds.PatchDatabase(e.Patcher, checker, p => true, () => opts.BackupDatabase);
                     break;
                 }

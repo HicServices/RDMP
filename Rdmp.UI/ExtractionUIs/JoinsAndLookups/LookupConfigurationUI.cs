@@ -120,7 +120,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         olvLookupNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
         olvExtractionInformationsNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
         olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-            
+
         //add the currently configured extraction informations in the order they appear in the dataset
         var allExtractionInformationFromCatalogue = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         allExtractionInformationFromCatalogue.Sort();

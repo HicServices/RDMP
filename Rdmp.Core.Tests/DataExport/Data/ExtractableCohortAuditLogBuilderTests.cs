@@ -20,7 +20,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
     public void AuditLogReFetch_FileInfo()
     {
         var builder = new ExtractableCohortAuditLogBuilder();
-            
+
         var fi = new FileInfo("durdur.txt");
         var desc = ExtractableCohortAuditLogBuilder.GetDescription(fi);
 

@@ -46,7 +46,7 @@ public abstract class Runner: IRunner
             var repo = locator.GetAllRepositories().FirstOrDefault(r => r.SupportsObjectType(typeof(T)));
             return repo.GetObjectByID<T>(id);
         }
-                
+
         var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
         if (!picker[0].HasValueOfType(typeof(T)))
             throw new ArgumentException($"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");

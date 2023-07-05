@@ -184,7 +184,7 @@ public class CohortSummaryQueryBuilder
         else
         {
             //they both have WHERE SQL
-                
+
             //Create a new spontaneous container (virtual memory only container) that contains both subtrees
             var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,new[] { cohortRootContainer,summaryRootContainer }, null, FilterContainerOperation.AND);
             summaryBuilder.RootFilterContainer = spontContainer;
@@ -203,7 +203,7 @@ public class CohortSummaryQueryBuilder
 
         if (cachingServer == null)
             throw new NotSupportedException("No Query Caching Server configured");
-            
+
         var memoryRepository = new MemoryCatalogueRepository();
 
         //Get a builder for creating the basic aggregate graph 

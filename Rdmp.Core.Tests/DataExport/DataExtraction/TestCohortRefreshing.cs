@@ -50,7 +50,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
             
         Assert.NotNull(engine.Request.NewCohortDefinition);
-            
+
         var oldData = oldcohort.GetExternalData();
 
         engine.Request.NewCohortDefinition.CohortReplacedIfAny = oldcohort;
@@ -87,7 +87,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
         var freezeArg = args.Single(a => a.Name.Equals("FreezeAfterSuccessfulImport"));
         freezeArg.SetValue(false);
         freezeArg.SaveToDatabase();
-                 
+
         var dest = new PipelineComponent(CatalogueRepository, pipe, typeof (BasicCohortDestination), 0);
         var argsDest = dest.CreateArgumentsForClassIfNotExists<BasicCohortDestination>();
         var allocatorArg = argsDest.Single(a => a.Name.Equals("ReleaseIdentifierAllocator"));
@@ -112,7 +112,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
 
         new MasterDatabaseScriptExecutor(cachedb).CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
         queryCacheServer.SetProperties(cachedb);
-            
+
         //Create a Cohort Identification configuration (query) that will identify the cohort
         var cic = new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs");
 
@@ -154,7 +154,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
 
             //get a new engine
             engine = new CohortRefreshEngine(toMem, _configuration);
-                
+
             //execute it
             var ex = Assert.Throws<PipelineCrashedException>(()=>engine.Execute());
 

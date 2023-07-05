@@ -145,7 +145,7 @@ public partial class GenerateTestDataUI : RDMPForm
 
     private void btnGenerate_Click(object sender, EventArgs e)
     {
-            
+
         var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui=>ui.Generate).ToArray();
             
         if(!uis.Any())
@@ -186,7 +186,7 @@ public partial class GenerateTestDataUI : RDMPForm
                 }
             }
             else
-            { 
+            {
                 var queue = new Queue<DataGeneratorUI>(uis);
                 Execute(identifiers,queue,queue.Dequeue(),r);
             }

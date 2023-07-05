@@ -201,7 +201,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                 var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
                 qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
                 qb.TopX = 10;
-                    
+
                 var rowsRead = false;
 
                 using (var cmd = server.GetCommand(qb.SQL, con))

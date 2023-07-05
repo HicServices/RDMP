@@ -53,7 +53,7 @@ public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipeline
             throw new Exception("Could not find Source Folder. DOes the project have an Extraction Directory defined?");
 
         var outputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
-            
+
         var cmd = new ExecuteCommandExportObjectsToFile(_activator, allCatalogues, outputFolder);
         cmd.Execute();
             

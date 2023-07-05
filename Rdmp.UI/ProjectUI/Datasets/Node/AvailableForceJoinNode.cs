@@ -80,7 +80,7 @@ internal class AvailableForceJoinNode : IMasqueradeAs
             //don't look for self joins
             if(Equals(otherNode , this))
                 continue;
-                
+
             var theirCols = coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray();
 
 

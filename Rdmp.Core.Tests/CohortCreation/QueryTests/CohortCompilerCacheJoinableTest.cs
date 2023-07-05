@@ -64,9 +64,9 @@ internal class CohortCompilerCacheJoinableTest:FromToDatabaseTests
         results.Rows.Add("2", "ALB", 50);
 
         var rTbl = From.CreateTable("results", results);
-            
+
         var importer = new TableInfoImporter(CatalogueRepository,rTbl);
-        importer.DoImport(out var rTi,out var rColInfos);
+        importer.DoImport(out var rTi, out var rColInfos);
 
         var fe = new ForwardEngineerCatalogue(rTi,rColInfos);
         fe.ExecuteForwardEngineering(cata);
@@ -89,7 +89,7 @@ internal class CohortCompilerCacheJoinableTest:FromToDatabaseTests
 
         //create a patient index table that shows all the times that they had a test in any HB (with the HB being part of the result set)
         var acPatIndex = new AggregateConfiguration(CatalogueRepository,cata,"My PatIndes");
-            
+
         var eiChi = cata.GetAllExtractionInformation(ExtractionCategory.Core).Single(ei => ei.GetRuntimeName().Equals("Chi"));
         eiChi.IsExtractionIdentifier = true;
         acPatIndex.CountSQL = null;

@@ -69,7 +69,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
         pt.ProcessTaskType = ProcessTaskType.DataProvider;
         pt.Name = "DoNothing";
         pt.SaveToDatabase();
-            
+
         var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
         Assert.IsTrue(ex.Message.StartsWith("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider"));
     }
@@ -167,7 +167,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
         var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true);
         _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
         _lmd.SaveToDatabase();
-            
+
         var pipeAssembler = new TestDataPipelineAssembler("CacheProvider_Normal", CatalogueRepository);
         pipeAssembler.ConfigureCacheProgressToUseThePipeline(_cp);
 
@@ -175,7 +175,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
         {
             var strategy = _factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener());
             Assert.AreEqual(typeof(SingleScheduleCacheDateTrackingStrategy), strategy.GetType());
-                
+
             var dates = strategy.GetDates(10, false);
             Assert.AreEqual(0,dates.Count); //zero dates to load because no files in cache
 

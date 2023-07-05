@@ -80,7 +80,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNotInitialized()
     {
         var mutilation = new PrimaryKeyCollisionResolverMutilation();
-            
+
         var ex = Assert.Throws<Exception>(()=>mutilation.Check(new ThrowImmediatelyCheckNotifier()));
         StringAssert.Contains("Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",ex.Message);
     }
@@ -88,7 +88,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]     
     public void GenerateSQL_OrderCorrect()
     {
-        SetupTableInfos(out var t, out var c1, out var c2,out var c3);
+        SetupTableInfos(out var t, out var c1, out var c2, out var c3);
         try
         {
             c1.IsPrimaryKey = true;

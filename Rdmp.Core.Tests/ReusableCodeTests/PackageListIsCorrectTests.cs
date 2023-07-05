@@ -40,7 +40,7 @@ public class PackageListIsCorrectTests
     [TestCase]
     public void TestPackagesDocumentCorrect(string rootPath=null)
     {
-        var root= FindRoot(rootPath);
+        var root = FindRoot(rootPath);
         var undocumented = new StringBuilder();
 
         // Extract the named packages from PACKAGES.md

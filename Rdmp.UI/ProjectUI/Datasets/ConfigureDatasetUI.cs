@@ -209,7 +209,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         }
 
         //on the left
-            
+
         var toAdd = new HashSet<ExtractionInformation>();
 
         //add all the extractable columns from the current Catalogue
@@ -650,7 +650,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
                     nodes.Add(node);
             }
         }
-                
+
 
         //identify the existing force joins
         var existingForceJoins = new HashSet<SelectedDataSetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(SelectedDataSet));

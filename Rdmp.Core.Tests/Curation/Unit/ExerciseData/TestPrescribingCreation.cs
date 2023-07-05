@@ -31,7 +31,7 @@ public class TestPrescribingCreation
 
         var finished = false;
         var finishedWithRecords = -1;
-            
+
         var prescribing = new Prescribing(r);
         prescribing.RowsGenerated += (s, e) =>
         {

@@ -203,9 +203,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// <inheritdoc/>
     public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o)
     {
-        var eds = o as ExtractableDataSet;
-
-        return eds != null && eds.ID == ExtractionConfiguration_ID;
+        return o is ExtractableDataSet eds && eds.ID == ExtractionConfiguration_ID;
     }
 
     /// <inheritdoc/>

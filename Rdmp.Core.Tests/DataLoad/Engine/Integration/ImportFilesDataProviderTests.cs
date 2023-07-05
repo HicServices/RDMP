@@ -31,7 +31,7 @@ public class ImportFilesDataProviderTests:DatabaseTests
         //make sure target is empty
         foreach (var f in targetDir.GetFiles())
             f.Delete();
-            
+
         var originpath = Path.Combine(sourceDir.FullName, "myFile.txt");
 
         File.WriteAllText(originpath,"fish");

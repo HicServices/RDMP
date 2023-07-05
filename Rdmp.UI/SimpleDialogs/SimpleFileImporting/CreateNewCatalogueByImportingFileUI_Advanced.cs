@@ -88,7 +88,7 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
                 var ui = new ConfigureCatalogueExtractabilityUI(_activator, new TableInfoImporter(_repositoryLocator.CatalogueRepository, table),
                     $"File '{_file.FullName}'", _projectSpecific);
                 ui.ShowDialog();
-                    
+
                 var cata = CatalogueCreatedIfAny = ui.CatalogueCreatedIfAny;
 
                 if (cata != null)

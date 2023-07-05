@@ -102,7 +102,7 @@ public class CreateNewCohortDatabaseWizard
                 new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){AllowNulls =  false,Default=MandatoryScalarFunctions.GetTodaysDate}
             });
 
-                
+
             var idColumn = definitionTable.DiscoverColumn("id");
             var foreignKey = new DatabaseColumnRequest(_definitionTableForeignKeyField,new DatabaseTypeRequest(typeof (int)), false) {IsPrimaryKey = true};
 

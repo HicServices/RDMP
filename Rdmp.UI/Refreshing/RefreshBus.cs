@@ -100,16 +100,14 @@ public class RefreshBus
 
     public void EstablishLifetimeSubscription(ILifetimeSubscriber c) 
     {
-        var containerControl = c as ContainerControl;
-
-        if(c is not IRefreshBusSubscriber subscriber)
+        if (c is not IRefreshBusSubscriber subscriber)
             throw new ArgumentException("Control must be an IRefreshBusSubscriber to establish a lifetime subscription", nameof(c));
 
         //ignore double requests for subscription
         if (subscribers.Contains(subscriber))
             return;
 
-        if(containerControl == null)
+        if(c is not ContainerControl containerControl)
             throw new ArgumentOutOfRangeException();
 
         var parentForm = containerControl.ParentForm;

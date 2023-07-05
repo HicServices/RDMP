@@ -226,7 +226,7 @@ public class MemoryRepository : IRepository
 
         if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
             return;
-            
+
         var type = mapsDirectlyToDatabaseTable.GetType();
 
         foreach (var e in _propertyChanges[mapsDirectlyToDatabaseTable].ToArray()) //call ToArray to avoid cyclical events on SetValue

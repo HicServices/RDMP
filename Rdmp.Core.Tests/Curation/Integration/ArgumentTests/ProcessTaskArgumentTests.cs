@@ -35,7 +35,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
         var loadMetadata = new LoadMetadata(CatalogueRepository);
 
         try
-        { 
+        {
             var pt = new ProcessTask(CatalogueRepository, loadMetadata, LoadStage.AdjustStaging);
             var pta = new ProcessTaskArgument(CatalogueRepository, pt);
 
@@ -74,7 +74,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
     {
         var methodName = new StackTrace().GetFrame(0).GetMethod().Name;
         var tableInfoName = $"TableInfoFor_{methodName}";
-        var preLoadDiscardedColumnName = $"PreLoadDiscardedColumnFor_{methodName}"; 
+        var preLoadDiscardedColumnName = $"PreLoadDiscardedColumnFor_{methodName}";
 
         var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
         var toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()

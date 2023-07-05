@@ -176,7 +176,7 @@ internal class PredictionValidationTest
     {
         var i = new ItemValidator();
         i.SecondaryConstraints.Add(prediction);
-            
+
         var v = new Validator();
         v.AddItemValidator(i, "chi", typeof(string));
         return v;

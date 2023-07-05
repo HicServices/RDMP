@@ -131,8 +131,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
             ObjectSaverButton1.SetupFor(this, databaseObject, activator);
         }
-                
-            
+
+
         var gotoFactory = new GoToCommandFactory(activator);
         foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
         {

@@ -103,7 +103,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
     {
         if( e == null || e.RowObject == null)
             return;
-            
+
         var node = (FindAndReplaceNode)e.RowObject;
         node.SetValue(e.NewValue);
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)node.Instance));

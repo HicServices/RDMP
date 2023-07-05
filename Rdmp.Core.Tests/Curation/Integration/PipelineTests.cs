@@ -109,7 +109,7 @@ public class PipelineTests : DatabaseTests
 
         var middle = new PipelineComponent(CatalogueRepository, p, typeof (ColumnRenamer), 1);
         middle.CreateArgumentsForClassIfNotExists<ColumnRenamer>();
-            
+
         var middle2 = new PipelineComponent(CatalogueRepository, p, typeof(ColumnForbidder), 1);
         middle2.CreateArgumentsForClassIfNotExists<ColumnForbidder>();
 

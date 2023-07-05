@@ -170,7 +170,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
     public void displayPreview()
     {
-            
+
         var pi = olvProperties.SelectedObject as PropertyInfo;
 
         if (pi != null && olvCatalogues.SelectedObject is CatalogueItem ci)

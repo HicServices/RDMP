@@ -32,7 +32,7 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_PasswordMismatch()
     {
-        var  testPoints = new List<TestAccessPoint>();
+        var testPoints = new List<TestAccessPoint>();
 
         testPoints.Add(new TestAccessPoint("frank","bob","username","mypas"));
         testPoints.Add(new TestAccessPoint("frank","bob","username","mydifferentPass"));
@@ -66,7 +66,7 @@ public class TestDataAccess:DatabaseTests
         testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
 
         //call this
-            
+
         var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
         StringAssert.Contains("collection could not agree on a single Username",ex.Message);
 
@@ -188,7 +188,7 @@ public class TestDataAccess:DatabaseTests
 
         foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(cred=>cred.Name.ToLower().Equals("bob")))
             c.DeleteInDatabase();
-            
+
         //test it with TableInfos
         var t = new TableInfo(CatalogueRepository, "Bob");
         try

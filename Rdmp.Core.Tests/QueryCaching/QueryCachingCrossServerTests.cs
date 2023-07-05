@@ -36,7 +36,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     public void Create_QueryCache(DatabaseType dbType,Type patcherType)
     {
         var db = GetCleanedServer(dbType);
-            
+
         var patcher = (Patcher)Activator.CreateInstance(patcherType);
 
         var mds = new MasterDatabaseScriptExecutor(db);
@@ -84,7 +84,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var root = cic.RootCohortAggregateContainer;
         root.AddChild(ac1,0);
-            
+
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
         runner.Run(new CancellationToken());
@@ -141,7 +141,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var root = cic.RootCohortAggregateContainer;
         root.AddChild(ac1,0);
         root.AddChild(ac2,1);
-            
+
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
         runner.Run(new CancellationToken());
@@ -216,7 +216,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var root = cic.RootCohortAggregateContainer;
         root.AddChild(ac,0);
-            
+
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
         runner.Run(new CancellationToken());
@@ -290,7 +290,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         root.SaveToDatabase();
         root.AddChild(ac1,0);
         root.AddChild(ac2,1);
-            
+
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
 
@@ -450,7 +450,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
          *                                  | Hospital Admissions|
          *
          */
-             
+
         var server1 = GetCleanedServer(DatabaseType.MySql);
         var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
@@ -504,7 +504,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
          *                                  | Hospital Admissions|
          *
          */
-             
+
         var server1 = GetCleanedServer(DatabaseType.MySql);
         var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var server3 = GetCleanedServer(DatabaseType.Oracle);
@@ -530,7 +530,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var runner = new CohortCompilerRunner(compiler, 50000);
             
         runner.Run(new CancellationToken());
-            
+
         var hospitalAdmissionsTask = compiler.Tasks.Keys.OfType<AggregationTask>().Single(t => t.Aggregate.Equals(hospitalAdmissions));
 
         Assert.AreEqual(CompilationState.Crashed,hospitalAdmissionsTask.State);
@@ -679,7 +679,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var syntax = db.Server.GetQuerySyntaxHelper();
 
         var ac = SetupAggregateConfiguration(db,people,r,cic);
-            
+
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         var filter = new AggregateFilter(CatalogueRepository, "Hospitalised after an NA", and);
         filter.WhereSQL = $"{syntax.EnsureWrapped("AdmissionDate")} > {syntax.EnsureWrapped("SampleDate")}";
@@ -710,7 +710,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         ac.RootFilterContainer_ID = container.ID;
         ac.SaveToDatabase();
-            
+
         //create a filter
         var filter = new AggregateFilter(CatalogueRepository,filterName,container);
 

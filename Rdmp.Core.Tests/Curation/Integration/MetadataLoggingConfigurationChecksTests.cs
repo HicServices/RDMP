@@ -80,7 +80,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-            
+
         var eds = WhenIHaveA<ExternalDatabaseServer>();
         eds.Name = "My Logging Server";
         eds.SaveToDatabase();

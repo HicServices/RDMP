@@ -285,7 +285,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
         var tbl = _database.ExpectTable(TargetTableName);
         var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
-            
+
         //Get the current estimates from the datatype computer
         var oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess),StringComparer.CurrentCultureIgnoreCase);
 

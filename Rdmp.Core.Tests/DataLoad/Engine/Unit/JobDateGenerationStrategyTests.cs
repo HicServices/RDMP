@@ -38,7 +38,7 @@ public class JobDateGenerationStrategyTests
     {
         //we have loaded SetUp to day before yesterday
         var schedule = Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == DateTime.Now.Date.AddDays(-2));
-                                    
+
         var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 
         var dates = strategy.GetDates(100, false);
@@ -52,7 +52,7 @@ public class JobDateGenerationStrategyTests
         var schedule = Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == DateTime.Now.Date.AddDays(-2));//we have loaded SetUp to day before yesterday
 
         var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
-            
+
         var dates = strategy.GetDates(100, true);
         Assert.AreEqual(dates.Count, 100);
         Assert.AreEqual(dates[0], DateTime.Now.Date.AddDays(-1));//it should try to load yesterday

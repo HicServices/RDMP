@@ -62,7 +62,7 @@ public class GlobalsReleaseChecker : ICheckable
 
         if (globalResult == null)
             return new NoGlobalReleasePotential(_repositoryLocator, null, _globalToCheck);
-            
+
         //it's been extracted!, who extracted it?
         var destinationThatExtractedIt = (IExecuteDatasetExtractionDestination)new ObjectConstructor().Construct(globalResult.GetDestinationType());
 

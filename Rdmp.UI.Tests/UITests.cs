@@ -371,7 +371,7 @@ public class UITests : UnitTests
                                 && t.BaseType != null 
                                 && t.BaseType.BaseType != null
                                 && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
-            
+
         var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
@@ -391,7 +391,7 @@ public class UITests : UnitTests
             {
                 //todo
                 var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 && m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
-                
+
                 //ensure that the method supports the Type
                 var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
 

@@ -82,7 +82,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 
                 var bulkCopy = new SqlBulkCopy(con);
                 bulkCopy.DestinationTableName = GetStagingRuntimeName();
-            
+
                 var uniqueNamesAdded = new List<string>();
 
                 //wire up the identifiers
@@ -173,7 +173,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                 cmdInsert.CommandTimeout = Timeout;
                 cmdInsert.ExecuteNonQuery();
             }
-            
+
             //PERFORM overwrite with UPDATES
             var updateSql = $"WITH ToUpdate AS ({Environment.NewLine}";
             updateSql += $"SELECT stag.* FROM {GetStagingRuntimeName()} AS stag{Environment.NewLine}";
@@ -248,7 +248,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"There are {duplicate.Count()} PreLoadDiscardedColumns called '{duplicate.Key}' for TableInfo '{TableInfo}'", CheckResult.Fail));
-                
+
         //columns that exist in live but are supposedly dropped during load
         var liveColumns = TableInfo.ColumnInfos.ToArray();
 
@@ -281,7 +281,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                 $"No columns require dumping from TableInfo {_tableInfo} so checking is not needed", CheckResult.Success, null));
             return;
         }
-            
+
         var tables = _dumpDatabase.DiscoverTables(false);
 
         var stagingTableFound = tables.Any(t => t.GetRuntimeName().Equals(GetStagingRuntimeName()));
@@ -317,7 +317,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             //see if table exists
             var synchronizer = new IdentifierDumperSynchronizer(this,_externalDatabaseServer);
             synchronizer.Synchronize(notifier);
-                
+
             //make sure there is a backup trigger enabled on the Identifier dump so that we version updates
             var triggerChecker = new TriggerChecks(_dumpDatabase.ExpectTable( GetRuntimeName())); // primary keys - ignoring transforms for ANO
             triggerChecker.Check(notifier);
@@ -360,7 +360,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 
         using (var con = (SqlConnection)_dumpDatabase.Server.GetConnection())
         {
-            con.Open(); 
+            con.Open();
 
             var pks = new DataTable();
             pks.Columns.Add("RuntimeName");
@@ -394,7 +394,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
               
             if(dumpColumns.Rows.Count == 0)
                 throw new Exception("Cannot create an identifier dump with no dump columns");
-              
+
             var cmdCreate = new SqlCommand(
                 $"EXEC {IdentifierDumpCreatorStoredprocedure} @liveTableName,@primaryKeys,@dumpColumns",con);
 

@@ -98,7 +98,7 @@ public class ColumnInfoToANOTableConverter
     private void EnsureNoTriggerOnTable(DiscoveredTable tbl)
     {
         var triggerFactory = new TriggerImplementerFactory(tbl.Database.Server.DatabaseType);
-            
+
         var triggerImplementer = triggerFactory.Create(tbl);
 
         if (triggerImplementer.GetTriggerStatus() != TriggerStatus.Missing)

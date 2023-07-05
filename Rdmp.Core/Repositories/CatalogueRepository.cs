@@ -291,7 +291,7 @@ select 0", con.Connection, con.Transaction))
             ClearDefault(toChange);
             return;
         }
-                
+
 
         var oldValue = GetDefaultFor(toChange);
 

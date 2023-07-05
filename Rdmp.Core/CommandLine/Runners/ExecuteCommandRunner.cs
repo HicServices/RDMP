@@ -232,7 +232,7 @@ internal class ExecuteCommandRunner:IRunner
 
         var word = new StringBuilder();
             
-        for(var i=0; i<commandLine.Length;i++)
+        for(var i =0; i<commandLine.Length;i++)
         {
             var c = commandLine[i];
 

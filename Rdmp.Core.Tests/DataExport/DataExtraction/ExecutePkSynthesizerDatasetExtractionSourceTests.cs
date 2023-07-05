@@ -89,7 +89,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     public void Test_CatalogueItems_NonExtractedPrimaryKey_MultiTable_PksAreMerged()
     {
         var request = SetupExtractDatasetCommand("MultiTable_PksAreMerged", new string[] { }, new[] { "DateOfBirth" }, true, true);
-            
+
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
         source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
         var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
@@ -160,7 +160,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         dt.Columns.Add("Description");
 
         dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
-            
+
         var tbl = Database.CreateTable("SimpleLookup", dt, new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
 
         var lookupCata = Import(tbl);
@@ -187,7 +187,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
                 dt.Columns.Cast<DataColumn>().Where(col => pkColumnInfos.Contains(col.ColumnName)).ToArray();
 
         dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
-            
+
         var tbl = Database.CreateTable(testTableName, 
             dt, 
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50))});

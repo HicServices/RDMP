@@ -64,7 +64,7 @@ public partial class ObjectSaverButton
     {
         control.CommonFunctionality.Add(btnSave);
         control.CommonFunctionality.Add(btnUndoRedo);
-            
+
         var f = control as Form ?? ((Control)control).FindForm();
 
         if (f == null)

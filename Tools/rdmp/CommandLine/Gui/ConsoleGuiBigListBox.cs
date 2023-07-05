@@ -261,7 +261,7 @@ internal class ConsoleGuiBigListBox<T>
 
     protected void RestartFiltering(string searchTerm)
     {
-            
+
         var cts = new CancellationTokenSource();
 
         lock(_taskCancellationLock)

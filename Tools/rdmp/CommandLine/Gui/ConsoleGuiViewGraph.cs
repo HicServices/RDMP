@@ -138,7 +138,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         var colors = GetColors(dt.Columns.Count - 1);
 
-        for (var i=1;i<dt.Columns.Count;i++)
+        for (var i =1;i<dt.Columns.Count;i++)
         {
 
             var series = new PathAnnotation { LineColor = colors[i - 1],BeforeSeries = true };
@@ -298,7 +298,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // Configure legend
         var legend = GetLegend(dt,boundsWidth,boundsHeight);
 
-        for(var i=1;i < dt.Columns.Count; i++)
+        for(var i =1;i < dt.Columns.Count; i++)
         {
             legend.AddEntry(new GraphCellToRender(mediumStiple, colors[i-1]), dt.Columns[i].ColumnName);
         }

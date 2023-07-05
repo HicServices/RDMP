@@ -106,7 +106,7 @@ public class DescendancyList
         NewBestRoute = false;
         BetterRouteExists = true;
 
-        var toReturn= new DescendancyList(Parents);
+        var toReturn = new DescendancyList(Parents);
         toReturn.NewBestRoute = false;
         toReturn.BetterRouteExists = true;
         return toReturn;
@@ -122,7 +122,7 @@ public class DescendancyList
         NewBestRoute = true;
         BetterRouteExists = false;
 
-        var toReturn= new DescendancyList(Parents);
+        var toReturn = new DescendancyList(Parents);
         toReturn.NewBestRoute = true;
         toReturn.BetterRouteExists = false;
 

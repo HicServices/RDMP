@@ -23,10 +23,10 @@ public class PipelineExecutionTests
         // set SetUp two engines, one with a locked cache progress/load schedule
         // run the serial execution and ensure that only one engine had its 'ExecutePipeline' method called
         var engine1 = new Mock<IDataFlowPipelineEngine>();
-            
+
 
         var engine2 = new Mock<IDataFlowPipelineEngine>();
-            
+
         var tokenSource = new GracefulCancellationTokenSource();
         var listener = new ThrowImmediatelyDataLoadEventListener();
 
@@ -66,7 +66,7 @@ public class PipelineExecutionTests
             .Returns(true)
             .Returns(false)
             .Throws<InvalidOperationException>();
-            
+
         // create the execution object
         var pipelineExecutor = new RoundRobinPipelineExecution();
 

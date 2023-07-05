@@ -81,8 +81,8 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
         sds.ExtractionConfiguration.Name = "AAA";
         sds.ExtractableDataSet.Catalogue.Name = "BBB";
         sds.ExtractableDataSet.Catalogue.Acronym = "C";
-            
-            
+
+
         var cmd = new ExtractDatasetCommand(sds.ExtractionConfiguration, new ExtractableDatasetBundle(sds.ExtractableDataSet));
         var dest = new ExecuteDatasetExtractionFlatFileDestination();
 

@@ -22,7 +22,7 @@ public class JobDateGenerationStrategyFactoryTestsUnit
     public void NoDates()
     {
         var lp = Mock.Of<ILoadProgress>();
-            
+
         var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 
         var ex = Assert.Throws<LoadOrCacheProgressUnclearException>(() => factory.Create(lp,new ThrowImmediatelyDataLoadEventListener()));
@@ -34,7 +34,7 @@ public class JobDateGenerationStrategyFactoryTestsUnit
     public void DateKnown_NoCache_SuggestSingleScheduleConsecutiveDateStrategy()
     {
         var lp = Mock.Of<ILoadProgress>(p => p.DataLoadProgress==new DateTime(2001, 01, 01));
-            
+
         var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 
         Assert.AreEqual(typeof(SingleScheduleConsecutiveDateStrategy), factory.Create(lp,new ThrowImmediatelyDataLoadEventListener()).GetType());

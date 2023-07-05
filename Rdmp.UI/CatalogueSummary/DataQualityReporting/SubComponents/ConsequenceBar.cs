@@ -42,7 +42,7 @@ public partial class ConsequenceBar : UserControl
     protected override void OnPaintBackground(PaintEventArgs e)
     {
         base.OnPaintBackground(e);
-            
+
         //Control looks like this:
         //note that because null count is completely separate from consequence it has its own microbar
 
@@ -64,10 +64,10 @@ public partial class ConsequenceBar : UserControl
         var bNulls = new SolidBrush(IsNullColor);
 
         var totalRecords = Correct + Missing + Invalid + Wrong;
-            
+
         var heightOfNullsBarStart = (int) (Height * 0.8);
         var heightOfNullsBar = (int) (Height/5.0);
-            
+
 
         //draw the nulls bar
         var valuesRatio = 1 - DBNull / totalRecords;
@@ -76,8 +76,8 @@ public partial class ConsequenceBar : UserControl
         //values
         e.Graphics.FillRectangle(bValues,new Rectangle(0,heightOfNullsBarStart,midPointOfNullsBar,heightOfNullsBar));
         e.Graphics.FillRectangle(bNulls,new Rectangle(midPointOfNullsBar,heightOfNullsBarStart,Width-midPointOfNullsBar,heightOfNullsBar));
-            
-            
+
+
         //draw the main bar
         var correctRightPoint = (int) (Correct/totalRecords*Width);
 

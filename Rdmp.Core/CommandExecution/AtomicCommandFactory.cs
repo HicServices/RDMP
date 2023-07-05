@@ -340,7 +340,7 @@ public class AtomicCommandFactory : CommandFactoryBase
         if(Is(o,out AllExternalServersNode _))
         {
             yield return new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null,PermissableDefaults.None);
-                
+
             var assemblyDictionary = new Dictionary<PermissableDefaults, IPatcher>
             {
                 {PermissableDefaults.DQE, new DataQualityEnginePatcher() },

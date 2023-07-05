@@ -19,7 +19,7 @@ internal class ExecutableProcessTaskTests : DatabaseTests
     public void TestConstructionFromProcessTaskUsingDatabase()
     {
         const string expectedPath = @"\\a\fake\path.exe";
-            
+
         var loadMetadata = new LoadMetadata(CatalogueRepository);
         var processTask = new ProcessTask(CatalogueRepository, loadMetadata, LoadStage.Mounting)
         {

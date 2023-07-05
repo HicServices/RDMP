@@ -86,13 +86,12 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void tlvLoadedTables_ItemActivate(object sender, EventArgs e)
     {
-        var tableNode = tlvLoadedTables.SelectedObject as LoadDiagramTableNode;
         var table = tlvLoadedTables.SelectedObject as DiscoveredTable;
 
         if (tlvLoadedTables.SelectedObject is UnplannedTable unplannedTable)
             table = unplannedTable.Table;
 
-        if (tableNode != null)
+        if (tlvLoadedTables.SelectedObject is LoadDiagramTableNode tableNode)
             if (tableNode.Bubble == LoadBubble.Live)
             {
                 //for live just use the TableInfo!
@@ -170,7 +169,6 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (Activator == null)
             return null;
 
-        var db = rowObject as LoadDiagramDatabaseNode;
         var col = rowObject as LoadDiagramColumnNode;
 
         if (rowObject is UnplannedTable)
@@ -185,7 +183,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             else
                 return Activator.CoreIconProvider.GetImage(rowObject, OverlayKind.Problem).ImageToBitmap();
 
-        if (db != null)
+        if (rowObject is LoadDiagramDatabaseNode db)
             return db.GetImage(Activator.CoreIconProvider);
 
         if(rowObject is LoadDiagramTableNode)
@@ -196,17 +194,15 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private IEnumerable ChildrenGetter(object model)
     {
-        var database = model as LoadDiagramDatabaseNode;
-        var table = model as LoadDiagramTableNode;
         var unplannedTable = model as UnplannedTable;
 
         if (model is LoadDiagramServerNode server)
             return server.GetChildren();
 
-        if (database != null)
+        if (model is LoadDiagramDatabaseNode database)
             return database.GetChildren();
 
-        if (table != null)
+        if (model is LoadDiagramTableNode table)
             return table.GetChildren(cbOnlyShowDynamicColumns.Checked);
 
         return unplannedTable?.Columns;
@@ -214,20 +210,16 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private bool CanExpandGetter(object model)
     {
-        var database = model as LoadDiagramDatabaseNode;
-        var table = model as LoadDiagramTableNode;
-        var unplannedTable = model as UnplannedTable;
-
         if (model is LoadDiagramServerNode server)
             return server.GetChildren().Any();
 
-        if (database != null)
+        if (model is LoadDiagramDatabaseNode database)
             return database.GetChildren().Any();
 
-        if (table != null)
+        if (model is LoadDiagramTableNode table)
             return table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any();
 
-        if (unplannedTable != null)
+        if (model is UnplannedTable unplannedTable)
             return true;
 
         return false;

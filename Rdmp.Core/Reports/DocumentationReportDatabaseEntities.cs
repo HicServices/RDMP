@@ -50,7 +50,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
             {
                 //creates the run
                 SetTableCell(t, i*2 + 1, 0, "");
-                        
+
                 var bmp = iconProvider.GetImage(keys[i]);
 
                 if (bmp != null)

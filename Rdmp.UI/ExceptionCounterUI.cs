@@ -40,7 +40,7 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
         base.OnPaint(e);
-            
+
         var exceptionCount = Math.Min(_events.Messages.Count, 10);
 
         if(exceptionCount > 0)
@@ -51,7 +51,7 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
 
             var xStart = (Width - NotifyWidth)/2;
             var yStart = (Height - NotifyWidth) / 2;
-                
+
             var darkRed = new SolidBrush(Color.FromArgb(206, 10, 26));
 
             e.Graphics.FillEllipse(darkRed, xStart, yStart+1, NotifyWidth-2, NotifyWidth-2);

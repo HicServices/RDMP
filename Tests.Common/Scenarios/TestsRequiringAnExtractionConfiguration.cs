@@ -135,7 +135,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
             
         CatalogueItem[] cataItems;
         _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);
-            
+
         var _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
         _privateID.IsExtractionIdentifier = true;
         _privateID.SaveToDatabase();
@@ -168,7 +168,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         var d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
 
         Pipeline pipeline = null;
-            
+
         //because extractable columns is likely to include chi column, it will be removed from the collection (for a substitution identifier)
         var before = _extractableColumns.ToArray();
 
@@ -212,7 +212,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         arguments.Single(a => a.Name.Equals("FlatFileType")).SaveToDatabase();
 
         AdjustPipelineComponentDelegate?.Invoke(component);
-            
+
         var component2 = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionSource), -1, "Source");
         var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionSource>().ToArray();
 

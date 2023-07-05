@@ -78,7 +78,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             var dataClassInstance = (ICustomUIDrivenClass)_args.InitialValue;
 
             var uiInstance = Activator.CreateInstance(_uiType);
-                
+
             var instanceAsCustomUI = (ICustomUI) uiInstance;
             instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 

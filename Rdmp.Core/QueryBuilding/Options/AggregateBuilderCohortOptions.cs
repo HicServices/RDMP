@@ -45,7 +45,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
     {
         //get the existing dimensions
         var alreadyExisting = aggregate.AggregateDimensions.ToArray();
-            
+
         //get novel ExtractionInformations from the catalogue for which there are not already any Dimensions
         var candidates = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => alreadyExisting.All(d => d.ExtractionInformation_ID != e.ID)).ToArray();
 
@@ -102,7 +102,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
     public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
     {
         var existingForcedJoinTables = aggregate.ForcedJoins;
-            
+
         var existingDimensions = aggregate.AggregateDimensions;
         var existingTablesAlreadyReferenced = existingDimensions.Select(d => d.ColumnInfo.TableInfo).Distinct();
 

@@ -30,7 +30,7 @@ public class BasicParameterUseTests:DatabaseTests
     {
         //Pick the destination server
         var tableName = TestDatabaseNames.GetConsistentName("tbl");
-            
+
         //make sure there's a database ready to receive the data
         var db = GetCleanedServer(dbType);
         db.Create(true);
@@ -55,8 +55,8 @@ public class BasicParameterUseTests:DatabaseTests
             var tbl = db.ExpectTable(tableName);
 
             var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            importer.DoImport(out var ti,out var ci);
-            
+            importer.DoImport(out var ti, out var ci);
+
             var engineer = new ForwardEngineerCatalogue(ti, ci);
             engineer.ExecuteForwardEngineering(out var cata, out var cis, out var ei);
             /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ public class BasicParameterUseTests:DatabaseTests
             p.ParameterSQL = p.ParameterSQL.Replace("varchar(50)", "int"); //make it int
             p.Value = "20";
             p.SaveToDatabase();
-                
+
             var qb = new QueryBuilder(null, null);
             qb.AddColumn(extractionInformation);
             qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null, new[] { filter }, FilterContainerOperation.AND);

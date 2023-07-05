@@ -143,7 +143,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         {
             var cata = catalogueItem.Catalogue;
             cata.ClearAllInjections();
-                
+
             var eiMax = cata.GetAllExtractionInformation(ExtractionCategory.Any).MaxBy(ei => ei.Order);
 
             return eiMax == null ? 1 : eiMax.Order + 1;

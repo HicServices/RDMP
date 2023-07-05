@@ -80,11 +80,11 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         }
             
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Original (unhacked) SQL was {sql}", null));
-            
+
         //now replace database with tempdb
         var extractableCohort = Request.ExtractableCohort;
         var extractableCohortSource = extractableCohort.ExternalCohortTable;
-            
+
         var syntaxHelperFactory = new QuerySyntaxHelperFactory();
         var sourceSyntax = syntaxHelperFactory.Create(extractableCohortSource.DatabaseType);
         var destinationSyntax = syntaxHelperFactory.Create(_server.DatabaseType);
@@ -223,7 +223,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
             else
                 throw new Exception(
                     $"Database '{_tempDb}' did not exist on server '{_server}' and CreateAndDestroyTemporaryDatabaseIfNotExists was false");
-  
+
 
         var tbl = _tempDb.ExpectTable(GetTableName() ?? cohortDataTable.TableName);
             

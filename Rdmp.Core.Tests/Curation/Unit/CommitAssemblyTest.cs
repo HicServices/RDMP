@@ -17,7 +17,7 @@ public class CommitAssemblyTest
     {
         const ScheduleStrategy s = ScheduleStrategy.Test;
         Console.Write(s.GetType().FullName);
-            
+
         var t = Type.GetType(s.GetType().AssemblyQualifiedName);
             
         Assert.AreEqual(s.GetType(),t);

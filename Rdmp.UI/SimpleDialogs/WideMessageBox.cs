@@ -153,7 +153,7 @@ public partial class WideMessageBox : Form
 
     public static void Show(IHasSummary summary,bool isModalDialog = true)
     {
-        summary.GetSummary(out var title,out var body, out var stackTrace,out var level);
+        summary.GetSummary(out var title, out var body, out var stackTrace, out var level);
         Show(title,body,stackTrace,isModalDialog,null,GetTheme(level));
     }
     public static void Show(string title, DataGridViewRow row, bool isModalDialog = true, WideMessageBoxTheme theme = WideMessageBoxTheme.Help)

@@ -76,9 +76,9 @@ public abstract class Patcher:IPatcher
         {
             case 1:
             {
-                var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
+                    var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
 
-                var sql = sr.ReadToEnd();
+                    var sql = sr.ReadToEnd();
 
                 if (!sql.Contains(Patch.VersionKey))
                     sql = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0)) + sql;

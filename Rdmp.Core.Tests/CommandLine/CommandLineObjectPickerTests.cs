@@ -252,7 +252,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         // these two belong to the same catalogue
         var ci = WhenIHaveA<CatalogueItem>();
         var ci2 = new CatalogueItem(ci.CatalogueRepository, ci.Catalogue, "My item 2");
-            
+
         // this one belongs to a different catalogue
         var ci3 = WhenIHaveA<CatalogueItem>();
 

@@ -137,7 +137,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             return;
 
         var startReorderingHere = lbDesiredOrder.Items[0].ToString();
-            
+
         //find the location of the first item in the desired order
         var extractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
             

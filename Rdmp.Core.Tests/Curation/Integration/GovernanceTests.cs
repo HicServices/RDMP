@@ -145,7 +145,7 @@ public class GovernanceTests:DatabaseTests
     public void GovernsSameCatalogueTwice()
     {
         var c = new Catalogue(CatalogueRepository, "GovernedCatalogue");
-            
+
         var gov = GetGov();
         Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);//should be no governanced catalogues for this governancer yet
 

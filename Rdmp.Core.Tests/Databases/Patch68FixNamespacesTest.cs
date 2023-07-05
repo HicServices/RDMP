@@ -29,7 +29,7 @@ internal class Patch68FixNamespacesTest:UnitTests
         var patch = p.GetAllPatchesInAssembly(null).Single(kvp=>kvp.Key == "068_FixNamespaces.sql").Value;
 
         var findSubsRegex = new Regex(@"REPLACE\(.*,'(.*)','(.*)'\)");
-            
+
         var substitutions = new Dictionary<string, string>();
 
         foreach (Match match in findSubsRegex.Matches(patch.EntireScript))

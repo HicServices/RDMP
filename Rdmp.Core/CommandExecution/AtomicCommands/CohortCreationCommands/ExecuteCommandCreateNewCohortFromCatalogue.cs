@@ -89,12 +89,10 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
 
     public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        var ei = target as ExtractionInformation;
-
         if (target is Catalogue cata)
             SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(cata));
 
-        if (ei != null)
+        if (target is ExtractionInformation ei)
             SetExtractionIdentifierColumn(ei);
 
         return base.SetTarget(target);

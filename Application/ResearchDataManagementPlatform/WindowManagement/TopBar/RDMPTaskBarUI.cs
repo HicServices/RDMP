@@ -198,12 +198,11 @@ public partial class RDMPTaskBarUI : UserControl
     private void cbx_DropDownClosed(object sender, EventArgs e)
     {
         var cbx = (ToolStripComboBox)sender;
-        var toOpen = cbx.SelectedItem as INamed;
 
         if (ReferenceEquals(cbx.SelectedItem, CreateNewLayout))
             AddNewLayout();
 
-        if (toOpen != null)
+        if (cbx.SelectedItem is INamed toOpen)
         {
             var cmd = new ExecuteCommandActivate(_manager.ActivateItems, toOpen);
             cmd.Execute();

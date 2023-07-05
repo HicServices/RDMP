@@ -26,7 +26,7 @@ public static class Rfc4180Writer
 
             writer.WriteLine(string.Join(",", headerValues));
         }
-            
+
         var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new Guesser());
         foreach (var kvp in typeDictionary)
             kvp.Value.AdjustToCompensateForValues(kvp.Key);

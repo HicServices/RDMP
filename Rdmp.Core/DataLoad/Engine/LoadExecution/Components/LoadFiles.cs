@@ -30,7 +30,7 @@ public class LoadFiles : CompositeDataLoadComponent
     {
         if (Skip(job)) 
             return ExitCodeType.Error;
-            
+
         var toReturn = ExitCodeType.Success; //This default will be returned unless there is an explicit DataProvider or collection of runtime tasks to run which return a different result (See below)
 
         // Figure out where we are getting the source files from

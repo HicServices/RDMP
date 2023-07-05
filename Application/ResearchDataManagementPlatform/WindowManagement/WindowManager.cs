@@ -157,7 +157,7 @@ public class WindowManager
         
 
     private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, Image<Rgba32> image)
-    {           
+    {
         var content = _windowFactory.Create(ActivateItems,control, label, image, collection);//these are collections so are not tracked with a window tracker.
         content.Closed += (s, e) => content_Closed(collection);
 

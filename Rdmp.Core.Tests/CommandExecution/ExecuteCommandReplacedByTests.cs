@@ -18,7 +18,7 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
     {
         var c1 = WhenIHaveA<Catalogue>();
         var c2 = WhenIHaveA<Catalogue>();
-            
+
         var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object,c1,c2);
             
         Assert.IsTrue(cmd.IsImpossible);
@@ -33,7 +33,7 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
             
         c1.IsDeprecated = true;
         c1.SaveToDatabase();
-            
+
         var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object,c1,ci1);
             
         Assert.IsTrue(cmd.IsImpossible);
@@ -47,7 +47,7 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
             
         c1.IsDeprecated = true;
         c1.SaveToDatabase();
-            
+
         var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object,c1,c2);
         Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
 

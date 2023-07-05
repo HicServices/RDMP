@@ -42,7 +42,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             var customDataCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("custTable99.csv"));
 
             Assert.IsNotNull(customDataCsv);
-            
+
             var lines = File.ReadAllLines(customDataCsv.FullName);
 
             Assert.AreEqual("SuperSecretThing,ReleaseID",lines[0]);
@@ -108,7 +108,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         Assert.IsNotNull(mainDataTableCsv);
         Assert.AreEqual("TestTable.csv", mainDataTableCsv.Name);
-                
+
         var lines = File.ReadAllLines(mainDataTableCsv.FullName);
 
         Assert.AreEqual("ReleaseID,Name,DateOfBirth,SuperSecretThing", lines[0]);
@@ -158,7 +158,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         //generate a new request (this will include the newly created column)
         _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
-            
+
         var tbl = Database.ExpectTable("TestTable");
         tbl.Truncate();
 

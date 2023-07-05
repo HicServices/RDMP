@@ -137,7 +137,7 @@ Year", sql);
     public void QueryGeneration_WithLinkedCohort_WHERECHIIN()
     {
         var csqb = new CohortSummaryQueryBuilder(acDataset, acCohort,null);
-            
+
         var ex = Assert.Throws<NotSupportedException>(() => csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
 
         Assert.AreEqual("No Query Caching Server configured", ex.Message);

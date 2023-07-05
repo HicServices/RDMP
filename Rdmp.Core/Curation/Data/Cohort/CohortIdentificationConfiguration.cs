@@ -443,7 +443,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(AggregateConfiguration toClone, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
     {
         var cataRepo = CatalogueRepository;
-                        
+
         //clone will not have axis or pivot or dimensions other than extraction identifier
         var newConfiguration = toClone.ShallowClone();
 
@@ -529,7 +529,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(ICatalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers, bool importMandatoryFilters = true)
     {
         var cataRepo = (ICatalogueRepository) Repository;
-            
+
         var configuration = new AggregateConfiguration(cataRepo,catalogue, $"People in {catalogue}");
         EnsureNamingConvention(configuration);
 

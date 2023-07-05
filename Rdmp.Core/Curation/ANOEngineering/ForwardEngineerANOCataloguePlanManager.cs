@@ -167,7 +167,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         if (Plans.Any(p=>p.Value.Plan == Plan.Dilute))
             if (GetIdentifierDumpServer() == null)
                 notifier.OnCheckPerformed(new CheckEventArgs("No default Identifier Dump server has been configured", CheckResult.Fail));
-            
+
         var refactorer = new SelectSQLRefactorer();
 
         foreach (var e in _allExtractionInformations)

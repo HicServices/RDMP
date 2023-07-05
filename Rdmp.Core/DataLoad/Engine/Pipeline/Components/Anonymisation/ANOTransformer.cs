@@ -85,7 +85,7 @@ public class ANOTransformer
             //don't bother substituting nulls (because they won't have a sub!)
             if (valueToReplace == DBNull.Value)
                 continue;
-                
+
             //its not null so look up the mapped value
             var substitutionRow = substitutionTable.Rows.Find(valueToReplace);
 
@@ -145,7 +145,7 @@ public class ANOTransformer
                             new DatabaseTypeRequest(table.Columns[0].DataType,
                                 _anoTable.NumberOfIntegersToUseInAnonymousRepresentation
                                 + _anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
-                        
+
                         //we want to use this syntax
                         var syntaxHelper = _server.Helper.GetQuerySyntaxHelper();
 
@@ -158,7 +158,7 @@ public class ANOTransformer
                 }
 
                 var substituteForANOIdentifiersProc = SubstitutionStoredprocedure;
-                
+
                 var cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, con);
                 cmdSubstituteIdentifiers.CommandType = CommandType.StoredProcedure;
                 cmdSubstituteIdentifiers.CommandTimeout = 500;

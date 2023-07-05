@@ -102,7 +102,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         if(rootContainerTask.State == CompilationState.Executing)
         {
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Root container task was unexpectedly still executing... let's give it a little longer to run"));
-                
+
             var countdown = Math.Max(5000,Timeout*1000);
             while(rootContainerTask.State == CompilationState.Executing && countdown>0)
             {

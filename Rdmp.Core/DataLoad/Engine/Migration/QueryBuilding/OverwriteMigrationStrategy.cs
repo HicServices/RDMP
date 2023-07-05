@@ -104,7 +104,7 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
             sbInsert.Append(" FOR UPDATE");
 
         var insertSql = sbInsert.ToString();
-            
+
         var cmd = server.GetCommand(insertSql, _managedConnection);
         cmd.CommandTimeout = Timeout;
 

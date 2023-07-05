@@ -189,7 +189,7 @@ public class AggregateFilterPublishingTests:CohortIdentificationTests
         parameter.Comment = "It's coconut time!";
         parameter.Value = "3";
         parameter.SaveToDatabase();
-            
+
         var newMaster = new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(null, _filter, null);
 
         //we should now be a clone of the master we just created

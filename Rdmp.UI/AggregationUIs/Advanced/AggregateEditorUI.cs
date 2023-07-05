@@ -123,13 +123,11 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     }
         
     private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
-    { 
+    {
         var ti = rowobject as TableInfo;
-        var patientIndexTable = rowobject as JoinableCohortAggregateConfiguration;
-        var patientIndexTableUse = rowobject as JoinableCohortAggregateConfigurationUse;
 
         var joiner = _aggregate.CatalogueRepository.AggregateForcedJoinManager;
-            
+
         //user is trying to use a joinable something
         if (newvalue == CheckState.Checked)
         {
@@ -141,7 +139,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
             }
 
             // user is trying to join to a Patient Index table
-            if (patientIndexTable != null)
+            if (rowobject is JoinableCohortAggregateConfiguration patientIndexTable)
             {
                 if(_aggregate.Catalogue.IsApiCall())
                 {
@@ -170,7 +168,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
                 _forcedJoins.Remove(ti);
             }
 
-            if(patientIndexTableUse != null)
+            if(rowobject is JoinableCohortAggregateConfigurationUse patientIndexTableUse)
             {
                 var joinable = patientIndexTableUse.JoinableCohortAggregateConfiguration;
 
@@ -272,14 +270,11 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
                
     private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)
     {
-        var revertable = e.RowObject as IRevertable;
-        var countColumn = e.RowObject as AggregateCountColumn;
+        e.Column.PutAspectByName(e.RowObject, e.NewValue);
 
-        e.Column.PutAspectByName(e.RowObject,e.NewValue);
-
-        if (countColumn != null)
+        if (e.RowObject is AggregateCountColumn countColumn)
             _aggregate.CountSQL = countColumn.SelectSQL + (countColumn.Alias != null ? $" as {countColumn.Alias}" : "");
-        else if (revertable != null)
+        else if (e.RowObject is IRevertable revertable)
         {
             if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
                 revertable.SaveToDatabase();
@@ -428,10 +423,10 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
         if(ddAxisDimension.SelectedItem is not AggregateDimension selectedDimension)
             return;
-            
+
         //is there already an axis? if so keep the old start/end dates
         var existing = _aggregate.GetAxisIfAny();
-            
+
         //create a new one
         var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension);
         axis.AxisIncrement = AxisIncrement.Month;
@@ -546,7 +541,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private void tbName_TextChanged(object sender, EventArgs e)
     {
         _aggregate.Name = tbName.Text;
-            
+
         var cic = _aggregate.GetCohortIdentificationConfigurationIfAny();
 
         cic?.EnsureNamingConvention(_aggregate);

@@ -161,7 +161,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     {
         if(olvParameters.Objects == null)//there are no parameters
             return;
-            
+
         var parameters = olvParameters.Objects.Cast<ISqlParameter>().ToArray();
         var toDisable = parameters.Where(Options.ShouldBeDisabled);
 
@@ -271,8 +271,6 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void olvParameters_CellEditFinishing(object sender, CellEditEventArgs e)
     {
-        var revertable = e.RowObject as IRevertable;
-            
         var parameter = e.RowObject as ISqlParameter;
         string oldParameterName = null;
         string newParameterName = null;
@@ -306,7 +304,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             return;
         }
 
-        if (revertable != null)
+        if (e.RowObject is IRevertable revertable)
         {
             var changes = revertable.HasLocalChanges();
 
@@ -322,8 +320,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
                     if((owner ?? (object)parameter) is DatabaseEntity toRefresh)
                         Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(toRefresh));
                 }
-                        
-                
+
+
             //anything that was a problem before
             var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;
             DisableRelevantObjects();

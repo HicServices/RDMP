@@ -141,13 +141,13 @@ public class ParameterManager
     public IEnumerable<ISqlParameter> GetFinalResolvedParametersList()
     {
         State = ParameterManagerLifecycleState.Finalized;
-            
+
         var toReturn = new List<ParameterFoundAtLevel>();
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
         foreach (var sqlParameter in kvp.Value)
             AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter,kvp.Key), toReturn);
-                
+
 
         //There can be empty parameters during resolution but only if it finds an overriding one further up the hierarchy
         var emptyParameter = toReturn.FirstOrDefault(t => string.IsNullOrWhiteSpace(t.Parameter.Value));
@@ -215,22 +215,19 @@ public class ParameterManager
 
     private static void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1, ParameterFoundAtLevel parameter2)
     {
-        var concrete1 = parameter1.Parameter as IMapsDirectlyToDatabaseTable;
-        var concrete2 = parameter2.Parameter as IMapsDirectlyToDatabaseTable;
-
         var concreteObjects = new List<IMapsDirectlyToDatabaseTable>();
 
         var desc1 = $"(Type:{parameter1.Parameter.GetType()}";
         var desc2 = $"(Type:{parameter2.Parameter.GetType()}";
 
 
-        if(concrete1 != null)
+        if(parameter1.Parameter is IMapsDirectlyToDatabaseTable concrete1)
         {
             concreteObjects.Add(concrete1);
             desc1 += $" ID:{concrete1.ID}";
         }
 
-        if(concrete2 != null)
+        if(parameter2.Parameter is IMapsDirectlyToDatabaseTable concrete2)
         {
 
             concreteObjects.Add(concrete2);
@@ -350,7 +347,7 @@ public class ParameterManager
     private static bool AreIdentical(ISqlParameter first, ISqlParameter other)
     {
         var sameSql = AreDeclaredTheSame(first, other);
-            
+
         var value1 = first.Value ?? "";
         var value2 = other.Value??"";
 
@@ -517,7 +514,7 @@ public class ParameterManager
 
         foreach (ParameterLevel l in Enum.GetValues(typeof(ParameterLevel)))
         {
-            var to = ParametersFoundSoFarInQueryGeneration[l]; 
+            var to = ParametersFoundSoFarInQueryGeneration[l];
             var from = other.ParametersFoundSoFarInQueryGeneration[l];
 
             //add all paramters which are not already represented with an identical parameter

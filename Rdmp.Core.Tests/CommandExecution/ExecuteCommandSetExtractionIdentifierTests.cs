@@ -81,7 +81,7 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
         ec1.SaveToDatabase();
 
         var config = Repository.GetObjectByID<ExtractionConfiguration>(ec1.ExtractionConfiguration_ID);
-               
+
         var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator().Object, 
             ec1.CatalogueExtractionInformation.CatalogueItem.Catalogue,
             config

@@ -649,7 +649,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         if (container != null)
             return container.GetCohortIdentificationConfiguration();
-            
+
         //it is not part of a container, maybe it is a joinable?
         var joinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
 

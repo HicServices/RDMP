@@ -148,10 +148,9 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object DestinationTypeAspectGetter(object rowobject)
     {
-        var ci = rowobject as ColumnInfo;
         try
         {
-            if (ci != null)
+            if (rowobject is ColumnInfo ci)
                 return _planManager.GetPlanForColumnInfo(ci).GetEndpointDataType();
         }
         catch (Exception)
@@ -165,10 +164,9 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object DestinationExtractionCategoryAspectGetter(object rowobject)
     {
-        var ci = rowobject as ColumnInfo;
         try
         {
-            if (ci != null)
+            if (rowobject is ColumnInfo ci)
             {
                 var plan = _planManager.GetPlanForColumnInfo(ci);
 
@@ -194,12 +192,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         if (e.Column == olvDestinationType)
             e.Cancel = true;
 
-        var col = e.RowObject as ColumnInfo;
 
         if (e.Column == olvMigrationPlan)
             e.Control.Bounds = e.CellBounds;
 
-        if (col != null)
+        if (e.RowObject is ColumnInfo col)
         {
             var plan = _planManager.GetPlanForColumnInfo(col);
 

@@ -53,7 +53,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
                 using (var zip = new LibArchiveReader(location))
                     foreach(var xml in zip.Entries())
                         if (xml.Name.EndsWith(".xml",true,CultureInfo.InvariantCulture))
-                            using (var content=xml.Stream)
+                            using (var content =xml.Stream)
                                 ReadComments(content);
         }
     }
@@ -91,7 +91,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     {
         if (summaryTag == null)
             return null;
-            
+
         var sb = new StringBuilder();
             
         summaryTag.IterateThroughAllNodes(

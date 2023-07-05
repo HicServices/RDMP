@@ -64,7 +64,7 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
 
         if (cols == null || cols.Length == 0)
             return;
-            
+
         var cts = new CancellationTokenSource();
 
         var task = Task.Run(() =>

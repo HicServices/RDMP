@@ -727,7 +727,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             LiveLoggingServer_ID = null;
         else
             LiveLoggingServer_ID = (int) r["LiveLoggingServer_ID"];
-            
+
         ////Type - with handling for invalid enum values listed in database
         var type = r["Type"];
         if (type == null || type == DBNull.Value)
@@ -869,7 +869,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                     CheckResult.Fail));
         else
             notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue name {Name} follows naming conventions ",CheckResult.Success));
-            
+
         var tables = GetTableInfoList(true);
         foreach (TableInfo t in tables)
             t.Check(notifier);
@@ -1083,7 +1083,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         if(LiveLoggingServer_ID == null) 
             throw new Exception($"No live logging server set for Catalogue {Name}");
-                
+
         var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
         return new LogManager(server);

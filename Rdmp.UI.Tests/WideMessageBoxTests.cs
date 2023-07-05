@@ -51,7 +51,7 @@ internal class WideMessageBoxTests:UITests
         var sb = new StringBuilder();
 
         //send wide message box a million characters
-        for(var i=0;i< 1_000_000; i++)
+        for(var i =0;i< 1_000_000; i++)
             sb.Append("f");
 
         var s = sb.ToString();

@@ -108,7 +108,7 @@ public class FTPDownloader : IPluginDataProvider
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, files.Aggregate("Identified the following files on the FTP server:", (s, f) =>
             $"{f},").TrimEnd(',')));
-            
+
         var forLoadingContainedCachedFiles = false;
 
         foreach (var file in files)

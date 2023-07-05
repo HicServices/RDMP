@@ -36,7 +36,7 @@ public class PersistableToolboxDockContent:DockContent
     protected override string GetPersistString()
     {
 
-            
+
 
         var args = new Dictionary<string, string>();
         args.Add("Toolbox", CollectionType.ToString());

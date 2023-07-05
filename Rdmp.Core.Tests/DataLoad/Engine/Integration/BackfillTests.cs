@@ -1036,7 +1036,7 @@ public class BackfillTests : FromToDatabaseTests
         var resultsImporter = new TableInfoImporter(CatalogueRepository, table);
             
         resultsImporter.DoImport(out var ti, out ciList);
-            
+
         var pkResult = ciList.Single(info => info.GetRuntimeName().Equals(pkName));
         pkResult.IsPrimaryKey = true;
         pkResult.SaveToDatabase();

@@ -134,7 +134,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
     private static DataTable GetChunkSchema(DbDataReader reader)
     {
         var toReturn = new DataTable("dt");
-            
+
         //Retrieve column schema into a DataTable.
         var schemaTable = reader.GetSchemaTable();
         if (schemaTable == null)

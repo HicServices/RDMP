@@ -357,12 +357,9 @@ public class CohortIdentificationConfigurationUICommon
     /// <param name="o"></param>
     public void ExecuteOrCancel(object o)
     {
-        var aggregate = o as AggregateConfiguration;
-        var container = o as CohortAggregateContainer;
-
         Task.Run(() =>
         {
-            if (aggregate != null)
+            if (o is AggregateConfiguration aggregate)
             {
                 var joinable = aggregate.JoinableCohortAggregateConfiguration;
 
@@ -371,7 +368,7 @@ public class CohortIdentificationConfigurationUICommon
                 else
                     OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
             }
-            if (container != null)
+            if (o is CohortAggregateContainer container)
             {
                 OrderActivity(GetNextOperation(GetState(container)), container);
             }

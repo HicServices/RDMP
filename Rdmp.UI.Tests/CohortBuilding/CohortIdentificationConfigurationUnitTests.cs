@@ -41,7 +41,7 @@ internal class CohortIdentificationConfigurationUnitTests:UITests
         DeleteOldAggregates();
 
         GetObjects(out var cata, out var cic);
-            
+
         //we should be able to add it
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
         AssertCommandIsPossible(cmd);
@@ -72,12 +72,12 @@ internal class CohortIdentificationConfigurationUnitTests:UITests
     public void Test_AggregateConfigurationOrder_MovingAggregatesBetweenContainers()
     {
         GetObjects(out var cata, out var cic);
-            
+
         //we should be able to add it to root container
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
         cmd.Execute();
 
-            
+
         //create a subcontainer
         var subcontainer = new CohortAggregateContainer(Repository, SetOperation.INTERSECT);
         cic.RootCohortAggregateContainer.AddChild(subcontainer);

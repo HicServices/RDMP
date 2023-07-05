@@ -110,7 +110,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
             //generate SQL -- only make it readonly after setting the .Text otherwise it ignores the .Text setting even though it is programatical
             QueryPreview.ReadOnly = false;
 
-                
+
             var collection = GetCollection(extractionInformations);
 
             QueryPreview.Text = collection.GetSql();

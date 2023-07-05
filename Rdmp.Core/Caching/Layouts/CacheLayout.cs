@@ -202,7 +202,7 @@ public abstract class CacheLayout : ICacheLayout
             }
             using (var zipArchive = ZipFile.Open(ziptmp, zipArchiveMode))
             {
-                var existing=new HashSet<string>();
+                var existing =new HashSet<string>();
                 // Entries can't be inspected if the zip archive has been opened in create mode
                 if (zipArchiveMode==ZipArchiveMode.Update)
                     foreach (var zipArchiveEntry in zipArchive.Entries)

@@ -115,7 +115,7 @@ public class DocXHelper
             bmp.SaveAsPng(ms);
                 
             ms.Seek(0, 0);
-                
+
             // Add an image into the document.
             var picture = run.AddPicture(ms,PICTURE_TYPE_PNG,"",Units.ToEMU(bmp.Width * PICTURE_SCALING), Units.ToEMU(bmp.Height *PICTURE_SCALING));
                 

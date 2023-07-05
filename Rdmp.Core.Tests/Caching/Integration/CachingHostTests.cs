@@ -48,14 +48,14 @@ public class CachingHostTests : UnitTests
                         
         cp.CacheFillProgress = DateTime.Now.AddDays(-1);
         cp.PermissionWindow_ID = 1;
-                                  
+
 
         var permissionWindow = new PermissionWindow(Repository);
         permissionWindow.RequiresSynchronousAccess = true;
         permissionWindow.ID = 1;
         permissionWindow.Name = "Test Permission Window";
 
-            
+
         //Create a time period that we are outwith (1 hour ago to 30 minutes ago).
         var start = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,1,0,0));
         var stop = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,0,30,0));

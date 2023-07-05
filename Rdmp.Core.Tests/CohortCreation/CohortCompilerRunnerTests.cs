@@ -28,7 +28,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
     {
         DiscoveredDatabase db;
 
-        SetupCohort(out db,out var cic,out var dt);
+        SetupCohort(out db,out var cic, out var dt);
 
         var compiler = new CohortCompiler(cic);
 
@@ -50,11 +50,11 @@ public class CohortCompilerRunnerTests:DatabaseTests
     public void CacheIdentifierListWithRunner_WithCaching()
     {
         SetupCohort(out var db, out var cic, out var dt);
-            
+
         var e = new MasterDatabaseScriptExecutor(db);
         var p = new QueryCachingPatcher();
         e.CreateAndPatchDatabase(p,new AcceptAllCheckNotifier());
-            
+
         var serverReference = new ExternalDatabaseServer(CatalogueRepository, "Cache", p);
         serverReference.SetProperties(db);
 

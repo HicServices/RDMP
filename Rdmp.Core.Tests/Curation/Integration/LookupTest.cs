@@ -31,7 +31,7 @@ public class LookupTest : DatabaseTests
 
         var tiHeader = new TableInfo(CatalogueRepository,"Head");
         var tiHeader_Code = new ColumnInfo(CatalogueRepository,"code","",tiHeader);
-                       
+
         var tiLookup = new TableInfo(CatalogueRepository,"z_HeadLookup");
         var tiLookup_Code = new ColumnInfo(CatalogueRepository,"code","",tiLookup);
         var tiLookup_Desc = new ColumnInfo(CatalogueRepository,"desc","",tiLookup);

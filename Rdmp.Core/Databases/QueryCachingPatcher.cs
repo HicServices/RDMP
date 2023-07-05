@@ -24,7 +24,7 @@ public sealed class QueryCachingPatcher:Patcher
     public override Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
     {
         var header = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1,0,0));
-            
+
         var body = db.Helper.GetCreateTableSql(db, "CachedAggregateConfigurationResults", new[]
         {
             new DatabaseColumnRequest("Committer",new DatabaseTypeRequest(typeof(string),500)),

@@ -671,7 +671,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 //no, there is no default or user does not want to use it.
                 throw new Exception("There is no default logging server configured and there was a problem asking Catalogues for a logging server instead.  Configure a default logging server via ManageExternalServersUI", e);
         }
-            
+
         var server = DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging);
 
         LogManager lm;

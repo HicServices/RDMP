@@ -97,7 +97,7 @@ public class TableInfoCloneOperation
 
         //new table will start with the same name as the as the old scripted one
         var newTable = destDatabaseInfo.ExpectTable(destTableName);
-            
+
         var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/,newTable); 
             
         _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"Creating table with SQL:{sql}"));

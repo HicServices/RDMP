@@ -350,7 +350,7 @@ internal class DocumentationCrossExaminationTest
         }
 
 
-        foreach (var (filename,tokens) in fileCommentTokens)
+        foreach ((var filename, var tokens) in fileCommentTokens)
         {
             problems.AddRange(tokens
                 .Where(token => !codeTokens.Contains(token) && !codeTokens.Contains($"ExecuteCommand{token}"))
@@ -386,7 +386,7 @@ internal class DocumentationCrossExaminationTest
         var rEndCodeBlock = new Regex("```");
 
         var markdownCodeBlocks = new Dictionary<string, string>();
-            
+
         var lines = File.ReadAllLines(mdFile);
 
         for (var i = 0; i < lines.Length; i++)
@@ -436,7 +436,7 @@ internal class DocumentationCrossExaminationTest
     private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
     {
         const string glossaryRelativePath = "./Documentation/CodeTutorials/Glossary.md";
-            
+
         var rGlossary = new Regex("##([A-z ]*)");
         var rWords = new Regex(@"\[?\w*\]?");
         var rGlossaryLink = new Regex(@"^\[\w*\]:");

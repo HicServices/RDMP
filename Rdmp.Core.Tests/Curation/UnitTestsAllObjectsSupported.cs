@@ -36,7 +36,7 @@ internal class UnitTestsAllObjectsSupported:UnitTests
 
         var methods = typeof(UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
         var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
-             
+
         var notSupported = new List<Type>();
             
         foreach (var t in types)

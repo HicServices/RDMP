@@ -113,7 +113,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         // Find all parents of this table
         var allJoinInfos = repository.GetAllObjects<JoinInfo>();
         var joinsWithThisTableAsChild = allJoinInfos.Where(info => info.ForeignKey.TableInfo_ID == tiCurrent.ID).ToList();
-            
+
         // Infinite recursion check
         var seenBefore = joinPathToTimeTable.Intersect(joinsWithThisTableAsChild).ToList();
         if (seenBefore.Any())

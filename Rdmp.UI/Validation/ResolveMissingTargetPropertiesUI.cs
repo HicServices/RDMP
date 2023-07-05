@@ -111,12 +111,9 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void lbAvailableColumns_DragDrop(object sender, DragEventArgs e)
     {
-        var missingReference = e.Data.GetData(typeof (ItemValidator)) as ItemValidator;
-            
-            
-        var indexFromPoint = lbAvailableColumns.IndexFromPoint(lbAvailableColumns.PointToClient(new Point(e.X,e.Y)));
+        var indexFromPoint = lbAvailableColumns.IndexFromPoint(lbAvailableColumns.PointToClient(new Point(e.X, e.Y)));
 
-        if (indexFromPoint != ListBox.NoMatches && missingReference != null)
+        if (indexFromPoint != ListBox.NoMatches && e.Data.GetData(typeof (ItemValidator)) is ItemValidator missingReference)
         {
             var oldName = missingReference.TargetProperty;
             var newName = (string) lbAvailableColumns.Items[indexFromPoint];

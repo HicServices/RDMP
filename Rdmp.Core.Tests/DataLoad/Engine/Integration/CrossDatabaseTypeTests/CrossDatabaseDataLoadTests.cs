@@ -86,7 +86,7 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         var defaults = CatalogueRepository;
         var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
         var logManager = new LogManager(logServer);
-            
+
         var db = GetCleanedServer(databaseType);
 
         var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
@@ -144,7 +144,7 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         }
 
         Assert.AreEqual(2, tbl.GetRowCount());
-            
+
         //define a new load configuration
         var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
 
@@ -152,10 +152,10 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         {
             lmd.IgnoreTrigger = true;
             lmd.SaveToDatabase();
-        }   
+        }
 
         var ti = Import(tbl, lmd,logManager);
-            
+
         var projectDirectory = SetupLoadDirectory(lmd);
 
         CreateCSVProcessTask(lmd,ti,"*.csv");
@@ -167,7 +167,7 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
 Frank,2001-01-01,Neon
 MrMurder,2001-01-01,Yella");
 
-            
+
         //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
@@ -192,7 +192,7 @@ MrMurder,2001-01-01,Yella");
         if (testCase == TestCase.WithDiffColumnIgnoreRegex)
             dbConfig.UpdateButDoNotDiff = new Regex("^FavouriteColour"); //do not diff FavouriteColour
 
-            
+
         var loadFactory = new HICDataLoadFactory(
             lmd,
             dbConfig,
@@ -204,7 +204,7 @@ MrMurder,2001-01-01,Yella");
         try
         {
             var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
-            
+
             var exitCode = exe.Run(
                 new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener(),dbConfig),
                 new GracefulCancellationToken());
@@ -300,7 +300,7 @@ MrMurder,2001-01-01,Yella");
         dtParent.PrimaryKey = new[] {dtParent.Columns[0]};
 
         dtParent.Rows.Add("1", "Dave", "3.5");
-            
+
         var dtChild = new DataTable();
         dtChild.Columns.Add("Parent_ID");
         dtChild.Columns.Add("ChildNumber");
@@ -347,7 +347,7 @@ MrMurder,2001-01-01,Yella");
 
         //create a new load
         var lmd = new LoadMetadata(CatalogueRepository, "MyLoading2");
-            
+
         var childTableInfo = Import(childTbl, lmd, logManager);
         var parentTableInfo = Import(parentTbl,lmd,logManager);
 
@@ -368,8 +368,8 @@ MrMurder,2001-01-01,Yella");
             @"Parent_ID,ChildNumber,Name,DateOfBirth,Age,Height
 1,1,UpdC1,2001-01-01,20,3.5
 2,1,NewC1,2000-01-01,19,null");
-            
-            
+
+
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
         var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
         checker.Check(new AcceptAllCheckNotifier());

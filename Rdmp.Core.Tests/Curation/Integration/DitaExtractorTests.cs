@@ -34,7 +34,7 @@ internal class DitaExtractorTests : DatabaseTests
             _directoryHelper.SetUp();
 
             var random = new Random();
-                
+
             //delete all catalogues with duplicate names
             var catalogues = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
 

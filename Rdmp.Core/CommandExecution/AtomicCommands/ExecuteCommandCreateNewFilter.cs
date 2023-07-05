@@ -263,7 +263,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
     {
 
         var wizard = new FilterImportWizard(BasicActivator);
-            
+
         var import = wizard.ImportManyFromSelection(container, _offerFilters).ToArray();
 
         foreach (var f in import)

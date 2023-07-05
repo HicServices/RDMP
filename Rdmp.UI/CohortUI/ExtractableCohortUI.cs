@@ -66,7 +66,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
             toShow += Environment.NewLine;
 
             var externalCohortTable = _extractableCohort.ExternalCohortTable;
-                
+
             var sql =
                 $"SELECT * FROM {externalCohortTable.TableName}{Environment.NewLine} WHERE {_extractableCohort.WhereSQL()}";
 
@@ -140,12 +140,11 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         tbVersion.Text = _extractableCohort.ExternalVersion.ToString();
 
         GenerateSQLPreview();
-            
-        var dx = Activator.CoreChildProvider as DataExportChildProvider;
+
 
         if (!_commonFunctionality1.IsSetup)
         {
-            _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage,activator,olvUsedIn,null,
+            _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage, activator, olvUsedIn, null,
                 new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddCheckColumn = false,
@@ -171,7 +170,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
             );
         }
 
-        if(dx != null)
+        if(Activator.CoreChildProvider is DataExportChildProvider dx)
         {
             tlvCohortUsage.ClearObjects();
             tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e=>e.Cohort_ID == _extractableCohort.ID).ToArray());

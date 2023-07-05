@@ -262,7 +262,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
                 SuppressActivate = true,
                 AddCheckColumn = false
             });
-            
+
         var checkedBefore = tlvDatasets.CheckedObjects;
 
         tlvDatasets.ClearObjects();

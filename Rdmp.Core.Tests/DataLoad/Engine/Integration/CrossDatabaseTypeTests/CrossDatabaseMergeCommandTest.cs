@@ -67,11 +67,11 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         dt.Rows.Add(new object[] { "Filli", 32, DBNull.Value }); //update from "DD3 78L" null
         dt.Rows.Add(new object[] { "Mandrake", 32, "DD1 1PS" }); //update from null toTbl "DD1 1PS"
         dt.Rows.Add(new object[] { "Mandrake", 31, "DD1 1PS" }); // insert because Age is unique (and part of pk)
-            
+
         var fromTbl = From.CreateTable($"{DatabaseName}_ToTable_STAGING", dt);
-            
+
         //import the toTbl table as a TableInfo
-        var cata = Import(toTbl,out var ti,out var cis);
+        var cata = Import(toTbl,out var ti, out var cis);
 
         //put the backup trigger on the live table (this will also create the needed hic_ columns etc)
         var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(toTbl);
@@ -100,7 +100,7 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         };
 
         migrationHost.Migrate(job, new GracefulCancellationToken());
-            
+
         var resultantDt = toTbl.GetDataTable();
         Assert.AreEqual(7,resultantDt.Rows.Count);
 

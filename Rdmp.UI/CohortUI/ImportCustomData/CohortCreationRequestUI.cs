@@ -121,7 +121,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (IDataExportRepository)Project.Repository, tbDescription.Text);
             
         Result.NewCohortDefinition.CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort;
-            
+
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
         Result.Check(notifier);

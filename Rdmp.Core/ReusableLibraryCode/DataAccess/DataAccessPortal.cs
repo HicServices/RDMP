@@ -66,7 +66,7 @@ public class DataAccessPortal
             else
                 throw new Exception(
                     $"Could not get server with setInitialDatabase=true because no Database was set on IDataAccessPoint {dataAccessPoint}");
-            
+
         var server = new DiscoveredServer(dataAccessPoint.Server,dbName,dataAccessPoint.DatabaseType,credentials?.Username, credentials?.GetDecryptedPassword());
                       
         return server;
@@ -109,7 +109,7 @@ public class DataAccessPortal
                         $"All data access points must be into the same database, access points '{first}' and '{accessPoint}' are into different databases", firstDbName, currentDbName);    
             }
         }
-            
+
         //There can be only one - credentials (but there might not be any)
         var credentials = collection.Select(t => t.GetCredentialsIfExists(context)).ToArray();
 

@@ -166,7 +166,7 @@ WHERE
         using (var con = _server.GetConnection())
         {
             con.Open();
-                
+
             var nameWeWillGiveTableInCache = $"{operation}_AggregateConfiguration{configuration.ID}";
 
             //either it has no name or it already has name we want so its ok

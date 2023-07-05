@@ -77,7 +77,7 @@ public class DublinCoreDefinition
         var xsiAttr = new XAttribute(XNamespace.Xmlns + "xsi", xsi);
         var dcAttr = new XAttribute(XNamespace.Xmlns + "dc", dc);
         var dctermsAttr = new XAttribute(XNamespace.Xmlns + "dcterms",dcterms);
-            
+
         var doc = new XDocument(new XElement("metadata",xsiAttr,dcAttr,dctermsAttr));
         doc.Root.Add(new XElement(dc + "title", Title));
         doc.Root.Add(new XElement(dcterms + "alternative", Alternative));

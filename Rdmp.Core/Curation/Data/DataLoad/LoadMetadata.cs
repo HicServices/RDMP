@@ -271,7 +271,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         if(cataloguesWithoutLoggingTasks.Any())
             throw new Exception(
                 $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
-            
+
         var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
         if(distinctLoggingTasks.Count()>= 2)
             throw new Exception(

@@ -206,7 +206,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
 
             DeepClone(subContainer,container,factory);            
         }
-            
+
         var wizard = new FilterImportWizard(BasicActivator);
             
         //clone the filters

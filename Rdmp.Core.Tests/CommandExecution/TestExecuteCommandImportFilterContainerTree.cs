@@ -37,7 +37,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
             
         //there should be no root container
         Assert.IsNull(sds.RootFilterContainer);
-            
+
         //run the command
         var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
         mgr.DisallowInput = true;
@@ -77,7 +77,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
             
         //there should be no root container
         Assert.IsNull(ac.RootFilterContainer);
-            
+
         //run the command
         var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
         mgr.DisallowInput = true;
@@ -124,7 +124,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
 
         //there should be no root container
         Assert.IsNull(sds.RootFilterContainer);
-            
+
         //run the command
         var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
         mgr.DisallowInput = true;

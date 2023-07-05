@@ -54,7 +54,7 @@ internal class FindAndReplaceNode:IMasqueradeAs
 
     public void FindAndReplace(string find, string replace, bool ignoreCase)
     {
-        var current=_currentValue.ToString();
+        var current =_currentValue.ToString();
         if(current?.Contains(find,ignoreCase?StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture)==true)
             SetValue(current.Replace(find, replace,ignoreCase ? StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture));
     }
