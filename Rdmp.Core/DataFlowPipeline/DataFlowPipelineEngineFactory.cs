@@ -166,7 +166,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
             //see if any demand nested initialization
             var nestedInit =
-                System.Attribute.GetCustomAttributes(propertyInfo)
+                Attribute.GetCustomAttributes(propertyInfo)
                     .FirstOrDefault(a => a is DemandsNestedInitializationAttribute);
 
             //this one does
@@ -199,7 +199,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         //see if any demand initialization
         var initialization =
             (DemandsInitializationAttribute)
-            System.Attribute.GetCustomAttributes(propertyInfo)
+            Attribute.GetCustomAttributes(propertyInfo)
                 .FirstOrDefault(a => a is DemandsInitializationAttribute);
 
         //this one does

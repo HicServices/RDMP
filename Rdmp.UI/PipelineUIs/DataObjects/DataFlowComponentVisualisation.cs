@@ -93,7 +93,7 @@ public partial class DataFlowComponentVisualisation : UserControl
         }
 
             
-        this.Width = lblText.PreferredWidth + 80;
+        Width = lblText.PreferredWidth + 80;
     }
 
     private ToolTip _toolTip = new ToolTip();

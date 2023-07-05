@@ -148,7 +148,7 @@ public class BulkTestsData
 
         var forwardEngineer = new ForwardEngineerCatalogue(tableInfo,columnInfos);
         forwardEngineer.ExecuteForwardEngineering(out var c,out catalogueItems, out extractionInformations);
-        this.catalogue = c;
+        catalogue = c;
 
         var chi = extractionInformations.Single(e => e.GetRuntimeName().Equals("chi"));
         chi.IsExtractionIdentifier = true;

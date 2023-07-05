@@ -775,7 +775,7 @@ public class UnitTests
         Assert.AreEqual(memObjectsArr.Count(), dbObjectsArr.Count());
 
         for (var i = 0; i < memObjectsArr.Count(); i++)
-            UnitTests.AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
+            AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
     }
 
     /// <summary>

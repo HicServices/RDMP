@@ -22,7 +22,7 @@ public partial class DataTableViewerUI : UserControl
     {
         InitializeComponent();
             
-        this.Text = caption;
+        Text = caption;
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         dataGridView1.DataSource = source;
     }
@@ -51,7 +51,7 @@ public partial class DataTableViewerUI : UserControl
             ExceptionViewer.Show($"Failed to connect to source {source} and execute SQL: {Environment.NewLine}{sql}",e);
         }
 
-        this.Text = caption;
+        Text = caption;
     }
 
 }

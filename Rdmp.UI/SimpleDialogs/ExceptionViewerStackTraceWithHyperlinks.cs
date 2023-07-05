@@ -163,7 +163,7 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
         {
             Clipboard.SetText($"{Path.GetFileName(filename)}:{lineNumber}");
 
-            var viewer = new Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog(filename, lineNumber,Color.LawnGreen);
+            var viewer = new ViewSourceCodeDialog(filename, lineNumber,Color.LawnGreen);
             viewer.ShowDialog();
         }
         catch (FileNotFoundException)
@@ -179,12 +179,12 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
         
     private void button1_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 
     private void ExceptionViewerStackTraceWithHyperlinks_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Escape || (e.KeyCode == Keys.W && e.Control))
-            this.Close();
+            Close();
     }
 }

@@ -68,8 +68,8 @@ public partial class WideMessageBox : Form
         btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
         //try to resize form to fit bounds
-        this.Size = GetPreferredSizeOfTextControl(richTextBox1);
-        this.Size = new Size(this.Size.Width + 10, this.Size.Height + 150);//leave a bit of padding
+        Size = GetPreferredSizeOfTextControl(richTextBox1);
+        Size = new Size(Size.Width + 10, Size.Height + 150);//leave a bit of padding
 
         richTextBox1.LinkClicked += richTextBox1_LinkClicked;
         btnViewSourceCode.Click += (s, e) => new ViewSourceCodeDialog((string)btnViewSourceCode.Tag).Show();
@@ -85,10 +85,10 @@ public partial class WideMessageBox : Form
         Width = Math.Min(Math.Max(600, Width), theScreen.Bounds.Width - 400);
 
         //if the text is too long vertically just maximise the message box
-        if (this.Height > theScreen.Bounds.Height)
+        if (Height > theScreen.Bounds.Height)
         {
-            this.MaximizedBounds = theScreen.WorkingArea;
-            this.WindowState = FormWindowState.Maximized;
+            MaximizedBounds = theScreen.WorkingArea;
+            WindowState = FormWindowState.Maximized;
         }
     }
     protected void Setup(WideMessageBoxArgs args)
@@ -214,7 +214,7 @@ public partial class WideMessageBox : Form
 
     private void btnOk_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 
     private void btnCopyToClipboard_Click(object sender, EventArgs e)
@@ -226,7 +226,7 @@ public partial class WideMessageBox : Form
     private void WideMessageBox_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Escape || (e.KeyCode == Keys.W && e.Control))
-            this.Close();
+            Close();
 
         if (e.KeyCode == Keys.Back)
             Back();

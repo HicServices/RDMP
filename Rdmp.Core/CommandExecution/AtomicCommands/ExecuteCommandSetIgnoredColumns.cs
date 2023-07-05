@@ -22,14 +22,14 @@ public class ExecuteCommandSetIgnoredColumns : BasicCommandExecution
     [UseWithObjectConstructor]
     public ExecuteCommandSetIgnoredColumns(IBasicActivateItems activator, LoadMetadata loadMetadata, ColumnInfo[] columnsToIgnore):base(activator)
     {
-        this._loadMetadata = loadMetadata;
-        this._columnsToIgnore = columnsToIgnore;
+        _loadMetadata = loadMetadata;
+        _columnsToIgnore = columnsToIgnore;
         _explicitChoiceMade = true;
     }
 
     public ExecuteCommandSetIgnoredColumns(IBasicActivateItems activator, LoadMetadata loadMetadata):base(activator)
     {
-        this._loadMetadata = loadMetadata;
+        _loadMetadata = loadMetadata;
     }
 
     public override void Execute()

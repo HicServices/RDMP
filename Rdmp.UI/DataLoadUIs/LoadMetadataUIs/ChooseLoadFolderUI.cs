@@ -96,7 +96,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
                 Result = LoadDirectory.CreateDirectoryStructure(dir.Parent,dir.Name).RootPath.FullName;
 
                 DialogResult = DialogResult.OK;
-                this.Close();
+                Close();
             }
             catch (Exception exception)
             {
@@ -111,7 +111,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
                 var dir = new LoadDirectory(tbUseExisting.Text);
                 Result = dir.RootPath.FullName;
                 DialogResult = DialogResult.OK;
-                this.Close();
+                Close();
             }
             catch (Exception exception)
             {
@@ -119,7 +119,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
                 {
                     Result = tbUseExisting.Text;
                     DialogResult = DialogResult.OK;
-                    this.Close();
+                    Close();
                 }
             }
         }
@@ -128,7 +128,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     private void btnCancel_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
 
     private void btnCreateNewBrowse_Click(object sender, EventArgs e)

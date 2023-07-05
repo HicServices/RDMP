@@ -271,7 +271,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         }
     }
 
-    private void olvParameters_CellEditFinishing(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+    private void olvParameters_CellEditFinishing(object sender, CellEditEventArgs e)
     {
         var revertable = e.RowObject as IRevertable;
             

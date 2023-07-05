@@ -43,7 +43,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         bool deleteMany = false) : base(activator)
     {
         _deletables = deletables;
-        this._allowDeleteMany = deleteMany;
+        _allowDeleteMany = deleteMany;
         if (_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
             
@@ -86,7 +86,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         // if the thing we are deleting is important and sensitive then we should use a transaction
         if(_deletables.Count > 1 || ShouldUseTransactionsWhenDeleting(_deletables.FirstOrDefault()))
         {
-            base.ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
+            ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
             PublishNearest();
         }
         else

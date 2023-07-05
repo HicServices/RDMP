@@ -54,7 +54,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
         pbDisconnected.Image = CatalogueIcons.ExternalDatabaseServer.ImageToBitmap();
 
-        this.Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
+        Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
     }
 
 
@@ -124,7 +124,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         if(InvokeRequired)
         {
-            this.Invoke(new MethodInvoker(StartupComplete));
+            Invoke(new MethodInvoker(StartupComplete));
             return;
         }
             

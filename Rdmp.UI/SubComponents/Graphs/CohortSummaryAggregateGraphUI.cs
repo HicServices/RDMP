@@ -64,7 +64,7 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
             
         BuildMenu(activator);
 
-        base.SetAggregate(activator,_collection.Graph);
+        SetAggregate(activator,_collection.Graph);
         LoadGraphAsync();
     }
 

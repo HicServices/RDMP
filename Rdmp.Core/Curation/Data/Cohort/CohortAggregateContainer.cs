@@ -90,7 +90,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
     {
         Order = int.Parse(r["Order"].ToString());
         SetOperation op;
-        SetOperation.TryParse(r["Operation"].ToString(), out op);
+        Enum.TryParse(r["Operation"].ToString(), out op);
         Operation = op;
         Name = r["Name"].ToString();
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
@@ -242,7 +242,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
                 foundChildThroughRecursion = true;
             
         //are we the one you are looking for or were any of our children
-        return potentialChild.ID == this.ID || foundChildThroughRecursion;
+        return potentialChild.ID == ID || foundChildThroughRecursion;
     }
 
     /// <summary>

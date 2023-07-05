@@ -45,7 +45,7 @@ public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparabl
             else
                 return Date > other.Date ? 1 : -1;
 
-        return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+        return String.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
 
     public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)

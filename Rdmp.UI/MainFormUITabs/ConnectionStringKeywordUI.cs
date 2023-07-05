@@ -61,7 +61,7 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
         Bind(ddDatabaseType, "Text", "DatabaseType", k => k.DatabaseType);
     }
 
-    private void ddDatabaseType_SelectedIndexChanged(object sender, System.EventArgs e)
+    private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
     {
         if(_keyword == null)
             return;

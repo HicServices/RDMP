@@ -288,7 +288,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     {
         //if it's not a valid context something has gone very wrong
         DataAccessContext context;
-        if (!DataAccessContext.TryParse((string) r["Context"], out context))
+        if (!Enum.TryParse((string) r["Context"], out context))
             throw new Exception($"Invalid DataAccessContext {r["Context"]}");
 
         return context;

@@ -150,7 +150,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
 
                         if (archivalDataLoadInfo == null)
                         {
-                            this.Invoke(new MethodInvoker(() =>
+                            Invoke(new MethodInvoker(() =>
                             {
                                 loadSummary.Status = DataLoadsGraphResultStatus.NeverBeenRun;
                                 loadSummary.LastRun = "Never";
@@ -170,7 +170,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                         else
                             countManualLoadsuccessful++;
 
-                        this.Invoke(new MethodInvoker(() =>
+                        Invoke(new MethodInvoker(() =>
                         {
                             loadSummary.Status = lastLoadWasError ? DataLoadsGraphResultStatus.Failing : DataLoadsGraphResultStatus.Succeeding;
                             loadSummary.LastRun = archivalDataLoadInfo.EndTime.ToString();
@@ -181,7 +181,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                     catch (Exception e)
                     {
                         ragSmiley1.Fatal(e);
-                        this.Invoke(new MethodInvoker(() =>
+                        Invoke(new MethodInvoker(() =>
                         {
                             pbLoading.Visible = false;
                         }));
@@ -192,7 +192,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                 //if there have been no loads at all ever
                 if (countManualLoadsuccessful == 0 && countManualLoadFailure == 0)
                 {
-                    this.Invoke(new MethodInvoker(() =>
+                    Invoke(new MethodInvoker(() =>
                     {
                         lblNoDataLoadsFound.Visible = true;
                         chart1.Visible = false;
@@ -210,7 +210,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                 dt.Rows.Add(new object[] { "Manual Fail", countManualLoadFailure });
 
 
-                this.Invoke(new MethodInvoker(() =>
+                Invoke(new MethodInvoker(() =>
                 {
                     chart1.Series[0].XValueMember = "Category";
                     chart1.Series[0].YValueMembers = "NumberOfDataLoadsAtStatus";
@@ -248,7 +248,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
             catch (Exception e)
             {
                 ragSmiley1.Fatal(e);
-                this.Invoke(new MethodInvoker(() =>
+                Invoke(new MethodInvoker(() =>
                 {
                     pbLoading.Visible = false;
                 }));

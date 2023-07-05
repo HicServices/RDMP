@@ -389,7 +389,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                             $"You chose to FORCE a join to table {t} which is marked IsPrimaryExtractionTable but you have also selected a column called {primary} which is also an IsPrimaryExtractionTable (cannot have 2 different primary extraction tables)");
             }
 
-        this.PrimaryExtractionTable = primary;
+        PrimaryExtractionTable = primary;
 
         SqlQueryBuilderHelper.FindLookups(this);
 

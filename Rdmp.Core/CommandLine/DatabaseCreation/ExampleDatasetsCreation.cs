@@ -51,7 +51,7 @@ public class ExampleDatasetsCreation
         
     public ExampleDatasetsCreation(IBasicActivateItems activator,IRDMPPlatformRepositoryServiceLocator repos)
     {
-        this._repos = repos;
+        _repos = repos;
         _activator = activator;
     }
 

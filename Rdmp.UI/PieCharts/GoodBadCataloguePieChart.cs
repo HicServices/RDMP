@@ -46,10 +46,10 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         btnViewDataTable.Image = CatalogueIcons.TableInfo.ImageToBitmap();
 
-        this.btnAllCatalogues.Click += new System.EventHandler(this.btnAllCatalogues_Click);
-        this.btnSingleCatalogue.Click += new System.EventHandler(this.btnSingleCatalogue_Click);
-        this.btnShowLabels.CheckStateChanged += new System.EventHandler(this.btnShowLabels_CheckStateChanged);
-        this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+        btnAllCatalogues.Click += new EventHandler(btnAllCatalogues_Click);
+        btnSingleCatalogue.Click += new EventHandler(btnSingleCatalogue_Click);
+        btnShowLabels.CheckStateChanged += new EventHandler(btnShowLabels_CheckStateChanged);
+        btnRefresh.Click += new EventHandler(btnRefresh_Click);
             
         //put edit mode on for the designer
         NotifyEditModeChange(false);
@@ -138,7 +138,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         }
         catch (Exception e)
         {
-            ExceptionViewer.Show($"{this.GetType().Name} failed to load data", e);
+            ExceptionViewer.Show($"{GetType().Name} failed to load data", e);
         }
     }
 

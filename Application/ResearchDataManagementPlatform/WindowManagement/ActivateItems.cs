@@ -221,7 +221,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
         //Look at assignments to Sender, the invocation list can change the Sender!
         var args = new EmphasiseEventArgs(request);
-        base.OnEmphasise(this,args);
+        OnEmphasise(this,args);
             
         //might be different than sender that was passed in
         if(args.Sender is DockContent content)
@@ -338,7 +338,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         f.Close();
-        ExceptionViewer.Show("Window Closed",reason);
+        WideMessageBox.Show("Window Closed",reason);
     }
     public void OnRuleRegistered(IBinderRule rule)
     {

@@ -413,7 +413,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         if(ddCohortSources.SelectedItem == null)
             return "You must choose an Identifier Allocation database (to put your cohort / anonymous mappings)";
 
-        if(this.cbxCohort.SelectedItem == null && _cohortFile == null)
+        if(cbxCohort.SelectedItem == null && _cohortFile == null)
             return "You must choose either a file or a cohort identification query to build the cohort from";
 
         //no problems
@@ -432,7 +432,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private void cbDefineCohort_CheckedChanged(object sender, EventArgs e)
     {
         gbCohortAndDatasets.Visible = cbDefineCohort.Checked;
-        this.OnSizeChanged(e);
+        OnSizeChanged(e);
     }
 
     private void cbxDatasets_SelectedIndexChanged(object sender, EventArgs e)
@@ -498,6 +498,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 }

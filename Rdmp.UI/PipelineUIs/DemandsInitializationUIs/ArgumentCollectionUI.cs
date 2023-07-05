@@ -106,9 +106,9 @@ public partial class ArgumentCollectionUI : UserControl
             
         if(DemandDictionary.Any())
         {
-            var g = this.CreateGraphics();
+            var g = CreateGraphics();
             maxArgNameWidth = DemandDictionary.Select(a =>
-                    g.MeasureString(UsefulStuff.PascalCaseStringToHumanReadable(a.Value.Name), Label.DefaultFont).Width)
+                    g.MeasureString(UsefulStuff.PascalCaseStringToHumanReadable(a.Value.Name), DefaultFont).Width)
                 .Max();
         }
 

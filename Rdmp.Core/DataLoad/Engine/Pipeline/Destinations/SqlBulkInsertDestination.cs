@@ -177,6 +177,6 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
 
     public void PreInitialize(ITableLoadInfo value, IDataLoadEventListener listener)
     {
-        this.TableLoadInfo = value;
+        TableLoadInfo = value;
     }
 }

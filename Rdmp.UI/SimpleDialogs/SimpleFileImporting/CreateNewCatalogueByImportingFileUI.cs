@@ -456,7 +456,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 
         }
         if (cbAutoClose.Checked)
-            this.Close();
+            Close();
         else
             MessageBox.Show("Creation completed successfully, close the Form when you are finished reviewing the output");
     }

@@ -230,7 +230,7 @@ public class DitaCatalogueExtractor : ICheckable
                 
             //Check whether property can be written to
             if (property.CanRead)
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(System.String)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(String)))
                 {
                     toReturnXml += $"<strow>{Environment.NewLine}";
                     toReturnXml += $"<stentry>{GetHtmlEncodedHeader(property.Name)}</stentry>{Environment.NewLine}";

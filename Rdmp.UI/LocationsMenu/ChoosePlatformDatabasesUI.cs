@@ -174,7 +174,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             btnSaveAndClose_Click(null,null);
 
         if(e.KeyCode == Keys.Escape)
-            this.Close();
+            Close();
 
     }
     private void tbCatalogueConnectionString_KeyUp(object sender, KeyEventArgs e)

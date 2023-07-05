@@ -64,7 +64,7 @@ public partial class SecondaryConstraintUI : UserControl
         //the amount of additional space required to accomodate description labels
         var inflation = 0;
         _repository = repository;
-        this.SecondaryConstriant = secondaryConstriant;
+        SecondaryConstriant = secondaryConstriant;
             
         _otherColumns = otherColumns;
 
@@ -77,7 +77,7 @@ public partial class SecondaryConstraintUI : UserControl
         cbxConsequence.SelectedItem = secondaryConstriant.Consequence;
 
         //put the name of the secondary constraint into the header
-        this.lblType.Text = SecondaryConstriant.GetType().Name;
+        lblType.Text = SecondaryConstriant.GetType().Name;
 
         lblConsequence.Left = lblType.Right + 5;
         cbxConsequence.Left = lblConsequence.Right + 5;

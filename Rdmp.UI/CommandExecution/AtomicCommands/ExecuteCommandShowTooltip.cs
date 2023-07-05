@@ -37,7 +37,7 @@ public class ExecuteCommandShowTooltip : BasicUICommandExecution, IAtomicCommand
     }
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        return (Image<Rgba32>)(_isBad ? Image<Rgba32>.Load(FamFamFamIcons.flag_red) : iconProvider.GetImage(RDMPConcept.Help));
+        return (Image<Rgba32>)(_isBad ? Image.Load(FamFamFamIcons.flag_red) : iconProvider.GetImage(RDMPConcept.Help));
     }
 
 

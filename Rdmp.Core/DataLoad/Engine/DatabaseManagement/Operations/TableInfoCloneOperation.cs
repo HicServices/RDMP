@@ -42,7 +42,7 @@ public class TableInfoCloneOperation
         _hicDatabaseConfiguration = hicDatabaseConfiguration;
         _tableInfo = tableInfo;
         _copyToBubble = copyToBubble;
-        this._listener = listener;
+        _listener = listener;
         DropIdentityColumns = true;
     }
 

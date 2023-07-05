@@ -298,7 +298,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
 
                 var cols = foundCohortDefinitionTable.DiscoverColumns();
                     
-                foreach (var requiredField in ExternalCohortTable.CohortDefinitionTable_RequiredFields)
+                foreach (var requiredField in CohortDefinitionTable_RequiredFields)
                     ComplainIfColumnMissing(DefinitionTableName, cols, requiredField, notifier);
             }
             else

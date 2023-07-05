@@ -214,7 +214,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
         annotating = true;
         btnAnnotator.Enabled = false;
         btnPointer.Enabled = true;
-        this.Cursor = Cursors.Cross;
+        Cursor = Cursors.Cross;
     }
 
     private void btnPointer_Click(object sender, EventArgs e)
@@ -222,7 +222,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
         annotating = false;
         btnAnnotator.Enabled = true;
         btnPointer.Enabled = false;
-        this.Cursor = DefaultCursor;
+        Cursor = DefaultCursor;
     }
 
     private void chart1_KeyUp(object sender, KeyEventArgs e)

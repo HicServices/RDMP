@@ -86,7 +86,7 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
     {
         CohortSummaryAdjustment a;
             
-        if(!CohortSummaryAdjustment.TryParse(s, out a))
+        if(!Enum.TryParse(s, out a))
             throw new Exception($"Could not parse '{s}' into a valid CohortSummaryAdjustment");
 
         Adjustment = a;

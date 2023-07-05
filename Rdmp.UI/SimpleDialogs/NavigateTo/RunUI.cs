@@ -33,7 +33,7 @@ public partial class RunUI : RDMPForm
 
         _commandCaller = new CommandInvoker(activator);
         _commandCaller.CommandImpossible += (s,e) =>MessageBox.Show(e.Command.ReasonCommandImpossible);
-        _commandCaller.CommandCompleted += (s, e) => this.Close();
+        _commandCaller.CommandCompleted += (s, e) => Close();
 
         var commands = _commandCaller.GetSupportedCommands();
             
@@ -51,7 +51,7 @@ public partial class RunUI : RDMPForm
     {
         ExceptionViewer.Show(exception);
     }
-    private void comboBox1_KeyUp(object sender, System.Windows.Forms.KeyEventArgs e)
+    private void comboBox1_KeyUp(object sender, KeyEventArgs e)
     {
         var key = (string)comboBox1.SelectedItem;
 

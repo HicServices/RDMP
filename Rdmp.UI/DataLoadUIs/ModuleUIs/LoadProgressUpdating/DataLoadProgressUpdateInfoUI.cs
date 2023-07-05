@@ -111,7 +111,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     {
         _programaticClose = true;
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
 
     private void btnSave_Click(object sender, EventArgs e)

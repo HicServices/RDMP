@@ -129,8 +129,8 @@ public partial class CohortCreationRequestUI : RDMPForm
         Result.Check(notifier);
         if (notifier.GetWorst() <= CheckResult.Warning)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
         else
         {
@@ -149,8 +149,8 @@ public partial class CohortCreationRequestUI : RDMPForm
     private void btnCancel_Click(object sender, EventArgs e)
     {
         Result = null;
-        this.DialogResult = DialogResult.Cancel;
-        this.Close();
+        DialogResult = DialogResult.Cancel;
+        Close();
     }
         
     private void rbNewCohort_CheckedChanged(object sender, EventArgs e)

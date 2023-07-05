@@ -304,9 +304,9 @@ public class WindowManager
     {
         if(_home == null)
         {
-            _home = new HomeUI(this.ActivateItems);
+            _home = new HomeUI(ActivateItems);
                 
-            _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", SixLabors.ImageSharp.Image.Load<Rgba32>(FamFamFamIcons.application_home));
+            _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", Image.Load<Rgba32>(FamFamFamIcons.application_home));
             _homeContent.Closed += (s, e) => _home = null;
             _homeContent.Show(_mainDockPanel, DockState.Document);
         }

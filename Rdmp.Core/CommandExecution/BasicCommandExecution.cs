@@ -102,7 +102,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 
     public BasicCommandExecution(IBasicActivateItems basicActivator)
     {
-        this.BasicActivator = basicActivator;
+        BasicActivator = basicActivator;
     }
 
     public virtual void Execute()
@@ -523,7 +523,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     public static bool HasCommandNameOrAlias(Type commandType, string name)
     {
         return 
-            commandType.Name.Equals(BasicCommandExecution.ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
+            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
             || 
             commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) 
             || 

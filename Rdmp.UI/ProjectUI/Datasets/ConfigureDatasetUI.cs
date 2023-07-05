@@ -105,7 +105,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvIssues, new Guid("741f0cff-1d2e-46a7-a5da-9ce13e0960cf"));
 
-        this.cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
+        cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
     }
 
     private void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
@@ -460,7 +460,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         }
     }
 
-    private void olvSelected_ModelCanDrop(object sender, BrightIdeasSoftware.ModelDropEventArgs e)
+    private void olvSelected_ModelCanDrop(object sender, ModelDropEventArgs e)
     {
         e.Effect = DragDropEffects.None;
             
@@ -825,7 +825,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         UpdateJoins();
     }
 
-    private void CbShowProjectSpecific_CheckedChanged(object sender, System.EventArgs e)
+    private void CbShowProjectSpecific_CheckedChanged(object sender, EventArgs e)
     {
         UserSettings.ShowProjectSpecificColumns = cbShowProjectSpecific.Checked;
         SetupUserInterface();            

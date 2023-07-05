@@ -23,7 +23,7 @@ public class CohortIdentificationConfigurationMerger
 
     public CohortIdentificationConfigurationMerger(ICatalogueRepository repository)
     {
-        this._repository = repository;
+        _repository = repository;
     }
 
     /// <summary>

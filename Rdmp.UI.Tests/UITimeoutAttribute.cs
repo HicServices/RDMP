@@ -28,13 +28,13 @@ internal class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
     /// <param name="timeout">timeout in milliseconds</param>
     public UITimeoutAttribute(int timeout)
     {
-        this._timeout = timeout;
+        _timeout = timeout;
     }
 
     /// <inheritdoc/>
     public TestCommand Wrap(TestCommand command)
     {
-        return new TimeoutCommand(command, this._timeout);
+        return new TimeoutCommand(command, _timeout);
     }
 
     private class TimeoutCommand : DelegatingTestCommand

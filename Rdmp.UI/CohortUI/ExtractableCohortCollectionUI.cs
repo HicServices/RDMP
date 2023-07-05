@@ -74,7 +74,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private void BeforeSorting(object sender, BeforeSortingEventArgs e)
     {
-        this.lbCohortDatabaseTable.ListViewItemSorter = new ColumnComparer(
+        lbCohortDatabaseTable.ListViewItemSorter = new ColumnComparer(
             e.ColumnToSort,e.SortOrder , e.SecondaryColumnToSort, e.SecondarySortOrder);
         e.Handled = true;
     }
@@ -124,7 +124,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         catch (Exception e)
         {
             ExceptionViewer.Show(
-                $"{this.GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
+                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
         }
     }
 
@@ -138,7 +138,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         catch (Exception e)
         {
             ExceptionViewer.Show(
-                $"{this.GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
+                $"{GetType().Name} could not load Cohorts:{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(e)}", e);
         }
     }
 

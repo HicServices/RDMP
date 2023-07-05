@@ -32,10 +32,10 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new System.DateTime(1990, 1, 1), new System.DateTime(2001, 1, 1),100,"mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1),100,"mybatch",
             _extractionInformations[0].ID);
 
-        ep.ProgressDate = new System.DateTime(1995, 1, 1); // we are half way through
+        ep.ProgressDate = new DateTime(1995, 1, 1); // we are half way through
         ep.SaveToDatabase();
 
         var ex = Assert.Throws<Exception>(()=>checker.Check(new ThrowImmediatelyCheckNotifier()));
@@ -53,10 +53,10 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
             r.DeleteInDatabase();
         }
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new System.DateTime(1990, 1, 1), new System.DateTime(2001, 1, 1), 100, "mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID);
 
-        ep.ProgressDate = new System.DateTime(1995, 1, 1); // we are half way through
+        ep.ProgressDate = new DateTime(1995, 1, 1); // we are half way through
         ep.SaveToDatabase();
 
         // audit has SQL that does not contain the cohort ID
@@ -78,10 +78,10 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         // normal checks pass
         var checker = new SelectedDataSetsChecker(new ThrowImmediatelyActivator(RepositoryLocator), _selectedDataSet);
 
-        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new System.DateTime(1990, 1, 1), new System.DateTime(2001, 1, 1), 100, "mybatch",
+        var ep = new ExtractionProgress(DataExportRepository, _selectedDataSet, new DateTime(1990, 1, 1), new DateTime(2001, 1, 1), 100, "mybatch",
             _extractionInformations[0].ID);
 
-        ep.ProgressDate = new System.DateTime(1995, 1, 1); // we are half way through
+        ep.ProgressDate = new DateTime(1995, 1, 1); // we are half way through
         ep.SaveToDatabase();
 
         foreach (var r in DataExportRepository.GetAllObjects<CumulativeExtractionResults>())

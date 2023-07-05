@@ -93,7 +93,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
             }
         }
 
-        this._offerCohortAggregates = offerCohortAggregates;
+        _offerCohortAggregates = offerCohortAggregates;
 
         SetCommandWeight();
     }

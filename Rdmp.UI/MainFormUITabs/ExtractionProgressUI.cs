@@ -89,7 +89,7 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
     }
 
 
-    private void tbDate_TextChanged(object sender, System.EventArgs e)
+    private void tbDate_TextChanged(object sender, EventArgs e)
     {
         if(sender == tbStartDate)
         {

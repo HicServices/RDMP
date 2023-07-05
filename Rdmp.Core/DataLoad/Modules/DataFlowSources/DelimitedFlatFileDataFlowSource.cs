@@ -122,7 +122,7 @@ This will not help you avoid bad data as the full file structure must still be r
     [DemandsInitialization(MaximumErrorsToReport_DemandDescription, DefaultValue = 100)]
     public int MaximumErrorsToReport { get; set; }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreColumns_Description)]
+    [DemandsInitialization(IgnoreColumns_Description)]
     public string IgnoreColumns { get; set; }
 
     private CultureInfo _culture;

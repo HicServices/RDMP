@@ -235,7 +235,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
             if (Source.WasCancelled)
             {
-                Destination.TableLoadInfo.DataLoadInfoParent.LogFatalError(this.GetType().Name, "User Cancelled Extraction");
+                Destination.TableLoadInfo.DataLoadInfoParent.LogFatalError(GetType().Name, "User Cancelled Extraction");
                 ExtractCommand.ElevateState(ExtractCommandState.UserAborted);
 
                 if (ExtractCommand is ExtractDatasetCommand)

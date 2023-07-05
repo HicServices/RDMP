@@ -424,7 +424,7 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override void ShowLogs(ILoggedActivityRootObject rootObject)
     {
-        foreach(var load in base.GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
+        foreach(var load in GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
         {
             Console.WriteLine(load.Description);
             Console.WriteLine(load.StartTime);
@@ -505,7 +505,7 @@ public class ConsoleInputManager : BasicActivateItems
             );
     }
 
-    public override void ShowData(System.Data.DataTable collection)
+    public override void ShowData(DataTable collection)
     {
         var tbl = new Table();
 

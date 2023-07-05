@@ -56,7 +56,7 @@ public partial class LicenseUI : Form
     {
         UserSettings.LicenseAccepted = _thirdParth.GetHashOfLicense();
         allowClose = true;
-        this.Close();
+        Close();
     }
 
     private void btnDecline_Click(object sender, EventArgs e)

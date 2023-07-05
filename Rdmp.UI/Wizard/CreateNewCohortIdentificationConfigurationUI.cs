@@ -42,7 +42,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
         setOperationInclude.SetupFor(Activator, true);
         setOperationExclude.SetupFor(Activator, false);
 
-        this.Size = _smallSize;
+        Size = _smallSize;
     }
 
     private void CheckBoxChanged(object sender, EventArgs e)
@@ -175,13 +175,13 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
         pnlWizard.Enabled = cbUseWizard.Checked;
 
         if (cbUseWizard.Checked)
-            this.Size = _bigSize;
+            Size = _bigSize;
         else
-            this.Size = _smallSize;
+            Size = _smallSize;
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 }

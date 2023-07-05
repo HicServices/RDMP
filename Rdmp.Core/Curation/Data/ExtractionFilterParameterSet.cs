@@ -145,7 +145,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
 
     public override void DeleteInDatabase()
     {
-        foreach(var v in this.Values)
+        foreach(var v in Values)
         {
             v.DeleteInDatabase();
         }

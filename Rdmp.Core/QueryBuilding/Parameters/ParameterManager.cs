@@ -476,7 +476,7 @@ public class ParameterManager
     /// <returns></returns>
     public ParameterManager Clone()
     {
-        var clone = new ParameterManager(this.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
+        var clone = new ParameterManager(ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
         clone.State = State;
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)

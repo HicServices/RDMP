@@ -344,7 +344,7 @@ Only define secondary columns if you really need them! if any of the key fields 
             null, true, null, WideMessageBoxTheme.Help);
     }
 
-    private void olvLookupColumns_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+    private void olvLookupColumns_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         var c = e.Model as ColumnInfo;
 
@@ -363,14 +363,14 @@ Only define secondary columns if you really need them! if any of the key fields 
         }
     }
 
-    private void olvSelectedDescriptionColumns_ModelDropped(object sender, BrightIdeasSoftware.ModelDropEventArgs e)
+    private void olvSelectedDescriptionColumns_ModelDropped(object sender, ModelDropEventArgs e)
     {
         olvSelectedDescriptionColumns.AddObject(e.SourceModels[0]);
 
         UpdateValidityAssesment();
     }
 
-    private void olvSelectedDescriptionColumns_ModelCanDrop(object sender, BrightIdeasSoftware.ModelDropEventArgs e)
+    private void olvSelectedDescriptionColumns_ModelCanDrop(object sender, ModelDropEventArgs e)
     {
         if(e.SourceModels.Count == 1)
             if(e.SourceModels[0] is ColumnInfo)

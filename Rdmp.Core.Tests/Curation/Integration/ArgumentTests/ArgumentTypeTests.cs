@@ -20,7 +20,7 @@ public class ArgumentTypeTests:UnitTests
     protected override void OneTimeSetUp()
     {
         base.OneTimeSetUp();
-        base.SetupMEF();
+        SetupMEF();
     }
 
     private object[] _expectedAnswers = new object[]

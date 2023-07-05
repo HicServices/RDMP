@@ -121,7 +121,7 @@ public class RichTextBoxEx : RichTextBox
     {
         // Otherwise, non-standard links get lost when user starts typing
         // next to a non-standard link
-        this.DetectUrls = false;
+        DetectUrls = false;
     }
 
     [DefaultValue(false)]
@@ -137,7 +137,7 @@ public class RichTextBoxEx : RichTextBox
     /// <param name="text">Text to be inserted</param>
     public void InsertLink(string text)
     {
-        InsertLink(text, this.SelectionStart);
+        InsertLink(text, SelectionStart);
     }
 
     /// <summary>
@@ -147,14 +147,14 @@ public class RichTextBoxEx : RichTextBox
     /// <param name="position">Insert position</param>
     public void InsertLink(string text, int position)
     {
-        if (position < 0 || position > this.Text.Length)
+        if (position < 0 || position > Text.Length)
             throw new ArgumentOutOfRangeException("position");
 
-        this.SelectionStart = position;
-        this.SelectedText = text;
-        this.Select(position, text.Length);
-        this.SetSelectionLink(true);
-        this.Select(position + text.Length, 0);
+        SelectionStart = position;
+        SelectedText = text;
+        Select(position, text.Length);
+        SetSelectionLink(true);
+        Select(position + text.Length, 0);
     }
 		
     /// <summary>
@@ -168,7 +168,7 @@ public class RichTextBoxEx : RichTextBox
     /// <param name="hyperlink">Invisible hyperlink string to be inserted</param>
     public void InsertLink(string text, string hyperlink)
     {
-        InsertLink(text, hyperlink, this.SelectionStart);
+        InsertLink(text, hyperlink, SelectionStart);
     }
 
     /// <summary>
@@ -182,21 +182,21 @@ public class RichTextBoxEx : RichTextBox
     /// <param name="position">Insert position</param>
     public void InsertLink(string text, string hyperlink, int position)
     {
-        if (position < 0 || position > this.Rtf.Length)
+        if (position < 0 || position > Rtf.Length)
             throw new ArgumentOutOfRangeException("position");
 
         //if it ends with whitespace then we have to put that outside the RTF
         var suffix = string.Concat(text.Reverse().TakeWhile(c => c == '\r' || c == '\n' || c == ' ' || c == '\t').Reverse());
             
-        this.SelectionStart = position;
-        this.SelectedRtf = $@"{{\rtf1\ansi {text.TrimEnd()}\v #{hyperlink}\v0}}";
-        this.Select(position, text.Length + hyperlink.Length + 1);
-        this.SetSelectionLink(true);
-        this.Select(position + text.Length + hyperlink.Length + 1, 0);
+        SelectionStart = position;
+        SelectedRtf = $@"{{\rtf1\ansi {text.TrimEnd()}\v #{hyperlink}\v0}}";
+        Select(position, text.Length + hyperlink.Length + 1);
+        SetSelectionLink(true);
+        Select(position + text.Length + hyperlink.Length + 1, 0);
 
         //avoids bong
         if(suffix != "")
-            this.SelectedText = suffix;
+            SelectedText = suffix;
 
     }
 

@@ -736,7 +736,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         {
             CatalogueType typeAsEnum;
 
-            if (CatalogueType.TryParse(type.ToString(), true, out typeAsEnum))
+            if (Enum.TryParse(type.ToString(), true, out typeAsEnum))
                 Type = typeAsEnum;
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
@@ -751,7 +751,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         {
             CataloguePeriodicity periodicityAsEnum;
 
-            if (CataloguePeriodicity.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
+            if (Enum.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
                 Periodicity = periodicityAsEnum;
             else
             {
@@ -767,7 +767,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         {
             CatalogueGranularity granularityAsEnum;
 
-            if (CatalogueGranularity.TryParse(granularity.ToString(), true, out granularityAsEnum))
+            if (Enum.TryParse(granularity.ToString(), true, out granularityAsEnum))
                 Granularity = granularityAsEnum;
             else
                 throw new Exception(
@@ -856,10 +856,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         if (obj is Catalogue)
         {
-            return -obj.ToString().CompareTo(this.ToString()); //sort alphabetically (reverse)
+            return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
         }
 
-        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
+        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
 
     /// <summary>
@@ -882,7 +882,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         foreach (TableInfo t in tables)
             t.Check(notifier);
 
-        var extractionInformations = this.GetAllExtractionInformation(ExtractionCategory.Core);
+        var extractionInformations = GetAllExtractionInformation(ExtractionCategory.Core);
             
         if (extractionInformations.Any())
         {
@@ -1091,7 +1091,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public LogManager GetLogManager()
     {
         if(LiveLoggingServer_ID == null) 
-            throw new Exception($"No live logging server set for Catalogue {this.Name}");
+            throw new Exception($"No live logging server set for Catalogue {Name}");
                 
         var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 

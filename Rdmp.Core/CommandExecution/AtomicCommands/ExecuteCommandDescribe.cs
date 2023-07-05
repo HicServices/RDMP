@@ -53,7 +53,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         {
             // Maybe they typed the alias or name of a command
             _nonDatabaseObjectToDescribe = new CommandInvoker(BasicActivator).GetSupportedCommands()
-                .FirstOrDefault(t=>BasicCommandExecution.HasCommandNameOrAlias(t,picker[0].RawValue));
+                .FirstOrDefault(t=>HasCommandNameOrAlias(t,picker[0].RawValue));
                 
                     
             if(_nonDatabaseObjectToDescribe == null)

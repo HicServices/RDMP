@@ -13,7 +13,7 @@ using ScintillaNET;
 
 namespace Rdmp.UI.ScintillaHelper;
 
-[System.ComponentModel.DesignerCategory("")]
+[DesignerCategory("")]
 internal class ScintillaMenu:ContextMenuStrip
 {
         
@@ -42,11 +42,11 @@ internal class ScintillaMenu:ContextMenuStrip
 
     private void InitContextMenu(bool spellCheck)
     {
-        this._miUndo = new ToolStripMenuItem("Undo",null, (s, ea) => _scintilla.Undo());
-        Items.Add(this._miUndo);
-        this._miRedo = new ToolStripMenuItem("Redo", null, (s, ea) => _scintilla.Redo());
+        _miUndo = new ToolStripMenuItem("Undo",null, (s, ea) => _scintilla.Undo());
+        Items.Add(_miUndo);
+        _miRedo = new ToolStripMenuItem("Redo", null, (s, ea) => _scintilla.Redo());
 
-        Items.Add(this._miRedo);
+        Items.Add(_miRedo);
 
         if (spellCheck)
         {
@@ -76,16 +76,16 @@ internal class ScintillaMenu:ContextMenuStrip
 
         Items.Add(new ToolStripSeparator());
 
-        this._miCut = new ToolStripMenuItem("Cut", null, (s, ea) => _scintilla.Cut());
+        _miCut = new ToolStripMenuItem("Cut", null, (s, ea) => _scintilla.Cut());
         Items.Add(_miCut);
-        this._miCopy = new ToolStripMenuItem("Copy", null, (s, ea) => _scintilla.Copy());
+        _miCopy = new ToolStripMenuItem("Copy", null, (s, ea) => _scintilla.Copy());
         Items.Add(_miCopy);
         Items.Add(new ToolStripMenuItem("Paste", null, (s, ea) => _scintilla.Paste()));
-        this._miDelete = new ToolStripMenuItem("Delete", null, (s, ea) => _scintilla.ReplaceSelection(""));
+        _miDelete = new ToolStripMenuItem("Delete", null, (s, ea) => _scintilla.ReplaceSelection(""));
         Items.Add(_miDelete);
         Items.Add(new ToolStripSeparator());
 
-        this._miSelectAll = new ToolStripMenuItem("Select All", null, (s, ea) => _scintilla.SelectAll());
+        _miSelectAll = new ToolStripMenuItem("Select All", null, (s, ea) => _scintilla.SelectAll());
         Items.Add(_miSelectAll);
     }
 

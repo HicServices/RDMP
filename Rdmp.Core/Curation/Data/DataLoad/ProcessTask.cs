@@ -160,13 +160,13 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
 
         ProcessTaskType processTaskType;
 
-        if (ProcessTaskType.TryParse(r["ProcessTaskType"] as string, out processTaskType))
+        if (Enum.TryParse(r["ProcessTaskType"] as string, out processTaskType))
             ProcessTaskType = processTaskType;
         else
             throw new Exception($"Could not parse ProcessTaskType:{r["ProcessTaskType"]}");
 
         LoadStage loadStage;
-        if (LoadStage.TryParse(r["LoadStage"] as string, out loadStage))
+        if (Enum.TryParse(r["LoadStage"] as string, out loadStage))
             LoadStage = loadStage;
         else
             throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");

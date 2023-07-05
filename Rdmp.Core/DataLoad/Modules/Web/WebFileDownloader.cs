@@ -90,12 +90,12 @@ public class WebFileDownloader : IPluginDataProvider
 
     public string GetDescription()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public IDataProvider Clone()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public bool Validate(ILoadDirectory _)

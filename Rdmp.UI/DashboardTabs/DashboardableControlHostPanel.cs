@@ -43,7 +43,7 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
 
         pbDelete.Visible = false;
             
-        this.Controls.Add((Control)HostedControl);
+        Controls.Add((Control)HostedControl);
             
         AdjustControlLocation();
     }

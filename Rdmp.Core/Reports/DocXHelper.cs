@@ -285,7 +285,7 @@ public class DocXHelper
         public XWPFDocumentFile(FileInfo fileInfo,FileStream stream)
         {
             FileInfo = fileInfo;
-            this._stream = stream;
+            _stream = stream;
         }
 
 

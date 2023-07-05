@@ -701,12 +701,12 @@ public abstract class BasicActivateItems : IBasicActivateItems
         var projectNumber = project?.ProjectNumber;
         string name;
 
-        if(!this.TypeText("Name","Enter name for cohort",255,null,out name,false))
+        if(!TypeText("Name","Enter name for cohort",255,null,out name,false))
             throw new Exception("User chose not to enter a name for the cohortand none was provided");
 
 
         if(projectNumber == null)
-            if(this.SelectValueType("enter project number",typeof(int),0,out var chosen))
+            if(SelectValueType("enter project number",typeof(int),0,out var chosen))
             {
                 projectNumber = (int)chosen;
             }
@@ -714,7 +714,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                 throw new Exception("User chose not to enter a Project number and none was provided");
 
             
-        if(this.SelectValueType("enter version number for cohort",typeof(int),0,out var chosenVersion))
+        if(SelectValueType("enter version number for cohort",typeof(int),0,out var chosenVersion))
         {
             version = (int)chosenVersion;
         }

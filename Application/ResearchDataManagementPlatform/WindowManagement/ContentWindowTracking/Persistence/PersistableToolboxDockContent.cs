@@ -52,7 +52,7 @@ public class PersistableToolboxDockContent:DockContent
     public static RDMPCollection? GetToolboxFromPersistString(string persistString)
     {
         var helper = new PersistStringHelper();
-        var s = persistString.Substring(PersistableToolboxDockContent.Prefix.Length + 1);
+        var s = persistString.Substring(Prefix.Length + 1);
 
         var args = helper.LoadDictionaryFromString(s);
 

@@ -17,7 +17,7 @@ public class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
 {
     public bool Equals(DirectoryInfo x, DirectoryInfo y)
     {
-        if (object.ReferenceEquals(x, y))
+        if (ReferenceEquals(x, y))
             return true;
         if (x == null || y == null)
             return false;

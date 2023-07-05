@@ -363,7 +363,7 @@ public class LookupTest : DatabaseTests
     [TestCase(LookupTestCase.SingleKeySingleDescription)]
     public void TestLookupCommand(LookupTestCase testCase)
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         var dt = new DataTable();
         dt.Columns.Add("ID");

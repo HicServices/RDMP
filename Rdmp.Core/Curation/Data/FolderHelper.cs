@@ -35,7 +35,7 @@ public static class FolderHelper
 
             if(string.IsNullOrWhiteSpace(candidate))
             {
-                candidate = FolderHelper.Root;
+                candidate = Root;
             }
 
             return candidate;

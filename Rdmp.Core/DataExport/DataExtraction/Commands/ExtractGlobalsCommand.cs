@@ -30,9 +30,9 @@ public class ExtractGlobalsCommand : ExtractCommand
 
     public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project, ExtractionConfiguration configuration, GlobalsBundle globals):base(configuration)
     {
-        this.RepositoryLocator = repositoryLocator;
+        RepositoryLocator = repositoryLocator;
         this.project = project;
-        this.Globals = globals;
+        Globals = globals;
 
         ExtractionResults = new List<IExtractionResults>();
     }

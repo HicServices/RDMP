@@ -357,7 +357,7 @@ e.g. /$i/$a")]
                 var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(
                     $"SELECT * FROM {lookup.TableInfo.Name}", lookup.TableInfo);
-                supplementalResult.CompleteAudit(this.GetType(), destinationDescription, linesWritten,false,false);
+                supplementalResult.CompleteAudit(GetType(), destinationDescription, linesWritten,false,false);
             }
 
             return true;
@@ -392,7 +392,7 @@ e.g. /$i/$a")]
             {
                 var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
-                supplementalResult.CompleteAudit(this.GetType(), outputPath, 0,false , false);
+                supplementalResult.CompleteAudit(GetType(), outputPath, 0,false , false);
             }
             else
             {
@@ -402,7 +402,7 @@ e.g. /$i/$a")]
                     extractGlobalsCommand.Configuration,
                     null,
                     doc);
-                result.CompleteAudit(this.GetType(), outputPath, 0,false,false);
+                result.CompleteAudit(GetType(), outputPath, 0,false,false);
                 extractGlobalsCommand.ExtractionResults.Add(result);
             }
 
@@ -442,7 +442,7 @@ e.g. /$i/$a")]
             {
                 var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
-                supplementalResult.CompleteAudit(this.GetType(),description , sqlLinesWritten, false,false);
+                supplementalResult.CompleteAudit(GetType(),description , sqlLinesWritten, false,false);
             }
             else
             {
@@ -453,7 +453,7 @@ e.g. /$i/$a")]
                         extractGlobalsCommand.Configuration,
                         sql.SQL,
                         sql);
-                result.CompleteAudit(this.GetType(), description, sqlLinesWritten, false, false);
+                result.CompleteAudit(GetType(), description, sqlLinesWritten, false, false);
                 extractGlobalsCommand.ExtractionResults.Add(result);
             }
 

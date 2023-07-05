@@ -22,7 +22,7 @@ public class ExecuteCommandAddPackageToConfiguration : BasicCommandExecution, IA
 
     public ExecuteCommandAddPackageToConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration):base(activator)
     {
-        this._extractionConfiguration = extractionConfiguration;
+        _extractionConfiguration = extractionConfiguration;
 
         if(extractionConfiguration.IsReleased)
             SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");

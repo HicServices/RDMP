@@ -264,6 +264,6 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
 
     public string GetSummary(bool includeName, bool includeId)
     {
-        return $"External Cohort Table: {this.NewCohortDefinition?.LocationOfCohort}";
+        return $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";
     }
 }

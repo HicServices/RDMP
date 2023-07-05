@@ -97,10 +97,10 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
     public string AddFilenameColumnNamed { get; set; }
 
-    [DemandsInitialization(Attacher.Culture_DemandDescription)]
+    [DemandsInitialization(Culture_DemandDescription)]
     public override CultureInfo Culture { get => _source.Culture; set => _source.Culture = value; }
 
-    [DemandsInitialization(Attacher.ExplicitDateTimeFormat_DemandDescription)]
+    [DemandsInitialization(ExplicitDateTimeFormat_DemandDescription)]
     public override string ExplicitDateTimeFormat {get => _source.ExplicitDateTimeFormat; set => _source.ExplicitDateTimeFormat = value; }
 
 

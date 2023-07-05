@@ -185,43 +185,43 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     #region InitializeComponent
     private void InitializeComponent()
     {
-        this.olvTree = new BrightIdeasSoftware.TreeListView();
-        this.olvName = (BrightIdeasSoftware.OLVColumn)new BrightIdeasSoftware.OLVColumn();
-        ((System.ComponentModel.ISupportInitialize)this.olvTree).BeginInit();
-        this.SuspendLayout();
+        olvTree = new BrightIdeasSoftware.TreeListView();
+        olvName = (BrightIdeasSoftware.OLVColumn)new BrightIdeasSoftware.OLVColumn();
+        ((System.ComponentModel.ISupportInitialize)olvTree).BeginInit();
+        SuspendLayout();
         // 
         // olvRecent
         // 
-        this.olvTree.AllColumns.Add(this.olvName);
-        this.olvTree.CellEditUseWholeCell = false;
-        this.olvTree.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
-        this.olvTree.Cursor = System.Windows.Forms.Cursors.Default;
-        this.olvTree.Dock = System.Windows.Forms.DockStyle.Fill;
-        this.olvTree.FullRowSelect = true;
-        this.olvTree.HideSelection = false;
-        this.olvTree.Location = new System.Drawing.Point(0, 0);
-        this.olvTree.Name = "olvRecent";
-        this.olvTree.RowHeight = 19;
-        this.olvTree.ShowGroups = false;
-        this.olvTree.Size = new System.Drawing.Size(487, 518);
-        this.olvTree.TabIndex = 4;
-        this.olvTree.UseCompatibleStateImageBehavior = false;
-        this.olvTree.View = System.Windows.Forms.View.Details;
-        this.olvTree.VirtualMode = true;
+        olvTree.AllColumns.Add(olvName);
+        olvTree.CellEditUseWholeCell = false;
+        olvTree.Columns.AddRange(new ColumnHeader[] {
+            olvName});
+        olvTree.Cursor = Cursors.Default;
+        olvTree.Dock = DockStyle.Fill;
+        olvTree.FullRowSelect = true;
+        olvTree.HideSelection = false;
+        olvTree.Location = new System.Drawing.Point(0, 0);
+        olvTree.Name = "olvRecent";
+        olvTree.RowHeight = 19;
+        olvTree.ShowGroups = false;
+        olvTree.Size = new System.Drawing.Size(487, 518);
+        olvTree.TabIndex = 4;
+        olvTree.UseCompatibleStateImageBehavior = false;
+        olvTree.View = View.Details;
+        olvTree.VirtualMode = true;
         // 
         // olvName
         // 
-        this.olvName.Groupable = false;
-        this.olvName.Text = "Name";
+        olvName.Groupable = false;
+        olvName.Text = "Name";
         // 
         // SessionCollectionUI
         // 
-        this.Controls.Add(this.olvTree);
-        this.Name = "SessionCollectionUI";
-        this.Size = new System.Drawing.Size(487, 518);
-        ((System.ComponentModel.ISupportInitialize)this.olvTree).EndInit();
-        this.ResumeLayout(false);
+        Controls.Add(olvTree);
+        Name = "SessionCollectionUI";
+        Size = new System.Drawing.Size(487, 518);
+        ((System.ComponentModel.ISupportInitialize)olvTree).EndInit();
+        ResumeLayout(false);
 
     }
 

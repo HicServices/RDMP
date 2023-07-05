@@ -71,6 +71,6 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 
             }
 
-        return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+        return String.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
 }

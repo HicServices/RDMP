@@ -68,7 +68,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
             if (dbToExtractTo.Exists())
                 dbToExtractTo.Drop();
 
-            base.ExecuteRunner();
+            ExecuteRunner();
 
             var destinationTable = dbToExtractTo.ExpectTable(_expectedTableName);
             Assert.IsTrue(destinationTable.Exists());

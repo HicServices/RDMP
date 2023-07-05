@@ -294,7 +294,7 @@ where
         using (var con = cohortTable.Database.Server.GetConnection())
         {
             con.Open();
-            var sql = $"SELECT DISTINCT * FROM {cohortTable.GetFullyQualifiedName()} WHERE {this.WhereSQL()}";
+            var sql = $"SELECT DISTINCT * FROM {cohortTable.GetFullyQualifiedName()} WHERE {WhereSQL()}";
 
             var da = cohortTable.Database.Server.GetDataAdapter(sql, con);
             var dtReturn = new DataTable();

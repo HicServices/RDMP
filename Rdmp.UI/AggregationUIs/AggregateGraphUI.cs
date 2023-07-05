@@ -235,7 +235,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                         "Window Handle was not created on AggregateGraph control after 10 seconds of calling LoadGraph!");
             }
                 
-            this.Invoke(new MethodInvoker(() =>
+            Invoke(new MethodInvoker(() =>
             {
                 lblLoadStage.Visible = true;
                 lblLoadStage.Text = "Generating Query...";
@@ -252,7 +252,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(
                     DataAccessContext.InternalDataProcessing,true);
 
-            this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Connecting To Server..."; }));
+            Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Connecting To Server..."; }));
 
             using (var con = server.GetConnection())
             {
@@ -263,7 +263,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
                 _dt = new DataTable();
 
-                this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
+                Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
 
                 var adapter = server.GetDataAdapter(_cmd);
                 adapter.Fill(_dt);
@@ -280,9 +280,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
                 //setup the heatmap if there is a pivot
                 if (_dt.Columns.Count > 2 && AggregateConfiguration.PivotOnDimensionID != null)
-                    this.Invoke(new MethodInvoker(() => heatmapUI.SetDataTable(_dt)));
+                    Invoke(new MethodInvoker(() => heatmapUI.SetDataTable(_dt)));
                 else
-                    this.Invoke(new MethodInvoker(() => heatmapUI.Clear()));
+                    Invoke(new MethodInvoker(() => heatmapUI.Clear()));
 
 
                 if (GraphTableRetrieved != null)
@@ -292,7 +292,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     throw new NotSupportedException("Aggregates must have 2 columns at least");
 
                 //Invoke onto main UI thread so we can setup the chart
-                this.Invoke(new MethodInvoker(() =>
+                Invoke(new MethodInvoker(() =>
                 {
                     PopulateGraphResults(countColumn, axis);
                     Done = true;

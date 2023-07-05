@@ -40,7 +40,7 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((PersistableObjectCollection) obj);
     }
 
@@ -49,12 +49,12 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
         unchecked
         {
             return
-                (397 * (this.DatabaseObjects != null ?
-                        this.DatabaseObjects.Aggregate(0, (old, curr) =>
+                (397 * (DatabaseObjects != null ?
+                        DatabaseObjects.Aggregate(0, (old, curr) =>
                             (old * 397) ^ (curr != null ? curr.GetHashCode() : 0)) :
                         0)
                 ) ^
-                (this.SaveExtraText() != null ? this.SaveExtraText().GetHashCode() : 0);
+                (SaveExtraText() != null ? SaveExtraText().GetHashCode() : 0);
         } 
     }
 }

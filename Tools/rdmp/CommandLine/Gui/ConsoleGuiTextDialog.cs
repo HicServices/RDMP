@@ -19,7 +19,7 @@ internal class ConsoleGuiTextDialog
     public ConsoleGuiTextDialog(DialogArgs args, string initialValue)
     {
         _args = args;
-        this._initialValue = initialValue;
+        _initialValue = initialValue;
     }
 
     public int? MaxLength { get; set; }

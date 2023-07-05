@@ -380,7 +380,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
             if (result != null && _toProcess != null)
-                result.CompleteAudit(this.GetType(), GetDestinationDescription(), TableLoadInfo.Inserts, _request.IsBatchResume, pipelineFailureExceptionIfAny != null);
+                result.CompleteAudit(GetType(), GetDestinationDescription(), TableLoadInfo.Inserts, _request.IsBatchResume, pipelineFailureExceptionIfAny != null);
         }
     }
 

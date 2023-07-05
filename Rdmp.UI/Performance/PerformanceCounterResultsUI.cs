@@ -182,7 +182,7 @@ public partial class PerformanceCounterResultsUI : UserControl
         {
             if(model.HasSourceCode)
             {
-                var dialog = new Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
+                var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
                 dialog.Show();
             }
         }

@@ -39,8 +39,8 @@ public partial class ObjectSaverButton
 
     public ObjectSaverButton()
     {
-        this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-        this.btnUndoRedo.Click += new System.EventHandler(this.btnUndoRedo_Click);
+        btnSave.Click += new EventHandler(btnSave_Click);
+        btnUndoRedo.Click += new EventHandler(btnUndoRedo_Click);
             
         _undoImage = FamFamFamIcons.Undo.ImageToBitmap();
         _redoImage = FamFamFamIcons.Redo.ImageToBitmap();

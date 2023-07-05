@@ -71,7 +71,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
         }
     }
         
-    private void btnLaunchCustomUI_Click(object sender, System.EventArgs e)
+    private void btnLaunchCustomUI_Click(object sender, EventArgs e)
     {
         try
         {

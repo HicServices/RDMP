@@ -26,10 +26,10 @@ public class ExecuteCommandGenerateTestData : BasicCommandExecution
 
     public ExecuteCommandGenerateTestData(IBasicActivateItems activator, string datasetName, int numberOfPeople, int numberOfRecords, int seed, string toFile):base(activator)
     {
-        this._datasetName = datasetName;
-        this._numberOfPeople = numberOfPeople;
-        this._numberOfRecords = numberOfRecords;
-        this._toFile = toFile;
+        _datasetName = datasetName;
+        _numberOfPeople = numberOfPeople;
+        _numberOfRecords = numberOfRecords;
+        _toFile = toFile;
 
         var dataGeneratorFactory = new DataGeneratorFactory();
         var match = dataGeneratorFactory.GetAvailableGenerators().FirstOrDefault(g=>g.Name.Contains(datasetName,StringComparison.InvariantCultureIgnoreCase));

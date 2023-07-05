@@ -258,7 +258,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
         //note that this only deals with clicking cells, to see what happens hwen user clicks in blank area of datagrid see dataGridView1_MouseClick
         if (e.RowIndex >= 0)
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                     
                 menu.Items.Clear();
@@ -372,7 +372,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     {
         dataGridView1.Visible = false;
         lblExtractions.Visible = false;
-        this.Height = 190;
+        Height = 190;
     }
 
     private void btnBrowse_Click(object sender, EventArgs e)

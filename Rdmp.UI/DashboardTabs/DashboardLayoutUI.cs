@@ -64,7 +64,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
     {
         //remove old controls
         foreach (var kvp in ControlDictionary)
-            this.Controls.Remove(kvp.Value);
+            Controls.Remove(kvp.Value);
 
         //restart audit of controls
         ControlDictionary.Clear();
@@ -97,7 +97,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
             }
 
             ControlDictionary.Add(c,instance);
-            this.Controls.Add(instance);
+            Controls.Add(instance);
                 
             //let people know what the edit state is
             _editModeFunctionality.EditMode = btnEditMode.Checked;
@@ -134,7 +134,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 
         DashboardableControlHostPanel control;
         var db = _controlFactory.Create(_layout, type, out control);
-        this.Controls.Add(control);
+        Controls.Add(control);
         ControlDictionary.Add(db,control);
         Controls.Add(control);
         control.BringToFront();

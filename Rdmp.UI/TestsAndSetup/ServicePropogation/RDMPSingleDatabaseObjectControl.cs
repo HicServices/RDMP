@@ -82,7 +82,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             _colorIndicator.Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight);
             _colorIndicator.TabIndex = 0;
             _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
-            this.Controls.Add(this._colorIndicator);
+            Controls.Add(_colorIndicator);
         }
 
         if (_readonlyIndicator == null)
@@ -93,9 +93,9 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             _readonlyIndicator.Size = new Size(150, 20);
             _readonlyIndicator.TabIndex = 0;
             _readonlyIndicator.TextAlign = ContentAlignment.MiddleLeft;
-            _readonlyIndicator.BackColor = System.Drawing.SystemColors.HotTrack;
-            _readonlyIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (byte)0);
-            _readonlyIndicator.ForeColor = System.Drawing.Color.Moccasin;
+            _readonlyIndicator.BackColor = SystemColors.HotTrack;
+            _readonlyIndicator.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0);
+            _readonlyIndicator.ForeColor = Color.Moccasin;
 
         }
 
@@ -104,13 +104,13 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             if (ro.ShouldBeReadOnly(out var reason))
             {
                 _readonlyIndicator.Text = reason;
-                this.Controls.Add(this._readonlyIndicator);
+                Controls.Add(_readonlyIndicator);
                 ReadOnly = true;
             }
             else
             {
                 //removing it allows us to handle refreshes (where something becomes unfrozen for example)
-                this.Controls.Remove(this._readonlyIndicator);
+                Controls.Remove(_readonlyIndicator);
                 ReadOnly = false;
             }
         }

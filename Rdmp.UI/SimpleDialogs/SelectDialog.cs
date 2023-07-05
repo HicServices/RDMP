@@ -171,7 +171,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             _allObjects = toSelectFrom.ToArray();
                 
             // don't bother with the tool strip because its not database objects so we can't filter by ID/type etc
-            this.Controls.Remove(toolStrip1);
+            Controls.Remove(toolStrip1);
         }
 
         taskDescriptionLabel1.SetupFor(args);
@@ -575,7 +575,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
             MultiSelected = new HashSet<T>(new[] { Selected });
             DialogResult = DialogResult.OK;
-            this.Close();
+            Close();
         }
     }
     private void listBox1_KeyUp(object sender, KeyEventArgs e)
@@ -606,7 +606,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             if(AllowMultiSelect && MultiSelected.Any())
             {
                 // select only those
-                this.Close();
+                Close();
                 return;
             }
 
@@ -614,7 +614,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 return;
 
             MultiSelected = new HashSet<T>(new[] { Selected });
-            this.Close();
+            Close();
         }
 
         //space flips the selectedness of the objects that are selected
@@ -827,7 +827,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             Selected = (T)olv.SelectedObject;
 
         DialogResult = DialogResult.OK;
-        this.Close();
+        Close();
     }
 
     private void btnSelectNULL_Click(object sender, EventArgs e)
@@ -835,7 +835,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         Selected = default(T);
         MultiSelected = new HashSet<T>();
         DialogResult = DialogResult.OK;
-        this.Close();
+        Close();
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -843,7 +843,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         Selected = default(T);
         MultiSelected = new HashSet<T>();
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
     public void SetInitialSelection(IEnumerable<T> toSelect)
     {

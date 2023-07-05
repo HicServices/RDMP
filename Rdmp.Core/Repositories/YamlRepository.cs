@@ -617,7 +617,7 @@ public class YamlRepository : MemoryDataExportRepository
                 return new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order);
             }
 
-            throw new System.Exception($"Unexpected IOrderable Type name '{Type}'");
+            throw new Exception($"Unexpected IOrderable Type name '{Type}'");
         }
     }
 

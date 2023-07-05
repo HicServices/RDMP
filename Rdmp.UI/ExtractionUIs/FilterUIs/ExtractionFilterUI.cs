@@ -220,7 +220,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
 
         if (e.Object.Equals(_extractionFilter))
             if (!e.Object.Exists()) //its deleted
-                this.ParentForm.Close();
+                ParentForm.Close();
             else
                 _extractionFilter = (IFilter)e.Object;
     }

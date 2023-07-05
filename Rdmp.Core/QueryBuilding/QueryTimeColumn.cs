@@ -99,7 +99,7 @@ public class QueryTimeColumn: IComparable
     {
         if (obj is QueryTimeColumn)
         {
-            return this.IColumn.Order -
+            return IColumn.Order -
                    (obj as QueryTimeColumn).IColumn.Order;
         }
 
@@ -231,14 +231,14 @@ public class QueryTimeColumn: IComparable
     /// <returns></returns>
     public string GetSelectSQL(string hashingPattern, string salt,IQuerySyntaxHelper syntaxHelper)
     {
-        var toReturn = this.IColumn.SelectSQL;
+        var toReturn = IColumn.SelectSQL;
 
         //deal with hashing
-        if (string.IsNullOrWhiteSpace(salt) == false && this.IColumn.HashOnDataRelease)
+        if (string.IsNullOrWhiteSpace(salt) == false && IColumn.HashOnDataRelease)
         {
-            if (string.IsNullOrWhiteSpace(this.IColumn.Alias))
+            if (string.IsNullOrWhiteSpace(IColumn.Alias))
                 throw new ArgumentException(
-                    $"IExtractableColumn {this.IColumn} is missing an Alias (required for hashing)");
+                    $"IExtractableColumn {IColumn} is missing an Alias (required for hashing)");
 
             //if there is no custom hashing pattern
             if (string.IsNullOrWhiteSpace(hashingPattern))
@@ -254,8 +254,8 @@ public class QueryTimeColumn: IComparable
         toReturn = string.Join(" ", trimmedSelectSQL);
                 
         //append alias to the end of the line if there is an alias
-        if (!string.IsNullOrWhiteSpace(this.IColumn.Alias))
-            toReturn += syntaxHelper.AliasPrefix + this.IColumn.Alias.Trim();
+        if (!string.IsNullOrWhiteSpace(IColumn.Alias))
+            toReturn += syntaxHelper.AliasPrefix + IColumn.Alias.Trim();
 
         //cannot be both, we check for this earlier (see SetLookupStatus)
         Debug.Assert(!(IsLookupDescription && IsLookupForeignKey));
@@ -311,6 +311,6 @@ public class QueryTimeColumn: IComparable
             return false;
 
         //see if the description is used anywhere in the actual query columns!
-        return selectColumns.Any(c => c.IsLookupDescription && c.LookupTable.ID == this.LookupTable.ID);
+        return selectColumns.Any(c => c.IsLookupDescription && c.LookupTable.ID == LookupTable.ID);
     }
 }

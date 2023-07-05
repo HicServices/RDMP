@@ -50,14 +50,14 @@ public partial class PipelineDiagramUI : UserControl
 
     public PipelineDiagramUI(IActivateItems activator)
     {
-        this._activator = activator;
+        _activator = activator;
 
         InitializeComponent();
         AllowSelection = false;
 
-        this.Controls.Add(pipelineSmiley);
+        Controls.Add(pipelineSmiley);
         pipelineSmiley.Anchor = AnchorStyles.Top|AnchorStyles.Right;
-        pipelineSmiley.Left = this.Width - pipelineSmiley.Width - 1;
+        pipelineSmiley.Left = Width - pipelineSmiley.Width - 1;
         pipelineSmiley.Top = 1;
         pipelineSmiley.BringToFront();
 
@@ -297,7 +297,7 @@ public partial class PipelineDiagramUI : UserControl
         ((PipelineComponentVisualisation) sender).IsSelected = true;
         SelectedComponentChanged?.Invoke(this, selected);
 
-        this.Focus();
+        Focus();
     }
 
     private void AddExplicit(object value)

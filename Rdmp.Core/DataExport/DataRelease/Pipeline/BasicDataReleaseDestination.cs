@@ -47,7 +47,7 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
                     
             var recordsDeleted = 0;
 
-            foreach (var configuration in this._releaseData.ConfigurationsForRelease.Keys)
+            foreach (var configuration in _releaseData.ConfigurationsForRelease.Keys)
             {
                 var current = configuration;
                 var currentResults = configuration.CumulativeExtractionResults;
@@ -136,6 +136,6 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
 
     public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
     {
-        this._releaseData = value;
+        _releaseData = value;
     }
 }

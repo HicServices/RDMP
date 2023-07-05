@@ -41,9 +41,9 @@ public class GlobalExtractionChecker : ICheckable
     /// <inheritdoc cref="GlobalExtractionChecker(IBasicActivateItems,ExtractionConfiguration)"/>
     public GlobalExtractionChecker(IBasicActivateItems activator,ExtractionConfiguration configuration, ExtractGlobalsCommand command, IPipeline alsoCheckPipeline)
     {
-        this._configuration = configuration;
-        this._command = command;
-        this._alsoCheckPipeline = alsoCheckPipeline;
+        _configuration = configuration;
+        _command = command;
+        _alsoCheckPipeline = alsoCheckPipeline;
         _activator = activator;
     }
 

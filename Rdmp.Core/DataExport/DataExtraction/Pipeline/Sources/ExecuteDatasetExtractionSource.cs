@@ -67,7 +67,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
 OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
-        ,DefaultValue = Sources.DistinctStrategy.SqlDistinct)]
+        ,DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
         

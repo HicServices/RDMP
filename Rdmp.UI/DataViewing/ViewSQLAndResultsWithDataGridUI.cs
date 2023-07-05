@@ -206,7 +206,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         tbErrors.Text = exception.Message;
         tbErrors.Dock = DockStyle.Fill;
             
-        base.CommonFunctionality.Fatal("Query failed",exception);
+        CommonFunctionality.Fatal("Query failed",exception);
     }
 
     private void HideFatal()
@@ -219,7 +219,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
         splitContainer1.Panel2.Controls.Add(dataGridView1);
         splitContainer1.Panel2.Controls.Remove(tbErrors);
-        base.CommonFunctionality.ResetChecks();
+        CommonFunctionality.ResetChecks();
 
     }
 

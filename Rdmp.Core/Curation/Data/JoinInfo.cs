@@ -146,7 +146,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
 
         ExtractionJoinType joinType;
 
-        if (ExtractionJoinType.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
+        if (Enum.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
             ExtractionJoinType = joinType;
         else
             throw new Exception($"Did not recognise ExtractionJoinType:{r["ExtractionJoinType"]}");

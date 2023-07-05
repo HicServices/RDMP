@@ -181,7 +181,7 @@ SELECT @@IDENTITY;", con);
                 }
 
                 //once a record has been commited to the database it is redundant and no further attempts to read/change it should be made by anyone
-                foreach (var t in this.TableLoads.Values)
+                foreach (var t in TableLoads.Values)
                 {
                     //close any table loads that have not yet completed
                     if (!t.IsClosed)

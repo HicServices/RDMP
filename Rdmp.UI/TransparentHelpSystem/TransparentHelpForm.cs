@@ -137,7 +137,7 @@ public class TransparentHelpForm:Form
     public void ShowWithoutActivate()
     {
         // Show the window without activating it (i.e. do not take focus)
-        ShowWindow(this.Handle, (short)SW_SHOWNOACTIVATE);
+        ShowWindow(Handle, (short)SW_SHOWNOACTIVATE);
     }
 
     protected override void WndProc(ref Message m)

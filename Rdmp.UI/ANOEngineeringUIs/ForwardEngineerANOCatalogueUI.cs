@@ -198,7 +198,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     #endregion
 
-    private void tlvTableInfoMigrations_CellEditStarting(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+    private void tlvTableInfoMigrations_CellEditStarting(object sender, CellEditEventArgs e)
     {
         if (e.RowObject is TableInfo)
             e.Cancel = true;
@@ -286,7 +286,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         }
     }
 
-    private void tlvTableInfoMigrations_CellEditFinishing(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+    private void tlvTableInfoMigrations_CellEditFinishing(object sender, CellEditEventArgs e)
     {
         try
         {
@@ -314,7 +314,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                 else
                 {
                     ExtractionCategory c;
-                    ExtractionCategory.TryParse((string) cbx.SelectedItem, out c);
+                    Enum.TryParse((string) cbx.SelectedItem, out c);
                     plan.ExtractionCategoryIfAny = c;
                 }
                         

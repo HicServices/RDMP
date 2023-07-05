@@ -261,7 +261,7 @@ public class MetadataReport:DocXHelper
             using(var cmd = DatabaseCommandHelper.GetCommand($"Select * from {lookupTable.Name}", con))
             using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
             {
-                var dt = new System.Data.DataTable();
+                var dt = new DataTable();
                 da.Fill(dt);
 
                 return dt;

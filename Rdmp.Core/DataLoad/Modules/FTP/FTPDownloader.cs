@@ -189,7 +189,7 @@ public class FTPDownloader : IPluginDataProvider
                 uri = $"ftp://{_host}";
 
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-            reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(uri));
+            reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
             reqFTP.UseBinary = true;
             reqFTP.Credentials = new NetworkCredential(_username, _password);
@@ -251,7 +251,7 @@ public class FTPDownloader : IPluginDataProvider
 
         FtpWebRequest reqFTP;
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-        reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(uri));
+        reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
         reqFTP.Credentials = new NetworkCredential(_username, _password);
         reqFTP.KeepAlive = false;
@@ -301,7 +301,7 @@ public class FTPDownloader : IPluginDataProvider
             {
                 FtpWebRequest reqFTP;
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-                reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(file));
+                reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(file));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
                 reqFTP.Credentials = new NetworkCredential(_username, _password);
                 reqFTP.KeepAlive = false;

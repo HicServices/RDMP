@@ -392,7 +392,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             try
             {
                 //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort 
-                var clone = this.ShallowClone();
+                var clone = ShallowClone();
 
                 //find each of the selected datasets for ourselves and clone those too
                 foreach (SelectedDataSets selected in SelectedDataSets)
@@ -452,7 +452,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 clone.ReleaseTicket = null;
 
                 //wire up some changes
-                clone.ClonedFrom_ID = this.ID;
+                clone.ClonedFrom_ID = ID;
                 clone.SaveToDatabase();
 
                 repo.EndTransaction(true);

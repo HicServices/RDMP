@@ -355,7 +355,7 @@ public class MemoryRepository : IRepository
     public Type[] GetCompatibleTypes()
     {
         return
-            this.GetType().Assembly.GetTypes()
+            GetType().Assembly.GetTypes()
                 .Where(
                     t =>
                         typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t)

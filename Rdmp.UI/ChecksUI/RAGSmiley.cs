@@ -42,12 +42,12 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
     private void SetCorrectCursor()
     {
         if (AlwaysShowHandCursor || memoryCheckNotifier.Messages.Any())
-            this.Cursor = Cursors.Hand;
+            Cursor = Cursors.Hand;
         else
         if (pbYellow.Tag != null || pbRed.Tag != null)
-            this.Cursor = Cursors.Hand;
+            Cursor = Cursors.Hand;
         else
-            this.Cursor = Cursors.Arrow;
+            Cursor = Cursors.Arrow;
     }
 
     public RAGSmiley()

@@ -127,7 +127,7 @@ public partial class ConsequenceBar : UserControl
 
     private double Truncate(double value, int digits)
     {
-        var mult = System.Math.Pow(10.0, digits);
-        return System.Math.Truncate(value * mult) / mult;
+        var mult = Math.Pow(10.0, digits);
+        return Math.Truncate(value * mult) / mult;
     }
 }

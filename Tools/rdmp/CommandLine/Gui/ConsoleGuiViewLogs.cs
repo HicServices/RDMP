@@ -27,9 +27,9 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
     public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject)
     {
-        this._activator = activator;
+        _activator = activator;
         Modal = true;
-        this._rootObject = rootObject;
+        _rootObject = rootObject;
 
         ColorScheme = ConsoleMainWindow.ColorScheme;
 

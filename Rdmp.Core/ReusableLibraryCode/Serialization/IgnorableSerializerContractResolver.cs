@@ -21,7 +21,7 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
 
     public IgnorableSerializerContractResolver()
     {
-        this.Ignores = new Dictionary<Type, HashSet<string>>();
+        Ignores = new Dictionary<Type, HashSet<string>>();
     }
 
     /// <summary>
@@ -32,11 +32,11 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
     public void Ignore(Type type, params string[] propertyName)
     {
         // start bucket if DNE
-        if (!this.Ignores.ContainsKey(type)) this.Ignores[type] = new HashSet<string>();
+        if (!Ignores.ContainsKey(type)) Ignores[type] = new HashSet<string>();
 
         foreach (var prop in propertyName)
         {
-            this.Ignores[type].Add(prop);
+            Ignores[type].Add(prop);
         }
     }
 
@@ -48,12 +48,12 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
     /// <returns></returns>
     public bool IsIgnored(Type type, string propertyName)
     {
-        if (!this.Ignores.ContainsKey(type)) return false;
+        if (!Ignores.ContainsKey(type)) return false;
 
         // if no properties provided, ignore the type entirely
-        if (this.Ignores[type].Count == 0) return true;
+        if (Ignores[type].Count == 0) return true;
 
-        return this.Ignores[type].Contains(propertyName);
+        return Ignores[type].Contains(propertyName);
     }
 
     /// <summary>
@@ -66,9 +66,9 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
     {
         var property = base.CreateProperty(member, memberSerialization);
 
-        if (this.IsIgnored(property.DeclaringType, property.PropertyName)
+        if (IsIgnored(property.DeclaringType, property.PropertyName)
             // need to check basetype as well for EF -- @per comment by user576838 - LT: but it can be null, so check that too!
-            || (property.DeclaringType.BaseType != null && this.IsIgnored(property.DeclaringType.BaseType, property.PropertyName)))
+            || (property.DeclaringType.BaseType != null && IsIgnored(property.DeclaringType.BaseType, property.PropertyName)))
         {
             property.ShouldSerialize = instance => { return false; };
         }

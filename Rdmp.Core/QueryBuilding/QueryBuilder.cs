@@ -220,7 +220,7 @@ public class QueryBuilder : ISqlQueryBuilder
                 if (!TablesUsedInQuery.Contains(force))
                     TablesUsedInQuery.Add(force);
 
-        this.PrimaryExtractionTable = primary;
+        PrimaryExtractionTable = primary;
             
         SqlQueryBuilderHelper.FindLookups(this);
 

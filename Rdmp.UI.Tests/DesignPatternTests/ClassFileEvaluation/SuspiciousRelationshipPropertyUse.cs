@@ -220,7 +220,7 @@ public class SuspiciousRelationshipPropertyUse
             if (toStringMethod == null)
                 continue;
 
-            if (toStringMethod.DeclaringType == typeof (System.Object))
+            if (toStringMethod.DeclaringType == typeof (Object))
                 continue;
 
             if (toStringMethod.DeclaringType == typeof (MarshalByRefObject))

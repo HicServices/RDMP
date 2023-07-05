@@ -55,8 +55,8 @@ internal class ConsoleGuiSqlEditor : Window
 
     public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
     {
-        this.Activator = activator;
-        this._collection = collection;
+        Activator = activator;
+        _collection = collection;
         Modal = true;
         ColorScheme = ConsoleMainWindow.ColorScheme;
 
@@ -357,9 +357,9 @@ internal class ConsoleGuiSqlEditor : Window
             
     }
 
-    private class SqlAutocomplete : Terminal.Gui.TextViewAutocomplete
+    private class SqlAutocomplete : TextViewAutocomplete
     {
-        public override bool IsWordChar(System.Rune rune)
+        public override bool IsWordChar(Rune rune)
         {
             return (char)rune == '_' || base.IsWordChar(rune);
         }
@@ -407,7 +407,7 @@ internal class ConsoleGuiSqlEditor : Window
             Driver.SetAttribute(_white);
         }
 
-        protected override void SetNormalColor(List<System.Rune> line, int idx)
+        protected override void SetNormalColor(List<Rune> line, int idx)
         {
             Driver.SetAttribute(IsKeyword(line, idx) ? _blue : _white);
         }

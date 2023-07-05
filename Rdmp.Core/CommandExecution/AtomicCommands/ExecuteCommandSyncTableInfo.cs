@@ -35,9 +35,9 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
         [DemandsInitialization("True to accept all changes without prompting")]
         bool autoYes):base(activator)
     {
-        this._tableInfo = table;
-        this._alsoSyncAno = alsoSyncAno;
-        this._autoYes = autoYes;
+        _tableInfo = table;
+        _alsoSyncAno = alsoSyncAno;
+        _autoYes = autoYes;
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

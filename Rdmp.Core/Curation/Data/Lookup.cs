@@ -184,7 +184,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
 
         ExtractionJoinType joinType;
 
-        if (ExtractionJoinType.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
+        if (Enum.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
             ExtractionJoinType = joinType;
         else
             throw new Exception($"Did not recognise ExtractionJoinType:{r["ExtractionJoinType"]}");
@@ -258,11 +258,11 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             
         if (ForeignKey.TableInfo_ID == PrimaryKey.TableInfo_ID)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Foreign Key and Primary Key are from the same table for Lookup {this.ID}",CheckResult.Fail));
+                $"Foreign Key and Primary Key are from the same table for Lookup {ID}",CheckResult.Fail));
 
         if (Description.TableInfo_ID != PrimaryKey.TableInfo_ID)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {this.ID}", CheckResult.Fail));
+                $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {ID}", CheckResult.Fail));
     }
         
     /// <inheritdoc/>

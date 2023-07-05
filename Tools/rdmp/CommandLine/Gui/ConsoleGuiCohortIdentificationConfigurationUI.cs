@@ -32,7 +32,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
             
         Modal = true;
 
-        this._activator = activator;
+        _activator = activator;
         Common.Activator = activator;
             
         Common.Compiler.CoreChildProvider = activator.CoreChildProvider;

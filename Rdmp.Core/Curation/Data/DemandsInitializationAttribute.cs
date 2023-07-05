@@ -15,8 +15,8 @@ namespace Rdmp.Core.Curation.Data;
 /// with this attribute to allow the user  to define values for the Pipeline when they build it.  Each Demand will be serialised as a 
 /// PipelineComponentArgument/ProcessTaskArgument.
 /// </summary>
-[System.AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
-public class DemandsInitializationAttribute : System.Attribute
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
+public class DemandsInitializationAttribute : Attribute
 {
     /// <summary>
     /// User readable description of what they are supposed to supply as values for the decorated property, allowable values etc
