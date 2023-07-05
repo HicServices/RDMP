@@ -292,7 +292,7 @@ public class SuggestComboBox : ComboBox
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        if ((e.KeyData == Keys.Enter) || (e.KeyData == Keys.Escape))
+        if (e.KeyData == Keys.Enter || e.KeyData == Keys.Escape)
         {
             e.SuppressKeyPress = true;
             return;

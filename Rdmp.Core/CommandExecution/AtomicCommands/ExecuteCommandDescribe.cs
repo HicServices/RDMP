@@ -333,7 +333,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         var line = new StringBuilder(width);
         foreach (var word in words)
         {
-            if ((line.Length + word.Length) >= width)
+            if (line.Length + word.Length >= width)
             {
                 newSentence.AppendLine(line.ToString().TrimEnd());
                 newSentence.Append(new string (' ',indent));

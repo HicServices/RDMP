@@ -43,7 +43,7 @@ public class PipelineTests : DatabaseTests
                     argument1.SaveToDatabase();
 
                     var dt = DateTime.Now ;
-                    dt = new DateTime(dt.Ticks - (dt.Ticks % TimeSpan.TicksPerSecond),dt.Kind);//get rid of the milliseconds
+                    dt = new DateTime(dt.Ticks - dt.Ticks % TimeSpan.TicksPerSecond,dt.Kind);//get rid of the milliseconds
 
                     argument2.SetType(typeof(DateTime));
                     argument2.SetValue(dt);

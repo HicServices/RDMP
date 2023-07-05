@@ -132,11 +132,11 @@ internal class CommandLineParser
         //
         if (i < cmd.Length && cmd[i] == '"')
         {
-            var n = (i - p); // find the number of backslashes seen
+            var n = i - p; // find the number of backslashes seen
             var quotient = n >> 1; // n divide 2 ( 5 div 2 = 2 , 6 div 2 = 3 )
             var remainder = n & 1; // n modulo 2 ( 5 mod 2 = 1 , 6 mod 2 = 0 )
 
-            buf.Length -= (quotient + remainder); // remove the unwanted backslashes
+            buf.Length -= quotient + remainder; // remove the unwanted backslashes
 
             if (remainder != 0)
             {

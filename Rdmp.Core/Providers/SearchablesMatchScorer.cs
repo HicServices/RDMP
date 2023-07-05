@@ -369,11 +369,11 @@ public class SearchablesMatchScorer
         var isExtractable = cata.GetExtractabilityStatus(null) != null && cata.GetExtractabilityStatus(null).IsExtractable;
 
         return (isExtractable && !cata.IsColdStorageDataset && !cata.IsDeprecated && !cata.IsInternalDataset && !isProjectSpecific) ||
-               ((includeColdStorage && cata.IsColdStorageDataset) ||
-                (includeDeprecated && cata.IsDeprecated) ||
-                (includeInternal && cata.IsInternalDataset) ||
-                (includeProjectSpecific && isProjectSpecific) ||
-                (includeNonExtractable && !isExtractable));
+               (includeColdStorage && cata.IsColdStorageDataset) ||
+               (includeDeprecated && cata.IsDeprecated) ||
+               (includeInternal && cata.IsInternalDataset) ||
+               (includeProjectSpecific && isProjectSpecific) ||
+               (includeNonExtractable && !isExtractable);
 
     }
 

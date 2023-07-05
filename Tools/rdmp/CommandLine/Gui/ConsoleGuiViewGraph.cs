@@ -86,7 +86,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         }
 
         var titleWidth = aggregate.Name.Sum(c => Rune.ColumnWidth(c));
-        var titleStartX = (boundsWidth / 2) - (titleWidth / 2);
+        var titleStartX = boundsWidth / 2 - titleWidth / 2;
 
         var title = new TextAnnotation()
         {
@@ -163,7 +163,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.CellSize = new PointF(xIncrement, yIncrement);
 
         graphView.AxisY.LabelGetter = (v) => FormatValue(v.Value,minY,maxY);
-        graphView.MarginLeft = (uint)(Math.Max(FormatValue(maxY, minY, maxY).Length, FormatValue(minY, minY, maxY).Length)) + 1;
+        graphView.MarginLeft = (uint)Math.Max(FormatValue(maxY, minY, maxY).Length, FormatValue(minY, minY, maxY).Length) + 1;
 
         var legend = GetLegend(dt,boundsWidth,boundsHeight);
 
@@ -234,7 +234,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // Configure Axis, Margins etc
 
         // make sure whole graph fits on axis
-        var xIncrement = (max - min) / (boundsWidth);
+        var xIncrement = (max - min) / boundsWidth;
 
         // 1 bar per row of console
         graphView.CellSize = new PointF(xIncrement, 1);
@@ -339,7 +339,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         graphView.Series.Add(barSeries);
         graphView.MarginBottom = 2;
-        graphView.MarginLeft = (uint)(Math.Max(FormatValue(max,min,max).Length, FormatValue(min, min, max).Length))+1;
+        graphView.MarginLeft = (uint)Math.Max(FormatValue(max,min,max).Length, FormatValue(min, min, max).Length)+1;
             
         // work out how to space x axis without scrolling
         graphView.AxisY.Increment = yIncrement*5;

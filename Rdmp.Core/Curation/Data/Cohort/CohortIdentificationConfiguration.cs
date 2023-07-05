@@ -347,7 +347,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
     {
         //todo this would be nice if it was ICatalogueRepository but transaction is super SQLy
-        var cataRepo = ((ICatalogueRepository) Repository);
+        var cataRepo = (ICatalogueRepository) Repository;
         //start a new super transaction
         using (cataRepo.BeginNewTransaction())
         {

@@ -93,11 +93,11 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
         {
             case CohortSummaryAdjustment.WhereExtractionIdentifiersIn:
                 restriction =
-                    $"Only showing records for people in cohort set '{(_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny)}')";
+                    $"Only showing records for people in cohort set '{_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny}')";
                 break;
             case CohortSummaryAdjustment.WhereRecordsIn:
                 restriction =
-                    $"Only showing records returned by the query defining cohort set '{(_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny)}')";
+                    $"Only showing records returned by the query defining cohort set '{_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny}')";
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

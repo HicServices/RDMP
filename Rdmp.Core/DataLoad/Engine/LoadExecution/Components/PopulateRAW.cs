@@ -59,7 +59,7 @@ public class PopulateRAW : CompositeDataLoadComponent
         if (attachingProcesses.Length > 1)
         {
             // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
-            var attachers = attachingProcesses.Select(runtime => (runtime).Attacher).ToList();
+            var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
             var numAttachersRequiringDbCreation = attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
 
             if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
@@ -67,7 +67,7 @@ public class PopulateRAW : CompositeDataLoadComponent
                     $"If there are multiple attachers then they should all agree on whether they require database creation or not: {attachers.Aggregate("", (s, attacher) => $"{s} {attacher.GetType().Name}:{attacher.RequestsExternalDatabaseCreation}")}");
         }
 
-        return (attachingProcesses[0]).Attacher.RequestsExternalDatabaseCreation;
+        return attachingProcesses[0].Attacher.RequestsExternalDatabaseCreation;
     }
 
     private void CreateRawDatabaseIfRequired(IDataLoadJob job)

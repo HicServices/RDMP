@@ -115,7 +115,7 @@ public class MissingFieldsChecker : ICheckable
         foreach (var missingDatabaseField in missingDatabaseFields)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Missing field in database table {table} when compared to class definition {type.FullName} property was called {missingDatabaseField.Name} and was of type {missingDatabaseField.PropertyType}{((typeof(Enum).IsAssignableFrom(missingDatabaseField.PropertyType) ? "(An Enum)" : ""))}"
+                $"Missing field in database table {table} when compared to class definition {type.FullName} property was called {missingDatabaseField.Name} and was of type {missingDatabaseField.PropertyType}{(typeof(Enum).IsAssignableFrom(missingDatabaseField.PropertyType) ? "(An Enum)" : "")}"
                 , CheckResult.Warning,
                 null));
             problems = true;

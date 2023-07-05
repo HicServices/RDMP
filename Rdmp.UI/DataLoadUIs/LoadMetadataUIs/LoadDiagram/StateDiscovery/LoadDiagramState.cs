@@ -12,6 +12,6 @@ public enum LoadDiagramState
     Found,
     NotFound,
     Different,
-    New,
-        
+    New
+
 }

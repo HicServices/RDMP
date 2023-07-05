@@ -44,11 +44,11 @@ public partial class TaskDescriptionLabel : UserControl
         //Switch style based on args.DesciptionSeverity
         switch (args.DesciptionSeverity)
         {
-            case (ProgressEventType.Warning):
+            case ProgressEventType.Warning:
                 _backColour = Color.FromArgb(253, 248, 228);
                 _foreColour = Color.FromArgb(134, 105, 53);
                 break;
-            case (ProgressEventType.Error):
+            case ProgressEventType.Error:
                 _backColour = Color.FromArgb(242, 222, 223);
                 _foreColour = Color.FromArgb(143, 58, 75);
                 break;

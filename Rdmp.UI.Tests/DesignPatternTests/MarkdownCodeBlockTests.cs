@@ -85,7 +85,7 @@ internal class MarkdownCodeBlockTests
 
             public override int GetHashCode()
             {
-                return (Project != null ? Project.GetHashCode() : 0);
+                return Project != null ? Project.GetHashCode() : 0;
             }
         }
         #endregion

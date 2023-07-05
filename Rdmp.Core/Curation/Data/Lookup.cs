@@ -223,7 +223,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         if(!foreignKeyTable.Repository.Equals(primaryKeyTable.Repository))
             throw new NotSupportedException("TableInfos come from different repositories!");
 
-        var repo = ((CatalogueRepository) foreignKeyTable.Repository);
+        var repo = (CatalogueRepository) foreignKeyTable.Repository;
         using (var con = repo.GetConnection())
         {
 

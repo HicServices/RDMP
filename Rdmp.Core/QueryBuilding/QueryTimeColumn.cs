@@ -89,7 +89,7 @@ public class QueryTimeColumn: IComparable
         if (obj is QueryTimeColumn == false)
             throw new Exception(".Equals only works for objects of type QueryTimeColumn");
 
-        var other = (obj as QueryTimeColumn);
+        var other = obj as QueryTimeColumn;
         return
             other.IColumn.Equals(IColumn);
     }

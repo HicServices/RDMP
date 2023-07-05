@@ -54,7 +54,7 @@ public class BackfillSqlHelper
         if (joinPath[0].ForeignKey.TableInfo_ID == _tiWithTimeColumn.ID || joinPath[0].PrimaryKey.TableInfo_ID == _tiWithTimeColumn.ID)
             joinPath.Reverse();
 
-        if ((joinPath[joinPath.Count - 1].ForeignKey.TableInfo_ID != _tiWithTimeColumn.ID) && (joinPath[joinPath.Count - 1].PrimaryKey.TableInfo_ID != _tiWithTimeColumn.ID))
+        if (joinPath[joinPath.Count - 1].ForeignKey.TableInfo_ID != _tiWithTimeColumn.ID && joinPath[joinPath.Count - 1].PrimaryKey.TableInfo_ID != _tiWithTimeColumn.ID)
             throw new InvalidOperationException("The TimePeriodicity table is not at the beginning or end of the join path.");
             
         var sql = string.Format(@"SELECT {0}.*, {1}.{2} AS TimePeriodicityField 
@@ -73,8 +73,8 @@ FROM {3} {4}",
             if (ascending)
             {
                 var parentTable = join.PrimaryKey.TableInfo;
-                var childTableAlias = (i == 0) ? tableAlias : $"j{i}";
-                var parentTableAlias = (i == (joinPath.Count - 1)) ? timePeriodTableAlias : $"j{(i + 1)}";
+                var childTableAlias = i == 0 ? tableAlias : $"j{i}";
+                var parentTableAlias = i == joinPath.Count - 1 ? timePeriodTableAlias : $"j{i + 1}";
 
                 sql += string.Format(@"
 LEFT JOIN {0} {1} ON {1}.{3} = {2}.{4}",
@@ -87,8 +87,8 @@ LEFT JOIN {0} {1} ON {1}.{3} = {2}.{4}",
             else
             {
                 var childTable = join.ForeignKey.TableInfo;
-                var parentTableAlias = (i == 0) ? tableAlias : $"j{(i + 1)}";
-                var childTableAlias = (i == (joinPath.Count - 1)) ? timePeriodTableAlias : $"j{i}";
+                var parentTableAlias = i == 0 ? tableAlias : $"j{i + 1}";
+                var childTableAlias = i == joinPath.Count - 1 ? timePeriodTableAlias : $"j{i}";
 
                 sql += string.Format(@"
 LEFT JOIN {0} {1} ON {2}.{3} = {1}.{4}",

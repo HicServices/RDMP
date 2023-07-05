@@ -166,7 +166,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         if (extractionInformation == null)
         {
             InjectKnown((CatalogueItem)null);
-            InjectKnown((ColumnInfo)(null));
+            InjectKnown((ColumnInfo)null);
         }
         else
         {

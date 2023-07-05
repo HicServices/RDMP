@@ -185,8 +185,8 @@ public class LoggingTabUI : LoggingTab_Design
         this.lblCurrentFilter = new System.Windows.Forms.Label();
         this.pFilter = new System.Windows.Forms.Panel();
         this.panel1 = new System.Windows.Forms.Panel();
-        ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-        ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)this.dataGridView1).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)this.pbRemoveFilter).BeginInit();
         this.pFilter.SuspendLayout();
         this.panel1.SuspendLayout();
         this.SuspendLayout();
@@ -207,9 +207,9 @@ public class LoggingTabUI : LoggingTab_Design
         // 
         // pbRemoveFilter
         // 
-        this.pbRemoveFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+        this.pbRemoveFilter.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right);
         this.pbRemoveFilter.BackColor = System.Drawing.Color.Goldenrod;
-        this.pbRemoveFilter.Image = ((System.Drawing.Image)(resources.GetObject("pbRemoveFilter.Image")));
+        this.pbRemoveFilter.Image = (System.Drawing.Image)resources.GetObject("pbRemoveFilter.Image");
         this.pbRemoveFilter.Location = new System.Drawing.Point(820, 3);
         this.pbRemoveFilter.Name = "pbRemoveFilter";
         this.pbRemoveFilter.Size = new System.Drawing.Size(19, 19);
@@ -220,8 +220,8 @@ public class LoggingTabUI : LoggingTab_Design
         // 
         // lblCurrentFilter
         // 
-        this.lblCurrentFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-                                                                             | System.Windows.Forms.AnchorStyles.Right)));
+        this.lblCurrentFilter.Anchor = (System.Windows.Forms.AnchorStyles)(System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left 
+                                                                           | System.Windows.Forms.AnchorStyles.Right);
         this.lblCurrentFilter.BackColor = System.Drawing.Color.Goldenrod;
         this.lblCurrentFilter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
         this.lblCurrentFilter.Location = new System.Drawing.Point(3, 3);
@@ -256,8 +256,8 @@ public class LoggingTabUI : LoggingTab_Design
         this.Controls.Add(this.panel1);
         this.Name = "LoggingTabUI";
         this.Size = new System.Drawing.Size(842, 571);
-        ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-        ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).EndInit();
+        ((System.ComponentModel.ISupportInitialize)this.dataGridView1).EndInit();
+        ((System.ComponentModel.ISupportInitialize)this.pbRemoveFilter).EndInit();
         this.pFilter.ResumeLayout(false);
         this.panel1.ResumeLayout(false);
         this.ResumeLayout(false);

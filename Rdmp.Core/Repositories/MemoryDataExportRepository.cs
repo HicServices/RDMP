@@ -103,7 +103,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
     public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
     {
         return GetAllObjects<CumulativeExtractionResults>().Where(e=>
-            (e.ExtractionConfiguration_ID == configuration.ID) && (e.ExtractableDataSet_ID == dataset.ID));
+            e.ExtractionConfiguration_ID == configuration.ID && e.ExtractableDataSet_ID == dataset.ID);
     }
 
     public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)

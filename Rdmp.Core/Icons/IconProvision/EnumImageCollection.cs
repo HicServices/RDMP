@@ -20,7 +20,7 @@ public class EnumImageCollection<T> where T : struct, Enum, IConvertible
 
     private static Image<Rgba32> LoadImage(byte [] ba)
     {
-        return (ba == null) ? null : Image.Load<Rgba32>(ba);
+        return ba == null ? null : Image.Load<Rgba32>(ba);
     }
 
     public EnumImageCollection(ResourceManager resourceManager)

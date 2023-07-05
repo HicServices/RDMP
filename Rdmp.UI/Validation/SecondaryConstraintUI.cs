@@ -247,7 +247,7 @@ public partial class SecondaryConstraintUI : UserControl
         //first row
         tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
 
-        Height = (_requiredProperties.Length * rowHeight) + 45 + inflation;
+        Height = _requiredProperties.Length * rowHeight + 45 + inflation;
 
         loadingComplete = true;
 

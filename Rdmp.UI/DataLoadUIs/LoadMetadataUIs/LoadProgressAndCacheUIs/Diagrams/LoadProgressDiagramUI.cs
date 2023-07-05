@@ -105,7 +105,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
             return;
         }
 
-        olvDQERuns.Height = 100 + (olvDQERuns.RowHeight * olvDQERuns.GetItemCount());
+        olvDQERuns.Height = 100 + olvDQERuns.RowHeight * olvDQERuns.GetItemCount();
         olvDQERuns.Top = splitContainer1.Panel1.Height - olvDQERuns.Height;
         btnRefresh.Top = olvDQERuns.Top;
         ragSmiley1.Top = olvDQERuns.Top;

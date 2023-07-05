@@ -56,7 +56,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
         return BasicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().
             Where(t=>
                 // must not be interface or abstract
-                (!(t.IsInterface || t.IsAbstract)) &&
+                !(t.IsInterface || t.IsAbstract) &&
                 (
                     // must implement one of these interfaces
                     typeof(IAttacher).IsAssignableFrom(t) ||

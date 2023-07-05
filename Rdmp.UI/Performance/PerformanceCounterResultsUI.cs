@@ -83,9 +83,9 @@ public partial class PerformanceCounterResultsUI : UserControl
 
     public static Color GetHeat(double fraction)
     {
-        var r = Light.R + ((Heavy.R - Light.R) * fraction);
-        var g = Light.G + ((Heavy.G - Light.G) * fraction);
-        var b = Light.B + ((Heavy.B - Light.B) * fraction);
+        var r = Light.R + (Heavy.R - Light.R) * fraction;
+        var g = Light.G + (Heavy.G - Light.G) * fraction;
+        var b = Light.B + (Heavy.B - Light.B) * fraction;
 
         return Color.FromArgb((int)r, (int)g, (int)b);
     }

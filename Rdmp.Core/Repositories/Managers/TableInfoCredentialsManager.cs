@@ -100,7 +100,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         using (var con = _repository.GetConnection())
         {
             using (var cmd = DatabaseCommandHelper.GetCommand(
-                       $"SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context={((int)DataAccessContext.Any)}) ", con.Connection, con.Transaction))
+                       $"SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context={(int)DataAccessContext.Any}) ", con.Connection, con.Transaction))
             {
                 cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
                 cmd.Parameters["@tid"].Value = tableInfo.ID;
@@ -117,7 +117,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
                         toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
 
                         //if the first record is liscenced for Any
-                        if (Convert.ToInt32(r["Context"]) == ((int) DataAccessContext.Any))
+                        if (Convert.ToInt32(r["Context"]) == (int) DataAccessContext.Any)
                         {
                             //see if there is a more specific second record (e.g. DataLoad)
                             if(r.Read())

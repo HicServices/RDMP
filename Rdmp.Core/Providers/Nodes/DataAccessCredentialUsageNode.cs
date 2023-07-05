@@ -48,7 +48,7 @@ public class DataAccessCredentialUsageNode:Node, IDeleteable
     {
         unchecked
         {
-            var hashCode = (Credentials != null ? Credentials.GetHashCode() : 0);
+            var hashCode = Credentials != null ? Credentials.GetHashCode() : 0;
             hashCode = (hashCode*397) ^ (TableInfo != null ? TableInfo.GetHashCode() : 0);
             hashCode = (hashCode*397) ^ (int) Context;
             return hashCode;

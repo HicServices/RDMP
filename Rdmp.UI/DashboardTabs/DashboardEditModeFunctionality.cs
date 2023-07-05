@@ -151,8 +151,8 @@ public class DashboardEditModeFunctionality
         if (_actionUnderway != EditModeAction.None)
         {
             var vector = new Point(
-                (currentScreenCoordinate.X - lastKnownScreenCoordinate.X ),
-                (currentScreenCoordinate.Y - lastKnownScreenCoordinate.Y));
+                currentScreenCoordinate.X - lastKnownScreenCoordinate.X,
+                currentScreenCoordinate.Y - lastKnownScreenCoordinate.Y);
 
             //move the control
             if(_actionUnderway == EditModeAction.Move)

@@ -54,16 +54,16 @@ internal class RDMPApplicationSettings : ISettings
         }
 
 
-        if ((type == typeof(string)) ||
-            (type == typeof(decimal)) ||
-            (type == typeof(double)) ||
-            (type == typeof(Single)) ||
-            (type == typeof(DateTime)) ||
-            (type == typeof(Guid)) ||
-            (type == typeof(bool)) ||
-            (type == typeof(Int32)) ||
-            (type == typeof(Int64)) ||
-            (type == typeof(byte)))
+        if (type == typeof(string) ||
+            type == typeof(decimal) ||
+            type == typeof(double) ||
+            type == typeof(Single) ||
+            type == typeof(DateTime) ||
+            type == typeof(Guid) ||
+            type == typeof(bool) ||
+            type == typeof(Int32) ||
+            type == typeof(Int64) ||
+            type == typeof(byte))
         {
             lock (locker)
             {
@@ -77,7 +77,7 @@ internal class RDMPApplicationSettings : ISettings
                 else if (value is DateTime)
                 {
                     return AddOrUpdateValue(key,
-                        Convert.ToString(-(Convert.ToDateTime(value)).ToUniversalTime().Ticks,
+                        Convert.ToString(-Convert.ToDateTime(value).ToUniversalTime().Ticks,
                             System.Globalization.CultureInfo.InvariantCulture));
                 }
                 else

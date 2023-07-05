@@ -94,7 +94,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             _readonlyIndicator.TabIndex = 0;
             _readonlyIndicator.TextAlign = ContentAlignment.MiddleLeft;
             _readonlyIndicator.BackColor = System.Drawing.SystemColors.HotTrack;
-            _readonlyIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            _readonlyIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, (byte)0);
             _readonlyIndicator.ForeColor = System.Drawing.Color.Moccasin;
 
         }

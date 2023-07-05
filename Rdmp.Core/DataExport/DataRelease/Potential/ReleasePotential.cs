@@ -149,9 +149,9 @@ public abstract class ReleasePotential:ICheckable
         var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
 
         if (finalAssessment == Releaseability.Undefined)
-            return (extractedObject.Name != supplementalExtractionResults.ExtractedName
+            return extractedObject.Name != supplementalExtractionResults.ExtractedName
                 ? Releaseability.ExtractionSQLDesynchronisation
-                : Releaseability.Releaseable);
+                : Releaseability.Releaseable;
 
         return finalAssessment;
     }

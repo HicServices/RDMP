@@ -134,7 +134,7 @@ public partial class HeatmapUI : UserControl
                     _maxValueInDataTable = cellValue;
             }
 
-            Height = (int)Math.Max(Height, ((_dataTable.Columns.Count) * MinPixelHeight));
+            Height = (int)Math.Max(Height, _dataTable.Columns.Count * MinPixelHeight);
         }
             
         Invalidate();
@@ -296,7 +296,7 @@ public partial class HeatmapUI : UserControl
                 //draw the labels
                 for (var i = 1; i < _dataTable.Columns.Count; i++)
                 {
-                    var labelStartY = (i)*heatPixelHeight;
+                    var labelStartY = i*heatPixelHeight;
                     
                     var name = _dataTable.Columns[i].ColumnName;
 
@@ -336,7 +336,7 @@ public partial class HeatmapUI : UserControl
 
 
                     //draw axis black line
-                    e.Graphics.DrawLine(Pens.Black, new PointF((float) axisXStart, (float)(axisYStart)), new PointF((float) axisXStart, Height));
+                    e.Graphics.DrawLine(Pens.Black, new PointF((float) axisXStart, (float)axisYStart), new PointF((float) axisXStart, Height));
                 }
             }
 
@@ -439,7 +439,7 @@ public partial class HeatmapUI : UserControl
             {
                 //add a note saying to user data has been clipped
                 var clippedRowsComment =
-                    $"{(totalHeatMapLinesAvailable - numberOfHeatLinesVisible)} more rows clipped";
+                    $"{totalHeatMapLinesAvailable - numberOfHeatLinesVisible} more rows clipped";
                 var g = Graphics.FromImage(bmp);
 
                 var fontSize = g.MeasureString(clippedRowsComment, Font);

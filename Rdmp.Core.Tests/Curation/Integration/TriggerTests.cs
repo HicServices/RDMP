@@ -131,7 +131,7 @@ public class TriggerTests :DatabaseTests
         });
 
         var liveOldRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
-        Assert.AreEqual(new DateTime(2001,1,2),((DateTime)liveOldRow[SpecialFieldNames.ValidFrom]));
+        Assert.AreEqual(new DateTime(2001,1,2),(DateTime)liveOldRow[SpecialFieldNames.ValidFrom]);
 
         RunSQL("UPDATE {0} set bubbles =99",_table.GetFullyQualifiedName());
 
@@ -160,7 +160,7 @@ public class TriggerTests :DatabaseTests
 
         // Archived row should not have had its validFrom field broken
         var archivedRow = _archiveTable.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
-        Assert.AreEqual(new DateTime(2001,1,2),((DateTime)archivedRow[SpecialFieldNames.ValidFrom]));
+        Assert.AreEqual(new DateTime(2001,1,2),(DateTime)archivedRow[SpecialFieldNames.ValidFrom]);
     }
 
     [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]

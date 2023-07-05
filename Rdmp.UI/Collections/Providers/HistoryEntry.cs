@@ -76,7 +76,7 @@ public class HistoryEntry : IMasqueradeAs
 
     public override int GetHashCode()
     {
-        return (Object != null ? Object.GetHashCode() : 0);
+        return Object != null ? Object.GetHashCode() : 0;
     }
 
     public object MasqueradingAs()

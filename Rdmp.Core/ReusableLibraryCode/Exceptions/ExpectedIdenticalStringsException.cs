@@ -36,7 +36,7 @@ public class ExpectedIdenticalStringsException : Exception
         {
             if (!(i < actual.Length))
                 return
-                    $"{message}{Environment.NewLine}Strings are identical except that Actual string ends at character {i} while we still Expected {(expected.Length - actual.Length)} additional characters";
+                    $"{message}{Environment.NewLine}Strings are identical except that Actual string ends at character {i} while we still Expected {expected.Length - actual.Length} additional characters";
 
             //give them a preview of the location of the difference 
             if (!expected[i].Equals(actual[i]))
@@ -51,7 +51,7 @@ public class ExpectedIdenticalStringsException : Exception
         }
 
         return
-            $"{message}{Environment.NewLine}Strings are identical except that Expected string ends at character {expected.Length} while the Actual string had {(actual.Length - expected.Length)} additional characters{GetPreviewsAround(expected.Length, expected, actual)}";
+            $"{message}{Environment.NewLine}Strings are identical except that Expected string ends at character {expected.Length} while the Actual string had {actual.Length - expected.Length} additional characters{GetPreviewsAround(expected.Length, expected, actual)}";
     }
 
     private static string GetPreviewsAround(int i, string expected, string actual)
@@ -87,7 +87,7 @@ public class ExpectedIdenticalStringsException : Exception
         var startSubstringAt = Math.Max(0, i - charsBefore);
         iIsAtCharacterPosition = i - startSubstringAt;  //if difference is at index 350 then return 350 - (350-20) i.e. 20 but if difference is at index 3 then return 3 - 0 (see Math.Max on line above)
 
-        var lengthWeWantToTake = (i - startSubstringAt) + charsAfter;//usually the full amount unless charsBefore is truncated due to the start of the string (when difference is early in the string)
+        var lengthWeWantToTake = i - startSubstringAt + charsAfter;//usually the full amount unless charsBefore is truncated due to the start of the string (when difference is early in the string)
         var lengthAvailable = str.Length - startSubstringAt;
         var lengthWeWillActuallyTake = Math.Min(lengthWeWantToTake, lengthAvailable);
 

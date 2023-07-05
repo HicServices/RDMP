@@ -44,6 +44,6 @@ public class DocumentationNode:Node
 
     public override int GetHashCode()
     {
-        return (Catalogue != null ? Catalogue.GetHashCode() : 0);
+        return Catalogue != null ? Catalogue.GetHashCode() : 0;
     }
 }

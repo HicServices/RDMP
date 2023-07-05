@@ -856,7 +856,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         if (obj is Catalogue)
         {
-            return -(obj.ToString().CompareTo(this.ToString())); //sort alphabetically (reverse)
+            return -obj.ToString().CompareTo(this.ToString()); //sort alphabetically (reverse)
         }
 
         throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");

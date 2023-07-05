@@ -149,12 +149,11 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 
     public static bool IsSourceCodeAvailable(Exception exception)
     {
-        return (
-            exception != null  //exception exists
-            &&
-            !string.IsNullOrWhiteSpace(exception.StackTrace)  //and has a stack trace
-            &&
-            SourceCodeAvailable.IsMatch(exception.StackTrace)); //and stack trace contains line numbers
+        return exception != null  //exception exists
+               &&
+               !string.IsNullOrWhiteSpace(exception.StackTrace)  //and has a stack trace
+               &&
+               SourceCodeAvailable.IsMatch(exception.StackTrace); //and stack trace contains line numbers
     }
 
 

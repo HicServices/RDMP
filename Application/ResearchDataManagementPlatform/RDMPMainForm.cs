@@ -122,7 +122,7 @@ public partial class RDMPMainForm : RDMPForm
             if (connectionStringsFileLoaded != null)
             {
                 instanceDescription =
-                    $" - {(connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name)}";
+                    $" - {connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name}";
             }
             if (database != null) 
                 _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";

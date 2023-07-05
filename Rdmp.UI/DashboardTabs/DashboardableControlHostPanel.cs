@@ -50,15 +50,15 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
 
     private void AdjustControlLocation()
     {
-        var control = ((Control)HostedControl);
+        var control = (Control)HostedControl;
 
         //center it on us with a gap of BorderWidth
         if (_editMode)
         {
 
             control.Location = new Point((int) BorderWidth, (int) BorderWidth);
-            control.Width = (int) (Width - (BorderWidth*2));
-            control.Height = (int) (Height - (BorderWidth*2));
+            control.Width = (int) (Width - BorderWidth*2);
+            control.Height = (int) (Height - BorderWidth*2);
         }
         else
         {

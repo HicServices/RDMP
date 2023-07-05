@@ -118,7 +118,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private object PropertyAspectGetter(object rowobject)
     {
-        var node = ((FindAndReplaceNode) rowobject);
+        var node = (FindAndReplaceNode) rowobject;
 
         return node.PropertyName;
     }

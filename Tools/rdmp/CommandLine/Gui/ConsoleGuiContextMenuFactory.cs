@@ -136,13 +136,13 @@ internal class ConsoleGuiContextMenuFactory
         {
             return new IAtomicCommand[] {
                 new ExecuteCommandCreateNewCatalogueByImportingFile(activator),
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator),
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator)
             };
         }
         if (ReferenceEquals(o, ConsoleMainWindow.Loads))
         {
             return new IAtomicCommand[] {
-                new ExecuteCommandCreateNewLoadMetadata(activator),
+                new ExecuteCommandCreateNewLoadMetadata(activator)
             };
         }
         if (ReferenceEquals(o, ConsoleMainWindow.Projects))

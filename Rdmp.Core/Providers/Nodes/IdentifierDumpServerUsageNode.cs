@@ -44,7 +44,7 @@ public class IdentifierDumpServerUsageNode:Node,IDeleteable
 
     public override int GetHashCode()
     {
-        return (TableInfo != null ? TableInfo.GetHashCode() : 0);
+        return TableInfo != null ? TableInfo.GetHashCode() : 0;
     }
 
     public void DeleteInDatabase()

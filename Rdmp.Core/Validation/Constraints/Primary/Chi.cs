@@ -94,7 +94,7 @@ public class Chi : PrimaryConstraint
         sum = 0;
         c = (int)'0';
         for (var i = 0; i < lsCHI - 1; i++)
-            sum += ((int)(sCHI.Substring(i, 1)[0]) - c) * (lsCHI - i);
+            sum += ((int)sCHI.Substring(i, 1)[0] - c) * (lsCHI - i);
         sum = sum % 11;
 
         c = 11 - sum;
@@ -137,7 +137,7 @@ public class Chi : PrimaryConstraint
         // Value of 10 indicates a checksum error
         var checkDigit = ComputeChecksum(strChi);
 
-        return (checkDigit != 10 && (int)Char.GetNumericValue(strChi[9]) == checkDigit);
+        return checkDigit != 10 && (int)Char.GetNumericValue(strChi[9]) == checkDigit;
     }
 
     private static bool isWellFormedChi(string strChi)
@@ -157,7 +157,7 @@ public class Chi : PrimaryConstraint
         var sum = SumDigits(chi);
         var checkDigit = 0;
 
-        var n = (11 - (sum % 11));
+        var n = 11 - sum % 11;
         if (n < 10)
             checkDigit = n;
 

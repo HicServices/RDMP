@@ -92,7 +92,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 
         if (m.ShouldBeReadOnly(out var reason))
         {
-            SetImpossible($"{(m is IContainer ? "Container" : ('\'' + m.ToString() + '\''))} is readonly beacause:{reason}");
+            SetImpossible($"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly beacause:{reason}");
         }
     }
     public BasicCommandExecution()

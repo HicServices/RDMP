@@ -396,7 +396,7 @@ e.g. /$i/$a")]
             }
             else
             {
-                var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                var extractGlobalsCommand = _request as ExtractGlobalsCommand;
                 Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
                 var result = new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
                     extractGlobalsCommand.Configuration,
@@ -446,7 +446,7 @@ e.g. /$i/$a")]
             }
             else
             {
-                var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                var extractGlobalsCommand = _request as ExtractGlobalsCommand;
                 Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
                 var result =
                     new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
