@@ -654,11 +654,11 @@ public class YamlRepository : MemoryDataExportRepository
 
     private void LoadWhereSubContainers()
     {        
-        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new())
+        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new Dictionary<FilterContainer, HashSet<FilterContainer>>())
         {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
         }
-        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new())
+        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
         {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
         }

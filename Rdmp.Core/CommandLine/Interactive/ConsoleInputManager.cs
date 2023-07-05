@@ -271,7 +271,7 @@ public class ConsoleInputManager : BasicActivateItems
             }
         }
 
-        selected = default(T);
+        selected = default;
         return false;
     }
 
@@ -433,7 +433,7 @@ public class ConsoleInputManager : BasicActivateItems
                 
             foreach(var error in load.Errors)
             {
-                error.GetSummary(out var title, out var body, out _, out var _);
+                error.GetSummary(out var title, out var body, out _, out _);
 
                 Console.WriteLine($"\t{title}");
                 Console.WriteLine($"\t{body}");

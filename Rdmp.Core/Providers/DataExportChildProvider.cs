@@ -241,7 +241,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         ReportProgress("Injecting SelectedDataSets");
 
-        _configurationToDatasetMapping = new();
+        _configurationToDatasetMapping = new Dictionary<IExtractionConfiguration, List<SelectedDataSets>>();
 
         var configToSds = SelectedDataSets.GroupBy(k => k.ExtractionConfiguration_ID).ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
 

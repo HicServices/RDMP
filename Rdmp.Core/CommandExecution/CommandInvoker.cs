@@ -344,7 +344,8 @@ public class CommandInvoker
         return GetDelegate(new RequiredArgument(p)) != null ? "":$"No delegate for {p.ParameterType}";
     }
 
-    private readonly ConcurrentDictionary<RequiredArgument, CommandInvokerDelegate> _delegateCache = new();
+    private readonly ConcurrentDictionary<RequiredArgument, CommandInvokerDelegate> _delegateCache =
+        new ConcurrentDictionary<RequiredArgument, CommandInvokerDelegate>();
     public CommandInvokerDelegate GetDelegate(RequiredArgument argument)
     {
         return _delegateCache.GetOrAdd(argument, GetDelegateCacheMiss);

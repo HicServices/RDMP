@@ -191,7 +191,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             return true;
         }
 
-        selected = default(T);
+        selected = default;
         return false;
     }
 

@@ -146,7 +146,7 @@ public partial class UserSettingsFileUI : Form
         };
     }
 
-    private Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
+    private Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new Dictionary<CheckBox, PropertyInfo>();
 
     private void RegisterCheckbox(CheckBox cb, string propertyName)
     {

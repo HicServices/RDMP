@@ -112,13 +112,13 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     {
         // if explicitThing and pipelineConfigurationThing are both null
         //Means: xplicitThing == null && pipelineConfigurationThing == null
-        if (EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default(T2)))
+        if (EqualityComparer<T2>.Default.Equals(explicitThing, default) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
             throw new Exception(
                 $"No explicit {descriptionOfWhatThingIs} was specified and there is no fixed {descriptionOfWhatThingIs} defined in the Pipeline configuration in the Catalogue");
 
         //if one of them only is null - XOR
-        if(EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) ^ EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default(T2)))
-            return EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) ? pipelineConfigurationThing : explicitThing; //return the not null one
+        if(EqualityComparer<T2>.Default.Equals(explicitThing, default) ^ EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
+            return EqualityComparer<T2>.Default.Equals(explicitThing, default) ? pipelineConfigurationThing : explicitThing; //return the not null one
 
         //both of them are populated
         throw new Exception(

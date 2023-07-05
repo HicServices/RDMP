@@ -16,9 +16,12 @@ namespace Rdmp.Core.Icons.IconOverlays;
 
 public class IconOverlayProvider
 {
-    private readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,OverlayKind>,Image<Rgba32>> _cache=new ();
-    private readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,Image<Rgba32>>, Image<Rgba32>>  _resultCacheCustom = new();
-    private readonly ConcurrentDictionary<Image<Rgba32>, Image<Rgba32>> _greyscaleCache = new();
+    private readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,OverlayKind>,Image<Rgba32>> _cache=
+        new ConcurrentDictionary<(Image<Rgba32>, OverlayKind), Image<Rgba32>>();
+    private readonly ConcurrentDictionary<ValueTuple<Image<Rgba32>,Image<Rgba32>>, Image<Rgba32>>  _resultCacheCustom =
+        new ConcurrentDictionary<(Image<Rgba32>, Image<Rgba32>), Image<Rgba32>>();
+    private readonly ConcurrentDictionary<Image<Rgba32>, Image<Rgba32>> _greyscaleCache =
+        new ConcurrentDictionary<Image<Rgba32>, Image<Rgba32>>();
 
     private readonly EnumImageCollection<OverlayKind> _images;
 

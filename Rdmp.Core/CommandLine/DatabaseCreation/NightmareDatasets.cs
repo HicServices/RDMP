@@ -43,12 +43,12 @@ internal class NightmareDatasets : DataGenerator
         _databaseNameRuntime = _db.GetRuntimeName();
     }
 
-    private BucketList<Catalogue> Catalogues = new ();
-    private BucketList<ExtractableDataSet> ExtractableDatasets = new ();
-    private BucketList<Project> Projects = new ();
-    private BucketList<TableInfo> Tables = new ();
+    private BucketList<Catalogue> Catalogues = new BucketList<Catalogue>();
+    private BucketList<ExtractableDataSet> ExtractableDatasets = new BucketList<ExtractableDataSet>();
+    private BucketList<Project> Projects = new BucketList<Project>();
+    private BucketList<TableInfo> Tables = new BucketList<TableInfo>();
     private int TablesCount = 0;
-    private BucketList<ColumnInfo> Columns = new();
+    private BucketList<ColumnInfo> Columns = new BucketList<ColumnInfo>();
     private int ColumnsCount = 0;
 
     /// <summary>

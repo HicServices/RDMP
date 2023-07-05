@@ -545,7 +545,7 @@ abstract public class TableRepository : ITableRepository
     /// <param name="columnWithObjectID"></param>
     /// <param name="dbNullSubstition"></param>
     /// <returns></returns>
-    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null, T dbNullSubstition = default(T)) where T : IMapsDirectlyToDatabaseTable
+    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null, T dbNullSubstition = default) where T : IMapsDirectlyToDatabaseTable
     {
         if (columnWithObjectID == null)
             columnWithObjectID = $"{typeof(T).Name}_ID";

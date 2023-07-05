@@ -73,7 +73,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     /// </summary>
     public string EncryptionKeyPath { get; protected set; }
 
-    protected virtual Dictionary<PermissableDefaults, IExternalDatabaseServer> Defaults { get; set; } = new ();
+    protected virtual Dictionary<PermissableDefaults, IExternalDatabaseServer> Defaults { get; set; } =
+        new Dictionary<PermissableDefaults, IExternalDatabaseServer>();
 
     public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
     {
@@ -211,7 +212,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     /// <summary>
     /// records which credentials can be used to access the table under which contexts
     /// </summary>
-    protected Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> CredentialsDictionary { get; set; } = new ();
+    protected Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> CredentialsDictionary { get; set; } =
+        new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
 
     public virtual void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
     {
@@ -305,7 +307,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #endregion
 
     #region IAggregateForcedJoin
-    protected Dictionary<AggregateConfiguration,HashSet<ITableInfo>> ForcedJoins { get; set; } = new ();
+    protected Dictionary<AggregateConfiguration,HashSet<ITableInfo>> ForcedJoins { get; set; } =
+        new Dictionary<AggregateConfiguration, HashSet<ITableInfo>>();
 
     public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
     {
@@ -339,7 +342,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #endregion
 
     #region ICohortContainerLinker
-    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents = new (); 
+    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents =
+        new Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>>(); 
 
     public CohortAggregateContainer GetParent(AggregateConfiguration child)
     {
@@ -435,7 +439,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     #region IFilterContainerManager
 
-    protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new ();
+    protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } =
+        new Dictionary<IContainer, HashSet<IContainer>>();
         
     public IContainer[] GetSubContainers(IContainer container)
     {
@@ -484,7 +489,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     #region IGovernanceManager
 
-    protected Dictionary<GovernancePeriod,HashSet<ICatalogue>> GovernanceCoverage { get; set; } = new ();
+    protected Dictionary<GovernancePeriod,HashSet<ICatalogue>> GovernanceCoverage { get; set; } =
+        new Dictionary<GovernancePeriod, HashSet<ICatalogue>>();
     private MEF _mef;
 
     public virtual void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)

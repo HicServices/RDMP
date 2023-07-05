@@ -198,8 +198,10 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// </summary>
     protected object WriteLock = new object();
 
-    public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
-    public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
+    public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } =
+        new AllOrphanAggregateConfigurationsNode();
+    public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } =
+        new AllTemplateAggregateConfigurationsNode();
     public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
 
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;

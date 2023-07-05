@@ -279,7 +279,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         set => databaseTypeUI1.DatabaseType = value;
     }
 
-    public DiscoveredServer Result => new(GetBuilder());
+    public DiscoveredServer Result => new DiscoveredServer(GetBuilder());
 
     public bool TableShouldBeNovel
     {

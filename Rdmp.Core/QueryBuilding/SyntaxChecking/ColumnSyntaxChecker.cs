@@ -17,7 +17,7 @@ namespace Rdmp.Core.QueryBuilding.SyntaxChecking;
 /// </summary>
 public class ColumnSyntaxChecker : SyntaxChecker
 {
-    private static readonly Regex RegexIsWrapped = new (@"^[\[`].*[\]`]$", RegexOptions.Compiled);
+    private static readonly Regex RegexIsWrapped = new Regex(@"^[\[`].*[\]`]$", RegexOptions.Compiled);
 
     private readonly IColumn _column;
 

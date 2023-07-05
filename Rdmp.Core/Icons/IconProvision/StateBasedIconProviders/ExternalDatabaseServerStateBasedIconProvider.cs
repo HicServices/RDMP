@@ -20,7 +20,8 @@ public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIco
 {
     private readonly IconOverlayProvider _overlayProvider;
     private readonly Image<Rgba32> _default;
-    private readonly Dictionary<string,Image<Rgba32>> _assemblyToIconDictionary = new();
+    private readonly Dictionary<string,Image<Rgba32>> _assemblyToIconDictionary =
+        new Dictionary<string, Image<Rgba32>>();
     private DatabaseTypeIconProvider _typeSpecificIconsProvider;
         
     public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)

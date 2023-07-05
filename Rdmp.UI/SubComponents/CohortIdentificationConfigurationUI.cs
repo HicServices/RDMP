@@ -71,7 +71,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     private Timer timer = new Timer();
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
-    private CohortIdentificationConfigurationUICommon Common = new ();
+    private CohortIdentificationConfigurationUICommon Common = new CohortIdentificationConfigurationUICommon();
 
     public CohortIdentificationConfigurationUI()
     {

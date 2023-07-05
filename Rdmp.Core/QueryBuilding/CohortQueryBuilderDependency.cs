@@ -78,7 +78,7 @@ public class CohortQueryBuilderDependency
     /// <summary>
     /// Locks on aggregate by ID
     /// </summary>
-    private static readonly ConcurrentDictionary<int,object> AggregateLocks = new();
+    private static readonly ConcurrentDictionary<int,object> AggregateLocks = new ConcurrentDictionary<int, object>();
 
 
     public CohortQueryBuilderDependency(AggregateConfiguration cohortSet,

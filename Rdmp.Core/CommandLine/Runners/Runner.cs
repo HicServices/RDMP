@@ -38,7 +38,7 @@ public abstract class Runner: IRunner
     {
         if(string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
         {
-            return default(T);
+            return default;
         }
 
         if (int.TryParse(arg, out var id))

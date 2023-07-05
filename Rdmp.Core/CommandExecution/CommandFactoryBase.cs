@@ -30,7 +30,7 @@ public abstract class CommandFactoryBase
             return Is<T>(m.MasqueradingAs(),out match);
         }
 
-        match = default(T);
+        match = default;
         return false;
     }
 }

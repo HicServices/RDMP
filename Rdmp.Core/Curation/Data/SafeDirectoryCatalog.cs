@@ -28,7 +28,8 @@ public class SafeDirectoryCatalog
     /// <summary>
     /// These assemblies do not load correctly and should be ignored (they produce warnings on Startup)
     /// </summary>
-    public static readonly HashSet<string> Ignore = new() {
+    public static readonly HashSet<string> Ignore = new HashSet<string>
+    {
 
 "0harmony.dll",
 "accessibility.dll",
@@ -414,9 +415,9 @@ public class SafeDirectoryCatalog
     };
 
 
-    private readonly object _oTypesLock = new();
-    private readonly HashSet<Type> _types = new();
-    public readonly ConcurrentDictionary<string,Type> TypesByName = new ();
+    private readonly object _oTypesLock = new object();
+    private readonly HashSet<Type> _types = new HashSet<Type>();
+    public readonly ConcurrentDictionary<string,Type> TypesByName = new ConcurrentDictionary<string, Type>();
 
     /// <summary>
     /// The number of ignored dlls that were skipped because another copy was already seen

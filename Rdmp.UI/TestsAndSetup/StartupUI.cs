@@ -128,7 +128,7 @@ public partial class StartupUI : Form, ICheckNotifier
             return;
         }
             
-        if (_startup is { RepositoryLocator.CatalogueRepository: { } })
+        if (_startup is { RepositoryLocator.CatalogueRepository: not null })
             WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
             
         //when things go badly leave the form

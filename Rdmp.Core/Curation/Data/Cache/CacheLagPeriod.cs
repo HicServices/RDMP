@@ -67,7 +67,7 @@ public class CacheLagPeriod
     /// Define a Zero length CacheLagPeriod i.e. the remote end point from which caching happens is real time up to the millisecond so you can always issue a cache fetch 
     /// request for data up to DateTime.Now (obviously you can't request future data).
     /// </summary>
-    public static CacheLagPeriod Zero => new(0, PeriodType.Month);
+    public static CacheLagPeriod Zero => new CacheLagPeriod(0, PeriodType.Month);
 
     /// <summary>
     /// Deserializes a <see cref="CacheProgress.CacheLagPeriodLoadDelay"/> string into an instance of <see cref="CacheLagPeriod"/>

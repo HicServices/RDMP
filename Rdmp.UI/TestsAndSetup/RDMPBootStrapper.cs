@@ -37,7 +37,7 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
 
     }
 
-    private readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase){ 
+    private readonly HashSet<string> IgnoreExceptions = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase){ 
             
         // This error seems to come from ObjectTreeView but seems harmless
         "Value cannot be null. (Parameter 'owningItem')"

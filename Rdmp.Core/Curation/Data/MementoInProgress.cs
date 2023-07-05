@@ -30,7 +30,7 @@ public class MementoInProgress
     /// </summary>
     public MementoType Type { get; set; } = MementoType.Modify;
 
-    private Dictionary<PropertyInfo, object> _props = new ();
+    private Dictionary<PropertyInfo, object> _props = new Dictionary<PropertyInfo, object>();
 
     public MementoInProgress(IMapsDirectlyToDatabaseTable o, string oldYaml)
     {

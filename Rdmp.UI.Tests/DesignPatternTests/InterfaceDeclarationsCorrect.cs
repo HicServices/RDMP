@@ -15,7 +15,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 
 public class InterfaceDeclarationsCorrect
 {
-    private static readonly List<string> Exemptions = new()
+    private static readonly List<string> Exemptions = new List<string>
     {
         "IPlugin",
         "IDataAccessCredentials",

@@ -63,9 +63,11 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
         var logger = LogManager.GetCurrentClassLogger();
 
-        Regex main = new ($@"^/?lib/{EnvironmentInfo.MainSubDir}/.*\.dll$",RegexOptions.Compiled|RegexOptions.CultureInvariant);
-        Regex windows = new($@"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*\.dll$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        AssemblyLoadContext context = new(nameof(ExecuteCommandPrunePlugin),true);
+        var main = new Regex($@"^/?lib/{EnvironmentInfo.MainSubDir}/.*\.dll$",
+            RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        var windows = new Regex($@"^/?lib/{EnvironmentInfo.WindowsSubDir}/.*\.dll$",
+            RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        var context = new AssemblyLoadContext(nameof(ExecuteCommandPrunePlugin), true);
         using (var zf = ZipFile.Open(file, ZipArchiveMode.Update))
         {
             var current = UsefulStuff.GetExecutableDirectory();

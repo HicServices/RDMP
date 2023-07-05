@@ -26,7 +26,7 @@ public class TreeNodeParentFinder
 
         //if there is no parent
         if (parent == null)
-            return default(T);//return null
+            return default;//return null
             
         //if parent is correct type return it
         var correctType = parent as T;

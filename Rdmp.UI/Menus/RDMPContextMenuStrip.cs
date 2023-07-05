@@ -231,7 +231,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         var start = DateTime.Now;
         var now = DateTime.Now;
-        Dictionary<IAtomicCommand, TimeSpan> performance = new();
+        var performance = new Dictionary<IAtomicCommand, TimeSpan>();
 
         var forObject = _args.Masquerader ?? _o;
         foreach (var toPresent in factory.CreateCommands(forObject))

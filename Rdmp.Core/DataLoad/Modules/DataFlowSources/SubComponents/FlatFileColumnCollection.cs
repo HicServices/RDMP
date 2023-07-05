@@ -368,7 +368,7 @@ public class FlatFileColumnCollection
         if (row.ColumnCount != _headers.Length)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
 
-        StringBuilder discarded = new();
+        var discarded = new StringBuilder();
         for (var i = 0; i < row.ColumnCount; i++)
         {
             if (i > 0)

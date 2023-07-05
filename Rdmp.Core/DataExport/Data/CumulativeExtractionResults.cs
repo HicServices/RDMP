@@ -108,7 +108,9 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public List<ISupplementalExtractionResults> SupplementalExtractionResults => new(Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this));
+    public List<ISupplementalExtractionResults> SupplementalExtractionResults =>
+        new List<ISupplementalExtractionResults>(
+            Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this));
 
     /// <inheritdoc/>
     public ISupplementalExtractionResults AddSupplementalExtractionResult(string sqlExecuted, IMapsDirectlyToDatabaseTable extractedObject)

@@ -28,7 +28,8 @@ public class MemoryRepository : IRepository
     /// <summary>
     /// This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
     /// </summary>
-    protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects = new ();
+    protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects =
+        new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, byte>();
     private readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
 
     public event EventHandler<SaveEventArgs> Saving;
@@ -113,7 +114,7 @@ public class MemoryRepository : IRepository
     public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
     {
         if (id == 0)
-            return default(T);
+            return default;
 
         try
         {

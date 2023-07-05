@@ -600,7 +600,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.KeyCode == Keys.Enter && olv.SelectedObject != null)
         {
             DialogResult = DialogResult.OK;
-            Selected = olv.SelectedObject is T s ? s : default(T);
+            Selected = olv.SelectedObject is T s ? s : default;
 
             // if there are some multi selected items already
             if(AllowMultiSelect && MultiSelected.Any())
@@ -832,7 +832,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     private void btnSelectNULL_Click(object sender, EventArgs e)
     {
-        Selected = default(T);
+        Selected = default;
         MultiSelected = new HashSet<T>();
         DialogResult = DialogResult.OK;
         Close();
@@ -840,7 +840,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        Selected = default(T);
+        Selected = default;
         MultiSelected = new HashSet<T>();
         DialogResult = DialogResult.Cancel;
         Close();

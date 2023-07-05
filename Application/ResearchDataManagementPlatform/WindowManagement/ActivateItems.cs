@@ -690,7 +690,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return true;
         }
 
-        selected = default(T);
+        selected = default;
         return false;
     }
 
@@ -714,7 +714,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return true;
         }
 
-        selected = default(T[]);
+        selected = default;
         return false;
     }
     public override DirectoryInfo SelectDirectory(string prompt)

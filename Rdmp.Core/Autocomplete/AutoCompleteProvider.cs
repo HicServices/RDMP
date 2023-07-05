@@ -25,7 +25,7 @@ namespace Rdmp.Core.Autocomplete;
 /// </summary>
 public class AutoCompleteProvider : IAutoCompleteProvider
 {
-    public HashSet<string> Items { get; set; }  = new ();
+    public HashSet<string> Items { get; set; }  = new HashSet<string>();
 
     /// <summary>
     /// Array of images that items can be depicted with.  Use <see cref="ItemsWithImages"/> to index into

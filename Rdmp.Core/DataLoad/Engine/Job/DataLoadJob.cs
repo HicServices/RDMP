@@ -46,7 +46,7 @@ public class DataLoadJob : IDataLoadJob
     public bool PersistentRaw { get; set; }
 
 
-    private List<NotifyEventArgs> _crashAtEnd = new();
+    private List<NotifyEventArgs> _crashAtEnd = new List<NotifyEventArgs>();
 
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 

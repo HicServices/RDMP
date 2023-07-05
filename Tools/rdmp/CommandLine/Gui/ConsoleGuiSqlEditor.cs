@@ -368,16 +368,17 @@ internal class ConsoleGuiSqlEditor : Window
     private class SqlTextView : TextView
     {
 
-        private readonly HashSet<string> _keywords = new(new[]
-        {
-            "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE",
-            "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION",
-            "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG",
-            "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
-            "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
-            "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
-            "database", "table", "having", "in", "join", "on", "union", "exists"
-        }, StringComparer.CurrentCultureIgnoreCase);
+        private readonly HashSet<string> _keywords = new HashSet<string>(
+            new[]
+            {
+                "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE",
+                "COALESCE", "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT",
+                "COMPLETION", "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT",
+                "CONSTRAINT_CATALOG", "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS",
+                "COPY", "CPU", "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete",
+                "truncate", "as", "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit",
+                "null", "is", "drop", "database", "table", "having", "in", "join", "on", "union", "exists"
+            }, StringComparer.CurrentCultureIgnoreCase);
         private readonly Attribute _blue;
         private readonly Attribute _white;
 

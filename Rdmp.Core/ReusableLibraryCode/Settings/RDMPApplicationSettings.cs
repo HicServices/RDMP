@@ -119,7 +119,7 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue"></param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns></returns>
-    private T GetValueOrDefaultInternal<T>(string key, T defaultValue = default(T), string fileName = null)
+    private T GetValueOrDefaultInternal<T>(string key, T defaultValue = default, string fileName = null)
     {
         object value = null;
         lock (locker)

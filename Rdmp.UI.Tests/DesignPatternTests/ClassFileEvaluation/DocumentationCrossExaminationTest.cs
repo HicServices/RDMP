@@ -27,7 +27,7 @@ internal class DocumentationCrossExaminationTest
     //words that are in Pascal case and you can use in comments despite not being in the codebase... this is an ironic variable to be honest
     //since the very fact that you add something to _ignorelist means that it is in the codebase after all!
     #region IgnoreList Terms
-    private static readonly HashSet<string> IgnoreList = new()
+    private static readonly HashSet<string> IgnoreList = new HashSet<string>
     {
         "ExecuteAggregateGraph",
         "ExtractMetadata",

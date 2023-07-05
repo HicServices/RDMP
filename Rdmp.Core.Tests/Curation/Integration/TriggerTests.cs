@@ -53,7 +53,7 @@ public class TriggerTests :DatabaseTests
         var implementer = GetImplementer();
 
         //most likely doesn't exist but may do
-        implementer.DropTrigger(out var _, out var _);
+        implementer.DropTrigger(out _, out _);
 
         Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
     }

@@ -33,7 +33,7 @@ public class CatalogueIconProvider : ICoreIconProvider
     private readonly IIconProvider[] _pluginIconProviders;
     public IconOverlayProvider OverlayProvider { get; private set; }
 
-    protected List<IObjectStateBasedIconProvider> StateBasedIconProviders = new();
+    protected List<IObjectStateBasedIconProvider> StateBasedIconProviders = new List<IObjectStateBasedIconProvider>();
 
     protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
     protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
@@ -270,7 +270,7 @@ public class CatalogueIconProvider : ICoreIconProvider
     /// <returns></returns>
     public Dictionary<string, Image<Rgba32>> GetImageList(bool addFavouritesOverlayKeysToo)
     {
-        Dictionary<string, Image<Rgba32>> imageList = new();
+        var imageList = new Dictionary<string, Image<Rgba32>>();
 
         foreach (RDMPConcept concept in Enum.GetValues(typeof(RDMPConcept)))
         {

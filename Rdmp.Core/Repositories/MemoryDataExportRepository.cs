@@ -66,7 +66,8 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
 
     #region IExtractableDataSetPackageManager
 
-    protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } = new ();
+    protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } =
+        new Dictionary<IExtractableDataSetPackage, HashSet<IExtractableDataSet>>();
 
     public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
     {

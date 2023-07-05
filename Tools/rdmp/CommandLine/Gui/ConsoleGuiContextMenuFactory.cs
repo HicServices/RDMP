@@ -41,12 +41,12 @@ internal class ConsoleGuiContextMenuFactory
             .Where(c => !string.IsNullOrWhiteSpace(c))
             .Distinct();
 
-        Dictionary<string, List<MenuItem>> miCategories = new();
+        var miCategories = new Dictionary<string, List<MenuItem>>();
 
         foreach (var category in categories)
             miCategories.Add(category, new List<MenuItem>());
 
-        List<MenuItem> items = new();
+        var items = new List<MenuItem>();
 
         // Build commands into menu items
         foreach (var cmd in commands.OrderBy(c => c.Weight))

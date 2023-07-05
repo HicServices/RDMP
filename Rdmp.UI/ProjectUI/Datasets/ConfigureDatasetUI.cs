@@ -217,7 +217,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
         //on the left
             
-        HashSet<ExtractionInformation> toAdd = new ();
+        var toAdd = new HashSet<ExtractionInformation>();
 
         //add all the extractable columns from the current Catalogue
         foreach (var e in cata.GetAllExtractionInformation(ExtractionCategory.Any))

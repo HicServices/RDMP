@@ -29,7 +29,7 @@ public class MEF
 
     public bool HaveDownloadedAllAssemblies;
     public SafeDirectoryCatalog SafeDirectoryCatalog;
-    private readonly ObjectConstructor o = new();
+    private readonly ObjectConstructor o = new ObjectConstructor();
                 
     private readonly string _localPath = null;
 
