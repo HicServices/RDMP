@@ -113,14 +113,14 @@ public class DatabaseTests
     static DatabaseTests()
     {
         Rdmp.Core.Repositories.CatalogueRepository.SuppressHelpLoading = true;
-
-        // Always ignore SSL when running tests
-        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
             
         ImplementationManager.Load<MicrosoftSQLImplementation>();
         ImplementationManager.Load<MySqlImplementation>();
         ImplementationManager.Load<OracleImplementation>();
         ImplementationManager.Load<PostgreSqlImplementation>();
+
+        // Always ignore SSL when running tests
+        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
 
         ReadSettingsFile();
     }
