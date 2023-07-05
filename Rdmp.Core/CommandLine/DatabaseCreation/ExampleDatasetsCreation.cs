@@ -260,7 +260,7 @@ public class ExampleDatasetsCreation
         if(releasePipeline != null)
             try
             {
-                var optsRelease = new ReleaseOptions()
+                var optsRelease = new ReleaseOptions
                 {
                     Configurations = string.Join(",",extractionConfigurations.Select(ec=>ec.ID.ToString()).Distinct().ToArray()),
                     Pipeline = releasePipeline.ID.ToString()
@@ -322,7 +322,7 @@ public class ExampleDatasetsCreation
 
         if(isReleased && extractionConfiguration != null)
         {
-            var optsExtract = new ExtractionOptions()
+            var optsExtract = new ExtractionOptions
             {
                 Pipeline = extractionPipeline.ID.ToString(),
                 ExtractionConfiguration = extractionConfiguration.ID.ToString()

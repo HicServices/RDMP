@@ -30,7 +30,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
     public ConsoleGuiViewGraph(IBasicActivateItems activator, AggregateConfiguration aggregate) :
         base (activator, new ViewAggregateExtractUICollection(aggregate) { TopX = null })
     {
-        graphView = new GraphView()
+        graphView = new GraphView
         {
             Width = Dim.Fill(),
             Height = Dim.Fill()
@@ -88,7 +88,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         var titleWidth = aggregate.Name.Sum(c => Rune.ColumnWidth(c));
         var titleStartX = boundsWidth / 2 - titleWidth / 2;
 
-        var title = new TextAnnotation()
+        var title = new TextAnnotation
         {
             ScreenPosition = new Point(titleStartX, 0),
             Text = aggregate.Name,
@@ -141,7 +141,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         for (var i=1;i<dt.Columns.Count;i++)
         {
 
-            var series = new PathAnnotation() { LineColor = colors[i - 1],BeforeSeries = true };
+            var series = new PathAnnotation { LineColor = colors[i - 1],BeforeSeries = true };
             var row = 0;
 
             foreach (DataRow dr in dt.Rows)

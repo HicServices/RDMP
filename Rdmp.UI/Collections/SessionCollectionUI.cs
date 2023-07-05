@@ -70,7 +70,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
 
         if(!CommonTreeFunctionality.IsSetup)
         {
-            CommonTreeFunctionality.SetUp(RDMPCollection.None,olvTree,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings()
+            CommonTreeFunctionality.SetUp(RDMPCollection.None,olvTree,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings
             {
                 // add custom options here
                     

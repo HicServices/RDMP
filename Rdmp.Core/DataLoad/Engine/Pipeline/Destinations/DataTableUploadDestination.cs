@@ -356,7 +356,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     /// <returns>True if the proposed alter is a bad idea and shouldn't be attempted</returns>
     protected virtual bool AbandonAlter(string oldSqlType, string newSqlType, out string reason)
     {
-        var basicallyDecimalAlready = new List<string>(){ "real","double","float","single"};
+        var basicallyDecimalAlready = new List<string> { "real","double","float","single"};
 
         var first = basicallyDecimalAlready.FirstOrDefault(c=>oldSqlType.Contains(c,StringComparison.InvariantCultureIgnoreCase));
 

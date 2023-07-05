@@ -23,7 +23,7 @@ internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
 
     private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec)
     {
-        return new ExtractionOptions()
+        return new ExtractionOptions
         {
             ExtractionConfiguration = ec.ID.ToString(),
             ExtractGlobals = true

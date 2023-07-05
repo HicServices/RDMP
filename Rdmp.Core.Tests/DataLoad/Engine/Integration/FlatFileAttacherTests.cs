@@ -477,7 +477,7 @@ public class FlatFileAttacherTests : DatabaseTests
 
         source.TableToLoad = tiNotInLoad;
 
-        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ ThrowOnWarning = true});
+        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true});
         job.RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad });
 
 

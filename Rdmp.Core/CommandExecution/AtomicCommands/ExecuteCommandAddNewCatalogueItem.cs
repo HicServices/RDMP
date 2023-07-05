@@ -72,7 +72,8 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
 
         if (c == null)
         {
-            if (BasicActivator.SelectObject(new DialogArgs() {
+            if (BasicActivator.SelectObject(new DialogArgs
+                {
                     WindowTitle = "Add CatalogueItem",
                     TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
 

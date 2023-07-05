@@ -145,7 +145,7 @@ public class DatabaseTests
     public DatabaseTests()
     {
 
-        var opts = new PlatformDatabaseCreationOptions()
+        var opts = new PlatformDatabaseCreationOptions
         {
             ServerName = TestDatabaseSettings.ServerName,
             Prefix = TestDatabaseNames.Prefix,
@@ -262,7 +262,7 @@ public class DatabaseTests
 
     private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)
     {
-        var opts = new PlatformDatabaseCreationOptions()
+        var opts = new PlatformDatabaseCreationOptions
         {
             ServerName = TestDatabaseSettings.ServerName,
             Prefix = prefix,

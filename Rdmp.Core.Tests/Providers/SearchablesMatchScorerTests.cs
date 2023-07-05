@@ -64,7 +64,7 @@ internal class SearchablesMatchScorerTests : UnitTests
 
         var childProvider = new DataExportChildProvider(RepositoryLocator, null, new ThrowImmediatelyCheckNotifier(), null);
 
-        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(),"", CancellationToken.None, new List<Type>() { typeof(CohortAggregateContainer)});
+        var scores = scorer.ScoreMatches(childProvider.GetAllSearchables(),"", CancellationToken.None, new List<Type> { typeof(CohortAggregateContainer)});
 
         var score = scores.Single(d => Equals(d.Key.Key, container));
         Assert.Greater(score.Value, 0);
@@ -205,7 +205,7 @@ internal class SearchablesMatchScorerTests : UnitTests
         c.SaveToDatabase();
 
 
-        var scorer = new SearchablesMatchScorer()
+        var scorer = new SearchablesMatchScorer
         {
             RespectUserSettings = true
         };

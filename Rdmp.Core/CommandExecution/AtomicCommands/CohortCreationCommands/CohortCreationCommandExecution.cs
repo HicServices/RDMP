@@ -106,7 +106,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <returns></returns>
     public static DialogArgs GetChooseCohortDialogArgs()
     {
-        return new DialogArgs()
+        return new DialogArgs
         {
             WindowTitle = "Choose where to save cohort",
             TaskDescription = "Select the Cohort Database in which to store the identifiers.  If you have multiple methods of anonymising cohorts or manage different types of identifiers (e.g. CHI lists, ECHI lists and/or BarcodeIDs) then you must pick the Cohort Database that matches your cohort identifier type/anonymisation protocol.",

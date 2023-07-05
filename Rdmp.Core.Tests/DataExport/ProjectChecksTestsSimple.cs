@@ -170,7 +170,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     {
         try
         {
-            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(notifier??new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(notifier??new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
         }
         finally
         {

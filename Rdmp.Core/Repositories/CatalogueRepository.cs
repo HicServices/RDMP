@@ -273,7 +273,7 @@ select 0", con.Connection, con.Transaction))
             return;
 
         Delete("DELETE FROM ServerDefaults WHERE DefaultType=@DefaultType",
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"DefaultType",ServerDefaults.StringExpansionDictionary[toDelete]}
             },false);
@@ -309,7 +309,7 @@ select 0", con.Connection, con.Transaction))
         var sql =
             "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
 
-        var affectedRows = Update(sql, new Dictionary<string, object>()
+        var affectedRows = Update(sql, new Dictionary<string, object>
         {
             {"DefaultType",ServerDefaults.StringExpansionDictionary[toChange]},
             {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}
@@ -327,7 +327,7 @@ select 0", con.Connection, con.Transaction))
 
         Insert(
             "INSERT INTO ServerDefaults(DefaultType,ExternalDatabaseServer_ID) VALUES (@DefaultType,@ExternalDatabaseServer_ID)",
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"DefaultType",ServerDefaults.StringExpansionDictionary[toChange]},
                 {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}

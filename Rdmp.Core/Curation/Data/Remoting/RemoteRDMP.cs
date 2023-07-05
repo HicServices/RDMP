@@ -101,7 +101,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
         _encryptedPasswordHost = new EncryptedPasswordHost(repository);
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>()
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "Name", "Unnamed remote" },
             { "URL", "https://example.com" }

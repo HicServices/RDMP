@@ -172,7 +172,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 
         var allBytes = File.ReadAllBytes(f.FullName);
 
-        var dictionaryParameters = new Dictionary<string, object>()
+        var dictionaryParameters = new Dictionary<string, object>
         {
             {"Bin",allBytes},
             {"Committer",Environment.UserName},

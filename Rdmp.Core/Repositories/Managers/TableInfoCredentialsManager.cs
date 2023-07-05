@@ -71,7 +71,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     {
         _repository.Delete(
             "DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid and Context =@context",
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"cid", credentials.ID},
                 {"tid", tableInfo.ID},
@@ -85,7 +85,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
     {
         _repository.Delete("DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid",
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"cid", credentials.ID},
                 {"tid", tableInfo.ID}

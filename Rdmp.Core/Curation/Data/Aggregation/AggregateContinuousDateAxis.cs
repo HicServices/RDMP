@@ -93,7 +93,7 @@ public class AggregateContinuousDateAxis: DatabaseEntity, IQueryAxis
         var todaysDateFunction = dimension.AggregateConfiguration.GetQuerySyntaxHelper().GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
 
         repository.InsertAndHydrate(this, 
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"AggregateDimension_ID",dimension.ID},
                 {"EndDate",todaysDateFunction}

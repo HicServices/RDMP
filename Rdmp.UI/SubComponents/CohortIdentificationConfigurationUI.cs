@@ -66,7 +66,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 {
     private ToolStripMenuItem cbIncludeCumulative = new ToolStripMenuItem("Calculate Cumulative Totals") { CheckOnClick = true };
     private ToolTip tt = new ToolTip();
-    private readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout() { Timeout = 3000 };
+    private readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout { Timeout = 3000 };
     private RDMPCollectionCommonFunctionality _commonFunctionality;
     private Timer timer = new Timer();
 

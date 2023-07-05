@@ -66,7 +66,7 @@ public class RemotePushingService
                 var share = _gatherer.GatherDependencies(toSend).ToShareDefinitionWithChildren(_shareManager);
                 var json = JsonConvertExtensions.SerializeObject(share, _repositoryLocator);
 
-                var handler = new HttpClientHandler()
+                var handler = new HttpClientHandler
                 {
                     Credentials = new NetworkCredential(remote.Username, remote.GetDecryptedPassword())
                 };

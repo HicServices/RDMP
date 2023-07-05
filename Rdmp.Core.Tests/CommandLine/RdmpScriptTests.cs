@@ -28,9 +28,9 @@ internal class RdmpScriptTests : UnitTests
         foreach(var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
             c.DeleteInDatabase();
 
-        var runner = new ExecuteCommandRunner(new ExecuteCommandOptions()
+        var runner = new ExecuteCommandRunner(new ExecuteCommandOptions
         {
-            Script = new RdmpScript()
+            Script = new RdmpScript
             {
                 Commands = new[] {command}
             }
@@ -56,9 +56,9 @@ internal class RdmpScriptTests : UnitTests
         foreach(var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
             c.DeleteInDatabase();
 
-        var runner = new ExecuteCommandRunner(new ExecuteCommandOptions()
+        var runner = new ExecuteCommandRunner(new ExecuteCommandOptions
         {
-            Script = new RdmpScript()
+            Script = new RdmpScript
             {
                 Commands = new[]
                 {

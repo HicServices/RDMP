@@ -61,7 +61,7 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     /// <param name="tableInfo"></param>
     public SelectedDataSetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, ITableInfo tableInfo)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>()
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"SelectedDataSets_ID",sds.ID},
             {"TableInfo_ID",tableInfo.ID}

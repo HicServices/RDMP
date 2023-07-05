@@ -103,7 +103,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     private void olvParameters_AboutToCreateGroups(object sender, CreateGroupsEventArgs e)
     {
 
-        var order = new Dictionary<string, int>()
+        var order = new Dictionary<string, int>
         {
             {ParameterLevel.Global.ToString(),0},
             {ParameterLevel.CompositeQueryLevel.ToString(),1},

@@ -135,7 +135,7 @@ internal class SimpleFileExtractorTests
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MovePatient("Pat1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true},new GracefulCancellationToken());
+        _extractor.MovePatient("Pat1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true},new GracefulCancellationToken());
             
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
@@ -178,7 +178,7 @@ internal class SimpleFileExtractorTests
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MovePatient("Sub1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true},new GracefulCancellationToken());
+        _extractor.MovePatient("Sub1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true},new GracefulCancellationToken());
             
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
@@ -199,11 +199,11 @@ internal class SimpleFileExtractorTests
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MovePatient("Sub1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true},new GracefulCancellationToken());
-        _extractor.MovePatient("Sub2","Rel2",_outDir,new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true},new GracefulCancellationToken());
+        _extractor.MovePatient("Sub1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true},new GracefulCancellationToken());
+        _extractor.MovePatient("Sub2","Rel2",_outDir,new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true},new GracefulCancellationToken());
 
         // does not exist
-        var ex = Assert.Throws<Exception>(()=>_extractor.MovePatient("Sub3", "Rel3", _outDir, new ThrowImmediatelyDataLoadEventListener() { ThrowOnWarning = true }, new GracefulCancellationToken()));
+        var ex = Assert.Throws<Exception>(()=>_extractor.MovePatient("Sub3", "Rel3", _outDir, new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true }, new GracefulCancellationToken()));
         Assert.AreEqual($"No Directories were found matching Pattern Sub3 in {_inDir.FullName}.  For private identifier 'Sub3'", ex.Message);
             
         // if not throwing on warnings then a missing sub just passes through and is ignored

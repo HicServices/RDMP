@@ -329,7 +329,7 @@ MrMurder,2001-01-01,Yella");
             null,
             dtChild,
             false,
-            new Dictionary<DatabaseColumnRequest, DiscoveredColumn>()
+            new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {fkParentID, pkParentID}
             },

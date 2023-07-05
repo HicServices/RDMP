@@ -165,7 +165,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             var lp = new LoadProgress(CatalogueRepository, new LoadMetadata(CatalogueRepository, "ffffff"));
             lp.OriginDate = new DateTime(2001,1,1);
             attacher.Progress = lp;
-            attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo(){Strategy = DataLoadProgressUpdateStrategy.DoNothing};
+            attacher.ProgressUpdateStrategy = new DataLoadProgressUpdateInfo {Strategy = DataLoadProgressUpdateStrategy.DoNothing};
             
             var dbConfiguration = new HICDatabaseConfiguration(lmd, RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 

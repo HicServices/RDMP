@@ -341,7 +341,7 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             yield return new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null,PermissableDefaults.None);
                 
-            var assemblyDictionary = new Dictionary<PermissableDefaults, IPatcher>()
+            var assemblyDictionary = new Dictionary<PermissableDefaults, IPatcher>
             {
                 {PermissableDefaults.DQE, new DataQualityEnginePatcher() },
                 {PermissableDefaults.WebServiceQueryCachingServer_ID, new QueryCachingPatcher()},

@@ -101,7 +101,7 @@ public class EndToEndCacheTest : DatabaseTests
         {
             Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Count());
 
-            var auto = new CacheRunner(new CacheOptions(){CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run});
+            var auto = new CacheRunner(new CacheOptions {CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run});
             auto.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
         });
 

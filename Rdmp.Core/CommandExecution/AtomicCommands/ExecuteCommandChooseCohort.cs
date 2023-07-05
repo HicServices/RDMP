@@ -86,7 +86,8 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
         var pick = _pick;
 
         if (pick == null)
-            if(SelectOne(new DialogArgs() {
+            if(SelectOne(new DialogArgs
+               {
                    WindowTitle = "Select Saved Cohort",
                    TaskDescription = "Select the existing Cohort you would like to be used for your Extraction Configuration."
                }, _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID && !c.IsDeprecated).ToList(), out var selected))

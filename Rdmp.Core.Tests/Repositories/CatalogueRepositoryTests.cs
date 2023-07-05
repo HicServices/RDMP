@@ -24,7 +24,7 @@ internal class CatalogueRepositoryTests
     {
         ImplementationManager.Load<FAnsi.Implementations.MicrosoftSQL.MicrosoftSQLImplementation>();
 
-        var repo = new CatalogueRepository(new SqlConnectionStringBuilder()
+        var repo = new CatalogueRepository(new SqlConnectionStringBuilder
         {
             DataSource = "NonExistant11",
             UserID = "fish",
@@ -49,7 +49,7 @@ internal class CatalogueRepositoryTests
         if(EnvironmentInfo.IsLinux)
             Assert.Inconclusive("Linux doesn't really support IntegratedSecurity and in fact can bomb just setting it on a builder");
 
-        var repo = new CatalogueRepository(new SqlConnectionStringBuilder()
+        var repo = new CatalogueRepository(new SqlConnectionStringBuilder
         {
             DataSource = "NonExistant11",
             IntegratedSecurity = true,

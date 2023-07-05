@@ -300,7 +300,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         base.SetDatabaseObject(activator, databaseObject);
 
         if (!_collectionCommonFunctionality.IsSetup)
-            _collectionCommonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables,activator,null,null,new RDMPCollectionCommonFunctionalitySettings()
+            _collectionCommonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables,activator,null,null,new RDMPCollectionCommonFunctionalitySettings
             {
                 AddFavouriteColumn = false,
                 AddIDColumn = false,

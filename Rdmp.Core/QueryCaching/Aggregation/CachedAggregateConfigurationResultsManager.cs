@@ -184,7 +184,7 @@ WHERE
 
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
-            mgrTable.Insert(new Dictionary<string, object>()
+            mgrTable.Insert(new Dictionary<string, object>
             {
                 { "Committer", Environment.UserName},
                 { "AggregateConfiguration_ID", configuration.ID},

@@ -259,7 +259,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
             desc += $"{parameter.ParameterName} is '{parameter.Comment}'";
         }
 
-        return new DialogArgs()
+        return new DialogArgs
         {
             WindowTitle = windowTitle,
             EntryLabel = parameter.ParameterName,

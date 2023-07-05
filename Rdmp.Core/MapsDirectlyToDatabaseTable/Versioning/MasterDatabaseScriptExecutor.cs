@@ -144,7 +144,7 @@ public class MasterDatabaseScriptExecutor
         var now = DateTime.Now;
 
         Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
-            .Insert(new Dictionary<string, object>()
+            .Insert(new Dictionary<string, object>
             {
                 {"script_name", kvp.Key},
                 {"text_of_script", kvp.Value.EntireScript},
@@ -194,7 +194,7 @@ public class MasterDatabaseScriptExecutor
 
         var now = DateTime.Now;
 
-        versionTable.Insert(new Dictionary<string, object>()
+        versionTable.Insert(new Dictionary<string, object>
         {
             {"repository_path", name},
             {"version", version},

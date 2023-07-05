@@ -20,7 +20,7 @@ public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
 {
     protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        return flowData ?? new ReleaseAudit()
+        return flowData ?? new ReleaseAudit
         {
             SourceGlobalFolder = PrepareSourceGlobalFolder()
         };

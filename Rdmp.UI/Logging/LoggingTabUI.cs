@@ -41,7 +41,7 @@ public class LoggingTabUI : LoggingTab_Design
     private ToolStripTextBox tbContentFilter = new ToolStripTextBox();
     private ToolStripLabel label1 = new ToolStripLabel("Filter:");
     private ToolStripLabel label2 = new ToolStripLabel("Top:");
-    private ToolStripTextBox tbTop = new ToolStripTextBox(){Text = "10000" };
+    private ToolStripTextBox tbTop = new ToolStripTextBox {Text = "10000" };
     private ToolStripButton cbPreferNewer = new ToolStripButton("Newest"){CheckOnClick =true,Checked = true};
 
     private Label lblCurrentFilter;

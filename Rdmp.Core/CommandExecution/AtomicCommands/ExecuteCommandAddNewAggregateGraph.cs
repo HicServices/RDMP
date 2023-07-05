@@ -42,7 +42,7 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution,IAtomicC
 
         if (c == null)
         {
-            if (BasicActivator.SelectObject(new DialogArgs()
+            if (BasicActivator.SelectObject(new DialogArgs
                 {
                     WindowTitle = "Add Aggregate Graph",
                     TaskDescription = "Select which Catalogue you want to add the graph to."

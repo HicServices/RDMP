@@ -282,7 +282,8 @@ internal class CatalogueLoadChecks:ICheckable
     {
         try
         {
-            new MigrationColumnSet(stagingTable,liveTable,new StagingToLiveMigrationFieldProcessor(){
+            new MigrationColumnSet(stagingTable,liveTable,new StagingToLiveMigrationFieldProcessor
+            {
                 NoBackupTrigger = _loadMetadata.IgnoreTrigger
             });
             notifier.OnCheckPerformed(new CheckEventArgs(

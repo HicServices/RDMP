@@ -325,7 +325,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     /// <returns></returns>
     private DataTable MakeDistinct(DataTable chunk, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
-        var removeDuplicates = new RemoveDuplicates(){NoLogging=true};
+        var removeDuplicates = new RemoveDuplicates {NoLogging=true};
         return removeDuplicates.ProcessPipelineData(chunk, listener, cancellationToken);
     }
 

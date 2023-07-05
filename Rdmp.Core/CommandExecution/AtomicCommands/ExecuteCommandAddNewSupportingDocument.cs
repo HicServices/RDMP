@@ -62,7 +62,7 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
 
         if (c == null)
         {
-            if (BasicActivator.SelectObject(new DialogArgs()
+            if (BasicActivator.SelectObject(new DialogArgs
                 {
                     WindowTitle = "Add SupportingDocument",
                     TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."

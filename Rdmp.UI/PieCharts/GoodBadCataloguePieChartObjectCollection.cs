@@ -103,7 +103,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
         
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(new Dictionary<string, string>()
+        return Helper.SaveDictionaryToString(new Dictionary<string, string>
         {
             {nameof(ShowLabels), ShowLabels.ToString()},
 

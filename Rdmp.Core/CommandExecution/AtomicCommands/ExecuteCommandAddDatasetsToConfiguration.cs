@@ -84,7 +84,7 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
         if (_userMustPick)
         {
             ExtractableDataSet[] selected;
-            if (!SelectMany(new DialogArgs()
+            if (!SelectMany(new DialogArgs
                 {
                     WindowTitle = "Select Datasets",
                     TaskDescription = "Select the Datasets you would like to be exported as part of your Extraction Configuration."

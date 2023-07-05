@@ -55,7 +55,7 @@ internal class ConsoleGuiTextDialog
 
         win.Add(entryLabel);
 
-        var textField = new TextView()
+        var textField = new TextView
         {
             X = 1,
             Y = Pos.Bottom(entryLabel),

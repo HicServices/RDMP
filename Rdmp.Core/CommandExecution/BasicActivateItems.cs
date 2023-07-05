@@ -287,7 +287,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public bool SelectType(string prompt, Type baseTypeIfAny, out Type chosen)
     {
-        return SelectType(new DialogArgs()
+        return SelectType(new DialogArgs
         {
             WindowTitle = prompt
         },baseTypeIfAny,out chosen);
@@ -300,7 +300,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public bool SelectType(string prompt, Type baseTypeIfAny,bool allowAbstract,bool allowInterfaces, out Type chosen)
     {
-        return SelectType(new DialogArgs()
+        return SelectType(new DialogArgs
         {
             WindowTitle = prompt
         },baseTypeIfAny,allowAbstract,allowInterfaces,out chosen);
@@ -617,7 +617,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
         IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null)
     {
-        return SelectMany(new DialogArgs()
+        return SelectMany(new DialogArgs
         {
             WindowTitle = prompt,
             InitialSearchText = initialSearchText
@@ -632,7 +632,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public virtual IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
         string initialSearchText = null, bool allowAutoSelect = false)
     {
-        return SelectOne(new DialogArgs()
+        return SelectOne(new DialogArgs
         {
             WindowTitle = prompt,
             AllowAutoSelect = allowAutoSelect,
@@ -646,7 +646,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <inheritdoc/>
     public bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class
     {
-        return SelectObject<T>(new DialogArgs()
+        return SelectObject<T>(new DialogArgs
         {
             WindowTitle = prompt,
             InitialSearchText = initialSearchText,
@@ -775,7 +775,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             throw new ArgumentException($"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",nameof(db));
 
         var executor = new MasterDatabaseScriptExecutor(db);
-        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier() { WriteToConsole = true});
+        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier { WriteToConsole = true});
 
         var eds = new ExternalDatabaseServer(catalogueRepository,
             $"New {(defaultToSet == PermissableDefaults.None ? "" : defaultToSet.ToString())}Server",patcher);
@@ -795,7 +795,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
     {
-        SelectAnythingThen(new DialogArgs() { WindowTitle = prompt}, callback);
+        SelectAnythingThen(new DialogArgs { WindowTitle = prompt}, callback);
     }
     public virtual void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
     {

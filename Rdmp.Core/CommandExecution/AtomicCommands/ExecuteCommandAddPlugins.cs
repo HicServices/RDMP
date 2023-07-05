@@ -61,7 +61,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
         foreach(var f in _files)
         {
-            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions(){File = f.FullName});
+            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions {File = f.FullName});
             runner.Run(BasicActivator.RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(),new DataFlowPipeline.GracefulCancellationToken());
         }
                 

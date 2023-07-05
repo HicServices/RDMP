@@ -82,7 +82,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
     private List<HelpStage> BuildHelpStages()
     {
-        var stages = new List<HelpStage>()
+        var stages = new List<HelpStage>
         {
             new HelpStage(btnRunChecks,
                 "Once you are happy with the selections, use this button to run the checks for the selected options."),

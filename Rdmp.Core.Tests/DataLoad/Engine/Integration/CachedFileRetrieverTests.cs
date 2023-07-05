@@ -54,7 +54,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             // Set SetUp retriever
             var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
                 
-            var retriever = new TestCachedFileRetriever()
+            var retriever = new TestCachedFileRetriever
             {
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
@@ -96,7 +96,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             // Set SetUp retriever
             var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
 
-            var retriever = new TestCachedFileRetriever()
+            var retriever = new TestCachedFileRetriever
             {
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
@@ -140,7 +140,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             // Set SetUp retriever
             var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
 
-            var retriever = new TestCachedFileRetriever()
+            var retriever = new TestCachedFileRetriever
             {
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,

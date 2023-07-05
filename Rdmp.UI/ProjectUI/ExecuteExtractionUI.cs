@@ -69,7 +69,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     private ToolStripControlHost _pipelinePanel;
 
     private ToolStripLabel lblMaxConcurrent = new ToolStripLabel("Concurrent:");
-    private ToolStripTextBox tbMaxConcurrent = new ToolStripTextBox(){Text="3"};
+    private ToolStripTextBox tbMaxConcurrent = new ToolStripTextBox {Text="3"};
 
     public ExecuteExtractionUI()
     {
@@ -235,7 +235,8 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         //if user has defined an alternative maximum concurrent number of executing extraction threads
         max = int.TryParse(tbMaxConcurrent.Text, out max) ? max : 3;
 
-        return new ExtractionOptions() { 
+        return new ExtractionOptions
+        { 
             Command = activityRequested,
             ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
             MaxConcurrentExtractions = max,
@@ -258,7 +259,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
 
         if (!_commonFunctionality.IsSetup)
-            _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings()
+            _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings
             {
                 AddFavouriteColumn = false,
                 SuppressChildrenAdder=true,

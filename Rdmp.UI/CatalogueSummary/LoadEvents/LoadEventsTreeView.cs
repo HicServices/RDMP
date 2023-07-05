@@ -45,7 +45,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     private CancellationTokenSource _populateLoadHistoryCancel;
     private readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
     private readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
-    private readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox() { Text = "1000" };
+    private readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox { Text = "1000" };
     private readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
 
     private int _toFetch = 1000;

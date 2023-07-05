@@ -95,7 +95,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
             throw new NotSupportedException(
                 $"Cannot make aggregate {aggregate} into a Joinable aggregate because it is already in a CohortAggregateContainer");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>()
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"CohortIdentificationConfiguration_ID",cic.ID},
             {"AggregateConfiguration_ID",aggregate.ID}

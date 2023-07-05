@@ -77,7 +77,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(new Dictionary<string, string>() { { "ViewType", ViewType.ToString() } });
+        return Helper.SaveDictionaryToString(new Dictionary<string, string> { { "ViewType", ViewType.ToString() } });
     }
 
     public override void LoadExtraText(string s)

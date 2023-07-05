@@ -42,8 +42,8 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi.ImageToBitmap()) { Name = "btnRemoveAll" };
     private ToolStripButton btnAddExtractableDatasetPackage = new ToolStripButton("Add Package") { Name = "btnAddExtractableDatasetPackage" };
     private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Show Period") { Name = "toolStripLabel1" };
-    private ToolStripComboBox ddShowPeriod = new ToolStripComboBox() { Name = "ddShowPeriod", Size = new Size(121, 25) };
-    private ToolStripButton cbIgnoreRowCounts = new ToolStripButton() { Name = "cbIgnoreRowCounts" };
+    private ToolStripComboBox ddShowPeriod = new ToolStripComboBox { Name = "ddShowPeriod", Size = new Size(121, 25) };
+    private ToolStripButton cbIgnoreRowCounts = new ToolStripButton { Name = "cbIgnoreRowCounts" };
 
     public DatasetRaceway()
     {
