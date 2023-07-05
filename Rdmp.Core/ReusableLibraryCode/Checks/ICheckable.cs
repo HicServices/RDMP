@@ -13,7 +13,7 @@ public enum CheckResult
     Success,
     Warning,
     Fail
-};
+}
 
 /// <summary>
 /// An object that can check its own state for problems and summarise this through the Checking Events system (See CheckEventArgs)

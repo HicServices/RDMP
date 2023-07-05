@@ -23,7 +23,7 @@ public enum CacheFileGranularity
 {
     Hour,
     Day
-};
+}
 
 /// <summary>
 /// Abstract implementation of ICacheFileSystemDestination. Includes checks for CacheLayout construction and read/write permissions to Cache directory.  To implement
