@@ -208,8 +208,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     }
 
     private DbCommand _cmd;
-    private ChartDashStyle[] StyleList = new ChartDashStyle[]
-    {
+    private ChartDashStyle[] StyleList = {
         ChartDashStyle.Solid,
         ChartDashStyle.Dash,
         ChartDashStyle.Dot,

@@ -85,7 +85,7 @@ public class FlatFileColumnCollection
     /// <summary>
     /// used to advise user if he has selected the wrong separator
     /// </summary>
-    private string[] _commonSeparators = new[] { "|", ",", "    ", "#" };
+    private string[] _commonSeparators = { "|", ",", "    ", "#" };
 
     /// <summary>
     /// Counts the number of headers that are not null

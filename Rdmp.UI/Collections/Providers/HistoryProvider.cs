@@ -31,8 +31,7 @@ public class HistoryProvider
     /// <summary>
     /// What Types to track in <see cref="Add"/>
     /// </summary>
-    public Type[] TrackTypes { get; set; } = new Type[]
-    {
+    public Type[] TrackTypes { get; set; } = {
         typeof(Catalogue),
         typeof(Project),
         typeof(ExtractionConfiguration),

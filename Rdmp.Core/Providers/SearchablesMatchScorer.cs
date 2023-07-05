@@ -27,7 +27,7 @@ namespace Rdmp.Core.Providers;
 /// </summary>
 public class SearchablesMatchScorer
 {
-    private static readonly int[] Weights = new int[] { 64, 32, 16, 8, 4, 2, 1 };
+    private static readonly int[] Weights = { 64, 32, 16, 8, 4, 2, 1 };
 
     public HashSet<string> TypeNames { get; set; }
 

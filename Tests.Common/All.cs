@@ -14,8 +14,7 @@ public class All
     /// <summary>
     /// <see cref="TestCaseSourceAttribute"/> for tests that should run on all DBMS
     /// </summary>
-    public static DatabaseType[] DatabaseTypes = new[]
-    {
+    public static DatabaseType[] DatabaseTypes = {
         DatabaseType.MicrosoftSQLServer,
         DatabaseType.MySql,
         DatabaseType.Oracle,
@@ -26,8 +25,7 @@ public class All
     /// <see cref="TestCaseSourceAttribute"/> for tests that should run on all DBMS
     /// with both permutations of true/false.  Matches exhaustively method signature (DatabaseType,bool)
     /// </summary>
-    public static object[] DatabaseTypesWithBoolFlags = new[]
-    {
+    public static object[] DatabaseTypesWithBoolFlags = {
         new object[] {DatabaseType.MicrosoftSQLServer,true},
         new object[] {DatabaseType.MySql,true},
         new object[] {DatabaseType.Oracle,true},

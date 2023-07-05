@@ -25,8 +25,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 {
     private readonly Dictionary<string,string> _dictionary = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
-    private string[] _ignoreHelpFor = new[]
-    {
+    private string[] _ignoreHelpFor = {
         "CsvHelper.xml",
         "Google.Protobuf.xml",
         "MySql.Data.xml",
