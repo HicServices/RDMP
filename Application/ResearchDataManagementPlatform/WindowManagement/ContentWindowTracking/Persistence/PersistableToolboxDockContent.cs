@@ -58,9 +58,9 @@ public class PersistableToolboxDockContent:DockContent
 
         RDMPCollection collection;
 
-        if (args.ContainsKey("Toolbox"))
+        if (args.TryGetValue("Toolbox", out var arg))
         {
-            Enum.TryParse(args["Toolbox"], true, out collection);
+            Enum.TryParse(arg, true, out collection);
             return collection;
         }
 

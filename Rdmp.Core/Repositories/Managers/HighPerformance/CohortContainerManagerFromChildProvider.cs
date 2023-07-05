@@ -36,8 +36,8 @@ internal class CohortContainerManagerFromChildProvider:CohortContainerManager
     /// <returns></returns>
     public override IOrderable[] GetChildren(CohortAggregateContainer parent)
     {
-        if (_contents.ContainsKey(parent.ID))
-            return _contents[parent.ID].ToArray();
+        if (_contents.TryGetValue(parent.ID, out var content))
+            return content.ToArray();
 
         return Array.Empty<IOrderable>();
     }

@@ -41,8 +41,8 @@ public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIco
     public Image<Rgba32> GetIconForAssembly(Assembly assembly)
     {
         var assemblyName = assembly.GetName().Name;
-        if (_assemblyToIconDictionary.ContainsKey(assemblyName))
-            return _assemblyToIconDictionary[assemblyName];
+        if (_assemblyToIconDictionary.TryGetValue(assemblyName, out var forAssembly))
+            return forAssembly;
 
         return _default;
     }
@@ -63,8 +63,8 @@ public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIco
         var toReturn = _default;
 
         //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)
-        if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.ContainsKey(server.CreatedByAssembly))
-            toReturn = _assemblyToIconDictionary[server.CreatedByAssembly];
+        if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.TryGetValue(server.CreatedByAssembly, out var value))
+            toReturn = value;
                 
         //add the database type overlay
         toReturn = _overlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));

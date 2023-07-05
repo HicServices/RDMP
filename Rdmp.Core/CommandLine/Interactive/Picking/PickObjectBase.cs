@@ -95,8 +95,8 @@ public abstract class PickObjectBase
     }
     protected static Type GetTypeFromShortCodeIfAny(string possibleShortCode)
     {
-        return SearchablesMatchScorer.ShortCodes.ContainsKey(possibleShortCode) ?
-            SearchablesMatchScorer.ShortCodes[possibleShortCode] :
+        return SearchablesMatchScorer.ShortCodes.TryGetValue(possibleShortCode, out var code) ?
+            code :
             null;
     }
     protected IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)

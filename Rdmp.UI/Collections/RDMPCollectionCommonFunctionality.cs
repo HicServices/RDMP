@@ -284,7 +284,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         if(Settings.AllowSorting)
         {
-            SetupColumnSortTracking(Tree, TreeGuids.ContainsKey(collection) ? TreeGuids[collection] : Guid.Empty);
+            SetupColumnSortTracking(Tree, TreeGuids.TryGetValue(collection, out var guid) ? guid : Guid.Empty);
         }
         else
             foreach (var c in Tree.AllColumns)
@@ -363,8 +363,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             lastInvalidatedCache = DateTime.Now;
         }
 
-        if(cache.ContainsKey(sum))
-            return cache[sum];
+        if(cache.TryGetValue(sum, out var body))
+            return body;
 
         var sb = new StringBuilder();
         sb.AppendLine(sum.GetSummary(false, false));

@@ -442,9 +442,9 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
 
-        if (_extractionProgressesBySelectedDataSetID.ContainsKey(selectedDataSets.ID))
+        if (_extractionProgressesBySelectedDataSetID.TryGetValue(selectedDataSets.ID, out var value))
         {
-            children.Add(_extractionProgressesBySelectedDataSetID[selectedDataSets.ID]);
+            children.Add(value);
         }
 
         if (selectedDataSets.RootFilterContainer_ID != null)

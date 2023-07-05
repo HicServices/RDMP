@@ -348,10 +348,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             if (_searchables == null)
                 return null;
 
-            if (_searchables.ContainsKey(m))
+            if (_searchables.TryGetValue(m, out var searchable))
             {
-                var descendancy = _searchables[m];
-                var parent = descendancy?.GetMostDescriptiveParent();
+                var parent = searchable?.GetMostDescriptiveParent();
 
                 if (parent == null)
                     return null;
@@ -373,10 +372,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             if (_searchables == null)
                 return null;
 
-            if (_searchables.ContainsKey(m))
+            if (_searchables.TryGetValue(m, out var searchable))
             {
-                var descendancy = _searchables[m];
-                return descendancy != null ? Regex.Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\\\+", "\\").Trim('\\') : null;
+                return searchable != null ? Regex.Replace(string.Join('\\', searchable.GetUsefulParents()), "\\\\+", "\\").Trim('\\') : null;
             }
         }   
 
@@ -395,8 +393,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
         Type[] startingFilters = null;
 
-        if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
-            startingFilters = StartingEasyFilters[focusedCollection];
+        if (focusedCollection != RDMPCollection.None && StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
+            startingFilters = filter;
 
         var backColorProvider = new BackColorProvider();
 

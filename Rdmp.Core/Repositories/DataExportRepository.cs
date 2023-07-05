@@ -81,8 +81,8 @@ public class DataExportRepository : TableRepository, IDataExportRepository
     private readonly ObjectConstructor _constructor = new ObjectConstructor();
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
-        if (Constructors.ContainsKey(t))
-            return Constructors[t](this, reader);
+        if (Constructors.TryGetValue(t, out var constructor))
+            return constructor(this, reader);
 
         return _constructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
     }

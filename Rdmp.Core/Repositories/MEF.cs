@@ -73,7 +73,7 @@ public class MEF
         if(TypeNotKnown.Contains(type))
             return null;
 
-        if (SafeDirectoryCatalog.TypesByName.ContainsKey(type)) return SafeDirectoryCatalog.TypesByName[type];
+        if (SafeDirectoryCatalog.TypesByName.TryGetValue(type, out var type1)) return type1;
         var toReturn = Type.GetType(type);
                 
         //If they are looking for the Type name without the namespace that's bad
@@ -275,8 +275,8 @@ public class MEF
 
         lock(_cachedImplementationsLock)
         {
-            if(_cachedImplementations.ContainsKey(type))
-                return _cachedImplementations[type];
+            if(_cachedImplementations.TryGetValue(type, out var types))
+                return types;
 
             var results = SafeDirectoryCatalog.GetAllTypes().Where(t=>type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
             _cachedImplementations.Add(type,results);

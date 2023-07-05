@@ -29,8 +29,8 @@ public static class AssemblyResolver
             var parts = assemblyInfo.Split(',');
             var name = parts[0];
 
-            if (assemblyResolveAttempts.ContainsKey(assemblyInfo))
-                return assemblyResolveAttempts[assemblyInfo];
+            if (assemblyResolveAttempts.TryGetValue(assemblyInfo, out var expression))
+                return expression;
 
             //start out assuming we cannot load it
             assemblyResolveAttempts.Add(assemblyInfo,null);

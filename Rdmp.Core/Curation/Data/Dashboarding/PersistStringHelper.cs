@@ -88,8 +88,8 @@ public class PersistStringHelper
     {
         var dict = LoadDictionaryFromString(persistString);
 
-        if(dict.ContainsKey(key))
-            return dict[key];
+        if(dict.TryGetValue(key, out var s))
+            return s;
             
         return null;
     }

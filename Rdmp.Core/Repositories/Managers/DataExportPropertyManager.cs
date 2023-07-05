@@ -49,8 +49,8 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
         if (!_allowCaching || _cacheOutOfDate)
             RefreshCache();
 
-        if (_cacheDictionary.ContainsKey(property))
-            return _cacheDictionary[property];
+        if (_cacheDictionary.TryGetValue(property, out var value))
+            return value;
 
         return null;
     }

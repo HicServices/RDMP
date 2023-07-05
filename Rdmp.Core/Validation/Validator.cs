@@ -452,9 +452,9 @@ public class Validator
                 {
                     var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
                         
-                    if (propertiesDictionary.ContainsKey(itemValidator.TargetProperty))
+                    if (propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out var value1))
                     {
-                        value = propertiesDictionary[itemValidator.TargetProperty];
+                        value = value1;
                             
                         result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(), propertiesDictionary.Keys.ToArray());
                     }

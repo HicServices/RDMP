@@ -68,7 +68,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 
     private void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
     {
-        if (periodsByDay.ContainsKey(dayNum)) PopulateTextBox(textBox, periodsByDay[dayNum]);
+        if (periodsByDay.TryGetValue(dayNum, out var value)) PopulateTextBox(textBox, value);
     }
 
     private static void PopulateTextBox(TextBox textBox, IEnumerable<PermissionWindowPeriod> periods)

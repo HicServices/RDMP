@@ -64,8 +64,8 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
             return;
         }
 
-        if (progressBars.ContainsKey(e.TaskDescription))
-            UpdateProgressBar(progressBars[e.TaskDescription], e);
+        if (progressBars.TryGetValue(e.TaskDescription, out var bar))
+            UpdateProgressBar(bar, e);
         else
         {
             var y = GetRowYForNewProgressBar();

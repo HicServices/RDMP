@@ -363,12 +363,11 @@ public partial class ParameterCollectionUI : RDMPUserControl
         e.StandardIcon = ToolTipControl.StandardIcons.Info;
 
         //if it is a problem parameter
-        if (parameterEditorScintillaControl1.ProblemObjects.ContainsKey(sqlParameter))
+        if (parameterEditorScintillaControl1.ProblemObjects.TryGetValue(sqlParameter, out var o))
         {
-            var ex = parameterEditorScintillaControl1.ProblemObjects[sqlParameter];
             e.StandardIcon = ToolTipControl.StandardIcons.Warning;
             e.Title = "Problem Detected With Parameter";
-            e.Text = ex.Message;
+            e.Text = o.Message;
             return;
         }
 

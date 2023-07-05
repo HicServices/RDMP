@@ -136,8 +136,8 @@ public class SearchablesMatchScorer
         //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
         if (!string.IsNullOrWhiteSpace(searchText))
             foreach(var s in searchText.Split(' ').ToArray())
-                if (AlsoIncludes.ContainsKey(s))
-                    foreach(var v in AlsoIncludes[s])
+                if (AlsoIncludes.TryGetValue(s, out var include))
+                    foreach(var v in include)
                         searchText += $" {v.Name}";
 
         //if we have nothing to search for return no results

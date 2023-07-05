@@ -732,8 +732,8 @@ abstract public class TableRepository : ITableRepository
         lock (ongoingConnectionsLock)
         {
             //see if Thread dictionary has it
-            if (ongoingConnections.ContainsKey(Thread.CurrentThread))
-                ongoingConnection = ongoingConnections[Thread.CurrentThread];
+            if (ongoingConnections.TryGetValue(Thread.CurrentThread, out var connection))
+                ongoingConnection = connection;
             else
             {
                 ongoingConnections.Add(Thread.CurrentThread, null);
@@ -742,8 +742,8 @@ abstract public class TableRepository : ITableRepository
 
 
             //see if Thread dictionary has it
-            if (ongoingTransactions.ContainsKey(Thread.CurrentThread))
-                ongoingTransaction = ongoingTransactions[Thread.CurrentThread];
+            if (ongoingTransactions.TryGetValue(Thread.CurrentThread, out var transaction))
+                ongoingTransaction = transaction;
             else
             {
                 ongoingTransactions.Add(Thread.CurrentThread, null);

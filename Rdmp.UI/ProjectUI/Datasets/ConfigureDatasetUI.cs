@@ -260,15 +260,14 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
                 var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
                 var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
 
-                if (eiDict.ContainsKey(ec.CatalogueExtractionInformation_ID.Value))
+                if (eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei))
                 {
-                    var ei = eiDict[ec.CatalogueExtractionInformation_ID.Value];
                     ec.InjectKnown(ei);
                     ec.InjectKnown(ei.ColumnInfo);
 
-                    if(ciDict.ContainsKey(ei.CatalogueItem_ID))
+                    if(ciDict.TryGetValue(ei.CatalogueItem_ID, out var value))
                     {
-                        ec.InjectKnown(ciDict[ei.CatalogueItem_ID]);
+                        ec.InjectKnown(value);
                     }
                 }
 
@@ -692,7 +691,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
         return olvSelected.Objects.OfType<ExtractableColumn>()
             .Where(ec => ec.CatalogueExtractionInformation_ID != null)
-            .Select(ec => eis.ContainsKey(ec.CatalogueExtractionInformation_ID.Value) ? eis[ec.CatalogueExtractionInformation_ID.Value] : null)
+            .Select(ec => eis.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei1) ? ei1 : null)
             .Where(ei => ei != null)
             .Select(ei => ei.ColumnInfo.TableInfo)
             .Distinct()

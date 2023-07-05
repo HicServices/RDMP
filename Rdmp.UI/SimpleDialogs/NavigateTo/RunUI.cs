@@ -60,10 +60,8 @@ public partial class RunUI : RDMPForm
             
         if (e.KeyCode == Keys.Enter)
         {
-            if (_commandsDictionary.ContainsKey(key))
+            if (_commandsDictionary.TryGetValue(key, out var type))
             {
-                var type = _commandsDictionary[key];
-
                 try
                 {
                     _commandCaller.ExecuteCommand(type, null);

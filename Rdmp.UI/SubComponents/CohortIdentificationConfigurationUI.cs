@@ -376,9 +376,8 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         var menuItem = new ToolStripMenuItem(title);
 
-        if (Common.Compiler.Tasks.ContainsKey(c))
+        if (Common.Compiler.Tasks.TryGetValue(c, out var exe))
         {
-            var exe = Common.Compiler.Tasks[c];
             if (exe != null && enabledFunc(exe))
                 menuItem.Click += (s, e) => action(exe);
             else

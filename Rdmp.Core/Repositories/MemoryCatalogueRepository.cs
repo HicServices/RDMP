@@ -263,8 +263,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
     {
-        if (CredentialsDictionary.ContainsKey(tableInfo))
-            return CredentialsDictionary[tableInfo];
+        if (CredentialsDictionary.TryGetValue(tableInfo, out var @for))
+            return @for;
 
         return null;
     }
@@ -415,9 +415,9 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     {
         var parent = GetParent(child);
 
-        if (parent != null && CohortContainerContents.ContainsKey(parent))
+        if (parent != null && CohortContainerContents.TryGetValue(parent, out var content))
         {
-            var record = CohortContainerContents[parent].SingleOrDefault(o => o.Orderable.Equals(child));
+            var record = content.SingleOrDefault(o => o.Orderable.Equals(child));
             if (record != null)
                 record.Order = newOrder;
         }

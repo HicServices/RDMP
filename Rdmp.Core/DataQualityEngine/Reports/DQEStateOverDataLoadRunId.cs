@@ -126,11 +126,9 @@ public class DQEStateOverDataLoadRunId
             {
                 //if it is a constrained column
                 if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
-                    .DictionaryOfFailure.ContainsKey( //with entries in the dictionary of failure
-                        column.TargetProperty))
+                    .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var kvp))
                 {
                     //adjust our correct value downwards according to the results of the dictionary of failure
-                    var kvp = ColumnValidationFailuresByDataLoadRunID[dataLoadRunID].DictionaryOfFailure[column.TargetProperty];
 
                     column.CountMissing = kvp[Consequence.Missing];
                     column.CountWrong = kvp[Consequence.Wrong];

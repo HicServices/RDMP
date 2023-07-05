@@ -181,8 +181,8 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
-        if (Constructors.ContainsKey(t))
-            return Constructors[t](this, reader);
+        if (Constructors.TryGetValue(t, out var constructor))
+            return constructor(this, reader);
 
         return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
     }
