@@ -370,8 +370,10 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         try
         {
-            var arg = new PipelineComponentArgument(CatalogueRepository, pc);
-            arg.Name = "MyNames";
+            var arg = new PipelineComponentArgument(CatalogueRepository, pc)
+            {
+                Name = "MyNames"
+            };
             arg.SetType(typeof(Dictionary<TableInfo,string>));
             arg.SaveToDatabase();
                 

@@ -182,11 +182,12 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
                 Request.GetDistinctLiveDatabaseServer().Builder, 
-                ExecutionTimeout);
-
-            // If we are running in batches then always allow empty extractions
-            _hostedSource.AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume;
-            _hostedSource.BatchSize = BatchSize;
+                ExecutionTimeout)
+            {
+                // If we are running in batches then always allow empty extractions
+                AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume,
+                BatchSize = BatchSize
+            };
         }
 
         DataTable chunk = null;

@@ -672,10 +672,12 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         foreach (var aggregateDimension in AggregateDimensions)
         {
-            var cloneDimension = new AggregateDimension((ICatalogueRepository) Repository, aggregateDimension.ExtractionInformation, clone);
-            cloneDimension.Alias = aggregateDimension.Alias;
-            cloneDimension.SelectSQL = aggregateDimension.SelectSQL;
-            cloneDimension.Order = aggregateDimension.Order;
+            var cloneDimension = new AggregateDimension((ICatalogueRepository) Repository, aggregateDimension.ExtractionInformation, clone)
+                {
+                    Alias = aggregateDimension.Alias,
+                    SelectSQL = aggregateDimension.SelectSQL,
+                    Order = aggregateDimension.Order
+                };
             cloneDimension.SaveToDatabase();
 
             if(aggregateDimension.AggregateContinuousDateAxis != null)
@@ -694,9 +696,11 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         foreach (var p in GetAllParameters())
         {
-            var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL);
-            cloneP.Comment = p.Comment;
-            cloneP.Value = p.Value;
+            var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL)
+            {
+                Comment = p.Comment,
+                Value = p.Value
+            };
             cloneP.SaveToDatabase();
         }
             

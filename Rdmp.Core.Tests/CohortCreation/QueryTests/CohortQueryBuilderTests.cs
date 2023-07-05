@@ -255,10 +255,12 @@ FROM
     {
         //setup a filter (all filters must be in a container so the container is a default AND container)
         var AND = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND);
-        var filter = new AggregateFilter(CatalogueRepository,"hithere",AND);
+        var filter = new AggregateFilter(CatalogueRepository,"hithere",AND)
+        {
+            //give the filter an implicit parameter requiring bit of SQL
+            WhereSQL = "1=@abracadabra"
+        };
 
-        //give the filter an implicit parameter requiring bit of SQL
-        filter.WhereSQL = "1=@abracadabra";
         filter.SaveToDatabase();
 
         //Make aggregate1 use the filter we just setup (required to happen before parameter creator gets hit because otherwise it won't know the IFilter DatabaseType because IFilter is an orphan at the moment)
@@ -380,9 +382,11 @@ SET @abracadabra=1;
         rootcontainer.AddChild(aggregate2,2);
         rootcontainer.AddChild(aggregate3,3);
 
-        var builder = new CohortQueryBuilder(rootcontainer, null,null);
-            
-        builder.StopContainerWhenYouReach = aggregate2;
+        var builder = new CohortQueryBuilder(rootcontainer, null,null)
+        {
+            StopContainerWhenYouReach = aggregate2
+        };
+
         try
         {
             Assert.AreEqual(
@@ -411,8 +415,10 @@ SET @abracadabra=1;
                 CollapseWhitespace(builder.SQL));
 
 
-            var builder2 = new CohortQueryBuilder(rootcontainer, null,null);
-            builder2.StopContainerWhenYouReach = null;
+            var builder2 = new CohortQueryBuilder(rootcontainer, null,null)
+            {
+                StopContainerWhenYouReach = null
+            };
             Assert.AreEqual(
                 CollapseWhitespace(
                     string.Format(
@@ -469,10 +475,10 @@ SET @abracadabra=1;
         new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
 
         rootcontainer.AddChild(aggregate4,5);
-        var builder = new CohortQueryBuilder(rootcontainer, null,null);
-
-        //Looks like:
-        /*
+        var builder = new CohortQueryBuilder(rootcontainer, null,null)
+        {
+            //Looks like:
+            /*
          * 
         EXCEPT
         Aggregate 1
@@ -481,7 +487,9 @@ SET @abracadabra=1;
            Aggregate3
         Aggregate 4
         */
-        builder.StopContainerWhenYouReach = container1;
+            StopContainerWhenYouReach = container1
+        };
+
         try
         {
             Assert.AreEqual(

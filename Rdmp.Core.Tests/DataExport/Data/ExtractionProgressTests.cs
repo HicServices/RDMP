@@ -96,10 +96,12 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         _catalogue.TimeCoverage_ExtractionInformation_ID = _extractionInformations.Single(e => e.GetRuntimeName().Equals("DateOfBirth")).ID;
         _catalogue.SaveToDatabase();
 
-        var progress = new ExtractionProgress(DataExportRepository, _request.SelectedDataSets);
-        progress.StartDate = new DateTime(2001, 01, 01);
-        progress.EndDate = new DateTime(2001, 01, 10);
-        progress.NumberOfDaysPerBatch = 10;
+        var progress = new ExtractionProgress(DataExportRepository, _request.SelectedDataSets)
+        {
+            StartDate = new DateTime(2001, 01, 01),
+            EndDate = new DateTime(2001, 01, 10),
+            NumberOfDaysPerBatch = 10
+        };
         progress.SaveToDatabase();
 
         _request.GenerateQueryBuilder();

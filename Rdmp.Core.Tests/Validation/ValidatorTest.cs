@@ -139,11 +139,13 @@ public class ValidatorTest
     public void Test_XML_Generation()
     {
         var v = new Validator();
-        var iv = new ItemValidator();
-        iv.TargetProperty = "Name";
-        iv.ExpectedType = typeof(string);
-        iv.PrimaryConstraint = new Alpha();
-            
+        var iv = new ItemValidator
+        {
+            TargetProperty = "Name",
+            ExpectedType = typeof(string),
+            PrimaryConstraint = new Alpha()
+        };
+
         v.ItemValidators.Add(iv);
 
         var answer = v.SaveToXml(false);
@@ -194,9 +196,11 @@ public class ValidatorTest
 
 
         //this constraint ensures that OldCol2 is between OldCol1 and OldcCol3
-        var boundDate = new BoundDate();
-        boundDate.LowerFieldName = "OldCol1";
-        boundDate.UpperFieldName = "OldCol3";
+        var boundDate = new BoundDate
+        {
+            LowerFieldName = "OldCol1",
+            UpperFieldName = "OldCol3"
+        };
 
         v.ItemValidators[0].SecondaryConstraints.Add(boundDate);
 

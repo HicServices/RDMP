@@ -47,12 +47,13 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
 
         var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-        mutilation.ColumnToResolveOn = resolveOn;
-            
-        mutilation.PreferLargerValues = true;
-        mutilation.PreferNulls = false;
-            
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation
+        {
+            ColumnToResolveOn = resolveOn,
+            PreferLargerValues = true,
+            PreferNulls = false
+        };
+
         mutilation.Initialize(db, LoadStage.AdjustRaw);
         mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
@@ -86,11 +87,12 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
 
         var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-        mutilation.ColumnToResolveOn = resolveOn;
-
-        mutilation.PreferLargerValues = true;
-        mutilation.PreferNulls = preferNulls;
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation
+        {
+            ColumnToResolveOn = resolveOn,
+            PreferLargerValues = true,
+            PreferNulls = preferNulls
+        };
 
         mutilation.Initialize(db, LoadStage.AdjustRaw);
         mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
@@ -133,11 +135,12 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
 
         var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-        mutilation.ColumnToResolveOn = resolveOn;
-
-        mutilation.PreferLargerValues = true;
-        mutilation.PreferNulls = true;
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation
+        {
+            ColumnToResolveOn = resolveOn,
+            PreferLargerValues = true,
+            PreferNulls = true
+        };
 
         mutilation.Initialize(db, LoadStage.AdjustRaw);
         mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server,namer), ti));
@@ -182,11 +185,12 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
 
         var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-        mutilation.ColumnToResolveOn = resolveOn;
-
-        mutilation.PreferLargerValues = preferLarger;
-        mutilation.PreferNulls = false; 
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation
+        {
+            ColumnToResolveOn = resolveOn,
+            PreferLargerValues = preferLarger,
+            PreferNulls = false
+        };
 
         mutilation.Initialize(db, LoadStage.AdjustRaw);
         mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
@@ -233,11 +237,12 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
 
         var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-        mutilation.ColumnToResolveOn = resolveOn;
-
-        mutilation.PreferLargerValues = preferLarger;
-        mutilation.PreferNulls = false;
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation
+        {
+            ColumnToResolveOn = resolveOn,
+            PreferLargerValues = preferLarger,
+            PreferNulls = false
+        };
 
         mutilation.Initialize(db, LoadStage.AdjustRaw);
         mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
@@ -293,11 +298,12 @@ public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
 
         var resolveOn = cis.Single(c => c.GetRuntimeName().Equals("ResolveOn"));
 
-        var mutilation = new SafePrimaryKeyCollisionResolverMutilation();
-        mutilation.ColumnToResolveOn = resolveOn;
-
-        mutilation.PreferLargerValues = preferLarger;
-        mutilation.PreferNulls = false;
+        var mutilation = new SafePrimaryKeyCollisionResolverMutilation
+        {
+            ColumnToResolveOn = resolveOn,
+            PreferLargerValues = preferLarger,
+            PreferNulls = false
+        };
 
         mutilation.Initialize(db, LoadStage.AdjustRaw);
         mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));

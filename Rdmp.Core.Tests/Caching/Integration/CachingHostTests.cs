@@ -50,10 +50,12 @@ public class CachingHostTests : UnitTests
         cp.PermissionWindow_ID = 1;
 
 
-        var permissionWindow = new PermissionWindow(Repository);
-        permissionWindow.RequiresSynchronousAccess = true;
-        permissionWindow.ID = 1;
-        permissionWindow.Name = "Test Permission Window";
+        var permissionWindow = new PermissionWindow(Repository)
+        {
+            RequiresSynchronousAccess = true,
+            ID = 1,
+            Name = "Test Permission Window"
+        };
 
 
         //Create a time period that we are outwith (1 hour ago to 30 minutes ago).

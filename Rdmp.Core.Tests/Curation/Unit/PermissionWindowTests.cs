@@ -30,8 +30,10 @@ public class PermissionWindowTests:DatabaseTests
 
         var permissionPeriodConfig = permissionWindow.PermissionPeriodConfig;
 
-        var newPermissionWindow = new PermissionWindow(CatalogueRepository);
-        newPermissionWindow.PermissionPeriodConfig = permissionPeriodConfig;
+        var newPermissionWindow = new PermissionWindow(CatalogueRepository)
+        {
+            PermissionPeriodConfig = permissionPeriodConfig
+        };
 
         var periods = newPermissionWindow.PermissionWindowPeriods;
         Assert.AreEqual(2, periods.Count);

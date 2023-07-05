@@ -54,8 +54,10 @@ public class RainbowColorPicker
             var bmpCRect = new Rectangle(Point.Empty, bmp.Size);
             var br = new LinearGradientBrush
                 (bmpCRect, Color.Empty, Color.Empty, 0, false);
-            var cb = new ColorBlend();
-            cb.Positions = new float[gradient.Count];
+            var cb = new ColorBlend
+            {
+                Positions = new float[gradient.Count]
+            };
             for (var i = 0; i < gradient.Count; i++)
                 cb.Positions[i] = gradient.ElementAt(i).Key;
             cb.Colors = gradient.Values.ToArray();

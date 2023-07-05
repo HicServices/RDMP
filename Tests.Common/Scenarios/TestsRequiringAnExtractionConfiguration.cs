@@ -93,8 +93,10 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     {
         _extractableDataSet = new ExtractableDataSet(DataExportRepository, _catalogue);
 
-        _project = new Project(DataExportRepository, _testDatabaseName);
-        _project.ProjectNumber = 1;
+        _project = new Project(DataExportRepository, _testDatabaseName)
+        {
+            ProjectNumber = 1
+        };
 
         Directory.CreateDirectory(ProjectDirectory);
         _project.ExtractionDirectory = ProjectDirectory;

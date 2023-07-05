@@ -28,8 +28,10 @@ public class ItemValidatorTest
     [SetUp]
     public void SetUp()
     {
-        _v = new ItemValidator();
-        _v.TargetProperty = "chi";
+        _v = new ItemValidator
+        {
+            TargetProperty = "chi"
+        };
     }
 
     [Test]

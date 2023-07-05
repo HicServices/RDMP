@@ -23,9 +23,11 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
         SetupTableInfos(out var t, out var c1, out var c2, out var c3);
         try
         {
-            var mutilation = new PrimaryKeyCollisionResolverMutilation();
-            mutilation.TargetTable = t;
-                
+            var mutilation = new PrimaryKeyCollisionResolverMutilation
+            {
+                TargetTable = t
+            };
+
             c1.IsPrimaryKey = true;
             c1.SaveToDatabase();
 
@@ -56,8 +58,10 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
         SetupTableInfos(out var t, out c1, out c2,out c3);
         try
         {
-            var mutilation = new PrimaryKeyCollisionResolverMutilation();
-            mutilation.TargetTable = t;
+            var mutilation = new PrimaryKeyCollisionResolverMutilation
+            {
+                TargetTable = t
+            };
             try
             {
 

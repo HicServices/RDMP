@@ -60,8 +60,10 @@ public class ExcelTests
     [Test]
     public void DontTryToOpenWithDelimited_ThrowsInvalidFileExtension()
     {
-        var invalid = new DelimitedFlatFileDataFlowSource();
-        invalid.Separator = ",";
+        var invalid = new DelimitedFlatFileDataFlowSource
+        {
+            Separator = ","
+        };
         invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), new ThrowImmediatelyDataLoadEventListener());
         var ex = Assert.Throws<Exception>(()=>invalid.Check(new ThrowImmediatelyCheckNotifier()));
         StringAssert.Contains("File Book1.xlsx has a prohibitted file extension .xlsx",ex.Message);
@@ -97,8 +99,10 @@ public class ExcelTests
     [TestCase(FreakyTestFile)]
     public void NormalBook_FirstRowCorrect_AddFilenameColumnNamed(string versionOfTestFile)
     {
-        var source = new ExcelDataFlowSource();
-        source.AddFilenameColumnNamed = "Path";
+        var source = new ExcelDataFlowSource
+        {
+            AddFilenameColumnNamed = "Path"
+        };
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ThrowImmediatelyDataLoadEventListener());
         var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
@@ -167,8 +171,10 @@ public class ExcelTests
     {
         var listener = new ToMemoryDataLoadEventListener(true);
 
-        var source = new ExcelDataFlowSource();
-        source.WorkSheetName = "MySheet";
+        var source = new ExcelDataFlowSource
+        {
+            WorkSheetName = "MySheet"
+        };
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[OddFormatsFile]), listener);
         var dt = source.GetChunk(listener, new GracefulCancellationToken());
@@ -289,14 +295,18 @@ public class ExcelTests
     {
         var loc = _fileLocations[TestFile];
 
-        var converter = new ExcelToCSVFilesConverter();
-        converter.ExcelFilePattern = loc.Name;
-        converter.PrefixWithWorkbookName = prefixWithWorkbookName;
+        var converter = new ExcelToCSVFilesConverter
+        {
+            ExcelFilePattern = loc.Name,
+            PrefixWithWorkbookName = prefixWithWorkbookName
+        };
 
         var mockProjDir = Mock.Of<ILoadDirectory>(p => p.ForLoading==loc.Directory);
 
-        var j = new ThrowImmediatelyDataLoadJob();
-        j.LoadDirectory = mockProjDir;
+        var j = new ThrowImmediatelyDataLoadJob
+        {
+            LoadDirectory = mockProjDir
+        };
 
         converter.Fetch(j, new GracefulCancellationToken());
 

@@ -56,12 +56,13 @@ public class CacheRunner : Runner
                 var forkListener = new ForkDataLoadEventListener(toLog, listener);
                 try
                 {
-                    var cachingHost = new CachingHost(repositoryLocator.CatalogueRepository);
-                    cachingHost.RetryMode = _options.RetryMode;
-                    cachingHost.CacheProgress =  cp; //run the cp
-
-                    //By default caching host will block 
-                    cachingHost.TerminateIfOutsidePermissionWindow = true;
+                    var cachingHost = new CachingHost(repositoryLocator.CatalogueRepository)
+                    {
+                        RetryMode = _options.RetryMode,
+                        CacheProgress = cp, //run the cp
+                        //By default caching host will block 
+                        TerminateIfOutsidePermissionWindow = true
+                    };
 
                     cachingHost.Start(forkListener, token);
                 }

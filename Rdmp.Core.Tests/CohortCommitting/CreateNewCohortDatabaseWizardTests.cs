@@ -155,8 +155,10 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
 
         //now try putting someone in it
         //the project it will go under
-        var project = new Project(DataExportRepository, "MyProject");
-        project.ProjectNumber = 10;
+        var project = new Project(DataExportRepository, "MyProject")
+        {
+            ProjectNumber = 10
+        };
         project.SaveToDatabase();
 
         //the request to put it under there

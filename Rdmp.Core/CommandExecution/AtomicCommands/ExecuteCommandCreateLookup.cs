@@ -109,10 +109,12 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
                     toBumpDown.SaveToDatabase();
                 }
 
-                var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, descCol, descCol.ToString());
-                newExtractionInformation.ExtractionCategory = ExtractionCategory.Supplemental;
-                newExtractionInformation.Alias = newCatalogueItem.Name;
-                newExtractionInformation.Order = _foreignKeyExtractionInformation.Order + 1;
+                var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, descCol, descCol.ToString())
+                    {
+                        ExtractionCategory = ExtractionCategory.Supplemental,
+                        Alias = newCatalogueItem.Name,
+                        Order = _foreignKeyExtractionInformation.Order + 1
+                    };
                 newExtractionInformation.SaveToDatabase();
             }
         }

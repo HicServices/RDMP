@@ -22,9 +22,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_NoEntries_Throws()
     {
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata");
-        cata.LoadMetadata_ID = lmd.ID;
-        cata.LoggingDataTask = "GGG";
+        var cata = new Catalogue(CatalogueRepository, "myCata")
+        {
+            LoadMetadata_ID = lmd.ID,
+            LoggingDataTask = "GGG"
+        };
         cata.SaveToDatabase();
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -41,9 +43,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_HappyEntries_Passes(bool withinTime)
     {
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata");
-        cata.LoadMetadata_ID = lmd.ID;
-        cata.LoggingDataTask = "FFF";
+        var cata = new Catalogue(CatalogueRepository, "myCata")
+        {
+            LoadMetadata_ID = lmd.ID,
+            LoggingDataTask = "FFF"
+        };
         cata.SaveToDatabase();
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -64,9 +68,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_SadEntry_BecauseNeverEnded_Throws()
     {
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata");
-        cata.LoadMetadata_ID = lmd.ID;
-        cata.LoggingDataTask = "FFF";
+        var cata = new Catalogue(CatalogueRepository, "myCata")
+        {
+            LoadMetadata_ID = lmd.ID,
+            LoggingDataTask = "FFF"
+        };
         cata.SaveToDatabase();
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -84,9 +90,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_SadEntryWithEx_Throws()
     {
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata");
-        cata.LoadMetadata_ID = lmd.ID;
-        cata.LoggingDataTask = "FFF";
+        var cata = new Catalogue(CatalogueRepository, "myCata")
+        {
+            LoadMetadata_ID = lmd.ID,
+            LoggingDataTask = "FFF"
+        };
         cata.SaveToDatabase();
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -107,9 +115,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     {
 
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata");
-        cata.LoadMetadata_ID = lmd.ID;
-        cata.LoggingDataTask = "FFF";
+        var cata = new Catalogue(CatalogueRepository, "myCata")
+        {
+            LoadMetadata_ID = lmd.ID,
+            LoggingDataTask = "FFF"
+        };
         cata.SaveToDatabase();
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
@@ -132,23 +142,29 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
     public void ConfirmLogs_With2CacheProgress_Throws()
     {
         var lmd1 = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata = new Catalogue(CatalogueRepository, "myCata");
-        cata.LoadMetadata_ID = lmd1.ID;
-        cata.LoggingDataTask = "B";
+        var cata = new Catalogue(CatalogueRepository, "myCata")
+        {
+            LoadMetadata_ID = lmd1.ID,
+            LoggingDataTask = "B"
+        };
         cata.SaveToDatabase();
 
         var lmd2 = new LoadMetadata(CatalogueRepository, "MyLmd");
-        var cata2 = new Catalogue(CatalogueRepository, "myCata");
-        cata2.LoadMetadata_ID = lmd2.ID;
-        cata2.LoggingDataTask = "A";
+        var cata2 = new Catalogue(CatalogueRepository, "myCata")
+        {
+            LoadMetadata_ID = lmd2.ID,
+            LoggingDataTask = "A"
+        };
         cata2.SaveToDatabase();
 
         var lp1 = new LoadProgress(CatalogueRepository, lmd1);
         var lp2 = new LoadProgress(CatalogueRepository, lmd2);
 
         var cp1 = new CacheProgress(CatalogueRepository, lp1);
-        var cp2 = new CacheProgress(CatalogueRepository, lp2);
-        cp2.Name = "MyCoolCache";
+        var cp2 = new CacheProgress(CatalogueRepository, lp2)
+        {
+            Name = "MyCoolCache"
+        };
         cp2.SaveToDatabase();
 
         var lm = new LogManager(cp1.GetDistinctLoggingDatabase());

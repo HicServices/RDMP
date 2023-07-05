@@ -96,8 +96,10 @@ public class CohortCompilerRunnerTests:DatabaseTests
         ei.IsExtractionIdentifier = true;
         ei.SaveToDatabase();
 
-        var agg = new AggregateConfiguration(CatalogueRepository, cata, "MyAgg");
-        agg.CountSQL = null;
+        var agg = new AggregateConfiguration(CatalogueRepository, cata, "MyAgg")
+        {
+            CountSQL = null
+        };
         agg.SaveToDatabase();
         var dimension = new AggregateDimension(CatalogueRepository, ei, agg);
 

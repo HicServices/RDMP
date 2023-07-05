@@ -130,8 +130,10 @@ public class DiffDatabaseDataFetcher
                 syntaxHelper.EnsureWrapped(pk.GetRuntimeName()), 
                 archiveTableName);
 
-        var qb = new QueryBuilder(null, null, new[] {_tableInfo});
-        qb.TopX = _batchSize;
+        var qb = new QueryBuilder(null, null, new[] {_tableInfo})
+        {
+            TopX = _batchSize
+        };
         qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository,c)).ToArray());
 
         //where

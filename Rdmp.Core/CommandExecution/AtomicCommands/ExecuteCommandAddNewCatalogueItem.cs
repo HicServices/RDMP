@@ -107,8 +107,10 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
             if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out var text))
             {
                 var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c,
-                    $"New CatalogueItem {Guid.NewGuid()}");
-                ci.Name = text;
+                    $"New CatalogueItem {Guid.NewGuid()}")
+                {
+                    Name = text
+                };
 
                 //set the associated column if they did pick it
                 if(columnInfo != null)

@@ -130,11 +130,13 @@ public class ForwardEngineerANOCatalogueEngine
                         if (columnPlan.Plan == Plan.Dilute)
                         {
                             //Create a discarded (load only) column with name matching the new columninfo
-                            var discard = new PreLoadDiscardedColumn(_catalogueRepository, newTableInfo,newColumnInfo.GetRuntimeName());
+                            var discard = new PreLoadDiscardedColumn(_catalogueRepository, newTableInfo,newColumnInfo.GetRuntimeName())
+                                {
+                                    //record that it exists to support dilution and that the data type matches the input (old) ColumnInfo (i.e. not the new data type!)
+                                    Destination = DiscardedColumnDestination.Dilute,
+                                    SqlDataType = oldColumnInfo.Data_type
+                                };
 
-                            //record that it exists to support dilution and that the data type matches the input (old) ColumnInfo (i.e. not the new data type!)
-                            discard.Destination = DiscardedColumnDestination.Dilute;
-                            discard.SqlDataType = oldColumnInfo.Data_type;
                             discard.SaveToDatabase();
 
                             DilutionOperationsForMigrations.Add(discard, columnPlan.Dilution);
@@ -194,9 +196,11 @@ public class ForwardEngineerANOCatalogueEngine
                     if (columnPlan.ExtractionCategoryIfAny != null)
                     {
                         //Create a new ExtractionInformation for the new Catalogue
-                        var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name);
+                        var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem, newColumnInfo, newColumnInfo.Name)
+                            {
+                                ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value
+                            };
 
-                        newExtractionInformation.ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value;
                         newExtractionInformation.SaveToDatabase();
 
                         //if it was previously extractable
@@ -287,8 +291,10 @@ public class ForwardEngineerANOCatalogueEngine
 
                 if (_planManager.DateColumn != null)
                 {
-                    LoadProgressIfAny = new LoadProgress(_catalogueRepository, LoadMetadata);
-                    LoadProgressIfAny.OriginDate = _planManager.StartDate;
+                    LoadProgressIfAny = new LoadProgress(_catalogueRepository, LoadMetadata)
+                    {
+                        OriginDate = _planManager.StartDate
+                    };
                     LoadProgressIfAny.SaveToDatabase();
 
                     //date column based migration only works for single TableInfo migrations (see Plan Manager checks)

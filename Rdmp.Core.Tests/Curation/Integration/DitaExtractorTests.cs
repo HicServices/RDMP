@@ -78,11 +78,12 @@ internal class DitaExtractorTests : DatabaseTests
         var oldCatalogueVersion = CatalogueRepository.GetAllObjects<Catalogue>().SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
         oldCatalogueVersion?.DeleteInDatabase();
 
-        var ditaTestCatalogue = new Catalogue(CatalogueRepository, "DitaExtractorConstructor_ExtractTestCatalogue_FilesExist");//name of Catalogue
+        var ditaTestCatalogue = new Catalogue(CatalogueRepository, "DitaExtractorConstructor_ExtractTestCatalogue_FilesExist")
+            {
+                Acronym = "DITA_TEST",
+                Description = $"Test catalogue for the unit test DitaExtractorConstructor_ExtractTestCatalogue_FilesExist in file {typeof(DitaExtractorTests).FullName}.cs"
+            };//name of Catalogue
 
-        ditaTestCatalogue.Acronym = "DITA_TEST";
-        ditaTestCatalogue.Description =
-            $"Test catalogue for the unit test DitaExtractorConstructor_ExtractTestCatalogue_FilesExist in file {typeof(DitaExtractorTests).FullName}.cs";
         ditaTestCatalogue.SaveToDatabase();
 
 
@@ -119,8 +120,10 @@ internal class DitaExtractorTests : DatabaseTests
         try
         {
             //create a new Catalogue in the test datbaase that doesnt have a acronym (should crash Dita Extractor)
-            var myNewCatalogue = new Catalogue(CatalogueRepository, "UnitTestCatalogue");
-            myNewCatalogue.Acronym = "";
+            var myNewCatalogue = new Catalogue(CatalogueRepository, "UnitTestCatalogue")
+            {
+                Acronym = ""
+            };
             myNewCatalogue.SaveToDatabase();
 
             try

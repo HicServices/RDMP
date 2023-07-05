@@ -472,8 +472,10 @@ public class ParameterManager
     /// <returns></returns>
     public ParameterManager Clone()
     {
-        var clone = new ParameterManager(ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
-        clone.State = State;
+        var clone = new ParameterManager(ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray())
+ {
+     State = State
+ };
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
             clone.ParametersFoundSoFarInQueryGeneration[kvp.Key].AddRange(kvp.Value);

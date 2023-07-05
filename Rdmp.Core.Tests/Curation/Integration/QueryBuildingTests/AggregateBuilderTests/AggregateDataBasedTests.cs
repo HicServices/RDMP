@@ -136,9 +136,11 @@ public class AggregateDataBasedTests:DatabaseTests
         var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
         axisDimension = new AggregateDimension(CatalogueRepository, dateDimension, configuration);
 
-        var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
-        axis.StartDate = "'2000-01-01'";
-        axis.AxisIncrement = AxisIncrement.Year;
+        var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension)
+        {
+            StartDate = "'2000-01-01'",
+            AxisIncrement = AxisIncrement.Year
+        };
         axis.SaveToDatabase();
         return configuration;
     }
@@ -158,9 +160,11 @@ public class AggregateDataBasedTests:DatabaseTests
         axisDimension = new AggregateDimension(CatalogueRepository, axisCol, configuration);
         pivotDimension = new AggregateDimension(CatalogueRepository, categoryCol, configuration);
 
-        var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
-        axis.StartDate = "'2000-01-01'";
-        axis.AxisIncrement = AxisIncrement.Year;
+        var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension)
+        {
+            StartDate = "'2000-01-01'",
+            AxisIncrement = AxisIncrement.Year
+        };
         axis.SaveToDatabase();
         return configuration;
     }
@@ -525,8 +529,10 @@ public class AggregateDataBasedTests:DatabaseTests
 
         configuration.SaveToDatabase();
 
-        var topx = new AggregateTopX(CatalogueRepository, configuration, 2);
-        topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
+        var topx = new AggregateTopX(CatalogueRepository, configuration, 2)
+        {
+            OrderByDirection = AggregateTopXOrderByDirection.Descending
+        };
         topx.SaveToDatabase();
 
         try
@@ -580,9 +586,11 @@ public class AggregateDataBasedTests:DatabaseTests
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
         configuration.SaveToDatabase();
 
-        var topx = new AggregateTopX(CatalogueRepository, configuration, 2);
-        topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
-        topx.OrderByDimensionIfAny_ID = pivotDimension.ID;
+        var topx = new AggregateTopX(CatalogueRepository, configuration, 2)
+        {
+            OrderByDirection = AggregateTopXOrderByDirection.Descending,
+            OrderByDimensionIfAny_ID = pivotDimension.ID
+        };
         topx.OrderByDirection = AggregateTopXOrderByDirection.Ascending;
         topx.SaveToDatabase();
 
@@ -642,8 +650,10 @@ public class AggregateDataBasedTests:DatabaseTests
 
         configuration.SaveToDatabase();
 
-        var topx = new AggregateTopX(CatalogueRepository, configuration, 1); //Top 1 (highest count columns should be used for pivot)
-        topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
+        var topx = new AggregateTopX(CatalogueRepository, configuration, 1)
+        {
+            OrderByDirection = AggregateTopXOrderByDirection.Descending
+        }; //Top 1 (highest count columns should be used for pivot)
         topx.SaveToDatabase();
 
         try

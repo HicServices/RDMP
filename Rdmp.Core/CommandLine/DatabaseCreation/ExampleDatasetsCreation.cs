@@ -295,8 +295,10 @@ public class ExampleDatasetsCreation
         if(col == null)
             throw new Exception($"Could not find ColumnInfo called '{columnInfoName}' in Catalogue {catalogue}");
 
-        var ci = new CatalogueItem(_repos.CatalogueRepository,catalogue,name);
-        ci.ColumnInfo_ID = col.ID;
+        var ci = new CatalogueItem(_repos.CatalogueRepository,catalogue,name)
+        {
+            ColumnInfo_ID = col.ID
+        };
         ci.SaveToDatabase();
             
         return new ExtractionInformation(_repos.CatalogueRepository,ci,col,selectSQL);
@@ -304,9 +306,11 @@ public class ExampleDatasetsCreation
 
     private ExtractionConfiguration CreateExtractionConfiguration(Project project, ExtractableCohort cohort,string name,bool isReleased,ICheckNotifier notifier, params ICatalogue[] catalogues)
     {
-        var extractionConfiguration = new ExtractionConfiguration(_repos.DataExportRepository,project);
-        extractionConfiguration.Name = name;
-        extractionConfiguration.Cohort_ID = cohort.ID;
+        var extractionConfiguration = new ExtractionConfiguration(_repos.DataExportRepository,project)
+        {
+            Name = name,
+            Cohort_ID = cohort.ID
+        };
         extractionConfiguration.SaveToDatabase();
 
         foreach(var c in catalogues)
@@ -347,16 +351,20 @@ public class ExampleDatasetsCreation
     private ExtractableCohort CommitCohortToNewProject(CohortIdentificationConfiguration cic, ExternalCohortTable externalCohortTable,IPipeline cohortCreationPipeline,string projectName,string cohortName,int projectNumber, out Project project)
     {
         //create a new data extraction Project
-        project = new Project(_repos.DataExportRepository,projectName);
-        project.ProjectNumber = projectNumber;
-        project.ExtractionDirectory = Path.GetTempPath();
+        project = new Project(_repos.DataExportRepository,projectName)
+        {
+            ProjectNumber = projectNumber,
+            ExtractionDirectory = Path.GetTempPath()
+        };
         project.SaveToDatabase();
 
         //create a cohort
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
 
-        var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository, ExtractableCohortAuditLogBuilder.GetDescription(cic));
-        request.CohortIdentificationConfiguration = cic;
+        var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository, ExtractableCohortAuditLogBuilder.GetDescription(cic))
+            {
+                CohortIdentificationConfiguration = cic
+            };
 
         var engine = request.GetEngine(cohortCreationPipeline,new ThrowImmediatelyDataLoadEventListener());                        
 
@@ -371,8 +379,10 @@ public class ExampleDatasetsCreation
         var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository,"Tayside Lung Cancer Cohort");
 
         //create a UNION container for Inclusion Criteria
-        var container = new CohortAggregateContainer(_repos.CatalogueRepository,SetOperation.UNION);
-        container.Name = "Inclusion Criteria";
+        var container = new CohortAggregateContainer(_repos.CatalogueRepository,SetOperation.UNION)
+        {
+            Name = "Inclusion Criteria"
+        };
         container.SaveToDatabase();
 
         cic.RootCohortAggregateContainer_ID = container.ID;
@@ -410,8 +420,10 @@ public class ExampleDatasetsCreation
         else
             container = (AggregateFilterContainer)graph.RootFilterContainer;
 
-        var filter = new AggregateFilter(_repos.CatalogueRepository,name,container);
-        filter.WhereSQL = whereSql;
+        var filter = new AggregateFilter(_repos.CatalogueRepository,name,container)
+        {
+            WhereSQL = whereSql
+        };
         filter.SaveToDatabase();
 
         return filter;
@@ -464,9 +476,11 @@ UNPIVOT
 
     private IFilter CreateFilter(ICatalogue cata, string name,string parentExtractionInformation, string whereSql,string desc)
     {
-        var filter = new ExtractionFilter(_repos.CatalogueRepository,name, GetExtractionInformation(cata,parentExtractionInformation));
-        filter.WhereSQL = whereSql;
-        filter.Description = desc;
+        var filter = new ExtractionFilter(_repos.CatalogueRepository,name, GetExtractionInformation(cata,parentExtractionInformation))
+            {
+                WhereSQL = whereSql,
+                Description = desc
+            };
         filter.SaveToDatabase();
 
         var parameterCreator = new ParameterCreator(filter.GetFilterFactory(),null,null);
@@ -485,8 +499,10 @@ UNPIVOT
     /// <param name="dimension2">Optional second dimension to create (this will be the pivot column)</param>
     private AggregateConfiguration CreateGraph(ICatalogue cata, string name, string dimension1,bool isAxis, string dimension2)
     {
-        var ac = new AggregateConfiguration(_repos.CatalogueRepository,cata,name);
-        ac.CountSQL = "count(*) as NumberOfRecords";
+        var ac = new AggregateConfiguration(_repos.CatalogueRepository,cata,name)
+        {
+            CountSQL = "count(*) as NumberOfRecords"
+        };
         ac.SaveToDatabase();
         ac.IsExtractable = true;
 
@@ -495,9 +511,11 @@ UNPIVOT
             
         if(isAxis)
         {
-            var axis = new AggregateContinuousDateAxis(_repos.CatalogueRepository,mainDimension);
-            axis.StartDate = "'1970-01-01'";
-            axis.AxisIncrement = FAnsi.Discovery.QuerySyntax.Aggregation.AxisIncrement.Year;
+            var axis = new AggregateContinuousDateAxis(_repos.CatalogueRepository,mainDimension)
+            {
+                StartDate = "'1970-01-01'",
+                AxisIncrement = FAnsi.Discovery.QuerySyntax.Aggregation.AxisIncrement.Year
+            };
             axis.SaveToDatabase();
         }
 

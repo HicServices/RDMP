@@ -129,9 +129,11 @@ internal class ColumnInfoTests : DatabaseTests
         var parent = new TableInfo(CatalogueRepository, "Rokkits");
         var column = new ColumnInfo(CatalogueRepository, "MyCol", "varchar(4)", parent);
 
-        var discard = new PreLoadDiscardedColumn(CatalogueRepository, parent, "MyCol");
-        discard.SqlDataType = "varchar(10)";
-        discard.Destination = DiscardedColumnDestination.Dilute;
+        var discard = new PreLoadDiscardedColumn(CatalogueRepository, parent, "MyCol")
+        {
+            SqlDataType = "varchar(10)",
+            Destination = DiscardedColumnDestination.Dilute
+        };
         discard.SaveToDatabase();
 
         Assert.AreEqual("varchar(4)", column.GetRuntimeDataType(LoadStage.PostLoad));

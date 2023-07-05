@@ -82,12 +82,16 @@ internal class CohortIdentificationConfigurationMergerTests : CohortIdentificati
         root.Name = "Root";
         root.SaveToDatabase();
 
-        var sub1 = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
-        sub1.Order = 1;
+        var sub1 = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT)
+        {
+            Order = 1
+        };
         sub1.SaveToDatabase();
 
-        var sub2 = new CohortAggregateContainer(CatalogueRepository,SetOperation.EXCEPT);
-        sub2.Order = 2;
+        var sub2 = new CohortAggregateContainer(CatalogueRepository,SetOperation.EXCEPT)
+        {
+            Order = 2
+        };
         sub2.SaveToDatabase();
 
         root.AddChild(sub1);

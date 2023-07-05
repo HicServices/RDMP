@@ -202,8 +202,10 @@ public class AggregateBuilder : ISqlQueryBuilder
 
         if(!string.IsNullOrWhiteSpace(countSQL))
         {
-            _countColumn = new AggregateCountColumn(countSQL);
-            _countColumn.Order = int.MaxValue;//order these last
+            _countColumn = new AggregateCountColumn(countSQL)
+            {
+                Order = int.MaxValue //order these last
+            };
             AddColumn(_countColumn);
         }
 

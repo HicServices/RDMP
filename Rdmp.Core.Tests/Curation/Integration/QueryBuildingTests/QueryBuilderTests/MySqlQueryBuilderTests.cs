@@ -17,8 +17,10 @@ public class MySqlQueryBuilderTests : DatabaseTests
     [Test]
     public void TestQueryBuilder_MySql_Normal()
     {
-        var t = new TableInfo(CatalogueRepository, "`db`.`tbl`");
-        t.DatabaseType = DatabaseType.MySql;
+        var t = new TableInfo(CatalogueRepository, "`db`.`tbl`")
+        {
+            DatabaseType = DatabaseType.MySql
+        };
         t.SaveToDatabase();
 
         var col = new ColumnInfo(CatalogueRepository, "`db`.`tbl`.`col`","varchar(10)",t);
@@ -41,8 +43,10 @@ FROM
     [Test]
     public void TestQueryBuilder_MySql_Top35()
     {
-        var t = new TableInfo(CatalogueRepository, "`db`.`tbl`");
-        t.DatabaseType = DatabaseType.MySql;
+        var t = new TableInfo(CatalogueRepository, "`db`.`tbl`")
+        {
+            DatabaseType = DatabaseType.MySql
+        };
         t.SaveToDatabase();
 
         var col = new ColumnInfo(CatalogueRepository, "`db`.`tbl`.`col`", "varchar(10)", t);
@@ -52,8 +56,10 @@ FROM
         var catalogueItem = new CatalogueItem(CatalogueRepository, cata, "col");
         var extractionInfo = new ExtractionInformation(CatalogueRepository, catalogueItem, col, col.Name);
 
-        var qb = new QueryBuilder(null, null);
-        qb.TopX = 35;
+        var qb = new QueryBuilder(null, null)
+        {
+            TopX = 35
+        };
         qb.AddColumn(extractionInfo);
         Assert.AreEqual(
             CollapseWhitespace(

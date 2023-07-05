@@ -90,10 +90,12 @@ public class ShareLoadMetadataTests : UnitTests
 
         SetupMEF();
 
-        var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting);
-        pt1.ProcessTaskType = ProcessTaskType.Attacher;
-        pt1.LoadStage = LoadStage.Mounting;
-        pt1.Path = typeof(AnySeparatorFileAttacher).FullName;
+        var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting)
+        {
+            ProcessTaskType = ProcessTaskType.Attacher,
+            LoadStage = LoadStage.Mounting,
+            Path = typeof(AnySeparatorFileAttacher).FullName
+        };
         pt1.SaveToDatabase();
 
         pt1.CreateArgumentsForClassIfNotExists(typeof(AnySeparatorFileAttacher));
@@ -141,10 +143,12 @@ public class ShareLoadMetadataTests : UnitTests
             x.DbInfo == new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
 
         //create a single process task for the load
-        var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting);
-        pt1.ProcessTaskType = ProcessTaskType.MutilateDataTable;
-        pt1.LoadStage = LoadStage.AdjustRaw;
-        pt1.Path = typeof(SafePrimaryKeyCollisionResolverMutilation).FullName;
+        var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting)
+        {
+            ProcessTaskType = ProcessTaskType.MutilateDataTable,
+            LoadStage = LoadStage.AdjustRaw,
+            Path = typeof(SafePrimaryKeyCollisionResolverMutilation).FullName
+        };
         pt1.SaveToDatabase();
 
         //give it a reference to an (unshared) object (ColumnInfo)

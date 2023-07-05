@@ -522,11 +522,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     private void FetchMatches(string text, CancellationToken cancellationToken)
     {
-        var scorer = new SearchablesMatchScorer();
-        scorer.RespectUserSettings = UserSettings.AdvancedFindFilters;
-        scorer.TypeNames = _typeNames;
-        scorer.ReturnEmptyResultWhenNoSearchTerms = _args.IsFind;
-        scorer.BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList();
+        var scorer = new SearchablesMatchScorer
+        {
+            RespectUserSettings = UserSettings.AdvancedFindFilters,
+            TypeNames = _typeNames,
+            ReturnEmptyResultWhenNoSearchTerms = _args.IsFind,
+            BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList()
+        };
 
         if (_lblId != null && int.TryParse(_lblId.Text, out var requireId))
         {

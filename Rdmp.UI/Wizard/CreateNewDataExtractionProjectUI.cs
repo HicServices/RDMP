@@ -238,8 +238,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
                 tbCohortName.Text = cic.ToString();
 
-                var source = new CohortIdentificationConfigurationSource();
-                source.Timeout = 5;
+                var source = new CohortIdentificationConfigurationSource
+                {
+                    Timeout = 5
+                };
                 source.PreInitialize(cic,new ThrowImmediatelyDataLoadEventListener());
                 source.Check(ragCic);
 
@@ -298,8 +300,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             if (_configuration == null && cbDefineCohort.Checked)
             {
                 _configuration = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository,
-                    _project);
-                _configuration.Name = "Cases";
+                    _project)
+                {
+                    Name = "Cases"
+                };
                 _configuration.SaveToDatabase();
             }
 

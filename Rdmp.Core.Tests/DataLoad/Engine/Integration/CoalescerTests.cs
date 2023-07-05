@@ -97,9 +97,11 @@ public class CoalescerTests:DatabaseTests
 
         var configuration = new HICDatabaseConfiguration(db.Server,namer);
 
-        var coalescer = new Coalescer();
-        coalescer.TableRegexPattern = new Regex(".*");
-        coalescer.CreateIndex = true;
+        var coalescer = new Coalescer
+        {
+            TableRegexPattern = new Regex(".*"),
+            CreateIndex = true
+        };
         coalescer.Initialize(db,LoadStage.AdjustRaw);
 
 

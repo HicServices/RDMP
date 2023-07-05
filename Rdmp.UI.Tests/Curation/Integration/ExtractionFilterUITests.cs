@@ -25,9 +25,11 @@ internal class ExtractionFilterUITests : UITests
             
         SetupMEF();
 
-        var activator = new TestActivateItems(this, Repository);
-        activator.InteractiveDeletes = true;
-        activator.YesNoResponse = true;
+        var activator = new TestActivateItems(this, Repository)
+        {
+            InteractiveDeletes = true,
+            YesNoResponse = true
+        };
 
         var del = new ExecuteCommandDelete(activator, filter);
         del.Execute();

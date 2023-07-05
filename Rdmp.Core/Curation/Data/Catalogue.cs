@@ -909,8 +909,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                     string sql;
                     try
                     {
-                        var qb = new QueryBuilder(null, null);
-                        qb.TopX = 1;
+                        var qb = new QueryBuilder(null, null)
+                        {
+                            TopX = 1
+                        };
                         qb.AddColumnRange(extractionInformations);
                     
                         sql = qb.SQL;

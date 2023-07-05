@@ -28,8 +28,10 @@ public class SupportingDocumentTests : DatabaseTests
     public void test_SupportingDocument_CreateChangeSaveDestroy()
     {
         var cata = new Catalogue(CatalogueRepository, "deleteme");
-        var doc = new SupportingDocument(CatalogueRepository, cata, "davesFile");
-        doc.Description = "some exciting file that dave loves";
+        var doc = new SupportingDocument(CatalogueRepository, cata, "davesFile")
+        {
+            Description = "some exciting file that dave loves"
+        };
         doc.SaveToDatabase();
 
         Assert.AreEqual(doc.Name, "davesFile");

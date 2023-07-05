@@ -31,8 +31,10 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
 
         // create a cohort config
-        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
-        cic.QueryCachingServer_ID = externalDatabaseServer.ID;
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
+        {
+            QueryCachingServer_ID = externalDatabaseServer.ID
+        };
         cic.SaveToDatabase();
 
         // this special Catalogue will be detected by ExamplePluginCohortCompiler and interpreted as an API call
@@ -88,8 +90,10 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
 
         // create a cohort config
-        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
-        cic.QueryCachingServer_ID = externalDatabaseServer.ID;
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
+        {
+            QueryCachingServer_ID = externalDatabaseServer.ID
+        };
         cic.SaveToDatabase();
 
         // this special Catalogue will be detected by ExamplePluginCohortCompiler and interpreted as an API call
@@ -120,8 +124,10 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var activator = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier()) { DisallowInput = true };
 
         // create a cohort config
-        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
-        cic.QueryCachingServer_ID = externalDatabaseServer.ID;
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
+        {
+            QueryCachingServer_ID = externalDatabaseServer.ID
+        };
         cic.SaveToDatabase();
 
         // this special Catalogue will be detected by ExamplePluginCohortCompiler and interpreted as an API call
@@ -172,8 +178,10 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         eiChi.SaveToDatabase();
 
         // create a cohort config
-        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic");
-        cic.QueryCachingServer_ID = externalDatabaseServer.ID;
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository, "mycic")
+        {
+            QueryCachingServer_ID = externalDatabaseServer.ID
+        };
         cic.SaveToDatabase();
 
         // this special Catalogue will be detected by ExamplePluginCohortCompiler and interpreted as an API call

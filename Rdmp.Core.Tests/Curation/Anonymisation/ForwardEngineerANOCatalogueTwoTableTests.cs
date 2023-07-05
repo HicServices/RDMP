@@ -99,8 +99,10 @@ GO";
             c2.Single(e => e.GetRuntimeName().Equals("TestId")),
             ExtractionJoinType.Left,null);
 
-        _anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOTes", "T");
-        _anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 10;
+        _anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOTes", "T")
+            {
+                NumberOfCharactersToUseInAnonymousRepresentation = 10
+            };
         _anoTable.SaveToDatabase();
         _anoTable.PushToANOServerAsNewTable("int",new ThrowImmediatelyCheckNotifier());
             

@@ -73,8 +73,10 @@ public class PlatformDatabaseCreation
             db.Drop();
         }
 
-        var executor = new MasterDatabaseScriptExecutor(db);
-        executor.BinaryCollation = options.BinaryCollation;
+        var executor = new MasterDatabaseScriptExecutor(db)
+        {
+            BinaryCollation = options.BinaryCollation
+        };
         executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
         Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
             

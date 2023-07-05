@@ -127,8 +127,10 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
         if(Project.ProjectNumber == null)
             throw new ProjectNumberException($"Project '{Project}' does not have a ProjectNumber");
 
-        var definition = new CohortDefinition(null, origCohortData.ExternalDescription, origCohortData.ExternalVersion + 1,(int) Project.ProjectNumber, origCohort.ExternalCohortTable);
-        definition.CohortReplacedIfAny = origCohort;
+        var definition = new CohortDefinition(null, origCohortData.ExternalDescription, origCohortData.ExternalVersion + 1,(int) Project.ProjectNumber, origCohort.ExternalCohortTable)
+            {
+                CohortReplacedIfAny = origCohort
+            };
 
         NewCohortDefinition = definition;
         DescriptionForAuditLog = "Cohort Refresh";

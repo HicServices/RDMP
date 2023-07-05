@@ -250,9 +250,11 @@ public class HICPipelineTests : DatabaseTests
                 defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, external);
             }
 
-            var options = new DleOptions();
-            options.LoadMetadata = catalogueEntities.LoadMetadata.ID.ToString();
-            options.Command = CommandLineActivity.check;
+            var options = new DleOptions
+            {
+                LoadMetadata = catalogueEntities.LoadMetadata.ID.ToString(),
+                Command = CommandLineActivity.check
+            };
 
             //run checks (with ignore errors if we are sending dodgy credentials)
             RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), 

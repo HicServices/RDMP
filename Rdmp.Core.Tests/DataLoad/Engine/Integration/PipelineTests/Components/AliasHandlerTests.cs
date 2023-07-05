@@ -54,15 +54,15 @@ public class AliasHandlerTests  : DatabaseTests
             s.GetCommand("INSERT INTO  AliasHandlerTests VALUES ('paul','peter')", con).ExecuteNonQuery();
         }
 
-        _handler = new AliasHandler();
-
-        _handler.AliasColumnInInputDataTables = "input";
-        _handler.AliasTableSQL = "select * from AliasHandlerTests";
-        _handler.DataAccessContext = DataAccessContext.DataLoad;
-        _handler.ResolutionStrategy = AliasResolutionStrategy.CrashIfAliasesFound;
-        _handler.TimeoutForAssemblingAliasTable = 10;
-        _handler.ServerToExecuteQueryOn = _server;
-
+        _handler = new AliasHandler
+        {
+            AliasColumnInInputDataTables = "input",
+            AliasTableSQL = "select * from AliasHandlerTests",
+            DataAccessContext = DataAccessContext.DataLoad,
+            ResolutionStrategy = AliasResolutionStrategy.CrashIfAliasesFound,
+            TimeoutForAssemblingAliasTable = 10,
+            ServerToExecuteQueryOn = _server
+        };
     }
 
         

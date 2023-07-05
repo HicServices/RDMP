@@ -728,8 +728,10 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {
-        var args = new RDMPContextMenuStripArgs(_activator,Tree,o);
-        args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
+        var args = new RDMPContextMenuStripArgs(_activator,Tree,o)
+        {
+            Masquerader = oMasquerader ?? o as IMasqueradeAs
+        };
 
         var objectConstructor = new ObjectConstructor();
 

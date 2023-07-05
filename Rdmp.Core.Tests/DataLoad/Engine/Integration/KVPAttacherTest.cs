@@ -163,8 +163,10 @@ public class KVPAttacherTest:DatabaseTests
     [Test]
     public void KVPAttacherCheckTest_FilePathMissing()
     {
-        var kvp = new KVPAttacher();
-        kvp.TableName = "MyTable";
+        var kvp = new KVPAttacher
+        {
+            TableName = "MyTable"
+        };
 
         var ex = Assert.Throws<Exception>(()=>kvp.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.IsTrue(ex.Message.StartsWith("Argument FilePattern has not been set"));
@@ -178,9 +180,11 @@ public class KVPAttacherTest:DatabaseTests
     [TestCase("TargetDataTableValueColumnName")]
     public void KVPAttacherCheckTest_BasicArgumentMissing(string missingField)
     {
-        var kvp = new KVPAttacher();
-        kvp.TableName = "MyTable";
-        kvp.FilePattern = "*.csv";
+        var kvp = new KVPAttacher
+        {
+            TableName = "MyTable",
+            FilePattern = "*.csv"
+        };
 
         if (missingField != "PrimaryKeyColumns")
             kvp.PrimaryKeyColumns = "dave,bob";
@@ -200,12 +204,14 @@ public class KVPAttacherTest:DatabaseTests
     [TestCase(false)]
     public void KVPAttacherCheckTest_Crossover(bool isKeyColumnDuplicate)
     {
-        var kvp = new KVPAttacher();
-        kvp.TableName = "MyTable";
-        kvp.FilePattern = "*.csv";
-        kvp.PrimaryKeyColumns = "dave,bob";
-        kvp.TargetDataTableKeyColumnName =  isKeyColumnDuplicate ?"dave":"Fish";
-        kvp.TargetDataTableValueColumnName = isKeyColumnDuplicate ? "tron" : "dave";
+        var kvp = new KVPAttacher
+        {
+            TableName = "MyTable",
+            FilePattern = "*.csv",
+            PrimaryKeyColumns = "dave,bob",
+            TargetDataTableKeyColumnName = isKeyColumnDuplicate ?"dave":"Fish",
+            TargetDataTableValueColumnName = isKeyColumnDuplicate ? "tron" : "dave"
+        };
 
         var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual("Field 'dave' is both a PrimaryKeyColumn and a TargetDataTable column, this is not allowed.  Your fields Pk1,Pk2,Pketc,Key,Value must all be mutually exclusive", ex.Message);
@@ -214,12 +220,14 @@ public class KVPAttacherTest:DatabaseTests
     [Test]
     public void KVPAttacherCheckTest_CrossoverKeyAndValue()
     {
-        var kvp = new KVPAttacher();
-        kvp.TableName = "MyTable";
-        kvp.FilePattern = "*.csv";
-        kvp.PrimaryKeyColumns = "dave";
-        kvp.TargetDataTableKeyColumnName = "Key";
-        kvp.TargetDataTableValueColumnName = "Key";
+        var kvp = new KVPAttacher
+        {
+            TableName = "MyTable",
+            FilePattern = "*.csv",
+            PrimaryKeyColumns = "dave",
+            TargetDataTableKeyColumnName = "Key",
+            TargetDataTableValueColumnName = "Key"
+        };
 
         var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual("TargetDataTableKeyColumnName cannot be the same as TargetDataTableValueColumnName", ex.Message);

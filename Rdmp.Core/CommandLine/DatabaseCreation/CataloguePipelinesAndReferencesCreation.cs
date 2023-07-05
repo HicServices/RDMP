@@ -52,10 +52,11 @@ public class CataloguePipelinesAndReferencesCreation
     {
         var defaults = _repositoryLocator.CatalogueRepository;
 
-        _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher());
-
-        _edsLogging.Server = _logging.DataSource;
-        _edsLogging.Database = _logging.InitialCatalog;
+        _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher())
+            {
+                Server = _logging.DataSource,
+                Database = _logging.InitialCatalog
+            };
 
         if(_logging.UserID != null)
         {
@@ -67,9 +68,11 @@ public class CataloguePipelinesAndReferencesCreation
         defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
         Console.WriteLine("Successfully configured default logging server");
 
-        var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher());
-        edsDQE.Server = _dqe.DataSource;
-        edsDQE.Database = _dqe.InitialCatalog;
+        var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
+            {
+                Server = _dqe.DataSource,
+                Database = _dqe.InitialCatalog
+            };
 
         if (_dqe.UserID != null)
         {
@@ -81,8 +84,10 @@ public class CataloguePipelinesAndReferencesCreation
         defaults.SetDefault(PermissableDefaults.DQE, edsDQE);
         Console.WriteLine("Successfully configured default dqe server");
 
-        var edsRAW = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "RAW Server", null);
-        edsRAW.Server = _dqe.DataSource;
+        var edsRAW = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "RAW Server", null)
+ {
+     Server = _dqe.DataSource
+ };
 
         //We are expecting a single username/password for everything here, so just use the dqe one
         if (_dqe.UserID != null)

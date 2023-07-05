@@ -104,12 +104,14 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     {
         var toAdd =
             new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(),
-                discoveredColumn.DataType.SQLType, parent);
+                discoveredColumn.DataType.SQLType, parent)
+            {
+                Format = discoveredColumn.Format,
+                Collation = discoveredColumn.Collation,
+                IsPrimaryKey = discoveredColumn.IsPrimaryKey,
+                IsAutoIncrement = discoveredColumn.IsAutoIncrement
+            };
 
-        toAdd.Format = discoveredColumn.Format;
-        toAdd.Collation = discoveredColumn.Collation;
-        toAdd.IsPrimaryKey = discoveredColumn.IsPrimaryKey;
-        toAdd.IsAutoIncrement = discoveredColumn.IsAutoIncrement;
         toAdd.SaveToDatabase();
 
         return toAdd;

@@ -111,14 +111,18 @@ public class CohortCompilerTests:CohortIdentificationTests
     public void TestCompilerAddAllTasks(TestCompilerAddAllTasksTestCase testCase,bool includeSubcontainers)
     {
         var aggregate4 =
-            new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate4");
-        aggregate4.CountSQL = null;
+            new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate4")
+            {
+                CountSQL = null
+            };
         aggregate4.SaveToDatabase();
         new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
 
         var aggregate5 =
-            new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate5");
-        aggregate5.CountSQL = null;
+            new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate5")
+            {
+                CountSQL = null
+            };
         aggregate5.SaveToDatabase();
         new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate5);
 

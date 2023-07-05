@@ -305,9 +305,11 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisab
         var contents = GetOrderedContents();
 
         //clone us with same order (in parents)
-        var cloneContainer = new CohortAggregateContainer((ICatalogueRepository)Repository, Operation);
-        cloneContainer.Name = Name;
-        cloneContainer.Order = Order;
+        var cloneContainer = new CohortAggregateContainer((ICatalogueRepository)Repository, Operation)
+        {
+            Name = Name,
+            Order = Order
+        };
         cloneContainer.SaveToDatabase();
 
 

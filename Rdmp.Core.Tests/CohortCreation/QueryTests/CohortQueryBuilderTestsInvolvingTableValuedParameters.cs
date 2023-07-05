@@ -28,12 +28,16 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
         CreateFunction();
 
         //In this example we have 2 configurations which both target the same table valued function but which must have different parameter values
-        var config1 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_1");
-        config1.CountSQL = null;
+        var config1 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_1")
+            {
+                CountSQL = null
+            };
         config1.SaveToDatabase();
 
-        var config2 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_2");
-        config2.CountSQL = null;
+        var config2 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_2")
+            {
+                CountSQL = null
+            };
         config2.SaveToDatabase();
 
         var cic = new CohortIdentificationConfiguration(CatalogueRepository,"CohortGenerationDifferingTableValuedParametersTest");
@@ -96,12 +100,16 @@ SET @name='fish';
                 CollapseWhitespace(builder.SQL));
 
             //now override JUST @name
-            var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);");
-            param1.Value = "'lobster'";
+            var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);")
+ {
+     Value = "'lobster'"
+ };
             param1.SaveToDatabase();
 
-            var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);");
-            param2.Value = "'monkey'";
+            var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);")
+ {
+     Value = "'monkey'"
+ };
             param2.SaveToDatabase();
 
             var builder2 = new CohortQueryBuilder(cic,null);

@@ -117,10 +117,12 @@ public abstract class RDMPCommandLineOptions
         else
         if (CatalogueDatabaseName != null)
         {
-            c = new SqlConnectionStringBuilder();
-            c.DataSource = ServerName;
-            c.IntegratedSecurity = true;
-            c.InitialCatalog = CatalogueDatabaseName;
+            c = new SqlConnectionStringBuilder
+            {
+                DataSource = ServerName,
+                IntegratedSecurity = true,
+                InitialCatalog = CatalogueDatabaseName
+            };
         }
         else
             c = null;
@@ -137,10 +139,12 @@ public abstract class RDMPCommandLineOptions
         else
         if (DataExportDatabaseName != null)
         {
-            d = new SqlConnectionStringBuilder();
-            d.DataSource = ServerName;
-            d.IntegratedSecurity = true;
-            d.InitialCatalog = DataExportDatabaseName;
+            d = new SqlConnectionStringBuilder
+            {
+                DataSource = ServerName,
+                IntegratedSecurity = true,
+                InitialCatalog = DataExportDatabaseName
+            };
         }
         else
             d = null;

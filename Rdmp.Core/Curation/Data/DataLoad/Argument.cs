@@ -406,8 +406,10 @@ public abstract class Argument : DatabaseEntity, IArgument
         {
             if (typeof(IEncryptedString).IsAssignableFrom(type))
             {
-                var encryptor = new EncryptedString(CatalogueRepository);
-                encryptor.Value = o.ToString();
+                var encryptor = new EncryptedString(CatalogueRepository)
+                {
+                    Value = o.ToString()
+                };
                 return encryptor.Value;
             }
 

@@ -30,8 +30,10 @@ internal class TestExecuteCommandSet : CommandCliTests
     [Test]
     public void Test_CatalogueDescription_Null()
     {
-        var cata = new Catalogue(Repository.CatalogueRepository, "Bob");
-        cata.Description = "something cool";
+        var cata = new Catalogue(Repository.CatalogueRepository, "Bob")
+        {
+            Description = "something cool"
+        };
         cata.SaveToDatabase();
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{

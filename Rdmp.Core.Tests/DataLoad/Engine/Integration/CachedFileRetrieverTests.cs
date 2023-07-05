@@ -178,8 +178,10 @@ public class CachedFileRetrieverTests : DatabaseTests
         var logManager = Mock.Of<ILogManager>();
         var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues()==new[] { catalogue });
 
-        var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null);
-        j.LoadProgress = _lpMock;
+        var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null)
+            {
+                LoadProgress = _lpMock
+            };
         return j;
     }
 }

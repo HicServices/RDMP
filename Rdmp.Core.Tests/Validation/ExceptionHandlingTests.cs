@@ -23,8 +23,10 @@ internal class ExceptionHandlingTests
     {
         var validator = new Validator();
 
-        var chi = new ItemValidator();
-        chi.PrimaryConstraint = (PrimaryConstraint) Validator.CreateConstraint("chi",Consequence.Wrong);
+        var chi = new ItemValidator
+        {
+            PrimaryConstraint = (PrimaryConstraint) Validator.CreateConstraint("chi",Consequence.Wrong)
+        };
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         chi.AddSecondaryConstraint(prediction);
         validator.AddItemValidator(chi, "chi", typeof(string));

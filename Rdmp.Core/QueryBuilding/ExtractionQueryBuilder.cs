@@ -85,9 +85,11 @@ public class ExtractionQueryBuilder
         //identify any tables we are supposed to force join to
         var forcedJoins = request.SelectedDataSets.SelectedDataSetsForcedJoins;
 
-        var queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
-        queryBuilder.TopX = request.TopX;
-            
+        var queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray())
+            {
+                TopX = request.TopX
+            };
+
         queryBuilder.SetSalt(request.Salt.GetSalt());
 
         //add the constant parameters

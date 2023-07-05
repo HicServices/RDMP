@@ -222,12 +222,16 @@ public partial class SimpleCohortSetUI : UserControl
         if (cbxCatalogues.SelectedItem is not Catalogue cata)
             return;
 
-        var cataCommand = new CatalogueCombineable(cata);
-        //use this one
-        cataCommand.ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation;
+        var cataCommand = new CatalogueCombineable(cata)
+        {
+            //use this one
+            ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation
+        };
 
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,cataCommand ,targetContainer);
-        cmd.SkipMandatoryFilterCreation = true;
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,cataCommand ,targetContainer)
+            {
+                SkipMandatoryFilterCreation = true
+            };
         cmd.Execute();
 
         var aggregate = cmd.AggregateCreatedIfAny;

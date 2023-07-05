@@ -43,14 +43,18 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
         if (_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).All(ei => ei.GetRuntimeName() != "YearOfBirth"))
         {
-            var ei = new ExtractionInformation(CatalogueRepository, ci, _columnToTransform, transform);
-            ei.Alias = "YearOfBirth";
-            ei.ExtractionCategory = ExtractionCategory.Core;
+            var ei = new ExtractionInformation(CatalogueRepository, ci, _columnToTransform, transform)
+            {
+                Alias = "YearOfBirth",
+                ExtractionCategory = ExtractionCategory.Core
+            };
             ei.SaveToDatabase();
 
             //make it part of the ExtractionConfiguration
-            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet, (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL);
-            newColumn.Alias = ei.Alias;
+            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet, (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
+                {
+                    Alias = ei.Alias
+                };
             newColumn.SaveToDatabase();
 
             _extractableColumns.Add(newColumn);
@@ -107,19 +111,23 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob.txt");
 
         File.WriteAllText(filename,"fishfishfish");
-        var doc = new SupportingDocument(CatalogueRepository, _catalogue, "bob");
-        doc.URL = new Uri($"file://{filename}");
-        doc.Extractable = true;
+        var doc = new SupportingDocument(CatalogueRepository, _catalogue, "bob")
+        {
+            URL = new Uri($"file://{filename}"),
+            Extractable = true
+        };
         doc.SaveToDatabase();
 
         //an extractable global file (comes out regardless of datasets)
         var filename2 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob2.txt");
 
         File.WriteAllText(filename2,"fishfishfish2");
-        var doc2 = new SupportingDocument(CatalogueRepository, _catalogue, "bob2");
-        doc2.URL = new Uri($"file://{filename2}");
-        doc2.Extractable = true;
-        doc2.IsGlobal = true;
+        var doc2 = new SupportingDocument(CatalogueRepository, _catalogue, "bob2")
+        {
+            URL = new Uri($"file://{filename2}"),
+            Extractable = true,
+            IsGlobal = true
+        };
         doc2.SaveToDatabase();
 
         //an supplemental table in the database (not linked against cohort)
@@ -137,11 +145,13 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         //an supplemental (global) table in the database (not linked against cohort)
         var tbl2 = CreateDataset<HospitalAdmissions>(Database,500, 1000, new Random(50));
 
-        var sql2 = new SupportingSQLTable(CatalogueRepository, _catalogue, "Hosp");
-        sql2.ExternalDatabaseServer_ID = server.ID;
-        sql2.SQL = $"SELECT * FROM {tbl2.GetFullyQualifiedName()}";
-        sql2.Extractable = true;
-        sql2.IsGlobal = true;
+        var sql2 = new SupportingSQLTable(CatalogueRepository, _catalogue, "Hosp")
+        {
+            ExternalDatabaseServer_ID = server.ID,
+            SQL = $"SELECT * FROM {tbl2.GetFullyQualifiedName()}",
+            Extractable = true,
+            IsGlobal = true
+        };
         sql2.SaveToDatabase();
 
 
@@ -163,8 +173,10 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
             ExtractionJoinType.Left,null);
 
         //we need a CatalogueItem for the description in order to pick SetUp the Lookup as associated with the Catalogue
-        var ci = new CatalogueItem(CatalogueRepository, _catalogue, "SomeDesc");
-        ci.ColumnInfo_ID = columnInfos[1].ID;
+        var ci = new CatalogueItem(CatalogueRepository, _catalogue, "SomeDesc")
+        {
+            ColumnInfo_ID = columnInfos[1].ID
+        };
         ci.SaveToDatabase();
     }
 
@@ -172,10 +184,12 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
     protected override Pipeline SetupPipeline()
     {
         //create a target server pointer
-        _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver",null);
-        _extractionServer.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-        _extractionServer.Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny;
-        _extractionServer.Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny;
+        _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver",null)
+        {
+            Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
+            Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
+            Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny
+        };
         _extractionServer.SaveToDatabase();
 
         //create a pipeline

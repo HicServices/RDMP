@@ -90,9 +90,11 @@ public class DescendancyList
         {
             anotherKnownParent
         };
-        var toReturn = new DescendancyList(list.ToArray());
-        toReturn.BetterRouteExists = BetterRouteExists;
-        toReturn.NewBestRoute = NewBestRoute;
+        var toReturn = new DescendancyList(list.ToArray())
+        {
+            BetterRouteExists = BetterRouteExists,
+            NewBestRoute = NewBestRoute
+        };
         return toReturn;
     }
 
@@ -106,9 +108,11 @@ public class DescendancyList
         NewBestRoute = false;
         BetterRouteExists = true;
 
-        var toReturn = new DescendancyList(Parents);
-        toReturn.NewBestRoute = false;
-        toReturn.BetterRouteExists = true;
+        var toReturn = new DescendancyList(Parents)
+        {
+            NewBestRoute = false,
+            BetterRouteExists = true
+        };
         return toReturn;
     }
 
@@ -122,9 +126,11 @@ public class DescendancyList
         NewBestRoute = true;
         BetterRouteExists = false;
 
-        var toReturn = new DescendancyList(Parents);
-        toReturn.NewBestRoute = true;
-        toReturn.BetterRouteExists = false;
+        var toReturn = new DescendancyList(Parents)
+        {
+            NewBestRoute = true,
+            BetterRouteExists = false
+        };
 
         return toReturn;
     }

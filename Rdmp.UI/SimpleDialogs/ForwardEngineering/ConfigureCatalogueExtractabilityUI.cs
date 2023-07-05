@@ -374,8 +374,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         olvColumnExtractability.UseFiltering = true;
 
-        var textFilter = new TextMatchFilter(olvColumnExtractability, tbFilter.Text);
-        textFilter.Columns = new[] {olvColumnInfoName};
+        var textFilter = new TextMatchFilter(olvColumnExtractability, tbFilter.Text)
+        {
+            Columns = new[] {olvColumnInfoName}
+        };
         olvColumnExtractability.ModelFilter = textFilter;
     }
 

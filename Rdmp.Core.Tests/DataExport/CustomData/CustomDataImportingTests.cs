@@ -140,8 +140,10 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         _selectedDataSet.RootFilterContainer_ID = rootContainer.ID;
         _selectedDataSet.SaveToDatabase();
 
-        var filter = new DeployedExtractionFilter(DataExportRepository, "monkeys only", rootContainer);
-        filter.WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'";
+        var filter = new DeployedExtractionFilter(DataExportRepository, "monkeys only", rootContainer)
+ {
+     WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'"
+ };
         filter.SaveToDatabase();
         rootContainer.AddChild(filter);
 

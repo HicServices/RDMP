@@ -327,8 +327,10 @@ internal class YamlRepositoryTests
         var dir = new DirectoryInfo(GetUniqueDirectoryName());
         var repo = new YamlRepository(dir);
 
-        var c = new Catalogue(repo, "yar");
-        c.Name = "ffff";
+        var c = new Catalogue(repo, "yar")
+        {
+            Name = "ffff"
+        };
         c.SaveToDatabase();
 
         // creating a new repo should load the same object back

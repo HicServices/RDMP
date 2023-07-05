@@ -164,15 +164,15 @@ public class TableInfoImporter:ITableInfoImporter
     /// <inheritdoc/>
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent,DiscoveredColumn discoveredColumn)
     {
-        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent);
-
-        //if it has an explicitly specified format (Collation)
-        col.Format = discoveredColumn.Format;
-            
-        //if it is a primary key
-        col.IsPrimaryKey = discoveredColumn.IsPrimaryKey;
-        col.IsAutoIncrement = discoveredColumn.IsAutoIncrement;
-        col.Collation = discoveredColumn.Collation;
+        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent)
+            {
+                //if it has an explicitly specified format (Collation)
+                Format = discoveredColumn.Format,
+                //if it is a primary key
+                IsPrimaryKey = discoveredColumn.IsPrimaryKey,
+                IsAutoIncrement = discoveredColumn.IsAutoIncrement,
+                Collation = discoveredColumn.Collation
+            };
 
         col.SaveToDatabase();
         

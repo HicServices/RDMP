@@ -165,8 +165,10 @@ public class TestDataAccess:DatabaseTests
         try
         {
             var repository = new CatalogueRepository(CatalogueTableRepository.ConnectionStringBuilder);
-            var cata = new Catalogue(repository, "bob");
-            cata.Name = "Fuss";
+            var cata = new Catalogue(repository, "bob")
+            {
+                Name = "Fuss"
+            };
             cata.SaveToDatabase();
             cata.DeleteInDatabase();
         }

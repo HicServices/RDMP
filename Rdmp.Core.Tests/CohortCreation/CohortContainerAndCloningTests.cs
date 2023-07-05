@@ -97,8 +97,10 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
         aggregate1.SaveToDatabase();
 
         //with filters
-        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container);
-        filter.WhereSQL = "sex=@sex";
+        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container)
+        {
+            WhereSQL = "sex=@sex"
+        };
 
         //and parameters
         new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
@@ -207,8 +209,10 @@ sex=@sex
         aggregate1.RootFilterContainer_ID = container.ID;
         aggregate1.SaveToDatabase();
 
-        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container);
-        filter.WhereSQL = "sex=@sex";
+        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container)
+        {
+            WhereSQL = "sex=@sex"
+        };
         new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter,null);
         filter.SaveToDatabase();
 

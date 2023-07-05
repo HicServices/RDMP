@@ -161,8 +161,10 @@ internal class CommandLineObjectPickerTests : UnitTests
     {
         var oc = new ObjectConstructor();
 
-        var mem = new MemoryDataExportRepository();
-        mem.MEF = MEF;
+        var mem = new MemoryDataExportRepository
+        {
+            MEF = MEF
+        };
 
         //create some objects that the examples can successfully reference
         new Catalogue(mem.CatalogueRepository, "mycata1"); //ID = 1

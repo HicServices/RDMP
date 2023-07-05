@@ -56,16 +56,20 @@ public class CohortSummaryQueryBuilderTests:DatabaseTests
             $"{CohortIdentificationConfiguration.CICPrefix}Agg1_Cohort");
         acDataset = new AggregateConfiguration(CatalogueRepository, c, "Agg2_Dataset");
 
-        ei_Year = new ExtractionInformation(CatalogueRepository, ci2, col2, "Year");
-        ei_Year.IsExtractionIdentifier = true;
+        ei_Year = new ExtractionInformation(CatalogueRepository, ci2, col2, "Year")
+        {
+            IsExtractionIdentifier = true
+        };
         ei_Year.SaveToDatabase();
         acDataset.AddDimension(ei_Year);
         acDataset.CountSQL = "count(*)";
         acDataset.SaveToDatabase();
 
 
-        ei_Chi = new ExtractionInformation(CatalogueRepository, ci, col, "CHI");
-        ei_Chi.IsExtractionIdentifier = true;
+        ei_Chi = new ExtractionInformation(CatalogueRepository, ci, col, "CHI")
+        {
+            IsExtractionIdentifier = true
+        };
         ei_Chi.SaveToDatabase();
 
         acCohort.AddDimension(ei_Chi);
@@ -188,8 +192,10 @@ Year", builder.SQL);
     {
         CreateParameters("'bob'", "'fish'");
 
-        var global = new AnyTableSqlParameter(CatalogueRepository, cic, "DECLARE @bob AS varchar(50);");
-        global.Value = "'zomber'";
+        var global = new AnyTableSqlParameter(CatalogueRepository, cic, "DECLARE @bob AS varchar(50);")
+        {
+            Value = "'zomber'"
+        };
         global.SaveToDatabase();
 
         try
@@ -247,8 +253,10 @@ Year"), CollapseWhitespace(builder.SQL));
         acDataset.RootFilterContainer_ID = container1.ID;
         acDataset.SaveToDatabase();
 
-        var filter1 = new AggregateFilter(CatalogueRepository, "Filter1", container1);
-        filter1.WhereSQL = "@bob = 'bob'";
+        var filter1 = new AggregateFilter(CatalogueRepository, "Filter1", container1)
+        {
+            WhereSQL = "@bob = 'bob'"
+        };
         filter1.SaveToDatabase();
 
         var paramCreator = new ParameterCreator(filter1.GetFilterFactory(), null, null);
@@ -258,8 +266,10 @@ Year"), CollapseWhitespace(builder.SQL));
         acCohort.RootFilterContainer_ID = container2.ID;
         acCohort.SaveToDatabase();
 
-        var filter2 = new AggregateFilter(CatalogueRepository, "Filter2", container2);
-        filter2.WhereSQL = "@bob = 'fish'";
+        var filter2 = new AggregateFilter(CatalogueRepository, "Filter2", container2)
+        {
+            WhereSQL = "@bob = 'fish'"
+        };
         filter2.SaveToDatabase();
 
         paramCreator.CreateAll(filter2, null);

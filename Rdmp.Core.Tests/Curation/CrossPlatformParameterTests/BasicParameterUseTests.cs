@@ -64,8 +64,10 @@ public class BasicParameterUseTests:DatabaseTests
             /////////////////////////////////THE ACTUAL PROPER TEST////////////////////////////////////
             //create an extraction filter
             var extractionInformation = ei.Single();
-            var filter = new ExtractionFilter(CatalogueRepository, "Filter by numbers", extractionInformation);
-            filter.WhereSQL = $"{extractionInformation.SelectSQL} = @n";
+            var filter = new ExtractionFilter(CatalogueRepository, "Filter by numbers", extractionInformation)
+                {
+                    WhereSQL = $"{extractionInformation.SelectSQL} = @n"
+                };
             filter.SaveToDatabase();
 
             //create the parameters for filter (no globals, masters or scope adjacent parameters)

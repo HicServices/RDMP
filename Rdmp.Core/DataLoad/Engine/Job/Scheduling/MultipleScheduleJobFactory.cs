@@ -56,10 +56,11 @@ public class MultipleScheduleJobFactory : ScheduledJobFactory
             return null;
 
         var LoadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
-        job = new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, LoadDirectory, listener,configuration);
-            
-        job.LoadProgress = loadProgress;
-        job.DatesToRetrieve = datesToRetrieve;
+        job = new ScheduledDataLoadJob(repositoryLocator,JobDescription, LogManager, LoadMetadata, LoadDirectory, listener,configuration)
+            {
+                LoadProgress = loadProgress,
+                DatesToRetrieve = datesToRetrieve
+            };
 
         // move our circular pointer for the round-robin assignment
         _lastScheduleId = (_lastScheduleId + 1) % _scheduleList.Count;

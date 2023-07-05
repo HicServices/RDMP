@@ -64,8 +64,10 @@ public class SourceTests:DatabaseTests
 
         var component = new TestObject_RequiresTableInfo();
         var ti = new TableInfo(mockRepo, "Foo");
-        var ci = new ColumnInfo(mockRepo, "ColumnInfo", "Type", ti);
-        ci.Name = "ColumnInfo"; // because we passed a stubbed repository, the name won't be set
+        var ci = new ColumnInfo(mockRepo, "ColumnInfo", "Type", ti)
+        {
+            Name = "ColumnInfo" // because we passed a stubbed repository, the name won't be set
+        };
 
         var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ci));
         StringAssert.Contains("The following expected types were not passed to PreInitialize:TableInfo",ex.Message);
@@ -92,8 +94,10 @@ public class SourceTests:DatabaseTests
         //component is both IPipelineRequirement<TableInfo> AND IPipelineRequirement<LoadModuleAssembly> but only TableInfo is passed in params
         var component = new TestObject_RequiresTableInfoAndFreakyObject();
 
-        var testTableInfo = new TableInfo(mockRepo, "");
-        testTableInfo.Name = "Test Table Info";
+        var testTableInfo = new TableInfo(mockRepo, "")
+        {
+            Name = "Test Table Info"
+        };
 
         var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, testTableInfo));
         StringAssert.Contains($"The following expected types were not passed to PreInitialize:LoadModuleAssembly{Environment.NewLine}The object types passed were:{Environment.NewLine}Rdmp.Core.Curation.Data.TableInfo:Test Table Info",ex.Message);
@@ -121,8 +125,10 @@ public class SourceTests:DatabaseTests
         var context = contextFactory.Create(PipelineUsage.FixedDestination);
 
         var pipeline = new Pipeline(CatalogueRepository, "DeleteMePipeline");
-        var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(TestObject_RequiresTableInfo), 0);
-        component.Name = "TestPipeComponent";
+        var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(TestObject_RequiresTableInfo), 0)
+            {
+                Name = "TestPipeComponent"
+            };
         component.SaveToDatabase();
 
         var rejection = context.IsAllowable(pipeline, out var reason);

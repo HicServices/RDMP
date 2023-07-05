@@ -270,8 +270,10 @@ public class CohortCompiler
             //if the container/aggregate being processed isn't the first component in the container
             if (!isFirstInContainer && IncludeCumulativeTotals) //and we want cumulative totals
             {
-                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals,CoreChildProvider);
-                cumulativeQueryBuilder.StopContainerWhenYouReach = (IOrderable) runnable;
+                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals,CoreChildProvider)
+                    {
+                        StopContainerWhenYouReach = (IOrderable) runnable
+                    };
             }
                 
         }

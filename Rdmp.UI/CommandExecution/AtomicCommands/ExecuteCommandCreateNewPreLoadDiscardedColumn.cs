@@ -95,8 +95,10 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
 
     private PreLoadDiscardedColumn Create(string name, string dataType)
     {
-        var discCol = new PreLoadDiscardedColumn(Activator.RepositoryLocator.CatalogueRepository, _tableInfo, name);
-        discCol.SqlDataType = dataType;
+        var discCol = new PreLoadDiscardedColumn(Activator.RepositoryLocator.CatalogueRepository, _tableInfo, name)
+            {
+                SqlDataType = dataType
+            };
         discCol.SaveToDatabase();
         return discCol;
     }

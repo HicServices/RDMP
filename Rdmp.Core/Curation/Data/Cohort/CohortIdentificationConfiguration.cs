@@ -363,9 +363,11 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 foreach (var p in GetAllParameters())
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs($"Cloning global parameter {p.ParameterName}",CheckResult.Success));
-                    var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL);
-                    cloneP.Comment = p.Comment;
-                    cloneP.Value = p.Value;
+                    var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL)
+                    {
+                        Comment = p.Comment,
+                        Value = p.Value
+                    };
                     cloneP.SaveToDatabase();
                 }
 
@@ -459,9 +461,11 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         //clone parameters
         foreach (var toCloneParameter in toClone.Parameters)
         {
-            var newParam = new AnyTableSqlParameter((ICatalogueRepository)newConfiguration.Repository, newConfiguration, toCloneParameter.ParameterSQL);
-            newParam.Value = toCloneParameter.Value;
-            newParam.Comment = toCloneParameter.Comment;
+            var newParam = new AnyTableSqlParameter((ICatalogueRepository)newConfiguration.Repository, newConfiguration, toCloneParameter.ParameterSQL)
+                {
+                    Value = toCloneParameter.Value,
+                    Comment = toCloneParameter.Comment
+                };
             newParam.SaveToDatabase();
         }
 

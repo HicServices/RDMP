@@ -47,9 +47,11 @@ public class ExcelAttacher:FlatFileAttacher
     {
         _haveServedData = false;
         _fileToLoad = fileToLoad;
-        _hostedSource = new ExcelDataFlowSource();
-        _hostedSource.WorkSheetName = WorkSheetName;
-        _hostedSource.AddFilenameColumnNamed = AddFilenameColumnNamed;
+        _hostedSource = new ExcelDataFlowSource
+        {
+            WorkSheetName = WorkSheetName,
+            AddFilenameColumnNamed = AddFilenameColumnNamed
+        };
 
         _hostedSource.PreInitialize(new FlatFileToLoad(fileToLoad),listener);
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,

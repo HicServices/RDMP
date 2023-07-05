@@ -147,9 +147,11 @@ public class EndToEndTableValuedFunction:DatabaseTests
 
         var source = new PipelineComponent(CatalogueRepository, _pipe,typeof (CohortIdentificationConfigurationSource), 0, "CIC Source");
             
-        _project = new Project(DataExportRepository, "TvfProject");
-        _project.ProjectNumber = 12;
-        _project.ExtractionDirectory = TestContext.CurrentContext.TestDirectory;
+        _project = new Project(DataExportRepository, "TvfProject")
+        {
+            ProjectNumber = 12,
+            ExtractionDirectory = TestContext.CurrentContext.TestDirectory
+        };
         _project.SaveToDatabase();
 
         var destination = new PipelineComponent(CatalogueRepository, _pipe, typeof(BasicCohortDestination), 1, "Destination");
@@ -163,8 +165,10 @@ public class EndToEndTableValuedFunction:DatabaseTests
         destination.CreateArgumentsForClassIfNotExists<BasicCohortDestination>();
 
         //create pipeline initialization objects
-        var request = new CohortCreationRequest(_project, new CohortDefinition(null, "MyFirstCohortForTvfTest", 1, 12, _externalCohortTable), DataExportRepository, "Here goes nothing");
-        request.CohortIdentificationConfiguration = _cic;
+        var request = new CohortCreationRequest(_project, new CohortDefinition(null, "MyFirstCohortForTvfTest", 1, 12, _externalCohortTable), DataExportRepository, "Here goes nothing")
+            {
+                CohortIdentificationConfiguration = _cic
+            };
         var engine = request.GetEngine(_pipe,new ThrowImmediatelyDataLoadEventListener());
         engine.ExecutePipeline(new GracefulCancellationToken());
     }
@@ -343,8 +347,10 @@ end
         }
 
         //create a global overriding parameter on the aggregate
-        var global = new AnyTableSqlParameter(CatalogueRepository, _aggregate, "DECLARE @numberOfRecords AS int;");
-        global.Value = "1";
+        var global = new AnyTableSqlParameter(CatalogueRepository, _aggregate, "DECLARE @numberOfRecords AS int;")
+            {
+                Value = "1"
+            };
         global.SaveToDatabase();
 
 
@@ -405,8 +411,10 @@ end
 
     private void TestDataExportOfTvf()
     {
-        var config = new ExtractionConfiguration(DataExportRepository, _project);
-        config.Cohort_ID = DataExportRepository.GetAllObjects<ExtractableCohort>().Single().ID;
+        var config = new ExtractionConfiguration(DataExportRepository, _project)
+        {
+            Cohort_ID = DataExportRepository.GetAllObjects<ExtractableCohort>().Single().ID
+        };
         config.SaveToDatabase();
 
         var tvfExtractable = new ExtractableDataSet(DataExportRepository, _tvfCatalogue);
@@ -421,8 +429,10 @@ end
         Assert.AreEqual("10",_tvfTableInfo.GetAllParameters().Single().Value);
 
         //configure an extraction specific global of 1 so that only 1 chi number is fetched (which will be in the cohort)
-        var globalP = new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;");
-        globalP.Value = "1";
+        var globalP = new GlobalExtractionFilterParameter(DataExportRepository, config, "DECLARE @numberOfRecords AS int;")
+            {
+                Value = "1"
+            };
         globalP.SaveToDatabase();
 
         var extractionCommand = new ExtractDatasetCommand(config, new ExtractableDatasetBundle(tvfExtractable));

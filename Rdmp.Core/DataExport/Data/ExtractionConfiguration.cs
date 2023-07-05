@@ -582,8 +582,10 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         {
             //first we need a root container e.g. an AND container
             //add the AND container and set it as the root container for the dataset configuration
-            var rootFilterContainer = new FilterContainer(dataExportRepo);
-            rootFilterContainer.Operation = FilterContainerOperation.AND;
+            var rootFilterContainer = new FilterContainer(dataExportRepo)
+            {
+                Operation = FilterContainerOperation.AND
+            };
             rootFilterContainer.SaveToDatabase();
 
             selectedDataSet.RootFilterContainer_ID = rootFilterContainer.ID;

@@ -447,11 +447,13 @@ public class FlatFileAttacherTests : DatabaseTests
 
 
         Import(tbl,out var ti,out _);
-        var attacher = new AnySeparatorFileAttacher();
-        attacher.Separator = ",";
-        attacher.FilePattern = "bob*";
-        attacher.TableName = tbl.GetRuntimeName();
-        attacher.Culture = new CultureInfo(attacherCulture);
+        var attacher = new AnySeparatorFileAttacher
+        {
+            Separator = ",",
+            FilePattern = "bob*",
+            TableName = tbl.GetRuntimeName(),
+            Culture = new CultureInfo(attacherCulture)
+        };
         attacher.Initialize(LoadDirectory, db);
 
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null),ti);
@@ -477,8 +479,10 @@ public class FlatFileAttacherTests : DatabaseTests
 
         source.TableToLoad = tiNotInLoad;
 
-        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true});
-        job.RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad });
+        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true})
+            {
+                RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad })
+            };
 
 
         var ex = Assert.Throws<Exception>(()=>source.Attach(job,new GracefulCancellationToken()));

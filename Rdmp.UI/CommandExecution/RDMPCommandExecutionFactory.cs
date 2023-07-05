@@ -140,8 +140,10 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
         if(cmd is FileCollectionCombineable file)
             if(file.Files.Length == 1)
             {
-                var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator,file.Files[0]);
-                toReturn.TargetFolder = targetFolder.FullName;
+                var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator,file.Files[0])
+                    {
+                        TargetFolder = targetFolder.FullName
+                    };
                 return toReturn;
             }
 

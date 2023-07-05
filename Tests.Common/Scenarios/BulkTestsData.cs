@@ -184,8 +184,10 @@ public class BulkTestsData
     public void SetupValidationOnCatalogue()
     {
         var v = new Validator();
-        var iv = new ItemValidator("chi");
-        iv.PrimaryConstraint = new Chi();
+        var iv = new ItemValidator("chi")
+        {
+            PrimaryConstraint = new Chi()
+        };
         iv.PrimaryConstraint.Consequence = Consequence.Wrong;
 
         v.AddItemValidator(iv, "chi", typeof(string));

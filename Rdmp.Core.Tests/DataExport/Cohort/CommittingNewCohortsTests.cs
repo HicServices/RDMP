@@ -80,8 +80,10 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     {
         var listener = new ThrowImmediatelyDataLoadEventListener();
 
-        var proj = new Project(DataExportRepository, projName);
-        proj.ProjectNumber = 999;
+        var proj = new Project(DataExportRepository, projName)
+        {
+            ProjectNumber = 999
+        };
         proj.SaveToDatabase();
 
         var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
@@ -110,8 +112,10 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     [TestCase(false)]
     public void DeprecateOldCohort(bool deprecate)
     {
-        var proj = new Project(DataExportRepository, projName);
-        proj.ProjectNumber = 999;
+        var proj = new Project(DataExportRepository, projName)
+        {
+            ProjectNumber = 999
+        };
         proj.SaveToDatabase();
 
         // we are replacing this imaginary cohort
@@ -150,8 +154,10 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     [TestCase(false)]
     public void MigrateUsages(bool migrate)
     {
-        var proj = new Project(DataExportRepository, projName);
-        proj.ProjectNumber = 999;
+        var proj = new Project(DataExportRepository, projName)
+        {
+            ProjectNumber = 999
+        };
         proj.SaveToDatabase();
 
         // we are replacing this imaginary cohort

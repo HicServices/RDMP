@@ -172,8 +172,10 @@ public class ProjectChecksTestsSimple:DatabaseTests
 
     private Project GetProjectWithConfig(out ExtractionConfiguration config)
     {
-        var p = new Project(DataExportRepository, "Fish");
-        p.ProjectNumber = -5000;
+        var p = new Project(DataExportRepository, "Fish")
+        {
+            ProjectNumber = -5000
+        };
         config = new ExtractionConfiguration(DataExportRepository,p);
         return p;
     }

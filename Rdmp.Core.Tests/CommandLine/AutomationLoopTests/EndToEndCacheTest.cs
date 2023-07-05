@@ -51,8 +51,10 @@ public class EndToEndCacheTest : DatabaseTests
 
         Clear(_LoadDirectory);
 
-        _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest");
-        _cata.LoadMetadata_ID = _lmd.ID;
+        _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest")
+        {
+            LoadMetadata_ID = _lmd.ID
+        };
         _cata.SaveToDatabase();
 
         _lp = new LoadProgress(CatalogueRepository, _lmd);
@@ -77,9 +79,11 @@ public class EndToEndCacheTest : DatabaseTests
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
-        var cachingHost = new CachingHost(CatalogueRepository);
-            
-        cachingHost.CacheProgress = _cp;
+        var cachingHost = new CachingHost(CatalogueRepository)
+        {
+            CacheProgress = _cp
+        };
+
         cachingHost.Start(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         // should be numDaysToCache days in cache

@@ -428,9 +428,11 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         var existing = _aggregate.GetAxisIfAny();
 
         //create a new one
-        var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension);
-        axis.AxisIncrement = AxisIncrement.Month;
-                          
+        var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension)
+            {
+                AxisIncrement = AxisIncrement.Month
+            };
+
         //copy over old values of start/end/increment
         if (existing != null && existing.AggregateDimension_ID != selectedDimension.ID)
         {

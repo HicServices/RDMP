@@ -19,10 +19,12 @@ public class CatalogueCheckTests:DatabaseTests
     [Test]
     public void CatalogueCheck_DodgyName()
     {
-        var cata = new Catalogue(CatalogueRepository, "fish");
-            
-        //name broken
-        cata.Name = @"c:\bob.txt#";
+        var cata = new Catalogue(CatalogueRepository, "fish")
+        {
+            //name broken
+            Name = @"c:\bob.txt#"
+        };
+
         var ex = Assert.Throws<Exception>(()=>cata.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.IsTrue(ex.Message.Contains("The following invalid characters were found:'\\','.','#'"));
 
