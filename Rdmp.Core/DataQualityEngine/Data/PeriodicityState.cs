@@ -90,8 +90,7 @@ public class PeriodicityState
                             continue;
                         }
 
-                        if (!toReturn.ContainsKey(date))
-                            toReturn.Add(date,new ArchivalPeriodicityCount());
+                        toReturn.TryAdd(date, new ArchivalPeriodicityCount());
 
                         var toIncrement = toReturn[date];
 

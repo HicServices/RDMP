@@ -99,8 +99,7 @@ public class DQEStateOverDataLoadRunId
         }
 
         //ensure key exists in passing rows
-        if (!RowsPassingValidationByDataLoadRunID.ContainsKey(dataLoadRunID))
-            RowsPassingValidationByDataLoadRunID.Add(dataLoadRunID, 0);
+        RowsPassingValidationByDataLoadRunID.TryAdd(dataLoadRunID, 0);
     }
 
     private bool _correctValuesCalculated = false;

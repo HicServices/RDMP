@@ -157,8 +157,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 }
                 catch (SyntaxErrorException errorException)
                 {
-                    if(!ProblemObjects.ContainsKey(parameter))
-                        ProblemObjects.Add(parameter,errorException);
+                    ProblemObjects.TryAdd(parameter, errorException);
                 }
                     
 
@@ -188,9 +187,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
             var exception = ex as QueryBuildingException;
             if (exception != null)
             {
-                foreach (var p in exception.ProblemObjects.OfType<ISqlParameter>())
-                    if(!ProblemObjects .ContainsKey(p))//might have already added it up above
-                        ProblemObjects.Add(p, ex);
+                foreach (var p in exception.ProblemObjects.OfType<ISqlParameter>()) ProblemObjects.TryAdd(p, ex);
 
                 ProblemObjectsFound();
             }

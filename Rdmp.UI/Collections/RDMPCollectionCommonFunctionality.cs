@@ -762,16 +762,14 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             //find first menu that's compatible
             if (menu != null)
             {
-                if (!_cachedMenuCompatibility.ContainsKey(oType))
-                    _cachedMenuCompatibility.Add(oType, menu.GetType());
+                _cachedMenuCompatibility.TryAdd(oType, menu.GetType());
 
                 return menu;
             }
         }
 
         //we know there are no menus compatible with this type
-        if (!_cachedMenuCompatibility.ContainsKey(oType))
-            _cachedMenuCompatibility.Add(oType, null);
+        _cachedMenuCompatibility.TryAdd(oType, null);
 
         //there are no derrived classes with compatible constructors
         return null;

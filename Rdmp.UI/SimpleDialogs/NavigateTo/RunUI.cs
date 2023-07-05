@@ -40,9 +40,8 @@ public partial class RunUI : RDMPForm
         foreach (var c in commands)
         {
             var name = BasicCommandExecution.GetCommandName(c.Name);
-                
-            if(!_commandsDictionary.ContainsKey(name))
-                _commandsDictionary.Add(name, c);
+
+            _commandsDictionary.TryAdd(name, c);
         }
 
         comboBox1.Items.AddRange(_commandsDictionary.Keys.ToArray());

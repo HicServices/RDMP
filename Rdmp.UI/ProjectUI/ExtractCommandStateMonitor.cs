@@ -37,8 +37,7 @@ internal class ExtractCommandStateMonitor
 
         foreach (var substate in cmd.DatasetBundle.States.ToArray())
         {
-            if(!toUpdateSubstates.ContainsKey(substate.Key))
-                toUpdateSubstates.Add(substate.Key,substate.Value);
+            toUpdateSubstates.TryAdd(substate.Key, substate.Value);
 
             toUpdateSubstates[substate.Key] = substate.Value;
         }
@@ -57,8 +56,7 @@ internal class ExtractCommandStateMonitor
     {
         foreach (var gkvp in globals.States)
         {
-            if(!GlobalsStates.ContainsKey(gkvp.Key))
-                GlobalsStates.Add(gkvp.Key,gkvp.Value);
+            GlobalsStates.TryAdd(gkvp.Key, gkvp.Value);
 
             GlobalsStates[gkvp.Key] = gkvp.Value;
         }
