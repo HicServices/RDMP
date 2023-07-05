@@ -476,7 +476,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         isRefreshing = true;
             
         //find out what is legal for the aggregate
-        _options = new AggregateBuilderOptionsFactory().Create(_aggregate);
+        _options = AggregateBuilderOptionsFactory.Create(_aggregate);
             
         //set enablednesss based on legality
         cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);

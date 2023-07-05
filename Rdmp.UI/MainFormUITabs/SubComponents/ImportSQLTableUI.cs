@@ -123,7 +123,7 @@ public partial class ImportSQLTableUI : RDMPForm
             {
                 if(ti.IsTableValuedFunction && ti.GetAllParameters().Any())
                 {
-                    var options = new ParameterCollectionUIOptionsFactory().Create(ti);
+                    var options = ParameterCollectionUIOptionsFactory.Create(ti);
                     ParameterCollectionUI.ShowAsDialog(Activator,options,true);
                 }
                 MessageBox.Show($"Successfully imported table '{ti}'");

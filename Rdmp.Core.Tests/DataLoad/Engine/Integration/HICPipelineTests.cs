@@ -255,13 +255,13 @@ public class HICPipelineTests : DatabaseTests
             options.Command = CommandLineActivity.check;
 
             //run checks (with ignore errors if we are sending dodgy credentials)
-            new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), 
+            RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), 
                 sendDodgyCredentials?
                     (ICheckNotifier) new IgnoreAllErrorsCheckNotifier(): new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
             //run load
             options.Command = CommandLineActivity.run;
-            var runner = new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options);
+            var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options);
 
                 
             if (sendDodgyCredentials)

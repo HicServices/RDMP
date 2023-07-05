@@ -28,7 +28,7 @@ public class AggregateFilterUIOptions : FilterUIOptions
                 $"AggregateFilter '{aggregateFilter}' (ID={aggregateFilter.ID}) does not belong to any AggregateConfiguration, is it somehow an orphan?");
 
         //it part of an AggregateConfiguration so get the same factory that is used by AggregateEditorUI to tell us about the globals and the columns
-        var options = new AggregateBuilderOptionsFactory().Create(aggregateConfiguration);
+        var options = AggregateBuilderOptionsFactory.Create(aggregateConfiguration);
         _globals = options.GetAllParameters(aggregateConfiguration);
 
         //get all the tables 

@@ -78,7 +78,7 @@ public partial class ViewSourceCodeDialog : Form
                 if (lineNumber != -1)
                 {
                     QueryEditor.FirstVisibleLine = Math.Max(0, lineNumber - 10);
-                    new ScintillaLineHighlightingHelper().HighlightLine(QueryEditor, lineNumber - 1, highlightColor);
+                    ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, lineNumber - 1, highlightColor);
                 }
             }
             else
