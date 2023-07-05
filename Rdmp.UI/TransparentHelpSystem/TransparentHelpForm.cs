@@ -28,8 +28,8 @@ public class TransparentHelpForm:Form
     [DllImport("dwmapi.dll", PreserveSig = false)]
     public static extern bool DwmIsCompositionEnabled();
 
-    private const UInt32 SW_SHOWNOACTIVATE = 4;
-    private const UInt32 WM_NCHITTEST = 0x0084;
+    private const uint SW_SHOWNOACTIVATE = 4;
+    private const uint WM_NCHITTEST = 0x0084;
     private const int HTTRANSPARENT = -1;
     private Timer timer = new Timer();
     private Color _transparencyColor;

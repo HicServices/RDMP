@@ -348,7 +348,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         {
             //Check whether property can be written to
             if (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID"))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(String)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(string)))
                     property.SetValue(clone, property.GetValue(this, null), null);
         }
 

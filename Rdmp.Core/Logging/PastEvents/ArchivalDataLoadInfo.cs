@@ -113,7 +113,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
             else
                 return StartTime > other.StartTime ? 1 : -1;
 
-        return String.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
+        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
 
     private List<ArchivalTableLoadInfo> GetTableInfos()

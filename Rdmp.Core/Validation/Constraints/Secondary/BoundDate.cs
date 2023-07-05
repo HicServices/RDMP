@@ -152,13 +152,13 @@ public class BoundDate : Bound
 
     private string CreateViolationReportUsingFieldNames(DateTime d)
     {
-        if (!String.IsNullOrWhiteSpace(LowerFieldName) && !String.IsNullOrWhiteSpace(UpperFieldName)) 
+        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName)) 
             return BetweenMessage(d, LowerFieldName, UpperFieldName);
 
-        if (!String.IsNullOrWhiteSpace(LowerFieldName))
+        if (!string.IsNullOrWhiteSpace(LowerFieldName))
             return GreaterThanMessage(d, LowerFieldName);
 
-        if (!String.IsNullOrWhiteSpace(UpperFieldName))
+        if (!string.IsNullOrWhiteSpace(UpperFieldName))
             return LessThanMessage(d, UpperFieldName);
 
         throw new InvalidOperationException("Illegal state.");

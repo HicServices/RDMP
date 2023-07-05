@@ -169,7 +169,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 }
                 catch (Exception)
                 {
-                    tbTableName.Text = String.Empty;
+                    tbTableName.Text = string.Empty;
                 }
 
                 ragSmileyFile.Visible = true;
@@ -427,7 +427,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     {
         if (expectTable.Exists())
         {
-            var confirm = MessageBox.Show(String.Format("A table named {0} has been created as part of this import. Do you want to keep it?", expectTable.GetFullyQualifiedName()),
+            var confirm = MessageBox.Show(string.Format("A table named {0} has been created as part of this import. Do you want to keep it?", expectTable.GetFullyQualifiedName()),
                 "Confirm", MessageBoxButtons.YesNo);
             if (confirm == DialogResult.No) 
                 expectTable.Drop();

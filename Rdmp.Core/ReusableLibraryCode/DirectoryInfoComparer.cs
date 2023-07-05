@@ -36,7 +36,7 @@ public static class DirectoryInfoExtensions
 {
     public static void CopyAll(this DirectoryInfo source, DirectoryInfo target)
     {
-        if (String.Equals(source.FullName, target.FullName, StringComparison.InvariantCultureIgnoreCase))
+        if (string.Equals(source.FullName, target.FullName, StringComparison.InvariantCultureIgnoreCase))
         {
             return;
         }

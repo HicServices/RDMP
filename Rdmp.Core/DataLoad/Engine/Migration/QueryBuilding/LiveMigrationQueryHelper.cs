@@ -28,7 +28,7 @@ public class LiveMigrationQueryHelper : MigrationQueryHelper
         var parts = ColumnsToMigrate.FieldsToUpdate.Select(name => $"{destAlias}.[{name}] = {sourceAlias}.[{name}]").ToList();
         parts.Add($"{destAlias}.{SpecialFieldNames.DataLoadRunID} = {_dataLoadRunID}");
 
-        return String.Join(", ", parts);
+        return string.Join(", ", parts);
     }
 
     public override string BuildInsertClause()

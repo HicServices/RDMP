@@ -149,12 +149,12 @@ public class FilterImporter
     {
         reason = null;
 
-        if (String.IsNullOrWhiteSpace(filter.Description))
+        if (string.IsNullOrWhiteSpace(filter.Description))
             reason = "There is no description";
         else
         if (filter.Description.Length <= 20)
             reason = "Description is not long enough (minimum length is 20 characters)";
-        else if (String.IsNullOrWhiteSpace(filter.WhereSQL))
+        else if (string.IsNullOrWhiteSpace(filter.WhereSQL))
             reason = "WhereSQL is not populated";
 
         //if we have not yet found a reason to complain, look at parameters for a reason to complain

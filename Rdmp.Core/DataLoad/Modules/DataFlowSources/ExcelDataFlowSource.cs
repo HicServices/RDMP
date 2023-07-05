@@ -138,7 +138,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             var row = (IRow)rowEnumerator.Current;
 
             //if all the cells in the current row are blank skip it (eliminates top of file whitespace)
-            if (row.Cells.All(c => String.IsNullOrWhiteSpace(c.ToString())))
+            if (row.Cells.All(c => string.IsNullOrWhiteSpace(c.ToString())))
                 continue;
 
             //first row (that has any data in it) - makes headers

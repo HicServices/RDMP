@@ -137,7 +137,7 @@ public class Chi : PrimaryConstraint
         // Value of 10 indicates a checksum error
         var checkDigit = ComputeChecksum(strChi);
 
-        return checkDigit != 10 && (int)Char.GetNumericValue(strChi[9]) == checkDigit;
+        return checkDigit != 10 && (int)char.GetNumericValue(strChi[9]) == checkDigit;
     }
 
     private static bool isWellFormedChi(string strChi)

@@ -39,7 +39,7 @@ public class ChiSexPredictor : PredictionRule
 
         if (sChi.Length == 10)
         {
-            var sexDigit = (int)Char.GetNumericValue(sChi, 8);
+            var sexDigit = (int)char.GetNumericValue(sChi, 8);
 
             var isvalid = true;
 

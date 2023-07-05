@@ -164,8 +164,8 @@ WHERE DuplicateCount > 1";
         List<IResolveDuplication> resolvers;
         var basicSQL = GenerateSQL(out pks, out resolvers);
 
-        var commaSeparatedPKs = String.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
-        var commaSeparatedCols = String.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedPKs = string.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedCols = string.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
 
         //add all the columns to the WITH CTE bit
         basicSQL = basicSQL.Replace(WithCTE, $"WITH CTE ({commaSeparatedPKs},{commaSeparatedCols},DuplicateCount)");
@@ -185,10 +185,10 @@ WHERE DuplicateCount > 1";
         basicSQL += $"\twhere{Environment.NewLine}";
 
         //add the child.pk1 = CTE.pk1 bit to restrict preview only to rows that are going to get compared for nukage
-        basicSQL += String.Join("\r\n\t\tand",pks.Select(pk =>  "\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
+        basicSQL += string.Join("\r\n\t\tand",pks.Select(pk =>  "\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
 
         basicSQL += $"\tgroup by{Environment.NewLine}";
-        basicSQL += String.Join(",\r\n", pks.Select( pk =>
+        basicSQL += string.Join(",\r\n", pks.Select( pk =>
             $"\t\t{_querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))}"));
 
         basicSQL += $"\t\t{Environment.NewLine}";
@@ -196,7 +196,7 @@ WHERE DuplicateCount > 1";
         basicSQL += $"){Environment.NewLine}";
 
         basicSQL +=
-            $"order by {String.Join(",\r\n", pks.Select(pk => _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))))}";
+            $"order by {string.Join(",\r\n", pks.Select(pk => _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))))}";
         basicSQL += ",DuplicateCount";
 
         return basicSQL;
@@ -295,7 +295,7 @@ WHERE DuplicateCount > 1";
                 toReturn = "-";
 
             //ignore element zero because elment zero is always a duplicate see https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.match.groups%28v=vs.110%29.aspx
-            if (digits.Groups.Count == 3 && String.IsNullOrWhiteSpace(digits.Groups[2].Value))
+            if (digits.Groups.Count == 3 && string.IsNullOrWhiteSpace(digits.Groups[2].Value))
             {
                 for (var i = 0; i < Convert.ToInt32(digits.Groups[1].Value); i++)
                     toReturn += "9";

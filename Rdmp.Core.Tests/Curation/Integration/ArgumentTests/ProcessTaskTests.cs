@@ -68,7 +68,7 @@ public class ProcessTaskTests : DatabaseTests
         var processTask1 = new ProcessTask(CatalogueRepository, parent1, LoadStage.AdjustRaw);
         var arg = new ProcessTaskArgument(CatalogueRepository, processTask1);
         arg.Name = "TestArg";
-        arg.SetType(typeof (System.String));
+        arg.SetType(typeof (string));
         arg.SetValue("TestValue");
         arg.SaveToDatabase();
 

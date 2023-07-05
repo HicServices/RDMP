@@ -496,7 +496,7 @@ public class CohortQueryBuilderResult
         if (string.IsNullOrWhiteSpace(str))
             return str;
 
-        var tabs = new String('\t', numberOfTabs);
+        var tabs = new string('\t', numberOfTabs);
         return tabs + str.Replace(Environment.NewLine, Environment.NewLine + tabs);
     }
 

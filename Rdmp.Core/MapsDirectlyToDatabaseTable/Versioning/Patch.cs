@@ -120,7 +120,7 @@ public class Patch : IComparable
     {
         if (obj is Patch)
         {
-            return -String.Compare(((Patch)obj).locationInAssembly, locationInAssembly, StringComparison.Ordinal); //sort alphabetically (reverse)
+            return -string.Compare(((Patch)obj).locationInAssembly, locationInAssembly, StringComparison.Ordinal); //sort alphabetically (reverse)
         }
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");

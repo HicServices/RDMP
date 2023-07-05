@@ -57,12 +57,12 @@ internal class RDMPApplicationSettings : ISettings
         if (type == typeof(string) ||
             type == typeof(decimal) ||
             type == typeof(double) ||
-            type == typeof(Single) ||
+            type == typeof(float) ||
             type == typeof(DateTime) ||
             type == typeof(Guid) ||
             type == typeof(bool) ||
-            type == typeof(Int32) ||
-            type == typeof(Int64) ||
+            type == typeof(int) ||
+            type == typeof(long) ||
             type == typeof(byte))
         {
             lock (locker)
@@ -170,7 +170,7 @@ internal class RDMPApplicationSettings : ISettings
                     value = Convert.ToDouble(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
-                else if (type == typeof(Single))
+                else if (type == typeof(float))
                 {
                     value = Convert.ToSingle(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
@@ -206,12 +206,12 @@ internal class RDMPApplicationSettings : ISettings
                     value = Convert.ToBoolean(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
-                else if (type == typeof(Int32))
+                else if (type == typeof(int))
                 {
                     value = Convert.ToInt32(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
-                else if (type == typeof(Int64))
+                else if (type == typeof(long))
                 {
                     value = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
                 }

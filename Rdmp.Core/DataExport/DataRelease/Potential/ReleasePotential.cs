@@ -255,7 +255,7 @@ public abstract class ReleasePotential:ICheckable
         var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
         if (existingReleaseLog != null)
         {
-            if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Dataset {0} has probably already been released as per {1}!",
+            if (notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Dataset {0} has probably already been released as per {1}!",
                         DataSet, existingReleaseLog),
                     CheckResult.Warning,
                     null,

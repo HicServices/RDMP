@@ -1054,7 +1054,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         }
                        
         //in the database it should be typed
-        Assert.AreEqual(typeof(Decimal),db.ExpectTable("ff").DiscoverColumn("mycol").DataType.GetCSharpDataType());
+        Assert.AreEqual(typeof(decimal),db.ExpectTable("ff").DiscoverColumn("mycol").DataType.GetCSharpDataType());
 
         var dt2 = db.ExpectTable("ff").GetDataTable();
             

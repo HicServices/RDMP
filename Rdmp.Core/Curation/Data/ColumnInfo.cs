@@ -316,8 +316,8 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
         RegexPattern = r["RegexPattern"].ToString();
         ValidationRules = r["ValidationRules"].ToString();
-        IsPrimaryKey = Boolean.Parse(r["IsPrimaryKey"].ToString());
-        IsAutoIncrement = Boolean.Parse(r["IsAutoIncrement"].ToString());
+        IsPrimaryKey = bool.Parse(r["IsPrimaryKey"].ToString());
+        IsAutoIncrement = bool.Parse(r["IsAutoIncrement"].ToString());
 
         if (r["ANOTable_ID"] != DBNull.Value)
             ANOTable_ID = int.Parse(r["ANOTable_ID"].ToString());

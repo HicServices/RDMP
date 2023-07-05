@@ -126,7 +126,7 @@ public class WordCatalogueExtractor: DocXHelper
         {
             //Check whether property can be written to
             if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||property.PropertyType.Equals(typeof (String)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||property.PropertyType.Equals(typeof (string)))
                     count++;
 
         }
@@ -145,7 +145,7 @@ public class WordCatalogueExtractor: DocXHelper
                 
             //Check whether property can be written to
             if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(String)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(string)))
                 {
                     SetTableCell(table, currentRow, 0, property.Name);
 

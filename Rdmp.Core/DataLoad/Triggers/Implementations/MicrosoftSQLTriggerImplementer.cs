@@ -266,7 +266,7 @@ END
         sqlToRun += $"BEGIN{Environment.NewLine}";
         sqlToRun += Environment.NewLine;
 
-        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new String[] {
+        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[] {
             $"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
         }).ToArray();
 
@@ -379,7 +379,7 @@ END
                 }
                         
 
-                if (String.IsNullOrWhiteSpace(result))
+                if (string.IsNullOrWhiteSpace(result))
                     throw new TriggerMissingException(
                         $"Trigger {updateTriggerName} does not have an OBJECT_DEFINITION or is missing or is disabled");
 

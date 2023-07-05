@@ -109,9 +109,9 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         if (pkColumn == null || string.IsNullOrWhiteSpace(pkColumn))
             throw new InvalidOperationException("Primary Key column is required.");
 
-        var pkConstraint = String.Format("CONSTRAINT PK_{0} PRIMARY KEY ({1})", tableName, pkColumn);
+        var pkConstraint = string.Format("CONSTRAINT PK_{0} PRIMARY KEY ({1})", tableName, pkColumn);
         var stagingTableDefinition = $"{columnDefinitions}, {pkConstraint}";
-        var liveTableDefinition = columnDefinitions + String.Format(", "+SpecialFieldNames.ValidFrom+" DATETIME, "+SpecialFieldNames.DataLoadRunID+" int, " + pkConstraint);
+        var liveTableDefinition = columnDefinitions + string.Format(", "+SpecialFieldNames.ValidFrom+" DATETIME, "+SpecialFieldNames.DataLoadRunID+" int, " + pkConstraint);
 
         if (fkConstraintString != null)
         {

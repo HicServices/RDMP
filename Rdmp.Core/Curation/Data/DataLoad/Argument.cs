@@ -133,7 +133,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         //bool
         if (type.Equals(typeof(bool).ToString()))
         {
-            if (String.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
                 return false;
 
             return Convert.ToBoolean(value);
@@ -185,7 +185,7 @@ public abstract class Argument : DatabaseEntity, IArgument
                 return DateTime.Parse(value);
 
         //null
-        if (String.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value))
             return null;
 
         if (type.Equals(typeof(Uri).ToString()))
@@ -405,7 +405,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         //get the system type
         var type = GetSystemType(asType);
 
-        if (o is String)
+        if (o is string)
         {
             if (typeof(IEncryptedString).IsAssignableFrom(type))
             {
@@ -436,7 +436,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             return SerializeDictionary((IDictionary) o);
 
         //if we already have a known type set on us
-        if (!String.IsNullOrWhiteSpace(asType))
+        if (!string.IsNullOrWhiteSpace(asType))
         {
             //if we are not being passed an Enum
             if (!typeof(Enum).IsAssignableFrom(type))

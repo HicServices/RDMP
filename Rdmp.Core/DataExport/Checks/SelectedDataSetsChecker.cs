@@ -346,7 +346,7 @@ public class SelectedDataSetsChecker : ICheckable
         if (cols.Any(c => c?.ExtractionCategory == category))
         {
             notifier.OnCheckPerformed(new CheckEventArgs(errorCode, configuration, dataset,
-                String.Join(",", cols.Where(c => c?.ExtractionCategory == category)
+                string.Join(",", cols.Where(c => c?.ExtractionCategory == category)
                     .Select(c => c.GetRuntimeName()))));
         }
     }

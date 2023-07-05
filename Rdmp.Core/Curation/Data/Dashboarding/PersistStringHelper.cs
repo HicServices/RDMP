@@ -65,7 +65,7 @@ public class PersistStringHelper
     /// <returns></returns>
     public Dictionary<string, string> LoadDictionaryFromString(string str)
     {
-        if(String.IsNullOrWhiteSpace(str))
+        if(string.IsNullOrWhiteSpace(str))
             return new Dictionary<string, string>();
 
         var rootElement = XElement.Parse(str);
@@ -108,7 +108,7 @@ public class PersistStringHelper
         sb.Append(CollectionStartDelimiter);
 
         //where obj is <RepositoryType>:<DatabaseObjectType>:<ObjectID>
-        sb.Append(String.Join(CollectionObjectSeparator, objects.Select(o => o.Repository.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
+        sb.Append(string.Join(CollectionObjectSeparator, objects.Select(o => o.Repository.GetType().FullName + Separator + o.GetType().FullName + Separator + o.ID)));
             
         //ending bracket for the object collection
         sb.Append(CollectionEndDelimiter);
@@ -164,7 +164,7 @@ public class PersistStringHelper
                 throw new PersistenceException(
                     $"Could not figure out what database object to fetch because the list contained an item with an invalid number of tokens ({objectTokens.Length} tokens).  The current object string is:{Environment.NewLine}{objectString}");
 
-            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], Int32.Parse(objectTokens[2]));
+            var dbObj = repositoryLocator.GetArbitraryDatabaseObject(objectTokens[0], objectTokens[1], int.Parse(objectTokens[2]));
 
             if (dbObj != null)
                 toReturn.Add(dbObj);

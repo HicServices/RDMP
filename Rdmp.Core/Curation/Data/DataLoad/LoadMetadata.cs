@@ -266,7 +266,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         if(!catalogueMetadatas.Any())
             throw new Exception($"There are no Catalogues associated with load metadata (ID={ID})");
 
-        var cataloguesWithoutLoggingTasks = catalogueMetadatas.Where(c => String.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
+        var cataloguesWithoutLoggingTasks = catalogueMetadatas.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
 
         if(cataloguesWithoutLoggingTasks.Any())
             throw new Exception(

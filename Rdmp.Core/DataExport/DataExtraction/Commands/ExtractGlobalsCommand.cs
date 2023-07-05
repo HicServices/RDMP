@@ -44,7 +44,7 @@ public class ExtractGlobalsCommand : ExtractCommand
 
     public override string DescribeExtractionImplementation()
     {
-        return String.Join(";", Globals.Contents);
+        return string.Join(";", Globals.Contents);
     }
 
     public override string ToString()

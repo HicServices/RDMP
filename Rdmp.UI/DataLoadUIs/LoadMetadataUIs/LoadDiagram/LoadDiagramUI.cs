@@ -385,7 +385,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void DiscoverStates()
     {
-        if (tlvLoadedTables.Objects == null || !tlvLoadedTables.Objects.Cast<Object>().Any())
+        if (tlvLoadedTables.Objects == null || !tlvLoadedTables.Objects.Cast<object>().Any())
             CommonFunctionality.Fatal("There are no tables loaded by the load",null);
 
 

@@ -90,7 +90,7 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
                 startup.RepositoryLocator = _args.GetRepositoryLocator();
             }
             else
-            if (!String.IsNullOrWhiteSpace(catalogueConnection) && !String.IsNullOrWhiteSpace(dataExportConnection))
+            if (!string.IsNullOrWhiteSpace(catalogueConnection) && !string.IsNullOrWhiteSpace(dataExportConnection))
             {
                 startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnection, dataExportConnection);
                 startup.RepositoryLocator.CatalogueRepository.TestConnection();

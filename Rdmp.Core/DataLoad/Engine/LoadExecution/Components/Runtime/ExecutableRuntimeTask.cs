@@ -108,7 +108,7 @@ public class ExecutableRuntimeTask : RuntimeTask
                 args.Add(CommandLineHelper.CreateArgString(name, value));
             return true;
         });
-        return String.Join(" ", args);
+        return string.Join(" ", args);
     }
 
     private ExitCodeType ParseExitCode(int value)
@@ -187,7 +187,7 @@ public class ExecutableRuntimeTask : RuntimeTask
 
     public override string ToString()
     {
-        return String.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
+        return string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
     }
 
     public XmlSchema GetSchema()

@@ -56,7 +56,7 @@ public class MigrationColumnSetQueryHelper
         if (!columnPrefix.EndsWith("."))
             columnPrefix += ".";
 
-        return String.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(col =>
+        return string.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(col =>
             $"{columnPrefix}[{col.GetRuntimeName()}] IS {condition}"));
     }
 
@@ -66,6 +66,6 @@ public class MigrationColumnSetQueryHelper
             throw new InvalidOperationException("None of the columns to be migrated are configured as a Primary Key, the JOIN clause for migration cannot be created. Please ensure that at least one of the columns in the MigrationColumnSet is configured as a Primary Key.");
 
         return
-            $"ON ({String.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(pk => String.Format(sourceAlias + ".[{0}] = " + destAlias + ".[{0}]", pk.GetRuntimeName())))})";
+            $"ON ({string.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(pk => string.Format(sourceAlias + ".[{0}] = " + destAlias + ".[{0}]", pk.GetRuntimeName())))})";
     }
 }

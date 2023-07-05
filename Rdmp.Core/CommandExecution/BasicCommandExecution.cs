@@ -154,7 +154,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 
     public virtual string GetCommandHelp()
     {
-        return String.Empty;
+        return string.Empty;
     }
 
     public virtual Image<Rgba32> GetImage(IIconProvider iconProvider)

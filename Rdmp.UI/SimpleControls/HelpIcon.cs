@@ -42,7 +42,7 @@ public partial class HelpIcon : UserControl
         _title = title;
         _hoverText = hoverText;
         _originalHoverText = hoverText;
-        Visible = !String.IsNullOrWhiteSpace(_hoverText);
+        Visible = !string.IsNullOrWhiteSpace(_hoverText);
 
         _hoverText = GetShortText(_hoverText);
 

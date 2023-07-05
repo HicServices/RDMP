@@ -95,7 +95,7 @@ public class FTPDownloader : IPluginDataProvider
     {
         _host = FTPServer.Server;
         _username = FTPServer.Username ?? "anonymous";
-        _password = String.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
+        _password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
 
         if(string.IsNullOrWhiteSpace(_host))
             throw new NullReferenceException(
@@ -269,7 +269,7 @@ public class FTPDownloader : IPluginDataProvider
         using (var writeStream = new FileStream(destinationFileName, FileMode.Create))
         {
             var Length = 2048;
-            var buffer = new Byte[Length];
+            var buffer = new byte[Length];
             var bytesRead = responseStream.Read(buffer, 0, Length);
             var totalBytesReadSoFar = bytesRead;
 

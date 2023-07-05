@@ -529,7 +529,7 @@ abstract public class TableRepository : ITableRepository
             if (!idsToReturn.Any())
                 return Enumerable.Empty<T>();
 
-            return GetAllObjects<T>($"WHERE ID in ({String.Join(",", idsToReturn)})");
+            return GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
         }
     }
     /// <summary>
@@ -577,7 +577,7 @@ abstract public class TableRepository : ITableRepository
                 return Enumerable.Empty<T>();
 
 
-            var toReturn =  GetAllObjects<T>($"WHERE ID in ({String.Join(",", idsToReturn)})").ToList();
+            var toReturn =  GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})").ToList();
 
             //this bit of hackery is if your a crazy person who hates transparency and wants something like ColumnInfo.Missing to appear in the return list instead of an empty return list
             if(dbNullSubstition != null)

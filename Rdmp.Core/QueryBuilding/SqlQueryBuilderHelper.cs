@@ -399,7 +399,7 @@ public class SqlQueryBuilderHelper
                     firstTable = winners[0];
                 else
                     throw new QueryBuildingException(
-                        $"There were {qb.TablesUsedInQuery.Count} Tables ({String.Join(",", qb.TablesUsedInQuery)}) involved in the query, some of them might have been lookup tables but there was no clear table to start joining from, either mark one of the TableInfos IsPrimaryExtractionTable or refine your query columns / create new lookup relationships");
+                        $"There were {qb.TablesUsedInQuery.Count} Tables ({string.Join(",", qb.TablesUsedInQuery)}) involved in the query, some of them might have been lookup tables but there was no clear table to start joining from, either mark one of the TableInfos IsPrimaryExtractionTable or refine your query columns / create new lookup relationships");
             }
                 
             toReturn += firstTable.Name; //simple case "FROM tableX"
