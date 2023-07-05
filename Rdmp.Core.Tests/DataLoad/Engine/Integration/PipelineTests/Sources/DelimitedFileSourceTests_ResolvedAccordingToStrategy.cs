@@ -124,7 +124,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
 
@@ -160,7 +160,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
         
@@ -202,7 +202,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
 
@@ -242,7 +242,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
 

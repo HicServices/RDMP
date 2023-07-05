@@ -89,7 +89,7 @@ public partial class DataFlowComponentVisualisation : UserControl
                 prongRight2.Visible = false;
                 break;
             default:
-                throw new ArgumentOutOfRangeException("role");
+                throw new ArgumentOutOfRangeException(nameof(role));
         }
 
             

@@ -90,7 +90,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
             PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
 
         if (!PackageDictionary[package].Contains(dataSet))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
 
         PackageDictionary[package].Remove(dataSet);
     }

@@ -104,7 +104,7 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
                 // Get the beginning of the day prior to nextDateToBeCached
                 return nextDateToBeCached.AddDays(-1).Date;
             default:
-                throw new ArgumentOutOfRangeException("cacheFileGranularity", cacheFileGranularity, "CacheFileGranularity must either be Hour or Day.");
+                throw new ArgumentOutOfRangeException(nameof(cacheFileGranularity), cacheFileGranularity, "CacheFileGranularity must either be Hour or Day.");
         }
     }
 

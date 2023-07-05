@@ -349,7 +349,7 @@ public partial class WideMessageBox : Form
             case CheckResult.Fail:
                 return WideMessageBoxTheme.Exception;
             default:
-                throw new ArgumentOutOfRangeException("result");
+                throw new ArgumentOutOfRangeException(nameof(result));
         }
     }
 

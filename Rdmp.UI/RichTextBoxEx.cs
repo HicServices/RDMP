@@ -148,7 +148,7 @@ public class RichTextBoxEx : RichTextBox
     public void InsertLink(string text, int position)
     {
         if (position < 0 || position > Text.Length)
-            throw new ArgumentOutOfRangeException("position");
+            throw new ArgumentOutOfRangeException(nameof(position));
 
         SelectionStart = position;
         SelectedText = text;
@@ -183,7 +183,7 @@ public class RichTextBoxEx : RichTextBox
     public void InsertLink(string text, string hyperlink, int position)
     {
         if (position < 0 || position > Rtf.Length)
-            throw new ArgumentOutOfRangeException("position");
+            throw new ArgumentOutOfRangeException(nameof(position));
 
         //if it ends with whitespace then we have to put that outside the RTF
         var suffix = string.Concat(text.Reverse().TakeWhile(c => c == '\r' || c == '\n' || c == ' ' || c == '\t').Reverse());

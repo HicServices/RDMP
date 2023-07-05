@@ -448,7 +448,7 @@ internal class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesD
             case LoadBubble.Archive:
                 return rootDatabaseName;
             default:
-                throw new ArgumentOutOfRangeException("convention");
+                throw new ArgumentOutOfRangeException(nameof(convention));
         }
     }
 

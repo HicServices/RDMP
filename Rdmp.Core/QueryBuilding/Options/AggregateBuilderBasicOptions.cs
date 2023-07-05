@@ -61,7 +61,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
             case AggregateEditorSection.AXIS:
                 return true;
             default:
-                throw new ArgumentOutOfRangeException("section");
+                throw new ArgumentOutOfRangeException(nameof(section));
         }
     }
 

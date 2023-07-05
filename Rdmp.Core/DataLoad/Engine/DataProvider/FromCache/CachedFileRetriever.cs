@@ -186,7 +186,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             case CacheArchiveType.Zip:
                 return new ZipExtractor();
             default:
-                throw new ArgumentOutOfRangeException("cacheArchiveType");
+                throw new ArgumentOutOfRangeException(nameof(cacheArchiveType));
         }
     }
 

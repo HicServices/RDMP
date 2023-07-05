@@ -69,7 +69,7 @@ public class TableVarcharMaxerTests : DatabaseTests
                 Assert.AreEqual(allDataTypes ? "varchar(max)" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
                 break;
             default:
-                throw new ArgumentOutOfRangeException("dbType");
+                throw new ArgumentOutOfRangeException(nameof(dbType));
         }
     }
 
@@ -112,7 +112,7 @@ public class TableVarcharMaxerTests : DatabaseTests
                 Assert.AreEqual("varchar(max)",tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
                 break;
             default:
-                throw new ArgumentOutOfRangeException("dbType");
+                throw new ArgumentOutOfRangeException(nameof(dbType));
         }
     }
 }

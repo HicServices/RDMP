@@ -38,7 +38,7 @@ public class BackColorProvider
             case RDMPCollection.DataLoad:
                 return Color.DarkGray;
             default:
-                throw new ArgumentOutOfRangeException("collection");
+                throw new ArgumentOutOfRangeException(nameof(collection));
         }
     }
 

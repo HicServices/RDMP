@@ -46,10 +46,10 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
     {
         if(!cohort.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Parameter cohort was AggregateConfiguration '{cohort}' which is not a Cohort Aggregate (not allowed)","cohort");
+                $"Parameter cohort was AggregateConfiguration '{cohort}' which is not a Cohort Aggregate (not allowed)",nameof(cohort));
         if (graph.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", "graph");
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", nameof(graph));
 
         DatabaseObjects.Add(cohort);
         DatabaseObjects.Add(graph);
@@ -65,7 +65,7 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
     {
         if (graph.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", "graph");
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", nameof(graph));
 
         DatabaseObjects.Add(container);
         DatabaseObjects.Add(graph);

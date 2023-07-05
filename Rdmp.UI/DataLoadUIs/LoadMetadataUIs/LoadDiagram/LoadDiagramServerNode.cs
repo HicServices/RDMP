@@ -55,7 +55,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
                 _description = $"LIVE Server:{serverName}";
                 break;
             default:
-                throw new ArgumentOutOfRangeException("bubble");
+                throw new ArgumentOutOfRangeException(nameof(bubble));
         }
 
         //Live can have multiple databases (for lookups)

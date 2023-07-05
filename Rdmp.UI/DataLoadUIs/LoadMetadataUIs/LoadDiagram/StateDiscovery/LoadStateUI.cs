@@ -54,7 +54,7 @@ public partial class LoadStateUI : UserControl
                 pictureBox1.Image = _executingOrCrashed;
                 break;
             default:
-                throw new ArgumentOutOfRangeException("state");
+                throw new ArgumentOutOfRangeException(nameof(state));
         }
     }
         

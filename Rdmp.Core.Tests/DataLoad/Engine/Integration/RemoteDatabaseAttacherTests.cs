@@ -81,7 +81,7 @@ public class RemoteDatabaseAttacherTests:DatabaseTests
             case Scenario.MissingPreLoadDiscardedColumnButSelectStar:
                 break;
             default:
-                throw new ArgumentOutOfRangeException("scenario");
+                throw new ArgumentOutOfRangeException(nameof(scenario));
         }
         attacher.Attach(job, new GracefulCancellationToken());
 

@@ -136,7 +136,7 @@ public class WindowManager
                 toReturn = Show(RDMPCollection.Favourites, collection, "Favourites", Image.Load<Rgba32>(CatalogueIcons.Favourite));
                 break;
 
-            default: throw new ArgumentOutOfRangeException("collectionToCreate");
+            default: throw new ArgumentOutOfRangeException(nameof(collectionToCreate));
         }
 
         toReturn.DockState = position;

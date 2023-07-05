@@ -217,7 +217,7 @@ public class DelimitedFileSourceTests
 
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("strategy");
+                    throw new ArgumentOutOfRangeException(nameof(strategy));
             }
         }
         finally
@@ -445,7 +445,7 @@ old"",2001-01-05");
 
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("strategy");
+                    throw new ArgumentOutOfRangeException(nameof(strategy));
             }
         }
         finally
@@ -549,7 +549,7 @@ old"",2001-01-05");
 
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("strategy");
+                    throw new ArgumentOutOfRangeException(nameof(strategy));
             }
         }
         finally

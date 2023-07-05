@@ -284,7 +284,7 @@ select 0", con.Connection, con.Transaction))
     public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", "toChange");
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
         if (externalDatabaseServer == null)
         {
@@ -304,7 +304,7 @@ select 0", con.Connection, con.Transaction))
     private void UpdateExistingValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", "toChange");
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
         var sql =
             "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
@@ -323,7 +323,7 @@ select 0", con.Connection, con.Transaction))
     private void InsertNewValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", "toChange");
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
         Insert(
             "INSERT INTO ServerDefaults(DefaultType,ExternalDatabaseServer_ID) VALUES (@DefaultType,@ExternalDatabaseServer_ID)",

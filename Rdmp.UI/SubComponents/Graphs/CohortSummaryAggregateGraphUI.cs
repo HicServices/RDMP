@@ -124,7 +124,7 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
             case CohortSummaryAdjustment.WhereRecordsIn:
                 return "Graphing Cohort Query Result";
             default:
-                throw new ArgumentOutOfRangeException("adjustment");
+                throw new ArgumentOutOfRangeException(nameof(adjustment));
         }
     }
 

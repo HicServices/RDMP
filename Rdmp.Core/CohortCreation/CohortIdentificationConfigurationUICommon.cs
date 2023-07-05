@@ -148,7 +148,7 @@ public class CohortIdentificationConfigurationUICommon
             CompilationState.Executing => Operation.Cancel,
             CompilationState.Finished => Operation.Execute,
             CompilationState.Crashed => Operation.Execute,
-            _ => throw new ArgumentOutOfRangeException("currentState")
+            _ => throw new ArgumentOutOfRangeException(nameof(currentState))
         };
     }
 
@@ -194,7 +194,7 @@ public class CohortIdentificationConfigurationUICommon
             case Operation.None:
                 break;
             default:
-                throw new ArgumentOutOfRangeException("operation");
+                throw new ArgumentOutOfRangeException(nameof(operation));
         }
     }
 

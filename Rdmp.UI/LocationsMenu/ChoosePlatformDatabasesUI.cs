@@ -136,7 +136,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 pResults.BringToFront();
                 break;
             default:
-                throw new ArgumentOutOfRangeException("newState");
+                throw new ArgumentOutOfRangeException(nameof(newState));
         }
     }
 

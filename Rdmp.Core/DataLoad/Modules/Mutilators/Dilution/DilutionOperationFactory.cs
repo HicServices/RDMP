@@ -22,7 +22,7 @@ public class DilutionOperationFactory
     public DilutionOperationFactory(IPreLoadDiscardedColumn targetColumn)
     {
         if(targetColumn == null)
-            throw new ArgumentNullException("targetColumn");
+            throw new ArgumentNullException(nameof(targetColumn));
 
         _targetColumn = targetColumn;
         _mef = ((ICatalogueRepository)_targetColumn.Repository).MEF;
@@ -31,7 +31,7 @@ public class DilutionOperationFactory
     public IDilutionOperation Create(Type operation)
     {
         if(operation == null)
-            throw new ArgumentNullException("operation");
+            throw new ArgumentNullException(nameof(operation));
 
         if(!typeof(IDilutionOperation).IsAssignableFrom(operation))
             throw new ArgumentException($"Requested operation Type {operation} did was not an IDilutionOperation");

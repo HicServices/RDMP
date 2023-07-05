@@ -177,7 +177,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         if (_packageContentsDictionary.Value.ContainsKey(package.ID) && _packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", "dataSet");
+            throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", nameof(dataSet));
 
         using (var con = GetConnection())
         {
@@ -206,7 +206,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         if (!_packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
 
         using (var con = GetConnection())
         {

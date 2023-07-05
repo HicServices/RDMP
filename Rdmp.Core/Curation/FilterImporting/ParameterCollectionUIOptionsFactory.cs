@@ -139,7 +139,7 @@ public class ParameterCollectionUIOptionsFactory
         if (host is ExtractionConfiguration)
             return Create((ExtractionConfiguration)host);
 
-        throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", "host");
+        throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", nameof(host));
     }
 
     private ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)

@@ -55,7 +55,7 @@ internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsB
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
         

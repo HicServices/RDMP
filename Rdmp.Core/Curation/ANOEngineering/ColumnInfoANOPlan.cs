@@ -73,7 +73,7 @@ public class ColumnInfoANOPlan:ICheckable
                     Dilution = null;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("value");
+                    throw new ArgumentOutOfRangeException(nameof(value));
             }
         }
     }

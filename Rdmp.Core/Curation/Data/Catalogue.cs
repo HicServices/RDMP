@@ -1146,7 +1146,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             case FetchOptions.AllGlobalsAndAllLocals:
                 return o.Catalogue_ID == ID || o.IsGlobal;
             default:
-                throw new ArgumentOutOfRangeException("fetch");
+                throw new ArgumentOutOfRangeException(nameof(fetch));
         }
     }
 
@@ -1172,7 +1172,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                 return $"WHERE Catalogue_ID={ID} OR IsGlobal=1";
                     
             default:
-                throw new ArgumentOutOfRangeException("fetch");
+                throw new ArgumentOutOfRangeException(nameof(fetch));
         }
     }
 

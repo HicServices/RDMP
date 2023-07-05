@@ -77,7 +77,7 @@ internal class ConsoleGuiBigListBox<T>
         Func<T, string> displayMember, bool addNull):this(prompt,okText,addSearch,displayMember)
     {
         if(collection == null)
-            throw new ArgumentNullException("collection");
+            throw new ArgumentNullException(nameof(collection));
 
         _publicCollection = collection;
         _addNull = addNull;

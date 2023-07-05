@@ -107,7 +107,7 @@ public class ReleaseEnvironmentPotential : ICheckable
                 return CheckResult.Success;
 
             default:
-                throw new ArgumentOutOfRangeException("assesment");
+                throw new ArgumentOutOfRangeException(nameof(assesment));
         }
     }
 }

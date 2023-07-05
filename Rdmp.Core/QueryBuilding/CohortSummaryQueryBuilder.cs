@@ -41,7 +41,7 @@ public class CohortSummaryQueryBuilder
     public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort, ICoreChildProvider childProvider)
     {
         if (cohort == null)
-            throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor","cohort");
+            throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor",nameof(cohort));
             
         if(summary.Equals(cohort))
             throw new ArgumentException("Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers");
@@ -128,7 +128,7 @@ public class CohortSummaryQueryBuilder
             case CohortSummaryAdjustment.WhereRecordsIn:
                 return GetAdjustedForRecordsIn(singleFilterOnly);
             default:
-                throw new ArgumentOutOfRangeException("adjustment");
+                throw new ArgumentOutOfRangeException(nameof(adjustment));
         }
     }
 
@@ -283,7 +283,7 @@ public class CohortSummaryQueryBuilder
     private void ThrowIfNotValidGraph(AggregateConfiguration summary)
     {
         if (summary == null)
-            throw new ArgumentException("summary was null in CohortSummaryQueryBuilder constructor", "summary");
+            throw new ArgumentException("summary was null in CohortSummaryQueryBuilder constructor", nameof(summary));
 
         if (summary.IsCohortIdentificationAggregate)
             throw new ArgumentException(

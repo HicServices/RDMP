@@ -415,7 +415,7 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
             case LoadStage.PostLoad:
                 return _anonymousDataType;
             default:
-                throw new ArgumentOutOfRangeException("loadStage");
+                throw new ArgumentOutOfRangeException(nameof(loadStage));
         }
     }
         

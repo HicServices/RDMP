@@ -399,7 +399,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
             case ProcessTaskType.MutilateDataTable:
                 return stage != LoadStage.GetFiles;
             default:
-                throw new ArgumentOutOfRangeException("type");
+                throw new ArgumentOutOfRangeException(nameof(type));
         }
     }
 

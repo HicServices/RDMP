@@ -35,7 +35,7 @@ public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
             case LoadBubble.Live:
                 return rootDatabaseName;
             default:
-                throw new ArgumentOutOfRangeException("stage");
+                throw new ArgumentOutOfRangeException(nameof(stage));
         }
     }
 

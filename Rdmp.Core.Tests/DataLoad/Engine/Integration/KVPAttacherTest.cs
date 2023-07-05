@@ -122,7 +122,7 @@ public class KVPAttacherTest:DatabaseTests
                     attacher.FilePattern = "kvpTestFilePK*.*";
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("testCase");
+                    throw new ArgumentOutOfRangeException(nameof(testCase));
             }
                 
 

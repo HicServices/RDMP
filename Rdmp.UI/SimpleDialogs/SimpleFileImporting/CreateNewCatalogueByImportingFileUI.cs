@@ -194,7 +194,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("state");
+                throw new ArgumentOutOfRangeException(nameof(state));
         }
     }
 

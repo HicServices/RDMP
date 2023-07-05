@@ -207,7 +207,7 @@ public class UITests : UnitTests
                 AssertNoErrors(ExpectedErrorType.GlobalErrorCheckNotifier);
                 break;
             default:
-                throw new ArgumentOutOfRangeException("expectedErrorLevel");
+                throw new ArgumentOutOfRangeException(nameof(expectedErrorLevel));
         }
     }
 

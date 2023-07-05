@@ -94,7 +94,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
             case AggregateEditorSection.AXIS:
                 return false;
             default:
-                throw new ArgumentOutOfRangeException("section");
+                throw new ArgumentOutOfRangeException(nameof(section));
         }
     }
 

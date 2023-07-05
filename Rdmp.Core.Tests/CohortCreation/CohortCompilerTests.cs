@@ -169,7 +169,7 @@ public class CohortCompilerTests:CohortIdentificationTests
                     Assert.AreEqual(includeSubcontainers?3:2,tasks.Count); //subcontainer and its aggregates
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("testCase");
+                    throw new ArgumentOutOfRangeException(nameof(testCase));
             }
 
 

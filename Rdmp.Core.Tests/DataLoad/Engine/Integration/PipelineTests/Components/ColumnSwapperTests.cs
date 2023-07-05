@@ -261,7 +261,7 @@ internal class ColumnSwapperTests:DatabaseTests
                 AreBasicallyEquals(60, resultDt.Rows[1]["Age"]);
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
             
     }
