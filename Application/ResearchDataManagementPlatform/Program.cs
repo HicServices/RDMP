@@ -43,11 +43,11 @@ internal static class Program
                 Console.WriteLine("Couldn't redirect console. Never mind");
             }
 
-        Startup.PreStartup();
+            Startup.PreStartup();
 
-        UsefulStuff.GetParser()
-            .ParseArguments<ResearchDataManagementPlatformOptions>(args)
-            .MapResult(RunApp, err => -1);
+            UsefulStuff.GetParser()
+                .ParseArguments<ResearchDataManagementPlatformOptions>(args)
+                .MapResult(RunApp, err => -1);
     }
 
     private static object RunApp(ResearchDataManagementPlatformOptions arg)

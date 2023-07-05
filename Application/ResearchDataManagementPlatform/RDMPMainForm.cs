@@ -149,12 +149,12 @@ public partial class RDMPMainForm : RDMPForm
                     LoadFromXml(new FileStream(_persistenceFile.FullName, FileMode.Open));
 
                     //load the state using the method
-                }
-                catch (Exception ex)
-                {
-                    _globalErrorCheckNotifier.OnCheckPerformed(
-                        new CheckEventArgs("Could not load window persistence due to error in persistence file",
-                            CheckResult.Fail, ex));
+            }
+            catch (Exception ex)
+            {
+                _globalErrorCheckNotifier.OnCheckPerformed(
+                    new CheckEventArgs("Could not load window persistence due to error in persistence file",
+                        CheckResult.Fail, ex));
 
                 //delete the persistence file and try again
                 MessageBox.Show("Persistence file corrupt, application will restart without persistence");
