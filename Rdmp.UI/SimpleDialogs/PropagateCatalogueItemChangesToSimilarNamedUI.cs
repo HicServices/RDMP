@@ -213,19 +213,19 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
         var highlighter = new ScintillaLineHighlightingHelper();
 
-        highlighter.ClearAll(previewNewValue);
-        highlighter.ClearAll(previewOldValue);
+        ScintillaLineHighlightingHelper.ClearAll(previewNewValue);
+        ScintillaLineHighlightingHelper.ClearAll(previewOldValue);
 
         var diff = new Diff();
-        foreach (var item in diff.DiffText(sOld, sNew))
+        foreach (var item in Diff.DiffText(sOld, sNew))
         {
                 
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
-                highlighter.HighlightLine(previewOldValue,i,Color.Pink);
+                ScintillaLineHighlightingHelper.HighlightLine(previewOldValue,i,Color.Pink);
                 
             //if it is single line change
             for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
-                highlighter.HighlightLine(previewNewValue, i, Color.LawnGreen);
+                ScintillaLineHighlightingHelper.HighlightLine(previewNewValue, i, Color.LawnGreen);
 
         }
     }

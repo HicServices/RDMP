@@ -225,7 +225,7 @@ public class KVPAttacherTest:DatabaseTests
         Assert.AreEqual("TargetDataTableKeyColumnName cannot be the same as TargetDataTableValueColumnName", ex.Message);
     }
 
-    private void CopyToBin(LoadDirectory projDir, string file)
+    private static void CopyToBin(LoadDirectory projDir, string file)
     {
             
         var testFileLocation = Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources" , file);

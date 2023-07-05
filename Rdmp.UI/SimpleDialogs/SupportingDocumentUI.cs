@@ -96,7 +96,7 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
         }
     }
         
-    private void SetUriPropertyOn( TextBox tb,string propertyToSet,object toSetOn)
+    private static void SetUriPropertyOn( TextBox tb,string propertyToSet,object toSetOn)
     {
         if (toSetOn == null) return;
         try

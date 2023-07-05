@@ -247,7 +247,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         r["CumulativeTotal"] = Common.CumulativeTotal_AspectGetter(o);
         r["Working"] = Common.Working_AspectGetter(o);
         r["Time"] = Common.Time_AspectGetter(o);
-        r["Catalogue"] = Common.Catalogue_AspectGetter(o);
+        r["Catalogue"] = CohortIdentificationConfigurationUICommon.Catalogue_AspectGetter(o);
         r["ID"] = o is IMapsDirectlyToDatabaseTable m ? m.ID : DBNull.Value;
 
         var children = childProvider.GetChildren(o).ToList();

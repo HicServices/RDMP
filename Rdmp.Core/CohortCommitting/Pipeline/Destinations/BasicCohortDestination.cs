@@ -124,7 +124,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     }
 
         
-    private bool IsNull(object o)
+    private static bool IsNull(object o)
     {
         if (o == null || o == DBNull.Value)
             return true;

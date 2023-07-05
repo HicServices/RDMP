@@ -47,7 +47,7 @@ public partial class RunUI : RDMPForm
 
         comboBox1.Items.AddRange(_commandsDictionary.Keys.ToArray());
     }
-    public void OnCommandExecutionException(IAtomicCommand instance, Exception exception)
+    public static void OnCommandExecutionException(IAtomicCommand instance, Exception exception)
     {
         ExceptionViewer.Show(exception);
     }

@@ -162,12 +162,12 @@ public class AbstractBaseRunnerTests : UnitTests
     {
         new public T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
         {
-            return base.GetObjectFromCommandLineString<T>(locator, arg);
+            return Runner.GetObjectFromCommandLineString<T>(locator, arg);
         }
 
         new public IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
         {
-            return base.GetObjectsFromCommandLineString<T>(locator, arg);
+            return Runner.GetObjectsFromCommandLineString<T>(locator, arg);
         }
 
         public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)

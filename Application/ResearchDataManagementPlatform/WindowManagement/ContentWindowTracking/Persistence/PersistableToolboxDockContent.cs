@@ -42,7 +42,7 @@ public class PersistableToolboxDockContent:DockContent
         args.Add("Toolbox", CollectionType.ToString());
 
          
-        return Prefix + PersistStringHelper.Separator + persistStringHelper.SaveDictionaryToString(args);
+        return Prefix + PersistStringHelper.Separator + PersistStringHelper.SaveDictionaryToString(args);
     }
     public RDMPCollectionUI GetCollection()
     {
@@ -54,7 +54,7 @@ public class PersistableToolboxDockContent:DockContent
         var helper = new PersistStringHelper();
         var s = persistString[(Prefix.Length + 1)..];
 
-        var args = helper.LoadDictionaryFromString(s);
+        var args = PersistStringHelper.LoadDictionaryFromString(s);
 
         RDMPCollection collection;
 

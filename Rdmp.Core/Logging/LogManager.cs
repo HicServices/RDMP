@@ -224,7 +224,7 @@ public class LogManager : ILogManager
         }
     }
 
-    private int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
+    private static int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
     {
         using (var cmd = server.GetCommand("SELECT ID FROM DataLoadTask WHERE name = @name", con))
         {

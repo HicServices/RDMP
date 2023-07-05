@@ -95,7 +95,7 @@ public class WordDataWriter : DocXHelper
                 SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
                 SetTableCell(t,rownum,1, request.IsBatchResume ? "unknown (batching was used)" : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
                 rownum++;
-                    
+
                 SetTableCell(t,rownum,0,"Dataset Line Count");
                 SetTableCell(t,rownum,1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
                 rownum++;
@@ -103,7 +103,7 @@ public class WordDataWriter : DocXHelper
                 if (_destination.GeneratesFiles)
                 {
                     SetTableCell(t,rownum,0,"MD5");
-                    SetTableCell(t,rownum,1,FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
+                    SetTableCell(t,rownum,1, FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
                     rownum++;
                     
                     var f = new FileInfo(_destination.OutputFile);
@@ -177,7 +177,7 @@ public class WordDataWriter : DocXHelper
         }
     }
 
-    private string FormatHashString(string s)
+    private static string FormatHashString(string s)
     {
         if(string.IsNullOrWhiteSpace(s))
             return null;
@@ -240,9 +240,9 @@ public class WordDataWriter : DocXHelper
         foreach (var filter in filtersUsed)
         foreach (var parameter in filter.GetAllParameters())
         {
-            SetTableCell(t,currentLine, 0, parameter.ParameterName);
-            SetTableCell(t,currentLine, 1, parameter.Comment);
-            SetTableCell(t,currentLine, 2, parameter.Value);
+                SetTableCell(t,currentLine, 0, parameter.ParameterName);
+                SetTableCell(t,currentLine, 1, parameter.Comment);
+                SetTableCell(t,currentLine, 2, parameter.Value);
             currentLine++;
         }
 
@@ -313,7 +313,7 @@ public class WordDataWriter : DocXHelper
         catalogueMetaData.AddMetaDataForColumns(supplementalData.Keys.ToArray(),supplementalData);
     }
 
-    private void CreateTimespanGraph(ExtractionTimeTimeCoverageAggregator toGraph)
+    private static void CreateTimespanGraph(ExtractionTimeTimeCoverageAggregator toGraph)
     {/*
             Chart wdChart = wrdDoc.InlineShapes.AddChart(Microsoft.Office.Core.XlChartType.xl3DColumn, ref oMissing).Chart;
             ChartData wdChartData = wdChart.ChartData;
@@ -469,7 +469,7 @@ public class WordDataWriter : DocXHelper
         var t = InsertTable(document,results.DictionaryOfFailure.Count + 1, 4);
             
         var tableLine = 0;
-            
+
         SetTableCell(t,tableLine, 0, "");
         SetTableCell(t,tableLine, 1, Consequence.Missing.ToString());
         SetTableCell(t,tableLine, 2, Consequence.Wrong.ToString());

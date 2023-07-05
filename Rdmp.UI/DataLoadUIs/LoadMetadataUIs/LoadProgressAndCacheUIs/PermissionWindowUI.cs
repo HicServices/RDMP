@@ -71,12 +71,12 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
         if (periodsByDay.ContainsKey(dayNum)) PopulateTextBox(textBox, periodsByDay[dayNum]);
     }
 
-    private void PopulateTextBox(TextBox textBox, IEnumerable<PermissionWindowPeriod> periods)
+    private static void PopulateTextBox(TextBox textBox, IEnumerable<PermissionWindowPeriod> periods)
     {
         textBox.Text = string.Join(",", periods.Select(period => period.ToString()));
     }
 
-    private List<PermissionWindowPeriod> CreatePeriodListFromTextBox(int dayOfWeek, TextBox textBox)
+    private static List<PermissionWindowPeriod> CreatePeriodListFromTextBox(int dayOfWeek, TextBox textBox)
     {
         var listString = textBox.Text;
         var periodList = new List<PermissionWindowPeriod>();

@@ -162,7 +162,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         };
     }
 
-    private string ToIdList(int[] ints)
+    private static string ToIdList(int[] ints)
     {
         return string.Join(",", ints.Select(i => i.ToString()).ToArray());
     }

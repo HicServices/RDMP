@@ -439,7 +439,7 @@ public class WindowManager
             CloseWindowIfInSameScope(adhoc, content);
     }
 
-    private void CloseWindowIfInSameScope(DockContent toClose, DockContent tabInSameScopeOrNull)
+    private static void CloseWindowIfInSameScope(DockContent toClose, DockContent tabInSameScopeOrNull)
     {
         var parent = tabInSameScopeOrNull == null ? null : tabInSameScopeOrNull.Parent;
 

@@ -92,7 +92,7 @@ public class ReleaseEnvironmentPotential : ICheckable
         notifier.OnCheckPerformed(new CheckEventArgs(message, GetCheckResultFor(Assesment), Exception));
     }
 
-    private CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)
+    private static CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)
     {
         switch (assesment)
         {

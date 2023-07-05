@@ -84,7 +84,7 @@ internal class ConsoleGuiContextMenuFactory
         return menu;
     }
 
-    private  MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)
+    private static MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)
     {
         // sort it                
         items.OrderBy(m => order[m]).ToList();
@@ -168,7 +168,7 @@ internal class ConsoleGuiContextMenuFactory
                 .OrderBy(c => c.Weight);
     }
 
-    private  IEnumerable<IAtomicCommand> GetExtraCommands(IBasicActivateItems activator, object o)
+    private static IEnumerable<IAtomicCommand> GetExtraCommands(IBasicActivateItems activator, object o)
     {
         if (CommandFactoryBase.Is(o, out LoadMetadata lmd))
         {

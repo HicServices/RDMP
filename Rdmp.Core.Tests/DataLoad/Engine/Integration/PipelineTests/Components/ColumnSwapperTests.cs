@@ -535,7 +535,7 @@ internal class ColumnSwapperTests:DatabaseTests
         Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
     }
 
-    private IExtractDatasetCommand GetMockExtractDatasetCommand()
+    private static IExtractDatasetCommand GetMockExtractDatasetCommand()
     {
         var mockPj = Mock.Of<IProject>(p =>
             p.Name == "My Project" &&

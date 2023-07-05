@@ -99,6 +99,6 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
         if(dict == null)
             return new List<IMapsDirectlyToDatabaseTable>();
 
-        return _scorer.ShortList(dict, MaxMatches,_activator);
+        return SearchablesMatchScorer.ShortList(dict, MaxMatches,_activator);
     }
 }

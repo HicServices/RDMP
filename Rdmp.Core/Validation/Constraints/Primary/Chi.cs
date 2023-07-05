@@ -109,7 +109,7 @@ public class Chi : PrimaryConstraint
     /// </summary>
     /// <param name="chi"></param>
     /// <returns>1 for male and 0 for female</returns>
-    public int GetSex(string chi)
+    public static int GetSex(string chi)
     {
         string errorReport;
 

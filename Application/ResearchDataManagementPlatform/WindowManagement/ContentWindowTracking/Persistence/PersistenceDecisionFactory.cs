@@ -61,7 +61,7 @@ public class PersistenceDecisionFactory
         return new DeserializeInstruction(controlType);
     }
 
-    public RDMPCollection? ShouldCreateCollection(string persistString)
+    public static RDMPCollection? ShouldCreateCollection(string persistString)
     {
         if (!persistString.StartsWith(PersistableToolboxDockContent.Prefix))
             return null;
@@ -109,17 +109,17 @@ public class PersistenceDecisionFactory
             throw new PersistenceException(
                 $"Constructor of Type '{collectionType}' did not initialise property DatabaseObjects");
             
-        var allObjectsString = _persistStringHelper.MatchCollectionInString(persistString);
+        var allObjectsString = PersistStringHelper.MatchCollectionInString(persistString);
 
-        collectionInstance.DatabaseObjects.AddRange(_persistStringHelper.GetObjectCollectionFromPersistString(allObjectsString,repositoryLocator));
+        collectionInstance.DatabaseObjects.AddRange(PersistStringHelper.GetObjectCollectionFromPersistString(allObjectsString,repositoryLocator));
 
-        var extraText = _persistStringHelper.GetExtraText(persistString);
+        var extraText = PersistStringHelper.GetExtraText(persistString);
         collectionInstance.LoadExtraText(extraText);
 
         return new DeserializeInstruction(uiType,collectionInstance);
     }
 
-    private Type GetTypeByName(string s, Type expectedBaseClassType,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    private static Type GetTypeByName(string s, Type expectedBaseClassType,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var toReturn = repositoryLocator.CatalogueRepository.MEF.GetType(s);
 

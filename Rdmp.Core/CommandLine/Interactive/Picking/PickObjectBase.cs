@@ -93,7 +93,7 @@ public abstract class PickObjectBase
         return t != null
                && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
     }
-    protected Type GetTypeFromShortCodeIfAny(string possibleShortCode)
+    protected static Type GetTypeFromShortCodeIfAny(string possibleShortCode)
     {
         return SearchablesMatchScorer.ShortCodes.ContainsKey(possibleShortCode) ?
             SearchablesMatchScorer.ShortCodes[possibleShortCode] :
@@ -135,7 +135,7 @@ public abstract class PickObjectBase
     /// <param name="key"></param>
     /// <param name="keyValueString"></param>
     /// <returns></returns>
-    protected string Trim(string key, string keyValueString)
+    protected static string Trim(string key, string keyValueString)
     {
         if (string.IsNullOrWhiteSpace(keyValueString))
             return null;

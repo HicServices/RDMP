@@ -288,7 +288,7 @@ public partial class RDMPMainForm : RDMPForm
     {
         try
         {
-            var toolbox = _persistenceFactory.ShouldCreateCollection(persiststring);
+            var toolbox = PersistenceDecisionFactory.ShouldCreateCollection(persiststring);
             if (toolbox.HasValue)
             {
                 var toolboxInstance = _windowManager.Create(toolbox.Value);

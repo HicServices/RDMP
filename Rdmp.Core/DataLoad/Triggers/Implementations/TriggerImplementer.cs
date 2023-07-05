@@ -186,7 +186,7 @@ public abstract class TriggerImplementer:ITriggerImplementer
                 $"The following column mismatch errors were seen:{Environment.NewLine}{string.Join(Environment.NewLine, errors)}");
     }
 
-    private bool AreCompatibleDatatypes(DiscoveredDataType mainDataType, DiscoveredDataType archiveDataType)
+    private static bool AreCompatibleDatatypes(DiscoveredDataType mainDataType, DiscoveredDataType archiveDataType)
     {
         var t1 = mainDataType.SQLType;
         var t2 = archiveDataType.SQLType;

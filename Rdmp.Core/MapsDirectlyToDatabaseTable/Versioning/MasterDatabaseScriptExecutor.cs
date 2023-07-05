@@ -160,7 +160,7 @@ public class MasterDatabaseScriptExecutor
             
     }
         
-    public string CalculateHash(string input)
+    public static string CalculateHash(string input)
     {
         // step 1, calculate MD5 hash from input
 
@@ -280,7 +280,7 @@ public class MasterDatabaseScriptExecutor
         }
     }
 
-    private bool SupportsBackup(DiscoveredDatabase database)
+    private static bool SupportsBackup(DiscoveredDatabase database)
     {
         // Only MS SQL Server has a backup implementation in FAnsi currently
         return database.Server.DatabaseType switch

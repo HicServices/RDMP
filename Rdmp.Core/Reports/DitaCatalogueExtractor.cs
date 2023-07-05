@@ -132,7 +132,7 @@ public class DitaCatalogueExtractor : ICheckable
         return $"{FixName(catalogue.Name)}.dita";
     }
 
-    private string FixName(string name)
+    private static string FixName(string name)
     {
         foreach (var invalidCharacter in Path.GetInvalidFileNameChars())
             name = name.Replace(invalidCharacter, '_');
@@ -246,7 +246,7 @@ public class DitaCatalogueExtractor : ICheckable
         return toReturnXml;
     }
 
-    private string GetHtmlEncodedHeader(object header)
+    private static string GetHtmlEncodedHeader(object header)
     {
         header = header ?? "";
 
@@ -256,7 +256,7 @@ public class DitaCatalogueExtractor : ICheckable
         return HttpUtility.HtmlEncode(header);
     }
 
-    private string GetHtmlEncodedValue(object value)
+    private static string GetHtmlEncodedValue(object value)
     {
         value = value ?? "";
         return HttpUtility.HtmlEncode(value);
@@ -338,7 +338,7 @@ public class DitaCatalogueExtractor : ICheckable
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public string GetAcronymSuggestionFromCatalogueName(string name)
+    public static string GetAcronymSuggestionFromCatalogueName(string name)
     {
         //concatenate all the capitals (and digits)
         var capsConcat = name.Where(c => char.IsUpper(c) || char.IsDigit(c)).Aggregate("", (s, n) => s + n);

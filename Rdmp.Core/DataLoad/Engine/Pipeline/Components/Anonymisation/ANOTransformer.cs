@@ -100,7 +100,7 @@ public class ANOTransformer
         }
     }
 
-    private DataTable ColumnToDataTable(DataColumn column,bool discardNulls)
+    private static DataTable ColumnToDataTable(DataColumn column,bool discardNulls)
     {
         var table = new DataTable();
 

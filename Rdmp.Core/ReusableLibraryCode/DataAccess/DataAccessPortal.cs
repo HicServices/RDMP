@@ -50,7 +50,7 @@ public class DataAccessPortal
         return GetServer(GetDistinct(collection, context, setInitialDatabase),context,setInitialDatabase);
     }
 
-    private DiscoveredServer GetServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase)
+    private static DiscoveredServer GetServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase)
     {
         var credentials = dataAccessPoint.GetCredentialsIfExists(context);
             
@@ -72,7 +72,7 @@ public class DataAccessPortal
         return server;
     }
 
-    private IDataAccessPoint GetDistinct(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
+    private static IDataAccessPoint GetDistinct(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
     {
         ///////////////////////Exception handling///////////////////////////////////////////////
         if(!collection.Any())

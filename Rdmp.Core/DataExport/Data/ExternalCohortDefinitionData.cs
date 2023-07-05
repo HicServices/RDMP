@@ -51,7 +51,7 @@ public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public DateTime? ObjectToNullableDateTime(object o)
+    public static DateTime? ObjectToNullableDateTime(object o)
     {
         if (o == null || o == DBNull.Value)
             return null;

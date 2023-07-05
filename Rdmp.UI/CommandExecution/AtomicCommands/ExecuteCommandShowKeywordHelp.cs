@@ -79,7 +79,7 @@ public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCom
             MessageBox.Show(title);
     }
 
-    private string GetTypeName(Type t)
+    private static string GetTypeName(Type t)
     {
         try
         {

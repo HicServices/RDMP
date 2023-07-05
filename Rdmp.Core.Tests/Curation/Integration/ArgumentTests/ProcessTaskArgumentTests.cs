@@ -275,7 +275,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
         //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
         var f = new ArgumentFactory();
         Assert.True(
-            f.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
+            ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
 
         //new pc should have no arguments
         Assert.That(pc.GetAllArguments(), Is.Empty);

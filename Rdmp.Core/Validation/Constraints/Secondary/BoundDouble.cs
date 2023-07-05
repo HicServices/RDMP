@@ -155,7 +155,7 @@ public class BoundDouble :  Bound
         return $"Value {Wrap(d.ToString())} out of range. Expected a value less than {Wrap(s)}.";
     }
 
-    private string Wrap(string s)
+    private static string Wrap(string s)
     {
         return $"[{s}]";
     }

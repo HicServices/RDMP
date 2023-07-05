@@ -202,7 +202,7 @@ WHERE DuplicateCount > 1";
         return basicSQL;
     }
 
-    private ValueType GetDataType(string dataType)
+    private static ValueType GetDataType(string dataType)
     {
         if (
             dataType.StartsWith("decimal") ||

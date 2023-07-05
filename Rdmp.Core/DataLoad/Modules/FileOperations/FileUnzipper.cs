@@ -111,7 +111,7 @@ public class FileUnzipper : IPluginDataProvider
         throw new NotImplementedException();
     }
 
-    public IDataProvider Clone()
+    public static IDataProvider Clone()
     {
         return new FileUnzipper();
     }

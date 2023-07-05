@@ -132,7 +132,7 @@ public class CustomMetadataReport
             
     }
 
-    private ITableInfo GetTable(Catalogue c)
+    private static ITableInfo GetTable(Catalogue c)
     {
         return c.GetTableInfosIdeallyJustFromMainTables().OrderBy(t => t.IsPrimaryExtractionTable).FirstOrDefault();
     }
@@ -324,7 +324,7 @@ public class CustomMetadataReport
         }   
     }
 
-    private IEnumerable<CatalogueSection> SplitCatalogueLoops(string[] templateBody)
+    private static IEnumerable<CatalogueSection> SplitCatalogueLoops(string[] templateBody)
     {
         if(templateBody.Length == 0)
             yield break;
@@ -569,7 +569,7 @@ public class CustomMetadataReport
         return template.TrimEnd();
     }
 
-    private void ThrowIfContainsIterationElements(string template)
+    private static void ThrowIfContainsIterationElements(string template)
     {
         if(template.Contains(Comma))
         {

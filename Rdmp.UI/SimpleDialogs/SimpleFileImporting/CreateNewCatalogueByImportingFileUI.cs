@@ -423,7 +423,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         }
     }
 
-    private void ConfirmTableDeletion(DiscoveredTable expectTable)
+    private static void ConfirmTableDeletion(DiscoveredTable expectTable)
     {
         if (expectTable.Exists())
         {

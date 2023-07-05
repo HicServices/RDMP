@@ -224,7 +224,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         return null;
     }
 
-    private void RemoveInvalidCharactersInSchema(DataTable toProcess)
+    private static void RemoveInvalidCharactersInSchema(DataTable toProcess)
     {
         var invalidSymbols = new[] { '.'} ;
 
@@ -270,7 +270,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
     }
 
-    private void EnsureTableHasDataInIt(DataTable toProcess)
+    private static void EnsureTableHasDataInIt(DataTable toProcess)
     {
         if(toProcess.Columns.Count == 0)
             throw new Exception($"DataTable '{toProcess}' had no Columns!");

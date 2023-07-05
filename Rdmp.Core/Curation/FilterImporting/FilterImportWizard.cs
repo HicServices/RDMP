@@ -193,7 +193,7 @@ public class FilterImportWizard
         {
             var aggregate = aggregatecontainer.GetAggregate();
             var factory = new AggregateBuilderOptionsFactory();
-            var options = factory.Create(aggregate);
+            var options = AggregateBuilderOptionsFactory.Create(aggregate);
 
             globals = options.GetAllParameters(aggregate);
             var root = aggregate.RootFilterContainer;

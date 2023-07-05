@@ -412,7 +412,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         return $"{TargetDatabaseServer.ID}|{dbName}|{tblName}";
     }
 
-    public DestinationType GetDestinationType()
+    public static DestinationType GetDestinationType()
     {
         return DestinationType.Database;
     }

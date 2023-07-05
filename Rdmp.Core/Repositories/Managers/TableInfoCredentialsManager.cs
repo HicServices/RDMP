@@ -241,7 +241,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>
-    private Dictionary<DataAccessContext, int> GetLinksFromReader(DbDataReader r)
+    private static Dictionary<DataAccessContext, int> GetLinksFromReader(DbDataReader r)
     {
         var toReturn = new Dictionary<DataAccessContext, int>();
         //gets the first licenced usage
@@ -285,7 +285,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         //did not find an existing credential that matched on username
         return null;
     }
-    private DataAccessContext GetContext(DbDataReader r)
+    private static DataAccessContext GetContext(DbDataReader r)
     {
         //if it's not a valid context something has gone very wrong
         DataAccessContext context;

@@ -289,7 +289,7 @@ public class SearchablesMatchScorer
         return !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues, _showColdStorageCatalogues, _showProjectSpecificCatalogues, _showNonExtractableCatalogues);
     }
 
-    private Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
+    private static Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
     {
         if (kvp.Key is Catalogue)
             return (Catalogue) kvp.Key;
@@ -308,7 +308,7 @@ public class SearchablesMatchScorer
 
         return MatchCount(regexes, matchOn);
     }
-    private int MatchCount(List<Regex> regexes, string str)
+    private static int MatchCount(List<Regex> regexes, string str)
     {
         var matches = 0;
 
@@ -381,7 +381,7 @@ public class SearchablesMatchScorer
     /// <param name="take"></param>
     /// <param name="activator"></param>
     /// <returns></returns>
-    public List<IMapsDirectlyToDatabaseTable> ShortList(Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take, IBasicActivateItems activator)
+    public static List<IMapsDirectlyToDatabaseTable> ShortList(Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take, IBasicActivateItems activator)
     {
         var favourites = activator.FavouritesProvider.CurrentFavourites;
 

@@ -237,7 +237,7 @@ public class ReleaseEngine
         return GetUniqueDirectoryFrom(masterDataDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
     }
 
-    protected IEnumerable<DirectoryInfo> GetAllFoldersCalled(string folderName, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+    protected static IEnumerable<DirectoryInfo> GetAllFoldersCalled(string folderName, KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
     {
         return toRelease.Value.Where(releasePotential => releasePotential.ExtractDirectory?.Parent != null)
             .Select(releasePotential => releasePotential.ExtractDirectory.Parent
@@ -263,7 +263,7 @@ public class ReleaseEngine
         return first;
     }
 
-    protected void ConfirmValidityOfGlobalsOrCustomDataDirectory(DirectoryInfo globalsDirectoryInfo)
+    protected static void ConfirmValidityOfGlobalsOrCustomDataDirectory(DirectoryInfo globalsDirectoryInfo)
     {
         if (globalsDirectoryInfo.EnumerateDirectories().Any())
             throw new Exception(
@@ -293,7 +293,7 @@ public class ReleaseEngine
         }
     }
 
-    protected void AuditFileCreation(string name, StreamWriter audit, int tabDepth)
+    protected static void AuditFileCreation(string name, StreamWriter audit, int tabDepth)
     {
         for (var i = 0; i < tabDepth; i++)
             audit.Write("\t");
@@ -301,7 +301,7 @@ public class ReleaseEngine
         audit.WriteLine($"-{name}");
     }
 
-    protected void AuditDirectoryCreation(string dir, StreamWriter audit, int tabDepth)
+    protected static void AuditDirectoryCreation(string dir, StreamWriter audit, int tabDepth)
     {
         for (var i = 0; i < tabDepth; i++)
             audit.Write("\t");

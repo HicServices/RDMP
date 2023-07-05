@@ -108,7 +108,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// <param name="pipelineConfigurationThing"></param>
     /// <param name="descriptionOfWhatThingIs"></param>
     /// <returns></returns>
-    private T2 GetBest<T2>(T2 explicitThing, T2 pipelineConfigurationThing, string descriptionOfWhatThingIs)
+    private static T2 GetBest<T2>(T2 explicitThing, T2 pipelineConfigurationThing, string descriptionOfWhatThingIs)
     {
         // if explicitThing and pipelineConfigurationThing are both null
         //Means: xplicitThing == null && pipelineConfigurationThing == null
@@ -194,7 +194,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// <param name="propertyInfo">The specific property you are trying to populate on toBuild</param>
     /// <param name="arguments">IArguments of toBuild (the values to populate toReturn with)</param>
     /// <param name="nestedProperty">If you are populating a sub property of the class then pass the instance of the sub property as toBuild and pass the nesting property as nestedProperty</param>
-    private void SetPropertyIfDemanded(IPipelineComponent toBuild,object toReturn, PropertyInfo propertyInfo, IArgument[] arguments, PropertyInfo nestedProperty = null)
+    private static void SetPropertyIfDemanded(IPipelineComponent toBuild,object toReturn, PropertyInfo propertyInfo, IArgument[] arguments, PropertyInfo nestedProperty = null)
     {
         //see if any demand initialization
         var initialization =

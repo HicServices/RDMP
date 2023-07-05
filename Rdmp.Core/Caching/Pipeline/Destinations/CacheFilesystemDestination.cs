@@ -61,11 +61,11 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
 
     public abstract void Abort(IDataLoadEventListener listener);
 
-    public void Stop()
+    public static void Stop()
     {
     }
 
-    public void Abort()
+    public static void Abort()
     {
     }
 

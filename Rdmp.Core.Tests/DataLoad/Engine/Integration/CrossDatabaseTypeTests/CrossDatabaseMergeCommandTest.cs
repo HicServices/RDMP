@@ -107,11 +107,11 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         AssertRowEquals(resultantDt, "Dave", 25, "DD1 1PS");
         AssertRowEquals(resultantDt, "Chutney", 32, DBNull.Value);
         AssertRowEquals(resultantDt, "Mango", 32, DBNull.Value);
-            
+
         AssertRowEquals(resultantDt,"Filli",32,DBNull.Value);
         AssertRowEquals(resultantDt, "Mandrake", 32, "DD1 1PS");
         AssertRowEquals(resultantDt, "Mandrake", 31, "DD1 1PS");
-            
+
         AssertRowEquals(resultantDt, "Dave", 18, "DD3 1AB");
 
 
@@ -124,7 +124,7 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         Assert.AreEqual(3, log.TableLoadInfos.Single().Updates);
     }
 
-    private void AssertRowEquals(DataTable resultantDt,string name,int age, object postcode)
+    private static void AssertRowEquals(DataTable resultantDt,string name,int age, object postcode)
     {
         Assert.AreEqual(
             1, resultantDt.Rows.Cast<DataRow>().Count(r => Equals(r["Name"], name) && Equals(r["Age"], age) && Equals(r["Postcode"], postcode)),

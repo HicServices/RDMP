@@ -80,7 +80,7 @@ public partial class KeyDropLocationUI : UserControl
         SelectedColumnChanged?.Invoke();
     }
 
-    private ColumnInfo GetColumnInfoOrNullFromDrag(DragEventArgs e)
+    private static ColumnInfo GetColumnInfoOrNullFromDrag(DragEventArgs e)
     {
         var data = e.Data as OLVDataObject;
 

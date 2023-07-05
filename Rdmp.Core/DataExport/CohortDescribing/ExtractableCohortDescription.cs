@@ -199,7 +199,7 @@ public class ExtractableCohortDescription
         return Cohort.ToString();
     }
 
-    private DateTime? ObjectToNullableDateTime(object o)
+    private static DateTime? ObjectToNullableDateTime(object o)
     {
         if (o == null || o == DBNull.Value)
             return null;

@@ -45,7 +45,7 @@ FROM
 	TOP 1000
 	*
 	FROM 
-	[" + _scratchDatabaseName + @"].[dbo].[BulkData]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(builder.GetDatasetSampleSQL()));
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]",cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.GetDatasetSampleSQL()));
     }
 
 
@@ -177,7 +177,7 @@ FROM
 	)
 
 )",cohortIdentificationConfiguration.ID))
-                , 
+                ,
                 CollapseWhitespace(builder.SQL));
         }
         finally
@@ -240,7 +240,7 @@ FROM
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )",cohortIdentificationConfiguration.ID))
-                ,CollapseWhitespace(builder.SQL));
+                , CollapseWhitespace(builder.SQL));
         }
         finally
         {
@@ -314,7 +314,7 @@ SET @abracadabra=1;
 	)
 )
 ",cohortIdentificationConfiguration.ID))
-                ,CollapseWhitespace(builder.SQL));
+                , CollapseWhitespace(builder.SQL));
 
 
             var builder2 = new CohortQueryBuilder(aggregate1, null,null);
@@ -334,7 +334,7 @@ WHERE
 (
 /*hithere*/
 1=@abracadabra
-)",cohortIdentificationConfiguration.ID)), 
+)",cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder2.SQL));
 
 
@@ -593,7 +593,7 @@ SET @abracadabra=1;
 
 )
 ",cohortIdentificationConfiguration.ID))
-                ,CollapseWhitespace(builder.SQL));
+                , CollapseWhitespace(builder.SQL));
 
         }
         finally

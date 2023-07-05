@@ -186,7 +186,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    protected bool AreOnSameServer(DiscoveredServer a, DiscoveredServer b)
+    protected static bool AreOnSameServer(DiscoveredServer a, DiscoveredServer b)
     {
         return
             string.Equals(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase) &&

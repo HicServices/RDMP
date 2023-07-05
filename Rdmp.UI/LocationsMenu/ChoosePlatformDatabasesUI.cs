@@ -282,7 +282,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 {
                     var creator = new PlatformDatabaseCreation();
                     creator.CreatePlatformDatabases(opts);
-                    if (!opts.SkipPipelines) 
+                    if (!opts.SkipPipelines)
                         PostFixPipelines(opts);
                 }
                 catch (Exception ex)
@@ -335,7 +335,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
     }
 
-    private void PostFixPipelines(PlatformDatabaseCreationOptions opts)
+    private static void PostFixPipelines(PlatformDatabaseCreationOptions opts)
     {
         var repo = new PlatformDatabaseCreationRepositoryFinder(opts);
         var bulkInsertCsvPipe = repo.CatalogueRepository
@@ -350,7 +350,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
     }
 
-    private void RestartApplication()
+    private static void RestartApplication()
     {
         MessageBox.Show("Connection Strings Changed, the application will now restart");
         ApplicationRestarter.Restart();

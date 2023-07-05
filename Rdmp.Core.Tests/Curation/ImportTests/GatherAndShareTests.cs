@@ -55,7 +55,7 @@ public class GatherAndShareTests:DatabaseTests
         var g = new Gatherer(RepositoryLocator);
         Assert.IsTrue(g.CanGatherDependencies(anoTable));
 
-        var gObj = g.GatherDependencies(anoTable);
+        var gObj = Gatherer.GatherDependencies(anoTable);
             
         //root should be the server
         Assert.AreEqual(gObj.Object,anoserver);
@@ -140,7 +140,7 @@ public class GatherAndShareTests:DatabaseTests
         var g = new Gatherer(RepositoryLocator);
         Assert.IsTrue(g.CanGatherDependencies(plugin));
 
-        var gObj = g.GatherDependencies(plugin);
+        var gObj = Gatherer.GatherDependencies(plugin);
 
         //root should be the server
         Assert.AreEqual(gObj.Object, plugin);
@@ -176,7 +176,7 @@ public class GatherAndShareTests:DatabaseTests
         Assert.IsTrue(g.CanGatherDependencies(cata));
 
         //gather the objects depending on Catalogue as a tree
-        var gObj = g.GatherDependencies(cata);
+        var gObj = Gatherer.GatherDependencies(cata);
         Assert.AreEqual(2, gObj.Children.Count); //both cata items
 
         var lmd = new LoadMetadata(CatalogueRepository);
@@ -227,7 +227,7 @@ public class GatherAndShareTests:DatabaseTests
         cata.SaveToDatabase();
 
         //test importing the Catalogue properties only
-        shareManager.ImportPropertiesOnly(cata,shareDefinition[0]);
+        ShareManager.ImportPropertiesOnly(cata,shareDefinition[0]);
             
         //import the defined properties but not name
         Assert.AreEqual("fishfish",cata.Name);
@@ -286,7 +286,7 @@ public class GatherAndShareTests:DatabaseTests
         var gatherer = new Gatherer(RepositoryLocator);
             
         Assert.IsTrue(gatherer.CanGatherDependencies(filter));
-        var gathered = gatherer.GatherDependencies(filter);
+        var gathered = Gatherer.GatherDependencies(filter);
 
         //gatherer should have gathered the filter and the parameter (but not the ExtractionFilterParameterSet sets)
         Assert.AreEqual(1,gathered.Children.Count);

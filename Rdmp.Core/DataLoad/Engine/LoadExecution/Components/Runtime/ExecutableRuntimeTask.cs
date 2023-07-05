@@ -111,7 +111,7 @@ public class ExecutableRuntimeTask : RuntimeTask
         return string.Join(" ", args);
     }
 
-    private ExitCodeType ParseExitCode(int value)
+    private static ExitCodeType ParseExitCode(int value)
     {
         ExitCodeType exitCode;
         var success = Enum.TryParse(value.ToString(), out exitCode);
@@ -190,7 +190,7 @@ public class ExecutableRuntimeTask : RuntimeTask
         return string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
     }
 
-    public XmlSchema GetSchema()
+    public static XmlSchema GetSchema()
     {
         return null;
     }

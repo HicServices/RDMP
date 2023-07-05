@@ -40,7 +40,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
 
             using var document = GetNewDocFile("RDMPDocumentation");
             var t = InsertTable(document,Summaries.Count *2 +1, 1);
-                    
+
             //Listing Cell header
             SetTableCell(t, 0, 0, "Tables");
 

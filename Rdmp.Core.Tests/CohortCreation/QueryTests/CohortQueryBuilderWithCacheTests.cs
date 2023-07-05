@@ -72,7 +72,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
 	FROM 
 	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 )
-",cohortIdentificationConfiguration.ID)), 
+",cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder.SQL));
 
             var server = queryCacheDatabase.Server;

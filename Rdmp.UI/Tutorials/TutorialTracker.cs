@@ -83,23 +83,23 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
             UserSettings.SetTutorialDone(tutorial.Guid, false);
     }
 
-    public void ClearCompleted(Tutorial tutorial)
+    public static void ClearCompleted(Tutorial tutorial)
     {
         UserSettings.SetTutorialDone(tutorial.Guid, false);
         UserSettings.DisableTutorials = false;
     }
 
-    public void DisableAllTutorials()
+    public static void DisableAllTutorials()
     {
         UserSettings.DisableTutorials = true;
     }
 
-    public bool HasSeen(Tutorial tutorial)
+    public static bool HasSeen(Tutorial tutorial)
     {
         return UserSettings.GetTutorialDone(tutorial.Guid);
     }
 
-    public void LaunchTutorial(Tutorial tutorial)
+    public static void LaunchTutorial(Tutorial tutorial)
     {
         tutorial.CommandExecution.Execute();
     }

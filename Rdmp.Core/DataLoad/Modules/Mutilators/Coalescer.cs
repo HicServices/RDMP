@@ -85,7 +85,7 @@ public class Coalescer : MatchingTablesMutilator
             $"Coalesce on table '{table}' completed ({affectedRows} rows affected)"));
     }
 
-    private string GetCommand(DiscoveredTable table, DiscoveredColumn[] pks, DiscoveredColumn nonPk)
+    private static string GetCommand(DiscoveredTable table, DiscoveredColumn[] pks, DiscoveredColumn nonPk)
     {
         var sqlLines = new List<CustomLine>
         {

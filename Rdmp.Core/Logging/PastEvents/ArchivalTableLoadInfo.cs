@@ -74,7 +74,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
 
         return toReturn;
     }
-    private int? ToNullableInt(object i)
+    private static int? ToNullableInt(object i)
     {
         if (i == null || i == DBNull.Value)
             return null;

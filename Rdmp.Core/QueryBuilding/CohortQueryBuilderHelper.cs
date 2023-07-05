@@ -158,7 +158,7 @@ public class CohortQueryBuilderHelper
             $" {joinDirection} Join ({Environment.NewLine}{TabIn(args.JoinSql.Sql, 1)}{Environment.NewLine}){joinableTableAlias}{Environment.NewLine}on {usersExtractionIdentifier.SelectSQL} = {joinableTableAlias}.{joinOn.GetRuntimeName()}",QueryComponent.JoinInfoJoin);
     }
         
-    public string TabIn(string str, int numberOfTabs)
+    public static string TabIn(string str, int numberOfTabs)
     {
         if (string.IsNullOrWhiteSpace(str))
             return str;

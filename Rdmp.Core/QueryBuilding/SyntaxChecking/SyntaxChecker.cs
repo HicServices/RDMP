@@ -53,7 +53,7 @@ public abstract class SyntaxChecker : ICheckable
     /// Checks to ensure char based parameters contains a value, are not longer than the expected length and contain either single quotes or an @ symbol before performing bracket parity checks
     /// </summary>
     /// <param name="parameter"></param>
-    public void CheckSyntax(ISqlParameter parameter)
+    public static void CheckSyntax(ISqlParameter parameter)
     {
 
         if (string.IsNullOrWhiteSpace(parameter.Value))

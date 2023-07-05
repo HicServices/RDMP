@@ -27,7 +27,7 @@ public partial class ArgumentValueSqlUI : UserControl, IArgumentValueUI
     /// </summary>
     /// <param name="sqlText"></param>
     /// <returns></returns>
-    private string FormatSqlForTextbox(object sqlText)
+    private static string FormatSqlForTextbox(object sqlText)
     {
         var sqlTextboxPretty = sqlText == null ? "" : sqlText.ToString();
         sqlTextboxPretty = new Regex(@"\s+").Replace(sqlTextboxPretty, " ");

@@ -75,12 +75,12 @@ public class FTPDownloader : IPluginDataProvider
         return DownloadFilesOnFTP(_directory, job);
     }
 
-    public string GetDescription()
+    public static string GetDescription()
     {
         return "See Description attribute of class";
     }
 
-    public IDataProvider Clone()
+    public static IDataProvider Clone()
     {
         return new FTPDownloader();
     }

@@ -114,7 +114,7 @@ public class WordCatalogueExtractor: DocXHelper
         }
     }
 
-    private int CountWriteableProperties(object o)
+    private static int CountWriteableProperties(object o)
     {
         var propertyInfo =
             o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);

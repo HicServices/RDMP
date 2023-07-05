@@ -93,13 +93,13 @@ internal class BoundDateTest
     }
 
 
-    private ValidationFailure CallValidateOnValidData(string targetProperty, BoundDate b)
+    private static ValidationFailure CallValidateOnValidData(string targetProperty, BoundDate b)
     {
         var d = TestConstants.AdmissionDateOccursAfterDob;
         return CallValidate(targetProperty, b, d);
     }
 
-    private ValidationFailure CallValidateOnInvalidData(string targetProperty, BoundDate b)
+    private static ValidationFailure CallValidateOnInvalidData(string targetProperty, BoundDate b)
     {
         var d = TestConstants.AdmissionDateOccursBeforeDob;
         return CallValidate(targetProperty, b, d);

@@ -137,7 +137,7 @@ public class DublinCoreDefinition
         return new Uri(stringValue);
     }
 
-    private string GetElement(XElement[] descendants, string tagLocalName, bool mandatory)
+    private static string GetElement(XElement[] descendants, string tagLocalName, bool mandatory)
     {
         var match = descendants.FirstOrDefault(e => e.Name.LocalName.Equals(tagLocalName,StringComparison.CurrentCultureIgnoreCase));
 

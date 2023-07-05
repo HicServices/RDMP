@@ -446,7 +446,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
         sb.AppendLine(SUMMARY_LINE_DIVIDER);
 
-        sb.AppendLine($"Extractable: { FormatForSummary(ExtractionInformation != null)}");
+        sb.AppendLine($"Extractable: {FormatForSummary(ExtractionInformation != null)}");
         sb.AppendLine($"Transforms Data: {FormatForSummary(ExtractionInformation?.IsProperTransform() ?? false)}");
         sb.AppendLine($"Category: {ExtractionInformation?.ExtractionCategory ?? (object)"Not Extractable"}");
 

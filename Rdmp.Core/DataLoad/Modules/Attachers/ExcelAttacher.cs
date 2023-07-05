@@ -79,7 +79,7 @@ public class ExcelAttacher:FlatFileAttacher
             throw new Exception("Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
     }
 
-    private string GenerateASCIIArtOfSubstitutions(string[] replacementHeadersSplit, DataColumnCollection columns)
+    private static string GenerateASCIIArtOfSubstitutions(string[] replacementHeadersSplit, DataColumnCollection columns)
     {
         var sb = new StringBuilder("");
 

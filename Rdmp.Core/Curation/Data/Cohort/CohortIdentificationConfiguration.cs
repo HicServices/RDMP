@@ -624,7 +624,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         return extractionIdentifier;
     }
 
-    private IColumn GetExtractionIdentifierFrom(ICatalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
+    private static IColumn GetExtractionIdentifierFrom(ICatalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
     {
         //the aggregate they are cloning does not have an extraction identifier but the dataset might still have one
         var catalogueCandidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => e.IsExtractionIdentifier).ToArray();

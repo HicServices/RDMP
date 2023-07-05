@@ -135,7 +135,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     }
 
-    private void ResolveMissingReferenceAs(ItemValidator missingReference, string newTarget)
+    private static void ResolveMissingReferenceAs(ItemValidator missingReference, string newTarget)
     {
         missingReference.TargetProperty = newTarget;
             

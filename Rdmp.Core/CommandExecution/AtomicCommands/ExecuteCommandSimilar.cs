@@ -140,7 +140,7 @@ public class ExecuteCommandSimilar : BasicCommandExecution
 
     private static readonly char[] trimChars = { ' ', '[', ']', '\'', '"', '`' };
 
-    private bool SimilarWord(string name1, string name2, StringComparison comparisonType)
+    private static bool SimilarWord(string name1, string name2, StringComparison comparisonType)
     {
         if (string.IsNullOrWhiteSpace(name1) || string.IsNullOrWhiteSpace(name2))
             return false;

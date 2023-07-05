@@ -492,7 +492,7 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
                             aggregate2.ID, //{1}
                             cohortIdentificationConfiguration.ID,//{2}
                             queryCachingDatabaseName) //{3}
-                    ),CollapseWhitespace(builder.SQL));
+                    ), CollapseWhitespace(builder.SQL));
 
             }
             finally

@@ -18,7 +18,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class SingleJobPipelineTests : DatabaseTests
 {
-    public void LoadNotRequiredStopsPipelineGracefully()
+    public static void LoadNotRequiredStopsPipelineGracefully()
     {
         var component = new NotRequiredComponent();
 

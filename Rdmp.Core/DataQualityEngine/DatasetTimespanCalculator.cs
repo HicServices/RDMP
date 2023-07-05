@@ -93,12 +93,12 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         return GetMachineReadableTimespanIfKnownOf(mostRecentEvaluation, discardOutliers);
     }
 
-    private Tuple<DateTime?, DateTime?> Unknown()
+    private static Tuple<DateTime?, DateTime?> Unknown()
     {
         return Tuple.Create<DateTime?, DateTime?>(null, null);
     }
 
-    private int GetDiscardThreshold(DataTable dt)
+    private static int GetDiscardThreshold(DataTable dt)
     {
         var total = 0;
         var counted = 0;

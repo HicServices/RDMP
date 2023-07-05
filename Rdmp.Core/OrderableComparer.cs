@@ -60,7 +60,7 @@ public class OrderableComparer : IComparer, IComparer<object>
         return string.Compare(x.ToString(), y.ToString());
     }
 
-    private int? GetOrderIfAny(object o)
+    private static int? GetOrderIfAny(object o)
     {
         if(o is IOrderable orderable)
             return orderable.Order;
@@ -78,7 +78,7 @@ public class OrderableComparer : IComparer, IComparer<object>
     /// </summary>
     /// <param name="x"></param>
     /// <returns></returns>
-    private bool ShouldSortByName(object x)
+    private static bool ShouldSortByName(object x)
     {
         return x is INamed && !(x is IProject);
     }

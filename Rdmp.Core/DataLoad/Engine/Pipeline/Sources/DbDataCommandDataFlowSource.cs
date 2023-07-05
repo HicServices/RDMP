@@ -131,7 +131,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
         return _reader.Read() ? AddRowToDataTable(GetChunkSchema(_reader), _reader) : null;
     }
 
-    private DataTable GetChunkSchema(DbDataReader reader)
+    private static DataTable GetChunkSchema(DbDataReader reader)
     {
         var toReturn = new DataTable("dt");
             

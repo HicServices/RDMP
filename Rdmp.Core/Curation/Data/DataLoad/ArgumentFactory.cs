@@ -80,7 +80,7 @@ public class ArgumentFactory
     /// </summary>
     /// <param name="classType"></param>
     /// <returns></returns>
-    public List<RequiredPropertyInfo> GetRequiredProperties(Type classType)
+    public static List<RequiredPropertyInfo> GetRequiredProperties(Type classType)
     {
         var required = new List<RequiredPropertyInfo>();
             

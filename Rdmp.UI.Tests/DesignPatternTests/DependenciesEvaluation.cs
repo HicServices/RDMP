@@ -169,7 +169,7 @@ public class DependenciesEvaluation
     /// <param name="availableVersion">The version available</param>
     /// <param name="requiredVersion">The version required, can include 0 elements for wildcards e.g. 11.0.0.0 would be compatible with 11.2.0.0</param>
     /// <returns></returns>
-    private bool AreProbablyCompatibleVersions(string availableVersion, string requiredVersion)
+    private static bool AreProbablyCompatibleVersions(string availableVersion, string requiredVersion)
     {
         var v1 = new Version(availableVersion.Trim('"'));
         var v2 = new Version(requiredVersion.Trim('"'));

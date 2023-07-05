@@ -604,7 +604,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     }
 
 
-    private string GetSeriesName(object o)
+    private static string GetSeriesName(object o)
     {
         if (o == null || o == DBNull.Value)
             return "NULL";

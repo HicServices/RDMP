@@ -47,7 +47,7 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
                 return;
             }
 
-            _scoringObjects = scorer.ShortList(matches, maxToTake, activator);
+            _scoringObjects = SearchablesMatchScorer.ShortList(matches, maxToTake, activator);
         }
 
     }

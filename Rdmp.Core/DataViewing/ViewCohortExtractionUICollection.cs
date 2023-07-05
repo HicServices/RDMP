@@ -51,11 +51,11 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
 
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(_arguments);
+        return PersistStringHelper.SaveDictionaryToString(_arguments);
     }
     public override void LoadExtraText(string s)
     {
-        _arguments = Helper.LoadDictionaryFromString(s);
+        _arguments = PersistStringHelper.LoadDictionaryFromString(s);
     }
 
     public ExtractableCohort Cohort => DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault();

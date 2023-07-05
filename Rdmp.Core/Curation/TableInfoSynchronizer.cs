@@ -259,7 +259,7 @@ public class TableInfoSynchronizer
 
     }
 
-    private bool SynchronizeField(DiscoveredColumn[] liveColumns,ColumnInfo[] columnsInCatalogue, ICheckNotifier notifier,string property)
+    private static bool SynchronizeField(DiscoveredColumn[] liveColumns,ColumnInfo[] columnsInCatalogue, ICheckNotifier notifier,string property)
     {
         var IsSynched = true;
 

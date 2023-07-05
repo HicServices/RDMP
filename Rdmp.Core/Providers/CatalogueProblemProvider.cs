@@ -105,7 +105,7 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
+    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
     {
         if (!allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any())
             return "Load has no Catalogues therefore loads no tables";
@@ -157,7 +157,7 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
+    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
     {
         if (decryptionPrivateKeyNode.KeyNotSpecified)
             return "No RSA encryption key has been created yet";
@@ -179,7 +179,7 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public string DescribeProblem(IFilter filter)
+    public static string DescribeProblem(IFilter filter)
     {
         if (string.IsNullOrWhiteSpace(filter.WhereSQL))
             return "Filter is blank";
@@ -187,7 +187,7 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public string DescribeProblem(Catalogue catalogue)
+    public static string DescribeProblem(Catalogue catalogue)
     {
         string reason;
         if (!Catalogue.IsAcceptableName(catalogue.Name, out reason))
@@ -261,7 +261,7 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    private string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
+    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
     {
         if (LoadDirectoryNode.IsEmpty)
             return "No Project Directory has been specified for the load";

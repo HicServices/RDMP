@@ -64,9 +64,9 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public CommentStore CommentStore { get; set; }
 
     public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
-    public string ConnectionString => null;
-    public DbConnectionStringBuilder ConnectionStringBuilder => null;
-    public DiscoveredServer DiscoveredServer => null;
+    public static string ConnectionString => null;
+    public static DbConnectionStringBuilder ConnectionStringBuilder => null;
+    public static DiscoveredServer DiscoveredServer => null;
 
     /// <summary>
     /// Path to RSA private key encryption certificate for decrypting encrypted credentials.

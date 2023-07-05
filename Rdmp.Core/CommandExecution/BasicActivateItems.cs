@@ -827,7 +827,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// </summary>
     /// <param name="rootObject"></param>
     /// <returns></returns>
-    protected IEnumerable<ArchivalDataLoadInfo> GetLogs(ILoggedActivityRootObject rootObject)
+    protected static IEnumerable<ArchivalDataLoadInfo> GetLogs(ILoggedActivityRootObject rootObject)
     {
         var db = rootObject.GetDistinctLoggingDatabase();
         var task = rootObject.GetDistinctLoggingTask();

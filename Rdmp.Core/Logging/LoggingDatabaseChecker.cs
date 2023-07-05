@@ -226,7 +226,7 @@ public class LoggingDatabaseChecker : ICheckable
     }
 
       
-    private void ExpectedLookupsValuesArePresent(Dictionary<int, string> expected, Dictionary<int, string> actual, out Dictionary<int, string> missing, out Dictionary<int, string> collisions, out List<string> misnomers)
+    private static void ExpectedLookupsValuesArePresent(Dictionary<int, string> expected, Dictionary<int, string> actual, out Dictionary<int, string> missing, out Dictionary<int, string> collisions, out List<string> misnomers)
     {
 
         collisions = new Dictionary<int, string>();

@@ -194,7 +194,7 @@ public class Diff {
     /// <param name="TextA">A-version of the text (usualy the old one)</param>
     /// <param name="TextB">B-version of the text (usualy the new one)</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
-    public Item [] DiffText(string TextA, string TextB) {
+    public static Item [] DiffText(string TextA, string TextB) {
         return DiffText(TextA, TextB, false, false, false);
     } // DiffText
 

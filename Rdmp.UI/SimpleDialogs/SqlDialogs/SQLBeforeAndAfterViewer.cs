@@ -50,8 +50,8 @@ public partial class SQLBeforeAndAfterViewer : Form
             
         //compute difference
         var highlighter = new ScintillaLineHighlightingHelper();
-        highlighter.ClearAll(QueryEditorAfter);
-        highlighter.ClearAll(QueryEditorBefore);
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditorAfter);
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditorBefore);
             
         if (sqlBefore == null)
             sqlBefore = "";
@@ -60,13 +60,13 @@ public partial class SQLBeforeAndAfterViewer : Form
 
         var diff = new Diff();
 
-        foreach (var item in diff.DiffText(sqlBefore, sqlAfter))
+        foreach (var item in Diff.DiffText(sqlBefore, sqlAfter))
         {
             for (var i = item.StartA; i < item.StartA+item.deletedA; i++)
-                highlighter.HighlightLine(QueryEditorBefore,i,Color.Pink);
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore,i,Color.Pink);
                     
             for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
-                highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
                 
         }
 

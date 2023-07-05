@@ -31,7 +31,7 @@ public class PeriodicityCubesOverTime
         _pivotCategory = pivotCategory;
     }
 
-    public void PeriodicityCube()
+    public static void PeriodicityCube()
     {
             
     }

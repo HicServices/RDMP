@@ -365,7 +365,7 @@ This will not help you avoid bad data as the full file structure must still be r
             ExpectFileExtension(notifier, ".tsv", extension);
     }
 
-    private void ExpectFileExtension(ICheckNotifier notifier, string expectedExtension, string actualExtension)
+    private static void ExpectFileExtension(ICheckNotifier notifier, string expectedExtension, string actualExtension)
     {
         if (expectedExtension.Equals(actualExtension))
             notifier.OnCheckPerformed(new CheckEventArgs($"File extension matched expectations ({expectedExtension})",CheckResult.Success));

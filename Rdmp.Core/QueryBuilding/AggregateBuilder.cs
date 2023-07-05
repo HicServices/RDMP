@@ -567,7 +567,7 @@ public class AggregateBuilder : ISqlQueryBuilder
         return GetGroupOrOrderByCustomLineBasedOn(select, alias);
     }
 
-    private string GetGroupOrOrderByCustomLineBasedOn(string select, string alias)
+    private static string GetGroupOrOrderByCustomLineBasedOn(string select, string alias)
     {
         if (UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs)
         {

@@ -19,7 +19,7 @@ public class AggregateBuilderOptionsFactory
     /// </summary>
     /// <param name="config"></param>
     /// <returns></returns>
-    public IAggregateBuilderOptions Create(AggregateConfiguration config)
+    public static IAggregateBuilderOptions Create(AggregateConfiguration config)
     {
         var cohortIdentificationConfiguration = config.GetCohortIdentificationConfigurationIfAny();
 

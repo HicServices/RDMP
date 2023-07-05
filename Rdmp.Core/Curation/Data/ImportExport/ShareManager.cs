@@ -407,7 +407,7 @@ public class ShareManager
     /// </summary>
     /// <param name="o"></param>
     /// <param name="shareDefinition"></param>
-    public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
+    public static void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
     {
         if (shareDefinition.Type != o.GetType())
             throw new Exception($"Share Definition is not for a {o.GetType()}");

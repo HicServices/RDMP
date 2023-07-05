@@ -26,7 +26,7 @@ public class SelectSQLRefactorerTests:UnitTests
         tableInfo.Name = "[database]..[table]";
 
         var refactorer = new SelectSQLRefactorer();
-        refactorer.RefactorTableName(columnInfo,tableInfo,"[database]..[table2]");
+        SelectSQLRefactorer.RefactorTableName(columnInfo,tableInfo,"[database]..[table2]");
 
         Assert.AreEqual("[database]..[table2].[column]", columnInfo.Name);
     }

@@ -160,7 +160,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
 
     }
 
-    private string MustHave(Type mustHaveType, IPipelineComponent component, string descriptionOfThingBeingChecked)
+    private static string MustHave(Type mustHaveType, IPipelineComponent component, string descriptionOfThingBeingChecked)
     {
         //it must have destination
         if (mustHaveType != null)
@@ -270,7 +270,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             );
     }
 
-    private Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, object component, object value, Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents)
+    private static Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, object component, object value, Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents)
     {
         var compatibleInterfaces = component.GetType()
             .GetInterfaces().Where(i => 

@@ -109,7 +109,7 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
     }
 
 
-    private TableInfo GetTableInfoFromConstructorArguments(ArchivalTableLoadInfo toAttemptToDisplay, List<TableInfo> potentialTableInfos, ICheckNotifier checkNotifier)
+    private static TableInfo GetTableInfoFromConstructorArguments(ArchivalTableLoadInfo toAttemptToDisplay, List<TableInfo> potentialTableInfos, ICheckNotifier checkNotifier)
     {
         checkNotifier.OnCheckPerformed(new CheckEventArgs(
             $"Table user is attempting to view updates/inserts for is called {toAttemptToDisplay.TargetTable}", CheckResult.Success));

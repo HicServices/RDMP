@@ -214,7 +214,7 @@ public class ParameterManager
             existingParameters.Add(toAdd); //its not a duplicate so add it to the list of RequiredParameters 
     }
 
-    private void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1, ParameterFoundAtLevel parameter2)
+    private static void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1, ParameterFoundAtLevel parameter2)
     {
         var concrete1 = parameter1.Parameter as IMapsDirectlyToDatabaseTable;
         var concrete2 = parameter2.Parameter as IMapsDirectlyToDatabaseTable;

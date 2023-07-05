@@ -81,7 +81,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             _colorIndicator.Location = new Point(0, 0);
             _colorIndicator.Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight);
             _colorIndicator.TabIndex = 0;
-            _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
+            _colorIndicator.BackColor = BackColorProvider.GetColor(AssociatedCollection);
             Controls.Add(_colorIndicator);
         }
 

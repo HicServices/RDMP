@@ -437,7 +437,7 @@ public class CohortCompiler
                         if(d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) && !d.ExtractionInformation.IsProperTransform())
                         {
                             //then use the origin datatype
-                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(),GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
+                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(), GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
                         }
                     }
                 }
@@ -466,7 +466,7 @@ public class CohortCompiler
     /// <param name="cacheableTask">Where the datatype was read from e.g. Oracle</param>
     /// <param name="queryCachingServer">Where the datatype is going to be stored e.g. Sql Server</param>
     /// <returns></returns>
-    private string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
+    private static string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
     {
         var accessPoints = cacheableTask.GetDataAccessPoints();
 

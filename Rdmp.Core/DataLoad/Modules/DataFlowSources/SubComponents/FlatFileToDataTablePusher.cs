@@ -325,7 +325,7 @@ public class FlatFileToDataTablePusher
             eventHandlers.BadDataFound(line);
     }
 
-    private void AllBad(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)
+    private static void AllBad(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)
     {
         //the current line is bad
         eventHandlers.BadDataFound(lineToPush);

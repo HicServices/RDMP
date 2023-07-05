@@ -42,7 +42,7 @@ public partial class ConfigureDisclaimerUI : RDMPForm
         base.OnLoad(e);
     }
 
-    private string GetDefaultText()
+    private static string GetDefaultText()
     {
         return
             @"*****************************************************************************************************************************

@@ -95,7 +95,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         }
     }
 
-    private bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
+    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
     {
         return
             deleteable is CatalogueItem ||

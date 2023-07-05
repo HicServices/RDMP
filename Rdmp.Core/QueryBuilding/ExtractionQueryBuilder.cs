@@ -195,7 +195,7 @@ public class ExtractionQueryBuilder
         queryBuilder.ParameterManager.AddGlobalParameter(batchEndParameter);
     }
 
-    private string FormatDateAsParameterValue(DateTime dt)
+    private static string FormatDateAsParameterValue(DateTime dt)
     {
         return $"'{dt.Year:D4}-{dt.Month:D2}-{dt.Day:D2}'";
     }

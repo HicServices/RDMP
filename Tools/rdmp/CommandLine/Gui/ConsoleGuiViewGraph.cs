@@ -258,7 +258,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.ScrollOffset = new PointF(0, barSeries.Bars.Count - boundsHeight + 4);
     }
 
-    private List<Attribute> GetColors(int numberNeeded)
+    private static List<Attribute> GetColors(int numberNeeded)
     {
         var colors = new Attribute[15];
 
@@ -352,7 +352,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.AxisX.Increment = 0;
         graphView.AxisX.Text = dt.Columns[0].ColumnName;
     }
-    private string FormatValue(float val, float min, float max)
+    private static string FormatValue(float val, float min, float max)
     {
         if (val < min)
             return "";

@@ -91,7 +91,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
 
     }
 
-    private bool HasColumn(IDataRecord reader, string columnName)
+    private static bool HasColumn(IDataRecord reader, string columnName)
     {
         for (var i = 0; i < reader.FieldCount; i++)
         {
@@ -108,7 +108,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// <param name="r"></param>
     /// <param name="fieldName"></param>
     /// <returns></returns>
-    protected Uri ParseUrl(DbDataReader r, string fieldName)
+    protected static Uri ParseUrl(DbDataReader r, string fieldName)
     {
         var uri = r[fieldName];
 
@@ -168,7 +168,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected DateTime? ObjectToNullableDateTime(object o)
+    protected static DateTime? ObjectToNullableDateTime(object o)
     {
         if (o == null || o == DBNull.Value)
             return null;
@@ -181,7 +181,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected int? ObjectToNullableInt(object o)
+    protected static int? ObjectToNullableInt(object o)
     {
         if (o == null || o == DBNull.Value)
             return null;
@@ -194,7 +194,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected bool? ObjectToNullableBool(object o)
+    protected static bool? ObjectToNullableBool(object o)
     {
         if (o == null || o == DBNull.Value)
             return null;
@@ -352,7 +352,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
             if (val is Enum e && Convert.ToInt32(e) == 0 && val is not DatabaseType)
                 return;
 
-            var representation = $"{(includePropertyName? $"{FormatPropertyNameForSummary(prop)}: " : "")}{ FormatForSummary(val)}";
+            var representation = $"{(includePropertyName? $"{FormatPropertyNameForSummary(prop)}: " : "")}{FormatForSummary(val)}";
 
             if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
             {
@@ -383,7 +383,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// </summary>
     /// <param name="val"></param>
     /// <returns></returns>
-    protected string FormatForSummary(object val)
+    protected static string FormatForSummary(object val)
     {
         if(val is bool b)
         {

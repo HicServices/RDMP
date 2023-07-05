@@ -122,7 +122,7 @@ public class ImportFileTests:DatabaseTests
 
     }
 
-    private string GetColumnType(DiscoveredDatabase database, string tableName, string colName)
+    private static string GetColumnType(DiscoveredDatabase database, string tableName, string colName)
     {
         return
             database.ExpectTable(tableName).DiscoverColumn(colName).DataType.SQLType;

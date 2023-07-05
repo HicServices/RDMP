@@ -268,7 +268,7 @@ public class PreExecutionChecker :  ICheckable
             dbInfo.ExpectTable(tableName).Drop();
     }
 
-    private bool IsNukable(DiscoveredDatabase dbInfo)
+    private static bool IsNukable(DiscoveredDatabase dbInfo)
     {
         return dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
     }

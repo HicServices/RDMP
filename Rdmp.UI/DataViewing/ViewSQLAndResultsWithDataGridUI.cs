@@ -284,7 +284,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         });
     }
 
-    private void MorphBinaryColumns(DataTable table)
+    private static void MorphBinaryColumns(DataTable table)
     {
         var targetNames = table.Columns.Cast<DataColumn>()
             .Where(col => col.DataType.Equals(typeof(byte[])))

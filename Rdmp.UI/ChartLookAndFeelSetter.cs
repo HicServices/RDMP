@@ -114,7 +114,7 @@ public class ChartLookAndFeelSetter
     /// </summary>
     /// <param name="yearMonth"></param>
     /// <returns></returns>
-    private int GetOffset(string yearMonth)
+    private static int GetOffset(string yearMonth)
     {
         var matchMonthName = Regex.Match(yearMonth, @"\d+-([A-Za-z]+)");
 

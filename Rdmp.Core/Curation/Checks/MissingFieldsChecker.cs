@@ -56,7 +56,7 @@ public class MissingFieldsChecker : ICheckable
     /// <param name="notifier"></param>
     /// <param name="type"></param>
     /// <param name="tables"></param>
-    private void CheckEntities(ICheckNotifier notifier, Type type, DiscoveredTable[] tables)
+    private static void CheckEntities(ICheckNotifier notifier, Type type, DiscoveredTable[] tables)
     {
         if(type.IsInterface)
             return;

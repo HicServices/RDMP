@@ -67,12 +67,12 @@ public class LoadDirectory : ILoadDirectory
         Cache = FindFolderInPath(DataPath, "Cache");
     }
 
-    private  DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName)
+    private static DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName)
     {
         return path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
     }
 
-    private DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
+    private static DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
     {
         var d = path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
 

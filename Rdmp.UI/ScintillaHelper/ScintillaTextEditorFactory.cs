@@ -159,14 +159,14 @@ public class ScintillaTextEditorFactory
             }            
     }
 
-    private void OnDragEnter(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
+    private static void OnDragEnter(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
     {
         var command = commandFactory.Create(dragEventArgs);
 
         if(command != null)
             dragEventArgs.Effect = DragDropEffects.Copy;
     }
-    private void OnDragDrop(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
+    private static void OnDragDrop(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
     {
         //point they are dragged over
         var editor = (Scintilla) sender;
@@ -195,7 +195,7 @@ public class ScintillaTextEditorFactory
         editor.InsertText(pos,command.GetSqlString());
     }
 
-    private void SetSQLHighlighting(Scintilla scintilla, IQuerySyntaxHelper syntaxHelper)
+    private static void SetSQLHighlighting(Scintilla scintilla, IQuerySyntaxHelper syntaxHelper)
     {
         // Reset the styles
         scintilla.StyleResetDefault();
@@ -270,7 +270,7 @@ public class ScintillaTextEditorFactory
         scintilla.StyleNeeded += (s,e)=>scintilla_StyleNeeded(scintilla,e);
     }
 
-    private void SetLexerEnumHighlighting(Scintilla scintilla, string lexer)
+    private static void SetLexerEnumHighlighting(Scintilla scintilla, string lexer)
     {
         scintilla.StyleResetDefault();
 

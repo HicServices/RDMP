@@ -158,7 +158,7 @@ public class MetadataReport:DocXHelper
                         ShowFile(document);
 
                     SetMargins(document,20);
-                        
+
                     AddFooter(document, $"Created on {DateTime.Now}", TextFontSize);
 
                     return document.FileInfo;
@@ -251,7 +251,7 @@ public class MetadataReport:DocXHelper
     }
 
 
-    private DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
+    private static DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
     {
         //get the contents of the lookup
         using(var con = DataAccessPortal.GetInstance().ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection())
@@ -413,7 +413,7 @@ public class MetadataReport:DocXHelper
             
         tableLine++;
 
-            
+
         SetTableCell(table,tableLine, 0,recordCount.ToString("N0"),TextFontSize);
 
         //only add column values if there is an IsExtractionIdentifier returned 

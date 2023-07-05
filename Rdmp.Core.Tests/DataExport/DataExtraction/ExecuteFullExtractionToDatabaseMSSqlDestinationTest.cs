@@ -82,7 +82,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
             Assert.AreEqual(_columnToTransform.Data_type, destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
             Assert.AreEqual("int",destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
-                
+
             AssertLookupsEtcExist(dbToExtractTo);
         }
         finally
@@ -94,7 +94,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         }
     }
 
-    private void AssertLookupsEtcExist(DiscoveredDatabase dbToExtractTo)
+    private static void AssertLookupsEtcExist(DiscoveredDatabase dbToExtractTo)
     {
         Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_Biochem").Exists());
         Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_Globals_Hosp").Exists());

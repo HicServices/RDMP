@@ -274,7 +274,7 @@ not too bad
 to be honest,Bob,20",
             "Hes ok,Dennis,35");
 
-        var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
+        var ex = Assert.Throws<FlatFileLoadException>(()=> RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
         Assert.AreEqual("Bad data found on line 3",ex.Message);
 
         //looks like a good record followed by 2 bad records
@@ -296,7 +296,7 @@ not too bad
 to be honest",
             "Dennis,35,Hes ok");
 
-        var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
+        var ex = Assert.Throws<FlatFileLoadException>(()=> RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
         Assert.AreEqual("Bad data found on line 4",ex.Message);
 
         //looks like a good record followed by 2 bad records

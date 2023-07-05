@@ -1475,7 +1475,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             
     }
 
-    private DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute, DescendancyList newRoute)
+    private static DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute, DescendancyList newRoute)
     {
         //if the new route is the best best
         if (newRoute.NewBestRoute && !oldRoute.NewBestRoute)

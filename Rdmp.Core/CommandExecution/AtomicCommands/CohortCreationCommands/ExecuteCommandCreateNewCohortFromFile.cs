@@ -89,7 +89,7 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
             flatFile = new FlatFileToLoad(_file);
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
-        var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(flatFile.File));
+        var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(flatFile.File));
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)

@@ -73,7 +73,7 @@ internal class ConsoleMainWindow
         _treeView.RebuildTree();
     }
 
-    private void Quit()
+    private static void Quit()
     {
         Application.RequestStop ();
     }
@@ -422,7 +422,7 @@ internal class ConsoleMainWindow
         }
     }
 
-    private IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
+    private static IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
     {
         if(o is IMasqueradeAs masquerade)
             return masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable;

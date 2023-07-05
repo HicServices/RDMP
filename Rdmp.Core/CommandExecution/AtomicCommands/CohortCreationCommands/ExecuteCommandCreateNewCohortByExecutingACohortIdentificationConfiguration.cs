@@ -83,7 +83,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         }
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
-        var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(cic));
+        var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(cic));
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)

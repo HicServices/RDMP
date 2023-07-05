@@ -222,7 +222,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         return Discover(DiscoverCohortTable(), DefinitionTableForeignKeyField);
     }
 
-    private DiscoveredColumn Discover(DiscoveredTable tbl, string column)
+    private static DiscoveredColumn Discover(DiscoveredTable tbl, string column)
     {
         return tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
     }

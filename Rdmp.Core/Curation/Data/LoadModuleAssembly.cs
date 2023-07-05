@@ -165,7 +165,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         return targetFile;
     }
 
-    private Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin)
+    private static Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin)
     {
         if(f.Extension != PackPluginRunner.PluginPackageSuffix)
             throw new Exception($"Expected LoadModuleAssembly file to be a {PackPluginRunner.PluginPackageSuffix}");

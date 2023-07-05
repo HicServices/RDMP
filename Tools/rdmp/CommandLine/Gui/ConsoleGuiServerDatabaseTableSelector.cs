@@ -139,7 +139,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         }
     }
 
-    private void AddNoWordMeansShowAllAutocomplete(TextField tb)
+    private static void AddNoWordMeansShowAllAutocomplete(TextField tb)
     {
         var prop = typeof(TextField).GetProperty(nameof(TextField.Autocomplete));
         prop?.SetValue(tb, new NoWordMeansShowAllAutocomplete(tb));

@@ -14,7 +14,7 @@ namespace Rdmp.UI.ScintillaHelper;
 /// </summary>
 public class ScintillaLineHighlightingHelper
 {
-    public void HighlightLine(Scintilla editor, int i, Color color)
+    public static void HighlightLine(Scintilla editor, int i, Color color)
     {
         var marker = editor.Markers[0];
         marker.Symbol = MarkerSymbol.Background;
@@ -22,7 +22,7 @@ public class ScintillaLineHighlightingHelper
         editor.Lines[i].MarkerAdd(0);
     }
 
-    public void ClearAll(Scintilla editor)
+    public static void ClearAll(Scintilla editor)
     {
         editor.MarkerDeleteAll(-1);
     }

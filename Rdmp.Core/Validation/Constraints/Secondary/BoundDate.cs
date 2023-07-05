@@ -97,7 +97,7 @@ public class BoundDate : Bound
         return true;
     }
 
-    private DateTime? SafeConvertToDate(object lookupFieldNamed)
+    private static DateTime? SafeConvertToDate(object lookupFieldNamed)
     {
         if (lookupFieldNamed == null)
             return null;
@@ -177,7 +177,7 @@ public class BoundDate : Bound
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";
     }
 
-    private string Wrap(string s)
+    private static string Wrap(string s)
     {
         return $"[{s}]";
     }

@@ -64,7 +64,7 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
 TestResultSetNumber,
 Code
 FROM 
-[biochemistry]..[Result] Right JOIN Head ON FK = PK"),CollapseWhitespace(queryBuilder.SQL));
+[biochemistry]..[Result] Right JOIN Head ON FK = PK"), CollapseWhitespace(queryBuilder.SQL));
 
         var memoryRepository = new MemoryCatalogueRepository();
 

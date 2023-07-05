@@ -60,7 +60,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         // Create an instance of Word  and make it visible.=
         using (var document = GetNewDocFile(f))
         {
-                
+
             //actually changes it to landscape :)
             SetLandscape(document);
                                
@@ -157,7 +157,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         SetTableCell(table,tableLine, 2, "Date Extracted");
         SetTableCell(table,tableLine, 3, "Unique Individuals");
         tableLine++;
-            
+
         SetTableCell(table,tableLine, 0, Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
         SetTableCell(table,tableLine, 1, string.Format("{0} (ID={1}, OriginID={2})" , Cohort,Cohort.ID,Cohort.OriginID));//description fetched from remote table
 
@@ -182,7 +182,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         foreach (var result in ExtractionResults)
         {
             var filename = GetFileName(result);
-                
+
             SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
             SetTableCell(table,tableLine, 1,result.FiltersUsed);
             SetTableCell(table,tableLine, 2,filename);

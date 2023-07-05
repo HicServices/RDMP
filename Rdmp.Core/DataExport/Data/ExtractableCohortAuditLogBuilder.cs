@@ -38,7 +38,7 @@ public class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="cic"></param>
     /// <returns></returns>
-    public string GetDescription(CohortIdentificationConfiguration cic)
+    public static string GetDescription(CohortIdentificationConfiguration cic)
     {
         return $"{InCohortIdentificationConfiguration} '{cic}' (ID={cic.ID})";
     }
@@ -49,13 +49,13 @@ public class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="extractionIdentifierColumn"></param>
     /// <returns></returns>
-    public string GetDescription(ExtractionInformation extractionIdentifierColumn)
+    public static string GetDescription(ExtractionInformation extractionIdentifierColumn)
     {
         return
             $"{InExtractionInformation} '{extractionIdentifierColumn.CatalogueItem.Catalogue}.{extractionIdentifierColumn.GetRuntimeName()}'  (ID={extractionIdentifierColumn.ID})";
     }
 
-    internal string GetDescription(DiscoveredColumn col)
+    internal static string GetDescription(DiscoveredColumn col)
     {
         return $"{InColumn} '{col.GetFullyQualifiedName()}'";
     }
@@ -66,7 +66,7 @@ public class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="file"></param>
     /// <returns></returns>
-    public string GetDescription(FileInfo file)
+    public static string GetDescription(FileInfo file)
     {
         return $"{InFile} '{file.FullName}'";
     }
@@ -145,7 +145,7 @@ public class ExtractableCohortAuditLogBuilder
         return GetObjectFromLog<T>(m, repository);
     }
 
-    private T GetObjectFromLog<T>(Match m, IRepository repository) where T : class, IMapsDirectlyToDatabaseTable
+    private static T GetObjectFromLog<T>(Match m, IRepository repository) where T : class, IMapsDirectlyToDatabaseTable
     {
         try
         {

@@ -40,7 +40,7 @@ public abstract class Bound : SecondaryConstraint
         return null;
     }
 
-    private void SignalThatFieldWasNotFound(string name)
+    private static void SignalThatFieldWasNotFound(string name)
     {
         throw new MissingFieldException($"Validation failed: Comparator field [{name}] not found in dictionary.");
     }

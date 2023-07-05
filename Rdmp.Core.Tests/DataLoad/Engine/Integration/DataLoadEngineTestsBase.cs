@@ -25,7 +25,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 /// </summary>
 internal class DataLoadEngineTestsBase : DatabaseTests
 {
-    protected void AssertHasDataLoadRunId(DataRow row)
+    protected static void AssertHasDataLoadRunId(DataRow row)
     {
         var o = row[SpecialFieldNames.DataLoadRunID];
 
@@ -58,7 +58,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         pt.Check(new ThrowImmediatelyCheckNotifier());
     }
 
-    protected LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
+    protected static LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
     {
         var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "MyLoadDir", true);
         lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;

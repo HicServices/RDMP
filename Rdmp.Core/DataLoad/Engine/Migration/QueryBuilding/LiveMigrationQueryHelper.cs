@@ -37,7 +37,7 @@ public class LiveMigrationQueryHelper : MigrationQueryHelper
         throw new NotImplementedException();
     }
 
-    public List<KeyValuePair<string, string>> GetListOfInsertColumnFields(MigrationColumnSet columnsToMigrate, int dataLoadRunID)
+    public static List<KeyValuePair<string, string>> GetListOfInsertColumnFields(MigrationColumnSet columnsToMigrate, int dataLoadRunID)
     {
         var inserts = new List<KeyValuePair<string, string>>();
 

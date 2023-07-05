@@ -34,7 +34,7 @@ public abstract class Runner: IRunner
     /// <param name="arg"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException">Thrown if it is not possible to parse <paramref name="arg"/> into an existing object</exception>
-    protected T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
+    protected static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
     {
         if(string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
         {
@@ -54,7 +54,7 @@ public abstract class Runner: IRunner
         return (T)picker[0].GetValueForParameterOfType(typeof(T));
     }
 
-    protected IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T: IMapsDirectlyToDatabaseTable
+    protected static IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T: IMapsDirectlyToDatabaseTable
     {
         if (string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
         {

@@ -87,7 +87,7 @@ public class PluginClassTests:UnitTests
         //gather dependencies of the plugin (plugin[0] + lma[1])
         var g = new Gatherer(RepositoryLocator);
         var sm = new ShareManager(RepositoryLocator);
-        var list = g.GatherDependencies(p).ToShareDefinitionWithChildren(sm);
+        var list = Gatherer.GatherDependencies(p).ToShareDefinitionWithChildren(sm);
 
         //Delete export definitions
         foreach (var e in Repository.GetAllObjects<ObjectExport>())

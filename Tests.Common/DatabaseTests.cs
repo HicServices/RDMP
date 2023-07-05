@@ -155,7 +155,7 @@ public class DatabaseTests
         };
 
         RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ? 
-            new RepositoryProvider(GetFreshYamlRepository()) :
+            new RepositoryProvider(global::Tests.Common.DatabaseTests.GetFreshYamlRepository()) :
             new PlatformDatabaseCreationRepositoryFinder(opts);
                     
         if(CatalogueRepository is TableRepository cataRepo)
@@ -226,7 +226,7 @@ public class DatabaseTests
             _discoveredPostgresServer = new DiscoveredServer(TestDatabaseSettings.PostgreSql, DatabaseType.PostgreSql);
     }
 
-    private void DealWithMissingTestDatabases(PlatformDatabaseCreationOptions opts, TableRepository cataRepo)
+    private static void DealWithMissingTestDatabases(PlatformDatabaseCreationOptions opts, TableRepository cataRepo)
     {
         var mainDb = cataRepo.DiscoveredServer.ExpectDatabase("master");
 
@@ -249,7 +249,7 @@ public class DatabaseTests
         HaveTriedCreatingTestDatabases = true;
     }
 
-    private IDataExportRepository GetFreshYamlRepository()
+    private static IDataExportRepository GetFreshYamlRepository()
     {
         var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Repo"));
             
@@ -425,7 +425,7 @@ public class DatabaseTests
         DeleteAll<LoadMetadata>(y);
     }
 
-    private void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable
+    private static void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable
     {
         foreach (var o in y.GetAllObjects<T>())
         {
@@ -691,7 +691,7 @@ delete from {1}..Project
     /// </summary>
     /// <param name="sql"></param>
     /// <returns></returns>
-    protected string CollapseWhitespace(string sql)
+    protected static string CollapseWhitespace(string sql)
     {
         //replace all whitespace with single spaces
         return Regex.Replace(sql, @"\s+", " ").Trim();
@@ -775,7 +775,7 @@ delete from {1}..Project
         return (trans,server.GetCurrentDatabase());
     }
 
-    protected void DeleteTables(DiscoveredDatabase database)
+    protected static void DeleteTables(DiscoveredDatabase database)
     {
         var syntax = database.Server.GetQuerySyntaxHelper();
 
@@ -850,7 +850,7 @@ delete from {1}..Project
         return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
     }
 
-    protected void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
+    protected static void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
     {
         if (resultTable.Columns.Count != rowObjects.Length)
             Assert.Fail(
@@ -946,7 +946,7 @@ delete from {1}..Project
     }
 
 
-    private string GrantAccessSql(string username, DatabaseType type, TestLowPrivilegePermissions permissions)
+    private static string GrantAccessSql(string username, DatabaseType type, TestLowPrivilegePermissions permissions)
     {
         switch (type)
         {
@@ -984,7 +984,7 @@ GO
         DeleteFilesIn(loadDirectory.Cache);
     }
 
-    protected void DeleteFilesIn(DirectoryInfo dir)
+    protected static void DeleteFilesIn(DirectoryInfo dir)
     {
         foreach (var f in dir.GetFiles())
             f.Delete();

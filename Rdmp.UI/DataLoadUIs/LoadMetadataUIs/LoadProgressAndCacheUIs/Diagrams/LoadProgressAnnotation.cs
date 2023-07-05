@@ -114,7 +114,7 @@ internal class LoadProgressAnnotation
 
     }
 
-    private int GetXForDate(DataTable dt, DateTime value)
+    private static int GetXForDate(DataTable dt, DateTime value)
     {
         var year = value.Year;
         var month = value.Month;
@@ -140,7 +140,7 @@ internal class LoadProgressAnnotation
         throw new Exception("Should have returned the last row or the first row by now");
     }
 
-    private double GetMaxY(DataTable dt)
+    private static double GetMaxY(DataTable dt)
     {
         var max = 0;
         var colCount = dt.Columns.Count;

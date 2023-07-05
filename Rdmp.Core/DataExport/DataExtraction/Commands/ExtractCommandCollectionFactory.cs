@@ -28,7 +28,7 @@ public class ExtractCommandCollectionFactory
         return new ExtractCommandCollection(datasetBundles);
     }
 
-    private ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractableDataSet dataset, IExtractionConfiguration configuration)
+    private static ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractableDataSet dataset, IExtractionConfiguration configuration)
     {
         var catalogue = dataset.Catalogue;
 

@@ -59,7 +59,7 @@ public class PlatformDatabaseCreation
         }
     }
 
-    private SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
+    private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
     {
         SqlConnection.ClearAllPools();
 

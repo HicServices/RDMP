@@ -484,7 +484,7 @@ public partial class PipelineDiagramUI : UserControl
         return toReturn;
     }
 
-    private AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
+    private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
     {
         var dataObject = e.Data as OLVDataObject;
         if (dataObject != null)

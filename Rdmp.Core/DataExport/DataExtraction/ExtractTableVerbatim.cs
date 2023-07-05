@@ -78,7 +78,7 @@ public class ExtractTableVerbatim
         _server = server;
     }
 
-    private string GetDefaultDateTimeFormat()
+    private static string GetDefaultDateTimeFormat()
     {
         return "yyyy-MM-dd hh:mm:ss";
     }

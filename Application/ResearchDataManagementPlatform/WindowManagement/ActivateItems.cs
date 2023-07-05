@@ -477,7 +477,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return (DockContent)activator.ShowWindow(c, true);
     }
 
-    private void SetTabText(DockContent floatable, INamedTab tab)
+    private static void SetTabText(DockContent floatable, INamedTab tab)
     {
         var tabText = tab.GetTabName();
         var tabToolTipText = tab.GetTabToolTip();

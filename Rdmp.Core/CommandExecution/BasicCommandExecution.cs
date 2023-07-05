@@ -509,7 +509,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
         return GetCommandName();
     }
 
-    protected CommentStore CreateCommentStore()
+    protected static CommentStore CreateCommentStore()
     {
         var help = new CommentStore();
         help.ReadComments(Environment.CurrentDirectory);

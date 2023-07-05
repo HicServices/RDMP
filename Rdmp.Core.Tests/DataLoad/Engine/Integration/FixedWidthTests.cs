@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class FixedWidthTests :DatabaseTests
 {
-    private FixedWidthFormatFile CreateFormatFile()
+    private static FixedWidthFormatFile CreateFormatFile()
     {
         var fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"FixedWidthFormat.csv"));
 

@@ -157,7 +157,7 @@ internal class ConsoleGuiSqlEditor : Window
 
         var auto = new AutoCompleteProvider(collection.GetQuerySyntaxHelper());
         collection.AdjustAutocomplete(auto);
-        var bits = auto.Items.SelectMany(auto.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+        var bits = auto.Items.SelectMany(AutoCompleteProvider.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
         textView.Autocomplete.AllSuggestions = bits;
         textView.Autocomplete.MaxWidth = 40;
     }
@@ -425,7 +425,7 @@ internal class ConsoleGuiSqlEditor : Window
             return _keywords.Contains(word);
         }
 
-        private string IdxToWord(IEnumerable<Rune> line, int idx)
+        private static string IdxToWord(IEnumerable<Rune> line, int idx)
         {
             var words = Regex.Split(
                 string.Join("", line),

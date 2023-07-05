@@ -198,17 +198,17 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         QueryEditor.ReadOnly = true;
 
         var highlighter = new ScintillaLineHighlightingHelper();
-        highlighter.ClearAll(QueryEditor);
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditor);
 
         foreach (var section in Sections)
             if (!section.Editable)
                 for (var i = section.LineStart; i <= section.LineEnd; i++)
-                    highlighter.HighlightLine(QueryEditor, i, Color.LightGray);
+                    ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, i, Color.LightGray);
     }
 
         
 
-    private int GetLineCount(string s)
+    private static int GetLineCount(string s)
     {
         return s.Count(c => c.Equals('\n'));
     }

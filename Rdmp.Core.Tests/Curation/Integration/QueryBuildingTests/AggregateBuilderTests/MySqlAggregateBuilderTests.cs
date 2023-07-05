@@ -40,7 +40,7 @@ group by
 Col1
 order by 
 Col1 desc
-LIMIT 32"),CollapseWhitespace(builder.SQL.Trim()));
+LIMIT 32"), CollapseWhitespace(builder.SQL.Trim()));
 
 
         topx.DeleteInDatabase();

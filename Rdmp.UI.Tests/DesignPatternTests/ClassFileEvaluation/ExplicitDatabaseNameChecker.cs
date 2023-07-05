@@ -14,7 +14,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
 public class ExplicitDatabaseNameChecker
 {
-    public void FindProblems(List<string> csFilesFound)
+    public static void FindProblems(List<string> csFilesFound)
     {
         var problemFiles = new Dictionary<string, string>();
         var prohibitedStrings = new List<string>();

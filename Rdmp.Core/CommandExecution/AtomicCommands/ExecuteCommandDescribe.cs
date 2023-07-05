@@ -256,7 +256,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
     }
 
-    private bool ShowSyntax(string title, StringBuilder sbSyntaxes, ParameterInfo[] parameters, Func<ParameterInfo, bool> selector, params PickObjectBase[] pickers)
+    private static bool ShowSyntax(string title, StringBuilder sbSyntaxes, ParameterInfo[] parameters, Func<ParameterInfo, bool> selector, params PickObjectBase[] pickers)
     {
         if(parameters.Any(selector))
         {
@@ -321,7 +321,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         return $"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}";
     }
         
-    private string Wrap(string longString, int width, int indent)
+    private static string Wrap(string longString, int width, int indent)
     {
         var words = longString.Split(' ');
 

@@ -220,7 +220,7 @@ public class DashboardEditModeFunctionality
     /// <param name="sender"></param>
     /// <param name="e"></param>
     /// <returns></returns>
-    private bool IsResizeLocation(UserControl sender, MouseEventArgs e)
+    private static bool IsResizeLocation(UserControl sender, MouseEventArgs e)
     {
         return e.X > sender.Width - 20 && e.Y > sender.Height - 20;
     }

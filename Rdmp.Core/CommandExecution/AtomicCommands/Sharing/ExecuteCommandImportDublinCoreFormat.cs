@@ -34,7 +34,7 @@ public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtom
         var doc = XDocument.Load(_toImport.FullName);
         dc.LoadFrom(doc.Root);
 
-        _translater.Fill(_target, dc);
+        DublinCoreTranslater.Fill(_target, dc);
         _target.SaveToDatabase();
 
         Publish(_target);

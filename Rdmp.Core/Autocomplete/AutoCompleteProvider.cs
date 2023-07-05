@@ -61,7 +61,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    public IEnumerable<string> GetBits(string arg)
+    public static IEnumerable<string> GetBits(string arg)
     {
         //     yield return arg;
 

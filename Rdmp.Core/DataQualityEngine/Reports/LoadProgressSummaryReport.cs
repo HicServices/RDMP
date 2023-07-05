@@ -318,7 +318,7 @@ public class LoadProgressSummaryReport:ICheckable
 
         
 
-    private string GetTotalsByMonthSQL(Catalogue[] catalogues)
+    private static string GetTotalsByMonthSQL(Catalogue[] catalogues)
     {
 
         return string.Format(GetTotalRecordsPerYearCountPivotByCatalogueSQL, string.Join(",", catalogues.Select(c=>c.ID)));

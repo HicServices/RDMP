@@ -149,7 +149,7 @@ internal class CatalogueLoadChecks:ICheckable
         }
     }
 
-    private void CheckTableInfoSynchronization(TableInfo tableInfo, ICheckNotifier notifier)
+    private static void CheckTableInfoSynchronization(TableInfo tableInfo, ICheckNotifier notifier)
     {
         //live is the current data load's (possilby overridden server/database)
         var tableInfoSynchronizer = new TableInfoSynchronizer(tableInfo);
@@ -181,7 +181,7 @@ internal class CatalogueLoadChecks:ICheckable
         }
     }
 
-    private void CheckTableHasColumnInfosAndPrimaryKeys(DiscoveredDatabase live, TableInfo tableInfo, out ColumnInfo[] columnInfos, out ColumnInfo[] columnInfosWhichArePrimaryKeys, ICheckNotifier notifier)
+    private static void CheckTableHasColumnInfosAndPrimaryKeys(DiscoveredDatabase live, TableInfo tableInfo, out ColumnInfo[] columnInfos, out ColumnInfo[] columnInfosWhichArePrimaryKeys, ICheckNotifier notifier)
     {
         columnInfos = tableInfo.ColumnInfos.ToArray();
         columnInfosWhichArePrimaryKeys = columnInfos.Where(col => col.IsPrimaryKey).ToArray();
@@ -224,7 +224,7 @@ internal class CatalogueLoadChecks:ICheckable
 
     }
 
-    private void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier, out bool runSynchronizationAgain)
+    private static void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier, out bool runSynchronizationAgain)
     {
         var checker = new TriggerChecks(table);
         checker.Check(notifier);
@@ -233,7 +233,7 @@ internal class CatalogueLoadChecks:ICheckable
     }
 
 
-    private void ConfirmStagingAndLiveHaveSameColumns(string tableName, DiscoveredColumn[] stagingCols, DiscoveredColumn[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
+    private static void ConfirmStagingAndLiveHaveSameColumns(string tableName, DiscoveredColumn[] stagingCols, DiscoveredColumn[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
     {
         //in LIVE but not STAGING
         foreach (var missingColumn in liveCols.Select(c=>c.GetRuntimeName()).Except(stagingCols.Select(c=>c.GetRuntimeName())))
@@ -316,7 +316,7 @@ internal class CatalogueLoadChecks:ICheckable
         ConfirmNullability(liveTable.DiscoverColumn(SpecialFieldNames.ValidFrom), true, notifier);
     }
 
-    private void ConfirmNullability(DiscoveredColumn column, bool expectedNullability, ICheckNotifier notifier)
+    private static void ConfirmNullability(DiscoveredColumn column, bool expectedNullability, ICheckNotifier notifier)
     {
         var nullability = column.AllowNulls;
         notifier.OnCheckPerformed(new CheckEventArgs(

@@ -124,7 +124,7 @@ public class UITests : UnitTests
     /// </summary>
     /// <param name="cmd"></param>
     /// <param name="expectedReason">The reason it should be impossible - uses StringAssert.Contains</param>
-    protected void AssertCommandIsImpossible(IAtomicCommand cmd, string expectedReason)
+    protected static void AssertCommandIsImpossible(IAtomicCommand cmd, string expectedReason)
     {
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.Contains(expectedReason, cmd.ReasonCommandImpossible);
@@ -133,7 +133,7 @@ public class UITests : UnitTests
     /// Asserts that the given command is not marked IsImpossible
     /// </summary>
     /// <param name="cmd"></param>
-    protected void AssertCommandIsPossible(IAtomicCommand cmd)
+    protected static void AssertCommandIsPossible(IAtomicCommand cmd)
     {
         //if it isn't marked impossible
         if(!cmd.IsImpossible)
@@ -259,7 +259,7 @@ public class UITests : UnitTests
         }
     }
 
-    private void AssertFailedCheck(ToMemoryCheckNotifier checkResults,string expectedContainsText)
+    private static void AssertFailedCheck(ToMemoryCheckNotifier checkResults,string expectedContainsText)
     {
         //there must have been something checked that failed with the provided message
         Assert.IsTrue(checkResults.Messages.Any(m =>
@@ -417,7 +417,7 @@ public class UITests : UnitTests
         }
     }
 
-    private string ShowCode(Type t, Type uiType)
+    private static string ShowCode(Type t, Type uiType)
     {
         var sb = new StringBuilder();
             

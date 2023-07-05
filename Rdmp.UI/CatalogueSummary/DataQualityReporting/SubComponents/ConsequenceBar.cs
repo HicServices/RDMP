@@ -125,7 +125,7 @@ public partial class ConsequenceBar : UserControl
         return $"({string.Format("{0:n2}", Truncate(fraction / totalRecords * 100, 2))}%){Environment.NewLine}";
     }
 
-    private double Truncate(double value, int digits)
+    private static double Truncate(double value, int digits)
     {
         var mult = Math.Pow(10.0, digits);
         return Math.Truncate(value * mult) / mult;

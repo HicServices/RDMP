@@ -88,7 +88,7 @@ AND
 [{0}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599
 "
                         , TestDatabaseNames.Prefix))
-                ,CollapseWhitespace(request.QueryBuilder.SQL));
+                , CollapseWhitespace(request.QueryBuilder.SQL));
 
             var deepClone = _configuration.DeepCloneWithNewIDs();
             Assert.AreEqual(deepClone.Cohort_ID,_configuration.Cohort_ID);

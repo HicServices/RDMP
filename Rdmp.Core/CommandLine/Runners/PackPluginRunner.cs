@@ -96,7 +96,7 @@ public class PackPluginRunner : IRunner
         return 0;
     }
 
-    private void UploadFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
+    private static void UploadFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
     {
 
         // delete EXACT old versions of the Plugin

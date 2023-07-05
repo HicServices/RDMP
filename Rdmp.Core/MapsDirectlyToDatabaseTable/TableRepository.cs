@@ -178,7 +178,7 @@ abstract public class TableRepository : ITableRepository
         cmd.Parameters["@ID"].Value = oTableWrapperObject.ID;
     }
 
-    private void SetParameterToValue(DbParameter p, object propValue)
+    private static void SetParameterToValue(DbParameter p, object propValue)
     {
         p.Value = propValue switch
         {

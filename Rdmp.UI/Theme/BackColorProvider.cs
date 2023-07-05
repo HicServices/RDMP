@@ -17,7 +17,7 @@ public class BackColorProvider
 {
     public const int IndicatorBarSuggestedHeight = 4;
 
-    public Color GetColor(RDMPCollection collection)
+    public static Color GetColor(RDMPCollection collection)
     {
         switch (collection)
         {

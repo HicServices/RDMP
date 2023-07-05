@@ -246,7 +246,7 @@ public class ValidatorTest
         return validator;
     }
 
-    private Validator CreateChiAndAgeValidators()
+    private static Validator CreateChiAndAgeValidators()
     {
         var validator = new Validator();
         var vChi = new ItemValidator { PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong) };

@@ -34,7 +34,7 @@ public class CacheLayoutFactory
         return destination.CreateCacheLayout();
     }
 
-    private void AssertThatThereIsACacheDataProvider(ILoadMetadata metadata, IEnumerable<IProcessTask> processTasks)
+    private static void AssertThatThereIsACacheDataProvider(ILoadMetadata metadata, IEnumerable<IProcessTask> processTasks)
     {
         const string whatWeExpected = @"(we expected one that was a MEF class implementing ICachedDataProvider since you are trying to execute a cache based data load)";
 

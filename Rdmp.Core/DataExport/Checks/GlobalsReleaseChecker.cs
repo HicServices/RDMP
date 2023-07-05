@@ -98,7 +98,7 @@ public class GlobalsReleaseChecker : ICheckable
         }
     }
 
-    private bool IsValidPath(string path)
+    private static bool IsValidPath(string path)
     {
         try
         {

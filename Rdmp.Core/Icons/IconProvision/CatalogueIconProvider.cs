@@ -205,7 +205,7 @@ public class CatalogueIconProvider : ICoreIconProvider
 
     }
 
-    private bool TryParseTypeNameToRdmpConcept(Type type, out RDMPConcept t)
+    private static bool TryParseTypeNameToRdmpConcept(Type type, out RDMPConcept t)
     {
         // is it a known Type like Project
         if(Enum.TryParse(type.Name, out t))
@@ -229,7 +229,7 @@ public class CatalogueIconProvider : ICoreIconProvider
         return GetImage(o) != ImagesCollection[RDMPConcept.NoIconAvailable];
     }
 
-    public RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)
+    public static RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)
     {
         return rdmpCollection switch
         {

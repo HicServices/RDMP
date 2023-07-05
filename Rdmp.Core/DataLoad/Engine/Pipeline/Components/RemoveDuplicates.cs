@@ -96,7 +96,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     /// </remarks>
     /// <param name="array">The array to generate a hash code for.</param>
     /// <returns>The hash code for the values in the array.</returns>
-    public int GetHashCode(object[] array)
+    public static int GetHashCode(object[] array)
     {
         // if non-null array then go into unchecked block to avoid overflow
         if (array != null)

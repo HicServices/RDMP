@@ -135,7 +135,7 @@ public class ArgumentValueUIFactory
         return new ArgumentValueComboBoxUI(_activator,array);
     }
 
-    private IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
+    private static IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
         if(parent is ProcessTask pt)
             return pt.GetTableInfos();
@@ -169,7 +169,7 @@ public class ArgumentValueUIFactory
     /// </summary>
     /// <param name="argsType"></param>
     /// <returns></returns>
-    public bool CanHandleInvalidStringData(Type argsType)
+    public static bool CanHandleInvalidStringData(Type argsType)
     {
         return argsType.IsValueType && !typeof(bool).IsAssignableFrom(argsType)&& !typeof(Enum).IsAssignableFrom(argsType);
     }

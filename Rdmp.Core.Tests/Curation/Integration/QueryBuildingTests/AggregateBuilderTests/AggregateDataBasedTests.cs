@@ -28,7 +28,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
 
 public class AggregateDataBasedTests:DatabaseTests
 {
-    private DataTable GetTestDataTable()
+    private static DataTable GetTestDataTable()
     {
         var dt = new DataTable();
         dt.TableName = "AggregateDataBasedTests";
@@ -82,14 +82,14 @@ public class AggregateDataBasedTests:DatabaseTests
 
         return tbl;
     }
-    private void Destroy(DiscoveredTable tbl, params IDeleteable[] deletablesInOrderOfDeletion)
+    private static void Destroy(DiscoveredTable tbl, params IDeleteable[] deletablesInOrderOfDeletion)
     {
         tbl.Drop();
         foreach (var deleteable in deletablesInOrderOfDeletion)
             deleteable.DeleteInDatabase();
     }
 
-    private DataTable GetResultForBuilder(AggregateBuilder builder, DiscoveredTable tbl)
+    private static DataTable GetResultForBuilder(AggregateBuilder builder, DiscoveredTable tbl)
     {
         var sql = builder.SQL;
 
@@ -105,7 +105,7 @@ public class AggregateDataBasedTests:DatabaseTests
     }
         
 
-    private void AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(AggregateBuilder builder, DatabaseType type)
+    private static void AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(AggregateBuilder builder, DatabaseType type)
     {
         var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
         var declaration = syntaxHelper.GetParameterDeclaration("@category", new DatabaseTypeRequest(typeof(string), 1));
@@ -238,7 +238,7 @@ public class AggregateDataBasedTests:DatabaseTests
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
             var resultTable = GetResultForBuilder(builder, tbl);
-                
+
             VerifyRowExist(resultTable, "T", 139);
             VerifyRowExist(resultTable, "F", 60);
             VerifyRowExist(resultTable, "E&, %a' mp;E", 137);

@@ -117,7 +117,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         return sb.ToString();
     }
 
-    private string TrimSummary(string value)
+    private static string TrimSummary(string value)
     {
         return value == null ? null : Regex.Replace(value,@"\s+"," ").Trim();
     }
@@ -128,7 +128,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <param name="memberName"></param>
     /// <param name="partsToGet"></param>
     /// <returns></returns>
-    private string GetLastTokens(string memberName, int partsToGet)
+    private static string GetLastTokens(string memberName, int partsToGet)
     {
         //throw away any preceding "T:", "M:" etc
         memberName = memberName[(memberName.IndexOf(':') + 1)..];
@@ -292,7 +292,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>
-    public string FormatAsParagraphs(string message)
+    public static string FormatAsParagraphs(string message)
     {
             
         message = Regex.Replace(message, $"{Environment.NewLine}\\s*",Environment.NewLine + Environment.NewLine);

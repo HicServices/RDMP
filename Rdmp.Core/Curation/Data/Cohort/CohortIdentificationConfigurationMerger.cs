@@ -145,7 +145,7 @@ public class CohortIdentificationConfigurationMerger
 
 
 
-    private void EnsureNamingConvention(CohortIdentificationConfiguration cic, AggregateConfiguration ac)
+    private static void EnsureNamingConvention(CohortIdentificationConfiguration cic, AggregateConfiguration ac)
     {
         //clear any old cic_x prefixes
         ac.Name = Regex.Replace(ac.Name, $@"^({CohortIdentificationConfiguration.CICPrefix }\d+_?)+","");

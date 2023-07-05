@@ -77,7 +77,7 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 
 
-    public void AddForDisposalAfterCompletion(IDisposeAfterDataLoad disposable)
+    public static void AddForDisposalAfterCompletion(IDisposeAfterDataLoad disposable)
     {
     }
     public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)

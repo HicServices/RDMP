@@ -121,7 +121,7 @@ public partial class ArgumentCollectionUI : UserControl
     }
 
 
-    private Label GetLabelHeader(string caption)
+    private static Label GetLabelHeader(string caption)
     {
         var label = new Label();
         label.Text = caption;
@@ -168,7 +168,7 @@ public partial class ArgumentCollectionUI : UserControl
         {
                 
             //add the text value value and report the error
-            if(_valueUisFactory.CanHandleInvalidStringData(args.Type))
+            if(ArgumentValueUIFactory.CanHandleInvalidStringData(args.Type))
                 args.InitialValue = argument.Value;
             else
                 args.InitialValue = null;
@@ -231,7 +231,7 @@ public partial class ArgumentCollectionUI : UserControl
         p.BringToFront();
     }
 
-    private string GetSystemTypeName(Type type)
+    private static string GetSystemTypeName(Type type)
     {
         if (typeof(Enum).IsAssignableFrom(type))
             return "Enum";

@@ -140,7 +140,7 @@ public partial class HeatmapUI : UserControl
         Invalidate();
     }
 
-    private double ToDouble(object o)
+    private static double ToDouble(object o)
     {
         return o == DBNull.Value ? 0 : Convert.ToDouble(o);
     }
@@ -380,7 +380,7 @@ public partial class HeatmapUI : UserControl
         return Math.Min(MaxPixelHeight, Math.Max(MinPixelHeight, plotAreaHeight / numberOfDimensions));
     }
 
-    private Font GetFontSizeThatWillFitPixelHeight(double heightInPixels, Graphics graphics)
+    private static Font GetFontSizeThatWillFitPixelHeight(double heightInPixels, Graphics graphics)
     {
         Font font;
         var emSize = heightInPixels;
@@ -396,7 +396,7 @@ public partial class HeatmapUI : UserControl
 
 
 
-    public void CalculateLayout()
+    public static void CalculateLayout()
     {
             
     }

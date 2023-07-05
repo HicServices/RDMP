@@ -178,7 +178,7 @@ public class RDMPCombineableFactory:ICombineableFactory
         return null;
     }
 
-    private T[] IsArrayOf<T>(object modelObject)
+    private static T[] IsArrayOf<T>(object modelObject)
     {
         if(modelObject is T)
             return new []{(T)modelObject};

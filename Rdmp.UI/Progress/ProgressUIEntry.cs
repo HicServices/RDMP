@@ -35,7 +35,7 @@ public class ProgressUIEntry
         Args = args;
     }
         
-    private string FormatSender(object sender)
+    private static string FormatSender(object sender)
     {
         if (sender == null)
             return "Unknown";

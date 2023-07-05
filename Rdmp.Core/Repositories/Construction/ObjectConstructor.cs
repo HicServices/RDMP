@@ -117,7 +117,7 @@ public class ObjectConstructor
             $"Type '{typeToConstruct}' does not have a constructor taking an {typeof(T)}");
     }
         
-    private List<ConstructorInfo> GetConstructors<T>(Type type)
+    private static List<ConstructorInfo> GetConstructors<T>(Type type)
     {
         var toReturn = new List<ConstructorInfo>();
         ConstructorInfo exactMatch = null;
@@ -152,7 +152,7 @@ public class ObjectConstructor
     /// <typeparam name="T2"></typeparam>
     /// <param name="type"></param>
     /// <returns></returns>
-    private List<ConstructorInfo> GetConstructors<T,T2>(Type type)
+    private static List<ConstructorInfo> GetConstructors<T,T2>(Type type)
     {
         var toReturn = new List<ConstructorInfo>();
         ConstructorInfo exactMatch = null;
@@ -239,7 +239,7 @@ public class ObjectConstructor
     /// <param name="parameterType"></param>
     /// <param name="parameterObjects"></param>
     /// <returns></returns>
-    private object GetBestObjectForPopulating(Type parameterType, params object[] parameterObjects)
+    private static object GetBestObjectForPopulating(Type parameterType, params object[] parameterObjects)
     {
         var matches = parameterObjects.Where(p => p.GetType() == parameterType).ToArray();
 
@@ -262,7 +262,7 @@ public class ObjectConstructor
 
     }
 
-    private object InvokeBestConstructor(List<ConstructorInfo> constructors, params object[] parameters)
+    private static object InvokeBestConstructor(List<ConstructorInfo> constructors, params object[] parameters)
     {
         if (constructors.Count == 1)
             return constructors[0].Invoke(parameters);
@@ -275,7 +275,7 @@ public class ObjectConstructor
             $"Could not pick the correct constructor between:{Environment.NewLine}{string.Join($"{Environment.NewLine}", constructors.Select(c => $"{c.Name}({string.Join(",", c.GetParameters().Select(p => p.ParameterType))}"))}");
     }
 
-    private object GetUsingBlankConstructor(Type t)
+    private static object GetUsingBlankConstructor(Type t)
     {
         var blankConstructor = t.GetConstructor(Type.EmptyTypes);
 
@@ -290,7 +290,7 @@ public class ObjectConstructor
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    public bool HasBlankConstructor(Type arg)
+    public static bool HasBlankConstructor(Type arg)
     {
         return arg.GetConstructor(Type.EmptyTypes) != null;
     }
@@ -350,7 +350,7 @@ public class ObjectConstructor
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public ConstructorInfo GetRepositoryConstructor(Type type)
+    public static ConstructorInfo GetRepositoryConstructor(Type type)
     {
         var compatible = new List<ConstructorInfo>();
 

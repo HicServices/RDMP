@@ -52,7 +52,7 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
-    protected string EnsureValueIsNotWrapped(string s)
+    protected static string EnsureValueIsNotWrapped(string s)
     {
         if (s == null)
             return null;

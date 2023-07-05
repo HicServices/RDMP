@@ -158,7 +158,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         }
     }
 
-    public void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions, DbConnection conn)
+    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions, DbConnection conn)
     {
         var sql = $"CREATE TABLE {tableName} ({columnDefinitions})";
         db.Server.GetCommand(sql, conn).ExecuteNonQuery();

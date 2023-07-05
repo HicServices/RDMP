@@ -260,7 +260,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (args.InitialSearchTextGuid != null)
         {
             recentHistoryOfSearches = new RecentHistoryOfControls(tbFilter, args.InitialSearchTextGuid.Value);
-            recentHistoryOfSearches.SetValueToMostRecentlySavedValue(tbFilter);
+            RecentHistoryOfControls.SetValueToMostRecentlySavedValue(tbFilter);
         }
 
         if (IsDatabaseObjects())
@@ -550,7 +550,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         lock (oMatches)
         {
-            _tempMatches = scorer.ShortList(scores, MaxMatches, _activator);
+            _tempMatches = SearchablesMatchScorer.ShortList(scores, MaxMatches, _activator);
         }
     }
 
@@ -653,7 +653,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         tbFilter_TextChanged(null, null);
     }
 
-    private bool IsDatabaseObjects()
+    private static bool IsDatabaseObjects()
     {
         return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T));
     }
@@ -752,7 +752,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
                     _objectsToDisplay = string.IsNullOrWhiteSpace(searchText) ?
                         _allObjects.ToList() :
-                        _allObjects.Where(o=>IsSimpleTextMatch(o, searchText)).ToList();
+                        _allObjects.Where(o=> IsSimpleTextMatch(o, searchText)).ToList();
                 }
 
                 stateChanged = false;
@@ -762,7 +762,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
     }
 
-    private bool IsSimpleTextMatch(T arg, string searchText)
+    private static bool IsSimpleTextMatch(T arg, string searchText)
     {
         var terms = searchText.Split(' ',StringSplitOptions.RemoveEmptyEntries);
         return terms.All(t=>arg.ToString().Contains(t,StringComparison.CurrentCultureIgnoreCase));

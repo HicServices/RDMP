@@ -103,7 +103,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         return result != 2;
     }
 
-    private void GetDialogDimensions(out int w, out int h)
+    private static void GetDialogDimensions(out int w, out int h)
     {
         w = Application.Top?.Frame.Width??0;
         h = Application.Top?.Frame.Height??0;
@@ -336,7 +336,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         return Wrap($"{errorText}\n{ExceptionHelper.ExceptionToListOfInnerMessages(exception, includeStackTrace)}", 76);
     }
 
-    private string Wrap(string longString, int width)
+    private static string Wrap(string longString, int width)
     {
         return string.Join("\n",Regex.Matches( longString, $".{{1,{width}}}").Select( m => m.Value ).ToArray());
     }

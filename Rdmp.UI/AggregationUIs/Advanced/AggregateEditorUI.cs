@@ -351,7 +351,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         PublishToSelfOnly();
     }
 
-    private void EnsurePivotHasAlias(AggregateDimension dimension)
+    private static void EnsurePivotHasAlias(AggregateDimension dimension)
     {
         if (string.IsNullOrWhiteSpace(dimension.Alias))
         {

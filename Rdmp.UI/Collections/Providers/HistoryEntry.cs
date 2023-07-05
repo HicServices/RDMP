@@ -35,7 +35,7 @@ public class HistoryEntry : IMasqueradeAs
     public string Serialize()
     {
         var helper = new PersistStringHelper();
-        return helper.GetObjectCollectionPersistString(Object) + PersistStringHelper.ExtraText + Date;
+        return PersistStringHelper.GetObjectCollectionPersistString(Object) + PersistStringHelper.ExtraText + Date;
     }
 
     public static HistoryEntry Deserialize(string s, IRDMPPlatformRepositoryServiceLocator locator)
@@ -45,12 +45,12 @@ public class HistoryEntry : IMasqueradeAs
         try
         {
             var helper = new PersistStringHelper();
-            e.Date = DateTime.Parse(helper.GetExtraText(s));
+            e.Date = DateTime.Parse(PersistStringHelper.GetExtraText(s));
 
             var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText)];
                 
 
-            e.Object = helper.GetObjectCollectionFromPersistString(objectString,locator).Single();
+            e.Object = PersistStringHelper.GetObjectCollectionFromPersistString(objectString,locator).Single();
         }
         catch (PersistenceException )
         {

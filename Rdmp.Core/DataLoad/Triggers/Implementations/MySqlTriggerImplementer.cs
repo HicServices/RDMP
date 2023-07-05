@@ -85,7 +85,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
             table.AddColumn(SpecialFieldNames.ValidFrom,"DATETIME DEFAULT CURRENT_TIMESTAMP",true, UserSettings.ArchiveTriggerTimeout);
     }
 
-    public bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
+    public static bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
     {
         using (var con = table.Database.Server.GetConnection())
         {

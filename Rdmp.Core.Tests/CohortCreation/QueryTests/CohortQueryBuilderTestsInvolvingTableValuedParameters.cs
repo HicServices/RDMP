@@ -92,7 +92,7 @@ SET @name='fish';
 	FROM 
 	[" + TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 )
-",cic.ID)), 
+",cic.ID)),
                 CollapseWhitespace(builder.SQL));
 
             //now override JUST @name

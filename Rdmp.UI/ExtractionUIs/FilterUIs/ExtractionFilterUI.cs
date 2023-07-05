@@ -77,7 +77,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
     {
 
         var factory = new FilterUIOptionsFactory();
-        var options = factory.Create(_extractionFilter);
+        var options = FilterUIOptionsFactory.Create(_extractionFilter);
         GlobalFilterParameters = options.GetGlobalParametersInFilterScope();
 
         if (QueryEditor != null)

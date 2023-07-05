@@ -52,7 +52,7 @@ public abstract class Patcher:IPatcher
     protected string GetHeader(DatabaseType dbType, string description,Version version) => $"{CommentFor(dbType, Patch.VersionKey + version.ToString())}{Environment.NewLine}{CommentFor(dbType, Patch.DescriptionKey + description)}{Environment.NewLine}";
 
     // some DBMS don't like the -- notation so we need to wrap with C style comments
-    private string CommentFor(DatabaseType dbType, string sql) =>
+    private static string CommentFor(DatabaseType dbType, string sql) =>
         dbType switch
         {
             DatabaseType.MicrosoftSQLServer => sql,

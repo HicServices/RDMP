@@ -57,7 +57,7 @@ public class SelectSQLRefactorer
     /// <param name="column"></param>
     /// <param name="tableName"></param>
     /// <param name="newFullySpecifiedTableName"></param>
-    public void RefactorTableName(ColumnInfo column, IHasFullyQualifiedNameToo tableName, string newFullySpecifiedTableName)
+    public static void RefactorTableName(ColumnInfo column, IHasFullyQualifiedNameToo tableName, string newFullySpecifiedTableName)
     {
         var fullyQualifiedName = tableName.GetFullyQualifiedName();
 
@@ -73,7 +73,7 @@ public class SelectSQLRefactorer
         column.SaveToDatabase();
     }
 
-    protected void Save(object o)
+    protected static void Save(object o)
     {
         var s = o as ISaveable;
         s?.SaveToDatabase();
@@ -124,7 +124,7 @@ public class SelectSQLRefactorer
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public string GetReasonNotRefactorable(IColumn column)
+    public static string GetReasonNotRefactorable(IColumn column)
     {
         var ci = column.ColumnInfo;
 
@@ -161,7 +161,7 @@ public class SelectSQLRefactorer
     /// </summary>
     /// <param name="table"></param>
     /// <returns></returns>
-    public string GetReasonNotRefactorable(ITableInfo table)
+    public static string GetReasonNotRefactorable(ITableInfo table)
     {
         if(string.IsNullOrWhiteSpace(table.Name))
             return "Table has no Name property, this should be the fully qualified database table name";
@@ -200,7 +200,7 @@ public class SelectSQLRefactorer
     public int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
         if(!IsRefactorable(tableInfo))
-            throw new RefactoringException(string.Format("TableInfo {0} is not refactorable because {1}",tableInfo,GetReasonNotRefactorable(tableInfo)));
+            throw new RefactoringException(string.Format("TableInfo {0} is not refactorable because {1}",tableInfo, GetReasonNotRefactorable(tableInfo)));
                         
         var updatesMade = 0;
             
@@ -253,7 +253,7 @@ public class SelectSQLRefactorer
         return updatesMade;
     }
 
-    private int RefactorTableNameImpl(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+    private static int RefactorTableNameImpl(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
         var updatesMade = 0;
                         

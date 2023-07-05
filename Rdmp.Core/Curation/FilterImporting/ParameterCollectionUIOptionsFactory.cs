@@ -42,7 +42,7 @@ public class ParameterCollectionUIOptionsFactory
 
 
 
-    public ParameterCollectionUIOptions Create(IFilter value, ISqlParameter[] globalFilterParameters)
+    public static ParameterCollectionUIOptions Create(IFilter value, ISqlParameter[] globalFilterParameters)
     {
         var pm = new ParameterManager();
 
@@ -54,20 +54,20 @@ public class ParameterCollectionUIOptionsFactory
         return new ParameterCollectionUIOptions(UseCaseIFilter, value, ParameterLevel.QueryLevel, pm);
     }
 
-    public ParameterCollectionUIOptions Create(ITableInfo tableInfo)
+    public static ParameterCollectionUIOptions Create(ITableInfo tableInfo)
     {
         var pm = new ParameterManager();
         pm.AddParametersFor(tableInfo);
         return new ParameterCollectionUIOptions(UseCaseTableInfo, tableInfo, ParameterLevel.TableInfo, pm);
     }
-    public ParameterCollectionUIOptions Create(ExtractionFilterParameterSet parameterSet)
+    public static ParameterCollectionUIOptions Create(ExtractionFilterParameterSet parameterSet)
     {
         var pm = new ParameterManager();
         pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].AddRange(parameterSet.Values);
 
         return new ParameterCollectionUIOptions(UseCaseParameterValueSet, parameterSet, ParameterLevel.TableInfo, pm);
     }
-    public ParameterCollectionUIOptions Create(AggregateConfiguration aggregateConfiguration, ICoreChildProvider coreChildProvider)
+    public static ParameterCollectionUIOptions Create(AggregateConfiguration aggregateConfiguration, ICoreChildProvider coreChildProvider)
     {
         ParameterManager pm;
 
@@ -128,7 +128,7 @@ public class ParameterCollectionUIOptionsFactory
         if (host is IFilter)
         {
             var factory = new FilterUIOptionsFactory();
-            var globals = factory.Create((IFilter)host).GetGlobalParametersInFilterScope();
+            var globals = FilterUIOptionsFactory.Create((IFilter)host).GetGlobalParametersInFilterScope();
 
             return Create((IFilter)host, globals);
         }
@@ -142,7 +142,7 @@ public class ParameterCollectionUIOptionsFactory
         throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", nameof(host));
     }
 
-    private ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)
+    private static ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration, ICoreChildProvider coreChildProvider)
     {
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, coreChildProvider);
         builder.RegenerateSQL();

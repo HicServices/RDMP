@@ -308,7 +308,7 @@ public partial class WideMessageBox : Form
     /// <param name="keywordNotToAdd"></param>
     /// <param name="word"></param>
     /// <returns></returns>
-    private string GetDocumentationKeyword(string keywordNotToAdd, string word)
+    private static string GetDocumentationKeyword(string keywordNotToAdd, string word)
     {
         if(string.IsNullOrWhiteSpace(word))
             return null;
@@ -421,7 +421,7 @@ public partial class WideMessageBox : Form
         }
     }
 
-    private Size GetPreferredSizeOfTextControl(Control c)
+    private static Size GetPreferredSizeOfTextControl(Control c)
     {
         var graphics = c.CreateGraphics();
         var measureString = graphics.MeasureString(c.Text, c.Font);

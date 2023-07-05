@@ -78,7 +78,7 @@ public class ObjectConstructorTests : UnitTests
             try
             {
                 var oc = new ObjectConstructor();
-                Assert.IsNotNull(oc.GetRepositoryConstructor(typeof(Catalogue)));
+                Assert.IsNotNull(ObjectConstructor.GetRepositoryConstructor(typeof(Catalogue)));
                 countCompatible++;
             }
             catch (Exception e)

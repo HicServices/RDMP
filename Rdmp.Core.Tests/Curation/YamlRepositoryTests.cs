@@ -337,7 +337,7 @@ internal class YamlRepositoryTests
         Assert.AreEqual("ffff", repo2.AllObjects.OfType<Catalogue>().Single().Name);
     }
 
-    private string GetUniqueDirectoryName()
+    private static string GetUniqueDirectoryName()
     {
         return Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid().ToString().Replace("-", ""));
     }

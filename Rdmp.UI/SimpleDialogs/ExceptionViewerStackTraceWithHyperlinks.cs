@@ -157,7 +157,7 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
     }
 
 
-    private void OpenVisualStudio(string filename, int lineNumber)
+    private static void OpenVisualStudio(string filename, int lineNumber)
     {
         try
         {

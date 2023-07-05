@@ -48,7 +48,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
             SetImpossible("ColumnInfo(s) are already in Catalogue");
     }
 
-    private HashSet<int> GetColumnInfos(Catalogue catalogue)
+    private static HashSet<int> GetColumnInfos(Catalogue catalogue)
     {
         if (catalogue == null)
             return null;
@@ -159,7 +159,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
         }
     }
 
-    private bool AlreadyInCatalogue(ColumnInfo candidate, HashSet<int> existingColumnInfos)
+    private static bool AlreadyInCatalogue(ColumnInfo candidate, HashSet<int> existingColumnInfos)
     {
         return existingColumnInfos.Contains(candidate.ID);
     }

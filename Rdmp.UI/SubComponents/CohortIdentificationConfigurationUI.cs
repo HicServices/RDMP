@@ -99,7 +99,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         olvCumulativeTotal.AspectGetter = Common.CumulativeTotal_AspectGetter;
         olvTime.AspectGetter = Common.Time_AspectGetter;
         olvWorking.AspectGetter = Common.Working_AspectGetter;
-        olvCatalogue.AspectGetter = Common.Catalogue_AspectGetter;
+        olvCatalogue.AspectGetter = Catalogue_AspectGetter;
 
         cbIncludeCumulative.CheckedChanged += (s, e) =>
         {
@@ -389,7 +389,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
         return menuItem;
     }
-    private void ViewCrashMessage(ICompileable compileable)
+    private static void ViewCrashMessage(ICompileable compileable)
     {
         ExceptionViewer.Show(compileable.CrashMessage);
     }

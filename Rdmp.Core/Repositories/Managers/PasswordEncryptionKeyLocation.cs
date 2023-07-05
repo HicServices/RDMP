@@ -74,7 +74,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         return location is null ? null : File.ReadAllText(location);
     }
 
-    private void DeserializeFromLocation(string keyLocation)
+    private static void DeserializeFromLocation(string keyLocation)
     {
         if (string.IsNullOrWhiteSpace(keyLocation))
             return;

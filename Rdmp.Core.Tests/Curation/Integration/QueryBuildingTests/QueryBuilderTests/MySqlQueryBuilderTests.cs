@@ -35,7 +35,7 @@ public class MySqlQueryBuilderTests : DatabaseTests
 `db`.`tbl`.`col`
 FROM 
 `db`.`tbl`"
-        ),CollapseWhitespace(qb.SQL));
+        ), CollapseWhitespace(qb.SQL));
 
     }
     [Test]

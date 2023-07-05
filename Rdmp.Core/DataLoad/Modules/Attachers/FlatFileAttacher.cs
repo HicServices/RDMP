@@ -239,7 +239,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken);
         
 
-    private void DropEmptyColumns(DataTable dt)
+    private static void DropEmptyColumns(DataTable dt)
     {
         var emptyColumnsSyntheticNames = new Regex("^Column[0-9]+$");
 

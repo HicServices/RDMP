@@ -83,7 +83,7 @@ public class TableInfoCloneOperation
     }
 
         
-    private bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
+    private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
     {
         return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase) 
             ||

@@ -34,6 +34,6 @@ public class DisableTutorialsMenuItem : ToolStripMenuItem
     protected override void OnClick(EventArgs e)
     {
         base.OnClick(e);
-        _tracker.DisableAllTutorials();
+        TutorialTracker.DisableAllTutorials();
     }
 }

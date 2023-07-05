@@ -587,7 +587,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
             table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
             table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
-                
+
             AssertIsStringWithLength(table.DiscoverColumn("StringAllowNull"), 105);
             Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
 
@@ -608,7 +608,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         }
     }
 
-    private void AssertIsStringWithLength(DiscoveredColumn col, int expectedLength)
+    private static void AssertIsStringWithLength(DiscoveredColumn col, int expectedLength)
     {
         switch (col.Table.Database.Server.DatabaseType)
         {

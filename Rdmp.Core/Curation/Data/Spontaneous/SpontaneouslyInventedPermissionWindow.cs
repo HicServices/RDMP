@@ -39,7 +39,7 @@ public class SpontaneouslyInventedPermissionWindow:SpontaneousObject,IPermission
     }
 
         
-    public void RefreshLockPropertiesFromDatabase()
+    public static void RefreshLockPropertiesFromDatabase()
     {
             
     }

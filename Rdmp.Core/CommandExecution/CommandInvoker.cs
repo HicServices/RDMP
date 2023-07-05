@@ -79,8 +79,8 @@ public class CommandInvoker
                 ? chosen 
                 : throw new OperationCanceledException());
 
-        AddDelegate(typeof(DiscoveredDatabase),false,p=>_basicActivator.SelectDatabase(true,GetPromptFor(p)));
-        AddDelegate(typeof(DiscoveredTable),false,p=>_basicActivator.SelectTable(true,GetPromptFor(p)));
+        AddDelegate(typeof(DiscoveredDatabase),false,p=>_basicActivator.SelectDatabase(true, GetPromptFor(p)));
+        AddDelegate(typeof(DiscoveredTable),false,p=>_basicActivator.SelectTable(true, GetPromptFor(p)));
 
         AddDelegate(typeof(DatabaseEntity), false, p => 
             _basicActivator.SelectOne(
@@ -190,7 +190,7 @@ public class CommandInvoker
         return (IPipeline)_basicActivator.SelectOne(GetPromptFor(arg), _basicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().ToArray());
     }
 
-    private string GetPromptFor(RequiredArgument p)
+    private static string GetPromptFor(RequiredArgument p)
     {
         return $"Value needed for {p.Name} ({p.Type.Name})";
     }

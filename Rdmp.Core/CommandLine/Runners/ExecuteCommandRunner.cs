@@ -214,7 +214,7 @@ internal class ExecuteCommandRunner:IRunner
                 
     }
 
-    private bool StartsWithEngineVerb(string s)
+    private static bool StartsWithEngineVerb(string s)
     {
         var verbs = new[] { "cache", "cohort", "dle", "dqe", "extract", "release" };
         return verbs.Any(v => s.TrimStart().StartsWith(v, StringComparison.CurrentCultureIgnoreCase));

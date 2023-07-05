@@ -93,7 +93,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         propertyChecker.FindPropertyMisuse(_csFilesFound);
 
         var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
-        explicitDatabaseNamesChecker.FindProblems(_csFilesFound);
+        ExplicitDatabaseNameChecker.FindProblems(_csFilesFound);
             
         var noMappingToDatabaseComments = new AutoCommentsEvaluator();
         noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, _csFilesFound);
@@ -364,7 +364,7 @@ public class AutoCommentsEvaluator
             File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
     }
 
-    private string GetUniqueTypeName(string typename)
+    private static string GetUniqueTypeName(string typename)
     {
         switch (typename)
         {

@@ -116,7 +116,7 @@ public class CacheFetchRequestProviderTests
         previousFailure.Verify();
     }
 
-    private Mock<ICacheFetchFailure> GetFailureMock()
+    private static Mock<ICacheFetchFailure> GetFailureMock()
     {
         var failure = Mock.Of<ICacheFetchFailure>(f=>
             f.FetchRequestEnd == DateTime.Now &&

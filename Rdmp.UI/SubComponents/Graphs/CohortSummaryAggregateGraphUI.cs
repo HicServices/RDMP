@@ -111,10 +111,10 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     protected override object[] GetRibbonObjects()
     {
-        return new object[]{GetAdjustmentDescription(_collection.Adjustment)};
+        return new object[]{ GetAdjustmentDescription(_collection.Adjustment)};
     }
 
-    private string GetAdjustmentDescription(CohortSummaryAdjustment adjustment)
+    private static string GetAdjustmentDescription(CohortSummaryAdjustment adjustment)
     {
         switch (adjustment)
         {

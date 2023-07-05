@@ -268,7 +268,7 @@ public class MDFAttacherTests : DatabaseTests
                 
         }
 
-        public string GetDescription()
+        public static string GetDescription()
         {
             return "Test class that does nothing";
         }

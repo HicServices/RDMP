@@ -486,7 +486,7 @@ public class Validator
         return null;
     }
 
-    private Dictionary<string, object> DomainObjectPropertiesToDictionary(object o)
+    private static Dictionary<string, object> DomainObjectPropertiesToDictionary(object o)
     {
         var toReturn = new Dictionary<string, object>();
             

@@ -182,7 +182,7 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
     }
 
     // Returns null if there is no duration, otherwise picks up the current state of both Duration and Type UI elements
-    private CacheLagPeriod CreateNewCacheLagPeriod(decimal value, object selectedItem)
+    private static CacheLagPeriod CreateNewCacheLagPeriod(decimal value, object selectedItem)
     {
         var duration = Convert.ToInt32(value);
         CacheLagPeriod cacheLagPeriod = null;
@@ -200,7 +200,7 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
 
     private void tbCacheProgress_TextChanged(object sender, EventArgs e)
     {
-        CommonFunctionality.DoActionAndRedIfThrows(tbCacheProgress, () =>
+        RDMPControlCommonFunctionality.DoActionAndRedIfThrows(tbCacheProgress, () =>
         {
             if (string.IsNullOrWhiteSpace(tbCacheProgress.Text))
                 _cacheProgress.CacheFillProgress = null;
@@ -216,7 +216,7 @@ public partial class CacheProgressUI : CacheProgressUI_Design,ISaveableUI
 
     private void tbChunkPeriod_TextChanged(object sender, EventArgs e)
     {
-        CommonFunctionality.DoActionAndRedIfThrows(tbChunkPeriod, () =>
+        RDMPControlCommonFunctionality.DoActionAndRedIfThrows(tbChunkPeriod, () =>
         {
             _cacheProgress.ChunkPeriod = TimeSpan.Parse(tbChunkPeriod.Text);
         });

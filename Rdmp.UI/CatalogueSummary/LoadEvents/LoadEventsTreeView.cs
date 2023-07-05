@@ -121,7 +121,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         throw new NotSupportedException();
     }
 
-    private string WithCommas(int? i)
+    private static string WithCommas(int? i)
     {
         if (!i.HasValue)
             return @"N\A";

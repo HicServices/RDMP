@@ -23,7 +23,7 @@ public abstract class BasicUICommandExecution:BasicCommandExecution
         Activator = activator;
     }
         
-    protected FileInfo SelectSaveFile(string filter)
+    protected static FileInfo SelectSaveFile(string filter)
     {
         var sfd = new SaveFileDialog();
         sfd.Filter = filter;
@@ -33,7 +33,7 @@ public abstract class BasicUICommandExecution:BasicCommandExecution
         return null;
     }
 
-    protected FileInfo SelectOpenFile(string filter)
+    protected static FileInfo SelectOpenFile(string filter)
     {
         var ofd = new OpenFileDialog();
         ofd.Filter = filter;

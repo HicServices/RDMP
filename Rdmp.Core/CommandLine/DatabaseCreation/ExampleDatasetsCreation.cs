@@ -277,11 +277,11 @@ public class ExampleDatasetsCreation
 
     private void ForExtractionInformations(ICatalogue catalogue, Action<ExtractionInformation> action,params string[] extractionInformations)
     {
-        foreach(var e in extractionInformations.Select(s=>GetExtractionInformation(catalogue,s)))
+        foreach(var e in extractionInformations.Select(s=> GetExtractionInformation(catalogue,s)))
             action(e);
     }
 
-    private void SetParameter(IFilter filter, string paramterToSet, string dataType, string value)
+    private static void SetParameter(IFilter filter, string paramterToSet, string dataType, string value)
     {
         var p = filter.GetAllParameters().Single(fp=>fp.ParameterName == paramterToSet);
         p.ParameterSQL = $"DECLARE {paramterToSet} AS {dataType}";
@@ -355,7 +355,7 @@ public class ExampleDatasetsCreation
         //create a cohort
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
 
-        var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository, auditLogBuilder.GetDescription(cic));
+        var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository, ExtractableCohortAuditLogBuilder.GetDescription(cic));
         request.CohortIdentificationConfiguration = cic;
 
         var engine = request.GetEngine(cohortCreationPipeline,new ThrowImmediatelyDataLoadEventListener());                        
@@ -417,7 +417,7 @@ public class ExampleDatasetsCreation
         return filter;
     }
 
-    private void CreateAdmissionsViews(DiscoveredDatabase db)
+    private static void CreateAdmissionsViews(DiscoveredDatabase db)
     {
         using(var con = db.Server.GetConnection())
         {
@@ -464,7 +464,7 @@ UNPIVOT
 
     private IFilter CreateFilter(ICatalogue cata, string name,string parentExtractionInformation, string whereSql,string desc)
     {
-        var filter = new ExtractionFilter(_repos.CatalogueRepository,name,GetExtractionInformation(cata,parentExtractionInformation));
+        var filter = new ExtractionFilter(_repos.CatalogueRepository,name, GetExtractionInformation(cata,parentExtractionInformation));
         filter.WhereSQL = whereSql;
         filter.Description = desc;
         filter.SaveToDatabase();
@@ -510,7 +510,7 @@ UNPIVOT
         return ac;
     }
 
-    private ExtractionInformation GetExtractionInformation(ICatalogue cata, string name)
+    private static ExtractionInformation GetExtractionInformation(ICatalogue cata, string name)
     {
         try
         {
@@ -541,7 +541,7 @@ UNPIVOT
 
 
         notifier.OnCheckPerformed(new CheckEventArgs($"Uploading {dataset}",CheckResult.Success));
-        var tbl = db.CreateTable(dataset,dt,GetExplicitColumnDefinitions<T>());
+        var tbl = db.CreateTable(dataset,dt, GetExplicitColumnDefinitions<T>());
 
         if(primaryKey.Length != 0)
         {
@@ -553,7 +553,7 @@ UNPIVOT
         return tbl;            
     }
 
-    private DatabaseColumnRequest[] GetExplicitColumnDefinitions<T>() where T : IDataGenerator
+    private static DatabaseColumnRequest[] GetExplicitColumnDefinitions<T>() where T : IDataGenerator
     {
             
         if(typeof(T) == typeof(HospitalAdmissions))
@@ -620,7 +620,7 @@ UNPIVOT
         return cata;
     }
 
-    private string Trim(string s)
+    private static string Trim(string s)
     {
         if(string.IsNullOrWhiteSpace(s))
             return null;
