@@ -296,12 +296,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 }
                 return;
             }
-            else
-            {
-                //make it not extractable by deleting the extraction information
-                n.ExtractionInformation.DeleteInDatabase();
-                n.ExtractionInformation = null;
-            }
+
+            //make it not extractable by deleting the extraction information
+            n.ExtractionInformation.DeleteInDatabase();
+            n.ExtractionInformation = null;
         }
         else
         {
@@ -309,20 +307,17 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
             if(!shouldBeExtractable) //it's already not extractable job done
                 return;
-            else
+            //make it extractable
+            var newExtractionInformation = new ExtractionInformation((ICatalogueRepository) n.ColumnInfo.Repository, n.CatalogueItem, n.ColumnInfo,n.ColumnInfo.Name);
+
+            if (category.HasValue)
             {
-                //make it extractable
-                var newExtractionInformation = new ExtractionInformation((ICatalogueRepository) n.ColumnInfo.Repository, n.CatalogueItem, n.ColumnInfo,n.ColumnInfo.Name);
-
-                if (category.HasValue)
-                {
-                    newExtractionInformation.ExtractionCategory = category.Value;
-                    newExtractionInformation.Order = olvColumnExtractability.IndexOf(n);
-                    newExtractionInformation.SaveToDatabase();
-                }
-
-                n.ExtractionInformation = newExtractionInformation;
+                newExtractionInformation.ExtractionCategory = category.Value;
+                newExtractionInformation.Order = olvColumnExtractability.IndexOf(n);
+                newExtractionInformation.SaveToDatabase();
             }
+
+            n.ExtractionInformation = newExtractionInformation;
         }
 
         olvColumnExtractability.RefreshObject(n);

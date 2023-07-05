@@ -74,14 +74,14 @@ internal class RDMPApplicationSettings : ISettings
                     return AddOrUpdateValue(key,
                         Convert.ToString(Convert.ToDecimal(value), System.Globalization.CultureInfo.InvariantCulture));
                 }
-                else if (value is DateTime)
+
+                if (value is DateTime)
                 {
                     return AddOrUpdateValue(key,
                         Convert.ToString(-Convert.ToDateTime(value).ToUniversalTime().Ticks,
                             System.Globalization.CultureInfo.InvariantCulture));
                 }
-                else
-                    str = Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
+                str = Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
 
                 string oldValue = null;
 

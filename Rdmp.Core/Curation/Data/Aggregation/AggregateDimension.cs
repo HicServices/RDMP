@@ -182,10 +182,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
             return syntax.GetRuntimeName(SelectSQL);
         }
-        else
-        {
-            return Alias;
-        }
+
+        return Alias;
     }
 
         

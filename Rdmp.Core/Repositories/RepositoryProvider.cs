@@ -108,8 +108,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             return CatalogueRepository.GetObjectByID<T>(value);
         if(DataExportRepository.SupportsObjectType(typeof(T)))
             return DataExportRepository.GetObjectByID<T>(value);
-        else
-            throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
+        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
     }
 
     /// <inheritdoc/>
@@ -119,8 +118,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             return CatalogueRepository.GetObjectByID(t,value);
         if(DataExportRepository.SupportsObjectType(t))
             return DataExportRepository.GetObjectByID(t,value);
-        else
-            throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
+        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
     }
     public virtual IEnumerable<IRepository> GetAllRepositories()
     {

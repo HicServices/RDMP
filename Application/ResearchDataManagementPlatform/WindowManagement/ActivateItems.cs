@@ -449,7 +449,6 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (uiCollection != null)
             //if we get here then Instruction wasn't for a 
             return Activate(uiCollection, instruction.ObjectCollection);
-        else
         if (uiInstance != null)
         {
             var databaseObject = instruction.DatabaseObject;
@@ -475,10 +474,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
             return floatable;
         }
-        else
-        {
-            return (DockContent)activator.ShowWindow(c, true);
-        }
+        return (DockContent)activator.ShowWindow(c, true);
     }
 
     private void SetTabText(DockContent floatable, INamedTab tab)

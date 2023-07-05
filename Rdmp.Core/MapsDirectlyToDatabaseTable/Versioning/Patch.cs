@@ -112,9 +112,8 @@ public class Patch : IComparable
 
         if (x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber))
             return true;
-        else
-            throw new InvalidPatchException(x.locationInAssembly,
-                $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Verison numbers", null);
+        throw new InvalidPatchException(x.locationInAssembly,
+            $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Verison numbers", null);
     }
     public int CompareTo(object obj)
     {

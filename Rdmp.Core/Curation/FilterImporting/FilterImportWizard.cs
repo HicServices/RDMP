@@ -177,8 +177,7 @@ public class FilterImportWizard
 
             if (chosen != null)
                 return chosen as ExtractionFilterParameterSet;
-            else
-                cancel = true;
+            cancel = true;
         }
 
         return null;

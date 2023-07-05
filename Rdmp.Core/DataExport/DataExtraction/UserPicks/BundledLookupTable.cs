@@ -78,8 +78,8 @@ public class BundledLookupTable : IBundledLookupTable
                 qb.AddColumnRange(eis);
                 return qb.SQL;
             }
-            else
-                throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
+
+            throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
         }
 
         return $"select * from {TableInfo.GetFullyQualifiedName()}";

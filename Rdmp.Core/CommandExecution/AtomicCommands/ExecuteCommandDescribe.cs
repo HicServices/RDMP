@@ -298,20 +298,17 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
                 if (string.IsNullOrWhiteSpace(desc))
                     return $"{name} {type}";
-                else
-                {
-                    var availableWidth = Console.WindowWidth;
-                    var occupied = nameColWidth + 1 + typeColWidth + 1;
+                var availableWidth = Console.WindowWidth;
+                var occupied = nameColWidth + 1 + typeColWidth + 1;
 
-                    var availableDescriptionWidth = availableWidth - occupied;
+                var availableDescriptionWidth = availableWidth - occupied;
 
-                    if(availableDescriptionWidth < 0)
-                        return $"{name} {type}";
+                if(availableDescriptionWidth < 0)
+                    return $"{name} {type}";
 
-                    var wrappedDesc = Wrap(desc,availableDescriptionWidth,occupied);
+                var wrappedDesc = Wrap(desc,availableDescriptionWidth,occupied);
 
-                    return $"{name} {type} {wrappedDesc}";
-                }
+                return $"{name} {type} {wrappedDesc}";
 
             }
 

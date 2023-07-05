@@ -87,11 +87,9 @@ False - Trigger an error reporting the missing table(s)
 
                     //skip it
                     continue;
-                }else
-                {
-                    throw new Exception(
-                        $"Loadable table {table} was NOT found on the remote DB and IgnoreMissingTables is false");
-                }   
+                }
+                throw new Exception(
+                    $"Loadable table {table} was NOT found on the remote DB and IgnoreMissingTables is false");
             }
                     
 

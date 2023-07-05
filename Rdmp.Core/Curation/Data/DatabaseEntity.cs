@@ -338,10 +338,8 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
             {
                 return;
             }
-            else
-            {
-                throw;
-            }
+
+            throw;
         }
 
         // skip properties marked with 'do not extract'

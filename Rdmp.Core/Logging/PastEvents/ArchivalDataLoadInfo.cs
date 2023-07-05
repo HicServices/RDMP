@@ -134,10 +134,8 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
                     {
                         continue;
                     }
-                    else
-                    {
-                        toReturn.Add(audit);
-                    }
+
+                    toReturn.Add(audit);
                 }   
         }
 

@@ -116,8 +116,7 @@ public class GovernanceReport:DocXHelper
 
         if (description.Length >= 100)
             return $"{description[..100]}...";
-        else
-            return description;
+        return description;
     }
 
     /// <summary>

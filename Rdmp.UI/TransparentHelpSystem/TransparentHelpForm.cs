@@ -214,7 +214,8 @@ public class TransparentHelpForm:Form
             *********************************************/
             return new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width), highlightBottomLeft.Y);
         }
-        else if (currentHelpBox.Height < availableSpaceAboveHighlight)
+
+        if (currentHelpBox.Height < availableSpaceAboveHighlight)
         {
             //No space below so go above it
 

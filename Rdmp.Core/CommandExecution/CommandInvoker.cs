@@ -261,8 +261,8 @@ public class CommandInvoker
                     idx++;
                     continue;
                 }
-                else
-                    // if user has not typed anything in for this parameter and it has a default value
+
+                // if user has not typed anything in for this parameter and it has a default value
                 if(picker.Length <= idx && parameterInfo.HasDefaultValue)
                 {
                     // then we should use the default value
@@ -270,7 +270,7 @@ public class CommandInvoker
                     idx++;
                     continue;
                 }
-                    
+
                 throw new Exception($"Expected parameter at index {idx} to be a {parameterInfo.ParameterType} (for parameter '{parameterInfo.Name}') but it was {(idx >= picker.Length ? "Missing":picker[idx].RawValue)}");
             }
             else

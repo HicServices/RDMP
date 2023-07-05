@@ -222,8 +222,8 @@ public class ConsoleInputManager : BasicActivateItems
             {
                 return availableObjects[0];
             }
-            else
-                throw new InputDisallowedException($"Value required for '{args}'");
+
+            throw new InputDisallowedException($"Value required for '{args}'");
         }
 
         if (availableObjects.Length == 0)
@@ -368,10 +368,8 @@ public class ConsoleInputManager : BasicActivateItems
                                         
             return dir.GetFiles(searchPattern).ToArray();
         }
-        else
-        {
-            return new[]{ new FileInfo(file) };
-        }
+
+        return new[]{ new FileInfo(file) };
 
     }
         

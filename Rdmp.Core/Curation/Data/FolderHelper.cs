@@ -40,8 +40,8 @@ public static class FolderHelper
 
             return candidate;
         }
-        else
-            throw new NotSupportedException(reason);
+
+        throw new NotSupportedException(reason);
     }
 
     public static bool IsValidPath(string candidatePath, out string reason)
@@ -110,20 +110,18 @@ public static class FolderHelper
                 {
                     throw new Exception($"Unable to build folder groups.  Current group had malformed Folder name.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
                 }
-                else
-                {
-                    // we may already have created this as part of a subgroup e.g. seeing \1\2 then seeing \1 alone (we don't want multiple copies of \1 folder).
-                    var existing = currentBranch.ChildFolders.FirstOrDefault(f => f.Name.Equals(nextFolder, StringComparison.CurrentCultureIgnoreCase));
-                        
-                    if(existing == null)
-                    {
-                        // we don't have one already so create it
-                        existing = new FolderNode<T>(nextFolder, currentBranch);
-                        currentBranch.ChildFolders.Add(existing);
-                    }                        
 
-                    BuildFolderTree(g.ToArray(),existing);
-                }
+                // we may already have created this as part of a subgroup e.g. seeing \1\2 then seeing \1 alone (we don't want multiple copies of \1 folder).
+                var existing = currentBranch.ChildFolders.FirstOrDefault(f => f.Name.Equals(nextFolder, StringComparison.CurrentCultureIgnoreCase));
+                        
+                if(existing == null)
+                {
+                    // we don't have one already so create it
+                    existing = new FolderNode<T>(nextFolder, currentBranch);
+                    currentBranch.ChildFolders.Add(existing);
+                }                        
+
+                BuildFolderTree(g.ToArray(),existing);
             }
         }
 

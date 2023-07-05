@@ -436,8 +436,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 }
             }
         }
-        else
-            return CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
+
+        return CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
     }
 
     private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(AggregateConfiguration toClone, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
@@ -642,8 +642,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 //the delegate returned null
                 if (answer == null)
                     throw new Exception("User did not pick a candidate ExtractionInformation column from those we offered");
-                else
-                    return answer;//the delegate picked one
+                return answer;//the delegate picked one
             }
 
         return catalogueCandidates[0];

@@ -330,7 +330,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             body = problem;
             return true;
         }
-        else
+
         if (model is ICanBeSummarised sum)
         {
             isBad = false;
@@ -692,7 +692,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(defaultMenu,o));
                 return Sort(defaultMenu);
             }
-            else
+
             {
                 //it's a right click in whitespace (nothing right clicked)
 

@@ -59,25 +59,22 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
                 //its a cic aggregate but it is one outside of our tree so instead offer adding (not moving/reordering)
                 return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,sourceAggregateCommand, targetCohortAggregateContainer);
             }
-            else
-            {
-                //we are dragging around inside our own tree
+            //we are dragging around inside our own tree
 
-                //it is involved in cohort identification already, presumably it's a reorder?
-                if(sourceAggregateCommand.ContainerIfAny != null)
-                    if(insertOption == InsertOption.Default)
-                        return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
-                    else
-                        return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer, insertOption);
+            //it is involved in cohort identification already, presumably it's a reorder?
+            if(sourceAggregateCommand.ContainerIfAny != null)
+                if(insertOption == InsertOption.Default)
+                    return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
+                else
+                    return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer, insertOption);
                 
-                //it's a patient index table
-                if (sourceAggregateCommand.IsPatientIndexTable)
-                    return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
+            //it's a patient index table
+            if (sourceAggregateCommand.IsPatientIndexTable)
+                return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
                 
                 
-                //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
-                return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
-            }
+            //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
+            return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
         }
 
         //source is another container (UNION / INTERSECT / EXCEPT)

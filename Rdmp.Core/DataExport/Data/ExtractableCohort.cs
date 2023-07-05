@@ -89,11 +89,8 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
         {
             if (_count != -1)
                 return _count;
-            else
-            {
-                _count = CountCohortInDatabase();
-                return _count;
-            }
+            _count = CountCohortInDatabase();
+            return _count;
         }
     }
 
@@ -106,11 +103,8 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
         {
             if (_countDistinct != -1)
                 return _countDistinct;
-            else
-            {
-                _countDistinct = GetCountDistinctFromDatabase();
-                return _countDistinct;
-            }
+            _countDistinct = GetCountDistinctFromDatabase();
+            return _countDistinct;
         }
     }
 

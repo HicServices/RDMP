@@ -83,11 +83,9 @@ public abstract class RDMPCommandLineOptions
             {
                 return _repositoryLocator = new RepositoryProvider(new YamlRepository(new DirectoryInfo(Dir)));
             }
-            else
-            {
-                GetConnectionStrings(out var c, out var d);
-                _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
-            }
+
+            GetConnectionStrings(out var c, out var d);
+            _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
         }
 
         return _repositoryLocator;

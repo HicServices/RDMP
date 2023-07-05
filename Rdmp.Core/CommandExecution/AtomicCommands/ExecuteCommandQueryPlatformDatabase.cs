@@ -63,7 +63,8 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
             _table = db?.ExpectTable("Project");
             return;
         }
-        else if (patcherType == typeof(CataloguePatcher))
+
+        if (patcherType == typeof(CataloguePatcher))
         {
             db = GetDatabase(BasicActivator.RepositoryLocator.CatalogueRepository);
 
@@ -71,14 +72,10 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
             _table = db?.ExpectTable("Catalogue");
             return;
         }
-        else
-        {
-            var eds = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>();
+        var eds = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>();
 
-            var patcher = (IPatcher)Activator.CreateInstance(patcherType);
-            db = GetDatabase(eds.Where(e => e.WasCreatedBy(patcher)).ToArray());
-
-        }
+        var patcher = (IPatcher)Activator.CreateInstance(patcherType);
+        db = GetDatabase(eds.Where(e => e.WasCreatedBy(patcher)).ToArray());
 
         if (db == null)
         {

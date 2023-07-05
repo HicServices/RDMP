@@ -134,25 +134,23 @@ public class CatalogueProblemProvider : ProblemProvider
 
             return "No value defined";
         }
-        else
-        {
-            var v = parameter.Value;
 
-            var g = new Guesser();
+        var v = parameter.Value;
+
+        var g = new Guesser();
                 
-            if(Culture != null)
-                g.Culture = Culture;
+        if(Culture != null)
+            g.Culture = Culture;
 
-            g.AdjustToCompensateForValue(v);
+        g.AdjustToCompensateForValue(v);
 
-            // if user has entered a date as the value
-            if (g.Guess.CSharpType == typeof(DateTime))
+        // if user has entered a date as the value
+        if (g.Guess.CSharpType == typeof(DateTime))
+        {
+            // and there are no delimiters
+            if(v.All(c=>c != '\'' && c != '"'))
             {
-                // and there are no delimiters
-                if(v.All(c=>c != '\'' && c != '"'))
-                {
-                    return "Parameter value looks like a date but is not surrounded by quotes";
-                }
+                return "Parameter value looks like a date but is not surrounded by quotes";
             }
         }
 

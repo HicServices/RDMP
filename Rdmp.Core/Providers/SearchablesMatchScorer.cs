@@ -201,8 +201,7 @@ public class SearchablesMatchScorer
 
             if (obj.ID != ID.Value)
                 return 0;
-            else
-                score += 10;
+            score += 10;
         }
 
         if(RespectUserSettings && ScoreZeroBecauseOfUserSettings(kvp))

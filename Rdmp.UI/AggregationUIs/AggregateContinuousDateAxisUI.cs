@@ -43,8 +43,8 @@ public partial class AggregateContinuousDateAxisUI : UserControl
                 groupBox1.Enabled = false;
                 return;
             }
-            else
-                groupBox1.Enabled = true;
+
+            groupBox1.Enabled = true;
 
             _axis = value.AggregateContinuousDateAxis;
 

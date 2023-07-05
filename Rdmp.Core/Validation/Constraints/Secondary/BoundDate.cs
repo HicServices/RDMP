@@ -111,20 +111,19 @@ public class BoundDate : Bound
         if (lookupFieldNamed is string)
         {
             if (string.IsNullOrWhiteSpace(lookupFieldNamed as string))
-                return null; 
-            else
-                try
-                {
-                    lookupFieldNamed = DateTime.Parse(lookupFieldNamed as string);
-                }
-                catch (InvalidCastException )
-                {
-                    return null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
-                }
-                catch (FormatException )
-                {
-                    return null;
-                }
+                return null;
+            try
+            {
+                lookupFieldNamed = DateTime.Parse(lookupFieldNamed as string);
+            }
+            catch (InvalidCastException )
+            {
+                return null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
+            }
+            catch (FormatException )
+            {
+                return null;
+            }
 
             return (DateTime)lookupFieldNamed;
         }

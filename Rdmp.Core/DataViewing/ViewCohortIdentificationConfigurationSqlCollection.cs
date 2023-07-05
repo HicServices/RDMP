@@ -56,12 +56,10 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
         {
             return cache;
         }
-        else
-        {
-            var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
-            builder.RegenerateSQL();
-            return new SelfCertifyingDataAccessPoint(builder.Results.TargetServer);
-        }
+
+        var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
+        builder.RegenerateSQL();
+        return new SelfCertifyingDataAccessPoint(builder.Results.TargetServer);
     }
 
     public string GetSql()

@@ -343,10 +343,8 @@ public class CohortIdentificationConfigurationUICommon
                 
                 return true;
             }
-            else
-            {
-                Compiler.CancelAllTasks(true);
-            }
+
+            Compiler.CancelAllTasks(true);
         }
 
         return false;

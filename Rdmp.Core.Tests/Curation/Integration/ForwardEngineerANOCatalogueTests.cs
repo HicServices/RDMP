@@ -273,8 +273,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
                 
             return;
         }
-        else
-            engine.Execute();
+
+        engine.Execute();
 
         var newCata = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Name.Equals("ANOHeads"));
         Assert.IsTrue(newCata.Exists());
