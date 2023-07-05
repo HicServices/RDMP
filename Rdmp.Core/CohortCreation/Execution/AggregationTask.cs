@@ -19,7 +19,7 @@ namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
 /// A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query like 'select distinct patientId from 
-/// TableX where ...'.  The  query result table can/will be commited as a CacheCommitIdentifierList to  the CachedAggregateConfigurationResultsManager.
+/// TableX where ...'.  The  query result table can/will be committed as a CacheCommitIdentifierList to  the CachedAggregateConfigurationResultsManager.
 /// </summary>
 public class AggregationTask:CacheableTask
 {

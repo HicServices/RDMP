@@ -202,14 +202,15 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     /// <inheritdoc/>
     public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
     {
-        var toReturn = new Dictionary<DataAccessContext, List<int>>();
+        var toReturn = new Dictionary<DataAccessContext, List<int>>
+        {
+            { DataAccessContext.Any, new List<int>() },
+            { DataAccessContext.DataExport, new List<int>() },
+            { DataAccessContext.DataLoad, new List<int>() },
+            { DataAccessContext.InternalDataProcessing, new List<int>() },
+            { DataAccessContext.Logging, new List<int>() }
+        };
 
-        toReturn.Add(DataAccessContext.Any, new List<int>());
-        toReturn.Add(DataAccessContext.DataExport, new List<int>());
-        toReturn.Add(DataAccessContext.DataLoad, new List<int>());
-        toReturn.Add(DataAccessContext.InternalDataProcessing, new List<int>());
-        toReturn.Add(DataAccessContext.Logging, new List<int>());
-            
         using (var con = _repository.GetConnection())
         {
             using (var cmd = DatabaseCommandHelper.GetCommand(

@@ -44,10 +44,11 @@ public class PeriodicityCubesOverTime
         if(!hyperCube.ContainsKey(year))
         {
             //create month dictionary
-            var perMonth = new Dictionary<int, PeriodicityCube>();
-                
-            //add month user wants to month dictionary
-            perMonth.Add(month, newCube = new PeriodicityCube(year, month));
+            var perMonth = new Dictionary<int, PeriodicityCube>
+            {
+                //add month user wants to month dictionary
+                { month, newCube = new PeriodicityCube(year, month) }
+            };
 
             //add month dictionary to year dictionary
             hyperCube.Add(year,perMonth);

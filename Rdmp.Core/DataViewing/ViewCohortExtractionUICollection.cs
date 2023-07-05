@@ -107,9 +107,10 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
     /// <returns></returns>
     private string GetSelectList(IExternalCohortTable ect)
     {
-        var selectList = new List<string>();
-
-        selectList.Add(ect.PrivateIdentifierField);
+        var selectList = new List<string>
+        {
+            ect.PrivateIdentifierField
+        };
 
         // if it is not an identifiable extraction
         if (!string.Equals(ect.PrivateIdentifierField, ect.ReleaseIdentifierField))

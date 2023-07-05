@@ -283,20 +283,21 @@ public class WordDataWriter : DocXHelper
 
         foreach (var value in Executer.Source.ExtractTimeTransformationsObserved.Values)
         {
-            var supplementalValuesForThisOne = new List<Tuple<string, string>>();
-             
-            //Jim no longer wants these to appear in metadata
-            /*
+            var supplementalValuesForThisOne = new List<Tuple<string, string>>
+            {
+                //Jim no longer wants these to appear in metadata
+                /*
+                if (value.FoundAtExtractTime)
+                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", value.RuntimeName));
+                else
+                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
+                */
+
+                new Tuple<string, string>("Datatype (SQL):", value.DataTypeInCatalogue)
+            };
+
+
             if (value.FoundAtExtractTime)
-                supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", value.RuntimeName));
-            else
-                supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
-            */
-
-            supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype (SQL):",value.DataTypeInCatalogue));
-                
-
-            if(value.FoundAtExtractTime)
                 if(value.DataTypeObservedInRuntimeBuffer == null)
                     supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", "Value was always NULL"));
                 else

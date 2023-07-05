@@ -367,27 +367,28 @@ public class ForwardEngineerANOCatalogueEngine
     /// <returns></returns>
     private ColumnInfo FindNewColumnNamed(IQuerySyntaxHelper syntaxHelper, ColumnInfo col, string expectedName, bool isOptional)
     {
-        var expectedNewNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-
-        //look for it in the default schema ".." or the API default server ".dbo." or the original table schema.
-        expectedNewNames.Add(syntaxHelper.EnsureFullyQualified(
+        var expectedNewNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
+        {
+            //look for it in the default schema ".." or the API default server ".dbo." or the original table schema.
+            syntaxHelper.EnsureFullyQualified(
             _planManager.TargetDatabase.GetRuntimeName(),
             null,
             col.TableInfo.GetRuntimeName(),
-            expectedName));
+            expectedName),
 
-        expectedNewNames.Add(syntaxHelper.EnsureFullyQualified(
+            syntaxHelper.EnsureFullyQualified(
             _planManager.TargetDatabase.GetRuntimeName(),
             syntaxHelper.GetDefaultSchemaIfAny(),
             col.TableInfo.GetRuntimeName(),
-            expectedName));
+            expectedName),
 
-        expectedNewNames.Add(syntaxHelper.EnsureFullyQualified(
+            syntaxHelper.EnsureFullyQualified(
             _planManager.TargetDatabase.GetRuntimeName(),
             col.TableInfo.Schema,
             col.TableInfo.GetRuntimeName(),
-            expectedName));
-                
+            expectedName)
+        };
+
 
         var columns = _allColumnsInfos.Where(c=>expectedNewNames.Contains(c.Name)).ToArray();
 

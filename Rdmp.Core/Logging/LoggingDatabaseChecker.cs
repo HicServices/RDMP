@@ -51,12 +51,13 @@ public class LoggingDatabaseChecker : ICheckable
 
     private void CheckDataLoadTaskStatusTable(ICheckNotifier notifier)
     {
-        var desired = new Dictionary<int, string>();
+        var desired = new Dictionary<int, string>
+        {
+            { 1, "Open" },
+            { 2, "Ready" },
+            { 3, "Committed" }
+        };
 
-        desired.Add(1, "Open");
-        desired.Add(2, "Ready");
-        desired.Add(3, "Commited");
-            
 
         CheckLookupTableIsCorrectlyPopulated(notifier, "status","z_DataLoadTaskStatus",desired);
     }

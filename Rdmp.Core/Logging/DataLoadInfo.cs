@@ -180,7 +180,7 @@ SELECT @@IDENTITY;", con);
                     throw;
                 }
 
-                //once a record has been commited to the database it is redundant and no further attempts to read/change it should be made by anyone
+                //once a record has been committed to the database it is redundant and no further attempts to read/change it should be made by anyone
                 foreach (var t in TableLoads.Values)
                 {
                     //close any table loads that have not yet completed

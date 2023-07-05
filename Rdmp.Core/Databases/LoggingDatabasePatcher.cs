@@ -91,7 +91,7 @@ public sealed class LoggingDatabasePatcher:Patcher
 
 INSERT INTO z_DataLoadTaskStatus(ID, status, description) VALUES(1, 'Open', NULL);
 INSERT INTO z_DataLoadTaskStatus (ID, status, description) VALUES(2, 'Ready', NULL);
-INSERT INTO z_DataLoadTaskStatus (ID, status, description) VALUES(3, 'Commited', NULL);
+INSERT INTO z_DataLoadTaskStatus (ID, status, description) VALUES(3, 'Committed', NULL);
 INSERT INTO z_FatalErrorStatus(ID, status) VALUES(1, 'Outstanding');
 INSERT INTO z_FatalErrorStatus (ID, status) VALUES(2, 'Resolved');
 INSERT INTO z_FatalErrorStatus (ID, status) VALUES(3, 'Blocked');
