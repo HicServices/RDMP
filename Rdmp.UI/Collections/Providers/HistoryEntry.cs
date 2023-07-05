@@ -47,7 +47,7 @@ public class HistoryEntry : IMasqueradeAs
             var helper = new PersistStringHelper();
             e.Date = DateTime.Parse(helper.GetExtraText(s));
 
-            var objectString = s.Substring(0, s.IndexOf(PersistStringHelper.ExtraText));
+            var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText)];
                 
 
             e.Object = helper.GetObjectCollectionFromPersistString(objectString,locator).Single();

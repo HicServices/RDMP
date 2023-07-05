@@ -52,7 +52,7 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
                         $"ColumnInfo  {columnName} does not start with ANO but is marked as an ANO column (ID={columnInfo.ID})");
 
                 //if the column is ANOGp then look for column Gp in the input columns (DataTable toProcess)
-                columnName = columnName.Substring(ANOTable.ANOPrefix.Length);
+                columnName = columnName[ANOTable.ANOPrefix.Length..];
                 columnsToAnonymise.Add(columnName, new ANOTransformer(columnInfo.ANOTable));
             }
         }

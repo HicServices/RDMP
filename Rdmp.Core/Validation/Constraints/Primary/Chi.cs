@@ -55,7 +55,7 @@ public class Chi : PrimaryConstraint
             return false;
         }
 
-        var dd = columnValueAsString.Substring(0, 2);
+        var dd = columnValueAsString[..2];
         var mm = columnValueAsString.Substring(2, 2);
         var yy = columnValueAsString.Substring(4, 2);
 
@@ -68,7 +68,7 @@ public class Chi : PrimaryConstraint
         }
 
 
-        if (columnValueAsString.Substring(columnValueAsString.Length - 1) != GetCHICheckDigit(columnValueAsString))
+        if (columnValueAsString[^1..] != GetCHICheckDigit(columnValueAsString))
         {
             reason = "CHI check digit did not match";
             return false;

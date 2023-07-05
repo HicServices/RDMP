@@ -359,9 +359,9 @@ public class DitaCatalogueExtractor : ICheckable
             if (words[0].Length < 10)
                 return words[0];        //if the only word is less than 10 long it can be used as acronym anyway (will be the same as catalogue name)
             else
-                return words[0].Substring(0, 5); //there's only one word so just suggest using the first 5 letters... suboptimal but hey whatever
+                return words[0][..5]; //there's only one word so just suggest using the first 5 letters... suboptimal but hey whatever
 
         //return the first letter from every word and also add in all numbers that appear after the first letter in the word
-        return words.Aggregate("", (s, n) => s + n.Substring(0, 1) + n.Skip(1).Where(char.IsDigit));
+        return words.Aggregate("", (s, n) => s + n[..1] + n.Skip(1).Where(char.IsDigit));
     }
 }

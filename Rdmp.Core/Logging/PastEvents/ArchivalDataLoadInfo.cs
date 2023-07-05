@@ -35,7 +35,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
         var s = ToString();
         if (s.Length > MaxDescriptionLength)
-            return $"{s.Substring(0, MaxDescriptionLength)}...";
+            return $"{s[..MaxDescriptionLength]}...";
         return s;
     }
 

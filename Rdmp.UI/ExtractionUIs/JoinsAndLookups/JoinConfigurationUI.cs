@@ -259,7 +259,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     private void tbCollation_Leave(object sender, EventArgs e)
     {
         if (tbCollation.Text != null && tbCollation.Text.StartsWith("collate", StringComparison.CurrentCultureIgnoreCase))
-            tbCollation.Text = tbCollation.Text.Substring("collate".Length).Trim();
+            tbCollation.Text = tbCollation.Text["collate".Length..].Trim();
     }
 
     private void olv_ItemActivate(object sender, EventArgs e)

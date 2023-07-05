@@ -395,7 +395,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         {
             //see if it has an ANO Transform on it
             if (ANOTable_ID != null && finalName.StartsWith("ANO"))
-                return finalName.Substring("ANO".Length);
+                return finalName["ANO".Length..];
         }
 
         //any other stage will be the regular final name

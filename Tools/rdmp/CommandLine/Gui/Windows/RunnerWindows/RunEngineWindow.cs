@@ -223,7 +223,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
             if (str.Length > width)
             {
-                str = str.Substring(0, width);
+                str = str[..width];
             }
             else
             {

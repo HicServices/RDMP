@@ -140,7 +140,7 @@ internal class CsProjFileTidy
         var reltive = csFile.FullName.Replace(_root.FullName, "");
 
         //trim off the "\myclass.cs" bit
-        reltive = reltive.Substring(0, reltive.Length - (csFile.Name.Length + 1));
+        reltive = reltive[..^(csFile.Name.Length + 1)];
         return reltive.Replace('\\', '.');
     }
 }

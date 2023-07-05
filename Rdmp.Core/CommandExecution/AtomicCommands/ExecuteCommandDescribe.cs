@@ -285,8 +285,8 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         {
             if(BasicActivator is ConsoleInputManager)
             {              
-                var name = req.Name.Length < nameColWidth ? req.Name.PadRight(nameColWidth) : req.Name.Substring(0,nameColWidth);
-                var type = req.Type.Name.Length < typeColWidth ? req.Type.Name.PadRight(typeColWidth) : req.Type.Name.Substring(0,typeColWidth);
+                var name = req.Name.Length < nameColWidth ? req.Name.PadRight(nameColWidth) : req.Name[..nameColWidth];
+                var type = req.Type.Name.Length < typeColWidth ? req.Type.Name.PadRight(typeColWidth) : req.Type.Name[..typeColWidth];
                     
                 var desc = req.DemandIfAny?.Description;
 

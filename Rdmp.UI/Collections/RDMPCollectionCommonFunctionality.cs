@@ -384,7 +384,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
                 if(val.Length>100)
                 {
-                    val = $"{val.Substring(0, 100)}...";
+                    val = $"{val[..100]}...";
                 }
 
                 sb.AppendLine($"{kvp.Key}: {val}");

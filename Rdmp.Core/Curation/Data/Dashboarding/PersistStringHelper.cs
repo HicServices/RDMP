@@ -186,7 +186,7 @@ public class PersistStringHelper
         if (!persistString.Contains(ExtraText))
             return null;
 
-        return persistString.Substring(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length);
+        return persistString[(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length)..];
     }
 
 

@@ -121,7 +121,7 @@ public class ExtractionTimeTimeCoverageAggregator
                         
                     //trim off times
                     if (Regex.IsMatch(valueAsString,"[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"))
-                        valueAsString = valueAsString.Substring(0, valueAsString.Length - "00:00:00".Length).Trim();
+                        valueAsString = valueAsString[..^"00:00:00".Length].Trim();
 
                     key = DateTime.ParseExact(valueAsString, "dd/MM/yyyy", null);
                 }

@@ -58,7 +58,7 @@ public class AllImportantClassesDocumented
 
             if (startAt != -1)
             {
-                var beforeDeclaration = text.Substring(0, startAt);
+                var beforeDeclaration = text[..startAt];
 
                 var mNamespace = Regex.Match(beforeDeclaration, "namespace (.*)");
 
@@ -121,8 +121,8 @@ public class AllImportantClassesDocumented
 
                     if(idxLastSlash != -1)
                         problems.Add(string.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})", 
-                            f.Substring(f.LastIndexOf("\\") + 1),
-                            f.Substring(0, idxLastSlash))
+                            f[(f.LastIndexOf("\\") + 1)..],
+                            f[..idxLastSlash])
                         );
                     else
                         problems.Add($"FAIL UNDOCUMENTED CLASS:{f}");

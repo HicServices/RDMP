@@ -108,7 +108,7 @@ public class ConnectionStringTextBox : TextBox
             }
 
             //get last thing user is typing
-            var lastBitBeingTyped = Text.Substring(Text.LastIndexOf(";") + 1);
+            var lastBitBeingTyped = Text[(Text.LastIndexOf(";") + 1)..];
 
             if (string.IsNullOrWhiteSpace(lastBitBeingTyped) //user has not typed anything or has just put in a ;
                 ||

@@ -329,7 +329,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             return t.Name;
         var sb = new StringBuilder();
 
-        sb.Append(t.Name.Substring(0, t.Name.LastIndexOf("`")));
+        sb.Append(t.Name[..t.Name.LastIndexOf("`")]);
         sb.Append(t.GetGenericArguments().Aggregate("<",
 
             delegate(string aggregate, Type type)

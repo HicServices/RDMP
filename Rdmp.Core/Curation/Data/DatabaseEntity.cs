@@ -358,7 +358,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
 
             if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
             {
-                representation = $"{representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3)}...";
+                representation = $"{representation[..(MAX_SUMMARY_ITEM_LENGTH - 3)]}...";
             }
 
             if (representation.Contains('\n'))

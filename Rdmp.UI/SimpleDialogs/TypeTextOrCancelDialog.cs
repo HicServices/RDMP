@@ -54,7 +54,7 @@ public partial class TypeTextOrCancelDialog : Form
            
 
         if (header != null && header.Length > WideMessageBox.MAX_LENGTH_TITLE)
-            header = header.Substring(0, WideMessageBox.MAX_LENGTH_TITLE);
+            header = header[..WideMessageBox.MAX_LENGTH_TITLE];
 
         taskDescriptionLabel1.SetupFor(args);
 

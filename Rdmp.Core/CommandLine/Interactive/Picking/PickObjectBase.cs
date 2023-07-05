@@ -143,7 +143,7 @@ public abstract class PickObjectBase
         if(!keyValueString.StartsWith(key,StringComparison.CurrentCultureIgnoreCase))
             throw new ArgumentException($"Provided value '{keyValueString}' did not start with expected key '{key}'");
 
-        return keyValueString.Substring(key.Length).Trim(':');
+        return keyValueString[key.Length..].Trim(':');
     }
 
     public virtual IEnumerable<string> GetAutoCompleteIfAny()

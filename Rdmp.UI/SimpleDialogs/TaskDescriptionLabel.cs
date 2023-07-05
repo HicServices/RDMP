@@ -33,7 +33,7 @@ public partial class TaskDescriptionLabel : UserControl
         tbEntryLabel.Visible = pnlEntryLabel.Visible = !string.IsNullOrWhiteSpace(entryLabel);
 
         if (entryLabel != null && entryLabel.Length > WideMessageBox.MAX_LENGTH_BODY)
-            entryLabel = entryLabel.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
+            entryLabel = entryLabel[..WideMessageBox.MAX_LENGTH_BODY];
 
         // set prompt text. If theres a TaskDescription too then leave a bit of extra space
         tbEntryLabel.Text = entryLabel;

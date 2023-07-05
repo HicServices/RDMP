@@ -73,7 +73,7 @@ public partial class HelpIcon : UserControl
             return hoverText;
 
         //enforce a maximum of 150 characters
-        return $"{hoverText.Substring(0, MaxHoverTextLength - 3)}...";
+        return $"{hoverText[..(MaxHoverTextLength - 3)]}...";
     }
 
     private void HelpIcon_MouseClick(object sender, MouseEventArgs e)

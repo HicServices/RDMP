@@ -137,7 +137,7 @@ public class SuspiciousRelationshipPropertyUse
                 {
                         
                     var firstLetter = p.Name.ToLower()[0];
-                    var fieldName = $"_{firstLetter}{p.Name.Substring(1)}";
+                    var fieldName = $"_{firstLetter}{p.Name[1..]}";
                     var typeName = p.PropertyType.Name;
                         
                     if (typeName == "String")

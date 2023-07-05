@@ -205,7 +205,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         if (result.DestinationDescription.StartsWith(Project.ExtractionDirectory,
                 StringComparison.CurrentCultureIgnoreCase))
         {
-            var relative = result.DestinationDescription.Substring(Project.ExtractionDirectory.Length).Replace('\\', '/');
+            var relative = result.DestinationDescription[Project.ExtractionDirectory.Length..].Replace('\\', '/');
                 
             return $"./{relative.Trim('/')}";
         }

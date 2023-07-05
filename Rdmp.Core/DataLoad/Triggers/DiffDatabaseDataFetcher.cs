@@ -254,7 +254,7 @@ Join
             foreach (DataColumn column in dtComboTable.Columns)
             {
                 if (column.ColumnName.StartsWith(zzArchive,StringComparison.InvariantCultureIgnoreCase))
-                    replacedRow[column.ColumnName.Substring(zzArchive.Length)] = fromRow[column];
+                    replacedRow[column.ColumnName[zzArchive.Length..]] = fromRow[column];
                 else
                     newRow[column.ColumnName] = fromRow[column];
             }

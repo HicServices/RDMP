@@ -158,7 +158,7 @@ public class MicrosoftSQLTriggerImplementer:TriggerImplementer
             updateValidToWhere += $"[{_table}].[{key}] = deleted.[{key}] AND ";
 
         //trim off last AND
-        updateValidToWhere = updateValidToWhere.Substring(0, updateValidToWhere.Length - "AND ".Length);
+        updateValidToWhere = updateValidToWhere[..^"AND ".Length];
 
         var InsertedToDeletedJoin = "JOIN inserted i ON ";
         InsertedToDeletedJoin += GetTableToTableEqualsSqlWithPrimaryKeys("i", "d");
@@ -220,7 +220,7 @@ END
             toReturn += $" [{table1}].[{key.GetRuntimeName()}] = [{table2}].[{key.GetRuntimeName()}] AND ";
 
         //trim off last AND
-        toReturn = toReturn.Substring(0, toReturn.Length - "AND ".Length);
+        toReturn = toReturn[..^"AND ".Length];
             
         return toReturn;
     }
@@ -238,7 +238,7 @@ END
 
         var startExtractingColumnsAt = matchStartColumnExtraction.Index + matchStartColumnExtraction.Length;
         //trim off excess crud at start and we should have just the columns bit of the create (plus crud at the end)
-        columnsInArchive = sqlUsedToCreateArchiveTableSQL.Substring(startExtractingColumnsAt);
+        columnsInArchive = sqlUsedToCreateArchiveTableSQL[startExtractingColumnsAt..];
 
         //trim off excess crud at the end
         columnsInArchive = columnsInArchive.Trim(new[] {')', '\r', '\n'});

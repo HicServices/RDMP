@@ -146,8 +146,8 @@ public class ExecuteCommandSimilar : BasicCommandExecution
             return false;
 
         return string.Equals(
-            name1.Substring(Math.Max(0,name1.LastIndexOf('.'))).Trim(trimChars),
-            name2.Substring(Math.Max(0,name2.LastIndexOf('.'))).Trim(trimChars),
+            name1[Math.Max(0,name1.LastIndexOf('.'))..].Trim(trimChars),
+            name2[Math.Max(0,name2.LastIndexOf('.'))..].Trim(trimChars),
             comparisonType);
     }
 

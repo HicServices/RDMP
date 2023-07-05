@@ -358,8 +358,8 @@ public class ConsoleInputManager : BasicActivateItems
             if(idxLastSlash == -1 || asteriskIdx < idxLastSlash)
                 throw new Exception("Wildcards are only supported at the file level");
 
-            var searchPattern = file.Substring(idxLastSlash+1);
-            var dirStr = file.Substring(0,idxLastSlash);
+            var searchPattern = file[(idxLastSlash+1)..];
+            var dirStr = file[..idxLastSlash];
                     
             var dir = new DirectoryInfo(dirStr);
 

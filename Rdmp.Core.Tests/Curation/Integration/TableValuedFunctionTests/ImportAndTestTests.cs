@@ -89,7 +89,7 @@ public class ImportAndTestTests : DatabaseTests
             db.Server.GetCommand("drop function MyAwesomeFunction", con).ExecuteNonQuery();
 
             //create it within the scope of the transaction
-            var cmd = db.Server.GetCommand(_function.CreateFunctionSQL.Substring(_function.CreateFunctionSQL.IndexOf("GO") + 3), con);
+            var cmd = db.Server.GetCommand(_function.CreateFunctionSQL[(_function.CreateFunctionSQL.IndexOf("GO") + 3)..], con);
             cmd.ExecuteNonQuery();
 
             Assert.IsTrue(db.DiscoverTableValuedFunctions(con.ManagedTransaction).Any(tbv => tbv.GetRuntimeName().Equals("MyAwesomeFunction")));

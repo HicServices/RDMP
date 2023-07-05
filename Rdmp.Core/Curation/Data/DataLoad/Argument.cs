@@ -365,7 +365,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         //if it is interface e.g. ITableInfo fetch instead the TableInfo object
         if (type.IsInterface && type.Name.StartsWith("I"))
         {
-            var candidate = CatalogueRepository.MEF.GetType(type.Name.Substring(1)); // chop the 'I' off
+            var candidate = CatalogueRepository.MEF.GetType(type.Name[1..]); // chop the 'I' off
 
             if (!candidate.IsAbstract)
                 return candidate;

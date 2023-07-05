@@ -57,7 +57,7 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
             return sql + Environment.NewLine + impromptuSql;
             
         //there is a group by
-        return sql.Substring(0, insertionPoint) + Environment.NewLine + impromptuSql + Environment.NewLine + sql.Substring(insertionPoint, sql.Length - insertionPoint);
+        return sql[..insertionPoint] + Environment.NewLine + impromptuSql + Environment.NewLine + sql.Substring(insertionPoint, sql.Length - insertionPoint);
     }
         
     public void PreInitialize(ExtractableCohort value, IDataLoadEventListener listener)

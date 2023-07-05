@@ -121,7 +121,7 @@ public partial class WideMessageBox : Form
         //if there is a title
         if (!string.IsNullOrWhiteSpace(title))
         {
-            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title.Substring(0,MAX_LENGTH_TITLE): title;
+            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title[..MAX_LENGTH_TITLE]: title;
         }
         else
         {
@@ -173,7 +173,7 @@ public partial class WideMessageBox : Form
                 var stringval = v == null || v == DBNull.Value ? "NULL" : v.ToString();
 
                 if(stringval.Length > MAX_LENGTH_ELEMENT)
-                    stringval = $"{stringval.Substring(0, MAX_LENGTH_ELEMENT)}...";
+                    stringval = $"{stringval[..MAX_LENGTH_ELEMENT]}...";
 
                 sb.AppendLine($"{c.Name}:{stringval}");
             }
@@ -273,7 +273,7 @@ public partial class WideMessageBox : Form
             message = "";            
 
         if(message.Length > MAX_LENGTH_BODY)
-            message = message.Substring(0,MAX_LENGTH_BODY);
+            message = message[..MAX_LENGTH_BODY];
 
         //if we don't have help documentation available just set the message without looking for hyperlinks
         if (CommentStore == null)

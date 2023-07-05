@@ -101,7 +101,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
                 if (errorIsInColumnOrder == j)
                 {
                     sql += colSql.Replace("(50)", "(1)");
-                    errorColumn = colSql.Substring(0, colSql.IndexOf(" "));
+                    errorColumn = colSql[..colSql.IndexOf(" ")];
 
                     if (errorColumn == "id")
                         invalid = true;
@@ -142,7 +142,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
             var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
             var exceptionMessage = ex.InnerException.Message;
-            var interestingBit = exceptionMessage.Substring(exceptionMessage.IndexOf(": <<") + ": ".Length);
+            var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<") + ": ".Length)..];
                 
             var expectedErrorMessage =
                 $"<<{errorColumn}>> which had value <<{dt1.Rows[0][errorColumn]}>> destination data type was <<varchar(1)>>";
@@ -201,7 +201,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(), token));
 
         var exceptionMessage = ex.InnerException.Message;
-        var interestingBit = exceptionMessage.Substring(exceptionMessage.IndexOf(": <<") + ": ".Length);
+        var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<") + ": ".Length)..];
 
         var expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
         StringAssert.Contains(expectedErrorMessage, interestingBit);

@@ -42,7 +42,7 @@ public class Patch : IComparable
             return $"Patch {DatabaseVersionNumber}";
 
         if(Description.Length> 100)
-            return $"Patch {DatabaseVersionNumber}({Description.Substring(0, 100)}...)";
+            return $"Patch {DatabaseVersionNumber}({Description[..100]}...)";
 
         return $"Patch {DatabaseVersionNumber}({Description})";
 
@@ -57,7 +57,7 @@ public class Patch : IComparable
         if (idx == -1)
             throw new InvalidPatchException(locationInAssembly, $"Script does not start with {VersionKey}");
 
-        var versionNumber = lines[0].Substring(idx + VersionKey.Length).Trim(':',' ','\n','\r','/','*');
+        var versionNumber = lines[0][(idx + VersionKey.Length)..].Trim(':',' ','\n','\r','/','*');
 
         try
         {
@@ -77,7 +77,7 @@ public class Patch : IComparable
                 throw new InvalidPatchException(locationInAssembly,
                     $"Second line of patch scripts must start with {DescriptionKey}");
 
-            var description = lines[1].Substring(idx + DescriptionKey.Length).Trim(':', ' ', '\n', '\r', '/', '*');
+            var description = lines[1][(idx + DescriptionKey.Length)..].Trim(':', ' ', '\n', '\r', '/', '*');
             Description = description;
         } 
     }

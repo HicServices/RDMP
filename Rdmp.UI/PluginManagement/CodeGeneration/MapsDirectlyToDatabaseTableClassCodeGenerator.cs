@@ -75,7 +75,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
             var fieldString = col.GetRuntimeName();
                 
             //cammel case it
-            fieldString = $"_{fieldString.Substring(0, 1).ToLower()}{fieldString.Substring(1)}";
+            fieldString = $"_{fieldString[..1].ToLower()}{fieldString[1..]}";
 
             databaseFields.AppendLine($"\tprivate {type} {fieldString};");
 
