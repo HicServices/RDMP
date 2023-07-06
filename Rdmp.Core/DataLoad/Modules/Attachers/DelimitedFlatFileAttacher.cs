@@ -116,8 +116,7 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         {
             Separator = separator.ToString(),
             StronglyTypeInput = false,
-            StronglyTypeInputBatchSize = 0,
-            Culture = Culture
+            StronglyTypeInputBatchSize = 0
         };
     }
 
