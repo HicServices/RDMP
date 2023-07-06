@@ -27,9 +27,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
 {
     private readonly IObjectCollectionControl _control;
-        
+
     public const string Prefix = "RDMPObjectCollection";
-        
+
     private PersistStringHelper persistStringHelper = new PersistStringHelper();
 
     public IPersistableObjectCollection Collection => _control.GetCollection();
@@ -68,7 +68,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         return sb.ToString();
     }
 
-        
+
 
     public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {

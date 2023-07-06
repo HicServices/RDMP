@@ -91,7 +91,7 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         task.Check(new ThrowImmediatelyCheckNotifier());
         var configuration = new HICDatabaseConfiguration(db.Server);
 
-        var job = Mock.Of<IDataLoadJob>(x => 
+        var job = Mock.Of<IDataLoadJob>(x =>
             x.RegularTablesToLoad == new List<ITableInfo> {ti} &&
             x.LookupTablesToLoad == new List<ITableInfo>() &&
             x.Configuration == configuration);
@@ -117,14 +117,11 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         Import(tbl,out var ti, out var cols);
 
         var sql = @"UPDATE {T:0} Set {C:0} = 1";
-            
-        IRuntimeTask task;
-        IProcessTask pt;
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
 #pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
-        var sqlArg = new IArgument[]{Mock.Of<IArgument>(x => 
+        var sqlArg = new IArgument[]{Mock.Of<IArgument>(x =>
             x.Name == "Sql" &&
             x.Value == sql &&
             x.GetValueAsSystemType() == sql) };
@@ -132,13 +129,13 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 
-        pt = Mock.Of<IProcessTask>(x => 
+        var pt = Mock.Of<IProcessTask>(x =>
             x.Path == typeof(ExecuteSqlMutilation).FullName &&
             x.GetAllArguments() == sqlArg
         );
 
-        task = new MutilateDataTablesRuntimeTask(pt,args,CatalogueRepository.MEF);
-                        
+        IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt,args,CatalogueRepository.MEF);
+
         task.Check(new ThrowImmediatelyCheckNotifier());
         var configuration = new HICDatabaseConfiguration(db.Server);
 
@@ -191,11 +188,11 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         task.Check(new ThrowImmediatelyCheckNotifier());
 
 
-        //create a namer that tells the user 
+        //create a namer that tells the user
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);
         var configuration = new HICDatabaseConfiguration(db.Server,namer);
 
-        var job = Mock.Of<IDataLoadJob>(x => 
+        var job = Mock.Of<IDataLoadJob>(x =>
             x.RegularTablesToLoad == new List<ITableInfo> { ti }&&
             x.LookupTablesToLoad == new List<ITableInfo>() &&
             x.Configuration == configuration);

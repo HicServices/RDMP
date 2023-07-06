@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataViewing;
 public class ArbitraryTableExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
 {
     private DiscoveredTable _table;
-        
+
     public DatabaseType DatabaseType { get; set; }
 
     private Dictionary<string, string> _arguments = new Dictionary<string, string>();

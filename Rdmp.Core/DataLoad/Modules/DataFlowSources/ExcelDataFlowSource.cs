@@ -39,7 +39,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     [DemandsInitialization(WorkSheetName_DemandDescription)]
     public string WorkSheetName { get; set; }
-        
+
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
     public bool MakeHeaderNamesSane { get; set; }
 
@@ -49,7 +49,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     private FlatFileToLoad _fileToLoad;
     private DataTable dataReadFromFile;
     private bool haveDispatchedDataTable = false;
-        
+
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         if (dataReadFromFile == null)
@@ -62,7 +62,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             
         return dataReadFromFile;
     }
-        
+
     private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         var sw = new Stopwatch();
@@ -85,10 +85,9 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
             try
             {
-                ISheet worksheet;
-
-                //if the user hasn't picked one, use the first
-                worksheet = string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName);
+                var worksheet =
+                    //if the user hasn't picked one, use the first
+                    string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName);
 
                 if (worksheet == null)
                     throw new FlatFileLoadException(string.Format("The Excel sheet '{0}' was not found in workbook '{1}'", WorkSheetName, _fileToLoad.File.Name));
@@ -117,7 +116,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             return toReturn;
         }
     }
-        
+
     /// <summary>
     /// Returns all data held in the current <paramref name="worksheet"/>.  The first row of data becomes the headers.  Throws away fully blank columns/rows.
     /// </summary>
@@ -226,7 +225,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                     if (IsDateWithoutTime(format))
                         return cell.DateCellValue.ToString("yyyy-MM-dd");
-                        
+
                     if(IsDateWithTime(format))
                         return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -333,7 +332,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
         return string.IsNullOrWhiteSpace(o.ToString());
     }
-        
+
     public void Check(ICheckNotifier notifier)
     {
         if (_fileToLoad != null)

@@ -27,7 +27,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 /// Filters, Aggregates, Extractions etc can all make use of SQL parameters (e.g. @drugName).  This dialog appears any time you are viewing/editing the parameters associated with a
 /// given parameter use case.  If you do not understand what SQL parameters (aka variables) are then you should read up on this before using this control.
 /// 
-/// <para>The following help instructions will relate to the context of editing a Filter and configuring some parameters but is equally applicable to configuring global parameters on an 
+/// <para>The following help instructions will relate to the context of editing a Filter and configuring some parameters but is equally applicable to configuring global parameters on an
 /// extraction or in a cohort identification configuration etc.</para>
 /// 
 /// <para>The first time you use a parameter in your filter (e.g. @drugName), a template SQL Parameter will be created (probably as a varchar(50)).  You should adjust the Declare SQL such
@@ -39,7 +39,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 /// 'Overriding' parameters, these are available for use at lower levels but cannot be changed (because the new Value would be applied to all users of the global i.e. all datasets in the
 /// extraction, not just the one you are editing).</para>
 /// 
-/// <para>So to return to the above example, if you create a filter 'Prescriptions collected after date X' with the SQL 'dateCollected > @dateOfCollection'.  When you save the Filter the 
+/// <para>So to return to the above example, if you create a filter 'Prescriptions collected after date X' with the SQL 'dateCollected > @dateOfCollection'.  When you save the Filter the
 /// parameter @dateOfCollection will be created (unless there is already a global with the same name/type).</para>
 /// 
 /// <para>Sometimes the Globals are explicit fixed value parameters for example the @ProjectNumber in a data extraction, in this case the Parameter cannot be modified period.</para>
@@ -57,7 +57,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         olvParameterName.GroupKeyGetter += GroupKeyGetter;
         olvParameters.AboutToCreateGroups +=olvParameters_AboutToCreateGroups;
         olvParameters.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
-            
+
         olvParameterName.ImageGetter += ImageGetter;
         olvParameterName.AspectGetter += ParameterName_AspectGetter;
 
@@ -117,7 +117,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             currentGroup.Header = $"{currentGroup.Header} (current)";
 
         e.Groups = e.Groups.OrderBy(g => g.SortValue).ToList();
-            
+
     }
 
     public void Clear()
@@ -130,12 +130,12 @@ public partial class ParameterCollectionUI : RDMPUserControl
         miAddNewParameter.Enabled = Options.CanNewParameters();
 
         olvParameters.ClearObjects();
-            
+
         //add all parameters from all levels
         foreach (ParameterLevel level in Enum.GetValues(typeof (ParameterLevel)))
         {
             var parametersFoundAtThisLevel = Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[level];
-                
+
             //add them to the collection
             if (parametersFoundAtThisLevel.Any())
                 olvParameters.AddObjects(parametersFoundAtThisLevel);
@@ -215,7 +215,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     public void SetUp(ParameterCollectionUIOptions options,IActivateItems activator)
     {
         Options = options;
-            
+
         SetItemActivator(activator);
 
         hiParameters.SetHelpText("Use Case",options.UseCase);
@@ -234,10 +234,10 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (dialog.ShowDialog() == DialogResult.OK)
         {
             var newParameter = Options.CreateNewParameter(dialog.ResultText.Trim());
-                
+
             Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
-                
-            RefreshParametersFromDatabase();   
+
+            RefreshParametersFromDatabase();
         }
     }
 
@@ -285,7 +285,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             {
                 oldParameterName = null;
             }
-                
+
         }
 
         if(e.Column.Index == olvParameterSQL.Index)
@@ -310,7 +310,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
             if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
                 revertable.SaveToDatabase();
-                
+
             //if the name has changed handle renaming
             if(oldParameterName != null)
                 if (Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
@@ -334,9 +334,9 @@ public partial class ParameterCollectionUI : RDMPUserControl
         }
         else
             throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
-         
+
     }
-        
+
     private object GroupKeyGetter(object rowObject)
     {
         var sqlParameter = (ISqlParameter)rowObject;
@@ -389,13 +389,13 @@ public partial class ParameterCollectionUI : RDMPUserControl
         {
 
             var sqlParameter = (ISqlParameter)rowObject;
-            
+
             if (parameterEditorScintillaControl1.ProblemObjects.ContainsKey(sqlParameter))
                 return "Warning.png";
 
             if (Options.IsOverridden(sqlParameter))
                 return "Overridden.png";
-          
+
             if(Options.IsHigherLevel(sqlParameter))
                 return "Locked.png";
         }
@@ -406,7 +406,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         return null;
     }
 
-    private object OwnerAspectGetter(object rowobject)
+    private static object OwnerAspectGetter(object rowobject)
     {
         var parameter = (ISqlParameter) rowobject;
         var owner = parameter.GetOwnerIfAny();
@@ -421,16 +421,13 @@ public partial class ParameterCollectionUI : RDMPUserControl
     {
         var param = olvParameters.SelectedObject as ISqlParameter;
 
-        miOverrideParameter.Enabled = false;
-
-        if(CanOverride(param))
-            miOverrideParameter.Enabled = true;
+        miOverrideParameter.Enabled = CanOverride(param);
     }
 
     private bool CanOverride(ISqlParameter sqlParameter)
     {
         if(sqlParameter != null)
-            //if it is not already overridden 
+            //if it is not already overridden
             if (!Options.IsOverridden(sqlParameter) &&
                 //and it exists at a lower level
                 Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel)
@@ -452,7 +449,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         newParameter.Value = param.Value;
         newParameter.Comment = param.Comment;
         newParameter.SaveToDatabase();
-            
+
         Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
         RefreshParametersFromDatabase();
     }
@@ -463,5 +460,5 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (e.RowObject is ISqlParameter p && Options.ShouldBeReadOnly(p))
             e.Cancel = true;
     }
-        
+
 }

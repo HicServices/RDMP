@@ -35,8 +35,8 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
     public string GetSql()
     {
         BuildRequest();
-            
-        //get the SQL from the query builder 
+
+        //get the SQL from the query builder
         return _request.QueryBuilder.SQL;
     }
 

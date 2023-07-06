@@ -32,7 +32,7 @@ public class PreExecutionChecker :  ICheckable
     /// </summary>
     public bool HardFail { get; private set; }
 
-    public PreExecutionChecker(ILoadMetadata loadMetadata, HICDatabaseConfiguration overrideDatabaseConfiguration) 
+    public PreExecutionChecker(ILoadMetadata loadMetadata, HICDatabaseConfiguration overrideDatabaseConfiguration)
     {
         _loadMetadata = loadMetadata;
         _databaseConfiguration = overrideDatabaseConfiguration ?? new HICDatabaseConfiguration(loadMetadata);
@@ -64,7 +64,7 @@ public class PreExecutionChecker :  ICheckable
             var createDatabase = _notifier.OnCheckPerformed(new CheckEventArgs($"{failureMessage}: {dbInfo}", CheckResult.Fail, null,
                 $"Create {dbInfo.GetRuntimeName()} on {dbInfo.Server.Name}"));
 
-                
+
             if (createDatabase)
                 dbInfo.Server.CreateDatabase(dbInfo.GetRuntimeName());
         }
@@ -86,9 +86,7 @@ public class PreExecutionChecker :  ICheckable
 
         if (alreadyExistingTableInfosThatShouldntBeThere.Any())
         {
-            bool nukeTables;
-
-            nukeTables = _notifier.OnCheckPerformed(new CheckEventArgs(
+            var nukeTables = _notifier.OnCheckPerformed(new CheckEventArgs(
                 $"The following tables: '{alreadyExistingTableInfosThatShouldntBeThere.Aggregate("", (s, n) => $"{s}{n},")}' exists in the Staging database ({stagingDbInfo.GetRuntimeName()}) but the database load configuration requires that tables are created during the load process",
                 CheckResult.Fail, null, "Drop the tables"));
 
@@ -128,7 +126,7 @@ public class PreExecutionChecker :  ICheckable
 
             var tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
             var table = dbInfo.ExpectTable(tableName);
-                    
+
             if(!table.Exists())
                 throw new Exception(
                     $"PreExecutionChecker spotted that table does not exist:{table} it was about to check whether the TableInfo matched the columns or not");
@@ -202,10 +200,10 @@ public class PreExecutionChecker :  ICheckable
         }
     }
 
- 
+
     private ICheckNotifier _notifier;
 
- 
+
     public void Check(ICheckNotifier notifier)
     {
         _notifier = notifier;
@@ -248,7 +246,7 @@ public class PreExecutionChecker :  ICheckable
             
     }
 
-        
+
 
     private void AtLeastOneTaskCheck()
     {
@@ -258,7 +256,7 @@ public class PreExecutionChecker :  ICheckable
                     $"There are no ProcessTasks defined for '{_loadMetadata}'",
                     CheckResult.Fail));
     }
-                
+
     public static void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo))

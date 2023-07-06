@@ -24,7 +24,7 @@ namespace Rdmp.Core.Reports.ExtractionTime;
 
 /// <summary>
 /// Generates a Microsoft Word docx file containing information about a researchers extract including the file generated, the number of rows, distinct patients, the
-/// filters used in the extraction query, any parameters etc.  Optionally includes a validation table which counts the number of rows extracted that passed ValidationXML 
+/// filters used in the extraction query, any parameters etc.  Optionally includes a validation table which counts the number of rows extracted that passed ValidationXML
 /// </summary>
 public class WordDataWriter : DocXHelper
 {
@@ -48,7 +48,7 @@ public class WordDataWriter : DocXHelper
             throw new NotSupportedException(
                 $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
-        
+
     private static object oLockOnWordUsage = new object();
     private IExecuteDatasetExtractionDestination _destination;
 
@@ -212,8 +212,7 @@ public class WordDataWriter : DocXHelper
 
         if (fc != null)
         {
-            List<IFilter> filtersUsed;
-            filtersUsed = fc.GetAllFiltersIncludingInSubContainersRecursively();
+            var filtersUsed = fc.GetAllFiltersIncludingInSubContainersRecursively();
 
             WriteOutFilters(document,filtersUsed);
 
@@ -302,12 +301,12 @@ public class WordDataWriter : DocXHelper
                     supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", "Value was always NULL"));
                 else
                     supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", value.DataTypeObservedInRuntimeBuffer.ToString()));
-                
+
 
             //add it with supplemental values
             if(value.CatalogueItem != null)
                 supplementalData.Add(value.CatalogueItem ,supplementalValuesForThisOne.ToArray());
-                
+
         }
 
         catalogueMetaData.AddMetaDataForColumns(supplementalData.Keys.ToArray(),supplementalData);
