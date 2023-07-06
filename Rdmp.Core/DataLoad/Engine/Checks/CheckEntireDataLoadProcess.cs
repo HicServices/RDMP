@@ -55,7 +55,7 @@ public class CheckEntireDataLoadProcess :  ICheckable
                 try
                 {
                     var f = new CacheLayoutFactory();
-                    f.CreateCacheLayout(loadProgress,LoadMetadata);
+                    CacheLayoutFactory.CreateCacheLayout(loadProgress,LoadMetadata);
                 }
                 catch (Exception e)
                 {

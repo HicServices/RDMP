@@ -132,7 +132,7 @@ public class WordCatalogueExtractor: DocXHelper
         return count;
     }
 
-    private void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o, Tuple<string,string>[] supplementalData )
+    private static void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o, Tuple<string,string>[] supplementalData )
     {
         var propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 

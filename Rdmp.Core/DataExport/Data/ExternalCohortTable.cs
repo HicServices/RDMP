@@ -249,7 +249,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public bool IDExistsInCohortTable(int originID)
     {
-        var server = DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport);
+        var server = DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport);
             
         using (var con = server.GetConnection())
         {
@@ -315,7 +315,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         try
         {
-            DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport).TestConnection();
+            DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport).TestConnection();
               
             notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success, null));
         }

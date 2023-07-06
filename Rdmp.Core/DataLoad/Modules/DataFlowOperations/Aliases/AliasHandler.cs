@@ -139,7 +139,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
         var toReturn = new Dictionary<object, List<object>>();
 
-        var server = DataAccessPortal.GetInstance().ExpectServer(ServerToExecuteQueryOn, DataAccessContext);
+        var server = DataAccessPortal.ExpectServer(ServerToExecuteQueryOn, DataAccessContext);
 
         using (var con = server.GetConnection())
         {

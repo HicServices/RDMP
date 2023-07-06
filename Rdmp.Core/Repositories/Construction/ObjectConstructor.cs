@@ -32,7 +32,7 @@ public class ObjectConstructor
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
-    public object Construct(Type t)
+    public static object Construct(Type t)
     {
         return GetUsingBlankConstructor(t);
     }
@@ -46,9 +46,9 @@ public class ObjectConstructor
     /// <param name="serviceLocator"></param>
     /// <param name="allowBlank"></param>
     /// <returns></returns>
-    public object Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator,bool allowBlank = true)
+    public static object Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator,bool allowBlank = true)
     {
-        return Construct<IRDMPPlatformRepositoryServiceLocator>(t,serviceLocator, allowBlank);
+        return ObjectConstructor.Construct(t,serviceLocator, allowBlank);
     }
 
     /// <summary>
@@ -58,9 +58,9 @@ public class ObjectConstructor
     /// <param name="catalogueRepository"></param>
     /// <param name="allowBlank"></param>
     /// <returns></returns>
-    public object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true)
+    public static object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true)
     {
-        return Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
+        return ObjectConstructor.Construct(t, catalogueRepository, allowBlank);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class ObjectConstructor
     /// <param name="repositoryOfTypeT"></param>
     /// <param name="reader"></param>
     /// <returns></returns>
-    public IMapsDirectlyToDatabaseTable ConstructIMapsDirectlyToDatabaseObject<T>(Type objectType, T repositoryOfTypeT, DbDataReader reader) where T : IRepository
+    public static IMapsDirectlyToDatabaseTable ConstructIMapsDirectlyToDatabaseObject<T>(Type objectType, T repositoryOfTypeT, DbDataReader reader) where T : IRepository
     {
         // Preferred constructor
         var constructors = GetConstructors<T, DbDataReader>(objectType);
@@ -96,7 +96,7 @@ public class ObjectConstructor
     /// <param name="constructorParameter1">a value to feed into the compatible constructor found for Type typeToConstruct in order to produce an instance</param>
     /// <param name="allowBlank">true to allow calling the blank constructor if no matching constructor is found that takes a T</param>
     /// <returns></returns>
-    public object Construct<T>(Type typeToConstruct, T constructorParameter1, bool allowBlank = true)
+    public static object Construct<T>(Type typeToConstruct, T constructorParameter1, bool allowBlank = true)
     {
         var repositoryLocatorConstructorInfos = GetConstructors<T>(typeToConstruct);
 
@@ -183,7 +183,7 @@ public class ObjectConstructor
     /// <param name="allowPrivate"></param>
     /// <param name="parameterObjects"></param>
     /// <returns></returns>
-    public Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor, bool allowPrivate, params object[] parameterObjects)
+    public static Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor, bool allowPrivate, params object[] parameterObjects)
     {
         var toReturn = new Dictionary<ConstructorInfo, List<object>>();
 
@@ -306,7 +306,7 @@ public class ObjectConstructor
     /// <param name="typeToConstruct"></param>
     /// <param name="constructorValues"></param>
     /// <returns></returns>
-    public object ConstructIfPossible(Type typeToConstruct, params object[] constructorValues)
+    public static object ConstructIfPossible(Type typeToConstruct, params object[] constructorValues)
     {
         var compatible = new List<ConstructorInfo>();
 

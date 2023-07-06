@@ -98,7 +98,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     private DiscoveredDatabase GetLiveDatabaseInfo()
     {
         var timePeriodicityTable = TimePeriodicityField.TableInfo;
-        return DataAccessPortal.GetInstance().ExpectDatabase(timePeriodicityTable, DataAccessContext.DataLoad);
+        return DataAccessPortal.ExpectDatabase(timePeriodicityTable, DataAccessContext.DataLoad);
     }
 
     /// <summary>

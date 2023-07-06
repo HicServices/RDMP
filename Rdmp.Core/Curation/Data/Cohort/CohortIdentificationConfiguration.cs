@@ -590,7 +590,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <param name="underlyingExtractionInformation"></param>
     /// <param name="resolveMultipleExtractionIdentifiers"></param>
     /// <returns></returns>
-    private IColumn GetExtractionIdentifierFrom(AggregateConfiguration toClone, out ExtractionInformation underlyingExtractionInformation, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
+    private static IColumn GetExtractionIdentifierFrom(AggregateConfiguration toClone, out ExtractionInformation underlyingExtractionInformation, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
     {
         //make sure it can be cloned before starting
 

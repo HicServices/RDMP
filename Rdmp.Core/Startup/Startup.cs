@@ -215,7 +215,7 @@ public class Startup
         {
             try
             {
-                var builder = DataAccessPortal.GetInstance()
+                var builder = DataAccessPortal
                     .ExpectServer(server, DataAccessContext.InternalDataProcessing)
                     .Builder;
 

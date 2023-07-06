@@ -75,7 +75,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         var constructor = new ObjectConstructor();
 
         foreach (var operationType in repositoryLocator.CatalogueRepository.MEF.GetTypes<IDilutionOperation>())
-            DilutionOperations.Add((IDilutionOperation)constructor.Construct(operationType));
+            DilutionOperations.Add((IDilutionOperation)ObjectConstructor.Construct(operationType));
     }
 
     public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICatalogue catalogue): this(repositoryLocator)
@@ -171,7 +171,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         var refactorer = new SelectSQLRefactorer();
 
         foreach (var e in _allExtractionInformations)
-            if (!refactorer.IsRefactorable(e))
+            if (!SelectSQLRefactorer.IsRefactorable(e))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"ExtractionInformation '{e}' is a not refactorable due to reason:{SelectSQLRefactorer.GetReasonNotRefactorable(e)}", CheckResult.Fail));
             

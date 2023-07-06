@@ -409,7 +409,7 @@ public class ConsoleInputManager : BasicActivateItems
     public override void ShowData(IViewSQLAndResultsCollection collection)
     {
         var point = collection.GetDataAccessPoint();
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(point,DataAccessContext.InternalDataProcessing);
+        var db = DataAccessPortal.ExpectDatabase(point,DataAccessContext.InternalDataProcessing);
 
         var sql = collection.GetSql();
 

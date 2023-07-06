@@ -120,14 +120,14 @@ public class DitaCatalogueExtractor : ICheckable
 
       
 
-    private string GetFileNameForCatalogueItem(Catalogue c,CatalogueItem ci)
+    private static string GetFileNameForCatalogueItem(Catalogue c,CatalogueItem ci)
     {
         var parentName = FixName(c.Acronym);
         var childName = FixName(ci.Name);
         return $"{parentName}_{childName}.dita";
     }
 
-    private string GetFileNameForCatalogue(Catalogue catalogue)
+    private static string GetFileNameForCatalogue(Catalogue catalogue)
     {
         return $"{FixName(catalogue.Name)}.dita";
     }
@@ -213,7 +213,7 @@ public class DitaCatalogueExtractor : ICheckable
         File.WriteAllText(saveLocation, xml);
     }
 
-    private string GenerateObjectPropertiesAsRowUsingReflection(object o)
+    private static string GenerateObjectPropertiesAsRowUsingReflection(object o)
     {
         var toReturnXml = "";
 

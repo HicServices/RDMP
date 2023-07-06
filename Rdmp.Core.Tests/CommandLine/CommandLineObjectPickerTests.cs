@@ -171,7 +171,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         new Catalogue(mem.CatalogueRepository, "mycata2"); //ID = 2
         new Catalogue(mem.CatalogueRepository, "mycata3"); //ID = 3
 
-        var picker = (PickObjectBase) oc.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
+        var picker = (PickObjectBase)ObjectConstructor.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
 
         Assert.IsNotEmpty(picker.Help,"No Help for picker {0}",picker);
         Assert.IsNotEmpty(picker.Format,"No Format for picker {0}",picker);

@@ -23,7 +23,7 @@ public class ExecuteCommandAlterTableName : AlterTableCommandExecution
             
         _refactorer = new SelectSQLRefactorer();
 
-        if (!_refactorer.IsRefactorable(TableInfo))
+        if (!SelectSQLRefactorer.IsRefactorable(TableInfo))
         {
             SetImpossible($"Cannot rename table because {SelectSQLRefactorer.GetReasonNotRefactorable(TableInfo)}");
             return;

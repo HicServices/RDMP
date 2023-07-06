@@ -255,7 +255,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 
     private static DbConnection GetConnectionToOtherTable(IDataAccessPoint tableInfo)
     {
-        return DataAccessPortal.GetInstance()
+        return DataAccessPortal
             .ExpectServer(tableInfo, DataAccessContext.InternalDataProcessing)
             .GetConnection();
     }

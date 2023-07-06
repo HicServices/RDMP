@@ -84,7 +84,7 @@ public class PersistStringHelper
     /// <param name="key"></param>
     /// <param name="persistString"></param>
     /// <returns></returns>
-    public string GetValueIfExistsFromPersistString(string key, string persistString)
+    public static string GetValueIfExistsFromPersistString(string key, string persistString)
     {
         var dict = LoadDictionaryFromString(persistString);
 

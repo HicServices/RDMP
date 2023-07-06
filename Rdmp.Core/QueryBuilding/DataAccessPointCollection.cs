@@ -109,7 +109,7 @@ public class DataAccessPointCollection
 
             try
             {
-                DataAccessPortal.GetInstance()
+                DataAccessPortal
                     .ExpectDistinctServer(tempList.ToArray(), DataAccessContext, false);
 
                 //now add to the proper collection
@@ -163,7 +163,7 @@ public class DataAccessPointCollection
         //they all have to be in the same server but do they also reside in the same database?
         var allOnSameDatabase = Points.Select(p => p.Database).Distinct().Count() == 1;
 
-        return DataAccessPortal.GetInstance().ExpectDistinctServer(Points.ToArray(),
+        return DataAccessPortal.ExpectDistinctServer(Points.ToArray(),
             DataAccessContext, allOnSameDatabase);
     }
 

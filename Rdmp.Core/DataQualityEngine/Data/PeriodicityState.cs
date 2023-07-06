@@ -54,7 +54,7 @@ public class PeriodicityState
         var toReturn = new Dictionary<DateTime, ArchivalPeriodicityCount>();
 
         var calc = new DatasetTimespanCalculator();
-        var result = calc.GetMachineReadableTimespanIfKnownOf(evaluation, discardOutliers);
+        var result = DatasetTimespanCalculator.GetMachineReadableTimespanIfKnownOf(evaluation, discardOutliers);
 
         var t = evaluation.DQERepository;
 

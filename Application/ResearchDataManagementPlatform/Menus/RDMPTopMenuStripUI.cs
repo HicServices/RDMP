@@ -142,7 +142,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         }
     }
 
-    private void SwitchTo(ConnectionStringsYamlFile yaml)
+    private static void SwitchTo(ConnectionStringsYamlFile yaml)
     {
         LaunchNew(yaml);
 

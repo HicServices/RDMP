@@ -101,6 +101,6 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
 
     internal DiscoveredDatabase Discover(DataAccessContext context)
     {
-        return DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+        return DataAccessPortal.ExpectDatabase(this, context);
     }
 }

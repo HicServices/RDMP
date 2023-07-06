@@ -440,7 +440,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (instruction.DatabaseObject != null && instruction.ObjectCollection != null)
             throw new ArgumentException("DeserializeInstruction cannot have both a DatabaseObject and an ObjectCollection");
 
-        var c = (Control)_constructor.Construct(instruction.UIControlType,activator,true);
+        var c = (Control)UIObjectConstructor.Construct(instruction.UIControlType,activator,true);
 
 
         //it has a database object so call SetDatabaseObject

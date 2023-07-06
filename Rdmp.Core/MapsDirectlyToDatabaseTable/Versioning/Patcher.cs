@@ -49,7 +49,7 @@ public abstract class Patcher:IPatcher
     /// <param name="description"></param>
     /// <param name="version"></param>
     /// <returns></returns>
-    protected string GetHeader(DatabaseType dbType, string description,Version version) => $"{CommentFor(dbType, Patch.VersionKey + version.ToString())}{Environment.NewLine}{CommentFor(dbType, Patch.DescriptionKey + description)}{Environment.NewLine}";
+    protected static string GetHeader(DatabaseType dbType, string description,Version version) => $"{CommentFor(dbType, Patch.VersionKey + version.ToString())}{Environment.NewLine}{CommentFor(dbType, Patch.DescriptionKey + description)}{Environment.NewLine}";
 
     // some DBMS don't like the -- notation so we need to wrap with C style comments
     private static string CommentFor(DatabaseType dbType, string sql) =>

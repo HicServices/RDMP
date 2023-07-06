@@ -11,9 +11,11 @@ namespace Tests.Common;
 
 public class TestDatabasesSettings
 {
+#pragma warning disable CA1822 // Mark members as static - that upsets the YAML hack used for loading settings
     public string Prefix { get => TestDatabaseNames.Prefix;
         set => TestDatabaseNames.Prefix = value;
     }
+#pragma warning restore CA1822 // Mark members as static
 
     public string ServerName { get; set; }
     public string Username { get; set; }

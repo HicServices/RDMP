@@ -198,7 +198,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         {
             try
             {
-                PluginUserInterfaces.Add((IPluginUserInterface)constructor.Construct(pluginType, this, false));
+                PluginUserInterfaces.Add((IPluginUserInterface)ObjectConstructor.Construct(pluginType, this, false));
             }
             catch (Exception e)
             {

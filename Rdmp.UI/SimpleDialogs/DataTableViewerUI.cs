@@ -33,7 +33,7 @@ public partial class DataTableViewerUI : UserControl
 
         try
         {
-            using (var con = DataAccessPortal.GetInstance().ExpectServer(source, DataAccessContext.DataExport).GetConnection())
+            using (var con = DataAccessPortal.ExpectServer(source, DataAccessContext.DataExport).GetConnection())
             {
                 con.Open();
 

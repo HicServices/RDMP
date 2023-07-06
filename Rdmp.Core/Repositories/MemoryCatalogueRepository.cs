@@ -34,7 +34,7 @@ namespace Rdmp.Core.Repositories;
 /// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in 
 /// dictionaries and arrays in memory instead of the database.
 /// </summary>
-public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
+public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
 {
     public IAggregateForcedJoinManager AggregateForcedJoinManager => this;
     public IGovernanceManager GovernanceManager => this;
@@ -141,11 +141,6 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
         base.DeleteFromDatabase(oTableWrapperObject);
         ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
-    }
-
-    public DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
-    {
-        throw new NotImplementedException();
     }
 
     public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity

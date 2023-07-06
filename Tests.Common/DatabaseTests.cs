@@ -242,8 +242,7 @@ public class DatabaseTests
             // then create them
             TestContext.Out.WriteLine($"Creating TEST databases on {mainDb.Server} using prefix {opts.Prefix}");
 
-            var creator = new PlatformDatabaseCreation();
-            creator.CreatePlatformDatabases(opts);
+            PlatformDatabaseCreation.CreatePlatformDatabases(opts);
         }
 
         HaveTriedCreatingTestDatabases = true;
@@ -911,7 +910,7 @@ delete from {1}..Project
     }
     protected void SetupLowPrivilegeUserRightsFor(ITableInfo ti, TestLowPrivilegePermissions permissions)
     {
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
+        var db = DataAccessPortal.ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
         SetupLowPrivilegeUserRightsFor(db, permissions, ti);
     }
 
@@ -977,7 +976,7 @@ GO
         throw new NotImplementedException();
     }
 
-    protected void Clear(LoadDirectory loadDirectory)
+    protected static void Clear(LoadDirectory loadDirectory)
     {
         DeleteFilesIn(loadDirectory.ForLoading);
         DeleteFilesIn(loadDirectory.ForArchiving);

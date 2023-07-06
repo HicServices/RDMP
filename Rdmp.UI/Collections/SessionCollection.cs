@@ -35,6 +35,6 @@ public class SessionCollection :PersistableObjectCollection
 
     public override void LoadExtraText(string s)
     {
-        SessionName = Helper.GetValueIfExistsFromPersistString(nameof(SessionName), s);
+        SessionName = PersistStringHelper.GetValueIfExistsFromPersistString(nameof(SessionName), s);
     }
 }

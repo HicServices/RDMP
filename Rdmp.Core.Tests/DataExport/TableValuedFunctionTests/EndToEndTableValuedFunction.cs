@@ -277,7 +277,7 @@ end
 
         var sql = qb.SQL;
 
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
+        var db = DataAccessPortal.ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
         using (var con = db.Server.GetConnection())
         {
             con.Open();
@@ -333,7 +333,7 @@ end
 
         var sql = qb.SQL;
 
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
+        var db = DataAccessPortal.ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
         using (var con = db.Server.GetConnection())
         {
             con.Open();
@@ -395,7 +395,7 @@ end
 
         var sql = qb.SQL;
 
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
+        var db = DataAccessPortal.ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
         using (var con = db.Server.GetConnection())
         {
             con.Open();

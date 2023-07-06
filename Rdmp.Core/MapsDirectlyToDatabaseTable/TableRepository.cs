@@ -159,7 +159,7 @@ abstract public class TableRepository : ITableRepository
         }
     }
 
-    protected void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
+    protected static void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         foreach (DbParameter p in cmd.Parameters)
         {
@@ -650,7 +650,7 @@ abstract public class TableRepository : ITableRepository
         }
     }
 
-    public DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
+    public static DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
     {
         var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction);
         if (parameters == null) return cmd;
@@ -658,7 +658,7 @@ abstract public class TableRepository : ITableRepository
         return PrepareCommand(cmd, parameters);
     }
 
-    public DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
+    public static DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
     {
         foreach (var kvp in parameters)
         {

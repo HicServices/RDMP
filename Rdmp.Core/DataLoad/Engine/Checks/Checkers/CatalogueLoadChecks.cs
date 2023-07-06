@@ -94,7 +94,7 @@ internal class CatalogueLoadChecks:ICheckable
 
         //check whether the live database and staging databases have appropriate columns and triggers etc on them
         var staging = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-        var live = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
+        var live = DataAccessPortal.ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
 
         var liveTable = live.ExpectTable(tableInfo.GetRuntimeName(LoadBubble.Live,_databaseConfiguration.DatabaseNamer),tableInfo.Schema);
         var liveCols = liveTable.DiscoverColumns();

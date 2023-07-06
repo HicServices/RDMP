@@ -297,11 +297,11 @@ public class SearchablesMatchScorer
         return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
-    private int CountMatchType(List<Regex> regexes, object key)
+    private static int CountMatchType(List<Regex> regexes, object key)
     {
         return MatchCount(regexes, key.GetType().Name);
     }
-    private int CountMatchToString(List<Regex> regexes, object key)
+    private static int CountMatchToString(List<Regex> regexes, object key)
     {
         var matchOn = key is ICustomSearchString s ? s.GetSearchString() : key.ToString();
 

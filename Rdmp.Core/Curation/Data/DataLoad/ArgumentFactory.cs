@@ -26,7 +26,7 @@ public class ArgumentFactory
     /// <inheritdoc cref = "CreateArgumentsForClassIfNotExistsGeneric(Type,IArgumentHost,IArgument[])"/>
     /// <typeparam name="T">A class with one or more Properties marked with DemandsInitialization</typeparam>
     /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
-    public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>( IArgumentHost host, IArgument[] existingArguments)
+    public static IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>( IArgumentHost host, IArgument[] existingArguments)
     {
         return CreateArgumentsForClassIfNotExistsGeneric(typeof (T),host,existingArguments);
     }
@@ -36,7 +36,7 @@ public class ArgumentFactory
     /// Each one of these that is found is created as a ProcessTaskArgument of the appropriate Name and PropertyType under the parent ProcessTask
     /// </summary>
     /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
-    public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric(
+    public static IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric(
         Type underlyingClassTypeForWhichArgumentsWillPopulate,IArgumentHost host,
         IArgument[] existingArguments)
     {
@@ -121,7 +121,7 @@ public class ArgumentFactory
     /// </summary>
     /// <param name="host"></param>
     /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>
-    public void SyncArgumentsForClass(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
+    public static void SyncArgumentsForClass(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
     {
         if(host.GetClassNameWhoArgumentsAreFor() != underlyingClassTypeForWhichArgumentsWillPopulate.FullName)
             throw new ExpectedIdenticalStringsException("IArgumentHost is not currently hosting the Type requested for sync", host.GetClassNameWhoArgumentsAreFor(), underlyingClassTypeForWhichArgumentsWillPopulate.FullName);

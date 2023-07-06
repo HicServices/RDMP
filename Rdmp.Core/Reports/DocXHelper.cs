@@ -53,7 +53,7 @@ public class DocXHelper
 
     }
 
-    protected void InsertHeader(XWPFDocument document, string htext, int headSize = 1)
+    protected static void InsertHeader(XWPFDocument document, string htext, int headSize = 1)
     {
         var h = document.CreateParagraph();
         var r0 = h.CreateRun();
@@ -100,7 +100,7 @@ public class DocXHelper
     }
     public const int PICTURE_TYPE_PNG =	6;
 
-    protected XWPFPicture GetPicture(XWPFDocument document, Image bmp)
+    protected static XWPFPicture GetPicture(XWPFDocument document, Image bmp)
     {
         var para = document.CreateParagraph();
         var run = para.CreateRun();
@@ -139,7 +139,7 @@ public class DocXHelper
         return table1;
     }
 
-    protected FileInfo GetUniqueFilenameInWorkArea(string desiredName, string extension = ".docx")
+    protected static FileInfo GetUniqueFilenameInWorkArea(string desiredName, string extension = ".docx")
     {
         var root = GetTempPath();
 
@@ -171,7 +171,7 @@ public class DocXHelper
     /// </summary>
     /// <param name="filename"></param>
     /// <returns></returns>
-    protected XWPFDocumentFile GetNewDocFile(string filename)
+    protected static XWPFDocumentFile GetNewDocFile(string filename)
     {
         var fi = GetUniqueFilenameInWorkArea(filename);
         return new XWPFDocumentFile(fi,new FileStream(fi.FullName,FileMode.Create));
@@ -188,7 +188,7 @@ public class DocXHelper
     /// Opens windows explorer to show the document
     /// </summary>
     /// <param name="document"></param>
-    protected void ShowFile(XWPFDocumentFile document)
+    protected static void ShowFile(XWPFDocumentFile document)
     {
         ShowFile(document.FileInfo);
     }

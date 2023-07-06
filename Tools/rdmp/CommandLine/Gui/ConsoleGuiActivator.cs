@@ -331,7 +331,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         );
     }
 
-    private ustring GetExceptionText(string errorText, Exception exception, bool includeStackTrace)
+    private static ustring GetExceptionText(string errorText, Exception exception, bool includeStackTrace)
     {
         return Wrap($"{errorText}\n{ExceptionHelper.ExceptionToListOfInnerMessages(exception, includeStackTrace)}", 76);
     }

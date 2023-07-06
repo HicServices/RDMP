@@ -42,7 +42,7 @@ public class BackColorProvider
         }
     }
 
-    public Image GetBackgroundImage(Size size, RDMPCollection collection)
+    public static Image GetBackgroundImage(Size size, RDMPCollection collection)
     {
         var bmp = new Bitmap(size.Width, size.Height);
 

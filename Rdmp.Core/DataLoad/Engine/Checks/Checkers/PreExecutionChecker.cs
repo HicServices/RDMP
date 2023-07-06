@@ -259,7 +259,7 @@ public class PreExecutionChecker :  ICheckable
                     CheckResult.Fail));
     }
                 
-    public void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
+    public static void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo))
             throw new Exception("This method loops through every table in a database and nukes it! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");

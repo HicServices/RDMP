@@ -70,7 +70,7 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
         if (OtherDependencyFinders.All(f => f.GetType() != typeof(T)))
         {
             var constructor = new ObjectConstructor();
-            OtherDependencyFinders.Add((T)constructor.Construct(typeof(T), repositoryLocator));
+            OtherDependencyFinders.Add((T)ObjectConstructor.Construct(typeof(T), repositoryLocator));
         }
     }
 }

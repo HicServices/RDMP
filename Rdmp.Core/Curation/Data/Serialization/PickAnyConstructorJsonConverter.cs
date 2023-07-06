@@ -102,6 +102,6 @@ public class PickAnyConstructorJsonConverter:JsonConverter
 
     private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType)
     {
-        return _objectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
+        return ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
     }
 }

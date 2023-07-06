@@ -63,7 +63,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             {
                 //the place to store identifiers (at least those that are StoreInIdentifiersDump)
                 _externalDatabaseServer = tableInfo.IdentifierDumpServer;
-                _dumpDatabase = DataAccessPortal.GetInstance().ExpectDatabase(_externalDatabaseServer, DataAccessContext.DataLoad);
+                _dumpDatabase = DataAccessPortal.ExpectDatabase(_externalDatabaseServer, DataAccessContext.DataLoad);
             }
 
         ColumnsToRouteToSomewhereElse = new List<PreLoadDiscardedColumn>(columnsToDump);

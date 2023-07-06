@@ -353,7 +353,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     public IArgument[] CreateArgumentsForClassIfNotExists(Type t)
     {
         var argFactory = new ArgumentFactory();
-        return argFactory.CreateArgumentsForClassIfNotExistsGeneric(
+        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(
                 t,
 
                 //tell it how to create new instances of us related to parent

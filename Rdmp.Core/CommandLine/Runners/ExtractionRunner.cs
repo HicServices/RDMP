@@ -84,7 +84,7 @@ public class ExtractionRunner : ManyRunner
 
         foreach (var sds in GetSelectedDataSets())
         {
-            var extractDatasetCommand = factory.Create(RepositoryLocator, sds);
+            var extractDatasetCommand = ExtractCommandCollectionFactory.Create(RepositoryLocator, sds);
             commands.Add(extractDatasetCommand);
                 
             lock(_oLock)

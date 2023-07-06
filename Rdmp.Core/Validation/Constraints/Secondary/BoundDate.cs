@@ -165,13 +165,13 @@ public class BoundDate : Bound
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
     }
 
-    private string GreaterThanMessage(DateTime d, string s)
+    private static string GreaterThanMessage(DateTime d, string s)
     {
         return
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date greater than {Wrap(s)}.";
     }
 
-    private string LessThanMessage(DateTime d, string s)
+    private static string LessThanMessage(DateTime d, string s)
     {
         return
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";

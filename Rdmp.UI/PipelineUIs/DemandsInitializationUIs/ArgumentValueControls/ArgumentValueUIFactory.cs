@@ -147,7 +147,7 @@ public class ArgumentValueUIFactory
     }
 
         
-    private IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
+    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
     {
         if(parent is ProcessTask || parent is LoadMetadata)
             return GetTableInfosInScope(repository,parent).SelectMany(ti => ti.ColumnInfos);
@@ -155,7 +155,7 @@ public class ArgumentValueUIFactory
         return repository.GetAllObjects<ColumnInfo>();
     }
         
-    private IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
+    private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
         if(parent is ProcessTask || parent is LoadMetadata)
             return GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns);

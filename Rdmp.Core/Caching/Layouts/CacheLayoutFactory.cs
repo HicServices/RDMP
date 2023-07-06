@@ -22,7 +22,7 @@ namespace Rdmp.Core.Caching.Layouts;
 /// </summary>
 public class CacheLayoutFactory
 {
-    public ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata)
+    public static ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata)
     {
         AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks.Where(p=>!p.IsDisabled));
 

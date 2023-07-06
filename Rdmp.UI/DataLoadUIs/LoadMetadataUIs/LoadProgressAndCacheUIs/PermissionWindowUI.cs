@@ -66,7 +66,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
         Bind(tbID,"Text","ID",w=>w.ID);
     }
 
-    private void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
+    private static void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
     {
         if (periodsByDay.TryGetValue(dayNum, out var value)) PopulateTextBox(textBox, value);
     }

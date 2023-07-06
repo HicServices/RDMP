@@ -39,7 +39,7 @@ internal class IdentifierDumperSynchronizer
 
 
         //dump database is required so check connection to it
-        var server = DataAccessPortal.GetInstance().ExpectServer(_dump, DataAccessContext.DataLoad);
+        var server = DataAccessPortal.ExpectServer(_dump, DataAccessContext.DataLoad);
         var tables = server.GetCurrentDatabase().DiscoverTables(false);
 
         using (var con = server.GetConnection())

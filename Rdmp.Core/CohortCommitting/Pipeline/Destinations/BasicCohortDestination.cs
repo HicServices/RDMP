@@ -60,7 +60,7 @@ public class BasicCohortDestination : IPluginCohortDestination
         //if user has picked an allocator get an instance
         if (ReleaseIdentifierAllocator != null && _allocator == null)
         {
-            _allocator = (IAllocateReleaseIdentifiers) new ObjectConstructor().Construct(ReleaseIdentifierAllocator);
+            _allocator = (IAllocateReleaseIdentifiers) ObjectConstructor.Construct(ReleaseIdentifierAllocator);
             _allocator.Initialize(Request);
         }
             

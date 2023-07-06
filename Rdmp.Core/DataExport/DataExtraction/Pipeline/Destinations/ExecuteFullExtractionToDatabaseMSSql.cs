@@ -500,7 +500,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         var databaseName = GetDatabaseName();
 
-        var discoveredServer = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
+        var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
 
         var db = discoveredServer.ExpectDatabase(databaseName);
         if(!db.Exists())
@@ -587,7 +587,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         try
         {
-            var server = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
+            var server = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
             var database = _destinationDatabase = server.ExpectDatabase(GetDatabaseName());
 
             if (database.Exists())

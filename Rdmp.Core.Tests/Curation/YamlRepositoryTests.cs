@@ -344,7 +344,7 @@ internal class YamlRepositoryTests
         return Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid().ToString().Replace("-", ""));
     }
 
-    private DirectoryInfo GetUniqueDirectory()
+    private static DirectoryInfo GetUniqueDirectory()
     {
         return new DirectoryInfo(GetUniqueDirectoryName());
     }

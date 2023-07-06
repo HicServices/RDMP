@@ -82,7 +82,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     public override void LoadExtraText(string s)
     {
-        var value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
+        var value = PersistStringHelper.GetValueIfExistsFromPersistString("ViewType", s);
         ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
     }
 

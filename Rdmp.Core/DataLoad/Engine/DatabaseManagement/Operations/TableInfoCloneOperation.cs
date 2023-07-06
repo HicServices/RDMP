@@ -52,7 +52,7 @@ public class TableInfoCloneOperation
         if(_operationSucceeded)
             throw new Exception("Operation already executed once");
 
-        var liveDb = DataAccessPortal.GetInstance().ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
+        var liveDb = DataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
         var destTableName = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
 
 
@@ -74,7 +74,7 @@ public class TableInfoCloneOperation
     }
 
         
-    public void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
+    public static void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo,tableName))
             throw new Exception("This method nukes a table in a database! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");

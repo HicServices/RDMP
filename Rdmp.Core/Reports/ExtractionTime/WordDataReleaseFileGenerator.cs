@@ -63,7 +63,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
             //actually changes it to landscape :)
             SetLandscape(document);
-                               
+
             InsertHeader(document, $"Project:{Project.Name}",1);
             InsertHeader(document, Configuration.Name,2);
 

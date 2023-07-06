@@ -265,7 +265,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         tableInfoCreated.IdentifierDumpServer_ID = IdentifierDump_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
 
-        var existingTable = DataAccessPortal.GetInstance()
+        var existingTable = DataAccessPortal
             .ExpectDatabase(IdentifierDump_ExternalDatabaseServer, DataAccessContext.InternalDataProcessing)
             .ExpectTable("ID_BulkData");
 

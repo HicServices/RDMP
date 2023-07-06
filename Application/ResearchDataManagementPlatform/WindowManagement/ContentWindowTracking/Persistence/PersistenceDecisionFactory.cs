@@ -44,7 +44,7 @@ public class PersistenceDecisionFactory
     /// <param name="persistString"></param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public DeserializeInstruction ShouldCreateBasicControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static DeserializeInstruction ShouldCreateBasicControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         if (!persistString.StartsWith(RDMPSingleControlTab.BasicPrefix))
             return null;
@@ -69,7 +69,7 @@ public class PersistenceDecisionFactory
         return PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
     }
 
-    public DeserializeInstruction ShouldCreateSingleObjectControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static DeserializeInstruction ShouldCreateSingleObjectControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         if (!persistString.StartsWith(PersistableSingleDatabaseObjectDockContent.Prefix))
             return null;
@@ -88,7 +88,7 @@ public class PersistenceDecisionFactory
 
     }
 
-    public DeserializeInstruction ShouldCreateObjectCollection(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static DeserializeInstruction ShouldCreateObjectCollection(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         if (!persistString.StartsWith(PersistableObjectCollectionDockContent.Prefix))
             return null;
@@ -103,7 +103,7 @@ public class PersistenceDecisionFactory
         var collectionType = GetTypeByName(tokens[2], typeof (IPersistableObjectCollection), repositoryLocator);
 
         var objectConstructor = new ObjectConstructor();
-        var collectionInstance = (IPersistableObjectCollection)objectConstructor.Construct(collectionType);
+        var collectionInstance = (IPersistableObjectCollection)ObjectConstructor.Construct(collectionType);
                 
         if(collectionInstance.DatabaseObjects == null)
             throw new PersistenceException(

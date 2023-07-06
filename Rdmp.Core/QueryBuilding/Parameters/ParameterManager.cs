@@ -146,7 +146,7 @@ public class ParameterManager
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
         foreach (var sqlParameter in kvp.Value)
-            AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter,kvp.Key), toReturn);
+                AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter,kvp.Key), toReturn);
 
 
         //There can be empty parameters during resolution but only if it finds an overriding one further up the hierarchy
@@ -179,7 +179,7 @@ public class ParameterManager
         _memoryRepository.Clear();
     }
 
-    private void AddParameterToCollection(ParameterFoundAtLevel toAdd,List<ParameterFoundAtLevel> existingParameters)
+    private static void AddParameterToCollection(ParameterFoundAtLevel toAdd,List<ParameterFoundAtLevel> existingParameters)
     {
         //see if parameter if we already have one with the same name
         var duplicate = existingParameters.FirstOrDefault(p => p.Parameter.ParameterName.Equals(toAdd.Parameter.ParameterName,StringComparison.InvariantCultureIgnoreCase));

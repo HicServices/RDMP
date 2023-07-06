@@ -87,7 +87,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
             Add(GetLastTokens(memberName),summary.Trim());
     }
 
-    private string GetSummaryAsText(XmlElement summaryTag)
+    private static string GetSummaryAsText(XmlElement summaryTag)
     {
         if (summaryTag == null)
             return null;
@@ -144,7 +144,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
             : string.Join(".", matches.Reverse().Take(partsToGet).Reverse());
     }
 
-    private string GetLastTokens(string memberName)
+    private static string GetLastTokens(string memberName)
     {
         if (memberName.StartsWith("P:"))
             return GetLastTokens(memberName, 2);

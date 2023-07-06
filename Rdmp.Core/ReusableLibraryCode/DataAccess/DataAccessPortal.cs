@@ -17,35 +17,17 @@ namespace Rdmp.Core.ReusableLibraryCode.DataAccess;
 /// credentials that can be used with it depending on the DataAccessContext.  Therefore when using the DataAccessPortal you always have to specify the 
 /// Context of the activity you are doing e.g. DataAccessContext.DataLoad.
 /// </summary>
-public class DataAccessPortal
+public static class DataAccessPortal
 {
-    private static readonly object oLockInstance = new object();
-    private static DataAccessPortal _instance;
-
-    public static DataAccessPortal GetInstance()
-    {
-        lock (oLockInstance)
-        {
-            if (_instance == null)
-                _instance = new DataAccessPortal();
-        }
-        return _instance;
-    }
-
-    private DataAccessPortal()
-    {
-            
-    }
-
-    public DiscoveredServer ExpectServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase=true)
+    public static DiscoveredServer ExpectServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase=true)
     {
         return GetServer(dataAccessPoint, context,setInitialDatabase);
     }
-    public DiscoveredDatabase ExpectDatabase(IDataAccessPoint dataAccessPoint, DataAccessContext context)
+    public static DiscoveredDatabase ExpectDatabase(IDataAccessPoint dataAccessPoint, DataAccessContext context)
     {
         return GetServer(dataAccessPoint, context,true).GetCurrentDatabase();
     }
-    public DiscoveredServer ExpectDistinctServer(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
+    public static DiscoveredServer ExpectDistinctServer(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
     {
         return GetServer(GetDistinct(collection, context, setInitialDatabase),context,setInitialDatabase);
     }

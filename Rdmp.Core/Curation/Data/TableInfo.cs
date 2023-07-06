@@ -476,7 +476,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// <inheritdoc/>
     public DiscoveredTable Discover(DataAccessContext context)
     {
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+        var db = DataAccessPortal.ExpectDatabase(this, context);
 
         if (IsTableValuedFunction)
             return db.ExpectTableValuedFunction(GetRuntimeName(), Schema);

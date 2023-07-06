@@ -210,9 +210,9 @@ public class ForwardEngineerANOCatalogueEngine
 
                             //restore the old SQL as it existed in the origin table
                             newExtractionInformation.SelectSQL = oldExtractionInformation.SelectSQL;
-                            
+
                             //do a refactor on the old column name for the new column name
-                            refactorer.RefactorColumnName(newExtractionInformation,oldColumnInfo,newColumnInfo.Name,true);
+                            SelectSQLRefactorer.RefactorColumnName(newExtractionInformation,oldColumnInfo,newColumnInfo.Name,true);
 
                             //also refactor any other column names that might be referenced by the transform SQL e.g. it could be a combo column name where forename + surname is the value of the ExtractionInformation
                             foreach (var kvpOtherCols in _parenthoodDictionary.Where(kvp=>kvp.Key is ColumnInfo))
@@ -222,7 +222,7 @@ public class ForwardEngineerANOCatalogueEngine
                                     continue;
 
                                 //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
-                                refactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)kvpOtherCols.Value).Name,false);
+                                SelectSQLRefactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)kvpOtherCols.Value).Name,false);
                             }
                             
                             //make the new one exactly as extractable

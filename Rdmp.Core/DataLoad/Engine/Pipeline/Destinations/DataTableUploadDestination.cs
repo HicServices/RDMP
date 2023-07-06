@@ -119,7 +119,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         if (Adjuster != null)
         {
             var constructor = new ObjectConstructor();
-            adjuster = (IDatabaseColumnRequestAdjuster) constructor.Construct(Adjuster);
+            adjuster = (IDatabaseColumnRequestAdjuster)ObjectConstructor.Construct(Adjuster);
         }
 
         //work out the table name for the table we are going to create
@@ -455,7 +455,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     {
         if (LoggingServer != null && _dataLoadInfo == null)
         {
-            _loggingDatabaseSettings = DataAccessPortal.GetInstance().ExpectServer(LoggingServer, DataAccessContext.Logging);
+            _loggingDatabaseSettings = DataAccessPortal.ExpectServer(LoggingServer, DataAccessContext.Logging);
             var logManager = new LogManager(_loggingDatabaseSettings);
             logManager.CreateNewLoggingTaskIfNotExists("Internal");
 

@@ -228,7 +228,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         var loggingServer = loggingServers.FirstOrDefault();
 
         //get distinct connection
-        var toReturn = DataAccessPortal.GetInstance().ExpectDistinctServer(loggingServers, DataAccessContext.Logging, true);
+        var toReturn = DataAccessPortal.ExpectDistinctServer(loggingServers, DataAccessContext.Logging, true);
 
         serverChosen = (IExternalDatabaseServer)loggingServer;
         return toReturn;
@@ -314,10 +314,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
 
         if (normalTables.Any())
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad,true);
+            return DataAccessPortal.ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad,true);
             
         if(lookupTables.Any())
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true);
+            return DataAccessPortal.ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true);
             
         throw new Exception(
             $"LoadMetadata {this} has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");

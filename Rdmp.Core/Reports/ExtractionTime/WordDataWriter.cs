@@ -255,7 +255,7 @@ public class WordDataWriter : DocXHelper
         }
     }
 
-    private void  WriteOutFilters(XWPFDocument document, List<IFilter> filtersUsed)
+    private static void  WriteOutFilters(XWPFDocument document, List<IFilter> filtersUsed)
     {
         InsertHeader(document,"Filters");
 
@@ -267,7 +267,7 @@ public class WordDataWriter : DocXHelper
 
         for (var i = 0; i < filtersUsed.Count; i++)
         {
-            //i+2 becauset, first row is for headers and indexing in word starts at 1 not 0
+            //i+2 because, first row is for headers and indexing in word starts at 1 not 0
             SetTableCell(t,i + 1, 0, filtersUsed[i].Name);
             SetTableCell(t,i + 1, 1, filtersUsed[i].Description);
             SetTableCell(t,i + 1, 2, filtersUsed[i].WhereSQL);

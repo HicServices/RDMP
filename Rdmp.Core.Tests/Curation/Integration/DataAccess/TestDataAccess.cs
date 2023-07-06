@@ -38,7 +38,7 @@ public class TestDataAccess:DatabaseTests
         testPoints.Add(new TestAccessPoint("frank","bob","username","mydifferentPass"));
 
         //call this
-        var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
+        var ex = Assert.Throws<Exception>(()=>DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
         StringAssert.Contains("collection could not agree on a single Password",ex.Message);
 
     }
@@ -52,7 +52,7 @@ public class TestDataAccess:DatabaseTests
         testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
 
         //call this
-        var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
+        var ex = Assert.Throws<Exception>(()=>DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
         StringAssert.Contains("collection could not agree whether to use Credentials",ex.Message);
 
     }
@@ -67,7 +67,7 @@ public class TestDataAccess:DatabaseTests
 
         //call this
 
-        var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
+        var ex = Assert.Throws<Exception>(()=>DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
         StringAssert.Contains("collection could not agree on a single Username",ex.Message);
 
     }
@@ -81,7 +81,7 @@ public class TestDataAccess:DatabaseTests
         testPoints.Add(new TestAccessPoint("frank", "bob", null,null));
         testPoints.Add(new TestAccessPoint("FRANK", "bob", null, null));
 
-        var server = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+        var server = DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
         Assert.AreEqual("frank", server.Name);
     }
 
@@ -93,7 +93,7 @@ public class TestDataAccess:DatabaseTests
         testPoints.Add(new TestAccessPoint("frank", "bob", null, null));
         testPoints.Add(new TestAccessPoint("frank", "BOB", null, null));
 
-        var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
+        var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
         StringAssert.Contains("All data access points must be into the same database, access points 'frankbob' and 'frankBOB' are into different databases", ex.Message);
     }
     #endregion
@@ -108,7 +108,7 @@ public class TestDataAccess:DatabaseTests
         testPoints.Add(new TestAccessPoint("frank", "[bob's Database]", "username", "mypas"));
         testPoints.Add(new TestAccessPoint("frank", "bob's Database", "username", "mypas"));
         //call this
-        var result = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+        var result = DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
 
         //test result
         Assert.AreEqual("bob's Database", result.Builder["Initial Catalog"]);
@@ -123,7 +123,7 @@ public class TestDataAccess:DatabaseTests
         testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mypas"));
 
         //call this
-        var result = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+        var result = DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
 
         //test result
         Assert.AreEqual("mypas", result.Builder["Password"]);
@@ -200,7 +200,7 @@ public class TestDataAccess:DatabaseTests
             t.SaveToDatabase();
 
             //t has no credentials 
-            var server = DataAccessPortal.GetInstance().ExpectServer(t, DataAccessContext.InternalDataProcessing);
+            var server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
             Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
             Assert.AreEqual("fish", ((SqlConnectionStringBuilder)server.Builder).DataSource);
@@ -219,7 +219,7 @@ public class TestDataAccess:DatabaseTests
                 t.ClearAllInjections();
 
                 ////t has some credentials now
-                server = DataAccessPortal.GetInstance().ExpectServer(t, DataAccessContext.InternalDataProcessing);
+                server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
                 Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
                 Assert.AreEqual("fish", ((SqlConnectionStringBuilder)server.Builder).DataSource);

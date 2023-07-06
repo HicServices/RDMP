@@ -321,7 +321,7 @@ public class MEF
             throw new Exception(
                 $"Requested typeToCreate '{typeToCreate}' was not assignable to the required Type '{typeof(T).Name}'");
 
-        var instance = (T)o.ConstructIfPossible(typeToCreateAsType,args);
+        var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType,args);
 
         if(instance == null)
             throw new ObjectLacksCompatibleConstructorException(

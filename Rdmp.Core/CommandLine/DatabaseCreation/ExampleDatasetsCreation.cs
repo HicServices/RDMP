@@ -93,7 +93,7 @@ public class ExampleDatasetsCreation
         var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","dtCreated","hb_extract"));
         var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","PrescribedDate","Name")); //<- this is slooo!
         var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","AdmissionDate"));
-            
+
         //Create but do not import the CarotidArteryScan dataset so that users can test out referencing a brand new table
         Create<CarotidArteryScan>(db,people,r,notifier, options.NumberOfRowsPerDataset, "RECORD_NUMBER");
 
@@ -275,7 +275,7 @@ public class ExampleDatasetsCreation
             }
     }
 
-    private void ForExtractionInformations(ICatalogue catalogue, Action<ExtractionInformation> action,params string[] extractionInformations)
+    private static void ForExtractionInformations(ICatalogue catalogue, Action<ExtractionInformation> action,params string[] extractionInformations)
     {
         foreach(var e in extractionInformations.Select(s=> GetExtractionInformation(catalogue,s)))
             action(e);
@@ -540,7 +540,7 @@ UNPIVOT
         }
     }
 
-    private DiscoveredTable Create<T>(DiscoveredDatabase db,PersonCollection people, Random r, ICheckNotifier notifier,int numberOfRecords, params string[] primaryKey) where T:IDataGenerator
+    private static DiscoveredTable Create<T>(DiscoveredDatabase db,PersonCollection people, Random r, ICheckNotifier notifier,int numberOfRecords, params string[] primaryKey) where T:IDataGenerator
     {
         var dataset = typeof(T).Name;
         notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Generating {0} records for {1}", numberOfRecords,dataset),CheckResult.Success));

@@ -40,7 +40,7 @@ public class TableInfoSynchronizer
         _tableToSync = tableToSync;
         _repository = _tableToSync.CatalogueRepository;
 
-        _toSyncTo = DataAccessPortal.GetInstance().ExpectServer(tableToSync, DataAccessContext.InternalDataProcessing);
+        _toSyncTo = DataAccessPortal.ExpectServer(tableToSync, DataAccessContext.InternalDataProcessing);
     }
     /// <summary>
     /// 

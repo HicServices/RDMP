@@ -35,7 +35,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         return $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
     }
 
-    public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation, bool discardOutliers)
+    public static Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation, bool discardOutliers)
     {
         var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(evaluation, "ALL", false);
 

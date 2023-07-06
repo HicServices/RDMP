@@ -18,7 +18,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 /// </summary>
 public class ExtractCommandCollectionFactory
 {
-    public ExtractCommandCollection Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration)
+    public static ExtractCommandCollection Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration)
     {
         var cohort = configuration.Cohort;
         var datasets = configuration.GetAllExtractableDataSets();
@@ -50,7 +50,7 @@ public class ExtractCommandCollectionFactory
         return new ExtractDatasetCommand(configuration, bundle);
     }
 
-    public ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets)
+    public static ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets)
     {
         return CreateDatasetCommand(repositoryLocator, selectedDataSets.ExtractableDataSet,selectedDataSets.ExtractionConfiguration);
     }

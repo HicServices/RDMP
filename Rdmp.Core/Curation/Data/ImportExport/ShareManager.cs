@@ -358,7 +358,7 @@ public class ShareManager
                     actual?.DeleteInDatabase();
                 }
                 var objectConstructor = new ObjectConstructor();
-                var instance = (IMapsDirectlyToDatabaseTable) objectConstructor.ConstructIfPossible(sd.Type, this, sd);
+                var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd);
 
                 if(instance == null)
                     throw new ObjectLacksCompatibleConstructorException(

@@ -190,7 +190,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             preview.Columns.Add(_columnInfo.GetRuntimeName(LoadStage.PostLoad));
             preview.Columns.Add(ANOTable.ANOPrefix + _columnInfo.GetRuntimeName(LoadStage.PostLoad));
 
-            var server = DataAccessPortal.GetInstance().ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
+            var server = DataAccessPortal.ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
 
             using(var con = server.GetConnection())
             {
@@ -305,7 +305,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         if(ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
             return;
 
-        ANOTransformer.ConfirmDependencies(DataAccessPortal.GetInstance().ExpectDatabase(server, DataAccessContext.DataLoad), checksUI1);
+        ANOTransformer.ConfirmDependencies(DataAccessPortal.ExpectDatabase(server, DataAccessContext.DataLoad), checksUI1);
     }
 
     private void ddANOTables_SelectedIndexChanged(object sender, EventArgs e)

@@ -225,13 +225,13 @@ public class ReleaseEngine
         new ReleaseLog(_repository,rp, environment,isPatch, rpDirectory, datasetFile);
     }
 
-    protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+    protected static DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
     {
         var customDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.CUSTOM_COHORT_DATA_FOLDER_NAME, toRelease);
         return GetUniqueDirectoryFrom(customDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
     }
 
-    protected DirectoryInfo ThrowIfMasterDataConflictElseReturnFirstOtherDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
+    protected static DirectoryInfo ThrowIfMasterDataConflictElseReturnFirstOtherDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)
     {
         var masterDataDirectoriesFound = GetAllFoldersCalled(ExtractionDirectory.MASTER_DATA_FOLDER_NAME, toRelease);
         return GetUniqueDirectoryFrom(masterDataDirectoriesFound.Distinct(new DirectoryInfoComparer()).ToList());
@@ -247,7 +247,7 @@ public class ReleaseEngine
             .Select(globalFolderForThisExtract => globalFolderForThisExtract);
     }
 
-    protected DirectoryInfo GetUniqueDirectoryFrom(List<DirectoryInfo> directoryInfos)
+    protected static DirectoryInfo GetUniqueDirectoryFrom(List<DirectoryInfo> directoryInfos)
     {
         if (!directoryInfos.Any())
             return null;

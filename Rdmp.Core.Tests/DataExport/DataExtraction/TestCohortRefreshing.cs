@@ -148,7 +148,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
             Assert.AreNotEqual(oldcohort.CountDistinct,engine.Request.CohortCreatedIfAny.CountDistinct);
 
             //now nuke all data in the catalogue so the cic returns nobody (except that the identifiers are cached eh?)
-            DataAccessPortal.GetInstance().ExpectDatabase(_tableInfo,DataAccessContext.InternalDataProcessing).ExpectTable(_tableInfo.GetRuntimeName()).Truncate();
+            DataAccessPortal.ExpectDatabase(_tableInfo,DataAccessContext.InternalDataProcessing).ExpectTable(_tableInfo.GetRuntimeName()).Truncate();
 
             var toMem = new ToMemoryDataLoadEventListener(false);
 

@@ -110,7 +110,7 @@ public class LinkedRepositoryProvider : RepositoryProvider
 
         //it's a plugin?
         foreach (var type in CatalogueRepository.MEF.GetTypes<IPluginRepositoryFinder>())
-            _pluginRepositoryFinders.Add((IPluginRepositoryFinder)constructor.Construct(type, this));
+            _pluginRepositoryFinders.Add((IPluginRepositoryFinder)ObjectConstructor.Construct(type, this));
     }
 
     public override IEnumerable<IRepository> GetAllRepositories()

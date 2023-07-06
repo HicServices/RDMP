@@ -471,7 +471,7 @@ public class CohortCompiler
     {
         var accessPoints = cacheableTask.GetDataAccessPoints();
 
-        var server = DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.DataExport, false);
+        var server = DataAccessPortal.ExpectDistinctServer(accessPoints, DataAccessContext.DataExport, false);
 
         var sourceSyntax = server.GetQuerySyntaxHelper();
         var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();

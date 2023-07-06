@@ -156,7 +156,7 @@ public class CohortQueryBuilderDependency
         {
             if(joinedToPluginCohortCompiler == null)
             {
-                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,
+                SqlJoinableCacheless = CohortQueryBuilderHelper.GetSQLForAggregate(JoinedTo,
                     new QueryBuilderArgs(new QueryBuilderCustomArgs(), //don't respect customizations in the inception bit!
                         globals));
                 SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, null, cancellationToken);
@@ -182,7 +182,7 @@ public class CohortQueryBuilderDependency
         {
             //explicit execution of a patient index table on its own
             //the full uncached SQL for the query
-            SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise,globals));
+            SqlCacheless = CohortQueryBuilderHelper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise,globals));
 
             if(SqlJoinableCached != null)
                 throw new QueryBuildingException("Patient index tables can't use other patient index tables!");
@@ -190,14 +190,14 @@ public class CohortQueryBuilderDependency
         else
         {
             //the full uncached SQL for the query
-            SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,
+            SqlCacheless = CohortQueryBuilderHelper.GetSQLForAggregate(CohortSet,
                 new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
                     SqlJoinableCacheless,parent.Customise,globals));
 
                 
             //if the joined to table is cached we can generate a partial too with full sql for the outer sql block and a cache fetch join
             if (SqlJoinableCached != null)
-                SqlPartiallyCached = parent.Helper.GetSQLForAggregate(CohortSet,
+                SqlPartiallyCached = CohortQueryBuilderHelper.GetSQLForAggregate(CohortSet,
                     new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
                         SqlJoinableCached,parent.Customise,globals));
         }

@@ -295,9 +295,9 @@ public partial class RDMPMainForm : RDMPForm
                 return toolboxInstance;
             }
 
-            var instruction = _persistenceFactory.ShouldCreateBasicControl(persiststring,RepositoryLocator) ??
-                              _persistenceFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
-                              _persistenceFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
+            var instruction = PersistenceDecisionFactory.ShouldCreateBasicControl(persiststring,RepositoryLocator) ??
+                              PersistenceDecisionFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
+                              PersistenceDecisionFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
 
             if (instruction != null)
                 return _windowManager.ActivateItems.Activate(instruction,_windowManager.ActivateItems);

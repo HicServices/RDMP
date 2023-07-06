@@ -525,7 +525,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             
         try
         {
-            server = DataAccessPortal.GetInstance().ExpectDatabase(source, DataAccessContext.DataExport).Server;
+            server = DataAccessPortal.ExpectDatabase(source, DataAccessContext.DataExport).Server;
         }
         catch (Exception exception)
         {

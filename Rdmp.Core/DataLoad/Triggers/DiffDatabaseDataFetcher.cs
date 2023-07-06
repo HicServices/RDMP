@@ -54,7 +54,7 @@ public class DiffDatabaseDataFetcher
 
             try
             {
-                database = DataAccessPortal.GetInstance().ExpectDatabase(_tableInfo, DataAccessContext.InternalDataProcessing);
+                database = DataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.InternalDataProcessing);
                 server = database.Server;
             }
             catch (Exception ex)

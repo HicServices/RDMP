@@ -170,8 +170,8 @@ public class CohortSummaryQueryBuilder
             if(extractionIdentifierColumn.Length != 1)
                 throw new Exception(
                     $"Catalogue behind {_summary} must have exactly 1 IsExtractionIdentifier column but it had {extractionIdentifierColumn.Length}");
-                
-            helper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null,_globals));
+
+            CohortQueryBuilderHelper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null,_globals));
         }
 
         //if the cohort has no WHERE SQL

@@ -241,7 +241,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
         if (!Server.WasCreatedBy(new ANOStorePatcher()))
             throw new Exception(string.Format("ANOTable's Server '{0}' is not an ANOStore.  ANOTable was '{1}'",Server,this));
 
-        var tables = DataAccessPortal.GetInstance()
+        var tables = DataAccessPortal
             .ExpectDatabase(Server, DataAccessContext.DataLoad)
             .DiscoverTables(false);
 
@@ -279,7 +279,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     /// <param name="forceTransaction"></param>
     public void PushToANOServerAsNewTable(string identifiableDatatype, ICheckNotifier notifier, DbConnection forceConnection=null,DbTransaction forceTransaction = null)
     {
-        var server = DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);
+        var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
 
         //matches varchar(100) and has capture group 100
         var regexGetLengthOfCharType =new Regex(@".*char.*\((\d*)\)");
@@ -380,7 +380,7 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         //cache answers
         if(_identifiableDataType == null)
         {
-            var server = DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);
+            var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
 
             var columnsFoundInANO = server.GetCurrentDatabase().ExpectTable(TableName).DiscoverColumns();
 

@@ -172,7 +172,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     {
         try
         {
-            _server = DataAccessPortal.GetInstance()
+            _server = DataAccessPortal
                 .ExpectServer(_collection.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing);
 
             var sql = _collection.GetSql();

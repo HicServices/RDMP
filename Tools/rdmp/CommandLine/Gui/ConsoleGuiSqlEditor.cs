@@ -316,7 +316,7 @@ internal class ConsoleGuiSqlEditor : Window
                 return;
             }
 
-            var db = DataAccessPortal.GetInstance().ExpectDatabase(_collection.GetDataAccessPoint(),DataAccessContext.InternalDataProcessing);
+            var db = DataAccessPortal.ExpectDatabase(_collection.GetDataAccessPoint(),DataAccessContext.InternalDataProcessing);
 
             using(var con = db.Server.GetConnection())
             {

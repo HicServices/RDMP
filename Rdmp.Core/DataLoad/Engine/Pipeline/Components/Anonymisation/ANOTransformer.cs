@@ -39,7 +39,7 @@ public class ANOTransformer
     {
         _externalDatabaseServer = anoTable.Server;
 
-        _server = DataAccessPortal.GetInstance().ExpectServer(_externalDatabaseServer, DataAccessContext.DataLoad);
+        _server = DataAccessPortal.ExpectServer(_externalDatabaseServer, DataAccessContext.DataLoad);
             
         _anoTable = anoTable;
         _listener = listener;

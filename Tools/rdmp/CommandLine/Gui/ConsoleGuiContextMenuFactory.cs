@@ -121,7 +121,7 @@ internal class ConsoleGuiContextMenuFactory
         }
     }
 
-    private  IEnumerable<IAtomicCommand> GetCommands(IBasicActivateItems activator, object[] many, object single)
+    private static IEnumerable<IAtomicCommand> GetCommands(IBasicActivateItems activator, object[] many, object single)
     {
         var factory = new AtomicCommandFactory(activator);
 

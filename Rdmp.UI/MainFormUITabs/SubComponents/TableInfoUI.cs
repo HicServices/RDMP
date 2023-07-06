@@ -114,9 +114,7 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
     }
     private void DoRefactoring(string toReplace, string toReplaceWith)
     {
-        var refactorer = new SelectSQLRefactorer();
-
-        var updatesMade = refactorer.RefactorTableName(_tableInfo,toReplace,toReplaceWith);
+        var updatesMade = SelectSQLRefactorer.RefactorTableName(_tableInfo,toReplace,toReplaceWith);
 
         MessageBox.Show($"Made {updatesMade} replacements in ExtractionInformation/ColumnInfos.");
     }

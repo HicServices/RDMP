@@ -900,7 +900,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
             try
             {
-                var server = DataAccessPortal.GetInstance().ExpectDistinctServer(tables, accessContext, false);
+                var server = DataAccessPortal.ExpectDistinctServer(tables, accessContext, false);
                 
                 using (var con = server.GetConnection())
                 {
@@ -1025,13 +1025,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         distinctAccessPoint = tables.FirstOrDefault();
 
-        return DataAccessPortal.GetInstance().ExpectDistinctServer(tables, context, setInitialDatabase);
+        return DataAccessPortal.ExpectDistinctServer(tables, context, setInitialDatabase);
     }
 
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
     {
-        return DataAccessPortal.GetInstance().ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
+        return DataAccessPortal.ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
     }
 
     /// <inheritdoc/>
@@ -1086,7 +1086,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         if(LiveLoggingServer_ID == null) 
             throw new Exception($"No live logging server set for Catalogue {Name}");
 
-        var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
+        var server = DataAccessPortal.ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
         return new LogManager(server);
     }

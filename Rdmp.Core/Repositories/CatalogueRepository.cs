@@ -50,8 +50,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     /// <inheritdoc/>
     public MEF MEF { get; set; }
 
-    private readonly ObjectConstructor _constructor = new ObjectConstructor();
-
     /// <inheritdoc/>
     public CommentStore CommentStore { get; set; }
 
@@ -184,7 +182,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         if (Constructors.TryGetValue(t, out var constructor))
             return constructor(this, reader);
 
-        return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
+        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
     }
 
     private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new ConcurrentDictionary<Type, IRowVerCache>();

@@ -118,7 +118,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
     private void RefreshTasks()
     {
         var liveserver = ddLoggingServer.SelectedItem as ExternalDatabaseServer;
-        var server = DataAccessPortal.GetInstance().ExpectServer(liveserver, DataAccessContext.Logging);
+        var server = DataAccessPortal.ExpectServer(liveserver, DataAccessContext.Logging);
 
         if (liveserver != null)
         {

@@ -84,7 +84,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
         if (Constructors.TryGetValue(t, out var constructor))
             return constructor(this, reader);
 
-        return _constructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
+        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
     }
         
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)

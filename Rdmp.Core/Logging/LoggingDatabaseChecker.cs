@@ -28,7 +28,7 @@ public class LoggingDatabaseChecker : ICheckable
     }
 
     public LoggingDatabaseChecker(IDataAccessPoint target)
-        : this(DataAccessPortal.GetInstance().ExpectServer(target, DataAccessContext.Logging))
+        : this(DataAccessPortal.ExpectServer(target, DataAccessContext.Logging))
     {
     }
 

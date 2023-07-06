@@ -42,7 +42,7 @@ public abstract class DelimitedFileSourceTestsBase
     }
 
 
-    protected DataTable RunGetChunk(FlatFileToLoad file,BadDataHandlingStrategy strategy, bool throwOnEmpty)
+    protected static DataTable RunGetChunk(FlatFileToLoad file,BadDataHandlingStrategy strategy, bool throwOnEmpty)
     {
         return RunGetChunk(file, s =>
         {

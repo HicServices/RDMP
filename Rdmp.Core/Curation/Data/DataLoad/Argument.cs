@@ -272,7 +272,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                 var constructor = new ObjectConstructor();
 
-                result = (ICustomUIDrivenClass) constructor.Construct(t, (ICatalogueRepository) Repository);
+                result = (ICustomUIDrivenClass)ObjectConstructor.Construct(t, (ICatalogueRepository) Repository);
                      
             }
             catch (Exception e)

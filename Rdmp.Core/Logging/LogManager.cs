@@ -52,7 +52,7 @@ public class LogManager : ILogManager
         Server = server;
     }
 
-    public LogManager(IDataAccessPoint loggingServer) : this(DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging))
+    public LogManager(IDataAccessPoint loggingServer) : this(DataAccessPortal.ExpectServer(loggingServer, DataAccessContext.Logging))
     {
         DataAccessPointIfAny = loggingServer;
     }

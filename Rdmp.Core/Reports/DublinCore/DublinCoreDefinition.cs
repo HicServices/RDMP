@@ -119,7 +119,7 @@ public class DublinCoreDefinition
         Format = GetElement(descendants, "format",false);
     }
 
-    private DateTime? GetElementDateTime(XElement[] descendants, string tagLocalName, bool mandatory)
+    private static DateTime? GetElementDateTime(XElement[] descendants, string tagLocalName, bool mandatory)
     {
         var stringValue = GetElement(descendants, tagLocalName, mandatory);
         if (string.IsNullOrWhiteSpace(stringValue))
@@ -128,7 +128,7 @@ public class DublinCoreDefinition
         return DateTime.Parse(stringValue);
     }
 
-    private Uri GetElementUri(XElement[] descendants, string tagLocalName, bool mandatory)
+    private static Uri GetElementUri(XElement[] descendants, string tagLocalName, bool mandatory)
     {
         var stringValue = GetElement(descendants, tagLocalName, mandatory);
         if (string.IsNullOrWhiteSpace(stringValue))
