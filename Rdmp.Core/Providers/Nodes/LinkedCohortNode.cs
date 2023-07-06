@@ -33,7 +33,7 @@ public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
     {
         return Cohort;
     }
-        
+
     protected bool Equals(LinkedCohortNode other)
     {
         return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
@@ -41,7 +41,7 @@ public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
         return Equals((LinkedCohortNode) obj);

@@ -26,7 +26,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     private readonly TableInfo[] _loadTables;
     private readonly HICDatabaseConfiguration _config;
     private string _description;
-        
+
     public string ErrorDescription { get; private set; }
 
     private Dictionary<DiscoveredDatabase, TableInfo[]> _liveDatabaseDictionary;
@@ -94,7 +94,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     {
         return _description;
     }
-        
+
     public void DiscoverState()
     {
         foreach (var db in Children)
@@ -108,7 +108,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
         return Equals((LoadDiagramServerNode) obj);

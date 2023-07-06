@@ -28,7 +28,7 @@ public class IdentifierDumpServerUsageNode:Node,IDeleteable
     {
         return $"Usage of:{IdentifierDumpServer.Name}";
     }
-        
+
     protected bool Equals(IdentifierDumpServerUsageNode other)
     {
         return Equals(TableInfo, other.TableInfo);
@@ -36,7 +36,7 @@ public class IdentifierDumpServerUsageNode:Node,IDeleteable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
         return Equals((IdentifierDumpServerUsageNode) obj);

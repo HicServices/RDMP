@@ -44,8 +44,6 @@ internal class CohortIdentificationHeader
         return "";
     }
         
-    public string ElapsedTime = "";
-
     public static string GetCachedQueryUseCount()
     {
         return "";

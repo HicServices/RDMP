@@ -102,8 +102,7 @@ public class CheckColumnProvider
     {
         lock (checkResultsDictionary)
         {
-            if (checkResultsDictionary.ContainsKey(o))
-                checkResultsDictionary.Remove(o);
+            checkResultsDictionary.Remove(o);
 
             checkResultsDictionary.Add(o, result);
 

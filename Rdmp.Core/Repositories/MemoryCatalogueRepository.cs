@@ -31,7 +31,7 @@ using IContainer = Rdmp.Core.Curation.Data.IContainer;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in 
+/// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in
 /// dictionaries and arrays in memory instead of the database.
 /// </summary>
 public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
@@ -112,14 +112,14 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
         ObscureDependencyFinder = dependencyFinder;
     }
-        
+
 
     public LogManager GetDefaultLogManager()
     {
         var server = GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
         if (server == null)
             return null;
-            
+
         return new LogManager(server);
     }
 
@@ -186,7 +186,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         else
             Defaults.Add(toChange, externalDatabaseServer);
     }
-        
+
     public override void Clear()
     {
         base.Clear();
@@ -199,7 +199,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     }
 
     #region ITableInfoToCredentialsLinker
-        
+
     /// <summary>
     /// records which credentials can be used to access the table under which contexts
     /// </summary>
@@ -247,7 +247,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
             if (CredentialsDictionary[tableInfo].ContainsKey(DataAccessContext.Any))
                 return CredentialsDictionary[tableInfo][DataAccessContext.Any];
         }
-                
+
 
         return null;
     }
@@ -278,7 +278,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
     {
         var toreturn = new Dictionary<DataAccessContext, List<ITableInfo>>();
-            
+
         //add the keys
         foreach (DataAccessContext context in Enum.GetValues(typeof (DataAccessContext)))
             toreturn.Add(context, new List<ITableInfo>());
@@ -286,7 +286,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         foreach (var kvp in CredentialsDictionary)
         foreach (var forNode in kvp.Value)
             toreturn[forNode.Key].Add(kvp.Key);
-            
+
         return toreturn;
     }
 
@@ -334,7 +334,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     #region ICohortContainerLinker
     protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents =
-        new Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>>(); 
+        new Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>>();
 
     public CohortAggregateContainer GetParent(AggregateConfiguration child)
     {
@@ -372,7 +372,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
             Order = order;
         }
     }
-        
+
     public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
     {
         var o = CohortContainerContents.SelectMany(kvp => kvp.Value).SingleOrDefault(c => c.Orderable.Equals(configuration));
@@ -387,13 +387,13 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
         return CohortContainerContents[parent].OrderBy(o => o.Order).Select(o => o.Orderable).ToArray();
     }
-        
+
     public CohortAggregateContainer GetParent(CohortAggregateContainer child)
     {
         var match = CohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child))).Select(kvp=>kvp.Key).ToArray();
         if (match.Length > 0)
             return match.Single();
-            
+
         return null;
     }
 
@@ -430,7 +430,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } =
         new Dictionary<IContainer, HashSet<IContainer>>();
-        
+
     public IContainer[] GetSubContainers(IContainer container)
     {
         if(!WhereSubContainers.ContainsKey(container))
@@ -470,7 +470,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     {
         if (!WhereSubContainers.ContainsKey(parent))
             WhereSubContainers.Add(parent, new HashSet<IContainer>());
-            
+
         WhereSubContainers[parent].Add(child);
     }
 
@@ -514,7 +514,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #endregion
 
     #region IEncryptionManager
-     
+
     public virtual void SetEncryptionKeyPath(string fullName)
     {
         EncryptionKeyPath = fullName;

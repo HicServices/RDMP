@@ -34,7 +34,7 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IP
 
     /// <summary>
     /// Enforces behaviour required for logging unsuccessful cache requests and providing implementation-independent checks, so that the plugin author
-    /// doesn't need to remember to call Request[Succeeded|Failed] or do general checks.  Plugin author provides implementation-specific caching in 
+    /// doesn't need to remember to call Request[Succeeded|Failed] or do general checks.  Plugin author provides implementation-specific caching in
     /// the 'DoGetChunk' function.
     /// </summary>
     /// <param name="listener"></param>
@@ -89,7 +89,7 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IP
     {
         PermissionWindow = value;
     }
-        
+
     public abstract void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny);
     public abstract void Abort(IDataLoadEventListener listener);
     public abstract T TryGetPreview();
@@ -100,5 +100,5 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IP
         MEF = value.MEF;
     }
 
-        
+
 }
