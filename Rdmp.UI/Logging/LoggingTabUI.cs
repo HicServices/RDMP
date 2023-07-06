@@ -169,7 +169,7 @@ public class LoggingTabUI : LoggingTab_Design
             for (var i = 0; i < dt.Columns.Count - 1; i++)
             {
                 sb.Append(dataRow[i]);
-                sb.Append("\t");
+                sb.Append('\t');
             }
             dataRow[dcRowString] = sb.ToString();
         }

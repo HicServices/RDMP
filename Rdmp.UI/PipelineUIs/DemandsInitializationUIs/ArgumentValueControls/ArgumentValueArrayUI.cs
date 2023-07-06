@@ -57,7 +57,7 @@ public partial class ArgumentValueArrayUI : UserControl, IArgumentValueUI
             while (e.MoveNext())
             {
                 sb.Append(e.Current);
-                sb.Append(",");
+                sb.Append(',');
             }
 
             tbArray.Text = sb.ToString().TrimEnd(',');

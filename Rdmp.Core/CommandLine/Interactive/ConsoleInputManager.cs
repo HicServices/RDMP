@@ -208,7 +208,7 @@ public class ConsoleInputManager : BasicActivateItems
                 }
             }
             sb.AppendLine();
-            sb.Append(":");
+            sb.Append(':');
         }
 
         return sb.ToString();

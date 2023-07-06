@@ -193,7 +193,7 @@ public class WordDataWriter : DocXHelper
         while(sr.Read(buff,0,23) > 0)
         {
             result.Append(buff);
-            result.Append(" ");
+            result.Append(' ');
 
             //skip a character (should be a -, if not something has gone badly wrong)
             var skipped = sr.Read();

@@ -52,7 +52,7 @@ internal class WideMessageBoxTests:UITests
 
         //send wide message box a million characters
         for(var i =0;i< 1_000_000; i++)
-            sb.Append("f");
+            sb.Append('f');
 
         var s = sb.ToString();
         var args = new WideMessageBoxArgs(s,s,s,s,WideMessageBoxTheme.Help);

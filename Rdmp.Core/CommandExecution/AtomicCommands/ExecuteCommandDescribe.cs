@@ -148,7 +148,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
             }
 
             sb.Append(p.Name);
-            sb.Append(":");
+            sb.Append(':');
             sb.AppendLine(p.GetValue(o)?.ToString() ?? "NULL");
         }
 
@@ -338,7 +338,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
             }
 
             line.Append(word);
-            line.Append(" ");
+            line.Append(' ');
         }
 
         if (line.Length > 0)
@@ -376,10 +376,10 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         sb.AppendLine("USAGE: ");
                 
         sb.Append(EnvironmentInfo.IsLinux ? "./rdmp" : "./rdmp.exe");
-        sb.Append(" ");
+        sb.Append(' ');
 
         sb.Append(BasicCommandExecution.GetCommandName(commandType.Name));
-        sb.Append(" ");
+        sb.Append(' ');
 
     }
 

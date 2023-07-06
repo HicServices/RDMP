@@ -334,7 +334,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
                 return aggregate + (aggregate == "<" ? "" : ",") + GetFullName(type);
             }
         ));
-        sb.Append(">");
+        sb.Append('>');
 
         return sb.ToString();
     }
