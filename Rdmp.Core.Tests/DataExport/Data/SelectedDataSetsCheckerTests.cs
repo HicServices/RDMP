@@ -71,7 +71,7 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
 
         var ex = Assert.Throws<Exception>(() => checker.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual(
-            $"R0017 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate? The SQL we expected to find was '[{TestDatabasesSettings.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'",ex.Message);
+            $"R0017 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate? The SQL we expected to find was '[{TestDatabaseNames.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'",ex.Message);
 
         // tidy up
         ep.DeleteInDatabase();
@@ -99,7 +99,7 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
 
         // audit has SQL is good, it contains the correct cohort
         var audit = new CumulativeExtractionResults(DataExportRepository, _configuration, _selectedDataSet.ExtractableDataSet,
-            $"select * from [yohoho and a bottle of rum] WHERE [{TestDatabasesSettings.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'");
+            $"select * from [yohoho and a bottle of rum] WHERE [{TestDatabaseNames.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'");
 
         audit.CompleteAudit(typeof(ExecuteFullExtractionToDatabaseMSSql), "[over the hills and far away]", 333, true, false);
         audit.SaveToDatabase();
