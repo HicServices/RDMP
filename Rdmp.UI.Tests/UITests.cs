@@ -287,17 +287,17 @@ public class UITests : UnitTests
     }
 
     /// <summary>
-    /// Returns all controls of type T that are in the currently shown user interface (<see cref="LastUserInterfaceLaunched")
+    /// Returns all controls of type T that are in the currently shown user interface (<see cref="LastUserInterfaceLaunched"/>)
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     protected List<T> GetControl<T>() where T:Control
     {
-        return GetControl<T>(LastUserInterfaceLaunched, new List<T>());
+        return GetControl(LastUserInterfaceLaunched, new List<T>());
     }
 
-    private List<T> GetControl<T>(Control c, List<T> list) where T:Control
+    private static List<T> GetControl<T>(Control c, List<T> list) where T:Control
     {
         if(c is T control)
             list.Add(control);
