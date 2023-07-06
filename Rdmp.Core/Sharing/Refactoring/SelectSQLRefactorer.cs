@@ -42,7 +42,7 @@ public class SelectSQLRefactorer
             throw new RefactoringException(
                 $"IColumn '{column}' did not contain the fully specified table name during refactoring ('{fullyQualifiedName}'");
 
-        if(!newFullySpecifiedTableName.Contains("."))
+        if(!newFullySpecifiedTableName.Contains('.'))
             throw new RefactoringException(
                 $"Replacement table name was not fully specified, value passed was '{newFullySpecifiedTableName}' which did not contain any dots");
 
@@ -65,7 +65,7 @@ public class SelectSQLRefactorer
             throw new RefactoringException(
                 $"ColumnInfo '{column}' did not start with the fully specified table name during refactoring ('{fullyQualifiedName}'");
 
-        if (!newFullySpecifiedTableName.Contains("."))
+        if (!newFullySpecifiedTableName.Contains('.'))
             throw new RefactoringException(
                 $"Replacement table name was not fully specified, value passed was '{newFullySpecifiedTableName}' which did not contain any dots");
 

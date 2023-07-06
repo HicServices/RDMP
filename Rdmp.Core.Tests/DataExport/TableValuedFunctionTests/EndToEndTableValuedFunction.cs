@@ -449,7 +449,7 @@ end
 
         //should be a guid
         Assert.IsTrue(dt.Rows[0][0].ToString().Length>10);
-        Assert.IsTrue(dt.Rows[0][0].ToString().Contains("-"));
+        Assert.IsTrue(dt.Rows[0][0].ToString().Contains('-'));
 
         selected.DeleteInDatabase();
         globalP.DeleteInDatabase();

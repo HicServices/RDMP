@@ -63,7 +63,7 @@ public class CommandLineHelper
     public static string GetValueString(object value)
     {
         if (value is string)
-            if (value.ToString().Contains(" "))
+            if (value.ToString().Contains(' '))
                 return $@"""{value}""";//<- looks like a snake (or a golf club? GM)
             else
                 return value as string;

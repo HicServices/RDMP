@@ -77,7 +77,7 @@ public abstract class SyntaxChecker : ICheckable
             }
         }
 
-        if (isCharBased && !(parameter.Value.Contains("'") || parameter.Value.Contains("@")))
+        if (isCharBased && !(parameter.Value.Contains('\'') || parameter.Value.Contains('@')))
             throw new SyntaxErrorException(
                 $"Parameter {parameter.ParameterName} looks like it is character based but its value does not contain any single quotes (or at least a reference to another variable)");
 

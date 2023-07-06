@@ -462,7 +462,7 @@ public class MetadataReport:DocXHelper
 
             con.Open();
 
-            if (tableToQuery.Name.Contains("@"))
+            if (tableToQuery.Name.Contains('@'))
                 throw new Exception(
                     $"Table '{tableToQuery.Name}' looks like a table valued function so cannot be processed");
 

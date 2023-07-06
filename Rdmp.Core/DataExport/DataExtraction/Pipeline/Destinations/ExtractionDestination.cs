@@ -216,7 +216,7 @@ e.g. /$i/$a")]
     {
         if (!string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern))
         {
-            if (ExtractionSubdirectoryPattern.Contains("."))
+            if (ExtractionSubdirectoryPattern.Contains('.'))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "ExtractionSubdirectoryPattern cannot contain dots, it must be relative e.g. $c/$d",
                     CheckResult.Fail));

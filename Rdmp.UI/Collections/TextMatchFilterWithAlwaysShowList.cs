@@ -22,7 +22,7 @@ public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
 
     public TextMatchFilterWithAlwaysShowList(IEnumerable<object> alwaysShow ,ObjectListView olv, string text, StringComparison comparison): base(olv, text, comparison)
     {
-        if(!string.IsNullOrWhiteSpace(text) && text.Contains(" "))
+        if(!string.IsNullOrWhiteSpace(text) && text.Contains(' '))
         {
             var filters = new List<IModelFilter>();
                 

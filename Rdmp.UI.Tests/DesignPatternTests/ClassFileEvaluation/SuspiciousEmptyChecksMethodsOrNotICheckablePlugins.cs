@@ -67,7 +67,7 @@ public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 
             Console.WriteLine($"Demander Check Method Is:{Environment.NewLine}{methodBody}");
 
-            if (!methodBody.Contains(";"))
+            if (!methodBody.Contains(';'))
                 _fails.Add($"FAIL:Method body of Checks in file {file} is empty (does not contain any semicolons)");
         }
 

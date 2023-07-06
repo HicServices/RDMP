@@ -263,16 +263,16 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     private static bool IsDateWithTime(string formatString)
     {
-        return formatString.Contains("h") && formatString.Contains("y");
+        return formatString.Contains('h') && formatString.Contains('y');
     }
     private static bool IsDateWithoutTime(string formatString)
     {
-        return formatString.Contains("y") && !formatString.Contains("h");
+        return formatString.Contains('y') && !formatString.Contains('h');
     }
 
     private static bool IsTimeWithoutDate(string formatString)
     {
-        return !formatString.Contains("y") && formatString.Contains("h");
+        return !formatString.Contains('y') && formatString.Contains('h');
     }
 
     private static bool IsDateFormat(string formatString)
@@ -280,7 +280,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         if (string.IsNullOrWhiteSpace(formatString))
             return false;
 
-        return formatString.Contains("/") || formatString.Contains("\\") || formatString.Contains(":");
+        return formatString.Contains('/') || formatString.Contains('\\') || formatString.Contains(':');
     }
 
     /*

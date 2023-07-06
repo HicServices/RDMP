@@ -245,7 +245,7 @@ public partial class WideMessageBox : Form
 
     private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
     {
-        if(e.LinkText.Contains("#"))
+        if(e.LinkText.Contains('#'))
         {
             var split = e.LinkText.Split('#');
             if(split.Length >=2 && CommentStore.ContainsKey(split[1]))

@@ -57,7 +57,7 @@ public static class FolderHelper
         if (candidatePath.Contains("\\\\"))//if it contains double slash
             reason = $"Catalogue paths cannot contain double slashes '\\\\', Invalid path was:{candidatePath}";
         else
-        if (candidatePath.Contains("/"))//if it contains double slash
+        if (candidatePath.Contains('/'))//if it contains double slash
             reason =
                 $"Catalogue paths must use backwards slashes not forward slashes, Invalid path was:{candidatePath}";
 

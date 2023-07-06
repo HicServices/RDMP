@@ -60,9 +60,9 @@ public class FixedStagingDatabaseNamer : SuffixBasedNamer
         var toReturn = s.Trim(new char[] { '[', ']', '`' ,'"'});
 
         if (
-            toReturn.Contains("[") ||
-            toReturn.Contains("]") ||
-            toReturn.Contains("'"))
+            toReturn.Contains('[') ||
+            toReturn.Contains(']') ||
+            toReturn.Contains('\''))
             throw new Exception(
                 $"Attempted to strip wrapping from {s} but result was {toReturn} which contains invalid characters like [ and ], possibly original string was a multipart identifier? e.g. [MyTable].dbo.[Bob]?");
 

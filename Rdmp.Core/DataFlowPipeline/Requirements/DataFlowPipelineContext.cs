@@ -288,7 +288,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             //We have an interface that matches the input object, let's call it
             var preInit = interfaceToInvokeIfAny.GetMethod("PreInitialize");
                 
-            //but first document the fact that we have foundit
+            //but first document the fact that we have found it
             if (!initializedComponents.ContainsKey(component))
                 initializedComponents.Add(component, new Dictionary<MethodInfo, object>());
 

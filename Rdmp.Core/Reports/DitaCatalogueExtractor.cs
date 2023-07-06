@@ -88,7 +88,7 @@ public class DitaCatalogueExtractor : ICheckable
                 throw new Exception(
                     $"Dita Extraction requires that each catalogue have a unique Acronym, the catalogue {c.Name} is missing an Acronym");
 
-            if (c.Name.Contains("\\") || c.Name.Contains("/"))
+            if (c.Name.Contains('\\') || c.Name.Contains('/'))
                 throw new Exception("Dita Extractor does not support catalogues with backslashes or forward slashs in their name");
 
             //catalogue main file

@@ -139,7 +139,7 @@ public static class UsefulStuff
             //clean the string
 
             var toAdd = s.Trim();
-            if (toAdd.Contains("."))
+            if (toAdd.Contains('.'))
                 toAdd = toAdd[(toAdd.LastIndexOf(".", StringComparison.Ordinal) + 1)..];
 
             var gotDelimitedMatch = false;
