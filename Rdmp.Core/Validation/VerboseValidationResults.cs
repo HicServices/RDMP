@@ -76,10 +76,9 @@ public class VerboseValidationResults
                         ReasonsRowsInvalidated.Add(
                             $"{subException.SourceItemValidator.TargetProperty}|{subException.SourceConstraint.GetType().Name}");
 
-                if (worstConsequences.Keys.Contains(subException.SourceItemValidator) == true)
+                if (worstConsequences.TryGetValue(subException.SourceItemValidator,out var oldConsequence))
                 {
                     //see if situation got worse
-                    var oldConsequence = worstConsequences[subException.SourceItemValidator];
                     var newConsequence = subException.SourceConstraint.Consequence.Value;
 
                     if (newConsequence > oldConsequence)
@@ -93,7 +92,7 @@ public class VerboseValidationResults
             }
 
             //now record the worst case event
-            if (worstConsequences.Values.Contains(Consequence.InvalidatesRow))
+            if (worstConsequences.ContainsValue(Consequence.InvalidatesRow))
                 CountOfRowsInvalidated++;
                 
             foreach (var itemValidator in worstConsequences.Keys)
