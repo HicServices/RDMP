@@ -25,7 +25,7 @@ namespace Rdmp.Core.Repositories.Construction;
 /// </summary>
 public class ObjectConstructor
 {
-    private readonly static BindingFlags BindingFlags = BindingFlags.Instance  | BindingFlags.Public| BindingFlags.NonPublic;
+    private static readonly BindingFlags BindingFlags = BindingFlags.Instance  | BindingFlags.Public| BindingFlags.NonPublic;
 
     /// <summary>
     /// Constructs a new instance of Type t using the blank constructor
@@ -40,7 +40,7 @@ public class ObjectConstructor
     #region permissable constructor signatures for use with this class
 
     /// <summary>
-    /// Constructs a new instance of Type t using the default constructor or one that takes an IRDMPPlatformRepositoryServiceLocator (or any derrived class)
+    /// Constructs a new instance of Type t using the default constructor or one that takes an IRDMPPlatformRepositoryServiceLocator (or any derived class)
     /// </summary>
     /// <param name="t"></param>
     /// <param name="serviceLocator"></param>
@@ -48,11 +48,11 @@ public class ObjectConstructor
     /// <returns></returns>
     public static object Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator,bool allowBlank = true)
     {
-        return ObjectConstructor.Construct(t,serviceLocator, allowBlank);
+        return Construct<IRDMPPlatformRepositoryServiceLocator>(t,serviceLocator, allowBlank);
     }
 
     /// <summary>
-    /// Constructs a new instance of Type t using the default constructor or one that takes an ICatalogueRepository (or any derrived class)
+    /// Constructs a new instance of Type t using the default constructor or one that takes an ICatalogueRepository (or any derived class)
     /// </summary>
     /// <param name="t"></param>
     /// <param name="catalogueRepository"></param>
@@ -60,7 +60,7 @@ public class ObjectConstructor
     /// <returns></returns>
     public static object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true)
     {
-        return ObjectConstructor.Construct(t, catalogueRepository, allowBlank);
+        return Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
     }
 
     /// <summary>

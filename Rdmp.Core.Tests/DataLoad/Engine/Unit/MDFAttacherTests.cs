@@ -296,14 +296,14 @@ public class MDFAttacherTests : DatabaseTests
             throw new TypeLoadException($"Type {type} does not implement IAttacher");
 
         //find the blank constructor
-        var constructorInfo = type.GetConstructor(new Type[] {});
+        var constructorInfo = type.GetConstructor(Array.Empty<Type>());
             
         //if it doesnt have one
         if(constructorInfo == null)
             throw new TypeLoadException($"Type {type} does not have a blank constructor");
 
         //call the blank constructor and return the reuslts
-        var bob = (IAttacher) constructorInfo.Invoke(new Type[] {});
+        var bob = (IAttacher) constructorInfo.Invoke(Array.Empty<Type>());
 
         
     }

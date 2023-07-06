@@ -176,7 +176,7 @@ public class ExecuteCommandSet:BasicCommandExecution
                     if (!string.IsNullOrWhiteSpace(rel.ValueGetter))
                     {
                         //get available from that method
-                        var method = on.GetType().GetMethod(rel.ValueGetter,new Type[0]);
+                        var method = on.GetType().GetMethod(rel.ValueGetter,Type.EmptyTypes);
 
                         if(method == null)
                         {

@@ -215,7 +215,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <inheritdoc/>
     public virtual IEnumerable<Type> GetIgnoredCommands()
     {
-        return new Type[0];
+        return Type.EmptyTypes;
     }
 
     /// <inheritdoc/>

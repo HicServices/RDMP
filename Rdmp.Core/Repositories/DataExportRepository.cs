@@ -133,7 +133,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     {
         //we know of no children
         if (!_packageContentsDictionary.Value.ContainsKey(package.ID))
-            return new ExtractableDataSet[0];
+            return Array.Empty<ExtractableDataSet>();
 
         return _packageContentsDictionary.Value[package.ID].Select(i => allDataSets.Single(ds => ds.ID == i)).ToArray();
     }

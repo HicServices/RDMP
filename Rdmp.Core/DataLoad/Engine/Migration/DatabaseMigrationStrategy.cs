@@ -18,13 +18,13 @@ public delegate void TableMigrationComplete(string tableName, int numInserts, in
 /// <summary>
 /// See OverwriteMigrationStrategy
 /// </summary>
-abstract public class DatabaseMigrationStrategy
+public abstract class DatabaseMigrationStrategy
 {
     protected IDataLoadInfo _dataLoadInfo;
     protected IManagedConnection _managedConnection;
     protected const int Timeout = 60000;
 
-    abstract public void MigrateTable(IDataLoadJob toMigrate, MigrationColumnSet columnsToMigrate, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates);
+    public abstract void MigrateTable(IDataLoadJob toMigrate, MigrationColumnSet columnsToMigrate, int dataLoadInfoID, GracefulCancellationToken cancellationToken, ref int inserts, ref int updates);
 
     protected DatabaseMigrationStrategy(IManagedConnection connection)
     {
