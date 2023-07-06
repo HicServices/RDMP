@@ -92,7 +92,7 @@ public class BackfillTests : FromToDatabaseTests
         ColumnInfo[] ciSamples;
         AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples, true);
 
-        Assert.AreEqual(5, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(5, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
     }
 
     private void Mutilate(string timeColumnName)
@@ -258,7 +258,7 @@ public class BackfillTests : FromToDatabaseTests
         tiSamples.IsPrimaryExtractionTable = true;
         tiSamples.SaveToDatabase();
 
-        Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Samples (1:M) Results join
         new JoinInfo(CatalogueRepository,ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
@@ -502,7 +502,7 @@ public class BackfillTests : FromToDatabaseTests
         tiSamples.IsPrimaryExtractionTable = true;
         tiSamples.SaveToDatabase();
 
-        Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Headers (1:M) Samples join
         new JoinInfo(CatalogueRepository,ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
@@ -873,7 +873,7 @@ public class BackfillTests : FromToDatabaseTests
         var tiHeaders = AddHeaderTableToCatalogue(DatabaseName, ciSamples);
 
         // should be all entities set SetUp now
-        Assert.AreEqual(15, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
         #endregion
 
         // add data

@@ -601,12 +601,12 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         IColumn extractionIdentifier = null;
 
         //very unexpected, he had multiple IsExtractionIdentifier Dimensions all configured for simultaneous use on this Aggregate, it is very freaky and we definetly don't want to let him import it for cohort identification
-        if (existingExtractionIdentifierDimensions.Count() > 1)
+        if (existingExtractionIdentifierDimensions.Length > 1)
             throw new NotSupportedException(
                 $"Cannot clone the AggregateConfiguration {toClone} because it has multiple IsExtractionIdentifier dimensions (must be 0 or 1)");
 
         //It has 1... maybe it's already being used in cohort identification from another project or he just likes to graph chi numbers for some reason
-        if (existingExtractionIdentifierDimensions.Count() == 1)
+        if (existingExtractionIdentifierDimensions.Length == 1)
         {
             extractionIdentifier = existingExtractionIdentifierDimensions[0];
             underlyingExtractionInformation = existingExtractionIdentifierDimensions[0].ExtractionInformation;
@@ -634,7 +634,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         var catalogueCandidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => e.IsExtractionIdentifier).ToArray();
 
         //if there are multiple IsExtractionInformation columns
-        if (catalogueCandidates.Count() != 1)
+        if (catalogueCandidates.Length != 1)
             if (resolveMultipleExtractionIdentifiers == null)//no delegate has been provided for resolving this
                 throw new NotSupportedException(
                     $"Cannot create AggregateConfiguration because the Catalogue {catalogue} has {catalogueCandidates.Length} IsExtractionIdentifier ExtractionInformations");

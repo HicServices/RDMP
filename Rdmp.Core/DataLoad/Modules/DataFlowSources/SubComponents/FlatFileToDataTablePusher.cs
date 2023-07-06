@@ -240,17 +240,17 @@ public class FlatFileToDataTablePusher
             //add any further cells on after that
             newCells.AddRange(peekedLine.Cells.Skip(1));
 
-        } while (newCells.Count() < _headers.Length);
+        } while (newCells.Count < _headers.Length);
 
 
         //if we read too much or reached the end of the file
-        if (newCells.Count() > _headers.Length)
+        if (newCells.Count > _headers.Length)
         {
             AllBadExceptLastSoRequeueThatOne(lineToPush,allPeekedLines,eventHandlers);
             return false;
         }
 
-        if (newCells.Count() != _headers.Length)
+        if (newCells.Count != _headers.Length)
             throw new Exception("We didn't over read or reach end of file, how did we get here?");
 
         //we managed to create a full row
@@ -321,7 +321,7 @@ public class FlatFileToDataTablePusher
         PeekedRecord = allPeekedLines.Last();
 
         //but throw away everything else we read
-        foreach (var line in allPeekedLines.Take(allPeekedLines.Count() - 1))
+        foreach (var line in allPeekedLines.Take(allPeekedLines.Count - 1))
             eventHandlers.BadDataFound(line);
     }
 

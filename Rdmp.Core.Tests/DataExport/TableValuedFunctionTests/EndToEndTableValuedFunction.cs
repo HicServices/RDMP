@@ -258,7 +258,7 @@ end
         var qb = new QueryBuilder("", "");
 
         //table valued function should have 2 fields (chi and definitionID)
-        Assert.AreEqual(2, _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Count());
+        Assert.AreEqual(2, _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Length);
 
         qb.AddColumnRange(_tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
@@ -380,7 +380,7 @@ end
         _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => { return null; });
             
         //it should have imported the global parameter as part of the import right?
-        Assert.AreEqual(1,_cicAggregate.GetAllParameters().Count());
+        Assert.AreEqual(1, _cicAggregate.GetAllParameters().Length);
 
         //add the new cic to the container
         root.AddChild(_cicAggregate,2);

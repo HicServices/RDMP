@@ -454,7 +454,7 @@ public class ParameterManager
     /// <returns></returns>
     public ParameterLevel? GetLevelForParameter(ISqlParameter parameter)
     {
-        if (ParametersFoundSoFarInQueryGeneration.Count(k => k.Value.Contains(parameter)) == 0)
+        if (!ParametersFoundSoFarInQueryGeneration.Any(k => k.Value.Contains(parameter)))
             return null;
 
         return 

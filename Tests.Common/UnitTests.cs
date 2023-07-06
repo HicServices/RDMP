@@ -765,9 +765,9 @@ public class UnitTests
         var memObjectsArr = memObjects.OrderBy(o => o.ID).ToArray();
         var dbObjectsArr = dbObjects.OrderBy(o => o.ID).ToArray();
 
-        Assert.AreEqual(memObjectsArr.Count(), dbObjectsArr.Count());
+        Assert.AreEqual(memObjectsArr.Length, dbObjectsArr.Length);
 
-        for (var i = 0; i < memObjectsArr.Count(); i++)
+        for (var i = 0; i < memObjectsArr.Length; i++)
             AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
     }
 

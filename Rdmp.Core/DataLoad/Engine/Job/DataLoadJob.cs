@@ -75,7 +75,7 @@ public class DataLoadJob : IDataLoadJob
     private string GetLoggingTask(IEnumerable<ICatalogue> cataloguesToLoad)
     {
         var distinctLoggingTasks = cataloguesToLoad.Select(catalogue => catalogue.LoggingDataTask).Distinct().ToList();
-        if (distinctLoggingTasks.Count() > 1)
+        if (distinctLoggingTasks.Count > 1)
             throw new Exception(
                 $"The catalogues to be loaded do not share the same logging task: {string.Join(", ", distinctLoggingTasks)}");
 

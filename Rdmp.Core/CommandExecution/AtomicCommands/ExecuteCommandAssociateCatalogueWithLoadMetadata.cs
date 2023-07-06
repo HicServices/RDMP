@@ -78,7 +78,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicCommandExecut
                         var liveServers = _otherCatalogues.Where(c => c.LiveLoggingServer_ID != null).Select(c => c.LiveLoggingServer_ID).Distinct().ToArray();
 
                         //AND if there is agreement on what logging server to use!
-                        if (liveServers.Count() <= 1)
+                        if (liveServers.Length <= 1)
                         {
                             //if there is no current logging task for the Catalogue
                             if (string.IsNullOrWhiteSpace(cata.LoggingDataTask)

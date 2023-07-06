@@ -225,7 +225,7 @@ public class WordDataWriter : DocXHelper
     {
         InsertHeader(document,"Parameters");
 
-        var linesRequred = filtersUsed.Aggregate(0, (s, f) => s + f.GetAllParameters().Count());
+        var linesRequred = filtersUsed.Aggregate(0, (s, f) => s + f.GetAllParameters().Length);
 
         var globalParameters = Executer.Source.Request.Configuration.GlobalExtractionFilterParameters.ToArray();
         linesRequred += globalParameters.Length;

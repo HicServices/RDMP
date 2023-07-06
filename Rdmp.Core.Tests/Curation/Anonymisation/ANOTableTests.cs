@@ -268,7 +268,7 @@ public class ANOTableTests:TestsRequiringANOStore
             dt.Rows.Add(valAsString, DBNull.Value);//duplicates    
         }
         Console.WriteLine($"Time to allocate in C# memory:{sw.Elapsed}");
-        Console.WriteLine($"Allocated {dt.Rows.Count} identifiers ({uniqueSourceSet.Count()} unique ones)");
+        Console.WriteLine($"Allocated {dt.Rows.Count} identifiers ({uniqueSourceSet.Count} unique ones)");
 
         sw.Reset();
         sw.Start();

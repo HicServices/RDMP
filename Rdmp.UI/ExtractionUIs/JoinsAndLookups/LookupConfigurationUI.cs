@@ -427,7 +427,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
             var uniqueIDs = new[] { p1, p2, p3, f1, f2, f3 }.Where(o => o != null).Select(c => c.ID).ToArray();
 
-            if (uniqueIDs.Distinct().Count() != uniqueIDs.Count())
+            if (uniqueIDs.Distinct().Count() != uniqueIDs.Length)
                 throw new Exception("Columns can only appear once in any given key box");
 
             if (new[] { p1, p2, p3 }.Where(o => o != null).Select(c => c.TableInfo_ID).Distinct().Count() != 1)

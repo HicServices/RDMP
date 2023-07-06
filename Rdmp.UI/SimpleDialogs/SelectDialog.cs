@@ -399,7 +399,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         var backColorProvider = new BackColorProvider();
 
         // if there are at least 2 Types of object let them filter
-        if(_types.Count() > 1)
+        if(_types.Length > 1)
         {
             foreach (var t in EasyFilterTypesAndAssociatedCollections.Keys)
             {

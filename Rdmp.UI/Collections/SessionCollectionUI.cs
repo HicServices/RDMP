@@ -146,7 +146,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
             }, typeof(IMapsDirectlyToDatabaseTable),
             Activator.CoreChildProvider.GetAllSearchables().Keys.Except(Collection.DatabaseObjects).ToArray())?.ToList();
 
-        if (toAdd == null || toAdd.Count() == 0)
+        if (toAdd == null || toAdd.Count == 0)
         {
             // user cancelled picking objects
             return;

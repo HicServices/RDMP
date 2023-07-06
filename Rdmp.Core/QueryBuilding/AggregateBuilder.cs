@@ -447,10 +447,10 @@ public class AggregateBuilder : ISqlQueryBuilder
     private void GetGroupBySQL(List<CustomLine> queryLines,IAggregateHelper aggregateHelper)
     {
         //now are there columns that...
-        if (SelectColumns.Count(col =>
+        if (SelectColumns.Any(col =>
                 !(col.IColumn is AggregateCountColumn)  //are not count(*) style columns
                 &&
-                !_skipGroupByForThese.Contains(col.IColumn)) > 0) //and are not being skipped for GROUP BY
+                !_skipGroupByForThese.Contains(col.IColumn))) //and are not being skipped for GROUP BY
         {
 
             //yes there are! better group by then!

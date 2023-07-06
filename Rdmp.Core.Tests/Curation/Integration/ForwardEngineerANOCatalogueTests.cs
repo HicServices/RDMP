@@ -125,8 +125,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Drop();
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
-        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
+        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
+        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
 
         Assert.AreEqual(exports, imports);
         Assert.IsTrue(exports > 0);
@@ -177,8 +177,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             
         db.Drop();
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
-        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
+        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
+        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
 
         Assert.AreEqual(exports, imports);
         Assert.IsTrue(exports > 0);
@@ -242,7 +242,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         cataEngineer2.ExecuteForwardEngineering(cata);
 
         //4 extraction informations in from Catalogue (2 from Heads and 2 from Necks)
-        Assert.AreEqual(cata.GetAllExtractionInformation(ExtractionCategory.Any).Count(),4);
+        Assert.AreEqual(cata.GetAllExtractionInformation(ExtractionCategory.Any).Length, 4);
 
         //setup ANOTable on head
         var anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOSkullColor", "C")
@@ -288,7 +288,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         Assert.IsTrue(newCata.Exists());
 
         var newCataItems = newCata.CatalogueItems;
-        Assert.AreEqual(newCataItems.Count(),4);
+        Assert.AreEqual(newCataItems.Length, 4);
 
         //should be extraction informations
         //all extraction informations should point to the new table location
@@ -477,8 +477,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         db.Drop();
 
-        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Count();
-        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Count();
+        var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
+        var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
 
         Assert.AreEqual(exports, imports);
         Assert.IsTrue(exports > 0);

@@ -55,7 +55,7 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         var archiveTable = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_Archive");
         Assert.IsTrue(archiveTable.Exists());
 
-        Assert.AreEqual(7,archiveTable.DiscoverColumns().Count());
+        Assert.AreEqual(7, archiveTable.DiscoverColumns().Length);
 
         Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("name")));
         Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("bubbles")));

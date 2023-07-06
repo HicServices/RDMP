@@ -138,7 +138,7 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
             return null;
         }
 
-        if (candidates.Count() > 1)
+        if (candidates.Length > 1)
         {
             checkNotifier.OnCheckPerformed(new CheckEventArgs(
                 $"Found multiple TableInfos (mentioned above) with the runtime name {runtimeName} I don't know which one you want to view", CheckResult.Fail));

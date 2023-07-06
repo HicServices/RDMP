@@ -860,7 +860,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
                 IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle)
             },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
 
-            if(initialObjects == null || initialObjects.Count() == 0)
+            if(initialObjects == null || !initialObjects.Any())
             {
                 // user cancelled picking objects
                 return;

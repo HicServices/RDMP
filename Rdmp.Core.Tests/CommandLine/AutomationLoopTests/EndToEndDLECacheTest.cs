@@ -69,9 +69,9 @@ public class EndToEndDLECacheTest:TestsRequiringADle
 
         Assert.AreEqual(10,RowsNow - RowsBefore);
 
-        Assert.AreEqual(0,LoadDirectory.Cache.GetFiles().Count());
-        Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Count());
-        Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Count());
+        Assert.AreEqual(0, LoadDirectory.Cache.GetFiles().Length);
+        Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Length);
+        Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Length);
 
         var archiveFile = LoadDirectory.ForArchiving.GetFiles()[0];
         Assert.AreEqual(".zip",archiveFile.Extension);

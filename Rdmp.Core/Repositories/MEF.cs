@@ -194,7 +194,7 @@ public class MEF
     public static string GetMEFNameForType(Type t)
     {
         if (!t.IsGenericType) return t.FullName;
-        if (t.GenericTypeArguments.Count() != 1)
+        if (t.GenericTypeArguments.Length != 1)
             throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
         var genericTypeName = t.GetGenericTypeDefinition().FullName;
 
@@ -219,7 +219,7 @@ public class MEF
     public static string GetCSharpNameForType(Type t)
     {
         if (!t.IsGenericType) return t.Name;
-        if (t.GenericTypeArguments.Count() != 1)
+        if (t.GenericTypeArguments.Length != 1)
             throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
         var genericTypeName = t.GetGenericTypeDefinition().Name;
 

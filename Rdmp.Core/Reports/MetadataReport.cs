@@ -441,7 +441,7 @@ public class MetadataReport:DocXHelper
                     .ToArray();
                 
             //there is only one table that we can query
-            if (tableInfos.Count() == 1)
+            if (tableInfos.Length == 1)
                 tableToQuery = tableInfos.Single();//query that one
             else
             if (tableInfos.Count(t => t.IsPrimaryExtractionTable) == 1)//there are multiple tables but there is only one IsPrimaryExtractionTable
