@@ -72,7 +72,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
         var table = _dbInfo.ExpectTable(TableName);
 
-        //table didnt exist!
+        //table didn't exist!
         if (!table.Exists())
             if (!_dbInfo.DiscoverTables(false).Any())//maybe no tables existed
                 throw new FlatFileLoadException("Raw database had 0 tables we could load");
