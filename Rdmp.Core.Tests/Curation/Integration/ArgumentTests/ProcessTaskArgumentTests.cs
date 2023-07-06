@@ -293,7 +293,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
         var useCase = ReleaseUseCase.DesignTime();
 
         var factory = new DataFlowPipelineEngineFactory(useCase,RepositoryLocator.CatalogueRepository.MEF);
-        var destInstance = factory.CreateDestinationIfExists(pipe);
+        var destInstance = DataFlowPipelineEngineFactory.CreateDestinationIfExists(pipe);
 
         Assert.AreEqual(true, ((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess);
     }

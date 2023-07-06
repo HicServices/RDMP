@@ -191,7 +191,7 @@ public class SelectSQLRefactorer
     /// <param name="tableInfo"></param>
     /// <param name="newFullyQualifiedTableName"></param>
     /// <returns>Total number of changes made in columns and table name</returns>
-    public int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName)
+    public static int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName)
     {
         return RefactorTableName(tableInfo, tableInfo.GetFullyQualifiedName(), newFullyQualifiedTableName);
     }

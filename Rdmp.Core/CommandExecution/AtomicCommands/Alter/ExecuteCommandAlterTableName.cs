@@ -40,7 +40,7 @@ public class ExecuteCommandAlterTableName : AlterTableCommandExecution
             Table.Rename(newName);
 
             var newNameFullyQualified = Table.Database.ExpectTable(newName, TableInfo.Schema).GetFullyQualifiedName();
-            _refactorer.RefactorTableName(TableInfo, newNameFullyQualified);
+            SelectSQLRefactorer.RefactorTableName(TableInfo, newNameFullyQualified);
         }
 
         Publish(TableInfo);

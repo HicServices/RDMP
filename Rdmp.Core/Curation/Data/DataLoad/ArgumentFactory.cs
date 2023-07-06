@@ -161,7 +161,7 @@ public class ArgumentFactory
     /// <param name="host"></param>
     /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>
     /// <returns></returns>
-    public Dictionary<IArgument, RequiredPropertyInfo> GetDemandDictionary(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
+    public static Dictionary<IArgument, RequiredPropertyInfo> GetDemandDictionary(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
     {
         var toReturn = new Dictionary<IArgument, RequiredPropertyInfo>();
 

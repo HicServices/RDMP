@@ -99,7 +99,7 @@ public class SelectSQLRefactorerTests:UnitTests
         var refactorer = new SelectSQLRefactorer();
         Assert.IsTrue(SelectSQLRefactorer.IsRefactorable(ti));
 
-        Assert.AreEqual(1,refactorer.RefactorTableName(ti,newName));
+        Assert.AreEqual(1,SelectSQLRefactorer.RefactorTableName(ti,newName));
         Assert.AreEqual(newName,ti.Name);
     }
 
@@ -117,7 +117,7 @@ public class SelectSQLRefactorerTests:UnitTests
         var refactorer = new SelectSQLRefactorer();
         Assert.IsFalse(SelectSQLRefactorer.IsRefactorable(ti));
 
-        var ex = Assert.Throws<RefactoringException>(()=>refactorer.RefactorTableName(ti,newName));
+        var ex = Assert.Throws<RefactoringException>(()=>SelectSQLRefactorer.RefactorTableName(ti,newName));
         StringAssert.Contains(expectedReason,ex.Message);
     }
 

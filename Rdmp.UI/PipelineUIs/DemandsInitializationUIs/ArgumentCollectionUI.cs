@@ -91,7 +91,7 @@ public partial class ArgumentCollectionUI : UserControl
     private void RefreshArgumentList()
     {
         var argumentFactory = new ArgumentFactory();
-        DemandDictionary = argumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
+        DemandDictionary = ArgumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
 
         lblNoArguments.Visible = !DemandDictionary.Any();
         pArguments.Visible = DemandDictionary.Any();
