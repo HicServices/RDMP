@@ -112,7 +112,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         h = Math.Max(10,Math.Min(20,  h - 2));
     }
 
-        
+
 
     public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
         bool requireSaneHeaderText)
@@ -212,38 +212,37 @@ internal class ConsoleGuiActivator : BasicActivateItems
             CanChooseDirectories = true,
             CanChooseFiles = false
         };
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
         var selected = openDir.FilePath?.ToString();
-            
+
         return selected == null ? null : new DirectoryInfo(selected);
 
     }
 
     public override FileInfo SelectFile(string prompt)
     {
-        var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
-            
+        using var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
-        var selected = openDir.FilePaths.FirstOrDefault();
-            
+        var selected = openDir.FilePaths.Count == 1 ? openDir.FilePaths[0] : null;
+
         return selected == null ? null : new FileInfo(selected);
     }
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
     {
-        var openDir = new OpenDialog(prompt,"File")
+        using var openDir = new OpenDialog(prompt,"File")
         {
             AllowsMultipleSelection = false,
             AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
         };
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
-        var selected = openDir.FilePaths.FirstOrDefault();
-
+        var selected = openDir.FilePaths.Count == 1 ? openDir.FilePaths[0] : null;
 
         // entering "null" in a file dialog may return something like "D:\Blah\null"
         if (string.Equals(Path.GetFileName(selected),"null", StringComparison.CurrentCultureIgnoreCase))
@@ -258,7 +257,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             AllowsMultipleSelection = true,
             AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
         };
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
         return openDir.FilePaths?.Select(f=>new FileInfo(f))?.ToArray();
@@ -323,7 +322,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         GetDialogDimensions(out var w, out var h);
 
-        var dlg = new Dialog("Error",w,h,btnOk,btnStack);            
+        var dlg = new Dialog("Error",w,h,btnOk,btnStack);
         dlg.Add(textView);
 
         Application.MainLoop.Invoke(() =>
