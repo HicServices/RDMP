@@ -26,7 +26,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
     protected AggregateConfiguration AggregateConfiguration;
     protected CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny;
 
-    private bool _haveSentData = false; 
+    private bool _haveSentData = false;
 
     [DemandsInitialization("The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.", DemandType.Unspecified, 10000)]
     public int Timeout { get; set; }
@@ -48,7 +48,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(),null);
         return cohortBuilder.SQL;
     }
-        
+
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         if (_haveSentData)
@@ -81,11 +81,11 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
             using (var cmd = server.GetCommand(sql, con))
             {
                 cmd.CommandTimeout = timeout;
-                    
+
                 using(var da = server.GetDataAdapter(cmd))
                     da.Fill(dt);
             }
-                
+
 
             dt.TableName = TableName;
 

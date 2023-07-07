@@ -110,7 +110,7 @@ internal class AggregateEditorUITests:UITests
         StringAssert.Contains("no extractable columns", killed.Value.Message);
     }
 
-        
+
 
 
 

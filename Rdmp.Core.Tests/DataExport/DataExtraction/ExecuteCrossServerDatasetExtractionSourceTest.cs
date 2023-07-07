@@ -76,7 +76,7 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
         if (_request.QueryBuilder == null)
             _request.GenerateQueryBuilder();
 
-        var expectedOutput = 
+        var expectedOutput =
             string.Format(@"/*The ID of the cohort in [tempdb]..[Cohort]*/
 DECLARE @CohortDefinitionID AS int;
 SET @CohortDefinitionID=-599;

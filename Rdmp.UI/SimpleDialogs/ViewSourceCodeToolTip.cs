@@ -31,7 +31,7 @@ internal class ViewSourceCodeToolTip : ToolTip
         Draw += OnDraw;
     }
 
-        
+
     private void OnPopup(object sender, PopupEventArgs e)
     {
         if(Screen.PrimaryScreen != null && Screen.PrimaryScreen.Bounds != Rectangle.Empty)
@@ -72,7 +72,7 @@ internal class ViewSourceCodeToolTip : ToolTip
 
             var index = linenumber - 1;
             var currentLineY = midpointY - coreLineHeight;
-            
+
             //any other lines we can fit on above the current line
             while(currentLineY > 0 && index >= 0)
             {
@@ -83,7 +83,7 @@ internal class ViewSourceCodeToolTip : ToolTip
 
             index = linenumber + 1;
             currentLineY = midpointY + coreLineHeight;
-            
+
             //while there are lines below us
             while (currentLineY < HEIGHT && index < lines.Length)
             {
@@ -109,7 +109,7 @@ internal class ViewSourceCodeToolTip : ToolTip
         if(!SourceFileCache.ContainsKey(filename))
         {
             string[] fileContents;
-                
+
             //if you have the original file
             if (File.Exists(filename))
                 fileContents = File.ReadLines(filename).ToArray();
@@ -122,7 +122,7 @@ internal class ViewSourceCodeToolTip : ToolTip
                     return null;
 
                 fileContents = contentsInOneLine.Split('\n');
-                    
+
             }
 
             SourceFileCache.Add(filename,fileContents);

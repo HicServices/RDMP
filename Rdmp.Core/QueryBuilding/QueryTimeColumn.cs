@@ -19,8 +19,8 @@ namespace Rdmp.Core.QueryBuilding;
 /// <summary>
 /// The SELECT portion of QueryBuilder is built up via AddColumn which takes an IColumn.  Each IColumn is a single line of SELECT Sql which might be as
 /// simple as the name of a column but might be a method with an alias or even a count e.g. 'sum(distinct mycol) as Total'.  These IColumns are wrapped by
-/// QueryTimeColumn which is a wrapper for IColumn which is gradually populated with facts discovered during QueryBuilding such as whether it is from a Lookup 
-/// Table, whether it maps to an underlying ColumnInfo etc.  These facts are used later on by QueryBuilder to decide which tables/joins are needed in the FROM 
+/// QueryTimeColumn which is a wrapper for IColumn which is gradually populated with facts discovered during QueryBuilding such as whether it is from a Lookup
+/// Table, whether it maps to an underlying ColumnInfo etc.  These facts are used later on by QueryBuilder to decide which tables/joins are needed in the FROM
 /// section of the query etc
 /// </summary>
 public class QueryTimeColumn: IComparable
@@ -32,7 +32,7 @@ public class QueryTimeColumn: IComparable
     public bool IsIsolatedLookupDescription { get; set; }
 
     /// <summary>
-    /// The <see cref="UnderlyingColumn"/> is NOT from a <see cref="Lookup"/> but it is a code column (foreign key) which could be linked to a <see cref="Lookup"/>. 
+    /// The <see cref="UnderlyingColumn"/> is NOT from a <see cref="Lookup"/> but it is a code column (foreign key) which could be linked to a <see cref="Lookup"/>.
     /// The <see cref="Lookup"/> will be included in the query if one or more description columns follow this column in the query
     /// </summary>
     public bool IsLookupForeignKey { get; private set; }
@@ -107,7 +107,7 @@ public class QueryTimeColumn: IComparable
     }
 
     /// <summary>
-    /// Computes and records the <see cref="Lookup"/> related facts about all the <see cref="QueryTimeColumn"/> provided when building a query which requires the 
+    /// Computes and records the <see cref="Lookup"/> related facts about all the <see cref="QueryTimeColumn"/> provided when building a query which requires the
     /// supplied list of <paramref name="tablesUsedInQuery"/>.
     /// </summary>
     /// <param name="ColumnsInOrder"></param>
@@ -186,7 +186,7 @@ public class QueryTimeColumn: IComparable
                             //any lookup where there is...
                             ColumnsInOrder.Any(
                                 qtc =>
-                                    //a column with an ID equal to the fk 
+                                    //a column with an ID equal to the fk
                                     qtc.UnderlyingColumn != null && qtc.UnderlyingColumn.ID == l.ForeignKey_ID)).ToArray();
 
 
@@ -221,7 +221,7 @@ public class QueryTimeColumn: IComparable
         }
     }
 
-      
+
     /// <summary>
     /// Returns the line of SELECT Sql for this column that will appear in the final query
     /// </summary>
@@ -301,7 +301,7 @@ public class QueryTimeColumn: IComparable
 
     /// <summary>
     /// For a given column that <see cref="IsLookupForeignKey"/> returns true if there is an associated column from the lookup (i.e. a description column). This
-    /// should determine whether or not to link to the table in the FROM section of the query. 
+    /// should determine whether or not to link to the table in the FROM section of the query.
     /// </summary>
     /// <param name="selectColumns"></param>
     /// <returns></returns>

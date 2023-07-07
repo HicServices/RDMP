@@ -48,7 +48,7 @@ public class ExampleDatasetsCreation
     private IBasicActivateItems _activator;
     public const int NumberOfPeople = 5000;
     public const int NumberOfRowsPerDataset = 10000;
-        
+
     public ExampleDatasetsCreation(IBasicActivateItems activator,IRDMPPlatformRepositoryServiceLocator repos)
     {
         _repos = repos;
@@ -130,7 +130,7 @@ public class ExampleDatasetsCreation
             },
             "current_postcode",
             "current_gp",
-            "previous_gp", 
+            "previous_gp",
             "date_of_birth");
 
 
@@ -310,9 +310,9 @@ public class ExampleDatasetsCreation
         foreach(var c in catalogues)
         {
             //Get its extractableness
-            var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault() 
+            var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault()
                       ?? new ExtractableDataSet(_repos.DataExportRepository,c); //or make it extractable
-                
+
             extractionConfiguration.AddDatasetToConfiguration(eds);
         }
 
@@ -444,7 +444,7 @@ UNPIVOT
 ) AS up;",con))
                 cmd.ExecuteNonQuery();
 
-                
+
 
             using(var cmd = db.Server.GetCommand(
                       @"create view vOperations as
@@ -460,7 +460,7 @@ UNPIVOT
   Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
 ) AS up;",con))
                 cmd.ExecuteNonQuery();
-                
+
 
         }
             
@@ -570,7 +570,7 @@ UNPIVOT
             
         if(typeof(T) == typeof(HospitalAdmissions))
         {
-            return new []{ 
+            return new []{
                 new DatabaseColumnRequest("MainOperation",new DatabaseTypeRequest(typeof(string),4)),
                 new DatabaseColumnRequest("MainOperationB",new DatabaseTypeRequest(typeof(string),4)),
                 new DatabaseColumnRequest("OtherOperation1",new DatabaseTypeRequest(typeof(string),4)),
@@ -593,7 +593,7 @@ UNPIVOT
             
         return ti;
     }
-        
+
     private ICatalogue ImportCatalogue(DiscoveredTable tbl)
     {
         return ImportCatalogue(ImportTableInfo(tbl));

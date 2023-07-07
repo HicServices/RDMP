@@ -27,7 +27,7 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     public DataLoadProgressUpdateInfoTests()
     {
         var cata = Mock.Of<ICatalogue>(
-            c=> c.LoggingDataTask == "NothingTask" && 
+            c=> c.LoggingDataTask == "NothingTask" &&
                 c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
                 c.GetLookupTableInfoList() == Array.Empty<TableInfo>());
 
@@ -60,13 +60,13 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
         try
         {
             var added = (UpdateProgressIfLoadsuccessful)updateInfo.AddAppropriateDisposeStep(_job, null);
-                
-                
+
+
             Assert.AreEqual(new DateTime(2001, 1, 3), added.DateToSetProgressTo);
         }
         finally
         {
-            _job.DatesToRetrieve.Clear();    
+            _job.DatesToRetrieve.Clear();
         }
             
     }

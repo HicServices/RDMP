@@ -29,16 +29,16 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 public class RDMPControlCommonFunctionality
 {
     /// <summary>
-    /// This is the strip of buttons and labels for all controls commonly used for interacting with the content of the tab.  The 
+    /// This is the strip of buttons and labels for all controls commonly used for interacting with the content of the tab.  The
     /// bar should start with <see cref="_menuDropDown"/>.
     /// </summary>
     public ToolStrip ToolStrip { get; private set; }
-        
+
     /// <summary>
     /// Occurs before checking the <see cref="ICheckable"/> (see  <see cref="StartChecking"/>
     /// </summary>
     public event EventHandler BeforeChecking;
-        
+
     /// <summary>
     /// Occurs when a call to <see cref="Fatal"/> is made.  This will result in the form showing an error
     /// icon (but not closing itself).
@@ -58,7 +58,7 @@ public class RDMPControlCommonFunctionality
     private readonly ToolStripMenuItem _menuDropDown;
 
     private AtomicCommandUIFactory atomicCommandUIFactory;
-        
+
     private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
     private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
     private ICheckable _checkable;
@@ -178,7 +178,7 @@ public class RDMPControlCommonFunctionality
 
     /// <summary>
     /// Adds check buttons to the tool strip and sets up <see cref="StartChecking"/> to target the return value of <paramref name="checkableFunc"/>.  If the method throws the
-    /// Exception will be exposed in the checking system. 
+    /// Exception will be exposed in the checking system.
     /// 
     /// <para>Only use this method if there is a reasonable chance the <paramref name="checkableFunc"/> will crash otherwise use the normal overload</para>
     /// </summary>
@@ -223,7 +223,7 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    /// Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks becomming 
+    /// Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks becomming
     /// visible if it was not visible before.
     /// </summary>
     /// <param name="s"></param>
@@ -385,7 +385,7 @@ public class RDMPControlCommonFunctionality
             if (!_addToMenuSubmenus.ContainsKey(underMenu))
             {
                 _addToMenuSubmenus.Add(underMenu, new ToolStripMenuItem(underMenu));
-                    
+
                 // If it's the GoTo menu then when the user expands the menu we have to fetch the objects
                 // and update the IsImpossible status etc.
                 if (underMenu == AtomicCommandFactory.GoTo)

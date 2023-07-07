@@ -73,7 +73,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
                                                    "filters, parameters and set operations. Are you sure this is what you want?",
                 "Confirm Cloning"))
         {
-                
+
             CloneCreatedIfAny = _cic.CreateClone(new ThrowImmediatelyCheckNotifier());
 
             if (_project != null) // clone the association

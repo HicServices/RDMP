@@ -71,7 +71,7 @@ namespace ResearchDataManagementPlatform.Menus;
 public partial class RDMPTopMenuStripUI : RDMPUserControl
 {
     private WindowManager _windowManager;
-        
+
     private SaveMenuItem _saveToolStripMenuItem;
     private AtomicCommandUIFactory _atomicCommandUIFactory;
 
@@ -105,7 +105,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var exeDir = UsefulStuff.GetExecutableDirectory();
         AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
 
-        // also add yaml files from wherever they got their original yaml file 
+        // also add yaml files from wherever they got their original yaml file
         if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory.FullName))
         {
             AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
@@ -184,7 +184,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var cmd = new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
         cmd.Execute();
     }
-        
+
 
     private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -211,7 +211,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     {
         new ExecuteCommandGenerateTestDataUI(Activator).Execute();
     }
-        
+
     private void showPerformanceCounterToolStripMenuItem_Click(object sender, EventArgs e)
     {
         new PerformanceCounterUI().Show();
@@ -371,13 +371,13 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
                 _windowManager.Navigation.Resume();
             }
-                    
+
         }
                 
 
         _saveToolStripMenuItem.Saveable = saveable;
     }
-        
+
     /// <summary>
     /// Updates the enabled status (greyed out) of the Forward/Back menu items (includes the use of keyobard shortcuts)
     /// </summary>
@@ -386,7 +386,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         navigateBackwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanBack();
         navigateForwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanForward();
     }
-        
+
 
     private void codeGenerationToolStripMenuItem_Click(object sender, EventArgs e)
     {

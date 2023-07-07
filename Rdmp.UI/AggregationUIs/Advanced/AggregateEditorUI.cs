@@ -37,17 +37,17 @@ using ScintillaNET;
 namespace Rdmp.UI.AggregationUIs.Advanced;
 
 /// <summary>
-/// Allows you to adjust an Aggregate.  This can either be a breakdown of your dataset by columns possibly including a graph (Basic Aggregate), a list of patient identifiers (Identifier 
+/// Allows you to adjust an Aggregate.  This can either be a breakdown of your dataset by columns possibly including a graph (Basic Aggregate), a list of patient identifiers (Identifier
 /// List) or a patient index table (See AggregateConfiguration). The image in the top left tells you what type of AggregateConfiguration it is.
 ///  
-/// <para>Clicking the 'Parameters' button will launch the ParameterCollectionUI dialogue which will let you edit which SQL Parameters @startDate etc are available for use in filters on the 
+/// <para>Clicking the 'Parameters' button will launch the ParameterCollectionUI dialogue which will let you edit which SQL Parameters @startDate etc are available for use in filters on the
 /// AggregateConfiguration</para>
 /// 
 /// <para>If you are editing a Basic Aggregate that does not include any patient identifier columns (IsExtractionIdentifier) then you can tick IsExtractable to make it available for use and
 /// extraction for researchers who use the underlying dataset and receive a data extraction (they will receive the 'master' aggregate run on the entire data repository and a 'personal'
 /// version which is the same query run against their project extraction only) See ExtractionAggregateGraphObjectCollection.</para>
 /// 
-/// <para>You can click in the SQL and Alias columns to rename columns or change their SQL.  You can also click in the 'Join Direction' column to edit the direction (LEFT or RIGHT) of 
+/// <para>You can click in the SQL and Alias columns to rename columns or change their SQL.  You can also click in the 'Join Direction' column to edit the direction (LEFT or RIGHT) of
 /// any supplemental JOINs.</para>
 /// 
 /// <para>If your Catalogue has multiple underlying TableInfos you can pick which ones to include in the query generated in the FROM section (any Columns included in the SELECT section
@@ -66,7 +66,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 {
     private IAggregateBuilderOptions _options;
     private AggregateConfiguration _aggregate;
-        
+
     private List<ITableInfo> _forcedJoins;
     private IQuerySyntaxHelper _querySyntaxHelper;
 
@@ -102,7 +102,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         {
             if(j.JoinType == (ExtractionJoinType) newvalue)
                 return;
-                
+
             j.JoinType = (ExtractionJoinType)newvalue;
             j.SaveToDatabase();
             Publish();
@@ -121,7 +121,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     {
         return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
     }
-        
+
     private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
     {
         var ti = rowobject as TableInfo;
@@ -184,7 +184,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         return newvalue;
 
     }
-        
+
     private CheckState ForceJoinCheckStateGetter(object rowObject)
     {
         if (_forcedJoins == null)
@@ -250,7 +250,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         //and patient index tables too
         olvJoin.AddObjects(_aggregate.PatientIndexJoinablesUsed);
     }
-        
+
     private void SetNameText()
     {
         if (_aggregate.IsJoinablePatientIndexTable())
@@ -263,7 +263,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         //set the name to the tostring not the .Name so that we ignore the cic prefix
         tbName.Text = _aggregate.ToString();
     }
-               
+
     private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)
     {
         e.Column.PutAspectByName(e.RowObject, e.NewValue);
@@ -278,7 +278,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         else
             throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
     }
-        
+
     #region Having
     private void HavingTextChanged(object sender, EventArgs e)
     {
@@ -551,7 +551,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(t));
     }
 }
-    
+
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<AggregateEditor_Design, UserControl>))]
 public abstract class AggregateEditor_Design : RDMPSingleDatabaseObjectControl<AggregateConfiguration>
 {

@@ -18,12 +18,12 @@ namespace Rdmp.Core.QueryBuilding;
 /// <summary>
 /// Allows you to generate adjusted AggregateBuilders in which a basic AggregateBuilder from an AggregateConfiguration is adjusted to include an inception WHERE statement
 /// which restricts the results to only those patients who are in a cohort (the cohort is the list of private identifiers returned by the AggregateConfiguration passed
-/// into the constructor as the 'cohort' argument) 
+/// into the constructor as the 'cohort' argument)
 /// </summary>
 public class CohortSummaryQueryBuilder
 {
     private AggregateConfiguration _summary;
-        
+
     private ISqlParameter[] _globals;
     private IColumn _extractionIdentifierColumn;
 
@@ -96,9 +96,9 @@ public class CohortSummaryQueryBuilder
     }
 
     /// <summary>
-    /// Functions in two modes 
+    /// Functions in two modes
     /// 
-    /// <para>WhereExtractionIdentifiersIn: 
+    /// <para>WhereExtractionIdentifiersIn:
     /// Returns a adjusted AggregateBuilder that is based on the summary AggregateConfiguration but which has an inception WHERE statement that restricts the IsExtractionIdentifier column
     /// by those values returned by the Cohort query.  In order that this query doesn't become super insane we require that the Cohort be cached so that it is just a simple single
     /// like IFilter e.g. conceptually: WHERE CHI IN (Select CHI from IndexedExtractionIdentifierList_AggregateConfiguration5)</para>
@@ -131,13 +131,13 @@ public class CohortSummaryQueryBuilder
 
         var memoryRepository = new MemoryCatalogueRepository();
 
-        //Get a builder for creating the basic aggregate graph 
+        //Get a builder for creating the basic aggregate graph
         var summaryBuilder = _summary.GetQueryBuilder();
 
         //Find its root container if it has one
         var summaryRootContainer = summaryBuilder.RootFilterContainer;
 
-        //work out a filter SQL that will restrict the graph generated only to the cohort 
+        //work out a filter SQL that will restrict the graph generated only to the cohort
         var cohortRootContainer = _cohort.RootFilterContainer;
 
         //if we are only graphing a single filter from the Cohort
@@ -146,7 +146,7 @@ public class CohortSummaryQueryBuilder
 
         var joinUse = _cohort.PatientIndexJoinablesUsed.SingleOrDefault();
         var joinTo = joinUse?.JoinableCohortAggregateConfiguration?.AggregateConfiguration;
-            
+
         //if there is a patient index table we must join to it
         if (joinUse != null)
         {
@@ -194,7 +194,7 @@ public class CohortSummaryQueryBuilder
         var cachingServer = GetQueryCachingServer() ?? throw new NotSupportedException("No Query Caching Server configured");
         var memoryRepository = new MemoryCatalogueRepository();
 
-        //Get a builder for creating the basic aggregate graph 
+        //Get a builder for creating the basic aggregate graph
         var builder = _summary.GetQueryBuilder();
 
         //Find its root container if it has one
@@ -203,7 +203,7 @@ public class CohortSummaryQueryBuilder
         //Create a new spontaneous container (virtual memory only container, this will include an in line filter that restricts the graph to match the cohort and then include a subcontainer with the old root container - if there was one)
         var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,oldRootContainer != null ? new[] { oldRootContainer } : null, null, FilterContainerOperation.AND);
 
-        //work out a filter SQL that will restrict the graph generated only to the cohort 
+        //work out a filter SQL that will restrict the graph generated only to the cohort
         var cohortQueryBuilder = GetBuilder();
         cohortQueryBuilder.CacheServer = cachingServer;
 

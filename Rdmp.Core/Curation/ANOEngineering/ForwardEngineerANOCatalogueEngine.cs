@@ -50,7 +50,7 @@ public class ForwardEngineerANOCatalogueEngine
         _planManager = planManager;
         _allColumnsInfos = _catalogueRepository.GetAllObjects<ColumnInfo>();
     }
-        
+
     public void Execute()
     {
 
@@ -70,7 +70,7 @@ public class ForwardEngineerANOCatalogueEngine
                     foreach (var columnInfo in skippedTable.ColumnInfos)
                         GetNewColumnInfoForOld(columnInfo,true);
                 }
-                    
+
                 //for each table that isn't being skipped
                 foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
                 {
@@ -91,7 +91,7 @@ public class ForwardEngineerANOCatalogueEngine
                             querybuilderForMigratingTable.AddColumn(new ColumnInfoToIColumn(memoryRepo,columnInfo));
 
                             var colName = columnInfo.GetRuntimeName();
-                                
+
                             //if it is being ano tabled then give the table name ANO as a prefix
                             if (columnPlan.Plan == Plan.ANO)
                                 colName = $"ANO{colName}";
@@ -158,7 +158,7 @@ public class ForwardEngineerANOCatalogueEngine
                 NewCatalogue.SaveToDatabase();
 
                 AuditParenthood(_planManager.Catalogue, NewCatalogue);
-                    
+
                 //For each of the old ExtractionInformations (95% of the time that's just a reference to a ColumnInfo e.g. '[People].[Height]' but 5% of the time it's some horrible aliased transform e.g. 'dbo.RunMyCoolFunction([People].[Height]) as BigHeight'
                 foreach (var oldCatalogueItem in _planManager.Catalogue.CatalogueItems)
                 {
@@ -177,7 +177,7 @@ public class ForwardEngineerANOCatalogueEngine
                     var newColumnInfo = GetNewColumnInfoForOld(oldColumnInfo);
 
                     var newCatalogueItem = oldCatalogueItem.ShallowClone(NewCatalogue);
-                        
+
                     //and rewire its ColumnInfo to the cloned child one
                     newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
 
@@ -224,7 +224,7 @@ public class ForwardEngineerANOCatalogueEngine
                                 //otherwise do a non strict refactoring (don't worry if you don't finda ny references)
                                 SelectSQLRefactorer.RefactorColumnName(newExtractionInformation,(ColumnInfo)kvpOtherCols.Key,((ColumnInfo)kvpOtherCols.Value).Name,false);
                             }
-                            
+
                             //make the new one exactly as extractable
                             newExtractionInformation.Order = oldExtractionInformation.Order;
                             newExtractionInformation.Alias = oldExtractionInformation.Alias;
@@ -267,7 +267,7 @@ public class ForwardEngineerANOCatalogueEngine
                     //see if we already have a Lookup declared for the NEW columns (unlikely)
                     var newLookup = existingLookups.SingleOrDefault(l => l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID) ?? new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,lookup.Collation);
 
-                    //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correclty e.g. where TestCode 'HAB1' means 2 different things depending on healthboard) 
+                    //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correclty e.g. where TestCode 'HAB1' means 2 different things depending on healthboard)
                     foreach (var compositeJoin in lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>())
                     {
                         var newCompositeFk = GetNewColumnInfoForOld(compositeJoin.ForeignKey);
@@ -352,10 +352,10 @@ public class ForwardEngineerANOCatalogueEngine
 
         return toReturn;
     }
-        
+
     /// <summary>
     /// Here we are migrating a Catalogue but some of the TableInfos have already been migrated e.g. lookup tables as part of migrating another Catalogue.  We are
-    /// now trying to find one of those 'not migrated' ColumnInfos by name without knowing whether the user has since deleted the reference or worse introduced 
+    /// now trying to find one of those 'not migrated' ColumnInfos by name without knowing whether the user has since deleted the reference or worse introduced
     /// duplicate references to the same TableInfo/ColumnInfos.
     /// </summary>
     /// <param name="syntaxHelper"></param>
@@ -425,7 +425,7 @@ public class ForwardEngineerANOCatalogueEngine
     }
 
     private Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable>();
-        
+
 
     private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)
     {

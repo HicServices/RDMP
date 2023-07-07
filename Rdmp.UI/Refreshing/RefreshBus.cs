@@ -23,7 +23,7 @@ public class RefreshBus
 {
     /// <summary>
     /// This event exists so that the IActivateItems can precache data for use by subscribers during publishing refresh events.  Do not subscribe to this event if you just want to
-    /// know when stuff has changed, instead use the Subscribe and Unsubscribe methods 
+    /// know when stuff has changed, instead use the Subscribe and Unsubscribe methods
     /// </summary>
     public event RefreshObjectEventHandler BeforePublish;
     public event RefreshObjectEventHandler AfterPublish;
@@ -62,7 +62,7 @@ public class RefreshBus
                     {
                         e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
                     }
-                }                        
+                }
 
                 RefreshObject?.Invoke(sender, e);
             }
@@ -71,7 +71,7 @@ public class RefreshBus
                 AfterPublish?.Invoke(this, e);
                 PublishInProgress = false;
                 Cursor.Current = Cursors.Default;
-            }  
+            }
         }
     }
 
@@ -98,7 +98,7 @@ public class RefreshBus
         subscribers.Remove(unsubscriber);
     }
 
-    public void EstablishLifetimeSubscription(ILifetimeSubscriber c) 
+    public void EstablishLifetimeSubscription(ILifetimeSubscriber c)
     {
         if (c is not IRefreshBusSubscriber subscriber)
             throw new ArgumentException("Control must be an IRefreshBusSubscriber to establish a lifetime subscription", nameof(c));

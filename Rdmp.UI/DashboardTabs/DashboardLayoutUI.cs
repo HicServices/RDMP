@@ -24,7 +24,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.DashboardTabs;
 
 /// <summary>
-/// Allows you to create an arrangement of IDashboardableControls on a Form that is stored in the Catalogue database and viewable by all RDMP users.  Use the task bar at the top of the 
+/// Allows you to create an arrangement of IDashboardableControls on a Form that is stored in the Catalogue database and viewable by all RDMP users.  Use the task bar at the top of the
 /// screen to add new controls.  Then click the spanner to drag and resize them.  Each control may also have some flexibility in how it is configured which is accessible in edit mode.
 /// </summary>
 public partial class DashboardLayoutUI : DashboardLayoutUI_Design
@@ -89,7 +89,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
                     c.DeleteInDatabase();
                     continue;
                 }
-                    
+
                 c.PersistenceString = "";
                 c.SaveToDatabase();
                 MessageBox.Show("Control state cleared, we will now try to reload it");
@@ -98,7 +98,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 
             ControlDictionary.Add(c,instance);
             Controls.Add(instance);
-                
+
             //let people know what the edit state is
             _editModeFunctionality.EditMode = btnEditMode.Checked;
         }
@@ -144,5 +144,5 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DashboardLayoutUI_Design, UserControl>))]
 public abstract class DashboardLayoutUI_Design:RDMPSingleDatabaseObjectControl<DashboardLayout>
 {
-        
+
 }

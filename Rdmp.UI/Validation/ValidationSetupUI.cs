@@ -28,12 +28,12 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Validation;
 
 /// <summary>
-/// Validation is an essential part of hosting research data.  If one month all the new records come in with values in gender of 'Male' and 'Female'  when previously they were 'M' or 
-/// 'F' then you want to know about it (because it will affect filters and end users of the data who now have to include 2 different values in their WHERE statements).  In such a 
-/// trivial situation the first step would be to confirm if it is a mistake with the data provider, if not then a decision should be made whether to standardise on the old/new 
+/// Validation is an essential part of hosting research data.  If one month all the new records come in with values in gender of 'Male' and 'Female'  when previously they were 'M' or
+/// 'F' then you want to know about it (because it will affect filters and end users of the data who now have to include 2 different values in their WHERE statements).  In such a
+/// trivial situation the first step would be to confirm if it is a mistake with the data provider, if not then a decision should be made whether to standardise on the old/new
 /// categories and adjust the data load accordingly.
 /// 
-/// <para>But for this to happen at all you need to be able to recognise when such problems occur.  The RDMP handles this by allowing you to specify validation rules on each of the 
+/// <para>But for this to happen at all you need to be able to recognise when such problems occur.  The RDMP handles this by allowing you to specify validation rules on each of the
 /// extractable columns / transforms you make available to researchers.  On the left of this form you can see all the columns/transforms.  By selecting one you can view/edit its'
 /// collection of Secondary Constraints (see SecondaryConstraintUI) and choose a Primary Constraint (Validates the datatype, only use a primary constraint if you have an insane
 /// schema such as using varchar(max) to store 'dates' and have dirty data that includes values like 'last friday' mixed in with legit values).</para>
@@ -41,14 +41,14 @@ namespace Rdmp.UI.Validation;
 public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 {
     private string _noPrimaryConstraintText = "No Primary Constraint Defined";
-        
+
     public Validator Validator { get; private set; }
-     
+
     private bool bSuppressChangeEvents = false;
     private Catalogue _catalogue;
 
     private string ClearSelection = "<<Clear Selection>>";
-        
+
     private ItemValidator SelectedColumnItemValidator {get
     {
         //The user has not selected a column
@@ -81,7 +81,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
         olvName.ImageGetter = o => Activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-    }       
+    }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
@@ -141,7 +141,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
             var dialog = new ResolveMissingTargetPropertiesUI(Validator,olvColumns.Objects.Cast<ExtractionInformation>().ToArray());
 
             if(dialog.ShowDialog() == DialogResult.OK)
-                Validator = dialog.AdjustedValidator;    
+                Validator = dialog.AdjustedValidator;
         }
     }
 
@@ -250,7 +250,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         {
             var secondaryConstriant =
                 Validator.CreateConstraint(ddSecondaryConstraints.Text,Consequence.Missing) as SecondaryConstraint;
-                
+
             SelectedColumnItemValidator.SecondaryConstraints.Add(secondaryConstriant);
             AddSecondaryConstraintControl(secondaryConstriant);
             ObjectSaverButton1.Enable(true);
@@ -303,7 +303,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
                 bSuppressChangeEvents = false;
             }
     }
-        
+
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
         olvColumns.UseFiltering = true;
@@ -386,7 +386,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
     {
-        if(Activator.SelectObject(new DialogArgs { 
+        if(Activator.SelectObject(new DialogArgs {
                TaskDescription = "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
                AllowSelectingNull = true
            }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any),out var selected))

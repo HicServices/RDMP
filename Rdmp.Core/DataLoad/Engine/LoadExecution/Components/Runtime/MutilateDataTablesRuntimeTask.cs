@@ -29,7 +29,7 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public MutilateDataTablesRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
         : base(task, args)
     {
-        //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name 
+        //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name
         var stageArgs = args.StageSpecificArguments ?? throw new NullReferenceException("Stage args was null");
         if (stageArgs.DbInfo == null)
             throw new NullReferenceException("Stage args had no DbInfo, unable to mutilate tables without a database - mutilator is sad");
@@ -68,7 +68,7 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         return true;
     }
-        
+
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {
         LoadCompletedSoDispose(ExitCodeType.Abort, postLoadEventListener);
@@ -86,5 +86,5 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
         MutilateDataTables.LoadCompletedSoDispose(exitCode, postDataLoadEventListener);
     }
 
-        
+
 }

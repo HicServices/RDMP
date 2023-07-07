@@ -11,7 +11,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 namespace Rdmp.UI.SimpleDialogs.Revertable;
 
 /// <summary>
-/// The RDMP uses a database (Catalogue Manager Database / Data Export Manager Database) to store all information about your datasets (Technical, descriptive, validation, attachments 
+/// The RDMP uses a database (Catalogue Manager Database / Data Export Manager Database) to store all information about your datasets (Technical, descriptive, validation, attachments
 /// etc).  Because the system is designed to run with multiple users accessing this database the same time (or by you having multiple applications running at once - like running
 /// CatalogueManager and Data Export Manager at the same time) it is possible that two users/applications will attempt to modify the same record at the same time.
 /// 

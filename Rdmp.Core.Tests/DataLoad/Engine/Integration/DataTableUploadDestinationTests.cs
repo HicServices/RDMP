@@ -118,7 +118,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
             sql = $"{sql.TrimEnd(',')})";
 
             Console.Write($"About to execute:{sql}");
-                
+
             //problem is with the column name which appears at order 0 in the destination dataset (name with width 1)
             using (var con = db.Server.GetConnection())
             {
@@ -477,7 +477,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         new object[] {"varchar(10)",new object[]{"12:01","2001-01-01"}, new object[]{"12:01","2001-01-01"}}
     };
 
-        
+
     [Test, TestCaseSource(nameof(_sourceLists))]
     public void DataTypeEstimation(string expectedDatatypeInDatabase, object[] rowValues, object[] expectedValuesReadFromDatabase)
     {
@@ -560,7 +560,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var server = db.Server;
 
         var table = db.CreateTable("TestResizing",
-            new DatabaseColumnRequest[] 
+            new DatabaseColumnRequest[]
             {
                 new DatabaseColumnRequest("MyInteger",new DatabaseTypeRequest(typeof(int))),
                 new DatabaseColumnRequest("MyMaxString",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
@@ -573,7 +573,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         using (var con = server.GetConnection())
         {
             con.Open();
-                
+
             //should not allow nulls before
             Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
             //do resize
@@ -582,7 +582,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             //rediscover it to get the new state in database (it should now be 500 and still shouldn't allow nulls)
             AssertIsStringWithLength(table.DiscoverColumn("StringNotNull"), 500);
 
-                
+
             Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
 
             //do the same with the one that allows nulls
@@ -606,7 +606,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
             Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
             Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
-                
+
             con.Close();
         }
     }
@@ -935,7 +935,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
             //tell the destination component to process the data
             destinationComponent.ProcessPipelineData(dt, listener,new GracefulCancellationToken());
-            
+
             destinationComponent.Dispose(listener,null);
             Assert.AreEqual(targetTableIsEmpty?3:4, tbl.GetRowCount());
         }
@@ -1201,7 +1201,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         Assert.AreEqual(
 
-            //if all we got are nulls we should have a DateTime otherwise we had 1/true so the only usable data type is string 
+            //if all we got are nulls we should have a DateTime otherwise we had 1/true so the only usable data type is string
             giveNullValuesOnly ? typeof(DateTime) : typeof(string),
 
             tt.GetCSharpTypeForSQLDBType(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType.SQLType));
@@ -1281,7 +1281,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.AreEqual(expectedTypeForBatch2, tt.GetCSharpTypeForSQLDBType(colAfter.DataType.SQLType));
     }
 
-        
+
     [Test]
     public void TwoBatch_ExplicitRealDataType()
     {

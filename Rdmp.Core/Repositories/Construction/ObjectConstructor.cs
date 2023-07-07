@@ -17,7 +17,7 @@ namespace Rdmp.Core.Repositories.Construction;
 
 /// <summary>
 /// Simplifies identifying and invoking ConstructorInfos on Types (reflection).  This includes identifying a suitable Constructor on a class Type based on the
-/// provided parameters and invoking it.  Also implicitly supports hypotheticals e.g. 'heres a TableInfo, construct class X with the TableInfo paramter or if 
+/// provided parameters and invoking it.  Also implicitly supports hypotheticals e.g. 'heres a TableInfo, construct class X with the TableInfo paramter or if
 /// it has a blank constructor that's fine too or if it takes ITableInfo that's fine too... just use whatever works'.  If there are multiple matching constructors
 /// it will attempt to find the 'best' (See InvokeBestConstructor for implementation).
 /// 
@@ -116,7 +116,7 @@ public class ObjectConstructor
         throw new ObjectLacksCompatibleConstructorException(
             $"Type '{typeToConstruct}' does not have a constructor taking an {typeof(T)}");
     }
-        
+
     private static List<ConstructorInfo> GetConstructors<T>(Type type)
     {
         var toReturn = new List<ConstructorInfo>();
@@ -128,7 +128,7 @@ public class ObjectConstructor
 
             switch (p.Length)
             {
-                //is it an exact match i.e. ctor(T bob) 
+                //is it an exact match i.e. ctor(T bob)
                 case 1 when p[0].ParameterType == typeof (T):
                     exactMatch = constructor;
                     break;
@@ -293,7 +293,7 @@ public class ObjectConstructor
 
     /// <summary>
     /// Attempts to construct an instance of Type typeToConstruct using the provided constructorValues.  This must match on parameter number but ignores order
-    /// so if you pass new Obj1(),new Obj2() it could invoke either MyClass(Obj1 a,Obj2 b) or MyClass(Obj2 a, Obj1 b).  
+    /// so if you pass new Obj1(),new Obj2() it could invoke either MyClass(Obj1 a,Obj2 b) or MyClass(Obj2 a, Obj1 b).
     /// <para>Throws <see cref="ObjectLacksCompatibleConstructorException"/> if there are multiple constructors that match the constructorValues</para>
     /// 
     /// <para>Does not invoke the default constructor unless you leave constructorValues blank</para>
@@ -357,11 +357,11 @@ public class ObjectConstructor
             //don't use this constructor
             if (parameters.Any(p => p.GetType() == typeof(ShareManager)))
                 continue;
-                
+
             //this is for fetching existing instances
             if (parameters.Any(p => p.GetType() == typeof(DbDataReader)))
                 continue;
-                
+
             //at least one parameter must be an IRepository
             if(!parameters.Any(p=>typeof(IRepository).IsAssignableFrom(p.ParameterType)))
                 continue;

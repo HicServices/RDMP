@@ -25,7 +25,7 @@ public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
         if(!string.IsNullOrWhiteSpace(text) && text.Contains(' '))
         {
             var filters = new List<IModelFilter>();
-                
+
             _tokens = text.Split(' ');
             foreach (var token in _tokens)
                 filters.Add(new TextMatchFilter(olv,token,comparison));

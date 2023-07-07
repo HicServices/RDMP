@@ -22,7 +22,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.DataRelease.Potential;
 
 /// <summary>
-/// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release. 
+/// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release.
 /// Extraction Destinations will return an implementation of this class which will run checks on the releasaility of the extracted datasets
 /// based on the extraction method used.
 /// </summary>
@@ -202,7 +202,7 @@ public abstract class ReleasePotential:ICheckable
 
         return resultLive.SQL;
     }
-        
+
     private bool SqlOutOfSyncWithDataExportManagerConfiguration(IExtractionResults extractionResults)
     {
         if (extractionResults.SQLExecuted == null)
@@ -219,7 +219,7 @@ public abstract class ReleasePotential:ICheckable
         //if the SQL today is different to the SQL that was run when the user last extracted the data then there is a desync in the SQL (someone has changed something in the catalogue/data export manager configuration since the data was extracted)
         return !SqlCurrentConfiguration.Equals(extractionResults.SQLExecuted);
     }
-        
+
     public override string ToString()
     {
         if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)

@@ -80,7 +80,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
             if(before == -1)
                 suggestComboBox1.SelectedIndex = -1;
         }
-        finally 
+        finally
         {
             _settingUp = false;
         }
@@ -104,5 +104,5 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
 
     }
 
-        
+
 }

@@ -55,7 +55,7 @@ public class ExtractionTimeTimeCoverageAggregator
         _expectedExtractionIdentifierInOutputBuffer = cohort.GetQuerySyntaxHelper().GetRuntimeName(cohort.GetReleaseIdentifier());
     }
 
-    private bool firstRow = true; 
+    private bool firstRow = true;
 
     public void ProcessRow(DataRow row)
     {
@@ -93,7 +93,7 @@ public class ExtractionTimeTimeCoverageAggregator
             //could not find the identifier in the output buffer, could be that there are multiple CHI columns e.g. CHI_Baby1, CHI_Baby2 or something
             //only swallow this exception (and abandon counting of distinct release identifiers) if it is the first output row.
             if(firstRow)
-            { 
+            {
                 _expectedExtractionIdentifierInOutputBuffer = null;//give up trying to work out the extraction identifier
             }
             else
@@ -117,7 +117,7 @@ public class ExtractionTimeTimeCoverageAggregator
                 }
 
                 var valueAsString = s;
-                        
+
                 //trim off times
                 if (Regex.IsMatch(valueAsString,"[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"))
                     valueAsString = valueAsString[..^"00:00:00".Length].Trim();
@@ -155,7 +155,7 @@ public class ExtractionTimeTimeCoverageAggregator
 
     /// <summary>
     /// we want a consistent line of buckets with difference of BucketSize.  Use this method when you identify a DateTime that is (after
-    /// rounding to the BucketSize, not in Buckets.  This method will add additional buckets up until the key has been reached (either 
+    /// rounding to the BucketSize, not in Buckets.  This method will add additional buckets up until the key has been reached (either
     /// adding new higher buckets if the key is > than the current maximum or adding additional lower buckets if it is lower.
     /// </summary>
     /// <param name="key"></param>
@@ -206,7 +206,7 @@ public class ExtractionTimeTimeCoverageAggregator
         {
             if (row["ColumnName"].ToString() == ColumnName)
                 return true;
-        } //Still here? Column not found. 
+        } //Still here? Column not found.
         return false;
     }
 }

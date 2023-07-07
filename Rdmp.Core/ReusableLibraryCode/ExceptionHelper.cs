@@ -44,7 +44,7 @@ public static class ExceptionHelper
     {
         return e.Flatten().InnerExceptions.OfType<T>().FirstOrDefault();
     }
-        
+
     /// <summary>
     /// Returns the first InnerException of type T in the Exception or null.
     /// 

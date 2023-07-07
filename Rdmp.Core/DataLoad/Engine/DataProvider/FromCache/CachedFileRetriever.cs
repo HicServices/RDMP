@@ -24,7 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 
 /// <summary>
-/// Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be done (e.g. data is cached but not yet loaded).  
+/// Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be done (e.g. data is cached but not yet loaded).
 /// Cached data is unzipped to the forLoading directory.  The Dispose method (which should be called after the entire DataLoad has completed successfully) will clear
 /// out the cached file(s) that were loaded and update the schedule to indicate the successful loading of data
 /// </summary>
@@ -38,7 +38,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     public abstract void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
     public abstract ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken);
-        
+
     #region Events
     public event CacheFileNotFoundHandler CacheFileNotFound;
     protected virtual void OnCacheFileNotFound(string message, Exception ex)
@@ -78,7 +78,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         foreach (var date in job.DatesToRetrieve)
         {
             var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date,job);
-                
+
             if (fileInfo == null)
                 OnCacheFileNotFound(
                     $"Could not find cached file for date '{date}' for CacheLayout.ArchiveType {cacheLayout.ArchiveType} in cache at {job.LoadDirectory.Cache.FullName}", null);
@@ -196,7 +196,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         return true;
     }
 
-        
+
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
@@ -248,7 +248,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
                 notifier.OnCheckPerformed(new CheckEventArgs("Cache Directory was null!", CheckResult.Fail));
                 return;
             }
-                
+
             notifier.OnCheckPerformed(new CheckEventArgs($"Cache Directory Is:{d.FullName}",CheckResult.Success));
         }
         catch (Exception ex)

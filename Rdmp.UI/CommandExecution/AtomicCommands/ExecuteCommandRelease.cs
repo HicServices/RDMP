@@ -56,7 +56,7 @@ public class ExecuteCommandRelease: BasicUICommandExecution,IAtomicCommandWithTa
         {
 
             _project = (Project)_configuration.Project;
-                
+
             if (_configuration.IsReleased)
                 SetImpossible("ExtractionConfiguration has already been Released");
 

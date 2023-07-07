@@ -13,7 +13,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.QueryBuilding.Options;
 
 /// <summary>
-/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running in 'graph mode' 
+/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running in 'graph mode'
 /// </summary>
 public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
 {
@@ -54,7 +54,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
             case AggregateEditorSection.Extractable:
                 return CanMakeExtractable(aggregate);
             case AggregateEditorSection.TOPX:
-                //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries 
+                //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries
                 return aggregate.PivotOnDimensionID != null || aggregate.GetAxisIfAny() == null;
             case AggregateEditorSection.PIVOT:
                 return aggregate.GetAxisIfAny() != null || aggregate.AggregateDimensions.Length==2;//can only pivot if there is an axis or exactly 2 dimensions (+ count)

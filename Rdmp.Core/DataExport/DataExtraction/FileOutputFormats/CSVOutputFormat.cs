@@ -36,7 +36,7 @@ public class CSVOutputFormat : FileOutputFormat
         DateFormat = dateFormat;
     }
 
-    public override string GetFileExtension() 
+    public override string GetFileExtension()
     {
         return ".csv";
     }
@@ -113,7 +113,7 @@ public class CSVOutputFormat : FileOutputFormat
             }
         }
 
-        //in order to kep a count 
+        //in order to kep a count
         var regexReplace = new Regex(Regex.Escape(separator));
 
         separatorsStrippedOut = 0;

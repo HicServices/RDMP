@@ -28,7 +28,7 @@ public class AggregateFilterUIOptions : FilterUIOptions
         var options = AggregateBuilderOptionsFactory.Create(aggregateConfiguration);
         _globals = options.GetAllParameters(aggregateConfiguration);
 
-        //get all the tables 
+        //get all the tables
         _tables = aggregateConfiguration.Catalogue.GetTableInfoList(true);
 
         //but also add the ExtractionInformations and AggregateDimensions - in the case of PatientIndex table join usages (duplicates are ignored by _autoCompleteProvider)

@@ -18,9 +18,9 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Stores a username and encrypted password the Password property of the entity will be a hex value formatted as string which can be decrypted at runtime via 
+/// Stores a username and encrypted password the Password property of the entity will be a hex value formatted as string which can be decrypted at runtime via
 /// the methods of base class EncryptedPasswordHost which currently uses SimpleStringValueEncryption which is a wrapper for RSACryptoServiceProvider.  The layout
-/// of this hierarchy however allows for future plugin utility e.g. using different encryption keys for different tables / user access rights etc. 
+/// of this hierarchy however allows for future plugin utility e.g. using different encryption keys for different tables / user access rights etc.
 /// </summary>
 public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INamed,IHasDependencies
 {
@@ -45,7 +45,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
         get => _username;
         set => SetField(ref  _username, value);
     }
-        
+
     /// <inheritdoc/>
     public string Password
     {
@@ -116,9 +116,9 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
             throw;
         }
     }
-        
+
     /// <summary>
-    /// Returns all the <see cref="TableInfo"/> that rely on the credentials to access the table(s).  This is split into the contexts under which the 
+    /// Returns all the <see cref="TableInfo"/> that rely on the credentials to access the table(s).  This is split into the contexts under which the
     /// credentials are used e.g. <see cref="DataAccessContext.DataLoad"/>
     /// </summary>
     /// <returns></returns>

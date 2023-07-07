@@ -35,7 +35,7 @@ public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipeline
 
     public ReleaseAudit ProcessPipelineData(ReleaseAudit toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        var allCatalogues = 
+        var allCatalogues =
             _releaseData.SelectedDatasets.Values.SelectMany(sd => sd.ToList())
                 .Select(sds => sds.ExtractableDataSet.Catalogue)
                 .Distinct()

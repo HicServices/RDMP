@@ -25,7 +25,7 @@ public class TestsRequiringACohort : TestsRequiringA
     protected const int projectNumberInTestData = 99;
     protected ExternalCohortTable _externalCohortTable;
     protected IExtractableCohort _extractableCohort;
-        
+
     protected string cohortTableName = "Cohort";
     protected string definitionTableName = "CohortDefinition";
 
@@ -46,7 +46,7 @@ public class TestsRequiringACohort : TestsRequiringA
     /// </summary>
     protected readonly Dictionary<string, string> _cohortKeysGenerated = new Dictionary<string, string>();
 
-        
+
 
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -197,7 +197,7 @@ GO
         foreach (var e in eis)
         {
             e.ExtractionCategory = ExtractionCategory.ProjectSpecific;
-                
+
             if (e.GetRuntimeName().Equals("PrivateID"))
                 e.IsExtractionIdentifier = true;
 
@@ -216,7 +216,7 @@ GO
         }
     }
 
-        
+
     protected void EmptyCohortTables()
     {
 
@@ -247,5 +247,5 @@ GO
                 Assert.AreEqual(1, insertRecord.ExecuteNonQuery());
         }
     }
-        
+
 }

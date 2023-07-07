@@ -25,10 +25,10 @@ namespace Rdmp.UI.MainFormUITabs;
 
 /// <summary>
 /// Allows you to modify the descriptive data stored in the RDMP database about the selected Catalogue (dataset).  Pressing Ctrl+S will save any changes.  You should make sure that you
-/// provide as much background about your datasets as possible since this is the information that will be given to researchers when you extract the dataset (as well as being a great 
+/// provide as much background about your datasets as possible since this is the information that will be given to researchers when you extract the dataset (as well as being a great
 /// reference for when you find a dataset and you're not quite sure about what it contains or how it got there or who supplied it etc).
 /// 
-/// <para>The collection of fields for documentation were chosen by committee and based on the 'Dublin Core'.  Realistically though just entering all the information into 'Resource 
+/// <para>The collection of fields for documentation were chosen by committee and based on the 'Dublin Core'.  Realistically though just entering all the information into 'Resource
 /// Description' is probably a more realistic goal.  Documentation may be boring but it is absolutely vital for handling providence of research datasets especially if you frequently
 /// get given small datasets from researchers (e.g. questionnaire data they have collected) for use in cohort generation etc).</para>
 /// 
@@ -61,7 +61,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         if (_catalogue != null)
             _catalogue.Ticket = ticketingControl1.TicketText;
     }
-        
+
     private void c_ddOverrideChildren_Click(object sender, EventArgs e)
     {
         if (_catalogue != null)
@@ -76,7 +76,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
                 }
             }
     }
-        
+
     private void tbName_TextChanged(object sender, EventArgs e)
     {
         if (!Catalogue.IsAcceptableName(tbName.Text, out var reasonInvalid))
@@ -84,7 +84,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         else
             errorProvider1.Clear();
     }
-       
+
     private void ddExplicitConsent_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (ddExplicitConsent.Text.Equals("Yes"))
@@ -97,7 +97,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             _catalogue.Explicit_consent = null;
 
     }
-        
+
     private void tbFolder_TextChanged(object sender, EventArgs e)
     {
         try
@@ -110,7 +110,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
             tbFolder.ForeColor = Color.Red;
         }
     }
-        
+
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
         if (_scintillaDescription == null)
@@ -258,5 +258,5 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]
 public abstract class CatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
 {
-        
+
 }

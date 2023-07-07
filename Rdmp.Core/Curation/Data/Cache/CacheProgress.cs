@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data.Cache;
 
 /// <summary>
 /// Records the progress of fetching and caching data from a remote source e.g. a Webservice or Imaging file host.  Each CacheProgress
-/// is tied to a LoadProgress (which itself is tied to a LoadMetadata).  
+/// is tied to a LoadProgress (which itself is tied to a LoadMetadata).
 /// </summary>
 public class CacheProgress : DatabaseEntity, ICacheProgress
 {
@@ -93,7 +93,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     {
         get => _cacheLagPeriodLoadDelay;
         set => SetField(ref  _cacheLagPeriodLoadDelay, value);
-    } 
+    }
 
     #endregion
 
@@ -136,7 +136,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
 
         return new CacheLagPeriod(CacheLagPeriodLoadDelay);
     }
-        
+
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
     public void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod)
     {

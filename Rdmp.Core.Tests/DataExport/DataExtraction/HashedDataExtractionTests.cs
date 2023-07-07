@@ -40,7 +40,7 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
 
         Execute(out ExtractionPipelineUseCase execute,out var result,listener);
 
-        var messages = 
+        var messages =
             listener.EventsReceivedBySender.SelectMany(m => m.Value)
                 .Where(m=>m.ProgressEventType == ProgressEventType.Information && m.Message.Contains("/*Decided on extraction SQL:*/"))
                 .ToArray();

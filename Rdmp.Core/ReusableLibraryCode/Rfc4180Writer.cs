@@ -34,10 +34,10 @@ public static class Rfc4180Writer
         foreach (DataRow row in sourceTable.Rows)
         {
             var line = new List<string>();
-                
+
             foreach (DataColumn col in sourceTable.Columns)
                 line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
-                
+
             writer.WriteLine(string.Join(",", line));
         }
 

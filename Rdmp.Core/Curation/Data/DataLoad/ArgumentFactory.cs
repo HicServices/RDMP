@@ -73,7 +73,7 @@ public class ArgumentFactory
     }
 
     /// <summary>
-    /// Gets all public properties of the given <paramref name="classType"/> decorated with <see cref="DemandsInitializationAttribute"/>.  
+    /// Gets all public properties of the given <paramref name="classType"/> decorated with <see cref="DemandsInitializationAttribute"/>.
     /// 
     /// <para>If there are any public properties encountered with <see cref="DemandsNestedInitializationAttribute"/> then the referenced class is also investigated in the same manner.</para>
     /// </summary>
@@ -114,7 +114,7 @@ public class ArgumentFactory
 
         return required;
     }
-        
+
     /// <summary>
     /// Creates <see cref="IArgument"/> instances for all demanded properties (See <see cref="GetRequiredProperties"/>) of the given class and deletes any old arguments
     /// which are no longer required by the class (e.g. due to an API change).
@@ -149,7 +149,7 @@ public class ArgumentFactory
             }
         }
     }
-        
+
     /// <summary>
     /// Synchronizes all arguments (See SyncArgumentsForClass) for the supplied class (<paramref name="underlyingClassTypeForWhichArgumentsWillPopulate"/>) and returns the mapping
     /// between <see cref="IArgument"/> (which stores the value) and public class property (<see cref="RequiredPropertyInfo"/>)

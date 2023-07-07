@@ -52,7 +52,7 @@ public class UnitTests
 {
     protected MemoryDataExportRepository Repository = new MemoryDataExportRepository();
     protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-        
+
     //These types do not have to be supported by the method WhenIHaveA
     protected HashSet<string> SkipTheseTypes = new HashSet<string>(new string[]
     {
@@ -62,8 +62,8 @@ public class UnitTests
         "Evaluation",
         "WindowLayout"
     });
-        
-        
+
+
     public UnitTests()
     {
         RepositoryLocator = new RepositoryProvider(Repository);
@@ -101,8 +101,8 @@ public class UnitTests
     }
 
     /// <summary>
-    /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
-    /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
+    /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a
+    /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.
     /// </summary>
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
@@ -115,8 +115,8 @@ public class UnitTests
 
 
     /// <summary>
-    /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
-    /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
+    /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a
+    /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.
     /// </summary>
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
@@ -382,7 +382,7 @@ public class UnitTests
         if (typeof (T) == typeof(Lookup))
         {
             WhenIHaveTwoTables(repository, out var col1, out var col2, out var col3);
-                
+
             return (T)(object)new Lookup(repository,col3,col1,col2,ExtractionJoinType.Left, null);
         }
         if (typeof (T) == typeof(LookupCompositeJoinInfo))
@@ -391,7 +391,7 @@ public class UnitTests
 
             var otherJoinFk = new ColumnInfo(repository,"otherJoinKeyForeign","int",lookup.ForeignKey.TableInfo);
             var otherJoinPk = new ColumnInfo(repository,"otherJoinKeyPrimary","int",lookup.PrimaryKey.TableInfo);
-                
+
             return (T)(object)new LookupCompositeJoinInfo(repository,lookup,otherJoinFk,otherJoinPk);
         }
         if (typeof (T) == typeof(Pipeline))
@@ -482,7 +482,7 @@ public class UnitTests
                 false,
                 new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 new FileInfo(file));
-                        
+
         }
 
         if (typeof (T) == typeof(ExtractableDataSetPackage))
@@ -660,7 +660,7 @@ public class UnitTests
         s.SaveToDatabase();
         return s;
     }
-        
+
     protected MEF MEF;
 
     /// <summary>
@@ -744,7 +744,7 @@ public class UnitTests
                 else
                     return;
 
-            //treat empty strings as the same as 
+            //treat empty strings as the same as
             memValue = memValue as string == string.Empty ? null : memValue;
             dbValue = dbValue as string == string.Empty ? null : dbValue;
 

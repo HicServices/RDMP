@@ -29,7 +29,7 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// <summary>
 /// Multi threading management class for CohortQueryBuilder.  Supports starting, executing and cancelling multiple cohort builder objects (ICompileable)
 /// at once.  Every input object (e.g. CohortAggregateContainer) will be assigned a corresponding ICompileable (e.g. AggregationContainerTask) and a
-/// CohortIdentificationTaskExecution.  The ICompileable records how long the query has been running for, how much of the query is cached, whether it 
+/// CohortIdentificationTaskExecution.  The ICompileable records how long the query has been running for, how much of the query is cached, whether it
 /// has been cancelled / crashed etc.  The CohortIdentificationTaskExecution handles the actual execution of the query on the data set database.
 /// 
 /// <para>See CohortCompiler.cd</para>
@@ -42,7 +42,7 @@ public class CohortCompiler
         set {
             _cic = value;
             BuildPluginCohortCompilerList();
-        } 
+        }
     }
     public bool IncludeCumulativeTotals { get; set; }
 
@@ -66,7 +66,7 @@ public class CohortCompiler
     /// and not running yet.
     /// </summary>
     public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new Dictionary<ICompileable, CohortIdentificationTaskExecution>();
-        
+
     public List<Thread> Threads = new List<Thread>();
     private ICoreChildProvider _coreChildProvider;
 
@@ -108,7 +108,7 @@ public class CohortCompiler
 
             task.Timeout = timeout;
             task.State = CompilationState.Executing;
-                
+
             execution.GetCohortAsync( timeout);
 
             task.FinalRowCount = execution.Identifiers.Rows.Count;
@@ -229,7 +229,7 @@ public class CohortCompiler
         {
             // is this a custom aggregate type that gets handled differently e.g. by queriying an API?
             var plugin = PluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(aggregate));
-                
+
             task = plugin != null ?
                 // yes
                 new PluginCohortCompilerTask(aggregate,this,plugin)
@@ -270,13 +270,13 @@ public class CohortCompiler
                         StopContainerWhenYouReach = (IOrderable) runnable
                     };
             }
-                
+
         }
         ExternalDatabaseServer cacheServer = null;
         //if the overall owner has a cache configured
         if (CohortIdentificationConfiguration.QueryCachingServer_ID != null)
         {
-                
+
             cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
             queryBuilder.CacheServer = cacheServer;
 
@@ -284,7 +284,7 @@ public class CohortCompiler
                 cumulativeQueryBuilder.CacheServer = cacheServer;
         }
 
-        //setup cancellation 
+        //setup cancellation
         task.CancellationToken = source.Token;
         task.CancellationTokenSource = source;
         task.State = CompilationState.Building;
@@ -340,7 +340,7 @@ public class CohortCompiler
             isResultsForRootContainer,
             queryBuilder?.Results?.TargetServer);
 
-        // task is now built but not yet 
+        // task is now built but not yet
         if(task.State != CompilationState.Crashed)
         {
             task.State = CompilationState.NotScheduled;
@@ -421,7 +421,7 @@ public class CohortCompiler
                 var identifierDimension = identifiers[0];
                 var identifierColumnInfo = identifierDimension.ColumnInfo;
                 var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
-                    
+
                 explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
 
                 //make other non transform Types have explicit values
@@ -528,7 +528,7 @@ public class CohortCompiler
                 {
                     compileable.CancellationTokenSource.Cancel();
                 }
-                    
+
 
                 if (alsoClearFromTaskList)
                 {

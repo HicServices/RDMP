@@ -88,7 +88,7 @@ internal class ConsoleGuiContextMenuFactory
 
     private static MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)
     {
-        // sort it                
+        // sort it
         items.OrderBy(m => order[m]).ToList();
 
         // add spacers when the Weight differs by more than 1 whole number

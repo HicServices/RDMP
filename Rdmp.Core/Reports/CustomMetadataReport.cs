@@ -34,7 +34,7 @@ public class CustomMetadataReport
 
     private Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new Dictionary<string, Func<CatalogueItem,object>>();
 
-        
+
     /// <summary>
     /// Control line that begins looping Catalogues
     /// </summary>
@@ -70,7 +70,7 @@ public class CustomMetadataReport
     public string CommaSubstitution { get; set; } = ",";
 
     /// <summary>
-    /// The repository where column completeness metrics will come from.  Note this is usually the same source as <see cref="TimespanCalculator"/> 
+    /// The repository where column completeness metrics will come from.  Note this is usually the same source as <see cref="TimespanCalculator"/>
     /// </summary>
     public DQERepository DQERepository { get; set; }
 
@@ -283,7 +283,7 @@ public class CustomMetadataReport
                         {
                             for (var i =0;i<catalogues.Length;i++)
                             {
-                                var element = 
+                                var element =
                                     i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
 
                                 var newContents = DoReplacements(section.Body.ToArray(), catalogues[i],section, element);
@@ -301,7 +301,7 @@ public class CustomMetadataReport
                 {
                     var newContents = DoReplacements(templateBody, catalogue,null,ElementIteration.NotIterating);
 
-                    if (oneFile) 
+                    if (oneFile)
                         outFile.WriteLine(newContents);
                     else
                     {
@@ -357,7 +357,7 @@ public class CustomMetadataReport
                         yield return currentSection;
                     else
                         throw new CustomMetadataReportException($"Unexpected '{str}' before the end of the last one on line {i+1}",i+1);
-                    
+
                 // start new section looping Catalogues
                 currentSection = new CatalogueSection(false,i);
                 depth = 1;
@@ -401,7 +401,7 @@ public class CustomMetadataReport
         if(currentSection != null)
             if(currentSection.IsPlainText)
                 yield return currentSection;
-            else 
+            else
                 throw new CustomMetadataReportException($"Reached end of template without finding an expected {EndLoop}",templateBody.Length);
     }
 
@@ -446,7 +446,7 @@ public class CustomMetadataReport
                     if (copy.Contains(r.Key))
                         copy = copy.Replace(r.Key, ValueToString(r.Value(catalogue)));
                 }
-                    
+
                 // when iterating we need to respect iteration symbols (e.g. $Comma).
                 if(iteration == ElementIteration.NotIterating)
                 {
@@ -510,7 +510,7 @@ public class CustomMetadataReport
         for(var j =0;j< catalogueItems.Length; j++)
         {
             sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
-                j < catalogueItems.Length -1 ? 
+                j < catalogueItems.Length -1 ?
                     ElementIteration.RegularElement : ElementIteration.LastElement));
         }
                 

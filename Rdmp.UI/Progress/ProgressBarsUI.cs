@@ -125,7 +125,7 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
     public void Clear()
     {
         //remove existing progress bars
-        foreach (var pb in Controls.OfType<ProgressBar>().ToArray()) 
+        foreach (var pb in Controls.OfType<ProgressBar>().ToArray())
             Controls.Remove(pb);
 
         //clear our record of them

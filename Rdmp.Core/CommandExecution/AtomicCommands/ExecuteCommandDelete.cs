@@ -21,14 +21,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandDelete : BasicCommandExecution
 {
     private readonly IList<IDeleteable> _deletables;
-        
+
     /// <summary>
     /// Flag applies only for deletion where the UI layer is non-interactive.  True to allow
     /// multiple deletes to go ahead without asking.  False to throw exception
     /// </summary>
     private readonly bool _allowDeleteMany;
 
-    public ExecuteCommandDelete(IBasicActivateItems activator, 
+    public ExecuteCommandDelete(IBasicActivateItems activator,
         IDeleteable deletable) : this(activator,new []{ deletable})
     {
         Weight = 50.4f;
@@ -124,7 +124,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
             // Fall through if deleting multiple:
         }
 
-        // if the command did not ask to delete many and it is not interactive (e.g. CLI) then 
+        // if the command did not ask to delete many and it is not interactive (e.g. CLI) then
         // we shouldn't just blindly delete them all
         if (!BasicActivator.IsInteractive && !_allowDeleteMany)
         {

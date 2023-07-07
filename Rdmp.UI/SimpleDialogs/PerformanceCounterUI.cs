@@ -58,7 +58,7 @@ public partial class PerformanceCounterUI : Form
             btnViewPerformanceResults.Enabled = false;
         }
     }
-        
+
     private void CatalogueLibraryPerformanceCounterUI_FormClosing(object sender, FormClosingEventArgs e)
     {
         //clear it before closing always

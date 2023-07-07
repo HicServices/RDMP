@@ -12,7 +12,7 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.DataExport.CohortDescribing;
 
 /// <summary>
-/// Summary of all useful information about an ExtractableCohort including the number of unique patients and rowcount (can differ if there are aliases 
+/// Summary of all useful information about an ExtractableCohort including the number of unique patients and rowcount (can differ if there are aliases
 /// for a patient - 2 private identifiers map to the same release identifier).
 /// 
 /// <para>Depending on whether you are using an CohortDescriptionDataTableAsyncFetch some properties of this class may start out null/0 and become populated
@@ -102,8 +102,8 @@ public class ExtractableCohortDescription
 
     /// <summary>
     /// Creates a new description based on the async fetch request for all cohorts including row counts etc (which might have already completed btw).  If you
-    /// use this constructor then the properties will start out with text like "Loading..." but it will perform much faster, when the fetch completes the 
-    /// values will be populated.  In general if you want to use this feature you should probably use CohortDescriptionFactory and only use it if you are 
+    /// use this constructor then the properties will start out with text like "Loading..." but it will perform much faster, when the fetch completes the
+    /// values will be populated.  In general if you want to use this feature you should probably use CohortDescriptionFactory and only use it if you are
     /// trying to get all the cohorts at once.
     ///  
     /// </summary>
@@ -147,7 +147,7 @@ public class ExtractableCohortDescription
             fetch.Finished += FetchOnFinished;
     }
 
-        
+
 
     private void FetchOnFinished()
     {
@@ -176,7 +176,7 @@ public class ExtractableCohortDescription
                 //it's a proper not overriden release identifier so we can use the DataTable value
                 Count = Convert.ToInt32(row["Count"]);
                 CountDistinct = Convert.ToInt32(row["CountDistinct"]);
-                
+
             }
 
             ProjectNumber = Convert.ToInt32(row["ProjectNumber"]);
@@ -190,7 +190,7 @@ public class ExtractableCohortDescription
         }
     }
 
-        
+
     public override string ToString()
     {
         return Cohort.ToString();

@@ -17,7 +17,7 @@ internal class StackFramesTree
 {
     public string CurrentFrame { get; private set; }
     public int QueryCount{ get; private set; }
-        
+
     public bool HasSourceCode { get; private set; }
 
     public string Method { get; private set; }
@@ -72,7 +72,7 @@ internal class StackFramesTree
             
         return $"{Path.GetFileNameWithoutExtension(Filename)}.{Method}";
     }
-        
+
     public void AddSubframes(string[] lines, QueryPerformed query)
     {
         if(!lines[0].Equals(CurrentFrame))

@@ -23,14 +23,14 @@ namespace Rdmp.Core.DataQualityEngine.Reports;
 /// <summary>
 /// Generates two DataTable.  One containing the row counts (according to DQE) for every Catalogue in a LoadMetadata.  The second containing all cached fetch
 /// counts and counts of all files in the Caching directory for the CacheProgress (if any) of the LoadProgress passed into the contructor.  These tables are
-/// intended to assist the user in rapidly determining how much of a given dataset collection based on a cache fetch/load DLE job has currently been loaded 
+/// intended to assist the user in rapidly determining how much of a given dataset collection based on a cache fetch/load DLE job has currently been loaded
 /// (according to the DQE).  See LoadProgressDiagram
 /// </summary>
 public class LoadProgressSummaryReport:ICheckable
 {
     private readonly ILoadProgress _loadProgress;
     private readonly ILoadMetadata _loadMetadata;
-        
+
     public bool DQERepositoryExists => dqeRepository != null;
 
     private DQERepository dqeRepository;
@@ -39,7 +39,7 @@ public class LoadProgressSummaryReport:ICheckable
     public DataTable CachePeriodictiyData;
 
     public DirectoryInfo ResolvedCachePath;
-        
+
     public HashSet<Catalogue> CataloguesMissingDQERuns { get; private set; }
     private ICacheProgress _cacheProgress;
 
@@ -85,7 +85,7 @@ public class LoadProgressSummaryReport:ICheckable
             {
                 CataloguesWithDQERuns.Add(catalogue,evaluation);
             }
-                
+
         }
         //The following code uses an epic pivot to produce something like:
         /*YearMonth	Year	Month	 6429	 6430
@@ -129,7 +129,7 @@ public class LoadProgressSummaryReport:ICheckable
             ExtendXAxisTill(cacheProgress.CacheFillProgress.Value);
     }
 
-        
+
 
     private void ExtendXAxisTill(DateTime value)
     {
@@ -285,7 +285,7 @@ public class LoadProgressSummaryReport:ICheckable
                 ExtendXAxisBackwardsTill(availableFiles.Min());
             }
 
-            //now clone the data table but populate the axis with available/failures instead of 
+            //now clone the data table but populate the axis with available/failures instead of
             foreach (DataRow originRow in CataloguesPeriodictiyData.Rows)
             {
                 var year = Convert.ToInt32(originRow["Year"]);
@@ -315,7 +315,7 @@ public class LoadProgressSummaryReport:ICheckable
                     CheckResult.Warning));
     }
 
-        
+
 
     private static string GetTotalsByMonthSQL(Catalogue[] catalogues)
     {

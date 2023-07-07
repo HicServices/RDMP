@@ -22,9 +22,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class BackfillTests : FromToDatabaseTests
 {
-        
+
     private ICatalogue _catalogue;
-        
+
 
     [SetUp]
     protected override void SetUp()
@@ -621,7 +621,7 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(stagingSamplesSql, connection);
             cmd.ExecuteNonQuery();
         }
-            
+
         #endregion
 
         Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
@@ -846,7 +846,7 @@ public class BackfillTests : FromToDatabaseTests
         using(var con = (SqlConnection)To.Server.GetConnection())
         {
             con.Open();
-            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery(); 
+            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery();
         }
     }
 
@@ -855,7 +855,7 @@ public class BackfillTests : FromToDatabaseTests
     {
         #region Set SetUp databases
         CreateTables("Header", "ID int NOT NULL, Discipline varchar(32) NOT NULL", "ID");
-            
+
         CreateTables("Samples",
             "ID int NOT NULL, HeaderID int NOT NULL, SampleDate DATETIME, Description varchar(1024)",
             "CONSTRAINT FK_Header_Samples FOREIGN KEY (HeaderID) REFERENCES Header (ID)");
@@ -863,7 +863,7 @@ public class BackfillTests : FromToDatabaseTests
         CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int",
             "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
-        #endregion  
+        #endregion
 
         #region Set SetUp catalogue entities
 

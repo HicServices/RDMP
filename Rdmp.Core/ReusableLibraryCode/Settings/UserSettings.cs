@@ -16,7 +16,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 /// <summary>
 /// This is the Settings static class that can be used in your Core solution or in any
 /// of your client applications. All settings are laid out the same exact way with getters
-/// and setters. 
+/// and setters.
 /// </summary>
 public static class UserSettings
 {
@@ -213,7 +213,7 @@ public static class UserSettings
     /// <para>The first colour represents the lowest values and should
     /// typically be darker than the second which represents high values.</para>
     /// </summary>
-    public static string HeatMapColours 
+    public static string HeatMapColours
     {
         get => AppSettings.GetValueOrDefault("HeatMapColours", null);
         set => AppSettings.AddOrUpdateValue("HeatMapColours", value);
@@ -270,7 +270,7 @@ public static class UserSettings
     /// <para>When enabled RDMP will record certain performance related metrics (how long refresh takes etc).</para>
     /// <para>These figures are completely internal to the application and are not transmitted anywhere.You can view the results in the toolbar.</para>
     /// </summary>
-    public static bool DebugPerformance { 
+    public static bool DebugPerformance {
         get => AppSettings.GetValueOrDefault("DebugPerformance", false);
         set => AppSettings.AddOrUpdateValue("DebugPerformance", value);
     }
@@ -283,12 +283,12 @@ public static class UserSettings
         get => AppSettings.GetValueOrDefault("AutoResizeColumns", true);
         set => AppSettings.AddOrUpdateValue("AutoResizeColumns", value);
     }
-        
+
 
     /// <summary>
     /// Show a popup confirmation dialog at the end of a pipeline completing execution
     /// </summary>
-    public static bool ShowPipelineCompletedPopup { 
+    public static bool ShowPipelineCompletedPopup {
         get => AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", true);
         set => AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value);
     }
@@ -350,8 +350,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Enable to refresh only objects which you make changes to instead of 
-    /// fetching all database changes since your last edit.  This improves 
+    /// Enable to refresh only objects which you make changes to instead of
+    /// fetching all database changes since your last edit.  This improves
     /// performance in large RDMP deployments with thousands of Projects configured.
     /// </summary>
     public static bool SelectiveRefresh
@@ -376,7 +376,7 @@ public static class UserSettings
     /// Determines whether queries are automatically sent and results displayed in
     /// data tabs in RDMP (e.g. View top 100 etc).  Enable to automatically send the
     /// queries.  Disable to show the SQL but require the user to press F5 or click Run
-    /// to execute. 
+    /// to execute.
     /// </para>
     /// </summary>
     public static bool AutoRunSqlQueries
@@ -406,7 +406,7 @@ public static class UserSettings
 
     /// <summary>
     /// <para>When generating an aggregate graph, use the column alias instead of the select sql.  For example
-    /// when you have the select column 'SELECT YEAR(dt) as myYear' then the GROUP BY will default to 
+    /// when you have the select column 'SELECT YEAR(dt) as myYear' then the GROUP BY will default to
     /// 'GROUP BY YEAR(dt)'.  Setting this property to true will instead use 'GROUP BY myYear'.  Typically
     /// this only works in MySql but it is not universally supported by all MySql versions and server settings
     /// </para>
@@ -451,7 +451,7 @@ public static class UserSettings
 
         return AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false); 
     }
-        
+
     public static void SetTutorialDone(Guid tutorialGuid,bool value)
     {
         if(tutorialGuid == Guid.Empty)
@@ -515,7 +515,7 @@ public static class UserSettings
     {
         return AppSettings.GetValueOrDefault($"A_{controlGuid:N}", "").Split(new []{"#!#"},StringSplitOptions.None);
     }
-        
+
     public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)
     {
         AppSettings.AddOrUpdateValue($"A_{controlGuid:N}", string.Join("#!#", history));
@@ -548,7 +548,7 @@ public static class UserSettings
 
             var args = value.Split(new[] {"#!#"}, StringSplitOptions.RemoveEmptyEntries);
 
-            //or it doesn't split properly 
+            //or it doesn't split properly
             if (args.Length != 2)
                 return null;
 
@@ -568,13 +568,13 @@ public static class UserSettings
     {
         lock (_oLockUserSettings)
         {
-            AppSettings.AddOrUpdateValue($"LastColumnSort_{controlGuid:N}", $"{columnName}#!#{ascending}");    
+            AppSettings.AddOrUpdateValue($"LastColumnSort_{controlGuid:N}", $"{columnName}#!#{ascending}");
         }
     }
 
 
     /// <summary>
-    /// Returns the last known manually set splitter distance for the Control who is 
+    /// Returns the last known manually set splitter distance for the Control who is
     /// identified by <paramref name="controlGuid"/> or -1 if none set yet
     /// </summary>
     /// <param name="controlGuid"></param>

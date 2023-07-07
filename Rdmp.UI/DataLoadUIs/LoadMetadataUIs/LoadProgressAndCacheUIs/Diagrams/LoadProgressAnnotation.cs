@@ -30,7 +30,7 @@ internal class LoadProgressAnnotation
 
     public LineAnnotation LineAnnotationCacheProgress { get; private set; }
     public TextAnnotation TextAnnotationCacheProgress { get; private set; }
-        
+
     public LoadProgressAnnotation(LoadProgress lp,DataTable dt, Chart chart)
     {
         _lp = lp;
@@ -124,11 +124,11 @@ internal class LoadProgressAnnotation
             //we have overstepped
             if (year < currentYear)
                 return i;
-                
+
             //if we are on the month or have overstepped it (axis can have gaps)
             if (year == currentYear && month <= currentMonth)
                 return i;
-                
+
             //if there is no more data, return the last row
             if (i + 1 == dt.Rows.Count)
                 return i;

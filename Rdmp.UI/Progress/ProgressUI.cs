@@ -22,13 +22,13 @@ namespace Rdmp.UI.Progress;
 
 /// <summary>
 /// There are two main event systems in play in the RDMP.  There is Checking and Progress.  Checking activities are tasks that should be supervised and can block asking the user
-/// whether or not a proposed fix to a problem should be applied (See ChecksUI).  Progress activities are messages only and can also include numerical update messages indicating 
+/// whether or not a proposed fix to a problem should be applied (See ChecksUI).  Progress activities are messages only and can also include numerical update messages indicating
 /// that progress is made towards a fixed number e.g. you could get 1000 messages over the course of an hour reporting how close towards a goal of 1,000,000 records a given task is.
 /// 
 /// <para>This control handles progress messages.  For Checks event system see ChecksUI.</para>
 /// 
-/// <para>ProgressUI handles progress messages of numerical progress (in either records or kilobytes) by updating the datagrid.  Messages appear in the Notifications area and 
-/// function very similarly to ChecksUI (you can double click them to view the message/copy it / view stack traces etc).  Because classes can be quite enthusiastic about notifying 
+/// <para>ProgressUI handles progress messages of numerical progress (in either records or kilobytes) by updating the datagrid.  Messages appear in the Notifications area and
+/// function very similarly to ChecksUI (you can double click them to view the message/copy it / view stack traces etc).  Because classes can be quite enthusiastic about notifying
 /// progress this control buffers all messages it receives and only updates the user interface once every 3s (this improves performance).  All date/times come from the buffered messages
 /// so there is no impact from the 3s refresh rate on those. </para>
 /// </summary>
@@ -165,7 +165,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
         lock (oProgressQueLock)
         {
-            //we have received an update to this message 
+            //we have received an update to this message
             if (ProgressQueue.ContainsKey(args.TaskDescription))
             {
                 ProgressQueue[args.TaskDescription].DateTime = DateTime.Now;
@@ -233,7 +233,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 }
 
                 var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription, args.Progress.Value, label);
-                        
+
                 if(!handledByFlood)
                     if (!progress.Rows.Contains(args.TaskDescription))
                     {
@@ -304,8 +304,8 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             if (progress.Rows.Contains(jobsAlreadySeen))
             {
                 startAtProgressAmount += Convert.ToInt32(progress.Rows.Find(jobsAlreadySeen)["Count"]);
-                progress.Rows.Remove(progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table 
-                    
+                progress.Rows.Remove(progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table
+
             }
 
         var i = 1;
@@ -396,7 +396,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         SetFilterFromTextBox();
     }
 
-        
+
 
     private void ddGroupBy_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -464,5 +464,5 @@ internal class QueuedProgressMessage
     public DateTime DateTime { get; set; }
     public ProgressEventArgs ProgressEventArgs { get; set; }
     public object Sender { get; set; }
-        
+
 }

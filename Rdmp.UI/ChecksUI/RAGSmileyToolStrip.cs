@@ -203,7 +203,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
             //if there is already a Task and it has not completed
             if (_checkTask != null && !_checkTask.IsCompleted)
                 return;
-                
+
             dialog = new YesNoYesToAllDialog();
 
             //else start a new Task

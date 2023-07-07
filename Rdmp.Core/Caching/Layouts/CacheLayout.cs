@@ -105,7 +105,7 @@ public abstract class CacheLayout : ICacheLayout
         {
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
                 $"Download Directory Did Not Exist:{downloadDirectory.FullName}"));
-                
+
             downloadDirectory.Create();
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
@@ -113,7 +113,7 @@ public abstract class CacheLayout : ICacheLayout
         }
         return downloadDirectory;
     }
-        
+
     private IEnumerable<FileInfo> GetArchiveFilesInLoadCacheDirectory(IDataLoadEventListener listener)
     {
         var disciplineRoot = GetLoadCacheDirectory(listener);

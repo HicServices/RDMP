@@ -17,7 +17,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
 
 /// <summary>
-/// Allows you to either create a new LoadDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading, 
+/// Allows you to either create a new LoadDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading,
 /// Executables etc.  In almost all cases you want to have a different directory for each load, this prevents simultaneous loads tripping over one another.
 /// 
 /// <para>To create a new directory with all the appropriate folders and example configuration files enter the path to an empty folder.  If the folder does not exist yet it will be created
@@ -89,7 +89,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             try
             {
                 var dir = new DirectoryInfo(tbCreateNew.Text);
-                
+
                 if(!dir.Exists)
                     dir.Create();
 

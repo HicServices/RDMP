@@ -74,19 +74,19 @@ public class CrossDatabaseTriggerTests : DatabaseTests
             con.Open();
             var cmd = tbl.Database.Server.GetCommand(string.Format("INSERT INTO {0}(name,bubbles) VALUES('bob',1)",tbl.GetRuntimeName()),con);
             cmd.ExecuteNonQuery();
-                
+
             Assert.AreEqual(1,tbl.GetRowCount());
             Assert.AreEqual(0,archiveTable.GetRowCount());
 
             cmd = tbl.Database.Server.GetCommand(string.Format("UPDATE {0} set bubbles=2",tbl.GetRuntimeName()), con);
             cmd.ExecuteNonQuery();
-                
+
             Assert.AreEqual(1, tbl.GetRowCount());
             Assert.AreEqual(1, archiveTable.GetRowCount());
 
             var archive = archiveTable.GetDataTable();
             var dr = archive.Rows.Cast<DataRow>().Single();
-                
+
             Assert.AreEqual(((DateTime)dr["hic_validTo"]).Date,DateTime.Now.Date);
         }
             

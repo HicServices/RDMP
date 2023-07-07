@@ -29,7 +29,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines;
 
 /// <summary>
 /// Reusable component shown by the RDMP whenever it wants you to select a pipeline to achieve a task (See 'Pipelines' is UserManual.md).  The task will
-/// be clearly described at the top of the form, this might be 'loading a flat file into the database to create a new cohort' (the actual description will be more verbose and clear 
+/// be clearly described at the top of the form, this might be 'loading a flat file into the database to create a new cohort' (the actual description will be more verbose and clear
 /// though).
 /// 
 /// <para>You should read the task description and select an appropriate pipeline (which will appear in the pipeline diagram along with the input objects this window was launched with).  If
@@ -101,9 +101,9 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
 
     private bool _pipelineOptionsSet = false;
 
-        
+
     public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
-        
+
     private void SetPipelineOptions(ICatalogueRepository repository)
     {
         if (_pipelineOptionsSet)
@@ -203,21 +203,21 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
                     fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Pipeline execution failed", ex));
                     exception = ex;
                 }
-                
+
             }
-                
-                
+
+
 
         );
 
-        t.ContinueWith(x => 
+        t.ContinueWith(x =>
         {
             if (success)
             {
                 //if it successfully got here then Thread has run the engine to completion successfully
                 PipelineExecutionFinishedsuccessfully?.Invoke(this, new PipelineEngineEventArgs(pipeline));
             }
-                
+
             progressUI1.ShowRunning(false);
 
             btnExecute.Text = "Execute"; //make it so user can execute again
@@ -247,7 +247,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         t.Start();
     }
 
-        
+
     private void btnPreviewSource_Click(object sender, EventArgs e)
     {
         var pipeline = CreateAndInitializePipeline();

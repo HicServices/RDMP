@@ -142,7 +142,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
             pta.SetType(typeof(TableInfo));
 
             var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
-              
+
             //Heres the TableInfo object
             pta.SetValue(tableInfo);
             pta.SaveToDatabase();
@@ -195,7 +195,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
         }
         finally
         {
-                
+
             lmd.DeleteInDatabase();
         }
     }
@@ -282,8 +282,8 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         //we create them (the root and nested ones!)
         var args = pc.CreateArgumentsForClassIfNotExists<BasicDataReleaseDestination>();
-            
-        //and get all arguments / create arguments for class should have handled that 
+
+        //and get all arguments / create arguments for class should have handled that
         Assert.That(pc.GetAllArguments().Any());
 
         var match = args.Single(a => a.Name == "ReleaseSettings.DeleteFilesOnSuccess");
@@ -376,7 +376,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
             };
             arg.SetType(typeof(Dictionary<TableInfo,string>));
             arg.SaveToDatabase();
-                
+
             Assert.AreEqual(typeof(Dictionary<TableInfo, string>), arg.GetConcreteSystemType());
 
             var ti1 = new TableInfo(CatalogueRepository, "test1");
@@ -389,7 +389,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
             };
 
             arg.SetValue(val);
-            
+
             arg.SaveToDatabase();
 
             var val2 = (Dictionary<TableInfo, string>) arg.GetValueAsSystemType();

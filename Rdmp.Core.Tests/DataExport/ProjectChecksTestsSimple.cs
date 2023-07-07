@@ -116,9 +116,9 @@ public class ProjectChecksTestsSimple:DatabaseTests
         //with empty subdirectories
         var lookupDir = remnantDir.CreateSubdirectory("DMPTestCatalogue").CreateSubdirectory("Lookups");
 
-        //this time put a file in 
+        //this time put a file in
         File.AppendAllLines(Path.Combine(lookupDir.FullName,"Text.txt"),new string[]{"Amagad"});
-            
+
         config.IsReleased = true;//make environment think config is released
         config.SaveToDatabase();
         try

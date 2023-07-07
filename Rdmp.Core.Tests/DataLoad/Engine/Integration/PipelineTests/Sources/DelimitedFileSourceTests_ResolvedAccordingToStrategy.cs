@@ -83,7 +83,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             
         if (throwOnEmpty)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file,  
+            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file,
                 s =>{ s.ThrowOnEmptyFiles = true; s.ForceHeaders="Name,Address"; s.ForceHeadersReplacesFirstLineInFile = true;}));
             Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex.Message);
         }
@@ -163,7 +163,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
                 throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
-        
+
     [TestCase(BadDataHandlingStrategy.DivertRows,true)]
     [TestCase(BadDataHandlingStrategy.ThrowException,false)]
     [TestCase(BadDataHandlingStrategy.ThrowException,true)]
@@ -352,5 +352,5 @@ to be honest",
         Assert.AreEqual(100, dt.Rows[0]["BloodGlucose"]);
 
     }
-        
+
 }

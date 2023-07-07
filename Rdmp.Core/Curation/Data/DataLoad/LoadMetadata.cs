@@ -34,7 +34,7 @@ public enum CacheArchiveType
     /// Cached files are in a directory uncompressed
     /// </summary>
     None = 0,
-        
+
     /// <summary>
     /// Cached files are contained in a zip file
     /// </summary>
@@ -103,7 +103,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Optional.  Indicates that when running the Data Load Engine, the specific <see cref="ExternalDatabaseServer"/> should be used for the RAW server (instead of 
+    /// Optional.  Indicates that when running the Data Load Engine, the specific <see cref="ExternalDatabaseServer"/> should be used for the RAW server (instead of
     /// the system default - see <see cref="ServerDefaults"/>).
     /// </summary>
     public int? OverrideRAWServer_ID
@@ -111,8 +111,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         get => _overrideRawServerID;
         set => SetField(ref _overrideRawServerID, value);
     }
-        
-        
+
+
     /// <iheritdoc/>
     public bool IgnoreTrigger
     {
@@ -207,7 +207,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
         base.DeleteInDatabase();
     }
-        
+
     /// <inheritdoc/>
     public override string ToString()
     {
@@ -233,7 +233,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         serverChosen = (IExternalDatabaseServer)loggingServer;
         return toReturn;
     }
-                
+
     /// <summary>
     /// The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer"/>)
     /// </summary>
@@ -295,7 +295,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
         return toReturn;
     }
-        
+
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {

@@ -71,7 +71,7 @@ using Rectangle = System.Drawing.Rectangle;
 namespace ResearchDataManagementPlatform.WindowManagement;
 
 /// <summary>
-/// Central class for RDMP main application, this class provides access to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child 
+/// Central class for RDMP main application, this class provides access to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child
 /// provision etc.  See IActivateItems for full details
 /// </summary>
 public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubscriber
@@ -89,7 +89,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     private readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
     public IArrangeWindows WindowArranger { get; private set; }
-        
+
     public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
     {
         if(databaseEntity is DatabaseEntity de)
@@ -157,10 +157,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         return provider;
     }
-        
+
 
     public Form ShowWindow(Control singleControlForm, bool asDocument = false)
-    { 
+    {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
@@ -170,7 +170,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         var width = singleControlForm.Size.Width + SystemInformation.BorderSize.Width;
         var height = singleControlForm.Size.Height + SystemInformation.BorderSize.Height;
 
-        //use the .Text or fallback on .Name 
+        //use the .Text or fallback on .Name
         var name = string.IsNullOrWhiteSpace(singleControlForm.Text)
             ? singleControlForm.Name ?? singleControlForm.GetType().Name//or worst case scenario use the type name!
             : singleControlForm.Text;
@@ -184,15 +184,15 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         c?.SetItemActivator(this);
 
         var content = WindowFactory.Create(this,singleControlForm,name , null);
-            
+
         if (asDocument)
             content.Show(_mainDockPanel,DockState.Document);
         else
             content.Show(_mainDockPanel,new Rectangle(0,0,width,height));
-            
+
         return content;
     }
-                
+
     public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
     {
         // if on wrong Thread
@@ -298,7 +298,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
     }
-        
+
     public string GetDocumentation(Type type)
     {
         return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
@@ -363,7 +363,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
     }
-        
+
     public T Activate<T>(IPersistableObjectCollection collection)
         where T: Control,IObjectCollectionControl,new()
 
@@ -429,7 +429,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         {
             existingHostedControlInstance = existing.Control;
             existing.Activate();
-                
+
             // only refresh if there are changes to some of the underlying objects
             if(collection.DatabaseObjects.OfType<IRevertable>().Any(r=>r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent))
                 existing.HandleUserRequestingTabRefresh(this);
@@ -447,7 +447,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         //it has a database object so call SetDatabaseObject
         if (c is IObjectCollectionControl uiCollection)
-            //if we get here then Instruction wasn't for a 
+            //if we get here then Instruction wasn't for a
             return Activate(uiCollection, instruction.ObjectCollection);
         if (c is IRDMPSingleDatabaseObjectControl uiInstance)
         {
@@ -638,7 +638,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         yield return typeof (ExecuteCommandCreateNewFileBasedProcessTask);
     }
 
-        
+
     public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
     {
         // if on wrong Thread
@@ -728,7 +728,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         {
             if (fb.ShowDialog() == DialogResult.OK)
                 return new DirectoryInfo(fb.SelectedPath);
-            
+
             return null;
         }
     }
@@ -765,11 +765,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
                 return new FileInfo(fb.FileName);
             }
-            
+
             return null;
         }        
     }
-        
+
     public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
     {
         // if on wrong Thread
@@ -785,7 +785,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
             if (fb.ShowDialog() == DialogResult.OK)
                 return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
-            
+
             return null;
         }
     }
@@ -841,7 +841,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
             for(var i = 0;i<ms.Count;i++)
                 toReturn.SetValue(ms[i],i);
-                
+
             return toReturn.Cast<IMapsDirectlyToDatabaseTable>().ToArray();
         }
 
@@ -882,7 +882,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         panel.Show(_mainDockPanel,DockState.DockLeft);
     }
 
-        
+
     /// <inheritdoc/>
     public IEnumerable<SessionCollectionUI> GetSessions()
     {
@@ -976,7 +976,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
-        { 
+        {
             _mainDockPanel.Invoke(() => SelectAnythingThen(args,callback));
             return;
         }

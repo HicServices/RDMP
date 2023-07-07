@@ -59,9 +59,9 @@ public class CatalogueProblemProvider : ProblemProvider
         _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
             !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
             !string.IsNullOrWhiteSpace(j.ForeignKey.Collation) &&
-                
+
             // does not have an explicit join collation specified
-            string.IsNullOrWhiteSpace(j.Collation) && 
+            string.IsNullOrWhiteSpace(j.Collation) &&
             !string.Equals(j.PrimaryKey.Collation, j.ForeignKey.Collation)
         ).ToArray();
     }
@@ -112,7 +112,7 @@ public class CatalogueProblemProvider : ProblemProvider
             
         return null;
     }
-        
+
     public string DescribeProblem(ISqlParameter parameter)
     {
         if (AnyTableSqlParameter.HasProhibitedName(parameter))
@@ -242,7 +242,7 @@ public class CatalogueProblemProvider : ProblemProvider
         if (catalogue != null)
         {
             //if we know the Catalogue extractability
-                    
+
             //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
             //otherwise it's a Problem
 

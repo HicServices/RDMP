@@ -125,11 +125,11 @@ public class MDFAttacherTests : DatabaseTests
 
             var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
             var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null);
-                
+
 
             Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
             Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
-                
+
             Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf", locations.CopyToLdf);
             Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.CopyToMdf);
 
@@ -165,7 +165,7 @@ public class MDFAttacherTests : DatabaseTests
 
             var serverDatabasePath = TestContext.CurrentContext.WorkDirectory;
             Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null));
-                
+
         }
         finally
         {
@@ -243,7 +243,7 @@ public class MDFAttacherTests : DatabaseTests
             File.Delete(ldf);
         }
     }
-       
+
     public class MyClass:IAttacher,ICheckable
     {
         public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -251,7 +251,7 @@ public class MDFAttacherTests : DatabaseTests
             throw new NotImplementedException();
         }
 
-            
+
 
         public void Check(ICheckNotifier notifier)
         {
@@ -273,7 +273,7 @@ public class MDFAttacherTests : DatabaseTests
             return "Test class that does nothing";
         }
 
-            
+
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
         {

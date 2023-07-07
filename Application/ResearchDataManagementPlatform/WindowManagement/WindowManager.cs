@@ -40,7 +40,7 @@ public class WindowManager
     private readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new Dictionary<RDMPCollection, PersistableToolboxDockContent>();
     private readonly List<RDMPSingleControlTab>  _trackedWindows = new List<RDMPSingleControlTab>();
     private readonly List<DockContent> _trackedAdhocWindows = new List<DockContent>();
-        
+
     public NavigationTrack<INavigation> Navigation { get; private set; }
     public event TabChangedHandler TabChanged;
 
@@ -52,10 +52,10 @@ public class WindowManager
     /// The location finder for the Catalogue and optionally Data Export databases
     /// </summary>
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
-        
+
     public ActivateItems ActivateItems;
     private readonly WindowFactory _windowFactory;
-        
+
     public event RDMPCollectionCreatedEventHandler CollectionCreated;
 
     private HomeUI _home;
@@ -146,7 +146,7 @@ public class WindowManager
         CollectionCreated?.Invoke(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
 
         collection.CommonTreeFunctionality.Tree.SelectionChanged += (s,e)=>
-        {    
+        {
             if(collection.CommonTreeFunctionality.Tree.SelectedObject is IMapsDirectlyToDatabaseTable im)
                 Navigation.Append(new CollectionNavigation(im));
         };
@@ -154,7 +154,7 @@ public class WindowManager
         return toReturn;
     }
 
-        
+
 
     private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, Image<Rgba32> image)
     {
@@ -249,7 +249,7 @@ public class WindowManager
 
 
     /// <summary>
-    /// Attempts to ensure that a compatible RDMPCollectionUI is made visible for the supplied object which must be one of the expected root Tree types of 
+    /// Attempts to ensure that a compatible RDMPCollectionUI is made visible for the supplied object which must be one of the expected root Tree types of
     /// an RDMPCollectionUI.  For example Project is the a root object of DataExportCollectionUI.  If a matching collection is already visible or no collection
     /// supports the supplied object as a root object then nothing will happen.  Otherwise the coresponding collection will be shown
     /// </summary>
@@ -295,7 +295,7 @@ public class WindowManager
 
         return RDMPCollection.None;
     }
-        
+
     /// <summary>
     /// Displays the HomeUI tab or brings it to the front if it is already open
     /// </summary>
@@ -304,7 +304,7 @@ public class WindowManager
         if(_home == null)
         {
             _home = new HomeUI(ActivateItems);
-                
+
             _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", Image.Load<Rgba32>(FamFamFamIcons.application_home));
             _homeContent.Closed += (s, e) => _home = null;
             _homeContent.Show(_mainDockPanel, DockState.Document);
@@ -335,7 +335,7 @@ public class WindowManager
 
 
     /// <summary>
-    /// Closes all Tracked windows 
+    /// Closes all Tracked windows
     /// </summary>
     /// <param name="tab"></param>
     public void CloseAllWindows(RDMPSingleControlTab tab)
@@ -424,7 +424,7 @@ public class WindowManager
 
         return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t => t.Control.GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
     }
-        
+
     /// <summary>
     /// Closes all Tracked windows except the specified tab
     /// </summary>

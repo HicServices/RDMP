@@ -36,7 +36,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     private IPipelineUseCase _useCase;
     private Type _flowType;
     private ObjectConstructor _constructor;
-        
+
     private Type _engineType;
 
     /// <summary>
@@ -90,14 +90,14 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
             //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
             var component = CreateComponent(toBuild);
-                
+
             //Add the components to the pipeline
             dataFlowEngine.ComponentObjects.Add(component);
         }
 
         return dataFlowEngine;
     }
-        
+
     /// <summary>
     /// Returns the thing that is not null or throws an exception because both are blank.  also throws if both are populated
     /// </summary>
@@ -181,7 +181,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     }
 
     /// <summary>
-    /// Sets the value of a property on instance toReturn. 
+    /// Sets the value of a property on instance toReturn.
     /// </summary>
     /// <param name="toBuild">IPipelineComponent which is the persistence record - the template of what to build</param>
     /// <param name="toReturn">An instance of the Class referenced by IPipelineComponent.Class (or in the case of [DemandsNestedInitializationAttribute] a reference to the nested property)</param>
@@ -212,7 +212,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 if (argument == null)
                     if (initialization.DefaultValue == null && initialization.Mandatory)
                     {
-                        var msg = string.Format("Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}", 
+                        var msg = string.Format("Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}",
                             toReturn.GetType().Name ,
                             propertyInfo.Name ,
                             toBuild.Name);

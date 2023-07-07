@@ -30,7 +30,7 @@ using YamlDotNet.Serialization;
 namespace Rdmp.UI.LocationsMenu;
 
 /// <summary>
-/// All metadata in RDMP is stored in one of two main databases.  The Catalogue database records all the technical, descriptive, governance, data load, filtering logic etc about 
+/// All metadata in RDMP is stored in one of two main databases.  The Catalogue database records all the technical, descriptive, governance, data load, filtering logic etc about
 /// your datasets (including where they are stored etc).  The Data Export Manager database stores all the extraction configurations you have created for releasing to researchers.
 /// 
 /// <para>This window lets you tell the software where your Catalogue / Data Export Manager databases are or create new ones.  These connection strings are recorded in each users settings file.
@@ -80,7 +80,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
 
         //only enable connection string setting if it is a user settings repo
-        tbDataExportManagerConnectionString.Enabled = 
+        tbDataExportManagerConnectionString.Enabled =
             tbCatalogueConnectionString.Enabled =
                 btnBrowseForCatalogue.Enabled =
                     btnBrowseForDataExport.Enabled =
@@ -101,7 +101,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         {
             case State.PickNewOrExisting:
                 pChooseOption.Dock = DockStyle.Top;
-                    
+
                 pResults.Visible = false;
                 gbCreateNew.Visible = false;
                 gbUseExisting.Visible = false;
@@ -113,8 +113,8 @@ public partial class ChoosePlatformDatabasesUI : Form
 
                 pResults.Dock = DockStyle.Fill;
                 gbCreateNew.Dock = DockStyle.Top;
-                    
-                    
+
+
                 pResults.Visible = true;
                 pChooseOption.Visible = false;
                 gbUseExisting.Visible = false;
@@ -122,12 +122,12 @@ public partial class ChoosePlatformDatabasesUI : Form
                 gbCreateNew.Visible = true;
                 pResults.BringToFront();
 
-                    
+
                 break;
             case State.ConnectToExisting:
                 pResults.Dock = DockStyle.Fill;
                 gbUseExisting.Dock = DockStyle.Top;
-                    
+
                 pChooseOption.Visible = false;
                 gbCreateNew.Visible = false;
 
@@ -199,7 +199,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             }
         }
     }
-        
+
     private void btnSaveAndClose_Click(object sender, EventArgs e)
     {
         //if save is successful
@@ -316,10 +316,10 @@ public partial class ChoosePlatformDatabasesUI : Form
 
             var cata = opts.GetBuilder(PlatformDatabaseCreation.DefaultCatalogueDatabaseName);
             var export = opts.GetBuilder(PlatformDatabaseCreation.DefaultDataExportDatabaseName);
-                
+
             UserSettings.CatalogueConnectionString = cata.ConnectionString;
             UserSettings.DataExportConnectionString = export.ConnectionString;
-                
+
             if(!failed)
                 RestartApplication();
 
@@ -402,7 +402,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             else if(sender == tbPeopleCount)
                 _peopleCount = result;
             else if(sender == tbRowCount)
-                _rowCount = result;                
+                _rowCount = result;
 
             tb.ForeColor = Color.Black;
         }

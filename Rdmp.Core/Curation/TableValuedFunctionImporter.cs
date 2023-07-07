@@ -21,7 +21,7 @@ namespace Rdmp.Core.Curation;
 /// Generates TableInfo entries in the ICatalogueRepository based the Table Valued Function specified on the live database server.  Table Valued Functions are Microsoft
 /// Sql Server specific, they are like Scalar functions except they return data tables.  RDMP supports building Catalogues that refer to Table Valued Functions.  These
 /// act just like regular tables when it comes to aggregates, data extraction etc except that they can have ISqlParameters declared for them.  Table Valued Functions are
-/// really not nice, especailly if they are non deterministic (return different results when given the same parameters), therefore really you should just avoid using them 
+/// really not nice, especailly if they are non deterministic (return different results when given the same parameters), therefore really you should just avoid using them
 /// if at all possible.
 /// </summary>
 public class TableValuedFunctionImporter : ITableInfoImporter
@@ -37,7 +37,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     private string _schema;
 
     /// <summary>
-    /// List of parameters belonging to the <see cref="DiscoveredTableValuedFunction"/> being imported.  Each parameter will result in an RDMP object <see cref="AnyTableSqlParameter"/> 
+    /// List of parameters belonging to the <see cref="DiscoveredTableValuedFunction"/> being imported.  Each parameter will result in an RDMP object <see cref="AnyTableSqlParameter"/>
     /// which records the default value to send when fetching data etc as well as to facilitate the population of parameters in data extract / cohort generation etc.
     /// </summary>
     public List<AnyTableSqlParameter> ParametersCreated { get; private set; }
@@ -150,7 +150,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
 
     /// <summary>
     /// Creates a parameter declaration SQL for the given <paramref name="parameter"/> e.g. if the parameter is @myVar varchar(10) then the declare SQL might be
-    /// DECLARE @myVar as varchar(10);.  
+    /// DECLARE @myVar as varchar(10);.
     /// 
     /// <para><seealso cref="IQuerySyntaxHelper.GetParameterDeclaration(string,string)"/></para>
     /// </summary>
@@ -160,5 +160,5 @@ public class TableValuedFunctionImporter : ITableInfoImporter
 
         return syntaxHelper.GetParameterDeclaration(parameter.ParameterName, parameter.DataType.SQLType);
     }
-   
+
 }

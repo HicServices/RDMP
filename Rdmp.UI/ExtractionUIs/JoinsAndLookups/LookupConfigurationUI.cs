@@ -33,18 +33,18 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 
 /// <summary>
 /// A Lookup in RDMP is a relationship between three columns.  The 'Foreign Key' column must come from a normal dataset table e.g. 'Prescribing.DrugCode', the 'Primary Key' must come
-/// from a different table (usually prefixed z_ to indicate it is a lookup table) e.g. 'z_DrugsLookup.DrugCode' and then a 'Description' column from the same table e.g. 
-/// 'z_DrugsLookup.DrugName'.  This is maintained in the RDMP Catalogue database and does not result in any changes / constraints on your actual data repository.  
+/// from a different table (usually prefixed z_ to indicate it is a lookup table) e.g. 'z_DrugsLookup.DrugCode' and then a 'Description' column from the same table e.g.
+/// 'z_DrugsLookup.DrugName'.  This is maintained in the RDMP Catalogue database and does not result in any changes / constraints on your actual data repository.
 /// 
-/// <para>While it might seem redundant to have to configure this logic in the RDMP as well as (if you choose to) constraints in your data repository, this approach allows for 
+/// <para>While it might seem redundant to have to configure this logic in the RDMP as well as (if you choose to) constraints in your data repository, this approach allows for
 /// flexibility when it comes to incomplete/corrupt lookup tables (common in the research data management domain) as well as letting us bundle lookups with data extracts etc.</para>
 /// 
 /// <para>This window is a low level alternative to LookupConfiguration (the recommended way of creating these Lookup relationships), this form lets you explicitly create a Lookup
 /// relationship using the supplied columns.  First of all you should make sure that the column you right clicked to activate the Form is the Description column.  Then select the
 /// 'Primary Key' and 'Foreign Key' as described above.  </para>
 /// 
-/// <para>If you have a particularly insane database design you can configure composite joins (where there are multiple columns that make up a composite 'Foreign Key' / 'Primary Key'.  For 
-/// example if there was crossover in 'DrugCode' between two countries then the Lookup relationship would need 'Primary Key' Prescribing.DrugCode + Prescribing.Country and the 
+/// <para>If you have a particularly insane database design you can configure composite joins (where there are multiple columns that make up a composite 'Foreign Key' / 'Primary Key'.  For
+/// example if there was crossover in 'DrugCode' between two countries then the Lookup relationship would need 'Primary Key' Prescribing.DrugCode + Prescribing.Country and the
 /// 'Foreign Key' would need to be z_DrugsLookup.DrugCode + z_DrugsLookup.Country.</para>
 ///
 /// <para>Allows you to rapidly import and configure lookup table relationships into the RDMP.  This has two benefits, firstly lookup tables will be automatically included in project extracts
@@ -52,7 +52,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 /// to lookup the meaning of codes in separate files).</para>
 /// 
 /// <para>Start by identifying a lookup table and click Import Lookup.  Then drag the primary key of the lookup into the PrimaryKey box.  Then drag the description column of the lookup onto the
-/// Foreign key field in the dataset you are modifying.  If you have multiple foreign keys (e.g. two columns SendingLocation and DischargeLocation both of which are location codes) then 
+/// Foreign key field in the dataset you are modifying.  If you have multiple foreign keys (e.g. two columns SendingLocation and DischargeLocation both of which are location codes) then
 /// join them both up (this will give you two lookup description fields SendingLocation_Desc and DischargeLocation_Desc).  </para>
 /// 
 /// <para>All Lookups and Lookup column description configurations are artifacts in the RDMP database and no actual changes will take place on your data repository (i.e. no constraints will be added
@@ -140,7 +140,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
         UpdateValidityAssesment();
     }
-        
+
     public void SetLookupTableInfo(TableInfo t,bool setComboBox = true)
     {
         if(t != null && t.IsTableValuedFunction)
@@ -374,7 +374,7 @@ Only define secondary columns if you really need them! if any of the key fields 
             if(e.SourceModels[0] is ColumnInfo)
             {
                 var c = e.SourceModels[0] as ColumnInfo;
-                    
+
                 //it's already in it
                 if (olvSelectedDescriptionColumns.IndexOf(c) != -1)
                 {
@@ -451,7 +451,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
                 if (p2 != null)
                     keyPairs.Add(Tuple.Create(f2,p2));
-                    
+
                 if(p3 != null)
                     keyPairs.Add(Tuple.Create(f3,p3));
 
@@ -467,14 +467,14 @@ Only define secondary columns if you really need them! if any of the key fields 
                 pk1.Clear();
                 pk2.Clear();
                 pk3.Clear();
-                        
+
                 fk1.Clear();
                 fk2.Clear();
                 fk3.Clear();
 
                 olvSelectedDescriptionColumns.ClearObjects();
                 SetStage(LookupCreationStage.DragAPrimaryKey);
-                    
+
             }
             btnCreateLookup.Enabled = true;
 

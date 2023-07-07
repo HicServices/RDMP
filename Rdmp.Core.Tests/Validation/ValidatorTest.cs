@@ -28,7 +28,7 @@ public class ValidatorTest
     {
         var validator = new Validator();
 
-        Assert.IsNull(validator.Validate(_domainObjectWithValidChi));    
+        Assert.IsNull(validator.Validate(_domainObjectWithValidChi));
     }
 
     [Test]
@@ -56,7 +56,7 @@ public class ValidatorTest
         //validate the row
         Assert.IsNull(v.Validate(dr));
     }
-        
+
     [Test]
     public void AddItemValidator_DuplicateCalls_ThrowsException()
     {
@@ -82,7 +82,7 @@ public class ValidatorTest
         Assert.AreEqual("Validation failed: Target field [non-existent] not found in domain object.",ex.Message);
     }
 
-        
+
     [Test]
     public void Validate_NonExistentTargetProperty_EmitsMessage()
     {
@@ -95,7 +95,7 @@ public class ValidatorTest
         catch (MissingFieldException exception)
         {
 
-            Assert.True(exception.Message.StartsWith("Validation failed"));                
+            Assert.True(exception.Message.StartsWith("Validation failed"));
         }
     }
 
@@ -129,7 +129,7 @@ public class ValidatorTest
 
         //additive --give it same row again, expect the count of wrong ones to go SetUp by 1
         results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, results, out lastRowConsequence);
-            
+
         Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong], 2);
     }
 
@@ -152,7 +152,7 @@ public class ValidatorTest
         var v2 = Validator.LoadFromXml(answer);
 
         var answer2 = v2.SaveToXml(false);
-            
+
         Assert.AreEqual(answer,answer2);
     }
 
@@ -214,10 +214,10 @@ public class ValidatorTest
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "OldCol1");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "OldCol3");
-            
+
         //now rename col 1
         dictionary.Add("OldCol1","NewCol1");
-        v.RenameColumns(dictionary); 
+        v.RenameColumns(dictionary);
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "NewCol1");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "OldCol3");
@@ -234,7 +234,7 @@ public class ValidatorTest
     //
     // A domain object contains a number of items, each of which we may wish to validate.
     // A Validator is responsible for validating a domain object.
-    // Any useful Validator contains at least one ItemValidator. 
+    // Any useful Validator contains at least one ItemValidator.
     // An ItemValidator is created for each item in the domain object you wish to validate.
     // An ItemValidator contains a single PrimaryConstraint (e.g. must be valid CHI) and zero or more secondary constraints.
     private static Validator CreateSimpleChiValidator()

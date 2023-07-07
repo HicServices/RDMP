@@ -41,7 +41,7 @@ public class CohortQueryBuilderDependency
     /// The relationship object describing the JOIN relationship between <see cref="CohortSet"/> and another optional table
     /// </summary>
     public JoinableCohortAggregateConfigurationUse PatientIndexTableIfAny { get; }
-        
+
     /// <summary>
     /// The column in the <see cref="CohortSet"/> that is marked <see cref="IColumn.IsExtractionIdentifier"/>
     /// </summary>
@@ -60,19 +60,19 @@ public class CohortQueryBuilderDependency
     /// <para>This SQL does not include the parameter declaration SQL since it is designed for nesting e.g. in UNION / INTERSECT / EXCEPT hierarchy</para>
     /// </summary>
     public CohortQueryBuilderDependencySql SqlCacheless { get; private set; }
-        
+
     /// <summary>
     /// The raw SQL for the <see cref="CohortSet"/> with a join against the cached artifact for the <see cref="PatientIndexTableIfAny"/>
     /// </summary>
     public CohortQueryBuilderDependencySql SqlPartiallyCached { get;  private set;}
-        
+
     /// <summary>
     /// Sql for a single cache fetch  that pulls the cached result of the <see cref="CohortSet"/> joined to <see cref="PatientIndexTableIfAny"/> (if there was any)
     /// </summary>
     public CohortQueryBuilderDependencySql SqlFullyCached { get;  private set;}
 
     public CohortQueryBuilderDependencySql SqlJoinableCacheless { get; private set; }
-        
+
     public CohortQueryBuilderDependencySql SqlJoinableCached { get; private set; }
 
     /// <summary>
@@ -139,7 +139,7 @@ public class CohortQueryBuilderDependency
 
             // It's a plugin aggregate so only ever run the cached SQL
             SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
-                    
+
             if(SqlFullyCached == null)
             {
                 throw new Exception($"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cached results were found after running.");
@@ -171,7 +171,7 @@ public class CohortQueryBuilderDependency
                 // of querying it too.
                 SqlJoinableCacheless = SqlJoinableCached;
             }
-                
+
         }
             
         if (isSolitaryPatientIndexTable)
@@ -190,7 +190,7 @@ public class CohortQueryBuilderDependency
                 new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
                     SqlJoinableCacheless,parent.Customise,globals));
 
-                
+
             //if the joined to table is cached we can generate a partial too with full sql for the outer sql block and a cache fetch join
             if (SqlJoinableCached != null)
                 SqlPartiallyCached = CohortQueryBuilderHelper.GetSQLForAggregate(CohortSet,

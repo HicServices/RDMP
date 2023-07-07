@@ -38,13 +38,13 @@ public class ExpectedIdenticalStringsException : Exception
                 return
                     $"{message}{Environment.NewLine}Strings are identical except that Actual string ends at character {i} while we still Expected {expected.Length - actual.Length} additional characters";
 
-            //give them a preview of the location of the difference 
+            //give them a preview of the location of the difference
             if (!expected[i].Equals(actual[i]))
             {
-                 
+
                 message = $"{message}{Environment.NewLine}Strings differ at index {i}";
                 message += GetPreviewsAround(i, expected, actual);
-                    
+
 
                 return message;
             }

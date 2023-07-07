@@ -13,20 +13,20 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <summary>
-/// Represents a Embedded Resource file in the up directory of a assembly found using an <see cref="IPatcher"/>.  Used during patching 
+/// Represents a Embedded Resource file in the up directory of a assembly found using an <see cref="IPatcher"/>.  Used during patching
 /// to ensure that the live database that is about to be patched is in the expected state and ready for new patches to be applied.
 /// </summary>
 public class Patch : IComparable
 {
     public const string VersionKey = "--Version:";
     public const string DescriptionKey = "--Description:";
-        
+
     public string EntireScript { get; set; }
     public string locationInAssembly { get; private set; }
 
     public Version DatabaseVersionNumber { get; set; }
     public string Description { get; set; }
-        
+
 
     public Patch(string scriptName, string entireScriptContents)
     {
@@ -91,7 +91,7 @@ public class Patch : IComparable
         return string.Join(Environment.NewLine,
             EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Skip(2));
     }
-        
+
     public override int GetHashCode()
     {
         return locationInAssembly.GetHashCode();

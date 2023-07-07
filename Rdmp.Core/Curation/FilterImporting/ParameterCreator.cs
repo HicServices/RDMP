@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.FilterImporting;
 /// Handles the creation of new ISqlParameters based on the current WHERE SQL of a given IFilter.  This involves parsing the WHERE SQL for variables (@myVar).  This class
 /// also takes into account any globals that exist and supports the use of template parameter values for new ISqlParameter created (importFromIfAny)
 /// 
-/// <para>globals are ISqlParameters which exist in the same scope as the IFilter being edited, if the WHERE Sql contains a parameter with the same name as a global then no new 
+/// <para>globals are ISqlParameters which exist in the same scope as the IFilter being edited, if the WHERE Sql contains a parameter with the same name as a global then no new
 /// ISqlParameter will be created.  For example if you have an IFilter "myfilter" with WhereSQL "@bob = 'bob'" and there are not already any parameters for the filter with the
 /// name @bob then a new one will be created (unless there is a global with the name @bob).</para>
 /// 
@@ -95,18 +95,18 @@ public class ParameterCreator
                     {
                         while (existingParametersInScope.Any(e => e.ParameterName.Equals(proposedNewParameterName + proposedAliasNumber)))
                             proposedAliasNumber++;
-                        
+
                         //Naming conflict has been resolved! (by adding the proposed alias number on) so record that this is the new name
                         proposedNewParameterName += proposedAliasNumber;
                     }
-                    
+
                 //The final name is different e.g. bob2 instead of bob so propagate into the WHERE SQL of the filter
                 if (!proposedNewParameterName.Equals(requiredParameterName))
                 {
                     filterToCreateFor.WhereSQL = RenameParameterInSQL(filterToCreateFor.WhereSQL,requiredParameterName, proposedNewParameterName);
                     filterToCreateFor.SaveToDatabase();
                 }
-                    
+
                 //If there is a matching Template Filter
                 if(matchingTemplateFilter != null)
                 {
@@ -115,7 +115,7 @@ public class ParameterCreator
                     //there's a rename requirement e.g. 'DECLARE @bob AS int' to 'DECLARE @bob2 AS int' because the existing scope already has a parameter called @bob
                     if (proposedNewParameterName != requiredParameterName)
                         toCreate = toCreate.Replace(requiredParameterName, proposedNewParameterName);
-                        
+
                     //construct it as a match to the existing parameter declared at the template level (see below for full match propogation)
                     newParameter = _factory.CreateNewParameter(filterToCreateFor,toCreate);
                 }
@@ -136,7 +136,7 @@ public class ParameterCreator
                 if (newParameter == null)
                     throw new NullReferenceException("Parameter construction method returned null, expected it to return an ISqlParameter");
 
-                 
+
 
                 //We have a template so copy across the remaining values
                 if (matchingTemplateFilter != null)
@@ -151,7 +151,7 @@ public class ParameterCreator
     }
 
     /// <summary>
-    /// Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" unless 
+    /// Lists the names of all parameters required by the supplied whereSql e.g. @bob = 'bob' would return "@bob" unless
     /// there is already a global parameter called @bob.  globals is optional, pass in null if there aren't any
     /// </summary>
     /// <param name="whereSql">the SQL filter WHERE section you want to determine the parameter names in, does.  Should not nclude WHERE (only the boolean logic bit)</param>

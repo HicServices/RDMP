@@ -20,13 +20,13 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
 /// <summary>
 /// Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For example storing all LabNumbers stored in
-/// DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber and putting in the appropriate 
+/// DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber and putting in the appropriate
 /// replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored proceedure SubstitutionStoredprocedure.
 /// </summary>
 public class ANOTransformer
 {
     private readonly ANOTable _anoTable;
-        
+
     private readonly IDataLoadEventListener _listener;
 
     //the following stored procedures have to exist in the target database;
@@ -90,7 +90,7 @@ public class ANOTransformer
             var substitutionRow = substitutionTable.Rows.Find(valueToReplace) ?? throw new Exception(
                     $"Substitution table returned by {SubstitutionStoredprocedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
             var substitutionValue = substitutionRow[1];//substitution value
-                
+
             //overwrite the value with the substitution
             destColumn.Table.Rows[i][destColumn.ColumnName] = substitutionValue;
         }
@@ -121,13 +121,13 @@ public class ANOTransformer
         using(var con = (SqlConnection)_server.GetConnection())
         {
             con.InfoMessage+=_con_InfoMessage;
-                
+
             if (table.Rows.Count == 0)
                 return table;
             try
             {
                 SqlTransaction transaction = null;
-                
+
                 if (previewOnly)
                 {
                     var mustPush = !_anoTable.IsTablePushed();
@@ -137,7 +137,7 @@ public class ANOTransformer
 
                     if (mustPush)
                     {
-                        var cSharpType = 
+                        var cSharpType =
                             new DatabaseTypeRequest(table.Columns[0].DataType,
                                 _anoTable.NumberOfIntegersToUseInAnonymousRepresentation
                                 + _anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
@@ -179,12 +179,12 @@ public class ANOTransformer
 
                 var da = new SqlDataAdapter(cmdSubstituteIdentifiers);
                 var dtToReturn = new DataTable();
-                
+
                 da.Fill(dtToReturn);
 
                 if (previewOnly)
                     transaction.Rollback();
-                
+
 
                 return dtToReturn;
             }
@@ -213,13 +213,13 @@ public class ANOTransformer
         else
             Console.WriteLine(e.Message);
     }
-        
+
     public string GetDestinationColumnExpectedDataType()
     {
         return _anoTable.GetRuntimeDataType(LoadStage.PostLoad);
     }
 
-        
+
     public static void ConfirmDependencies(DiscoveredDatabase database,ICheckNotifier notifier)
     {
         try
@@ -231,7 +231,7 @@ public class ANOTransformer
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Failed to find {SubstitutionStoredprocedure} on {database}", CheckResult.Fail, null));
-        }   
+        }
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(

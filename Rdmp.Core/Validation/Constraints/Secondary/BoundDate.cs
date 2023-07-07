@@ -20,12 +20,12 @@ public class BoundDate : Bound
     public DateTime? Lower { get; set; }
     [Description("Optional, Requires the value being validated to be BEFORE this date")]
     public DateTime? Upper { get; set; }
-        
+
     public BoundDate()
     {
         Inclusive = true;
     }
-        
+
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
         if(value == null)
@@ -34,14 +34,14 @@ public class BoundDate : Bound
         if (value is string s)
         {
             value = SafeConvertToDate(s);
-            
+
             if (!((DateTime?)value).HasValue)
                 return null;
         }
 
         var d = (DateTime)value;
 
-        if (value != null && !IsWithinRange(d)) 
+        if (value != null && !IsWithinRange(d))
             return new ValidationFailure(CreateViolationReportUsingDates(d),this);
             
         if (value != null && !IsWithinRange(d,otherColumns, otherColumnNames))
@@ -147,7 +147,7 @@ public class BoundDate : Bound
 
     private string CreateViolationReportUsingFieldNames(DateTime d)
     {
-        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName)) 
+        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName))
             return BetweenMessage(d, LowerFieldName, UpperFieldName);
 
         if (!string.IsNullOrWhiteSpace(LowerFieldName))
@@ -181,7 +181,7 @@ public class BoundDate : Bound
     {
         return $"[{s}]";
     }
-        
+
     public override string GetHumanReadableDescriptionOfValidation()
     {
         var result = "Checks that a date is within a given set of bounds.  This field is currently configured to be ";

@@ -22,7 +22,7 @@ public abstract class PickObjectBase
 
     protected Regex Regex { get; }
     protected readonly IBasicActivateItems Activator;
-        
+
     public virtual bool IsMatch(string arg, int idx)
     {
         return Regex.IsMatch(arg);
@@ -120,7 +120,7 @@ public abstract class PickObjectBase
             
         return patternDictionary[pattern].IsMatch(o.ToString());
     }
-        
+
     /// <summary>
     /// Takes a key value pair in a string e.g. "Schema:dbo" and returns the substring "dbo".  Trims leading and trailing ':'.  Returns null if <paramref name="keyValueString"/> is null
     /// </summary>

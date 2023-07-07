@@ -66,7 +66,7 @@ public class BundledLookupTable : IBundledLookupTable
             // if there is a Catalogue associated with this TableInfo use its extraction instead
             var cata = catas[0];
 
-            // Extract core columns only (and definetly not extraction identifiers) 
+            // Extract core columns only (and definetly not extraction identifiers)
             var eis = cata.GetAllExtractionInformation(ExtractionCategory.Core)
                 .Where(e=>!e.IsExtractionIdentifier)
                 .ToArray();
@@ -86,7 +86,7 @@ public class BundledLookupTable : IBundledLookupTable
 
     /// <summary>
     /// We only want Catalogues where all <see cref="CatalogueItem"/>
-    /// are us (i.e. we don't want to pick up Catalogues where we are 
+    /// are us (i.e. we don't want to pick up Catalogues where we are
     /// Description column slotted in amongst the other columns).
     /// </summary>
     /// <param name="arg"></param>

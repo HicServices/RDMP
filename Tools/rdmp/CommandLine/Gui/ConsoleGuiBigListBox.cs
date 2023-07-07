@@ -29,7 +29,7 @@ internal class ConsoleGuiBigListBox<T>
     private bool _addNull;
 
     public T Selected { get; private set; }
-        
+
     /// <summary>
     /// Determines what is rendered in the list visually
     /// </summary>
@@ -41,7 +41,7 @@ internal class ConsoleGuiBigListBox<T>
     private ConcurrentBag<CancellationTokenSource> _cancelFiltering = new ConcurrentBag<CancellationTokenSource>();
     private Task _currentFilterTask;
     private object _taskCancellationLock = new object();
-        
+
     private ListView _listView;
     private bool _changes;
     private TextField _mainInput;
@@ -113,7 +113,7 @@ internal class ConsoleGuiBigListBox<T>
     }
 
     /// <summary>
-    /// Runs the dialog as modal blocking and returns true if a selection was made. 
+    /// Runs the dialog as modal blocking and returns true if a selection was made.
     /// </summary>
     /// <returns>True if selection was made (see <see cref="Selected"/>) or false if user cancelled the dialog</returns>
     public bool ShowDialog()
@@ -176,7 +176,7 @@ internal class ConsoleGuiBigListBox<T>
             };
 
             win.Add(searchLabel);
-            
+
             _mainInput = new TextField ("") {
                 X = Pos.Right(searchLabel),
                 Y = Pos.Bottom(_listView),
@@ -188,12 +188,12 @@ internal class ConsoleGuiBigListBox<T>
 
             win.Add(_mainInput);
             _mainInput.SetFocus();
-                
+
             _mainInput.TextChanged += s =>
             {
                 // Don't update the UI while user is hammering away on the keyboard
                 _lastKeypress = DateTime.Now;
-                RestartFiltering(); 
+                RestartFiltering();
             };
         }
         else
@@ -245,7 +245,7 @@ internal class ConsoleGuiBigListBox<T>
 
                 if(oldSelected < _collection.Count)
                     _listView.SelectedItem = oldSelected ;
-                    
+
                 _changes = false;
                 return true;
             }
@@ -268,7 +268,7 @@ internal class ConsoleGuiBigListBox<T>
             //cancel any previous searches
             foreach(var c in _cancelFiltering)
                 c.Cancel();
-            
+
             _cancelFiltering.Clear();
 
             _cancelFiltering.Add(cts);
@@ -283,7 +283,7 @@ internal class ConsoleGuiBigListBox<T>
                 _collection = result;
                 _changes = true;
             }
-                    
+
         });       
     }
 

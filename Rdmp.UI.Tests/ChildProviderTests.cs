@@ -264,7 +264,7 @@ internal class ChildProviderTests : UITests
         // both objects should have identical path
         Assert.IsTrue(p1.SequenceEqual(p2));
     }
-        
+
     /// <summary>
     /// Capitalization changes are not considered different.  This test confirms that
     /// when user has 2 nodes that have DATABASE names with different caps they get grouped

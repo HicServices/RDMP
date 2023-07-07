@@ -49,7 +49,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     protected bool AllowEmptyExtractions = false;
     protected SelectedDataSets _selectedDataSet;
     protected ColumnInfo[] _columnInfos;
-        
+
     /// <summary>
     /// Called when pipeline components are created during <see cref="SetupPipeline"/>.  Allows you to make last minute changes to them e.g. before pipeline is executed
     /// </summary>
@@ -117,7 +117,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
                 col.IsExtractionIdentifier = true;
 
             col.SaveToDatabase();
-                
+
             _extractableColumns.Add(col);
         }
     }
@@ -193,7 +193,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         _extractableColumns = new List<IColumn>(before);
     }
 
-        
+
 
     protected virtual Pipeline SetupPipeline()
     {

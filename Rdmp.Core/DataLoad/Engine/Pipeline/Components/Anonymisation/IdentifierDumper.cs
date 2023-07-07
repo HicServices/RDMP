@@ -44,7 +44,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
     public bool HasAtLeastOneColumnToStoreInDump { get; private set; }
 
     private const string IdentifierDumpCreatorStoredprocedure = "sp_createIdentifierDump";
-        
+
     public bool HaveDumpedRecords { get; private set; }
 
     public IdentifierDumper(ITableInfo tableInfo)
@@ -95,7 +95,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                 }
 
                 var pks = TableInfo.ColumnInfos.Where(c => c.IsPrimaryKey).ToArray();
-            
+
                 //wire up the primary keys
                 foreach (var pk in pks)
                 {
@@ -107,8 +107,8 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 
                     uniqueNamesAdded.Add(pkName);
                     bulkCopy.ColumnMappings.Add(new SqlBulkCopyColumnMapping(pkName,pkName));
-                        
-                        
+
+
                 }
 
                 try
@@ -140,7 +140,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                     $"Could not find {preLoadDiscardedColumn.RuntimeColumnName} in pipeline column collection");
     }
 
-     
+
 
     private void MergeStagingWithLive(string[] pks)
     {
@@ -199,7 +199,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             updateSql += $"FROM {GetRuntimeName()} AS prod {Environment.NewLine}";
             updateSql += $"INNER JOIN ToUpdate ON {Environment.NewLine}";
             updateSql += $"({Environment.NewLine}";
-            updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}]=ToUpdate.[{n}] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine; 
+            updateSql = pks.Aggregate(updateSql, (s, n) => $"{s} prod.[{n}]=ToUpdate.[{n}] AND").TrimEnd(new[] { 'A', 'N', 'D', ' ' }) + Environment.NewLine;
             updateSql += $"){Environment.NewLine}";
 
             using(var updateCommand = _dumpDatabase.Server.GetCommand(updateSql,con))
@@ -231,7 +231,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             $"SELECT TOP 0 * INTO {GetStagingRuntimeName()} FROM {GetRuntimeName()}", con);
         cmdCreateSTAGING.ExecuteNonQuery();
     }
-        
+
     public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
     {
         if(exitCode == ExitCodeType.Error)
@@ -239,7 +239,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
 
         DropStaging();
     }
-        
+
     public void Check(ICheckNotifier notifier)
     {
 
@@ -346,7 +346,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             }
         }
     }
-        
+
     private string GetStagingRuntimeName()
     {
         return $"ID_{_tableInfo.GetRuntimeName()}_STAGING";
@@ -372,28 +372,28 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             {
                 var runtimeName = columnInfo.GetRuntimeName(LoadStage.AdjustRaw);
                 var dataType = columnInfo.GetRuntimeDataType(LoadStage.AdjustRaw);
-                  
+
                 pks.Rows.Add(new object[] { runtimeName, dataType });
             }
 
             var dumpColumns = new DataTable();
             dumpColumns.Columns.Add("RuntimeName");
             dumpColumns.Columns.Add("DataType");
-              
+
             foreach (var discardedColumn in _tableInfo.PreLoadDiscardedColumns.Where(d=>d.GoesIntoIdentifierDump()))
             {
                 if(discardedColumn.RuntimeColumnName.StartsWith("ANO"))
                     throw new Exception(
                         $"Why are you trying to discard column {discardedColumn.RuntimeColumnName}, it looks like an ANO column in which case it should have an ANOTable transform rather than being a dump field.");
-                  
+
                 if(discardedColumn.SqlDataType == null)
                     throw new Exception(
                         $"{discardedColumn.GetType().Name} called {discardedColumn.RuntimeColumnName} does not have an assigned type");
-                  
+
                 dumpColumns.Rows.Add(new object[] { discardedColumn.RuntimeColumnName, discardedColumn.SqlDataType});
             }
 
-              
+
             if(dumpColumns.Rows.Count == 0)
                 throw new Exception("Cannot create an identifier dump with no dump columns");
 
@@ -409,9 +409,9 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             cmdCreate.Parameters.AddWithValue("@dumpColumns", dumpColumns);
             cmdCreate.Parameters["@dumpColumns"].SqlDbType = SqlDbType.Structured;
             cmdCreate.Parameters["@dumpColumns"].TypeName = "dbo.ColumnInfo";
-              
+
             cmdCreate.ExecuteNonQuery();
-               
+
         }
             
     }

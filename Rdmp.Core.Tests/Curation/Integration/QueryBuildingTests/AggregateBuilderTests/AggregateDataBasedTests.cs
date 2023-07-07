@@ -105,7 +105,7 @@ public class AggregateDataBasedTests:DatabaseTests
             return toReturn;
         }
     }
-        
+
 
     private static void AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(AggregateBuilder builder, DatabaseType type)
     {
@@ -208,7 +208,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
             var resultTable = GetResultForBuilder(builder, tbl);
@@ -240,7 +240,7 @@ public class AggregateDataBasedTests:DatabaseTests
         configuration.SaveToDatabase();
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
             var resultTable = GetResultForBuilder(builder, tbl);
@@ -274,7 +274,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
@@ -309,7 +309,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
@@ -349,7 +349,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
@@ -389,7 +389,7 @@ public class AggregateDataBasedTests:DatabaseTests
         configuration.SaveToDatabase();
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
@@ -427,7 +427,7 @@ public class AggregateDataBasedTests:DatabaseTests
         configuration.SaveToDatabase();
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);
@@ -437,7 +437,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
             Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
-            
+
             Assert.AreEqual("T",resultTable.Columns[1].ColumnName);
             Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
             Assert.AreEqual("F", resultTable.Columns[3].ColumnName);
@@ -477,7 +477,7 @@ public class AggregateDataBasedTests:DatabaseTests
         configuration.SaveToDatabase();
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);
@@ -539,7 +539,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);
@@ -598,7 +598,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);
@@ -660,7 +660,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);

@@ -27,7 +27,7 @@ public class LoadDirectory : ILoadDirectory
     public DirectoryInfo DataPath { get; private set; }
     /// <inheritdoc/>
     public DirectoryInfo ExecutablesPath { get; private set; }
-        
+
 
     internal const string ExampleFixedWidthFormatFileContents = @"From,To,Field,Size,DateFormat
 1,7,gmc,7,

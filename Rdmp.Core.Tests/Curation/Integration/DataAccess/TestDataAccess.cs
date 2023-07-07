@@ -26,7 +26,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess;
 
 public class TestDataAccess:DatabaseTests
 {
-       
+
     #region Distinct Connection String (from Collection tests - Failing)
 
     [Test]
@@ -206,7 +206,7 @@ public class TestDataAccess:DatabaseTests
             t.Database = "bobsDatabase";
             t.SaveToDatabase();
 
-            //t has no credentials 
+            //t has no credentials
             var server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
             Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
@@ -250,7 +250,7 @@ public class TestDataAccess:DatabaseTests
         }
     }
 
-        
+
     internal class TestAccessPoint:IDataAccessPoint,IDataAccessCredentials
     {
         public string Server { get; set; }
@@ -276,7 +276,7 @@ public class TestDataAccess:DatabaseTests
             return null;
         }
 
-            
+
         public string GetDecryptedPassword()
         {
             return Password?? "";

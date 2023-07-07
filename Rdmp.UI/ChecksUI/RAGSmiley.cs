@@ -18,7 +18,7 @@ namespace Rdmp.UI.ChecksUI;
 public partial class RAGSmiley : UserControl, IRAGSmiley
 {
     private bool _alwaysShowHandCursor;
-        
+
     public bool AlwaysShowHandCursor
     {
         get => _alwaysShowHandCursor;
@@ -151,7 +151,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         _state = CheckResult.Fail;
         _exception = ex;
     }
-        
+
     public void Reset()
     {
         //reset the checks too so as not to leave old check results kicking about

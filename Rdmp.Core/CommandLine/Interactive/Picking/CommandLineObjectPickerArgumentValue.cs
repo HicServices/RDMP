@@ -193,7 +193,7 @@ public class CommandLineObjectPickerArgumentValue
             {
                 _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine, DatabaseEntities)}");
             }
-                    
+
             return latest;
         }   
 
@@ -255,7 +255,7 @@ public class CommandLineObjectPickerArgumentValue
                 else
                 if(other.DatabaseEntities.Any())
                     throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntitites");
-                
+
         }
 
         return this;

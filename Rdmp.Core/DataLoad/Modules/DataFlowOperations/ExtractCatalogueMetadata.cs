@@ -40,7 +40,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
          THIS WILL OVERRIDE THE TableNamingPattern at the destination!
          ", Mandatory = true, DefaultValue = "$d")]
     public string MetadataNamingPattern { get; set; }
-        
+
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         toProcess.TableName = GetTableName();

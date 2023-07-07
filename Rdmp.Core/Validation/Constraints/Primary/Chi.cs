@@ -31,7 +31,7 @@ public class Chi : PrimaryConstraint
         return null;
     }
 
-        
+
     public override void RenameColumn(string originalName, string newName)
     {
             
