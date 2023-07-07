@@ -54,24 +54,21 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
     {
         base.Execute();
 
-        string name = null;
-        string dataType = null;
-
         if(_prototypes == null)
         {
             var varcharMaxDataType = _tableInfo.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (string), int.MaxValue));
 
             var textDialog = new TypeTextOrCancelDialog("Column Name","Enter name for column (this should NOT include any qualifiers e.g. database name)", 300);
-            if (textDialog.ShowDialog() == DialogResult.OK)
-                name = textDialog.ResultText;
-            else
+            if (textDialog.ShowDialog() != DialogResult.OK)
                 return;
 
+            var name = textDialog.ResultText;
+
             textDialog = new TypeTextOrCancelDialog("Column DataType", "Enter data type for column (e.g. 'varchar(10)')", 300, varcharMaxDataType);
-            if (textDialog.ShowDialog() == DialogResult.OK)
-                dataType = textDialog.ResultText;
-            else
+            if (textDialog.ShowDialog() != DialogResult.OK)
                 return;
+
+            var dataType = textDialog.ResultText;
 
             var created = Create(name, dataType);
             Publish();

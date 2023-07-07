@@ -154,10 +154,9 @@ public class LogManager : ILogManager
 
             var dataTaskId = GetDataTaskId(dataTask,Server, con);
 
-            var where = "";
-
             using (var cmd = Server.GetCommand("", con))
             {
+                var where = "";
                 if (specificDataLoadRunIDOnly != null)
                     where = $"WHERE ID={specificDataLoadRunIDOnly.Value}";
                 else

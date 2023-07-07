@@ -146,19 +146,14 @@ public class CohortQueryBuilder
 
         var sampleSQL = Results.Sql;
 
-        var parameterSql = "";
-
         //get resolved parameters for the select * query
         var finalParams = ParameterManager.GetFinalResolvedParametersList().ToArray();
 
-        if(finalParams.Any())
-        {
-            parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
+        if (!finalParams.Any()) return sampleSQL;
 
-            return parameterSql + Environment.NewLine + sampleSQL;
-        }
-            
-        return sampleSQL;
+        var parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
+        return $"{parameterSql}{Environment.NewLine}{sampleSQL}";
+
     }
 
     public void RegenerateSQL()

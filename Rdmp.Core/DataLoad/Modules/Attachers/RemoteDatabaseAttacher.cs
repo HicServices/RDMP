@@ -64,8 +64,6 @@ False - Trigger an error reporting the missing table(s)
     {
         if (job == null)
             throw new Exception("Job is Null, we require to know the job to build a DataFlowPipeline");
-      
-        string sql;
 
         var dbFrom = RemoteSource.Discover(DataAccessContext.DataLoad);
 
@@ -91,8 +89,9 @@ False - Trigger an error reporting the missing table(s)
                 throw new Exception(
                     $"Loadable table {table} was NOT found on the remote DB and IgnoreMissingTables is false");
             }
-                    
 
+
+            string sql;
             if(LoadRawColumnsOnly)
             {
                 var rawColumns = LoadRawColumnsOnly ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw) : tableInfo.ColumnInfos;

@@ -60,7 +60,6 @@ public class BundledLookupTable : IBundledLookupTable
     public string GetDataTableFetchSql()
     {
         var catas = TableInfo.GetAllRelatedCatalogues().Where(IsLookupOnlyCatalogue).ToArray();
-        QueryBuilder qb;
 
         if (catas.Length == 1)
         {
@@ -74,7 +73,7 @@ public class BundledLookupTable : IBundledLookupTable
 
             if (eis.Length > 0)
             {
-                qb = new QueryBuilder(null, null, new[] { TableInfo });
+                var qb = new QueryBuilder(null, null, new[] { TableInfo });
                 qb.AddColumnRange(eis);
                 return qb.SQL;
             }

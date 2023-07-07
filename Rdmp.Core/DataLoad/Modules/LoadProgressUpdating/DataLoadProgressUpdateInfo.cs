@@ -116,8 +116,6 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
 
     private DateTime GetMaxDate(DiscoveredServer server, IDataLoadEventListener listener)
     {
-        DateTime dt;
-
         using (var con = server.GetConnection())
         {
             con.Open();
@@ -125,6 +123,7 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"About to execute SQL to determine the maximum date for data loaded:{ExecuteScalarSQL}"));
 
+            DateTime dt;
             using(var cmd = server.GetCommand(ExecuteScalarSQL, con))
             {
                 var scalarValue = cmd.ExecuteScalar();
