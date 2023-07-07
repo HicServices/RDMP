@@ -423,7 +423,8 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     {
         if (expectTable.Exists())
         {
-            var confirm = MessageBox.Show(string.Format("A table named {0} has been created as part of this import. Do you want to keep it?", expectTable.GetFullyQualifiedName()),
+            var confirm = MessageBox.Show(
+                $"A table named {expectTable.GetFullyQualifiedName()} has been created as part of this import. Do you want to keep it?",
                 "Confirm", MessageBoxButtons.YesNo);
             if (confirm == DialogResult.No)
                 expectTable.Drop();

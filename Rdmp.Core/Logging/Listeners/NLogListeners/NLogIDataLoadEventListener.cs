@@ -28,7 +28,7 @@ public class NLogIDataLoadEventListener : NLogListener,IDataLoadEventListener
     public void OnProgress(object sender, ProgressEventArgs e)
     {
         Log(sender, LogLevel.Trace, null,
-            string.Format("Progress: {0} {1}{2}", e.Progress.Value, e.Progress.UnitOfMeasurement, e.Progress.KnownTargetValue == 0 ? "" : $" of {e.Progress.KnownTargetValue}")
+            $"Progress: {e.Progress.Value} {e.Progress.UnitOfMeasurement}{(e.Progress.KnownTargetValue == 0 ? "" : $" of {e.Progress.KnownTargetValue}")}"
         );
     }
 }

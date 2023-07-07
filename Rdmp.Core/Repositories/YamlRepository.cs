@@ -102,7 +102,7 @@ public class YamlRepository : MemoryDataExportRepository
                 Directory.CreateSubdirectory(t.Name);
                 continue;
             }
-            
+
             lock(lockFs)
             {
                 foreach (var yaml in typeDir.EnumerateFiles("*.yaml"))
@@ -140,7 +140,7 @@ public class YamlRepository : MemoryDataExportRepository
 
     private int ObjectDependencyOrder(Type arg)
     {
-        // Load Plugin objects before dependent children 
+        // Load Plugin objects before dependent children
         if (arg == typeof(Rdmp.Core.Curation.Data.Plugin))
             return 1;
 
@@ -220,14 +220,14 @@ public class YamlRepository : MemoryDataExportRepository
             if (oTableWrapperObject is LoadModuleAssembly lma)
             {
                 File.Delete(GetNupkgPath(lma));
-            }             
+            }
         }
     }
 
     public override void SaveToDatabase(IMapsDirectlyToDatabaseTable o)
     {
         base.SaveToDatabase(o);
-        
+
         SetRepositoryOnObject(o);
 
         var yaml = _serializer.Serialize(o);
@@ -450,29 +450,25 @@ public class YamlRepository : MemoryDataExportRepository
                     continue;
 
                 var valDictionary = new Dictionary<DataAccessContext, DataAccessCredentials>();
-                foreach(var credentialUsage in tableToCredentialUsage.Value)
+                foreach(var (usage, value) in tableToCredentialUsage.Value)
                 {
-                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(credentialUsage.Value);
-                    var usage = credentialUsage.Key;
+                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(value);
 
-                    // Credentials deleted on the sly
-                    if (credential == null)
-                        continue;
-                    
-                    valDictionary.Add(usage, credential);
+                    // In case credentials were deleted on the sly
+                    if (credential != null) valDictionary.Add(usage, credential);
                 }
 
                 CredentialsDictionary.Add(table, valDictionary);
             }
 
-            
+
         }
     }
     private void SaveCredentialsDictionary()
     {
         var serializer = new Serializer();
 
-        var ids = 
+        var ids =
             CredentialsDictionary.ToDictionary(
                 k => k.Key.ID,
                 v => v.Value.ToDictionary(k => k.Key, v => v.Value.ID));
@@ -653,7 +649,7 @@ public class YamlRepository : MemoryDataExportRepository
     }
 
     private void LoadWhereSubContainers()
-    {        
+    {
         foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new Dictionary<FilterContainer, HashSet<FilterContainer>>())
         {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));

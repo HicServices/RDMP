@@ -89,9 +89,9 @@ the best ever", dt.Rows[0]["Description"]);
     {
         var file = CreateTestFile(
             "Name,Dob",
-            string.Format("{0},2001-01-01",nullstring),
+            $"{nullstring},2001-01-01",
             "",
-            string.Format("Herbert ,{0}",nullstring)
+            $"Herbert ,{nullstring}"
         );
 
         var dt = RunGetChunk(file);

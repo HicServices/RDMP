@@ -17,7 +17,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.LocationsMenu.Ticketing;
 
 /// <summary>
-/// The RDMP recognises that there are a wide array of software systems for tracking time worked, issues,project requests, bug reports etc.  The RDMP is designed to support gated 
+/// The RDMP recognises that there are a wide array of software systems for tracking time worked, issues,project requests, bug reports etc.  The RDMP is designed to support gated
 /// interactions with ticketing systems (which can be skipped entirely if you do not want the functionality).  This window lets you configure which ticketing system you have, the
 /// credentials needed to access it and where it is located.  You will need to make sure you select the appropriate Type of ticketing system you have.
 /// 
@@ -26,10 +26,10 @@ namespace Rdmp.UI.LocationsMenu.Ticketing;
 /// 
 /// <para>1. Validating whether a ticket is valid
 /// 2. Navigating to the ticket when the user clicks 'Show' in a TicketingControlUI (See TicketingControlUI)
-/// 3. Determining whether a given project extraction can go ahead (This lets you drive ethics/approvals process through your normal ticketing system but have RDMP prevent 
+/// 3. Determining whether a given project extraction can go ahead (This lets you drive ethics/approvals process through your normal ticketing system but have RDMP prevent
 /// releases of data until the ticketing system says its ok). </para>
 /// 
-/// <para>Ticketing systems are entirely optional and you can ignore them if you don't have one or don't want to configure it.  If you do not see a Type that corresponds with your 
+/// <para>Ticketing systems are entirely optional and you can ignore them if you don't have one or don't want to configure it.  If you do not see a Type that corresponds with your
 /// ticketing system you might need to write your own Ticketing dll (See ITicketingSystem interface) and upload it as a plugin to the Data Catalogue.</para>
 /// </summary>
 public partial class TicketingSystemConfigurationUI : RDMPUserControl
@@ -176,7 +176,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             }
         }
         catch (Exception ex)
-        {  
+        {
             ExceptionViewer.Show(ex);
         }
         RefreshUIFromDatabase();

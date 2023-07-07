@@ -81,7 +81,8 @@ public class PackPluginRunner : IRunner
 
         var runningSoftwareVersion = typeof(PackPluginRunner).Assembly.GetName().Version;
         if (!rdmpDependencyVersion.IsCompatibleWith(runningSoftwareVersion, 2))
-            throw new NotSupportedException(string.Format("Plugin version {0} is incompatible with current running version of RDMP ({1}).", pluginVersion, runningSoftwareVersion));
+            throw new NotSupportedException(
+                $"Plugin version {pluginVersion} is incompatible with current running version of RDMP ({runningSoftwareVersion}).");
 
         UploadFile(repositoryLocator,checkNotifier,toCommit,pluginVersion,rdmpDependencyVersion);
             

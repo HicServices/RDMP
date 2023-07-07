@@ -143,7 +143,7 @@ public class ColumnInfoANOPlan:ICheckable
             {
                 if (toReturn == null)
                     toReturn = extractionInformation.ExtractionCategory;
-                    
+
                 //there are multiple, if the new one is more restrictive then use the more restrictive category instead
                 toReturn = extractionInformation.ExtractionCategory > toReturn ? extractionInformation.ExtractionCategory : toReturn;
             }
@@ -161,7 +161,7 @@ public class ColumnInfoANOPlan:ICheckable
         //and if the same named ColumnInfo(s) have a shared ANOTable (e.g. ANOCHI)
         var agreedAnoTableID = matchingOnName.Where(c => c.ANOTable_ID != null).Select(c => c.ANOTable_ID).Distinct().ToArray();
 
-        //if there is a single recommended anotable id amongst all columns with matching name featuring ano tables 
+        //if there is a single recommended anotable id amongst all columns with matching name featuring ano tables
         if (agreedAnoTableID.Length == 1)
         {
             ANOTable = ColumnInfo.Repository.GetObjectByID<ANOTable>(agreedAnoTableID.Single().Value);

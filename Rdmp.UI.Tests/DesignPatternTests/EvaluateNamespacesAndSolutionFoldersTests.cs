@@ -265,7 +265,7 @@ public class AutoCommentsEvaluator
 
             for (var i = 0; i < text.Length; i++)
             {
-                    
+
                 //////////////////////////////////No Mapping Properties////////////////////////////////////////////////////
                 if (text[i].Trim().Equals("[NoMappingToDatabase]"))
                 {
@@ -292,8 +292,7 @@ public class AutoCommentsEvaluator
                             if (t.GetProperty($"{member}_ID") != null)
                             {
                                 changes = true;
-                                sbSuggestedText.AppendLine(whitespace + string.Format("/// <inheritdoc cref=\"{0}\"/>",
-                                    $"{member}_ID"));
+                                sbSuggestedText.AppendLine(whitespace + $"/// <inheritdoc cref=\"{$"{member}_ID"}\"/>");
                             }
                             else
                             {
@@ -337,7 +336,7 @@ public class AutoCommentsEvaluator
                     if (!text[i + 1].Contains("<para>") && text[i + 1].Contains("///"))
                     {
                         changes = true;
-                            
+
                         //add current line
                         sbSuggestedText.AppendLine(text[i]);
 

@@ -22,7 +22,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests:DatabaseTests
 {
     private IProject _projectStub;
     private IExtractCommand _commandStub;
-        
+
     public DiscoveredDatabase Database { get; set; }
 
     [SetUp]
@@ -40,7 +40,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests:DatabaseTests
         Database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
     }
 
-        
+
 
 
     [Test]

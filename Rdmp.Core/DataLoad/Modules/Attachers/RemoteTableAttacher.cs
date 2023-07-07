@@ -424,7 +424,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
     {
         if(job is not ScheduledDataLoadJob jobAsScheduledJob)
             throw new NotSupportedException(
-                $"Job must be of type {typeof(ScheduledDataLoadJob).Name} because you have specified a LoadProgress");
+                $"Job must be of type {nameof(ScheduledDataLoadJob)} because you have specified a LoadProgress");
 
         //if the currently scheduled job is not our Schedule then it is a mismatch and we should skip it
         scheduleMismatch = !jobAsScheduledJob.LoadProgress.Equals(Progress);

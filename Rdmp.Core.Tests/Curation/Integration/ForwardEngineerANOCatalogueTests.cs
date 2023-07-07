@@ -184,7 +184,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         Assert.IsTrue(exports > 0);
     }
 
-        
+
 
     [Test]
     [TestCase(false,false)]
@@ -278,7 +278,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             var ex = Assert.Throws<Exception>(engine.Execute);
             Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called"));
             Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "[Necks].[SpineColor]"));
-                
+
             return;
         }
 
@@ -308,7 +308,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
         Assert.IsTrue(newCataItems.Select(ci=>ci.ColumnInfo).Contains(newSpineColorColumnInfo));
     }
-        
+
     [Test]
     public void CreateANOVersionTest_LookupsAndExtractionInformations()
     {
@@ -350,7 +350,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //add a transform
         var eiPostcode = bulk.extractionInformations.Single(ei => ei.GetRuntimeName() == "current_postcode");
 
-        eiPostcode.SelectSQL = string.Format("LEFT(10,{0}.[current_postcode])", eiPostcode.ColumnInfo.TableInfo.Name);
+        eiPostcode.SelectSQL = $"LEFT(10,{eiPostcode.ColumnInfo.TableInfo.Name}.[current_postcode])";
         eiPostcode.Alias = "MyMutilatedColumn";
         eiPostcode.SaveToDatabase();
 
@@ -438,8 +438,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         for (var i = 0; i < eiSource.Length; i++)
         {
             Assert.AreEqual(eiSource[i].Order , eiDestination[i].Order,"ExtractionInformations in the source and destination Catalogue should have the same order");
-                
-            Assert.AreEqual(eiSource[i].GetRuntimeName(), 
+
+            Assert.AreEqual(eiSource[i].GetRuntimeName(),
                 eiDestination[i].GetRuntimeName().Replace("ANO",""), "ExtractionInformations in the source and destination Catalogue should have the same names (excluding ANO prefix)");
 
             Assert.AreEqual(eiSource[i].ExtractionCategory, eiDestination[i].ExtractionCategory, "Old / New ANO ExtractionInformations did not match on ExtractionCategory");
@@ -458,7 +458,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var anoEiPostcode = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
             
         //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
-        Assert.AreEqual(string.Format("LEFT(10,{0}.[current_postcode])", anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()),anoEiPostcode.SelectSQL);
+        Assert.AreEqual($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])",anoEiPostcode.SelectSQL);
 
         var anoEiComboCol = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei => ei.GetRuntimeName().Equals("ComboColumn"));
 

@@ -218,7 +218,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             Tree.RowHeight = 19;
 
         //add colour indicator bar
-        Tree.Location = new Point(Tree.Location.X, tree.Location.Y+3);
+        Tree.Location = Tree.Location with { Y = tree.Location.Y+3 };
         Tree.Height -= 3;
 
         CreateColorIndicator(Tree,collection);
@@ -436,7 +436,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         var ctrl = new Control
         {
             BackColor = BackColorProvider.GetColor(collection),
-            Location = new Point(Tree.Location.X, tree.Location.Y - indicatorHeight),
+            Location = Tree.Location with { Y = tree.Location.Y - indicatorHeight },
             Height = indicatorHeight,
             Width = Tree.Width
         };

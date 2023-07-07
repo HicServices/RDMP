@@ -52,7 +52,7 @@ public class ColumnInfoToANOTableConverter
         using (var con = tbl.Database.Server.GetConnection())
         {
             con.Open();
-                
+
             if (!IsOldColumnDroppable(con, notifier))
                 return false;
 
@@ -81,7 +81,7 @@ public class ColumnInfoToANOTableConverter
                 return false;
 
             EnsureNoTriggerOnTable(tbl);
-                
+
             AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
             MigrateExistingData(shouldApplySql,con, notifier,tbl);
@@ -114,7 +114,7 @@ public class ColumnInfoToANOTableConverter
 
         //create an empty table for the anonymised data
         using (var cmdCreateTempMap = DatabaseCommandHelper.GetCommand(
-                   string.Format("SELECT top 0 {0},{1} into TempANOMap from {2}", from, to, tbl.GetFullyQualifiedName()),
+                   $"SELECT top 0 {from},{to} into TempANOMap from {tbl.GetFullyQualifiedName()}",
                    con))
         {
             if(!shouldApplySql(cmdCreateTempMap.CommandText))
@@ -130,7 +130,7 @@ public class ColumnInfoToANOTableConverter
                 //get the existing data
                 using (var cmdGetExistingData =
                        DatabaseCommandHelper.GetCommand(
-                           string.Format("SELECT {0},{1} from {2}", from, to, tbl.GetFullyQualifiedName()), con))
+                           $"SELECT {from},{to} from {tbl.GetFullyQualifiedName()}", con))
                 {
                     using (var da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData))
                     {
@@ -149,7 +149,7 @@ public class ColumnInfoToANOTableConverter
                     }
                 }
             }
-                
+
 
             //create an empty table for the anonymised data
             using (var cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(

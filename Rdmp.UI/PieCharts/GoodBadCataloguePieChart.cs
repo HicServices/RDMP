@@ -224,8 +224,8 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         if (isEditModeOn)
         {
-            gbWhatThisIs.Location = new Point(l.X, l.Y + 25);//move it down 25 to allow space for tool bar
-            gbWhatThisIs.Size = new Size(s.Width, s.Height - 25);//and adjust height accordingly
+            gbWhatThisIs.Location = l with { Y = l.Y + 25 };//move it down 25 to allow space for tool bar
+            gbWhatThisIs.Size = s with { Height = s.Height - 25 };//and adjust height accordingly
         }
         else
         {

@@ -24,7 +24,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-/// Allows you to perform database wide find and replace operations.  This is a useful but very dangerous feature, it is possible to very easily break your Catalogue.  The 
+/// Allows you to perform database wide find and replace operations.  This is a useful but very dangerous feature, it is possible to very easily break your Catalogue.  The
 /// feature is primarily intended for system wide operations such as when you change a network UNC folder location or mapped network drive and you need to change ALL references
 /// to the root path to the new location.
 /// 
@@ -38,12 +38,12 @@ public partial class FindAndReplaceUI : RDMPUserControl
     private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new HashSet<IMapsDirectlyToDatabaseTable>();
 
     private IAttributePropertyFinder _adjustableLocationPropertyFinder;
-    private List<FindAndReplaceNode> _locationNodes = new List<FindAndReplaceNode>(); 
-        
+    private List<FindAndReplaceNode> _locationNodes = new List<FindAndReplaceNode>();
+
     private IAttributePropertyFinder _sqlPropertyFinder;
     private List<FindAndReplaceNode> _sqlNodes = new List<FindAndReplaceNode>();
 
-        
+
     public FindAndReplaceUI(IActivateItems activator)
     {
         SetItemActivator(activator);
@@ -146,7 +146,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
         }
         olvAllObjects.EndUpdate();
     }
-        
+
     private void btnReplaceAll_Click(object sender, EventArgs e)
     {
         if (Activator.YesNo("Are you sure you want to do a system wide find and replace? This operation cannot be undone","Are you sure"))

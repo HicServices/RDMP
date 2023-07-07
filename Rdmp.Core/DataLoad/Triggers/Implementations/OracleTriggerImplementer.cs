@@ -29,8 +29,7 @@ internal class OracleTriggerImplementer:MySqlTriggerImplementer
 
             using (var cmd =
                    _server.GetCommand(
-                       string.Format("select trigger_body from all_triggers where trigger_name = UPPER('{0}')",
-                           GetTriggerName()), con))
+                       $"select trigger_body from all_triggers where trigger_name = UPPER('{GetTriggerName()}')", con))
             {
                 ((OracleCommand)cmd).InitialLONGFetchSize = -1;
                 var r = cmd.ExecuteReader();
@@ -52,16 +51,13 @@ internal class OracleTriggerImplementer:MySqlTriggerImplementer
     {
         var syntax = _table.GetQuerySyntaxHelper();
 
-        return string.Format(@"BEGIN
-    INSERT INTO {0} ({1},hic_validTo,hic_userID,hic_status) VALUES ({2},CURRENT_DATE,USER,'U');
+        return $@"BEGIN
+    INSERT INTO {_archiveTable.GetFullyQualifiedName()} ({string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},hic_validTo,hic_userID,hic_status) VALUES ({string.Join(",", _columns.Select(c => $":old.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},CURRENT_DATE,USER,'U');
 
-  :new.{3} := sysdate;
+  :new.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} := sysdate;
 
 
-  END", _archiveTable.GetFullyQualifiedName(),
-            string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
-            string.Join(",", _columns.Select(c => $":old.{syntax.EnsureWrapped(c.GetRuntimeName())}")),
-            syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
+  END";
     }
 
     protected override void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)

@@ -99,22 +99,21 @@ public class DependenciesEvaluation
 
             }
 
-            var csprojFileContexnts = File.ReadAllText(csproj.FullName);
+            var csprojFileContents = File.ReadAllText(csproj.FullName);
 
             //look for dodgy reference includes
-            foreach (var dependency in Dependencies)
+            foreach (var (key, versionInNuspec) in Dependencies)
             {
                 //Reference Include="MySql.Data, Version=8.0.12.0
-                var r = new Regex($@"{dependency.Key.Trim('"')}, Version=([0-9.""]*)");
+                var r = new Regex($@"{key.Trim('"')}, Version=([0-9.""]*)");
 
-                foreach (Match match in r.Matches(csprojFileContexnts))
+                foreach (Match match in r.Matches(csprojFileContents))
                 {
                     var versionInCsproj = match.Groups[1].Value;
-                    var versionInNuspec = dependency.Value;
 
                     if (!AreProbablyCompatibleVersions(versionInNuspec, versionInCsproj))
                         problems.Add(
-                            $"csproj file {project.Name} lists dependency of {dependency.Key} with version {versionInCsproj} while in the nuspec it is {versionInNuspec}");
+                            $"csproj file {project.Name} lists dependency of {key} with version {versionInCsproj} while in the nuspec it is {versionInNuspec}");
                 }
             }
         }

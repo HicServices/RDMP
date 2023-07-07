@@ -153,9 +153,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         {
             if (OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null && value != null)
                 throw new NotSupportedException(
-                    string.Format(
-                        "This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (its OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is {0}) which means it cannot be assigned its own RootFilterContainerID",
-                        OverrideFiltersByUsingParentAggregateConfigurationInstead_ID));
+                    $"This AggregateConfiguration has a shortcut to another AggregateConfiguration's Filters (its OverrideFiltersByUsingParentAggregateConfigurationInstead_ID is {OverrideFiltersByUsingParentAggregateConfigurationInstead_ID}) which means it cannot be assigned its own RootFilterContainerID");
 
             SetField(ref _rootFilterContainerID ,value);
         }

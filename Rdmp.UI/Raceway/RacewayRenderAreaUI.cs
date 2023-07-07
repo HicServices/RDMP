@@ -63,20 +63,20 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
     }
 
     private object oPeriodicityDictionaryLock = new object();
-        
+
     private bool _ignoreRowCounts;
     private bool _isEditModeOn;
     private const float MaximumRaceLaneRenderSpace = 30f;
     private SolidBrush[] _brushes;
-        
+
     private Dictionary<Rectangle,Catalogue> rectNoDQE = new Dictionary<Rectangle,Catalogue>();
-    private Dictionary<Rectangle, Catalogue> rectDeleteButtons = new Dictionary<Rectangle, Catalogue>(); 
+    private Dictionary<Rectangle, Catalogue> rectDeleteButtons = new Dictionary<Rectangle, Catalogue>();
     private IActivateItems _activator;
 
     private bool _allowScrollDown = false;
     private RectangleF _rectScrollDown;
     private int _scrollDownIndexOffset = 0;
-        
+
     private bool _allowScrollUp;
     private RectangleF _rectScrollUp;
     private DateTime _currentScrollActionBegan;
@@ -116,7 +116,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
         Invalidate();
     }
-        
+
 
 
     protected override void OnMouseClick(MouseEventArgs e)
@@ -136,7 +136,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                     //stop rendering this Catalogue
                     _periodicityDictionary.Remove(kvp.Value);
                     Invalidate();
-                        
+
                 }
             }
         }
@@ -157,7 +157,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
             ScrollDown();
         }
 
-        //scroll them down 
+        //scroll them down
         if (_rectScrollUp != RectangleF.Empty && _rectScrollUp.Contains(e.Location) && _allowScrollUp)
         {
             _currentScrollActionBegan = DateTime.Now;
@@ -291,7 +291,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
             _allowScrollDown = false;
 
             var index = 0;
-            foreach (var kvp in _periodicityDictionary.OrderBy(kvp => kvp.Value == null ? $"zzzzzz{kvp.Key.Name}" : kvp.Key.Name))
+            foreach (var (catalogue, dictionary) in _periodicityDictionary.OrderBy(kvp => kvp.Value == null ? $"zzzzzz{kvp.Key.Name}" : kvp.Key.Name))
             {
                 index++;
 
@@ -306,9 +306,6 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                     break;
                 }
 
-                var catalogue = kvp.Key;
-                var dictionary = kvp.Value;
-
                 var middleLineOfCatalogueLabelY = eachRaceLaneHasThisMuchYSpace / 2 - Font.Height / 2.0 + startDrawingLaneAtY;
 
                 if (!_buckets.Any())
@@ -319,22 +316,22 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                 if (dictionary == null)
                 {
                     var textWidth = DrawErrorText($"No DQE Evaluation for {catalogue}",true,e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
-                    rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace),kvp.Key);
+                    rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace),catalogue);
                 }
                 else
                 if (!dictionary.Any())
                 {
                     var textWidth = DrawErrorText($"Table(s) were empty for {catalogue}", true, e, startDrawingLaneAtY, eachRaceLaneHasThisMuchYSpace, middleLineOfCatalogueLabelY);
-                    rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace), kvp.Key);
+                    rectNoDQE.Add(new Rectangle(0, (int)startDrawingLaneAtY, (int)textWidth, (int)eachRaceLaneHasThisMuchYSpace), catalogue);
                 }
                 else
                 {
                     //get the maximum number of rows regardless of consequence found in any data month
                     var maxRowsInAnyMonth = dictionary.Max(r=>r.Value.Total);
-                            
+
                     for (var i = 0; i < _buckets.Length; i++)
                     {
-                            
+
                         Brush brush;
                         float lineHeightPercentage;
 
@@ -342,7 +339,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                         var total = 0;
 
                         if (dictionary.ContainsKey(_buckets[i]))
-                        {   
+                        {
                             good = dictionary[_buckets[i]].CountGood;
                             total = dictionary[_buckets[i]].Total;
 
@@ -375,7 +372,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                         {
                             hoverLabel = _buckets[i].ToString("Y");
                             hoverValue =
-                                $"{string.Format("{0:n0}", good)}/{string.Format("{0:n0}", total)}";
+                                $"{$"{good:n0}"}/{$"{total:n0}"}";
                         }
                     }
 
@@ -403,7 +400,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                             rectHoverLabel.Top,
                             valueSize.Width,
                             valueSize.Height);
-                        
+
                     e.Graphics.DrawString(hoverLabel, Font, Brushes.White, rectHoverLabel);
                     e.Graphics.DrawString(hoverValue, Font, Brushes.White, rectHoverValue);
                 }
@@ -416,7 +413,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
                     e.Graphics.DrawImage(deleteIcon, buttonPoint);
 
-                    rectDeleteButtons.Add(new Rectangle(buttonPoint.X, buttonPoint.Y, deleteIcon.Width, deleteIcon.Height), kvp.Key);
+                    rectDeleteButtons.Add(new Rectangle(buttonPoint.X, buttonPoint.Y, deleteIcon.Width, deleteIcon.Height), catalogue);
                 }
 
                 //move to next lane on graph
@@ -463,7 +460,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
             };
 
             e.Graphics.DrawPolygon(new Pen(_allowScrollUp?Color.LawnGreen:Color.Green), points);
-            
+
             _rectScrollDown = new RectangleF(Width - 20, startDrawingAxisAtY-20, 20, 20);
             e.Graphics.FillRectangle(Brushes.Green, _rectScrollDown);
             e.Graphics.FillRectangle(Brushes.Black, _rectScrollDown.X + 2, _rectScrollDown.Y + 2, 16, 16);

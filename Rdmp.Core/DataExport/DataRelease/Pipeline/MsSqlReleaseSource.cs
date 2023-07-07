@@ -190,8 +190,9 @@ public class MsSqlReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
         if (File.Exists(Path.Combine(dbOutputFolder.FullName, $"{databaseName}.mdf")) ||
             File.Exists(Path.Combine(dbOutputFolder.FullName, $"{databaseName}_log.ldf")))
         {
-            if (notifier.OnCheckPerformed(new CheckEventArgs(string.Format("It seems that database {0} was already detached previously into {1} " +
-                                                                           "but not released or cleaned from the extraction folder", databaseName, dbOutputFolder.FullName),
+            if (notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"It seems that database {databaseName} was already detached previously into {dbOutputFolder.FullName} " +
+                    "but not released or cleaned from the extraction folder",
                     CheckResult.Warning,
                     null,
                     "Do you want to delete it? You should check the contents first. Clicking 'No' will abort the Release.")))

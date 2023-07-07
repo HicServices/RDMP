@@ -170,10 +170,11 @@ public class SelectSQLRefactorer
         var db = table.GetDatabaseRuntimeName(Curation.Data.DataLoad.LoadStage.PostLoad);
 
         if(!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
-            return string.Format("Table with Name '{0}' has incorrect database propery '{1}'", table.Name , table.Database);
+            return $"Table with Name '{table.Name}' has incorrect database propery '{table.Database}'";
 
         if(table.Name != table.GetFullyQualifiedName())
-            return string.Format("Table name '{0}' did not match the expected fully qualified name '{1}'",table.Name,table.GetFullyQualifiedName());
+            return
+                $"Table name '{table.Name}' did not match the expected fully qualified name '{table.GetFullyQualifiedName()}'";
 
         return null;
     }
@@ -196,7 +197,8 @@ public class SelectSQLRefactorer
     public static int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
         if(!IsRefactorable(tableInfo))
-            throw new RefactoringException(string.Format("TableInfo {0} is not refactorable because {1}",tableInfo, GetReasonNotRefactorable(tableInfo)));
+            throw new RefactoringException(
+                $"TableInfo {tableInfo} is not refactorable because {GetReasonNotRefactorable(tableInfo)}");
 
         var updatesMade = 0;
 

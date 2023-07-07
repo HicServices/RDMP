@@ -65,9 +65,9 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
             var obj = _auditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
             return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;
         }
-                
 
-        return null;   
+
+        return null;
     }
 
     private void BeforeSorting(object sender, BeforeSortingEventArgs e)
@@ -144,13 +144,10 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
         lbCohortDatabaseTable.AddObjects(fetchDescriptionsDictionary.SelectMany(kvp => kvp.Value).ToArray());
 
-        //Just because the object updates itself doesn't mean ObjectListView will notice, so we must also subscribe to the fetch completion (1 per cohort source table) 
+        //Just because the object updates itself doesn't mean ObjectListView will notice, so we must also subscribe to the fetch completion (1 per cohort source table)
         //when the fetch completes, update the UI nodes (they also themselves subscribe to the fetch completion handler and should be registered further up the inovcation list)
-        foreach (var kvp in fetchDescriptionsDictionary)
+        foreach (var (fetch, nodes) in fetchDescriptionsDictionary)
         {
-            var fetch = kvp.Key;
-            var nodes = kvp.Value;
-
             //Could be we are disposed when this happens
             fetch.Finished += () =>
             {
@@ -162,11 +159,11 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private void lbCohortDatabaseTable_SelectedIndexChanged(object sender, EventArgs e)
     {
-            
+
     }
 
     public event SelectedCohortChangedHandler SelectedCohortChanged;
-        
+
     private void lbCohortDatabaseTable_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Delete && lbCohortDatabaseTable.SelectedObject != null)
@@ -192,7 +189,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
                 return;
         }
     }
-        
+
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
         lbCohortDatabaseTable.UseFiltering = true;
@@ -224,7 +221,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         }
 
         var matchingNode = lbCohortDatabaseTable.Objects.Cast<ExtractableCohortDescription>().SingleOrDefault(c => c.Cohort.ID == toSelect.ID);
-            
+
         lbCohortDatabaseTable.SelectedObject = matchingNode;
     }
 

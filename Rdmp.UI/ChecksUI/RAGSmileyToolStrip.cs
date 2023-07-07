@@ -145,7 +145,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
         if (dialog != null)
         {
             if(!string.IsNullOrWhiteSpace(args.ProposedFix))
-                if (dialog.ShowDialog(string.Format("Problem:{0}\r\n\r\nFix:{1}",args.Message,args.ProposedFix), "Apply Fix?") == DialogResult.Yes)
+                if (dialog.ShowDialog($"Problem:{args.Message}\r\n\r\nFix:{args.ProposedFix}", "Apply Fix?") == DialogResult.Yes)
                 {
                     ElevateState(CheckResult.Warning);
                     memoryCheckNotifier.OnCheckPerformed(new CheckEventArgs("Fix will be applied",CheckResult.Warning));

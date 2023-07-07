@@ -25,7 +25,7 @@ using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 namespace Rdmp.UI.Logging;
 
 /// <summary>
-/// <para>Displays all the activity going on within the RDMP that has been recorded in the logging database.  This includes data extractions, data loads, data quality runs etc.  This 
+/// <para>Displays all the activity going on within the RDMP that has been recorded in the logging database.  This includes data extractions, data loads, data quality runs etc.  This
 /// information is stored in a relational database format including:</para>
 /// 
 /// <para>Task - The overarching type of task e.g. 'Data Extraction', 'Loading Biochemistry' etc</para>
@@ -48,7 +48,7 @@ public class LoggingTabUI : LoggingTab_Design
     private PictureBox pbRemoveFilter;
     private DataGridView dataGridView1;
 
-        
+
     private LogViewerFilter Filter = new LogViewerFilter(LoggingTables.DataLoadTask);
 
     private int TopX;
@@ -112,7 +112,7 @@ public class LoggingTabUI : LoggingTab_Design
                 var mi = new ToolStripMenuItem(cmd.GetCommandName(), null, (s, x) => cmd1.Execute());
                 menu.Items.Add(mi);
             }
-                                
+
             if (menu.Items.Count != 0)
                 menu.Items.Add(new ToolStripSeparator());
 
@@ -220,7 +220,7 @@ public class LoggingTabUI : LoggingTab_Design
         // 
         // lblCurrentFilter
         // 
-        lblCurrentFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left 
+        lblCurrentFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left
                                                                            | AnchorStyles.Right);
         lblCurrentFilter.BackColor = Color.Goldenrod;
         lblCurrentFilter.ForeColor = SystemColors.ControlLightLight;
@@ -277,7 +277,7 @@ public class LoggingTabUI : LoggingTab_Design
 
     private void tbContentFilter_TextChanged(object sender, EventArgs e)
     {
-        _freeTextFilter = string.Format("[_RowString] LIKE '%{0}%'", tbContentFilter.Text);
+        _freeTextFilter = $"[_RowString] LIKE '%{tbContentFilter.Text}%'";
         RegenerateFilters();
     }
 

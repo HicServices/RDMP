@@ -70,7 +70,7 @@ internal class CatalogueLoadChecks:ICheckable
             tablesFound.AddRange(tableInfos.Where(tableInfo => !tablesFound.Contains(tableInfo)));
         }
 
-            
+
         //check regular tables
         foreach (TableInfo regularTable in tablesFound)
         {
@@ -100,7 +100,7 @@ internal class CatalogueLoadChecks:ICheckable
         CheckTableInfoSynchronization(tableInfo,notifier);
 
         CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out ColumnInfo[] columnInfos, out ColumnInfo[] columnInfosWhichArePrimaryKeys,notifier);
-            
+
         //check for trying to ignore primary keys
         foreach (var col in tableInfo.ColumnInfos)
         {
@@ -283,13 +283,13 @@ internal class CatalogueLoadChecks:ICheckable
                 NoBackupTrigger = _loadMetadata.IgnoreTrigger
             });
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"TableInfo {liveTable} passed {typeof(MigrationColumnSet).Name} check ", CheckResult.Success, null));
+                $"TableInfo {liveTable} passed {nameof(MigrationColumnSet)} check ", CheckResult.Success, null));
         }
         catch (Exception e)
         {
 
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"{typeof(MigrationColumnSet).Name} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}", CheckResult.Fail, e));
+                $"{nameof(MigrationColumnSet)} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}", CheckResult.Fail, e));
         }
 
         //live columns

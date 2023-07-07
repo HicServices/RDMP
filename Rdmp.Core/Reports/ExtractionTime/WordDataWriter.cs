@@ -39,7 +39,7 @@ public class WordDataWriter : DocXHelper
 
         if (executer.Source.WasCancelled)
             throw new NullReferenceException("Cannot write meta data since ExtractionPipelineHost reports that it was Cancelled");
-            
+
         Executer = executer;
 
         _destination = Executer.Destination;
@@ -471,14 +471,12 @@ public class WordDataWriter : DocXHelper
 
         tableLine++;
 
-        foreach (var keyValuePair in results.DictionaryOfFailure)
+        foreach (var (colname, value) in results.DictionaryOfFailure)
         {
-            var colname = keyValuePair.Key;
-
             SetTableCell(t,tableLine, 0,colname);
-            SetTableCell(t,tableLine, 1,keyValuePair.Value[Consequence.Missing].ToString());
-            SetTableCell(t,tableLine, 2,keyValuePair.Value[Consequence.Wrong].ToString());
-            SetTableCell(t,tableLine, 3,keyValuePair.Value[Consequence.InvalidatesRow].ToString());
+            SetTableCell(t,tableLine, 1,value[Consequence.Missing].ToString());
+            SetTableCell(t,tableLine, 2,value[Consequence.Wrong].ToString());
+            SetTableCell(t,tableLine, 3,value[Consequence.InvalidatesRow].ToString());
             tableLine++;
         }
     }

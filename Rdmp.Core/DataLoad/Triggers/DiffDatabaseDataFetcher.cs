@@ -50,7 +50,7 @@ public class DiffDatabaseDataFetcher
         try
         {
             DiscoveredDatabase database;
-            DiscoveredServer server; 
+            DiscoveredServer server;
 
             try
             {
@@ -96,7 +96,7 @@ public class DiffDatabaseDataFetcher
                     c =>allArchiveCols.Any(
                         //there is a column with the same name in the archive columns (ignoring case)
                         archiveCol=>c.GetRuntimeName().Equals(archiveCol.GetRuntimeName(), StringComparison.InvariantCultureIgnoreCase)
-                           
+
                                     //but don't care about differences in these columns (e.g. the actual data load run id will obviously be different!)
                                     && !SpecialFieldNames.IsHicPrefixed(c)
                     )).ToArray();
@@ -125,9 +125,9 @@ public class DiffDatabaseDataFetcher
         var whereStatement = "";
 
         foreach (var pk in _pks)
-            whereStatement += string.Format("{0}.{1} = {2}.{1} AND ", 
+            whereStatement += string.Format("{0}.{1} = {2}.{1} AND ",
                 tableName,
-                syntaxHelper.EnsureWrapped(pk.GetRuntimeName()), 
+                syntaxHelper.EnsureWrapped(pk.GetRuntimeName()),
                 archiveTableName);
 
         var qb = new QueryBuilder(null, null, new[] {_tableInfo})
@@ -141,9 +141,9 @@ public class DiffDatabaseDataFetcher
             $"{syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID)} = {_dataLoadRunID}", "DataLoadRunID matches", null, null);
         var filter2 =
             new SpontaneouslyInventedFilter(memoryRepository,null,
-                string.Format(@" not exists (
-select 1 from {0} where {1} {2} < {3}
-)",archiveTableName,whereStatement,syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID),_dataLoadRunID),
+                $@" not exists (
+select 1 from {archiveTableName} where {whereStatement} {syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID)} < {_dataLoadRunID}
+)",
                 "Record doesn't exist in archive",null,null);
 
         qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null,new []{filter1,filter2},FilterContainerOperation.AND);
@@ -198,7 +198,7 @@ where
             case DatabaseType.MySql:
             case DatabaseType.PostgreSql:
 
-                    
+
                 sql = $@"
 /*Records which appear in the archive*/
 SELECT
@@ -230,7 +230,7 @@ Join
             _dataLoadRunID,                     //{5}
             GetSharedColumnsSQL(tableName),     //{6}
             GetSharedColumnsSQLWithColumnAliasPrefix(archive, zzArchive),   //{7}
-            archive, //{8}            
+            archive, //{8}
             syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)
         );
 

@@ -36,7 +36,7 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
 
         if(string.IsNullOrWhiteSpace(task.Path))
             throw new ArgumentException(
-                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {typeof(IMutilateDataTables).Name}");
+                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IMutilateDataTables)}");
 
         MutilateDataTables = mef.CreateA<IMutilateDataTables>(ProcessTask.Path);
         SetPropertiesForClass(RuntimeArguments, MutilateDataTables);

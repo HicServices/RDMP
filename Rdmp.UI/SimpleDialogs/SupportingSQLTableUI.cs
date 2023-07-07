@@ -25,7 +25,7 @@ namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
 /// The RDMP allows you at attach both documents and auxiliary tables (SupportingSQLTable) to your datasets (Catalogue).  These artifacts are then available to data analysts who
-/// want to understand the dataset better.  Also if you tick IsExtractable then whenever the Catalogue is extracted the table/document is automatically copied and extracted into 
+/// want to understand the dataset better.  Also if you tick IsExtractable then whenever the Catalogue is extracted the table/document is automatically copied and extracted into
 /// project extraction directory for provision to the researcher.
 /// 
 /// <para>If you have Lookup tables (that you don't want to configure as Lookup objects, see LookupConfiguration) or complex dictionary tables etc which are required/helpful in understanding or
@@ -33,7 +33,7 @@ namespace Rdmp.UI.SimpleDialogs;
 /// must select the server on which the SQL should be run (See ManageExternalServers), if you setup a single reference to your data repository with Database='master' and then ensure
 /// that all your SupportingSQLTables are fully qualified (e.g. [MyDb].dbo.[MyTable]) then you can avoid having to create an ExternalDatabaseServer for each different database.</para>
 /// 
-/// <para>If you tick IsGlobal then the table will be extracted regardless of what dataset is selected in a researchers data request (useful for global lookups that contain cross dataset 
+/// <para>If you tick IsGlobal then the table will be extracted regardless of what dataset is selected in a researchers data request (useful for global lookups that contain cross dataset
 /// codes).  </para>
 /// 
 /// <para>IMPORTANT: Make sure your SQL query DOES NOT return any identifiable data if it is marked as IsExtractable as this SQL is executed 'as is' and does not undergo any project level
@@ -45,7 +45,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
     private SupportingSQLTable _supportingSQLTable;
 
     private const string NoExternalServer = "<<NONE>>";
-        
+
     public SupportingSQLTableUI()
     {
         InitializeComponent();
@@ -125,7 +125,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
         if (_supportingSQLTable != null)
             _supportingSQLTable.SQL = QueryPreview.Text;
     }
-        
+
     private void cbGlobal_CheckedChanged(object sender, EventArgs e)
     {
         if(_bLoading)
@@ -145,17 +145,17 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
                 else
                     cbGlobal.Checked = true;
             }
-                
+
         }
     }
-        
+
     private void tbDescription_KeyPress(object sender, KeyPressEventArgs e)
     {
         //apparently that is S when the control key is held down
         if(e.KeyChar == 19 && ModifierKeys == Keys.Control)
             e.Handled = true;
     }
-        
+
     private void ddExternalServers_SelectedIndexChanged(object sender, EventArgs e)
     {
         if(_supportingSQLTable == null)
@@ -168,13 +168,13 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
             //user selected a good server
             _supportingSQLTable.ExternalDatabaseServer_ID = ((ExternalDatabaseServer)ddExternalServers.SelectedItem).ID;
     }
-        
+
     private void TcTicketOnTicketTextChanged(object sender, EventArgs eventArgs)
     {
         if (_supportingSQLTable != null)
             _supportingSQLTable.Ticket = tcTicket.TicketText;
     }
-        
+
     private void btnAdd_Click(object sender, EventArgs e)
     {
         var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(Activator, null, PermissableDefaults.None);
@@ -182,7 +182,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
         RefreshUIFromDatabase();
     }
 }
-    
+
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingSQLTableUI_Design, UserControl>))]
 public abstract class SupportingSQLTableUI_Design:RDMPSingleDatabaseObjectControl<SupportingSQLTable>
 {

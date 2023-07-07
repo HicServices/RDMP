@@ -79,7 +79,8 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
 
         if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
         {
-            if (notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Release folder {0} already exists!", _releaseFolder.FullName), CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
+            if (notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Release folder {_releaseFolder.FullName} already exists!", CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
                 _releaseFolder.Delete(true);
             else
                 return;

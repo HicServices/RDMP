@@ -27,7 +27,7 @@ public partial class ConsequenceBar : UserControl
     public static Color MissingColor = Color.Orange;
     public static Color WrongColor = Color.IndianRed;
     public static Color InvalidColor = Color.Red;
-        
+
     public static Color HasValuesColor = Color.Black;
     public static Color IsNullColor = Color.LightGray;
 
@@ -36,7 +36,7 @@ public partial class ConsequenceBar : UserControl
     public double Missing { get; set; }
     public double Wrong { get; set; }
     public double DBNull { get; set; }
-        
+
     public string Label { get; set; }
 
     protected override void OnPaintBackground(PaintEventArgs e)
@@ -115,14 +115,14 @@ public partial class ConsequenceBar : UserControl
             return;
 
         toolTip.SetToolTip(this,
-            $"{Label}{Environment.NewLine}Null:{string.Format("{0:n0}", DBNull)}{GetPercentageText(DBNull)}Correct:{string.Format("{0:n0}", Correct)}{GetPercentageText(Correct)}Missing:{string.Format("{0:n0}", Missing)}{GetPercentageText(Missing)}Wrong:{string.Format("{0:n0}", Wrong)}{GetPercentageText(Wrong)}Invalid:{string.Format("{0:n0}", Invalid)}{GetPercentageText(Invalid).TrimEnd()}"
+            $"{Label}{Environment.NewLine}Null:{$"{DBNull:n0}"}{GetPercentageText(DBNull)}Correct:{$"{Correct:n0}"}{GetPercentageText(Correct)}Missing:{$"{Missing:n0}"}{GetPercentageText(Missing)}Wrong:{$"{Wrong:n0}"}{GetPercentageText(Wrong)}Invalid:{$"{Invalid:n0}"}{GetPercentageText(Invalid).TrimEnd()}"
         );
     }
 
     private string GetPercentageText(double fraction)
     {
         var totalRecords = Correct + Missing + Invalid + Wrong;
-        return $"({string.Format("{0:n2}", Truncate(fraction / totalRecords * 100, 2))}%){Environment.NewLine}";
+        return $"({$"{Truncate(fraction / totalRecords * 100, 2):n2}"}%){Environment.NewLine}";
     }
 
     private static double Truncate(double value, int digits)

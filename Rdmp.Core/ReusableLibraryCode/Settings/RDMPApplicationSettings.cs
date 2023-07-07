@@ -106,7 +106,7 @@ internal class RDMPApplicationSettings : ISettings
             }
         }
 
-        throw new ArgumentException(string.Format("Value of type {0} is not supported.", type.Name));
+        throw new ArgumentException($"Value of type {type.Name} is not supported.");
     }
 
     /// <summary>

@@ -541,7 +541,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             if(Silent)
                 throw new Exception($"Aborting data binding because there were {cells} cells in the graph data table");
             else
-                abandon = !Activator.YesNo($"Data Table has {string.Format("{0:n0}", cells)} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
+                abandon = !Activator.YesNo($"Data Table has {$"{cells:n0}"} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
 
         if (!abandon)
         {

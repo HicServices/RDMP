@@ -26,7 +26,7 @@ public enum LookupType
     Description,
 
     /// <summary>
-    /// Used for Fetching only, this value reflects either the PrimaryKey or the ForeignKey (but not the Description).  Used for example to find out 
+    /// Used for Fetching only, this value reflects either the PrimaryKey or the ForeignKey (but not the Description).  Used for example to find out
     /// all the Lookup involvements of a given ColumnInfo.
     /// </summary>
     AnyKey,
@@ -57,7 +57,7 @@ public enum ExtractionJoinType
     /// </summary>
     Inner
 }
-    
+
 /// <summary>
 /// Persistent reference in the Catalogue database that records how to join two TableInfos.  You can create instances of this class via JoinHelper (which is available as
 /// a property on ICatalogueRepository).  JoinInfos are processed by during query building in the following way:
@@ -113,17 +113,17 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     private ColumnInfo _foreignKey;
     private ColumnInfo _primaryKey;
 
-        
+
     private List<JoinInfo> _queryTimeComboJoins = new List<JoinInfo>();
 
     #region Relationships
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey => _foreignKey ?? (_foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID));
+    public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey => _primaryKey ?? (_primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID));
+    public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
     #endregion
 
@@ -171,13 +171,13 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
         });
 
     }
-        
+
     /// <inheritdoc/>
     public override string ToString()
     {
         return $" {ForeignKey.Name} = {PrimaryKey.Name}";
     }
-        
+
     /// <summary>
     /// Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of
     /// which have to appear on the SQL ON section of the query

@@ -54,11 +54,8 @@ internal class MySqlTriggerImplementer:TriggerImplementer
     {
         var creationSql = base.CreateTrigger(notifier);
 
-        var sql = string.Format(@"CREATE TRIGGER {0} BEFORE UPDATE ON {1} FOR EACH ROW
-{2};",
-            GetTriggerName(),
-            _table.GetFullyQualifiedName(),
-            CreateTriggerBody());
+        var sql = $@"CREATE TRIGGER {GetTriggerName()} BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
+{CreateTriggerBody()};";
 
         using (var con = _server.GetConnection())
         {
@@ -116,14 +113,12 @@ internal class MySqlTriggerImplementer:TriggerImplementer
     {
         var syntax = _server.GetQuerySyntaxHelper();
 
-        return string.Format(@"BEGIN
-    INSERT INTO {0} SET {1},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
+        return $@"BEGIN
+    INSERT INTO {_archiveTable.GetFullyQualifiedName()} SET {string.Join(",", _columns.Select(c =>
+        $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
 
-	SET NEW.{2} = now();
-  END", _archiveTable.GetFullyQualifiedName(),
-            string.Join(",", _columns.Select(c =>
-                $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}")),
-            syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
+	SET NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} = now();
+  END";
     }
 
     public override TriggerStatus GetTriggerStatus()
@@ -137,7 +132,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         {
             con.Open();
 
-            using(var cmd = _server.GetCommand(string.Format("show triggers like '{0}'", _table.GetRuntimeName()), con))
+            using(var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con))
             using(var r = cmd.ExecuteReader())
                 while (r.Read())
                 {

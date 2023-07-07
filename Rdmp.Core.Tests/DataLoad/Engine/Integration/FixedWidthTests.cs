@@ -31,7 +31,7 @@ public class FixedWidthTests :DatabaseTests
 
         return new FixedWidthFormatFile(fileInfo);
     }
-        
+
     [Test]
     public void TestLoadingFormat()
     {
@@ -115,10 +115,10 @@ public class FixedWidthTests :DatabaseTests
             Assert.AreEqual("38051", dataTable.Rows[0]["practice_code"]);
             Assert.AreEqual(new DateTime(2004, 4, 1), dataTable.Rows[0]["date_into_practice"]);
             Assert.AreEqual(new DateTime(2009,5,1), dataTable.Rows[0]["date_out_of_practice"]);
-                
+
 
         }
-        finally 
+        finally
         {
             File.Delete(tempFileToCreate);
         }
@@ -212,10 +212,10 @@ public class FixedWidthTests :DatabaseTests
                 default:
                     throw new ArgumentOutOfRangeException(nameof(testCase));
             }
-              
+
             //Assert the expected error result is the real one
             Assert.IsTrue(errorRegex.IsMatch(ex.Message));
-                
+
 
         }
         finally

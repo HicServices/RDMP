@@ -32,7 +32,7 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
 
         if (string.IsNullOrWhiteSpace(task.Path))
             throw new ArgumentException(
-                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {typeof(IDataProvider).Name}");
+                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IDataProvider)}");
 
         Provider = mef.CreateA<IDataProvider>(classNameToInstantiate);
 
@@ -62,7 +62,7 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         return true;
     }
-        
+
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {
     }

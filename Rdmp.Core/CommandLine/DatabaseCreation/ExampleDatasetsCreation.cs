@@ -200,7 +200,8 @@ public class ExampleDatasetsCreation
         {
             con.Open();
             //delete half the records (so we can simulate cohort refresh)
-            using(var cmd = cohortTable.Database.Server.GetCommand(string.Format("DELETE TOP (10) PERCENT from {0}",cohortTable.GetFullyQualifiedName()), con))
+            using(var cmd = cohortTable.Database.Server.GetCommand(
+                      $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con))
                 cmd.ExecuteNonQuery();
         }
 
@@ -537,7 +538,7 @@ UNPIVOT
     private static DiscoveredTable Create<T>(DiscoveredDatabase db,PersonCollection people, Random r, ICheckNotifier notifier,int numberOfRecords, params string[] primaryKey) where T:IDataGenerator
     {
         var dataset = typeof(T).Name;
-        notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Generating {0} records for {1}", numberOfRecords,dataset),CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Generating {numberOfRecords} records for {dataset}",CheckResult.Success));
 
         var factory = new DataGeneratorFactory();
 
