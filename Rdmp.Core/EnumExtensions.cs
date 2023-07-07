@@ -18,23 +18,19 @@ public static class EnumExtensions
     /// Returns a culture specific string for the <see cref="Enum"/>
     /// </summary>
     /// <param name="e"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     /// <returns></returns>
     public static string S(this Enum e)
     {
-        if(e is TriggerStatus ts)
-            switch (ts)
-            {
-                case TriggerStatus.Enabled:
-                    return GlobalStrings.Enabled;
-                case TriggerStatus.Disabled:
-                    return GlobalStrings.Disabled;
-                case TriggerStatus.Missing:
-                    return GlobalStrings.Missing;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+        if (e is not TriggerStatus ts) return e.ToString();
 
+        return ts switch
+        {
+            TriggerStatus.Enabled => GlobalStrings.Enabled,
+            TriggerStatus.Disabled => GlobalStrings.Disabled,
+            TriggerStatus.Missing => GlobalStrings.Missing,
+            _ => throw new ArgumentOutOfRangeException(nameof(e))
+        };
 
-        return e.ToString();
     }
 }

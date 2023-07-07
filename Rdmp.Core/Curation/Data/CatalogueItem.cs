@@ -223,7 +223,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             {"Name", name},
             {"Catalogue_ID", parent.ID}
         });
-            
+
         ClearAllInjections();
         parent.ClearAllInjections();
     }
@@ -269,7 +269,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     {
         _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfoIfAny);
         _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformationIfAny);
-        _knownCatalogue = new Lazy<Catalogue>(FetchCatalogue); 
+        _knownCatalogue = new Lazy<Catalogue>(FetchCatalogue);
     }
 
     private Catalogue FetchCatalogue()

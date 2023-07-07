@@ -19,7 +19,7 @@ public class ProgressUIEntry
 {
     public string Sender { get; private set; }
     public string Message { get; private set; }
-    public ProgressEventType ProgressEventType { get; private set; }
+    public ProgressEventType ProgressEventType { get; }
     public DateTime EventDate { get; private set; }
 
     public NotifyEventArgs Args { get;private set; }
@@ -34,31 +34,22 @@ public class ProgressUIEntry
         Exception = args.Exception;
         Args = args;
     }
-        
+
     private static string FormatSender(object sender)
     {
-        if (sender == null)
-            return "Unknown";
-            
-        return sender as string ?? sender.GetType().Name;
+        return sender as string ?? sender?.GetType().Name ?? "Unknown";
     }
 
     public WideMessageBoxTheme GetTheme()
     {
-        switch (ProgressEventType)
+        return ProgressEventType switch
         {
-            case ProgressEventType.Trace:
-                return WideMessageBoxTheme.Help;
-            case ProgressEventType.Debug:
-                return WideMessageBoxTheme.Help;
-            case ProgressEventType.Information:
-                return WideMessageBoxTheme.Help;
-            case ProgressEventType.Warning:
-                return WideMessageBoxTheme.Warning;
-            case ProgressEventType.Error:
-                return WideMessageBoxTheme.Exception;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            ProgressEventType.Trace => WideMessageBoxTheme.Help,
+            ProgressEventType.Debug => WideMessageBoxTheme.Help,
+            ProgressEventType.Information => WideMessageBoxTheme.Help,
+            ProgressEventType.Warning => WideMessageBoxTheme.Warning,
+            ProgressEventType.Error => WideMessageBoxTheme.Exception,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

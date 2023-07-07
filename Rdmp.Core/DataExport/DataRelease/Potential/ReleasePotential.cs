@@ -297,19 +297,12 @@ public abstract class ReleasePotential:ICheckable
 
         foreach (var kvp in Assessments)
         {
-            CheckResult checkResult;
-            switch (kvp.Value)
+            var checkResult = kvp.Value switch
             {
-                case Releaseability.ColumnDifferencesVsCatalogue:
-                    checkResult = CheckResult.Warning;
-                    break;
-                case Releaseability.Releaseable:
-                    checkResult = CheckResult.Success;
-                    break;
-                default:
-                    checkResult = CheckResult.Fail;
-                    break;
-            }
+                Releaseability.ColumnDifferencesVsCatalogue => CheckResult.Warning,
+                Releaseability.Releaseable => CheckResult.Success,
+                _ => CheckResult.Fail
+            };
 
             notifier.OnCheckPerformed(new CheckEventArgs($"{kvp.Key} is {kvp.Value}", checkResult));
         }

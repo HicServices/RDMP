@@ -76,7 +76,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
         pk1.KeyType = JoinKeyType.PrimaryKey;
         pk1.SelectedColumnChanged +=pk1_SelectedColumnChanged;
-            
+
         pk2.KeyType = JoinKeyType.PrimaryKey;
         pk2.SelectedColumnChanged += UpdateValidityAssesment;
 
@@ -85,7 +85,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
         fk1.KeyType = JoinKeyType.ForeignKey;
         fk1.SelectedColumnChanged += fk1_SelectedColumnChanged;
-            
+
         fk2.KeyType = JoinKeyType.ForeignKey;
         fk2.SelectedColumnChanged += UpdateValidityAssesment;
 
@@ -124,15 +124,15 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         //add the currently configured extraction informations in the order they appear in the dataset
         var allExtractionInformationFromCatalogue = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         allExtractionInformationFromCatalogue.Sort();
-            
+
         olvExtractionInformations.ClearObjects();
         olvExtractionInformations.AddObjects(allExtractionInformationFromCatalogue.ToArray());
-            
+
         btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import).ImageToBitmap();
         toolTip.SetToolTip(btnImportNewTableInfo, "Import new...");
 
         btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help.ImageToBitmap();
-            
+
         pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
         tbCatalogue.Text = databaseObject.ToString();
 
@@ -149,7 +149,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
                 $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");
             return;
         }
-            
+
         if(setComboBox)
             cbxLookup.SelectedItem = t;
 
@@ -214,30 +214,19 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
 
         var lineHeight = e.Graphics.MeasureString(lines[0], Font).Height;
-            
+
         for (var i = 0; i < lines.Length; i++)
             e.Graphics.DrawString(lines[i], Font, Brushes.Black,new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight*i));
 
-        int bulletLineIndex;
-
-        switch (_currentStage)
+        int bulletLineIndex = _currentStage switch
         {
-            case LookupCreationStage.ChooseLookupTable:
-                bulletLineIndex = 1;
-                break;
-            case LookupCreationStage.DragAPrimaryKey:
-                bulletLineIndex = 2;
-                break;
-            case LookupCreationStage.DragAForeignKey:
-                bulletLineIndex = 3;
-                break;
-            case LookupCreationStage.DragADescription:
-                bulletLineIndex = 4;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-            
+            LookupCreationStage.ChooseLookupTable => 1,
+            LookupCreationStage.DragAPrimaryKey => 2,
+            LookupCreationStage.DragAForeignKey => 3,
+            LookupCreationStage.DragADescription => 4,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
         DrawArrows(e.Graphics);
 
         var triangleBasePoints = new[]
@@ -262,7 +251,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         var arrowPen = new Pen(Color.DarkGray,2);
 
         var capPath = new GraphicsPath();
-            
+
         // Create the outline for our custom end cap.
         capPath.AddLine(new Point(0, 0), new Point(2, -2));
         capPath.AddLine(new Point(2, -2), new Point(0, 0));
@@ -270,8 +259,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         capPath.AddLine(new Point(-2, -2),new Point(0, 0));
 
         arrowPen.CustomEndCap = new CustomLineCap(null, capPath);
-    
-            
+
+
         switch (_currentStage)
         {
             case LookupCreationStage.ChooseLookupTable:
@@ -319,7 +308,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             mid1,
             mid2,
             end);
-            
+
         if (debugPoints)
         {
             g.FillEllipse(Brushes.Red, start.X -2, start.Y -2, 5, 5);

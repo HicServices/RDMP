@@ -365,12 +365,11 @@ public class AutoCommentsEvaluator
 
     private static string GetUniqueTypeName(string typename)
     {
-        switch (typename)
+        return typename switch
         {
-            case "ColumnInfo": return "Rdmp.Core.Curation.Data.ColumnInfo";
-            case "IFilter": return "Rdmp.Core.Curation.Data.IFilter";
-        }
-
-        return typename;
+            "ColumnInfo" => "Rdmp.Core.Curation.Data.ColumnInfo",
+            "IFilter" => "Rdmp.Core.Curation.Data.IFilter",
+            _ => typename
+        };
     }
 }

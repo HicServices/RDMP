@@ -188,30 +188,22 @@ public class WindowManager
     /// <param name="collection"></param>
     public void Pop(RDMPCollection collection)
     {
-        if (_visibleToolboxes.ContainsKey(collection))
-        {
-            switch (_visibleToolboxes[collection].DockState)
-            {
-                case DockState.DockLeftAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockLeft;
-                    break;
-                case DockState.DockRightAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockRight;
-                    break;
-                case DockState.DockTopAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockTop;
-                    break;
-                case DockState.DockBottomAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockBottom;
-                    break;
-            }
+        if (!_visibleToolboxes.TryGetValue(collection, out var dockContent)) return;
 
-            _visibleToolboxes[collection].Activate();
-        }
+        dockContent.DockState = dockContent.DockState switch
+        {
+            DockState.DockLeftAutoHide => DockState.DockLeft,
+            DockState.DockRightAutoHide => DockState.DockRight,
+            DockState.DockTopAutoHide => DockState.DockTop,
+            DockState.DockBottomAutoHide => DockState.DockBottom,
+            _ => _visibleToolboxes[collection].DockState
+        };
+
+        dockContent.Activate();
     }
 
     /// <summary>
-    /// Returns true if the corresponding RDMPCollectionUI is open (even if it is burried under other windows).
+    /// Returns true if the corresponding RDMPCollectionUI is open (even if it is buried under other windows).
     /// </summary>
     /// <param name="collection"></param>
     /// <returns></returns>
@@ -222,13 +214,7 @@ public class WindowManager
 
     public RDMPCollection GetFocusedCollection()
     {
-        foreach (var t in _visibleToolboxes)
-        {
-            if (t.Value.ContainsFocus)
-                return t.Key;
-        }
-
-        return RDMPCollection.None;
+        return _visibleToolboxes.Where(static t => t.Value.ContainsFocus).Select(static t => t.Key).FirstOrDefault();
     }
 
     internal void OnFormClosing(System.Windows.Forms.FormClosingEventArgs e)

@@ -107,35 +107,24 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void tlvLoadedTables_FormatCell(object sender, FormatCellEventArgs e)
     {
-        if (e.Column == olvDataType)
+        if (e.Column == olvDataType && e.Model is LoadDiagramColumnNode { State: LoadDiagramState.Different })
         {
-            if (e.Model is LoadDiagramColumnNode colNode && colNode.State == LoadDiagramState.Different)
-                e.SubItem.ForeColor = Color.Red;
+            e.SubItem.ForeColor = Color.Red;
         }
 
-        if (e.Column == olvState)
+        if (e.Column == olvState && e.CellValue is LoadDiagramState state)
         {
-            if(e.CellValue is LoadDiagramState state)
-                switch (state)
-                {
-                    case LoadDiagramState.Anticipated:
-                        e.SubItem.ForeColor = Color.LightGray;
-                        break;
-                    case LoadDiagramState.Found:
-                        e.SubItem.ForeColor = Color.Green;
-                        break;
-                    case LoadDiagramState.NotFound:
-                        e.SubItem.ForeColor = loadStateUI1.State == LoadStateUI.LoadState.StartedOrCrashed ? Color.Red : Color.LightGray;
-                        break;
-                    case LoadDiagramState.Different:
-                        e.SubItem.ForeColor = Color.Red;
-                        break;
-                    case LoadDiagramState.New:
-                        e.SubItem.ForeColor = Color.Red;
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+            e.SubItem.ForeColor = state switch
+            {
+                LoadDiagramState.Anticipated => Color.LightGray,
+                LoadDiagramState.Found => Color.Green,
+                LoadDiagramState.NotFound => loadStateUI1.State == LoadStateUI.LoadState.StartedOrCrashed
+                    ? Color.Red
+                    : Color.LightGray,
+                LoadDiagramState.Different => Color.Red,
+                LoadDiagramState.New => Color.Red,
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
     }
 
@@ -169,60 +158,44 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (Activator == null)
             return null;
 
-        var col = rowObject as LoadDiagramColumnNode;
-
-        if (rowObject is UnplannedTable)
-            return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem).ImageToBitmap();
-
-        if (rowObject is DiscoveredColumn)
-            return Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem).ImageToBitmap();
-            
-        if (rowObject is LoadDiagramServerNode node)
-            if (string.IsNullOrWhiteSpace(node.ErrorDescription))
-                return Activator.CoreIconProvider.GetImage(node).ImageToBitmap();
-            else
-                return Activator.CoreIconProvider.GetImage(node, OverlayKind.Problem).ImageToBitmap();
-
-        if (rowObject is LoadDiagramDatabaseNode db)
-            return db.GetImage(Activator.CoreIconProvider);
-
-        if(rowObject is LoadDiagramTableNode)
-            return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap();
-
-        return col?.GetImage(Activator.CoreIconProvider);
+        return rowObject switch
+        {
+            UnplannedTable => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem)
+                .ImageToBitmap(),
+            DiscoveredColumn => Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem)
+                .ImageToBitmap(),
+            LoadDiagramServerNode node => string.IsNullOrWhiteSpace(node.ErrorDescription)
+                ? Activator.CoreIconProvider.GetImage(node).ImageToBitmap()
+                : Activator.CoreIconProvider.GetImage(node, OverlayKind.Problem).ImageToBitmap(),
+            LoadDiagramDatabaseNode db => db.GetImage(Activator.CoreIconProvider),
+            LoadDiagramTableNode => Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo).ImageToBitmap(),
+            LoadDiagramColumnNode col => col.GetImage(Activator.CoreIconProvider),
+            _ => null
+        };
     }
 
     private IEnumerable ChildrenGetter(object model)
     {
-        var unplannedTable = model as UnplannedTable;
-
-        if (model is LoadDiagramServerNode server)
-            return server.GetChildren();
-
-        if (model is LoadDiagramDatabaseNode database)
-            return database.GetChildren();
-
-        if (model is LoadDiagramTableNode table)
-            return table.GetChildren(cbOnlyShowDynamicColumns.Checked);
-
-        return unplannedTable?.Columns;
+        return model switch
+        {
+            LoadDiagramServerNode server => server.GetChildren(),
+            LoadDiagramDatabaseNode database => database.GetChildren(),
+            LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked),
+            UnplannedTable unplannedTable => unplannedTable.Columns,
+            _ => null
+        };
     }
 
     private bool CanExpandGetter(object model)
     {
-        if (model is LoadDiagramServerNode server)
-            return server.GetChildren().Any();
-
-        if (model is LoadDiagramDatabaseNode database)
-            return database.GetChildren().Any();
-
-        if (model is LoadDiagramTableNode table)
-            return table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any();
-
-        if (model is UnplannedTable unplannedTable)
-            return true;
-
-        return false;
+        return model switch
+        {
+            LoadDiagramServerNode server => server.GetChildren().Any(),
+            LoadDiagramDatabaseNode database => database.GetChildren().Any(),
+            LoadDiagramTableNode table => table.GetChildren(cbOnlyShowDynamicColumns.Checked).Any(),
+            UnplannedTable unplannedTable => true,
+            _ => false
+        };
     }
 
     public void RefreshUIFromDatabase()

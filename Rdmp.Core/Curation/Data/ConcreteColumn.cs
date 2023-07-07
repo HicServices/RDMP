@@ -98,13 +98,13 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,ICompa
     /// <inheritdoc/>
     protected ConcreteColumn(IRepository repository, DbDataReader r):base(repository,r)
     {
-            
+
     }
 
     /// <inheritdoc/>
     protected ConcreteColumn():base()
     {
-            
+
     }
 
     /// <inheritdoc/>

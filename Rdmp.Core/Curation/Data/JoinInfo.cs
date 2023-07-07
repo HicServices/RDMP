@@ -196,7 +196,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
     {
         //Supplemental Joins are not currently supported by JoinInfo, only Lookups
-        return _queryTimeComboJoins.Select(j => new QueryTimeComboJoin
+        return _queryTimeComboJoins.Select(static j => new QueryTimeComboJoin
         {
             Collation = j.Collation,
             PrimaryKey = j.PrimaryKey,
@@ -207,15 +207,12 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     /// <inheritdoc/>
     public ExtractionJoinType GetInvertedJoinType()
     {
-        switch (ExtractionJoinType)
+        return ExtractionJoinType switch
         {
-            case ExtractionJoinType.Left:
-                return ExtractionJoinType.Right;
-            case ExtractionJoinType.Right:
-                return ExtractionJoinType.Left;
-            default:
-                return ExtractionJoinType;
-        }
+            ExtractionJoinType.Left => ExtractionJoinType.Right,
+            ExtractionJoinType.Right => ExtractionJoinType.Left,
+            _ => ExtractionJoinType
+        };
     }
 
     private class QueryTimeComboJoin :ISupplementalJoin

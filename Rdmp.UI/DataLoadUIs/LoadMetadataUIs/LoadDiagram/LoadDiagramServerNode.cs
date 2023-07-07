@@ -43,33 +43,26 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
         _config = config;
         var serverName = database.Server.Name;
 
-        switch (bubble)
+        _description = bubble switch
         {
-            case LoadBubble.Raw:
-                _description = $"RAW Server:{serverName}";
-                break;
-            case LoadBubble.Staging:
-                _description = $"STAGING Server:{serverName}";
-                break;
-            case LoadBubble.Live:
-                _description = $"LIVE Server:{serverName}";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(bubble));
-        }
+            LoadBubble.Raw => $"RAW Server:{serverName}",
+            LoadBubble.Staging => $"STAGING Server:{serverName}",
+            LoadBubble.Live => $"LIVE Server:{serverName}",
+            _ => throw new ArgumentOutOfRangeException(nameof(bubble))
+        };
 
         //Live can have multiple databases (for lookups)
         if (_bubble == LoadBubble.Live)
         {
-            var servers = loadTables.Select(t => t.Server).Distinct().ToArray();
+            var servers = loadTables.Select(static t => t.Server).Distinct().ToArray();
             if (servers.Length > 1)
             {
                 _description = $"Ambiguous LIVE Servers:{string.Join(",", servers)}";
                 ErrorDescription =
-                    $"The TableInfo collection that underly the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
+                    $"The TableInfo collection that underlie the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
             }
 
-            var databases = _loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
+            var databases = _loadTables.Select(static t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
 
             _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 

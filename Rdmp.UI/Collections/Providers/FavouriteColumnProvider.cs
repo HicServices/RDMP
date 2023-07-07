@@ -53,10 +53,10 @@ public class FavouriteColumnProvider
         _olvFavourite.AspectToStringConverter = st => "";
 
         _tlv.CellClick += OnCellClick;
-            
+
         _tlv.AllColumns.Add(_olvFavourite);
         _tlv.RebuildColumns();
-            
+
         return _olvFavourite;
     }
 
@@ -87,7 +87,7 @@ public class FavouriteColumnProvider
     {
         if (rowobject is DatabaseEntity o)
             return _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow;
-                    
+
 
         return null;
     }
@@ -95,7 +95,7 @@ public class FavouriteColumnProvider
     {
         if (rowobject is DatabaseEntity o)
             return _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0;
-                    
+
 
         return null;
     }

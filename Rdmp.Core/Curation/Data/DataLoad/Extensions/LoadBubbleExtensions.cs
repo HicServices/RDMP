@@ -20,18 +20,14 @@ public static class LoadBubbleExtensions
     /// <returns></returns>
     public static LoadStage ToLoadStage(this LoadBubble bubble)
     {
-        switch (bubble)
+        return bubble switch
         {
-            case LoadBubble.Raw:
-                return LoadStage.AdjustRaw;
-            case LoadBubble.Staging:
-                return LoadStage.AdjustStaging;
-            case LoadBubble.Live:
-                return LoadStage.PostLoad;
-            case LoadBubble.Archive:
-                throw new Exception("LoadBubble.Archive refers to _Archive tables, therefore it cannot be translated into a LoadStage");
-            default:
-                throw new ArgumentOutOfRangeException(nameof(bubble));
-        }
+            LoadBubble.Raw => LoadStage.AdjustRaw,
+            LoadBubble.Staging => LoadStage.AdjustStaging,
+            LoadBubble.Live => LoadStage.PostLoad,
+            LoadBubble.Archive => throw new Exception(
+                "LoadBubble.Archive refers to _Archive tables, therefore it cannot be translated into a LoadStage"),
+            _ => throw new ArgumentOutOfRangeException(nameof(bubble))
+        };
     }
 }

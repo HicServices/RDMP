@@ -15,37 +15,33 @@ namespace Rdmp.Core.Curation.Data.EntityNaming;
 /// </summary>
 public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
 {
-    protected static Dictionary<LoadBubble, string> Suffixes = new Dictionary<LoadBubble, string>
+    protected static readonly Dictionary<LoadBubble, string> Suffixes = new()
     {
         {LoadBubble.Raw, ""},
         {LoadBubble.Staging, "_STAGING"},
         {LoadBubble.Live, ""},
         {LoadBubble.Archive, "_Archive"}
     };
-        
+
     /// <inheritdoc/>
     public virtual string GetDatabaseName(string rootDatabaseName, LoadBubble stage)
     {
-        switch (stage)
+        return stage switch
         {
-            case LoadBubble.Raw:
-                return $"{rootDatabaseName}_RAW";
-            case LoadBubble.Staging:
-                return $"{rootDatabaseName}_STAGING";
-            case LoadBubble.Live:
-                return rootDatabaseName;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(stage));
-        }
+            LoadBubble.Raw => $"{rootDatabaseName}_RAW",
+            LoadBubble.Staging => $"{rootDatabaseName}_STAGING",
+            LoadBubble.Live => rootDatabaseName,
+            _ => throw new ArgumentOutOfRangeException(nameof(stage))
+        };
     }
 
     /// <inheritdoc/>
     public virtual string GetName(string tableName, LoadBubble convention)
     {
-        if (!Suffixes.ContainsKey(convention))
+        if (!Suffixes.TryGetValue(convention,out var suffix))
             throw new ArgumentException($"Do not have a suffix for convention: {convention}");
 
-        return tableName + Suffixes[convention];
+        return $"{tableName}{suffix}";
     }
         
 }

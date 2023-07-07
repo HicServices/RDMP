@@ -123,7 +123,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             _binder = new BinderWithErrorProviderFactory(activator);
 
         SetBindings(_binder, databaseObject);
-            
+
         if(this is ISaveableUI)
         {
             if(UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
@@ -164,7 +164,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 return false;
             }
         }
-            
+
         // before starting a new commit cleanup old one
         CurrentCommit?.Dispose();
 
@@ -190,7 +190,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)
     {
-            
+
     }
 
     /// <summary>
@@ -210,7 +210,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         {
             box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
         }
-            
+
         _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
     }
 

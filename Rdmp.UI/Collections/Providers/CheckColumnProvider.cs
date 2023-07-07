@@ -71,7 +71,7 @@ public class CheckColumnProvider
                     checkResultsDictionary.Add(checkable, notifier.GetWorst());
             }
         });
-            
+
         EnsureChecksColumnVisible();
         checkingTask.ContinueWith(
             //now load images to UI

@@ -53,7 +53,7 @@ public class CatalogueUITests : UITests
         saver.Redo();
         Assert.AreEqual("amagad zombies", ui._scintillaDescription.Text);
         Assert.AreEqual("amagad zombies", cata.Description);
-            
+
         //when I save
         saver.Save();
 
@@ -98,10 +98,10 @@ public class CatalogueUITests : UITests
 
         //it tells me that I have to make it unique
         AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Must be unique");
-            
+
         //so I make it unique
         ui.tbAcronym.Text = "ABC";
-            
+
         //and all is good again
         AssertNoErrors(ExpectedErrorType.Any);
     }

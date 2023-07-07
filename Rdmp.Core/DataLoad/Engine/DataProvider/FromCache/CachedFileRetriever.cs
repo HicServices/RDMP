@@ -173,15 +173,12 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     private static IArchivedFileExtractor CreateExtractor(CacheArchiveType cacheArchiveType)
     {
-        switch (cacheArchiveType)
+        return cacheArchiveType switch
         {
-            case CacheArchiveType.None:
-                throw new Exception("At this stage a cache archive type must be specified");
-            case CacheArchiveType.Zip:
-                return new ZipExtractor();
-            default:
-                throw new ArgumentOutOfRangeException(nameof(cacheArchiveType));
-        }
+            CacheArchiveType.None => throw new Exception("At this stage a cache archive type must be specified"),
+            CacheArchiveType.Zip => new ZipExtractor(),
+            _ => throw new ArgumentOutOfRangeException(nameof(cacheArchiveType))
+        };
     }
 
     public static bool Validate(ILoadDirectory destination)

@@ -34,8 +34,8 @@ using Timer = System.Windows.Forms.Timer;
 namespace Rdmp.UI.SubComponents;
 
 /// <summary>
-/// Allows you to view/edit a CohortIdentificationConfiguration.  You should start by giving it a meaningful name e.g. 'Project 132 Cases - Deaths caused by diabetic medication' 
-/// and a comprehensive description e.g. 'All patients in Tayside and Fife who are over 16 at the time of their first prescription of a diabetic medication (BNF chapter 6.1) 
+/// Allows you to view/edit a CohortIdentificationConfiguration.  You should start by giving it a meaningful name e.g. 'Project 132 Cases - Deaths caused by diabetic medication'
+/// and a comprehensive description e.g. 'All patients in Tayside and Fife who are over 16 at the time of their first prescription of a diabetic medication (BNF chapter 6.1)
 /// and died within 6 months'.  An accurate up-to-date description will help future data analysts to understand the configuration.
 /// 
 /// <para>If you have a large data repository or plan to use lots of different datasets or complex filters in your CohortIdentificationCriteria you should configure a caching database
@@ -84,16 +84,16 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         tlvCic.RowHeight = 19;
         olvExecute.AspectGetter += Common.ExecuteAspectGetter;
         tlvCic.ButtonClick += tlvCic_ButtonClick;
-        olvOrder.AspectGetter += o=> o is JoinableCollectionNode ? null : o is ISqlParameter ? null : (o as IOrderable)?.Order;
+        olvOrder.AspectGetter += static o=> o is IOrderable orderable ? orderable.Order : null;
         olvOrder.IsEditable = false;
         tlvCic.ItemActivate += TlvCic_ItemActivate;
         AssociatedCollection = RDMPCollection.Cohort;
 
-            
+
         timer.Tick += refreshColumnValues;
         timer.Interval = 2000;
         timer.Start();
-            
+
         olvCount.AspectGetter = Common.Count_AspectGetter;
         olvCached.AspectGetter = Common.Cached_AspectGetter;
         olvCumulativeTotal.AspectGetter = Common.CumulativeTotal_AspectGetter;
@@ -125,13 +125,13 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         tt.SetToolTip(btnAbortLoad, "Cancells execution of any running cohort sets");
     }
 
-        
+
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
         Common.Activator = Activator;
         var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
-            
+
         //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
         if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
         {
@@ -147,13 +147,13 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             Common.RecreateAllTasks();
         }
     }
-        
+
     private void refreshColumnValues(object sender, EventArgs e)
     {
         if(!tlvCic.IsDisposed)
             tlvCic.RefreshObjects(tlvCic.Objects.Cast<object>().ToArray());
     }
-        
+
     public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
     {
         base.SetDatabaseObject(activator,databaseObject);
@@ -201,7 +201,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(databaseObject),
             "Commit Cohort",
             activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort,OverlayKind.Add));
-            
+
         foreach (var c in _timeoutControls.GetControls())
             CommonFunctionality.Add(c);
 
@@ -241,7 +241,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
                 return;
             }
         }
-                
+
         _commonFunctionality.CommonItemActivation(sender, e);
     }
 
@@ -255,7 +255,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         return $"Execute:{base.GetTabName()}";
     }
-        
+
     private void ticket_TicketTextChanged(object sender, EventArgs e)
     {
         Common.Configuration.Ticket = ticket.TicketText;
@@ -360,7 +360,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             e.Menu.Items.Add(
                 new ToolStripMenuItem("View Crash Message", null,
                     (s, ev) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null });
-                
+
             e.Menu.Items.Add(
                 BuildItem("Clear Object from Cache", c, a => a.SubqueriesCached > 0,
                     a =>
