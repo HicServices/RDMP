@@ -494,7 +494,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         PopulateHavingText();
 
         var axisIfAny = _aggregate.GetAxisIfAny();
-        var _axisDimensionIfAny = axisIfAny != null ? axisIfAny.AggregateDimension : null;
+        var _axisDimensionIfAny = axisIfAny?.AggregateDimension;
         var _pivotIfAny = _aggregate.PivotDimension;
 
         PopulatePivotDropdown(_axisDimensionIfAny, _pivotIfAny);

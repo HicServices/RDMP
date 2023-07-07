@@ -441,7 +441,7 @@ public class WindowManager
 
     private static void CloseWindowIfInSameScope(DockContent toClose, DockContent tabInSameScopeOrNull)
     {
-        var parent = tabInSameScopeOrNull == null ? null : tabInSameScopeOrNull.Parent;
+        var parent = tabInSameScopeOrNull?.Parent;
 
         if (toClose != null && (parent == null || toClose.Parent == parent))
             toClose.Close();

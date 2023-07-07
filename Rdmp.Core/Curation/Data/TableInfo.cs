@@ -188,7 +188,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"Name", name},
-            {"IdentifierDumpServer_ID",dumpServer == null ? (object) DBNull.Value:dumpServer.ID}
+            {"IdentifierDumpServer_ID",dumpServer?.ID ?? (object) DBNull.Value}
         });
 
         ClearAllInjections();

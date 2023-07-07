@@ -27,7 +27,7 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
     public SingleScheduleCacheDateTrackingStrategy(ICacheLayout cacheLayout, ILoadProgress loadProgress,IDataLoadEventListener listener)
     {
         // no null check needed as the contract ensures that both DataLoadProgress and OriginDate can't simultaneously be null
-        var lastAssignedLoadDate = loadProgress.DataLoadProgress == null ? loadProgress.OriginDate.Value : loadProgress.DataLoadProgress.Value;
+        var lastAssignedLoadDate = loadProgress.DataLoadProgress ?? loadProgress.OriginDate.Value;
 
         // This is all the dates in the cache, but we want to start from _lastAssignedLoadDate
         // todo: must be efficient, revisit

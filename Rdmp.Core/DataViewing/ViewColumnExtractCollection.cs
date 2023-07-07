@@ -231,6 +231,6 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var c = ColumnInfo;
-        return c != null ? c.GetQuerySyntaxHelper() : null;
+        return c?.GetQuerySyntaxHelper();
     }
 }

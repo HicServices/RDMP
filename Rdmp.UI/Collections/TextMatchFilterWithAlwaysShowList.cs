@@ -45,7 +45,7 @@ public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
     public override bool Filter(object modelObject)
     {
         //gets us the highlight and composite match if the user put in spaces
-        var showing = _compositeFilter != null ? _compositeFilter.Filter(modelObject) : base.Filter(modelObject);
+        var showing = _compositeFilter?.Filter(modelObject) ?? base.Filter(modelObject);
 
         //if its in the always show it
         if (AlwaysShow.Contains(modelObject))

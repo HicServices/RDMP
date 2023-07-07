@@ -114,7 +114,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private object Releaseability_AspectGetter(object rowObject)
     {
         var state = GetState(rowObject);
-        return state == null ? null : state.ToString();
+        return state?.ToString();
     }
 
     private object GetState(object rowObject)

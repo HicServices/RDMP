@@ -59,16 +59,16 @@ public class ExecuteCommandDelete : BasicCommandExecution
     {
         var verb = GetDeleteVerbIfAny();
 
-        return verb != null ? verb : base.GetCommandName();
+        return verb ?? base.GetCommandName();
     }
 
     private string GetDeleteVerbIfAny()
     {
         // if all objects are IDeletableWithCustomMessage
-        if (OverrideCommandName == null && _deletables.Count > 0 && _deletables.All(d => typeof(IDeletableWithCustomMessage).IsAssignableFrom(d.GetType())))
+        if (OverrideCommandName == null && _deletables.Count > 0 && _deletables.All(static d => d is IDeletableWithCustomMessage))
         {
             // Get the verbs (e.g. Remove, Disassociate etc)
-            var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(d => d.GetDeleteVerb()).Distinct().ToArray();
+            var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(static d => d.GetDeleteVerb()).Distinct().ToArray();
 
             // if they agree on one specific verb
             if (verbs.Length == 1)

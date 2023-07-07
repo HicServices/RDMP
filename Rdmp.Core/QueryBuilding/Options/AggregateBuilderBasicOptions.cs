@@ -69,7 +69,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
     public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
     {
         var availableTables = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .Select(e => e.ColumnInfo != null? e.ColumnInfo.TableInfo:null)
+            .Select(e => e.ColumnInfo?.TableInfo)
             .Where( t=> t != null)
             .Distinct();
 

@@ -221,7 +221,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
                 return "WaitingForDatabase";
         }
 
-        return state == null ? null : state.ToString();
+        return state?.ToString();
     }
         
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)

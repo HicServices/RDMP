@@ -192,7 +192,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"Name", name},
-            {"QueryCachingServer_ID",queryCache == null ? (object) DBNull.Value:queryCache.ID},
+            {"QueryCachingServer_ID",queryCache?.ID ?? (object) DBNull.Value},
             {"Folder" , FolderHelper.Root}
         });
     }
