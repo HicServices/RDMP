@@ -130,8 +130,8 @@ public enum ImplicitUseKindFlags
 [Flags]
 public enum ImplicitUseTargetFlags
 {
-    Default = Itself,
     Itself = 1,
+    Default = Itself,
     /// <summary>Members of entity marked with attribute are considered used</summary>
     Members = 2,
     /// <summary>Entity marked with attribute and all its members considered used</summary>
