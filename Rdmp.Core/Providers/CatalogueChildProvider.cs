@@ -1519,7 +1519,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         lock(WriteLock)
         {
             //things that are a match on Type but not IMasqueradeAs
-            var exactMatches = GetAllSearchables().Keys.Where(t=>!(t is IMasqueradeAs)).Where(type.IsInstanceOfType);
+            var exactMatches = GetAllSearchables().Keys.Where(t=>t is not IMasqueradeAs).Where(type.IsInstanceOfType);
 
             //Union the unwrapped masqueraders
             if (unwrapMasqueraders)
@@ -1695,7 +1695,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         ArgumentNullException.ThrowIfNull(other);
 
-        if(!(other is CatalogueChildProvider otherCat))
+        if(other is not CatalogueChildProvider otherCat)
             throw new NotSupportedException(
                 $"Did not know how to UpdateTo ICoreChildProvider of type {other.GetType().Name}");
 

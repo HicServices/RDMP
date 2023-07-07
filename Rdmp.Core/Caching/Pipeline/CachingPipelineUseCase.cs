@@ -52,14 +52,10 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
         else
             _permissionWindow = cacheProgress.PermissionWindow;
             
-        if(_providerIfAny == null)
-        {
-            _providerIfAny = new CacheFetchRequestProvider(_cacheProgress)
+        _providerIfAny ??= new CacheFetchRequestProvider(_cacheProgress)
             {
                 PermissionWindow = _permissionWindow
             };
-
-        }
 
         _pipeline = _cacheProgress.Pipeline;
 
@@ -104,7 +100,7 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
     {
         // get the current destination
         var destination = GetEngine(_pipeline, listener).DestinationObject ?? throw new Exception($"{_cacheProgress} does not have a DestinationComponent in its Pipeline");
-        if (!(destination is ICacheFileSystemDestination systemDestination))
+        if (destination is not ICacheFileSystemDestination systemDestination)
             throw new NotSupportedException(
                 $"{_cacheProgress} pipeline destination is not an ICacheFileSystemDestination, it was {_cacheProgress.GetType().FullName}");
             

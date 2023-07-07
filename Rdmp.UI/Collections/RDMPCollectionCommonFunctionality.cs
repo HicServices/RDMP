@@ -210,10 +210,10 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         Tree.CellRightClick += CommonRightClick;
         Tree.KeyUp += CommonKeyPress;
-            
+
         if(iconColumn != null)
             iconColumn.ImageGetter += ImageGetter;
-            
+
         if(Tree.RowHeight != 19)
             Tree.RowHeight = 19;
 
@@ -271,14 +271,14 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         CopyPasteProvider = new CopyPasteProvider();
         CopyPasteProvider.RegisterEvents(tree);
-            
+
         CoreChildProvider = _activator.CoreChildProvider;
-            
+
         _activator.Emphasise += _activator_Emphasise;
 
         Tree.TreeFactory = TreeFactoryGetter;
         Tree.RebuildAll(true);
-            
+
         Tree.FormatRow += Tree_FormatRow;
         Tree.KeyDown += Tree_KeyDown;
 
@@ -432,7 +432,6 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         var indicatorHeight = BackColorProvider.IndicatorBarSuggestedHeight;
 
-        var p = new BackColorProvider();
         var ctrl = new Control
         {
             BackColor = BackColorProvider.GetColor(collection),
@@ -539,7 +538,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         //get the parental hierarchy
         var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
-            
+
         if (decendancyList != null)
         {
             //for each parent in the decendandy list
@@ -570,7 +569,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             {
                 Tree.EndUpdate();
             }
-                
+
         //update index now pin filter is applied
         index = Tree.IndexOf(args.Request.ObjectToEmphasise);
 
@@ -578,7 +577,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Tree.SelectedObject = args.Request.ObjectToEmphasise;
         Tree.EnsureVisible(index);
 
-            
+
         args.Sender = Tree.FindForm();
     }
 
@@ -612,14 +611,14 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         if (result == null)
             return false;
-            
+
         return result.Cast<object>().Any();
     }
 
     private Bitmap ImageGetter(object rowObject)
     {
         var hasProblems = _activator.HasProblem(rowObject);
-            
+
         return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None).ImageToBitmap();
     }
 
@@ -717,11 +716,11 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
             _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs($"Failed to build menu for {o} of Type {o?.GetType()}",CheckResult.Fail,ex));
             return null;
-        }           
+        }
     }
 
     //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
-    private Dictionary<Type,Type> _cachedMenuCompatibility = new();
+    private readonly Dictionary<Type,Type> _cachedMenuCompatibility = new();
 
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {
@@ -730,22 +729,15 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             Masquerader = oMasquerader ?? o as IMasqueradeAs
         };
 
-        var objectConstructor = new ObjectConstructor();
-
         var oType = o.GetType();
 
         //if we have encountered this object type before
-        if (_cachedMenuCompatibility.ContainsKey(oType))
+        if (_cachedMenuCompatibility.TryGetValue(oType,out var compatibleMenu))
         {
-            var compatibleMenu = _cachedMenuCompatibility[oType];
-
             //we know there are no menus compatible with o
-            if (compatibleMenu == null)
-                return null;
-
-            return ConstructMenu(_cachedMenuCompatibility[oType], args, o);
+            return compatibleMenu == null ? null : ConstructMenu(compatibleMenu, args, o);
         }
-                
+
 
         //now find the first RDMPContextMenuStrip with a compatible constructor
         foreach (var menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
@@ -768,7 +760,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         //we know there are no menus compatible with this type
         _cachedMenuCompatibility.TryAdd(oType, null);
 
-        //there are no derrived classes with compatible constructors
+        //there are no derived classes with compatible constructors
         return null;
     }
 
@@ -863,7 +855,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public void CommonItemActivation(object sender, EventArgs eventArgs)
     {
         var o = Tree.SelectedObject;
-            
+
         if(o == null)
             return;
 
@@ -891,13 +883,13 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         RefreshObject(e.Object,e.Exists);
 
         //now tell tree view to refresh the object
-            
+
         RefreshContextMenuStrip();
 
         //also refresh anyone who is masquerading as e.Object
         foreach (var masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
             RefreshObject(masquerader, e.Exists);
-            
+
     }
 
     private void RefreshObject(object o, bool exists)
@@ -924,7 +916,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 }
             }
         }
-                
+
 
         Tree.RebuildAll(true);
         Tree.Sort();

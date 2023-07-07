@@ -214,7 +214,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        if(!(e.Object is IFilter filter))
+        if(e.Object is not IFilter filter)
             return;
 
         if (filter.Equals(_extractionFilter))

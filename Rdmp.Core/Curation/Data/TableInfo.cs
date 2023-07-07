@@ -269,8 +269,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     {
         var baseName = GetDatabaseRuntimeName();
 
-        if(namer == null)
-            namer = new FixedStagingDatabaseNamer(baseName);
+        namer ??= new FixedStagingDatabaseNamer(baseName);
 
         return namer.GetDatabaseName(baseName, loadStage.ToLoadBubble());
     }
@@ -279,8 +278,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     public string GetRuntimeName(LoadBubble bubble, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
     {
         // If no naming scheme is specified, the default 'FixedStaging...' prepends the database name and appends '_STAGING'
-        if (tableNamingScheme == null)
-            tableNamingScheme = new FixedStagingDatabaseNamer(Database);
+        tableNamingScheme ??= new FixedStagingDatabaseNamer(Database);
 
         var baseName = GetQuerySyntaxHelper().GetRuntimeName(Name);
 

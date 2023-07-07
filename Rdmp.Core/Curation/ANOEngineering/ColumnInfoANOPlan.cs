@@ -141,8 +141,7 @@ public class ColumnInfoANOPlan:ICheckable
             //The ColumnInfo is extractable
             if (extractionInformation != null)
             {
-                if (toReturn == null)
-                    toReturn = extractionInformation.ExtractionCategory;
+                toReturn ??= extractionInformation.ExtractionCategory;
 
                 //there are multiple, if the new one is more restrictive then use the more restrictive category instead
                 toReturn = extractionInformation.ExtractionCategory > toReturn ? extractionInformation.ExtractionCategory : toReturn;

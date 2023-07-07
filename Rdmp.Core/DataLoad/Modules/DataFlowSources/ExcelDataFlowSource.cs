@@ -52,8 +52,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        if (dataReadFromFile == null)
-            dataReadFromFile = GetAllData(listener, cancellationToken);
+        dataReadFromFile ??= GetAllData(listener, cancellationToken);
 
         if (haveDispatchedDataTable)
             return null;

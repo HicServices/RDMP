@@ -379,8 +379,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     ///<inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        if (_cachedQuerySyntaxHelper == null)
-            _cachedQuerySyntaxHelper = TableInfo.GetQuerySyntaxHelper();
+        _cachedQuerySyntaxHelper ??= TableInfo.GetQuerySyntaxHelper();
 
         return _cachedQuerySyntaxHelper;
     }

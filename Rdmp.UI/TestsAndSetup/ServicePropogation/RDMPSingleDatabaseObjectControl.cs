@@ -75,7 +75,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
         if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
         {
-            var colorProvider = new BackColorProvider();
             _colorIndicator = new Control
             {
                 Dock = DockStyle.Top,
@@ -87,9 +86,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             Controls.Add(_colorIndicator);
         }
 
-        if (_readonlyIndicator == null)
-        {
-            _readonlyIndicator = new Label
+        _readonlyIndicator ??= new Label
             {
                 Dock = DockStyle.Top,
                 Location = new Point(0, 0),
@@ -100,8 +97,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0),
                 ForeColor = Color.Moccasin
             };
-
-        }
 
         if (databaseObject is IMightBeReadOnly ro)
         {
@@ -119,8 +114,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             }
         }
 
-        if (_binder == null)
-            _binder = new BinderWithErrorProviderFactory(activator);
+        _binder ??= new BinderWithErrorProviderFactory(activator);
 
         SetBindings(_binder, databaseObject);
 

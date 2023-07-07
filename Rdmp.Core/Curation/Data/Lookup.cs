@@ -100,8 +100,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     {
         get
         {
-            if (_description == null)
-                _description = Repository.GetObjectByID<ColumnInfo>(Description_ID);
+            _description ??= Repository.GetObjectByID<ColumnInfo>(Description_ID);
             return _description;
         }
     }
@@ -114,8 +113,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     {
         get
         {
-            if (_foreignKey == null)
-                _foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
+            _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
             return _foreignKey;
         }
     }
@@ -128,8 +126,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     {
         get
         {
-            if (_primaryKey == null)
-                _primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
+            _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
             return _primaryKey;
         }
     }

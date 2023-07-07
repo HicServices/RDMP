@@ -45,7 +45,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                     if(o == DBNull.Value || o == null)
                         continue;
 
-                    if(!(o is string s))
+                    if(o is not string s)
                         throw new ArgumentException(
                             $"Despite being marked as a string column, object found in column {toClean} was of type {o.GetType()}");
 

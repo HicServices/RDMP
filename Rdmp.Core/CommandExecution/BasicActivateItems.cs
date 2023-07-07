@@ -172,8 +172,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         //there was an error generating a data export repository or there was no repository specified
 
         //so just create a catalogue one
-        if (temp == null)
-            temp = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
+        temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
 
         // first time
         if (CoreChildProvider == null)

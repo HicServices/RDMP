@@ -31,7 +31,6 @@ public partial class RDMPTaskBarUI : UserControl
     public RDMPTaskBarUI()
     {
         InitializeComponent();
-        var provider = new BackColorProvider();
 
         btnHome.Image = FamFamFamIcons.application_home.ImageToBitmap();
         btnCatalogues.Image = CatalogueIcons.Catalogue.ImageToBitmap();

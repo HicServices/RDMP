@@ -45,8 +45,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
     {
         var newRows = new List<object[]>();
 
-        if(_aliasDictionary == null)
-            _aliasDictionary = GenerateAliasTable(TimeoutForAssemblingAliasTable);
+        _aliasDictionary ??= GenerateAliasTable(TimeoutForAssemblingAliasTable);
 
         var idx = toProcess.Columns.IndexOf(AliasColumnInInputDataTables);
 

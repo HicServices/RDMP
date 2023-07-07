@@ -23,8 +23,8 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     private Stopwatch sw = new();
     private int totalRecordsProcessed = 0;
     private int totalDuplicatesFound = 0;
-    private Dictionary<int, List<DataRow>> unqiueHashesSeen = new();
-        
+    private readonly Dictionary<int, List<DataRow>> _uniqueHashesSeen = new();
+
     /// <summary>
     /// Turns off notify messages about number of duplicates found/replaced
     /// </summary>
@@ -42,26 +42,26 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
             totalRecordsProcessed++;
             var hashOfItems = GetHashCode(row.ItemArray);
 
-            if (unqiueHashesSeen.ContainsKey(hashOfItems))
+            if (_uniqueHashesSeen.TryGetValue(hashOfItems,out var collisions))
             {
-                //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just incase.
-                if (unqiueHashesSeen[hashOfItems].Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
+                //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just in case.
+                if (collisions.Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
                 {
                     totalDuplicatesFound++;
                     continue; //it's a duplicate
                 }
 
-                unqiueHashesSeen[hashOfItems].Add(row);
+                collisions.Add(row);
             }
             else
             {
-                //its not a duplicate hashcode so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
-                unqiueHashesSeen.Add(hashOfItems, new List<DataRow>(new[] { row }));
+                //it's not a duplicate hashcode so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
+                _uniqueHashesSeen.Add(hashOfItems, new List<DataRow>(new[] { row }));
             }
 
             toReturn.Rows.Add(row.ItemArray);
         }
-            
+
         sw.Stop();
 
         if(!NoLogging)
@@ -71,19 +71,19 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
         }
         return toReturn;
     }
-        
+
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-            
+
     }
 
     public void Check(ICheckNotifier notifier)
     {
-            
+
     }
 
     /// <summary>
@@ -91,7 +91,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     /// for an array is unique even if the contents are the same.
     /// </summary>
     /// <remarks>
-    /// See Jon Skeet (C# MVP) response in the StackOverflow thread 
+    /// See Jon Skeet (C# MVP) response in the StackOverflow thread
     /// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
     /// </remarks>
     /// <param name="array">The array to generate a hash code for.</param>

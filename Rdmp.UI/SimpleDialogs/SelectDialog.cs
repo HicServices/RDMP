@@ -340,7 +340,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     private Bitmap GetHierarchyImage(object rowObject)
     {
-        if (!(rowObject is IMapsDirectlyToDatabaseTable m))
+        if (rowObject is not IMapsDirectlyToDatabaseTable m)
             return null;
 
         lock (oMatches)
@@ -364,7 +364,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     private object GetHierarchy(object rowObject)
     {
-        if (!(rowObject is IMapsDirectlyToDatabaseTable m))
+        if (rowObject is not IMapsDirectlyToDatabaseTable m)
             return null;
 
         lock(oMatches)
@@ -395,8 +395,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         if (focusedCollection != RDMPCollection.None && StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
             startingFilters = filter;
-
-        var backColorProvider = new BackColorProvider();
 
         // if there are at least 2 Types of object let them filter
         if(_types.Length > 1)

@@ -27,7 +27,7 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
     {
         _ect = ect;
 
-        if (!(activator.CoreChildProvider is DataExportChildProvider dx))
+        if (activator.CoreChildProvider is not DataExportChildProvider dx)
         {
             SetImpossible($"{nameof(activator.CoreChildProvider)} is not a {nameof(DataExportChildProvider)}");
             return;

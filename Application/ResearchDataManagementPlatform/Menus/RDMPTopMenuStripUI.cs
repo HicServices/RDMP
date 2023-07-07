@@ -348,7 +348,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void WindowFactory_TabChanged(object sender, IDockContent newTab)
     {
-        closeToolStripMenuItem.Enabled = newTab != null && !(newTab is PersistableToolboxDockContent);
+        closeToolStripMenuItem.Enabled = newTab != null && newTab is not PersistableToolboxDockContent;
         showHelpToolStripMenuItem.Enabled = newTab is RDMPSingleControlTab;
 
         if (newTab is not RDMPSingleControlTab singleObjectControlTab)

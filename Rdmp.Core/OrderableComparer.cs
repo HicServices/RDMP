@@ -80,6 +80,6 @@ public class OrderableComparer : IComparer, IComparer<object>
     /// <returns></returns>
     private static bool ShouldSortByName(object x)
     {
-        return x is INamed && !(x is IProject);
+        return x is INamed && x is not IProject;
     }
 }

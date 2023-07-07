@@ -153,8 +153,8 @@ public partial class ServerDatabaseTableSelector : UserControl
         else
         if (!e.Cancelled)
         {
-            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(t => ! (t is DiscoveredTableValuedFunction)).ToArray());
-            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(t => t is DiscoveredTableValuedFunction).ToArray());
+            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(static t => t is not DiscoveredTableValuedFunction).ToArray());
+            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(static t => t is DiscoveredTableValuedFunction).ToArray());
         }
                 
 

@@ -125,7 +125,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
                     WindowTitle = "New Extraction Configuration",
                     TaskDescription = "Enter a name for the new Extraction Configuration",
                     EntryLabel = "Name"
-                }, 255, $"{p.ProjectNumber} {DateTime.Now.ToString("yyyy-MM-dd")} Extraction".Trim(), out name, false))
+                }, 255, $"{p.ProjectNumber} {DateTime.Now:yyyy-MM-dd} Extraction".Trim(), out name, false))
                 return;
         }
 

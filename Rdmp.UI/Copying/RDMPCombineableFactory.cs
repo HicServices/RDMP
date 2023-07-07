@@ -169,7 +169,7 @@ public class RDMPCombineableFactory:ICombineableFactory
         if(modelObject is T modelObject1)
             return new [] { modelObject1 };
 
-        if (!(modelObject is IEnumerable array))
+        if (modelObject is not IEnumerable array)
             return null;
 
         var toReturn = new List<T>();
@@ -177,7 +177,7 @@ public class RDMPCombineableFactory:ICombineableFactory
         foreach (var o in array)
         {
             //if array contains anything that isn't a T
-            if (!(o is T o1))
+            if (o is not T o1)
                 return null; //it's not an array of T
 
             toReturn.Add(o1);

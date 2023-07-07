@@ -145,8 +145,7 @@ public class Validator
         _domainObject = domainObject;
 
         //first time initialize the results by calling its constructor (with all the ivs)
-        if(currentResults == null)
-            currentResults = new VerboseValidationResults(ItemValidators.ToArray());
+        currentResults ??= new VerboseValidationResults(ItemValidators.ToArray());
 
         var result = ValidateAgainstDomainObject();
 
@@ -189,8 +188,7 @@ public class Validator
 
     private static void InitializeSerializer()
     {
-        if (_serializer == null)
-            _serializer = new XmlSerializer(typeof (Validator), GetExtraTypes());
+        _serializer ??= new XmlSerializer(typeof (Validator), GetExtraTypes());
     }
 
     /// <summary>

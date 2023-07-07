@@ -83,11 +83,11 @@ internal class ExecuteCommandRunner:IRunner
         }
 
 
-        _picker = 
+        _picker =
             _options.CommandArgs != null && _options.CommandArgs.Any() ?
                 new CommandLineObjectPicker(_options.CommandArgs, _input) :
                 null;
-            
+
         if(!string.IsNullOrWhiteSpace(_options.File) && _options.Script == null)
             throw new Exception("Command line option File was provided but Script property was null.  The host API failed to deserialize the file or correctly use the ExecuteCommandOptions class");
 
@@ -100,21 +100,21 @@ internal class ExecuteCommandRunner:IRunner
             RunCommandExecutionLoop(repositoryLocator);
         else
             RunCommand(_options.CommandName);
-            
+
         return 0;
     }
 
     private void RunCommand(string command)
     {
-        if(_commands.ContainsKey(command))
+        if(_commands.TryGetValue(command,out var runner))
         {
-            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Trace,$"Running Command '{_commands[command].Name}'"));
-            _invoker.ExecuteCommand(_commands[command],_picker);
+            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Trace,$"Running Command '{runner.Name}'"));
+            _invoker.ExecuteCommand(runner,_picker);
         }
         else
         {
             var suggestions =
-                _commands.Keys.Where(c => CultureInfo.CurrentCulture.CompareInfo.IndexOf(c,command, CompareOptions.IgnoreCase) >= 0).ToArray();
+                _commands.Keys.Where(c => c.Contains(command,StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             var msg = new StringBuilder($"Unknown or Unsupported Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands");
 
@@ -124,7 +124,7 @@ internal class ExecuteCommandRunner:IRunner
 
             _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,msg.ToString()));
         }
-                
+
     }
 
     /// <summary>
@@ -166,7 +166,7 @@ internal class ExecuteCommandRunner:IRunner
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
     private string GetCommandAndPickerFromLine(string command, out CommandLineObjectPicker picker,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-    {    
+    {
         if (command.Contains(' '))
         {
             picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),_input);
@@ -211,7 +211,7 @@ internal class ExecuteCommandRunner:IRunner
                 }
             }
         }
-                
+
     }
 
     private static bool StartsWithEngineVerb(string s)
@@ -231,7 +231,7 @@ internal class ExecuteCommandRunner:IRunner
         char? inQuotes = null;
 
         var word = new StringBuilder();
-            
+
         for(var i =0; i<commandLine.Length;i++)
         {
             var c = commandLine[i];
@@ -240,7 +240,7 @@ internal class ExecuteCommandRunner:IRunner
             if(inQuotes == null && (c == '\'' || c == '"') && word.Length == 0)
             {
                 inQuotes = c;
-            }                
+            }
             else
             if(c == inQuotes)
             {
@@ -248,7 +248,7 @@ internal class ExecuteCommandRunner:IRunner
                 inQuotes = null;
             }
             else
-            if(c == ' ' && inQuotes == null) 
+            if(c == ' ' && inQuotes == null)
             {
                 //break character outside of quotes
                 var resultWord = word.ToString().Trim();
@@ -263,6 +263,6 @@ internal class ExecuteCommandRunner:IRunner
 
         var finalWord = word.ToString().Trim();
         if(!string.IsNullOrWhiteSpace(finalWord))
-            yield return finalWord;            
+            yield return finalWord;
     }
 }

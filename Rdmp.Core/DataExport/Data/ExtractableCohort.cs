@@ -270,8 +270,7 @@ where
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        if (_cachedQuerySyntaxHelper == null)
-            _cachedQuerySyntaxHelper = ExternalCohortTable.GetQuerySyntaxHelper();
+        _cachedQuerySyntaxHelper ??= ExternalCohortTable.GetQuerySyntaxHelper();
 
         return _cachedQuerySyntaxHelper;
     }
@@ -584,8 +583,7 @@ where
     /// <param name="s"></param>
     public void AppendToAuditLog(string s)
     {
-        if (AuditLog == null)
-            AuditLog = "";
+        AuditLog ??= "";
 
         AuditLog += $"{Environment.NewLine}{DateTime.Now} {Environment.UserName} {s}";
         SaveToDatabase();

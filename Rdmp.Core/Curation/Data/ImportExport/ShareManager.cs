@@ -105,10 +105,10 @@ public class ShareManager
             return null;
 
         var elements = persistenceString.Split(new []{PersistenceSeparator},StringSplitOptions.None);
-            
+
         if(elements.Length < 4)
             throw new Exception($"Malformed persistenceString:{persistenceString}");
-            
+
         //elements[0];//type name of the class we are fetching
         //elements[1]; //ID of the class
         //elements[2]; // Repository Type name
@@ -178,7 +178,7 @@ public class ShareManager
             return existingExport;
 
         var existingImport = _catalogueRepository.GetAllObjects<ObjectImport>().SingleOrDefault(e => e.IsReferenceTo(o));
-            
+
         if (existingImport != null)
             return new ObjectExport(_catalogueRepository, o, existingImport.SharingUIDAsGuid);
 
@@ -457,11 +457,11 @@ public class ShareManager
 
         //for finding properties decorated with [Relationship]
         var finder = new AttributePropertyFinder<RelationshipAttribute>(toCreate);
-            
+
         //If we have already got a local copy of this shared object?
         //either as an import or as an export
         var actual = (T)GetExistingImportObject(shareDefinition.SharingGuid) ?? (T)GetExistingExportObject(shareDefinition.SharingGuid);
-            
+
         //we already have a copy imported of the shared object
         if (actual != null)
         {
@@ -471,10 +471,8 @@ public class ShareManager
             foreach (var prop in TableRepository.GetPropertyInfos(typeof(T)))
             {
                 //don't update any ID columns or any with relationships on UPDATE
-                if (propertiesDictionary.ContainsKey(prop.Name) && finder.GetAttribute(prop) == null)
-                {
-                    SetValue(prop, propertiesDictionary[prop.Name], toCreate);
-                }
+                if (propertiesDictionary.TryGetValue(prop.Name, out var value) && finder.GetAttribute(prop) == null)
+                    SetValue(prop, value, toCreate);
                 else
                     prop.SetValue(toCreate, prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
 

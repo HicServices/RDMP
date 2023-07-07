@@ -509,8 +509,7 @@ public abstract class TableRepository : ITableRepository
 
     public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID= null) where T : IMapsDirectlyToDatabaseTable
     {
-        if (columnWithObjectID == null)
-            columnWithObjectID = $"{typeof(T).Name}_ID";
+        columnWithObjectID ??= $"{typeof(T).Name}_ID";
 
         using (var opener = GetConnection())
         {
@@ -547,8 +546,7 @@ public abstract class TableRepository : ITableRepository
     /// <returns></returns>
     public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null, T dbNullSubstition = default) where T : IMapsDirectlyToDatabaseTable
     {
-        if (columnWithObjectID == null)
-            columnWithObjectID = $"{typeof(T).Name}_ID";
+        columnWithObjectID ??= $"{typeof(T).Name}_ID";
 
         if (selectQuery.ToLower().Contains("order by "))
             throw new Exception("Select Query contained an ORDER BY statment in it!");
@@ -875,8 +873,7 @@ public abstract class TableRepository : ITableRepository
     {
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
 
-        if (_compatibleTypes == null)
-            _compatibleTypes = GetCompatibleTypes();
+        _compatibleTypes ??= GetCompatibleTypes();
 
         foreach (var type in _compatibleTypes)
             try

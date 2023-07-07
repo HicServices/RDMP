@@ -448,7 +448,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     {
         //now are there columns that...
         if (SelectColumns.Any(col =>
-                !(col.IColumn is AggregateCountColumn)  //are not count(*) style columns
+                col.IColumn is not AggregateCountColumn  //are not count(*) style columns
                 &&
                 !_skipGroupByForThese.Contains(col.IColumn))) //and are not being skipped for GROUP BY
         {

@@ -139,7 +139,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         try
         {
             foreach (var d in _deletables)
-                if (!(d is DatabaseEntity exists) ||
+                if (d is not DatabaseEntity exists ||
                     exists.Exists()) //don't delete stuff that doesn't exist!
                     d.DeleteInDatabase();
         }

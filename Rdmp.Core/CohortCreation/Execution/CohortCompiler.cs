@@ -141,12 +141,12 @@ public class CohortCompiler
         var toReturn = new List<ICompileable>();
         var globals = CohortIdentificationConfiguration.GetAllParameters();
         CohortIdentificationConfiguration.CreateRootContainerIfNotExists();
-            
+
         foreach (var joinable in CohortIdentificationConfiguration.GetAllJoinables())
             toReturn.Add(AddTask(joinable, globals));
 
         toReturn.AddRange( AddTasksRecursively(globals,CohortIdentificationConfiguration.RootCohortAggregateContainer,addSubcontainerTasks));
-            
+
         return toReturn;
     }
 
@@ -185,7 +185,7 @@ public class CohortCompiler
                 toReturn.Add(Task.Run(()=> { return AddTask(container, globals); }));
             }
         }
-                
+
 
         foreach (var c in container.GetOrderedContents())
         {
@@ -470,7 +470,7 @@ public class CohortCompiler
 
         var sourceSyntax = server.GetQuerySyntaxHelper();
         var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
-            
+
         //if we have a change in syntax e.g. read from Oracle write to Sql Server
         if (sourceSyntax.DatabaseType != destinationSyntax.DatabaseType)
         {
@@ -512,54 +512,46 @@ public class CohortCompiler
     {
         lock(Tasks)
         {
-            if (Tasks.ContainsKey(compileable))
+            if (!Tasks.TryGetValue(compileable, out var execution)) return;
+            if (execution is { IsExecuting: true })
             {
-                var execution = Tasks[compileable];
+                execution.Cancel();
+            }
 
-                if (execution != null && execution.IsExecuting)
-                {
-                    execution.Cancel();
-                }
+            // cancel the source
+            if(
+                compileable.State is CompilationState.Building or CompilationState.Executing)
+            {
+                compileable.CancellationTokenSource.Cancel();
+            }
 
-                // cancel the source
-                if(
-                    compileable.State == CompilationState.Building ||
-                    compileable.State == CompilationState.Executing)
-                {
-                    compileable.CancellationTokenSource.Cancel();
-                }
-
-
-                if (alsoClearFromTaskList)
-                {
-                    execution?.Dispose();
-                    Tasks.Remove(compileable);
-                }
+            if (alsoClearFromTaskList)
+            {
+                execution?.Dispose();
+                Tasks.Remove(compileable);
             }
         }
-            
+
     }
 
     public int GetAliveThreadCount()
     {
-        return Threads.Count(t => t.IsAlive);
+        return Threads.Count(static t => t.IsAlive);
     }
 
     public string GetCachedQueryUseCount(ICompileable task)
     {
-        if (!Tasks.ContainsKey(task) || Tasks[task] == null)
+        if (!Tasks.TryGetValue(task,out var execution) || execution == null)
             return "Unknown";
 
-        var execution = Tasks[task];
         return $"{execution.SubqueriesCached}/{execution.SubQueries}";
     }
 
     public bool AreaAllQueriesCached(ICompileable task )
     {
-        if (!Tasks.ContainsKey(task) || Tasks[task] == null)
+        if (!Tasks.TryGetValue(task,out var execution) || execution == null)
             return false;
 
-        var execution = Tasks[task];
         return execution.SubqueriesCached == execution.SubQueries && execution.SubQueries >=1;
     }
 }

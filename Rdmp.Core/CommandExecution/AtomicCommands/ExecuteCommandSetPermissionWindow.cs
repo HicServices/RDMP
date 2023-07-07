@@ -37,8 +37,7 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution,IAtomicCo
     {
         base.Execute();
 
-        if(_window == null)
-            _window = SelectOne<PermissionWindow>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _window ??= SelectOne<PermissionWindow>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
         if(_window == null)
             return;

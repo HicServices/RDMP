@@ -40,8 +40,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     {
         base.Execute();
 
-        if (_aggregateConfiguration == null)
-            _aggregateConfiguration = SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _aggregateConfiguration ??= SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
         if (_aggregateConfiguration == null)
             return;

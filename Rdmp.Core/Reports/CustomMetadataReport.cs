@@ -391,8 +391,7 @@ public class CustomMetadataReport
                 // it's just a regular line of text
 
                 //if it's the first line of a new block we get a plaintext block
-                if(currentSection == null)
-                    currentSection = new CatalogueSection(true,i);
+                currentSection ??= new CatalogueSection(true,i);
 
                 currentSection.Body.Add(str);
             }

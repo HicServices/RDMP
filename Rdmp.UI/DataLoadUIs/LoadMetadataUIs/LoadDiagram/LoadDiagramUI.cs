@@ -269,8 +269,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                 AddCheckColumn = false
             });
 
-        if (_dragDropProvider == null)
-            _dragDropProvider = new DragDropProvider(new RDMPCombineableFactory(), new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
+        _dragDropProvider ??= new DragDropProvider(new RDMPCombineableFactory(), new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
             
         _loadMetadata = databaseObject;
         RefreshUIFromDatabase();

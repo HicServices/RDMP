@@ -109,21 +109,13 @@ public class KVPAttacherTest:DatabaseTests
             attacher.PipelineForReadingFromFlatFile = p;
             attacher.TableName = "KVPTestTable";
 
-            switch (testCase)
+            attacher.FilePattern = testCase switch
             {
-                case KVPAttacherTestCase.OneFileWithPrimaryKey:
-                    attacher.FilePattern = filepk;
-                    break;
-                case KVPAttacherTestCase.OneFileWithoutPrimaryKey:
-                    attacher.FilePattern = fileNoPk;
-                    break;
-                case KVPAttacherTestCase.TwoFilesWithPrimaryKey:
-                    attacher.FilePattern = "kvpTestFilePK*.*";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(testCase));
-            }
-                
+                KVPAttacherTestCase.OneFileWithPrimaryKey => filepk,
+                KVPAttacherTestCase.OneFileWithoutPrimaryKey => fileNoPk,
+                KVPAttacherTestCase.TwoFilesWithPrimaryKey => "kvpTestFilePK*.*",
+                _ => throw new ArgumentOutOfRangeException(nameof(testCase))
+            };
 
             if (hasPk)
                 attacher.PrimaryKeyColumns = "Person";

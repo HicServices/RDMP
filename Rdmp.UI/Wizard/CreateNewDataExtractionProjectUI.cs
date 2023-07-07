@@ -288,8 +288,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             ragExecute.Reset();
 
             //create the project
-            if (_project == null)
-                _project = new Project(Activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
+            _project ??= new Project(Activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
 
             _project.ProjectNumber = int.Parse(tbProjectNumber.Text);
             _project.ExtractionDirectory = tbExtractionDirectory.Text;

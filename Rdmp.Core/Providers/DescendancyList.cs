@@ -158,7 +158,7 @@ public class DescendancyList
         return Parents.LastOrDefault(parent => 
             !TypesThatAreNotUsefulParents.Contains(parent.GetType())
             &&
-            !(parent is IContainer)
+            parent is not IContainer
         );
     }
     /// <summary>
@@ -171,7 +171,7 @@ public class DescendancyList
         return Parents.Where(parent =>
             !TypesThatAreNotUsefulParents.Contains(parent.GetType())
             &&
-            !(parent is IContainer)
+            parent is not IContainer
         );
     }
 }

@@ -53,10 +53,8 @@ public partial class SQLBeforeAndAfterViewer : Form
         ScintillaLineHighlightingHelper.ClearAll(QueryEditorAfter);
         ScintillaLineHighlightingHelper.ClearAll(QueryEditorBefore);
             
-        if (sqlBefore == null)
-            sqlBefore = "";
-        if (sqlAfter == null)
-            sqlAfter = "";
+        sqlBefore ??= "";
+        sqlAfter ??= "";
 
         var diff = new Diff();
 
