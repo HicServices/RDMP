@@ -134,7 +134,7 @@ public class CustomMetadataReport
 
     private static ITableInfo GetTable(Catalogue c)
     {
-        return c.GetTableInfosIdeallyJustFromMainTables().OrderBy(t => t.IsPrimaryExtractionTable).FirstOrDefault();
+        return c.GetTableInfosIdeallyJustFromMainTables().MinBy(t => t.IsPrimaryExtractionTable);
     }
 
     private void AddDQEReplacements()

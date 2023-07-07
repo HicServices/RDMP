@@ -500,7 +500,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
     private void HandleReorder(ExtractableColumn sourceColumn, IOrderable targetOrderable, DropTargetLocation location)
     {
         if (targetOrderable == null)
-            targetOrderable = olvSelected.Objects.Cast<IOrderable>().OrderByDescending(o => o.Order).FirstOrDefault();
+            targetOrderable = olvSelected.Objects.Cast<IOrderable>().MaxBy(o => o.Order);
 
         if (targetOrderable == null)
             return;
