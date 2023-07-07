@@ -271,9 +271,12 @@ public class UITests : UnitTests
 
     private List<string> GetAllErrorProviderErrorsShown()
     {
-        return GetControl<Control>()
-            .Select(static c => (c, eps: GetErrorProviders(c).Where(static ep => ep.HasErrors).ToArray())).SelectMany(
-                static t => t.eps.Select(ep => ep.GetError(t.c)).Where(static s => !string.IsNullOrWhiteSpace(s))).ToList();
+        var controls = GetControl<Control>().ToArray();
+        var providers = controls.SelectMany(GetErrorProviders)
+            .Union(ItemActivator.Results.RegisteredRules.Select(static r => r.ErrorProvider)).Distinct();
+        var errors=providers.Where(static ep=>ep.HasErrors)
+            .SelectMany(ep => controls.Select(ep.GetError)).Where(static s=>!string.IsNullOrWhiteSpace(s));
+        return errors.ToList();
     }
 
     private static readonly ConcurrentDictionary<Type, FieldInfo[]>  ErrorProviderFieldCache =new();
