@@ -55,7 +55,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         if (olvColumns.SelectedObject is not ExtractionInformation ei)
             return null;
 
-            var c = ei.GetRuntimeName();
+        var c = ei.GetRuntimeName();
 
         //The validator can contains all the columns in the Catalogue (Dataset) but columns which don't have any validation on them yet might not be in its ItemValidators collection
         if (!Validator.ItemValidators.Any(iv => iv.TargetProperty.Equals(c)))
