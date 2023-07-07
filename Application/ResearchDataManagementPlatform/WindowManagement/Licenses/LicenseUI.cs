@@ -32,7 +32,7 @@ public partial class LicenseUI : Form
             rtLicense.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
-                    btnAccept_Click(btnAccept, new EventArgs());
+                    btnAccept_Click(btnAccept, EventArgs.Empty);
 
                 // prevents it going BONG!
                 e.SuppressKeyPress = true;

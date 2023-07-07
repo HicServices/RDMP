@@ -40,7 +40,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
                 else
                     suggestComboBox1.SelectedIndex = -1;
 
-                suggestComboBox1_SelectedIndexChanged(this,new EventArgs());
+                suggestComboBox1_SelectedIndexChanged(this,EventArgs.Empty);
             }
         }
     }
@@ -63,7 +63,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
         if(_settingUp)
             return;
 
-        SelectedItemChanged?.Invoke(this,new EventArgs());
+        SelectedItemChanged?.Invoke(this,EventArgs.Empty);
     }
 
     public void SetUp(IEnumerable<IMapsDirectlyToDatabaseTable> available)

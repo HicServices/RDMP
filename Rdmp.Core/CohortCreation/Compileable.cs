@@ -50,7 +50,7 @@ public abstract class Compileable:ICompileable
         {
             _state = value;
             var h = StateChanged;
-            h?.Invoke(this,new EventArgs());
+            h?.Invoke(this,EventArgs.Empty);
         }
         get => _state;
     }

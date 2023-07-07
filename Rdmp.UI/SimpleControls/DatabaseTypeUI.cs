@@ -62,7 +62,7 @@ public partial class DatabaseTypeUI : UserControl
 
         DatabaseType = (DatabaseType)ddDatabaseType.SelectedItem;
 
-        DatabaseTypeChanged?.Invoke(this,new EventArgs());
+        DatabaseTypeChanged?.Invoke(this,EventArgs.Empty);
 
         changing = false;
     }

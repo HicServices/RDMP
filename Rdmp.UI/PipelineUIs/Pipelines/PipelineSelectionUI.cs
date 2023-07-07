@@ -175,7 +175,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         if(!Equals(_previousSelection,Pipeline))
         {
-            PipelineChanged?.Invoke(this,new EventArgs());
+            PipelineChanged?.Invoke(this,EventArgs.Empty);
             _previousSelection = Pipeline;
         }
                 
@@ -208,7 +208,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         ddPipelines.SelectedItem = Pipeline;
 
         // user may have edited it so raise the changed event
-        PipelineChanged?.Invoke(this, new EventArgs());
+        PipelineChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void btnDeletePipeline_Click(object sender, EventArgs e)
