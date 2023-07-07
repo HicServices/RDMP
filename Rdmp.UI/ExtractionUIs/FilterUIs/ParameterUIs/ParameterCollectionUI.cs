@@ -245,30 +245,30 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void olvParameters_KeyDown(object sender, KeyEventArgs e)
     {
+        // If the key isn't Delete, don't go building a list of things we'd delete then throwing it away!
+        if (e.KeyCode != Keys.Delete) return;
+
         var deletables = olvParameters.SelectedObjects.OfType<IDeleteable>().ToArray();
 
-        bool dr;
-        if(deletables.Any() && e.KeyCode == Keys.Delete)
+        if (!deletables.Any()) return;
+
+        var dr = Activator.YesNo(
+            deletables.Length == 1
+                ? $"Confirm deleting {deletables[0]}"
+                : $"Confirm deleting {deletables.Length} Parameters?", "Confirm delete");
+
+        if (!dr) return;
+
+        foreach (var d in deletables)
         {
-            if (deletables.Length == 1)
-                dr = Activator.YesNo($"Confirm deleting {deletables[0]}", "Confirm Delete?");
-            else
-                dr =  Activator.YesNo($"Confirm deleting {deletables.Length} Parameters?", "Confirm delete");
-
-            if(dr)
-            {
-                foreach (IDeleteable d in olvParameters.SelectedObjects)
-                {
-                    d.DeleteInDatabase();
-                    olvParameters.RemoveObject(d);
-                    Options.ParameterManager.RemoveParameter((ISqlParameter)d);
-
-                    DisableRelevantObjects();
-                    parameterEditorScintillaControl1.RegenerateSQL();
-                    UpdateTabVisibility();
-                }
-            }
+            d.DeleteInDatabase();
+            olvParameters.RemoveObject(d);
+            Options.ParameterManager.RemoveParameter((ISqlParameter)d);
         }
+        // Rebuild once after deleting all objects, instead of after each deletion
+        DisableRelevantObjects();
+        parameterEditorScintillaControl1.RegenerateSQL();
+        UpdateTabVisibility();
     }
 
     private void olvParameters_CellEditFinishing(object sender, CellEditEventArgs e)
@@ -306,37 +306,32 @@ public partial class ParameterCollectionUI : RDMPUserControl
             return;
         }
 
-        if (e.RowObject is IRevertable revertable)
-        {
-            var changes = revertable.HasLocalChanges();
-
-            if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                revertable.SaveToDatabase();
-
-            //if the name has changed handle renaming
-            if(oldParameterName != null)
-                if (Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
-                {
-                    var owner = parameter.GetOwnerIfAny();
-
-                    if((owner ?? (object)parameter) is DatabaseEntity toRefresh)
-                        Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(toRefresh));
-                }
-
-
-            //anything that was a problem before
-            var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;
-            DisableRelevantObjects();
-            parameterEditorScintillaControl1.RegenerateSQL();
-            UpdateTabVisibility();
-
-            //might not be a problem anymore so refresh the icons on them (and everything else)
-            olvParameters.RefreshObjects(problemsBefore.ToList());
-
-        }
-        else
+        if (e.RowObject is not IRevertable revertable)
             throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
 
+        var changes = revertable.HasLocalChanges();
+
+        if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+            revertable.SaveToDatabase();
+
+        //if the name has changed handle renaming
+        if (oldParameterName != null && Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
+        {
+            var owner = parameter.GetOwnerIfAny();
+
+            if ((owner ?? (object)parameter) is DatabaseEntity toRefresh)
+                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(toRefresh));
+        }
+
+
+        //anything that was a problem before
+        var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;
+        DisableRelevantObjects();
+        parameterEditorScintillaControl1.RegenerateSQL();
+        UpdateTabVisibility();
+
+        //might not be a problem anymore so refresh the icons on them (and everything else)
+        olvParameters.RefreshObjects(problemsBefore.ToList());
     }
 
     private object GroupKeyGetter(object rowObject)
