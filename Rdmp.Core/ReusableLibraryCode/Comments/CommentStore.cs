@@ -38,7 +38,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         "ScintillaNET.xml",
         "nunit.framework.xml"
     };
-        
+
     public virtual void ReadComments(params string[] locations)
     {
         foreach (var location in locations)
@@ -65,7 +65,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         doc.IterateThroughAllNodes(AddXmlDoc);
 
     }
-        
+
     /// <summary>
     /// Adds the given member xml doc to the <see cref="CommentStore"/>
     /// </summary>
@@ -81,7 +81,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
         if(memberName == null || string.IsNullOrWhiteSpace(summary))
             return;
-                
+
         //it's a Property get Type.Property (not fully specified)
         if (memberName.StartsWith("P:") || memberName.StartsWith("T:"))
             Add(GetLastTokens(memberName),summary.Trim());
@@ -93,7 +93,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
             return null;
 
         var sb = new StringBuilder();
-            
+
         summaryTag.IterateThroughAllNodes(
             n =>
             {
@@ -154,7 +154,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
         if (memberName.StartsWith("M:"))
             return GetLastTokens(memberName, 2);
-            
+
         return memberName;
     }
 
@@ -196,7 +196,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    public string this[string index] => _dictionary.ContainsKey(index) ? _dictionary[index] : null; // Indexer declaration  
+    public string this[string index] => _dictionary.TryGetValue(index,out var value) ? value : null; // Indexer declaration
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
     {
@@ -294,10 +294,10 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <returns></returns>
     public static string FormatAsParagraphs(string message)
     {
-            
+
         message = Regex.Replace(message, $"{Environment.NewLine}\\s*",Environment.NewLine + Environment.NewLine);
         message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", m => m.Groups[2].Value);
-            
+
         return message;
     }
 }

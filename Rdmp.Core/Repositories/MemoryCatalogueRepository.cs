@@ -239,13 +239,13 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
     {
-        if(CredentialsDictionary.ContainsKey(tableInfo))
+        if(CredentialsDictionary.TryGetValue(tableInfo,out var creds))
         {
-            if (CredentialsDictionary[tableInfo].ContainsKey(context))
-                return CredentialsDictionary[tableInfo][context];
+            if (creds.TryGetValue(context,out var cred))
+                return cred;
 
-            if (CredentialsDictionary[tableInfo].ContainsKey(DataAccessContext.Any))
-                return CredentialsDictionary[tableInfo][DataAccessContext.Any];
+            if (creds.TryGetValue(DataAccessContext.Any,out cred))
+                return cred;
         }
 
 

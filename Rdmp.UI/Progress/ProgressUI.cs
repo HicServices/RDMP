@@ -155,32 +155,32 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         lblSuccess.Visible = false;
     }
 
-    private Dictionary<object, HashSet<string>> JobsreceivedFromSender = new();
-    private object oProgressQueLock = new();
-    private Dictionary<string, QueuedProgressMessage> ProgressQueue = new();
-    private object oNotifyQueLock = new();
-    private List<ProgressUIEntry> NotificationQueue = new();
+    private readonly Dictionary<object, HashSet<string>> _jobsReceivedFromSender = new();
+    private readonly object _oProgressQueueLock = new();
+    private readonly Dictionary<string, QueuedProgressMessage> _progressQueue = new();
+    private readonly object _oNotifyQueLock = new();
+    private readonly List<ProgressUIEntry> _notificationQueue = new();
 
     public void Progress(object sender,ProgressEventArgs args)
     {
-        lock (oProgressQueLock)
+        lock (_oProgressQueueLock)
         {
             //we have received an update to this message
-            if (ProgressQueue.ContainsKey(args.TaskDescription))
+            if (_progressQueue.TryGetValue(args.TaskDescription,out var message))
             {
-                ProgressQueue[args.TaskDescription].DateTime = DateTime.Now;
-                ProgressQueue[args.TaskDescription].ProgressEventArgs = args;
-                ProgressQueue[args.TaskDescription].Sender = sender;
+                message.DateTime = DateTime.Now;
+                message.ProgressEventArgs = args;
+                message.Sender = sender;
             }
             else
-                ProgressQueue.Add(args.TaskDescription,new QueuedProgressMessage(DateTime.Now, args, sender));
+                _progressQueue.Add(args.TaskDescription,new QueuedProgressMessage(DateTime.Now, args, sender));
         }
     }
     private void Notify(object sender, NotifyEventArgs notifyEventArgs)
     {
-        lock (oNotifyQueLock)
+        lock (_oNotifyQueLock)
         {
-            NotificationQueue.Add(new ProgressUIEntry(sender,DateTime.Now, notifyEventArgs));
+            _notificationQueue.Add(new ProgressUIEntry(sender,DateTime.Now, notifyEventArgs));
         }
     }
 
@@ -212,11 +212,11 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private void ProcessAndClearQueuedProgressMessages(object sender, EventArgs e)
     {
-        lock (oProgressQueLock)
+        lock (_oProgressQueueLock)
         {
-            while(ProgressQueue.Any())
+            while(_progressQueue.Any())
             {
-                var message = ProgressQueue.First();
+                var message = _progressQueue.First();
                 var args = message.Value.ProgressEventArgs;
 
                 var label = args.Progress.UnitOfMeasurement switch
@@ -239,18 +239,18 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                         progress.Rows.Find(args.TaskDescription)["Processing Time"] = args.TimeSpentProcessingSoFar;
                     }
 
-                ProgressQueue.Remove(message.Key);
+                _progressQueue.Remove(message.Key);
 
                 AutoReizeColumns();
             }
         }
 
-        lock (oNotifyQueLock)
+        lock (_oNotifyQueLock)
         {
-            if (NotificationQueue.Any())
+            if (_notificationQueue.Any())
             {
-                olvProgressEvents.AddObjects(NotificationQueue);
-                NotificationQueue.Clear();
+                olvProgressEvents.AddObjects(_notificationQueue);
+                _notificationQueue.Clear();
 
                 AutoReizeColumns();
             }
@@ -273,15 +273,15 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
 
         //ensure we have a records of the sender
-        if (!JobsreceivedFromSender.ContainsKey(sender))
-            JobsreceivedFromSender.Add(sender, new HashSet<string>());
+        if (!_jobsReceivedFromSender.ContainsKey(sender))
+            _jobsReceivedFromSender.Add(sender, new HashSet<string>());
 
         //new job we have not seen before
-        if (!JobsreceivedFromSender[sender].Contains(job))
-            JobsreceivedFromSender[sender].Add(job); //add it - even if sender has a bad rep for sending lots of jobs
+        if (!_jobsReceivedFromSender[sender].Contains(job))
+            _jobsReceivedFromSender[sender].Add(job); //add it - even if sender has a bad rep for sending lots of jobs
 
         //see if sender has been sending loads of unique job messages
-        if (JobsreceivedFromSender[sender].Count > MaxNumberOfJobsAcceptableFromSenderBeforeThrottlingKicksIn) //it has told us about more than 5 jobs so far
+        if (_jobsReceivedFromSender[sender].Count > MaxNumberOfJobsAcceptableFromSenderBeforeThrottlingKicksIn) //it has told us about more than 5 jobs so far
         {
             MergeAllJobsForSenderIntoSingleRowAndCumulateResult(sender, job, progressAmount, label);
             return true;
@@ -294,7 +294,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
         var startAtProgressAmount = 0;
 
-        foreach (var jobsAlreadySeen in JobsreceivedFromSender[sender])
+        foreach (var jobsAlreadySeen in _jobsReceivedFromSender[sender])
             if (progress.Rows.Contains(jobsAlreadySeen))
             {
                 startAtProgressAmount += Convert.ToInt32(progress.Rows.Find(jobsAlreadySeen)["Count"]);
@@ -307,9 +307,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             for (; i < 500; i++)
             {
-                var startsWith = JobsreceivedFromSender[sender].First()[..i];
+                var startsWith = _jobsReceivedFromSender[sender].First()[..i];
 
-                if (!JobsreceivedFromSender[sender].All(job => job[..i].StartsWith(startsWith)))
+                if (!_jobsReceivedFromSender[sender].All(job => job[..i].StartsWith(startsWith)))
                     break;
             }
         }
@@ -320,7 +320,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
         var floodJob =
             //no shared prefix
-            i ==1 ? $"{sender} FloodOfMessages" : $"{JobsreceivedFromSender[sender].First()[..(i - 1)]}... FloodOfMessages";
+            i ==1 ? $"{sender} FloodOfMessages" : $"{_jobsReceivedFromSender[sender].First()[..(i - 1)]}... FloodOfMessages";
 
         //add a new row (or edit existing) for the flood of messages from sender
         if (progress.Rows.Contains(floodJob))
@@ -434,7 +434,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     public NotifyEventArgs GetWorst()
     {
 
-        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
+        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(_notificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
 
         if(worstEntry == null)
             return null;

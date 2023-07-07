@@ -152,8 +152,8 @@ public class FlatFileToDataTablePusher
 
                 try
                 {
-                    if (hackedValue is string s && typeDeciderFactory.Dictionary.ContainsKey(dt.Columns[_headers[i]].DataType))
-                        hackedValue = typeDeciderFactory.Dictionary[dt.Columns[_headers[i]].DataType].Parse(s);
+                    if (hackedValue is string s && typeDeciderFactory.Dictionary.TryGetValue(dt.Columns[_headers[i]].DataType,out var decider))
+                        hackedValue = decider.Parse(s);
 
                     rowValues.Add(_headers[i], hackedValue);
                 }
@@ -302,8 +302,8 @@ public class FlatFileToDataTablePusher
             foreach (DataRow row in workingTable.Rows)
                 dtCloned.Rows.Add(row.ItemArray.Select((v,idx)=>
 
-                    deciders.ContainsKey(idx) && v is string s?
-                        deciders[idx].Parse(s) :
+                    deciders.TryGetValue(idx,out var decider) && v is string s?
+                        decider.Parse(s) :
                         v).ToArray());
 
             return dtCloned;
