@@ -28,7 +28,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
     public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator, FileCollectionCombineable fileCombineable):base(itemActivator)
     {
-        if(!fileCombineable.Files.All(f=>f.Extension == PackPluginRunner.PluginPackageSuffix))
+        if(fileCombineable.Files.Any(f => f.Extension != PackPluginRunner.PluginPackageSuffix))
         {
             SetImpossible($"Plugins must {PackPluginRunner.PluginPackageSuffix}"); 
             return;

@@ -28,8 +28,7 @@ internal class ExecuteCommandViewCommits : BasicUICommandExecution
         if (
             !activator.RepositoryLocator.CatalogueRepository
                 .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
-                .Where(m => m.IsReferenceTo(o))
-                .Any())
+                .Any(m => m.IsReferenceTo(o)))
         {
             SetImpossible("No commits have been made yet");
         }

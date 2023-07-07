@@ -36,7 +36,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
     /// </summary>
     public bool IncludeCohortID
     {
-        get => _arguments.ContainsKey(IncludeCohortIDKey) ? bool.Parse(_arguments[IncludeCohortIDKey]) : true;
+        get => !_arguments.ContainsKey(IncludeCohortIDKey) || bool.Parse(_arguments[IncludeCohortIDKey]);
         set => _arguments[IncludeCohortIDKey] = value.ToString();
     }
 

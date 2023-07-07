@@ -167,7 +167,7 @@ public class SelectedDataSetsChecker : ICheckable
         foreach (var grouping in request.ColumnsToExtract.GroupBy(c=>c.Order).Where(g=>g.Count()>1))
             notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) that share the same Order '{ grouping.Key }'",CheckResult.Fail));
 
-        // Warn user if stuff is out of sync with the Catalogue version (changes have happened to the master but not propgated to the copy in this extraction)
+        // Warn user if stuff is out of sync with the Catalogue version (changes have happened to the master but not propagated to the copy in this extraction)
         var outOfSync = selectedcols.OfType<ExtractableColumn>().Where(c => c.IsOutOfSync()).ToArray();
         if(outOfSync.Any())
             notifier.OnCheckPerformed(new CheckEventArgs(
@@ -175,8 +175,7 @@ public class SelectedDataSetsChecker : ICheckable
 
         var nonSelectedCore = cata.GetAllExtractionInformation(ExtractionCategory.Core)
             .Union(cata.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
-            .Where(ei => !ei.IsExtractionIdentifier &&
-                         !selectedcols.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == ei.ID))
+            .Where(ei => !ei.IsExtractionIdentifier && selectedcols.OfType<ExtractableColumn>().All(ec => ec.CatalogueExtractionInformation_ID != ei.ID))
             .ToArray();
 
         if (nonSelectedCore.Any())
@@ -198,7 +197,7 @@ public class SelectedDataSetsChecker : ICheckable
             {
                 using (var con = server.BeginNewTransactedConnection())
                 {
-                    //incase user somehow manages to write a filter/transform that nukes data or something
+                    //in case user somehow manages to write a filter/transform that nukes data or something
 
                     DbCommand cmd;
 

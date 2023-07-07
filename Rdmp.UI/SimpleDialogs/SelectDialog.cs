@@ -298,8 +298,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         var type = mapsDirectlyToDatabaseTables.First().GetType();
 
-        // types differ (use All to jump out ASAP if theres a billion objects)
-        if (!mapsDirectlyToDatabaseTables.All(m => m.GetType() == type))
+        // types differ (use Any to jump out ASAP if there are a billion objects)
+        if (mapsDirectlyToDatabaseTables.Any(m => m.GetType() != type))
             return;
 
         //all objects are the same Type

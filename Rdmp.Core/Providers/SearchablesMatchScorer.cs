@@ -174,11 +174,11 @@ public class SearchablesMatchScorer
 
     private void SetupRespectUserSettings()
     {
-        _showInternalCatalogues = RespectUserSettings ? UserSettings.ShowInternalCatalogues : true;
-        _showDeprecatedCatalogues = RespectUserSettings ? UserSettings.ShowDeprecatedCatalogues : true;
-        _showColdStorageCatalogues = RespectUserSettings ? UserSettings.ShowColdStorageCatalogues : true;
-        _showProjectSpecificCatalogues = RespectUserSettings ? UserSettings.ShowProjectSpecificCatalogues : true;
-        _showNonExtractableCatalogues = RespectUserSettings ? UserSettings.ShowNonExtractableCatalogues : true;
+        _showInternalCatalogues = !RespectUserSettings || UserSettings.ShowInternalCatalogues;
+        _showDeprecatedCatalogues = !RespectUserSettings || UserSettings.ShowDeprecatedCatalogues;
+        _showColdStorageCatalogues = !RespectUserSettings || UserSettings.ShowColdStorageCatalogues;
+        _showProjectSpecificCatalogues = !RespectUserSettings || UserSettings.ShowProjectSpecificCatalogues;
+        _showNonExtractableCatalogues = !RespectUserSettings || UserSettings.ShowNonExtractableCatalogues;
     }
 
     private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, string[] explicitTypeNames, CancellationToken cancellationToken)

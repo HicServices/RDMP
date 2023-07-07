@@ -89,9 +89,9 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
     {
         // get the latest log entry
         var unfilteredResults = logManager.GetArchivalDataLoadInfos(LogRootObject.GetDistinctLoggingTask(), null, null);
-        var latest = LogRootObject.FilterRuns(unfilteredResults)
-            .Where(a=>!checkInclusionCriteria || Include(a))
-            .FirstOrDefault();
+        var latest = LogRootObject
+            .FilterRuns(unfilteredResults)
+            .FirstOrDefault(a => !checkInclusionCriteria || Include(a));
 
         var messageClarification = checkInclusionCriteria ? " (where rows were loaded)" : "";
 

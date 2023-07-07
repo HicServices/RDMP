@@ -52,7 +52,7 @@ ConnectionString (Required)";
         var schema = Trim("Schema:",m.Groups[2].Value);
 
         var isViewStr = Trim("IsView:",m.Groups[3].Value);
-        var isViewBool = isViewStr == null ? false : bool.Parse(isViewStr);
+        var isViewBool = isViewStr != null && bool.Parse(isViewStr);
 
         var dbType = (DatabaseType)Enum.Parse(typeof(DatabaseType),m.Groups[4].Value);
         var dbName = Trim("Name:",m.Groups[5].Value);

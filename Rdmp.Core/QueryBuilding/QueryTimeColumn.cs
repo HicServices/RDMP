@@ -214,7 +214,7 @@ public class QueryTimeColumn: IComparable
 
                 if (supplementalJoins != null)
                     foreach (var supplementalJoin in supplementalJoins)
-                        if (!tablesUsedInQuery.Any(t => t.ID == supplementalJoin.ForeignKey.TableInfo_ID))
+                        if (tablesUsedInQuery.All(t => t.ID != supplementalJoin.ForeignKey.TableInfo_ID))
                             throw new QueryBuildingException(
                                 $"Lookup requires supplemental join to column {supplementalJoin.ForeignKey} which is contained in a table that is not part of the SELECT column collection");
             }

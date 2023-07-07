@@ -105,7 +105,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
     }
     private static void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)
     {
-        var msg = toMem.Messages.Where(m => m.Result == CheckResult.Fail).First();
+        var msg = toMem.Messages.First(m => m.Result == CheckResult.Fail);
 
         Assert.AreEqual(expectedMessage,msg.Message,"Expected error message was wrong");
         Assert.AreEqual(expectedFix,msg.ProposedFix,"Expected proposed fix was wrong");
