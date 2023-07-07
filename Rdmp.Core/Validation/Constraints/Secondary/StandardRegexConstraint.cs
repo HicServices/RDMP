@@ -48,10 +48,7 @@ public class StandardRegexConstraint : SecondaryConstraint
         {
             _standardRegexID = value;
 
-            if (value == 0)
-                CatalogueStandardRegex = null;
-            else
-                CatalogueStandardRegex = _repository.GetObjectByID<StandardRegex>(value);
+            CatalogueStandardRegex = value == 0 ? null : _repository.GetObjectByID<StandardRegex>(value);
         }
     }
 
@@ -80,7 +77,7 @@ public class StandardRegexConstraint : SecondaryConstraint
 
     public override void RenameColumn(string originalName, string newName)
     {
-            
+
     }
 
     public override string GetHumanReadableDescriptionOfValidation()
@@ -91,12 +88,12 @@ public class StandardRegexConstraint : SecondaryConstraint
 
         return "Checks that values match the supplied agency specific StandardRegex defined in the Catalogue for core concepts (e.g. Gender)";
     }
-        
+
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
         if (value == null || value == DBNull.Value)
             return null;
-            
+
         if(string.IsNullOrWhiteSpace(value.ToString()))
             return null;
 
@@ -105,7 +102,7 @@ public class StandardRegexConstraint : SecondaryConstraint
 
         return new ValidationFailure(
             $"Value {value} did not match pattern for StandardRegex concept '{CatalogueStandardRegex.ConceptName}'", this);
-            
+
     }
 
 }

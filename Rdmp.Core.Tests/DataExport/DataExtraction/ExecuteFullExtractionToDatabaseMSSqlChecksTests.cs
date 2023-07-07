@@ -100,10 +100,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests:DatabaseTests
             destination.TargetDatabaseServer = server;
             destination.TableNamingPattern = "$d";
 
-            if (alreadyExists)
-                destination.DatabaseNamingPattern = Database.GetRuntimeName(); //database that exists
-            else
-                destination.DatabaseNamingPattern = "Fictional$nDatabase";  //database does not exist (but server does)
+            destination.DatabaseNamingPattern = alreadyExists ? Database.GetRuntimeName() : //database that exists
+                "Fictional$nDatabase"; //database does not exist (but server does)
 
             var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
             destination.Check(tomemory);

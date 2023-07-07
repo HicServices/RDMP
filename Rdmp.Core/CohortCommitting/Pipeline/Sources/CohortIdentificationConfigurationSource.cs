@@ -80,8 +80,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
     private DataTable GetDataTable(IDataLoadEventListener listener)
     {
-        if(listener == null)
-            listener = new ThrowImmediatelyDataLoadEventListener();
+        listener ??= new ThrowImmediatelyDataLoadEventListener();
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to lookup which server to interrogate for CohortIdentificationConfiguration {_cohortIdentificationConfiguration}"));
@@ -92,13 +91,12 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
         var cohortCompiler = new CohortCompiler(_cohortIdentificationConfiguration);
 
-        ICompileable rootContainerTask;
-        //no caching set up so no point in running CohortCompilerRunner 
-        if(_cohortIdentificationConfiguration.QueryCachingServer_ID == null)
-            rootContainerTask = RunRootContainerOnlyNoCaching(cohortCompiler);
-        else
-            rootContainerTask =  RunAllTasksWithRunner(cohortCompiler,listener);
-            
+        var rootContainerTask =
+            //no caching set up so no point in running CohortCompilerRunner
+            _cohortIdentificationConfiguration.QueryCachingServer_ID == null
+            ? RunRootContainerOnlyNoCaching(cohortCompiler)
+            : RunAllTasksWithRunner(cohortCompiler, listener);
+
         if(rootContainerTask.State == CompilationState.Executing)
         {
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Root container task was unexpectedly still executing... let's give it a little longer to run"));
@@ -106,7 +104,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             var countdown = Math.Max(5000,Timeout*1000);
             while(rootContainerTask.State == CompilationState.Executing && countdown>0)
             {
-                Task.Delay(100).Wait();
+                Thread.Sleep(100);
                 countdown -=100;
             }
         }
@@ -175,7 +173,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Clearing Cohort Identifier Cache"));
 
             var cacheManager = new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
-                
+
             cohortCompiler.AddAllTasks(false);
             foreach (var cacheable in cohortCompiler.Tasks.Keys.OfType<ICacheableTask>())
                 cacheable.ClearYourselfFromCache(cacheManager);
@@ -230,7 +228,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Could not build extraction SQL for {_cohortIdentificationConfiguration}", CheckResult.Fail,e));
         }
-            
+
     }
 
 

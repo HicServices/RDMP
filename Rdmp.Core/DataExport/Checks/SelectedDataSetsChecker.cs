@@ -96,7 +96,7 @@ public class SelectedDataSetsChecker : ICheckable
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     ErrorCodes.ExtractionInformationMissing,
-                    Environment.NewLine + 
+                    Environment.NewLine +
                     string.Join(Environment.NewLine, orphans.Select(o => o.GetRuntimeName()).ToArray()))
             );
         }
@@ -216,7 +216,7 @@ public class SelectedDataSetsChecker : ICheckable
                             CheckResult.Fail, e));
                         return;
                     }
-                    
+
                     try
                     {
                         using (var r = cmd.ExecuteReader())
@@ -233,12 +233,9 @@ public class SelectedDataSetsChecker : ICheckable
                     }
                     catch (Exception e)
                     {
-                        if (server.GetQuerySyntaxHelper().IsTimeout(e))
-                        {
-                            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking,e,timeout));
-                        }
-                        else
-                            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e,ds));
+                        notifier.OnCheckPerformed(server.GetQuerySyntaxHelper().IsTimeout(e)
+                            ? new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking, e, timeout)
+                            : new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e, ds));
                     }
 
                     con.ManagedTransaction.AbandonAndCloseConnection();

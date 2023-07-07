@@ -40,7 +40,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         Cohort = _repository.GetObjectByID<ExtractableCohort>((int) Configuration.Cohort_ID);
 
-        ExtractionResults = 
+        ExtractionResults =
             Configuration.CumulativeExtractionResults
                 .OrderBy(
                     c => _repository.GetObjectByID<ExtractableDataSet>(c.ExtractableDataSet_ID).ToString()
@@ -52,10 +52,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         FileInfo f;
 
-        if (string.IsNullOrWhiteSpace(saveAsFilename))
-            f = GetUniqueFilenameInWorkArea("ReleaseDocument");
-        else
-            f = new FileInfo(saveAsFilename);
+        f = string.IsNullOrWhiteSpace(saveAsFilename) ? GetUniqueFilenameInWorkArea("ReleaseDocument") : new FileInfo(saveAsFilename);
 
         // Create an instance of Word  and make it visible.=
         using (var document = GetNewDocFile(f))
@@ -81,7 +78,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             InsertParagraph(document,Environment.NewLine);
 
             CreateFileSummary(document);
-                                
+
             //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
             if (string.IsNullOrWhiteSpace(saveAsFilename))
                 ShowFile(f);
@@ -190,7 +187,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             SetTableCell(table,tableLine, 4,result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
             tableLine++;
         }
-           
+
     }
 
     private string GetFileName(ICumulativeExtractionResults result)
@@ -206,7 +203,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
                 StringComparison.CurrentCultureIgnoreCase))
         {
             var relative = result.DestinationDescription[Project.ExtractionDirectory.Length..].Replace('\\', '/');
-                
+
             return $"./{relative.Trim('/')}";
         }
 

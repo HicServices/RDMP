@@ -125,11 +125,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         RefreshBus = refreshBus;
 
         RefreshBus.ChildProvider = CoreChildProvider;
-            
+
         HistoryProvider = new HistoryProvider(repositoryLocator);
-            
+
         WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
-            
+
         CommandFactory = new RDMPCombineableFactory();
         CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
 
@@ -141,7 +141,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         RefreshProblemProviders();
 
         RefreshBus.Subscribe(this);
-            
+
         // We can run subprocesses
         IsAbleToLaunchSubprocesses = true;
     }
@@ -206,12 +206,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         //ensure a relevant Toolbox is available
         var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(request.ObjectToEmphasise);
-        object root = null;
 
-        if (descendancy != null)
-            root = descendancy.Parents.FirstOrDefault();
-        else
-            root = request.ObjectToEmphasise; //assume maybe o is a root object itself?
+        var root = descendancy != null
+            ? descendancy.Parents.FirstOrDefault()
+            : request.ObjectToEmphasise; //assume maybe o is a root object itself?
 
         if (root is CohortIdentificationConfiguration cic)
             Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
@@ -223,7 +221,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         //Look at assignments to Sender, the invocation list can change the Sender!
         var args = new EmphasiseEventArgs(request);
         OnEmphasise(this,args);
-            
+
         //might be different than sender that was passed in
         if(args.Sender is DockContent content)
             content.Activate();
@@ -377,7 +375,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
             return existing;
         }
-                
+
 
         var uiInstance = new T();
         Activate(uiInstance, collection);
@@ -576,7 +574,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true,this);
         dialog.ShowDialog();
-            
+
         if (dialog.DialogResult != DialogResult.OK)
             return null;
 
@@ -767,7 +765,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             }
 
             return null;
-        }        
+        }
     }
 
     public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
@@ -908,7 +906,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
-                
+
         if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
             ui.CohortDescription = $"{cohortInitialDescription} ({Environment.UserName} - {DateTime.Now})";
 
@@ -931,7 +929,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             TargetFolder = folder
         };
         ui.ShowDialog();
-            
+
         return ui.CatalogueCreatedIfAny;
     }
     public override ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
@@ -959,14 +957,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var wizard = new CreateNewCohortIdentificationConfigurationUI(this);
 
-        if (wizard.ShowDialog() == DialogResult.OK)
-        {
-            cic = wizard.CohortIdentificationCriteriaCreatedIfAny;
-        }
-        else
-        {
-            cic = null;
-        }
+        cic = wizard.ShowDialog() == DialogResult.OK ? wizard.CohortIdentificationCriteriaCreatedIfAny : null;
 
         // Wizard was shown so that's a thing
         return true;
@@ -1057,7 +1048,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     }
 
     public override void ShowData(System.Data.DataTable table)
-    { 
+    {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
         {

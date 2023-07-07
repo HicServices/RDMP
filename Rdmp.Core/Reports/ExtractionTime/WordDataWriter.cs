@@ -70,11 +70,7 @@ public class WordDataWriter : DocXHelper
 
                 InsertHeader(document,"File Data");
 
-                int rowCount;
-                if (_destination.GeneratesFiles)
-                    rowCount = 10;
-                else
-                    rowCount = 5;
+                var rowCount = _destination.GeneratesFiles ? 10 : 5;
 
                 var t = InsertTable(document, rowCount, 2);
 
@@ -297,10 +293,9 @@ public class WordDataWriter : DocXHelper
 
 
             if (value.FoundAtExtractTime)
-                if(value.DataTypeObservedInRuntimeBuffer == null)
-                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", "Value was always NULL"));
-                else
-                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", value.DataTypeObservedInRuntimeBuffer.ToString()));
+                supplementalValuesForThisOne.Add(value.DataTypeObservedInRuntimeBuffer == null
+                    ? new Tuple<string, string>("Datatype:", "Value was always NULL")
+                    : new Tuple<string, string>("Datatype:", value.DataTypeObservedInRuntimeBuffer.ToString()));
 
 
             //add it with supplemental values

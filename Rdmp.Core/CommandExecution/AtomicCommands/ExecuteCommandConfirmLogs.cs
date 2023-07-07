@@ -48,13 +48,13 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
     /// <param name="withinTime"></param>
     /// <param name="requireLoadedRows"></param>
     public ExecuteCommandConfirmLogs(IBasicActivateItems activator,
-            
+
         [DemandsInitialization("The object you want to confirm passing log entries for")]
         ILoggedActivityRootObject obj,
 
         [DemandsInitialization("Optional time period in which to expect successful logs e.g. 24:00:00 (24 hours)")]
         string withinTime = null,
-            
+
         [DemandsInitialization("Optional.  Pass true to require rows to be loaded if obj is a LoadMetadata")]
         bool requireLoadedRows=false):base(activator)
     {

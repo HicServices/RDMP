@@ -39,10 +39,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
             var pt = new ProcessTask(CatalogueRepository, loadMetadata, LoadStage.AdjustStaging);
             var pta = new ProcessTaskArgument(CatalogueRepository, pt);
 
-            if(declareAsInterface)
-                pta.SetType(typeof(ITableInfo));
-            else
-                pta.SetType(typeof (TableInfo));
+            pta.SetType(declareAsInterface ? typeof(ITableInfo) : typeof(TableInfo));
 
             var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
             try

@@ -92,12 +92,9 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
 
             if (_alsoCreateExtractionInformations)
             {
-                string proposedName;
-
-                if (_lookupDescriptionColumns.Length == 1)
-                    proposedName = $"{_foreignKeyExtractionInformation.GetRuntimeName()}_Desc";
-                else
-                    proposedName = $"{_foreignKeyExtractionInformation.GetRuntimeName()}_{descCol.GetRuntimeName()}";
+                var proposedName = _lookupDescriptionColumns.Length == 1
+                    ? $"{_foreignKeyExtractionInformation.GetRuntimeName()}_Desc"
+                    : $"{_foreignKeyExtractionInformation.GetRuntimeName()}_{descCol.GetRuntimeName()}";
 
                 var newCatalogueItem = new CatalogueItem(_catalogueRepository, _catalogue, proposedName);
                 newCatalogueItem.SetColumnInfo(descCol);

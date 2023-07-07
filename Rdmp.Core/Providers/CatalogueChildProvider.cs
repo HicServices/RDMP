@@ -1630,14 +1630,10 @@ public class CatalogueChildProvider : ICoreChildProvider
                                 //get the descendancy of the parent
                                 var parentDescendancy = GetDescendancyListIfAnyFor(o);
 
-                                DescendancyList newDescendancy;
-                                if(parentDescendancy == null)
-                                    newDescendancy = new DescendancyList(new[] {o}); //if the parent is a root level object start a new descendancy list from it
-                                else
-                                    newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+                                var newDescendancy = parentDescendancy == null ? new DescendancyList(new[] {o}) : //if the parent is a root level object start a new descendancy list from it
+                                    parentDescendancy.Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
 
                                 //record that
-
                                 foreach (var pluginChild in pluginChildren)
                                 {
                                     //if the parent didn't have any children before

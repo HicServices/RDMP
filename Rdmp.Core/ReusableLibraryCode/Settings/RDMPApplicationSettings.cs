@@ -177,16 +177,10 @@ internal class RDMPApplicationSettings : ISettings
                 {
 
                     var ticks = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
-                    if (ticks >= 0)
-                    {
-                        //Old value, stored before update to UTC values
-                        value = new DateTime(ticks);
-                    }
-                    else
-                    {
+                    //Old value, stored before update to UTC values
+                    value = ticks >= 0 ? new DateTime(ticks) :
                         //New value, UTC
-                        value = new DateTime(-ticks, DateTimeKind.Utc);
-                    }
+                        new DateTime(-ticks, DateTimeKind.Utc);
 
 
                     return (T)value;

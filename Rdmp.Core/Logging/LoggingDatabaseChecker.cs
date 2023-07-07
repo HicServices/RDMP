@@ -173,7 +173,7 @@ public class LoggingDatabaseChecker : ICheckable
         //now reconcile what is in the database with what we expect
 
         ExpectedLookupsValuesArePresent(expected, actual, out var missing, out var collisions, out var misnomers);
-            
+
         if(!missing.Any() && !collisions.Any() && !misnomers.Any())
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"{tableName} contains the correct lookup values", CheckResult.Success, null));
@@ -194,7 +194,7 @@ public class LoggingDatabaseChecker : ICheckable
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"{tableName} the following ID conflicts were found:{misnomers.Aggregate("", (s, n) => s + Environment.NewLine + n)}", CheckResult.Fail, null));
 
-            
+
 
         if(missing.Any())
         {
@@ -219,34 +219,31 @@ public class LoggingDatabaseChecker : ICheckable
                 }
             }
         }
-            
+
     }
 
-      
+
     private static void ExpectedLookupsValuesArePresent(Dictionary<int, string> expected, Dictionary<int, string> actual, out Dictionary<int, string> missing, out Dictionary<int, string> collisions, out List<string> misnomers)
     {
 
         collisions = new Dictionary<int, string>();
         missing = new Dictionary<int, string>();
         misnomers = new List<string>();
-            
-        //for each desired kvp 
+
+        //for each desired kvp
         foreach (var kvp in expected)
         {
-                
+
             //make sure it is not a misnomer
             if (actual.Any(m => m.Value.Equals(kvp.Value) && m.Key != kvp.Key)) //if there are any actuals that have different keys
             {
-                //see if it is a misnmoer e.g. 1,'MyFunkyStatus' vs 2,'MyFunkyStatus'
+                //see if it is a misnomer e.g. 1,'MyFunkyStatus' vs 2,'MyFunkyStatus'
                 var misnomer = actual.Where(m => m.Value.Equals(kvp.Value)).Select(p => p.Key).ToArray(); //get ALL the keys that correspond to this value including exact matching key=key (to deal with schitzophrenia)
 
-                if (misnomer.Length == 1)
-                    misnomers.Add(
-                        $"{kvp.Value} is known under ID={kvp.Key} in desired but in your live database it is ID={misnomer.Single()}");
-                else
-                    misnomers.Add(
-                        $"{kvp.Value} is known under ID={kvp.Key} in desired but in your live database is it is known schizophrenically as ({misnomer.Aggregate("", (s, n) => $"{s}ID={n},").TrimEnd(',')})");
-                    
+                misnomers.Add(
+                    misnomer.Length == 1
+                        ? $"{kvp.Value} is known under ID={kvp.Key} in desired but in your live database it is ID={misnomer.Single()}"
+                        : $"{kvp.Value} is known under ID={kvp.Key} in desired but in your live database is it is known schizophrenically as ({misnomer.Aggregate("", (s, n) => $"{s}ID={n},").TrimEnd(',')})");
             }
 
 

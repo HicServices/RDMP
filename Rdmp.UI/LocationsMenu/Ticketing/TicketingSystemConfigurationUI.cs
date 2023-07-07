@@ -93,11 +93,9 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             cbxType.Text = _ticketingSystemConfiguration.Type;
             cbDisabled.Checked = !_ticketingSystemConfiguration.IsActive;
 
-            if (_ticketingSystemConfiguration.DataAccessCredentials_ID != null)
-                ddCredentials.Text =
-                    _ticketingSystemConfiguration.DataAccessCredentials.ToString();
-            else
-                ddCredentials.Text = NoneText;
+            ddCredentials.Text = _ticketingSystemConfiguration.DataAccessCredentials_ID != null
+                ? _ticketingSystemConfiguration.DataAccessCredentials.ToString()
+                : NoneText;
 
             btnCreate.Enabled = false;
             btnDelete.Enabled = true;

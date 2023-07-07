@@ -58,7 +58,7 @@ public class HICDatabaseConfiguration
         this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository,lmd.OverrideRAWServer)
     {
         var globalIgnorePattern = GetGlobalIgnorePatternIfAny(lmd.CatalogueRepository);
-            
+
         if(globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
             IgnoreColumns = new Regex(globalIgnorePattern.Regex);
 
@@ -82,12 +82,10 @@ public class HICDatabaseConfiguration
         var liveDatabase = liveServer.GetCurrentDatabase() ?? throw new Exception("Cannot load live without having a unique live named database");
 
         // Default namer
-        if (namer == null)
-            if(liveServer.DatabaseType == DatabaseType.PostgreSql)
-                //create the DLE tables on the live database because postgres can't handle cross database references
-                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName(),liveDatabase.GetRuntimeName());
-            else
-                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
+        //create the DLE tables on the live database because postgres can't handle cross database references
+        namer ??= liveServer.DatabaseType == DatabaseType.PostgreSql
+            ? new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName(), liveDatabase.GetRuntimeName())
+            : new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
 
         //if there are defaults
         if (overrideRAWServer == null && defaults != null)
@@ -95,14 +93,12 @@ public class HICDatabaseConfiguration
 
         DiscoveredServer rawServer;
         //if there was defaults and a raw default server
-        if (overrideRAWServer != null)
-            rawServer = DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false); //get the raw server connection
-        else
-            rawServer = liveServer; //there is no raw override so we will have to use the live server for RAW too.
+        rawServer = overrideRAWServer != null ? DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false) : //get the raw server connection
+            liveServer; //there is no raw override so we will have to use the live server for RAW too.
 
         //populates the servers -- note that an empty rawServer value passed to this method makes it the localhost
         DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer,rawServer);
-            
+
         RequiresStagingTableCreation = true;
     }
 
@@ -120,7 +116,7 @@ public class HICDatabaseConfiguration
 
         foreach (var t in job.RegularTablesToLoad)
             yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
-            
+
         if(includeLookups)
             foreach (var t in job.LookupTablesToLoad)
                 yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));

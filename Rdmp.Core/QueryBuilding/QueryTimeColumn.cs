@@ -120,11 +120,11 @@ public class QueryTimeColumn: IComparable
 
         var firstTable = tablesUsedInQuery.FirstOrDefault();
 
-        var allAvailableLookups = Array.Empty<Lookup>(); 
+        var allAvailableLookups = Array.Empty<Lookup>();
 
         if(firstTable != null)
             allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();
-                
+
         for (var i = 0; i < ColumnsInOrder.Length; i++)
         {
             //it is a custom column
@@ -241,10 +241,8 @@ public class QueryTimeColumn: IComparable
                     $"IExtractableColumn {IColumn} is missing an Alias (required for hashing)");
 
             //if there is no custom hashing pattern
-            if (string.IsNullOrWhiteSpace(hashingPattern))
-                toReturn = syntaxHelper.HowDoWeAchieveMd5(toReturn); //use the DBMS specific one
-            else
-                toReturn = string.Format(hashingPattern,toReturn, salt); //otherwise use the custom one
+            toReturn = string.IsNullOrWhiteSpace(hashingPattern) ? syntaxHelper.HowDoWeAchieveMd5(toReturn) : //use the DBMS specific one
+                string.Format(hashingPattern,toReturn, salt); //otherwise use the custom one
         }
 
         // the SELECT SQL may span multiple lines, so collapse it to a single line cleaning up any whitespace issues, e.g. to avoid double spaces in the collapsed version
@@ -252,7 +250,7 @@ public class QueryTimeColumn: IComparable
             toReturn.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(s => s.Trim());
         toReturn = string.Join(" ", trimmedSelectSQL);
-                
+
         //append alias to the end of the line if there is an alias
         if (!string.IsNullOrWhiteSpace(IColumn.Alias))
             toReturn += syntaxHelper.AliasPrefix + IColumn.Alias.Trim();

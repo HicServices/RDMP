@@ -138,12 +138,7 @@ public class PeriodicityState
     {
         using (var con = evaluation.DQERepository.GetConnection())
         {
-            var sql = "";
-
-            if (pivot)
-                sql = string.Format(PeriodicityPivotSql, evaluation.ID, pivotCategoryValue);
-            else
-                sql = $@"Select [Evaluation_ID]
+            var sql = pivot ? string.Format(PeriodicityPivotSql, evaluation.ID, pivotCategoryValue) : $@"Select [Evaluation_ID]
       ,CAST([Year] as varchar(4)) + '-' + datename(month,dateadd(month, [Month] - 1, 0)) as YearMonth
       ,[CountOfRecords]
       ,[RowEvaluation] from PeriodicityState where Evaluation_ID={evaluation.ID} AND PivotCategory = '{pivotCategoryValue}'";

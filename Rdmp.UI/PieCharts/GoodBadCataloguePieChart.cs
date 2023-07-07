@@ -91,10 +91,9 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         chart1.Visible = false;
         lblNoIssues.Visible = false;
 
-        if (_collection.IsSingleCatalogueMode)
-            gbWhatThisIs.Text = $"Column Descriptions in {_collection.GetSingleCatalogueModeCatalogue()}";
-        else
-            gbWhatThisIs.Text = "Column Descriptions";
+        gbWhatThisIs.Text = _collection.IsSingleCatalogueMode
+            ? $"Column Descriptions in {_collection.GetSingleCatalogueModeCatalogue()}"
+            : "Column Descriptions";
 
         PopulateAsEmptyDescriptionsChart();
     }

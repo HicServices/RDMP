@@ -48,7 +48,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
         var expectedText =
             "BulkInsert failed on data row 1 the complaint was about source column <<name>> which had value <<BigFish>> destination data type was <<varchar(4)>>";
-            
+
         Assert.IsNotNull(ex.InnerException);
         StringAssert.Contains(expectedText,ex.InnerException.Message);
 
@@ -206,7 +206,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         var expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
         StringAssert.Contains(expectedErrorMessage, interestingBit);
-            
+
         destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
 
         if(tbl.Exists())
@@ -230,7 +230,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
         destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
-            
+
         Assert.AreEqual("DataTable 'MyEmptyTable' had no Columns!", ex.Message);
     }
     [Test]
@@ -247,7 +247,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.Columns.Add("GoTeamGo");
         dt1.TableName = "MyEmptyTable";
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
-            
+
         destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
 
         Assert.AreEqual("DataTable 'MyEmptyTable' had no Rows!", ex.Message);
@@ -283,7 +283,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
         Assert.AreEqual(2,db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
 
-            
+
     }
 
     [Test]
@@ -306,7 +306,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.Rows.Add(new object[] { 5 });
 
         dt1.TableName = "DataTableUploadDestinationTests";
-            
+
         destination.ProcessPipelineData(dt1, toConsole, token);
         destination.Dispose(toConsole, null);
 
@@ -331,7 +331,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var dt1 = new DataTable();
         dt1.Columns.Add("mycol");
         dt1.Rows.Add(new[] {batch1Value});
-            
+
         dt1.TableName = "DataTableUploadDestinationTests";
         try
         {
@@ -349,7 +349,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(toConsole, e);
             throw;
         }
-            
+
         Assert.AreEqual(expectedDatatypeInDatabase, db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mycol").DataType.SQLType);
     }
 
@@ -447,7 +447,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt2.Rows.Add(new[] { "00000.00000" });
         dt2.Rows.Add(new[] { "0" });
         dt2.Rows.Add(new string[] { null });
-        dt2.Rows.Add(new [] { "" }); 
+        dt2.Rows.Add(new [] { "" });
         dt2.Rows.Add(new[] { DBNull.Value });
         dt2.TableName = "DataTableUploadDestinationTests";
 
@@ -493,7 +493,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         foreach (var rowValue in rowValues)
             dt1.Rows.Add(new[] {rowValue});
-            
+
         dt1.TableName = "DataTableUploadDestinationTests";
 
         destination.ProcessPipelineData(dt1, toConsole, token);
@@ -547,7 +547,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         //should have 2 rows
         Assert.AreEqual(sendTheZero?2:1, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
-            
+
         //should be decimal
 
         Assert.AreEqual(sendTheZero ?"decimal(19,18)":"decimal(18,18)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
@@ -680,7 +680,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             AllowResizingColumnsAtUploadTime = true
         };
         dest.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
-            
+
         dest.ProcessPipelineData(dt,new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
         dest.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
         dest.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
@@ -753,7 +753,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.AreEqual("decimal(3,3)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col2").DataType.SQLType);
         Assert.AreEqual("bit", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col3").DataType.SQLType);
         Assert.AreEqual("tinyint", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col4").DataType.SQLType);
-            
+
         Assert.AreEqual("varbinary(max)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col5").DataType.SQLType);
     }
 
@@ -815,7 +815,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         //drop the millisecond part
         var now = DateTime.Now;
         now = new DateTime(now.Year,now.Month,now.Day,now.Hour,now.Minute,now.Second);
-            
+
         dt.Rows.Add(new object[] { "Anhoy there \"mates\"", "999", "2001-01-01", now,null});
         dt.TableName = "DataTableUploadDestinationTests";
 
@@ -984,7 +984,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
 
         var tbl = db.ExpectTable("MyTable");
-            
+
         Assert.AreEqual(2,tbl.GetRowCount());
         Assert.IsTrue(tbl.DiscoverColumns().Single().IsPrimaryKey);
 
@@ -1069,12 +1069,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dest.Dispose(new ThrowImmediatelyDataLoadEventListener(),ex);
             throw;
         }
-                       
+
         //in the database it should be typed
         Assert.AreEqual(typeof(decimal),db.ExpectTable("ff").DiscoverColumn("mycol").DataType.GetCSharpDataType());
 
         var dt2 = db.ExpectTable("ff").GetDataTable();
-            
+
         Assert.IsTrue((decimal)dt2.Rows[0][0]  == (decimal)-0.0000410235746055587);
 
     }
@@ -1270,7 +1270,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(toConsole, ex);
             throw;
         }
-            
+
         Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
         Assert.AreEqual(2, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
 

@@ -245,10 +245,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
             return;
         }
 
-        if (!File.Exists(Path))
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not find File '{Path}' for ProcessTask '{Name}'", CheckResult.Fail));
-        else
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found File '{Path}'", CheckResult.Success));
+        notifier.OnCheckPerformed(!File.Exists(Path)
+            ? new CheckEventArgs($"Could not find File '{Path}' for ProcessTask '{Name}'", CheckResult.Fail)
+            : new CheckEventArgs($"Found File '{Path}'", CheckResult.Success));
 
 
         var matchingPaths = Repository.GetAllObjects<ProcessTask>().Where(pt => pt.Path.Equals(Path));

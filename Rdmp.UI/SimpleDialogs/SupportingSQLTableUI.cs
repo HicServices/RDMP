@@ -76,10 +76,9 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
         QueryPreview.Text = _supportingSQLTable.SQL;
 
         //if it has an external server configured
-        if (_supportingSQLTable.ExternalDatabaseServer_ID != null)
-            ddExternalServers.Text = _supportingSQLTable.ExternalDatabaseServer.ToString();
-        else
-            ddExternalServers.Text = NoExternalServer;
+        ddExternalServers.Text = _supportingSQLTable.ExternalDatabaseServer_ID != null
+            ? _supportingSQLTable.ExternalDatabaseServer.ToString()
+            : NoExternalServer;
 
         tcTicket.TicketText = _supportingSQLTable.Ticket;
 

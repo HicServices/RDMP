@@ -63,15 +63,13 @@ public abstract class Patcher:IPatcher
     {
         var assembly = GetDbAssembly();
         var subdirectory = ResourceSubdirectory;
-        Regex initialCreationRegex;
 
-        if (string.IsNullOrWhiteSpace(subdirectory))
-            initialCreationRegex = new Regex(@".*\.runAfterCreateDatabase\..*\.sql");
-        else
-            initialCreationRegex = new Regex($@".*\.{Regex.Escape(subdirectory)}\.runAfterCreateDatabase\..*\.sql");
+        var initialCreationRegex = string.IsNullOrWhiteSpace(subdirectory)
+            ? new Regex(@".*\.runAfterCreateDatabase\..*\.sql")
+            : new Regex($@".*\.{Regex.Escape(subdirectory)}\.runAfterCreateDatabase\..*\.sql");
 
         var candidates = assembly.GetManifestResourceNames().Where(r => initialCreationRegex.IsMatch(r)).ToArray();
-            
+
         switch (candidates.Length)
         {
             case 1:
@@ -109,7 +107,7 @@ public abstract class Patcher:IPatcher
 
         var files = new SortedDictionary<string, Patch>();
 
-        //get all resources out of 
+        //get all resources out of
         foreach (var manifestResourceName in assembly.GetManifestResourceNames())
         {
             var match = upgradePatchesRegexPattern.Match(manifestResourceName);

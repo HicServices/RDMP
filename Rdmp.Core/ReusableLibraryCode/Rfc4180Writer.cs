@@ -60,10 +60,7 @@ public static class Rfc4180Writer
 
         var str = o.ToString();
 
-        if (escaper != null)
-            str = escaper.Escape(str);
-        else
-            str = str.Replace("\"", "\"\"");
+        str = escaper != null ? escaper.Escape(str) : str.Replace("\"", "\"\"");
 
         return str;
     }

@@ -147,7 +147,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
         olvProgressEvents.ClearObjects();
         progress.Rows.Clear();
-            
+
         progressBar1.Style = ProgressBarStyle.Continuous;
         progressBar1.Value = 0;
 
@@ -277,7 +277,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private bool HandleFloodOfMessagesFromJob(object sender, string job,int progressAmount,string label)
     {
-            
+
         //ensure we have a records of the sender
         if (!JobsreceivedFromSender.ContainsKey(sender))
             JobsreceivedFromSender.Add(sender, new HashSet<string>());
@@ -324,14 +324,10 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             i = 1;//one of them is a dodgy length or empty length or otherwise they are sending us some dodgy messages
         }
 
-        string floodJob;
-            
-        //no shared prefix
-        if(i ==1)
-            floodJob = $"{sender} FloodOfMessages";
-        else
-            floodJob = $"{JobsreceivedFromSender[sender].First()[..(i - 1)]}... FloodOfMessages";
-            
+        var floodJob =
+            //no shared prefix
+            i ==1 ? $"{sender} FloodOfMessages" : $"{JobsreceivedFromSender[sender].First()[..(i - 1)]}... FloodOfMessages";
+
         //add a new row (or edit existing) for the flood of messages from sender
         if (progress.Rows.Contains(floodJob))
         {
@@ -343,7 +339,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             progress.Rows.Add(new object[] { floodJob, startAtProgressAmount + progressAmountToAdd, label });
         }
-           
+
     }
 
     private void olvProgressEvents_ItemActivate(object sender, EventArgs e)
@@ -445,7 +441,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
 
         var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
-            
+
         if(worstEntry == null)
             return null;
 

@@ -108,10 +108,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
         if (col.DataType.GetLengthIfString() != -1)
         {
-            if (col.AllowNulls)
-                setCode = $"{r} as string;";
-            else
-                setCode = $"{r}.ToString();";
+            setCode = col.AllowNulls ? $"{r} as string;" : $"{r}.ToString();";
 
             return "string";
         }

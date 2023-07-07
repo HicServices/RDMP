@@ -15,14 +15,14 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project extracts will appear when 
+/// The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project extracts will appear when
 /// an ExtractionConfiguration is executed.  It is also the location where the Release Engine will pick them up from when it bundles together a
 /// release package.
 /// </summary>
 public class ExtractionDirectory : IExtractionDirectory
 {
     private readonly DirectoryInfo root;
-        
+
     public const string EXTRACTION_SUB_FOLDER_NAME = "Extractions";
     public const string STANDARD_EXTRACTION_PREFIX = "Extr_";
     public const string GLOBALS_DATA_NAME = "Globals";
@@ -31,7 +31,7 @@ public class ExtractionDirectory : IExtractionDirectory
     public const string METADATA_FOLDER_NAME = "MetadataShareDefs";
 
     public DirectoryInfo ExtractionDirectoryInfo { get; private set; }
-        
+
     public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
         : this(rootExtractionDirectory, configuration, DateTime.Now)
     {
@@ -52,10 +52,9 @@ public class ExtractionDirectory : IExtractionDirectory
 
         var subdirectoryName = GetExtractionDirectoryPrefix(configuration);
 
-        if (!Directory.Exists(Path.Combine(root.FullName, subdirectoryName)))
-            ExtractionDirectoryInfo = root.CreateSubdirectory(subdirectoryName);
-        else
-            ExtractionDirectoryInfo = new DirectoryInfo(Path.Combine(root.FullName, subdirectoryName));
+        ExtractionDirectoryInfo = Directory.Exists(Path.Combine(root.FullName, subdirectoryName))
+            ? new DirectoryInfo(Path.Combine(root.FullName, subdirectoryName))
+            : root.CreateSubdirectory(subdirectoryName);
     }
 
     public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
@@ -101,7 +100,7 @@ public class ExtractionDirectory : IExtractionDirectory
 
         if (directory.Parent.FullName != Path.Combine(p.ExtractionDirectory, EXTRACTION_SUB_FOLDER_NAME))
             return false;
-            
+
         return directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
     }
 

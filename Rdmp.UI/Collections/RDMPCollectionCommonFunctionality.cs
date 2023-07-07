@@ -178,7 +178,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
     /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
     /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-    /// <param name="settings">Customise which common behaviorurs are turned on</param>
+    /// <param name="settings">Customise which common behaviours are turned on</param>
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn, OLVColumn renameableColumn,RDMPCollectionCommonFunctionalitySettings settings)
     {
         Settings = settings;
@@ -500,10 +500,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         //clear the old menu strip first so old shortcuts cannot be activated during
         _menu?.Dispose();
 
-        if(Tree.SelectedObjects.Count <= 1)
-            _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObject);
-        else
-            _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
+        _menu = Tree.SelectedObjects.Count <= 1 ? GetMenuIfExists(_lastMenuObject = Tree.SelectedObject) : GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
 
         _lastMenuBuilt = DateTime.Now;
     }

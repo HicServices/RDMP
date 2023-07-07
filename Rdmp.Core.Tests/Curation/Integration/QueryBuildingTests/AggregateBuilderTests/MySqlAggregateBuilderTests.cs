@@ -65,9 +65,8 @@ LIMIT 32"), CollapseWhitespace(builder.SQL.Trim()));
         };
         builder.AggregateTopX = topx;
 
-        if (useAliasForGroupBy)
-        {
-            Assert.AreEqual(CollapseWhitespace(@"/**/
+        Assert.AreEqual(useAliasForGroupBy
+            ? CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(*) AS MyCount
@@ -77,11 +76,8 @@ group by
 Col1
 order by 
 MyCount asc
-LIMIT 31"), CollapseWhitespace(builder.SQL));
-        }
-        else
-        {
-            Assert.AreEqual(CollapseWhitespace(@"/**/
+LIMIT 31")
+            : CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(*) AS MyCount
@@ -92,8 +88,6 @@ Col1
 order by 
 count(*) asc
 LIMIT 31"), CollapseWhitespace(builder.SQL));
-        }
-            
 
 
         topx.DeleteInDatabase();

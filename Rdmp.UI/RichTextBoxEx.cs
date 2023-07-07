@@ -21,16 +21,16 @@ public class RichTextBoxEx : RichTextBox
     [ StructLayout( LayoutKind.Sequential )]
     private struct CHARFORMAT2_STRUCT
     {
-        public uint cbSize; 
-        public uint dwMask; 
-        public uint dwEffects; 
-        public int yHeight; 
-        public int yOffset; 
-        public int crTextColor; 
-        public byte     bCharSet; 
-        public byte     bPitchAndFamily; 
+        public uint cbSize;
+        public uint dwMask;
+        public uint dwEffects;
+        public int yHeight;
+        public int yOffset;
+        public int crTextColor;
+        public byte     bCharSet;
+        public byte     bPitchAndFamily;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst=32)]
-        public char[]   szFaceName; 
+        public char[]   szFaceName;
         public ushort wWeight;
         public ushort sSpacing;
         public int		crBackColor; // Color.ToArgb() -> int
@@ -141,7 +141,7 @@ public class RichTextBoxEx : RichTextBox
     }
 
     /// <summary>
-    /// Insert a given text at a given position as a link. 
+    /// Insert a given text at a given position as a link.
     /// </summary>
     /// <param name="text">Text to be inserted</param>
     /// <param name="position">Insert position</param>
@@ -156,7 +156,7 @@ public class RichTextBoxEx : RichTextBox
         SetSelectionLink(true);
         Select(position + text.Length, 0);
     }
-		
+
     /// <summary>
     /// Insert a given text at at the current input position as a link.
     /// The link text is followed by a hash (#) and the given hyperlink text, both of
@@ -187,7 +187,7 @@ public class RichTextBoxEx : RichTextBox
 
         //if it ends with whitespace then we have to put that outside the RTF
         var suffix = string.Concat(text.Reverse().TakeWhile(c => c == '\r' || c == '\n' || c == ' ' || c == '\t').Reverse());
-            
+
         SelectionStart = position;
         SelectedRtf = $@"{{\rtf1\ansi {text.TrimEnd()}\v #{hyperlink}\v0}}";
         Select(position, text.Length + hyperlink.Length + 1);
@@ -226,7 +226,7 @@ public class RichTextBoxEx : RichTextBox
         cf.dwEffects = effect;
 
         var wpar = new IntPtr(SCF_SELECTION);
-        var lpar = Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) ); 
+        var lpar = Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) );
         Marshal.StructureToPtr(cf, lpar, false);
 
         var res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
@@ -241,7 +241,7 @@ public class RichTextBoxEx : RichTextBox
         cf.szFaceName = new char[32];
 
         var wpar = new IntPtr(SCF_SELECTION);
-        var lpar = 	Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) ); 
+        var lpar = 	Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) );
         Marshal.StructureToPtr(cf, lpar, false);
 
         var res = SendMessage(Handle, EM_GETCHARFORMAT, wpar, lpar);
@@ -250,18 +250,15 @@ public class RichTextBoxEx : RichTextBox
 
         int state;
         // dwMask holds the information which properties are consistent throughout the selection:
-        if ((cf.dwMask & mask) == mask) 
+        if ((cf.dwMask & mask) == mask)
         {
-            if ((cf.dwEffects & effect) == effect)
-                state = 1;
-            else
-                state = 0;
+            state = (cf.dwEffects & effect) == effect ? 1 : 0;
         }
         else
         {
             state = -1;
         }
-			
+
         Marshal.FreeCoTaskMem(lpar);
         return state;
     }

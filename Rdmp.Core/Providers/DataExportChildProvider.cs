@@ -175,11 +175,10 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         //inject extractability into Catalogues
         foreach (var catalogue in AllCatalogues)
-            if (cataToEds.TryGetValue(catalogue.ID, out var result))
-                catalogue.InjectKnown(result.GetCatalogueExtractabilityStatus());
-            else
-                catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));
-            
+            catalogue.InjectKnown(cataToEds.TryGetValue(catalogue.ID, out var result)
+                ? result.GetCatalogueExtractabilityStatus()
+                : new CatalogueExtractabilityStatus(false, false));
+
         ReportProgress("Catalogue extractability injection");
 
         try

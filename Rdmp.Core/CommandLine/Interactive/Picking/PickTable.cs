@@ -18,7 +18,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 public class PickTable : PickObjectBase
 {
     public override string Format => "Table:{TableName}:[Schema:{SchemaIfAny}:][IsView:{True/False}]:DatabaseType:{DatabaseType}:Name:{DatabaseName}:{ConnectionString}";
-    public override string Help =>             
+    public override string Help =>
         @"Table (Required): Name of the table you want
 Schema (Optional): leave out this section unless your table is in a sub schema within the Database (MySql doesn't support schemas)
 IsView (Optional): Defaults to false, pass 'true' to instead look for a view
@@ -30,7 +30,7 @@ DatabaseType (Required):
 
 Name: Name of the database it resides in (Optional if in connection string)
 ConnectionString (Required)";
-        
+
     public override IEnumerable<string> Examples => new[]
     {
         "Table:MyTable:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;",
@@ -60,17 +60,10 @@ ConnectionString (Required)";
 
         var server = new DiscoveredServer(connectionString, dbType);
 
-        DiscoveredDatabase db;
-
-        if (string.IsNullOrWhiteSpace(dbName))
-            db = server.GetCurrentDatabase();
-        else
-            db = server.ExpectDatabase(dbName);
-
-        if(db == null)
-            throw new CommandLineObjectPickerParseException("Missing database name parameter, it was not in connection string or specified explicitly",idx,arg);
-
-            
+        var db = (string.IsNullOrWhiteSpace(dbName) ? server.GetCurrentDatabase() : server.ExpectDatabase(dbName)) ??
+                 throw new CommandLineObjectPickerParseException(
+                     "Missing database name parameter, it was not in connection string or specified explicitly", idx,
+                     arg);
         return new CommandLineObjectPickerArgumentValue(arg,idx,db.ExpectTable(tableName,schema,isViewBool ? TableType.View:TableType.Table));
     }
 

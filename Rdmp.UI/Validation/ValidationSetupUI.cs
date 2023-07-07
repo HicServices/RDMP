@@ -67,7 +67,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     public ValidationSetupUI()
     {
         InitializeComponent();
-            
+
         SetupAvailableOperations();
 
         olvColumns.RowHeight = 19;
@@ -90,16 +90,13 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         CommonFunctionality.AddToMenu(new ExecuteCommandRunDQEOnCatalogue(activator).SetTarget(databaseObject));
         CommonFunctionality.AddToMenu(new ExecuteCommandViewDQEResultsForCatalogue(activator)
             {OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
-            
+
         _catalogue = databaseObject;
-            
+
         SetupComboBoxes(databaseObject);
 
         //get the validation XML
-        if (string.IsNullOrWhiteSpace(databaseObject.ValidatorXML))
-            Validator = new Validator();
-        else
-            Validator = Validator.LoadFromXml(databaseObject.ValidatorXML);
+        Validator = string.IsNullOrWhiteSpace(databaseObject.ValidatorXML) ? new Validator() : Validator.LoadFromXml(databaseObject.ValidatorXML);
 
         var extractionInformations = databaseObject.GetAllExtractionInformation(ExtractionCategory.Any).ToArray();
         Array.Sort(extractionInformations);
@@ -150,7 +147,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         var constraintNames = new List<string>();
         constraintNames.AddRange(Validator.GetPrimaryConstraintNames());
         constraintNames.Sort();
-            
+
         ddPrimaryConstraints.Items.AddRange(constraintNames.ToArray());
         ddPrimaryConstraints.Items.Add(_noPrimaryConstraintText);
 
@@ -175,7 +172,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
         bSuppressChangeEvents = true;
 
-        if (SelectedColumnItemValidator == null || SelectedColumnItemValidator.PrimaryConstraint == null)
+        if (SelectedColumnItemValidator?.PrimaryConstraint == null)
         {
             ddPrimaryConstraints.Text = _noPrimaryConstraintText;
             ddConsequence.SelectedItem = Consequence.Missing;
@@ -183,14 +180,10 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         else
         {
             ddPrimaryConstraints.Text = SelectedColumnItemValidator.PrimaryConstraint.GetType().Name;
-            if (SelectedColumnItemValidator.PrimaryConstraint.Consequence.HasValue)
-                ddConsequence.SelectedItem = SelectedColumnItemValidator.PrimaryConstraint.Consequence.Value;
-            else
-                ddConsequence.SelectedItem = Consequence.Missing;
-
+            ddConsequence.SelectedItem = SelectedColumnItemValidator.PrimaryConstraint.Consequence ?? Consequence.Missing;
         }
 
-        //Make consequence selection only possible if there is a priary constraint selected
+        //Make consequence selection only possible if there is a primary constraint selected
         ddConsequence.Enabled = ddPrimaryConstraints.Text != _noPrimaryConstraintText;
 
         //clear secondary constraints then add them again (it's the only way to be sure)
@@ -200,7 +193,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         if (SelectedColumnItemValidator != null)
             foreach (var secondaryConstraint in SelectedColumnItemValidator.SecondaryConstraints)
                 AddSecondaryConstraintControl(secondaryConstraint);
-            
+
         bSuppressChangeEvents = false;
     }
 
@@ -277,9 +270,9 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         };
         toAdd.RequestDeletion += SecondaryConstraintRequestDelete;
         tableLayoutPanel1.Controls.Add(toAdd, tableLayoutPanel1.RowCount - 1,0);
-            
+
         //this array always seems to be 1 element long..
-        tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;    
+        tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
     }
 
 
@@ -287,7 +280,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         if(bSuppressChangeEvents)
             return;
-            
+
         if (SelectedColumnItemValidator != null)
             if (SelectedColumnItemValidator.PrimaryConstraint != null)
             {

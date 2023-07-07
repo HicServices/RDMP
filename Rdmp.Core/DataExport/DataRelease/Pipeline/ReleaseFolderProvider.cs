@@ -110,10 +110,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
 
         if (string.IsNullOrWhiteSpace(suffix))
         {
-            if (string.IsNullOrWhiteSpace(p.MasterTicket))
-                suffix = $"{p.ID}_{p.Name}";
-            else
-                suffix = p.MasterTicket;
+            suffix = string.IsNullOrWhiteSpace(p.MasterTicket) ? $"{p.ID}_{p.Name}" : p.MasterTicket;
         }
 
         return new DirectoryInfo(Path.Combine(p.ExtractionDirectory, $"{prefix}_{suffix}"));

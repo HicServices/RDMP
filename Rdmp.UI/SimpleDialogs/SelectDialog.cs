@@ -318,7 +318,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
             }
         }
-            
+
     }
 
     protected override void OnShown(EventArgs e)
@@ -376,7 +376,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             {
                 return searchable != null ? Regex.Replace(string.Join('\\', searchable.GetUsefulParents()), "\\\\+", "\\").Trim('\\') : null;
             }
-        }   
+        }
 
         return null;
     }
@@ -482,7 +482,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             MultiSelected.Add((T)rowobject);
         else
             MultiSelected.Remove((T)rowobject);
-            
+
         StateChanged();
     }
 
@@ -496,7 +496,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         base.OnFormClosed(e);
-            
+
         _isClosed = true;
         recentHistoryOfSearches?.AddResult(tbFilter.Text);
 
@@ -513,7 +513,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     {
         if (!AllowMultiSelect)
             return null;
-            
+
         if (rowObject == null)
             return false;
 
@@ -534,14 +534,14 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         {
             scorer.ID = requireId;
         }
-                
+
         if (AlwaysFilterOn != null)
         {
             showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
         }
 
         var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
-            
+
         if (scores == null)
         {
             stateChanged = true;
@@ -599,7 +599,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.KeyCode == Keys.Enter && olv.SelectedObject != null)
         {
             DialogResult = DialogResult.OK;
-            Selected = olv.SelectedObject is T s ? s : default;
+            Selected = olv.SelectedObject as T ?? default;
 
             // if there are some multi selected items already
             if(AllowMultiSelect && MultiSelected.Any())
@@ -710,7 +710,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
-            
+
     }
 
     public void AddObjects(ICollection modelObjects)
@@ -774,7 +774,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     public void InsertObjects(int index, ICollection modelObjects)
     {
-            
+
     }
 
     public void PrepareCache(int first, int last)
@@ -801,7 +801,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     public void UpdateObject(int index, object modelObject)
     {
-            
+
     }
     private void AddUserSettingCheckbox(Func<bool> getter, Action<bool> setter, string name, string toolTip)
     {

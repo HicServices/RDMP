@@ -73,7 +73,7 @@ public partial class ArgumentCollectionUI : UserControl
             lblClassName.Text = UsefulStuff.PascalCaseStringToHumanReadable(_argumentsAreFor.Name);
 
         helpIcon1.Left = lblClassName.Right;
-            
+
         if (_argumentsAreFor != null)
         {
             var summary = catalogueRepository.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
@@ -103,7 +103,7 @@ public partial class ArgumentCollectionUI : UserControl
         pArguments.SuspendLayout();
 
         float maxArgNameWidth = 0;
-            
+
         if(DemandDictionary.Any())
         {
             var g = CreateGraphics();
@@ -170,17 +170,13 @@ public partial class ArgumentCollectionUI : UserControl
         }
         catch (Exception e)
         {
-
             //add the text value value and report the error
-            if(ArgumentValueUIFactory.CanHandleInvalidStringData(args.Type))
-                args.InitialValue = argument.Value;
-            else
-                args.InitialValue = null;
+            args.InitialValue = ArgumentValueUIFactory.CanHandleInvalidStringData(args.Type) ? argument.Value : null;
 
             ragSmiley.Fatal(e);
         }
 
-            
+
         args.Required = required;
         args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
         args.Setter = v =>

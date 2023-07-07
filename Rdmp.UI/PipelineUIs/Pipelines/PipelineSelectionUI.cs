@@ -95,7 +95,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         _useCase = useCase;
         _repository = repository;
         InitializeComponent();
-            
+
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) //don't connect to database in design mode
             return;
 
@@ -164,11 +164,8 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         Pipeline = ddPipelines.SelectedItem as Pipeline;
 
-        if (Pipeline == null)
-            tbDescription.Text = "";
-        else
-            tbDescription.Text = Pipeline.Description;
-            
+        tbDescription.Text = Pipeline == null ? "" : Pipeline.Description;
+
         btnEditPipeline.Enabled = Pipeline != null;
         btnDeletePipeline.Enabled = Pipeline != null;
         btnClonePipeline.Enabled = Pipeline != null;
@@ -178,7 +175,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             PipelineChanged?.Invoke(this,EventArgs.Empty);
             _previousSelection = Pipeline;
         }
-                
+
     }
 
     private void btnEditPipeline_Click(object sender, EventArgs e)

@@ -52,7 +52,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
 
         AssertFailWithFix("Some catalogues have NULL LoggingDataTasks","Set task to OMG YEAGH",toMem);   
     }
-        
+
     [Test]
     public void Test_MissingLoggingServer()
     {

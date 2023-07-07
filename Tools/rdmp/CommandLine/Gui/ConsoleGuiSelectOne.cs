@@ -26,21 +26,14 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
     /// The maximum number of objects to show in the list box
     /// </summary>
     public const int MaxMatches = 100;
-        
+
     public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available):base("Open","Ok",
         true,null)
     {
         _activator = activator;
-            
-        if(available != null)
-        {
-            _masterCollection = available.ToDictionary(k=>k,v=>activator.CoreChildProvider.GetDescendancyListIfAnyFor(v));
-        }
-        else
-        {
-            _masterCollection = _activator.CoreChildProvider.GetAllSearchables();
-        }
-            
+
+        _masterCollection = available != null ? available.ToDictionary(k=>k,v=>activator.CoreChildProvider.GetDescendancyListIfAnyFor(v)) : _activator.CoreChildProvider.GetAllSearchables();
+
         _publicCollection = _masterCollection.Select(v=>v.Key).ToList();
         SetAspectGet(_activator.CoreChildProvider);
     }
@@ -53,7 +46,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
                 return "Null";
 
             var parent = childProvider.GetDescendancyListIfAnyFor(o)?.GetMostDescriptiveParent();
-                
+
             return parent != null ? $"{o.ID} {o.GetType().Name} {o} ({parent})" : $"{o.ID} {o.GetType().Name} {o}";
         };
 
@@ -70,7 +63,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
             Y = Pos.Top(btnCancel)
         };
         win.Add(lbl);
-            
+
         txtId = new TextField
         {
             X = Pos.Right(lbl),
@@ -88,10 +81,10 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
     {
         if(token.IsCancellationRequested)
             return new List<IMapsDirectlyToDatabaseTable>();
-             
+
         if(int.TryParse(txtId.Text.ToString(), out var searchForID))
             _scorer.ID = searchForID;
-        else 
+        else
             _scorer.ID = null;
 
         var dict = _scorer.ScoreMatches(_masterCollection, searchText, token,null);

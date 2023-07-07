@@ -244,15 +244,11 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
         //Periodicity - with handling for invalid enum values listed in database
         var periodicity = r["Periodicity"];
-        if (periodicity == null || periodicity == DBNull.Value)
-            Periodicity = Catalogue.CataloguePeriodicity.Unknown;
-        else
-        {
-            if(Enum.TryParse(periodicity.ToString(), true, out Catalogue.CataloguePeriodicity periodicityAsEnum))
-                Periodicity = periodicityAsEnum;
-            else
-                Periodicity = Catalogue.CataloguePeriodicity.Unknown;
-        }
+        Periodicity =
+            periodicity == null || periodicity == DBNull.Value || !Enum.TryParse(periodicity.ToString(), true,
+                out Catalogue.CataloguePeriodicity periodicityAsEnum)
+                ? Catalogue.CataloguePeriodicity.Unknown
+                : periodicityAsEnum;
 
         ClearAllInjections();
     }

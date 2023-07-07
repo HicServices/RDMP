@@ -29,13 +29,13 @@ public enum ExecuteExtractionToFlatFileType
 }
 
 /// <summary>
-/// Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g. CSV).  Also copies SupportingDocuments, 
+/// Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g. CSV).  Also copies SupportingDocuments,
 /// lookups etc into accompanying folders in the ExtractionDirectory.
 /// </summary>
 public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 {
     private FileOutputFormat _output;
-        
+
     [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified, ExecuteExtractionToFlatFileType.CSV)]
     public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
 
@@ -46,7 +46,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     {
 
     }
-                                        
+
     protected override void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener)
     {
         if (_request is ExtractGlobalsCommand)
@@ -60,10 +60,9 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         {
             case ExecuteExtractionToFlatFileType.CSV:
                 OutputFile = Path.Combine(DirectoryPopulated.FullName, $"{GetFilename()}.csv");
-                if (request.Configuration != null)
-                    _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
-                else
-                    _output = new CSVOutputFormat(OutputFile, ",", DateFormat);
+                _output = request.Configuration != null
+                    ? new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat)
+                    : new CSVOutputFormat(OutputFile, ",", DateFormat);
 
                 _output.RoundFloatsTo = RoundFloatsTo;
                 break;
@@ -74,7 +73,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Setup data extraction destination as {OutputFile} (will not exist yet)"));
     }
-    
+
     protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
     {
         if(_request.IsBatchResume)
@@ -195,8 +194,8 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     public override string GetDestinationDescription()
     {
         return OutputFile;
-    }               
-        
+    }
+
     public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
     {
         return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
@@ -250,9 +249,9 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             {
                 rootDir.Delete(true);
                 rootDir.Create();
-            }                    
+            }
         }
-            
+
         base.Check(notifier);
     }
 }

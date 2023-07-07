@@ -19,9 +19,9 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 
 /// <summary>
-/// Command representing a desire to extract a given dataset in an ExtractionConfiguration through an extraction pipeline.  This includes bundled content 
-/// (Lookup tables, SupportingDocuments etc).  Also includes optional settings (e.g. IncludeValidation) etc.  You can realise the request by running the 
-/// QueryBuilder SQL. 
+/// Command representing a desire to extract a given dataset in an ExtractionConfiguration through an extraction pipeline.  This includes bundled content
+/// (Lookup tables, SupportingDocuments etc).  Also includes optional settings (e.g. IncludeValidation) etc.  You can realise the request by running the
+/// QueryBuilder SQL.
 /// </summary>
 public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 {
@@ -37,21 +37,18 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         get => _datasetBundle;
         set
         {
-            _datasetBundle = value; 
+            _datasetBundle = value;
 
-            if(value == null)
-                Catalogue = null;
-            else
-                Catalogue = DataExportRepository.CatalogueRepository.GetObjectByID<Catalogue>(value.DataSet.Catalogue_ID);
+            Catalogue = value == null ? null : DataExportRepository.CatalogueRepository.GetObjectByID<Catalogue>(value.DataSet.Catalogue_ID);
         }
     }
 
     public IDataExportRepository DataExportRepository { get; set; }
 
-    public List<IColumn> ColumnsToExtract{get;set;} 
+    public List<IColumn> ColumnsToExtract{get;set;}
     public IHICProjectSalt Salt{get;set;}
-    public bool IncludeValidation {get;set;} 
-        
+    public bool IncludeValidation {get;set;}
+
     public IExtractionDirectory Directory { get; set; }
     public ICatalogue Catalogue { get; private set; }
 
@@ -72,7 +69,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         ExtractableCohort = extractableCohort;
         DatasetBundle = datasetBundle;
         ColumnsToExtract = columnsToExtract;
-            
+
         // create a copy of the columns so we can support Reset()
         _origColumnsToExtract = ColumnsToExtract.ToList();
 
@@ -82,7 +79,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         TopX = -1;
     }
 
-        
+
 
     /// <summary>
     /// This version has less arguments because it goes back to the database and queries the configuration and explores who the cohort is etc, it will result in more database
@@ -99,7 +96,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         ExtractableCohort = configuration.GetExtractableCohort();
         DatasetBundle = datasetBundle;
         ColumnsToExtract = new List<IColumn>(Configuration.GetAllExtractableColumnsFor(datasetBundle.DataSet));
-            
+
         // create a copy of the columns so we can support Reset()
         _origColumnsToExtract = ColumnsToExtract.ToList();
 
@@ -127,7 +124,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     private ExtractDatasetCommand() : base(null)
     {
-            
+
     }
 
     /// <summary>
@@ -168,17 +165,13 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {
-        IDataAccessPoint[] points;
-
-        if (QueryBuilder?.TablesUsedInQuery != null) 
-            points = QueryBuilder.TablesUsedInQuery.ToArray(); //get it from the request if it has been built
-        else
-            points = Catalogue.GetTableInfoList(false); //or from the Catalogue directly if the query hasn't been built
+        IDataAccessPoint[] points = QueryBuilder?.TablesUsedInQuery != null ? QueryBuilder.TablesUsedInQuery.ToArray() : //get it from the request if it has been built
+            Catalogue.GetTableInfoList(false); //or from the Catalogue directly if the query hasn't been built
 
         var singleServer = new DataAccessPointCollection(true, DataAccessContext.DataExport);
         singleServer.AddRange(points);
-           
+
         return singleServer.GetDistinctServer();
-        
+
     }
 }

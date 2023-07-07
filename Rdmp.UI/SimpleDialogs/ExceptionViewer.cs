@@ -18,7 +18,7 @@ namespace Rdmp.UI.SimpleDialogs;
 public class ExceptionViewer : WideMessageBox
 {
     private readonly Exception _exception;
-        
+
     public ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,GetStackTrace(exception,Environment.StackTrace),null,WideMessageBoxTheme.Exception))
     {
         _exception = exception;
@@ -34,7 +34,7 @@ public class ExceptionViewer : WideMessageBox
 
     /// <summary>
     /// Returns the first stack trace from the <paramref name="exception"/> (including examining inner exceptions where stack trace is missing).
-    /// Otherwise returns <paramref name="ifNotFound"/>. 
+    /// Otherwise returns <paramref name="ifNotFound"/>.
     /// </summary>
     /// <param name="exception"></param>
     /// <param name="ifNotFound"></param>
@@ -59,11 +59,9 @@ public class ExceptionViewer : WideMessageBox
         if(exception.InnerException != null)
             longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception.InnerException );
 
-        ExceptionViewer ev;
-        if (longMessage == "")
-            ev = new ExceptionViewer(exception.GetType().Name,exception.Message, exception);
-        else
-            ev = new ExceptionViewer(exception.Message,longMessage, exception);
+        var ev = longMessage == ""
+            ? new ExceptionViewer(exception.GetType().Name, exception.Message, exception)
+            : new ExceptionViewer(exception.Message, longMessage, exception);
 
         if (isModalDialog)
             ev.ShowDialog();

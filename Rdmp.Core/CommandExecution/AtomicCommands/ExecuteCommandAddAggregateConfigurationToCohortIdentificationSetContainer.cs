@@ -35,10 +35,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
     private void SetCommandWeight()
     {
-        if (_offerCohortAggregates)
-            Weight = 0.14f;
-        else
-            Weight = 0.13f;
+        Weight = _offerCohortAggregates ? 0.14f : 0.13f;
     }
 
 
@@ -158,7 +155,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
                     return;
                 }
             }
-                
+
             if(!BasicActivator.SelectObjects(new DialogArgs
                {
                    WindowTitle = "Add Aggregate Configuration(s) to Container",

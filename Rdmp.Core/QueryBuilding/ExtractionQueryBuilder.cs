@@ -42,7 +42,7 @@ public class ExtractionQueryBuilder
     {
         if(request.QueryBuilder != null)
             throw new Exception("Creation of a QueryBuilder from a request can only happen once, to access the results of the creation use the cached answer in the request.QueryBuilder property");
-            
+
         if (!request.ColumnsToExtract.Any())
             throw new Exception("No columns are marked for extraction in this configuration");
 
@@ -56,7 +56,7 @@ public class ExtractionQueryBuilder
         substitutions = new List<ReleaseIdentifierSubstitution>();
 
         var memoryRepository = new MemoryRepository();
-            
+
         switch (request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier))
         {
             //no extraction identifiers
@@ -113,13 +113,9 @@ public class ExtractionQueryBuilder
         if (request.ExtractableCohort != null)
         {
             //the JOIN with the cohort table:
-            string cohortJoin;
-
-            if (substitutions.Count == 1)
-                cohortJoin = $" INNER JOIN {externalCohortTable.TableName} ON {substitutions.Single().JoinSQL}";
-            else
-                cohortJoin =
-                    $" INNER JOIN {externalCohortTable.TableName} ON {string.Join(" OR ", substitutions.Select(s => s.JoinSQL))}";
+            var cohortJoin = substitutions.Count == 1
+                ? $" INNER JOIN {externalCohortTable.TableName} ON {substitutions.Single().JoinSQL}"
+                : $" INNER JOIN {externalCohortTable.TableName} ON {string.Join(" OR ", substitutions.Select(s => s.JoinSQL))}";
 
             //add the JOIN in after any other joins
             queryBuilder.AddCustomLine(cohortJoin, QueryComponent.JoinInfoJoin);
@@ -148,7 +144,7 @@ public class ExtractionQueryBuilder
         request.IsBatchResume = batch.ProgressDate.HasValue;
 
         var start = batch.ProgressDate ?? batch.StartDate ?? throw new QueryBuildingException($"It was not possible to build a batch extraction query for '{request}' because there is no {nameof(ExtractionProgress.StartDate)} or {nameof(ExtractionProgress.ProgressDate)} set on the {nameof(ExtractionProgress)}");
-            
+
         if(batch.NumberOfDaysPerBatch <= 0)
         {
             throw new QueryBuildingException($"{ nameof(ExtractionProgress.NumberOfDaysPerBatch)} was {batch.NumberOfDaysPerBatch } for '{request}'");
@@ -168,19 +164,12 @@ public class ExtractionQueryBuilder
         request.BatchStart = start;
         request.BatchEnd = end;
 
-        string line;
-            
-        if(!request.IsBatchResume)
-        {
+        var line =
             // if it is a first batch, also pull the null dates
-            line = $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null)";
-        }
-        else
-        {
+            !request.IsBatchResume ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null)" :
             // it is a subsequent batch
-            line = $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
-        }
-            
+            $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
+
 
         queryBuilder.AddCustomLine(line, QueryComponent.WHERE);
 
@@ -213,7 +202,7 @@ public class ExtractionQueryBuilder
 
         if (project.ProjectNumber == null)
             throw new ProjectNumberException("Project number has not been entered, cannot create constant paramaters");
-            
+
         if(extractableCohort == null)
             throw new Exception("Cohort has not been selected, cannot create constant parameters");
 

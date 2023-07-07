@@ -162,7 +162,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
         var expectedFileName = $"rdmp{(EnvironmentInfo.IsLinux ? "" : ".exe")}";
 
-        // try in the location we ran from 
+        // try in the location we ran from
         var binary = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, expectedFileName);
 
         if (!File.Exists(binary))
@@ -204,7 +204,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
                     consoleOutput.Insert(0,line);
                     Application.MainLoop.Invoke(()=>_results.SetNeedsDisplay());
                 }
-                    
+
             }
         });
     }
@@ -221,14 +221,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
             var str = consoleOutput[item];
 
-            if (str.Length > width)
-            {
-                str = str[..width];
-            }
-            else
-            {
-                str = str.PadRight(width,' ');
-            }
+            str = str.Length > width ? str[..width] : str.PadRight(width,' ');
 
             _results.Move(col, line);
 
@@ -246,7 +239,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
             driver.SetAttribute(selected ? scheme.Focus : scheme.Normal);
             driver.AddStr(str);
-        }                
+        }
     }
 
     public bool IsMarked(int item)

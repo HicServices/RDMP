@@ -996,7 +996,7 @@ public class BackfillTests : FromToDatabaseTests
     {
         var ti = AddTableToCatalogue(databaseName, "Samples", "ID", out ciList, true);
         _catalogue.Name = databaseName;
-            
+
         // todo: what should this text actually look like
         _catalogue.Time_coverage = "[Samples].[SampleDate]";
         _catalogue.SaveToDatabase();
@@ -1033,7 +1033,7 @@ public class BackfillTests : FromToDatabaseTests
     {
         var table = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName).ExpectTable(tableName);
         var resultsImporter = new TableInfoImporter(CatalogueRepository, table);
-            
+
         resultsImporter.DoImport(out var ti, out ciList);
 
         var pkResult = ciList.Single(info => info.GetRuntimeName().Equals(pkName));
