@@ -38,7 +38,7 @@ public class DataLoadInfo : IDataLoadInfo
 
     public DiscoveredServer DatabaseSettings => _server;
 
-    private object oLock = new object();
+    private object oLock = new();
         
         
     #region Property setup (these throw exceptions if you try to read them after the record is closed)
@@ -192,7 +192,7 @@ SELECT @@IDENTITY;", con);
     }
 
 
-    private Dictionary<int, TableLoadInfo> _TableLoads = new Dictionary<int, TableLoadInfo>();
+    private Dictionary<int, TableLoadInfo> _TableLoads = new();
 
     public Dictionary<int, TableLoadInfo> TableLoads => _TableLoads;
 
@@ -201,7 +201,7 @@ SELECT @@IDENTITY;", con);
         return new TableLoadInfo(this, suggestedRollbackCommand, destinationTable, sources, expectedInserts);
     }
 
-    public static DataLoadInfo Empty= new DataLoadInfo();
+    public static DataLoadInfo Empty= new();
 
     private DataLoadInfo()
     {

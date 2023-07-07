@@ -43,7 +43,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// <summary>
     /// Cached results of <see cref="GetQuerySyntaxHelper"/>
     /// </summary>
-    private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper>();
+    private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new();
 
     #region Database Properties
     private string _name;
@@ -149,7 +149,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
 
     private Lazy<ColumnInfo[]> _knownColumnInfos;
     private Lazy<bool> _knownIsLookup;
-    private Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>> _knownCredentials = new Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>>();
+    private Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>> _knownCredentials = new();
 
 
     #region Relationships

@@ -209,7 +209,7 @@ public class Validator
         return sb.ToString();
     }
 
-    private static object oLockExtraTypes = new object();
+    private static object oLockExtraTypes = new();
     private static Type[] _extraTypes = null;
 
     public static void RefreshExtraTypes(SafeDirectoryCatalog mef, ICheckNotifier notifier)

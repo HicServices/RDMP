@@ -71,7 +71,7 @@ public class ThrowImmediatelyDataLoadJob: IDataLoadJob
     public object Payload { get; set; }
     public bool PersistentRaw { get; set; }
 
-    private List<NotifyEventArgs> _crashAtEnd = new List<NotifyEventArgs>();
+    private List<NotifyEventArgs> _crashAtEnd = new();
 
     /// <inheritdoc/>
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();

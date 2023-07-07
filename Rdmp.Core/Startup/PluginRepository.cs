@@ -31,7 +31,7 @@ public abstract class PluginRepository:TableRepository
         ExternalDatabaseServer = externalDatabaseServer;
     }
 
-    private readonly ObjectConstructor _constructor = new ObjectConstructor();
+    private readonly ObjectConstructor _constructor = new();
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
         return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject(t, this, reader);

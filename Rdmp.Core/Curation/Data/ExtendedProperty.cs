@@ -52,7 +52,7 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
     /// <summary>
     /// Collection of all known property names.  Plugins are free to add to these if desired but must do so pre startup
     /// </summary>
-    public static List<string> KnownProperties = new List<string>();
+    public static List<string> KnownProperties = new();
 
     static ExtendedProperty()
     {

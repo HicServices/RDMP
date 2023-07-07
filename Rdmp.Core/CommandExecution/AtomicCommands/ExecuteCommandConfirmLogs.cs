@@ -137,7 +137,7 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
     /// <returns></returns>
     private bool Include(ArchivalDataLoadInfo arg)
     {
-        if (!RequireLoadedRows || !(LogRootObject is ILoadMetadata lmd))
+        if (!RequireLoadedRows || LogRootObject is not ILoadMetadata lmd)
             return true;
 
         var excludeStaging = new Regex("_STAGING");

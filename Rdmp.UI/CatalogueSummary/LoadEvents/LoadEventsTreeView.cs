@@ -40,13 +40,13 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 {
     public LoadEventsTreeViewObjectCollection Collection {get;set;}
 
-    private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
+    private BackgroundWorker _populateLoadHistory = new();
     private ArchivalDataLoadInfo[] _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
     private CancellationTokenSource _populateLoadHistoryCancel;
-    private readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
-    private readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
-    private readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox { Text = "1000" };
-    private readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
+    private readonly ToolStripTextBox _tbFilterBox = new();
+    private readonly ToolStripButton _btnApplyFilter = new("Apply");
+    private readonly ToolStripTextBox _tbToFetch = new() { Text = "1000" };
+    private readonly ToolStripButton _btnFetch = new("Go");
 
     private int _toFetch = 1000;
 

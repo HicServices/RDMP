@@ -86,7 +86,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public RefreshBus RefreshBus { get; private set; }
 
-    private readonly UIObjectConstructor _constructor = new UIObjectConstructor();
+    private readonly UIObjectConstructor _constructor = new();
 
     public IArrangeWindows WindowArranger { get; private set; }
 

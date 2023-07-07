@@ -35,7 +35,7 @@ public partial class SimpleCohortSetUI : UserControl
     private bool lockIn = true;
     private bool _knownIdentifiersMode;
 
-    private List<SimpleFilterUI> _filterUIs = new List<SimpleFilterUI>();
+    private List<SimpleFilterUI> _filterUIs = new();
 
     public SimpleCohortSetUI()
     {

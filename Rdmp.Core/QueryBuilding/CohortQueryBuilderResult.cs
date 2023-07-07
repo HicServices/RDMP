@@ -42,7 +42,7 @@ public class CohortQueryBuilderResult
     public QueryBuilderCustomArgs Customise { get; }
     public CancellationToken CancellationToken { get; }
 
-    private readonly StringBuilder _log = new StringBuilder();
+    private readonly StringBuilder _log = new();
 
     /// <summary>
     /// Log of all activities undertaken while building
@@ -55,7 +55,7 @@ public class CohortQueryBuilderResult
     /// </summary>
     public CacheUsage CacheUsageDecision { get; private set; }
 
-    private List<CohortQueryBuilderDependency> _dependencies = new List<CohortQueryBuilderDependency>();
+    private List<CohortQueryBuilderDependency> _dependencies = new();
     private bool _alreadyBuilt = false;
 
     public IReadOnlyCollection<CohortQueryBuilderDependency> Dependencies => _dependencies;

@@ -22,7 +22,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 /// </summary>
 internal class CohortContainerManagerFromChildProvider:CohortContainerManager
 {
-    private readonly Dictionary<int, List<IOrderable>> _contents = new Dictionary<int, List<IOrderable>>();
+    private readonly Dictionary<int, List<IOrderable>> _contents = new();
 
     public CohortContainerManagerFromChildProvider(CatalogueRepository repository,CatalogueChildProvider childProvider):base(repository)
     {

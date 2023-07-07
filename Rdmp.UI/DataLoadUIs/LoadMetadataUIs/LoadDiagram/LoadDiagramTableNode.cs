@@ -34,8 +34,8 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
 
     public readonly DiscoveredTable Table;
 
-    private List<LoadDiagramColumnNode> _anticipatedChildren = new List<LoadDiagramColumnNode>();
-    private List<DiscoveredColumn>  _unplannedChildren = new List<DiscoveredColumn>();
+    private List<LoadDiagramColumnNode> _anticipatedChildren = new();
+    private List<DiscoveredColumn>  _unplannedChildren = new();
 
     public LoadDiagramTableNode(LoadDiagramDatabaseNode databaseNode,TableInfo tableInfo, LoadBubble bubble, HICDatabaseConfiguration config)
     {

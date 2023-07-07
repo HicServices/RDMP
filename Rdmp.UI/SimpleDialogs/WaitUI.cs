@@ -17,7 +17,7 @@ public sealed partial class WaitUI : Form
     private readonly string _caption;
     private readonly Task _task;
     private readonly CancellationTokenSource _cancellationTokenSource;
-    private Timer timer = new Timer();
+    private Timer timer = new();
 
     public WaitUI(string caption, Task task, CancellationTokenSource cancellationTokenSource)
     {

@@ -334,7 +334,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     #region ICohortContainerLinker
     protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents =
-        new Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>>();
+        new();
 
     public CohortAggregateContainer GetParent(AggregateConfiguration child)
     {

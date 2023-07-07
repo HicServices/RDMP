@@ -17,7 +17,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 /// </summary>
 public class PeriodicityCube
 {
-    private readonly Dictionary<Consequence, PeriodicityState> _consequenceCube = new Dictionary<Consequence, PeriodicityState>();
+    private readonly Dictionary<Consequence, PeriodicityState> _consequenceCube = new();
     private readonly PeriodicityState _passingValidation;
 
     public PeriodicityCube(int year, int month)

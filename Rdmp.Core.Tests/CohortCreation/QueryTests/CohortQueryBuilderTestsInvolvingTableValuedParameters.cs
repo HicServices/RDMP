@@ -15,7 +15,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 
 public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
 {
-    private TestableTableValuedFunction _function = new TestableTableValuedFunction();
+    private TestableTableValuedFunction _function = new();
         
     public void CreateFunction()
     {

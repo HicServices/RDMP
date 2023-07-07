@@ -28,7 +28,7 @@ public class TableInfoSynchronizer
     private DiscoveredServer _toSyncTo;
     private ICatalogueRepository _repository;
 
-    public HashSet<Catalogue> ChangedCatalogues  = new HashSet<Catalogue>();
+    public HashSet<Catalogue> ChangedCatalogues  = new();
 
     /// <summary>
     /// Synchronizes the TableInfo against the underlying database to ensure the Catalogues understanding of what columns exist, what are primary keys,

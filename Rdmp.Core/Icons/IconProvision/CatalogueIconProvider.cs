@@ -33,11 +33,11 @@ public class CatalogueIconProvider : ICoreIconProvider
     private readonly IIconProvider[] _pluginIconProviders;
     public IconOverlayProvider OverlayProvider { get; private set; }
 
-    protected List<IObjectStateBasedIconProvider> StateBasedIconProviders = new List<IObjectStateBasedIconProvider>();
+    protected List<IObjectStateBasedIconProvider> StateBasedIconProviders = new();
 
     protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
     protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
-    private DatabaseTypeIconProvider _databaseTypeIconProvider = new DatabaseTypeIconProvider();
+    private DatabaseTypeIconProvider _databaseTypeIconProvider = new();
 
     public Image<Rgba32> ImageUnknown => ImagesCollection[RDMPConcept.NoIconAvailable];
 

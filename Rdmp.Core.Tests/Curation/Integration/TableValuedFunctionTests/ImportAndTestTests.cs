@@ -19,7 +19,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests;
 
 public class ImportAndTestTests : DatabaseTests
 {
-    private TestableTableValuedFunction _function = new TestableTableValuedFunction();
+    private TestableTableValuedFunction _function = new();
     private DiscoveredDatabase _database;
 
     [SetUp]

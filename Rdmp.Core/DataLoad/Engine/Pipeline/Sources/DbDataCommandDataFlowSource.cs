@@ -24,7 +24,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
     private DbConnection _con;
 
     private readonly string _taskBeingPerformed;
-    private Stopwatch timer = new Stopwatch();
+    private Stopwatch timer = new();
 
     public int BatchSize { get; set; }
 

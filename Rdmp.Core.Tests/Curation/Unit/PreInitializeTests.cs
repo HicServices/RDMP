@@ -16,8 +16,8 @@ namespace Rdmp.Core.Tests.Curation.Unit;
 [Category("Unit")]
 public class PreInitializeTests
 {
-    private DataFlowPipelineContext<DataTable> context = new DataFlowPipelineContext<DataTable>();
-    private Fish fish = new Fish();
+    private DataFlowPipelineContext<DataTable> context = new();
+    private Fish fish = new();
 
     [Test]
     public void TestNormal()

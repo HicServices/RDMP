@@ -16,7 +16,7 @@ namespace Rdmp.Core.Providers;
 
 public abstract class ProblemProvider:IProblemProvider
 {
-    public static HashSet<Type> IgnoreBadNamesFor = new HashSet<Type>(new[] { 
+    public static HashSet<Type> IgnoreBadNamesFor = new(new[] { 
         typeof(TableInfo),
         typeof(ColumnInfo),
         typeof(IFilter),

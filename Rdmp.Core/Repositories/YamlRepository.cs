@@ -35,7 +35,7 @@ public class YamlRepository : MemoryDataExportRepository
     public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
     public DirectoryInfo Directory { get; }
 
-    private object lockFs = new object();
+    private object lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {

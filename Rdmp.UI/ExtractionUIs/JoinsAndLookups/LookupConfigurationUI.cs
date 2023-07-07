@@ -61,7 +61,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 public partial class LookupConfigurationUI : LookupConfiguration_Design
 {
     private Catalogue _catalogue;
-    private ToolTip toolTip = new ToolTip();
+    private ToolTip toolTip = new();
 
     //constructor
     public LookupConfigurationUI()

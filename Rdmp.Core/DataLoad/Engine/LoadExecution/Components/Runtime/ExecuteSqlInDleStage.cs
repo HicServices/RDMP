@@ -22,7 +22,7 @@ internal class ExecuteSqlInDleStage
 {
     private readonly IDataLoadJob _job;
     private readonly LoadStage _loadStage;
-    private Regex _regexEntity = new Regex(@"{([CT]):(\d+)}",RegexOptions.IgnoreCase);
+    private Regex _regexEntity = new(@"{([CT]):(\d+)}",RegexOptions.IgnoreCase);
 
     public ExecuteSqlInDleStage(IDataLoadJob job, LoadStage loadStage)
     {

@@ -19,9 +19,9 @@ namespace Rdmp.Core.Tests.Validation;
 [Category("Unit")]
 public class ValidatorTest
 {
-    private readonly ChiDomainObject _domainObjectWithValidChi = new ChiDomainObject(TestConstants._VALID_CHI);
-    private readonly ChiDomainObject _domainObjectWithInvalidChi = new ChiDomainObject(TestConstants._INVALID_CHI_CHECKSUM);
-    private readonly ChiAgeDomainObject _domainObjectWithValidChiAndAge = new ChiAgeDomainObject(TestConstants._VALID_CHI, 33);
+    private readonly ChiDomainObject _domainObjectWithValidChi = new(TestConstants._VALID_CHI);
+    private readonly ChiDomainObject _domainObjectWithInvalidChi = new(TestConstants._INVALID_CHI_CHECKSUM);
+    private readonly ChiAgeDomainObject _domainObjectWithValidChiAndAge = new(TestConstants._VALID_CHI, 33);
 
     [Test]
     public void Validate_InitialisedState_IsValid()

@@ -94,9 +94,9 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     private Bitmap _yellow = Images.TinyYellow.ImageToBitmap();
     private Bitmap _red = Images.TinyRed.ImageToBitmap();
 
-    private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
+    private ToMemoryCheckNotifier memoryCheckNotifier = new();
     private Task _checkTask;
-    private object oTaskLock = new object();
+    private object oTaskLock = new();
     private Timer timer;
 
     protected override void OnClick(EventArgs e)

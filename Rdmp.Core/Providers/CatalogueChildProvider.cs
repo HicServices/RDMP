@@ -70,11 +70,11 @@ public class CatalogueChildProvider : ICoreChildProvider
     public SupportingSQLTable[] AllSupportingSQL { get; set; }
 
     //tells you the imediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
-    private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new ConcurrentDictionary<object, HashSet<object>>();
+    private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new();
 
     //This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
     //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
-    private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new ConcurrentDictionary<object, DescendancyList>();
+    private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new();
 
     public IEnumerable<CatalogueItem> AllCatalogueItems => AllCatalogueItemsDictionary.Values;
 
@@ -177,7 +177,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     private IChildProvider[] _pluginChildProviders;
     private readonly ICatalogueRepository _catalogueRepository;
     private readonly ICheckNotifier _errorsCheckNotifier;
-    private readonly List<IChildProvider> _blockedPlugins = new List<IChildProvider>();
+    private readonly List<IChildProvider> _blockedPlugins = new();
 
     public AllGovernanceNode AllGovernanceNode { get; private set; }
     public GovernancePeriod[] AllGovernancePeriods { get; private set; }
@@ -196,7 +196,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// <summary>
     /// Lock for changes to Child provider
     /// </summary>
-    protected object WriteLock = new object();
+    protected object WriteLock = new();
 
     public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } =
         new AllOrphanAggregateConfigurationsNode();

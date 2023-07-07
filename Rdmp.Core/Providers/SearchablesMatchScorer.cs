@@ -70,7 +70,7 @@ public class SearchablesMatchScorer
     /// When the user types one of these they get a filter on the full Type
     /// </summary>
     public static Dictionary<string, Type> ShortCodes =
-        new Dictionary<string, Type> (StringComparer.CurrentCultureIgnoreCase){
+        new(StringComparer.CurrentCultureIgnoreCase){
 
             {"c",typeof (Catalogue)},
             {"ci",typeof (CatalogueItem)},
@@ -94,7 +94,7 @@ public class SearchablesMatchScorer
     /// Key Type.
     /// </summary>
     public static Dictionary<string, Type[]> AlsoIncludes =
-        new Dictionary<string, Type[]> (StringComparer.CurrentCultureIgnoreCase){
+        new(StringComparer.CurrentCultureIgnoreCase){
 
             {"Pipeline",new Type[]{ typeof(PipelineCompatibleWithUseCaseNode)}}
 

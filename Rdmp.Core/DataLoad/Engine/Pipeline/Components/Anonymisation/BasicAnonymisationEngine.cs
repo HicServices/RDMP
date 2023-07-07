@@ -26,7 +26,7 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
 {
     private bool _bInitialized = false;
 
-    private Dictionary<string, ANOTransformer> columnsToAnonymise = new Dictionary<string, ANOTransformer>();
+    private Dictionary<string, ANOTransformer> columnsToAnonymise = new();
     private IdentifierDumper _dumper;
         
     public TableInfo TableToLoad { get; set; }
@@ -59,8 +59,8 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
     }
 
     private int recordsProcessedSoFar = 0;
-    private Stopwatch stopwatch_TimeSpentTransforming = new Stopwatch();
-    private Stopwatch stopwatch_TimeSpentDumping = new Stopwatch();
+    private Stopwatch stopwatch_TimeSpentTransforming = new();
+    private Stopwatch stopwatch_TimeSpentDumping = new();
 
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {

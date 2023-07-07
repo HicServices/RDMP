@@ -26,7 +26,7 @@ internal class StackFramesTree
 
     public bool IsInDatabaseAccessAssembly { get;private set; }
 
-    public Dictionary<string,StackFramesTree> Children = new Dictionary<string, StackFramesTree>();
+    public Dictionary<string,StackFramesTree> Children = new();
 
     public StackFramesTree(string[] stackFrameAndSubframes,QueryPerformed performed, bool isInDatabaseAccessAssemblyYet)
     {

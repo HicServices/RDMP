@@ -109,7 +109,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public List<ISupplementalExtractionResults> SupplementalExtractionResults =>
-        new List<ISupplementalExtractionResults>(
+        new(
             Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this));
 
     /// <inheritdoc/>

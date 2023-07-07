@@ -153,7 +153,7 @@ public class GovernanceTests:DatabaseTests
         gov.CreateGovernanceRelationshipTo(c);            
     }
 
-    private List<GovernancePeriod> toCleanup = new List<GovernancePeriod>();
+    private List<GovernancePeriod> toCleanup = new();
     private GovernancePeriod GetGov(ICatalogueRepository repo = null)
     {
         var gov = new GovernancePeriod(repo??CatalogueRepository);

@@ -37,9 +37,9 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// </summary>
 public class WindowManager
 {
-    private readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new Dictionary<RDMPCollection, PersistableToolboxDockContent>();
-    private readonly List<RDMPSingleControlTab>  _trackedWindows = new List<RDMPSingleControlTab>();
-    private readonly List<DockContent> _trackedAdhocWindows = new List<DockContent>();
+    private readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new();
+    private readonly List<RDMPSingleControlTab>  _trackedWindows = new();
+    private readonly List<DockContent> _trackedAdhocWindows = new();
 
     public NavigationTrack<INavigation> Navigation { get; private set; }
     public event TabChangedHandler TabChanged;

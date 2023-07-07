@@ -38,7 +38,7 @@ public class DataLoadJob : IDataLoadJob
     public List<ITableInfo> LookupTablesToLoad { get; private set; }
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
-    private Stack<IDisposeAfterDataLoad> _disposalStack = new Stack<IDisposeAfterDataLoad>();
+    private Stack<IDisposeAfterDataLoad> _disposalStack = new();
 
     public HICDatabaseConfiguration Configuration { get; set; }
     public object Payload { get; set; }
@@ -46,7 +46,7 @@ public class DataLoadJob : IDataLoadJob
     public bool PersistentRaw { get; set; }
 
 
-    private List<NotifyEventArgs> _crashAtEnd = new List<NotifyEventArgs>();
+    private List<NotifyEventArgs> _crashAtEnd = new();
 
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 

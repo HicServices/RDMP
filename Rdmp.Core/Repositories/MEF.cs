@@ -29,7 +29,7 @@ public class MEF
 
     public bool HaveDownloadedAllAssemblies;
     public SafeDirectoryCatalog SafeDirectoryCatalog;
-    private readonly ObjectConstructor o = new ObjectConstructor();
+    private readonly ObjectConstructor o = new();
 
     private readonly string _localPath = null;
 
@@ -54,7 +54,7 @@ public class MEF
         DownloadDirectory = new DirectoryInfo(_MEFPathAsString);
     }
 
-    private HashSet<string> TypeNotKnown = new HashSet<string>();
+    private HashSet<string> TypeNotKnown = new();
 
     /// <summary>
     /// Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup"/>).  Returns null
@@ -260,8 +260,8 @@ public class MEF
         return GetTypes(typeof(T));
     }
 
-    private object _cachedImplementationsLock = new object();
-    private Dictionary<Type,Type[]> _cachedImplementations = new Dictionary<Type, Type[]>();
+    private object _cachedImplementationsLock = new();
+    private Dictionary<Type,Type[]> _cachedImplementations = new();
 
     /// <summary>
     /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see

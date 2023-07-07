@@ -40,7 +40,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private readonly AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
 
     private const int MaxMatches = 500;
-    private object oMatches = new object();
+    private object oMatches = new();
 
     private Task _lastFetchTask = null;
     private CancellationTokenSource _lastCancellationToken;
@@ -49,7 +49,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     private Type[] _types;
     private HashSet<string> _typeNames;
 
-    private List<Type> showOnlyTypes = new List<Type>();
+    private List<Type> showOnlyTypes = new();
     private Type _alwaysFilterOn;
     private ToolStripTextBox _lblId;
     private readonly DialogArgs _args;
@@ -60,7 +60,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// All the objects when T is not an IMapsDirectlyToDatabaseTable.
     /// </summary>
     private T[] _allObjects;
-    private List<T> _objectsToDisplay = new List<T>();
+    private List<T> _objectsToDisplay = new();
     private List<IMapsDirectlyToDatabaseTable> _tempMatches;
     private List<IMapsDirectlyToDatabaseTable> _matches;
     private bool stateChanged = true;
@@ -117,7 +117,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// <summary>
     /// Object types that appear in the task bar as filterable types
     /// </summary>
-    private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new Dictionary<Type, RDMPCollection>
+    private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new()
     {
         {typeof (Catalogue),RDMPCollection.Catalogue},
         {typeof (CatalogueItem),RDMPCollection.Catalogue},
@@ -136,7 +136,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     /// Identifies which Types are checked by default when the dialog is shown when the given RDMPCollection has focus
     /// </summary>
     public Dictionary<RDMPCollection, Type[]> StartingEasyFilters
-        = new Dictionary<RDMPCollection, Type[]>
+        = new()
         {
             {RDMPCollection.Catalogue, new[] {typeof (Catalogue)}},
             {RDMPCollection.Cohort, new[] {typeof (CohortIdentificationConfiguration)}},
@@ -336,7 +336,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
     }
 
-    private IconOverlayProvider provider = new IconOverlayProvider();
+    private IconOverlayProvider provider = new();
 
     private Bitmap GetHierarchyImage(object rowObject)
     {

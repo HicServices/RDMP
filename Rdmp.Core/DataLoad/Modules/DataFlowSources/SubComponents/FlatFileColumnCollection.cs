@@ -78,7 +78,7 @@ public class FlatFileColumnCollection
     /// and they must never have data in them.  This lets you have a full blank column in the middle of your file e.g. if you have inserted
     /// it via Excel
     /// </summary>
-    public ReadOnlyCollection<DataColumn> UnamedColumns = new ReadOnlyCollection<DataColumn>(Array.Empty<DataColumn>()); //start off with none
+    public ReadOnlyCollection<DataColumn> UnamedColumns = new(Array.Empty<DataColumn>()); //start off with none
 
     public bool FileIsEmpty = false;
 

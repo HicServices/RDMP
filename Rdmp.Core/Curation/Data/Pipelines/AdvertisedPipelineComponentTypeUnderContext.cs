@@ -23,7 +23,7 @@ public class AdvertisedPipelineComponentTypeUnderContext
     private Type _componentType;
 
 
-    private List<Type> unmetRequirements = new List<Type>();
+    private List<Type> unmetRequirements = new();
 
     public AdvertisedPipelineComponentTypeUnderContext(Type componentType, IPipelineUseCase useCase)
     {

@@ -50,7 +50,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     private BinderWithErrorProviderFactory _binder;
 
-    protected ObjectSaverButton ObjectSaverButton1 = new ObjectSaverButton();
+    protected ObjectSaverButton ObjectSaverButton1 = new();
 
     public DatabaseEntity DatabaseObject { get; private set; }
     protected RDMPCollection AssociatedCollection = RDMPCollection.None;

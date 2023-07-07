@@ -348,10 +348,10 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
 
 public class TestActivateItemsResults:ICheckNotifier
 {
-    public List<Control> WindowsShown = new List<Control>();
-    public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
-    public List<IBinderRule> RegisteredRules = new List<IBinderRule>();
-    public List<CheckEventArgs> FatalCalls = new List<CheckEventArgs>();
+    public List<Control> WindowsShown = new();
+    public Dictionary<Form, Exception> KilledForms = new();
+    public List<IBinderRule> RegisteredRules = new();
+    public List<CheckEventArgs> FatalCalls = new();
 
     public void Clear()
     {

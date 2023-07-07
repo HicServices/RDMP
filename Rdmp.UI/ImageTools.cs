@@ -17,7 +17,7 @@ public static class ImageTools
 {
 
     private static ConcurrentDictionary<Image<Rgba32>, Bitmap> ImageToBitmapCacheRgba32 =
-        new ConcurrentDictionary<Image<Rgba32>, Bitmap>();
+        new();
 
     public static Bitmap ImageToBitmap(this Image<Rgba32> img)
     {
@@ -31,7 +31,7 @@ public static class ImageTools
     }
 
     private static ConcurrentDictionary<byte[], Bitmap> ImageToBitmapCacheByteArray =
-        new ConcurrentDictionary<byte[], Bitmap>();
+        new();
 
     public static Bitmap ImageToBitmap(this byte [] img)
     {

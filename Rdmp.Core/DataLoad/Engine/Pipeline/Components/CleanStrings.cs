@@ -25,7 +25,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
 {
     private int _rowsProcessed = 0;
     private string _taskDescription;
-    private Stopwatch timer = new Stopwatch();
+    private Stopwatch timer = new();
 
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
     {
@@ -81,7 +81,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
         return toProcess;
     }
 
-    private List<string> columnsToClean = new List<string>();
+    private List<string> columnsToClean = new();
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {

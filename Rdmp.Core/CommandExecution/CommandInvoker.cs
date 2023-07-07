@@ -345,7 +345,7 @@ public class CommandInvoker
     }
 
     private readonly ConcurrentDictionary<RequiredArgument, CommandInvokerDelegate> _delegateCache =
-        new ConcurrentDictionary<RequiredArgument, CommandInvokerDelegate>();
+        new();
     public CommandInvokerDelegate GetDelegate(RequiredArgument argument)
     {
         return _delegateCache.GetOrAdd(argument, GetDelegateCacheMiss);

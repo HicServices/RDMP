@@ -28,7 +28,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
 {
     private MEF _mef;
     private CommentStore _commentStore;
-    private Dictionary<Type, string> Summaries = new Dictionary<Type, string>();
+    private Dictionary<Type, string> Summaries = new();
 
     public void GenerateReport(CommentStore commentStore,ICheckNotifier notifier, IIconProvider iconProvider,MEF mef, bool showFile)
     {

@@ -24,7 +24,7 @@ public class DependenciesEvaluation
         "Plugin/Plugin.UI/Plugin.UI.nuspec"
 
     };
-    private Dictionary<string, string> Dependencies = new Dictionary<string, string>();
+    private Dictionary<string, string> Dependencies = new();
 
     public void FindProblems(VisualStudioSolutionFile sln)
     {

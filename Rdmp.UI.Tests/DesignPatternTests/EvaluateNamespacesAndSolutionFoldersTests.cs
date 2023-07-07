@@ -21,9 +21,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
 {
     private const string SolutionName = "HIC.DataManagementPlatform.sln";
-    private readonly List<string> _csFilesFound = new List<string>();
+    private readonly List<string> _csFilesFound = new();
 
-    public static readonly HashSet<string> IgnoreList = new HashSet<string>
+    public static readonly HashSet<string> IgnoreList = new()
     {
         "Program.cs",
         "Settings.Designer.cs",
@@ -192,7 +192,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         }
     }
 
-    private readonly List<string> _errors = new List<string>();
+    private readonly List<string> _errors = new();
     private void Error(string s)
     {
         Console.WriteLine(s);

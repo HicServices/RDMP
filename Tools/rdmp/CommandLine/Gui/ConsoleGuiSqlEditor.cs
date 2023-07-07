@@ -367,7 +367,7 @@ internal class ConsoleGuiSqlEditor : Window
     private class SqlTextView : TextView
     {
 
-        private readonly HashSet<string> _keywords = new HashSet<string>(
+        private readonly HashSet<string> _keywords = new(
             new[]
             {
                 "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE",

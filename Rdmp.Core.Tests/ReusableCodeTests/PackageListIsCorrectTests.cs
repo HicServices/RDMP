@@ -20,16 +20,16 @@ namespace Rdmp.Core.Tests.ReusableCodeTests;
 /// </summary>
 public class PackageListIsCorrectTests
 {
-    private static readonly EnumerationOptions EnumerationOptions = new EnumerationOptions { RecurseSubdirectories = true,MatchCasing = MatchCasing.CaseInsensitive,IgnoreInaccessible = true};
+    private static readonly EnumerationOptions EnumerationOptions = new() { RecurseSubdirectories = true,MatchCasing = MatchCasing.CaseInsensitive,IgnoreInaccessible = true};
 
     //<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
     private static readonly Regex RPackageRef =
-        new Regex(@"<PackageReference\s+Include=""(.*)""\s+Version=""([^""]*)""",
+        new(@"<PackageReference\s+Include=""(.*)""\s+Version=""([^""]*)""",
             RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     // | Org.SomePackage |
     //
-    private static readonly Regex RMarkdownEntry = new Regex(@"^\|\s*\[?([^ |\]]+)(\]\([^)]+\))?\s*\|",
+    private static readonly Regex RMarkdownEntry = new(@"^\|\s*\[?([^ |\]]+)(\]\([^)]+\))?\s*\|",
         RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
 

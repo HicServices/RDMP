@@ -32,13 +32,13 @@ namespace Rdmp.UI.PieCharts;
 /// </summary>
 public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableControl
 {
-    private ToolStripButton btnSingleCatalogue = new ToolStripButton("Single",CatalogueIcons.Catalogue.ImageToBitmap()) { Name = "btnSingleCatalogue" };
-    private ToolStripButton btnAllCatalogues = new ToolStripButton("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()){Name= "btnAllCatalogues" };
-    private ToolStripButton btnRefresh = new ToolStripButton("Refresh",FamFamFamIcons.text_list_bullets.ImageToBitmap()) { Name = "btnRefresh" };
-    private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Type:"){Name= "toolStripLabel1" };
-    private ToolStripButton btnShowLabels = new ToolStripButton("Labels",FamFamFamIcons.text_align_left.ImageToBitmap()) { Name = "btnShowLabels", CheckOnClick = true };
+    private ToolStripButton btnSingleCatalogue = new("Single",CatalogueIcons.Catalogue.ImageToBitmap()) { Name = "btnSingleCatalogue" };
+    private ToolStripButton btnAllCatalogues = new("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()){Name= "btnAllCatalogues" };
+    private ToolStripButton btnRefresh = new("Refresh",FamFamFamIcons.text_list_bullets.ImageToBitmap()) { Name = "btnRefresh" };
+    private ToolStripLabel toolStripLabel1 = new("Type:"){Name= "toolStripLabel1" };
+    private ToolStripButton btnShowLabels = new("Labels",FamFamFamIcons.text_align_left.ImageToBitmap()) { Name = "btnShowLabels", CheckOnClick = true };
 
-    private List<ToolStripMenuItem> _flagOptions = new List<ToolStripMenuItem>();
+    private List<ToolStripMenuItem> _flagOptions = new();
 
     public GoodBadCataloguePieChart()
     {

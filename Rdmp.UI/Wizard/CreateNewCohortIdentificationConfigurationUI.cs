@@ -25,8 +25,8 @@ namespace Rdmp.UI.Wizard;
 /// </summary>
 public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 {
-    private Size _smallSize = new Size(755, 140);
-    private Size _bigSize = new Size(1368, 876);
+    private Size _smallSize = new(755, 140);
+    private Size _bigSize = new(1368, 876);
 
     public CohortIdentificationConfiguration CohortIdentificationCriteriaCreatedIfAny { get;private set; }
 

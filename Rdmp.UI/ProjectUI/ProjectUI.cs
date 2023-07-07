@@ -71,8 +71,8 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     }
 
     //menu item setup
-    private ContextMenuStrip menu = new ContextMenuStrip();
-    private ToolStripMenuItem mi_SetDescription = new ToolStripMenuItem("Set Description");
+    private ContextMenuStrip menu = new();
+    private ToolStripMenuItem mi_SetDescription = new("Set Description");
 
     /// <summary>
     /// Set when the user right clicks a row, so that we can reference the row in the handlers of the ToolStripMenuItems

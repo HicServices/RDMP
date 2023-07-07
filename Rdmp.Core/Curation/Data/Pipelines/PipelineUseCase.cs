@@ -65,7 +65,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     /// </summary>
     public bool IsDesignTime { get; private set; }
         
-    protected HashSet<object> InitializationObjects = new HashSet<object>();
+    protected HashSet<object> InitializationObjects = new();
     private IDataFlowPipelineContext _context;
 
     /// <summary>

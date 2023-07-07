@@ -19,7 +19,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public static class AssemblyResolver
 {
-    private static Dictionary<string,Assembly> assemblyResolveAttempts = new Dictionary<string, Assembly>(); 
+    private static Dictionary<string,Assembly> assemblyResolveAttempts = new(); 
 
     public static void SetupAssemblyResolver(params DirectoryInfo[] dirs)
     {

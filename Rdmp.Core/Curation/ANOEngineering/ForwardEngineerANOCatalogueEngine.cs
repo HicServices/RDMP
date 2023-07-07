@@ -36,8 +36,8 @@ public class ForwardEngineerANOCatalogueEngine
     public LoadMetadata LoadMetadata { get; private set; }
     public LoadProgress LoadProgressIfAny { get; set; }
 
-    public Dictionary<ITableInfo, QueryBuilder> SelectSQLForMigrations = new Dictionary<ITableInfo, QueryBuilder>();
-    public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new Dictionary<PreLoadDiscardedColumn, IDilutionOperation>();
+    public Dictionary<ITableInfo, QueryBuilder> SelectSQLForMigrations = new();
+    public Dictionary<PreLoadDiscardedColumn,IDilutionOperation> DilutionOperationsForMigrations = new();
 
     private ShareManager _shareManager;
 
@@ -424,7 +424,7 @@ public class ForwardEngineerANOCatalogueEngine
             $"Found '{columns.Length}' ColumnInfos called '{expectedNewNames.First()}'{(failedANOToo ? $" (Or 'ANO{expectedName}')" : "")}");
     }
 
-    private Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable>();
+    private Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new();
 
 
     private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)

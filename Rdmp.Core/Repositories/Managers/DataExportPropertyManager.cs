@@ -23,7 +23,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
     private readonly bool _allowCaching;
     private readonly DataExportRepository _repository;
     private bool _cacheOutOfDate = true;
-    private readonly ConcurrentDictionary<string,string> _cacheDictionary = new ConcurrentDictionary<string, string>();
+    private readonly ConcurrentDictionary<string,string> _cacheDictionary = new();
 
     /// <summary>
     /// Creates a new instance ready to read values out of the <paramref name="repository"/> database

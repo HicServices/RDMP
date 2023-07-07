@@ -78,7 +78,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
             $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
     }
 
-    private readonly ObjectConstructor _constructor = new ObjectConstructor();
+    private readonly ObjectConstructor _constructor = new();
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
         if (Constructors.TryGetValue(t, out var constructor))
@@ -110,7 +110,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 )", "ID").ToArray();
     }
 
-    private readonly Dictionary<Type, IRowVerCache> _caches = new Dictionary<Type, IRowVerCache>();
+    private readonly Dictionary<Type, IRowVerCache> _caches = new();
 
     public override T[] GetAllObjects<T>()
     {

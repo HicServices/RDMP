@@ -31,7 +31,7 @@ public class ParameterCollectionUIOptions
     public ParameterManager ParameterManager { get; set; }
     private CreateNewSqlParameterHandler _createNewParameterDelegate;
 
-    public readonly ParameterRefactorer Refactorer = new ParameterRefactorer();
+    public readonly ParameterRefactorer Refactorer = new();
 
     public string UseCase { get; private set; }
 

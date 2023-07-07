@@ -18,12 +18,12 @@ public  class YesNoYesToAllDialog : WideMessageBox
 {
     private bool YesToAllClicked = false;
     private bool NoToAllClicked = false;
-    private object lockShowDialog = new object();
-    private FlowLayoutPanel p = new FlowLayoutPanel();
-    private Button btnYes = new Button {Text ="Yes"};
-    private Button btnYesToAll = new Button {Text = "Yes To All"};
-    private Button btnNo = new Button {Text="No"};
-    private Button btnNoToAll = new Button {Text = "No To All"};
+    private object lockShowDialog = new();
+    private FlowLayoutPanel p = new();
+    private Button btnYes = new() { Text ="Yes"};
+    private Button btnYesToAll = new() { Text = "Yes To All"};
+    private Button btnNo = new() { Text="No"};
+    private Button btnNoToAll = new() { Text = "No To All"};
 
     /// <summary>
     /// The number of pixels to allow outside of the text width when auto sizing buttons

@@ -16,7 +16,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 public class AllImportantClassesDocumented
 {
     private List<string> _csFilesList;
-    private List<string> problems = new List<string>();
+    private List<string> problems = new();
     private int commentedCount = 0;
     private int commentLineCount = 0;
     private bool strict = false;

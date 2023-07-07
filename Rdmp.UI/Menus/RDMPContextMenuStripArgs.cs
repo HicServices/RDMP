@@ -19,7 +19,7 @@ namespace Rdmp.UI.Menus;
 /// </summary>
 public class RDMPContextMenuStripArgs
 {
-    private HashSet<Type> _skipCommands = new HashSet<Type>();
+    private HashSet<Type> _skipCommands = new();
 
     public IActivateItems ItemActivator { get; set; }
     public IMasqueradeAs Masquerader { get; set; }

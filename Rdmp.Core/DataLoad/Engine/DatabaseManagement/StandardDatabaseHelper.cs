@@ -18,7 +18,7 @@ public class StandardDatabaseHelper
 {
     public INameDatabasesAndTablesDuringLoads DatabaseNamer { get; set; }
 
-    public Dictionary<LoadBubble, DiscoveredDatabase> DatabaseInfoList = new Dictionary<LoadBubble, DiscoveredDatabase>();
+    public Dictionary<LoadBubble, DiscoveredDatabase> DatabaseInfoList = new();
 
     //Constructor
     internal StandardDatabaseHelper(DiscoveredDatabase liveDatabase, INameDatabasesAndTablesDuringLoads namer,DiscoveredServer rawServer)

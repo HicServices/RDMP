@@ -185,7 +185,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
     }
 
-    private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new ConcurrentDictionary<Type, IRowVerCache>();
+    private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new();
     public override T[] GetAllObjects<T>()
     {
         return _caches.GetOrAdd(typeof(T),t=> new RowVerCache<T>(this))

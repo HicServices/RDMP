@@ -65,9 +65,9 @@ public class CohortCompiler
     /// Tasks currently running in the compiler, Value can be null if the <see cref="ICompileable"/> is still building
     /// and not running yet.
     /// </summary>
-    public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new Dictionary<ICompileable, CohortIdentificationTaskExecution>();
+    public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new();
 
-    public List<Thread> Threads = new List<Thread>();
+    public List<Thread> Threads = new();
     private ICoreChildProvider _coreChildProvider;
 
     public CohortCompiler(CohortIdentificationConfiguration cohortIdentificationConfiguration)

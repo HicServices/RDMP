@@ -34,8 +34,8 @@ public abstract class TableRepository : ITableRepository
     protected DbConnectionStringBuilder _connectionStringBuilder;
     public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
-    private static object _oLockUpdateCommands = new object();
-    private UpdateCommandStore _updateCommandStore = new UpdateCommandStore();
+    private static object _oLockUpdateCommands = new();
+    private UpdateCommandStore _updateCommandStore = new();
     public bool SupportsCommits => true;
 
     //'accessors'
@@ -47,7 +47,7 @@ public abstract class TableRepository : ITableRepository
     /// <summary>
     /// Constructors for quickly resolving <see cref="ConstructEntity"/> calls rather than relying on reflection e.g. ObjectConstructor
     /// </summary>
-    protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>>();
+    protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new();
 
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
     private Lazy<DiscoveredTable[]> _tables;
@@ -698,9 +698,9 @@ public abstract class TableRepository : ITableRepository
         Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
     }
 
-    private object ongoingConnectionsLock = new object();
-    private readonly Dictionary<Thread,IManagedConnection> ongoingConnections = new Dictionary<Thread, IManagedConnection>();
-    private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new Dictionary<Thread, IManagedTransaction>();
+    private object ongoingConnectionsLock = new();
+    private readonly Dictionary<Thread,IManagedConnection> ongoingConnections = new();
+    private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new();
 
 
     public IManagedConnection GetConnection()
@@ -822,8 +822,8 @@ public abstract class TableRepository : ITableRepository
         return (DateTime)o;
     }
 
-    private Dictionary<Type,bool> _knownSupportedTypes = new Dictionary<Type,bool>();
-    private object oLockKnownTypes = new object();
+    private Dictionary<Type,bool> _knownSupportedTypes = new();
+    private object oLockKnownTypes = new();
 
     public bool SupportsObjectType(Type type)
     {

@@ -42,12 +42,12 @@ public class ParameterManager
     /// Collection of all the parameters found at each level so far
     /// <para>Do not modify this yourself</para>
     /// </summary>
-    public Dictionary<ParameterLevel,List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new Dictionary<ParameterLevel, List<ISqlParameter>>();
+    public Dictionary<ParameterLevel,List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new();
 
     /// <summary>
     /// Repository for creating temporary aggregate parameters
     /// </summary>
-    private readonly MemoryRepository _memoryRepository = new MemoryRepository();
+    private readonly MemoryRepository _memoryRepository = new();
 
     /// <summary>
     /// Creates a new <see cref="ParameterManager"/> with the specified global parameters

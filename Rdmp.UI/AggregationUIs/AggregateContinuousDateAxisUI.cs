@@ -28,7 +28,7 @@ public partial class AggregateContinuousDateAxisUI : UserControl
     private AggregateDimension _dimension;
     private AggregateContinuousDateAxis _axis;
 
-    private ErrorProvider _errorProvider = new ErrorProvider();
+    private ErrorProvider _errorProvider = new();
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public AggregateDimension Dimension

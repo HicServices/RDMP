@@ -60,7 +60,7 @@ public partial class SimpleFilterUI : UserControl
         }
     }
 
-    private List<SimpleParameterUI>  parameterUis = new List<SimpleParameterUI>();
+    private List<SimpleParameterUI>  parameterUis = new();
     private bool _mandatory;
 
     public SimpleFilterUI(IActivateItems activator,ExtractionFilter filter)

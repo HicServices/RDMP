@@ -13,7 +13,7 @@ public static class ServerDefaults
     /// <summary>
     /// The value that will actually be stored in the ServerDefaults table as a dictionary (see constructor for population
     /// </summary>
-    public static readonly Dictionary<PermissableDefaults, string> StringExpansionDictionary = new Dictionary<PermissableDefaults, string>();
+    public static readonly Dictionary<PermissableDefaults, string> StringExpansionDictionary = new();
 
     static ServerDefaults()
     {

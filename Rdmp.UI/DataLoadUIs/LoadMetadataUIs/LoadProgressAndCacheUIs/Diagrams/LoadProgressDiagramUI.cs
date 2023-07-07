@@ -32,7 +32,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
     private LoadProgressSummaryReport _report;
     public event Action LoadProgressChanged;
 
-    private ChartLookAndFeelSetter _chartLookAndFeelSetter = new ChartLookAndFeelSetter();
+    private ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
 
 
     public LoadProgressDiagramUI()

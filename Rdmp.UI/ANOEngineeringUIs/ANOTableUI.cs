@@ -27,7 +27,7 @@ namespace Rdmp.UI.ANOEngineeringUIs;
 public partial class ANOTableUI : ANOTableUI_Design
 {
     private ANOTable _anoTable;
-    private readonly ErrorProvider _serverErrorProvider = new ErrorProvider();
+    private readonly ErrorProvider _serverErrorProvider = new();
 
     public ANOTableUI()
     {

@@ -48,8 +48,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
 {
     public ParameterCollectionUIOptions Options { get; private set; }
 
-    private ToolStripMenuItem miAddNewParameter = new ToolStripMenuItem("New Parameter...");
-    private ToolStripMenuItem miOverrideParameter = new ToolStripMenuItem("Override Parameter");
+    private ToolStripMenuItem miAddNewParameter = new("New Parameter...");
+    private ToolStripMenuItem miOverrideParameter = new("Override Parameter");
 
     public ParameterCollectionUI()
     {

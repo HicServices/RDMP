@@ -25,7 +25,7 @@ public class GovernanceReport:DocXHelper
     private readonly IDetermineDatasetTimespan _timespanCalculator;
     private readonly ICatalogueRepository _repository;
 
-    private readonly CsvConfiguration _csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
+    private readonly CsvConfiguration _csvConfig = new(CultureInfo.CurrentCulture)
     {
         Delimiter = ","
     };

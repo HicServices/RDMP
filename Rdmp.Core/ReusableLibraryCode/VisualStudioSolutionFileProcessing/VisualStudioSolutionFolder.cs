@@ -22,6 +22,6 @@ public class VisualStudioSolutionFolder
         Guid = guid.Trim();
     }
 
-    public List<VisualStudioSolutionFolder> ChildrenFolders = new List<VisualStudioSolutionFolder>();
-    public List<VisualStudioProjectReference> ChildrenProjects = new List<VisualStudioProjectReference>();
+    public List<VisualStudioSolutionFolder> ChildrenFolders = new();
+    public List<VisualStudioProjectReference> ChildrenProjects = new();
 }

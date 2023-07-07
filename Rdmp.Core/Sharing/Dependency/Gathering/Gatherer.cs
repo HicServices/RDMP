@@ -23,7 +23,7 @@ namespace Rdmp.Core.Sharing.Dependency.Gathering;
 public class Gatherer
 {
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-    private readonly Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>> _functions = new Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>>();
+    private readonly Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>> _functions = new();
 
     public Gatherer(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {

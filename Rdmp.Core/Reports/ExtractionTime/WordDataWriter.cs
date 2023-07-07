@@ -30,7 +30,7 @@ public class WordDataWriter : DocXHelper
 {
     public ExtractionPipelineUseCase Executer { get; set; }
 
-    public List<Exception> ExceptionsGeneratingWordFile = new List<Exception>();
+    public List<Exception> ExceptionsGeneratingWordFile = new();
 
     public WordDataWriter(ExtractionPipelineUseCase executer)
     {
@@ -49,7 +49,7 @@ public class WordDataWriter : DocXHelper
                 $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
 
-    private static object oLockOnWordUsage = new object();
+    private static object oLockOnWordUsage = new();
     private IExecuteDatasetExtractionDestination _destination;
 
     /// <summary>

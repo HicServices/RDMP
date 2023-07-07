@@ -37,7 +37,7 @@ public class MetadataReport:DocXHelper
 {
     private readonly ICatalogueRepository _repository;
     private readonly MetadataReportArgs _args;
-    private HashSet<TableInfo> LookupsEncounteredToAppearInAppendix = new HashSet<TableInfo>();
+    private HashSet<TableInfo> LookupsEncounteredToAppearInAppendix = new();
 
     public float PageWidthInPixels { get; private set; }
 

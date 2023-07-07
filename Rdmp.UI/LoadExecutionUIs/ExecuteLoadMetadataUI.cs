@@ -38,7 +38,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     private ILoadProgress[] _allLoadProgresses;
 
 
-    private ToolStripComboBox dd_DebugOptions = new ToolStripComboBox();
+    private ToolStripComboBox dd_DebugOptions = new();
 
 
     private enum DebugOptions

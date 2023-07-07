@@ -21,8 +21,8 @@ public class SuggestComboBox : ComboBox
 {
     #region fields and properties
 
-    private readonly ListBox _suggLb = new ListBox { Visible = false, TabStop = false };
-    private readonly BindingList<string> _suggBindingList = new BindingList<string>();
+    private readonly ListBox _suggLb = new() { Visible = false, TabStop = false };
+    private readonly BindingList<string> _suggBindingList = new();
     private Expression<Func<ObjectCollection, IEnumerable<string>>> _propertySelector;
     private Func<ObjectCollection, IEnumerable<string>> _propertySelectorCompiled;
     private Expression<Func<string, string, bool>> _filterRule;

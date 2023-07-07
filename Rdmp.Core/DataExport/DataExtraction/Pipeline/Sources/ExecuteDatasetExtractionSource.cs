@@ -40,7 +40,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 
     public const string AuditTaskName = "DataExtraction";
 
-    private readonly List<string> _extractionIdentifiersidx = new List<string>();
+    private readonly List<string> _extractionIdentifiersidx = new();
 
     private bool _cancel = false;
     private ICatalogue _catalogue;
@@ -142,7 +142,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     private bool firstGlobalChunk = true;
     private int _rowsRead;
 
-    private RowPeeker _peeker = new RowPeeker();
+    private RowPeeker _peeker = new();
 
     public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {

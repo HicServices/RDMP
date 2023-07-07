@@ -43,7 +43,7 @@ internal class ConsoleMainWindow
     private MouseFlags _rightClick = MouseFlags.Button3Clicked;
 
     // Last time the mouse moved and where it moved to
-    private Point _lastMousePos = new Point(0,0);
+    private Point _lastMousePos = new(0,0);
     private DateTime _lastMouseMove = DateTime.Now;
 
     public const string Catalogues = "Catalogues";

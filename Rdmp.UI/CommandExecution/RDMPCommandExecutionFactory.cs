@@ -24,9 +24,9 @@ namespace Rdmp.UI.CommandExecution;
 public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 {
     private readonly IActivateItems _activator;
-    private Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>>();
-    private object oLockCachedAnswers = new object();
-    private List<ICommandExecutionProposal> _proposers = new List<ICommandExecutionProposal>();
+    private Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new();
+    private object oLockCachedAnswers = new();
+    private List<ICommandExecutionProposal> _proposers = new();
 
     public RDMPCommandExecutionFactory(IActivateItems activator)
     {

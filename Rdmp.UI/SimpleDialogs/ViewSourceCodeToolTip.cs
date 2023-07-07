@@ -44,7 +44,7 @@ internal class ViewSourceCodeToolTip : ToolTip
         e.ToolTipSize = new Size(WIDTH, HEIGHT);
     }
 
-    private static Dictionary<string, string[]> SourceFileCache = new Dictionary<string, string[]>();
+    private static Dictionary<string, string[]> SourceFileCache = new();
 
     private void OnDraw(object sender, DrawToolTipEventArgs e)
     {

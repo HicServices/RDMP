@@ -31,7 +31,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
 
     private Dictionary<DiscoveredDatabase, TableInfo[]> _liveDatabaseDictionary;
 
-    public readonly List<LoadDiagramDatabaseNode> Children = new List<LoadDiagramDatabaseNode>();
+    public readonly List<LoadDiagramDatabaseNode> Children = new();
 
     public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config)
         :base(database.Server.Name,database.Server.DatabaseType, loadTables)

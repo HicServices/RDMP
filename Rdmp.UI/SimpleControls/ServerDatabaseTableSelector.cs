@@ -66,11 +66,11 @@ public partial class ServerDatabaseTableSelector : UserControl
     public event Action SelectionChanged;
     private IDiscoveredServerHelper _helper;
 
-    private BackgroundWorker _workerRefreshDatabases = new BackgroundWorker();
+    private BackgroundWorker _workerRefreshDatabases = new();
     private CancellationTokenSource _workerRefreshDatabasesToken;
     private string[] _listDatabasesAsyncResult;
 
-    private BackgroundWorker _workerRefreshTables = new BackgroundWorker();
+    private BackgroundWorker _workerRefreshTables = new();
     private CancellationTokenSource _workerRefreshTablesToken;
     private List<DiscoveredTable> _listTablesAsyncResult;
 
@@ -277,7 +277,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         set => databaseTypeUI1.DatabaseType = value;
     }
 
-    public DiscoveredServer Result => new DiscoveredServer(GetBuilder());
+    public DiscoveredServer Result => new(GetBuilder());
 
     public bool TableShouldBeNovel
     {

@@ -23,7 +23,7 @@ internal class FilterManagerFromChildProvider: AggregateFilterManager
     /// <summary>
     /// Where ID key is the ID of the parent and the Value List is all the subcontainers.  If there is no key there are no subcontainers.
     /// </summary>
-    private readonly Dictionary<int, List<AggregateFilterContainer>> _subcontainers = new Dictionary<int, List<AggregateFilterContainer>>();
+    private readonly Dictionary<int, List<AggregateFilterContainer>> _subcontainers = new();
 
     private Dictionary<int, List<AggregateFilter>> _containersToFilters;
 

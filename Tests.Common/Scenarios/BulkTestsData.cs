@@ -72,7 +72,7 @@ public class BulkTestsData
 
     private Demography _dataGenerator;
 
-    private Random r = new Random();
+    private Random r = new();
 
     /// <summary>
     /// the bulk test data created during <see cref="SetupTestData"/>

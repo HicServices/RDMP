@@ -20,7 +20,7 @@ namespace Rdmp.Core.CommandLine;
 /// </summary>
 public class ColorSettings
 {
-    private static object oLockInstance = new object();
+    private static object oLockInstance = new();
     private static ColorSettings _instance;
     public static ColorSettings Instance
     {
@@ -51,7 +51,7 @@ public class ColorSettings
     }
 
     [YamlIgnore]
-    public ColorScheme Red => new ColorScheme
+    public ColorScheme Red => new()
     {
         Normal = new Attribute(RedForegroundNormal, RedBackgroundNormal),
         Focus = new Attribute(RedForegroundFocus, RedBackgroundFocus),
@@ -69,7 +69,7 @@ public class ColorSettings
 
 
     [YamlIgnore]
-    public ColorScheme Yellow => new ColorScheme
+    public ColorScheme Yellow => new()
     {
         Normal = new Attribute(YellowForegroundNormal, YellowBackgroundNormal),
         Focus = new Attribute(YellowForegroundFocus, YellowBackgroundFocus),
@@ -87,7 +87,7 @@ public class ColorSettings
 
 
     [YamlIgnore]
-    public ColorScheme White => new ColorScheme
+    public ColorScheme White => new()
     {
         Normal = new Attribute(WhiteForegroundNormal, WhiteBackgroundNormal),
         Focus = new Attribute(WhiteForegroundFocus, WhiteBackgroundFocus),

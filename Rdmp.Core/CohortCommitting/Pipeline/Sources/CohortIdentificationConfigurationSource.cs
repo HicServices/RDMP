@@ -37,7 +37,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
     public bool FreezeAfterSuccessfulImport { get; set; }
 
     private bool haveSentData = false;
-    private CancellationTokenSource _cancelGlobalOperations = new CancellationTokenSource();
+    private CancellationTokenSource _cancelGlobalOperations = new();
 
     /// <summary>
     /// If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear out the cache.  This will mean that

@@ -33,7 +33,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 public class UserInterfaceStandardisationChecker
 {
     private List<string> _csFilesList;
-    private List<string> problems = new List<string>();
+    private List<string> problems = new();
 
     private Type[] excusedNodeClasses = {
         //it's a singleton because you can only have one decryption certificate for an RDMP as opposed to other SingletonNode classses that represent collections e.g. AllTableInfos is the only collection of TableInfos but it's a collection

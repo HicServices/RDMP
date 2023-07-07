@@ -72,7 +72,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryHaving;
-    private ErrorProvider _errorProviderAxis = new ErrorProvider();
+    private ErrorProvider _errorProviderAxis = new();
 
     //Constructor
     public AggregateEditorUI()

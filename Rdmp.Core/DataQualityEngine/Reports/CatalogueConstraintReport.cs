@@ -43,8 +43,8 @@ public class CatalogueConstraintReport : DataQualityReport
 
     public static int MaximumPivotValues = 5000;
 
-    private Dictionary<string,DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new Dictionary<string, DQEStateOverDataLoadRunId>();
-    private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new Dictionary<string, PeriodicityCubesOverTime>();
+    private Dictionary<string,DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
+    private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
 
     private IExternalDatabaseServer _loggingServer;
     private string _loggingTask;

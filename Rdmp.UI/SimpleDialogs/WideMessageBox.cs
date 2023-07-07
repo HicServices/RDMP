@@ -42,9 +42,9 @@ public partial class WideMessageBox : Form
     /// </summary>
     public WideMessageBoxArgs Args { get; set; }
 
-    private readonly Stack<WideMessageBoxArgs> _navigationStack = new Stack<WideMessageBoxArgs>();
+    private readonly Stack<WideMessageBoxArgs> _navigationStack = new();
 
-    private static readonly HashSet<string> KeywordIgnoreList = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
+    private static readonly HashSet<string> KeywordIgnoreList = new(StringComparer.CurrentCultureIgnoreCase)
     {
         "date",
         "example",
@@ -56,7 +56,7 @@ public partial class WideMessageBox : Form
     public static CommentStore CommentStore;
     #endregion
 
-    private Regex className = new Regex(@"^\w+$");
+    private Regex className = new(@"^\w+$");
 
     public WideMessageBox(WideMessageBoxArgs args)
     {

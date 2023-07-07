@@ -45,7 +45,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     private ExtractionInformation[] _allExtractionInformations;
     private CatalogueItem[] _allCatalogueItems;
 
-    public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new Dictionary<ColumnInfo, ColumnInfoANOPlan>();
+    public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new();
         
     [JsonIgnore]
     public List<IDilutionOperation>  DilutionOperations { get; private set; }
@@ -59,7 +59,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     public DateTime? StartDate { get; set; }
 
     [JsonIgnore]
-    public HashSet<ITableInfo> SkippedTables = new HashSet<ITableInfo>();
+    public HashSet<ITableInfo> SkippedTables = new();
     private ICatalogue _catalogue;
 
     /// <summary>

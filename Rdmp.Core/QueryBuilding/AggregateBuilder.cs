@@ -160,7 +160,7 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// when adding columns you have the option of either including them in groupby (default) or omitting them from groupby.  If ommitted then the columns will be used to decide how to
     /// build the FROM statement (which tables to join etc) but not included in the SELECT and GROUP BY sections of the query
     /// </summary>
-    private readonly List<IColumn> _skipGroupByForThese = new List<IColumn>();
+    private readonly List<IColumn> _skipGroupByForThese = new();
 
     /// <inheritdoc cref="AggregateBuilder(string,string,AggregateConfiguration)" />
     /// <param name="limitationSQL"></param>
