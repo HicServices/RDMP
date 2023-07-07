@@ -113,33 +113,25 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private Bitmap ImageGetter(object rowObject)
     {
-        if(rowObject is ProgressUIEntry o)
-            switch (o.ProgressEventType)
-            {
-                // TODO: draw a couple of new icons if required
-                case ProgressEventType.Debug:
-                    return _information;
-                case ProgressEventType.Trace:
-                    return _information;
-                case ProgressEventType.Information:
-                    return _information;
-                case ProgressEventType.Warning:
-                    return o.Exception == null ? _warning : _warningEx;
-                case ProgressEventType.Error:
-                    return o.Exception == null ? _fail : _failEx;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+        if (rowObject is not ProgressUIEntry o) return null;
 
-        return null;
+        return o.ProgressEventType switch
+        {
+            // TODO: draw a couple of new icons if required
+            ProgressEventType.Debug => _information,
+            ProgressEventType.Trace => _information,
+            ProgressEventType.Information => _information,
+            ProgressEventType.Warning => o.Exception == null ? _warning : _warningEx,
+            ProgressEventType.Error => o.Exception == null ? _fail : _failEx,
+            _ => throw new ArgumentOutOfRangeException(nameof(rowObject))
+        };
     }
 
     private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
     {
-        if(e.ColumnIndex == _processingTimeColIndex)
-            if (e.Value != null && e.Value != DBNull.Value)
-                e.Value =
-                    $"{((TimeSpan)e.Value).Hours:00}:{((TimeSpan)e.Value).Minutes:00}:{((TimeSpan)e.Value).Seconds:00}";
+        if(e.ColumnIndex == _processingTimeColIndex && e.Value != null && e.Value != DBNull.Value)
+            e.Value =
+                $"{((TimeSpan)e.Value).Hours:00}:{((TimeSpan)e.Value).Minutes:00}:{((TimeSpan)e.Value).Seconds:00}";
     }
 
 
