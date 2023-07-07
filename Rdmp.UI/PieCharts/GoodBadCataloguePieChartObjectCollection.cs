@@ -78,22 +78,17 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     /// <returns></returns>
     public bool Include(CatalogueItem ci)
     {
-        var returnValue = true;
-
         var ei = ci.ExtractionInformation;
 
         if(ei == null)
             return IncludeNonExtractableCatalogueItems;
 
-        switch (ei.ExtractionCategory)
+        return ei.ExtractionCategory switch
         {
-            case ExtractionCategory.Internal:
-                return IncludeInternalCatalogueItems;
-            case ExtractionCategory.Deprecated:
-                return IncludeDeprecatedCatalogueItems;
-            default:
-                return returnValue;
-        }
+            ExtractionCategory.Internal => IncludeInternalCatalogueItems,
+            ExtractionCategory.Deprecated => IncludeDeprecatedCatalogueItems,
+            _ => true
+        };
     }
 
     public Catalogue GetSingleCatalogueModeCatalogue()

@@ -126,15 +126,14 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
             case LoadDiagramState.Different:
             case LoadDiagramState.Anticipated:
             case LoadDiagramState.Found:
-                switch (_bubble)
+                return _bubble switch
                 {
-                    case LoadBubble.Raw:
-                        return
-                            "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)";
-                    case LoadBubble.Staging:
-                        return "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE";
-                }
-                return "A Column that is involved in the load (based on the Catalogues associated with the load)";
+                    LoadBubble.Raw =>
+                        "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)",
+                    LoadBubble.Staging =>
+                        "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE",
+                    _ => "A Column that is involved in the load (based on the Catalogues associated with the load)"
+                };
             case LoadDiagramState.NotFound:
                 return "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
             case LoadDiagramState.New:
