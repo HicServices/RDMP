@@ -33,7 +33,7 @@ public class BoundDouble :  Bound
             return null;
 
         //nulls are also fine if we are passed blanks
-        if (value is string && string.IsNullOrWhiteSpace(value as string))
+        if (value is string s && string.IsNullOrWhiteSpace(s))
             return null;
 
         double v;

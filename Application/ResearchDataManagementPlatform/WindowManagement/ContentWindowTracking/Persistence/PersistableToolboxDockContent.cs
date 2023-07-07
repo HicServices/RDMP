@@ -38,10 +38,12 @@ public class PersistableToolboxDockContent:DockContent
 
 
 
-        var args = new Dictionary<string, string>();
-        args.Add("Toolbox", CollectionType.ToString());
+        var args = new Dictionary<string, string>
+        {
+            { "Toolbox", CollectionType.ToString() }
+        };
 
-         
+
         return Prefix + PersistStringHelper.Separator + PersistStringHelper.SaveDictionaryToString(args);
     }
     public RDMPCollectionUI GetCollection()
@@ -56,11 +58,10 @@ public class PersistableToolboxDockContent:DockContent
 
         var args = PersistStringHelper.LoadDictionaryFromString(s);
 
-        RDMPCollection collection;
 
         if (args.TryGetValue("Toolbox", out var arg))
         {
-            Enum.TryParse(arg, true, out collection);
+            Enum.TryParse(arg, true, out RDMPCollection collection);
             return collection;
         }
 

@@ -103,16 +103,12 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
     public ICacheFileSystemDestination CreateDestinationOnly( IDataLoadEventListener listener)
     {
         // get the current destination
-        var destination = GetEngine(_pipeline, listener).DestinationObject;
-            
-        if(destination == null)
-            throw new Exception($"{_cacheProgress} does not have a DestinationComponent in its Pipeline");
-
-        if(!(destination is ICacheFileSystemDestination))
+        var destination = GetEngine(_pipeline, listener).DestinationObject ?? throw new Exception($"{_cacheProgress} does not have a DestinationComponent in its Pipeline");
+        if (!(destination is ICacheFileSystemDestination systemDestination))
             throw new NotSupportedException(
                 $"{_cacheProgress} pipeline destination is not an ICacheFileSystemDestination, it was {_cacheProgress.GetType().FullName}");
             
-        return (ICacheFileSystemDestination) destination;
+        return systemDestination;
     }
 
     public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener)

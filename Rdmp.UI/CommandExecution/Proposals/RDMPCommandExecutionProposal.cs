@@ -37,7 +37,7 @@ public abstract class RDMPCommandExecutionProposal<T>:ICommandExecutionProposal 
 
     public bool IsCompatibleTarget(object target)
     {
-        return target is T && IsCompatibleTargetImpl((T)target);
+        return target is T target1 && IsCompatibleTargetImpl(target1);
     }
 
     protected virtual bool IsCompatibleTargetImpl(T target)

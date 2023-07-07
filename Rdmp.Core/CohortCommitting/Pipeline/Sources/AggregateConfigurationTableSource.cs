@@ -44,11 +44,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
             return builder.SQL;
         }
 
-        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
-
-        if(cic == null)
-            throw new Exception($"There GetCohortIdentificationConfiguration is unknown for '{AggregateConfiguration}'");
-
+        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny() ?? throw new Exception($"There GetCohortIdentificationConfiguration is unknown for '{AggregateConfiguration}'");
         var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(),null);
         return cohortBuilder.SQL;
     }

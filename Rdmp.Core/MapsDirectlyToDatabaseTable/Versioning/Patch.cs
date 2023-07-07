@@ -116,9 +116,9 @@ public class Patch : IComparable
     }
     public int CompareTo(object obj)
     {
-        if (obj is Patch)
+        if (obj is Patch patch)
         {
-            return -string.Compare(((Patch)obj).locationInAssembly, locationInAssembly, StringComparison.Ordinal); //sort alphabetically (reverse)
+            return -string.Compare(patch.locationInAssembly, locationInAssembly, StringComparison.Ordinal); //sort alphabetically (reverse)
         }
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");

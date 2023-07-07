@@ -50,9 +50,7 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
     {
         // Compute the last cache date from the CacheFillProgress date
         // CacheFillProgress is the date up to which caching has been performed, and is therefore the date from which caching will next begin.
-        var cacheProgress = loadProgress.CacheProgress;
-        if (cacheProgress == null)
-            throw new InvalidOperationException(
+        var cacheProgress = loadProgress.CacheProgress ?? throw new InvalidOperationException(
                 $"Could not retrieve the CacheProgress from LoadProgress {loadProgress.ID} (ensure caching is configured on this load before using this strategy)");
         if (cacheProgress.CacheFillProgress == null)
             throw new InvalidOperationException(

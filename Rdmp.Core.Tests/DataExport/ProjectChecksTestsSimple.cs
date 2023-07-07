@@ -139,8 +139,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Configuration_NoDatasets()
     {
-        DirectoryInfo dir;
-        var p = GetProjectWithConfigDirectory(out var config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out DirectoryInfo dir);
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
         StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",ex.Message);
 
@@ -150,8 +149,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Configuration_NoProjectNumber()
     {
-        DirectoryInfo dir;
-        var p = GetProjectWithConfigDirectory(out var config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out DirectoryInfo dir);
         p.ProjectNumber = null;
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
         StringAssert.Contains("Project does not have a Project Number, this is a number which is meaningful to you (as opposed to ID which is the ",ex.Message);

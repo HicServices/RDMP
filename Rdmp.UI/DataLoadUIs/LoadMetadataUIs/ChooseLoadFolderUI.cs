@@ -141,8 +141,10 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
 
     private void btnBrowseForExisting_Click(object sender, EventArgs e)
     {
-        var fbd = new FolderBrowserDialog();
-        fbd.ShowNewFolderButton = false;
+        var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
 
         if (fbd.ShowDialog() == DialogResult.OK)
         {

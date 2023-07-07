@@ -19,9 +19,9 @@ public abstract class CommandFactoryBase
     /// <returns></returns>
     public static bool Is<T>(object o, out T match)
     {
-        if(o is T)
+        if(o is T o1)
         {
-            match = (T)o;
+            match = o1;
             return true;
         }
 

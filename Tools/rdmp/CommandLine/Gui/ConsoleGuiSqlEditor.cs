@@ -69,10 +69,9 @@ internal class ConsoleGuiSqlEditor : Window
             Y = 0,
             Width = Dim.Fill(),
             Height = Dim.Fill(),
-            Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n").Replace("\t", "    ")
+            Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n").Replace("\t", "    "),
+            AllowsTab = false
         };
-
-        textView.AllowsTab = false;
 
         TabView.AddTab(queryTab = new Tab("Query", textView),true);
 
@@ -385,12 +384,13 @@ internal class ConsoleGuiSqlEditor : Window
 
         public SqlTextView()
         {
-            Autocomplete = new SqlAutocomplete();
-
-            Autocomplete.ColorScheme = new ColorScheme
+            Autocomplete = new SqlAutocomplete
             {
-                Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
-                Focus = Driver.MakeAttribute(Color.Black, Color.Cyan)
+                ColorScheme = new ColorScheme
+                {
+                    Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
+                    Focus = Driver.MakeAttribute(Color.Black, Color.Cyan)
+                }
             };
 
             _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);

@@ -58,8 +58,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     /// <returns></returns>
     public bool IsAllowable(Type t)
     {
-        string whoCares;
-        return IsAllowable(t, out whoCares);
+        return IsAllowable(t, out string whoCares);
     }
         
     /// <inheritdoc/>
@@ -190,8 +189,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     /// <inheritdoc/>
     public bool IsAllowable(IPipeline pipeline)
     {
-        string whocares;
-        return IsAllowable(pipeline, out whocares);
+        return IsAllowable(pipeline, out string whocares);
     }
 
 
@@ -310,10 +308,10 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     /// <inheritdoc/>
     public void PreInitializeGeneric(IDataLoadEventListener listener, object component, params object[] initializationObjects)
     {
-        if(component is IDataFlowSource<T>)
-            PreInitialize(listener, (IDataFlowSource<T>)component, initializationObjects);
-        else if (component is IDataFlowComponent<T>)
-            PreInitialize(listener, (IDataFlowComponent<T>) component, initializationObjects);
+        if(component is IDataFlowSource<T> source)
+            PreInitialize(listener, source, initializationObjects);
+        else if (component is IDataFlowComponent<T> flowComponent)
+            PreInitialize(listener, flowComponent, initializationObjects);
         else
             throw new NotSupportedException(
                 $"It looks like you attempted to pre initialize using PreInitializeGeneric but your object was type '{GetFullName(component.GetType())}' and we expected either a source or a component <T> where <T> is:{GetFullName(typeof(T))}");

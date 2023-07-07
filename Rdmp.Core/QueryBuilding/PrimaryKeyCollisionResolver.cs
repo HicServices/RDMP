@@ -50,10 +50,8 @@ WHERE DuplicateCount > 1";
     /// <returns></returns>
     public string GenerateSQL()
     {
-        ColumnInfo[] pks;
-        List<IResolveDuplication> resolvers;
 
-        return GenerateSQL(out pks, out resolvers);
+        return GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers);
     }
 
     private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)

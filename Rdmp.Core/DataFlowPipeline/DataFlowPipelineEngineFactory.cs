@@ -147,11 +147,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
     private static object CreateComponent(IPipelineComponent toBuild)
     {
-        var type = toBuild.GetClassAsSystemType();
-            
-        if(type == null)
-            throw new Exception($"Could not find Type '{toBuild.Class}'");
-
+        var type = toBuild.GetClassAsSystemType() ?? throw new Exception($"Could not find Type '{toBuild.Class}'");
         var toReturn = ObjectConstructor.Construct(type);
 
         //all the IArguments we need to initialize the class

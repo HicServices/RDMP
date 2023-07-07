@@ -164,9 +164,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(AggregateConfiguration))
         {
-            ExtractionInformation dateEi;
-            ExtractionInformation otherEi;
-            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository,out dateEi, out otherEi);
+            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository, out ExtractionInformation dateEi, out ExtractionInformation otherEi);
         }
 
         if (typeof(T) == typeof(ExternalDatabaseServer))
@@ -176,8 +174,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(ANOTable))
         {
-            ExternalDatabaseServer server;
-            return (T)(object)WhenIHaveA<ANOTable>(repository, out server);
+            return (T)(object)WhenIHaveA<ANOTable>(repository, out ExternalDatabaseServer server);
         }
 
         if (typeof(T) == typeof(LoadMetadata))
@@ -256,8 +253,7 @@ public class UnitTests
 
         if (typeof (T) == typeof(ObjectExport))
         {
-            ShareManager sm;
-            return (T)(object)WhenIHaveA<ObjectExport>(repository, out sm);
+            return (T)(object)WhenIHaveA<ObjectExport>(repository, out ShareManager sm);
         }
             
         if (typeof (T) == typeof(ObjectImport))
@@ -303,9 +299,8 @@ public class UnitTests
             
         if (typeof (T) == typeof(AggregateContinuousDateAxis))
         {
-            ExtractionInformation otherEi;
-            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi,out otherEi);
-                
+            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi, out ExtractionInformation otherEi);
+
             //remove the other Ei
             config.AggregateDimensions[0].DeleteInDatabase();
             //add the date one
@@ -380,9 +375,8 @@ public class UnitTests
 
         if (typeof (T) == typeof(JoinInfo))
         {
-            ColumnInfo col3;
-            WhenIHaveTwoTables(repository, out var col1, out var col2,out col3);
-                
+            WhenIHaveTwoTables(repository, out var col1, out var col2, out ColumnInfo col3);
+
             return (T)(object)new JoinInfo(repository,col1,col2,ExtractionJoinType.Left, null);
         }
         if (typeof (T) == typeof(Lookup))
@@ -598,9 +592,7 @@ public class UnitTests
 
     private static void WhenIHaveTwoTables(MemoryDataExportRepository repository,out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
     {
-        TableInfo ti1;
-        TableInfo ti2;
-        WhenIHaveTwoTables(repository, out ti1, out ti2, out col1, out col2, out col3);
+        WhenIHaveTwoTables(repository, out TableInfo ti1, out TableInfo ti2, out col1, out col2, out col3);
     }
 
     private static void WhenIHaveTwoTables(MemoryDataExportRepository repository,out TableInfo ti1, out TableInfo ti2, out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
@@ -735,20 +727,20 @@ public class UnitTests
                 Assert.Fail("{0} Property {1} could not be read from Database:\r\n{2}", dbObj.GetType().Name, property.Name, e);
             }
 
-            if(memValue is IMapsDirectlyToDatabaseTable)
+            if(memValue is IMapsDirectlyToDatabaseTable table)
             {
-                AssertAreEqual((IMapsDirectlyToDatabaseTable)memValue, (IMapsDirectlyToDatabaseTable)dbValue,false);
+                AssertAreEqual(table, (IMapsDirectlyToDatabaseTable)dbValue,false);
                 return;
             }
-            if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable>)
+            if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable> value)
             {
-                AssertAreEqual((IEnumerable<IMapsDirectlyToDatabaseTable>)memValue, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue,false);
+                AssertAreEqual(value, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue,false);
                 return;
             }
 
-            if (memValue is DateTime && dbValue is DateTime)
-                if (!AreAboutTheSameTime((DateTime) memValue, (DateTime) dbValue))
-                    Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, memValue, dbValue);
+            if (memValue is DateTime time && dbValue is DateTime dateTime)
+                if (!AreAboutTheSameTime(time, dateTime))
+                    Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, time, dateTime);
                 else
                     return;
 

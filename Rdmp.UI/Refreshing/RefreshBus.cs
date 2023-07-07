@@ -110,11 +110,7 @@ public class RefreshBus
         if(c is not ContainerControl containerControl)
             throw new ArgumentOutOfRangeException();
 
-        var parentForm = containerControl.ParentForm;
-
-        if(parentForm == null)
-            throw new ArgumentException("Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",nameof(c));
-
+        var parentForm = containerControl.ParentForm ?? throw new ArgumentException("Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",nameof(c));
         Subscribe(subscriber);
         parentForm.FormClosing += (s, e) => Unsubscribe(subscriber);
     }
@@ -160,10 +156,7 @@ public class RefreshBus
         //subscribe them now
         Subscribe(subscriber);
 
-        var parentForm = user.ParentForm;
-
-        if (parentForm == null)
-            throw new ArgumentException("Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)", "c");
+        var parentForm = user.ParentForm ?? throw new ArgumentException("Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)", "c");
 
         //when their parent closes we unsubscribe them
         parentForm.FormClosed += (s, e) =>

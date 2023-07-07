@@ -794,10 +794,10 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
 
         var i = 0;
-        foreach (var kvp in compiler.Tasks)
-            TestContext.WriteLine($"{i++} - {kvp.Key.ToString()} | {kvp.Key.GetType()} | {kvp.Key.State} | {kvp.Key?.CrashMessage} | {kvp.Key.FinalRowCount} | {kvp.Key.GetCachedQueryUseCount()}");
+        foreach (var kvp in compiler.Tasks.Keys)
+            TestContext.WriteLine($"{i++} - {kvp.ToString()} | {kvp.GetType()} | {kvp.State} | {kvp.CrashMessage} | {kvp.FinalRowCount} | {kvp.GetCachedQueryUseCount()}");
             
-        Assert.IsTrue(compiler.Tasks.All(t => t.Key.State == CompilationState.Finished), "Expected all tasks to finish without error");
+        Assert.IsTrue(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished), "Expected all tasks to finish without error");
     }
 
     /// <summary>

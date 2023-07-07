@@ -972,8 +972,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public ITableInfo[] GetLookupTableInfoList()
     {
-        List<ITableInfo> normalTables;
-        GetTableInfos(out normalTables, out var lookupTables);
+        GetTableInfos(out List<ITableInfo> normalTables, out var lookupTables);
 
         return lookupTables.ToArray();
     }
@@ -1238,13 +1237,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var f = new QuerySyntaxHelperFactory();
-        var type = GetDistinctLiveDatabaseServerType();
-
-        if(type == null)
-            throw new AmbiguousDatabaseTypeException(
+        var type = GetDistinctLiveDatabaseServerType() ?? throw new AmbiguousDatabaseTypeException(
                 $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
-            
-        return f.Create(type.Value);
+        return f.Create(type);
     }
 
     #region Static Methods
@@ -1278,8 +1273,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc cref="Catalogue.IsAcceptableName(string,out string)"/>
     public static bool IsAcceptableName(string name)
     {
-        string whoCares;
-        return IsAcceptableName(name, out whoCares);
+        return IsAcceptableName(name, out string whoCares);
     }
     #endregion
 

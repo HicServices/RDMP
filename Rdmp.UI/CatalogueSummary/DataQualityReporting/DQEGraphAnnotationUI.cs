@@ -35,30 +35,34 @@ internal class DQEGraphAnnotationUI
     public DQEGraphAnnotationUI(DQEGraphAnnotation a, Chart chart)
     {
         _underlyingAnnotationObject = a;
-        Annotation = new LineAnnotation();
-        Annotation.IsSizeAlwaysRelative = false;
-        Annotation.AxisX = chart.ChartAreas[0].AxisX;
-        Annotation.AxisY = chart.ChartAreas[0].AxisY;
-        Annotation.AnchorX = a.EndX;
-        Annotation.AnchorY = a.EndY;
-        Annotation.Height = a.StartY - a.EndY;
-        Annotation.Width = a.StartX - a.EndX;
-        Annotation.LineWidth = 2;
-        Annotation.StartCap = LineAnchorCapStyle.Arrow;
-        Annotation.EndCap = LineAnchorCapStyle.None;
-        Annotation.AllowSelecting = true;
-        Annotation.Tag = this;
+        Annotation = new LineAnnotation
+        {
+            IsSizeAlwaysRelative = false,
+            AxisX = chart.ChartAreas[0].AxisX,
+            AxisY = chart.ChartAreas[0].AxisY,
+            AnchorX = a.EndX,
+            AnchorY = a.EndY,
+            Height = a.StartY - a.EndY,
+            Width = a.StartX - a.EndX,
+            LineWidth = 2,
+            StartCap = LineAnchorCapStyle.Arrow,
+            EndCap = LineAnchorCapStyle.None,
+            AllowSelecting = true,
+            Tag = this
+        };
 
-        TextAnnotation = new TextAnnotation();
-        TextAnnotation.Text = a.Text;
-        TextAnnotation.IsSizeAlwaysRelative = false;
-        TextAnnotation.AxisX = chart.ChartAreas[0].AxisX;
-        TextAnnotation.AxisY = chart.ChartAreas[0].AxisY;
-        TextAnnotation.AnchorX = a.StartX;
-        TextAnnotation.AnchorY = a.StartY;
-        TextAnnotation.AllowSelecting = true;
-        TextAnnotation.Tag = this;
-            
+        TextAnnotation = new TextAnnotation
+        {
+            Text = a.Text,
+            IsSizeAlwaysRelative = false,
+            AxisX = chart.ChartAreas[0].AxisX,
+            AxisY = chart.ChartAreas[0].AxisY,
+            AnchorX = a.StartX,
+            AnchorY = a.StartY,
+            AllowSelecting = true,
+            Tag = this
+        };
+
     }
 
     public void Delete(Chart chart)

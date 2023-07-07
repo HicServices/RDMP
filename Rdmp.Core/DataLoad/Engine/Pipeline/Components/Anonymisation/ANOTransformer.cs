@@ -87,12 +87,8 @@ public class ANOTransformer
                 continue;
 
             //its not null so look up the mapped value
-            var substitutionRow = substitutionTable.Rows.Find(valueToReplace);
-
-            if (substitutionRow == null)
-                throw new Exception(
+            var substitutionRow = substitutionTable.Rows.Find(valueToReplace) ?? throw new Exception(
                     $"Substitution table returned by {SubstitutionStoredprocedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
-
             var substitutionValue = substitutionRow[1];//substitution value
                 
             //overwrite the value with the substitution
@@ -159,10 +155,12 @@ public class ANOTransformer
 
                 var substituteForANOIdentifiersProc = SubstitutionStoredprocedure;
 
-                var cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, con);
-                cmdSubstituteIdentifiers.CommandType = CommandType.StoredProcedure;
-                cmdSubstituteIdentifiers.CommandTimeout = 500;
-                cmdSubstituteIdentifiers.Transaction = transaction;
+                var cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, con)
+                {
+                    CommandType = CommandType.StoredProcedure,
+                    CommandTimeout = 500,
+                    Transaction = transaction
+                };
 
                 cmdSubstituteIdentifiers.Parameters.Add("@batch", SqlDbType.Structured);
                 cmdSubstituteIdentifiers.Parameters.Add("@tableName", SqlDbType.VarChar, 500);

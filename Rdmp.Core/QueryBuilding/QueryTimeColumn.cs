@@ -97,10 +97,10 @@ public class QueryTimeColumn: IComparable
     /// <inheritdoc/>
     public int CompareTo(object obj)
     {
-        if (obj is QueryTimeColumn)
+        if (obj is QueryTimeColumn column)
         {
             return IColumn.Order -
-                   (obj as QueryTimeColumn).IColumn.Order;
+                   column.IColumn.Order;
         }
 
         return 0;

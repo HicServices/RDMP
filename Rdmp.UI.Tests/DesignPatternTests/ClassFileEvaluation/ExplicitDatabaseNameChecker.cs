@@ -19,15 +19,17 @@ public class ExplicitDatabaseNameChecker
         var problemFiles = new Dictionary<string, string>();
         var prohibitedStrings = new List<string>();
 
-        var ignoreList = new List<string>();
-        ignoreList.Add("ExplicitDatabaseNameChecker.cs"); //us obviously since we do contain that text!
-        ignoreList.Add("DatabaseCreationProgramOptions.cs"); //allowed because it is the usage text for the program.
-        ignoreList.Add("AutomationServiceOptions.cs");//allowed because it is the usage text for the program.
-        ignoreList.Add("DatabaseTests.cs"); //allowed because it is telling user about how you can setup database tests support
-        ignoreList.Add("ChoosePlatformDatabasesUI.Designer.cs"); //allowed because it is a suggestion to user about what prefix to use
-        ignoreList.Add("PluginPackagerProgramOptions.cs"); //allwed because it's a suggestion to the user about command line arguments
-        ignoreList.Add("DocumentationCrossExaminationTest.cs"); //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
-        ignoreList.Add("ResearchDataManagementPlatformOptions.cs"); //allowed because it's an Example
+        var ignoreList = new List<string>
+        {
+            "ExplicitDatabaseNameChecker.cs", //us obviously since we do contain that text!
+            "DatabaseCreationProgramOptions.cs", //allowed because it is the usage text for the program.
+            "AutomationServiceOptions.cs",//allowed because it is the usage text for the program.
+            "DatabaseTests.cs", //allowed because it is telling user about how you can setup database tests support
+            "ChoosePlatformDatabasesUI.Designer.cs", //allowed because it is a suggestion to user about what prefix to use
+            "PluginPackagerProgramOptions.cs", //allwed because it's a suggestion to the user about command line arguments
+            "DocumentationCrossExaminationTest.cs", //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
+            "ResearchDataManagementPlatformOptions.cs" //allowed because it's an Example
+        };
 
 
         ignoreList.AddRange(

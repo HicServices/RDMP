@@ -41,13 +41,7 @@ internal class RunReleaseWindow : RunEngineWindow<ReleaseOptions>
             throw new Exception("No compatible pipelines");
         }
 
-        var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true);
-
-        if (pipe == null)
-        {
-            throw new OperationCanceledException();
-        }
-
+        var pipe = BasicActivator.SelectOne("Release Pipeline", compatible, null, true) ?? throw new OperationCanceledException();
         opts.Pipeline = pipe.ID.ToString();
         opts.Configurations = string.Join(",",configs.Select(c=>c.ID.ToString()).ToArray());
         opts.ReleaseGlobals = true;

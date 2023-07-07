@@ -37,8 +37,8 @@ public class MigrationConfiguration
     public IList<MigrationColumnSet> CreateMigrationColumnSetFromTableInfos(List<ITableInfo> tableInfos, List<ITableInfo> lookupTableInfos, IMigrationFieldProcessor migrationFieldProcessor)
     {
         //treat null values as empty
-        tableInfos = tableInfos ?? new List<ITableInfo>();
-        lookupTableInfos = lookupTableInfos ?? new List<ITableInfo>();
+        tableInfos ??= new List<ITableInfo>();
+        lookupTableInfos ??= new List<ITableInfo>();
 
         var columnSet = new List<MigrationColumnSet>();
 

@@ -271,7 +271,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            olvMessage.Width = olvMessage.Width + 15; //add room for icon
+            olvMessage.Width += 15; //add room for icon
         }
     }
 

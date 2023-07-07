@@ -138,9 +138,9 @@ public abstract class ReleasePotential:ICheckable
                 supplementalExtractionResults.ReferencedObjectID) is not INamed extractedObject)
             return Releaseability.Undefined;
 
-        if (extractedObject is SupportingSQLTable)
+        if (extractedObject is SupportingSQLTable table)
         {
-            if ((extractedObject as SupportingSQLTable).SQL != supplementalExtractionResults.SQLExecuted)
+            if (table.SQL != supplementalExtractionResults.SQLExecuted)
                 return Releaseability.ExtractionSQLDesynchronisation;
         }
 

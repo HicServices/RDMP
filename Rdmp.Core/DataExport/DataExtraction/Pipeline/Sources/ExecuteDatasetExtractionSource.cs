@@ -206,7 +206,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 if(chunk != null && chunk.Rows.Count > 0)
                 {
                     //last release id in the current chunk
-                    var lastReleaseId = chunk.Rows[chunk.Rows.Count-1][releaseIdentifierColumn];
+                    var lastReleaseId = chunk.Rows[^1][releaseIdentifierColumn];
 
                     _peeker.AddWhile(_hostedSource,r=>Equals(r[releaseIdentifierColumn], lastReleaseId),chunk);
                     chunk = MakeDistinct(chunk,listener,cancellationToken);
@@ -450,11 +450,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         if (Request.IsBatchResume)
         {
-            var match = previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID);
-            if(match == null)
-            {
-                throw new Exception($"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
-            }
+            var match = previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID) ?? throw new Exception($"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
             Request.CumulativeExtractionResults = match;
         }
         else
@@ -538,10 +534,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
     {
-        if (value is ExtractDatasetCommand)
-            Initialize(value as ExtractDatasetCommand);
-        if (value is ExtractGlobalsCommand)
-            Initialize(value as ExtractGlobalsCommand);
+        if (value is ExtractDatasetCommand datasetCommand)
+            Initialize(datasetCommand);
+        if (value is ExtractGlobalsCommand command)
+            Initialize(command);
     }
 
     public virtual void Check(ICheckNotifier notifier)

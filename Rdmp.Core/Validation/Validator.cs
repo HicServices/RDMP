@@ -384,10 +384,8 @@ public class Validator
 
         var o = _domainObject;
 
-        if (o is DbDataReader)
+        if (o is DbDataReader reader)
         {
-            var reader = (DbDataReader)o;
-
             names = new string[reader.FieldCount];
             values = new object[reader.FieldCount];
 
@@ -402,10 +400,8 @@ public class Validator
             }
         }
 
-        if (o is DataRow)
+        if (o is DataRow row)
         {
-            var row = (DataRow) o;
-
             names = new string[row.Table.Columns.Count];
             values = new object[row.Table.Columns.Count];
 
@@ -421,7 +417,7 @@ public class Validator
         }
         #endregion
 
-            
+
         foreach (var itemValidator in ItemValidators)
         {
                 
@@ -435,17 +431,17 @@ public class Validator
                 ValidationFailure result = null;
 
                 //see if it has property with this name
-                if (o is DbDataReader)
+                if (o is DbDataReader dataReader)
                 {
-                    value = ((DbDataReader) o)[itemValidator.TargetProperty];
+                    value = dataReader[itemValidator.TargetProperty];
                     if (value == DBNull.Value)
                         value = null;
 
                     result = itemValidator.ValidateAll(value, values, names);
                 }
                 else
-                if (o is DataRow)
-                    result = itemValidator.ValidateAll(((DataRow)o)[itemValidator.TargetProperty], values, names);
+                if (o is DataRow dataRow)
+                    result = itemValidator.ValidateAll(dataRow[itemValidator.TargetProperty], values, names);
                 else
                 {
                     var propertiesDictionary = DomainObjectPropertiesToDictionary(o);

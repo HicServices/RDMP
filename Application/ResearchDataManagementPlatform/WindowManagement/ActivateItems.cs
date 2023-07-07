@@ -133,9 +133,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         CommandFactory = new RDMPCombineableFactory();
         CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
 
-        ProblemProviders = new List<IProblemProvider>();
-        ProblemProviders.Add(new DataExportProblemProvider());
-        ProblemProviders.Add(new CatalogueProblemProvider());
+        ProblemProviders = new List<IProblemProvider>
+        {
+            new DataExportProblemProvider(),
+            new CatalogueProblemProvider()
+        };
         RefreshProblemProviders();
 
         RefreshBus.Subscribe(this);
@@ -589,9 +591,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => SelectTable(allowDatabaseCreation, taskDescription));
         }
 
-        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true,this);
-        dialog.AllowTableValuedFunctionSelection = true;
-            
+        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription, true, true, this)
+        {
+            AllowTableValuedFunctionSelection = true
+        };
+
         dialog.ShowDialog();
 
         if (dialog.DialogResult != DialogResult.OK)
@@ -698,8 +702,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return rtn;
         }
 
-        var pick = new SelectDialog<T>(args,this, available, false);
-        pick.AllowMultiSelect = true;
+        var pick = new SelectDialog<T>(args, this, available, false)
+        {
+            AllowMultiSelect = true
+        };
 
         if (pick.ShowDialog() == DialogResult.OK)
         {
@@ -823,9 +829,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return null;
         }
 
-        var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false);
-        selectDialog.AllowMultiSelect = true;
-            
+        var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false)
+        {
+            AllowMultiSelect = true
+        };
+
         if (selectDialog.ShowDialog() == DialogResult.OK)
         {
             var ms = selectDialog.MultiSelected.ToList();
@@ -883,9 +891,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public override IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline)
     {
-        var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
-        configureAndExecuteDialog.Dock = DockStyle.Fill;
-            
+        var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args, useCase, this)
+        {
+            Dock = DockStyle.Fill
+        };
+
         return configureAndExecuteDialog;
     }
 
@@ -916,8 +926,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription,projectSpecific,folder));
         }
 
-        var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
-        ui.TargetFolder = folder;
+        var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific)
+        {
+            TargetFolder = folder
+        };
         ui.ShowDialog();
             
         return ui.CatalogueCreatedIfAny;

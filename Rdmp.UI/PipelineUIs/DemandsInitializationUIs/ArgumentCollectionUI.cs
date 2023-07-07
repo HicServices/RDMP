@@ -123,13 +123,15 @@ public partial class ArgumentCollectionUI : UserControl
 
     private static Label GetLabelHeader(string caption)
     {
-        var label = new Label();
-        label.Text = caption;
-        label.BackColor = Color.DarkGray;
-        label.Dock = DockStyle.Top;
+        var label = new Label
+        {
+            Text = caption,
+            BackColor = Color.DarkGray,
+            Dock = DockStyle.Top,
 
-        label.TextAlign = ContentAlignment.MiddleCenter;
-            
+            TextAlign = ContentAlignment.MiddleCenter
+        };
+
         return label;
     }
 
@@ -205,9 +207,11 @@ public partial class ArgumentCollectionUI : UserControl
         var valueui = (Control)_valueUisFactory.Create(_activator, args);
         valueui.Dock = DockStyle.Fill;
 
-        var p = new Panel();
-        p.Height = Math.Max(Math.Max(lblClassName.Height,helpIcon.Height),valueui.Height);
-        p.Dock = DockStyle.Top;
+        var p = new Panel
+        {
+            Height = Math.Max(Math.Max(lblClassName.Height, helpIcon.Height), valueui.Height),
+            Dock = DockStyle.Top
+        };
 
         name.Location = new Point(0,0);
         p.Controls.Add(name);
@@ -221,11 +225,13 @@ public partial class ArgumentCollectionUI : UserControl
 
         name.Height = p.Height;
 
-        var hr = new Label();
-        hr.AutoSize = false;
-        hr.BorderStyle = BorderStyle.FixedSingle;
-        hr.Height = 1;
-        hr.Dock = DockStyle.Bottom;
+        var hr = new Label
+        {
+            AutoSize = false,
+            BorderStyle = BorderStyle.FixedSingle,
+            Height = 1,
+            Dock = DockStyle.Bottom
+        };
         p.Controls.Add(hr);
 
         valueui.BringToFront();

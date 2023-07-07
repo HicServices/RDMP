@@ -36,8 +36,7 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
     public object AllocateReleaseIdentifier(object privateIdentifier)
     {
         //figure out all the historical release ids for private ids in the Project
-        if (_releaseMap == null)
-            _releaseMap = GetReleaseMap();
+        _releaseMap ??= GetReleaseMap();
 
         //if we have a historical release Id use it
         if (_releaseMap.TryGetValue(privateIdentifier, out var identifier))

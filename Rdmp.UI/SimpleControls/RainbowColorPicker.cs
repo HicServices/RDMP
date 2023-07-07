@@ -21,13 +21,15 @@ public class RainbowColorPicker
     {
         Colors = new List<Color>();
 
-        var baseColors = new List<Color>();  // create a color list
-        baseColors.Add(Color.RoyalBlue);
-        baseColors.Add(Color.LightSkyBlue);
-        baseColors.Add(Color.LightGreen);
-        baseColors.Add(Color.Yellow);
-        baseColors.Add(Color.Orange);
-        baseColors.Add(Color.Red);
+        var baseColors = new List<Color>
+        {
+            Color.RoyalBlue,
+            Color.LightSkyBlue,
+            Color.LightGreen,
+            Color.Yellow,
+            Color.Orange,
+            Color.Red
+        };  // create a color list
         Colors = interpolateColors(baseColors, numberOfColors);
     }
 
@@ -35,9 +37,11 @@ public class RainbowColorPicker
     {
         Colors = new List<Color>();
 
-        var baseColors = new List<Color>();  // create a color list
-        baseColors.Add(color1);
-        baseColors.Add(color2);
+        var baseColors = new List<Color>
+        {
+            color1,
+            color2
+        };  // create a color list
         Colors = interpolateColors(baseColors, numberOfColors);
     }
 

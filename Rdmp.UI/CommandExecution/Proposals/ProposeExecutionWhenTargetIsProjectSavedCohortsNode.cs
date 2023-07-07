@@ -44,8 +44,8 @@ internal class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandEx
         if (cmd is CatalogueCombineable catalogueCombineable)
             return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue).SetTarget(target.Project);
 
-        if (cmd is ColumnCombineable columnCommand && columnCommand.Column is ExtractionInformation)
-            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
+        if (cmd is ColumnCombineable columnCommand && columnCommand.Column is ExtractionInformation column)
+            return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,column);
 
         return null;
     }

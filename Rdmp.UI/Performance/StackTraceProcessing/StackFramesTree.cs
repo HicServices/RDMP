@@ -53,18 +53,13 @@ internal class StackFramesTree
 
     public static bool FindSourceCode(string frame)
     {
-        string filenameMatch;
-        int lineNumberMatch;
-        string method;
 
-        return ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out filenameMatch, out lineNumberMatch, out method);
+        return ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out string filenameMatch, out int lineNumberMatch, out string method);
     }
     public static string GetMethodName(string frame)
     {
-        string filenameMatch;
-        int lineNumberMatch;
 
-        ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out filenameMatch, out lineNumberMatch, out var method);
+        ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out string filenameMatch, out int lineNumberMatch, out var method);
 
         return method;
     }

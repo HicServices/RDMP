@@ -641,11 +641,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             else
             {
                 //there is a delegate to resolve this, invoke it
-                var answer = resolveMultipleExtractionIdentifiers(catalogue, catalogueCandidates);
-
-                //the delegate returned null
-                if (answer == null)
-                    throw new Exception("User did not pick a candidate ExtractionInformation column from those we offered");
+                var answer = resolveMultipleExtractionIdentifiers(catalogue, catalogueCandidates) ?? throw new Exception("User did not pick a candidate ExtractionInformation column from those we offered");
                 return answer;//the delegate picked one
             }
 

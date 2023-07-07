@@ -116,13 +116,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            var hashCode = base.GetHashCode();
-            hashCode = (hashCode*397) ^ (int) _bubble;
-            hashCode = (hashCode*397) ^ (_database != null ? _database.GetHashCode() : 0);
-            return hashCode;
-        }
+        return HashCode.Combine(base.GetHashCode(), _bubble, _database);
     }
 
     public string WhatIsThis()

@@ -25,8 +25,8 @@ public class ChiSexPredictor : PredictionRule
         if (oGender is string s)
             sex = s.ToCharArray()[0];
         else
-        if (oGender is char)
-            sex = (char)oGender;
+        if (oGender is char gender)
+            sex = gender;
         else
             throw new ArgumentException($"Gender must be a string or char, gender value is a {oGender.GetType()}");
 

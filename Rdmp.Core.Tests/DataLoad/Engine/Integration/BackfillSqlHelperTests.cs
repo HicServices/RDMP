@@ -40,10 +40,7 @@ public class BackfillSqlHelperTests : FromToDatabaseTests
     {
         ThreeTableSetupWhereTimePeriodIsGrandparent();
 
-        var ciTimePeriodicity = CatalogueRepository.GetAllObjects<ColumnInfo>().SingleOrDefault(c => c.GetRuntimeName().Equals("HeaderDate"));
-        if (ciTimePeriodicity == null)
-            throw new InvalidOperationException("Could not find TimePeriodicity column");
-
+        var ciTimePeriodicity = CatalogueRepository.GetAllObjects<ColumnInfo>().SingleOrDefault(c => c.GetRuntimeName().Equals("HeaderDate")) ?? throw new InvalidOperationException("Could not find TimePeriodicity column");
         var sqlHelper = new BackfillSqlHelper(ciTimePeriodicity, From, To);
 
         var tiHeader = CatalogueRepository.GetAllObjects<TableInfo>().Single(t=>t.GetRuntimeName().Equals("Headers"));
@@ -135,10 +132,8 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
         {
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] extractionInformations;
 
-            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out cataItems, out extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out CatalogueItem[] cataItems, out ExtractionInformation[] extractionInformations);
         }
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);

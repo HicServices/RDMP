@@ -25,8 +25,10 @@ public abstract class BasicUICommandExecution:BasicCommandExecution
         
     protected static FileInfo SelectSaveFile(string filter)
     {
-        var sfd = new SaveFileDialog();
-        sfd.Filter = filter;
+        var sfd = new SaveFileDialog
+        {
+            Filter = filter
+        };
         if (sfd.ShowDialog() == DialogResult.OK)
             return new FileInfo(sfd.FileName);
 
@@ -35,8 +37,10 @@ public abstract class BasicUICommandExecution:BasicCommandExecution
 
     protected static FileInfo SelectOpenFile(string filter)
     {
-        var ofd = new OpenFileDialog();
-        ofd.Filter = filter;
+        var ofd = new OpenFileDialog
+        {
+            Filter = filter
+        };
         if (ofd.ShowDialog() == DialogResult.OK)
             return new FileInfo(ofd.FileName);
 

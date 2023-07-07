@@ -107,7 +107,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         if(db == null)
             return;
 
-        File = File ?? BasicActivator.SelectFile("File to upload");
+        File ??= BasicActivator.SelectFile("File to upload");
             
         if(File == null)
             return;

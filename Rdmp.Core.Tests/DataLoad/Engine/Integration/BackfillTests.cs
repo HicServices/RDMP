@@ -89,8 +89,7 @@ public class BackfillTests : FromToDatabaseTests
         CreateTables("Samples", "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
 
         // Set SetUp catalogue entities
-        ColumnInfo[] ciSamples;
-        AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples, true);
+        AddTableToCatalogue(DatabaseName, "Samples", "ID", out ColumnInfo[] ciSamples, true);
 
         Assert.AreEqual(5, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
     }
@@ -1044,10 +1043,8 @@ public class BackfillTests : FromToDatabaseTests
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
         {
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] extractionInformations;
 
-            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out cataItems, out extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out CatalogueItem[] cataItems, out ExtractionInformation[] extractionInformations);
         }
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);

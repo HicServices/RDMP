@@ -32,10 +32,11 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_PasswordMismatch()
     {
-        var testPoints = new List<TestAccessPoint>();
-
-        testPoints.Add(new TestAccessPoint("frank","bob","username","mypas"));
-        testPoints.Add(new TestAccessPoint("frank","bob","username","mydifferentPass"));
+        var testPoints = new List<TestAccessPoint>
+        {
+            new TestAccessPoint("frank", "bob", "username", "mypas"),
+            new TestAccessPoint("frank", "bob", "username", "mydifferentPass")
+        };
 
         //call this
         var ex = Assert.Throws<Exception>(()=>DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
@@ -46,10 +47,11 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_UsernamePasswordAreNull()
     {
-        var testPoints = new List<TestAccessPoint>();
-
-        testPoints.Add(new TestAccessPoint("frank", "bob", null, null));
-        testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
+        var testPoints = new List<TestAccessPoint>
+        {
+            new TestAccessPoint("frank", "bob", null, null),
+            new TestAccessPoint("frank", "bob", "username", "mydifferentPass")
+        };
 
         //call this
         var ex = Assert.Throws<Exception>(()=>DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
@@ -60,10 +62,11 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_UsernameMismatch()
     {
-        var testPoints = new List<TestAccessPoint>();
-
-        testPoints.Add(new TestAccessPoint("frank", "bob", "usernameasdasd", "mydifferentpass"));
-        testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
+        var testPoints = new List<TestAccessPoint>
+        {
+            new TestAccessPoint("frank", "bob", "usernameasdasd", "mydifferentpass"),
+            new TestAccessPoint("frank", "bob", "username", "mydifferentPass")
+        };
 
         //call this
 
@@ -76,10 +79,11 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_ServerMixedCapitalization_Allowed()
     {
-        var testPoints = new List<TestAccessPoint>();
-
-        testPoints.Add(new TestAccessPoint("frank", "bob", null,null));
-        testPoints.Add(new TestAccessPoint("FRANK", "bob", null, null));
+        var testPoints = new List<TestAccessPoint>
+        {
+            new TestAccessPoint("frank", "bob", null, null),
+            new TestAccessPoint("FRANK", "bob", null, null)
+        };
 
         var server = DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
         Assert.AreEqual("frank", server.Name);
@@ -88,10 +92,11 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_DatabaseMixedCapitalization_NotAllowed()
     {
-        var testPoints = new List<TestAccessPoint>();
-
-        testPoints.Add(new TestAccessPoint("frank", "bob", null, null));
-        testPoints.Add(new TestAccessPoint("frank", "BOB", null, null));
+        var testPoints = new List<TestAccessPoint>
+        {
+            new TestAccessPoint("frank", "bob", null, null),
+            new TestAccessPoint("frank", "BOB", null, null)
+        };
 
         var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
         StringAssert.Contains("All data access points must be into the same database, access points 'frankbob' and 'frankBOB' are into different databases", ex.Message);
@@ -103,10 +108,11 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_WrappedDatabaseName()
     {
-        var testPoints = new List<TestAccessPoint>();
-
-        testPoints.Add(new TestAccessPoint("frank", "[bob's Database]", "username", "mypas"));
-        testPoints.Add(new TestAccessPoint("frank", "bob's Database", "username", "mypas"));
+        var testPoints = new List<TestAccessPoint>
+        {
+            new TestAccessPoint("frank", "[bob's Database]", "username", "mypas"),
+            new TestAccessPoint("frank", "bob's Database", "username", "mypas")
+        };
         //call this
         var result = DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
 
@@ -117,10 +123,11 @@ public class TestDataAccess:DatabaseTests
     [Test]
     public void TestDistinctCredentials_PasswordMatch()
     {
-        var testPoints = new List<TestAccessPoint>();
-
-        testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mypas"));
-        testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mypas"));
+        var testPoints = new List<TestAccessPoint>
+        {
+            new TestAccessPoint("frank", "bob", "username", "mypas"),
+            new TestAccessPoint("frank", "bob", "username", "mypas")
+        };
 
         //call this
         var result = DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);

@@ -51,10 +51,12 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
         var updateInfo = new DataLoadProgressUpdateInfo();
         Assert.AreEqual(DataLoadProgressUpdateStrategy.UseMaxRequestedDay,updateInfo.Strategy);
 
-        _job.DatesToRetrieve = new List<DateTime>();
-        _job.DatesToRetrieve.Add(new DateTime(2001,1,1));
-        _job.DatesToRetrieve.Add(new DateTime(2001, 1, 2));
-        _job.DatesToRetrieve.Add(new DateTime(2001, 1, 3));
+        _job.DatesToRetrieve = new List<DateTime>
+        {
+            new DateTime(2001, 1, 1),
+            new DateTime(2001, 1, 2),
+            new DateTime(2001, 1, 3)
+        };
         try
         {
             var added = (UpdateProgressIfLoadsuccessful)updateInfo.AddAppropriateDisposeStep(_job, null);
@@ -130,10 +132,12 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     [Test]
     public void AddRAWSQLStrategy_SQLCorrect()
     {
-        _job.DatesToRetrieve = new List<DateTime>();
-        _job.DatesToRetrieve.Add(new DateTime(2001,1,6));
-        _job.DatesToRetrieve.Add(new DateTime(2001,1,7));
-        _job.DatesToRetrieve.Add(new DateTime(2001,1,8));
+        _job.DatesToRetrieve = new List<DateTime>
+        {
+            new DateTime(2001, 1, 6),
+            new DateTime(2001, 1, 7),
+            new DateTime(2001, 1, 8)
+        };
 
         var updateInfo = new DataLoadProgressUpdateInfo
         {

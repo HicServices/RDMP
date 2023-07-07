@@ -223,12 +223,8 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
         foreach (var d in _aggregate.AggregateDimensions)
         {
-            var colInfo = d.ExtractionInformation.ColumnInfo;
-                
-            if (colInfo == null)
-                throw new Exception(
+            var colInfo = d.ExtractionInformation.ColumnInfo ?? throw new Exception(
                     $"Aggregate Configuration {_aggregate} (Catalogue '{_aggregate.Catalogue}') has a Dimension '{d}' which is an orphan (someone deleted the ColumnInfo)");
-
             var toAdd = colInfo.TableInfo.ToString();
 
             if (!uniqueUsedTables.Contains(toAdd))

@@ -323,12 +323,8 @@ public abstract class Argument : DatabaseEntity, IArgument
             var elementTypeAsString = arrayMatch.Groups[1].Value;
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-            var elementType = CatalogueRepository.MEF.GetType(elementTypeAsString);
-
-            if (elementType == null)
-                throw new Exception(
+            var elementType = CatalogueRepository.MEF.GetType(elementTypeAsString) ?? throw new Exception(
                     $"Could not figure out what SystemType to use for elementType = '{elementTypeAsString}' of Type '{type}'");
-
             return Array.CreateInstance(elementType, 0).GetType();
         }
 
@@ -340,11 +336,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         }
 
         //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-        var anyType = CatalogueRepository.MEF.GetType(type);
-
-        if (anyType == null)
-            throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
-
+        var anyType = CatalogueRepository.MEF.GetType(type) ?? throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
         return anyType;
     }
 
@@ -389,8 +381,8 @@ public abstract class Argument : DatabaseEntity, IArgument
     private string Serialize(object o, string asType)
     {
         //anything implementing this interface is permitted 
-        if (o is ICustomUIDrivenClass)
-            return ((ICustomUIDrivenClass) o).SaveStateToString();
+        if (o is ICustomUIDrivenClass @class)
+            return @class.SaveStateToString();
 
         if (o == null)
             return null;
@@ -460,8 +452,8 @@ public abstract class Argument : DatabaseEntity, IArgument
             }
         }
 
-        if (o is IMapsDirectlyToDatabaseTable)
-            return ((IMapsDirectlyToDatabaseTable)o).ID.ToString();
+        if (o is IMapsDirectlyToDatabaseTable table)
+            return table.ID.ToString();
             
         return o.ToString();
     }

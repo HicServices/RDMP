@@ -115,8 +115,8 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
         if (e.Column == olvState)
         {
-            if(e.CellValue is LoadDiagramState)
-                switch ((LoadDiagramState)e.CellValue)
+            if(e.CellValue is LoadDiagramState state)
+                switch (state)
                 {
                     case LoadDiagramState.Anticipated:
                         e.SubItem.ForeColor = Color.LightGray;
@@ -177,11 +177,11 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         if (rowObject is DiscoveredColumn)
             return Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem).ImageToBitmap();
             
-        if (rowObject is LoadDiagramServerNode)
-            if (string.IsNullOrWhiteSpace(((LoadDiagramServerNode) rowObject).ErrorDescription))
-                return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
+        if (rowObject is LoadDiagramServerNode node)
+            if (string.IsNullOrWhiteSpace(node.ErrorDescription))
+                return Activator.CoreIconProvider.GetImage(node).ImageToBitmap();
             else
-                return Activator.CoreIconProvider.GetImage(rowObject, OverlayKind.Problem).ImageToBitmap();
+                return Activator.CoreIconProvider.GetImage(node, OverlayKind.Problem).ImageToBitmap();
 
         if (rowObject is LoadDiagramDatabaseNode db)
             return db.GetImage(Activator.CoreIconProvider);

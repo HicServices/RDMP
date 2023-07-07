@@ -50,10 +50,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         {
             var catalogue = extractDatasetCommand.Catalogue;
 
-            var sourceFolder = _request.GetExtractionDirectory();
-            if (sourceFolder == null)
-                throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
-
+            var sourceFolder = _request.GetExtractionDirectory() ?? throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
             var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
             var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, $"{toProcess.TableName}.sd"));
 
@@ -75,10 +72,10 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
         tblName = tblName.Replace("$c", _request.Configuration.Name);
 
-        if (_request is ExtractDatasetCommand)
+        if (_request is ExtractDatasetCommand command)
         {
-            tblName = tblName.Replace("$d", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Name);
-            tblName = tblName.Replace("$a", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Acronym);
+            tblName = tblName.Replace("$d", command.DatasetBundle.DataSet.Catalogue.Name);
+            tblName = tblName.Replace("$a", command.DatasetBundle.DataSet.Catalogue.Acronym);
         }
 
         if (_request is ExtractGlobalsCommand)

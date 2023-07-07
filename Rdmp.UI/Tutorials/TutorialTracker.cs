@@ -34,10 +34,11 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
 
     private void BuildTutorialList()
     {
-        TutorialsAvailable = new List<Tutorial>();
-            
-        TutorialsAvailable.Add(new Tutorial("1. Generate Test Data", new ExecuteCommandGenerateTestDataUI(_activator), new Guid("8255fb4e-94a4-4bbc-9e8d-edec5ecebab0")));
-        TutorialsAvailable.Add(new Tutorial("2. Import a file", new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), new Guid("5d71a169-5c08-4c33-8f88-8ee123222a3b")));
+        TutorialsAvailable = new List<Tutorial>
+        {
+            new Tutorial("1. Generate Test Data", new ExecuteCommandGenerateTestDataUI(_activator), new Guid("8255fb4e-94a4-4bbc-9e8d-edec5ecebab0")),
+            new Tutorial("2. Import a file", new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), new Guid("5d71a169-5c08-4c33-8f88-8ee123222a3b"))
+        };
 
         //var executeExtraction = new Tutorial("4. Execute DataSet Extraction",
         //                                     new ExecuteCommandExecuteExtractionConfiguration(_activator),

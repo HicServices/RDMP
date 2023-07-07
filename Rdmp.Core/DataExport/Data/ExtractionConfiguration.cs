@@ -511,12 +511,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
             var catalogue = repo.CatalogueRepository.GetObjectByID<Catalogue>((int)catalogueID);
 
-            var loggingServer = catalogue.LiveLoggingServer_ID;
-
-            if ( loggingServer == null)
-                throw new Exception(
+            var loggingServer = catalogue.LiveLoggingServer_ID ?? throw new Exception(
                     $"Catalogue {catalogue.Name} does not have a {(testLoggingServer ? "test" : "")} logging server configured");
-
             if (uniqueLoggingServerID == -1)
                 uniqueLoggingServerID = (int) catalogue.LiveLoggingServer_ID;
             else
@@ -637,8 +633,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
         ExtractableColumn addMe;
 
-        if (column is ExtractionInformation)
-            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, column as ExtractionInformation, -1, query);
+        if (column is ExtractionInformation information)
+            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, information, -1, query);
         else
             addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1, query); // its custom column of some kind, not tied to a catalogue entry
 

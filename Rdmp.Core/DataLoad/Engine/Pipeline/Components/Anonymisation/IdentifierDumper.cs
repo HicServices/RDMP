@@ -80,8 +80,10 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                 if(con.State != ConnectionState.Open)
                     con.Open();
 
-                var bulkCopy = new SqlBulkCopy(con);
-                bulkCopy.DestinationTableName = GetStagingRuntimeName();
+                var bulkCopy = new SqlBulkCopy(con)
+                {
+                    DestinationTableName = GetStagingRuntimeName()
+                };
 
                 var uniqueNamesAdded = new List<string>();
 

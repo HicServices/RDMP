@@ -133,8 +133,8 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,ICompa
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is IColumn)
-            return Order - (obj as IColumn).Order;
+        if (obj is IColumn column)
+            return Order - column.Order;
 
         return 0;
     }

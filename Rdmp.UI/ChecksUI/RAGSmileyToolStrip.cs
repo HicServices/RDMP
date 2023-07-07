@@ -33,8 +33,10 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
         Text = "Checks";
         Image = _green;
 
-        timer = new Timer();
-        timer.Interval = 500;
+        timer = new Timer
+        {
+            Interval = 500
+        };
         timer.Tick += T_Tick;
         timer.Start();
     }

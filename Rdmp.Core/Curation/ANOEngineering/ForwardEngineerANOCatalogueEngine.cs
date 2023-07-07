@@ -265,11 +265,7 @@ public class ForwardEngineerANOCatalogueEngine
                     var newPk = GetNewColumnInfoForOld(lookup.PrimaryKey);
 
                     //see if we already have a Lookup declared for the NEW columns (unlikely)
-                    var newLookup = existingLookups.SingleOrDefault(l => l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID);
-                         
-                    //create new Lookup that mirrors the old but references the ANO columns instead
-                    if(newLookup == null)
-                        newLookup = new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,lookup.Collation);
+                    var newLookup = existingLookups.SingleOrDefault(l => l.Description_ID == newDesc.ID && l.ForeignKey_ID == newFk.ID) ?? new Lookup(_catalogueRepository, newDesc, newFk, newPk, lookup.ExtractionJoinType,lookup.Collation);
 
                     //also mirror any composite (secondary, tertiary join column pairs needed for the Lookup to operate correclty e.g. where TestCode 'HAB1' means 2 different things depending on healthboard) 
                     foreach (var compositeJoin in lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>())
@@ -344,12 +340,8 @@ public class ForwardEngineerANOCatalogueEngine
         //find a reference to the new ColumnInfo Location (note that it is possible the TableInfo was skipped, in which case we should still expect to find ColumnInfos that reference the new location because you must have created it somehow right?)
         var syntaxHelper = _planManager.TargetDatabase.Server.GetQuerySyntaxHelper();
 
-        var toReturn = FindNewColumnNamed(syntaxHelper,col,col.GetRuntimeName(),isOptional);
-                
+        var toReturn = FindNewColumnNamed(syntaxHelper,col,col.GetRuntimeName(),isOptional) ?? FindNewColumnNamed(syntaxHelper,col, $"ANO{col.GetRuntimeName()}",isOptional);
         if (toReturn == null)
-            toReturn = FindNewColumnNamed(syntaxHelper,col, $"ANO{col.GetRuntimeName()}",isOptional);
-
-        if(toReturn == null)
             if (isOptional)
                 return null;
             else

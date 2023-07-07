@@ -250,7 +250,7 @@ public class SearchablesMatchScorer
                 if (i > numberOfParents)
                     break;
 
-                var parent = parents[parents.Length - i];
+                var parent = parents[^i];
 
                 if (parent != null)
                 {
@@ -291,8 +291,8 @@ public class SearchablesMatchScorer
 
     private static Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
     {
-        if (kvp.Key is Catalogue)
-            return (Catalogue) kvp.Key;
+        if (kvp.Key is Catalogue key)
+            return key;
 
         return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }

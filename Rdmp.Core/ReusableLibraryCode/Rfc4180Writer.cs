@@ -55,8 +55,8 @@ public static class Rfc4180Writer
                 return GetStringRepresentation(dt);
         }
 
-        if (o is DateTime)
-            return GetStringRepresentation((DateTime) o);
+        if (o is DateTime time)
+            return GetStringRepresentation(time);
 
         var str = o.ToString();
 

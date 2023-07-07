@@ -166,23 +166,21 @@ public class RDMPCombineableFactory:ICombineableFactory
 
     private static T[] IsArrayOf<T>(object modelObject)
     {
-        if(modelObject is T)
-            return new []{(T)modelObject};
+        if(modelObject is T modelObject1)
+            return new [] { modelObject1 };
 
-        if (!(modelObject is IEnumerable))
+        if (!(modelObject is IEnumerable array))
             return null;
-
-        var array = (IEnumerable)modelObject;
 
         var toReturn = new List<T>();
 
         foreach (var o in array)
         {
             //if array contains anything that isn't a T
-            if (!(o is T))
+            if (!(o is T o1))
                 return null; //it's not an array of T
                 
-            toReturn.Add((T)o);
+            toReturn.Add(o1);
         }
 
         //it's an array of T

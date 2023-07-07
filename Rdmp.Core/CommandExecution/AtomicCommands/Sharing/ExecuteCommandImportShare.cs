@@ -47,7 +47,7 @@ public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomic
         base.Execute();
 
         //ensure file selected
-        if ((_shareDefinitionFile = _shareDefinitionFile ?? BasicActivator.SelectFile("Select share definition file to import","Share Definition","*.sd")) == null)
+        if ((_shareDefinitionFile ??= BasicActivator.SelectFile("Select share definition file to import","Share Definition","*.sd")) == null)
             return;
 
         var json = File.ReadAllText(_shareDefinitionFile.FullName);

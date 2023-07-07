@@ -382,10 +382,12 @@ public class ProcessTaskArgumentTests:DatabaseTests
             var ti1 = new TableInfo(CatalogueRepository, "test1");
             var ti2 = new TableInfo(CatalogueRepository, "test2");
 
-            var val = new Dictionary<TableInfo, string>();
-            val.Add(ti1,"Fish");
-            val.Add(ti2,"Fish");
-            
+            var val = new Dictionary<TableInfo, string>
+            {
+                { ti1, "Fish" },
+                { ti2, "Fish" }
+            };
+
             arg.SetValue(val);
             
             arg.SaveToDatabase();

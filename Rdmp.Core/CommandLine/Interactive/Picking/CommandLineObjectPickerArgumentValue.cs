@@ -243,9 +243,9 @@ public class CommandLineObjectPickerArgumentValue
             if(other.Index != Index || other.RawValue != RawValue)
                 throw new ArgumentException("Merge only arguments of the same object");
 
-            Type = Type ?? other.Type;
-            Database = Database ?? other.Database;
-            Table = Table ?? other.Table;
+            Type ??= other.Type;
+            Database ??= other.Database;
+            Table ??= other.Table;
 
             //if they have some
             if(other.DatabaseEntities != null)

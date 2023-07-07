@@ -70,16 +70,20 @@ public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
         {
             var y = GetRowYForNewProgressBar();
 
-            var lbl = new Label();
-            lbl.Text = e.TaskDescription;
-            lbl.Font = new Font(Font.FontFamily,EmSize);
-            lbl.Location = new Point(0,y);
+            var lbl = new Label
+            {
+                Text = e.TaskDescription,
+                Font = new Font(Font.FontFamily, EmSize),
+                Location = new Point(0, y)
+            };
             Controls.Add(lbl);
 
-            var pb = new ProgressBar();
-            pb.Location = new Point(lbl.Right,y);
-            pb.Size = new Size(ragSmiley1.Left - lbl.Right,lbl.Height-2);
-            pb.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
+            var pb = new ProgressBar
+            {
+                Location = new Point(lbl.Right, y),
+                Size = new Size(ragSmiley1.Left - lbl.Right, lbl.Height - 2),
+                Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right
+            };
             Controls.Add(pb);
 
             UpdateProgressBar(pb,e);

@@ -57,7 +57,7 @@ public class CohortCompiler
     /// </summary>
     public ICoreChildProvider CoreChildProvider
     {
-        get => _coreChildProvider = _coreChildProvider ?? new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier(),null);
+        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier(),null);
         set => _coreChildProvider = value;
     }
 
@@ -214,13 +214,8 @@ public class CohortCompiler
         var aggregate = runnable as AggregateConfiguration;
         var container = runnable as CohortAggregateContainer;
         var joinable = runnable as JoinableCohortAggregateConfiguration;
-        var obj = aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable;
-
-
-        if (obj == null)
-            throw new NotSupportedException(
+        var obj = (aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable) ?? throw new NotSupportedException(
                 $"Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was {runnable.GetType().Name}");
-
         var source = new CancellationTokenSource();
         ICompileable task;
 

@@ -29,12 +29,12 @@ internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsB
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = a =>
+        void adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = strategy;
             a.ThrowOnEmptyFiles = true;
             a.IgnoreQuotes = false;
-        };
+        }
 
         switch (strategy)
         {
@@ -70,12 +70,12 @@ internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsB
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = a =>
+        static void adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
             a.ThrowOnEmptyFiles = true;
             a.IgnoreQuotes = true;
-        };
+        }
 
         var dt2 = RunGetChunk(file, adjust);
         Assert.AreEqual(5, dt2.Rows.Count);

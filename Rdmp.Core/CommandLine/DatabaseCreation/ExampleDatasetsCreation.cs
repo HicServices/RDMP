@@ -186,10 +186,7 @@ public class ExampleDatasetsCreation
         var externalCohortTable = cmdCreateCohortTable.Created;
 
         //Find the pipeline for committing cohorts
-        var cohortCreationPipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p=>p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName);
-            
-        if(cohortCreationPipeline == null)
-            throw new Exception("Could not find a cohort committing pipeline");
+        var cohortCreationPipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p=>p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName) ?? throw new Exception("Could not find a cohort committing pipeline");
 
         //A cohort creation query
         var f = CreateFilter(vConditions,"Lung Cancer Condition","Condition","Condition like 'C349'","ICD-10-CM Diagnosis Code C34.9 Malignant neoplasm of unspecified part of bronchus or lung");
@@ -291,10 +288,7 @@ public class ExampleDatasetsCreation
 
     private ExtractionInformation CreateExtractionInformation(ICatalogue catalogue, string name, string columnInfoName, string selectSQL)
     {
-        var col = catalogue.GetTableInfoList(false).SelectMany(t=>t.ColumnInfos).SingleOrDefault(c=>c.GetRuntimeName() == columnInfoName);
-        if(col == null)
-            throw new Exception($"Could not find ColumnInfo called '{columnInfoName}' in Catalogue {catalogue}");
-
+        var col = catalogue.GetTableInfoList(false).SelectMany(t=>t.ColumnInfos).SingleOrDefault(c=>c.GetRuntimeName() == columnInfoName) ?? throw new Exception($"Could not find ColumnInfo called '{columnInfoName}' in Catalogue {catalogue}");
         var ci = new CatalogueItem(_repos.CatalogueRepository,catalogue,name)
         {
             ColumnInfo_ID = col.ID

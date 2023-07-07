@@ -95,12 +95,8 @@ public abstract class CacheLayout : ICacheLayout
         if(RootDirectory == null)
             throw new NullReferenceException("RootDirectory has not been set yet");
 
-        var downloadDirectory = Resolver.GetLoadCacheDirectory(RootDirectory);
-
-        if (downloadDirectory == null)
-            throw new Exception(
+        var downloadDirectory = Resolver.GetLoadCacheDirectory(RootDirectory) ?? throw new Exception(
                 $"Resolver {Resolver} of type {Resolver.GetType().FullName} returned null from GetLoadCacheDirectory");
-
         if (downloadDirectory.Exists)
             listener.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Trace,
@@ -156,7 +152,7 @@ public abstract class CacheLayout : ICacheLayout
             return null;
 
         dateList.Sort();
-        return dateList[dateList.Count -1];
+        return dateList[^1];
     }
 
     public DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener)
@@ -178,10 +174,7 @@ public abstract class CacheLayout : ICacheLayout
             throw new ArgumentException("When using CacheArchiveType.None you should not use ArchiveFiles, instead just copy them into the relevant Cache directory yourself.  Remember that you must have 1 file per day and the filename must be the date according to the DateFormat e.g. 2001-01-01.csv or 2001-01-01.txt or whatever");
 
         var archiveFilepath = GetArchiveFileInfoForDate(archiveDate,listener);
-        var archiveDirectory = archiveFilepath.DirectoryName;
-        if (archiveDirectory == null)
-            throw new Exception("The directory for the archive within the cache is being reported as null, which should not be possible.");
-
+        var archiveDirectory = archiveFilepath.DirectoryName ?? throw new Exception("The directory for the archive within the cache is being reported as null, which should not be possible.");
         if (!Directory.Exists(archiveDirectory))
             Directory.CreateDirectory(archiveDirectory);
 

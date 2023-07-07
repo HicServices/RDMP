@@ -71,15 +71,18 @@ public class RDMPControlCommonFunctionality
     public RDMPControlCommonFunctionality(IRDMPControl hostControl)
     {
         _hostControl = hostControl;
-        ToolStrip = new ToolStrip();
-            
-        ToolStrip.Location = new Point(0, 0);
-        ToolStrip.TabIndex = 1;
+        ToolStrip = new ToolStrip
+        {
+            Location = new Point(0, 0),
+            TabIndex = 1
+        };
 
         //Add the three lines dropdown for seldom used options (See AddToMenu). This starts disabled.
-        _menuDropDown = new ToolStripMenuItem();
-        _menuDropDown.Image = CatalogueIcons.Menu.ImageToBitmap();
-        _menuDropDown.Visible = false;
+        _menuDropDown = new ToolStripMenuItem
+        {
+            Image = CatalogueIcons.Menu.ImageToBitmap(),
+            Visible = false
+        };
         ToolStrip.Items.Add(_menuDropDown);
                         
         _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
@@ -268,7 +271,7 @@ public class RDMPControlCommonFunctionality
         if (c.Parent == null)
             throw new NotSupportedException("Control is not in a container.  HelpIcon cannot be added to top level controls");
 
-        title = title ?? propertyName;
+        title ??= propertyName;
         var body = _activator.CommentStore.GetDocumentationIfExists(propertyName, false, true);
 
         if (body == null)

@@ -50,11 +50,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     protected  ICacheLayout CreateCacheLayout(ScheduledDataLoadJob job)
     {
-        var cacheProgress = job.LoadProgress.CacheProgress;
-
-        if(cacheProgress == null)
-            throw new NullReferenceException("cacheProgress cannot be null");
-
+        var cacheProgress = job.LoadProgress.CacheProgress ?? throw new NullReferenceException("cacheProgress cannot be null");
         return CreateCacheLayout(cacheProgress, job);
     }
 

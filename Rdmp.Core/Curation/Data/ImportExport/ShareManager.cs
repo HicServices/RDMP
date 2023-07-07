@@ -34,13 +34,13 @@ public class ShareManager
     public readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
     private readonly ICatalogueRepository _catalogueRepository;
 
-    private const string PersistenceSeparator = "|";
+    private const char PersistenceSeparator = '|';
 
     /// <summary>
     /// Delegate method for populating environment specific properties e.g. <see cref="ICatalogue.LiveLoggingServer_ID"/> when importing 
     /// <see cref="ShareDefinition"/> since this ID will be different from the origin.
     /// </summary>
-    public LocalReferenceGetterDelegate LocalReferenceGetter;
+    internal LocalReferenceGetterDelegate LocalReferenceGetter;
 
     /// <summary>
     /// Creates a new manager for importing and exporting objects from the given platform databases
@@ -50,7 +50,7 @@ public class ShareManager
     public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, LocalReferenceGetterDelegate localReferenceGetter = null)
     {
         RepositoryLocator = repositoryLocator;
-        _catalogueRepository = RepositoryLocator.CatalogueRepository;
+        _catalogueRepository = repositoryLocator.CatalogueRepository;
         LocalReferenceGetter = localReferenceGetter ?? DefaultLocalReferenceGetter;
     }
 
@@ -72,7 +72,7 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Gets a serializated representation of the object, this is a reference to the object by ID / SharingUID (if it has one) not a list of all its property values.
+    /// Gets a serialized representation of the object, this is a reference to the object by ID / SharingUID (if it has one) not a list of all its property values.
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -125,11 +125,7 @@ public class ShareManager
         }
 
         //otherwise get the existing master object
-        var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1]));
-
-        if(o == null)
-            throw new Exception($"Could not find object for persistenceString:{persistenceString}");
-            
+        var o = RepositoryLocator.GetArbitraryDatabaseObject(elements[2], elements[0], int.Parse(elements[1])) ?? throw new Exception($"Could not find object for persistenceString:{persistenceString}");
         return o;
     }
 
@@ -358,12 +354,8 @@ public class ShareManager
                     actual?.DeleteInDatabase();
                 }
                 var objectConstructor = new ObjectConstructor();
-                var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd);
-
-                if(instance == null)
-                    throw new ObjectLacksCompatibleConstructorException(
+                var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ?? throw new ObjectLacksCompatibleConstructorException(
                         $"Could not find a ShareManager constructor for '{sd.Type}'");
-                    
                 created.Add(instance);
             }
             catch (Exception e)
@@ -581,7 +573,7 @@ public class ShareManager
 
         if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
             if (propertyType == typeof(Uri))
-                value = value is string ? new Uri((string)value):(Uri) value;
+                value = value is string s ? new Uri(s):(Uri) value;
             else
             if (typeof(Enum).IsAssignableFrom(propertyType))
                 value = Enum.ToObject(propertyType, value);//if the property is an enum

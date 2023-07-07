@@ -52,10 +52,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNoColumnOrderConfigured()
     {
-        ColumnInfo c1;
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out var t, out c1, out c2,out c3);
+        SetupTableInfos(out var t, out ColumnInfo c1, out ColumnInfo c2, out ColumnInfo c3);
         try
         {
             var mutilation = new PrimaryKeyCollisionResolverMutilation
@@ -129,9 +126,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void NoColumnOrdersConfigured_ThrowsException()
     {
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out var t, out var c1, out c2, out c3);
+        SetupTableInfos(out var t, out var c1, out ColumnInfo c2, out ColumnInfo c3);
         try
         {
             c1.IsPrimaryKey = true;
@@ -150,11 +145,8 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void NoPrimaryKeys_ThrowsException()
     {
-        ColumnInfo c1;
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out var t, out c1, out c2,out c3);
-           
+        SetupTableInfos(out var t, out ColumnInfo c1, out ColumnInfo c2, out ColumnInfo c3);
+
         try
         {
             var resolver = new PrimaryKeyCollisionResolver(t);

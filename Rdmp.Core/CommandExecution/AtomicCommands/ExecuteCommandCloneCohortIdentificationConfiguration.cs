@@ -49,11 +49,11 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is CohortIdentificationConfiguration)
-            _cic = (CohortIdentificationConfiguration)target;
+        if (target is CohortIdentificationConfiguration configuration)
+            _cic = configuration;
 
-        if (target is Project)
-            _project = (Project)target;
+        if (target is Project project)
+            _project = project;
 
         return this;
     }

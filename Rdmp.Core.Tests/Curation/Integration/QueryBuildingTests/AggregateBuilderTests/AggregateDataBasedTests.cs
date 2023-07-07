@@ -30,8 +30,10 @@ public class AggregateDataBasedTests:DatabaseTests
 {
     private static DataTable GetTestDataTable()
     {
-        var dt = new DataTable();
-        dt.TableName = "AggregateDataBasedTests";
+        var dt = new DataTable
+        {
+            TableName = "AggregateDataBasedTests"
+        };
 
         dt.Columns.Add("EventDate");
         dt.Columns.Add("Category");

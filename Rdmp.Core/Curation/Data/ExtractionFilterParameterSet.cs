@@ -92,7 +92,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     /// <param name="name"></param>
     public ExtractionFilterParameterSet(ICatalogueRepository repository, ExtractionFilter filter, string name = null)
     {
-        name = name ?? $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
+        name ??= $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
 
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {

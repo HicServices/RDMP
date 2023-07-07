@@ -49,9 +49,11 @@ public partial class GenerateTestDataUI : RDMPForm
 
         foreach(var t in dataGeneratorFactory.GetAvailableGenerators())
         {
-            var ui = new DataGeneratorUI();
-            ui.Generator = dataGeneratorFactory.Create(t,new Random());
-            ui.Location = new Point(0,yLoc);
+            var ui = new DataGeneratorUI
+            {
+                Generator = dataGeneratorFactory.Create(t, new Random()),
+                Location = new Point(0, yLoc)
+            };
             yLoc += ui.Height;
             pDatasets.Controls.Add(ui);
         }

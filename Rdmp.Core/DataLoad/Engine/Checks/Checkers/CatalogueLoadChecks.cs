@@ -89,8 +89,6 @@ internal class CatalogueLoadChecks:ICheckable
     private void CheckTableInfo(TableInfo tableInfo, ICheckNotifier notifier)
     {
         //get all columns
-        ColumnInfo[] columnInfos;
-        ColumnInfo[] columnInfosWhichArePrimaryKeys;
 
         //check whether the live database and staging databases have appropriate columns and triggers etc on them
         var staging = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
@@ -101,7 +99,7 @@ internal class CatalogueLoadChecks:ICheckable
 
         CheckTableInfoSynchronization(tableInfo,notifier);
 
-        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out columnInfos, out columnInfosWhichArePrimaryKeys,notifier);
+        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out ColumnInfo[] columnInfos, out ColumnInfo[] columnInfosWhichArePrimaryKeys,notifier);
             
         //check for trying to ignore primary keys
         foreach (var col in tableInfo.ColumnInfos)

@@ -22,7 +22,6 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
     [Test]
     public void ExtractNormally()
     {
-        ExtractionPipelineUseCase execute;
 
         _catalogue.Name = "TestTable";
         _catalogue.SaveToDatabase();
@@ -30,7 +29,7 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
 
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
             
-        Execute(out execute,out var result);
+        Execute(out ExtractionPipelineUseCase execute,out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 

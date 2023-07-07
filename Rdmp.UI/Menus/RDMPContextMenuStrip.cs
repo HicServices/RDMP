@@ -291,11 +291,10 @@ public class RDMPContextMenuStrip:ContextMenuStrip
             {
                 /* The Weight of ExecuteCommandCheckAsync to ensure there is no tool strip separator*/
                 Tag = 100.4f,
-                ToolTipText = "Run validation checks for all visible items in the current window"
+                ToolTipText = "Run validation checks for all visible items in the current window",
+                Image = CatalogueIcons.TinyYellow.ImageToBitmap(),
+                Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any()
             };
-
-            checkAll.Image = CatalogueIcons.TinyYellow.ImageToBitmap();
-            checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
             inspectionMenuItem.DropDownItems.Add(checkAll);
         }
 

@@ -46,12 +46,14 @@ public class ConsoleGuiSelectMany : Window
         Modal = true;
         ColorScheme = ConsoleMainWindow.ColorScheme;
 
-        lv = new ListView(available);
-        lv.AllowsMarking = true;
-        lv.AllowsMultipleSelection = true;
+        lv = new ListView(available)
+        {
+            AllowsMarking = true,
+            AllowsMultipleSelection = true,
 
-        lv.Width = Dim.Fill();
-        lv.Height = Dim.Fill(1);
+            Width = Dim.Fill(),
+            Height = Dim.Fill(1)
+        };
         lv.KeyPress += Lv_KeyPress;
         Add(lv);
 

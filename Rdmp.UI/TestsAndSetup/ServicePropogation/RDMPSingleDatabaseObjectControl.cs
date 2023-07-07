@@ -76,26 +76,30 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
         {
             var colorProvider = new BackColorProvider();
-            _colorIndicator = new Control();
-            _colorIndicator.Dock = DockStyle.Top;
-            _colorIndicator.Location = new Point(0, 0);
-            _colorIndicator.Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight);
-            _colorIndicator.TabIndex = 0;
-            _colorIndicator.BackColor = BackColorProvider.GetColor(AssociatedCollection);
+            _colorIndicator = new Control
+            {
+                Dock = DockStyle.Top,
+                Location = new Point(0, 0),
+                Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight),
+                TabIndex = 0,
+                BackColor = BackColorProvider.GetColor(AssociatedCollection)
+            };
             Controls.Add(_colorIndicator);
         }
 
         if (_readonlyIndicator == null)
         {
-            _readonlyIndicator = new Label();
-            _readonlyIndicator.Dock = DockStyle.Top;
-            _readonlyIndicator.Location = new Point(0, 0);
-            _readonlyIndicator.Size = new Size(150, 20);
-            _readonlyIndicator.TabIndex = 0;
-            _readonlyIndicator.TextAlign = ContentAlignment.MiddleLeft;
-            _readonlyIndicator.BackColor = SystemColors.HotTrack;
-            _readonlyIndicator.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0);
-            _readonlyIndicator.ForeColor = Color.Moccasin;
+            _readonlyIndicator = new Label
+            {
+                Dock = DockStyle.Top,
+                Location = new Point(0, 0),
+                Size = new Size(150, 20),
+                TabIndex = 0,
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = SystemColors.HotTrack,
+                Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0),
+                ForeColor = Color.Moccasin
+            };
 
         }
 

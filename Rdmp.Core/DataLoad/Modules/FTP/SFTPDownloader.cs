@@ -51,7 +51,7 @@ public class SFTPDownloader:FTPDownloader
             var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
             //register for events
-            Action<ulong> callback = totalBytes => job.OnProgress(this, new ProgressEventArgs(destinationFilePath, new ProgressMeasurement((int)(totalBytes * 0.001), ProgressType.Kilobytes), s.Elapsed));
+            void callback(ulong totalBytes) => job.OnProgress(this, new ProgressEventArgs(destinationFilePath, new ProgressMeasurement((int)(totalBytes * 0.001), ProgressType.Kilobytes), s.Elapsed));
 
             using (var fs = new FileStream(destinationFilePath, FileMode.CreateNew))
             {

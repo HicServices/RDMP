@@ -516,8 +516,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
                     databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
             }
 
-            if (deleteable is IMasqueradeAs)
-                databaseObject = databaseObject ?? ((IMasqueradeAs)deleteable).MasqueradingAs() as DatabaseEntity;
+            if (deleteable is IMasqueradeAs @as)
+                databaseObject ??= @as.MasqueradingAs() as DatabaseEntity;
 
             if (databaseObject == null)
                 throw new NotSupportedException(
@@ -734,10 +734,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             // Mark the columns specified IsExtractionIdentifier
             foreach(var col in extractionIdentifierColumns)
             {
-                var match = eis.FirstOrDefault(ei=>ei.ColumnInfo?.ID == col.ID);
-                if(match == null)
-                    throw new ArgumentException($"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
-
+                var match = eis.FirstOrDefault(ei=>ei.ColumnInfo?.ID == col.ID) ?? throw new ArgumentException($"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
                 match.IsExtractionIdentifier = true;
                 match.SaveToDatabase();
             }

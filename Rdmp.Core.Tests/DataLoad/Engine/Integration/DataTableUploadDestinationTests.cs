@@ -79,13 +79,14 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
             var sql = "CREATE TABLE RandomOrderTable (";
 
-            var leftToCreate = new List<string>();
+            var leftToCreate = new List<string>
+            {
+                "name varchar(50),",
+                "color varchar(50),",
+                "age varchar(50),"
+            };
 
-            leftToCreate.Add("name varchar(50),");
-            leftToCreate.Add("color varchar(50),");
-            leftToCreate.Add("age varchar(50),");
-
-            if(createIdentity)
+            if (createIdentity)
                 leftToCreate.Add("id int IDENTITY(1,1),");
 
             var invalid = false;
@@ -222,8 +223,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
 
-        var dt1 = new DataTable();
-        dt1.TableName = "MyEmptyTable";
+        var dt1 = new DataTable
+        {
+            TableName = "MyEmptyTable"
+        };
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
         destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
@@ -955,8 +958,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         destination.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
 
-        var dt1 = new DataTable();
-        dt1.TableName = "MyTable";
+        var dt1 = new DataTable
+        {
+            TableName = "MyTable"
+        };
         dt1.Columns.Add("Name");
         dt1.Rows.Add("Fish");
 
@@ -964,8 +969,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         destination.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
 
-        var dt2 = new DataTable();
-        dt2.TableName = "MyTable";
+        var dt2 = new DataTable
+        {
+            TableName = "MyTable"
+        };
         dt2.Columns.Add("Name");
         dt2.Rows.Add("Fish Monkey Fish Fish"); //notice that this is longer so the column must be resized
 

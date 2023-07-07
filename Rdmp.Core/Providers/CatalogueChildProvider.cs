@@ -1697,8 +1697,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public virtual void UpdateTo(ICoreChildProvider other)
     {
-        if(other == null)
-            throw new ArgumentNullException(nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         if(!(other is CatalogueChildProvider otherCat))
             throw new NotSupportedException(

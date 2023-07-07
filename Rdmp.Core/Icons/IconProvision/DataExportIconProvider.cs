@@ -38,9 +38,9 @@ public class DataExportIconProvider : CatalogueIconProvider
         if (concept is PackageContentNode pcn)
             return base.GetImageImpl(pcn.DataSet);
 
-        if (concept is ProjectCohortIdentificationConfigurationAssociation)
+        if (concept is ProjectCohortIdentificationConfigurationAssociation association)
         {
-            var cic = ((ProjectCohortIdentificationConfigurationAssociation)concept).CohortIdentificationConfiguration;
+            var cic = association.CohortIdentificationConfiguration;
             //return image based on cic (will include frozen graphic if frozen)
             return cic != null ? GetImageImpl(cic, OverlayKind.Link) :
                 //it's an orphan or user cannot fetch the cic for some reason

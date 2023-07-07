@@ -791,9 +791,11 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         
     private void MiSaveImagesClick(object sender, EventArgs e)
     {
-        var sfd = new SaveFileDialog();
-        sfd.FileName = "Chart.jpg";
-        sfd.Filter = "Jpeg|*.jpg";
+        var sfd = new SaveFileDialog
+        {
+            FileName = "Chart.jpg",
+            Filter = "Jpeg|*.jpg"
+        };
         if (sfd.ShowDialog() == DialogResult.OK)
         {
             chart1.SaveImage(sfd.FileName, ChartImageFormat.Jpeg);
@@ -848,11 +850,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text, (DataTable)dataGridView1.DataSource,Timeout);
             cacheManager.CommitResults(args);
 
-            var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text);
-
-            if(result == null)
-                throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
-
+            var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text) ?? throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
             MessageBox.Show($"DataTable successfully submitted to:{result.GetFullyQualifiedName()}");
             btnClearFromCache.Enabled = true;
         }

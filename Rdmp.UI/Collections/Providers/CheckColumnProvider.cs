@@ -34,10 +34,12 @@ public class CheckColumnProvider
 
     public OLVColumn CreateColumn()
     {
-        var toReturn = new OLVColumn();
-        toReturn.Text = ChecksColumnName;
-        toReturn.ImageGetter = CheckImageGetter;
-        toReturn.IsEditable = false;
+        var toReturn = new OLVColumn
+        {
+            Text = ChecksColumnName,
+            ImageGetter = CheckImageGetter,
+            IsEditable = false
+        };
 
         return toReturn;
     }

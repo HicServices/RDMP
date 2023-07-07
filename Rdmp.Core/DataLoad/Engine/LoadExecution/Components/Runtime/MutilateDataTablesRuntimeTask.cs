@@ -30,11 +30,8 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
         : base(task, args)
     {
         //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name 
-        var stageArgs = args.StageSpecificArguments;
-
-        if (stageArgs == null)
-            throw new NullReferenceException("Stage args was null");
-        if(stageArgs.DbInfo == null)
+        var stageArgs = args.StageSpecificArguments ?? throw new NullReferenceException("Stage args was null");
+        if (stageArgs.DbInfo == null)
             throw new NullReferenceException("Stage args had no DbInfo, unable to mutilate tables without a database - mutilator is sad");
 
         if(string.IsNullOrWhiteSpace(task.Path))

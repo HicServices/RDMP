@@ -41,7 +41,7 @@ public static class ApplicationRestarter
         if (arguments.Length > 1)
         {
             sb.Append('"');
-            sb.Append(arguments[arguments.Length - 1]);
+            sb.Append(arguments[^1]);
             sb.Append('"');
         }
         var currentStartInfo = new ProcessStartInfo

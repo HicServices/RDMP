@@ -311,22 +311,15 @@ public class MEF
     /// <returns></returns>
     public T CreateA<T>(string typeToCreate, params object[] args)
     {
-        var typeToCreateAsType = GetType(typeToCreate);
-
-        if (typeToCreateAsType == null)
-            throw new Exception($"Could not find Type '{typeToCreate}'");
+        var typeToCreateAsType = GetType(typeToCreate) ?? throw new Exception($"Could not find Type '{typeToCreate}'");
 
         //can we cast to T?
-        if(typeToCreateAsType.IsAssignableFrom(typeof(T)))
+        if (typeToCreateAsType.IsAssignableFrom(typeof(T)))
             throw new Exception(
                 $"Requested typeToCreate '{typeToCreate}' was not assignable to the required Type '{typeof(T).Name}'");
 
-        var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType,args);
-
-        if(instance == null)
-            throw new ObjectLacksCompatibleConstructorException(
+        var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
                 $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
-
         return instance;
     }
 

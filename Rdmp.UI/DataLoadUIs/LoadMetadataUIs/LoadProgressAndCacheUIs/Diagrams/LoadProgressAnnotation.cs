@@ -77,32 +77,35 @@ internal class LoadProgressAnnotation
             anchorX = GetXForDate(_dt, date.Value) + 1;
         }
 
-        line = new LineAnnotation();
-        line.IsSizeAlwaysRelative = false;
-        line.AxisX = chart.ChartAreas[0].AxisX;
-        line.AxisY = chart.ChartAreas[0].AxisY;
-        line.AnchorX = anchorX;
-        line.AnchorY = 0;
-        line.Height = maxY * 2;
-        line.LineWidth = 1;
-        line.LineDashStyle = ChartDashStyle.Dot;
-        line.Width = 0;
+        line = new LineAnnotation
+        {
+            IsSizeAlwaysRelative = false,
+            AxisX = chart.ChartAreas[0].AxisX,
+            AxisY = chart.ChartAreas[0].AxisY,
+            AnchorX = anchorX,
+            AnchorY = 0,
+            Height = maxY * 2,
+            LineWidth = 1,
+            LineDashStyle = ChartDashStyle.Dot,
+            Width = 0
+        };
         line.LineWidth = 2;
         line.StartCap = LineAnchorCapStyle.None;
         line.EndCap = LineAnchorCapStyle.None;
         line.AllowSelecting = true;
         line.AllowMoving = true;
 
-        text = new TextAnnotation();
+        text = new TextAnnotation
+        {
+            Text = $"{label}:{Environment.NewLine}{originText}",
+            IsSizeAlwaysRelative = false,
+            AxisX = chart.ChartAreas[0].AxisX,
+            AxisY = chart.ChartAreas[0].AxisY,
+            AnchorX = anchorX,
+            AnchorY = textAnchorY,
 
-        text.Text = $"{label}:{Environment.NewLine}{originText}";
-        text.IsSizeAlwaysRelative = false;
-        text.AxisX = chart.ChartAreas[0].AxisX;
-        text.AxisY = chart.ChartAreas[0].AxisY;
-        text.AnchorX = anchorX;
-        text.AnchorY = textAnchorY;
-
-        text.ForeColor = date == null ? Color.Red : Color.Green;
+            ForeColor = date == null ? Color.Red : Color.Green
+        };
         text.Font = new Font(text.Font, FontStyle.Bold);
 
 

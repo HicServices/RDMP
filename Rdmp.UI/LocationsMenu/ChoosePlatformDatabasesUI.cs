@@ -425,10 +425,12 @@ public partial class ChoosePlatformDatabasesUI : Form
             var serializer = new Serializer();
             var yaml = serializer.Serialize(toSerialize);
 
-            var sfd = new SaveFileDialog();
-            sfd.Filter = "Yaml|*.yaml";
-            sfd.Title = "Save yaml";
-            sfd.InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName;
+            var sfd = new SaveFileDialog
+            {
+                Filter = "Yaml|*.yaml",
+                Title = "Save yaml",
+                InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName
+            };
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {

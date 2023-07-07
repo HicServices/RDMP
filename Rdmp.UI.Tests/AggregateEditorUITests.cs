@@ -117,9 +117,7 @@ internal class AggregateEditorUITests:UITests
 
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions()
     {
-        ExtractionInformation otherEi;
-        ExtractionInformation dateEi;
-        return GetAggregateConfigurationWithNoDimensions(out dateEi, out otherEi);
+        return GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi, out ExtractionInformation otherEi);
     }
 
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi, out ExtractionInformation otherEi)

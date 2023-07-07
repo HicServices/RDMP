@@ -66,8 +66,8 @@ internal class OracleTriggerImplementer:MySqlTriggerImplementer
 
     protected override void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
     {
-        sqlNow = sqlNow??"";
-        sqlThen = sqlThen??"";
+        sqlNow ??= "";
+        sqlThen ??= "";
 
         if(!sqlNow.Trim(';',' ','\t').Equals(sqlThen.Trim(';',' ','\t')))
             throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlThen,sqlNow);

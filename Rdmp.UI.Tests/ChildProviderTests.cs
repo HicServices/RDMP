@@ -31,7 +31,7 @@ internal class ChildProviderTests : UITests
         Assert.IsNotNull(desc);
 
         //instead we should get a parent node with the name "Null Server"
-        var parent = (TableInfoServerNode) desc.Parents[desc.Parents.Length - 2];
+        var parent = (TableInfoServerNode) desc.Parents[^2];
         Assert.AreEqual(TableInfoServerNode.NullServerNode, parent.ServerName);
     }
 
@@ -48,7 +48,7 @@ internal class ChildProviderTests : UITests
         Assert.IsNotNull(desc);
 
         //instead we should get a parent node with the name "Null Server"
-        var parent = (TableInfoDatabaseNode)desc.Parents[desc.Parents.Length - 1];
+        var parent = (TableInfoDatabaseNode)desc.Parents[^1];
         Assert.AreEqual(TableInfoDatabaseNode.NullDatabaseNode, parent.DatabaseName);
     }
 

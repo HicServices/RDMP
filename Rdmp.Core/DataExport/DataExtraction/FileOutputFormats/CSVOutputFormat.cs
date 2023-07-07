@@ -96,14 +96,13 @@ public class CSVOutputFormat : FileOutputFormat
 
     public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat, int? roundFloatsTo)
     {
-        if (o is DateTime)
+        if (o is DateTime dt)
         {
-            var dt = (DateTime)o;
             separatorsStrippedOut = 0;
             return dt.ToString(dateFormat);
         }
 
-        if(roundFloatsTo.HasValue)
+        if (roundFloatsTo.HasValue)
         {
             separatorsStrippedOut = 0;
             switch(o)

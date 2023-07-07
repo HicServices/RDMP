@@ -67,8 +67,8 @@ public class TransparentHelpForm:Form
         DoubleBuffered = true;
 
         //if the host is a Form and it closes we should close too
-        if (host is Form)
-            ((Form) host).FormClosed +=(s,e)=> Close();
+        if (host is Form form)
+            form.FormClosed +=(s,e)=> Close();
     }
     private void UpdateLocation()
     {

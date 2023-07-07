@@ -35,8 +35,10 @@ internal class ChiValidationTest : ValidationTests
         validator.AddItemValidator(chi, "chi", typeof(string));
 
         // 5. Create a target object (dictionary) against which to validate
-        var domainObject = new Dictionary<string, object>();
-        domainObject.Add("chi", TestConstants._VALID_CHI);
+        var domainObject = new Dictionary<string, object>
+        {
+            { "chi", TestConstants._VALID_CHI }
+        };
 
         // 6. Validate, passing in the target object to be validated against - ValidationFailure or null is returned
         Assert.IsNull(validator.Validate(domainObject));
@@ -73,9 +75,11 @@ internal class ChiValidationTest : ValidationTests
         validator.AddItemValidator(age, "age", typeof(int));
 
         // 8. Create a target object (dictionary) against which to validate
-        var domainObject = new Dictionary<string, object>();
-        domainObject.Add("chi", TestConstants._VALID_CHI);
-        domainObject.Add("age", 12);
+        var domainObject = new Dictionary<string, object>
+        {
+            { "chi", TestConstants._VALID_CHI },
+            { "age", 12 }
+        };
 
         // 9. Validate, passing in the target object to be validated against
         Assert.IsNull(validator.Validate(domainObject));

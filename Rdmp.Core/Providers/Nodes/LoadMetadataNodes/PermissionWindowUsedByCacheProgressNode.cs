@@ -61,13 +61,7 @@ public class PermissionWindowUsedByCacheProgressNode: Node,IDeletableWithCustomM
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            var hashCode = CacheProgress.GetHashCode();
-            hashCode = (hashCode*397) ^ PermissionWindow.GetHashCode();
-            hashCode = (hashCode*397) ^ DirectionIsCacheToPermissionWindow.GetHashCode();
-            return hashCode;
-        }
+        return System.HashCode.Combine(CacheProgress, PermissionWindow, DirectionIsCacheToPermissionWindow);
     }
     #endregion
 

@@ -843,10 +843,8 @@ delete from {1}..Project
 
     protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
     {
-        CatalogueItem[] catalogueItems;
-        ExtractionInformation[] extractionInformations;
 
-        return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
+        return Import(tbl, out tableInfoCreated, out columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations);
     }
 
     protected static void VerifyRowExist(DataTable resultTable, params object[] rowObjects)

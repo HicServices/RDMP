@@ -126,11 +126,11 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
     public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is Project)
-            Project = (Project)target;
+        if (target is Project project)
+            Project = project;
 
-        if (target is ExternalCohortTable)
-            ExternalCohortTable = (ExternalCohortTable)target;
+        if (target is ExternalCohortTable table)
+            ExternalCohortTable = table;
 
         return this;
     }

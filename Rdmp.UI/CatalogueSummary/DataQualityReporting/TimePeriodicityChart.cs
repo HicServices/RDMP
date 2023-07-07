@@ -116,27 +116,31 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
             if (lastBucket != DateTime.MinValue && diff.TotalDays >31)
             {
                 //add gap annotation
-                var line = new LineAnnotation();
-                line.IsSizeAlwaysRelative = false;
-                line.AxisX = chart1.ChartAreas[0].AxisX;
-                line.AxisY = chart1.ChartAreas[0].AxisY;
-                line.AnchorX = bucketNumber;
-                line.AnchorY = 0;
-                line.IsInfinitive = true;
-                line.LineWidth = 1;
-                line.LineDashStyle = ChartDashStyle.Dot;
-                line.Width = 0;
+                var line = new LineAnnotation
+                {
+                    IsSizeAlwaysRelative = false,
+                    AxisX = chart1.ChartAreas[0].AxisX,
+                    AxisY = chart1.ChartAreas[0].AxisY,
+                    AnchorX = bucketNumber,
+                    AnchorY = 0,
+                    IsInfinitive = true,
+                    LineWidth = 1,
+                    LineDashStyle = ChartDashStyle.Dot,
+                    Width = 0
+                };
                 line.LineWidth = 2;
                 line.StartCap = LineAnchorCapStyle.None;
                 line.EndCap = LineAnchorCapStyle.None;
 
-                var text = new TextAnnotation();
-                text.Text = $"{diff.TotalDays}d gap";
-                text.IsSizeAlwaysRelative = false;
-                text.AxisX = chart1.ChartAreas[0].AxisX;
-                text.AxisY = chart1.ChartAreas[0].AxisY;
-                text.AnchorX = bucketNumber;
-                text.AnchorY = 0;
+                var text = new TextAnnotation
+                {
+                    Text = $"{diff.TotalDays}d gap",
+                    IsSizeAlwaysRelative = false,
+                    AxisX = chart1.ChartAreas[0].AxisX,
+                    AxisY = chart1.ChartAreas[0].AxisY,
+                    AnchorX = bucketNumber,
+                    AnchorY = 0
+                };
 
                 chart1.Annotations.Add(line);
                 chart1.Annotations.Add(text);

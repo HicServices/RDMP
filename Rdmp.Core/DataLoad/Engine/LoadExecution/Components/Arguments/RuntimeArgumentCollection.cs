@@ -66,11 +66,7 @@ public class RuntimeArgumentCollection
 
     public object GetCustomArgumentValue(string name)
     {
-        var first = Arguments.SingleOrDefault(a => a.Name.Equals(name));
-
-        if(first == null)
-            throw new KeyNotFoundException($"Argument {name} was missing");
-
+        var first = Arguments.SingleOrDefault(a => a.Name.Equals(name)) ?? throw new KeyNotFoundException($"Argument {name} was missing");
         try
         {
             return first.GetValueAsSystemType();

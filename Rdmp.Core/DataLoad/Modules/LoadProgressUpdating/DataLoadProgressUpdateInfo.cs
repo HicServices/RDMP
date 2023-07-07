@@ -38,13 +38,12 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
             return;
 
         var lines = value.Split(new []{'\n','\r'},StringSplitOptions.RemoveEmptyEntries);
-            
-        DataLoadProgressUpdateStrategy strat;
+
         if (lines.Length > 0)
         {
             var fields = lines[0].Split(';');
-            if(fields.Length>0)
-                if (Enum.TryParse(fields[0], out strat))
+            if (fields.Length > 0)
+                if (Enum.TryParse(fields[0], out DataLoadProgressUpdateStrategy strat))
                     Strategy = strat;
 
             if (fields.Length > 1)

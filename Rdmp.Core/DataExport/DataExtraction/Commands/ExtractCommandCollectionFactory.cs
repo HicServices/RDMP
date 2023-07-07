@@ -35,10 +35,9 @@ public class ExtractCommandCollectionFactory
         //get all extractable locals AND extractable globals first time then just extractable locals
         var docs = catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals);
         var sqls = catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals);
-            
+
         //Now find all the lookups and include them into the bundle
-        List<ITableInfo> normalTablesFound;
-        catalogue.GetTableInfos(out normalTablesFound, out var lookupsFound);
+        catalogue.GetTableInfos(out List<ITableInfo> normalTablesFound, out var lookupsFound);
 
         //bundle consists of:
         var bundle = new ExtractableDatasetBundle(

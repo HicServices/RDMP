@@ -805,11 +805,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     }
     private void AddUserSettingCheckbox(Func<bool> getter, Action<bool> setter, string name, string toolTip)
     {
-        var b = new ToolStripButton(name);
-        b.CheckOnClick = true;
-        b.ToolTipText = toolTip;
-        b.DisplayStyle = ToolStripItemDisplayStyle.Text;
-        b.Checked = getter();
+        var b = new ToolStripButton(name)
+        {
+            CheckOnClick = true,
+            ToolTipText = toolTip,
+            DisplayStyle = ToolStripItemDisplayStyle.Text,
+            Checked = getter()
+        };
         b.CheckedChanged += (s, e) =>
         {
             setter(b.Checked);

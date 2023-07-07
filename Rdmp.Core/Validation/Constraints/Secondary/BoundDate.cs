@@ -31,9 +31,9 @@ public class BoundDate : Bound
         if(value == null)
             return null;
 
-        if (value is string)
+        if (value is string s)
         {
-            value = SafeConvertToDate(value as string);
+            value = SafeConvertToDate(s);
             
             if (!((DateTime?)value).HasValue)
                 return null;
@@ -105,16 +105,16 @@ public class BoundDate : Bound
         if (lookupFieldNamed == DBNull.Value)
             return null;
 
-        if (lookupFieldNamed is DateTime)
-            return (DateTime)lookupFieldNamed;
+        if (lookupFieldNamed is DateTime time)
+            return time;
 
-        if (lookupFieldNamed is string)
+        if (lookupFieldNamed is string named)
         {
-            if (string.IsNullOrWhiteSpace(lookupFieldNamed as string))
+            if (string.IsNullOrWhiteSpace(named))
                 return null;
             try
             {
-                lookupFieldNamed = DateTime.Parse(lookupFieldNamed as string);
+                lookupFieldNamed = DateTime.Parse(named);
             }
             catch (InvalidCastException )
             {

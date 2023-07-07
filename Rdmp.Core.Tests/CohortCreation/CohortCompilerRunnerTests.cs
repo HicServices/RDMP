@@ -26,9 +26,8 @@ public class CohortCompilerRunnerTests:DatabaseTests
     [Test]
     public void CacheIdentifierListWithRunner_SimpleCase()
     {
-        DiscoveredDatabase db;
 
-        SetupCohort(out db,out var cic, out var dt);
+        SetupCohort(out DiscoveredDatabase db, out var cic, out var dt);
 
         var compiler = new CohortCompiler(cic);
 

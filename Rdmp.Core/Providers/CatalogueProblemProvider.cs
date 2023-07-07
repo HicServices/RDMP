@@ -69,32 +69,32 @@ public class CatalogueProblemProvider : ProblemProvider
     /// <inheritdoc/>
     protected override string DescribeProblemImpl(object o)
     {
-        if (o is AllGovernanceNode)
-            return DescribeProblem((AllGovernanceNode) o);
+        if (o is AllGovernanceNode node)
+            return DescribeProblem(node);
 
-        if (o is Catalogue)
-            return DescribeProblem((Catalogue)o);
+        if (o is Catalogue catalogue)
+            return DescribeProblem(catalogue);
 
-        if (o is CatalogueItem)
-            return DescribeProblem((CatalogueItem) o);
+        if (o is CatalogueItem item)
+            return DescribeProblem(item);
 
-        if (o is LoadDirectoryNode)
-            return DescribeProblem((LoadDirectoryNode) o);
+        if (o is LoadDirectoryNode directoryNode)
+            return DescribeProblem(directoryNode);
 
-        if (o is ExtractionInformation)
-            return DescribeProblem((ExtractionInformation) o);
+        if (o is ExtractionInformation information)
+            return DescribeProblem(information);
 
-        if (o is IFilter)
-            return DescribeProblem((IFilter) o);
+        if (o is IFilter filter)
+            return DescribeProblem(filter);
 
-        if (o is AggregateConfiguration)
-            return DescribeProblem((AggregateConfiguration) o);
+        if (o is AggregateConfiguration configuration)
+            return DescribeProblem(configuration);
 
-        if (o is DecryptionPrivateKeyNode)
-            return DescribeProblem((DecryptionPrivateKeyNode) o);
+        if (o is DecryptionPrivateKeyNode keyNode)
+            return DescribeProblem(keyNode);
 
-        if (o is AllCataloguesUsedByLoadMetadataNode)
-            return DescribeProblem((AllCataloguesUsedByLoadMetadataNode) o);
+        if (o is AllCataloguesUsedByLoadMetadataNode metadataNode)
+            return DescribeProblem(metadataNode);
 
         if (o is ISqlParameter p)
             return DescribeProblem(p);

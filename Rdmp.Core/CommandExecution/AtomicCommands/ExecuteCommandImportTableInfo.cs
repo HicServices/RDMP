@@ -45,8 +45,8 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
             return;
 
         //if it isn't a table valued function
-        if (t is DiscoveredTableValuedFunction)
-            importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository, (DiscoveredTableValuedFunction) t);
+        if (t is DiscoveredTableValuedFunction function)
+            importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository, function);
         else
             importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, t);
 

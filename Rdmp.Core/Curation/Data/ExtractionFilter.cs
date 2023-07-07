@@ -123,7 +123,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     /// <param name="parent"></param>
     public ExtractionFilter(ICatalogueRepository repository, string name, ExtractionInformation parent)
     {
-        name = name ?? $"New Filter {Guid.NewGuid()}";
+        name ??= $"New Filter {Guid.NewGuid()}";
 
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {

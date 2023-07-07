@@ -194,8 +194,7 @@ internal class RDMPApplicationSettings : ISettings
 
                 else if (type == typeof(Guid))
                 {
-                    Guid guid;
-                    if (Guid.TryParse(str, out guid))
+                    if (Guid.TryParse(str, out Guid guid))
                         value = guid;
                 }
 

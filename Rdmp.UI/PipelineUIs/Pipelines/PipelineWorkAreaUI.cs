@@ -52,15 +52,19 @@ public partial class PipelineWorkAreaUI : UserControl
         olvComponents.AlwaysGroupByColumn = olvRole;
         olvComponents.FullRowSelect = true;
 
-        _pipelineDiagram = new PipelineDiagramUI(_activator);
-        _pipelineDiagram.AllowSelection = true;
-        _pipelineDiagram.AllowReOrdering = true;
+        _pipelineDiagram = new PipelineDiagramUI(_activator)
+        {
+            AllowSelection = true,
+            AllowReOrdering = true
+        };
         _pipelineDiagram.SelectedComponentChanged += _pipelineDiagram_SelectedComponentChanged;
         _pipelineDiagram.Dock = DockStyle.Fill;
         diagramPanel.Controls.Add(_pipelineDiagram);
 
-        _arumentsCollection1 = new ArgumentCollectionUI();
-        _arumentsCollection1.Dock = DockStyle.Fill;
+        _arumentsCollection1 = new ArgumentCollectionUI
+        {
+            Dock = DockStyle.Fill
+        };
         gbArguments.Controls.Add(_arumentsCollection1);
 
         olvComponents.RowFormatter+= RowFormatter;

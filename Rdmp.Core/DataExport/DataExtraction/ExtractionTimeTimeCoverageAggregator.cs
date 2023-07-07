@@ -107,16 +107,16 @@ public class ExtractionTimeTimeCoverageAggregator
 
         try
         {
-            if (value is string)
+            if (value is string s)
             {
 
-                if (string.IsNullOrWhiteSpace((string)value))
+                if (string.IsNullOrWhiteSpace(s))
                 {
                     countOfNullsSeen++;
                     return;
                 }
 
-                var valueAsString = (string) value;
+                var valueAsString = s;
                         
                 //trim off times
                 if (Regex.IsMatch(valueAsString,"[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"))
@@ -124,8 +124,8 @@ public class ExtractionTimeTimeCoverageAggregator
 
                 key = DateTime.ParseExact(valueAsString, "dd/MM/yyyy", null);
             }
-            else if (value is DateTime)
-                key = (DateTime) value;
+            else if (value is DateTime time)
+                key = time;
             else
                 key = Convert.ToDateTime(value);
         }

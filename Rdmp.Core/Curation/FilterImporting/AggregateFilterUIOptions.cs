@@ -21,10 +21,7 @@ public class AggregateFilterUIOptions : FilterUIOptions
 
     public AggregateFilterUIOptions(AggregateFilter aggregateFilter) : base(aggregateFilter)
     {
-        var aggregateConfiguration = aggregateFilter.GetAggregate();
-
-        if (aggregateConfiguration == null)
-            throw new Exception(
+        var aggregateConfiguration = aggregateFilter.GetAggregate() ?? throw new Exception(
                 $"AggregateFilter '{aggregateFilter}' (ID={aggregateFilter.ID}) does not belong to any AggregateConfiguration, is it somehow an orphan?");
 
         //it part of an AggregateConfiguration so get the same factory that is used by AggregateEditorUI to tell us about the globals and the columns

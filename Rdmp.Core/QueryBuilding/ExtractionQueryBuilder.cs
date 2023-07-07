@@ -49,13 +49,9 @@ public class ExtractionQueryBuilder
         if(request.ExtractableCohort == null)
             throw new NullReferenceException("No Cohort selected");
 
-        var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();
-
-        if(databaseType == null)
-            throw new NotSupportedException(
+        var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType() ?? throw new NotSupportedException(
                 $"Catalogue {request.Catalogue} did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
-
-        var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType.Value);
+        var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType);
 
         substitutions = new List<ReleaseIdentifierSubstitution>();
 

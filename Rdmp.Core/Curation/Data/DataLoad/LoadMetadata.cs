@@ -240,8 +240,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <returns></returns>
     public DiscoveredServer GetDistinctLoggingDatabase()
     {
-        IExternalDatabaseServer whoCares;
-        return GetDistinctLoggingDatabase(out whoCares);
+        return GetDistinctLoggingDatabase(out IExternalDatabaseServer whoCares);
     }
 
     private IDataAccessPoint[] GetLoggingServers()

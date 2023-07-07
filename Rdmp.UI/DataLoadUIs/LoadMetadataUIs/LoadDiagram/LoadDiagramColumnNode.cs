@@ -116,13 +116,7 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            var hashCode = (int) _bubble;
-            hashCode = (hashCode*397) ^ (_tableNode != null ? _tableNode.GetHashCode() : 0);
-            hashCode = (hashCode*397) ^ (ColumnName != null ? ColumnName.GetHashCode() : 0);
-            return hashCode;
-        }
+        return HashCode.Combine(_bubble, _tableNode, ColumnName);
     }
 
     public string WhatIsThis()

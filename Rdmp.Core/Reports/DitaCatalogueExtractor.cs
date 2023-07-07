@@ -248,7 +248,7 @@ public class DitaCatalogueExtractor : ICheckable
 
     private static string GetHtmlEncodedHeader(object header)
     {
-        header = header ?? "";
+        header ??= "";
 
         header = header.ToString().Replace("_", " ");
         header = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(header.ToString());
@@ -258,7 +258,7 @@ public class DitaCatalogueExtractor : ICheckable
 
     private static string GetHtmlEncodedValue(object value)
     {
-        value = value ?? "";
+        value ??= "";
         return HttpUtility.HtmlEncode(value);
     }
 

@@ -116,28 +116,28 @@ public class ParameterCollectionUIOptionsFactory
 
     public ParameterCollectionUIOptions Create(ICollectSqlParameters host, ICoreChildProvider coreChildProvider)
     {
-        if (host is TableInfo)
-            return Create((TableInfo)host);
+        if (host is TableInfo info)
+            return Create(info);
 
-        if (host is ExtractionFilterParameterSet)
-            return Create((ExtractionFilterParameterSet)host);
+        if (host is ExtractionFilterParameterSet set)
+            return Create(set);
 
-        if (host is AggregateConfiguration)
-            return Create((AggregateConfiguration)host, coreChildProvider);
+        if (host is AggregateConfiguration configuration)
+            return Create(configuration, coreChildProvider);
 
-        if (host is IFilter)
+        if (host is IFilter filter)
         {
             var factory = new FilterUIOptionsFactory();
-            var globals = FilterUIOptionsFactory.Create((IFilter)host).GetGlobalParametersInFilterScope();
+            var globals = FilterUIOptionsFactory.Create(filter).GetGlobalParametersInFilterScope();
 
-            return Create((IFilter)host, globals);
+            return Create(filter, globals);
         }
 
-        if (host is CohortIdentificationConfiguration)
-            return Create((CohortIdentificationConfiguration)host, coreChildProvider);
+        if (host is CohortIdentificationConfiguration identificationConfiguration)
+            return Create(identificationConfiguration, coreChildProvider);
 
-        if (host is ExtractionConfiguration)
-            return Create((ExtractionConfiguration)host);
+        if (host is ExtractionConfiguration extractionConfiguration)
+            return Create(extractionConfiguration);
 
         throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", nameof(host));
     }

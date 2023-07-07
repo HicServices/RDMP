@@ -64,8 +64,11 @@ internal class ScintillaMenu:ContextMenuStrip
         _miWordwrap = new ToolStripMenuItem("Word Wrap");
         foreach (WrapMode mode in Enum.GetValues(typeof(WrapMode)))
         {
-            var mi = new ToolStripMenuItem(mode.ToString(), null,SetWordWrapMode){Tag = mode};
-            mi.Checked = _scintilla.WrapMode == mode;
+            var mi = new ToolStripMenuItem(mode.ToString(), null, SetWordWrapMode)
+            {
+                Tag = mode,
+                Checked = _scintilla.WrapMode == mode
+            };
             _miWordwrap.DropDownItems.Add(mi);
         }
 

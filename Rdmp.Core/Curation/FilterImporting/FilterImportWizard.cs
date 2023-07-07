@@ -196,11 +196,7 @@ public class FilterImportWizard
 
         if (containerToImportOneInto is FilterContainer filtercontainer)
         {
-            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively();
-
-            if(selectedDataSet == null)
-                throw new Exception($"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
-
+            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ?? throw new Exception($"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
             var config = selectedDataSet.ExtractionConfiguration;
             var root = selectedDataSet.RootFilterContainer;
 

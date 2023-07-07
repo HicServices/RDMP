@@ -60,11 +60,7 @@ public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommand
 
             var shareName = (string)sd.Properties["Name"];
 
-            var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName));
-
-            if (existingMatch == null)
-                existingMatch = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _targetCatalogue, shareName);
-
+            var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName)) ?? new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _targetCatalogue, shareName);
             ShareManager.ImportPropertiesOnly(existingMatch, sd);
             existingMatch.SaveToDatabase();
         }

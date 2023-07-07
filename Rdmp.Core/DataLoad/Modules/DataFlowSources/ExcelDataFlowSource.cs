@@ -87,11 +87,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             {
                 var worksheet =
                     //if the user hasn't picked one, use the first
-                    string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName);
-
-                if (worksheet == null)
-                    throw new FlatFileLoadException(string.Format("The Excel sheet '{0}' was not found in workbook '{1}'", WorkSheetName, _fileToLoad.File.Name));
-
+                    (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ?? throw new FlatFileLoadException(string.Format("The Excel sheet '{0}' was not found in workbook '{1}'", WorkSheetName, _fileToLoad.File.Name));
                 toReturn = GetAllData(worksheet, listener);
 
                 //set the table name the file name

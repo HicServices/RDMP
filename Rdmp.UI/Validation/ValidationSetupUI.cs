@@ -270,10 +270,11 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         tableLayoutPanel1.RowCount++;
 
-        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository,secondaryConstriant,olvColumns.Objects.Cast<ExtractionInformation>().Select(c=>c.GetRuntimeName()).ToArray());
-
-        toAdd.Width = splitContainer1.Panel2.Width;
-        toAdd.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository, secondaryConstriant, olvColumns.Objects.Cast<ExtractionInformation>().Select(c => c.GetRuntimeName()).ToArray())
+        {
+            Width = splitContainer1.Panel2.Width,
+            Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top
+        };
         toAdd.RequestDeletion += SecondaryConstraintRequestDelete;
         tableLayoutPanel1.Controls.Add(toAdd, tableLayoutPanel1.RowCount - 1,0);
             

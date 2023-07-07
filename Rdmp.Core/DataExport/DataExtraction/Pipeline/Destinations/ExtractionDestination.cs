@@ -348,9 +348,9 @@ e.g. /$i/$a")]
             tableLoadInfo.CloseAndArchive();
                 
             //audit in cumulative extraction results (determines release-ability of artifacts).
-            if (_request is ExtractDatasetCommand)
+            if (_request is ExtractDatasetCommand command)
             {
-                var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(
                     $"SELECT * FROM {lookup.TableInfo.Name}", lookup.TableInfo);
                 supplementalResult.CompleteAudit(GetType(), destinationDescription, linesWritten,false,false);
@@ -384,9 +384,9 @@ e.g. /$i/$a")]
         try
         {
             var outputPath = fetcher.ExtractToDirectory(directory);
-            if (_request is ExtractDatasetCommand)
+            if (_request is ExtractDatasetCommand command)
             {
-                var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
                 supplementalResult.CompleteAudit(GetType(), outputPath, 0,false , false);
             }
@@ -434,9 +434,9 @@ e.g. /$i/$a")]
             tableLoadInfo.Inserts = sqlLinesWritten;
             tableLoadInfo.CloseAndArchive();
 
-            if (_request is ExtractDatasetCommand)
+            if (_request is ExtractDatasetCommand command)
             {
-                var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
                 supplementalResult.CompleteAudit(GetType(),description , sqlLinesWritten, false,false);
             }

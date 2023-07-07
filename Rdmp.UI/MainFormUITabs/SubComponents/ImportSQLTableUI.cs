@@ -75,8 +75,8 @@ public partial class ImportSQLTableUI : RDMPForm
             }
                 
             //if it isn't a table valued function
-            if (tbl is DiscoveredTableValuedFunction)
-                Importer = new TableValuedFunctionImporter(cataRepo, (DiscoveredTableValuedFunction) tbl,(DataAccessContext) ddContext.SelectedValue);
+            if (tbl is DiscoveredTableValuedFunction function)
+                Importer = new TableValuedFunctionImporter(cataRepo, function,(DataAccessContext) ddContext.SelectedValue);
             else
                 Importer = new TableInfoImporter(cataRepo, tbl, (DataAccessContext) ddContext.SelectedValue);
                     

@@ -60,13 +60,7 @@ NamePattern: must be a value that could appear for the given Property.  Comparis
 
         var dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
 
-        var property = dbObjectType.GetProperty(propertyName);
-
-        if(property == null)
-        {
-            throw new Exception($"Unknown property '{propertyName}'.  Did not exist on Type '{dbObjectType.Name}'");
-        }
-
+        var property = dbObjectType.GetProperty(propertyName) ?? throw new Exception($"Unknown property '{propertyName}'.  Did not exist on Type '{dbObjectType.Name}'");
         var objs = GetObjectByToString(dbObjectType,property,objectToString);
         return new CommandLineObjectPickerArgumentValue(arg,idx,objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
     }

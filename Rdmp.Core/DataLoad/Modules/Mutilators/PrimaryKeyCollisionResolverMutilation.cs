@@ -68,8 +68,10 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
             con.Open();
 
             var resolver = new PrimaryKeyCollisionResolver(TargetTable);
-            var cmdAreTherePrimaryKeyCollisions = new SqlCommand(resolver.GenerateCollisionDetectionSQL(), con);
-            cmdAreTherePrimaryKeyCollisions.CommandTimeout = 5000;
+            var cmdAreTherePrimaryKeyCollisions = new SqlCommand(resolver.GenerateCollisionDetectionSQL(), con)
+            {
+                CommandTimeout = 5000
+            };
 
             //if there are no primary key collisions
             if (cmdAreTherePrimaryKeyCollisions.ExecuteScalar().ToString().Equals("0"))
@@ -81,8 +83,10 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
             //there are primary key collisions so resolve them
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Primary key collisions detected"));
 
-            var cmdResolve = new SqlCommand(resolver.GenerateSQL(), con);
-            cmdResolve.CommandTimeout = 5000;
+            var cmdResolve = new SqlCommand(resolver.GenerateSQL(), con)
+            {
+                CommandTimeout = 5000
+            };
             var affectedRows = cmdResolve.ExecuteNonQuery();
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,

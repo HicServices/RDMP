@@ -55,9 +55,8 @@ public class Chi : PrimaryConstraint
         var mm = columnValueAsString.Substring(2, 2);
         var yy = columnValueAsString.Substring(4, 2);
 
-        DateTime outDt;
         //maybe tryparse instead
-        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out outDt) == false)
+        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out DateTime outDt) == false)
         {
             reason = "First 6 numbers of CHI did not constitute a valid date";
             return false;
@@ -91,7 +90,7 @@ public class Chi : PrimaryConstraint
         c = (int)'0';
         for (var i = 0; i < lsCHI - 1; i++)
             sum += ((int)sCHI.Substring(i, 1)[0] - c) * (lsCHI - i);
-        sum = sum % 11;
+        sum %= 11;
 
         c = 11 - sum;
         if (c == 11) c = 0;
@@ -107,9 +106,8 @@ public class Chi : PrimaryConstraint
     /// <returns>1 for male and 0 for female</returns>
     public static int GetSex(string chi)
     {
-        string errorReport;
 
-        if (!IsValidChiNumber(chi, out errorReport))
+        if (!IsValidChiNumber(chi, out string errorReport))
             throw new ArgumentException("Invalid CHI");
 
         var sexChar = chi[8];

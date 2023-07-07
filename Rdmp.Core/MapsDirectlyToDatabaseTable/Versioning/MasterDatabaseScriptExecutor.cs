@@ -162,24 +162,15 @@ public class MasterDatabaseScriptExecutor
         
     public static string CalculateHash(string input)
     {
-        // step 1, calculate MD5 hash from input
+        // step 1, calculate SHA512 hash from input
 
-        var hashProvider = SHA512.Create();
 
         var inputBytes = Encoding.ASCII.GetBytes(input);
 
-        var hash = hashProvider.ComputeHash(inputBytes);
-
+        var hash = SHA512.HashData(inputBytes);
 
         // step 2, convert byte array to hex string
-
-        var sb = new StringBuilder();
-
-        for (var i = 0; i < hash.Length; i++)
-            sb.Append(i.ToString("X2"));
-
-        return sb.ToString();
-
+        return string.Join("", hash.Select(static octet => octet.ToString("X2")));
     }
 
 

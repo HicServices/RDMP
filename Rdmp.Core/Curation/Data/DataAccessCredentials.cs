@@ -74,7 +74,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
     /// <param name="name"></param>
     public DataAccessCredentials(ICatalogueRepository repository, string name= null)
     {
-        name = name ?? $"New Credentials {Guid.NewGuid()}";
+        name ??= $"New Credentials {Guid.NewGuid()}";
 
         _encryptedPasswordHost = new EncryptedPasswordHost(repository);
 

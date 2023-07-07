@@ -104,12 +104,7 @@ public static class FolderHelper
                 }
 
                 var subFolders = g.Key[idx..];
-                var nextFolder = subFolders.Split('\\',StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
-
-                if(nextFolder == null)
-                {
-                    throw new Exception($"Unable to build folder groups.  Current group had malformed Folder name.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
-                }
+                var nextFolder = subFolders.Split('\\',StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? throw new Exception($"Unable to build folder groups.  Current group had malformed Folder name.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
 
                 // we may already have created this as part of a subgroup e.g. seeing \1\2 then seeing \1 alone (we don't want multiple copies of \1 folder).
                 var existing = currentBranch.ChildFolders.FirstOrDefault(f => f.Name.Equals(nextFolder, StringComparison.CurrentCultureIgnoreCase));

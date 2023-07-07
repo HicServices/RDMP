@@ -120,9 +120,8 @@ public class ValidatorTest
     public void ValidateVerbose_InvalidChi_CountOfWrongIncreases()
     {
         var validator = CreateSimpleChiValidator();
-        Consequence? lastRowConsequence;
         //run once
-        var results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, null, out lastRowConsequence);
+        var results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, null, out Consequence? lastRowConsequence);
 
         Assert.IsNotNull(results);
 
@@ -204,8 +203,10 @@ public class ValidatorTest
 
         v.ItemValidators[0].SecondaryConstraints.Add(boundDate);
 
-        var dictionary  = new Dictionary<string, string>();
-        dictionary.Add("OldCol2","NewCol2");
+        var dictionary = new Dictionary<string, string>
+        {
+            { "OldCol2", "NewCol2" }
+        };
 
         //before and after rename of col2
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "OldCol2");

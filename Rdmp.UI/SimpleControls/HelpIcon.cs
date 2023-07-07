@@ -47,7 +47,7 @@ public partial class HelpIcon : UserControl
         _hoverText = GetShortText(_hoverText);
 
         //If TT is null create new tooltip
-        tt = tt?? new ToolTip
+        tt ??= new ToolTip
         {
             AutoPopDelay = 15000,  // Warning! MSDN states this is Int32, but anything over 32767 will fail.
             ShowAlways = true,

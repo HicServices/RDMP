@@ -64,11 +64,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         base.Execute();
 
-        var cic = _cic;
-
-        if (cic == null)
-            cic = (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
-
+        var cic = _cic ?? (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
         if (cic == null)
             return;
 
@@ -117,8 +113,8 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         base.SetTarget(target);
 
-        if (target is CohortIdentificationConfiguration)
-            _cic = (CohortIdentificationConfiguration)target;
+        if (target is CohortIdentificationConfiguration configuration)
+            _cic = configuration;
 
         return this;
     }
