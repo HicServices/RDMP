@@ -47,7 +47,7 @@ public interface IBasicActivateItems
     List<IPluginUserInterface> PluginUserInterfaces { get; }
 
     /// <summary>
-    /// Component for fetching xmldoc comments from the codebase 
+    /// Component for fetching xmldoc comments from the codebase
     /// </summary>
     public CommentStore CommentStore { get; }
 
@@ -56,6 +56,7 @@ public interface IBasicActivateItems
     /// </summary>
     /// <param name="aggregate"></param>
     void ShowGraph(AggregateConfiguration aggregate);
+
 
 
     /// <summary>
@@ -192,8 +193,7 @@ public interface IBasicActivateItems
     /// <param name="availableObjects"></param>
     /// <param name="initialSearchText"></param>
     /// <returns></returns>
-    IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
-        IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null);
+    IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
 
     /// <inheritdoc cref="SelectMany(string, Type, IMapsDirectlyToDatabaseTable[], string)"/>
     IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
@@ -278,7 +278,7 @@ public interface IBasicActivateItems
     /// <param name="patternDescription">Type of file to select e.g. "Comma Separated Values"</param>
     /// <param name="pattern">Pattern to restrict files to e.g. *.csv</param>
     /// <returns></returns>
-    FileInfo SelectFile(string prompt, string patternDescription, string pattern);
+    FileInfo SelectFile(string prompt,string patternDescription, string pattern);
 
 
     /// <summary>
@@ -321,7 +321,7 @@ public interface IBasicActivateItems
 
 
     /// <summary>
-    /// Offers the user a binary choice for whether they want to proceede on a dangerous/complex operation.  Returns true if 
+    /// Offers the user a binary choice for whether they want to proceede on a dangerous/complex operation.  Returns true if
     /// environment is not interactive or an external setting auto confirms e.g. a command line argument etc
     /// </summary>
     /// <param name="text">The question to pose</param>

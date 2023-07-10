@@ -127,7 +127,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
 
                 UpdateIsImpossibleFor(combineable);
 
-                if (IsImpossible)
+                if(IsImpossible)
                     throw new ImpossibleCommandException(this, ReasonCommandImpossible);
 
                 // add it to the cic container

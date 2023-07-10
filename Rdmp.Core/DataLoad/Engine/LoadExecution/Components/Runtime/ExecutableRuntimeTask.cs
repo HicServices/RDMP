@@ -86,8 +86,7 @@ public class ExecutableRuntimeTask : RuntimeTask
 
         var exitCode = ParseExitCode(_currentProcess.ExitCode);
         job.OnNotify(this,
-            new NotifyEventArgs(
-                exitCode != ExitCodeType.Error ? ProgressEventType.Information : ProgressEventType.Error,
+            new NotifyEventArgs(exitCode != ExitCodeType.Error ? ProgressEventType.Information : ProgressEventType.Error,
                 $"Executable has exited with state '{exitCode}'"));
 
         if (exitCode == ExitCodeType.Error)
@@ -158,7 +157,7 @@ public class ExecutableRuntimeTask : RuntimeTask
         var exeParsed = parser.Parse(ExeFilepath).ToArray();
 
         //if it is an SQL file they are pointing us at by accident
-        if (new FileInfo(exeParsed[0]).Extension.Equals(".sql")) //yes it is 
+        if (new FileInfo(exeParsed[0]).Extension.Equals(".sql")) //yes it is
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"ProcessTask called {ProcessTask.Name} is marked as an Executable but seems to point at an SQL file.  You should set the process task type to SQLFile instead",

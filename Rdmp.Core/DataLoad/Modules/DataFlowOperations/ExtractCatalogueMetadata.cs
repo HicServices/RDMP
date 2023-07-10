@@ -42,8 +42,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
          ", Mandatory = true, DefaultValue = "$d")]
     public string MetadataNamingPattern { get; set; }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         toProcess.TableName = GetTableName();
         toProcess.ExtendedProperties.Add("ProperlyNamed", true);
@@ -51,7 +50,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
             var catalogue = extractDatasetCommand.Catalogue;
-            
+
             var sourceFolder = _request.GetExtractionDirectory() ?? throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
             var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
             var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, $"{toProcess.TableName}.sd"));

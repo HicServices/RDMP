@@ -413,8 +413,7 @@ public class ShareManager
         }
     }
 
-    public void UpsertAndHydrate<T>(T toCreate, ShareDefinition shareDefinition)
-        where T : class, IMapsDirectlyToDatabaseTable
+    public void UpsertAndHydrate<T>(T toCreate, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
     {
         IRepository repo;
 

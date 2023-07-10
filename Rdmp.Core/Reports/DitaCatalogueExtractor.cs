@@ -101,7 +101,7 @@ public class DitaCatalogueExtractor : ICheckable
             foreach (var ci in cataItems)
             {
                 xml.AppendLine($"<topicref href=\"{GetFileNameForCatalogueItem(c, ci)}\"/>");
-                CreateCatalogueItemFile(c,ci);        
+                CreateCatalogueItemFile(c,ci);
             }
             xml.AppendLine($"</topicref>");
 
@@ -113,6 +113,7 @@ public class DitaCatalogueExtractor : ICheckable
         File.WriteAllText(Path.Combine(_folderToCreateIn.FullName ,"hic_data_catalogue.ditamap"  ),xml.ToString());
 
     }
+
 
 
     private static string GetFileNameForCatalogueItem(Catalogue c, CatalogueItem ci)
@@ -275,7 +276,7 @@ public class DitaCatalogueExtractor : ICheckable
                 CheckResult.Fail, null,
                 $"Assign it a suggested acronym: '{suggestion}'?"));
 
-            if (useSuggestion)
+            if(useSuggestion)
             {
                 c.Acronym = suggestion;
                 c.SaveToDatabase();
@@ -292,7 +293,7 @@ public class DitaCatalogueExtractor : ICheckable
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Duplication in acronym between Catalogues {catas[i]} and {catas[j]}, duplicate acronym value is {acronym}", CheckResult.Fail, null));
             }
-                
+
         }
     }
 

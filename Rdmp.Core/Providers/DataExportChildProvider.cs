@@ -51,7 +51,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
     public ExtractableDataSetPackage[] AllPackages { get; set; }
 
-    public FolderNode<Project> ProjectRootFolder { get; private set; }
+    public FolderNode<Project> ProjectRootFolder { get; private set;}
     public Project[] Projects { get; set; }
 
     private Dictionary<int, HashSet<ExtractableCohort>> _cohortsByOriginId;
@@ -64,7 +64,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     private IFilterManager _dataExportFilterManager;
 
     public List<ExternalCohortTable> ForbidListedSources { get; private set; }
-        
+
     public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new();
     public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new();
 
@@ -310,6 +310,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         foreach (var projectSpecificEds in ExtractableDataSets.Where(eds =>
                      eds.Project_ID == projectCataloguesNode.Project.ID))
         {
+
             var cata = (Catalogue)projectSpecificEds.Catalogue;
 
             // cata will be null if it has been deleted from the database
@@ -318,6 +319,7 @@ public class DataExportChildProvider : CatalogueChildProvider
                 children.Add(cata);
                 AddChildren(cata, descendancy.Add(projectSpecificEds.Catalogue));
             }
+
         }
 
         AddToDictionaries(children, descendancy);
@@ -555,7 +557,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         {
             using var con = server.GetConnection();
             con.Open();
-                    
+
             //Get all of the project numbers and remote origin ids etc from the source in one query
             using var cmd = server.GetCommand(source.GetExternalDataSql(), con);
             cmd.CommandTimeout = 120;
@@ -564,7 +566,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             while (r.Read())
             {
                 //really should be only one here but still they might for some reason have 2 references to the same external cohort
-                            
+
                 if(_cohortsByOriginId.TryGetValue(Convert.ToInt32(r["OriginID"]),out var result))
                     //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
                     foreach (var c in result.Where(c=> c.ExternalCohortTable_ID == source.ID))
@@ -574,7 +576,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
                         //tell the cohort about the data
                         c.InjectKnown(externalData);
-                                        
+
                         lock (_oProjectNumberToCohortsDictionary)
                         {
                             //for performance also keep a dictionary of project number => compatible cohorts
@@ -643,8 +645,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             }
 
             //add the cohort to the list of known cohorts from this source (a project can have lots of cohorts and even cohorts from different sources)
-            var cohortUsedByProject =
-                new ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode, ExtractableCohort>(existing, cohort);
+            var cohortUsedByProject = new ObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode,ExtractableCohort>(existing,cohort);
             existing.CohortsUsed.Add(cohortUsedByProject);
 
             DuplicatesByCohortSourceUsedByProjectNode.Add(cohortUsedByProject);
@@ -653,8 +654,8 @@ public class DataExportChildProvider : CatalogueChildProvider
         DuplicatesByProject.AddRange(toReturn);
 
         //if the project has no cohorts then add a ??? node
-        if (!toReturn.Any())
-            toReturn.Add(new CohortSourceUsedByProjectNode(project, null));
+        if(!toReturn.Any())
+            toReturn.Add(new CohortSourceUsedByProjectNode(project,null));
 
         return toReturn;
     }

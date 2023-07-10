@@ -12,9 +12,9 @@ using Rdmp.Core.ReusableLibraryCode.Exceptions;
 namespace Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 /// <summary>
-/// Translation class for converting IDataAccessPoints into DiscoveredServer / DiscoveredDatabase / ConnectionStrings etc.  IDataAccessPoints are named 
-/// servers/databases which might have usernames/passwords associated with them (or might use Integrated Security).  Each IDataAccessPoint can have multiple 
-/// credentials that can be used with it depending on the DataAccessContext.  Therefore when using the DataAccessPortal you always have to specify the 
+/// Translation class for converting IDataAccessPoints into DiscoveredServer / DiscoveredDatabase / ConnectionStrings etc.  IDataAccessPoints are named
+/// servers/databases which might have usernames/passwords associated with them (or might use Integrated Security).  Each IDataAccessPoint can have multiple
+/// credentials that can be used with it depending on the DataAccessContext.  Therefore when using the DataAccessPortal you always have to specify the
 /// Context of the activity you are doing e.g. DataAccessContext.DataLoad.
 /// </summary>
 public static class DataAccessPortal
@@ -71,8 +71,11 @@ public static class DataAccessPortal
 
             if (!first.Server.Equals(accessPoint.Server, StringComparison.CurrentCultureIgnoreCase))
                 throw new ExpectedIdenticalStringsException(
-                    $"There was a mismatch in server names for data access points {first} and {accessPoint} server names must match exactly",
-                    first.Server, accessPoint.Server);
+                    $"There was a mismatch in server names for data access points {first} and {accessPoint} server names must match exactly", first.Server, accessPoint.Server);
+
+            if(first.DatabaseType != accessPoint.DatabaseType)
+                throw new ExpectedIdenticalStringsException(
+                    $"There was a mismatch on DatabaseType for data access points {first} and {accessPoint}", first.DatabaseType.ToString(),accessPoint.DatabaseType.ToString());
 
             if (first.DatabaseType != accessPoint.DatabaseType)
                 throw new ExpectedIdenticalStringsException(
@@ -91,8 +94,7 @@ public static class DataAccessPortal
 
                 if (!firstDbName.Equals(currentDbName))
                     throw new ExpectedIdenticalStringsException(
-                        $"All data access points must be into the same database, access points '{first}' and '{accessPoint}' are into different databases",
-                        firstDbName, currentDbName);
+                        $"All data access points must be into the same database, access points '{first}' and '{accessPoint}' are into different databases", firstDbName, currentDbName);
             }
         }
 
@@ -100,8 +102,8 @@ public static class DataAccessPortal
         var credentials = collection.Select(t => t.GetCredentialsIfExists(context)).ToArray();
 
         //if there are credentials
-        if (credentials.Any(c => c != null))
-            if (credentials.Any(c => c == null)) //all objects in collection must have a credentials if any of them do
+        if(credentials.Any(c => c != null))
+            if (credentials.Any(c=>c == null))//all objects in collection must have a credentials if any of them do
                 throw new Exception(
                     $"IDataAccessPoint collection could not agree whether to use Credentials or not {Environment.NewLine}Objects wanting to use Credentials{string.Join(",", collection.Where(c => c.GetCredentialsIfExists(context) != null).Select(s => s.ToString()))}{Environment.NewLine}Objects not wanting to use Credentials{string.Join(",", collection.Where(c => c.GetCredentialsIfExists(context) == null).Select(s => s.ToString()))}{Environment.NewLine}"
                 );

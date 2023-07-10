@@ -40,9 +40,10 @@ public class ExpectedIdenticalStringsException : Exception
             //give them a preview of the location of the difference
             if (!expected[i].Equals(actual[i]))
             {
+
                 message = $"{message}{Environment.NewLine}Strings differ at index {i}";
                 message += GetPreviewsAround(i, expected, actual);
-                    
+
 
                 return message;
             }

@@ -124,6 +124,7 @@ internal class ViewSourceCodeToolTip : ToolTip
                     return null;
 
                 fileContents = contentsInOneLine.Split('\n');
+
             }
 
             SourceFileCache.Add(filename, fileContents);

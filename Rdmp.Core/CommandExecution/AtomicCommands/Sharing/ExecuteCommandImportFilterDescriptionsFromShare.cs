@@ -21,9 +21,8 @@ public class ExecuteCommandImportFilterDescriptionsFromShare : ExecuteCommandImp
     private readonly IFilter _toPopulate;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandImportFilterDescriptionsFromShare(IBasicActivateItems activator, IFilter toPopulate,
-        FileInfo file)
-        : this(activator, toPopulate, new FileCollectionCombineable(new[] { file }))
+    public ExecuteCommandImportFilterDescriptionsFromShare(IBasicActivateItems activator, IFilter toPopulate, FileInfo file)
+        : this(activator, toPopulate, new FileCollectionCombineable(new[] { file}))
     {
     }
 

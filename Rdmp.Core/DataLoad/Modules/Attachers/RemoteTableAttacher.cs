@@ -94,7 +94,7 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
 
     private const string StartDateParameter = "@startDate";
     private const string EndDateParameter = "@endDate";
-        
+
     private DiscoveredDatabase _remoteDatabase;
 
     /// <summary>
@@ -143,8 +143,10 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         if (RemoteServerReference != null)
         {
             if (!string.IsNullOrWhiteSpace(RemoteServer))
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    "RemoteServer must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs("RemoteServer must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
+
+            if (!string.IsNullOrWhiteSpace(RemoteDatabaseName))
+                notifier.OnCheckPerformed(new CheckEventArgs("RemoteDatabaseName must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
 
             if (!string.IsNullOrWhiteSpace(RemoteDatabaseName))
                 notifier.OnCheckPerformed(new CheckEventArgs(
@@ -164,8 +166,7 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         else
         {
             if (string.IsNullOrWhiteSpace(RemoteServer))
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    "RemoteServer is a Required field (unless you specify a RemoteServerReference)", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs("RemoteServer is a Required field (unless you specify a RemoteServerReference)", CheckResult.Fail));
 
             if (string.IsNullOrWhiteSpace(RemoteDatabaseName))
                 notifier.OnCheckPerformed(new CheckEventArgs(
@@ -189,6 +190,7 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
 
             try
             {
+
                 try
                 {
                     Setup();
@@ -226,10 +228,9 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
                     var fixDate = Progress.OriginDate.Value.AddDays(-1);
 
                     var setDataLoadProgressDateToOriginDate = notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date",
-                        CheckResult.Fail, null,
+                        $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date", CheckResult.Fail, null,
                         $"Set the data load progress date to the OriginDate minus one Day? {Environment.NewLine}Set DataLoadProgress = {Progress.OriginDate} -1 day = {fixDate}"));
-                    if (setDataLoadProgressDateToOriginDate)
+                    if(setDataLoadProgressDateToOriginDate)
                     {
                         Progress.DataLoadProgress = fixDate;
                         Progress.SaveToDatabase();
@@ -243,9 +244,8 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
                 else
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date",
-                        CheckResult.Fail, null));
-                }
+                        $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date",CheckResult.Fail, null));
+
             }
 
             if (ProgressUpdateStrategy == null)
@@ -343,9 +343,7 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
                 remotePassword = RemoteTableAccessCredentials.GetDecryptedPassword();
             }
 
-            _remoteDatabase =
-                new DiscoveredServer(RemoteServer, RemoteDatabaseName, DatabaseType, remoteUsername, remotePassword)
-                    .GetCurrentDatabase();
+            _remoteDatabase = new DiscoveredServer(RemoteServer, RemoteDatabaseName,DatabaseType, remoteUsername, remotePassword).GetCurrentDatabase();
         }
     }
 
@@ -361,6 +359,11 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
         var sql = !string.IsNullOrWhiteSpace(RemoteSelectSQL)
             ? RemoteSelectSQL
             : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}";
+
+        if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
+            sql = RemoteSelectSQL;
+        else
+            sql = $"Select * from {syntax.EnsureWrapped(RemoteTableName)}";
 
         var scheduleMismatch = false;
 
@@ -410,9 +413,16 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
                 cmd.Parameters.Add(pmax);
             };
 
-        var rawTableName = RAWTableToLoad != null
-            ? RAWTableToLoad.GetRuntimeName(LoadStage.AdjustRaw, job.Configuration.DatabaseNamer)
-            : RAWTableName;
+        string rawTableName;
+
+        if(RAWTableToLoad != null)
+        {
+            rawTableName = RAWTableToLoad.GetRuntimeName(LoadStage.AdjustRaw, job.Configuration.DatabaseNamer);
+        }
+        else
+        {
+            rawTableName = RAWTableName;
+        }
 
         var destination = new SqlBulkInsertDestination(_dbInfo, rawTableName, Enumerable.Empty<string>());
 

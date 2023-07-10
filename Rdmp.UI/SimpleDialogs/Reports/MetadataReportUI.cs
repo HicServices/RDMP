@@ -35,7 +35,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 /// 
 /// <para>- Graphs of each IsExtractable aggregate on the dataset (See AggregateGraph)</para>
 /// 
-/// <para>You can untick any of the above options if desired.  If any aspect times out then you can either fix the underlying problem (maybe you need an index that helps an 
+/// <para>You can untick any of the above options if desired.  If any aspect times out then you can either fix the underlying problem (maybe you need an index that helps an
 /// Aggregate run faster) or just increase the Query Timeout (default is 30s).</para>
 /// </summary>
 public partial class MetadataReportUI : RDMPForm
@@ -124,7 +124,7 @@ public partial class MetadataReportUI : RDMPForm
 
             aggregateGraph1.LoadGraphAsync();
 
-            while (aggregateGraph1.Done == false && aggregateGraph1.Crashed == false)
+            while(aggregateGraph1.Done == false && aggregateGraph1.Crashed == false)
             {
                 Thread.Sleep(100);
                 Application.DoEvents();
@@ -248,7 +248,7 @@ public partial class MetadataReportUI : RDMPForm
             return;
 
         if (cbxCatalogues.SelectedItem != null)
-            _cataloguesToRun = new[] { (ICatalogue)cbxCatalogues.SelectedItem };
+            _cataloguesToRun = new[] {(ICatalogue) cbxCatalogues.SelectedItem};
     }
 
     private void btnFolder_Click(object sender, EventArgs e)

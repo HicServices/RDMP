@@ -29,7 +29,7 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
     private Dictionary<string, ANOTransformer> columnsToAnonymise = new();
 
     private IdentifierDumper _dumper;
-        
+
     public TableInfo TableToLoad { get; set; }
 
     public void PreInitialize(TableInfo target, IDataLoadEventListener listener)

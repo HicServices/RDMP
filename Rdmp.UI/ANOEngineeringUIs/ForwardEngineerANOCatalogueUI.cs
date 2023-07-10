@@ -296,6 +296,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                     Enum.TryParse((string) cbx.SelectedItem, out ExtractionCategory c);
                     plan.ExtractionCategoryIfAny = c;
                 }
+
             }
         }
         catch (Exception exception)
@@ -328,19 +329,17 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
             //Set up tree view to show ANO Tables that are usable
             tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
-            tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables, activator, olvANOTablesName, null,
-                settings);
+            tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables, activator, olvANOTablesName, null, settings);
 
             tlvANOTables.AddObject(activator.CoreChildProvider.AllANOTablesNode);
             tlvANOTables.ExpandAll();
 
             //Setup tree view to show all TableInfos that you are trying to Migrate
             tlvTableInfoMigrationsCommonFunctionality = new RDMPCollectionCommonFunctionality();
-            tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None, tlvTableInfoMigrations, activator,
-                olvTableInfoName, null, settings);
+            tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None, tlvTableInfoMigrations, activator, olvTableInfoName, null, settings);
 
             //don't display anything below ColumnInfo
-            tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] { typeof(ColumnInfo) };
+            tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] {typeof (ColumnInfo)};
 
             _setup = true;
         }

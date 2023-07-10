@@ -264,7 +264,7 @@ public class AggregateBuilder : ISqlQueryBuilder
         }
     }
 
-    private int _pivotID = -1;
+    private int _pivotID=-1;
     private bool _doNotWriteOutParameters;
     public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
     private readonly AggregateConfiguration _aggregateConfigurationIfAny;
@@ -320,7 +320,7 @@ public class AggregateBuilder : ISqlQueryBuilder
 
         //tell the count column what language it is
         if (_countColumn != null)
-        {    
+        {
             _isCohortIdentificationAggregate = _aggregateConfigurationIfAny is { IsCohortIdentificationAggregate: true };
 
             //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
@@ -330,11 +330,11 @@ public class AggregateBuilder : ISqlQueryBuilder
 
         var aggregateHelper = QuerySyntaxHelper.AggregateHelper;
 
-        if (_pivotID != -1)
+        if(_pivotID != -1)
             try
             {
                 _pivotDimension = SelectColumns.Single(
-                    qtc => qtc.IColumn is AggregateDimension aggregateDimension 
+                    qtc => qtc.IColumn is AggregateDimension aggregateDimension
                            &&
                            aggregateDimension.ID == _pivotID);
             }
@@ -426,11 +426,11 @@ public class AggregateBuilder : ISqlQueryBuilder
         queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetFROMSQL(this), QueryComponent.FROM));
         CompileCustomLinesInStageAndAddToList(QueryComponent.JoinInfoJoin, queryLines);
 
-        queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetWHERESQL(this), QueryComponent.WHERE));
+        queryLines.Add(new CustomLine(SqlQueryBuilderHelper.GetWHERESQL(this),QueryComponent.WHERE));
 
-        CompileCustomLinesInStageAndAddToList(QueryComponent.WHERE, queryLines);
+        CompileCustomLinesInStageAndAddToList(QueryComponent.WHERE,queryLines);
 
-        GetGroupBySQL(queryLines, aggregateHelper);
+        GetGroupBySQL(queryLines,aggregateHelper);
 
         queryLines = queryLines.Where(l => !string.IsNullOrWhiteSpace(l.Text)).ToList();
 
@@ -450,7 +450,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                 $"You must have three columns in an AggregateConfiguration that contains a pivot.  These must be the axis column, the pivot column and the count/sum column.  Your query had {SelectColumns.Count} ({string.Join(",", SelectColumns.Select(c => $"'{c.IColumn}'"))})");
     }
 
-    private void CompileCustomLinesInStageAndAddToList(QueryComponent stage, List<CustomLine> list)
+    private void CompileCustomLinesInStageAndAddToList( QueryComponent stage,List<CustomLine> list)
     {
         list.AddRange(SqlQueryBuilderHelper.GetCustomLinesSQLForStage(this, stage));
     }
@@ -485,7 +485,7 @@ public class AggregateBuilder : ISqlQueryBuilder
             //clear trailing last comma
             queryLines.Last().Text = queryLines.Last().Text.TrimEnd('\n', '\r', ',');
 
-            queryLines.Add(new CustomLine(GetHavingSql(), QueryComponent.Having));
+            queryLines.Add(new CustomLine(GetHavingSql(),QueryComponent.Having));
 
             CompileCustomLinesInStageAndAddToList(QueryComponent.GroupBy, queryLines);
 
@@ -507,6 +507,8 @@ public class AggregateBuilder : ISqlQueryBuilder
                         //was added with skip for group by enabled
                         if (_skipGroupByForThese.Contains(col.IColumn))
                             continue;
+
+                        var line = new CustomLine($"{GetGroupOrOrderByCustomLineBasedOn(col)},", QueryComponent.OrderBy);
 
                         var line = new CustomLine($"{GetGroupOrOrderByCustomLineBasedOn(col)},",
                             QueryComponent.OrderBy);

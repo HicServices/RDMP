@@ -44,9 +44,7 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
 
     private readonly ICheckable _preExecutionChecker;
 
-    public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ILoadMetadata loadMetadata,
-        ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener,
-        IDataLoadExecution loadExecution, HICDatabaseConfiguration configuration)
+    public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener, IDataLoadExecution loadExecution,HICDatabaseConfiguration configuration)
     {
         _repositoryLocator = repositoryLocator;
         LoadMetadata = loadMetadata;

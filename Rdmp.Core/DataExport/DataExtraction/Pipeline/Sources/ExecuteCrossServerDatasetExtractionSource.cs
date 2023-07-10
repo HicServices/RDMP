@@ -56,7 +56,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
 
         return base.GetChunk(listener, cancellationToken);
     }
-        
+
     private List<DiscoveredTable> tablesToCleanup = new();
 
     public static Semaphore OneCrossServerExtractionAtATime = new(1, 1);
@@ -131,8 +131,8 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Replacing '{r.Key}' with '{r.Value}'", null));
 
-            if (!sql.Contains(r.Key))
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+            if(!sql.Contains(r.Key))
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
                     $"SQL extraction query string did not contain the text '{r.Key}' (which we expected to replace with '{r.Value}"));
 
             sql = sql.Replace(r.Key, r.Value);
@@ -265,6 +265,8 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                         $"Warning dropping '{tbl}' failed", ex));
                 }
+
+
             }
             else
             {

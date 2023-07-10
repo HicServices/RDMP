@@ -289,7 +289,8 @@ public partial class ChoosePlatformDatabasesUI : Form
             {
                 try
                 {
-                    PlatformDatabaseCreation.CreatePlatformDatabases(opts);
+                    var creator = new PlatformDatabaseCreation();
+                    creator.CreatePlatformDatabases(opts);
                     if (!opts.SkipPipelines)
                         PostFixPipelines(opts);
                 }
@@ -328,6 +329,9 @@ public partial class ChoosePlatformDatabasesUI : Form
 
             UserSettings.CatalogueConnectionString = cata.ConnectionString;
             UserSettings.DataExportConnectionString = export.ConnectionString;
+
+            if(!failed)
+                RestartApplication();
 
             if (!failed)
                 RestartApplication();
@@ -408,7 +412,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 _seed = result;
             else if (sender == tbPeopleCount)
                 _peopleCount = result;
-            else if (sender == tbRowCount)
+            else if(sender == tbRowCount)
                 _rowCount = result;
 
             tb.ForeColor = Color.Black;

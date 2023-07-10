@@ -15,7 +15,7 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Memory only implementation of <see cref="IDataExportRepository"/>.  Also implements <see cref="ICatalogueRepository"/>.  All objects are created in 
+/// Memory only implementation of <see cref="IDataExportRepository"/>.  Also implements <see cref="ICatalogueRepository"/>.  All objects are created in
 /// dictionaries and arrays in memory instead of the database.
 /// </summary>
 public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExportRepository, IDataExportPropertyManager,
@@ -48,7 +48,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
     #region IDataExportPropertyManager
 
     protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new();
-        
+
     public virtual string GetValue(DataExportProperty property)
     {
         return PropertiesDictionary.TryGetValue(property, out var value) ? value : null;
@@ -60,6 +60,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
     }
 
     #endregion
+
 
 
     #region IExtractableDataSetPackageManager

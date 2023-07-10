@@ -128,7 +128,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
         CatalogueRepository.CohortContainerManager.GetParent(this);
 
     /// <summary>
-    /// Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration"/>) declared as immediate children of the container.  These exist in 
+    /// Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration"/>) declared as immediate children of the container.  These exist in
     /// order defined by <see cref="IOrderable.Order"/> and can be interspersed with subcontainers (<see cref="GetSubContainers"/>).
     /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
     /// </summary>
@@ -340,7 +340,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
                     cloneJoinUse.SaveToDatabase();
 
                     //Now! (brace yourself).  Some the filters in the AggregateConfiguration we just cloned might reference a table called ix2934 or whetever, this
-                    //is the Joinable we need to do a replace to point them at the correct ix number (although if they are good users they will have aliased any 
+                    //is the Joinable we need to do a replace to point them at the correct ix number (although if they are good users they will have aliased any
                     //patient index columns anyway)
                     if (configClone.RootFilterContainer_ID != null)
                         foreach (var clonedFilter in SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(

@@ -14,7 +14,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Find similar objects to an example e.g. all CHI columns in all datasets.  Optionally finds those with important differences only 
+/// Find similar objects to an example e.g. all CHI columns in all datasets.  Optionally finds those with important differences only
 /// e.g. data type is different
 /// </summary>
 public class ExecuteCommandSimilar : BasicCommandExecution
@@ -23,7 +23,7 @@ public class ExecuteCommandSimilar : BasicCommandExecution
     private bool _butDifferent;
 
     /// <summary>
-    /// Collection of all Types where finding differences between instances is supported by 
+    /// Collection of all Types where finding differences between instances is supported by
     /// <see cref="Include(IMapsDirectlyToDatabaseTable)"/>
     /// </summary>
     private readonly Type[] _diffSupportedTypes = { typeof(ColumnInfo) };
@@ -45,7 +45,7 @@ public class ExecuteCommandSimilar : BasicCommandExecution
     }
 
     /// <summary>
-    /// Set to true to make command show similar objects in interactive 
+    /// Set to true to make command show similar objects in interactive
     /// </summary>
     public bool GoTo { get; set; }
 
@@ -144,7 +144,8 @@ public class ExecuteCommandSimilar : BasicCommandExecution
         if (!_butDifferent) return true;
 
         // or they are different
-        if (_to is ColumnInfo col && arg is ColumnInfo otherCol)
+        if(_to is ColumnInfo col && arg is ColumnInfo otherCol)
+        {
             return
                 !string.Equals(col.Data_type, otherCol.Data_type) || !string.Equals(col.Collation, otherCol.Collation);
 

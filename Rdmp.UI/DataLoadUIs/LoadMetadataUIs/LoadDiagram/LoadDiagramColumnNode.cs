@@ -68,6 +68,11 @@ public class LoadDiagramColumnNode : Node, ICombineableSource, IHasLoadDiagramSt
 
     public string GetDataType() => State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
 
+    public string GetDataType()
+    {
+        return State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
+    }
+
     public ICombineToMakeCommand GetCombineable()
     {
         var querySyntaxHelper = _tableNode.TableInfo.GetQuerySyntaxHelper();

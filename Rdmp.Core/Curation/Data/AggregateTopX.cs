@@ -124,4 +124,6 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
             { nameof(OrderByDirection), AggregateTopXOrderByDirection.Descending }
         });
     }
+
+
 }

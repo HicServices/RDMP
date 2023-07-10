@@ -49,7 +49,10 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         if (ect == null)
         {
             var available = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>();
-            if (!SelectOne(available, out ect, null, true)) return;
+            if(!SelectOne(available,out ect,null,true))
+            {
+                return;
+            }
         }
 
 

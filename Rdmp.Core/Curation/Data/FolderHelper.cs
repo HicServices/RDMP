@@ -87,14 +87,16 @@ public static class FolderHelper
                           currentBranchFullName.Length;
 
                 // if we have objects that do not live under this full path thats a problem
+
                 // or its also a problem if we found a full match to the end of the string
+
                 // this branch deals with sub folders and that would mean the current group
                 // are not in any subfolders
                 if (idx == -1 || idx == g.Key.Length -1)
                 {
                     throw new Exception($"Unable to build folder groups.  Current group was not a child of the current branch.  Branch was '{currentBranch.FullName}' while Group was '{g.Key}'");
                 }
-                    
+
                 var subFolders = g.Key[idx..];
                 var nextFolder = subFolders.Split('\\',StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
 
@@ -105,13 +107,13 @@ public static class FolderHelper
 
                 // we may already have created this as part of a subgroup e.g. seeing \1\2 then seeing \1 alone (we don't want multiple copies of \1 folder).
                 var existing = currentBranch.ChildFolders.FirstOrDefault(f => f.Name.Equals(nextFolder, StringComparison.CurrentCultureIgnoreCase));
-                        
+
                 if(existing == null)
                 {
                     // we don't have one already so create it
                     existing = new FolderNode<T>(nextFolder, currentBranch);
                     currentBranch.ChildFolders.Add(existing);
-                }                        
+                }
 
                 BuildFolderTree(g.ToArray(),existing);
             }

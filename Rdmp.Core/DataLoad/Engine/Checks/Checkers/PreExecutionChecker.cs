@@ -128,7 +128,7 @@ public class PreExecutionChecker : ICheckable
             var tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
             var table = dbInfo.ExpectTable(tableName);
 
-            if (!table.Exists())
+            if(!table.Exists())
                 throw new Exception(
                     $"PreExecutionChecker spotted that table does not exist:{table} it was about to check whether the TableInfo matched the columns or not");
         }
@@ -251,6 +251,7 @@ public class PreExecutionChecker : ICheckable
     }
 
 
+
     private void AtLeastOneTaskCheck()
     {
         if (_loadMetadata.ProcessTasks.All(p => p.IsDisabled))
@@ -260,7 +261,7 @@ public class PreExecutionChecker : ICheckable
                     CheckResult.Fail));
     }
 
-    public static void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
+    public void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo))
             throw new Exception(

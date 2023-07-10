@@ -30,7 +30,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
     {
         if(fileCombineable.Files.Any(f => f.Extension != PackPluginRunner.PluginPackageSuffix))
         {
-            SetImpossible($"Plugins must end {PackPluginRunner.PluginPackageSuffix}"); 
+            SetImpossible($"Plugins must end {PackPluginRunner.PluginPackageSuffix}");
             return;
         }
 
@@ -49,6 +49,7 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
 
         if (_files == null)
         {
+
             var f = BasicActivator.SelectFile("Plugin to add",
                 $"Plugins (*{PackPluginRunner.PluginPackageSuffix})", $"*{PackPluginRunner.PluginPackageSuffix}");
             if (f != null)

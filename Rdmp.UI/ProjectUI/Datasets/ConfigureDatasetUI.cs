@@ -437,9 +437,9 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
         if (ei != null)
         {
-            var cmd = new ExecuteCommandShow(Activator, ei, 1);
+            var cmd = new ExecuteCommandShow(Activator,ei,1);
 
-            if (!cmd.IsImpossible)
+            if(!cmd.IsImpossible)
                 cmd.Execute();
         }
     }
@@ -698,11 +698,11 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
                 }
                 else
                 {
-                    if (Activator.SelectObject(new DialogArgs
-                        {
-                            TaskDescription =
-                                "There are multiple columns involved in the join, which do you want to navigate to?"
-                        }, cols, out var selected))
+                    if(Activator.SelectObject(new DialogArgs
+                       {
+                           TaskDescription = "There are multiple columns involved in the join, which do you want to navigate to?"
+                       },cols,out var selected))
+                    {
                         toEmphasise = selected;
                 }
 
@@ -733,6 +733,8 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
                         TaskDescription = "Which table do you want to join to?"
                     }, otherTables, out var selected))
                     otherTable = selected;
+                }
+
             }
 
             if (otherTable != null)
@@ -807,4 +809,5 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ConfigureDatasetUI_Design, UserControl>))]
 public abstract class ConfigureDatasetUI_Design : RDMPSingleDatabaseObjectControl<SelectedDataSets>
 {
+
 }

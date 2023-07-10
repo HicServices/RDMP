@@ -23,4 +23,5 @@ internal class PreLoadDiscardedColumnsNodeMenu : RDMPContextMenuStrip
     {
         Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, discardUsageNode.TableInfo));
     }
+
 }

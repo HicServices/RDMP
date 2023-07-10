@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job;
 
 /// <summary>
-/// Empty implementation of IDataLoadJob that can be used during Checking / Tests etc 
+/// Empty implementation of IDataLoadJob that can be used during Checking / Tests etc
 /// </summary>
 public class ThrowImmediatelyDataLoadJob : IDataLoadJob
 {

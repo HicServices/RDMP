@@ -109,7 +109,10 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
             : systemDestination;
     }
 
-    public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener) => GetEngine(_pipeline, listener);
+    public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener)
+    {
+        return GetEngine(_pipeline, listener);
+    }
 
 
     /// <summary>

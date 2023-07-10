@@ -159,7 +159,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                             }));
                             continue; //has never been run (or has had test runs only)
                         }
-                            
+
                         var lastLoadWasError = archivalDataLoadInfo.Errors.Any() || archivalDataLoadInfo.EndTime == null;
 
                         //while we were fetching data from database the form was closed

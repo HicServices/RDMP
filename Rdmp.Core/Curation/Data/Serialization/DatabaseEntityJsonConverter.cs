@@ -14,7 +14,7 @@ namespace Rdmp.Core.Curation.Data.Serialization;
 
 /// <summary>
 /// Handles Serialization of Database Entity classes.  Writing is done by by storing the ID, Type and RepositoryType where the object is stored.  Reading is done by
-/// using the IRDMPPlatformRepositoryServiceLocator to fetch the instance out of the database.  
+/// using the IRDMPPlatformRepositoryServiceLocator to fetch the instance out of the database.
 /// 
 /// <para>Also stores the ObjectExport SharingUID if available which will allow deserializing shared objects that might only exist in a local import form i.e. with a different ID
 /// (<see cref="ShareManager"/>)</para>
@@ -35,7 +35,7 @@ public class DatabaseEntityJsonConverter : JsonConverter
 
     /// <summary>
     /// Serializes a <see cref="IMapsDirectlyToDatabaseTable"/> by sharing it with <see cref="ShareManager.GetObjectFromPersistenceString"/>.  This
-    /// creates a pointer only e.g. "Catalogue 123" and if an <see cref="ObjectExport"/> exists then also the <see cref="ObjectExport.SharingUID"/> 
+    /// creates a pointer only e.g. "Catalogue 123" and if an <see cref="ObjectExport"/> exists then also the <see cref="ObjectExport.SharingUID"/>
     /// so that the JSON can be used in other instances (that have imported the <see cref="ShareDefinition"/> of the serialized object)
     /// </summary>
     /// <param name="writer"></param>
@@ -56,7 +56,7 @@ public class DatabaseEntityJsonConverter : JsonConverter
     }
 
     /// <summary>
-    /// Deserializes a persisted <see cref="IMapsDirectlyToDatabaseTable"/> by resolving it as a reference and fetching the original 
+    /// Deserializes a persisted <see cref="IMapsDirectlyToDatabaseTable"/> by resolving it as a reference and fetching the original
     /// object using <see cref="ShareManager.GetObjectFromPersistenceString"/>.
     /// </summary>
     /// <param name="reader"></param>
@@ -67,7 +67,7 @@ public class DatabaseEntityJsonConverter : JsonConverter
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
         if (reader.TokenType == JsonToken.Null) return null;
-
+            
         if (reader.TokenType != JsonToken.StartObject)
             throw new JsonReaderException("Malformed json");
 

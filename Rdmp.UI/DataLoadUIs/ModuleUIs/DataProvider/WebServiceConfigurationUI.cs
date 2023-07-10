@@ -13,8 +13,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataProvider;
 
 /// <summary>
-/// Allows you to specify and store an encrypted set of credentials in the Catalogue database for a web service endpoint.  The exact interpretation of Endpoint, MaxBufferSize and 
-/// MaxReceivedMessageSize are up to the specific use case of the dialog.  The dialog allows [DemandsInitialization] arguments of plugin classes to securely store the location of 
+/// Allows you to specify and store an encrypted set of credentials in the Catalogue database for a web service endpoint.  The exact interpretation of Endpoint, MaxBufferSize and
+/// MaxReceivedMessageSize are up to the specific use case of the dialog.  The dialog allows [DemandsInitialization] arguments of plugin classes to securely store the location of
 /// a web service in the Catalogue database.
 ///</summary>
 public partial class WebServiceConfigurationUI : Form, ICustomUI<WebServiceConfiguration>

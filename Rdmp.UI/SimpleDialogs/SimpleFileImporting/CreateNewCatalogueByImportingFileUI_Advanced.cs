@@ -75,8 +75,7 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
     }
 
 
-    private void ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully(object sender,
-        PipelineEngineEventArgs args)
+    private void ConfigureAndExecutePipeline1OnPipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
     {
         //pipeline executed successfully
         if (_alsoForwardEngineerCatalogue)

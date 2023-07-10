@@ -209,6 +209,12 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Name;
+    }
+
+    /// <inheritdoc/>
     public override string ToString() => Name;
 
     /// <inheritdoc/>

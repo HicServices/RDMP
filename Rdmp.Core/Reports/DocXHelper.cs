@@ -207,17 +207,19 @@ public class DocXHelper
     /// </summary>
     /// <param name="fileInfo"></param>
     /// <returns></returns>
-    protected static XWPFDocumentFile GetNewDocFile(FileInfo fileInfo) =>
-        new(fileInfo, new FileStream(fileInfo.FullName, FileMode.Create));
+    protected XWPFDocumentFile GetNewDocFile(FileInfo fileInfo)
+    {
+        return new XWPFDocumentFile(fileInfo,new FileStream(fileInfo.FullName,FileMode.Create));
+    }
 
-    protected static void InsertSectionPageBreak(XWPFDocument document)
+    protected void InsertSectionPageBreak(XWPFDocument document)
     {
         var pageBreak = document.CreateParagraph();
         var pageBreakRun = pageBreak.CreateRun();
         pageBreakRun.AddBreak(BreakType.PAGE);
     }
 
-    protected static void SetLandscape(XWPFDocumentFile document)
+    protected void SetLandscape(XWPFDocumentFile document)
     {
         document.Document.body.sectPr ??= new CT_SectPr();
         document.Document.body.sectPr.pgSz ??= new CT_PageSz();
@@ -236,7 +238,7 @@ public class DocXHelper
         //document.InsertTableOfContents("Contents", new TableOfContentsSwitches());
     }
 
-    protected static void AutoFit(XWPFTable table)
+    protected void AutoFit(XWPFTable table)
     {
         //tables auto fit already with NPOI
         //table.AutoFit = AutoFit.Contents;
@@ -271,7 +273,7 @@ public class DocXHelper
         public FileInfo FileInfo { get; }
         private readonly FileStream _stream;
 
-        public XWPFDocumentFile(FileInfo fileInfo, FileStream stream)
+        public XWPFDocumentFile(FileInfo fileInfo,FileStream stream)
         {
             FileInfo = fileInfo;
             _stream = stream;

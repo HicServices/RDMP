@@ -20,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Implementation of <see cref="IBasicActivateItems"/> that writes to console and throws 
+/// Implementation of <see cref="IBasicActivateItems"/> that writes to console and throws
 /// </summary>
 public class ThrowImmediatelyActivator : BasicActivateItems
 {

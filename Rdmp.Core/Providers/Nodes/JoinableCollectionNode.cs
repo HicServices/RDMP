@@ -39,9 +39,11 @@ public class JoinableCollectionNode : Node, IOrderable
     public int? CumulativeRowCount { set; get; }
 
 
-    public static string GetStateDescription() => "";
 
-    public static string Order() => "";
+    public string Order()
+    {
+        return "";
+    }
 
     public string ElapsedTime = "";
 

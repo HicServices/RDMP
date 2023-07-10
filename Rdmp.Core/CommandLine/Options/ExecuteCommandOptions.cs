@@ -21,7 +21,7 @@ public class ExecuteCommandOptions : RDMPCommandLineOptions
     public string CommandName { get; set; }
 
 
-    [Value(1, HelpText = "The arguments to provide for the command e.g. Catalogue:12")]
+    [Value(1,HelpText = "The arguments to provide for the command e.g. Catalogue:12")]
     public IEnumerable<string> CommandArgs { get; set; }
 
     [Option('f', "file", HelpText = "Runs commands in the given yaml file")]
@@ -31,7 +31,7 @@ public class ExecuteCommandOptions : RDMPCommandLineOptions
     /// The deserialized contents of File or null if File is not provided.  It is up to the hosting API to populate this property
     /// </summary>
     /// <value></value>
-    public RdmpScript Script { get; set; }
+    public RdmpScript Script {get;set;}
 
     [Usage]
     public static IEnumerable<Example> Examples

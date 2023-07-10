@@ -12,7 +12,7 @@ namespace Rdmp.Core.CommandLine.Options;
 /// <summary>
 /// Describes a series of commands to run in sequence.
 /// </summary>
-public class RdmpScript
+public  class RdmpScript
 {
     /// <summary>
     /// Commands which should be run by a <see cref="ExecuteCommandRunner"/>

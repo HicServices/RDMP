@@ -25,7 +25,7 @@ public class ColumnState
     public int DataLoadRunID { get; set; }
 
     public int? ID { get; private set; }
-    public int? Evaluation_ID { get; private set; }
+    public int? Evaluation_ID { get;private set; }
 
     public string ItemValidatorXML { get; set; }
 
@@ -160,4 +160,6 @@ public class ColumnState
 
         IsCommitted = true;
     }
+
+
 }

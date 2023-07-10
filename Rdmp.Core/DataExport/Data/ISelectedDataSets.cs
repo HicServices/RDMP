@@ -12,7 +12,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// Represents the desire to extract a given dataset for a given <see cref="ExtractableDataSet"/> for a given <see cref="ExtractionConfiguration"/>.  
+/// Represents the desire to extract a given dataset for a given <see cref="ExtractableDataSet"/> for a given <see cref="ExtractionConfiguration"/>.
 /// </summary>
 public interface ISelectedDataSets : IDeleteable, IRevertable, IMightBeReadOnly, IRootFilterContainerHost
 {
@@ -43,7 +43,7 @@ public interface ISelectedDataSets : IDeleteable, IRevertable, IMightBeReadOnly,
     /// Returns all tables which should be force joined against when extracting the <see cref="ISelectedDataSets"/> (regardless of extracted columns).
     /// This does not include implicitly joined <see cref="ITableInfo"/> (i.e. if you are extracting a column from that table).
     /// </summary>
-    ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins { get; }
+    ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins { get;}
 
     /// <summary>
     /// If this dataset has been extracted in the past this will return the last extract audit record.  Otherwise it will return null

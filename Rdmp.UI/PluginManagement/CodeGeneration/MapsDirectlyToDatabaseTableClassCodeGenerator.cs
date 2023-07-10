@@ -72,7 +72,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
             var type = GetCSharpTypeFor(col,out var setCode);
             var propertyName = col.GetRuntimeName();
             var fieldString = col.GetRuntimeName();
-                
+
             //camel case it
             fieldString = $"_{fieldString[..1].ToLower()}{fieldString[1..]}";
 

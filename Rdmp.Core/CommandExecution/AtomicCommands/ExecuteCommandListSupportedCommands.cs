@@ -23,12 +23,10 @@ internal class ExecuteCommandListSupportedCommands:BasicCommandExecution
     private readonly bool _verbose;
 
     public ExecuteCommandListSupportedCommands(IBasicActivateItems basicActivator,
-        [DemandsInitialization(
-            "Optional. A term to look for in command names.  Supports wildcards e.g. new*cata.  If not supplied then all will be shown")]
-        string pattern = null,
-        [DemandsInitialization(
-            "Optional. Set to true to display information about the command.  If specified with pattern then pattern will also search the description")]
-        bool verbose = false) : base(basicActivator)
+        [DemandsInitialization("Optional. A term to look for in command names.  Supports wildcards e.g. new*cata.  If not supplied then all will be shown")]
+        string pattern=null,
+        [DemandsInitialization("Optional. Set to true to display information about the command.  If specified with pattern then pattern will also search the description")]
+        bool verbose = false):base(basicActivator)
     {
         _pattern = pattern;
         _verbose = verbose;

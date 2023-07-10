@@ -101,11 +101,10 @@ public class DiffDatabaseDataFetcher
                 allCols.Where( //from all columns take all columns where
                     c => allArchiveCols.Any(
                         //there is a column with the same name in the archive columns (ignoring case)
-                        archiveCol => c.GetRuntimeName().Equals(archiveCol.GetRuntimeName(),
-                                          StringComparison.InvariantCultureIgnoreCase)
+                        archiveCol=>c.GetRuntimeName().Equals(archiveCol.GetRuntimeName(), StringComparison.InvariantCultureIgnoreCase)
 
-                                      //but don't care about differences in these columns (e.g. the actual data load run id will obviously be different!)
-                                      && !SpecialFieldNames.IsHicPrefixed(c)
+                                    //but don't care about differences in these columns (e.g. the actual data load run id will obviously be different!)
+                                    && !SpecialFieldNames.IsHicPrefixed(c)
                     )).ToArray();
 
             checkNotifier.OnCheckPerformed(new CheckEventArgs(
@@ -243,14 +242,14 @@ Join
 
 
         sql = string.Format(sql,
-            _batchSize, //{0}
-            tableName, //{1}
-            archiveTableName, //{2}
-            whereStatement, //{3}
-            syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID), //{4}
-            _dataLoadRunID, //{5}
-            GetSharedColumnsSQL(tableName), //{6}
-            GetSharedColumnsSQLWithColumnAliasPrefix(archive, zzArchive), //{7}
+            _batchSize,                         //{0}
+            tableName,                          //{1}
+            archiveTableName,                   //{2}
+            whereStatement,                     //{3}
+            syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID),    //{4}
+            _dataLoadRunID,                     //{5}
+            GetSharedColumnsSQL(tableName),     //{6}
+            GetSharedColumnsSQLWithColumnAliasPrefix(archive, zzArchive),   //{7}
             archive, //{8}
             syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)
         );

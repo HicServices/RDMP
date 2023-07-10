@@ -60,6 +60,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
 
         // if there are no explicit columns use all
         if (!cols.Any())
+        {
             cols =
                 Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
                     .Union(Catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))

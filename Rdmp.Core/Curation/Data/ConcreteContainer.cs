@@ -121,7 +121,7 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
     {
         return GetAllFiltersIncludingInSubContainersRecursively(this);
     }
-        
+
     private static List<IFilter> GetAllFiltersIncludingInSubContainersRecursively(IContainer container)
     {
         var toReturn = new List<IFilter>();

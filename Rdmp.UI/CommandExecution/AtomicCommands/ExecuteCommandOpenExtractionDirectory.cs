@@ -82,6 +82,8 @@ internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution
                     SetImpossible($"Extracted files do not share a common extraction directory");
                 else
                     _dir = new DirectoryInfo(parents[0]);
+                }
+
             }
         }
         catch (Exception)

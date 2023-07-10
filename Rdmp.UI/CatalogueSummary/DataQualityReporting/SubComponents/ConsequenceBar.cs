@@ -22,21 +22,21 @@ public partial class ConsequenceBar : UserControl
         InitializeComponent();
     }
 
-    internal static Color CorrectColor = Color.Green;
-    internal static Color MissingColor = Color.Orange;
-    internal static Color WrongColor = Color.IndianRed;
-    internal static Color InvalidColor = Color.Red;
+    public static Color CorrectColor = Color.Green;
+    public static Color MissingColor = Color.Orange;
+    public static Color WrongColor = Color.IndianRed;
+    public static Color InvalidColor = Color.Red;
 
-    internal static Color HasValuesColor = Color.Black;
-    internal static Color IsNullColor = Color.LightGray;
+    public static Color HasValuesColor = Color.Black;
+    public static Color IsNullColor = Color.LightGray;
 
-    internal double Correct { get; init; }
-    internal double Invalid { get; init; }
-    internal double Missing { get; init; }
-    internal double Wrong { get; init; }
-    internal double DBNull { get; init; }
+    public double Correct { get; set; }
+    public double Invalid { get; set; }
+    public double Missing { get; set; }
+    public double Wrong { get; set; }
+    public double DBNull { get; set; }
 
-    internal string Label { get; init; }
+    public string Label { get; set; }
 
     protected override void OnPaintBackground(PaintEventArgs e)
     {

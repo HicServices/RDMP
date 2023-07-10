@@ -23,7 +23,7 @@ public abstract class BasicUICommandExecution : BasicCommandExecution
         Activator = activator;
     }
 
-    protected static FileInfo SelectSaveFile(string filter)
+    protected FileInfo SelectSaveFile(string filter)
     {
         var sfd = new SaveFileDialog
         {

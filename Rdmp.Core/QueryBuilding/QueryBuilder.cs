@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// This class maintains a list of user defined ExtractionInformation objects.  It can produce SQL which will try to 
+/// This class maintains a list of user defined ExtractionInformation objects.  It can produce SQL which will try to
 /// extract this set of ExtractionInformation objects only from the database.  This includes determining which ExtractionInformation
 /// are Lookups, which tables the various objects come from, figuring out whether they can be joined by using JoinInfo in the catalogue
 /// 
@@ -69,12 +69,12 @@ public class QueryBuilder : ISqlQueryBuilder
 
     /// <summary>
     /// Optional field, this specifies where to start gargantuan joins such as when there are 3+ joins and multiple primary key tables e.g. in a star schema.
-    /// If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the Exception 
+    /// If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the Exception
     /// </summary>
     public ITableInfo PrimaryExtractionTable { get; set; }
 
     /// <summary>
-    /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your 
+    /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your
     /// own container tree at runtime rather than referencing a database entity)
     /// </summary>
     public IContainer RootFilterContainer
@@ -119,7 +119,7 @@ public class QueryBuilder : ISqlQueryBuilder
     public List<IFilter> Filters { get; private set; }
 
     /// <summary>
-    /// Limits the number of returned rows to the supplied maximum or -1 if there is no maximum 
+    /// Limits the number of returned rows to the supplied maximum or -1 if there is no maximum
     /// </summary>
     public int TopX
     {
@@ -198,7 +198,7 @@ public class QueryBuilder : ISqlQueryBuilder
     }
 
     /// <summary>
-    /// Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to manually call it. 
+    /// Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to manually call it.
     /// </summary>
     public void RegenerateSQL()
     {
@@ -215,7 +215,7 @@ public class QueryBuilder : ISqlQueryBuilder
 
         SelectColumns.Sort();
 
-        //work out all the filters 
+        //work out all the filters
         Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
 
         TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out var primary, _forceJoinsToTheseTables);
@@ -227,7 +227,7 @@ public class QueryBuilder : ISqlQueryBuilder
                     TablesUsedInQuery.Add(force);
 
         PrimaryExtractionTable = primary;
-            
+
         SqlQueryBuilderHelper.FindLookups(this);
 
         JoinsUsedInQuery = SqlQueryBuilderHelper.FindRequiredJoins(this);
@@ -261,7 +261,7 @@ public class QueryBuilder : ISqlQueryBuilder
             //if the parameter is one that needs to be told what the query syntax helper is e.g. if it's a global parameter designed to work on multiple datasets
             if(parameter is IInjectKnown<IQuerySyntaxHelper> needsToldTheSyntaxHelper)
                 needsToldTheSyntaxHelper.InjectKnown(QuerySyntaxHelper);
-                
+
             if(CheckSyntax)
                 parameter.Check(checkNotifier);
 
@@ -283,7 +283,7 @@ public class QueryBuilder : ISqlQueryBuilder
 
         toReturn = AppendCustomLines(toReturn, QueryComponent.QueryTimeColumn);
 
-        for (var i = 0; i < SelectColumns.Count; i++)
+        for (var i = 0; i < SelectColumns.Count;i++ )
         {
             //output each of the ExtractionInformations that the user requested and record the line number for posterity
             var columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, QuerySyntaxHelper);
@@ -329,7 +329,10 @@ public class QueryBuilder : ISqlQueryBuilder
     }
 
     /// <inheritdoc/>
-    public IEnumerable<Lookup> GetDistinctRequiredLookups() => SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
+    public IEnumerable<Lookup> GetDistinctRequiredLookups()
+    {
+        return SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
+    }
 
     /// <summary>
     /// Generates Sql to comment, declare and set the initial value for the supplied <see cref="ISqlParameter"/>.

@@ -39,7 +39,7 @@ public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject
     {
         if (_project == null)
         {
-            //project is not known so get all projects 
+            //project is not known so get all projects
             var valid = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
 
             //except if the cic is the launch point

@@ -53,7 +53,7 @@ public interface IActivateItems : IBasicActivateItems
     /// <summary>
     /// Component for suggesting completion options for an ongoing drag or paste
     /// </summary>
-    ICommandExecutionFactory CommandExecutionFactory { get; }
+    ICommandExecutionFactory CommandExecutionFactory { get;}
 
     /// <summary>
     /// Records when objects are accessed by the user through the UI to allow navigation to recent objects
@@ -77,6 +77,7 @@ public interface IActivateItems : IBasicActivateItems
     /// <param name="collection"></param>
     /// <returns></returns>
     T Activate<T>(IPersistableObjectCollection collection) where T : Control, IObjectCollectionControl, new();
+
 
 
     bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
@@ -139,8 +140,7 @@ public interface IActivateItems : IBasicActivateItems
     /// <param name="sessionName"></param>
     /// <param name="initialSelectionIfAny">Initial root objects to be in scope (or null if not known)</param>
     /// <param name="initialSearch">The value to set the search textbox to on load if objects are being selected during this operation, or null.</param>
-    void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny,
-        string initialSearch);
+    void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny, string initialSearch);
 
     /// <summary>
     /// Returns all currently open session uis

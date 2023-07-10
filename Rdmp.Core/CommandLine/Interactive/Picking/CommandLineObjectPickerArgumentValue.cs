@@ -191,8 +191,9 @@ public class CommandLineObjectPickerArgumentValue
             var latest = NewObjectPool.Latest(DatabaseEntities.Where(d => d is T));
 
             if (latest == null)
-                _logger.Warn(
-                    $"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine, DatabaseEntities)}");
+            {
+                _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine, DatabaseEntities)}");
+            }
 
             return latest;
         }
@@ -255,7 +256,7 @@ public class CommandLineObjectPickerArgumentValue
                 else
                 if(other.DatabaseEntities.Any())
                     throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntities");
-                
+
         }
 
         return this;

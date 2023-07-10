@@ -100,7 +100,7 @@ internal class CommandLineParser
             if (ch == '"') break; // lead-in quote starts a quoted word
             if (ch == '\\') break; // escape sequence terminates the bareword
 
-            buf.Append(ch); // otherwise, keep reading this word                
+            buf.Append(ch); // otherwise, keep reading this word
 
             ++i;
         }

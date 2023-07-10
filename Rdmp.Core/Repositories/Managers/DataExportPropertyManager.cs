@@ -12,7 +12,7 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// String based properties that are configured once per Data Export Database.  This includes how to implement Hashing and any text to appear in the Release 
+/// String based properties that are configured once per Data Export Database.  This includes how to implement Hashing and any text to appear in the Release
 /// Document that is provided to researchers (and anything else we might want to configure globally for extraction in future).
 /// 
 /// <para>Values are stored in the ConfigurationProperties table in the Data Export Database.</para>

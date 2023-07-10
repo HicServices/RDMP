@@ -174,12 +174,11 @@ public class WordDataReleaseFileGenerator : DocXHelper
         {
             var filename = GetFileName(result);
 
-            SetTableCell(table, tableLine, 0,
-                _repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
-            SetTableCell(table, tableLine, 1, result.FiltersUsed);
-            SetTableCell(table, tableLine, 2, filename);
-            SetTableCell(table, tableLine, 3, result.RecordsExtracted.ToString("N0"));
-            SetTableCell(table, tableLine, 4, result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
+            SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
+            SetTableCell(table,tableLine, 1,result.FiltersUsed);
+            SetTableCell(table,tableLine, 2,filename);
+            SetTableCell(table,tableLine, 3,result.RecordsExtracted.ToString("N0"));
+            SetTableCell(table,tableLine, 4,result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
             tableLine++;
         }
     }
@@ -197,7 +196,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
                 StringComparison.CurrentCultureIgnoreCase))
         {
             var relative = result.DestinationDescription[Project.ExtractionDirectory.Length..].Replace('\\', '/');
-                
+
             return $"./{relative.Trim('/')}";
         }
 

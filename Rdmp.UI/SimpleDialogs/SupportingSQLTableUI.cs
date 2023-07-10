@@ -149,6 +149,7 @@ public partial class SupportingSQLTableUI : SupportingSQLTableUI_Design, ISaveab
                 else
                     cbGlobal.Checked = true;
             }
+
         }
     }
 

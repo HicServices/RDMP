@@ -208,7 +208,8 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         if (string.IsNullOrWhiteSpace(Server))
             notifier.OnCheckPerformed(new CheckEventArgs("No Server set", CheckResult.Warning));
-        else if (string.IsNullOrWhiteSpace(Database))
+        else
+        if (string.IsNullOrWhiteSpace(Database))
             notifier.OnCheckPerformed(new CheckEventArgs("No Database set", CheckResult.Warning));
         else
             try

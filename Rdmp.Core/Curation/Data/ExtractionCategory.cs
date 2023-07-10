@@ -37,7 +37,7 @@ public enum ExtractionCategory
     Deprecated,
 
     /// <summary>
-    /// This column is part of a 'Project Specific Catalogue'.  If a <see cref="Catalogue"/> is for use only with a specific data export Project then all 
+    /// This column is part of a 'Project Specific Catalogue'.  If a <see cref="Catalogue"/> is for use only with a specific data export Project then all
     /// <see cref="ExtractionInformation"/> in that <see cref="Catalogue"/> must have this <see cref="ExtractionCategory"/>
     /// </summary>
     ProjectSpecific,

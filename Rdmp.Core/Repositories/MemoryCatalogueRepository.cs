@@ -321,9 +321,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #endregion
 
     #region ICohortContainerLinker
-
-    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents =
-        new();
+    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents = new ();
 
     public CohortAggregateContainer GetParent(AggregateConfiguration child)
     {
@@ -411,7 +409,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     #region IFilterContainerManager
 
-    protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new();
+    protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new ();
 
     public IContainer[] GetSubContainers(IContainer container)
     {

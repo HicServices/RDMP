@@ -19,7 +19,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 
 /// <summary>
 /// Destination component for Cohort Creation Pipelines, responsible for bulk inserting patient identifiers into the cohort database specified in the
-/// ICohortCreationRequest.  This 
+/// ICohortCreationRequest.  This
 /// </summary>
 public class BasicCohortDestination : IPluginCohortDestination
 {
@@ -33,10 +33,7 @@ public class BasicCohortDestination : IPluginCohortDestination
 
     private string _fk;
 
-    [DemandsInitialization(
-        "Set one of these if you plan to upload lists of patients and want RDMP to automatically allocate an anonymous ReleaseIdentifier",
-        TypeOf = typeof(IAllocateReleaseIdentifiers),
-        DefaultValue = typeof(ProjectConsistentGuidReleaseIdentifierAllocator))]
+    [DemandsInitialization("Set one of these if you plan to upload lists of patients and want RDMP to automatically allocate an anonymous ReleaseIdentifier", TypeOf = typeof(IAllocateReleaseIdentifiers),DefaultValue=typeof(ProjectConsistentGuidReleaseIdentifierAllocator))]
     public Type ReleaseIdentifierAllocator { get; set; }
 
     [DemandsInitialization(
@@ -138,7 +135,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     }
 
 
-    private static bool IsNull(object o)
+    private bool IsNull(object o)
     {
         return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
     }
@@ -181,7 +178,7 @@ public class BasicCohortDestination : IPluginCohortDestination
                     // don't add 2 columns if they are the same column!
                     if (!isIdentifiable) dt.Columns.Add(_releaseIdentifier);
 
-                    //add the ID as another column 
+                    //add the ID as another column
                     dt.Columns.Add(_fk);
 
                     foreach (var kvp in _cohortDictionary)
@@ -189,6 +186,8 @@ public class BasicCohortDestination : IPluginCohortDestination
                             dt.Rows.Add(kvp.Key, Request.NewCohortDefinition.ID);
                         else
                             dt.Rows.Add(kvp.Key, kvp.Value, Request.NewCohortDefinition.ID);
+                        }
+                    }
 
 
                     bulkCopy.Upload(dt);

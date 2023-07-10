@@ -11,7 +11,7 @@ using System.Windows.Forms;
 namespace Rdmp.UI;
 
 /// <summary>
-/// ToolStripButton with a public Property Count on it which displays a number up to 99 (after which it displays 99+) 
+/// ToolStripButton with a public Property Count on it which displays a number up to 99 (after which it displays 99+)
 /// </summary>
 [TechnicalUI]
 [System.ComponentModel.DesignerCategory("")]
@@ -51,12 +51,14 @@ public class SimpleCounterButton : ToolStripButton
 
             var labelXStart = (Width - labelSize.Width) / 2;
 
-            var labelRect = new RectangleF(new PointF(labelXStart, Height - (labelSize.Height + LabelPadding)),
-                labelSize);
+            var labelRect = new RectangleF(new PointF(labelXStart,Height - (labelSize.Height + LabelPadding)), labelSize);
 
-            e.Graphics.FillRectangle(Brushes.White, labelRect);
-            e.Graphics.DrawRectangle(Pens.Gray, Rectangle.Round(labelRect));
-            e.Graphics.DrawString(label, labelFont, Brushes.Black, labelRect);
+            e.Graphics.FillRectangle(Brushes.White,labelRect);
+            e.Graphics.DrawRectangle(Pens.Gray,Rectangle.Round(labelRect));
+            e.Graphics.DrawString(label,labelFont,Brushes.Black,labelRect);
+
         }
     }
+
+
 }

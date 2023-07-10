@@ -63,20 +63,20 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
     }
 
     private object oPeriodicityDictionaryLock = new();
-        
+
     private bool _ignoreRowCounts;
     private bool _isEditModeOn;
     private const float MaximumRaceLaneRenderSpace = 30f;
     private SolidBrush[] _brushes;
-        
+
     private Dictionary<Rectangle,Catalogue> rectNoDQE = new();
-    private Dictionary<Rectangle, Catalogue> rectDeleteButtons = new(); 
+    private Dictionary<Rectangle, Catalogue> rectDeleteButtons = new();
     private IActivateItems _activator;
 
     private bool _allowScrollDown;
     private RectangleF _rectScrollDown;
     private int _scrollDownIndexOffset;
-        
+
     private bool _allowScrollUp;
     private RectangleF _rectScrollUp;
     private DateTime _currentScrollActionBegan;
@@ -120,6 +120,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
     }
 
 
+
     protected override void OnMouseClick(MouseEventArgs e)
     {
         base.OnMouseClick(e);
@@ -135,6 +136,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                     //stop rendering this Catalogue
                     _periodicityDictionary.Remove(kvp.Value);
                     Invalidate();
+
                 }
     }
 
@@ -277,8 +279,8 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
         //draw the tracks
         lock (oPeriodicityDictionaryLock)
         {
-            var eachRaceLaneHasThisMuchYSpace = Math.Max(MinimumRowHeight,
-                Math.Min(MaximumRaceLaneRenderSpace, (float)Height / (_periodicityDictionary.Count + 1)));
+
+            var eachRaceLaneHasThisMuchYSpace = Math.Max(MinimumRowHeight,Math.Min(MaximumRaceLaneRenderSpace, (float)Height/(_periodicityDictionary.Count +1)));
 
 
             float startDrawingLaneAtY = 0;
@@ -320,10 +322,11 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                 else
                 {
                     //get the maximum number of rows regardless of consequence found in any data month
-                    var maxRowsInAnyMonth = dictionary.Max(r => r.Value.Total);
+                    var maxRowsInAnyMonth = dictionary.Max(r=>r.Value.Total);
 
                     for (var i = 0; i < _buckets.Length; i++)
                     {
+
                         Brush brush;
                         float lineHeightPercentage;
 
@@ -331,7 +334,7 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                         var total = 0;
 
                         if (dictionary.TryGetValue(_buckets[i],out var counter))
-                        {   
+                        {
                             good = counter.CountGood;
                             total = counter.Total;
 
@@ -454,9 +457,9 @@ public partial class RacewayRenderAreaUI : UserControl, INotifyMeOfEditState
                 new((int) (_rectScrollUp.X + 10),(int) (_rectScrollUp.Y + 5))
             };
 
-            e.Graphics.DrawPolygon(new Pen(_allowScrollUp ? Color.LawnGreen : Color.Green), points);
+            e.Graphics.DrawPolygon(new Pen(_allowScrollUp?Color.LawnGreen:Color.Green), points);
 
-            _rectScrollDown = new RectangleF(Width - 20, startDrawingAxisAtY - 20, 20, 20);
+            _rectScrollDown = new RectangleF(Width - 20, startDrawingAxisAtY-20, 20, 20);
             e.Graphics.FillRectangle(Brushes.Green, _rectScrollDown);
             e.Graphics.FillRectangle(Brushes.Black, _rectScrollDown.X + 2, _rectScrollDown.Y + 2, 16, 16);
 

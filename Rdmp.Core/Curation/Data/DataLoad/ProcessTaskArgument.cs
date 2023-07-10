@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// <summary>
 /// Contains a strongly typed value which will be provided to an instantiated data class of ProcessTask at runtime.  These usually correspond
 /// 1 to 1 with [DemandsInitialization] flagged properties of a data class e.g. 'LoadModules.Generic.Attachers.AnySeparatorFileAttacher' would have
-/// a ProcessTaskArgument record for the property UnderReadBehaviour and one for IgnoreBlankLines etc. 
+/// a ProcessTaskArgument record for the property UnderReadBehaviour and one for IgnoreBlankLines etc.
 /// 
 /// <para>This all happens transparently by reflection and is handled at design time through PluginProcessTaskUI seamlessly</para>
 /// </summary>
@@ -55,7 +55,7 @@ public sealed class ProcessTaskArgument : Argument
 
     /// <summary>
     /// Stores a new argument value for the class hosted by <see cref="ProcessTask"/>. Use
-    /// <see cref="ArgumentFactory"/> if you want to do this in a more structured manner. 
+    /// <see cref="ArgumentFactory"/> if you want to do this in a more structured manner.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
@@ -108,7 +108,10 @@ public sealed class ProcessTaskArgument : Argument
     }
 
     /// <inheritdoc/>
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
     /// Creates new ProcessTaskArguments for the supplied class T (based on what DemandsInitialization fields it has).  Parent is the ProcessTask that hosts the class T e.g. IAttacher
@@ -118,7 +121,8 @@ public sealed class ProcessTaskArgument : Argument
     public static IArgument[] CreateArgumentsForClassIfNotExists<T>(IProcessTask parent)
     {
         var argFactory = new ArgumentFactory();
-        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(
+        return argFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(
+
                 //tell it how to create new instances of us related to parent
                 parent,
 

@@ -72,6 +72,9 @@ public class CheckEntireDataLoadProcess : ICheckable
 
             preExecutionChecks.Check(notifier);
 
+            if(!preExecutionChecks.HardFail)
+                catalogueLoadChecks.Check(notifier);
+
             if (!preExecutionChecks.HardFail)
                 catalogueLoadChecks.Check(notifier);
         }

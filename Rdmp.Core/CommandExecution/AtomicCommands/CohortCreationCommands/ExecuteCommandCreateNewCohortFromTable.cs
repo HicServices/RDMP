@@ -18,7 +18,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 /// <summary>
 /// Generates and runs an SQL query to fetch all private identifiers contained in a table
 /// and commits them as a new cohort using the specified <see cref="Pipeline"/>.  Note that
-/// this command will query an entire table, use <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration"/> 
+/// this command will query an entire table, use <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration"/>
 /// if you want to generate a proper query (e.g. joining multiple tables or only fetching a subset of the table)
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecution
@@ -35,8 +35,10 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         ExternalCohortTable = externalCohortTable;
     }
 
-    public override string GetCommandHelp() =>
-        "Creates a cohort using ALL of the patient identifiers in the referenced table";
+    public override string GetCommandHelp()
+    {
+        return "Creates a cohort using ALL of the patient identifiers in the referenced table";
+    }
 
 
     public override void Execute()

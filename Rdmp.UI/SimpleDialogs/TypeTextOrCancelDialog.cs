@@ -134,10 +134,10 @@ public partial class TypeTextOrCancelDialog : Form
         textBox1.ForeColor = Color.Black;
 
         //if there's some text typed and we want typed text to be sane
-        if (RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
-            //if the sane name doesn't match the 
-            if (!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(textBox1.Text),
-                    StringComparison.CurrentCultureIgnoreCase))
+        if(RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
+        {
+            //if the sane name doesn't match the
+            if(!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(textBox1.Text),StringComparison.CurrentCultureIgnoreCase))
             {
                 btnOk.Enabled = false;
                 textBox1.ForeColor = Color.Red;

@@ -117,7 +117,7 @@ public partial class WideMessageBox : Form
             title = null;
         }
 
-        //Replace single newlines with double new lines 
+        //Replace single newlines with double new lines
         if (Args.FormatAsParagraphs && CommentStore != null)
             message = CommentStore.FormatAsParagraphs(message);
 

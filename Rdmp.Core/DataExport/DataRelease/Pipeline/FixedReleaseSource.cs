@@ -58,7 +58,10 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
 
     public abstract void Abort(IDataLoadEventListener listener);
 
-    public T TryGetPreview() => null;
+    public T TryGetPreview()
+    {
+        return null;
+    }
 
     public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
     {

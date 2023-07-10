@@ -19,10 +19,10 @@ namespace Rdmp.Core.DataExport.Data;
 /// <summary>
 /// Sometimes when extracting data in an ExtractionConfiguration of a Project you don't want to extract all the available (extractable) columns in a dataset.  For example you might
 /// have some columns which require 'special approval' to be released and most extracts will not include the columns.  ExtractableColumn is the object which records which columns in
-/// a given ExtractionConfiguration are being released to the researcher.  It also allows you to change the implementation of the column, for example a given researcher might want 
+/// a given ExtractionConfiguration are being released to the researcher.  It also allows you to change the implementation of the column, for example a given researcher might want
 /// all values UPPERd or he might want the Value field of Prescribing to be passed through his adjustment Scalar Valued Function.
 /// 
-/// <para>When selecting a column for extraction in ExtractionConfigurationUI an ExtractableColumn will be created with a pointer to the original ExtractionInformation 
+/// <para>When selecting a column for extraction in ExtractionConfigurationUI an ExtractableColumn will be created with a pointer to the original ExtractionInformation
 /// (CatalogueExtractionInformation_ID) in the Catalogue database.  The ExtractionInformations SelectSQL will also be copied out.  The ExtractionQueryBuilder will use these records to
 /// assemble the correct SQL for each Catalogue in your ExtractionConfiguration.</para>
 /// 
@@ -41,7 +41,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     private int? _catalogueExtractionInformation_ID;
 
     /// <summary>
-    /// The dataset to which this column belongs.  This is used with <see cref="ExtractionConfiguration_ID"/> to specify which dataset in which extraction 
+    /// The dataset to which this column belongs.  This is used with <see cref="ExtractionConfiguration_ID"/> to specify which dataset in which extraction
     /// this line of SELECT sql is used.
     /// </summary>
     public int ExtractableDataSet_ID
@@ -51,7 +51,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     }
 
     /// <summary>
-    /// The configuration to which this column belongs.  This is used with <see cref="ExtractableDataSet_ID"/> to specify which dataset in which extraction 
+    /// The configuration to which this column belongs.  This is used with <see cref="ExtractableDataSet_ID"/> to specify which dataset in which extraction
     /// this line of SELECT sql is used.
     /// </summary>
     public int ExtractionConfiguration_ID
@@ -62,8 +62,8 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
 
     /// <summary>
     /// The original master column definition this object was cloned from.  When you add a dataset to an <see cref="ExtractionConfiguration"/> all the column
-    /// definitions are copied to ensure the configuration is preserved going forwards.  This enables old extractions to be rerun regardless of changes in 
-    /// the original dataset.  
+    /// definitions are copied to ensure the configuration is preserved going forwards.  This enables old extractions to be rerun regardless of changes in
+    /// the original dataset.
     /// 
     /// <para>May be null if the parent catalogue <see cref="ExtractionInformation"/> has been deleted</para>
     /// </summary>
@@ -78,6 +78,8 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     }
 
     #endregion
+
+    #region Relationships
 
     #region Relationships
 
@@ -190,7 +192,6 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformation);
         _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfo);
     }
-
     #endregion
 
     /// <summary>
@@ -239,7 +240,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
     }
 
     /// <summary>
-    /// Returns true if the current state of the ExtractableColumn is different from the current state of the original <see cref="ExtractionInformation"/> that 
+    /// Returns true if the current state of the ExtractableColumn is different from the current state of the original <see cref="ExtractionInformation"/> that
     /// it was cloned from.
     /// </summary>
     /// <returns></returns>

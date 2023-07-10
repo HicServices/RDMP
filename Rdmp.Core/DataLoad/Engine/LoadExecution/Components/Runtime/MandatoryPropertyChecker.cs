@@ -11,7 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// Checks that all Properties on the supplied classInstanceToCheck that are decorated with a [DemandsInitialization] where the Mandatory flag is true have 
+/// Checks that all Properties on the supplied classInstanceToCheck that are decorated with a [DemandsInitialization] where the Mandatory flag is true have
 /// a value.
 /// </summary>
 public class MandatoryPropertyChecker : ICheckable

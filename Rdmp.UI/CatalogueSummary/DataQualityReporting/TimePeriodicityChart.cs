@@ -111,7 +111,7 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
 
             bucketNumber++;
 
-            if (lastBucket != DateTime.MinValue && diff.TotalDays > 31)
+            if (lastBucket != DateTime.MinValue && diff.TotalDays >31)
             {
                 //add gap annotation
                 var line = new LineAnnotation
@@ -200,8 +200,7 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
             }, 500, null, out var result, false))
         {
             //create new annotation in the database
-            new DQEGraphAnnotation(_currentEvaluation.DQERepository, pointStartX, pointStartY, pointEndX, pointEndY,
-                result, _currentEvaluation, DQEGraphType.TimePeriodicityGraph, _pivotCategoryValue);
+            new DQEGraphAnnotation(_currentEvaluation.DQERepository,pointStartX, pointStartY, pointEndX, pointEndY, result, _currentEvaluation, DQEGraphType.TimePeriodicityGraph, _pivotCategoryValue);
 
             //refresh the annotations
             AddUserAnnotations(_currentEvaluation);

@@ -40,13 +40,12 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
         {
             var filename = doc.GetFileName();
 
-            if (filename == null)
+            if(filename == null)
                 continue;
 
-            var collisions = _fileCollectionCombineable.Files.FirstOrDefault(f =>
-                f.FullName.Equals(filename.FullName, StringComparison.CurrentCultureIgnoreCase));
+            var collisions = _fileCollectionCombineable.Files.FirstOrDefault(f => f.FullName.Equals(filename.FullName,StringComparison.CurrentCultureIgnoreCase));
 
-            if (collisions != null)
+            if(collisions != null)
                 SetImpossible($"File '{collisions.Name}' is already a SupportingDocument (ID={doc.ID} - '{doc.Name}')");
         }
     }

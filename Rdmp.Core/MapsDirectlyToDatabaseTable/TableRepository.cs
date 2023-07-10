@@ -111,6 +111,7 @@ public abstract class TableRepository : ITableRepository
     }
 
 
+
     /// <inheritdoc/>
     public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
@@ -135,7 +136,7 @@ public abstract class TableRepository : ITableRepository
             using var managedConnection = GetConnection();
             var cmd = GetUpdateCommandFromStore(oTableWrapperObject.GetType(), managedConnection);
 
-            PopulateUpdateCommandValuesWithCurrentState(cmd, oTableWrapperObject);
+            PopulateUpdateCommandValuesWithCurrentState(cmd,oTableWrapperObject);
 
             cmd.Connection = managedConnection.Connection;
 
@@ -191,6 +192,11 @@ public abstract class TableRepository : ITableRepository
             Version => propValue.ToString(),
             _ => propValue
         };
+    }
+
+    public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable
+    {
+        return StillExists(typeof(T),id);
     }
 
     public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable => StillExists(typeof(T), id);
@@ -416,7 +422,7 @@ public abstract class TableRepository : ITableRepository
         }
 
         //Mark any cached data as out of date
-        if (localCopy is IInjectKnown inject)
+        if(localCopy is IInjectKnown inject)
             inject.ClearAllInjections();
     }
 
@@ -465,6 +471,7 @@ public abstract class TableRepository : ITableRepository
 
     #region new
 
+
     public void TestConnection()
     {
         try
@@ -479,8 +486,8 @@ public abstract class TableRepository : ITableRepository
 
             var pass = DiscoveredServer.Helper.GetExplicitPasswordIfAny(_connectionStringBuilder);
 
-            if (!string.IsNullOrWhiteSpace(pass))
-                msg = msg.Replace(pass, "****");
+            if(!string.IsNullOrWhiteSpace(pass))
+                msg = msg.Replace(pass,"****");
 
             throw new Exception($"Testing connection failed, connection string was '{msg}'", e);
         }
@@ -508,7 +515,7 @@ public abstract class TableRepository : ITableRepository
     /// <summary>
     /// Runs the selectQuery (which must be a FULL QUERY) and uses @parameters for each of the kvps in the dictionary.  It expects the query result set to include
     /// a field which is named whatever your value in parameter columnWithObjectID is.  If you hate life you can pass a dbNullSubstition (which must also be of type
-    /// T) in which case whenever a record in the result set is found with a DBNull in it, the substitute appears in the returned list instead.  
+    /// T) in which case whenever a record in the result set is found with a DBNull in it, the substitute appears in the returned list instead.
     /// 
     /// <para>IMPORTANT: Order is NOT PERSERVED by this method so don't bother trying to sneak an Order by command into your select query </para>
     /// </summary>
@@ -559,8 +566,9 @@ public abstract class TableRepository : ITableRepository
     }
 
 
-    private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null)
-        where T : IMapsDirectlyToDatabaseTable
+
+
+    private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
     {
         using var opener = GetConnection();
         var query = CreateInsertStatement<T>(parameters);
@@ -594,6 +602,7 @@ public abstract class TableRepository : ITableRepository
 
         return query;
     }
+
 
 
     public int Delete(string deleteQuery, Dictionary<string, object> parameters = null,
@@ -646,8 +655,7 @@ public abstract class TableRepository : ITableRepository
 
     #endregion
 
-    public void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
-        where T : IMapsDirectlyToDatabaseTable
+    public void InsertAndHydrate<T>(T toCreate, Dictionary<string,object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
     {
         var id = InsertAndReturnID<T>(constructorParameters);
 
@@ -787,7 +795,7 @@ public abstract class TableRepository : ITableRepository
         lock (oLockKnownTypes)
         {
             if (!_knownSupportedTypes.ContainsKey(type))
-                _knownSupportedTypes.Add(type, DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());
+                _knownSupportedTypes.Add(type,DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());
 
             return _knownSupportedTypes[type];
         }
@@ -839,6 +847,7 @@ public abstract class TableRepository : ITableRepository
     }
 
 
+
     /// <inheritdoc/>
     public Type[] GetCompatibleTypes()
     {
@@ -856,12 +865,15 @@ public abstract class TableRepository : ITableRepository
                         //or with a spontaneous base class
                         && (t.BaseType == null || !t.BaseType.Name.Contains("Spontaneous"))
                         && IsCompatibleType(t)
+
+
+
                 ).ToArray();
     }
 
     /// <summary>
     /// Returns True if the type is one for objects that are held in the database.  Types will come from your repository assembly
-    /// and will include only <see cref="IMapsDirectlyToDatabaseTable"/> Types that are not abstract/interfaces.  Types are only 
+    /// and will include only <see cref="IMapsDirectlyToDatabaseTable"/> Types that are not abstract/interfaces.  Types are only
     /// compatible if an accompanying <see cref="DiscoveredTable"/> exists in the database to store the objects.
     /// </summary>
     /// <param name="type"></param>

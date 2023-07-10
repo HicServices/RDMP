@@ -39,7 +39,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionControl
 {
     public LoadEventsTreeViewObjectCollection Collection {get;set;}
-                
+
     private BackgroundWorker _populateLoadHistory = new();
     private ArchivalDataLoadInfo[] _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
     private CancellationTokenSource _populateLoadHistoryCancel;
@@ -365,14 +365,14 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
 
         if (o == null)
             return;
-
-        if (o is ArchivalDataLoadInfo dli)
-            new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadRun) { Run = dli.ID })
-                .Execute();
-        else if (o is LoadEventsTreeView_Category cat)
-            new ExecuteCommandViewLogs(Activator, new LogViewerFilter(cat.AssociatedTable) { Run = cat.RunId })
-                .Execute();
-        else if (o is IHasSummary s)
+            
+        if(o is ArchivalDataLoadInfo dli)
+            new ExecuteCommandViewLogs(Activator,new LogViewerFilter(LoggingTables.DataLoadRun){Run = dli.ID}).Execute();
+        else
+        if (o is LoadEventsTreeView_Category cat)
+            new ExecuteCommandViewLogs(Activator,  new LogViewerFilter(cat.AssociatedTable) { Run = cat.RunId}).Execute();
+        else
+        if(o is IHasSummary s)
             WideMessageBox.Show(s);
     }
 
@@ -390,7 +390,15 @@ public partial class LoadEventsTreeView : RDMPUserControl, IObjectCollectionCont
             //We manually implement this here because the default TreeView will only copy 340? characters... very weird but hey Windows Forms
             if (sb.Length != 0)
                 Clipboard.SetText(sb.ToString());
+
         }
+    }
+
+
+
+    public IPersistableObjectCollection GetCollection()
+    {
+        return Collection;
     }
 
 

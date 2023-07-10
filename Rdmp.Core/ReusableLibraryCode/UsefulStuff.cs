@@ -132,7 +132,7 @@ public static partial class UsefulStuff
         var split = text.Split(new char[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
 
-        //trim off [db]..[tbl] 1 
+        //trim off [db]..[tbl] 1
         for (var i = 0; i < split.Length; i++)
             split[i] = Regex.Replace(split[i], @"\s+[\d\s]*$", "");
 
@@ -507,7 +507,7 @@ public static partial class UsefulStuff
     }
 
     /// <summary>
-    /// Returns the <paramref name="input"/> string split across multiple lines with the 
+    /// Returns the <paramref name="input"/> string split across multiple lines with the
     /// <paramref name="newline"/> (or <see cref="Environment.NewLine"/> if null) separator
     /// such that no lines are longer than <paramref name="maxLen"/>
     /// </summary>

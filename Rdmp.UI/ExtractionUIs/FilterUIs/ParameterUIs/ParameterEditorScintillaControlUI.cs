@@ -126,9 +126,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
     }
 
     private List<ParameterEditorScintillaSection> Sections = new();
-        
+
     /// <summary>
-    /// Updates the Sql code for the current state of the <see cref="Options"/> 
+    /// Updates the Sql code for the current state of the <see cref="Options"/>
     /// </summary>
     public void RegenerateSQL()
     {
@@ -167,9 +167,10 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
 
                 var lineCount = GetLineCount(toAdd);
 
-                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += lineCount - 1, parameter, 
-                        
+                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += lineCount - 1, parameter,
+
                     !Options.ShouldBeReadOnly(parameter),
+
                     toAdd));
 
                 sql += toAdd;
@@ -201,6 +202,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
             for (var i = section.LineStart; i <= section.LineEnd; i++)
                 highlighter.HighlightLine(QueryEditor, i, Color.LightGray);
     }
+
 
 
     private static int GetLineCount(string s)

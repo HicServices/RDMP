@@ -48,13 +48,13 @@ public class ExecuteCommandSet : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandSet(IBasicActivateItems activator,
+
         [DemandsInitialization("A single object on which you want to change a given property")]
         IMapsDirectlyToDatabaseTable setOn,
         [DemandsInitialization("Name of a property you want to change e.g. Description")]
         string property,
-        [DemandsInitialization(
-            "New value to assign, this will be parsed into a valid Type if property is not a string")]
-        string value) : base(activator)
+        [DemandsInitialization("New value to assign, this will be parsed into a valid Type if property is not a string")]
+        string value):base(activator)
     {
         _setOn = setOn;
 
@@ -178,8 +178,9 @@ public class ExecuteCommandSet : BasicCommandExecution
                     NewValue = BasicActivator.SelectOne(_property.Name, available)?.ID;
                     populatedNewValueWithRelationship = true;
                 }
+            }
 
-            if (!populatedNewValueWithRelationship)
+            if(!populatedNewValueWithRelationship)
             {
                 if (BasicActivator.SelectValueType(GetDialogArgs(on), _property.PropertyType, _property.GetValue(on),
                         out var chosen))

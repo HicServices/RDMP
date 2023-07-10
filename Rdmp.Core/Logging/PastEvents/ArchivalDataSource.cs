@@ -10,7 +10,7 @@ using System.Data.Common;
 namespace Rdmp.Core.Logging.PastEvents;
 
 /// <summary>
-/// Readonly audit of a historical 'data source' (See HIC.Logging.DataSource) that contributed records to a table that was loaded in the last (See 
+/// Readonly audit of a historical 'data source' (See HIC.Logging.DataSource) that contributed records to a table that was loaded in the last (See
 /// ArchivalTableLoadInfo).
 /// </summary>
 public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable

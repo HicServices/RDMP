@@ -23,7 +23,7 @@ public class ExecuteCommandSetArgument : BasicCommandExecution
     private readonly object _value;
 
     private readonly bool _promptUser;
-        
+
     public ExecuteCommandSetArgument(IBasicActivateItems activator,IArgumentHost _, IArgument arg, object value):base(activator)
     {
         _arg = arg;
@@ -134,6 +134,7 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
             {
                 return;
             }
+
         }
 
         _arg.SetValue(value);

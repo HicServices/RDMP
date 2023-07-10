@@ -65,7 +65,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     private ExtractionArbitraryFolderNode _coreDatasetsFolder = new(CoreDatasets,1);
     private ExtractionArbitraryFolderNode _projectSpecificDatasetsFolder = new(ProjectSpecificDatasets,2);
     private ArbitraryFolderNode _globalsFolder = new(ExtractionDirectory.GLOBALS_DATA_NAME,0);
-        
+
     private ToolStripControlHost _pipelinePanel;
 
     private ToolStripLabel lblMaxConcurrent = new("Concurrent:");
@@ -225,17 +225,14 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         max = int.TryParse(tbMaxConcurrent.Text, out max) ? max : 3;
 
         return new ExtractionOptions
-        { 
+        {
             Command = activityRequested,
             ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
             MaxConcurrentExtractions = max,
             ExtractionConfiguration = _extractionConfiguration.ID.ToString(),
-            Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
-            Datasets = _datasets.All(tlvDatasets.IsChecked)
-                ? ""
-                : string.Join(",",
-                    _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID.ToString())
-                        .ToArray())
+            Pipeline = _pipelineSelectionUI1.Pipeline == null? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
+            Datasets = _datasets.All(tlvDatasets.IsChecked) ? "" :
+                string.Join(",",_datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID.ToString()).ToArray())
         };
     }
 
@@ -259,7 +256,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
                 SuppressActivate = true,
                 AddCheckColumn = false
             });
-            
+
         var checkedBefore = tlvDatasets.CheckedObjects;
 
         tlvDatasets.ClearObjects();
@@ -301,11 +298,9 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
             _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
 
-            _pipelinePanel = new ToolStripControlHost((Control)_pipelineSelectionUI1);
+            _pipelinePanel = new ToolStripControlHost((Control) _pipelineSelectionUI1);
 
-            helpIcon1.SetHelpText("Extraction",
-                "It is a wise idea to click here if you don't know what this screen can do for you...",
-                BuildHelpFlow());
+            helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
         }
 
         CommonFunctionality.Add(new ToolStripLabel("Extraction Pipeline:"));

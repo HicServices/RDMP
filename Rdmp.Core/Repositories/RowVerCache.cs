@@ -134,6 +134,7 @@ FROM
         using (var cmd =
                _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
         {
+
             var result = cmd.ExecuteScalar();
             if (result != DBNull.Value)
                 _changeTracking = Convert.ToInt64(result);

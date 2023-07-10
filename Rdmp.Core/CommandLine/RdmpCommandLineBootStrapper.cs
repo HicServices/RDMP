@@ -126,6 +126,7 @@ public class RdmpCommandLineBootStrapper
             }
 
 
+
             if (!CheckRepo(repositoryLocator)) return REPO_ERROR;
 
             CatalogueRepository.SuppressHelpLoading = false;

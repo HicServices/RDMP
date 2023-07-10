@@ -204,6 +204,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     }
 
 
+
     protected virtual Pipeline SetupPipeline()
     {
         var repository = RepositoryLocator.CatalogueRepository;

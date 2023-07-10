@@ -144,8 +144,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
         }
         else
         {
-            var f = LocationOfFiles.GetFiles()
-                .FirstOrDefault(f => f.Name.Equals(Pattern, StringComparison.OrdinalIgnoreCase));
+            var f = LocationOfFiles.GetFiles().FirstOrDefault(f=>f.Name.Equals(Pattern, StringComparison.OrdinalIgnoreCase));
 
             if (f != null)
                 infos.Add(f);

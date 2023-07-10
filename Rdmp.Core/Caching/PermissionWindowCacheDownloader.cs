@@ -60,7 +60,7 @@ public class PermissionWindowCacheDownloader
 
     /// <summary>
     /// Single-shot, will either exit immediately if not in the permission window or run until either:
-    /// - the permission window expires, or 
+    /// - the permission window expires, or
     /// - all engines successfully complete execution.
     /// </summary>
     /// <param name="listener"></param>
@@ -82,9 +82,9 @@ public class PermissionWindowCacheDownloader
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Retrying download: {(_permissionWindow == null ? "No permission window" : _permissionWindow.Name)}"));
 
-        return IsDownloadRequired(listener)
-            ? RunPipelineExecutionTask(cancellationToken, CreateRetryCachingEngine)
-            : _retrievalResult;
+        return IsDownloadRequired(listener) ?
+            RunPipelineExecutionTask(cancellationToken, CreateRetryCachingEngine) :
+            _retrievalResult;
     }
 
     private bool IsDownloadRequired(IDataLoadEventListener listener)
@@ -131,9 +131,8 @@ public class PermissionWindowCacheDownloader
 
         // We want to be able to stop the engine if we pass outside the permission window, however the execution strategy objects should not know about PermissionWindows
         var executionTask = new Task(() =>
-            _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token,
-                _listener));
-
+            _pipelineEngineExecutionStrategy.Execute(cachingEngines, executionCancellationTokenSource.Token, _listener));
+            
         // Block waiting on task completion or signalling of the cancellation token
         while (!executionTask.IsCompleted)
         {
@@ -157,6 +156,7 @@ public class PermissionWindowCacheDownloader
                 }
                 catch (AggregateException)
                 {
+
                 }
 
                 return RetrievalResult.Aborted;

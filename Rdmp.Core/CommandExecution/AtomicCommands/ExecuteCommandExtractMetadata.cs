@@ -28,17 +28,14 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
         Catalogue[] catalogues,
         [DemandsInitialization("Where new files should be generated")]
         DirectoryInfo outputDirectory,
-        [DemandsInitialization(
-            "Template file in which keys such as $Name will be replaced with the corresponding Catalogue entry")]
+
+        [DemandsInitialization("Template file in which keys such as $Name will be replaced with the corresponding Catalogue entry")]
         FileInfo template,
-        [DemandsInitialization(
-            "How output files based on the template should be named.  Uses same replacement strategy as template contents e.g. $Name.xml")]
+        [DemandsInitialization("How output files based on the template should be named.  Uses same replacement strategy as template contents e.g. $Name.xml")]
         string fileNaming,
-        [DemandsInitialization(
-            "True to append all outputs into a single file.  False to output a new file for every Catalogue")]
+        [DemandsInitialization("True to append all outputs into a single file.  False to output a new file for every Catalogue")]
         bool oneFile,
-        [DemandsInitialization(
-            "Optional, specify a replacement for newlines when found in fields e.g. <br/>.  Leave as null to leave newlines intact.")]
+        [DemandsInitialization("Optional, specify a replacement for newlines when found in fields e.g. <br/>.  Leave as null to leave newlines intact.")]
         string newlineSub,
         [DemandsInitialization("Optional, specify a replacement for the token $Comma (defaults to ',')",
             DefaultValue = ",")]

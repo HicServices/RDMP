@@ -95,9 +95,10 @@ public partial class ExtractionTimeTimeCoverageAggregator
         {
             //could not find the identifier in the output buffer, could be that there are multiple CHI columns e.g. CHI_Baby1, CHI_Baby2 or something
             //only swallow this exception (and abandon counting of distinct release identifiers) if it is the first output row.
-            if (firstRow)
-                _expectedExtractionIdentifierInOutputBuffer =
-                    null; //give up trying to work out the extraction identifier
+            if(firstRow)
+            {
+                _expectedExtractionIdentifierInOutputBuffer = null;//give up trying to work out the extraction identifier
+            }
             else
                 throw;
         }
@@ -116,7 +117,7 @@ public partial class ExtractionTimeTimeCoverageAggregator
                 }
 
                 var valueAsString = s;
-                        
+
                 //trim off times
                 if (TimeRegex().IsMatch(valueAsString))
                     valueAsString = valueAsString[..^"00:00:00".Length].Trim();

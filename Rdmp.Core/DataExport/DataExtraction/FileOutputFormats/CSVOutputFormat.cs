@@ -36,7 +36,10 @@ public class CSVOutputFormat : FileOutputFormat
         DateFormat = dateFormat;
     }
 
-    public override string GetFileExtension() => ".csv";
+    public override string GetFileExtension()
+    {
+        return ".csv";
+    }
 
     public override void Open()
     {

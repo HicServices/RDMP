@@ -33,7 +33,7 @@ public interface IExtractableDataSetPackageManager
     void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet);
 
     /// <summary>
-    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents 
+    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents
     /// in memory.
     /// </summary>
     /// <param name="package"></param>

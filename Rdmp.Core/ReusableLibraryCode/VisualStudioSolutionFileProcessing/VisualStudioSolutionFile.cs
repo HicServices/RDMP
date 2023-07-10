@@ -108,4 +108,6 @@ GlobalSection(NestedProjects) = preSolution
         RootFolders = Folders.Where(f => !Folders.Any(f2 => f2.ChildrenFolders.Contains(f))).ToArray();
         RootProjects = Projects.Where(p => !Folders.Any(f => f.ChildrenProjects.Contains(p))).ToArray();
     }
+
+
 }

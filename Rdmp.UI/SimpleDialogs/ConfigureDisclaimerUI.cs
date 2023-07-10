@@ -15,14 +15,14 @@ namespace Rdmp.UI.SimpleDialogs;
 /// <summary>
 /// As part of a data extraction, a ReleaseDocument is generated.  This is a Microsoft Word document which lists in tabular format the datasets released, the filters applied, the number
 /// of rows extracted, distinct patient identifiers etc.  This document can optionally include a statement about use of the data / accreditation or a disclaimer or whatever else message
-/// you want researchers to read.  
+/// you want researchers to read.
 /// 
 /// <para>You can only have one message at a time and it is constant, we suggest something like "this data was supplied by blah, please accredit us and the NHS as the data provider... etc"</para>
-/// </summary> 
+/// </summary>
 public partial class ConfigureDisclaimerUI : RDMPForm
 {
     private bool _allowClose;
-        
+
     public ConfigureDisclaimerUI(IActivateItems activator):base(activator)
     {
         InitializeComponent();

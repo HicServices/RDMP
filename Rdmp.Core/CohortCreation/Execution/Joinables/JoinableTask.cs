@@ -20,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution.Joinables;
 
 /// <summary>
-/// A single AggregateConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The 
+/// A single AggregateConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The
 /// AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where ...'.  The  query
 /// result table can/will be committed as a CacheCommitJoinableInceptionQuery to  the CachedAggregateConfigurationResultsManager.
 /// </summary>

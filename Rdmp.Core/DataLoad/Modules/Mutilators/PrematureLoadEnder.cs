@@ -29,8 +29,7 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
         "An exit code that reflects the nature off the stop.  Do not set Success because loads do not stop halfway through Successfully.  If you do not want an error use LoadNotRequired")]
     public ExitCodeType ExitCodeToReturnIfConditionMet { get; set; }
 
-    [DemandsInitialization(
-        "Condition under which to return the exit code.  Use cases for Always are few and far between I guess if you have a big configuration but you want to stop it running ever you could put an Always abort step in")]
+    [DemandsInitialization("Condition under which to return the exit code.  Use cases for Always are few and far between I guess if you have a big configuration but you want to stop it running ever you could put an Always abort step in")]
     public PrematureLoadEndCondition ConditionsToTerminateUnder { get; set; }
 
     public void Check(ICheckNotifier notifier)
@@ -89,7 +88,7 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
                     $"No tables had any rows in them so returning {ExitCodeToReturnIfConditionMet} which should terminate the load here"));
                 return ExitCodeToReturnIfConditionMet;
             }
- 
+
             case PrematureLoadEndCondition.NoFilesInForLoading:
             {
                 var dataLoadJob = job as IDataLoadJob ?? throw new Exception($"IDataLoadEventListener {job} was not an IDataLoadJob (very unexpected)");
@@ -107,8 +106,8 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
 
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Found {files.Length} files in ForLoading so not terminating ({string.Join(",", files.Select(f => f.Name))})"));
-                
-                //There were 
+
+                //There were
                 return ExitCodeType.Success;
             }
 

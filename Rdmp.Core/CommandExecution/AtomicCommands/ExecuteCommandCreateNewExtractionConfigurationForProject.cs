@@ -47,8 +47,8 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         {
             if (!GetProjects(value).Any())
                 SetImpossible($"There are no Projects with ProjectNumber {value.ExternalProjectNumber}");
-            cohort = value;
-        }
+            }
+            cohort = value; }
     }
 
     private IEnumerable<Project> GetProjects(ExtractableCohort cohortIfAny)

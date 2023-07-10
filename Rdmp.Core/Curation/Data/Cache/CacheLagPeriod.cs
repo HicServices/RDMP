@@ -64,7 +64,7 @@ public class CacheLagPeriod
     public int Days => Type == PeriodType.Day ? Duration : 0;
 
     /// <summary>
-    /// Define a Zero length CacheLagPeriod i.e. the remote end point from which caching happens is real time up to the millisecond so you can always issue a cache fetch 
+    /// Define a Zero length CacheLagPeriod i.e. the remote end point from which caching happens is real time up to the millisecond so you can always issue a cache fetch
     /// request for data up to DateTime.Now (obviously you can't request future data).
     /// </summary>
     public static CacheLagPeriod Zero => new(0, PeriodType.Month);
@@ -145,7 +145,7 @@ public class CacheLagPeriod
     }
 
     /// <summary>
-    /// Pass the date you are about to create a cache fetch request for.  Returns true if the date is outside (i.e. older than) the lag period.  E.g. if you have a lag period of 
+    /// Pass the date you are about to create a cache fetch request for.  Returns true if the date is outside (i.e. older than) the lag period.  E.g. if you have a lag period of
     /// 6 months then any date before 6 months is valid for fetching since the remote endpoint is likely to have had its data stabilised.
     /// </summary>
     /// <seealso cref="Duration"/>

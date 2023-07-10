@@ -56,8 +56,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
 
         _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
 
-        var toAddTo = SelectOne(new DialogArgs
-        {
+        var toAddTo = SelectOne(new DialogArgs {
             WindowTitle = "Associated Column",
             TaskDescription =
                 "All filters must be associated with a single column.  Pick which column to associate this filter with."

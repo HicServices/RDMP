@@ -30,11 +30,9 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 
     [UseWithObjectConstructor]
     public ExecuteCommandReplacedBy(IBasicActivateItems activator,
-        [DemandsInitialization(
-            "The object that is being retired.  If its Type supports being marked IsDeprecated then it must be true")]
+        [DemandsInitialization("The object that is being retired.  If its Type supports being marked IsDeprecated then it must be true")]
         IMapsDirectlyToDatabaseTable deprecated,
-        [DemandsInitialization(
-            "The object that replaces the retired one.  Pass null to clear the replacement relationship")]
+        [DemandsInitialization("The object that replaces the retired one.  Pass null to clear the replacement relationship")]
         IMapsDirectlyToDatabaseTable replacement)
         : base(activator)
     {

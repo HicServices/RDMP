@@ -66,8 +66,9 @@ public class ForwardEngineerANOCatalogueEngine
                 //for each skipped table
                 foreach (var skippedTable in _planManager.SkippedTables)
                     //we might have to refactor or port JoinInfos to these tables so we should establish what the parenthood of them was
-                foreach (var columnInfo in skippedTable.ColumnInfos)
-                    GetNewColumnInfoForOld(columnInfo, true);
+                    foreach (var columnInfo in skippedTable.ColumnInfos)
+                        GetNewColumnInfoForOld(columnInfo,true);
+                }
 
                 //for each table that isn't being skipped
                 foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
@@ -119,7 +120,7 @@ public class ForwardEngineerANOCatalogueEngine
                     {
                         var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName()];
 
-                        var columnPlan = _planManager.GetPlanForColumnInfo(oldColumnInfo);
+                        var columnPlan =_planManager.GetPlanForColumnInfo(oldColumnInfo);
 
                         if (columnPlan.Plan == Plan.ANO)
                         {
@@ -434,7 +435,7 @@ public class ForwardEngineerANOCatalogueEngine
     }
 
     private Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new();
-        
+
 
     private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)
     {

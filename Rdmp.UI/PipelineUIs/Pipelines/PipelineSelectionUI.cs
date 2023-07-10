@@ -88,7 +88,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             : "<<None>>";
     }
 
-    public PipelineSelectionUI(IActivateItems activator, IPipelineUseCase useCase, ICatalogueRepository repository)
+    public PipelineSelectionUI(IActivateItems activator,IPipelineUseCase useCase, ICatalogueRepository repository)
     {
         _activator = activator;
         _useCase = useCase;
@@ -133,7 +133,10 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             e.Graphics.DrawLine(Pens.CornflowerBlue, new Point(e.Bounds.Left, e.Bounds.Top + 1),
                 new Point(e.Bounds.Right, e.Bounds.Top + 1));
 
-            if (showAll) render = $"\u2713 {render}";
+            if(showAll)
+            {
+                render = $"\u2713 {render}";
+            }
 
             TextRenderer.DrawText(e.Graphics, render, italic,
                 new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.CornflowerBlue,

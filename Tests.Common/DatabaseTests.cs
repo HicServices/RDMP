@@ -155,7 +155,7 @@ public partial class DatabaseTests
             ValidateCertificate = false
         };
 
-        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ? 
+        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ?
             new RepositoryProvider(GetFreshYamlRepository()) :
             new PlatformDatabaseCreationRepositoryFinder(opts);
 
@@ -478,11 +478,10 @@ public partial class DatabaseTests
             }
     }
 
-    private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
-    {
-        if (args.Exception != null && args.Status != RDMPPlatformDatabaseStatus.Healthy &&
-            args.Status != RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
-            Assert.Fail(args.SummariseAsString());
+        private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
+        {
+            if (args.Exception != null && args.Status!=RDMPPlatformDatabaseStatus.Healthy && args.Status!=RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
+                Assert.Fail(args.SummariseAsString());
 
         switch (args.Status)
         {
@@ -507,8 +506,8 @@ public partial class DatabaseTests
     {
         Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
     }
-        
-        
+
+
     public const string BlitzDatabases = @"
 --If you want to blitz everything out of your test catalogue and data export database(s) then run the following SQL (adjusting for database names):
 
@@ -801,6 +800,7 @@ delete from {1}..Project
         foreach (var t in tables.Order.Reverse())
             try
             {
+
                 t.Drop();
             }
             catch (Exception ex)
@@ -811,6 +811,7 @@ delete from {1}..Project
         foreach (var t in database.DiscoverTableValuedFunctions())
             try
             {
+
                 t.Drop();
             }
             catch (Exception ex)

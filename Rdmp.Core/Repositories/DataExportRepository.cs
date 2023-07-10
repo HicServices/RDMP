@@ -84,9 +84,9 @@ public class DataExportRepository : TableRepository, IDataExportRepository
             (rep, r) => new SelectedDataSetsForcedJoin((IDataExportRepository)rep, r));
     }
 
-    public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(
-        IExtractionConfiguration configuration, IExtractableDataSet dataset) =>
-        GetAllObjects<CumulativeExtractionResults>(
+    public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
+    {
+        return GetAllObjects<CumulativeExtractionResults>(
             $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
 
     private readonly ObjectConstructor _constructor = new();
@@ -104,8 +104,9 @@ public class DataExportRepository : TableRepository, IDataExportRepository
         return eds == null ? new CatalogueExtractabilityStatus(false, false) : eds.GetCatalogueExtractabilityStatus();
     }
 
-    public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers() =>
-        SelectAll<SelectedDataSets>(@"
+    public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
+    {
+        return SelectAll<SelectedDataSets>(@"
 SELECT ID  FROM SelectedDataSets sds
 where not exists (
 select 1 FROM ExtractableColumn ec where 
@@ -168,8 +169,8 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     }
 
     /// <summary>
-    /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/> and updates the cached package contents 
-    /// in memory.  
+    /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/> and updates the cached package contents
+    /// in memory.
     /// 
     /// <para>This change is immediately written to the database</para>
     ///
@@ -199,8 +200,8 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 
 
     /// <summary>
-    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents 
-    /// in memory.  
+    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents
+    /// in memory.
     /// 
     /// <para>This change is immediately written to the database</para>
     ///

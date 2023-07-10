@@ -36,8 +36,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 {
     private FileOutputFormat _output;
 
-    [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified,
-        ExecuteExtractionToFlatFileType.CSV)]
+    [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified, ExecuteExtractionToFlatFileType.CSV)]
     public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
 
     [DemandsInitialization(
@@ -77,8 +76,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             $"Setup data extraction destination as {OutputFile} (will not exist yet)"));
     }
 
-    protected override void Open(DataTable toProcess, IDataLoadEventListener job,
-        GracefulCancellationToken cancellationToken)
+    protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
     {
         if (_request.IsBatchResume)
         {
@@ -198,7 +196,15 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     }
 
 
-    public override string GetDestinationDescription() => OutputFile;
+    public override string GetDestinationDescription()
+    {
+        return OutputFile;
+    }
+
+    public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
+    {
+        return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
+    }
 
     public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
     {

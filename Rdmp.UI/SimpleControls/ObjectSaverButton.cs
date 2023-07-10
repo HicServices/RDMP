@@ -32,7 +32,7 @@ public partial class ObjectSaverButton
 
     private ToolStripButton btnSave  = new("Save",FamFamFamIcons.disk.ImageToBitmap());
     private ToolStripButton btnUndoRedo = new("Undo", FamFamFamIcons.Undo.ImageToBitmap());
-        
+
     private RevertableObjectReport _undoneChanges;
     private IRDMPControl _parent;
     private IActivateItems _activator;
@@ -144,6 +144,7 @@ public partial class ObjectSaverButton
     {
         Save();
     }
+
 
 
     private void btnUndoRedo_Click(object sender, EventArgs e)

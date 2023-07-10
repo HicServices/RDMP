@@ -11,7 +11,7 @@ using Rdmp.Core.DataLoad.Engine.Job;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 
 /// <summary>
-/// DataLoadComponent (DLE) that consists of running multiple subcomponents (also DataLoadComponents).  This is used for composite stages e.g. 
+/// DataLoadComponent (DLE) that consists of running multiple subcomponents (also DataLoadComponents).  This is used for composite stages e.g.
 /// adjustStagingAndMigrateToLive where you want to run all or none (skip) of the components and pass the collection around as a single object.
 /// </summary>
 public class CompositeDataLoadComponent : DataLoadComponent

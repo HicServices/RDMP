@@ -132,8 +132,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         }
         else
         {
-            if (SelectMany(new DialogArgs
-                {
+            if (SelectMany(new DialogArgs {
                     InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
                     AllowSelectingNull = true,
                     WindowTitle = $"Set {_commandProperty}",

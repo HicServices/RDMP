@@ -136,6 +136,7 @@ public class SuggestComboBox : ComboBox
             {
                 if (_suggLb.Parent != form)
                 {
+
                     //move it to the parent form
                     _suggLb.Parent.Controls.Remove(_suggLb);
                     form.Controls.Add(_suggLb);

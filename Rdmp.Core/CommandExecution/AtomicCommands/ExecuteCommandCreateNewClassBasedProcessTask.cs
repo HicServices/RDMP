@@ -22,10 +22,8 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
     private Type _type;
     private ProcessTaskType _processTaskType;
 
-    public ExecuteCommandCreateNewClassBasedProcessTask(IBasicActivateItems activator, LoadMetadata loadMetadata,
-        LoadStage loadStage,
-        [DemandsInitialization("Class to execute, must be an attacher, mutilater etc",
-            TypeOf = typeof(IDisposeAfterDataLoad))]
+    public ExecuteCommandCreateNewClassBasedProcessTask(IBasicActivateItems activator, LoadMetadata loadMetadata, LoadStage loadStage,
+        [DemandsInitialization("Class to execute, must be an attacher, mutilater etc", TypeOf = typeof(IDisposeAfterDataLoad))]
         Type type) : base(activator)
     {
         _loadMetadata = loadMetadata;
@@ -68,7 +66,9 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
     {
         if (_type == null)
         {
-            if (BasicActivator.SelectType("Process Type", GetProcessTaskTypes(), out var chosen))
+
+            if(BasicActivator.SelectType("Process Type",GetProcessTaskTypes(),out var chosen))
+            {
                 SetType(chosen);
             else
                 return;

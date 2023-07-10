@@ -37,8 +37,7 @@ public class DleRunner : Runner
         _options = options;
     }
 
-    public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener, ICheckNotifier checkNotifier,GracefulCancellationToken token)
     {
         ILoadProgress loadProgress = GetObjectFromCommandLineString<LoadProgress>(locator, _options.LoadProgress);
         ILoadMetadata loadMetadata = GetObjectFromCommandLineString<LoadMetadata>(locator, _options.LoadMetadata);
@@ -131,4 +130,6 @@ public class DleRunner : Runner
                 throw new ArgumentOutOfRangeException();
         }
     }
+
+
 }

@@ -141,7 +141,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
             yield return (e.Name,ms2);
         }
     }
-        
+
     /// <summary>
     /// Downloads the plugin nupkg to the given directory
     /// </summary>

@@ -36,6 +36,7 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<ExtractionFilterParameterSet[]>
 {
+
     #region Database Properties
 
     private int _extractionInformationID;
@@ -83,7 +84,10 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     public override Catalogue GetCatalogue() => ExtractionInformation.CatalogueItem.Catalogue;
 
     /// <inheritdoc/>
-    public override ISqlParameter[] GetAllParameters() => ExtractionFilterParameters.ToArray();
+    public override ISqlParameter[] GetAllParameters()
+    {
+        return ExtractionFilterParameters.ToArray();
+    }
 
     #region Relationships
 
@@ -138,7 +142,10 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     }
 
     /// <inheritdoc/>
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 
     //we are an extraction filter ourselves! so obviously we werent cloned from one! (this is for aggregate and data export filters and satisfies IFilter).  Actually we can
     //be cloned via the publishing (elevation) from a custom filter defined at Aggregate level for example.  But in this case we don't need to know the ID anyway since we

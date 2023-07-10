@@ -41,6 +41,11 @@ public partial class DataGeneratorUI : UserControl
         }
     }
 
+    public int GetSize()
+    {
+        return 10* (int)Math.Pow(10, trackBar1.Value);
+    }
+
     private int sizeAtBeginGeneration = -1;
     public Thread Thread;
     private IDataGenerator _generator;

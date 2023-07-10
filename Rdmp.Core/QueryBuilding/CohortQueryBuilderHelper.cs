@@ -17,8 +17,8 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Helper for CohortQueryBuilder which contains code for building individual cohort identification subqueries.  Subqueries are actually built by 
-/// AggregateBuilder but this class handles tab indentation, parameter renaming (where there are other subqueries with conflicting sql parameter names), 
+/// Helper for CohortQueryBuilder which contains code for building individual cohort identification subqueries.  Subqueries are actually built by
+/// AggregateBuilder but this class handles tab indentation, parameter renaming (where there are other subqueries with conflicting sql parameter names),
 /// injecting globals etc.
 /// </summary>
 public class CohortQueryBuilderHelper
@@ -45,7 +45,7 @@ public class CohortQueryBuilderHelper
         //get the extraction identifier (method IsAcceptableAsCohortGenerationSource will ensure this linq returns 1 so no need to check again)
         var extractionIdentifier = aggregate.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
 
-        //create a builder but do it manually, we care about group bys etc or count(*) even 
+        //create a builder but do it manually, we care about group bys etc or count(*) even
         AggregateBuilder builder;
 
         //we are getting SQL for a cohort identification aggregate without a HAVING/count statement so it is actually just 'select patientIdentifier from tableX'
@@ -75,8 +75,8 @@ public class CohortQueryBuilderHelper
             //select list is either [chi] or [chi],[mycolumn],[myexcitingcol] (in the case of a patient index table)
             builder = new AggregateBuilder(limitationSQL, selectList, aggregate, aggregate.ForcedJoins);
 
-            //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select 
-            if (!isJoinAggregate)
+            //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select
+            if(!isJoinAggregate)
                 builder.AddColumn(extractionIdentifier, false);
             else
                 builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(), false);
@@ -109,7 +109,7 @@ public class CohortQueryBuilderHelper
 
         //Add the inception join
         if (args.JoinIfAny != null)
-            AddJoinToBuilder(aggregate, extractionIdentifier, builder, args);
+            AddJoinToBuilder(aggregate,extractionIdentifier,builder, args);
 
         //set the where container
         builder.RootFilterContainer = aggregate.RootFilterContainer;
@@ -163,7 +163,7 @@ public class CohortQueryBuilderHelper
             QueryComponent.JoinInfoJoin);
     }
 
-    public static string TabIn(string str, int numberOfTabs)
+    public string TabIn(string str, int numberOfTabs)
     {
         if (string.IsNullOrWhiteSpace(str))
             return str;

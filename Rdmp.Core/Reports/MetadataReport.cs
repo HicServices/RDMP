@@ -46,6 +46,7 @@ public class MetadataReport : DocXHelper
     private const int TextFontSize = 7;
 
 
+
     public MetadataReport(ICatalogueRepository repository, MetadataReportArgs args)
     {
         _repository = repository;
@@ -69,7 +70,7 @@ public class MetadataReport : DocXHelper
 
             using var document = GetNewDocFile(filename);
             PageWidthInPixels = GetPageWidth();
-                    
+
             var sw = Stopwatch.StartNew();
 
             try
@@ -104,7 +105,7 @@ public class MetadataReport : DocXHelper
 
                     //assume we don't know the age of the dataset
                     DateTime? accurateAsOf = null;
-                            
+
                     //get the age of the dataset if known and output it
                     if (_args.TimespanCalculator != null)
                     {
@@ -117,7 +118,7 @@ public class MetadataReport : DocXHelper
 
                     if(accurateAsOf.HasValue)
                         InsertParagraph(document, $"* Based on DQE run on {accurateAsOf.Value}", TextFontSize-2);
-                            
+
                     if (gotRecordCount)
                     {
                         InsertHeader(document,"Record Count", 3);
@@ -135,7 +136,7 @@ public class MetadataReport : DocXHelper
                         }
 
                     }
-                                                        
+
                     CreateDescriptionsTable(document,c);
 
                     if(_args.IncludeNonExtractableItems)
@@ -155,14 +156,14 @@ public class MetadataReport : DocXHelper
                     ShowFile(document);
 
                 SetMargins(document,20);
-                        
+
                 AddFooter(document, $"Created on {DateTime.Now}", TextFontSize);
 
                 return document.FileInfo;
             }
             catch (ThreadInterruptedException)
             {
-                //user hit abort   
+                //user hit abort
             }
         }
         catch (Exception e)
@@ -194,7 +195,7 @@ public class MetadataReport : DocXHelper
                     $"Failed to get the contents of loookup {lookupTable.Name}", e));
             }
 
-            if (dt == null)
+            if(dt == null)
                 continue;
 
             //if it has too many columns
@@ -219,7 +220,7 @@ public class MetadataReport : DocXHelper
             //move to next line
             tableLine++;
 
-            var maxLineCountDowner = _args.MaxLookupRows + 1; //1 for the headers and 1 for the ... row
+            var maxLineCountDowner = _args.MaxLookupRows + 1;//1 for the headers and 1 for the ... row
 
             //see if it has any lookups
             foreach (DataRow row in dt.Rows)
@@ -383,7 +384,7 @@ public class MetadataReport : DocXHelper
 
     private void CreateCountTable(XWPFDocument document, int recordCount, int distinctCount, string identifierName)
     {
-        var table = InsertTable(document, 2, identifierName != null && _args.IncludeDistinctIdentifierCounts ? 2 : 1);
+        var table = InsertTable(document,2, identifierName != null && _args.IncludeDistinctIdentifierCounts ? 2 : 1);
 
         var tableLine = 0;
 
@@ -391,12 +392,12 @@ public class MetadataReport : DocXHelper
 
         //only add column values if there is an IsExtractionIdentifier returned
         if (identifierName != null && _args.IncludeDistinctIdentifierCounts)
-            SetTableCell(table, tableLine, 1, $"Distinct {identifierName}", TextFontSize);
+            SetTableCell(table,tableLine, 1, $"Distinct {identifierName}",TextFontSize);
 
         tableLine++;
 
 
-        SetTableCell(table, tableLine, 0, recordCount.ToString("N0"), TextFontSize);
+        SetTableCell(table,tableLine, 0,recordCount.ToString("N0"),TextFontSize);
 
         //only add column values if there is an IsExtractionIdentifier returned
         if (identifierName != null && _args.IncludeDistinctIdentifierCounts)

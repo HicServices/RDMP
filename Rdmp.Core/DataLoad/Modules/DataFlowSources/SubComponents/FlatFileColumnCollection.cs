@@ -151,7 +151,7 @@ public class FlatFileColumnCollection
                 _headers[i] = _headers[i].Trim();
 
         //throw away trailing null headers e.g. the header line "Name,Date,,,"
-        var trailingNullHeaders = _headers.Reverse().TakeWhile(s => s.IsBasicallyNull()).Count();
+        var trailingNullHeaders = _headers.Reverse().TakeWhile(s=>s.IsBasicallyNull()).Count();
 
         if (trailingNullHeaders > 0)
             _headers = _headers.Take(_headers.Length - trailingNullHeaders).ToArray();
@@ -161,6 +161,7 @@ public class FlatFileColumnCollection
             for (var i = 0; i < _headers.Length; i++)
                 _headers[i] = QuerySyntaxHelper.MakeHeaderNameSensible(_headers[i]);
     }
+
 
 
     /// <summary>
@@ -211,7 +212,7 @@ public class FlatFileColumnCollection
 
                 //if the user wants a string don't let downstream components pick a different Type (by assuming it is is untyped)
                 if(c.DataType == typeof(string))
-                    c.SetDoNotReType(true); 
+                    c.SetDoNotReType(true);
             }
             else
                 //override type
@@ -259,7 +260,7 @@ public class FlatFileColumnCollection
         {
             ASCIIArt.Append($"[{index}]");
 
-            if (dt.Columns.Contains(_headers[index])) //exact match
+            if (dt.Columns.Contains(_headers[index]))    //exact match
             {
                 ASCIIArt.AppendLine($"{_headers[index]}>>>{_headers[index]}");
                 continue;

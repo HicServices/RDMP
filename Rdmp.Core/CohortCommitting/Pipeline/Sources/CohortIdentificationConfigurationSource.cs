@@ -94,20 +94,19 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
         var cohortCompiler = new CohortCompiler(_cohortIdentificationConfiguration);
 
-        var rootContainerTask =
-            //no caching set up so no point in running CohortCompilerRunner
-            _cohortIdentificationConfiguration.QueryCachingServer_ID == null
-                ? RunRootContainerOnlyNoCaching(cohortCompiler)
-                : RunAllTasksWithRunner(cohortCompiler, listener);
+        ICompileable rootContainerTask;
+        //no caching set up so no point in running CohortCompilerRunner
+        if(_cohortIdentificationConfiguration.QueryCachingServer_ID == null)
+            rootContainerTask = RunRootContainerOnlyNoCaching(cohortCompiler);
+        else
+            rootContainerTask =  RunAllTasksWithRunner(cohortCompiler,listener);
 
-        if (rootContainerTask.State == CompilationState.Executing)
+        if(rootContainerTask.State == CompilationState.Executing)
         {
-            listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Warning,
-                    "Root container task was unexpectedly still executing... let's give it a little longer to run"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Root container task was unexpectedly still executing... let's give it a little longer to run"));
 
-            var countdown = Math.Max(5000, Timeout * 1000);
-            while (rootContainerTask.State == CompilationState.Executing && countdown > 0)
+            var countdown = Math.Max(5000,Timeout*1000);
+            while(rootContainerTask.State == CompilationState.Executing && countdown>0)
             {
                 Thread.Sleep(100);
                 countdown -= 100;
@@ -185,6 +184,8 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
 
             var cacheManager =
                 new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
+
+            var cacheManager = new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
 
             cohortCompiler.AddAllTasks(false);
             foreach (var cacheable in cohortCompiler.Tasks.Keys.OfType<ICacheableTask>())

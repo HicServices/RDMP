@@ -18,9 +18,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Records how (via SQL) replace the private patient identifier column (e.g. CHI) with the release identifier (e.g. swap [biochemistry]..[chi] for 
+/// Records how (via SQL) replace the private patient identifier column (e.g. CHI) with the release identifier (e.g. swap [biochemistry]..[chi] for
 /// [cohort]..[ReleaseId]).  Also includes the Join SQL string for linking the cohort table (which contains the ReleaseId e.g. [cohort]) with the dataset
-/// table (e.g. [biochemistry]). 
+/// table (e.g. [biochemistry]).
 /// 
 /// <para>This class is an IColumn and is designed to be added as a new Column to a QueryBuilder as normal (See ExtractionQueryBuilder)</para>
 /// </summary>
@@ -101,7 +101,7 @@ public class ReleaseIdentifierSubstitution : SpontaneousObject, IColumn
             SelectSQL =
                 $"(SELECT DISTINCT {extractableCohort.GetReleaseIdentifier()} FROM {privateCol.Table.GetFullyQualifiedName()} WHERE {extractableCohort.WhereSQL()} AND {privateCol.GetFullyQualifiedName()}={OriginalDatasetColumn.SelectSQL}{collateStatement})";
 
-            if (!string.IsNullOrWhiteSpace(OriginalDatasetColumn.Alias))
+            if(!string.IsNullOrWhiteSpace(OriginalDatasetColumn.Alias))
             {
                 var toReplace = extractableCohort.GetPrivateIdentifier(true);
                 var toReplaceWith = extractableCohort.GetReleaseIdentifier(true);
@@ -113,8 +113,9 @@ public class ReleaseIdentifierSubstitution : SpontaneousObject, IColumn
                 if (!Alias.Contains(toReplace) || Regex.Matches(Alias, Regex.Escape(toReplace)).Count > 1)
                     throw new Exception(
                         $"Failed to resolve multiple extraction identifiers in dataset.  Either mark a single column as the IsExtractionIdentifier for this extraction or ensure all columns are of compatible type and have the text \"{toReplace}\" appearing once (and only once in its name)");
+                }
 
-                Alias = Alias.Replace(toReplace, toReplaceWith);
+                Alias = Alias.Replace(toReplace,toReplaceWith);
             }
             else
             {

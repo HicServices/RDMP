@@ -54,7 +54,7 @@ public class FilterImporter
     public IFilter ImportFilter(IContainer containerToImportOneInto, IFilter fromMaster,
         IFilter[] existingFiltersAlreadyInScope)
     {
-        if(fromMaster is ExtractionFilter extractionFilter && extractionFilter.ExtractionInformation.ColumnInfo == null) 
+        if(fromMaster is ExtractionFilter extractionFilter && extractionFilter.ExtractionInformation.ColumnInfo == null)
             throw new Exception(
                 $"Could not import filter {extractionFilter} because it could not be traced back to a ColumnInfo");
 
@@ -86,8 +86,8 @@ public class FilterImporter
         newFilter.WhereSQL = fromMaster.WhereSQL;
 
         //if we are down cloning from a master ExtractionFilter so record that the new filter is
-        if (fromMaster is ExtractionFilter)
-            newFilter.ClonedFromExtractionFilter_ID = fromMaster.ID; //make the new filters parent the master
+        if(fromMaster is ExtractionFilter)
+            newFilter.ClonedFromExtractionFilter_ID = fromMaster.ID;//make the new filters parent the master
 
         //if we are up cloning we are publishing a child into being a new master catalogue filter (ExtractionFilter)
         if (newFilter is ExtractionFilter)
@@ -107,10 +107,8 @@ public class FilterImporter
             existingFiltersAlreadyInScope.SelectMany(f => f.GetAllParameters()).ToArray();
 
         //now create parameters while respecting globals
-        var parameterCreator = new ParameterCreator(_factory, _globals,
-            AlternateValuesToUseForNewParameters ?? fromMaster.GetAllParameters());
-        parameterCreator.CreateAll(newFilter,
-            existingFiltersParametersAlreadyInScope); //Create the parameters while handling the existing parameters in scope
+        var parameterCreator = new ParameterCreator(_factory, _globals, AlternateValuesToUseForNewParameters ?? fromMaster.GetAllParameters());
+        parameterCreator.CreateAll(newFilter, existingFiltersParametersAlreadyInScope); //Create the parameters while handling the existing parameters in scope
 
         return newFilter;
     }

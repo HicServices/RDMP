@@ -36,7 +36,7 @@ public interface IPluginCohortCompiler
 
 
     /// <summary>
-    /// Must be implemented such that by the time the method completes the <paramref name="cache"/> 
+    /// Must be implemented such that by the time the method completes the <paramref name="cache"/>
     /// is populated with an identifier list that matches the expectations of <paramref name="ac"/>
     /// </summary>
     /// <param name="ac"></param>
@@ -46,7 +46,7 @@ public interface IPluginCohortCompiler
         CancellationToken cancellationToken);
 
     /// <summary>
-    /// Return true if the <paramref name="oldDescription"/> does not match the logic currently 
+    /// Return true if the <paramref name="oldDescription"/> does not match the logic currently
     /// stored in <paramref name="aggregate"/>
     /// </summary>
     /// <param name="aggregate"></param>

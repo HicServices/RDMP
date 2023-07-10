@@ -60,7 +60,7 @@ public class PeriodicityState
         var t = evaluation.DQERepository;
 
         using var con = evaluation.DQERepository.GetConnection();
-        var sql = 
+        var sql =
             @$"SELECT 
       {t.Wrap("Year")}
       ,{t.Wrap("Month")}
@@ -99,7 +99,7 @@ public class PeriodicityState
 
             switch ((string)r["RowEvaluation"])
             {
-                case "Correct": 
+                case "Correct":
                     toIncrement.CountGood += (int) r["CountOfRecords"];
                     toIncrement.Total += (int)r["CountOfRecords"];
                     break;

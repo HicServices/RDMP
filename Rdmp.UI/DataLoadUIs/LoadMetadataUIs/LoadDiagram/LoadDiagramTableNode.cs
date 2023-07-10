@@ -76,11 +76,15 @@ public class LoadDiagramTableNode : Node, ICombineableSource, IHasLoadDiagramSta
             yield return c;
     }
 
-    public override string ToString() => TableName;
+    public override string ToString()
+    {
+        return TableName;
+    }
 
-    public ICombineToMakeCommand GetCombineable() =>
-        new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper()
-            .EnsureFullyQualified(DatabaseName, null, TableName));
+    public ICombineToMakeCommand GetCombineable()
+    {
+        return new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
+    }
 
     public void DiscoverState()
     {

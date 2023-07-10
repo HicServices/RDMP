@@ -48,7 +48,7 @@ public class LoggingTabUI : LoggingTab_Design
     private PictureBox pbRemoveFilter;
     private DataGridView dataGridView1;
 
-        
+
     private LogViewerFilter Filter = new(LoggingTables.DataLoadTask);
 
     private int TopX;
@@ -230,7 +230,7 @@ public class LoggingTabUI : LoggingTab_Design
         // 
         // lblCurrentFilter
         // 
-        lblCurrentFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left 
+        lblCurrentFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left
                                                                   | AnchorStyles.Right);
         lblCurrentFilter.BackColor = Color.Goldenrod;
         lblCurrentFilter.ForeColor = SystemColors.ControlLightLight;

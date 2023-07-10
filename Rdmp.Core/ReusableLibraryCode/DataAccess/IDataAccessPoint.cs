@@ -34,7 +34,7 @@ public interface IDataAccessPoint : IHasQuerySyntaxHelper
     /// <summary>
     /// The DBMS type of the server e.g. Sql Server / MySql / Oracle
     /// </summary>
-    DatabaseType DatabaseType { get; set; }
+    DatabaseType DatabaseType { get; set;}
 
     /// <summary>
     /// The username/password to use when connecting to the server (otherwise integrated security is used)
@@ -44,8 +44,9 @@ public interface IDataAccessPoint : IHasQuerySyntaxHelper
     IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context);
 
 
+
     /// <summary>
-    /// Attempts to connect to the server using the provided <paramref name="context"/>.  If the object is not properly setup for a valid reference e.g. 
+    /// Attempts to connect to the server using the provided <paramref name="context"/>.  If the object is not properly setup for a valid reference e.g.
     /// <see cref="Server"/> is missing or the referenced database/server could not be connected to then the method returns false
     /// </summary>
     /// <param name="context"></param>

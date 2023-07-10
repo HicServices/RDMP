@@ -147,7 +147,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         UpdateValidityAssesment();
     }
 
-    public void SetLookupTableInfo(TableInfo t, bool setComboBox = true)
+    public void SetLookupTableInfo(TableInfo t,bool setComboBox = true)
     {
         if(t is { IsTableValuedFunction: true })
         {
@@ -444,8 +444,11 @@ Only define secondary columns if you really need them! if any of the key fields 
 
                 var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(f1,p1) };
 
-                if (p2 != null)
-                    keyPairs.Add(Tuple.Create(f2, p2));
+                if(p2 != null)
+                    keyPairs.Add(Tuple.Create(f2,p2));
+
+                if(p3 != null)
+                    keyPairs.Add(Tuple.Create(f3,p3));
 
                 if (p3 != null)
                     keyPairs.Add(Tuple.Create(f3, p3));
@@ -470,6 +473,7 @@ Only define secondary columns if you really need them! if any of the key fields 
 
                 olvSelectedDescriptionColumns.ClearObjects();
                 SetStage(LookupCreationStage.DragAPrimaryKey);
+
             }
 
             btnCreateLookup.Enabled = true;

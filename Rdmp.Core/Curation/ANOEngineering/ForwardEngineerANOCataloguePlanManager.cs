@@ -26,7 +26,7 @@ namespace Rdmp.Core.Curation.ANOEngineering;
 /// Configuration class for ForwardEngineerANOCatalogueEngine (See ForwardEngineerANOCatalogueEngine).  This class stores which anonymisation transforms/dilutions
 /// etc to apply to which columns, which TableInfos are to be mirated etc.  Also stores whether the LoadMetadata that is to be created should be a single one off
 /// load or should load in date based batches (e.g. 1 year at a time - use this option if you have too much data in the source table to be migrated in one go - e.g.
-/// tens of millions of records). 
+/// tens of millions of records).
 /// </summary>
 public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstructorFinishedCallback
 {
@@ -46,7 +46,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     private CatalogueItem[] _allCatalogueItems;
 
     public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new();
-        
+
     [JsonIgnore]
     public List<IDilutionOperation>  DilutionOperations { get; private set; }
 
@@ -62,8 +62,8 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     private ICatalogue _catalogue;
 
     /// <summary>
-    /// This constructor is primarily intended for deserialization via <see cref="JsonConvertExtensions.DeserializeObject"/>.  You should 
-    /// instead use the overload. 
+    /// This constructor is primarily intended for deserialization via <see cref="JsonConvertExtensions.DeserializeObject"/>.  You should
+    /// instead use the overload.
     /// </summary>
     public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
@@ -91,6 +91,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
     public IExternalDatabaseServer GetIdentifierDumpServer() =>
         Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
+
 
 
     public void Check(ICheckNotifier notifier)
@@ -124,14 +125,15 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
                 //for each key involved in the lookup
                 foreach (var c in new[] { lookup.ForeignKey, lookup.PrimaryKey, lookup.Description })
                 {
-                    //lookup / table has already been migrated 
-                    if (SkippedTables.Any(t => t.ID == c.TableInfo_ID))
+                    //lookup / table has already been migrated
+                    if(SkippedTables.Any(t=>t.ID == c.TableInfo_ID))
                         continue;
 
                     //make sure that the plan is sensible
                     if (GetPlanForColumnInfo(c).Plan != Plan.PassThroughUnchanged)
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"ColumnInfo '{c}' is part of a Lookup so must PassThroughUnchanged", CheckResult.Fail));
+
                 }
             }
         }
@@ -187,8 +189,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
             if (!pks.Any())
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"TableInfo '{tableInfo}' does not have any Primary Keys, it cannot be anonymised",
-                    CheckResult.Fail));
+                    $"TableInfo '{tableInfo}' does not have any Primary Keys, it cannot be anonymised", CheckResult.Fail));
 
             if (tableInfo.IsTableValuedFunction)
                 notifier.OnCheckPerformed(new CheckEventArgs(

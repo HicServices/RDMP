@@ -27,7 +27,7 @@ public abstract class Runner : IRunner
         ICheckNotifier checkNotifier, GracefulCancellationToken token);
 
     /// <summary>
-    /// Translates a string <paramref name="arg"/> into an object of type <typeparamref name="T"/>.  String can 
+    /// Translates a string <paramref name="arg"/> into an object of type <typeparamref name="T"/>.  String can
     /// just be the ID e.g. "5" or could be an RDMP command line expression e.g. "LoadMetadata:*Load*Biochemistry*"
     /// </summary>
     /// <typeparam name="T"></typeparam>

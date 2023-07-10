@@ -217,6 +217,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         try
         {
+
             if (string.IsNullOrWhiteSpace(tb.Text))
             {
                 action(null);

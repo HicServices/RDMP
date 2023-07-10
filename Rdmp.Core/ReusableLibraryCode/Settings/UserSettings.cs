@@ -277,8 +277,7 @@ public static class UserSettings
     /// <para>When enabled RDMP will record certain performance related metrics (how long refresh takes etc).</para>
     /// <para>These figures are completely internal to the application and are not transmitted anywhere.You can view the results in the toolbar.</para>
     /// </summary>
-    public static bool DebugPerformance
-    {
+    public static bool DebugPerformance {
         get => AppSettings.GetValueOrDefault("DebugPerformance", false);
         set => AppSettings.AddOrUpdateValue("DebugPerformance", value);
     }
@@ -297,8 +296,7 @@ public static class UserSettings
     /// <summary>
     /// Show a popup confirmation dialog at the end of a pipeline completing execution
     /// </summary>
-    public static bool ShowPipelineCompletedPopup
-    {
+    public static bool ShowPipelineCompletedPopup {
         get => AppSettings.GetValueOrDefault("ShowPipelineCompletedPopup", true);
         set => AppSettings.AddOrUpdateValue("ShowPipelineCompletedPopup", value);
     }
@@ -513,7 +511,7 @@ public static class UserSettings
         return AppSettings.GetValueOrDefault($"A_{controlGuid:N}", "").Split(new[] { "#!#" }, StringSplitOptions.None);
     }
 
-    public static void SetHistoryForControl(Guid controlGuid, IEnumerable<string> history)
+    public static void SetHistoryForControl(Guid controlGuid,IEnumerable<string> history)
     {
         AppSettings.AddOrUpdateValue($"A_{controlGuid:N}", string.Join("#!#", history));
     }

@@ -96,6 +96,11 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
 
         foreach (var discoveredTable in selected)
         {
+            return;
+        }
+
+        foreach (var discoveredTable in selected)
+        {
             var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, discoveredTable);
 
             //import the table

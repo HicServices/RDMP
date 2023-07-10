@@ -9,7 +9,7 @@ using System;
 namespace Rdmp.Core.ReusableLibraryCode.Progress;
 
 /// <summary>
-/// IDataLoadEventListener that ignores all OnProgress messages but responds to OnNotify events of ProgressEventType.Error (and optionally Warning) by 
+/// IDataLoadEventListener that ignores all OnProgress messages but responds to OnNotify events of ProgressEventType.Error (and optionally Warning) by
 /// raising an Exception.  Use this if you need an IDataLoadEventListener and don't care about the messages it sends (unless they are errors).
 /// </summary>
 public sealed class ThrowImmediatelyDataLoadEventListener : IDataLoadEventListener
@@ -18,7 +18,7 @@ public sealed class ThrowImmediatelyDataLoadEventListener : IDataLoadEventListen
     /// By default this class will only throw Fail results but if you set this flag then it will also throw warning messages
     /// </summary>
     public bool ThrowOnWarning { get; init; }
-        
+
     public bool WriteToConsole { get; init; }
 
     public static readonly ThrowImmediatelyDataLoadEventListener Quiet = new(false, false);
@@ -42,8 +42,8 @@ public sealed class ThrowImmediatelyDataLoadEventListener : IDataLoadEventListen
         if (WriteToConsole)
             Console.WriteLine($"{sender}:{e.Message}");
 
-        if (e.ProgressEventType == ProgressEventType.Error ||
-            (e.ProgressEventType == ProgressEventType.Warning && ThrowOnWarning))
+        if(e.ProgressEventType == ProgressEventType.Error ||
+           (e.ProgressEventType == ProgressEventType.Warning && ThrowOnWarning))
             throw new Exception(e.Message, e.Exception);
     }
 

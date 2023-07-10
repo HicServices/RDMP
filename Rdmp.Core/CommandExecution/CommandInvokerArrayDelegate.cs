@@ -29,5 +29,9 @@ internal class CommandInvokerArrayDelegate : CommandInvokerDelegate
     }
 
     /// <inheritdoc/>
-    public override bool CanHandle(Type t) => t.IsArray && HandledType.IsAssignableFrom(t.GetElementType());
+    public override bool CanHandle(Type t)
+    {
+        return t.IsArray && HandledType.IsAssignableFrom(t.GetElementType());
+    }
+
 }

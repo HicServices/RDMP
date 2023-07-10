@@ -312,7 +312,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public void Activate(object o)
     {
-        if (o is IMapsDirectlyToDatabaseTable m)
+        if(o is IMapsDirectlyToDatabaseTable m)
+        {
             // if a plugin user interface exists to handle editing this then let them handle it instead of launching the
             // normal UI
             foreach (var pluginInterface in PluginUserInterfaces)
@@ -340,6 +341,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public virtual IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t) =>
         CoreChildProvider.GetAllSearchables()
             .Keys.Where(t.IsInstanceOfType);
+    }
 
     /// <inheritdoc/>
     public abstract void ShowException(string errorText, Exception exception);
@@ -372,7 +374,10 @@ public abstract class BasicActivateItems : IBasicActivateItems
         {
             var didDelete = InteractiveDelete(deleteable);
 
-            if (didDelete) PublishNearest(deleteable);
+            if (didDelete)
+            {
+                PublishNearest(deleteable);
+            }
 
             return didDelete;
         }
@@ -414,7 +419,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                             $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
                             "Delete"))
                         return false;
-                    
+
                     foreach (var child in children)
                     {
                         child.DeleteInDatabase();
@@ -438,7 +443,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                     {
                         Show($"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
                         return false;
-                    }                       
+                    }
                 }
 
                 break;
@@ -457,12 +462,12 @@ public abstract class BasicActivateItems : IBasicActivateItems
         if (databaseObject != null)
         {
             var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
-            if (exports.Any(e => e.Exists()))
-                if (YesNo(
-                        "This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?",
-                        "Delete ObjectExport"))
-                    foreach (var e in exports)
+            if(exports.Any(e=>e.Exists()))
+                if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
+                {
+                    foreach(var e in exports)
                         e.DeleteInDatabase();
+                }
                 else
                     return false;
         }
@@ -641,11 +646,16 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public abstract FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern);
 
     /// <inheritdoc/>
-    public virtual List<CommandInvokerDelegate> GetDelegates() => new();
+    public virtual List<CommandInvokerDelegate> GetDelegates()
+    {
+        return new List<CommandInvokerDelegate>();
+    }
 
     /// <inheritdoc/>
-    public virtual IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline) =>
-        new PipelineRunner(useCase, pipeline);
+    public virtual IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
+    {
+        return new PipelineRunner(useCase,pipeline);
+    }
 
     /// <inheritdoc/>
     public virtual CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable,

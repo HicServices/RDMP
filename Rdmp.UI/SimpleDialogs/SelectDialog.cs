@@ -391,6 +391,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
                 toolStrip1.Items.Add(b);
             }
+        }
         else
             toolStripLabel1.Visible = false;
 
@@ -691,8 +692,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                         return 0;
 
                     // when returning search results always put checked items first
-                    var toDisplay =
-                        new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
+                    var toDisplay = new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
 
                     toDisplay.AddRange(_matches.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
                     _objectsToDisplay = toDisplay.Cast<T>().ToList();

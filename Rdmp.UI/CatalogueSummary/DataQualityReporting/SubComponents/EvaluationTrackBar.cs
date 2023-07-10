@@ -89,11 +89,12 @@ public partial class EvaluationTrackBar : UserControl
                 Text = Evaluations[i].DateOfEvaluation.ToString("d")
             };
             l.Location = new Point(x - l.PreferredWidth / 2, y);
-              
+
             Controls.Add(l);
             l.BringToFront();
 
             labels.Add(l);
+
         }
 
         tbEvaluation.Value = tbEvaluation.Maximum;

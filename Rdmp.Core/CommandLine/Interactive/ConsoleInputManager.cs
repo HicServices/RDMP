@@ -190,6 +190,7 @@ public class ConsoleInputManager : BasicActivateItems
 
             if (picker.Examples.Any())
             {
+
                 sb.AppendLine();
                 sb.Append($"Examples:");
                 foreach (var example in picker.Examples)
@@ -342,7 +343,7 @@ public class ConsoleInputManager : BasicActivateItems
 
             var searchPattern = file[(idxLastSlash+1)..];
             var dirStr = file[..idxLastSlash];
-                    
+
             var dir = new DirectoryInfo(dirStr);
 
             return !dir.Exists
@@ -354,6 +355,7 @@ public class ConsoleInputManager : BasicActivateItems
 
         return new[] { new FileInfo(file) };
     }
+
 
 
     protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
@@ -405,7 +407,7 @@ public class ConsoleInputManager : BasicActivateItems
 
             Console.WriteLine($"Errors:{load.Errors.Count}");
 
-            foreach (var error in load.Errors)
+            foreach(var error in load.Errors)
             {
                 error.GetSummary(out var title, out var body, out _, out _);
 
@@ -419,13 +421,16 @@ public class ConsoleInputManager : BasicActivateItems
             {
                 Console.WriteLine($"\t{t}: I={t.Inserts:N0} U={t.Updates:N0} D={t.Deletes:N0}");
 
-                foreach (var source in t.DataSources)
+                foreach(var source in t.DataSources)
                     Console.WriteLine($"\t\tSource:{source.Source}");
             }
 
             Console.WriteLine("Progress:");
 
-            foreach (var p in load.Progress) Console.WriteLine($"\t{p.Date} {p.Description}");
+            foreach(var p in load.Progress)
+            {
+                Console.WriteLine($"\t{p.Date} {p.Description}");
+            }
         }
     }
 

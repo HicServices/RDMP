@@ -87,7 +87,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
     }
 
     private Dictionary<object,List<object>> _mappingTable;
-        
+
     /// <summary>
     /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
     /// </summary>
@@ -171,9 +171,9 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                 catch (Exception ex)
                 {
                     throw new Exception($"Error building Type conversion decider for the mapping table key type {_keyType}",ex);
-                }   
+                }
             }
-                    
+
         }
 
         foreach (DataRow row in toProcess.Rows)

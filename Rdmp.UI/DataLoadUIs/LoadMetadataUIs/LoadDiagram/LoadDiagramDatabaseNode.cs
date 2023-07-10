@@ -50,6 +50,11 @@ public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
         _anticipatedChildren.AddRange(_loadTables.Select(t => new LoadDiagramTableNode(this, t, _bubble, _config)));
     }
 
+    public IEnumerable<object> GetChildren()
+    {
+        return _anticipatedChildren.Cast<object>().Union(_unplannedChildren);
+    }
+
     public IEnumerable<object> GetChildren() => _anticipatedChildren.Cast<object>().Union(_unplannedChildren);
 
     public override string ToString() => DatabaseName;

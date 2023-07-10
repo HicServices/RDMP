@@ -8,7 +8,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
 /// interface for any <see cref="IDeleteable"/> which wants to describe the unique special snowflake effects of deleting it.  This is primarily intended
-/// for classes which are not nouns and instead describe a relationship e.g. SelectedDataSets which describes the fact that dataset X is included in 
+/// for classes which are not nouns and instead describe a relationship e.g. SelectedDataSets which describes the fact that dataset X is included in
 /// configuration Y.
 /// </summary>
 public interface IDeletableWithCustomMessage : IDeleteable

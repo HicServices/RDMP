@@ -54,13 +54,13 @@ public class BulkTestsData
     public ColumnInfo[] columnInfos;
 
     /// <summary>
-    /// Rdmp reference to the test table (<see cref="ImportAsCatalogue"/>).  <see cref="Catalogue"/> is the descriptive element while <see cref="tableInfo"/> is the 
+    /// Rdmp reference to the test table (<see cref="ImportAsCatalogue"/>).  <see cref="Catalogue"/> is the descriptive element while <see cref="tableInfo"/> is the
     /// pointer to the underlying table.
     /// </summary>
     public ICatalogue catalogue;
 
     /// <summary>
-    /// Rdmp reference to the test table columns (<see cref="ImportAsCatalogue"/>).  <see cref="CatalogueItem"/> is the descriptive element while <see cref="columnInfos"/> is the 
+    /// Rdmp reference to the test table columns (<see cref="ImportAsCatalogue"/>).  <see cref="CatalogueItem"/> is the descriptive element while <see cref="columnInfos"/> is the
     /// pointer to the underlying table columns.
     /// </summary>
     public CatalogueItem[] catalogueItems;
@@ -118,7 +118,7 @@ public class BulkTestsData
             tbl.Drop();
 
         //create the table but make sure the chi is a primary key and the correct data type and that we have a sensible primary key
-        Table = BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{ 
+        Table = BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{
             new("chi",new DatabaseTypeRequest(typeof(string),10)){IsPrimaryKey=true},
             new("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){IsPrimaryKey=true},
             new("hb_extract",new DatabaseTypeRequest(typeof(string),1)){IsPrimaryKey=true}

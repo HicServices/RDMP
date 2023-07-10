@@ -17,7 +17,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced;
 
 /// <summary>
 /// Allows you to limit the graph generated to X bars (in the case of a graph without an axis) or restrict the number of Pivot values returned.  For example you can graph 'Top 10 most
-/// prescribed drugs'.  Top X is meaningless without an order by statement, therefore you must also configure a dimension to order by (and a direction).  In most cases you should leave 
+/// prescribed drugs'.  Top X is meaningless without an order by statement, therefore you must also configure a dimension to order by (and a direction).  In most cases you should leave
 /// the Dimension at 'Count Column' this will mean that whatever your count dimension is (usually count(*)) will be used to determine the TOP X.  Setting to Ascending will give you the
 /// lowest number e.g. 'Top 10 LEAST prescribed drugs' instead.  If you change the dimension from the 'count column' to one of your dimensions then the TOP X will apply to that column
 /// instead.  e.g. the 'The first 10 prescribed drugs alphabetically' (not particularly useful).
@@ -27,7 +27,7 @@ public partial class AggregateTopXUI : RDMPUserControl
     private AggregateTopX _topX;
     private AggregateConfiguration _aggregate;
 
-    private const string CountColumn = "Count Column";
+    private const string CountColumn  = "Count Column";
 
     public AggregateTopXUI()
     {
@@ -144,7 +144,7 @@ public partial class AggregateTopXUI : RDMPUserControl
         if (ddOrderByDimension.SelectedItem is AggregateDimension dimension)
             _topX.OrderByDimensionIfAny_ID = dimension.ID;
         else
-            _topX.OrderByDimensionIfAny_ID = null; //means use count column 
+            _topX.OrderByDimensionIfAny_ID = null; //means use count column
 
         _topX.SaveToDatabase();
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));

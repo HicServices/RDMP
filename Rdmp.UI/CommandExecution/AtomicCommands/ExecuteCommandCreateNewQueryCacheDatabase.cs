@@ -22,8 +22,7 @@ public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution
 {
     private readonly CohortIdentificationConfiguration _cic;
 
-    public ExecuteCommandCreateNewQueryCacheDatabase(IActivateItems activator,
-        CohortIdentificationConfiguration configuration) : base(activator)
+    public ExecuteCommandCreateNewQueryCacheDatabase(IActivateItems activator, CohortIdentificationConfiguration configuration):base(activator)
     {
         _cic = configuration;
         if (_cic.QueryCachingServer_ID != null)
@@ -49,7 +48,7 @@ public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution
             _cic.QueryCachingServer_ID = newServer.ID;
             _cic.SaveToDatabase();
 
-            SetDefaultIfNotExists(newServer, PermissableDefaults.CohortIdentificationQueryCachingServer_ID, true);
+            SetDefaultIfNotExists(newServer,PermissableDefaults.CohortIdentificationQueryCachingServer_ID,true);
 
             Publish(_cic);
         }

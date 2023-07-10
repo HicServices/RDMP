@@ -192,7 +192,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
             var input = r[0];
             var alias = r[1];
-                            
+
             if(input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
                 throw new AliasTableFetchException("Alias table contained nulls");
 

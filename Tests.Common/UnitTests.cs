@@ -292,7 +292,7 @@ public class UnitTests
         if (typeof(T) == typeof(LoadModuleAssembly))
         {
             var config = WhenIHaveA(repository, out var dateEi,out _);
-                
+
             //remove the other Ei
             config.AggregateDimensions[0].DeleteInDatabase();
             //add the date one
@@ -370,14 +370,14 @@ public class UnitTests
         if (typeof(T) == typeof(JoinInfo))
         {
             WhenIHaveTwoTables(repository, out var col1,out var col2,out _);
-                
+
             return (T)(object)new JoinInfo(repository,col1,col2,ExtractionJoinType.Left, null);
         }
 
         if (typeof(T) == typeof(Lookup))
         {
             WhenIHaveTwoTables(repository, out var col1,out var col2,out var col3);
-                
+
             return (T)(object)new Lookup(repository,col3,col1,col2,ExtractionJoinType.Left, null);
         }
 
@@ -385,8 +385,13 @@ public class UnitTests
         {
             var lookup = WhenIHaveA<Lookup>(repository);
 
-            var otherJoinFk = new ColumnInfo(repository, "otherJoinKeyForeign", "int", lookup.ForeignKey.TableInfo);
-            var otherJoinPk = new ColumnInfo(repository, "otherJoinKeyPrimary", "int", lookup.PrimaryKey.TableInfo);
+            var otherJoinFk = new ColumnInfo(repository,"otherJoinKeyForeign","int",lookup.ForeignKey.TableInfo);
+            var otherJoinPk = new ColumnInfo(repository,"otherJoinKeyPrimary","int",lookup.PrimaryKey.TableInfo);
+
+            return (T)(object)new LookupCompositeJoinInfo(repository,lookup,otherJoinFk,otherJoinPk);
+        }
+        if (typeof (T) == typeof(Pipeline))
+            return (T)(object)new Pipeline(repository,"My Pipeline");
 
             return (T)(object)new LookupCompositeJoinInfo(repository, lookup, otherJoinFk, otherJoinPk);
         }
@@ -473,8 +478,8 @@ public class UnitTests
 
         if (typeof(T) == typeof(ReleaseLog))
         {
-            var file = Path.Combine(TestContext.CurrentContext.TestDirectory, "myDataset.csv");
-            File.WriteAllText(file, "omg rows");
+            var file = Path.Combine(TestContext.CurrentContext.TestDirectory,"myDataset.csv");
+            File.WriteAllText(file,"omg rows");
 
             var sds = WhenIHaveA<SelectedDataSets>(repository);
             _=new CumulativeExtractionResults(repository,sds.ExtractionConfiguration,sds.ExtractableDataSet,"SELECT * FROM ANYWHERE");
@@ -486,6 +491,7 @@ public class UnitTests
                 false,
                 new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 new FileInfo(file));
+
         }
 
         if (typeof(T) == typeof(ExtractableDataSetPackage))

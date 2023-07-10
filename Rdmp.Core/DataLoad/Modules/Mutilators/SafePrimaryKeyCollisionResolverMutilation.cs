@@ -27,8 +27,7 @@ public class SafePrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTabl
         "The non primary key column to be used for deduplication.  This must contain different values for the same primary key and you must only want to keep one e.g. DataAge")]
     public ColumnInfo ColumnToResolveOn { get; set; }
 
-    [DemandsInitialization(
-        @"Determines behaviour when a primary key collision is the result of one record having null and another not.
+    [DemandsInitialization(@"Determines behaviour when a primary key collision is the result of one record having null and another not.
 True - Delete the non null record
 False - Delete the null record")]
     public bool PreferNulls { get; set; }
@@ -52,8 +51,7 @@ False - Delete the larger value")]
         //FYI - we are considering whether to delete records from table {0}
 
         var deleteConditional =
-            PreferNulls
-                ?
+            PreferNulls?
                 //delete rows {0} where {0} is not null and {1} is null - leaving only the null records {1}
                 $"({t1DotColumn} IS NOT NULL AND {t2DotColumn} IS NULL)"
                 :

@@ -24,7 +24,7 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
     private readonly LoadBubble _bubble;
     private readonly DiscoveredDatabase _database;
     private readonly string _description;
-        
+
     public string ErrorDescription { get; private set; }
 
     private Dictionary<DiscoveredDatabase, TableInfo[]> _liveDatabaseDictionary;
@@ -78,6 +78,11 @@ public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderab
     public IEnumerable<LoadDiagramDatabaseNode> GetChildren() => Children;
 
     public override string ToString() => _description;
+
+    public override string ToString()
+    {
+        return _description;
+    }
 
     public void DiscoverState()
     {

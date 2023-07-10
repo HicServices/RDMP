@@ -86,9 +86,9 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
         var catalogueItemPkColumns = GetCatalogueItemPrimaryKeys().Select(c => c.GetRuntimeName()).ToArray();
 
         if (catalogueItemPkColumns.Any())
-            chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c =>
-                catalogueItemPkColumns.Contains(c.ColumnName, StringComparer.CurrentCultureIgnoreCase)).ToArray();
-        else if (_synthesizePkCol)
+            chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c => catalogueItemPkColumns.Contains(c.ColumnName, StringComparer.CurrentCultureIgnoreCase)).ToArray();
+        else
+        if (_synthesizePkCol)
             chunk.PrimaryKey = new[] { chunk.Columns[SYNTH_PK_COLUMN] };
 
         return chunk;
@@ -117,8 +117,8 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
                     CheckResult.Success));
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'",
-                    CheckResult.Fail));
+                    $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'", CheckResult.Fail));
+
         }
         else
         {

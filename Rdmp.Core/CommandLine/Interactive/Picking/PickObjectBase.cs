@@ -23,7 +23,10 @@ public abstract class PickObjectBase
     protected Regex Regex { get; }
     protected readonly IBasicActivateItems Activator;
 
-    public virtual bool IsMatch(string arg, int idx) => Regex.IsMatch(arg);
+    public virtual bool IsMatch(string arg, int idx)
+    {
+        return Regex.IsMatch(arg);
+    }
     public abstract CommandLineObjectPickerArgumentValue Parse(string arg, int idx);
 
 

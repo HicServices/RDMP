@@ -94,8 +94,7 @@ public class Diff
     /// <summary>
     /// Shortest Middle Snake Return Data
     /// </summary>
-    private struct SMSRD
-    {
+    private struct SMSRD {
         internal int x, y;
         // internal int u, v;  // 2002.09.20: no need for 2 points
     }
@@ -203,6 +202,7 @@ public class Diff
         return DiffText(TextA, TextB, false, false, false);
     } // DiffText
 
+
     /// <summary>
     /// Find the difference in 2 text documents, comparing by textlines.
     /// The algorithm itself is comparing 2 arrays of numbers so when comparing 2 text documents
@@ -283,7 +283,7 @@ public class Diff
 
             if (ignoreCase)
                 s = s.ToLower();
-        
+
             var aCode = h[s];
             if (aCode == null) {
                 lastUsedCode++;
@@ -477,7 +477,7 @@ public class Diff
 
             // The path is from LowerX to (x,y) and (x,y) ot UpperX
             LCS(DataA, LowerA, smsrd.x, DataB, LowerB, smsrd.y);
-            LCS(DataA, smsrd.x, UpperA, DataB, smsrd.y, UpperB); // 2002.09.20: no need for 2 points
+            LCS(DataA, smsrd.x, UpperA, DataB, smsrd.y, UpperB);  // 2002.09.20: no need for 2 points
         }
     } // LCS()
 
@@ -560,6 +560,7 @@ internal class DiffData
         Length = initData.Length;
         modified = new bool[Length + 2];
     } // DiffData
+
 } // class DiffData
 
 // namespace

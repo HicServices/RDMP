@@ -36,21 +36,21 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
             SetImpossible("No root container");
             return;
         }
-
-        if (!_target.IsRootContainer())
+            
+        if(!_target.IsRootContainer())
         {
             SetImpossible("Only root containers can be unmerged");
             return;
         }
 
-        if (_target.GetAggregateConfigurations().Any())
+        if(_target.GetAggregateConfigurations().Any())
         {
             SetImpossible("Container must contain only subcontainers (i.e. no aggregate sets)");
             return;
         }
 
         if(_target.GetSubContainers().Length <= 1)
-        { 
+        {
             SetImpossible("Container must have 2 or more immediate subcontainers for unmerging");
             return;
         }

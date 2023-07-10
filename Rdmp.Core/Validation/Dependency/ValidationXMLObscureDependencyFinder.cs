@@ -25,7 +25,7 @@ public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
 {
     /// <summary>
     /// This is a list of regex patterns for identifying xml serialized classes that implement IMapsDirectlyToDatabaseTable in Xml strings
-    /// It is used to detect when you are trying to delete an object which has hidden references to it in important serialized bits of 
+    /// It is used to detect when you are trying to delete an object which has hidden references to it in important serialized bits of
     /// text (e.g. Catalogue.ValidationXML).
     /// </summary>
     public List<Suspect> TheUsualSuspects = new();

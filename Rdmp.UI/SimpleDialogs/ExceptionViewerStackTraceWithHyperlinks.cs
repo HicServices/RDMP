@@ -93,6 +93,8 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 
         for (var i = 0; i < lines.Length; i++)
         {
+
+
             //Any other things you want to not be a hyperlink because they give no useful context to the error can be added here and they will not appear as hyperlinks
             var lineIsMessageConstructor = lines[i].Contains("ReusableLibraryCode.Checks.CheckEventArgs..ctor");
 

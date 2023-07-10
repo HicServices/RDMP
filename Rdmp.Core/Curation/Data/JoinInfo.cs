@@ -113,7 +113,7 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     private ColumnInfo _foreignKey;
     private ColumnInfo _primaryKey;
 
-        
+
     private List<JoinInfo> _queryTimeComboJoins = new();
 
     #region Relationships
@@ -171,8 +171,13 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
         });
     }
 
+    }
+
     /// <inheritdoc/>
-    public override string ToString() => $" {ForeignKey.Name} = {PrimaryKey.Name}";
+    public override string ToString()
+    {
+        return $" {ForeignKey.Name} = {PrimaryKey.Name}";
+    }
 
     /// <summary>
     /// Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of

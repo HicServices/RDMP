@@ -205,7 +205,7 @@ public class CatalogueProblemProvider : ProblemProvider
         if (catalogue != null)
         {
             //if we know the Catalogue extractability
-                    
+
             //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
             //otherwise it's a Problem
 

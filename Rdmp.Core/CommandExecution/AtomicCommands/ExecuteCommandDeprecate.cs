@@ -19,7 +19,7 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
     public ExecuteCommandDeprecate(IBasicActivateItems itemActivator,
         [DemandsInitialization("The object you want to deprecate/undeprecate")]
         IMightBeDeprecated[] o,
-        [DemandsInitialization("True to deprecate.  False to undeprecate", DefaultValue = true)]
+        [DemandsInitialization("True to deprecate.  False to undeprecate",DefaultValue = true)]
         bool desiredState = true) : base(itemActivator)
     {
         _o = o;

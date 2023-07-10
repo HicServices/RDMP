@@ -28,8 +28,7 @@ public class HelpWorkflow
     public HelpStage RootStage { get; set; }
     public HelpStage CurrentStage { get; set; }
 
-    public HelpWorkflow(Control hostControl, Guid workflowGuid, IHelpWorkflowProgressProvider progressProvider) : this(
-        hostControl, null, progressProvider)
+    public HelpWorkflow(Control hostControl, Guid workflowGuid, IHelpWorkflowProgressProvider progressProvider):this(hostControl,null,progressProvider)
     {
         WorkflowGuid = workflowGuid;
     }

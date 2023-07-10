@@ -115,8 +115,7 @@ public class CataloguePipelinesAndReferencesCreation
     public void CreatePipelines(PlatformDatabaseCreationOptions options)
     {
         var bulkInsertCsvPipe =
-            CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)",
-                typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
+            CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)", typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
         var bulkInsertCsvPipewithAdjuster =
             CreatePipeline("BULK INSERT: CSV Import File (automated column-type detection)",
                 typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
@@ -158,8 +157,7 @@ public class CataloguePipelinesAndReferencesCreation
         d.SaveToDatabase();
     }
 
-    private Pipeline CreatePipeline(string nameOfPipe, Type sourceType, Type destinationTypeIfAny,
-        params Type[] componentTypes)
+    private Pipeline CreatePipeline(string nameOfPipe, Type sourceType, Type destinationTypeIfAny, params Type[] componentTypes)
     {
         if (componentTypes == null || componentTypes.Length == 0)
             return CreatePipeline(nameOfPipe, sourceType, destinationTypeIfAny);

@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Class for persisting the Comment, type and value of an Sql Parameter (e.g. /*mycool variable*/ DECLARE @bob as Varchar(10); Set @bob = 'fish').  RDMP supports 
+/// Class for persisting the Comment, type and value of an Sql Parameter (e.g. /*mycool variable*/ DECLARE @bob as Varchar(10); Set @bob = 'fish').  RDMP supports
 /// parameter overriding and merging duplicate parameters etc during query building (See ParameterManager).
 /// </summary>
 public interface ISqlParameter : ISaveable, IHasQuerySyntaxHelper, ICheckable
@@ -32,7 +32,7 @@ public interface ISqlParameter : ISaveable, IHasQuerySyntaxHelper, ICheckable
     string ParameterSQL { get; set; }
 
     /// <summary>
-    /// The value that the SQL parameter currently holds.  This should be a valid Right hand side operand for the assignment operator e.g. 'fish' or 10 or UPPER('omg') 
+    /// The value that the SQL parameter currently holds.  This should be a valid Right hand side operand for the assignment operator e.g. 'fish' or 10 or UPPER('omg')
     /// </summary>
     [Sql]
     string Value { get; set; }
@@ -44,7 +44,7 @@ public interface ISqlParameter : ISaveable, IHasQuerySyntaxHelper, ICheckable
 
     /// <summary>
     /// Returns the <see cref="IMapsDirectlyToDatabaseTable"/> (usually an <see cref="IFilter"/>) that the parameter is declared on.  If the parameter is a global level
-    /// parameter e.g. declared at <see cref="AggregateConfiguration"/> level then the corresponding higher level object will be returned 
+    /// parameter e.g. declared at <see cref="AggregateConfiguration"/> level then the corresponding higher level object will be returned
     ///  (e.g. <see cref="AnyTableSqlParameter"/>).
     /// </summary>
     /// <returns></returns>

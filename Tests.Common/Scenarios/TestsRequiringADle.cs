@@ -29,6 +29,7 @@ namespace Tests.Common.Scenarios;
 /// </summary>
 public class TestsRequiringADle : TestsRequiringA
 {
+
     protected int RowsBefore;
     protected int RowsNow => LiveTable.GetRowCount();
 

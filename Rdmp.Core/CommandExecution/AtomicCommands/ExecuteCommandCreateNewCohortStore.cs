@@ -24,12 +24,13 @@ public class ExecuteCommandCreateNewCohortStore : BasicCommandExecution
     private readonly string privateFieldDataType;
 
     /// <summary>
-    /// The cohort store created 
+    /// The cohort store created
     /// </summary>
     public ExternalCohortTable Created;
 
 
     public ExecuteCommandCreateNewCohortStore(IBasicActivateItems activator,
+
         [DemandsInitialization("The database to create")]
         DiscoveredDatabase databaseToCreate,
         [DemandsInitialization(

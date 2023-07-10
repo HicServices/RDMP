@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
 /// Abstract base IPipelineUseCase. Provides basic implementations for filtering compatible pipelines and translating
-/// a selected IPipeline into an actual executable engine instance via DataFlowPipelineEngineFactory.  Set ExplicitSource / 
+/// a selected IPipeline into an actual executable engine instance via DataFlowPipelineEngineFactory.  Set ExplicitSource /
 /// ExplicitDestination / PreInitialize objects etc as needed for your use case.
 /// </summary>
 public abstract class PipelineUseCase : IPipelineUseCase
@@ -31,7 +31,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <summary>
-    /// Call this in your constructor 
+    /// Call this in your constructor
     /// </summary>
     protected void GenerateContext()
     {
@@ -39,7 +39,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <summary>
-    /// Implement this to generate the compatiblity definition for pipelines that will be used by you.  
+    /// Implement this to generate the compatiblity definition for pipelines that will be used by you.
     /// 
     /// <para>IMPORTANT: Make sure you call <see cref="GenerateContext"/> in every constructor you have</para>
     /// </summary>
@@ -53,13 +53,13 @@ public abstract class PipelineUseCase : IPipelineUseCase
     public object ExplicitDestination { get; protected set; }
 
     /// <summary>
-    /// True if there there are no objects available for hydrating (e.g. no files to load, no picked cohorts etc).  This is often 
+    /// True if there there are no objects available for hydrating (e.g. no files to load, no picked cohorts etc).  This is often
     /// the case when the user is editing a <see cref="Pipeline"/> at some arbitrary time.
     /// 
     /// <para>If this is true then GetInitializationObjects should return Type[] instead of the actually selected objects for the task</para>
     /// </summary>
     public bool IsDesignTime { get; private set; }
-        
+
     protected HashSet<object> InitializationObjects = new();
     private IDataFlowPipelineContext _context;
 
@@ -84,8 +84,10 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <inheritdoc/>
-    public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines) =>
-        pipelines.Where(IsAllowable);
+    public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
+    {
+        return pipelines.Where(IsAllowable);
+    }
 
     /// <inheritdoc/>
     public virtual IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)

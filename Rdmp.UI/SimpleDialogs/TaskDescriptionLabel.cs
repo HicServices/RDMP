@@ -39,7 +39,7 @@ public partial class TaskDescriptionLabel : UserControl
         // set prompt text. If theres a TaskDescription too then leave a bit of extra space
         tbEntryLabel.Text = entryLabel;
 
-        Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) + 
+        Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) +
                       (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
 
         //Switch style based on args.DesciptionSeverity

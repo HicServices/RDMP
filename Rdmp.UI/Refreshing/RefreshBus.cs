@@ -61,6 +61,7 @@ public class RefreshBus
                 {
                     if (ChildProvider != null && e.DeletedObjectDescendancy == null)
                         e.DeletedObjectDescendancy = ChildProvider.GetDescendancyListIfAnyFor(e.Object);
+                    }
                 }
 
                 RefreshObject?.Invoke(sender, e);

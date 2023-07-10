@@ -42,10 +42,12 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="cache">Where to store results.  Note you can use helper method <see cref="SubmitIdentifierList{T}"/> instead
     /// of using this directly</param>
     /// <param name="token">Check this token for cancellation regularly if your API call takes a while to complete</param>
-    public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
-        CancellationToken token);
+    public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken token);
 
-    public virtual bool ShouldRun(AggregateConfiguration ac) => ShouldRun(ac.Catalogue);
+    public virtual bool ShouldRun(AggregateConfiguration ac)
+    {
+        return ShouldRun(ac.Catalogue);
+    }
     public abstract bool ShouldRun(ICatalogue catalogue);
 
 
@@ -87,7 +89,7 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     /// <param name="results"></param>
     /// <param name="aggregate"></param>
     /// <param name="cache"></param>
-    /// <param name="knownTypes">If your DataTable is properly Typed (i.e. columns in <paramref name="results"/> have assigned Types) 
+    /// <param name="knownTypes">If your DataTable is properly Typed (i.e. columns in <paramref name="results"/> have assigned Types)
     /// then pass true.  If everything is a string and you want types to be assigned for these for querying later pass false.</param>
     protected void SubmitPatientIndexTable(DataTable results, AggregateConfiguration aggregate,
         CachedAggregateConfigurationResultsManager cache, bool knownTypes)
@@ -108,7 +110,7 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
 
         // this is how you commit the results to the cache
         var args = new CacheCommitJoinableInceptionQuery(aggregate, GetDescription(aggregate), results,
-            guessers.Select(k => new DatabaseColumnRequest(k.Key, k.Value.Guess)).ToArray()
+            guessers.Select(k=>new DatabaseColumnRequest(k.Key,k.Value.Guess)).ToArray()
             , 5000);
         cache.CommitResults(args);
     }

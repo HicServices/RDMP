@@ -209,6 +209,7 @@ internal class RDMPApplicationSettings : ISettings
             {
                 return defaultValue;
             }
+
         }
 
         return null != value ? (T)value : defaultValue;

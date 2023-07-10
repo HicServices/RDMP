@@ -25,7 +25,7 @@ public class RemoveDuplicates : IPluginDataFlowComponent<DataTable>
     private int totalDuplicatesFound;
 
     private Dictionary<int, List<DataRow>> _uniqueHashesSeen = new();
-        
+
     /// <summary>
     /// Turns off notify messages about number of duplicates found/replaced
     /// </summary>

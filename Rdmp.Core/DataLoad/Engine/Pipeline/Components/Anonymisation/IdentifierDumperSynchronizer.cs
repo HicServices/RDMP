@@ -77,7 +77,7 @@ internal class IdentifierDumperSynchronizer
         var columnsInTheIdentifiersDumpTable = server.ExpectDatabase(_dump.Database).ExpectTable(identifiersTable).DiscoverColumns();
 
         #region Pk Mismatches between dump and live
-                
+
         //Are all origin primary keys in the dump and also primary keys in the dump?
         foreach (var originPk in primaryKeyColumnInfos)
         {
@@ -109,7 +109,7 @@ internal class IdentifierDumperSynchronizer
 
             if(_parent.ColumnsToRouteToSomewhereElse.Any(d=>d.GetRuntimeName().Equals(columnNameInDump)))//it's something we were expecting to dump
                 continue;
-                    
+
             //these are also expected don't warn user about them
             if (columnNameInDump == SpecialFieldNames.ValidFrom || columnNameInDump == SpecialFieldNames.DataLoadRunID)
                 continue;
@@ -175,7 +175,7 @@ internal class IdentifierDumperSynchronizer
         foreach (var columnInIdentifierDump in columnsInTheIdentifiersDumpTable)
         {
             //try to find a ColumnInfo in the catalogue that has the same name as the identifier dump column we found when interrogating the database
-            var columnThatShouldHaveTheSameType 
+            var columnThatShouldHaveTheSameType
                 = allColumnsInLiveDatabase.FirstOrDefault(
                     col => col.GetRuntimeName().Equals(columnInIdentifierDump.GetRuntimeName()));
 

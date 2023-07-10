@@ -66,6 +66,8 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
     private IAggregateBuilderOptions _options;
     private AggregateConfiguration _aggregate;
 
+    private List<ITableInfo> _forcedJoins;
+
     private IQuerySyntaxHelper _querySyntaxHelper;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -113,7 +115,10 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         return rowobject is JoinableCohortAggregateConfigurationUse j ? j.JoinType : (object)null;
     }
 
-    private Bitmap ImageGetter(object rowObject) => Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
+    private Bitmap ImageGetter(object rowObject)
+    {
+        return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
+    }
 
     private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
     {

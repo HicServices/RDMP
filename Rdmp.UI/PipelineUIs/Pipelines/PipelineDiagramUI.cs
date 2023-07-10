@@ -38,7 +38,7 @@ public partial class PipelineDiagramUI : UserControl
     public bool AllowReOrdering { get; set; }
 
     private RAGSmiley pipelineSmiley = new();
-        
+
     public IPipelineComponent SelectedComponent;
     public event PipelineComponentSelectedHandler SelectedComponentChanged;
 
@@ -147,10 +147,11 @@ public partial class PipelineDiagramUI : UserControl
 
                     //create it
                     var pipelineInstance = _pipelineFactory.Create(pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
-                    
+
                     //initialize it (unless it is design time)
                     if (!_useCase.IsDesignTime)
                         pipelineInstance.Initialize(_useCase.GetInitializationObjects().ToArray());
+
                 }
                 catch (Exception ex)
                 {
@@ -161,21 +162,18 @@ public partial class PipelineDiagramUI : UserControl
 
                 //was there an explicit instance?
                 if (_useCase.ExplicitSource != null)
-                    AddExplicit(_useCase.ExplicitSource); //if so add it
+                    AddExplicit(_useCase.ExplicitSource);//if so add it
                 else
                     //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
                 if (pipeline.SourcePipelineComponent_ID != null)
                     AddPipelineComponent((int)pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source,
                         pipeline.Repository); //add the possibly broken PipelineComponent to the diagram
                 else
-                    AddBlankComponent(PipelineComponentRole.Source); //the user hasn't put one in yet 
+                    AddBlankComponent(PipelineComponentRole.Source);//the user hasn't put one in yet
 
 
-                foreach (var middleComponent in pipeline.PipelineComponents.Where(c =>
-                             c.ID != pipeline.SourcePipelineComponent_ID &&
-                             c.ID != pipeline.DestinationPipelineComponent_ID).OrderBy(comp => comp.Order))
-                    AddPipelineComponent(middleComponent,
-                        PipelineComponentRole.Middle); //add the possibly broken PipelineComponent to the diagram
+                foreach (var middleComponent in pipeline.PipelineComponents.Where( c=>c.ID!= pipeline.SourcePipelineComponent_ID && c.ID != pipeline.DestinationPipelineComponent_ID).OrderBy(comp=>comp.Order))
+                    AddPipelineComponent(middleComponent, PipelineComponentRole.Middle);//add the possibly broken PipelineComponent to the diagram
 
                 //was there an explicit instance?
                 if (_useCase.ExplicitDestination != null)
@@ -194,7 +192,7 @@ public partial class PipelineDiagramUI : UserControl
                 else
                 {
                     AddDividerIfReorderingAvailable();
-                    AddBlankComponent(PipelineComponentRole.Destination); //the user hasn't put one in yet 
+                    AddBlankComponent(PipelineComponentRole.Destination);//the user hasn't put one in yet
                 }
 
 
@@ -202,7 +200,7 @@ public partial class PipelineDiagramUI : UserControl
             }
 
 
-            //Fallback 
+            //Fallback
             //user has not picked a pipeline yet, show him the shell (factory)
             //factory has no source, add empty source
             if (_useCase.ExplicitSource == null)

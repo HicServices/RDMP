@@ -83,8 +83,7 @@ public class ParameterCreator
 
                 //now we might be in the process of cloning another IFilter in which case we want the filters to match the templates ones
                 if (_importFromIfAny != null)
-                    matchingTemplateFilter =
-                        _importFromIfAny.SingleOrDefault(t => t.ParameterName.Equals(requiredParameterName));
+                    matchingTemplateFilter = _importFromIfAny.SingleOrDefault(t => t.ParameterName.Equals(requiredParameterName));
 
                 var proposedNewParameterName = requiredParameterName;
                 var proposedAliasNumber = 2;
@@ -139,9 +138,6 @@ public class ParameterCreator
                     }
                 }
 
-                if (newParameter == null)
-                    throw new NullReferenceException(
-                        "Parameter construction method returned null, expected it to return an ISqlParameter");
 
 
                 //We have a template so copy across the remaining values

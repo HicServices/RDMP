@@ -163,7 +163,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
         lock (_oProgressQueueLock)
         {
-            //we have received an update to this message 
+            //we have received an update to this message
             if (ProgressQueue.TryGetValue(args.TaskDescription,out var entry))
             {
                 entry.DateTime = DateTime.Now;
@@ -230,17 +230,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                     _ => throw new ArgumentOutOfRangeException("type")
                 };
 
-                var label = args.Progress.UnitOfMeasurement switch
-                {
-                    ProgressType.Records => "records",
-                    ProgressType.Kilobytes => "KB",
-                    _ => throw new ArgumentOutOfRangeException("type")
-                };
+                var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription, args.Progress.Value, label);
 
-                var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription,
-                    args.Progress.Value, label);
-
-                if (!handledByFlood)
+                if(!handledByFlood)
                     if (!progress.Rows.Contains(args.TaskDescription))
                     {
                         progress.Rows.Add(new object[] { args.TaskDescription, args.Progress.Value, label });
@@ -311,8 +303,8 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             if (progress.Rows.Contains(jobsAlreadySeen))
             {
                 startAtProgressAmount += Convert.ToInt32(progress.Rows.Find(jobsAlreadySeen)["Count"]);
-                progress.Rows.Remove(
-                    progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table
+                progress.Rows.Remove(progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table
+
             }
 
         var i = 1;
@@ -400,6 +392,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     }
 
 
+
     private void ddGroupBy_SelectedIndexChanged(object sender, EventArgs e)
     {
         var dd = ddGroupBy.SelectedItem as string;
@@ -467,4 +460,5 @@ internal class QueuedProgressMessage
     public DateTime DateTime { get; set; }
     public ProgressEventArgs ProgressEventArgs { get; set; }
     public object Sender { get; set; }
+
 }

@@ -31,6 +31,7 @@ public abstract class Bound : SecondaryConstraint
     public bool Inclusive { get; set; }
 
 
+
     protected static object LookupFieldNamed(string name, object[] otherColumns, object[] otherColumnNames)
     {
         for (var i = 0; i < otherColumnNames.Length; i++)
@@ -47,6 +48,7 @@ public abstract class Bound : SecondaryConstraint
     {
         throw new MissingFieldException($"Validation failed: Comparator field [{name}] not found in dictionary.");
     }
+
 
 
     public override void RenameColumn(string originalName, string newName)

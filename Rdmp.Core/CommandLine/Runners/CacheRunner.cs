@@ -56,7 +56,7 @@ public class CacheRunner : Runner
                     {
                         RetryMode = _options.RetryMode,
                         CacheProgress = cp, //run the cp
-                        //By default caching host will block 
+                        //By default caching host will block
                         TerminateIfOutsidePermissionWindow = true
                     };
 

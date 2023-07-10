@@ -60,7 +60,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private IPipelineSelectionUI _pipelineSelectionUI1;
     private IMapsDirectlyToDatabaseTable[] _globals;
     private DataExportChildProvider _childProvider;
-        
+
     private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
 
 
@@ -241,7 +241,10 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
 
-    public override string GetTabName() => $"Release: {_project}";
+    public override string GetTabName()
+    {
+        return $"Release: {_project}";
+    }
 
     public void TickAllFor(ExtractionConfiguration configuration)
     {

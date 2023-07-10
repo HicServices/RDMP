@@ -20,17 +20,18 @@ using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 
 /// <summary>
-/// Allows you to view a sample of the data in your dataset before and after a data load.  This includes a sample of the new records added and a side by side comparison of the 
+/// Allows you to view a sample of the data in your dataset before and after a data load.  This includes a sample of the new records added and a side by side comparison of the
 /// changes (See DiffDataTables).  Depending on your indexes and the volume of your data it might take some time to execute the sample fetching query.
 /// 
 /// <para>Generate the preview by entering an appropriate timeout (e.g. 120 seconds) and selecting 'Try To Fetch Appropriate Data'.  This will show you the SQL that the system is about
 /// to run so that you can (if you want/need to) run the code in Sql Management Studio with the query analyser on which might suggest indexes to help with performance problems.</para>
 /// 
-/// <para>Once the queries have finished executing (you will see progress messages appearing in the 'Fetch Data' tab), INSERTS that were part of the data load will appear in 'View Inserts' 
+/// <para>Once the queries have finished executing (you will see progress messages appearing in the 'Fetch Data' tab), INSERTS that were part of the data load will appear in 'View Inserts'
 /// tab and side by side views of UPDATES (old vs new) will appear in the 'View Updates' tab (see DiffDataTables).</para>
 /// </summary>
 public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
 {
+
     private int _dataLoadRunID;
     private TableInfo _toInterrogate;
     private int _batchSizeToGet;

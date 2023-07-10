@@ -97,7 +97,7 @@ public class YamlRepository : MemoryDataExportRepository
                 continue;
             }
 
-            lock (lockFs)
+            lock(lockFs)
             {
                 foreach (var yaml in typeDir.EnumerateFiles("*.yaml"))
                     try
@@ -208,7 +208,10 @@ public class YamlRepository : MemoryDataExportRepository
             File.Delete(GetPath(oTableWrapperObject));
 
             // if deleting a LoadModuleAssembly also delete its binary content file (the plugin dlls in nupkg)
-            if (oTableWrapperObject is LoadModuleAssembly lma) File.Delete(GetNupkgPath(lma));
+            if (oTableWrapperObject is LoadModuleAssembly lma)
+            {
+                File.Delete(GetNupkgPath(lma));
+            }
         }
     }
 
@@ -444,6 +447,8 @@ public class YamlRepository : MemoryDataExportRepository
 
                 CredentialsDictionary.Add(table, valDictionary);
             }
+
+
         }
     }
 

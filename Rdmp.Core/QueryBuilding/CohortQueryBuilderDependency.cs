@@ -64,7 +64,7 @@ public class CohortQueryBuilderDependency
     /// <summary>
     /// The raw SQL for the <see cref="CohortSet"/> with a join against the cached artifact for the <see cref="PatientIndexTableIfAny"/>
     /// </summary>
-    public CohortQueryBuilderDependencySql SqlPartiallyCached { get; private set; }
+    public CohortQueryBuilderDependencySql SqlPartiallyCached { get;  private set;}
 
     /// <summary>
     /// Sql for a single cache fetch  that pulls the cached result of the <see cref="CohortSet"/> joined to <see cref="PatientIndexTableIfAny"/> (if there was any)
@@ -138,12 +138,12 @@ public class CohortQueryBuilderDependency
                     $"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cache is configured on {CohortSet.GetCohortIdentificationConfigurationIfAny()}.  You must enable result caching to use plugin aggregates.");
 
             // It's a plugin aggregate so only ever run the cached SQL
-            SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable,
-                pluginCohortCompiler, cancellationToken);
+            SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
 
-            if (SqlFullyCached == null)
-                throw new Exception(
-                    $"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cached results were found after running.");
+            if(SqlFullyCached == null)
+            {
+                throw new Exception($"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cached results were found after running.");
+            }
             return;
         }
 
@@ -173,6 +173,7 @@ public class CohortQueryBuilderDependency
                 // of querying it too.
                 SqlJoinableCacheless = SqlJoinableCached;
             }
+
         }
 
         if (isSolitaryPatientIndexTable)
@@ -191,6 +192,7 @@ public class CohortQueryBuilderDependency
             SqlCacheless = CohortQueryBuilderHelper.GetSQLForAggregate(CohortSet,
                 new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
                     SqlJoinableCacheless, parent.Customise, globals));
+
 
 
             //if the joined to table is cached we can generate a partial too with full sql for the outer sql block and a cache fetch join

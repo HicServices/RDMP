@@ -35,7 +35,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced;
 /// <summary>
 /// Allows you to pick which columns are used to build an AggregateConfiguration.  This includes all AggregateDimensions (and the count column) as well as all available columns which could
 /// be included.  This UI handles column selection / editing for both regular Aggregate Graphs, Cohort Sets and Patient Index Tables (because they are all actually just AggregateConfiguration
-/// objects anyway). 
+/// objects anyway).
 /// 
 /// <para>Ticking a column includes it in the configuration, unticking it deletes it.  If you have ticked an ExtractionInformation it will become an AggregateDimension which means when you change its
 /// SQL implementation it will not affect the main extraction implementation.  This means that if you tick a column and modify it then untick it you will loose the changes.</para>
@@ -129,7 +129,7 @@ public partial class SelectColumnUI : RDMPUserControl
             }
             else
             {
-                //it is a removal 
+                //it is a removal
 
                 //user is trying to remove count column
                 if (countColumn != null)

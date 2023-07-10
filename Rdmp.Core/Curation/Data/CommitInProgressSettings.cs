@@ -14,7 +14,7 @@ namespace Rdmp.Core.Curation.Data;
 public class CommitInProgressSettings
 {
     /// <summary>
-    /// Set to true to detect ANY object creation or deletion that occurs on any of the 
+    /// Set to true to detect ANY object creation or deletion that occurs on any of the
     /// <see cref="IRepository"/> in the current application scope.  All new/deleted objects
     /// during the lifteime of this object will then be included in any <see cref="Commit"/>
     /// created.  Do not use this for long lifetime <see cref="CommitInProgress"/> e.g. one
@@ -23,7 +23,7 @@ public class CommitInProgressSettings
     public bool TrackInsertsAndDeletes { get; }
 
     /// <summary>
-    /// Optional default description to use when describing the purpose of this commit. 
+    /// Optional default description to use when describing the purpose of this commit.
     /// If code is interactive then user may expand on the description or replace it entirely.
     /// If null then a suitable description is generated based on objects/properties changed
     /// </summary>
@@ -38,7 +38,7 @@ public class CommitInProgressSettings
 
     /// <summary>
     /// All initially known objects you want to detect changes in.  Note that depending on settings
-    /// this may be expanded to include new objects added/deleted during the lifetime of the 
+    /// this may be expanded to include new objects added/deleted during the lifetime of the
     /// <see cref="CommitInProgress"/>.
     /// </summary>
     public IMapsDirectlyToDatabaseTable[] ObjectsToTrack { get; }

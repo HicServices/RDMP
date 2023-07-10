@@ -250,7 +250,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
                 _cmd.CommandTimeout = _timeoutControls.Timeout;
 
                 var a = server.GetDataAdapter(_cmd);
-                        
+
                 var dt = new DataTable();
 
                 a.Fill(dt);

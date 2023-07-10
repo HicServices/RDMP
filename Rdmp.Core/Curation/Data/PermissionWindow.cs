@@ -134,7 +134,10 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     }
 
     /// <inheritdoc/>
-    public override string ToString() => $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
+    public override string ToString()
+    {
+        return $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
+    }
 
     /// <inheritdoc/>
     public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)

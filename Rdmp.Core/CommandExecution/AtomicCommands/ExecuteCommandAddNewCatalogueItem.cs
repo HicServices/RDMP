@@ -99,6 +99,11 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
 
             if (columnInfo == null) return;
 
+            if (columnInfo == null)
+            {
+                return;
+            }
+
             //get them to type a name for it (based on the ColumnInfo if picked)
             if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out var text))
             {
@@ -112,7 +117,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
                 if (columnInfo != null)
                 {
                     ci.SetColumnInfo(columnInfo);
-                    CreateExtractionInformation(repo, ci, columnInfo);
+                    CreateExtractionInformation(repo,ci,columnInfo);
                 }
 
                 ci.SaveToDatabase();

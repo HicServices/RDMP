@@ -183,13 +183,12 @@ public class QueryTimeColumn : IComparable
 
                     //either way the last seen fk (or guessed fk) isn't right.  So what fks could potentially be used with the Column?
                     var probableCorrectColumn = lookupDescriptionInvolvement.Where(
-                            l =>
-                                //any lookup where there is...
-                                ColumnsInOrder.Any(
-                                    qtc =>
-                                        //a column with an ID equal to the fk
-                                        qtc.UnderlyingColumn != null && qtc.UnderlyingColumn.ID == l.ForeignKey_ID))
-                        .ToArray();
+                        l =>
+                            //any lookup where there is...
+                            ColumnsInOrder.Any(
+                                qtc =>
+                                    //a column with an ID equal to the fk
+                                    qtc.UnderlyingColumn != null && qtc.UnderlyingColumn.ID == l.ForeignKey_ID)).ToArray();
 
 
                     var suggestions = "";

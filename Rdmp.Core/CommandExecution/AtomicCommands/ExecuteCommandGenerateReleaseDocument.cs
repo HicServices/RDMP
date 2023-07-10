@@ -35,7 +35,7 @@ internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IA
         else
             try
             {
-                // try to fetch the cohort (give it 2 seconds maximum). 
+                // try to fetch the cohort (give it 2 seconds maximum).
                 // we don't want to freeze waiting for context menu to pop up on this
                 var eds = _extractionConfiguration.Cohort.GetExternalData(2);
 

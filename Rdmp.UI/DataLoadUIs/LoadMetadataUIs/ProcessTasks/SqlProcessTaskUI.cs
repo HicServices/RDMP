@@ -165,4 +165,5 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SqlProcessTaskUI_Design, UserControl>))]
 public abstract class SqlProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
 {
+
 }

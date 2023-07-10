@@ -225,7 +225,7 @@ public class SelectedDataSetsChecker : ICheckable
                         CheckResult.Fail, e));
                     return;
                 }
-                    
+
                 try
                 {
                     using var r = cmd.ExecuteReader();

@@ -30,9 +30,15 @@ public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasquerade
         DataSet = dataSet;
     }
 
-    public override string ToString() => DataSet.ToString();
+    public override string ToString()
+    {
+        return DataSet.ToString();
+    }
 
-    protected bool Equals(PackageContentNode other) => Equals(Package, other.Package) && Equals(DataSet, other.DataSet);
+    protected bool Equals(PackageContentNode other)
+    {
+        return Equals(Package, other.Package) && Equals(DataSet, other.DataSet);
+    }
 
     public override bool Equals(object obj)
     {

@@ -25,8 +25,7 @@ public class PopulateRAW : CompositeDataLoadComponent
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
 
-    public PopulateRAW(List<IRuntimeTask> collection, HICDatabaseConfiguration databaseConfiguration) : base(
-        collection.Cast<IDataLoadComponent>().ToList())
+    public PopulateRAW(List<IRuntimeTask> collection,HICDatabaseConfiguration databaseConfiguration):base(collection.Cast<IDataLoadComponent>().ToList())
     {
         _databaseConfiguration = databaseConfiguration;
         Description = "Populate RAW";
@@ -107,6 +106,7 @@ public class PopulateRAW : CompositeDataLoadComponent
             var message = $"The Mounting stage has not populated the RAW database ({rawDbInfo}) with any data";
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, message));
             throw new Exception(message);
+
         }
     }
 }

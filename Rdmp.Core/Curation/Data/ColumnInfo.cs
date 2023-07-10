@@ -35,6 +35,7 @@ namespace Rdmp.Core.Curation.Data;
 public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable,
     IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>, INamed
 {
+
     #region Database Properties
 
     private int _tableInfoID;
@@ -92,7 +93,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    ///  User specified free text field.  Not used for anything by RDMP. 
+    ///  User specified free text field.  Not used for anything by RDMP.
     /// <para> Use <see cref="Collation"/> instead</para>
     /// </summary>
     public string Format
@@ -401,9 +402,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         {
             //if it has an ANO transform
             if (ANOTable_ID != null)
-                return
-                    ANOTable.GetRuntimeDataType(
-                        loadStage); //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet 
+                return ANOTable.GetRuntimeDataType(loadStage);    //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet
 
             //it doesn't have an ANOtransform but it might be the subject of dilution
             var discard = TableInfo.PreLoadDiscardedColumns.SingleOrDefault(c =>
@@ -469,7 +468,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Checks the ANO status of the column is valid (and matching on datatypes etc).  
+    /// Checks the ANO status of the column is valid (and matching on datatypes etc).
     /// <para>Does not check for synchronization against the underlying database.</para>
     /// </summary>
     /// <param name="notifier"></param>
@@ -525,7 +524,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
     /// <summary>
     /// Returns true if the Data_type is numerical (decimal or int) according to the DBMS it resides in.  Returns
-    /// false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything 
+    /// false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything
     /// else goes wrong resolving the Type.
     /// </summary>
     /// <returns></returns>

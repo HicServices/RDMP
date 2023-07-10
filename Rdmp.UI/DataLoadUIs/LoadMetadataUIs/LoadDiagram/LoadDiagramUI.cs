@@ -101,8 +101,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             if (tableNode.Bubble == LoadBubble.Live)
             {
                 //for live just use the TableInfo!
-                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(
-                    new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
+                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
                 return;
             }
             else

@@ -100,8 +100,7 @@ public class KVPAttacher : FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDes
                 $"Target destination table {TableName} did not contain a column called '{TargetDataTableValueColumnName}' which is where we were told to store the Value of the Key value pairs");
     }
 
-    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,
-        GracefulCancellationToken cancellationToken)
+    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken)
     {
         //there are no batches for processing
         if (!BatchesReadyForProcessing.Any())
@@ -118,8 +117,8 @@ public class KVPAttacher : FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDes
         {
             var pkValues = new Dictionary<string, object>();
 
-            foreach (var pk in pks)
-                pkValues.Add(pk, batchRow[pk]);
+            foreach(var pk in pks)
+                pkValues.Add(pk,batchRow[pk]);
 
             foreach (DataColumn col in currentBatch.Columns)
             {

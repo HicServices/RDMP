@@ -183,7 +183,7 @@ public class LogManager : ILogManager
             else
             {
                 cmd.Cancel();
-                        
+
                 if (rTask.IsFaulted && rTask.Exception != null)
                     throw rTask.Exception.GetExceptionIfExists<Exception>() ?? rTask.Exception;
 
@@ -206,6 +206,7 @@ public class LogManager : ILogManager
 
         return Convert.ToInt32(cmd.ExecuteScalar());
     }
+
 
 
     public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description,

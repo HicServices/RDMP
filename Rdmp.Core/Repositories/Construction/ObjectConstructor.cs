@@ -17,7 +17,7 @@ namespace Rdmp.Core.Repositories.Construction;
 
 /// <summary>
 /// Simplifies identifying and invoking ConstructorInfos on Types (reflection).  This includes identifying a suitable Constructor on a class Type based on the
-/// provided parameters and invoking it.  Also implicitly supports hypotheticals e.g. 'here's a TableInfo, construct class X with the TableInfo parameter or if 
+/// provided parameters and invoking it.  Also implicitly supports hypotheticals e.g. 'here's a TableInfo, construct class X with the TableInfo parameter or if
 /// it has a blank constructor that's fine too or if it takes ITableInfo that's fine too... just use whatever works'.  If there are multiple matching constructors
 /// it will attempt to find the 'best' (See InvokeBestConstructor for implementation).
 /// 
@@ -115,7 +115,7 @@ public class ObjectConstructor
         throw new ObjectLacksCompatibleConstructorException(
             $"Type '{typeToConstruct}' does not have a constructor taking an {typeof(T)}");
     }
-        
+
     private static List<ConstructorInfo> GetConstructors<T>(Type type)
     {
         var toReturn = new List<ConstructorInfo>();
@@ -126,7 +126,7 @@ public class ObjectConstructor
 
             switch (p.Length)
             {
-                //is it an exact match i.e. ctor(T bob) 
+                //is it an exact match i.e. ctor(T bob)
                 case 1 when p[0].ParameterType == typeof (T): // Exact match found
                     return new List<ConstructorInfo>(new[] { constructor });
                 case 1:

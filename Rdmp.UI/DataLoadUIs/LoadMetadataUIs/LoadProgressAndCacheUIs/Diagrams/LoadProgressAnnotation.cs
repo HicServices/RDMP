@@ -31,7 +31,7 @@ internal class LoadProgressAnnotation
     public LineAnnotation LineAnnotationCacheProgress { get; private set; }
     public TextAnnotation TextAnnotationCacheProgress { get; private set; }
 
-    public LoadProgressAnnotation(LoadProgress lp, DataTable dt, Chart chart)
+    public LoadProgressAnnotation(LoadProgress lp,DataTable dt, Chart chart)
     {
         _lp = lp;
         _dt = dt;

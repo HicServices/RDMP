@@ -149,7 +149,10 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public bool IsReferenceTo(Type type) => AreProbablySameType(ReferencedObjectType, type);
+    public bool IsReferenceTo(Type type)
+    {
+        return AreProbablySameType(ReferencedObjectType, type);
+    }
 
     /// <summary>
     /// True if the <paramref name="o"/> is the object that is explicitly referenced by this class instance
@@ -167,15 +170,22 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
         storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
         storedTypeName.Equals(candidate.FullName, StringComparison.CurrentCultureIgnoreCase);
 
+    private bool AreProbablySameType(string storedTypeName, Type candidate)
+    {
+        return
+            storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
+            storedTypeName.Equals(candidate.FullName, StringComparison.CurrentCultureIgnoreCase);
+    }
+
     /// <summary>
     /// Returns the instance of the object referenced by this class or null if it no longer exists (e.g. has been deleted)
     /// </summary>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public virtual IMapsDirectlyToDatabaseTable
-        GetReferencedObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator) =>
-        repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType,
-            ReferencedObjectID);
+    public virtual IMapsDirectlyToDatabaseTable GetReferencedObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    {
+        return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
+    }
 
     /// <summary>
     /// Returns true if the object referenced by this class still exists in the database

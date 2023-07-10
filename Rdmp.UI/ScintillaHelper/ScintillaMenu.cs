@@ -16,6 +16,7 @@ namespace Rdmp.UI.ScintillaHelper;
 [DesignerCategory("")]
 internal class ScintillaMenu:ContextMenuStrip
 {
+
     private readonly Scintilla _scintilla;
     private ToolStripMenuItem _miUndo;
     private ToolStripMenuItem _miRedo;

@@ -69,7 +69,7 @@ public class CohortCompiler
     /// and not running yet.
     /// </summary>
     public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new();
-        
+
     public List<Thread> Threads = new();
     private ICoreChildProvider _coreChildProvider;
 
@@ -107,7 +107,7 @@ public class CohortCompiler
             task.Timeout = timeout;
             task.State = CompilationState.Executing;
 
-            execution.GetCohortAsync(timeout);
+            execution.GetCohortAsync( timeout);
 
             task.FinalRowCount = execution.Identifiers.Rows.Count;
 
@@ -232,8 +232,7 @@ public class CohortCompiler
             // is this a custom aggregate type that gets handled differently e.g. by queriying an API?
             var plugin = PluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(aggregate));
 
-            task = plugin != null
-                ?
+            task = plugin != null ?
                 // yes
                 new PluginCohortCompilerTask(aggregate, this, plugin)
                 // no
@@ -273,13 +272,14 @@ public class CohortCompiler
                         StopContainerWhenYouReach = (IOrderable) runnable
                     };
             }
-                
+
         }
 
         ExternalDatabaseServer cacheServer = null;
         //if the overall owner has a cache configured
         if (CohortIdentificationConfiguration.QueryCachingServer_ID != null)
         {
+
             cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
             queryBuilder.CacheServer = cacheServer;
 
@@ -333,9 +333,7 @@ public class CohortCompiler
         task.Log = queryBuilder?.Results?.Log;
 
 
-        var isResultsForRootContainer = container != null &&
-                                        container.ID == CohortIdentificationConfiguration
-                                            .RootCohortAggregateContainer_ID;
+        var isResultsForRootContainer = container != null && container.ID == CohortIdentificationConfiguration.RootCohortAggregateContainer_ID;
 
 
         var taskExecution = new CohortIdentificationTaskExecution(cacheServer, newsql, cumulativeSql, source,
@@ -345,7 +343,10 @@ public class CohortCompiler
             queryBuilder?.Results?.TargetServer);
 
         // task is now built but not yet
-        if (task.State != CompilationState.Crashed) task.State = CompilationState.NotScheduled;
+        if(task.State != CompilationState.Crashed)
+        {
+            task.State = CompilationState.NotScheduled;
+        }
 
         lock (Tasks)
         {
@@ -421,8 +422,7 @@ public class CohortCompiler
 
                 var identifierDimension = identifiers[0];
                 var identifierColumnInfo = identifierDimension.ColumnInfo;
-                var destinationDataType =
-                    GetDestinationType(identifierColumnInfo.Data_type, cacheableTask, queryCachingServer);
+                var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
 
                 explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
 
@@ -514,7 +514,7 @@ public class CohortCompiler
                 {
                     compileable.CancellationTokenSource.Cancel();
                 }
-                    
+
 
                 if (alsoClearFromTaskList)
                 {

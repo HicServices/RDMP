@@ -43,7 +43,7 @@ public static class NewObjectPool
 
     /// <summary>
     /// Starts a new session tracking all new objects created.  Make sure you wrap the
-    /// returned session in a using statement.  
+    /// returned session in a using statement.
     /// </summary>
     /// <exception cref="Exception">If there is already a session ongoing</exception>
     /// <returns></returns>

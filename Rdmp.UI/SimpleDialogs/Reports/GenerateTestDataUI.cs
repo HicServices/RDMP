@@ -139,7 +139,7 @@ public partial class GenerateTestDataUI : RDMPForm
     }
 
     private bool started;
-        
+
     private List<DataGeneratorUI> Executing = new();
     private DirectoryInfo _extractDirectory;
 
@@ -181,11 +181,7 @@ public partial class GenerateTestDataUI : RDMPForm
                     Executing.Add(ui);
                     ui.BeginGeneration(identifiers, _extractDirectory);
                     var ui1 = ui;
-                    ui.Completed += () =>
-                    {
-                        Executing.Remove(ui1);
-                        AnnounceIfComplete();
-                    };
+                    ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};
                 }
             }
             else
@@ -211,7 +207,7 @@ public partial class GenerateTestDataUI : RDMPForm
         var dataGeneratorFactory = new DataGeneratorFactory();
 
         //reset the current generator to use the seed provided
-        current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(), r);
+        current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(),r);
 
 
         current.BeginGeneration(identifiers, _extractDirectory);

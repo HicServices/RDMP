@@ -40,7 +40,7 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
             case CatalogueCombineable sourceCatalogueCombineable:
                 return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,sourceCatalogueCombineable, targetCohortAggregateContainer);
             //source is aggregate
-            //if it is not already involved in cohort identification 
+            //if it is not already involved in cohort identification
             case AggregateConfigurationCombineable sourceAggregateCommand when !sourceAggregateCommand.Aggregate.IsCohortIdentificationAggregate:
                 return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
             case AggregateConfigurationCombineable sourceAggregateCommand:
@@ -63,8 +63,8 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
                     //it's a patient index table
                     if (sourceAggregateCommand.IsPatientIndexTable)
                     return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
-                
-                
+
+
                 //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
                 return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
             }

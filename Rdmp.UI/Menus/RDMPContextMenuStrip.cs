@@ -85,7 +85,7 @@ public class RDMPContextMenuStrip : ContextMenuStrip
         {
             foreach (var mi in gotoMenu.DropDownItems.OfType<ToolStripMenuItem>())
             {
-                if (mi.Tag is ExecuteCommandShow cmd)
+                if(mi.Tag is ExecuteCommandShow cmd)
                 {
                     cmd.FetchDestinationObjects();
                     mi.Enabled = !cmd.IsImpossible;

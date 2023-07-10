@@ -68,6 +68,9 @@ public class ReleaseRunner : ManyRunner
                 if (!configurationIds.Contains(s.ExtractionConfiguration_ID))
                     //add the config since it's not included in _options.Configurations
                     _configurations = _configurations.ToList().Union(new[] { s.ExtractionConfiguration }).ToArray();
+                }
+            }
+
         }
         else
         {

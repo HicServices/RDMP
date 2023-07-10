@@ -70,9 +70,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
 
         var expectedFieldName = GetPrivateFieldName();
 
-        listener.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information,
-                $"Looking for column called '{expectedFieldName}' in the data in order to produce a sample"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,$"Looking for column called '{expectedFieldName}' in the data in order to produce a sample"));
 
         if (!toProcess.Columns.Contains(expectedFieldName))
             throw new Exception(

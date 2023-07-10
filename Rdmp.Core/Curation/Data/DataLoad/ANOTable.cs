@@ -188,7 +188,10 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <inheritdoc/>
-    public override string ToString() => TableName;
+    public override string ToString()
+    {
+        return TableName;
+    }
 
     /// <summary>
     /// Checks that the remote mapping table referenced by this object exists and checks <see cref="ANOTable"/> settings (<see cref="Suffix"/> etc).
@@ -307,7 +310,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                         $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation})", CheckResult.Warning));
         }
 
-        var con = forceConnection ?? server.GetConnection(); //use the forced connection or open a new one
+        var con = forceConnection ?? server.GetConnection();//use the forced connection or open a new one
 
         try
         {
@@ -395,17 +398,16 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         //cache answers
         if (_identifiableDataType == null)
         {
-            var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
+            var server = DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);
 
             var columnsFoundInANO = server.GetCurrentDatabase().ExpectTable(TableName).DiscoverColumns();
 
             var expectedIdentifiableName = TableName["ANO".Length..];
 
             var anonymous = columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(TableName));
-            var identifiable =
-                columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedIdentifiableName));
+            var identifiable = columnsFoundInANO.SingleOrDefault(c=>c.GetRuntimeName().Equals(expectedIdentifiableName));
 
-            if (anonymous == null)
+            if(anonymous == null)
                 throw new Exception(
                     $"Could not find a column called {TableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray())})");
 
@@ -428,7 +430,7 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
             _ => throw new ArgumentOutOfRangeException(nameof(loadStage))
         };
     }
-        
+
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {

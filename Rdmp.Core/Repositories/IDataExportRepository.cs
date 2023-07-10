@@ -36,8 +36,6 @@ public interface IDataExportRepository : IRepository, IExtractableDataSetPackage
 
     IDataExportPropertyManager DataExportPropertyManager { get; }
 
-    IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(
-        IExtractionConfiguration configuration, IExtractableDataSet dataset);
-
+    IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset);
     IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults);
 }

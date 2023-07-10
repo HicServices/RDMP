@@ -130,8 +130,7 @@ public class SearchablesMatchScorer
         //if user hasn't typed any explicit Type filters
         if (showOnlyTypes != null && TypeNames != null)
             //add the explicit types only if the search text does not contain any explicit type names
-            if (string.IsNullOrWhiteSpace(searchText) ||
-                !TypeNames.Intersect(searchText.Split(' '), StringComparer.CurrentCultureIgnoreCase).Any())
+            if(string.IsNullOrWhiteSpace(searchText) || !TypeNames.Intersect(searchText.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
                 foreach (var showOnlyType in showOnlyTypes)
                     searchText = $"{searchText} {showOnlyType.Name}";
 
@@ -343,7 +342,7 @@ public class SearchablesMatchScorer
     public static bool Filter(object modelObject, DescendancyList descendancy, bool includeInternal,
         bool includeDeprecated, bool includeColdStorage, bool includeProjectSpecific, bool includeNonExtractable)
     {
-        //doesn't relate to us... 
+        //doesn't relate to us...
         if (modelObject is not ICatalogue cata)
         {
             // or are we one of these things that can be tied to a catalogue

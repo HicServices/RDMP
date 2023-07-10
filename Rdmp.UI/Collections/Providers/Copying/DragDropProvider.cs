@@ -183,6 +183,7 @@ public class DragDropProvider : SimpleDragSource
     }
 
 
+
     private static void DisplayFeedback(ICommandExecution execution, OlvDropEventArgs e)
     {
         //no command is even remotely possible
@@ -207,6 +208,7 @@ public class DragDropProvider : SimpleDragSource
         e.Handled = true;
         e.Effect = DragDropEffects.Move;
     }
+
 
 
     private static InsertOption GetDropLocation(ModelDropEventArgs e)

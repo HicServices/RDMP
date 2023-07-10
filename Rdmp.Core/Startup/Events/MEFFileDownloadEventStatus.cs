@@ -12,6 +12,7 @@ namespace Rdmp.Core.Startup.Events;
 /// </summary>
 public enum MEFFileDownloadEventStatus
 {
+
     /// <summary>
     /// The file was successfully processed
     /// </summary>

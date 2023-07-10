@@ -157,7 +157,7 @@ public class BoundDouble : Bound
     {
         return $"[{s}]";
     }
-        
+
     public BoundDouble And(int upper)
     {
         Upper = upper;

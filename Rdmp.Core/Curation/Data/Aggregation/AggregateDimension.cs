@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// <summary>
 /// This class allows you to associate a specific extractioninformation for use in aggregate generation.  For example a dataset might have a date field AdmissionDate which you
 /// want to create an aggregate configuration (when patients were admitted) over time.  However the class also allows you to specify new SelectSQL which can change how the field
-/// is extracted e.g. you might want to change "[MyDatabase].[MyTable].[AdmissionDate]" into "YEAR([MyDatabase].[MyTable].[AdmissionDate]) as AdmissionDate" 
+/// is extracted e.g. you might want to change "[MyDatabase].[MyTable].[AdmissionDate]" into "YEAR([MyDatabase].[MyTable].[AdmissionDate]) as AdmissionDate"
 /// </summary>
 public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColumn, IHasDependencies,
     IInjectKnown<ExtractionInformation>
@@ -38,7 +38,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
     /// <summary>
     /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and ORDER BY sections of an <see cref="AggregateConfiguration"/>.  This property returns
-    /// the ID of the <see cref="AggregateConfiguration"/> that this column is declared on.  
+    /// the ID of the <see cref="AggregateConfiguration"/> that this column is declared on.
     /// </summary>
     public int AggregateConfiguration_ID
     {
@@ -49,7 +49,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     /// <summary>
     /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and/or ORDER BY sections of an <see cref="AggregateConfiguration"/>.  The column must have
     /// come from an extractable column in the parent <see cref="Catalogue"/>.  The Catalogue column definition is an <see cref="ExtractionInformation"/> and documents the
-    /// master SELECT Sql (which can be overriden in the current AggregateDimension) as well as what the underlying <see cref="ColumnInfo"/> / <see cref="TableInfo"/>. 
+    /// master SELECT Sql (which can be overriden in the current AggregateDimension) as well as what the underlying <see cref="ColumnInfo"/> / <see cref="TableInfo"/>.
     /// 
     /// <para>This property is the ID of the associated Catalogue master <see cref="ExtractionInformation"/>.</para>
     /// </summary>

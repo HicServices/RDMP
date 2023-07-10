@@ -130,7 +130,7 @@ public class FlatFileToDataTablePusher
             //if we are ignoring this header
             if (_headers.IgnoreColumnsList.Contains(_headers[i]))
                 continue;
-                
+
             //it's an empty header, don't bother populating it
             if (_headers[i].IsBasicallyNull())
                 if (!lineToPush[i].IsBasicallyNull())
@@ -179,8 +179,7 @@ public class FlatFileToDataTablePusher
         return 0;
     }
 
-    private bool DealWithTooFewCellsOnCurrentLine(CsvReader reader, FlatFileLine lineToPush,
-        IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
+    private bool DealWithTooFewCellsOnCurrentLine(CsvReader reader, FlatFileLine lineToPush, IDataLoadEventListener listener,FlatFileEventHandlers eventHandlers)
     {
         if (!_attemptToResolveNewlinesInRecords)
         {
@@ -264,6 +263,7 @@ public class FlatFileToDataTablePusher
     }
 
 
+
     public DataTable StronglyTypeTable(DataTable workingTable, ExplicitTypingCollection explicitTypingCollection)
     {
         var deciders = new Dictionary<int, IDecideTypesForStrings>();
@@ -306,10 +306,10 @@ public class FlatFileToDataTablePusher
             foreach (DataRow row in workingTable.Rows)
                 dtCloned.Rows.Add(row.ItemArray.Select((v,idx)=>
 
-                    deciders.TryGetValue(idx,out var typer) && v is string s? 
+                    deciders.TryGetValue(idx,out var typer) && v is string s?
                         typer.Parse(s) :
                         v).ToArray());
-                
+
             return dtCloned;
         }
 

@@ -74,13 +74,11 @@ public class RdmpMockFactory
     /// <returns></returns>
     public static ITableInfo Mock_TableInfo(DiscoveredTable table)
     {
-        var mock = Substitute.For<ITableInfo>();
-        mock.Name.Returns(table.GetFullyQualifiedName());
-        mock.Database.Returns(table.Database.GetRuntimeName());
-        mock.DatabaseType.Returns(table.Database.Server.DatabaseType);
-        mock.IsTableValuedFunction.Returns(table.TableType == TableType.TableValuedFunction);
-        mock.Discover(Arg.Any<DataAccessContext>()).Returns(table);
-        return mock;
-
+        return Mock.Of<ITableInfo>(p=>
+            p.Name == table.GetFullyQualifiedName() &&
+            p.Database==table.Database.GetRuntimeName() &&
+            p.DatabaseType==table.Database.Server.DatabaseType &&
+            p.IsTableValuedFunction == (table.TableType == TableType.TableValuedFunction) &&
+            p.Discover(It.IsAny<DataAccessContext>())==table);
     }
 }

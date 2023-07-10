@@ -34,7 +34,7 @@ public interface IExtractableDataSet : IMapsDirectlyToDatabaseTable, IRevertable
     /// <summary>
     /// Indicates that the referenced <see cref="Catalogue_ID"/> is associated only with one <see cref="IProject"/> and should not be used outside of that.
     /// 
-    /// <para>Usually this means the data is bespoke project data e.g. questionnaire answers for a cohort etc.  These data tables are treated exactly like regular Catalogues and 
+    /// <para>Usually this means the data is bespoke project data e.g. questionnaire answers for a cohort etc.  These data tables are treated exactly like regular Catalogues and
     /// extracted in the same way as all the regular data.</para>
     /// 
     /// <para>In addition, you can use the columns in the referenced <see cref="Catalogue_ID"/> by joining them to any regular Catalogue being extracted in the Project.  These

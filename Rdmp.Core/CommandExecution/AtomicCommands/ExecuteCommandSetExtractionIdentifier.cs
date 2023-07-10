@@ -34,7 +34,7 @@ public class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSett
             IExtractionConfiguration inConfiguration,
 
             [DemandsInitialization("Optional - The Column name(s) you want to select as the new linkage identifier(s).  Comma separate multiple entries if needed")]
-            string column) 
+            string column)
         // base class args
         : base(activator, catalogue, inConfiguration, column,
             "Set Extraction Identifier",

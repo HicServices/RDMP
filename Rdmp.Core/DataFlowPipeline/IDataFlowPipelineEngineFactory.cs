@@ -16,7 +16,7 @@ public interface IDataFlowPipelineEngineFactory
 {
     /// <summary>
     /// Turns the blueprint <see cref="IPipeline"/> into a runnable instance of <see cref="IDataFlowPipelineEngine"/>.  This engine will be uninitialized
-    /// to start with. 
+    /// to start with.
     /// </summary>
     /// <param name="pipeline"></param>
     /// <param name="listener"></param>

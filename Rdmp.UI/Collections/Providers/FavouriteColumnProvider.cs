@@ -77,6 +77,7 @@ public class FavouriteColumnProvider
             }
             catch (ArgumentException)
             {
+
             }
         }
     }

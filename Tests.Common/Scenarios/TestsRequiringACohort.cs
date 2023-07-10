@@ -49,6 +49,7 @@ public class TestsRequiringACohort : TestsRequiringA
     protected readonly Dictionary<string, string> _cohortKeysGenerated = new();
 
 
+
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
     {
@@ -217,7 +218,7 @@ GO
         cmd.ExecuteNonQuery();
     }
 
-        
+
     protected void EmptyCohortTables(DbConnection con)
     {
         //clear out old data
@@ -237,4 +238,5 @@ GO
         using var insertRecord = _cohortDatabase.Server.GetCommand(insertIntoList, con);
         Assert.AreEqual(1, insertRecord.ExecuteNonQuery());
     }
+
 }

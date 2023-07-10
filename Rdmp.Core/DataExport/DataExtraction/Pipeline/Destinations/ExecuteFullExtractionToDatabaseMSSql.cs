@@ -59,9 +59,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          ", Mandatory = true, DefaultValue = "$c_$d")]
     public string TableNamingPattern { get; set; }
 
-    [DemandsInitialization(
-        @"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",
-        defaultValue: true)]
+    [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
     public bool DropTableIfLoadFails { get; set; }
 
     [DemandsInitialization(DataTableUploadDestination.AlterTimeout_Description, DefaultValue = 300)]
@@ -88,7 +86,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private bool _tableDidNotExistAtStartOfLoad;
     private bool _isTableAlreadyNamed;
     private DataTable _toProcess;
-        
+
     public ExecuteFullExtractionToDatabaseMSSql():base(false)
     {
 
@@ -119,8 +117,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         OutputFile = _toProcess.TableName;
     }
 
-    protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job,
-        GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
+    protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
     {
         // empty batches are allowed when using batch/resume
         if (toProcess.Rows.Count == 0 && _request.IsBatchResume) return;
@@ -191,7 +188,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         _destination = new DataTableUploadDestination();
 
-        PrimeDestinationTypesBasedOnCatalogueTypes(listener, toProcess);
+        PrimeDestinationTypesBasedOnCatalogueTypes(listener,toProcess);
 
         _destination.AllowResizingColumnsAtUploadTime = true;
         _destination.AlterTimeout = AlterTimeout;
@@ -235,7 +232,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 continue;
             }
 
-            if (extractionInformation.IsProperTransform())
+            if(extractionInformation.IsProperTransform())
             {
                 listener.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Warning,
@@ -363,7 +360,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 {
                     var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
 
-                    if (tbl.Exists())
+                    if(tbl.Exists())
                     {
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"DropTableIfLoadFails is true so about to drop table {tbl}"));
@@ -372,11 +369,11 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     }
                 }
 
-            if (pipelineFailureExceptionIfAny == null
-                && _request.IsBatchResume
-                && MakeFinalTableDistinctWhenBatchResuming
-                && _destinationDatabase != null
-                && _toProcess != null)
+            if(pipelineFailureExceptionIfAny == null
+               && _request.IsBatchResume
+               && MakeFinalTableDistinctWhenBatchResuming
+               && _destinationDatabase != null
+               && _toProcess != null)
             {
                 var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
                 if (tbl.Exists())
@@ -430,7 +427,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         return DestinationType.Database;
     }
-        
+
     public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
     {
         return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
@@ -443,7 +440,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
     }
-        
+
     protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory, IExtractionConfiguration configuration,IDataLoadEventListener listener, out int linesWritten,
         out string destinationDescription)
     {
@@ -548,9 +545,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         if (TargetDatabaseServer == null)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                "Target database server property has not been set (This component does not know where to extract data to!), " +
-                "to fix this you must edit the pipeline and choose an ExternalDatabaseServer to extract to)",
+            notifier.OnCheckPerformed(new CheckEventArgs("Target database server property has not been set (This component does not know where to extract data to!), " +
+                                                         "to fix this you must edit the pipeline and choose an ExternalDatabaseServer to extract to)",
                 CheckResult.Fail));
             return;
         }
@@ -650,9 +646,11 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 }
 
                 // if the expected table exists and we are not doing a batch resume
-                if (tables.Any(t => t.GetRuntimeName().Equals(tableName)) && !_request.IsBatchResume)
-                    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase,
-                        tableName, database));
+                if(tables.Any(t=>t.GetRuntimeName().Equals(tableName))  && !_request.IsBatchResume)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase, tableName,database));
+                }
+
             }
             else
             {

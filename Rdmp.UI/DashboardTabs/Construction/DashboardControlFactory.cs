@@ -29,10 +29,13 @@ public class DashboardControlFactory
     public Type[] GetAvailableControlTypes() => _activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
         .Where(IsCompatibleType).ToArray();
 
-    private bool IsCompatibleType(Type arg) =>
-        typeof(IDashboardableControl).IsAssignableFrom(arg)
-        &&
-        typeof(UserControl).IsAssignableFrom(arg);
+    private bool IsCompatibleType(Type arg)
+    {
+        return
+            typeof (IDashboardableControl).IsAssignableFrom(arg)
+            &&
+            typeof(UserControl).IsAssignableFrom(arg);
+    }
 
     /// <summary>
     /// Creates an instance of the user control described by the database record DashboardControl, including providing the control with a hydrated IPersistableObjectCollection that reflects

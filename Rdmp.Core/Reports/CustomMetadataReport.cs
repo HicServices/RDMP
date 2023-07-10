@@ -32,6 +32,7 @@ public partial class CustomMetadataReport
     /// </summary>
     private Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new();
 
+
     /// <summary>
     /// Control line that begins looping Catalogues
     /// </summary>
@@ -261,9 +262,7 @@ public partial class CustomMetadataReport
                             for (var i = 0; i < catalogues.Length; i++)
                             {
                                 var element =
-                                    i == catalogues.Length - 1
-                                        ? ElementIteration.LastElement
-                                        : ElementIteration.RegularElement;
+                                    i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
 
                                 var newContents = DoReplacements(section.Body.ToArray(), catalogues[i], section,
                                     element);
@@ -280,7 +279,6 @@ public partial class CustomMetadataReport
                     var newContents = DoReplacements(templateBody, catalogue, null, ElementIteration.NotIterating);
 
                     if (oneFile)
-                    {
                         outFile.WriteLine(newContents);
                     }
                     else
@@ -425,6 +423,7 @@ public partial class CustomMetadataReport
                 foreach (var r in Replacements)
                     if (copy.Contains(r.Key))
                         copy = copy.Replace(r.Key, ValueToString(r.Value(catalogue)));
+                }
 
                 // when iterating we need to respect iteration symbols (e.g. $Comma).
                 if (iteration == ElementIteration.NotIterating)
@@ -489,8 +488,10 @@ public partial class CustomMetadataReport
 
         for (var j = 0; j < catalogueItems.Length; j++)
             sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
-                j < catalogueItems.Length - 1 ? ElementIteration.RegularElement : ElementIteration.LastElement));
-
+                j < catalogueItems.Length -1 ?
+                    ElementIteration.RegularElement : ElementIteration.LastElement));
+        }
+                
 
         result = sbResult.ToString();
 

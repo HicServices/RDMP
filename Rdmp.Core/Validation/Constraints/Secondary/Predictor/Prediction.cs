@@ -20,8 +20,7 @@ public class Prediction : SecondaryConstraint
     [ExpectsColumnNameAsInput]
     public string TargetColumn { get; set; }
 
-    [Description(
-        "The prediction rule that takes as input the current value and uses it to check the target column matches expectations")]
+    [Description("The prediction rule that takes as input the current value and uses it to check the target column matches expectations")]
     public PredictionRule Rule { get; set; }
 
     //blank constructor required for XMLSerialization

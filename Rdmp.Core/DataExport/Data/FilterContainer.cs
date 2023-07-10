@@ -68,7 +68,10 @@ public class FilterContainer : ConcreteContainer, IContainer
     /// Returns the <see cref="ConcreteContainer.Operation"/> "AND" or "OR"
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => Operation.ToString();
+    public override string ToString()
+    {
+        return Operation.ToString();
+    }
 
 
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()

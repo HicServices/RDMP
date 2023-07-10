@@ -83,7 +83,14 @@ public class MemoryRepository : IRepository
         var type = underlying ?? prop.PropertyType;
 
         if (type.IsEnum)
-            prop.SetValue(toCreate, strVal != null ? Enum.Parse(type, strVal) : Enum.ToObject(type, val));
+        {
+            if ( strVal != null)
+                prop.SetValue(toCreate, Enum.Parse(type, strVal));
+            else
+            {
+                prop.SetValue(toCreate, Enum.ToObject(type, val));
+            }
+        }
         else
             prop.SetValue(toCreate, Convert.ChangeType(val, type));
     }
@@ -282,6 +289,12 @@ public class MemoryRepository : IRepository
     public Version GetVersion() => GetType().Assembly.GetName().Version;
 
 
+    public Version GetVersion()
+    {
+        return GetType().Assembly.GetName().Version;
+    }
+
+
     public bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable
     {
         return Objects.Keys.OfType<T>().Any(o => o.ID == allegedParent);
@@ -297,8 +310,7 @@ public class MemoryRepository : IRepository
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type objectType, int objectId)
     {
         return Objects.Keys.SingleOrDefault(o => o.GetType() == objectType && objectId == o.ID)
-               ?? throw new KeyNotFoundException(
-                   $"Could not find object of Type '{objectType}' with ID '{objectId}' in {nameof(MemoryRepository)}");
+               ?? throw new KeyNotFoundException($"Could not find object of Type '{objectType}' with ID '{objectId}' in {nameof(MemoryRepository)}");
     }
 
     public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable

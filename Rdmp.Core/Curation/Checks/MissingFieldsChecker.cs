@@ -78,8 +78,7 @@ public class MissingFieldsChecker : ICheckable
         if (table == null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Could not find Table called {type.Name} (which implements IMapsDirectlyToDatabaseTable)",
-                CheckResult.Fail, null));
+                $"Could not find Table called {type.Name} (which implements IMapsDirectlyToDatabaseTable)",CheckResult.Fail, null));
             return;
         }
 

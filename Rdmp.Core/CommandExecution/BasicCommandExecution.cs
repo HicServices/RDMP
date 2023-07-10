@@ -26,9 +26,9 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Basic implementation of ICommandExecution ensures that if a command is marked IsImpossible then it cannot be run.  Call SetImpossible to render your command 
-/// un runnable with the given arguments.  You cannot make an IsImpossible command Possible again (therefore you should probably make this discision in your 
-/// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure 
+/// Basic implementation of ICommandExecution ensures that if a command is marked IsImpossible then it cannot be run.  Call SetImpossible to render your command
+/// un runnable with the given arguments.  You cannot make an IsImpossible command Possible again (therefore you should probably make this discision in your
+/// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure
 /// IsImpossible is respected in the unlikely event that some code or user attempts to execute an impossible command.
 /// 
 /// <para>Override GetCommandHelp and GetCommandName to change the presentation layer of the command (if applicable).</para>
@@ -230,7 +230,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     }
 
     /// <summary>
-    /// Displays the given message to the user, calling String.Format 
+    /// Displays the given message to the user, calling String.Format
     /// </summary>
     /// <param name="message"></param>
     /// <param name="objects">Objects to use for {0},{1} etc tokens in <paramref name="message"/></param>
@@ -255,8 +255,10 @@ public abstract class BasicCommandExecution : IAtomicCommand
         BasicActivator.TypeText(header, prompt, maxLength, initialText, out text, requireSaneHeaderText);
 
     /// <inheritdoc cref="TypeText(string, string, int, string, out string,bool)"/>
-    protected bool TypeText(string header, string prompt, out string text) =>
-        TypeText(header, prompt, 500, null, out text);
+    protected bool TypeText(string header, string prompt, out string text)
+    {
+        return TypeText(header, prompt, 500, null, out text);
+    }
 
     /// <inheritdoc cref="IBasicActivateItems.ShowException"/>
     protected void ShowException(string message, Exception exception)
@@ -272,10 +274,9 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
     /// <returns></returns>
-    protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false)
-        where T : DatabaseEntity =>
-        SelectOne(new DialogArgs
-        {
+    protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
+    {
+        return SelectOne(new DialogArgs {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
         },availableObjects, out var selected) ? selected : null;
@@ -300,10 +301,9 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <param name="initialSearchText"></param>
     /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
     /// <returns></returns>
-    protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false)
-        where T : DatabaseEntity =>
-        SelectOne(new DialogArgs
-        {
+    protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
+    {
+        return SelectOne(new DialogArgs {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
         },repository.GetAllObjects<T>().ToList(),out var answer) ? answer: null;
@@ -394,6 +394,11 @@ public abstract class BasicCommandExecution : IAtomicCommand
     protected void Emphasise(object o, int expansionDepth = 0)
     {
         BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
+    }
+
+    protected DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+    {
+        return BasicActivator.SelectDatabase(allowDatabaseCreation, taskDescription);
     }
 
     protected DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription) =>
@@ -498,11 +503,11 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// </summary>
     public static bool HasCommandNameOrAlias(Type commandType, string name)
     {
-        return 
-            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
-            || 
-            commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) 
-            || 
+        return
+            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase)
+            ||
+            commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase)
+            ||
             commandType.GetCustomAttributes<AliasAttribute>(false)
                 .Any(a => a.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
     }
@@ -511,7 +516,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <summary>
     /// <para>
     /// Performs the <paramref name="toRun"/> action within a <see cref="Commit"/> (if
-    /// commits are supported by platform).  Returns true if no commit was used or commit 
+    /// commits are supported by platform).  Returns true if no commit was used or commit
     /// was completed successfully.  Returns false if commit was abandonned (e.g. by user cancelling).
     /// </para>
     /// <remarks> If commit is abandoned then <paramref name="trackObjects"/> will all be reverted
@@ -550,6 +555,9 @@ public abstract class BasicCommandExecution : IAtomicCommand
             foreach (var o in trackObjects)
                 if (o is IRevertable re)
                     re.RevertToDatabaseState();
+                }
+            }
+        }
 
         return !revert;
     }

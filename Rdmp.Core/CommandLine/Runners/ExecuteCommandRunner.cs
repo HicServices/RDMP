@@ -79,9 +79,12 @@ internal class ExecuteCommandRunner:IRunner
 
 
         _picker =
-            _options.CommandArgs != null && _options.CommandArgs.Any()
-                ? new CommandLineObjectPicker(_options.CommandArgs, _input)
-                : null;
+            _options.CommandArgs != null && _options.CommandArgs.Any() ?
+                new CommandLineObjectPicker(_options.CommandArgs, _input) :
+                null;
+            
+        if(!string.IsNullOrWhiteSpace(_options.File) && _options.Script == null)
+            throw new Exception("Command line option File was provided but Script property was null.  The host API failed to deserialize the file or correctly use the ExecuteCommandOptions class");
 
         if (!string.IsNullOrWhiteSpace(_options.File) && _options.Script == null)
             throw new Exception(
@@ -234,12 +237,14 @@ internal class ExecuteCommandRunner:IRunner
             {
                 inQuotes = c;
             }
-            else if (c == inQuotes)
+            else
+            if(c == inQuotes)
             {
                 //if we exit quotes
                 inQuotes = null;
             }
-            else if (c == ' ' && inQuotes == null)
+            else
+            if(c == ' ' && inQuotes == null)
             {
                 //break character outside of quotes
                 var resultWord = word.ToString().Trim();

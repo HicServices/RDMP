@@ -69,7 +69,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             btnLaunchCustomUI.Enabled = false;
         }
     }
-        
+
     private void btnLaunchCustomUI_Click(object sender, EventArgs e)
     {
         try
@@ -78,7 +78,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
 
             var uiInstance = Activator.CreateInstance(_uiType);
 
-            var instanceAsCustomUI = (ICustomUI)uiInstance;
+            var instanceAsCustomUI = (ICustomUI) uiInstance;
             instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 
             instanceAsCustomUI.SetGenericUnderlyingObjectTo(dataClassInstance);

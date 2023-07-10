@@ -17,7 +17,7 @@ using Rdmp.UI.Refreshing;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// Displays all the cohort identification configurations you have configured in RDMP. Cohort Identification Configurations (CIC) are created to identify specific patients e.g. 'all patients 
+/// Displays all the cohort identification configurations you have configured in RDMP. Cohort Identification Configurations (CIC) are created to identify specific patients e.g. 'all patients
 /// with 3 or more prescriptions for a diabetes drug or who have been hospitalised for an amputation'.  Each CIC achieves its goal by combining Cohort Sets with Set operations (UNION,
 /// INTERSECT, EXCEPT) for example Cohort Set 1 '3+ diabetes drug prescriptions' UNION 'hospital admissions for amputations'.  Cohort sets can be from the same or different data sets (as
 /// long as they have a common identifier).
@@ -43,8 +43,9 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             RDMPCollection.Cohort,
             tlvCohortIdentificationConfigurations,
             Activator,
-            olvName, //column with the icon
-            olvName //column that can be renamed
+            olvName,//column with the icon
+            olvName//column that can be renamed
+
         );
         CommonTreeFunctionality.AxeChildren = new[]
         {

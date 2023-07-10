@@ -51,6 +51,7 @@ public class LoadFiles : CompositeDataLoadComponent
         {
             // We can only clean up ForLoading after the job is finished, so give it the necessary disposal operation
             job.PushForDisposal(new DeleteForLoadingFilesOperation(job));
+
         }
 
         return toReturn;

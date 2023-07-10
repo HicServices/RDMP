@@ -49,7 +49,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         {
             AggregateEditorSection.Extractable => CanMakeExtractable(aggregate),
             AggregateEditorSection.TOPX =>
-                //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries 
+                //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries
                 aggregate.PivotOnDimensionID != null || aggregate.GetAxisIfAny() == null,
             AggregateEditorSection.PIVOT => aggregate.GetAxisIfAny() != null ||
                                             aggregate.AggregateDimensions.Length ==

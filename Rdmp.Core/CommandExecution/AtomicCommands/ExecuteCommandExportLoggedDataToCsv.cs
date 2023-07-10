@@ -73,7 +73,7 @@ order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter
 
             var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
                 CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
-                    
+
             extract.DoExtraction();
         }
     }

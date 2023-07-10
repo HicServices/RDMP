@@ -19,4 +19,5 @@ public class ZipCacheLayoutOnePerDay : CacheLayout
         : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.Zip, CacheFileGranularity.Day, resolver)
     {
     }
+
 }

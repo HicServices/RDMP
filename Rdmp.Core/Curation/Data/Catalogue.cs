@@ -437,8 +437,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [DoNotExtractProperty]
-    [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference,
-        ValueGetter = nameof(GetAllExtractionInformation))]
+    [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference, ValueGetter=nameof(GetAllExtractionInformation))]
     public int? PivotCategory_ExtractionInformation_ID
     {
         get => _pivotCategoryExtractionInformationID;
@@ -710,7 +709,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         {
             var liveLoggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
-            if (liveLoggingServer != null)
+            if(liveLoggingServer != null)
                 LiveLoggingServer_ID = liveLoggingServer.ID;
         }
 
@@ -755,6 +754,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                 Type = typeAsEnum;
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
+
         }
 
         //Periodicity - with handling for invalid enum values listed in database
@@ -784,6 +784,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             else
                 throw new Exception(
                     $" r[\"granularity\"] had value {granularity} which is not contained in Enum CatalogueGranularity");
+
         }
 
         Geographical_coverage = r["Geographical_coverage"].ToString();
@@ -919,7 +920,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
                 using var con = server.GetConnection();
                 con.Open();
-                        
+
                 string sql;
                 try
                 {
@@ -928,7 +929,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                         TopX = 1
                     };
                     qb.AddColumnRange(extractionInformations);
-                    
+
                     sql = qb.SQL;
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}", CheckResult.Success));
@@ -940,7 +941,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                             CheckResult.Fail, e));
                     return;
                 }
-                
+
                 using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
                 {
                     cmd.CommandTimeout = 10;
@@ -952,7 +953,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
                 }
-                        
+
                 con.Close();
             }
             catch (Exception e)
@@ -1089,7 +1090,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public LogManager GetLogManager()
     {
-        if(LiveLoggingServer_ID == null) 
+        if(LiveLoggingServer_ID == null)
             throw new Exception($"No live logging server set for Catalogue {Name}");
                 
         var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);

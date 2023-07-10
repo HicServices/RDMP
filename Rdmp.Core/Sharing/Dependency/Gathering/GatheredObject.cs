@@ -26,7 +26,7 @@ namespace Rdmp.Core.Sharing.Dependency.Gathering;
 /// </summary>
 public class GatheredObject : IHasDependencies, IMasqueradeAs
 {
-    public IMapsDirectlyToDatabaseTable Object { get; } 
+    public IMapsDirectlyToDatabaseTable Object { get; }
     public List<GatheredObject> Children { get; }
 
     public GatheredObject(IMapsDirectlyToDatabaseTable o)

@@ -143,6 +143,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     }
 
 
+
     public void Check(ICheckNotifier checker)
     {
         if (OtherColumnInfo == null)
@@ -203,9 +204,8 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     /// </summary>
     private void GetUniqueValues()
     {
-        if (OtherColumnInfo == null)
-            throw new NotSupportedException(
-                "No ColumnInfo has been selected yet! unable to populate constraint HashSet");
+        if(OtherColumnInfo == null)
+            throw new NotSupportedException("No ColumnInfo has been selected yet! unable to populate constraint HashSet");
 
 
         //Get the values off the server

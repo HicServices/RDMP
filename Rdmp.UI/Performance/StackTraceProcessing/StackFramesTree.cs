@@ -16,7 +16,7 @@ namespace Rdmp.UI.Performance.StackTraceProcessing;
 internal class StackFramesTree
 {
     public string CurrentFrame { get; private set; }
-    public int QueryCount { get; private set; }
+    public int QueryCount{ get; private set; }
 
     public bool HasSourceCode { get; private set; }
 

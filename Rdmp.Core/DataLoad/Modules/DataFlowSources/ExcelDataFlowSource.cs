@@ -41,8 +41,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     [DemandsInitialization(WorkSheetName_DemandDescription)]
     public string WorkSheetName { get; set; }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,
-        DemandType.Unspecified, true)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
     public bool MakeHeaderNamesSane { get; set; }
 
     [DemandsInitialization(AddFilenameColumnNamed_DemandDescription)]
@@ -52,7 +51,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     private DataTable dataReadFromFile;
     private bool haveDispatchedDataTable;
-        
+
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         dataReadFromFile ??= GetAllData(listener, cancellationToken);
@@ -221,7 +220,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                 if (IsDateWithoutTime(format))
                     return cell.DateCellValue.ToString("yyyy-MM-dd");
-                        
+
                 if(IsDateWithTime(format))
                     return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
 

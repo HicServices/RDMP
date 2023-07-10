@@ -132,13 +132,27 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
     {
         if (e.Object is DataAccessCredentials)
             tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
-
-        if (e.Object is Catalogue || e.Object is TableInfo)
+            
+        if(e.Object is Catalogue || e.Object is TableInfo)
             tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
 
         if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
             tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
     }
+
+    public static bool IsRootObject(object root)
+    {
+        return
+            root is AllRDMPRemotesNode ||
+            root is AllObjectSharingNode ||
+            root is AllPipelinesNode ||
+            root is AllExternalServersNode ||
+            root is AllDataAccessCredentialsNode ||
+            root is AllANOTablesNode ||
+            root is AllServersNode ||
+            root is AllConnectionStringKeywordsNode ||
+            root is AllStandardRegexesNode ||
+            root is AllDashboardsNode;
 
     public static bool IsRootObject(object root) =>
         root is AllRDMPRemotesNode ||

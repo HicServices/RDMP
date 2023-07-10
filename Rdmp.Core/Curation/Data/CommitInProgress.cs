@@ -103,6 +103,7 @@ public class CommitInProgress : IDisposable
 
             if (originalStates[e.Object].Type == MementoType.Add)
                 // ok user created this object during the commit then deleted it again... odd but fair enough
+
                 // pretend it never existed
                 originalStates.Remove(e.Object);
             else
@@ -138,7 +139,7 @@ public class CommitInProgress : IDisposable
         foreach (var t in originalStates)
         {
             // serialize the current state on finishing into yaml (or use null for deleted objects)
-            var newYaml = t.Value.Type == MementoType.Delete ? null : _serializer.Serialize(t.Key);
+            var newYaml = t.Value.Type == MementoType.Delete ? null :  _serializer.Serialize(t.Key);
 
             //something changed
             if (newYaml != t.Value.OldYaml) changes.Add(t.Key, Tuple.Create(t.Value, newYaml));

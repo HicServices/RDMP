@@ -66,7 +66,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
             CommonTreeFunctionality.SetUp(RDMPCollection.None,olvTree,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings
             {
                 // add custom options here
-                    
+
             });
         }
                 

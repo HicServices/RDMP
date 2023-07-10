@@ -39,4 +39,5 @@ public interface ICacheLayout
     // requested by DLE
     Queue<DateTime> GetSortedDateQueue(IDataLoadEventListener listener);
     bool CheckCacheFilesAvailability(IDataLoadEventListener listener);
+
 }

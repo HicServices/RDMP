@@ -24,9 +24,15 @@ public class IdentifierDumpServerUsageNode : Node, IDeleteable
         IdentifierDumpServer = identifierDumpServer;
     }
 
-    public override string ToString() => $"Usage of:{IdentifierDumpServer.Name}";
+    public override string ToString()
+    {
+        return $"Usage of:{IdentifierDumpServer.Name}";
+    }
 
-    protected bool Equals(IdentifierDumpServerUsageNode other) => Equals(TableInfo, other.TableInfo);
+    protected bool Equals(IdentifierDumpServerUsageNode other)
+    {
+        return Equals(TableInfo, other.TableInfo);
+    }
 
     public override bool Equals(object obj)
     {

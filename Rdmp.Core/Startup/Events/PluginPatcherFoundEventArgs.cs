@@ -29,6 +29,6 @@ public class PluginPatcherFoundEventArgs
 
     public Type Type { get; set; }
     public IPatcher Instance { get; set; }
-    public PluginPatcherStatus Status { get; set; }
+    public PluginPatcherStatus Status {get;set;}
     public Exception Exception { get; set; }
 }

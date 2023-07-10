@@ -824,12 +824,15 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
 
         //add catalogues in folder
-        foreach (var c in folder.ChildObjects) AddChildren(c, descendancy.Add(c));
-
+        foreach(var c in folder.ChildObjects)
+        {
+            AddChildren(c, descendancy.Add(c));
+        }
+            
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)), descendancy
+                    .Union(folder.ChildObjects)),descendancy
         );
     }
 
@@ -846,7 +849,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)), descendancy
+                    .Union(folder.ChildObjects)),descendancy
         );
     }
 
@@ -863,7 +866,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)), descendancy
+                    .Union(folder.ChildObjects)),descendancy
         );
     }
 
@@ -1075,7 +1078,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 
             //record the children
-            AddToDictionaries(new HashSet<object>(lookups.Select(l => new CatalogueLookupUsageNode(c, l))),
+            AddToDictionaries(new HashSet<object>(lookups.Select(l=>new CatalogueLookupUsageNode(c,l))),
                 descendancy.Add(lookupsNode));
         }
 
@@ -1135,9 +1138,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         //really user wants to see it in CohortIdentificationCollectionUI
         if (aggregateConfiguration.RootFilterContainer_ID != null)
         {
-            var container = AllAggregateContainersDictionary[(int)aggregateConfiguration.RootFilterContainer_ID];
+            var container = AllAggregateContainersDictionary[(int) aggregateConfiguration.RootFilterContainer_ID];
 
-            AddChildren(container, descendancy.Add(container));
+            AddChildren(container,descendancy.Add(container));
             childrenObjects.Add(container);
         }
 
@@ -1526,7 +1529,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             }
 
 
-            return _childDictionary[model].OrderBy(o => o.ToString()).ToArray();
+            return _childDictionary[model].OrderBy(o=>o.ToString()).ToArray();
         }
     }
 
@@ -1649,7 +1652,7 @@ public class CatalogueChildProvider : ICoreChildProvider
                                 var newDescendancy = parentDescendancy == null ? new DescendancyList(o) : //if the parent is a root level object start a new descendncy list from it
                                     parentDescendancy.Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
 
-                                //record that 
+                                //record that
                                 foreach (var pluginChild in pluginChildren)
                                 {
                                     //if the parent didn't have any children before
@@ -1659,7 +1662,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
                                     //add us to the parent objects child collection
                                     _childDictionary[o].Add(pluginChild);
-                                    
+
                                     //add to the child collection of the parent object kvp.Key
                                     _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
 

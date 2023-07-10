@@ -255,9 +255,7 @@ e.g. /$i/$a")]
     #region Release Related Methods
 
     /// <inheritdoc/>
-    public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISelectedDataSets selectedDataSet);
-
+    public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
     /// <inheritdoc/>
     public abstract GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
@@ -316,7 +314,9 @@ e.g. /$i/$a")]
 
         //extract lookups
         foreach (BundledLookupTable lookup in datasetBundle.LookupTables)
-            datasetBundle.States[lookup] = TryExtractLookupTable(lookup, lookupDir, job)
+        {
+
+            datasetBundle.States[lookup] = TryExtractLookupTable(lookup, lookupDir,job)
                 ? ExtractCommandState.Completed
                 : ExtractCommandState.Crashed;
     }
@@ -384,6 +384,7 @@ e.g. /$i/$a")]
             }
 
             return true;
+
         }
         catch (Exception e)
         {
@@ -459,6 +460,8 @@ e.g. /$i/$a")]
             TryExtractSupportingSQLTableImpl(sql, directory, configuration, listener, out var sqlLinesWritten,
                 out var description);
 
+            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten,out var description);
+
             sw.Stop();
 
             //end auditing it
@@ -532,4 +535,5 @@ e.g. /$i/$a")]
     }
 
     #endregion
+
 }

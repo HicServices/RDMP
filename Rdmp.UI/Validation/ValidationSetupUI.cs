@@ -42,13 +42,13 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     private string _noPrimaryConstraintText = "No Primary Constraint Defined";
 
     public Validator Validator { get; private set; }
-     
+
     private bool bSuppressChangeEvents;
     private Catalogue _catalogue;
 
     private string ClearSelection = "<<Clear Selection>>";
 
-    private ItemValidator SelectedColumnItemValidator
+    private ItemValidator SelectedColumnItemValidator {get
     {
         //The user has not selected a column
         if (olvColumns.SelectedObject is not ExtractionInformation ei)
@@ -83,7 +83,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
         olvName.ImageGetter = o => Activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-    }       
+    }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
@@ -143,7 +143,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
             var dialog = new ResolveMissingTargetPropertiesUI(Validator,
                 olvColumns.Objects.Cast<ExtractionInformation>().ToArray());
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if(dialog.ShowDialog() == DialogResult.OK)
                 Validator = dialog.AdjustedValidator;
         }
     }
@@ -251,7 +251,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         if (ddSecondaryConstraints.SelectedItem != null)
         {
             var secondaryConstriant =
-                Validator.CreateConstraint(ddSecondaryConstraints.Text, Consequence.Missing) as SecondaryConstraint;
+                Validator.CreateConstraint(ddSecondaryConstraints.Text,Consequence.Missing) as SecondaryConstraint;
 
             SelectedColumnItemValidator.SecondaryConstraints.Add(secondaryConstriant);
             AddSecondaryConstraintControl(secondaryConstriant);
@@ -391,7 +391,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
     {
-        if(Activator.SelectObject(new DialogArgs { 
+        if(Activator.SelectObject(new DialogArgs {
                TaskDescription = "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
                AllowSelectingNull = true
            }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any),out var selected))

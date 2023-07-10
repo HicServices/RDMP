@@ -19,8 +19,7 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution, IAtomicC
     private readonly CacheProgress _cacheProgress;
     private PermissionWindow _window;
 
-    public ExecuteCommandSetPermissionWindow(IBasicActivateItems activator, CacheProgress cacheProgress) :
-        base(activator)
+    public ExecuteCommandSetPermissionWindow(IBasicActivateItems activator, CacheProgress cacheProgress) : base(activator)
     {
         _cacheProgress = cacheProgress;
         _window = null;

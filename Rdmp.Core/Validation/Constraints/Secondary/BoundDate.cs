@@ -36,7 +36,7 @@ public class BoundDate : Bound
             case string stringValue:
             {
                 value = SafeConvertToDate(stringValue);
-            
+
                 if (!((DateTime?)value).HasValue)
                     return null;
                 break;
@@ -45,7 +45,7 @@ public class BoundDate : Bound
 
         var d = (DateTime)value;
 
-        if (value != null && !IsWithinRange(d)) 
+        if (value != null && !IsWithinRange(d))
             return new ValidationFailure(CreateViolationReportUsingDates(d),this);
 
         return value != null && !IsWithinRange(d,otherColumns, otherColumnNames)
@@ -113,7 +113,7 @@ public class BoundDate : Bound
 
     private string CreateViolationReportUsingFieldNames(DateTime d)
     {
-        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName)) 
+        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName))
             return BetweenMessage(d, LowerFieldName, UpperFieldName);
 
         if (!string.IsNullOrWhiteSpace(LowerFieldName))
@@ -139,7 +139,7 @@ public class BoundDate : Bound
     {
         return $"[{s}]";
     }
-        
+
     public override string GetHumanReadableDescriptionOfValidation()
     {
         var result = "Checks that a date is within a given set of bounds.  This field is currently configured to be ";

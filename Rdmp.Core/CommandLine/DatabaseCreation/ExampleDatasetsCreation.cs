@@ -49,7 +49,7 @@ public partial class ExampleDatasetsCreation
     public const int NumberOfPeople = 5000;
     public const int NumberOfRowsPerDataset = 10000;
 
-    public ExampleDatasetsCreation(IBasicActivateItems activator, IRDMPPlatformRepositoryServiceLocator repos)
+    public ExampleDatasetsCreation(IBasicActivateItems activator,IRDMPPlatformRepositoryServiceLocator repos)
     {
         _repos = repos;
         _activator = activator;
@@ -334,7 +334,7 @@ public partial class ExampleDatasetsCreation
         {
             //Get its extractableness
             var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault()
-                      ?? new ExtractableDataSet(_repos.DataExportRepository, c); //or make it extractable
+                      ?? new ExtractableDataSet(_repos.DataExportRepository,c); //or make it extractable
 
             extractionConfiguration.AddDatasetToConfiguration(eds);
         }
@@ -616,8 +616,10 @@ UNPIVOT
         return ti;
     }
 
-    private ICatalogue ImportCatalogue(DiscoveredTable tbl) => ImportCatalogue(ImportTableInfo(tbl));
-
+    private ICatalogue ImportCatalogue(DiscoveredTable tbl)
+    {
+        return ImportCatalogue(ImportTableInfo(tbl));
+    }
     private ICatalogue ImportCatalogue(ITableInfo ti)
     {
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ti.ColumnInfos);

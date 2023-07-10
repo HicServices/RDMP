@@ -22,16 +22,16 @@ public partial class RichTextBoxEx : RichTextBox
     [StructLayout(LayoutKind.Sequential)]
     private struct CHARFORMAT2_STRUCT
     {
-        public uint	cbSize; 
-        public uint   dwMask; 
-        public uint   dwEffects; 
-        public int    yHeight; 
-        public int    yOffset; 
-        public int	crTextColor; 
-        public byte     bCharSet; 
-        public byte     bPitchAndFamily; 
+        public uint	cbSize;
+        public uint   dwMask;
+        public uint   dwEffects;
+        public int    yHeight;
+        public int    yOffset;
+        public int	crTextColor;
+        public byte     bCharSet;
+        public byte     bPitchAndFamily;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst=32)]
-        public char[]   szFaceName; 
+        public char[]   szFaceName;
         public ushort	wWeight;
         public ushort	sSpacing;
         public int		crBackColor; // Color.ToArgb() -> int
@@ -260,7 +260,12 @@ public partial class RichTextBoxEx : RichTextBox
         int state;
         // dwMask holds the information which properties are consistent throughout the selection:
         if ((cf.dwMask & mask) == mask)
-            state = (cf.dwEffects & effect) == effect ? 1 : 0;
+        {
+            if ((cf.dwEffects & effect) == effect)
+                state = 1;
+            else
+                state = 0;
+        }
         else
             state = -1;
 

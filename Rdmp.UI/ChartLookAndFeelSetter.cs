@@ -20,7 +20,7 @@ namespace Rdmp.UI;
 public class ChartLookAndFeelSetter
 {
     /// <summary>
-    /// Formats the X and Y axis of a <paramref name="chart"/> with sensible axis increments for the DataTable <paramref name="dt"/>. The 
+    /// Formats the X and Y axis of a <paramref name="chart"/> with sensible axis increments for the DataTable <paramref name="dt"/>. The
     /// table must have a first column called YearMonth in the format YYYY-MM
     /// </summary>
     /// <param name="chart"></param>
@@ -110,7 +110,7 @@ public class ChartLookAndFeelSetter
     }
 
     /// <summary>
-    /// calculates how far offset the month is 
+    /// calculates how far offset the month is
     /// </summary>
     /// <param name="yearMonth"></param>
     /// <returns></returns>

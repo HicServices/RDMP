@@ -8,8 +8,8 @@ namespace Rdmp.Core.Providers;
 
 /// <summary>
 /// Identifies problems with objects held in an ICoreChildProvider e.g. Projects missing cohorts, orphan ExtractionInformations etc.  This class
-/// differs from ICheckable etc because it is designed to identify and record a large number of problems very quickly among a large number of 
-/// objects and then later report about the problems e.g. when rendering a UI. 
+/// differs from ICheckable etc because it is designed to identify and record a large number of problems very quickly among a large number of
+/// objects and then later report about the problems e.g. when rendering a UI.
 /// </summary>
 public interface IProblemProvider
 {

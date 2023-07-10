@@ -20,8 +20,7 @@ public abstract class ProblemProvider : IProblemProvider
         typeof(TableInfo),
         typeof(ColumnInfo),
         typeof(IFilter),
-        typeof(Pipeline)
-    });
+        typeof(Pipeline)});
 
     /// <inheritdoc/>
     public bool HasProblem(object o) => DescribeProblem(o) != null;

@@ -26,10 +26,15 @@ public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
 
     public override string ToString() => Cohort.ToString();
 
-    public object MasqueradingAs() => Cohort;
+    public object MasqueradingAs()
+    {
+        return Cohort;
+    }
 
-    protected bool Equals(LinkedCohortNode other) =>
-        Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
+    protected bool Equals(LinkedCohortNode other)
+    {
+        return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
+    }
 
     public override bool Equals(object obj)
     {

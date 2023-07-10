@@ -94,7 +94,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     {
         return (Catalogue) DatabaseObjects.SingleOrDefault();
     }
-        
+
     public override string SaveExtraText()
     {
         return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>

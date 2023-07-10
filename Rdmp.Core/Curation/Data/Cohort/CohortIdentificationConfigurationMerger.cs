@@ -54,8 +54,7 @@ public class CohortIdentificationConfigurationMerger
         using (_repository.BeginNewTransaction())
         {
             // Create a new master configuration
-            var cicMaster = new CohortIdentificationConfiguration(_repository,
-                $"Merged cics (IDs {string.Join(",", cics.Select(c => c.ID))})");
+            var cicMaster = new CohortIdentificationConfiguration(_repository,$"Merged cics (IDs {string.Join(",",cics.Select(c=>c.ID))})" );
 
             // With a single top level container with the provided operation
             cicMaster.CreateRootContainerIfNotExists();
@@ -76,8 +75,8 @@ public class CohortIdentificationConfigurationMerger
                 rootContainer.AddChild(container);
 
                 // Make the new name of all the AggregateConfigurations match the new master cic
-                foreach (var child in container.GetAllAggregateConfigurationsRecursively())
-                    EnsureNamingConvention(cicMaster, child);
+                foreach(var child in container.GetAllAggregateConfigurationsRecursively())
+                    EnsureNamingConvention(cicMaster,child);
 
                 // Delete the old now empty clones
                 cic.DeleteInDatabase();
@@ -129,8 +128,8 @@ public class CohortIdentificationConfigurationMerger
                 into.AddChild(container);
 
                 // Make the new name of all the AggregateConfigurations match the owner of import into container
-                foreach (var child in container.GetAllAggregateConfigurationsRecursively())
-                    EnsureNamingConvention(cicInto, child);
+                foreach(var child in container.GetAllAggregateConfigurationsRecursively())
+                    EnsureNamingConvention(cicInto,child);
 
                 // Delete the old now empty clones
                 cic.DeleteInDatabase();
@@ -175,7 +174,7 @@ public class CohortIdentificationConfigurationMerger
 
         try
         {
-            // clone the input cic 
+            // clone the input cic
             cic = cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
 
             // grab the new clone root container
@@ -192,8 +191,7 @@ public class CohortIdentificationConfigurationMerger
             foreach (var subContainer in rootContainer.GetSubContainers().OrderBy(c => c.Order))
             {
                 // create a new config
-                var newCic = new CohortIdentificationConfiguration(_repository,
-                    $"Un Merged {subContainer.Name} ({subContainer.ID}) ");
+                var newCic = new CohortIdentificationConfiguration(_repository,$"Un Merged { subContainer.Name } ({subContainer.ID }) ");
 
                 //take the container we are splitting out
                 subContainer.MakeIntoAnOrphan();
@@ -203,8 +201,8 @@ public class CohortIdentificationConfigurationMerger
                 newCic.SaveToDatabase();
 
                 // Make the new name of all the AggregateConfigurations match the new cic
-                foreach (var child in subContainer.GetAllAggregateConfigurationsRecursively())
-                    EnsureNamingConvention(newCic, child);
+                foreach(var child in subContainer.GetAllAggregateConfigurationsRecursively())
+                    EnsureNamingConvention(newCic,child);
 
                 toReturn.Add(newCic);
             }

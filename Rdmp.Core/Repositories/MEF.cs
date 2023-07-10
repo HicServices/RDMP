@@ -128,7 +128,7 @@ public class MEF
         if (!HaveDownloadedAllAssemblies)
             throw new NotSupportedException("MEF was not loaded by Startup?!!");
     }
-        
+
     public Dictionary<string, Exception> ListBadAssemblies()
     {
         SetupMEFIfRequired();

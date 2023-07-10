@@ -90,8 +90,10 @@ public class Patch : IComparable
             EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Skip(2));
     }
 
-    public override int GetHashCode() => locationInAssembly.GetHashCode();
-
+    public override int GetHashCode()
+    {
+        return locationInAssembly.GetHashCode();
+    }
     public override bool Equals(object obj)
     {
         var x = this;

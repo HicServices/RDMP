@@ -16,8 +16,8 @@ namespace Rdmp.UI.PipelineUIs.Pipelines;
 /// <summary>
 /// Allows you to name, describe and configure a Data Flow Pipeline (IPipeline).  This is a flow of objects (usually DataTables) from a Source through 0 or more Components to a Destination.
 /// Depending on the context the source and/or/neither destination may be fixed.  There will also be zero or more initialization objects which components can consume.  For example if you
-/// are trying to build a pipeline to import a FlatFileToLoad into your database then you might use a DelimitedFlatFileDataFlowSource component to read the file (assuming it wasn't fixed 
-/// width or a database file or anything wierd) and a DataTableUploadDestination to put it into the endpoint.  
+/// are trying to build a pipeline to import a FlatFileToLoad into your database then you might use a DelimitedFlatFileDataFlowSource component to read the file (assuming it wasn't fixed
+/// width or a database file or anything wierd) and a DataTableUploadDestination to put it into the endpoint.
 /// </summary>
 public partial class ConfigurePipelineUI : Form
 {
@@ -26,8 +26,7 @@ public partial class ConfigurePipelineUI : Form
 
     private PipelineWorkAreaUI _workArea;
 
-    public ConfigurePipelineUI(IActivateItems activator, IPipeline pipeline, IPipelineUseCase useCase,
-        ICatalogueRepository repository)
+    public ConfigurePipelineUI(IActivateItems activator,IPipeline pipeline, IPipelineUseCase useCase, ICatalogueRepository repository)
     {
         _pipeline = pipeline;
         _useCase = useCase;

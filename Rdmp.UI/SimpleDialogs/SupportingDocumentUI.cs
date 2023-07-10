@@ -94,7 +94,7 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
         }
     }
 
-    private static void SetUriPropertyOn(TextBox tb, string propertyToSet, object toSetOn)
+    private void SetUriPropertyOn( TextBox tb,string propertyToSet,object toSetOn)
     {
         if (toSetOn == null) return;
         try
@@ -134,4 +134,5 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingDocumentUI_Design, UserControl>))]
 public abstract class SupportingDocumentUI_Design : RDMPSingleDatabaseObjectControl<SupportingDocument>
 {
+
 }

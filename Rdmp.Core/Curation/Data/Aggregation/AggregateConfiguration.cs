@@ -39,7 +39,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// <para>3. 'Joinable PatientIndex Table' - Produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)</para>
 /// <para>The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
 /// AggregateConfiguration is. </para>
-///
+/// 
 /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification
 /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
 /// </summary>
@@ -261,7 +261,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// When an AggregateConfiguration is used in a cohort identification capacity it can have one or more 'patient index tables' defined e.g.
     /// 'Give me all prescriptions for morphine' (Prescribing) 'within 6 months of patient being discharged from hospital' (SMR01).  In this case
     /// a join is done against the secondary dataset.
-    ///
+    /// 
     /// <para>This property returns all such 'patient index table' AggregateConfigurations which are currently being used by this AggregateConfiguration
     /// for building its join.</para>
     /// </summary>
@@ -600,6 +600,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     private bool orderFetchAttempted;
 
 
+
     /// <summary>
     /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container
     /// (e.g. UNION / INTERSECT / EXCEPT) that it is in.  Returns null if it is not in a <see cref="CohortAggregateContainer"/>.
@@ -633,7 +634,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         //it is not part of a container, maybe it is a joinable?
         var joinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
 
-        //it is a joinable (Patient Index Table) so return it 
+        //it is a joinable (Patient Index Table) so return it
         return joinable?.CohortIdentificationConfiguration;
     }
 

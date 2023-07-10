@@ -46,8 +46,7 @@ public class FTPDownloader : IPluginDataProvider
         "Determines the behaviour of the system when no files are found on the server.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
     public bool SendLoadNotRequiredIfFileNotFound { get; set; }
 
-    [DemandsInitialization(
-        "The Regex expression to validate files on the FTP server against, only files matching the expression will be downloaded")]
+    [DemandsInitialization("The Regex expression to validate files on the FTP server against, only files matching the expression will be downloaded")]
     public Regex FilePattern { get; set; }
 
     [DemandsInitialization("The timeout to use when connecting to the FTP server in SECONDS")]
@@ -165,6 +164,7 @@ public class FTPDownloader : IPluginDataProvider
 
     private bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain,
         SslPolicyErrors sslpolicyerrors) => true; //any cert will do! yay
+
 
 
     protected virtual string[] GetFileList()

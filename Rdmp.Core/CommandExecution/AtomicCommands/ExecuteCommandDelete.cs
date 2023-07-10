@@ -29,7 +29,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
     private readonly bool _allowDeleteMany;
 
     public ExecuteCommandDelete(IBasicActivateItems activator,
-        IDeleteable deletable) : this(activator, new[] { deletable })
+        IDeleteable deletable) : this(activator,new []{ deletable})
     {
         Weight = 50.4f;
     }

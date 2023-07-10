@@ -52,7 +52,10 @@ public abstract class RDMPUserControl : UserControl, IRDMPControl
     /// <summary>
     /// Returns the topmost control which implements <see cref="RDMPUserControl"/>
     /// </summary>
-    public IRDMPControl GetTopmostRDMPUserControl() => GetTopmostRDMPUserControl(this, this);
+    public IRDMPControl GetTopmostRDMPUserControl()
+    {
+        return GetTopmostRDMPUserControl(this, this);
+    }
 
     public event EventHandler<bool> UnSavedChanges;
 

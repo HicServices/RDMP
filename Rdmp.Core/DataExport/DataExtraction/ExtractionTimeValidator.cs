@@ -27,9 +27,9 @@ public class ExtractionTimeValidator
 {
     private readonly ICatalogue _catalogue;
     private readonly List<IColumn> _columnsToExtract;
-        
+
     private bool _initialized;
-  
+
     public Validator Validator { get; set; }
     public VerboseValidationResults Results { get; set; }
 

@@ -23,13 +23,12 @@ public partial class PickObjectByID :PickObjectBase
 
         */
     public override string Format => "{Type}:{ID}[,{ID2},{ID3}...]";
-
     public override string Help =>
         @"Type: must be an RDMP object type e.g. Catalogue, Project etc.
 ID: must reference an object that exists
 ID2+: (optional) only allowed if you are being prompted for multiple objects, allows you to specify multiple objects of the same Type using comma separator";
 
-    public override IEnumerable<string> Examples => new[]
+    public override IEnumerable<string> Examples => new []
     {
         "Catalogue:1",
         "Catalogue:1,2,3"

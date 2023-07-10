@@ -280,6 +280,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
                             $"Name of ProcessTask '{Name}' (ID={ID}) references file '{match.Value}' but the Path of the ProcessTask is '{Path}'",
                             CheckResult.Fail));
             }
+
+        }
     }
 
     /// <summary>
@@ -324,6 +326,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
                 foreach (var argument in toCloneArguments)
                     //clone it but rewire it to the proper ProcessTask parent (the clone)
                     argument.ShallowClone(clone);
+                }
 
                 //the values passed into parameter
                 clone.LoadMetadata_ID = loadMetadata.ID;

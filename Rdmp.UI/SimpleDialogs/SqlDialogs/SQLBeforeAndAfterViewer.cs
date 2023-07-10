@@ -15,7 +15,7 @@ using ScintillaNET;
 namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 /// <summary>
-/// Shows two pieces of SQL and the differences between them.  This is used by the RDMP for example to show you what the audited extraction SQL for a dataset was and what you 
+/// Shows two pieces of SQL and the differences between them.  This is used by the RDMP for example to show you what the audited extraction SQL for a dataset was and what you
 /// last extracted it (e.g. before the weekend) and what the active configuration looks like today (e.g. if somebody snuck in a couple of extra columns into a data extraction
 /// after the extract file had already been generated).
 /// </summary>
@@ -62,11 +62,12 @@ public partial class SQLBeforeAndAfterViewer : Form
 
         foreach (var item in Diff.DiffText(sqlBefore, sqlAfter))
         {
-            for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore, i, Color.Pink);
+            for (var i = item.StartA; i < item.StartA+item.deletedA; i++)
+                highlighter.HighlightLine(QueryEditorBefore,i,Color.Pink);
 
-            for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
+            for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
+                highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
+
         }
 
         switch (buttons)

@@ -65,4 +65,5 @@ public class JoinManager : IJoinManager
             _ => throw new ArgumentOutOfRangeException(nameof(type))
         };
     }
+
 }

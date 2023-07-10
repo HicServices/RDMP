@@ -17,9 +17,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 /// </summary>
 public class PickTable : PickObjectBase
 {
-    public override string Format =>
-        "Table:{TableName}:[Schema:{SchemaIfAny}:][IsView:{True/False}]:DatabaseType:{DatabaseType}:Name:{DatabaseName}:{ConnectionString}";
-
+    public override string Format => "Table:{TableName}:[Schema:{SchemaIfAny}:][IsView:{True/False}]:DatabaseType:{DatabaseType}:Name:{DatabaseName}:{ConnectionString}";
     public override string Help =>
         @"Table (Required): Name of the table you want
 Schema (Optional): leave out this section unless your table is in a sub schema within the Database (MySql doesn't support schemas)

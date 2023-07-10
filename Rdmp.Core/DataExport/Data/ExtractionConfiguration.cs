@@ -305,8 +305,12 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     /// </summary>
     /// <param name="shortString">True for a short representation.  False for a longer representation.</param>
     /// <returns></returns>
-    public string GetProjectHint(bool shortString) =>
-        shortString ? $"({Project.ProjectNumber})" : $"'{Project.Name}' (PNo. {Project.ProjectNumber})";
+    public string GetProjectHint(bool shortString)
+    {
+        return
+            shortString ? $"({ Project.ProjectNumber})" :
+                $"'{Project.Name}' (PNo. { Project.ProjectNumber})";
+    }
 
     /// <summary>
     /// Reads an existing <see cref="IExtractionConfiguration"/> out of the  <paramref name="repository"/> database.
@@ -383,7 +387,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         {
             try
             {
-                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort 
+                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort
                 var clone = ShallowClone();
 
                 //find each of the selected datasets for ourselves and clone those too
@@ -401,10 +405,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                     }
 
                     //clone should copy accross the forced joins (if any)
-                    foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(
-                                 selected))
-                        new SelectedDataSetsForcedJoin((IDataExportRepository)Repository, newSelectedDataSet,
-                            oldForcedJoin.TableInfo);
+                    foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(selected))
+                        new SelectedDataSetsForcedJoin((IDataExportRepository) Repository, newSelectedDataSet,oldForcedJoin.TableInfo);
 
                     // clone should copy any ExtractionProgresses
                     if (selected.ExtractionProgressIfAny != null)

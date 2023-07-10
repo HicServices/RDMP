@@ -23,9 +23,7 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
     public IEnumerable<object> AlwaysShow { get; }
     public CancellationToken CancellationToken { get; }
 
-    public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow,
-        IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text, int maxToTake,
-        CancellationToken cancellationToken)
+    public FindSearchTailFilterWithAlwaysShowList(IBasicActivateItems activator, IEnumerable<object> alwaysShow, IEnumerable<IMapsDirectlyToDatabaseTable> allObjects, string text,int maxToTake, CancellationToken cancellationToken)
     {
         AlwaysShow = alwaysShow;
         CancellationToken = cancellationToken;

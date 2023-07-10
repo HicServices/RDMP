@@ -16,8 +16,7 @@ public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution, IAtomi
 {
     private CohortAggregateContainer _container;
 
-    public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container) :
-        base(activator)
+    public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container):base(activator)
     {
         Weight = 0.12f;
 

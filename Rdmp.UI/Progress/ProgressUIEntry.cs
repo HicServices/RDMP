@@ -34,7 +34,7 @@ public class ProgressUIEntry
         Exception = args.Exception;
         Args = args;
     }
-        
+
     private string FormatSender(object sender)
     {
         return sender == null ? "Unknown" : sender as string ?? sender.GetType().Name;

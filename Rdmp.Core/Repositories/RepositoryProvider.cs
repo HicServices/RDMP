@@ -35,8 +35,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     {
     }
 
-    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
-        string databaseObjectTypeName, int objectId)
+    public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)
     {
         var repository = GetRepository(repositoryTypeName);
         var objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));

@@ -164,7 +164,7 @@ public class MasterDatabaseScriptExecutor
 
         SetVersion(kvp.Key, kvp.Value.DatabaseVersionNumber.ToString());
     }
-        
+
     private string CalculateHash(string input)
     {
         // step 1, calculate SHA512 hash from input
@@ -197,12 +197,12 @@ public class MasterDatabaseScriptExecutor
 
         versionTable.Insert(new Dictionary<string, object>
         {
-            { "repository_path", name },
-            { "version", version },
+            {"repository_path", name},
+            {"version", version},
 
-            { "entry_date", now },
-            { "modified_date", now },
-            { "entered_by", Environment.UserName }
+            {"entry_date", now},
+            {"modified_date", now},
+            {"entered_by", Environment.UserName}
         });
     }
 
@@ -226,6 +226,7 @@ public class MasterDatabaseScriptExecutor
                 Database.CreateBackup($"Full backup of {Database}");
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
+
             }
             catch (Exception e)
             {
@@ -254,6 +255,7 @@ public class MasterDatabaseScriptExecutor
                     }
 
 
+
                     notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success,
                         null));
                 }
@@ -262,10 +264,10 @@ public class MasterDatabaseScriptExecutor
                     throw new Exception($"User decided not to execute patch {patch.Key} - aborting ");
                 }
             }
-                
+
             SetVersion("Patching",maxPatchVersion.ToString());
             notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}", CheckResult.Success));
-                
+
             return true;
 
             return true;
@@ -340,8 +342,7 @@ public class MasterDatabaseScriptExecutor
                 {
                     //we found it and it was intact
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",
-                        CheckResult.Success, null));
+                        $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",CheckResult.Success, null));
 
                     //do not apply this patch
                     toApply.Remove(patch.locationInAssembly);
@@ -371,6 +372,7 @@ public class MasterDatabaseScriptExecutor
                 $"Cannot apply patch {futurePatch.locationInAssembly} because its database version number is {futurePatch.DatabaseVersionNumber} which is higher than the currently loaded host assembly ({patcher.GetDbAssembly().FullName}). ",
                 CheckResult.Fail, null));
             stop = true;
+
         }
 
         if (stop)

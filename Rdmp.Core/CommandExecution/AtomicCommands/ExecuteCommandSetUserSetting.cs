@@ -20,6 +20,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandSetUserSetting : BasicCommandExecution
 {
+
     private readonly PropertyInfo _property;
     private ErrorCode _errorCode;
     private CheckResult _errorCodeValue;
@@ -30,16 +31,16 @@ public class ExecuteCommandSetUserSetting : BasicCommandExecution
     public object NewValue { get; private set; }
 
     /// <summary>
-    /// True if the command was successfully completed 
+    /// True if the command was successfully completed
     /// </summary>
     public bool Success { get; private set; }
 
     [UseWithObjectConstructor]
     public ExecuteCommandSetUserSetting(IBasicActivateItems activator,
+
         [DemandsInitialization("Name of a property you want to change e.g. AllowIdentifiableExtractions")]
         string property,
-        [DemandsInitialization(
-            "New value to assign, this will be parsed into a valid Type if property is not a string")]
+        [DemandsInitialization("New value to assign, this will be parsed into a valid Type if property is not a string")]
         string value) : base(activator)
     {
         // if user is calling to set an error code e.g. 'rdmp SetUserSetting R001 Success'

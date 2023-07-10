@@ -220,7 +220,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void btnAddCatalogue_Click(object sender, EventArgs e)
     {
-        if(_activator.SelectObjects(new DialogArgs { 
+        if(_activator.SelectObjects(new DialogArgs {
                    TaskDescription = "Choose which new Catalogues should be represented in the diagram."
                },
                _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
@@ -265,8 +265,10 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
                     dataExportChildProvider.ExtractableDataSets);
 
             foreach (var cata in contents.Select(ds => ds.Catalogue))
-                if (!_collection.GetCatalogues().Contains(cata))
-                    AddCatalogue((Catalogue)cata);
+            {
+                if(!_collection.GetCatalogues().Contains(cata))
+                    AddCatalogue((Catalogue) cata);
+            }
 
             SaveCollectionChanges();
             GenerateChart();

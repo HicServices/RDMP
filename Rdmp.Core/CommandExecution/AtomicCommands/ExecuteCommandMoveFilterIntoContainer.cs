@@ -17,7 +17,7 @@ public class ExecuteCommandMoveFilterIntoContainer : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator, IFilter toMove, IContainer into)
-        : this(activator, new FilterCombineable(toMove), into)
+        : this(activator,new FilterCombineable(toMove),into)
     {
     }
 

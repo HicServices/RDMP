@@ -24,7 +24,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.ProjectUI;
 
 /// <summary>
-/// Allows you to view/edit a data extraction project including the extraction configurations that make it up (See ExtractionConfigurationUI).  
+/// Allows you to view/edit a data extraction project including the extraction configurations that make it up (See ExtractionConfigurationUI).
 /// 
 /// <para>First make sure your Project has a nice unique name that lets you rapidly identify it.  Next choose the 'Extraction Directory', this is the location where extracted data will be
 /// generated (See ExecuteExtractionUI).  Make sure that the extraction directory is accessible to every data analyst who is using the software / working on the project (e.g. it could
@@ -35,8 +35,8 @@ namespace Rdmp.UI.ProjectUI;
 /// <para>Add a ProjectNumber, this number must be unique.  This number must match the project number of the cohorts you intend to use with the project in the Cohort Database (you only need
 /// to worry about a mismatch here if you are manually hacking your cohort database or if you change the project number halfway through its lifecycle).</para>
 ///  
-/// <para>Right clicking in the datagrid will allow you to create new Extraction Configurations for the project or edit existing ones.  An extraction configuration is a collection of 
-/// datasets linked against a cohort private identifier and released against an anonymous project specific identifier (See ExtractableCohortUI and ExtractionConfigurationUI).  Once 
+/// <para>Right clicking in the datagrid will allow you to create new Extraction Configurations for the project or edit existing ones.  An extraction configuration is a collection of
+/// datasets linked against a cohort private identifier and released against an anonymous project specific identifier (See ExtractableCohortUI and ExtractionConfigurationUI).  Once
 /// you have a few Extraction Configurations, they will appear in the datagrid too.</para>
 /// 
 /// <para>Selecting 'Check Project' will check all current and released extraction configurations in the project for problems (empty result sets, broken extraction SQL etc).</para>
@@ -67,6 +67,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     private int _rightClickedRowExtractionConfigurationID = -1;
 
 
+
     public ProjectUI()
     {
         InitializeComponent();
@@ -79,6 +80,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
         AssociatedCollection = RDMPCollection.DataExport;
     }
+
 
 
     public void RefreshLists()
@@ -97,8 +99,8 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
     {
-        base.SetDatabaseObject(activator, databaseObject);
-        //now load the UI form 
+        base.SetDatabaseObject(activator,databaseObject);
+        //now load the UI form
         _project = databaseObject;
 
         dataGridView1.DataSource = LoadDatagridFor(_project);
@@ -244,15 +246,13 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         if (e.RowIndex >= 0)
             if (e.Button == MouseButtons.Right)
             {
+
                 menu.Items.Clear();
 
 
-                _rightClickedRowExtractionConfigurationID =
-                    int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
+                _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
 
-                var selectedExtractionConfiguration =
-                    Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
-                        _rightClickedRowExtractionConfigurationID);
+                var selectedExtractionConfiguration = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
                 menu.Items.Clear();
 
@@ -260,8 +260,11 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
                     menu.Items.Add(mi_SetDescription);
 
                 menu.Show(Cursor.Position.X, Cursor.Position.Y);
+
             }
     }
+
+
 
     #endregion
 

@@ -92,7 +92,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     public string CacheLagPeriodLoadDelay
     {
         get => _cacheLagPeriodLoadDelay;
-        set => SetField(ref _cacheLagPeriodLoadDelay, value);
+        set => SetField(ref  _cacheLagPeriodLoadDelay, value);
     }
 
     #endregion

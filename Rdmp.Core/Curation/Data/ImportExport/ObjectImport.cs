@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport;
 /// <summary>
 /// Identifies an object in the local Catalogue database (or DataExport database) which was imported from an external catalogue (See ObjectExport).  The SharingUID
 /// allows you to always identify which local object represents a remoted shared object (e.g. available from a web service).  The remote object will have a different
-///  ID but the same SharingUID).  Sometimes you will import whole networks of objects which might have shared object dependencies in this case newly imported 
+///  ID but the same SharingUID).  Sometimes you will import whole networks of objects which might have shared object dependencies in this case newly imported
 /// networks will reference existing imported objects where they are already available.
 /// 
 /// <para>This table exists to avoid all the unmaintainability/scalability of IDENTITY INSERT whilst also ensuring referential integrity of object shares and preventing
@@ -59,10 +59,11 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "ReferencedObjectRepositoryType", localObject.Repository.GetType().Name },
-            { "ReferencedObjectType", localObject.GetType().Name },
-            { "ReferencedObjectID", localObject.ID },
-            { "SharingUID", sharingUID }
+            {"ReferencedObjectRepositoryType",localObject.Repository.GetType().Name},
+            {"ReferencedObjectType",localObject.GetType().Name},
+            {"ReferencedObjectID",localObject.ID},
+            {"SharingUID",sharingUID}
+
         });
 
         if (ID == 0 || Repository != repository)

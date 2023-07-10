@@ -39,7 +39,7 @@ internal class AggregateConfigurationMenu :RDMPContextMenuStrip
 
             if (cic != null)
             {
-                //find other non cohort aggregates (graphs) 
+                //find other non cohort aggregates (graphs)
                 AggregateConfiguration[] graphsAvailableInCatalogue;
 
                 try

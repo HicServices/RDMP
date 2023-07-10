@@ -85,6 +85,7 @@ public class LoadProgressSummaryReport : ICheckable
             {
                 CataloguesWithDQERuns.Add(catalogue, evaluation);
             }
+
         }
         //The following code uses an epic pivot to produce something like:
         /*YearMonth	Year	Month	 6429	 6430
@@ -126,6 +127,7 @@ public class LoadProgressSummaryReport : ICheckable
         if (cacheProgress is { CacheFillProgress: not null })
             ExtendXAxisTill(cacheProgress.CacheFillProgress.Value);
     }
+
 
 
     private void ExtendXAxisTill(DateTime value)
@@ -233,9 +235,7 @@ public class LoadProgressSummaryReport : ICheckable
 
             try
             {
-                var cacheFileSystem =
-                    new CachingPipelineUseCase(_cacheProgress).CreateDestinationOnly(
-                        new FromCheckNotifierToDataLoadEventListener(notifier));
+                var cacheFileSystem = new CachingPipelineUseCase(_cacheProgress).CreateDestinationOnly(new FromCheckNotifierToDataLoadEventListener(notifier));
 
                 var layout = cacheFileSystem.CreateCacheLayout();
                 availableFiles = layout.GetSortedDateQueue(ThrowImmediatelyDataLoadEventListener.Quiet).ToArray();
@@ -311,6 +311,7 @@ public class LoadProgressSummaryReport : ICheckable
                     CheckResult.Warning));
         }
     }
+
 
 
     private static string GetTotalsByMonthSQL(Catalogue[] catalogues)

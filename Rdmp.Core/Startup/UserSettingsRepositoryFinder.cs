@@ -100,7 +100,7 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
                {
                    HaveDownloadedAllAssemblies: true
                })
-                //use the old MEF    
+                //use the old MEF
                 newrepo.CatalogueRepository.MEF = mef;
 
             newrepo.CatalogueRepository.CommentStore = commentStore ?? newrepo.CatalogueRepository.CommentStore;

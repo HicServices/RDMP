@@ -275,7 +275,10 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         ticket.SetItemActivator(activator);
     }
 
-    public override string GetTabName() => $"Execute:{base.GetTabName()}";
+    public override string GetTabName()
+    {
+        return $"Execute:{base.GetTabName()}";
+    }
 
     private void ticket_TicketTextChanged(object sender, EventArgs e)
     {
@@ -380,7 +383,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
             e.Menu.Items.Add(
                 new ToolStripMenuItem("View Crash Message", null,
-                    (s, ev) => ViewCrashMessage(c)) { Enabled = c.CrashMessage != null });
+                    (s, ev) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null });
 
             e.Menu.Items.Add(
                 BuildItem("Clear Object from Cache", c, a => a.SubqueriesCached > 0,

@@ -49,11 +49,8 @@ public class FixedWidthFormatFile
             FormatColumns[index].Size = int.Parse(cellsOnRowAsSplitString[3]);
 
             //It's ok to ommmit this column for specific rows (that aren't dates)
-            if (cellsOnRowAsSplitString.Length > 4)
-                FormatColumns[index].DateFormat =
-                    cellsOnRowAsSplitString[4]
-                        .Replace("ccyy",
-                            "yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong
+            if (cellsOnRowAsSplitString.Length >4)
+                FormatColumns[index].DateFormat = cellsOnRowAsSplitString[4].Replace("ccyy","yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong
 
             if (FormatColumns[index].From + FormatColumns[index].Size - 1 != FormatColumns[index].To)
                 throw new FlatFileLoadException(
@@ -109,7 +106,7 @@ public class FixedWidthFormatFile
                         $"Error on line {lineNumber} of file {f.Name}, the format file ({_pathToFormatFile.FullName}) specified that a column {fixedWidthColumn.Field} would be found between character positions {fixedWidthColumn.From} and {fixedWidthColumn.To} but the current line is only {readAllLine.Length} characters long");
 
                 //substring in order to get cell data
-                var value = readAllLine.Substring(fixedWidthColumn.From - 1, fixedWidthColumn.Size);
+                var value = readAllLine.Substring(fixedWidthColumn.From-1, fixedWidthColumn.Size);
 
                 //if its a null
                 if (string.IsNullOrWhiteSpace(value))
@@ -123,6 +120,7 @@ public class FixedWidthFormatFile
                     }
                     catch (Exception e)
                     {
+
                         throw new Exception(
                             $"The value '{value}' was rejected by DateTime.ParseExact using the listed date time format '{fixedWidthColumn.DateFormat}'",
                             e);

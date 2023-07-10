@@ -38,8 +38,7 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
         "Alternative to specifying a Regex pattern in CrashIfAnyColumnMatches.  Select an existing StandardRegex.  This has the advantage of centralising the concept.  See StandardRegexUI for configuring StandardRegexes")]
     public StandardRegex StandardRegex { get; set; }
 
-    [DemandsInitialization(
-        "Crash message (if any) to explain why columns matching the Regex are a problem e.g. 'Patient telephone numbers should never be extracted!'")]
+    [DemandsInitialization("Crash message (if any) to explain why columns matching the Regex are a problem e.g. 'Patient telephone numbers should never be extracted!'")]
     public string Rationale { get; set; }
 
     private Regex _reCache;

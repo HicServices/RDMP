@@ -182,8 +182,10 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() =>
-        new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
+    }
 
     /// <inheritdoc/>
     public DiscoveredDatabase Discover() => SelfCertifyingDataAccessPoint.Discover(DataAccessContext.DataExport);
@@ -212,6 +214,11 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
 
     private static DiscoveredColumn Discover(DiscoveredTable tbl, string column) =>
         tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
+
+    private DiscoveredColumn Discover(DiscoveredTable tbl, string column)
+    {
+        return tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
+    }
 
 
     /// <summary>
@@ -263,8 +270,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             var cohortTable = DiscoverCohortTable();
             if (cohortTable.Exists())
             {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}",
-                    CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}", CheckResult.Success, null));
 
                 DiscoverPrivateIdentifier();
                 DiscoverReleaseIdentifier();
@@ -284,7 +290,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
                     $"Found table {DefinitionTableName} in database {Database}", CheckResult.Success, null));
 
                 var cols = foundCohortDefinitionTable.DiscoverColumns();
-                    
+
                 foreach (var requiredField in CohortDefinitionTable_RequiredFields)
                     ComplainIfColumnMissing(DefinitionTableName, cols, requiredField, notifier);
             }
@@ -305,10 +311,9 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         try
         {
-            DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport).TestConnection();
+            DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport).TestConnection();
 
-            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success,
-                null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success, null));
         }
         catch (Exception e)
         {

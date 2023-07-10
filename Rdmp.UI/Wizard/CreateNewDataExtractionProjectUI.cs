@@ -150,6 +150,8 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         foreach (var dd in new ComboBox[] { ddCicPipeline, ddExtractionPipeline, ddFilePipeline })
             if (dd.Items.Count == 1)
                 dd.SelectedItem = dd.Items[0]; //select it
+        }
+            
     }
 
     private void btnBrowse_Click(object sender, EventArgs e)
@@ -253,6 +255,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 source.Check(ragCic);
 
                 ClearFile();
+
             }
             finally
             {

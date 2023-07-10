@@ -20,10 +20,13 @@ internal class AggregateFilterManager : IFilterManager
         _catalogueRepository = catalogueRepository;
     }
 
-    public virtual IContainer[] GetSubContainers(IContainer container) =>
-        _catalogueRepository.SelectAll<AggregateFilterContainer>(
-            $"SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID={container.ID}",
-            "AggregateFilterContainer_ChildID").ToArray();
+    public virtual IContainer[] GetSubContainers(IContainer container)
+    {
+        return
+            _catalogueRepository.SelectAll<AggregateFilterContainer>(
+                $"SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID={container.ID}",
+                "AggregateFilterContainer_ChildID").ToArray();
+    }
 
     public void MakeIntoAnOrphan(IContainer container)
     {

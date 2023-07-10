@@ -41,7 +41,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
 
             using var document = GetNewDocFile("RDMPDocumentation");
             var t = InsertTable(document,Summaries.Count *2 +1, 1);
-                    
+
             //Listing Cell header
             SetTableCell(t, 0, 0, "Tables");
 
@@ -51,7 +51,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
             {
                 //creates the run
                 SetTableCell(t, i*2 + 1, 0, "");
-                        
+
                 var bmp = iconProvider.GetImage(keys[i]);
 
                 if (bmp != null)

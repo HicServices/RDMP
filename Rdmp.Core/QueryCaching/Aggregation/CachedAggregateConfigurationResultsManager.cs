@@ -22,11 +22,11 @@ namespace Rdmp.Core.QueryCaching.Aggregation;
 
 /// <summary>
 /// Handles the caching and versioning of AggregateConfigurations in a QueryCaching database (QueryCaching.Database.csproj).  Query caching is the process
-/// of storing the SQL query and resulting DataTable from running an Aggregate Configuration SQL query (Usually built by an AggregateBuilder).  
+/// of storing the SQL query and resulting DataTable from running an Aggregate Configuration SQL query (Usually built by an AggregateBuilder).
 /// 
-/// <para>Caching is vital for large CohortIdentificationConfigurations which feature many complicated subqueries with WHERE conditions and even Patient Index 
-/// Tables (See JoinableCohortAggregateConfiguration).  The only way some of these queries can finish in a sensible time frame (i.e. minutes instead of days) 
-/// is to execute each subquery (AggregateConfiguration) and cache the resulting identifier lists with primary key indexes.  The 
+/// <para>Caching is vital for large CohortIdentificationConfigurations which feature many complicated subqueries with WHERE conditions and even Patient Index
+/// Tables (See JoinableCohortAggregateConfiguration).  The only way some of these queries can finish in a sensible time frame (i.e. minutes instead of days)
+/// is to execute each subquery (AggregateConfiguration) and cache the resulting identifier lists with primary key indexes.  The
 /// CohortIdentificationConfiguration can then be built into a query that uses the cached results (See CohortQueryBuilder).</para>
 /// 
 /// <para>In order to ensure the cache is never stale the exact SQL query is stored in a table (CachedAggregateConfigurationResults) so that if the user changes
@@ -130,7 +130,7 @@ WHERE
 
     private bool IsMatchOnSqlExecuted(DbDataReader r, string currentSql)
     {
-        //replace all white space with single space 
+        //replace all white space with single space
         var standardisedDatabaseSql = Spaces().Replace(r["SqlExecuted"].ToString(),  " ");
         var standardisedUsersSql = Spaces().Replace(currentSql, " ");
 
@@ -207,7 +207,7 @@ WHERE
 
             //drop the data
             _database.ExpectTable(table.GetRuntimeName()).Drop();
-                    
+
             //delete the record!
             using var cmd = DatabaseCommandHelper.GetCommand(
                 $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = {configuration.ID} AND Operation = '{operation}'", con);

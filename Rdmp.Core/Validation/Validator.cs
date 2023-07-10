@@ -53,6 +53,7 @@ public class Validator
     public List<ItemValidator> ItemValidators { get; set; }
 
 
+
     public Validator()
     {
         ItemValidators = new List<ItemValidator>();
@@ -335,7 +336,7 @@ public class Validator
                 var result = itemValidator.ValidateAll(o, vals, keys);
 
                 //if it wasn't valid then add it to the eList
-                if (result is { SourceItemValidator: null })
+                if(result is { SourceItemValidator: null })
                 {
                     result.SourceItemValidator = itemValidator;
                     eList.Add(result);
@@ -398,7 +399,8 @@ public class Validator
 
         foreach (var itemValidator in ItemValidators)
         {
-            if (itemValidator.TargetProperty == null)
+
+            if(itemValidator.TargetProperty == null)
                 throw new NullReferenceException("Target property cannot be null");
 
             try

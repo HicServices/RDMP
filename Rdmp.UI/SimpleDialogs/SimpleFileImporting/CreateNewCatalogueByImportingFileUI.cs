@@ -374,7 +374,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
             var dest = (DataTableUploadDestination)engine.DestinationObject;
             dest.TableNamerDelegate = () => tbTableName.Text;
-                
+
             using var cts = new CancellationTokenSource();
             var t =Task.Run(() =>
                 {
@@ -449,6 +449,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 $"Successfully imported new Dataset '{catalogue}'.\r\nThe edit functionality will now open.");
 
             Activator.WindowArranger.SetupEditAnything(this, catalogue);
+
         }
 
         if (cbAutoClose.Checked)
@@ -470,7 +471,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void tbTableName_TextChanged(object sender, EventArgs e)
     {
-        if (!string.IsNullOrWhiteSpace(tbTableName.Text))
+        if(!string.IsNullOrWhiteSpace(tbTableName.Text))
             //if the sane name doesn't match the
             tbTableName.ForeColor = !tbTableName.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(tbTableName.Text),
                 StringComparison.CurrentCultureIgnoreCase)

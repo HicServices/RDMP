@@ -41,7 +41,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
     public const string AuditTaskName = "DataExtraction";
 
     private readonly List<string> _extractionIdentifiersidx = new();
-        
+
     private bool _cancel;
 
     private ICatalogue _catalogue;
@@ -80,8 +80,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     [DemandsInitialization("When DBMS is SqlServer then HASH JOIN should be used instead of regular JOINs")]
     public bool UseHashJoins { get; set; }
 
-    [DemandsInitialization(
-        "When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
+    [DemandsInitialization("When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
     public Catalogue[] UseHashJoinsForCatalogues { get; set; }
 
     [DemandsInitialization(
@@ -110,7 +109,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         _timeSpentCalculatingDISTINCT = new Stopwatch();
         _timeSpentBuckettingDates = new Stopwatch();
 
-        Request.ColumnsToExtract.Sort(); //ensure they are in the right order so we can record the release identifiers
+        Request.ColumnsToExtract.Sort();//ensure they are in the right order so we can record the release identifiers
 
         //if we have a cached builder already
         if (request.QueryBuilder == null)
@@ -180,20 +179,20 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         Request.ElevateState(ExtractCommandState.WaitingForSQLServer);
 
-        if (_cancel)
+        if(_cancel)
             throw new Exception("User cancelled data extraction");
 
         if (_hostedSource == null)
         {
             StartAudit(Request.QueryBuilder.SQL);
 
-            if (Request.DatasetBundle.DataSet.DisableExtraction)
+            if(Request.DatasetBundle.DataSet.DisableExtraction)
                 throw new Exception(
                     $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
 
             _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
-                Request.GetDistinctLiveDatabaseServer().Builder, 
+                Request.GetDistinctLiveDatabaseServer().Builder,
                 ExecutionTimeout)
             {
                 // If we are running in batches then always allow empty extractions
@@ -237,14 +236,14 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Read from source failed", e));
         }
 
-        if (cancellationToken.IsCancellationRequested)
+        if(cancellationToken.IsCancellationRequested)
             throw new Exception("Data read cancelled because our cancellationToken was set, aborting data reading");
 
         //if the first chunk is null
         if (firstChunk && chunk == null && !AllowEmptyExtractions)
             throw new Exception(
                 $"There is no data to load, query returned no rows, query was:{Environment.NewLine}{_hostedSource.Sql ?? Request.QueryBuilder.SQL}");
-            
+
         //not the first chunk anymore
         firstChunk = false;
 
@@ -305,9 +304,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             foreach (DataRow row in chunk.Rows)
                 ExtractionTimeTimeCoverageAggregator.ProcessRow(row);
 
-            listener.OnProgress(this,
-                new ProgressEventArgs("Bucketting Dates", new ProgressMeasurement(_rowsBucketted, ProgressType.Records),
-                    _timeSpentCalculatingDISTINCT.Elapsed));
+            listener.OnProgress(this, new ProgressEventArgs("Bucketting Dates",new ProgressMeasurement(_rowsBucketted,ProgressType.Records),_timeSpentCalculatingDISTINCT.Elapsed ));
         }
 
         _timeSpentBuckettingDates.Stop();
@@ -465,6 +462,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     public virtual string HackExtractionSQL(string sql, IDataLoadEventListener listener) => sql;
 
+    }
+
     private void StartAudit(string sql)
     {
         var dataExportRepo = Request.DataExportRepository;
@@ -535,6 +534,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     public void Abort(IDataLoadEventListener listener)
     {
+
     }
 
     public virtual DataTable TryGetPreview()
@@ -552,7 +552,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         //get up to 1000 records
         da.Fill(0, 1000, toReturn);
-                
+
         con.Close();
 
         return toReturn;

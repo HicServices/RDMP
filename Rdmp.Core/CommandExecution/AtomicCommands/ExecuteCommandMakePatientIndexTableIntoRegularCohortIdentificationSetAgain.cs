@@ -18,9 +18,8 @@ public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationS
     private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator,
-        AggregateConfiguration aggregate, CohortAggregateContainer targetCohortAggregateContainer)
-        : this(activator, new AggregateConfigurationCombineable(aggregate), targetCohortAggregateContainer)
+    public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator, AggregateConfiguration aggregate, CohortAggregateContainer targetCohortAggregateContainer)
+        : this (activator,new AggregateConfigurationCombineable(aggregate), targetCohortAggregateContainer)
     {
     }
 
@@ -47,7 +46,7 @@ public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationS
     {
         base.Execute();
 
-        //remove it from its old container (really shouldn't be in any!) 
+        //remove it from its old container (really shouldn't be in any!)
         _sourceAggregateCommand.ContainerIfAny?.RemoveChild(_sourceAggregateCommand.Aggregate);
 
         //remove any non IsExtractionIdentifier columns

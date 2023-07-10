@@ -15,4 +15,5 @@ namespace Rdmp.Core.DataFlowPipeline;
 /// <typeparam name="T"></typeparam>
 public interface IPluginDataFlowComponent<T> : IDataFlowComponent<T>, ICheckable
 {
+
 }

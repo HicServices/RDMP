@@ -61,7 +61,7 @@ WHERE DuplicateCount > 1";
         var cols = _tableInfo.ColumnInfos.ToArray();
         pks = cols.Where(col => col.IsPrimaryKey).ToArray();
 
-        if (!pks.Any())
+        if(!pks.Any())
             throw new Exception(
                 $"TableInfo {_tableInfo.GetRuntimeName()} does not have any primary keys defined so cannot resolve primary key collisions");
 

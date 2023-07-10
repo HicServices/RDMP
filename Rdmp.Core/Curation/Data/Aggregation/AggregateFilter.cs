@@ -82,7 +82,10 @@ public class AggregateFilter : ConcreteFilter, IDisableable
     }
 
     /// <inheritdoc/>
-    public override ISqlParameter[] GetAllParameters() => AggregateFilterParameters.ToArray();
+    public override ISqlParameter[] GetAllParameters()
+    {
+        return AggregateFilterParameters.ToArray();
+    }
 
     ///<inheritdoc/>
     [NoMappingToDatabase]
@@ -136,7 +139,10 @@ public class AggregateFilter : ConcreteFilter, IDisableable
 
 
     /// <inheritdoc/>
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <inheritdoc/>
     public override ColumnInfo GetColumnInfoIfExists()

@@ -88,7 +88,11 @@ public class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicC
 
             // Creates the new property into the db
             // If the Value passed was null just leave it deleted
-            if (!string.IsNullOrWhiteSpace(newValue)) new ExtendedProperty(cataRepo, o, PropertyName, newValue);
+            if(!string.IsNullOrWhiteSpace(newValue))
+            {
+                new ExtendedProperty(cataRepo, o, PropertyName, newValue);
+            }
+
         }
 
         if (SetOn.Any())

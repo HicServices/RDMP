@@ -12,7 +12,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Allows you to copy descriptive metadata (CatalogueItems) between datasets.  This is useful for maintaining a 'single version of the truth' e.g. if every dataset has a field called 
+/// Allows you to copy descriptive metadata (CatalogueItems) between datasets.  This is useful for maintaining a 'single version of the truth' e.g. if every dataset has a field called
 /// 'NHS Number' then the description of this column should be the same in every case.  Using this form you can import/copy the description from another column.  While this covers you
 /// for setting up new fields, the synchronizing of this description over time (e.g. when a data analyst edits one of the other 'NHS Number' fields) is done through propagation
 /// (See PropagateCatalogueItemChangesToSimilarNamedUI)
@@ -21,8 +21,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
 {
     private readonly CatalogueItem _toPopulate;
 
-    public ExecuteCommandImportCatalogueItemDescription(IBasicActivateItems activator, CatalogueItem toPopulate) :
-        base(activator)
+    public ExecuteCommandImportCatalogueItemDescription(IBasicActivateItems activator, CatalogueItem toPopulate):base(activator)
     {
         _toPopulate = toPopulate;
     }

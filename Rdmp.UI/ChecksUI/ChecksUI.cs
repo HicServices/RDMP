@@ -130,7 +130,7 @@ public partial class ChecksUI : UserControl, ICheckNotifier
 
     public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
 
-    private Thread _checkingThread; 
+    private Thread _checkingThread;
     private YesNoYesToAllDialog yesNoYesToAllDialog;
 
     protected override void OnLoad(EventArgs e)

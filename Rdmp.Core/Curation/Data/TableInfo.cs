@@ -45,7 +45,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     /// Cached results of <see cref="GetQuerySyntaxHelper"/>
     /// </summary>
     private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new();
-                
+
     #region Database Properties
 
     private string _name;
@@ -209,6 +209,13 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         _state = r["State"].ToString();
         Schema = r["Schema"].ToString();
         _validationXml = r["ValidationXml"].ToString();
+            
+        IsTableValuedFunction = r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
+            
+        if(r["IsPrimaryExtractionTable"] == DBNull.Value)
+            IsPrimaryExtractionTable = false;
+        else
+            IsPrimaryExtractionTable = Convert.ToBoolean(r["IsPrimaryExtractionTable"]);
 
         IsTableValuedFunction =
             r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
@@ -249,8 +256,10 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     public string GetRuntimeName() => GetQuerySyntaxHelper().GetRuntimeName(Name);
 
     /// <inheritdoc cref="ITableInfo.GetFullyQualifiedName"/>
-    public string GetFullyQualifiedName() =>
-        GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
+    public string GetFullyQualifiedName()
+    {
+        return GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
+    }
 
     /// <inheritdoc cref="ITableInfo.GetDatabaseRuntimeName()"/>
     public string GetDatabaseRuntimeName() => Database.Trim(QuerySyntaxHelper.TableNameQualifiers);
@@ -278,8 +287,10 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     }
 
     /// <inheritdoc/>
-    public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null) =>
-        GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
+    public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
+    {
+        return GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
+    }
 
     /// <inheritdoc/>
     public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
@@ -402,11 +413,11 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
             else if (loadStage <= LoadStage.AdjustStaging &&
                      c.IsAutoIncrement) //auto increment columns do not get created in RAW/STAGING
                 continue;
-            else if (loadStage == LoadStage.AdjustStaging &&
-                     //these two do not appear in staging
-                     (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
-                      c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
-                    )
+            else
+            if(loadStage == LoadStage.AdjustStaging &&
+               //these two do not appear in staging
+               (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID)  || c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
+              )
                 continue;
             else
                 yield return c;

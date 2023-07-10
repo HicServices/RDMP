@@ -66,6 +66,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     public Scintilla QueryEditor { get; private set; }
 
+    public Scintilla QueryEditor { get;private set; }
+
     public int Timeout
     {
         get => _timeoutControls.Timeout;
@@ -93,8 +95,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private ToolStripButton btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
 
     private readonly ToolStripTimeout _timeoutControls = new();
-        
-        
+
+
     public AggregateGraphUI()
     {
         InitializeComponent();
@@ -103,7 +105,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
         #region Query Editor setup
 
-        if (VisualStudioDesignMode)
+        if(VisualStudioDesignMode)
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create();
@@ -179,7 +181,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public void LoadGraphAsync()
     {
         //it is already executing
-        if (_loadTask is { IsCompleted: false }) 
+        if (_loadTask is { IsCompleted: false })
             return;
 
         if (chart1.IsDisposed || chart1.Disposing)
@@ -244,7 +246,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     throw new TimeoutException(
                         "Window Handle was not created on AggregateGraph control after 10 seconds of calling LoadGraph!");
             }
-                
+
             Invoke(new MethodInvoker(() =>
             {
                 lblLoadStage.Visible = true;
@@ -334,7 +336,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private void PopulateGraphResults(QueryTimeColumn countColumn, AggregateContinuousDateAxis axis)
     {
         var haveSetSource = false;
-        if (chart1.Legends.Count == 0)
+        if(chart1.Legends.Count == 0)
             chart1.Legends.Add(new Legend());
 
         chart1.Titles.Clear();
@@ -529,6 +531,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     chart1.ChartAreas[0].AxisX.Interval = 1;
                     chart1.ChartAreas[0].AxisX.LabelAutoFitMinFontSize = 8;
                 }
+
             }
 
             //name series based on column 3 or the aggregate name
@@ -549,7 +552,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         if (cells > MAXIMUM_CELLS_BEFORE_WARNING)
             if (Silent)
                 throw new Exception($"Aborting data binding because there were {cells} cells in the graph data table");
-            else 
+            else
                 abandon = !Activator.YesNo($"Data Table has {cells:n0} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
 
         if (!abandon)
@@ -563,9 +566,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         lblLoadStage.Visible = false;
 
         //set publish enabledness to the enabledness of
-        btnCache.Enabled =
-            Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults
-                .WebServiceQueryCachingServer_ID) != null;
+        btnCache.Enabled =Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
         btnClearFromCache.Enabled = false;
 
         //Make publish button enabledness be dependant on cache
@@ -823,7 +824,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
             var formatted = UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString(s);
 
-            Clipboard.SetText(formatted, TextDataFormat.Html);
+            Clipboard.SetText(formatted,TextDataFormat.Html);
         }
 
         if (sender == miClipboardCsv)

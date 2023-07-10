@@ -161,4 +161,5 @@ public class TableValuedFunctionImporter : ITableInfoImporter
 
         return syntaxHelper.GetParameterDeclaration(parameter.ParameterName, parameter.DataType.SQLType);
     }
+
 }

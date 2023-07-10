@@ -97,4 +97,6 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
         if (string.IsNullOrWhiteSpace(suggestComboBox1.Text))
             suggestComboBox1.SelectedIndex = -1;
     }
+
+
 }

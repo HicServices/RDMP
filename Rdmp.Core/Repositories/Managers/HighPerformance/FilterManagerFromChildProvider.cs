@@ -15,7 +15,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 
 /// <summary>
 /// Provides a memory based efficient (in terms of the number of database queries sent) way of finding all Catalogue filters and parameters as well as those used in
-/// AggregateConfigurations 
+/// AggregateConfigurations
 /// 
 /// </summary>
 internal class FilterManagerFromChildProvider: AggregateFilterManager
@@ -30,9 +30,10 @@ internal class FilterManagerFromChildProvider: AggregateFilterManager
     public FilterManagerFromChildProvider(CatalogueRepository repository, ICoreChildProvider childProvider) :
         base(repository)
     {
+
         _containersToFilters =
-            childProvider.AllAggregateFilters.Where(f => f.FilterContainer_ID.HasValue)
-                .GroupBy(f => f.FilterContainer_ID.Value)
+            childProvider.AllAggregateFilters.Where(f=>f.FilterContainer_ID.HasValue)
+                .GroupBy(f=>f.FilterContainer_ID.Value)
                 .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
 
         var server = repository.DiscoveredServer;
@@ -51,7 +52,7 @@ internal class FilterManagerFromChildProvider: AggregateFilterManager
         }
         r.Close();
     }
-        
+
     public override IContainer[] GetSubContainers(IContainer container)
     {
         return _subcontainers.TryGetValue(container.ID, out var result) ? result.ToArray() :

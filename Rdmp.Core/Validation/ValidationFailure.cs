@@ -14,6 +14,7 @@ namespace Rdmp.Core.Validation;
 /// </summary>
 public class ValidationFailure
 {
+
     public ItemValidator SourceItemValidator { get; set; }
     public IConstraint SourceConstraint { get; set; }
 
@@ -41,5 +42,8 @@ public class ValidationFailure
         eList = e;
     }
 
-    public List<ValidationFailure> GetExceptionList() => eList;
+    public List<ValidationFailure> GetExceptionList()
+    {
+        return eList;
+    }
 }

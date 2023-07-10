@@ -15,6 +15,7 @@ namespace Rdmp.Core.Curation.DataHelper;
 /// </summary>
 public class JoinHelper
 {
+
     /// <summary>
     /// Assembles ANSI Sql for the JOIN section of a query including any supplemental join columns (e.g. T1 LEFT JOIN T2 on T1.A = T2.A AND T1.B = T2.B)
     /// </summary>
@@ -147,6 +148,7 @@ public class JoinHelper
         {
             toReturn =
                 $" {join.ExtractionJoinType} JOIN {primaryTable}{GetOnSql(join, foreignTable, primaryTable, key1, key2, out hasCustomSql)}";
+
         }
         else
         {

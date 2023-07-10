@@ -10,7 +10,7 @@ using System.Data.Common;
 namespace Rdmp.Core.ReusableLibraryCode.Performance;
 
 /// <summary>
-/// Stores the location (Stack Trace) of all calls to the database (DbCommands constructed).  This does not include how long they took to run or even the 
+/// Stores the location (Stack Trace) of all calls to the database (DbCommands constructed).  This does not include how long they took to run or even the
 /// final state of the command (which could have parameters or have its command text modified after construction).  Mostly it is useful for detecting
 /// lines of code that are sending hundreds/thousands of duplicate queries.
 /// 

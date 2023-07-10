@@ -32,8 +32,7 @@ public class WebFileDownloader : IPluginDataProvider
         Mandatory = true)]
     public Uri UriToFile { get; set; }
 
-    [DemandsInitialization(
-        "Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
+    [DemandsInitialization("Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
     public DataAccessCredentials WebsenseCredentials { get; set; }
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
@@ -67,8 +66,8 @@ public class WebFileDownloader : IPluginDataProvider
 
         using var response = CreateNewRequest(UriToFile.AbsoluteUri, credentials);
         using var writer = File.Create(destinationFile.FullName);
-        //download the file 
-        response.CopyTo(writer, 1 << 20);
+        //download the file
+        response.CopyTo(writer,1<<20);
     }
 
     private static Stream CreateNewRequest(string url, ICredentials credentials = null, bool useCredentials = false)

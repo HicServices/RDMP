@@ -47,9 +47,9 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
     public IDataExportRepository DataExportRepository { get; set; }
 
-    public List<IColumn> ColumnsToExtract { get; set; }
-    public IHICProjectSalt Salt { get; set; }
-    public bool IncludeValidation { get; set; }
+    public List<IColumn> ColumnsToExtract{get;set;}
+    public IHICProjectSalt Salt{get;set;}
+    public bool IncludeValidation {get;set;}
 
     public IExtractionDirectory Directory { get; set; }
     public ICatalogue Catalogue { get; private set; }
@@ -84,6 +84,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         IncludeValidation = includeValidation;
         TopX = -1;
     }
+
 
 
     /// <summary>
@@ -165,10 +166,12 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {
-        IDataAccessPoint[] points = QueryBuilder?.TablesUsedInQuery != null
-            ? QueryBuilder.TablesUsedInQuery.ToArray()
-            : //get it from the request if it has been built
-            Catalogue.GetTableInfoList(false); //or from the Catalogue directly if the query hasn't been built
+        IDataAccessPoint[] points;
+
+        if (QueryBuilder?.TablesUsedInQuery != null)
+            points = QueryBuilder.TablesUsedInQuery.ToArray(); //get it from the request if it has been built
+        else
+            points = Catalogue.GetTableInfoList(false); //or from the Catalogue directly if the query hasn't been built
 
         var singleServer = new DataAccessPointCollection(true, DataAccessContext.DataExport);
         singleServer.AddRange(points);

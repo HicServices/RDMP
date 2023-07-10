@@ -20,4 +20,5 @@ public interface ISupplementalJoin
 
     /// <inheritdoc cref="IJoin.Collation"/>
     string Collation { get; }
+
 }

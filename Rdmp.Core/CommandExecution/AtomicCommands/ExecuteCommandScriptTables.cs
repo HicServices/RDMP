@@ -68,6 +68,7 @@ public class ExecuteCommandScriptTables : BasicCommandExecution
 
         if (_outFile != null)
             File.WriteAllText(_outFile.FullName, sbScript.ToString());
+        }
         else
             Show($"Script for {_tableInfos.Length} tables", sbScript.ToString());
     }

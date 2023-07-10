@@ -78,7 +78,7 @@ public class TableInfoCloneOperation
     }
 
 
-    public static void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
+    public void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo, tableName))
             throw new Exception(
@@ -88,16 +88,13 @@ public class TableInfoCloneOperation
     }
 
 
-    private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName) =>
-        tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
-        tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)
-        ||
-        dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
-        dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
-
-    public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo,
-        DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns,
-        bool allowNulls, PreLoadDiscardedColumn[] dilutionColumns)
+    private bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
+    {
+        return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)
+            ||
+            dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+    }
+    public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls, PreLoadDiscardedColumn[] dilutionColumns)
     {
         if (!sourceTable.Exists())
             throw new Exception($"Table {sourceTable} does not exist on {srcDatabaseInfo}");

@@ -55,10 +55,14 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
         _catalogue = databaseObject;
         checkAndExecuteUI1.SetItemActivator(activator);
 
-        CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue),
-            "Validation Rules...");
-        CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator)
-            { OverrideCommandName = "View Results..." }.SetTarget(databaseObject));
+        CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue), "Validation Rules...");
+        CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator){OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
+    }
+
+    public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+    {
+        base.ConsultAboutClosing(sender,e);
+        checkAndExecuteUI1.ConsultAboutClosing(sender,e);
     }
 
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)

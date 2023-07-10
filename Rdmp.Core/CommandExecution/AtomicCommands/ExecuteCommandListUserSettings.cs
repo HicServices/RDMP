@@ -23,10 +23,11 @@ public class ExecuteCommandListUserSettings : BasicCommandExecution
 
         var sb = new StringBuilder();
 
-        foreach (var prop in
-                 typeof(UserSettings)
-                     .GetProperties(BindingFlags.Public | BindingFlags.Static)
-                     .OrderBy(p => p.Name))
+        foreach(var prop in
+                typeof(UserSettings)
+                    .GetProperties(BindingFlags.Public | BindingFlags.Static)
+                    .OrderBy(p=>p.Name))
+        {
             sb.AppendLine($"{prop.Name}:{prop.GetValue(null)}");
 
         BasicActivator.Show(sb.ToString());

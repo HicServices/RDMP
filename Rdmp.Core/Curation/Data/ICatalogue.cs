@@ -24,10 +24,10 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// The central class for the RDMP, a Catalogue is a virtual dataset e.g. 'Hospital Admissions'.  A Catalogue can be a merging of multiple underlying tables and exists 
+/// The central class for the RDMP, a Catalogue is a virtual dataset e.g. 'Hospital Admissions'.  A Catalogue can be a merging of multiple underlying tables and exists
 /// independent of where the data is actually stored (look at other classes like TableInfo to see the actual locations of data).
 /// 
-/// <para>As well as storing human readable names/descriptions of what is in the dataset it is the hanging off point for Attachments (SupportingDocument), validation logic, 
+/// <para>As well as storing human readable names/descriptions of what is in the dataset it is the hanging off point for Attachments (SupportingDocument), validation logic,
 /// extractable columns (CatalogueItem->ExtractionInformation->ColumnInfo) ways of filtering the data, aggregations to help understand the dataset etc.</para>
 /// 
 /// <para>Catalogues are always flat views although they can be built from multiple relational data tables underneath.</para>
@@ -47,7 +47,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     int? LoadMetadata_ID { get; set; }
 
     /// <summary>
-    /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue. 
+    /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue.
     /// <seealso cref="LogManager"/>
     /// </summary>
     string LoggingDataTask { get; set; }
@@ -64,7 +64,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
 
     /// <summary>
     /// The <see cref="ExtractionInformation"/> which indicates the time field (in dataset time) of the dataset.  This should be a column in your table
-    /// that indicates for every row when it became active e.g. 'PrescribedDate' for prescribing.  Try to avoid using columns that have lots of nulls or 
+    /// that indicates for every row when it became active e.g. 'PrescribedDate' for prescribing.  Try to avoid using columns that have lots of nulls or
     /// where the date is arbitrary (e.g. 'RecordLoadedDate')
     /// </summary>
     int? TimeCoverage_ExtractionInformation_ID { get; set; }
@@ -94,7 +94,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// User specified free text field.  Not used for anything by RDMP.
     /// <seealso cref="Periodicity"/>
     /// </summary>
-    string Time_coverage { get; set; }
+    string Time_coverage {get;set;}
 
     /// <summary>
     /// User specified period on how regularly the dataset is updated.  This does not have any technical bearing on how often it is loaded
@@ -103,7 +103,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     Catalogue.CataloguePeriodicity Periodicity { get; set; }
 
     /// <summary>
-    /// Human readable description provided by the RDMP user that describes what the dataset contains.  
+    /// Human readable description provided by the RDMP user that describes what the dataset contains.
     /// <para>This can be multiple paragraphs.</para>
     /// </summary>
     string Description { get; set; }
@@ -173,7 +173,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
         out List<ITableInfo> lookupTables);
 
     /// <summary>
-    /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is 
+    /// Returns the unique <see cref="DiscoveredServer"/> from which to access connect to in order to run queries generated from the <see cref="Catalogue"/>.  This is
     /// determined by comparing all the underlying <see cref="TableInfo"/> that power the <see cref="ExtractionInformation"/> of the Catalogue and looking for a shared
     /// servername.  This will handle when the tables are in different databases but only if you set <paramref name="setInitialDatabase"/> to false
     /// </summary>
@@ -198,8 +198,8 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch);
 
     /// <summary>
-    /// Returns all <see cref="ExtractionInformation"/> declared under this <see cref="Catalogue"/> <see cref="CatalogueItem"/>s.  This can be restricted by 
-    /// <see cref="ExtractionCategory"/> 
+    /// Returns all <see cref="ExtractionInformation"/> declared under this <see cref="Catalogue"/> <see cref="CatalogueItem"/>s.  This can be restricted by
+    /// <see cref="ExtractionCategory"/>
     /// 
     /// <para>pass <see cref="ExtractionCategory.Any"/> to fetch all <see cref="ExtractionInformation"/> regardless of category</para>
     /// </summary>
@@ -229,7 +229,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     ExtractionFilter[] GetAllFilters();
 
     /// <summary>
-    /// Returns the unique <see cref="DatabaseType"/> shared by all <see cref="TableInfo"/> which underlie the Catalogue.  This is similar to GetDistinctLiveDatabaseServer 
+    /// Returns the unique <see cref="DatabaseType"/> shared by all <see cref="TableInfo"/> which underlie the Catalogue.  This is similar to GetDistinctLiveDatabaseServer
     /// but is faster and more tolerant of failure i.e. if there are no underlying <see cref="TableInfo"/> at all or they are on different servers this will still return
     /// the shared / null <see cref="DatabaseType"/>
     /// </summary>
@@ -252,14 +252,14 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     ICatalogue ShallowClone();
 
     /// <summary>
-    /// Returns true if the <see cref="Catalogue"/> reflects a call to an external API and not a 
+    /// Returns true if the <see cref="Catalogue"/> reflects a call to an external API and not a
     /// database query.
     /// </summary>
     /// <returns></returns>
     bool IsApiCall();
 
     /// <summary>
-    /// Returns true if the <see cref="Catalogue"/> reflects a call to an external API and not a 
+    /// Returns true if the <see cref="Catalogue"/> reflects a call to an external API and not a
     /// database query.  If it is an API then <paramref name="plugin"/> will be populated with the
     /// plugin that can service the API or null if none are loaded that are compatible with
     /// the <see cref="Catalogue"/>
@@ -270,7 +270,7 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     bool IsApiCall(out IPluginCohortCompiler plugin);
 
     /// <summary>
-    /// Returns true if the Catalogue is extractable but only with a specific Project.  You can pass null if you are addressing a Catalogue for whom you know 
+    /// Returns true if the Catalogue is extractable but only with a specific Project.  You can pass null if you are addressing a Catalogue for whom you know
     /// IInjectKnown&lt;CatalogueExtractabilityStatus&gt; has been called already.
     /// </summary>
     /// <param name="dataExportRepository"></param>

@@ -71,7 +71,7 @@ public class ForwardEngineerCatalogue
     {
         var repo = _tableInfo.CatalogueRepository;
 
-        //if user did not specify an existing catalogue to supplement 
+        //if user did not specify an existing catalogue to supplement
         intoExistingCatalogue ??= new Catalogue(repo, _tableInfo.GetRuntimeName());
 
         catalogue = intoExistingCatalogue;
@@ -80,7 +80,7 @@ public class ForwardEngineerCatalogue
 
         var order = 0;
 
-        //for each column we will add a new one to the 
+        //for each column we will add a new one to the
         foreach (var col in _columnInfos)
         {
             order++;
@@ -88,7 +88,7 @@ public class ForwardEngineerCatalogue
             //create it with the same name
             var cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name[(col.Name.LastIndexOf(".", StringComparison.Ordinal) + 1)..].Trim('[', ']', '`','"'));
             catalogueItemsCreated.Add(cataItem);
-                                
+
             var newExtractionInfo = new ExtractionInformation(repo, cataItem, col, col.Name)
             {
                 Order = order

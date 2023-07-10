@@ -18,7 +18,10 @@ internal class ProposeExecutionWhenTargetIsCohortIdentificationConfiguration:RDM
     {
     }
 
-    public override bool CanActivate(CohortIdentificationConfiguration target) => true;
+    public override bool CanActivate(CohortIdentificationConfiguration target)
+    {
+        return true;
+    }
 
     public override void Activate(CohortIdentificationConfiguration target)
     {

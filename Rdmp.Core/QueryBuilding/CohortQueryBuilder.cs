@@ -69,6 +69,7 @@ public class CohortQueryBuilder
 
     public ParameterManager ParameterManager = new();
 
+
     private CohortQueryBuilderHelper helper;
     public CohortQueryBuilderResult Results { get; private set; }
 
@@ -140,9 +141,7 @@ public class CohortQueryBuilder
 
         //Show the user all the fields (*) unless there is a HAVING or it is a Patient Index Table.
         var selectList =
-            string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable()
-                ? "*"
-                : null;
+            string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable() ? "*" : null;
 
         RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX), CancellationToken.None);
 

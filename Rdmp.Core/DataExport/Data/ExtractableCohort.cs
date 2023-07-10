@@ -79,6 +79,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     #endregion
 
 
+
     private int _count = -1;
 
 
@@ -430,7 +431,10 @@ where
     public string GetPrivateIdentifierDataType() => ExternalCohortTable.DiscoverPrivateIdentifier().DataType.SQLType;
 
     /// <inheritdoc/>
-    public string GetReleaseIdentifierDataType() => ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
+    public string GetReleaseIdentifierDataType()
+    {
+        return ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
+    }
 
 
     /// <inheritdoc/>
@@ -439,7 +443,7 @@ where
     //these need to be private since ReverseAnonymiseDataTable will likely be called in batch
     private int _reverseAnonymiseProgressFetchingMap;
     private int _reverseAnonymiseProgressReversing;
-        
+
     /// <summary>
     /// Indicates whether the database described in ExternalCohortTable is unreachable or if the cohort has since been deleted etc.
     /// </summary>
@@ -474,6 +478,7 @@ where
                         haveWarnedAboutTop1AlreadyCount--;
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"Top 1-ing will occur for release identifier {r[releaseIdentifier]} because it maps to multiple private identifiers"));
+
                     }
                     else
                     {

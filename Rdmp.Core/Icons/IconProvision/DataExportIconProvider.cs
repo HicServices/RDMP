@@ -21,8 +21,7 @@ public class DataExportIconProvider : CatalogueIconProvider
         IIconProvider[] pluginIconProviders) : base(repositoryLocator, pluginIconProviders)
     {
         //Calls to the Resource manager cause file I/O (I think or at the least CPU use anyway) so cache them all at once
-        StateBasedIconProviders.Add(
-            new ExtractableDataSetStateBasedIconProvider(OverlayProvider, CatalogueStateBasedIconProvider));
+        StateBasedIconProviders.Add(new ExtractableDataSetStateBasedIconProvider(OverlayProvider,CatalogueStateBasedIconProvider));
         StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
     }
 

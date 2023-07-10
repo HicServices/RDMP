@@ -20,7 +20,7 @@ public class RegularExpression : SecondaryConstraint
 
     public RegularExpression()
     {
-        // Required for serialisation. 
+        // Required for serialisation.
     }
 
     public RegularExpression(string pattern)

@@ -311,7 +311,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
             if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
                 revertible.SaveToDatabase();
-                
+
             //if the name has changed handle renaming
             if(oldParameterName != null)
                 if (Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
@@ -321,8 +321,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
                     if((owner ?? (object)parameter) is DatabaseEntity toRefresh)
                         Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(toRefresh));
                 }
-                        
-                
+
+
             //anything that was a problem before
             var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;
             DisableRelevantObjects();
@@ -421,7 +421,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             if (Options.IsOverridden(sqlParameter))
                 return "Overridden.png";
 
-            if (Options.IsHigherLevel(sqlParameter))
+            if(Options.IsHigherLevel(sqlParameter))
                 return "Locked.png";
         }
         catch (Exception)
@@ -449,7 +449,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     private bool CanOverride(ISqlParameter sqlParameter)
     {
         return sqlParameter != null &&
-               //if it is not already overridden 
+               //if it is not already overridden
                !Options.IsOverridden(sqlParameter) &&
                //and it exists at a lower level
                Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel;
@@ -477,4 +477,5 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (e.RowObject is ISqlParameter p && Options.ShouldBeReadOnly(p))
             e.Cancel = true;
     }
+
 }

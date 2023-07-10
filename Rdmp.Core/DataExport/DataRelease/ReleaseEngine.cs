@@ -292,7 +292,7 @@ public class ReleaseEngine
         //found files in current directory
         foreach (var file in from.GetFiles())
         {
-            //audit as -Filename at tab indent 
+            //audit as -Filename at tab indent
             AuditFileCreation(file.Name, audit, tabDepth);
             file.CopyTo(Path.Combine(into.FullName, file.Name));
         }

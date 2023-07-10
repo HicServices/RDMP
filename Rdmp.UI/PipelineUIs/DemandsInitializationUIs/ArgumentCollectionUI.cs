@@ -170,6 +170,7 @@ public partial class ArgumentCollectionUI : UserControl
         }
         catch (Exception e)
         {
+
             //add the text value value and report the error
             args.InitialValue = ArgumentValueUIFactory.CanHandleInvalidStringData(args.Type) ? argument.Value : null;
 

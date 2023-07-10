@@ -50,7 +50,7 @@ public class Gatherer
     }
 
     /// <summary>
-    /// Invokes the relevant overload if it exists. 
+    /// Invokes the relevant overload if it exists.
     /// <seealso cref="CanGatherDependencies"/>
     /// </summary>
     /// <param name="databaseEntity"></param>
@@ -113,7 +113,7 @@ public class Gatherer
         return root;
     }
 
-    public static GatheredObject GatherDependencies(IFilter filter)
+    public GatheredObject GatherDependencies(IFilter filter)
     {
         var root = new GatheredObject(filter);
 

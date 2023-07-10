@@ -76,6 +76,8 @@ public class ItemValidator
     private ValidationFailure ValidateSecondaryConstraints(object columnValue, object[] otherColumns, string[] otherColumnNames)
     {
         foreach (ISecondaryConstraint secondaryConstraint in SecondaryConstraints)
+        {
+
             try
             {
                 var result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);

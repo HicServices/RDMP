@@ -25,11 +25,11 @@ public sealed class DataLoadInfo : IDataLoadInfo
     public DiscoveredServer DatabaseSettings { get; }
 
     private readonly object _oLock = new();
-        
-        
+
+
     #region Property setup (these throw exceptions if you try to read them after the record is closed)
 
-       
+
 
     public string PackageName { get; }
 
@@ -186,8 +186,8 @@ SELECT @@IDENTITY;", con);
         {
             //prevent double closing
             if (IsClosed)
-                return; 
-            
+                return;
+
             EndTime = DateTime.Now;
 
             using var con = DatabaseSettings.BeginNewTransactedConnection();
@@ -200,7 +200,7 @@ SELECT @@IDENTITY;", con);
 
                 DatabaseSettings.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed,DateTime.Now);
                 DatabaseSettings.AddParameterWithValueToCommand("@ID", cmdUpdateToClosed, ID);
-                        
+
                 var rowsAffected = cmdUpdateToClosed.ExecuteNonQuery();
 
                 if (rowsAffected != 1)

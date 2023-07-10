@@ -28,10 +28,8 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
     /// </summary>
     private bool _userMustPick;
 
-    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems activator,
-        ExtractableDataSetCombineable sourceExtractableDataSetCombineable,
-        ExtractionConfiguration targetExtractionConfiguration)
-        : this(activator, targetExtractionConfiguration)
+    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems activator,ExtractableDataSetCombineable sourceExtractableDataSetCombineable, ExtractionConfiguration targetExtractionConfiguration)
+        : this(activator,targetExtractionConfiguration)
     {
         SetExtractableDataSets(false, sourceExtractableDataSetCombineable.ExtractableDataSets);
     }
@@ -73,7 +71,7 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
             }
     }
 
-    private void SetExtractableDataSets(bool userMustPick, params IExtractableDataSet[] toAdd)
+    private void SetExtractableDataSets(bool userMustPick,params IExtractableDataSet[] toAdd)
     {
         _userMustPick = userMustPick;
         var alreadyInConfiguration = _targetExtractionConfiguration.GetAllExtractableDataSets().ToArray();

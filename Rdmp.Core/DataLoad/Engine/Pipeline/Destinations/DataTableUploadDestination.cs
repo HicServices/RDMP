@@ -29,9 +29,9 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
 /// <summary>
-/// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform 
+/// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform
 /// targets (MySql , Sql Server etc).  Normally the SQL Data Types and column names will be computed from the DataTable and a table will be created with the
-/// name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in which case a basic bulk insert will take 
+/// name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in which case a basic bulk insert will take
 /// place.
 /// </summary>
 public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>,
@@ -77,7 +77,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public string TargetTableName { get; private set; }
 
     /// <summary>
-    /// True if a new table was created or re-created by the execution of this destination.  False if 
+    /// True if a new table was created or re-created by the execution of this destination.  False if
     /// the table already existed e.g. data was simply added
     /// </summary>
     public bool CreatedTable { get; private set; }
@@ -147,7 +147,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     "Chunk did not have a TableName, did not know what to call the newly created table");
             }
             else
-            {
+            if (string.IsNullOrWhiteSpace(toProcess.TableName))
+                throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
+            else
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
             }
         }
@@ -177,7 +179,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 tableAlreadyExistsButEmpty = true;
 
-                if (!AllowLoadingPopulatedTables)
+                if(!AllowLoadingPopulatedTables)
                     if (_discoveredTable.IsEmpty())
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"Found table {TargetTableName} already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
@@ -193,7 +195,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Determined that the table name {TargetTableName} is unique at destination {_database}"));
-            }
 
             //create connection to destination
             if (!tableAlreadyExistsButEmpty)
@@ -211,7 +212,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
 
             _managedConnection = _server.BeginNewTransactedConnection();
-            _bulkcopy = _discoveredTable.BeginBulkInsert(Culture, _managedConnection.ManagedTransaction);
+            _bulkcopy = _discoveredTable.BeginBulkInsert(Culture,_managedConnection.ManagedTransaction);
 
             _firstTime = false;
         }
@@ -251,6 +252,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         if (!string.IsNullOrWhiteSpace(toProcess.TableName) && invalidSymbols.Any(c => toProcess.TableName.Contains(c)))
             foreach (var symbol in invalidSymbols)
                 toProcess.TableName = toProcess.TableName.Replace(symbol.ToString(), "");
+            }
+        }
 
         foreach (DataColumn col in toProcess.Columns)
             if (!string.IsNullOrWhiteSpace(col.ColumnName) && invalidSymbols.Any(c => col.ColumnName.Contains(c)))
@@ -300,7 +303,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         var oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key,
             v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess), StringComparer.CurrentCultureIgnoreCase);
 
-        //columns in 
+        //columns in
         var sharedColumns = new List<string>();
 
         //for each destination column
@@ -310,7 +313,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 sharedColumns.Add(col); //it is a shared column
 
 
-        //adjust the computer to 
+
+        //adjust the computer to
         //for each shared column adjust the corresponding computer for all rows
         Parallel.ForEach(sharedColumns, col =>
         {
@@ -401,7 +405,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 if (pipelineFailureExceptionIfAny != null)
                 {
                     _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
-                        
+
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back successfully"));
 
                     _bulkcopy?.Dispose();

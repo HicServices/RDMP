@@ -61,7 +61,7 @@ public class CommandInvoker
         AddDelegate(typeof(DirectoryInfo), false, p => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
         AddDelegate(typeof(FileInfo), false, p => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
 
-        // Is the Global Check Notifier the best here? 
+        // Is the Global Check Notifier the best here?
         AddDelegate(typeof(ICheckNotifier), true, p => _basicActivator.GlobalErrorCheckNotifier);
 
         AddDelegate(typeof(Uri), false, p => new Uri(SelectText(p)));
@@ -69,7 +69,7 @@ public class CommandInvoker
 
         AddDelegate(typeof(string), false, SelectText);
 
-        AddDelegate(typeof(Type), false,p => 
+        AddDelegate(typeof(Type), false,p =>
             _basicActivator.SelectType(
                 new DialogArgs
                 {
@@ -82,7 +82,7 @@ public class CommandInvoker
         AddDelegate(typeof(DiscoveredDatabase),false,p=>_basicActivator.SelectDatabase(true,GetPromptFor(p)));
         AddDelegate(typeof(DiscoveredTable),false,p=>_basicActivator.SelectTable(true,GetPromptFor(p)));
 
-        AddDelegate(typeof(DatabaseEntity), false, p => 
+        AddDelegate(typeof(DatabaseEntity), false, p =>
             _basicActivator.SelectOne(
                 new DialogArgs
                 {
@@ -99,10 +99,10 @@ public class CommandInvoker
         AddDelegate(typeof(IDeleteable), false, SelectOne<IDeleteable>, true);
         AddDelegate(typeof(ILoggedActivityRootObject), false, SelectOne<ILoggedActivityRootObject>);
         AddDelegate(typeof(ICollectSqlParameters), false, SelectOne<ICollectSqlParameters>);
-        AddDelegate(typeof(IRootFilterContainerHost), false, SelectOne<IRootFilterContainerHost>);
+        AddDelegate(typeof(IRootFilterContainerHost),false, SelectOne<IRootFilterContainerHost>);
 
         AddDelegate(typeof(Enum),false,p=>_basicActivator.SelectEnum(
-            new DialogArgs { 
+            new DialogArgs {
                 WindowTitle = GetPromptFor(p),
                 InitialSearchText = p.DefaultValue?.ToString()
             } , p.Type, out var chosen)?chosen:null);
@@ -115,31 +115,30 @@ public class CommandInvoker
                 new DialogArgs
                 {
                     WindowTitle = GetPromptFor(p),
-                    InitialObjectSelection = p.DefaultValue == null || p.DefaultValue == DBNull.Value
-                        ? null
-                        : ((IEnumerable<IMapsDirectlyToDatabaseTable>)p.DefaultValue).ToArray()
-                }, p.Type.GetElementType(), available);
+                    InitialObjectSelection = p.DefaultValue == null || p.DefaultValue == DBNull.Value ? null :
+                        ((IEnumerable<IMapsDirectlyToDatabaseTable>)p.DefaultValue).ToArray()
+                },p.Type.GetElementType(), available);
 
-            if (result == null)
+            if(result == null)
                 return null;
 
-            var typedArray = Array.CreateInstance(p.Type.GetElementType(), result.Length);
-            for (var i = 0; i < typedArray.Length; i++)
-                typedArray.SetValue(result[i], i);
+            var typedArray = Array.CreateInstance(p.Type.GetElementType(),result.Length);
+            for(var i=0;i<typedArray.Length;i++)
+                typedArray.SetValue(result[i],i);
 
             return typedArray;
         }));
 
 
         AddDelegate(typeof(ICheckable), false,
-            p=>_basicActivator.SelectOne(GetPromptFor(p), 
+            p=>_basicActivator.SelectOne(GetPromptFor(p),
                 _basicActivator.GetAll<ICheckable>()
                     .Where(p.Type.IsInstanceOfType)
                     .Cast<IMapsDirectlyToDatabaseTable>()
                     .ToArray()), true);
 
         // if we aren't asking for any of the above explicit interfaces (e.g. get user to pick an IDeletable)
-        // then we might be something like IProject so let them pick any 
+        // then we might be something like IProject so let them pick any
         AddDelegate(typeof(IMapsDirectlyToDatabaseTable), false,
             p => _basicActivator.SelectOne(GetPromptFor(p),
                 _basicActivator.GetAll<IMapsDirectlyToDatabaseTable>()
@@ -166,8 +165,8 @@ public class CommandInvoker
         );
 
         _argumentDelegates.Add(new CommandInvokerValueTypeDelegate(p=>
-            _basicActivator.SelectValueType(GetPromptFor(p), p.Type, p.DefaultValue, out var chosen) 
-                ? chosen 
+            _basicActivator.SelectValueType(GetPromptFor(p), p.Type, p.DefaultValue, out var chosen)
+                ? chosen
                 : throw new OperationCanceledException()));
     }
 
@@ -314,6 +313,17 @@ public class CommandInvoker
             }
             , _basicActivator.GetAll(p.Type).Cast<IMapsDirectlyToDatabaseTable>().ToArray());
     }
+    private T[] SelectMany<T>(RequiredArgument p)
+    {
+        return
+            _basicActivator.SelectMany(
+                    new DialogArgs
+                    {
+                        WindowTitle = p.Name,
+                        InitialObjectSelection = ((IEnumerable<T>)p.DefaultValue)?.Cast<IMapsDirectlyToDatabaseTable>().ToArray()
+                    }, typeof(T), _basicActivator.GetAll(p.Type).Cast<IMapsDirectlyToDatabaseTable>().ToArray())
+                ?.Cast<T>()?.ToArray() ?? throw new OperationCanceledException();
+    }
 
     private T[] SelectMany<T>(RequiredArgument p) =>
         _basicActivator.SelectMany(
@@ -345,7 +355,7 @@ public class CommandInvoker
 
         CommandInvokerDelegate match;
         if (required.Type.IsAssignableTo(typeof(IMapsDirectlyToDatabaseTable)))
-            match = _argumentDelegates.FirstOrDefault(k => k.CanHandle(typeof(IMapsDirectlyToDatabaseTable)));
+            match=_argumentDelegates.FirstOrDefault(k => k.CanHandle(typeof(IMapsDirectlyToDatabaseTable)));
         else if (required.Type.IsAssignableTo(typeof(Enum)))
             match = _argumentDelegates.FirstOrDefault(k => k.CanHandle(typeof(Enum)));
         else

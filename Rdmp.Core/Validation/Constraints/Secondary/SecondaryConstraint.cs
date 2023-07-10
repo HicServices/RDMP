@@ -21,4 +21,5 @@ public abstract class SecondaryConstraint : ISecondaryConstraint
     public abstract void RenameColumn(string originalName, string newName);
     public abstract string GetHumanReadableDescriptionOfValidation();
     public abstract ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames);
+
 }

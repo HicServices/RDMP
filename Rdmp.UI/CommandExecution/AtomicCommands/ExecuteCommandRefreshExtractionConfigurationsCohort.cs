@@ -66,8 +66,8 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
         {
             progressUi.ShowRunning(false);
 
-            //then on the UI thread 
-            if (s.IsFaulted)
+            //then on the UI thread
+            if(s.IsFaulted)
                 return;
 
             //issue save and refresh

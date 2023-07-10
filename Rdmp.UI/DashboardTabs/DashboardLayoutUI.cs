@@ -100,7 +100,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 
             ControlDictionary.Add(c,instance);
             Controls.Add(instance);
-                
+
             //let people know what the edit state is
             _editModeFunctionality.EditMode = btnEditMode.Checked;
         }
@@ -145,4 +145,5 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DashboardLayoutUI_Design, UserControl>))]
 public abstract class DashboardLayoutUI_Design : RDMPSingleDatabaseObjectControl<DashboardLayout>
 {
+
 }

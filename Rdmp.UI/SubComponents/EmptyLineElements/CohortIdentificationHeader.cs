@@ -28,7 +28,7 @@ internal class CohortIdentificationHeader
     {
         return "";
     }
-    
+
     public string GetCachedQueryUseCount()
     {
         return "";
