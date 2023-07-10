@@ -26,14 +26,14 @@ public class TableInfoImporter:ITableInfoImporter
     private readonly string _importFromServer;
     private readonly string _importDatabaseName;
     private readonly string _importTableName;
-        
+
     private readonly string _username;
     private readonly string _password;
     private readonly DataAccessContext _usageContext;
     private readonly string _importFromSchema;
 
     private readonly DatabaseType _type;
-        
+
     private DiscoveredServer _server;
     private TableType _importTableType;
 
@@ -98,7 +98,7 @@ public class TableInfoImporter:ITableInfoImporter
         _server = new DiscoveredServer(_importFromServer, _importDatabaseName, _type,_username, _password);
     }
     #endregion
-        
+
     /// <inheritdoc/>
     public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
     {
@@ -173,7 +173,7 @@ public class TableInfoImporter:ITableInfoImporter
 
         return col;
     }
-        
+
     /// <inheritdoc cref="DoImport(out ITableInfo,out ColumnInfo[])"/>
     public void DoImport()
     {

@@ -23,7 +23,7 @@ public class ExecuteCommandListUserSettings : BasicCommandExecution
 
         var sb = new StringBuilder();
 
-        foreach(var prop in 
+        foreach(var prop in
                 typeof(UserSettings)
                     .GetProperties(BindingFlags.Public | BindingFlags.Static)
                     .OrderBy(p=>p.Name))

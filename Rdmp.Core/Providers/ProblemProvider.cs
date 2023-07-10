@@ -21,7 +21,7 @@ public abstract class ProblemProvider:IProblemProvider
         typeof(ColumnInfo),
         typeof(IFilter),
         typeof(Pipeline)});
-        
+
     /// <inheritdoc/>
     public bool HasProblem(object o)
     {

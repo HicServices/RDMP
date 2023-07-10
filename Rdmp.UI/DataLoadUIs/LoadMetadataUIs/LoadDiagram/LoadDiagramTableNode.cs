@@ -78,7 +78,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
     {
         return TableName;
     }
-        
+
     public ICombineToMakeCommand GetCombineable()
     {
         return new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
@@ -95,7 +95,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
         //we don't exist either!
         if (!Table.Exists())
         {
-            State = LoadDiagramState.NotFound;    
+            State = LoadDiagramState.NotFound;
             return;
         }
 

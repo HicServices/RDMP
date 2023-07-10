@@ -28,7 +28,7 @@ namespace Rdmp.Core.Curation.Data.Cohort;
 /// <summary>
 /// Cohort identification is the job identifying which patients fit certain study criteria.  E.g. "I want all patients who have been prescribed Diazepam for the first time after 2000
 /// and who are still alive today".  Every time the data analyst has a new project/cohort to identify he should create a new CohortIdentificationConfiguration, it is the entry point
-/// for cohort generation and includes a high level description of what the cohort requirements are, an optional ticket and is the hanging off point for all the 
+/// for cohort generation and includes a high level description of what the cohort requirements are, an optional ticket and is the hanging off point for all the
 /// RootCohortAggregateContainers (the bit that provides the actual filtering/technical data about how the cohort is identified).
 /// </summary>
 public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlParameters,INamed, IHasDependencies,ICustomSearchString, IMightBeReadOnly, IHasFolder
@@ -92,7 +92,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// To assist with complex cohort identification queries over multiple datasets (and between servers / server types) you can configure a QueryCachingServer.  
+    /// To assist with complex cohort identification queries over multiple datasets (and between servers / server types) you can configure a QueryCachingServer.
     /// This is an <see cref="ExternalDatabaseServer"/> created by <see cref="QueryCachingPatcher"/>.
     /// 
     /// <para>Once setup, each <see cref="AggregateConfiguration"/> query in this <see cref="CohortIdentificationConfiguration"/> will be run independently and
@@ -213,7 +213,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
         Folder = r["Folder"] as string ?? FolderHelper.Root;
     }
-        
+
     /// <summary>
     /// Deletes the root container and consequently the entire <see cref="CohortIdentificationConfiguration"/>
     /// </summary>
@@ -393,7 +393,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Creates an adjusted copy of the <paramref name="toClone"/> to be used as a cohort identification <see cref="AggregateConfiguration"/>.  This could be 
+    /// Creates an adjusted copy of the <paramref name="toClone"/> to be used as a cohort identification <see cref="AggregateConfiguration"/>.  This could be
     /// an <see cref="AggregateConfiguration"/> graph or one that is acting as a patient index table / cohort set for another <see cref="CohortIdentificationConfiguration"/>.
     /// <para>IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from <paramref name="resolveMultipleExtractionIdentifiers"/></para>
     /// </summary>
@@ -431,11 +431,11 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(AggregateConfiguration toClone, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
     {
         var cataRepo = CatalogueRepository;
-                        
+
         //clone will not have axis or pivot or dimensions other than extraction identifier
         var newConfiguration = toClone.ShallowClone();
 
-        //make its name follow the naming convention e.g. cic_105_LINK103_MyAggregate 
+        //make its name follow the naming convention e.g. cic_105_LINK103_MyAggregate
         EnsureNamingConvention(newConfiguration);
 
         //now clear its pivot dimension, make it not extractable and make its countSQL basic/sane
@@ -464,10 +464,10 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             //two cases here either the import has a custom freaky CHI column (dimension) or it doesn't reference CHI at all if it is freaky we want to preserve its freakyness
             var extractionIdentifier = GetExtractionIdentifierFrom(toClone, out var underlyingExtractionInformation, resolveMultipleExtractionIdentifiers);
 
-            //now give it 1 dimension which is the only IsExtractionIdentifier column 
+            //now give it 1 dimension which is the only IsExtractionIdentifier column
             var newDimension = new AggregateDimension(cataRepo, underlyingExtractionInformation, newConfiguration);
 
-            //the thing we were cloning had a freaky CHI column (probably had a collate or something involved in it or a masterchi) 
+            //the thing we were cloning had a freaky CHI column (probably had a collate or something involved in it or a masterchi)
             if (extractionIdentifier is AggregateDimension)
             {
                 //preserve its freakyness
@@ -497,7 +497,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <summary>
     /// Delegate for handling the situation in which the user wants to create a cohort based on a given Catalogue but there are multiple IsExtractionIdentifier columns.
     /// For example SMR02 (baby birth records) might have (Mother CHI, Father CHI, Baby CHI).  In this situation the descision on which column to use is resolved by this
-    /// class. 
+    /// class.
     /// </summary>
     /// <param name="catalogue"></param>
     /// <param name="candidates"></param>
@@ -509,7 +509,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// Creates a new cohort set <see cref="AggregateConfiguration"/> which initially matches any patient appearing in the dataset (<see cref="Catalogue"/>).
     /// <para>IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from <paramref name="resolveMultipleExtractionIdentifiers"/></para>
     /// </summary>
-    /// <param name="catalogue">The catalogue to import as a patient identification set (you can import the same Catalogue multiple times e.g. 
+    /// <param name="catalogue">The catalogue to import as a patient identification set (you can import the same Catalogue multiple times e.g.
     /// 'People ever prescribed morphine' EXCEPT 'People ever prescribed percoset'</param>
     /// <param name="resolveMultipleExtractionIdentifiers">What to do if there are multiple <see cref="ExtractionInformation"/>
     ///  marked IsExtractionIdentifier</param>
@@ -564,7 +564,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     /// <summary>
     /// returns an underlying ExtractionInformation which IsExtractionIdentifier (e.g. a chi column).  The first pass approach is to look for a suitable AggregateDimension which
-    /// has an underlying  ExtractionInformation which IsExtractionIdentifier but if it doesn't find one then it will look in the Catalogue for one instead.  The reason this is 
+    /// has an underlying  ExtractionInformation which IsExtractionIdentifier but if it doesn't find one then it will look in the Catalogue for one instead.  The reason this is
     /// complex is because you can have datasets with multiple IsExtractionIdentifier columns e.g. SMR02 (birth records) where there is both MotherCHI and BabyCHI which are both
     /// IsExtractionIdentifier - in this case the AggregateConfiguration would need a Dimension of one or the other (but not both!) - if it had neither then the method would throw
     /// when it checked Catalogue and found both.
@@ -599,9 +599,9 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             //As expected the user isn't graphing chis or otherwise configured any Dimensions on this aggregate.  It is probably just a normal aggregate e.g. 'Prescriptions of Morphine over time between 2005-2001' where the only dimension is 'date prescribed'
             //now when we import this for cohort identification we want to keep the cool filters and stuff but we can junk all the dimensions.  BUT we do need to add the IsExtractionIdentifier column from the dataset (and if there are for some reason multiple
             //e.g. babychi, motherchi then we can invoke the delegate to let the user pick one.
-                
+
             //get the unique IsExtractionIdentifier from the cloned configurations parent catalogue
-            underlyingExtractionInformation = 
+            underlyingExtractionInformation =
                 (ExtractionInformation)GetExtractionIdentifierFrom(
                     toClone.Catalogue, resolveMultipleExtractionIdentifiers);
 
@@ -639,7 +639,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
 
     /// <summary>
-    /// Returns all unique <see cref="TableInfo"/> required for building all of the <see cref="AggregateConfiguration"/>s in the 
+    /// Returns all unique <see cref="TableInfo"/> required for building all of the <see cref="AggregateConfiguration"/>s in the
     /// <see cref="AggregateConfiguration.RootFilterContainer_ID"/> or any subcontainers.
     /// </summary>
     /// <returns></returns>

@@ -38,7 +38,7 @@ public class SpontaneouslyInventedPermissionWindow:SpontaneousObject,IPermission
         Name = "Spontaneous Permission Window";
     }
 
-        
+
     public void RefreshLockPropertiesFromDatabase()
     {
             
@@ -47,7 +47,7 @@ public class SpontaneouslyInventedPermissionWindow:SpontaneousObject,IPermission
     public string Name { get; set; }
     public string Description { get; set; }
     public bool RequiresSynchronousAccess { get; set; }
-        
+
     public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
     public bool WithinPermissionWindow()
     {

@@ -13,7 +13,7 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 /// <summary>
 /// Data Quality Engine records all validation results in a relational database, this includes recording with each result the Pivot column value found when evaluating the row.  A Pivot
 /// column is a single categorical field in the dataset that is the most useful way of slicing the dataset e.g. Healthboard.  If your dataset has a pivot column
-/// then this control will let you change which results are displayed in any IDataQualityReportingCharts from either All rows in the dataset or only 
+/// then this control will let you change which results are displayed in any IDataQualityReportingCharts from either All rows in the dataset or only
 /// those where the pivot column has a specific value.  If your pivot column contains nulls then these records will only be audited under the ALL category.
 /// </summary>
 public partial class DQEPivotCategorySelector : UserControl

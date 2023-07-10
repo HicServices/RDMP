@@ -37,7 +37,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
     private readonly object _o;
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
     protected IActivateItems _activator;
-        
+
     protected readonly AtomicCommandUIFactory AtomicCommandUIFactory;
 
     protected ToolStripMenuItem ActivateCommandMenuItem;
@@ -88,7 +88,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
             foreach(var mi in gotoMenu.DropDownItems.OfType<ToolStripMenuItem>())
             {
                 if(mi.Tag is ExecuteCommandShow cmd)
-                {   
+                {
                     cmd.FetchDestinationObjects();
                     mi.Enabled = !cmd.IsImpossible;
                     mi.ToolTipText = cmd.ReasonCommandImpossible;
@@ -192,7 +192,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         //Check if we even want to display this
         if (commonFunctionality.CheckColumnProvider != null)
-        { 
+        {
             var inspectionMenuItem = AddMenuIfNotExists(Checks);
             Items.Add(inspectionMenuItem);
             PopulateChecksMenu(commonFunctionality, inspectionMenuItem);
@@ -202,14 +202,14 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         Items.Add(treeMenuItem);
         PopulateTreeMenu(commonFunctionality, treeMenuItem);
 
-        if (databaseEntity != null) 
+        if (databaseEntity != null)
         {
             Add(new ExecuteCommandAddFavourite(_activator,databaseEntity));
             Add(new ExecuteCommandAddToSession(_activator,new IMapsDirectlyToDatabaseTable[]{ databaseEntity },null));
         }
 
         //add refresh and then finally help
-        if (databaseEntity != null) 
+        if (databaseEntity != null)
             Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
 
         Add(new ExecuteCommandShowTooltip(_activator, _args.Model));
@@ -224,7 +224,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         foreach (var mi in _subMenuDictionary.Values.Except(Items.OfType<ToolStripMenuItem>()))
             Items.Add(mi);
     }
-                
+
     private void AddFactoryMenuItems()
     {
         var factory = new AtomicCommandFactory(_activator);
@@ -237,7 +237,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         foreach (var toPresent in factory.CreateCommands(forObject))
         {
             // how long did it take to construct the command?
-            performance.Add(toPresent, DateTime.Now.Subtract(now)); 
+            performance.Add(toPresent, DateTime.Now.Subtract(now));
 
             Add(toPresent);
             now = DateTime.Now;

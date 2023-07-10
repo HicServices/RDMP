@@ -146,7 +146,7 @@ public partial class ANOTableUI : ANOTableUI_Design
         cmd.Execute();
     }
 }
-    
+
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ANOTableUI_Design, UserControl>))]
 public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>
 {

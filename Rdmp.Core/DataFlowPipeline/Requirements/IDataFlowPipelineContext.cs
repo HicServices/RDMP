@@ -45,7 +45,7 @@ public interface IDataFlowPipelineContext
     /// <param name="t">The Type of an IDataFlowComponent</param>
     /// <returns>true if the component is compatible with the context</returns>
     bool IsAllowable(Type t);
-        
+
     /// <summary>
     /// Determines whether a given IDataFlowComponent Type is compatible with the current context
     /// </summary>

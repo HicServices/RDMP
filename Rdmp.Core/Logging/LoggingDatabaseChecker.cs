@@ -203,18 +203,18 @@ public class LoggingDatabaseChecker : ICheckable
             
     }
 
-      
+
     private void ExpectedLookupsValuesArePresent(Dictionary<int, string> expected, Dictionary<int, string> actual, out Dictionary<int, string> missing, out Dictionary<int, string> collisions, out List<string> misnomers)
     {
 
         collisions = new Dictionary<int, string>();
         missing = new Dictionary<int, string>();
         misnomers = new List<string>();
-            
-        //for each desired kvp 
+
+        //for each desired kvp
         foreach (var kvp in expected)
         {
-                
+
             //make sure it is not a misnomer
             if (actual.Any(m => m.Value.Equals(kvp.Value) && m.Key != kvp.Key)) //if there are any actuals that have different keys
             {

@@ -23,7 +23,7 @@ public interface IPersistableObjectCollection
     /// A list of all the currently used objects in this collection
     /// </summary>
     List<IMapsDirectlyToDatabaseTable> DatabaseObjects { get; set; }
-        
+
     /// <summary>
     /// Serialize any current state information about the collection that is not encapsulated in <see cref="DatabaseObjects"/> e.g. tickboxes, options, selected enums etc.
     /// <para>Returns null if there is no supplemental information to save about the collection</para>

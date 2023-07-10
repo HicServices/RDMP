@@ -12,7 +12,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
-/// Executes an ExtractionConfiguration's CohortRefreshPipeline which should result in the CohortIdentificationConfiguration associated with the 
+/// Executes an ExtractionConfiguration's CohortRefreshPipeline which should result in the CohortIdentificationConfiguration associated with the
 /// ExtractionConfiguration (if any) being recalculated and a new updated set of patient identifiers commited as the next version number in the cohort
 /// database for that ExtractionConfiguration.
 /// 

@@ -20,7 +20,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance;
 /// <summary>
 /// The RDMP is designed to store sensitive clinical datasets and make them available in research ready (anonymous) form.  This usually requires governance approval from the data
 /// provider.  It is important to store the document trail and schedule (e.g. do you require yearly re-approval) for audit purposes.  The RDMP does this through Governance Periods
-/// (See GovernancePeriodUI).  
+/// (See GovernancePeriodUI).
 /// 
 /// <para>This control allows you to configure/view attachments of a GovernancePeriod (e.g. an email, a scan of a signed approval letter etc). For ease of reference you should describe
 /// what is in the document (e.g. 'letter to Fife healthboard (Mary Sue) listing the datasets we host and requesting re-approval for 2016.  Letter is signed by Dr Governancer.)'</para>
@@ -55,7 +55,7 @@ public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveab
             tbPath.Text = ofd.FileName;
         }
     }
-        
+
     private void btnOpenContainingFolder_Click(object sender, EventArgs e)
     {
         try

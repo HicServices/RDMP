@@ -25,8 +25,8 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Extension of IChildProvider which also lists all the high level cached objects so that if you need to fetch objects from the database to calculate 
-/// things you don't expect to have been the result of an immediate user change you can access the cached object from one of these arrays instead.  For 
+/// Extension of IChildProvider which also lists all the high level cached objects so that if you need to fetch objects from the database to calculate
+/// things you don't expect to have been the result of an immediate user change you can access the cached object from one of these arrays instead.  For
 /// example if you want to know whether you are within the PermissionWindow of your CacheProgress when picking an icon and you only have the PermissionWindow_ID
 /// property you can just look at the array AllPermissionWindows (especially since you might get lots of spam requests for the icon - you don't want to lookup
 /// the PermissionWindow from the database every time).
@@ -95,7 +95,7 @@ public interface ICoreChildProvider:IChildProvider
     AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
     AllStandardRegexesNode AllStandardRegexesNode { get;}
     AllPipelinesNode AllPipelinesNode { get; }
-        
+
     AllGovernanceNode AllGovernanceNode { get; }
     GovernancePeriod[] AllGovernancePeriods { get; }
     GovernanceDocument[] AllGovernanceDocuments { get;}
@@ -108,7 +108,7 @@ public interface ICoreChildProvider:IChildProvider
 
     JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }
 
-        
+
     /// <summary>
     /// Copy updated values for all properties from the <paramref name="other"/>
     /// </summary>
@@ -122,7 +122,7 @@ public interface ICoreChildProvider:IChildProvider
     /// <returns></returns>
     IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
 
-        
+
     AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; }
     AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; }
 
@@ -131,7 +131,7 @@ public interface ICoreChildProvider:IChildProvider
     /// </summary>
     HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get; }
 
-        
+
     /// <summary>
     /// All components within all <see cref="Pipeline"/>
     /// </summary>
@@ -146,9 +146,9 @@ public interface ICoreChildProvider:IChildProvider
     /// All process
     /// </summary>
     ProcessTask[] AllProcessTasks { get; }
-        
+
     ProcessTaskArgument[] AllProcessTasksArguments { get; }
-        
+
 
     /// <summary>
     /// Returns all objects in the tree hierarchy that are assignable to the supplied <paramref name="type"/>

@@ -27,7 +27,7 @@ public class ExtractionOptions:ConcurrentRDMPCommandLineOptions
 
     [Option('s', "Datasets", HelpText = "Restrict extraction to only those ExtractableDatasets that have the provided list of IDs (must be part of the ExtractionConfiguration)")]
     public string Datasets { get; set; }
-        
+
     [Usage]
     public static IEnumerable<Example> Examples
     {

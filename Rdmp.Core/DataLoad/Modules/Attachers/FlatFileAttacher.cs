@@ -23,7 +23,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
 /// Base class for an Attacher which expects to be passed a Filepath which is the location of a textual file in which values for a single DataTable are stored
-///  (e.g. csv or fixed width etc).  This attacher requires that the RAW database server be setup and contain the correct tables for loading (it is likely that 
+///  (e.g. csv or fixed width etc).  This attacher requires that the RAW database server be setup and contain the correct tables for loading (it is likely that
 /// the DataLoadEngine handles all this - as a user you don't need to worry about this).
 /// </summary>
 public abstract class FlatFileAttacher : Attacher, IPluginAttacher
@@ -86,7 +86,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
         {
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
                 $"Did not find any files matching pattern {filePattern} in forLoading directory"));
-                
+
             return SendLoadNotRequiredIfFileNotFound ? ExitCodeType.OperationNotRequired : ExitCodeType.Success;
         }
 
@@ -145,15 +145,15 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
                 
         try
         {
-            //while there is data to be loaded into table 
+            //while there is data to be loaded into table
             while (IterativelyBatchLoadDataIntoDataTable(dt, maxBatchSize,token) != 0)
             {
                 DropEmptyColumns(dt);
                 ConfirmFitToDestination(dt, tableToLoad, job);
                 try
                 {
-                    recordsCreatedSoFar += insert.Upload(dt); 
-                                
+                    recordsCreatedSoFar += insert.Upload(dt);
+
                     dt.Rows.Clear(); //very important otherwise we add more to the end of the table but still insert last batches records resulting in exponentially multiplying upload sizes of duplicate records!
 
                     job.OnProgress(this,
@@ -164,7 +164,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
                 {
                     throw new Exception(
                         $"Error processing batch number {batchNumber} (of batch size {maxBatchSize})",e);
-                } 
+                }
             }
         }
         catch (Exception e)
@@ -179,7 +179,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
     protected abstract void OpenFile(FileInfo fileToLoad,IDataLoadEventListener listener,GracefulCancellationToken cancellationToken);
     protected abstract void CloseFile();
-        
+
     public override void Check(ICheckNotifier notifier)
     {
         if (string.IsNullOrWhiteSpace(TableName) && TableToLoad == null)
@@ -193,7 +193,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
         if (!string.IsNullOrWhiteSpace(TableName) && TableToLoad != null)
             notifier.OnCheckPerformed(new CheckEventArgs("You should only specify argument TableName or TableToLoad, not both", CheckResult.Fail));
     }
-        
+
     private void ConfirmFitToDestination(DataTable dt, DiscoveredTable tableToLoad,IDataLoadJob job)
     {
 
@@ -227,7 +227,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     /// <param name="cancellationToken"></param>
     /// <returns>return the number of rows read, if you return >0 then you will be called again to get more data (if during this second or subsequent call there is no more data to read from source, return 0)</returns>
     protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken);
-        
+
 
     private void DropEmptyColumns(DataTable dt)
     {
@@ -255,7 +255,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
             }
         }
     }
-        
+
     protected virtual object HackValueReadFromFile(string s)
     {
             

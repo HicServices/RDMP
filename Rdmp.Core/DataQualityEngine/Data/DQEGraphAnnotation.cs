@@ -30,7 +30,7 @@ public class DQEGraphAnnotation : DatabaseEntity
     public string Username { get; set; }
     public DateTime CreationDate { get; set; }
     public DQEGraphType AnnotationIsForGraph { get; set; }
-        
+
     public string PivotCategory { get; set; }
 
     public DQEGraphAnnotation()

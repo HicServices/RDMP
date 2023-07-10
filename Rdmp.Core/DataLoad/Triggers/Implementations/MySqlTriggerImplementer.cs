@@ -111,7 +111,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
 	SET NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} = now();
   END";
     }
-        
+
     public override TriggerStatus GetTriggerStatus()
     {
         return string.IsNullOrWhiteSpace(GetTriggerBody())? TriggerStatus.Missing : TriggerStatus.Enabled;

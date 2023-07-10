@@ -46,7 +46,7 @@ internal class SetNull : IPluginDataFlowComponent<DataTable>
                 row[ColumnNameToFind] = DBNull.Value;
                 _changes++;
             }
-                
+
         }
 
         listener.OnProgress(this,new ProgressEventArgs("SetNull Rows",new ProgressMeasurement(_changes,ProgressType.Records),_sw.Elapsed ));

@@ -29,14 +29,14 @@ public class ReleaseEnvironmentPotential : ICheckable
     public TicketingReleaseabilityEvaluation Assesment { get; private set; }
     public string Reason { get; private set; }
 
-        
+
     public ReleaseEnvironmentPotential(IExtractionConfiguration configuration)
     {
         _repository = configuration.DataExportRepository;
         Configuration = configuration;
         Project = configuration.Project;
     }
-        
+
     private void MakeAssessment()
     {
         Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly;
@@ -59,7 +59,7 @@ public class ReleaseEnvironmentPotential : ICheckable
             return;
         }
             
-        if (ticketingSystem == null) 
+        if (ticketingSystem == null)
             return;
 
         try

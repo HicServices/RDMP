@@ -57,7 +57,7 @@ internal class CohortContainerManager : ICohortContainerManager
         });
     }
 
-        
+
     public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
     {
         if (configuration.Repository != this)

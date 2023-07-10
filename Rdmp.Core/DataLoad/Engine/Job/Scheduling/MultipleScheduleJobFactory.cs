@@ -19,8 +19,8 @@ namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 /// <summary>
 /// Return a ScheduledDataLoadJob hydrated with appropriate dates for the LoadProgress supplied.  This class differs from SingleScheduledJobFactory only
 /// in that it lets you pass multiple ILoadProgress instead of only one, the class will decide which is the next most sensible one to run.  For example
-/// you might have 'Load Biochem For Tayside' and 'Load Biochem For Fife' as two LoadProgress in the LoadMetadata 'Loading Biochemistry', this class would 
-/// pick which one to execute next. 
+/// you might have 'Load Biochem For Tayside' and 'Load Biochem For Fife' as two LoadProgress in the LoadMetadata 'Loading Biochemistry', this class would
+/// pick which one to execute next.
 /// </summary>
 public class MultipleScheduleJobFactory : ScheduledJobFactory
 {

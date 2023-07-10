@@ -155,7 +155,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
                     return;
                 }
             }
-                
+
             if(!BasicActivator.SelectObjects(new DialogArgs
                {
                    WindowTitle = "Add Aggregate Configuration(s) to Container",

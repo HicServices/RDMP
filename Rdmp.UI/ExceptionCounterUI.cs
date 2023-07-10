@@ -26,7 +26,7 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
     private const float EmSize = 8f;
 
     private ToMemoryCheckNotifier _events = new(new NLogICheckNotifier(true,false));
-        
+
     private const float NotifyWidth = 15;
 
     public ExceptionCounterUI()
@@ -51,7 +51,7 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
 
             var xStart = (Width - NotifyWidth)/2;
             var yStart = (Height - NotifyWidth) / 2;
-                
+
             var darkRed = new SolidBrush(Color.FromArgb(206, 10, 26));
 
             e.Graphics.FillEllipse(darkRed, xStart, yStart+1, NotifyWidth-2, NotifyWidth-2);
@@ -74,7 +74,7 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
             };
         }
     }
-        
+
     public bool OnCheckPerformed(CheckEventArgs args)
     {
         //handle cross thread invocations

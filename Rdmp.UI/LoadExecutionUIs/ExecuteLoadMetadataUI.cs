@@ -48,7 +48,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         StopAfterSTAGING,
         SkipArchiving
     }
-               
+
     public ExecuteLoadMetadataUI()
     {
         InitializeComponent();
@@ -64,7 +64,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         dd_DebugOptions.ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
         dd_DebugOptions.ComboBox.DataSource = Enum.GetValues(typeof(DebugOptions));
     }
-        
+
     public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
@@ -85,7 +85,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
             
         CommonFunctionality.Add(dd_DebugOptions);
     }
-        
+
     private void SetLoadProgressGroupBoxState()
     {
         _allLoadProgresses = _loadMetadata.LoadProgresses;
@@ -119,7 +119,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     {
         gbLoadProgresses.Enabled = checkAndExecuteUI1.ChecksPassed;
     }
-        
+
     private RDMPCommandLineOptions AutomationCommandGetter(CommandLineActivity activityRequested)
     {
         var lp = GetLoadProgressIfAny();
@@ -148,7 +148,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         base.ConsultAboutClosing(sender, e);
         checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
-        
+
     private LoadProgress GetLoadProgressIfAny()
     {
         if (ddLoadProgress.SelectedIndex == -1)
@@ -158,7 +158,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         return scheduleItem.Key == 0 ? null : Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
     }
 
-        
+
     private void ddLoadProgress_SelectedIndexChanged(object sender, EventArgs e)
     {
         var loadProgress = GetLoadProgressIfAny();

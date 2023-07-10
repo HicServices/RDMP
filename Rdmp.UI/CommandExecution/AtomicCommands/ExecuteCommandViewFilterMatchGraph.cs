@@ -73,7 +73,7 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution,IAto
                     selected,
                     CohortSummaryAdjustment.WhereRecordsIn,
                     aggFilter));
-                    
+
             cmd.Execute();
         }
         else

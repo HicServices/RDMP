@@ -33,6 +33,6 @@ public static class FormsHelper
         rect = originalControl.RectangleToClient(rect);
         return rect;
     }
-        
-        
+
+
 }

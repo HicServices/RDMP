@@ -56,7 +56,7 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
     public abstract void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny);
 
     public abstract void Abort(IDataLoadEventListener listener);
-        
+
     public T TryGetPreview()
     {
         return null;

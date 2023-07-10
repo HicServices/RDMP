@@ -49,14 +49,14 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
 
         return base.GetChunk(listener, cancellationToken);
     }
-        
+
     private List<DiscoveredTable> tablesToCleanup = new();
 
     public static Semaphore OneCrossServerExtractionAtATime = new(1, 1);
     private DiscoveredServer _server;
     private DiscoveredDatabase _tempDb;
     private bool _semaphoreObtained;
-        
+
     /// <summary>
     /// True if we decided not to move the cohort after all (e.g. if one or more datasets being extracted are already on the same server).
     /// </summary>
@@ -116,7 +116,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Replacing '{r.Key}' with '{r.Value}'", null));
-                
+
             if(!sql.Contains(r.Key))
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
                     $"SQL extraction query string did not contain the text '{r.Key}' (which we expected to replace with '{r.Value}"));
@@ -141,7 +141,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
                 return null;
 
             // add a g to avoid creating a table name that starts with a number (can cause problems and always requires wrapping etc... just bad)
-            var guid = $"g{Guid.NewGuid():N}";                
+            var guid = $"g{Guid.NewGuid():N}";
 
             return _tablename = TemporaryTableName.Replace("$g", guid);
         }
@@ -168,7 +168,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         {
             //it's a legit dataset being extracted?
             _server = Request.GetDistinctLiveDatabaseServer();
-                
+
             //expect a database called called tempdb
             _tempDb = _server.ExpectDatabase(TemporaryDatabaseName);
 
@@ -235,7 +235,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                     $"About to drop existing table '{tbl}'"));
-                    
+
                 try
                 {
                     tbl.Drop();
@@ -248,7 +248,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
                         $"Warning dropping '{tbl}' failed",ex));
                 }
 
-                    
+
             }
             else
             {

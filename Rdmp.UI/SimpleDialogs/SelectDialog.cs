@@ -168,7 +168,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         else
         {
             _allObjects = toSelectFrom.ToArray();
-                
+
             // don't bother with the tool strip because its not database objects so we can't filter by ID/type etc
             Controls.Remove(toolStrip1);
         }
@@ -402,7 +402,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
                 toolStrip1.Items.Add(b);
             }
-        }      
+        }
         else
         {
             toolStripLabel1.Visible = false;
@@ -721,7 +721,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
                     // when returning search results always put checked items first
                     var toDisplay = new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
-                        
+
                     toDisplay.AddRange(_matches.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
                     _objectsToDisplay = toDisplay.Cast<T>().ToList();
                 }

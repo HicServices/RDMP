@@ -35,7 +35,7 @@ internal class DqeRunner:Runner
             case CommandLineActivity.run:
                 report.GenerateReport(catalogue, listener, token.AbortToken);
                 return 0;
-                
+
             case CommandLineActivity.check:
                 report.Check(checkNotifier);
                 return 0;

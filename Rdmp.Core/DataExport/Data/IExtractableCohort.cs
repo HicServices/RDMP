@@ -28,7 +28,7 @@ namespace Rdmp.Core.DataExport.Data;
 public interface IExtractableCohort : IHasQuerySyntaxHelper, IMightBeDeprecated, IHasDependencies
 {
     /// <summary>
-    /// Runs a (non distinct) count on the number of rows in the private/release identifier mapping table 
+    /// Runs a (non distinct) count on the number of rows in the private/release identifier mapping table
     /// stored in the <see cref="ExternalCohortTable"/> which match this cohorts <see cref="OriginID"/>
     /// </summary>
     int Count { get; }
@@ -109,7 +109,7 @@ public interface IExtractableCohort : IHasQuerySyntaxHelper, IMightBeDeprecated,
     /// </summary>
     /// <param name="timeout">Number of seconds to allow query to execute for before giving up</param>
     IExternalCohortDefinitionData GetExternalData(int timeout = -1);
-        
+
     /// <summary>
     /// Returns the data type of the identifiable column (e.g. "varchar(10)")
     /// </summary>
@@ -138,5 +138,5 @@ public interface IExtractableCohort : IHasQuerySyntaxHelper, IMightBeDeprecated,
     /// <param name="allowCaching"></param>
     /// <exception cref="KeyNotFoundException"></exception>
     void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener, bool allowCaching);
-        
+
 }

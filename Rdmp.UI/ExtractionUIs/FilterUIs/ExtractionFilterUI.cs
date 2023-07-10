@@ -29,8 +29,8 @@ using ScintillaNET;
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 
 /// <summary>
-/// One major problem with research data curation/provision is that data analysts who routinely work with datasets build up an in-depth knowledge of the data and how to identify 
-/// interesting subsets (e.g. 'How to identify all lab test codes for Creatinine').  This can involve complicated SQL which can end up buried in undocumented extraction scripts 
+/// One major problem with research data curation/provision is that data analysts who routinely work with datasets build up an in-depth knowledge of the data and how to identify
+/// interesting subsets (e.g. 'How to identify all lab test codes for Creatinine').  This can involve complicated SQL which can end up buried in undocumented extraction scripts
 /// or kept in the head of the data analyst and lost if he ever leaves the organisation.
 /// 
 /// <para>RDMP Filters are an attempt to reduce this risk by centralising SQL 'WHERE' logic into clearly defined and documented reusable blocks (called Filters).  These named filters can
@@ -152,7 +152,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         }
     }
 
-        
+
     public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
     {
         _loading = true;

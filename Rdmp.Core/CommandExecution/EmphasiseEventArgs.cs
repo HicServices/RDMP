@@ -17,7 +17,7 @@ public class EmphasiseEventArgs:EventArgs
     /// The object to show and how much of its child objects to show
     /// </summary>
     public EmphasiseRequest Request { get; set; }
-        
+
     /// <summary>
     /// Top level control (e.g. Form) which requesting the showing of the object
     /// </summary>

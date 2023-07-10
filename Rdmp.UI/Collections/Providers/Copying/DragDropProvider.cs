@@ -93,7 +93,7 @@ public class DragDropProvider:SimpleDragSource
             if(dataObject is OLVDataObject)
                 return;  //should be handled by ModelDropped
 
-            //is it a non model drop (in which case ModelDropped won't be called) e.g. it could be a file drop 
+            //is it a non model drop (in which case ModelDropped won't be called) e.g. it could be a file drop
             var execution = GetExecutionCommandIfAnyForNonModelObjects(dataObject, e.DropTargetItem.RowObject);
 
             if(execution is { IsImpossible: false })
@@ -166,7 +166,7 @@ public class DragDropProvider:SimpleDragSource
         {
             //get the drag operation data object olv does
             var toReturn = (OLVDataObject)base.StartDrag(olv, button, item);
-                
+
             //can we process it into a command?
             var command = _commandFactory.Create(toReturn);
 
@@ -182,7 +182,7 @@ public class DragDropProvider:SimpleDragSource
         return base.StartDrag(olv, button, item);
     }
 
-   
+
 
     private void DisplayFeedback(ICommandExecution execution, OlvDropEventArgs e)
     {
@@ -208,7 +208,7 @@ public class DragDropProvider:SimpleDragSource
         e.Handled = true;
         e.Effect = DragDropEffects.Move;
     }
-        
+
 
     private InsertOption GetDropLocation(ModelDropEventArgs e)
     {

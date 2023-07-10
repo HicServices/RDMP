@@ -100,7 +100,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     /// <inheritdoc cref="ILoadProgress"/>
     public LoadProgress(ICatalogueRepository repository, LoadMetadata parent)
     {
-        repository.InsertAndHydrate(this,  
+        repository.InsertAndHydrate(this,
             new Dictionary<string, object>
             {
                 {"Name", Guid.NewGuid().ToString()},
@@ -119,7 +119,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(r["DefaultNumberOfDaysToLoadEachTime"]);
     }
-        
+
     /// <inheritdoc/>
     public override string ToString()
     {

@@ -23,7 +23,7 @@ namespace Rdmp.UI.LocationsMenu;
 /// part of the RDMP codebase but it is recommended that you create your own Private Key.  Without your own private key someone could decompile this software and decrypt the passwords
 /// stored in your RDMP database if it ever became compromised.
 /// 
-/// <para>This control lets you create a custom 4096 bit RSA Private Key file.  The location of this file is stored in the RDMP database but the file itself should be held under access 
+/// <para>This control lets you create a custom 4096 bit RSA Private Key file.  The location of this file is stored in the RDMP database but the file itself should be held under access
 /// control (see UserManual.md).  This ensures that passwords are only compromised if both the RDMP database and the Windows user account file system (where the private key is held)
 /// are both compromised.</para>
 /// 
@@ -134,5 +134,5 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
 
     }
 
-        
+
 }

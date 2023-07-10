@@ -24,7 +24,7 @@ public abstract class RDMPToolStripMenuItem : ToolStripMenuItem
         _activator = activator;
         AtomicCommandUIFactory = new AtomicCommandUIFactory(activator);
     }
-        
+
     protected void Activate(DatabaseEntity o)
     {
         var cmd = new ExecuteCommandActivate(_activator, o);

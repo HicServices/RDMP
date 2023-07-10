@@ -96,7 +96,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         foreach (var cata in allCatalogues.OrderBy(c => c.Name))
         {
             var eval = dqeRepository.GetMostRecentEvaluationFor(cata);
-                
+
             Dictionary<DateTime, ArchivalPeriodicityCount> dictionary = null;
 
             if (eval != null)
@@ -153,7 +153,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         LastYear,
         LastSixMonths
     }
-        
+
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
             
@@ -225,10 +225,10 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
         CommonFunctionality.ToolStrip.Visible = isEditModeOn;
     }
-        
+
     private void btnAddCatalogue_Click(object sender, EventArgs e)
     {
-        if(_activator.SelectObjects(new DialogArgs { 
+        if(_activator.SelectObjects(new DialogArgs {
                    TaskDescription = "Choose which new Catalogues should be represented in the diagram."
                },
                _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
@@ -275,7 +275,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
                 if(!_collection.GetCatalogues().Contains(cata))
                     AddCatalogue((Catalogue) cata);
             }
-                
+
             SaveCollectionChanges();
             GenerateChart();
         }

@@ -12,7 +12,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Used to model Design Time initialization of IDataFlowComponents and DLE ProcessTasks (IAttacher etc).  Decorate public properties of IDataFlowComponents
-/// with this attribute to allow the user  to define values for the Pipeline when they build it.  Each Demand will be serialised as a 
+/// with this attribute to allow the user  to define values for the Pipeline when they build it.  Each Demand will be serialised as a
 /// PipelineComponentArgument/ProcessTaskArgument.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Parameter)]
@@ -48,14 +48,14 @@ public class DemandsInitializationAttribute : Attribute
 
     /// <summary>
     /// If the property being decorated is System.Type e.g. <code>public Type OperationType {get;set;}</code>.  Then this specifies which Types the user can
-    /// select (anything derrived from this Type).  This lets you have the user pick a strategy for your plugin as long as the strategies have blank/compatible 
+    /// select (anything derrived from this Type).  This lets you have the user pick a strategy for your plugin as long as the strategies have blank/compatible
     /// constructors.  You will have to decide how best to instantiate this Type yourself at runtime.
     /// </summary>
     public Type TypeOf { get; set; }
 
     /// <summary>
     /// Marks a public property on an RDMP plugin class as editable by the user.  The user can pick a value at design time for use with the plugin e.g. in
-    /// a <see cref="Pipeline"/> then when the pipeline is run your class will be instantiated and all properties will be 
+    /// a <see cref="Pipeline"/> then when the pipeline is run your class will be instantiated and all properties will be
     /// hydrated from the corresponding <see cref="IArgument"/>s.
     /// </summary>
     /// <param name="description"></param>

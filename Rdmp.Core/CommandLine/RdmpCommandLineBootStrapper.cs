@@ -24,7 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine;
 
 /// <summary>
-/// Parses strings into relevant <see cref="RDMPCommandLineOptions"/> subclasses 
+/// Parses strings into relevant <see cref="RDMPCommandLineOptions"/> subclasses
 /// and runs appropriate <see cref="Runners.Runner"/>
 /// </summary>
 public class RdmpCommandLineBootStrapper
@@ -121,7 +121,7 @@ public class RdmpCommandLineBootStrapper
                 listener.OnNotify(typeof(RdmpCommandLineBootStrapper), new NotifyEventArgs(ProgressEventType.Error, "No repository has been specified.  Either create a Databases.yaml file or provide repository connection strings/paths as command line arguments"));
                 return REPO_ERROR;
             }
-                    
+
 
             if (!CheckRepo(repositoryLocator))
             {

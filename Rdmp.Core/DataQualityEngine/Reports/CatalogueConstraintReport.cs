@@ -35,7 +35,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports;
 public class CatalogueConstraintReport : DataQualityReport
 {
     private readonly string _dataLoadRunFieldName;
-    //where the data is located 
+    //where the data is located
     private DiscoveredServer _server;
     private QueryBuilder _queryBuilder;
     private Validator _validator;
@@ -169,10 +169,10 @@ public class CatalogueConstraintReport : DataQualityReport
                     //if there is a value in the current record for the pivot column
                     if (pivotValue != null)
                     {
-                        //if it is a novel 
+                        //if it is a novel
                         if (!byPivotCategoryCubesOverTime.ContainsKey(pivotValue))
                         {
-                            //we will need to expand the dictionaries 
+                            //we will need to expand the dictionaries
                             if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
                                 throw new OverflowException(
                                     $"Encountered more than {MaximumPivotValues} values for the pivot column {_pivotCategory} this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
@@ -272,7 +272,7 @@ public class CatalogueConstraintReport : DataQualityReport
 
     private string _timePeriodicityField;
     private string _pivotCategory;
-        
+
 
 
     public override void Check(ICheckNotifier notifier)
@@ -499,12 +499,12 @@ public class CatalogueConstraintReport : DataQualityReport
 
                         //add one that says 'if I am null my fk should also be null'
                         itemValidator.SecondaryConstraints.Add(newRule);
-                        
+
                         notifier.OnCheckPerformed(
                             new CheckEventArgs(
                                 $"Dynamically added value->value Nullnes constraint with consequence Missing onto columns {foreignKeyFieldName} and {descriptionFieldName} because they have a configured Lookup relationship in the Catalogue", CheckResult.Success));
                     }
-           
+
                 }
             }
             catch(Exception ex)
@@ -521,11 +521,11 @@ public class CatalogueConstraintReport : DataQualityReport
         //make sure all the results dictionaries
         states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder);
 
-        //ask the validator to validate! 
+        //ask the validator to validate!
         _validator.ValidateVerboseAdditive(
             r,//validate the data reader
             states.ColumnValidationFailuresByDataLoadRunID[dataLoadRunIDOfCurrentRecord],//additively adjust the validation failures dictionary
-            out var worstConsequence);//and tell us what the worst consequence in the row was 
+            out var worstConsequence);//and tell us what the worst consequence in the row was
 
 
         //increment the time periodicity hypercube!

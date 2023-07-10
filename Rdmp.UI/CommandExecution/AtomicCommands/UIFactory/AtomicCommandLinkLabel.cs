@@ -31,7 +31,7 @@ public partial class AtomicCommandLinkLabel : UserControl
 
         helpIcon1.SetHelpText(_command.GetCommandName(),command.GetCommandHelp());
     }
-        
+
     private void label1_Click(object sender, EventArgs e)
     {
         _command.Execute();

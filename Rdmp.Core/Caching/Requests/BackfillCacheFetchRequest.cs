@@ -34,7 +34,7 @@ public class BackfillCacheFetchRequest : ICacheFetchRequest
         Start = start;
         IsRetry = false;
     }
-        
+
     public void SaveCacheFillProgress(DateTime cacheFillProgress)
     {
         // do nothing, backfill should not affect the cache

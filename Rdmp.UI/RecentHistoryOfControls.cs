@@ -70,7 +70,7 @@ public class RecentHistoryOfControls
         if (save)
             Save();
     }
-        
+
     public void Clear()
     {
         //clear the selected key only

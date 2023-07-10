@@ -56,8 +56,8 @@ public class ConnectionStringTextBox : TextBox
                 supportedKeywords.Add("Addr");
                 supportedKeywords.Add("Network Address");
                 supportedKeywords.Add("Application Name");
-                    
-                    
+
+
                 break;
             case DatabaseType.MySql:
                 throw new NotImplementedException();
@@ -77,7 +77,7 @@ public class ConnectionStringTextBox : TextBox
         try
         {
             base.OnTextChanged(e);
-            
+
             //set text color to black by default
             ForeColor = Color.Black;
 
@@ -137,7 +137,7 @@ public class ConnectionStringTextBox : TextBox
             SelectionStart = whereUserIsCurrently;
             SelectionLength = TextLength - whereUserIsCurrently;
             suppressAutocomplete = false;//we are done
-        } catch (Exception ex) 
+        } catch (Exception ex)
         {
             ExceptionViewer.Show(ex);
         }
@@ -157,7 +157,7 @@ public class ConnectionStringTextBox : TextBox
         if (char.IsLetterOrDigit((char)e.KeyCode) || e.KeyCode == Keys.Space)
             suppressAutocomplete = false;
         else
-            suppressAutocomplete = true;//user is pressing some arrow keys or delete keys or something, don't suggest anything until 
+            suppressAutocomplete = true;//user is pressing some arrow keys or delete keys or something, don't suggest anything until
     }
 
 }

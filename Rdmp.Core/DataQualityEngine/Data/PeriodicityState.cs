@@ -59,7 +59,7 @@ public class PeriodicityState
         var t = evaluation.DQERepository;
 
         using var con = evaluation.DQERepository.GetConnection();
-        var sql = 
+        var sql =
             @$"SELECT 
       {t.Wrap("Year")}
       ,{t.Wrap("Month")}
@@ -98,7 +98,7 @@ public class PeriodicityState
 
             switch ((string)r["RowEvaluation"])
             {
-                case "Correct": 
+                case "Correct":
                     toIncrement.CountGood += (int) r["CountOfRecords"];
                     toIncrement.Total += (int)r["CountOfRecords"];
                     break;
@@ -115,7 +115,7 @@ public class PeriodicityState
 
         return toReturn;
     }
-       
+
     /// <summary>
     /// Returns a table describing the number of records over time optionally only those where the pivot column in the rows
     /// had the value of <paramref name="pivotCategoryValue"/>.  Returns null if no rows were present in the table at the

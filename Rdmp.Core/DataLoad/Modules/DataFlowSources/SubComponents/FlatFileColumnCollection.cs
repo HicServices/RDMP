@@ -21,7 +21,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 
 /// <summary>
-/// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for processing the headers (or overriding headers) 
+/// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for processing the headers (or overriding headers)
 /// of a CSV (TSV etc) file.
 /// 
 /// <para>The component has two main operational modes after it has read headers: <see cref="GetDataTableWithHeaders"/> and  <see cref="MakeDataTableFitHeaders"/></para>
@@ -42,7 +42,7 @@ public class FlatFileColumnCollection
     private readonly string _ignoreColumns;
 
     /// <summary>
-    /// The columns from the file the user does not want to load into the destination (this will not help 
+    /// The columns from the file the user does not want to load into the destination (this will not help
     /// you avoid bad data).
     /// </summary>
     public HashSet<string> IgnoreColumnsList { get; private set; }
@@ -128,7 +128,7 @@ public class FlatFileColumnCollection
             //user has some specific headers he wants to override with
             _headers = _forceHeaders.Split(new[] { r.Configuration.Delimiter }, StringSplitOptions.None);
         }
-            
+
         //ignore these columns (trimmed and ignoring case)
         if (!string.IsNullOrWhiteSpace(_ignoreColumns))
             IgnoreColumnsList = new HashSet<string>(
@@ -145,7 +145,7 @@ public class FlatFileColumnCollection
             if (!string.IsNullOrWhiteSpace(_headers[i]))
                 _headers[i] = _headers[i].Trim();
 
-        //throw away trailing null headers e.g. the header line "Name,Date,,," 
+        //throw away trailing null headers e.g. the header line "Name,Date,,,"
         var trailingNullHeaders = _headers.Reverse().TakeWhile(s=>s.IsBasicallyNull()).Count();
 
         if (trailingNullHeaders > 0)
@@ -157,7 +157,7 @@ public class FlatFileColumnCollection
                 _headers[i] = QuerySyntaxHelper.MakeHeaderNameSensible(_headers[i]);
     }
 
-        
+
 
     /// <summary>
     /// Creates a new empty DataTable has only the columns found in the headers that were read during <see cref="GetHeadersFromFile"/>
@@ -205,7 +205,7 @@ public class FlatFileColumnCollection
 
                 //if the user wants a string don't let downstream components pick a different Type (by assuming it is is untyped)
                 if(c.DataType == typeof(string))
-                    c.SetDoNotReType(true); 
+                    c.SetDoNotReType(true);
             }
             else
                 dt.Columns.Add(h);
@@ -240,7 +240,7 @@ public class FlatFileColumnCollection
         for (var index = 0; index < _headers.Length; index++)
         {
             ASCIIArt.Append($"[{index}]");
-                
+
             if (dt.Columns.Contains(_headers[index]))    //exact match
             {
                 ASCIIArt.AppendLine($"{_headers[index]}>>>{_headers[index]}");

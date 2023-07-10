@@ -23,7 +23,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// to the RAW Sql Server data directory (and that the path is the same).
 /// 
 /// <para>The mdf file will be copied to the Sql Server data directory of the RAW server and attached with the expected name of RAW.  From this point on the load
-/// will function normally.  It is up to the user to ensure that the table names/columns in the attached MDF match expected LIVE tables on your server (or 
+/// will function normally.  It is up to the user to ensure that the table names/columns in the attached MDF match expected LIVE tables on your server (or
 /// write AdjustRAW scripts to harmonise).</para>
 /// </summary>
 public class MDFAttacher : Attacher,IPluginAttacher
@@ -47,7 +47,7 @@ public class MDFAttacher : Attacher,IPluginAttacher
 
     [DemandsInitialization("Set this only if you encounter problems with the ATTACH stage path.  This is the local path to the .ldf file in the DATA directory from the perspective of SQL Server")]
     public string OverrideAttachLdfPath { get; set; }
-                
+
     public MDFAttacher():base(false)
     {
              
@@ -106,7 +106,7 @@ public class MDFAttacher : Attacher,IPluginAttacher
    ON (FILENAME = '{_locations.AttachMdfPath}'),   
    (FILENAME = '{_locations.AttachLdfPath}')   
    FOR ATTACH;  ",con);
-                    
+
 
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"About to execute SQL: {cmd.CommandText}"));

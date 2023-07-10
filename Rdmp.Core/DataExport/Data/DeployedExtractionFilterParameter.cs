@@ -62,7 +62,7 @@ public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
         set => SetField(ref _comment, value);
     }
     #endregion
-        
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);

@@ -36,7 +36,7 @@ public class FTPDownloader : IPluginDataProvider
     protected string _host;
     protected string _username;
     protected string _password;
-        
+
     private bool _useSSL = false;
 
     protected List<string> _filesRetrieved = new();
@@ -44,7 +44,7 @@ public class FTPDownloader : IPluginDataProvider
 
     [DemandsInitialization("Determines the behaviour of the system when no files are found on the server.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
     public bool SendLoadNotRequiredIfFileNotFound { get; set; }
-        
+
     [DemandsInitialization("The Regex expression to validate files on the FTP server against, only files matching the expression will be downloaded")]
     public Regex FilePattern { get; set; }
 
@@ -166,7 +166,7 @@ public class FTPDownloader : IPluginDataProvider
         return true;//any cert will do! yay
     }
 
-        
+
     protected virtual string[] GetFileList()
     {
         var result = new StringBuilder();
@@ -192,7 +192,7 @@ public class FTPDownloader : IPluginDataProvider
             reqFTP.Method = WebRequestMethods.Ftp.ListDirectory;
             reqFTP.Timeout = TimeoutInSeconds*1000;
             reqFTP.KeepAlive = KeepAlive;
-                
+
             reqFTP.Proxy = null;
             reqFTP.KeepAlive = false;
             reqFTP.UsePassive = true;
@@ -259,7 +259,7 @@ public class FTPDownloader : IPluginDataProvider
         var response = (FtpWebResponse)reqFTP.GetResponse();
         var responseStream = response.GetResponseStream();
         var destinationFileName = Path.Combine(destination.ForLoading.FullName, file);
-            
+
         using (var writeStream = new FileStream(destinationFileName, FileMode.Create))
         {
             var Length = 2048;
@@ -279,7 +279,7 @@ public class FTPDownloader : IPluginDataProvider
             }
             writeStream.Close();
         }
-            
+
         response.Close();
 
         _filesRetrieved.Add(serverUri.ToString());
@@ -319,7 +319,7 @@ public class FTPDownloader : IPluginDataProvider
         }
     }
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
         try

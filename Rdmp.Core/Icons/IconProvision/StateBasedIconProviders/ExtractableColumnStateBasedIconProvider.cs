@@ -33,7 +33,7 @@ public class ExtractableColumnStateBasedIconProvider : IObjectStateBasedIconProv
         var toReturn = _basicImage;
             
         //if the current state is to hash add the overlay
-        if (col.HashOnDataRelease) 
+        if (col.HashOnDataRelease)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
         if (col.CatalogueExtractionInformation?.IsPrimaryKey ?? false)

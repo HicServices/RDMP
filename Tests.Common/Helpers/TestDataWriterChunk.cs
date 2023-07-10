@@ -20,5 +20,5 @@ public class TestDataWriterChunk : ICacheChunk
         Files = files;
     }
 
-        
+
 }

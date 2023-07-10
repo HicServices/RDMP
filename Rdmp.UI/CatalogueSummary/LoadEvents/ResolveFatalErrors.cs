@@ -67,5 +67,5 @@ public partial class ResolveFatalErrors : RDMPForm
         Close();
     }
 
-        
+
 }

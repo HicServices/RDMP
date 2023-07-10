@@ -20,9 +20,9 @@ using Rdmp.UI.Versioning;
 namespace Rdmp.UI.LocationsMenu;
 
 /// <summary>
-/// The RDMP Data Catalogue database is the central resource for storing all information about what is where, what datasets there are, what servers they are on etc.  This includes 
+/// The RDMP Data Catalogue database is the central resource for storing all information about what is where, what datasets there are, what servers they are on etc.  This includes
 /// keeping track of the locations of other servers such as the Logging server/database, Data Quality Engine reporting database, anonymisation databases, query caching databases
-/// etc. 
+/// etc.
 /// 
 /// <para>This dialog lets you set which server references (ExternalDatabaseServer) are used for each of the defaults that RDMP has (e.g. which logging server should be used by default)</para>
 ///  
@@ -30,7 +30,7 @@ namespace Rdmp.UI.LocationsMenu;
 public partial class ServerDefaultsUI : RDMPForm
 {
     private IServerDefaults defaults;
-        
+
     public ServerDefaultsUI(IActivateItems activator):base(activator)
     {
         InitializeComponent();
@@ -55,7 +55,7 @@ public partial class ServerDefaultsUI : RDMPForm
             defaults = Activator.RepositoryLocator.CatalogueRepository;
 
             var allServers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().ToArray();
-                
+
             InitializeServerDropdown(ddDefaultLoggingServer, PermissableDefaults.LiveLoggingServer_ID, allServers);
             InitializeServerDropdown(ddDQEServer, PermissableDefaults.DQE, allServers);
             InitializeServerDropdown(ddWebServiceQueryCacheServer, PermissableDefaults.WebServiceQueryCachingServer_ID, allServers);
@@ -72,7 +72,7 @@ public partial class ServerDefaultsUI : RDMPForm
 
             btnCreateNewCohortIdentificationQueryCache.Enabled = ddCohortIdentificationQueryCacheServer.SelectedItem == null;
             btnClearCohortIdentificationQueryCache.Enabled = ddCohortIdentificationQueryCacheServer.SelectedItem !=null;
-                
+
         }
         catch (Exception ex)
         {
@@ -89,7 +89,7 @@ public partial class ServerDefaultsUI : RDMPForm
             
         var toAdd = allServers;
             
-        if(patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database 
+        if(patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database
         {
             var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedBy(patcher)).ToArray();
 
@@ -106,7 +106,7 @@ public partial class ServerDefaultsUI : RDMPForm
             comboBox.SelectedItem = comboBox.Items.Cast<ExternalDatabaseServer>().Single(s => s.ID == currentDefault.ID);
     }
 
-        
+
     private void ddDefault_SelectedIndexChanged(object sender, EventArgs e)
     {
         PermissableDefaults toChange;
@@ -181,7 +181,7 @@ public partial class ServerDefaultsUI : RDMPForm
         defaults.ClearDefault(toClear);
         RefreshUIFromDatabase();
     }
-        
+
     private void CreateNewExternalServer(PermissableDefaults defaultToSet, IPatcher patcher)
     {
         if (CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository, defaultToSet, patcher) != null)
@@ -208,7 +208,7 @@ public partial class ServerDefaultsUI : RDMPForm
     {
         CreateNewExternalServer(PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
     }
-        
+
     private void btnCreateNewIdentifierDump_Click(object sender, EventArgs e)
     {
         CreateNewExternalServer(PermissableDefaults.IdentifierDumpServer_ID, new IdentifierDumpDatabasePatcher());

@@ -37,7 +37,7 @@ public class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconProvider
         //it's not extractable:
         if (ei == null) return toReturn;
 
-        if (ei.HashOnDataRelease) 
+        if (ei.HashOnDataRelease)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
         if (ei.IsExtractionIdentifier)

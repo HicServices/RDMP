@@ -24,8 +24,8 @@ public class RenameProvider
     private readonly IActivateItems _activator;
     private readonly ObjectListView _olv;
     private readonly OLVColumn _columnThatSupportsRenaming;
-        
-    public bool AllowRenaming {  
+
+    public bool AllowRenaming {
         get => _columnThatSupportsRenaming.IsEditable;
         set
         {
@@ -89,7 +89,7 @@ public class RenameProvider
                 else
                     cmd.Execute();
             }
-                    
+
         }
         catch (Exception exception)
         {

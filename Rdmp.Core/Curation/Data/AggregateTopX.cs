@@ -65,7 +65,7 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
     }
     #endregion
 
-        
+
     #region Relationships
     /// <inheritdoc cref="OrderByDimensionIfAny_ID"/>
     [NoMappingToDatabase]
@@ -124,5 +124,5 @@ public class AggregateTopX : DatabaseEntity, IAggregateTopX
         });
     }
 
-        
+
 }

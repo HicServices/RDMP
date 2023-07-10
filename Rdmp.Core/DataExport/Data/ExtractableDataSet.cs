@@ -49,9 +49,9 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     }
 
     #endregion
-        
+
     #region Relationships
-        
+
     /// <summary>
     /// Returns all <see cref="IExtractionConfiguration"/> in which this dataset is one of the extracted datasets
     /// </summary>
@@ -154,7 +154,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     }
 
     private Lazy<ICatalogue> _catalogue;
-        
+
     /// <inheritdoc/>
     public void InjectKnown(ICatalogue instance)
     {

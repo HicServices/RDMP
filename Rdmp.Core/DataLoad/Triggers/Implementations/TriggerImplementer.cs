@@ -24,7 +24,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 public abstract class TriggerImplementer:ITriggerImplementer
 {
     protected readonly bool _createDataLoadRunIdAlso;
-        
+
     protected readonly DiscoveredServer _server;
     protected readonly DiscoveredTable _table;
     protected readonly DiscoveredTable _archiveTable;
@@ -93,13 +93,13 @@ public abstract class TriggerImplementer:ITriggerImplementer
         {
             using var con = _server.GetConnection();
             con.Open();
-                
+
             using(var cmdCreateArchive = _server.GetCommand(sql, con))
             {
                 cmdCreateArchive.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmdCreateArchive.ExecuteNonQuery();
             }
-                        
+
 
             _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, UserSettings.ArchiveTriggerTimeout);
             _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, UserSettings.ArchiveTriggerTimeout);
@@ -151,12 +151,12 @@ public abstract class TriggerImplementer:ITriggerImplementer
     /// <returns></returns>
     public virtual bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
     {
-        //check server has trigger and it is on 
+        //check server has trigger and it is on
         var isEnabledSimple = GetTriggerStatus();
 
         if (isEnabledSimple == TriggerStatus.Disabled || isEnabledSimple == TriggerStatus.Missing)
             return false;
-            
+
         CheckColumnDefinitionsMatchArchive();
 
         return true;

@@ -41,7 +41,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         Cohort = _repository.GetObjectByID<ExtractableCohort>((int) Configuration.Cohort_ID);
 
-        ExtractionResults = 
+        ExtractionResults =
             Configuration.CumulativeExtractionResults
                 .OrderBy(
                     c => _repository.GetObjectByID<ExtractableDataSet>(c.ExtractableDataSet_ID).ToString()
@@ -175,7 +175,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         foreach (var result in ExtractionResults)
         {
             var filename = GetFileName(result);
-                
+
             SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
             SetTableCell(table,tableLine, 1,result.FiltersUsed);
             SetTableCell(table,tableLine, 2,filename);
@@ -199,7 +199,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
                 StringComparison.CurrentCultureIgnoreCase))
         {
             var relative = result.DestinationDescription[Project.ExtractionDirectory.Length..].Replace('\\', '/');
-                
+
             return $"./{relative.Trim('/')}";
         }
 

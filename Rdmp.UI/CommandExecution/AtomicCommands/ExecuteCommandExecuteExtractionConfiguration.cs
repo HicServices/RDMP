@@ -71,7 +71,7 @@ public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecutio
 
         return this;
     }
-        
+
 
     public override void Execute()
     {
@@ -80,7 +80,7 @@ public class ExecuteCommandExecuteExtractionConfiguration:BasicUICommandExecutio
         if(_project != null && _extractionConfiguration == null)
         {
             var available = _project.ExtractionConfigurations.Where(c=>c.IsExtractable(out _)).Cast<ExtractionConfiguration>().ToArray();
-                
+
             if(available.Any())
                 _extractionConfiguration = SelectOne(available);
 

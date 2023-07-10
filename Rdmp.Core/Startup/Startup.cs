@@ -29,7 +29,7 @@ using Rdmp.Core.Startup.Events;
 namespace Rdmp.Core.Startup;
 
 /// <summary>
-/// Locates main databases (Catalogue / Data Export - called Tier1 databases) and satellite databases (DQE, Logging etc - called Tier2 
+/// Locates main databases (Catalogue / Data Export - called Tier1 databases) and satellite databases (DQE, Logging etc - called Tier2
 /// databases) and plugin databases (Called Tier3).
 /// 
 /// <para>Identifies which databases need to be patched.</para>
@@ -260,10 +260,10 @@ public class Startup
 
     /// <summary>
     /// <para>
-    /// Call before running <see cref="Startup"/>.  Sets up basic assembly redirects to the execution directory 
+    /// Call before running <see cref="Startup"/>.  Sets up basic assembly redirects to the execution directory
     /// (see <see cref="AssemblyResolver"/>) and FAnsiSql DBMS implementations.
     /// </para>
-    /// <para>Note that this method can be used even if you do not then go on to use <see cref="Startup"/> e.g. if you 
+    /// <para>Note that this method can be used even if you do not then go on to use <see cref="Startup"/> e.g. if you
     /// are performing a low level operation like patching</para>
     /// </summary>
     public static void PreStartup()

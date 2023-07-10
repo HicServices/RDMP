@@ -35,7 +35,7 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
         askAtRuntime = true;
     }
 
-        
+
     [UseWithObjectConstructor]
     public ExecuteCommandSetPivot(IBasicActivateItems basicActivator, AggregateConfiguration aggregate, string column ) : base(basicActivator)
     {
@@ -84,7 +84,7 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
                 }
 
                 match = (AggregateDimension)BasicActivator.SelectOne("Choose pivot dimension", possible);
-                    
+
                 if(match == null)
                 {
                     return;

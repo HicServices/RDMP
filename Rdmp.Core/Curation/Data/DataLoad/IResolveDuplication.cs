@@ -28,7 +28,7 @@ public interface IResolveDuplication : IHasRuntimeName, ISaveable, IHasStageSpec
     bool DuplicateRecordResolutionIsAscending { get; set; }
 
     /// <summary>
-    /// The proprietary SQL datatype of the column in the underlying database table this record points at.  
+    /// The proprietary SQL datatype of the column in the underlying database table this record points at.
     /// <para>E.g. datetime2 or varchar2 (Oracle) or int etc</para>
     /// </summary>
     string Data_type { get; }

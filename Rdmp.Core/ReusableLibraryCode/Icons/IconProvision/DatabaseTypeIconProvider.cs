@@ -26,10 +26,10 @@ public class DatabaseTypeIconProvider
 
     private readonly Image<Rgba32> _postgresBig;
     private readonly Image<Rgba32> _postgresOverlay;
-        
+
     private readonly Image<Rgba32> _unknownBig;
     private readonly Image<Rgba32> _unknownOverlay;
-        
+
     public DatabaseTypeIconProvider()
     {
         _msBig = Image.Load<Rgba32>(DatabaseProviderIcons.Microsoft);

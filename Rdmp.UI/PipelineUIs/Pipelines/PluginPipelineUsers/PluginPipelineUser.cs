@@ -44,7 +44,7 @@ public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
 
         GenerateContext();
     }
-        
+
     protected override IDataFlowPipelineContext GenerateContextImpl()
     {
         return _useCase.GetContext();

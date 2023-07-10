@@ -54,7 +54,7 @@ public interface ICohortContainerManager
     /// </summary>
     /// <returns></returns>
     IOrderable[] GetChildren(CohortAggregateContainer parent);
-        
+
     /// <summary>
     /// Removes the given <paramref name="child"/> container from its host parent container
     /// </summary>

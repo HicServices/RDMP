@@ -29,7 +29,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
     private readonly IPipelineUseCase _useCaseIfAny;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddPipelineComponent(IBasicActivateItems activator, 
+    public ExecuteCommandAddPipelineComponent(IBasicActivateItems activator,
         [DemandsInitialization("The pipeline to add the component to")]
         IPipeline pipeline,
         [DemandsInitialization("The Type of component to add")]

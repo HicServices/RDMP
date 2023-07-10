@@ -15,7 +15,7 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting;
 
 /// <summary>
 /// Only visible after running the data quality engine on a dataset (Catalogue).   Shows each extractable column in the dataset with a horizontal bar indicating what proportion
-/// of the values in the dataset that are in that column are passing validation.  By comparing this chart with the TimePeriodicityChart you can if validation problems in the 
+/// of the values in the dataset that are in that column are passing validation.  By comparing this chart with the TimePeriodicityChart you can if validation problems in the
 /// dataset are attributable to specific columns or whether the quality of the entire dataset is bad.  For example if the entire TimePeriodicityChart is red (failing validation)
 /// but only one column in the ColumnStatesChart is showing red then you know that the scope of the problem is limited only to that column.
 /// 
@@ -27,7 +27,7 @@ public partial class ColumnStatesChart : UserControl, IDataQualityReportingChart
     {
         InitializeComponent();
     }
-        
+
     /// <inheritdoc/>
     public void ClearGraph()
     {

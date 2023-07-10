@@ -195,9 +195,9 @@ public class SelectSQLRefactorer
         if(!IsRefactorable(tableInfo))
             throw new RefactoringException(
                 $"TableInfo {tableInfo} is not refactorable because {GetReasonNotRefactorable(tableInfo)}");
-                        
+
         var updatesMade = 0;
-            
+
         //if it's a new name
         if(tableInfo.Name != newFullyQualifiedTableName)
         {
@@ -205,12 +205,12 @@ public class SelectSQLRefactorer
             Save(tableInfo);
             updatesMade++;
         }
-            
-        //Rename all ColumnInfos that belong to this TableInfo 
+
+        //Rename all ColumnInfos that belong to this TableInfo
         foreach (var columnInfo in tableInfo.ColumnInfos)
             updatesMade += RefactorTableName(columnInfo,oldFullyQualifiedTableName,newFullyQualifiedTableName);
-                
-        return updatesMade;      
+
+        return updatesMade;
     }
 
     /// <summary>
@@ -258,7 +258,7 @@ public class SelectSQLRefactorer
             if (extractionInformation.SelectSQL.Contains(oldFullyQualifiedTableName))
             {
                 var newvalue = extractionInformation.SelectSQL.Replace(oldFullyQualifiedTableName, newFullyQualifiedTableName);
-                        
+
                 if(!extractionInformation.SelectSQL.Equals(newvalue))
                 {
                     extractionInformation.SelectSQL = newvalue;

@@ -34,7 +34,7 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
         AssociatedCollection = RDMPCollection.Catalogue;
         DoubleBuffered = true;
     }
-        
+
     private void ClearDQEGraphs()
     {
         timePeriodicityChart1.ClearGraph();

@@ -32,7 +32,7 @@ namespace Rdmp.UI.Overview;
 public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
 {
     private DataLoadsGraphObjectCollection _collection;
-        
+
     public DataLoadsGraph()
     {
         InitializeComponent();
@@ -116,7 +116,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
             {
                 var countManualLoadsuccessful = 0;
                 var countManualLoadFailure = 0;
-                    
+
                 foreach (var metadata in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
                 {
                     try
@@ -133,7 +133,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                             //sometimes a load metadata won't have any catalogues so we can't process its log history
                             if(e.Message.Contains("does not have any Catalogues associated with it"))
                                 continue;
-                                
+
                             throw;
                         }
 
@@ -155,7 +155,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                             }));
                             continue; //has never been run (or has had test runs only)
                         }
-                            
+
                         var lastLoadWasError = archivalDataLoadInfo.Errors.Any() || archivalDataLoadInfo.EndTime == null;
 
                         //while we were fetching data from database the form was closed
@@ -171,7 +171,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                         {
                             loadSummary.Status = lastLoadWasError ? DataLoadsGraphResultStatus.Failing : DataLoadsGraphResultStatus.Succeeding;
                             loadSummary.LastRun = archivalDataLoadInfo.EndTime.ToString();
-                                
+
                             olvDataLoads.AddObject(loadSummary);
                         }));
                     }
@@ -195,7 +195,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                         chart1.Visible = false;
                         pbLoading.Visible = false;
                     }));
-                        
+
                     return;
                 }
 
@@ -232,7 +232,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                     chart1.ChartAreas[0].AxisY.MajorGrid.Interval = gridMarkEvery;
                     chart1.ChartAreas[0].AxisY.MajorTickMark.Interval = gridMarkEvery;
                     chart1.ChartAreas[0].AxisY.MajorTickMark.IntervalOffset = 0;
-                        
+
                     chart1.ChartAreas[0].AxisY.IsMarginVisible = false;
 
 

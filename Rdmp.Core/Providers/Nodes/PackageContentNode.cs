@@ -33,7 +33,7 @@ public class PackageContentNode:Node,IDeletableWithCustomMessage, IMasqueradeAs
     {
         return DataSet.ToString();
     }
-        
+
     protected bool Equals(PackageContentNode other)
     {
         return Equals(Package, other.Package) && Equals(DataSet, other.DataSet);

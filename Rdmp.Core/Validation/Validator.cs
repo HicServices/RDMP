@@ -23,13 +23,13 @@ namespace Rdmp.Core.Validation;
 
 /// <summary>
 /// The Validator is the main entry point into this API. A client would typically create a Validator instance and then
-/// add a number of ItemValidators to it.  Alternatively you can use the static method LoadFromXml.  Ensure you set 
+/// add a number of ItemValidators to it.  Alternatively you can use the static method LoadFromXml.  Ensure you set
 /// LocatorForXMLDeserialization.
 /// 
 /// <para>Generally, there are two phases of interaction with a Validator:</para>
 /// 
 /// <para>1. Design Time
-/// During this phase, the client will instantiate and set up a Validator. The Check() method can be called to check for 
+/// During this phase, the client will instantiate and set up a Validator. The Check() method can be called to check for
 /// any type incompatibilities prior to running the actual Validate() method.</para>
 /// 
 /// <para>2. Run Time
@@ -45,13 +45,13 @@ public class Validator
     private Dictionary<string, object> _domainObjectDictionary;
 
     /// <summary>
-    /// Validation rules can reference objects e.g. StandardRegex.  This static property indicates where to get the available instances available 
+    /// Validation rules can reference objects e.g. StandardRegex.  This static property indicates where to get the available instances available
     /// for selection (the Catalogue database).
     /// </summary>
     public static ICatalogueRepositoryServiceLocator LocatorForXMLDeserialization;
     public List<ItemValidator> ItemValidators { get; set; }
 
-        
+
 
     public Validator()
     {
@@ -153,7 +153,7 @@ public class Validator
         return currentResults;
     }
 
-       
+
     /// <summary>
     /// Validate against the supplied domain object, which takes the form of a Dictionary.
     /// </summary>
@@ -337,8 +337,8 @@ public class Validator
             {
                 //get the first validation failure for the given column (or null if it is valid)
                 var result = itemValidator.ValidateAll(o, vals, keys);
-                    
-                //if it wasn't valid then add it to the eList 
+
+                //if it wasn't valid then add it to the eList
                 if(result is { SourceItemValidator: null })
                 {
                     result.SourceItemValidator = itemValidator;
@@ -362,7 +362,7 @@ public class Validator
         #region work out other column values
         string[] names = null;
         object[] values = null;
-            
+
         var o = _domainObject;
 
         if (o is DbDataReader)
@@ -402,10 +402,10 @@ public class Validator
         }
         #endregion
 
-            
+
         foreach (var itemValidator in ItemValidators)
         {
-                
+
             if(itemValidator.TargetProperty == null)
                 throw new NullReferenceException("Target property cannot be null");
 

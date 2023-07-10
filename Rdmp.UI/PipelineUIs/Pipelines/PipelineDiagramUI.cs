@@ -24,7 +24,7 @@ using RAGSmiley = Rdmp.UI.ChecksUI.RAGSmiley;
 namespace Rdmp.UI.PipelineUIs.Pipelines;
 
 public delegate void PipelineComponentSelectedHandler(object sender, IPipelineComponent selected);
-    
+
 /// <summary>
 /// Used to visualise an IPipeline (See ConfigurePipelineUI and ConfigureAndExecutePipelineUI for what these are).  This control has a readonly/editable setting on it.  In dialogs where
 /// you are selecting an IPipeline you will see the diagram rendered readonly.  If you are editting  (See PipelineWorkAreaUI and ConfigurePipelineUI) then you will be able to select
@@ -33,12 +33,12 @@ public delegate void PipelineComponentSelectedHandler(object sender, IPipelineCo
 public partial class PipelineDiagramUI : UserControl
 {
     private IPipeline _pipeline;
-        
+
     public bool AllowSelection { get; set; }
     public bool AllowReOrdering { get; set; }
 
     private RAGSmiley pipelineSmiley = new();
-        
+
     public IPipelineComponent SelectedComponent;
     public event PipelineComponentSelectedHandler SelectedComponentChanged;
 
@@ -134,7 +134,7 @@ public partial class PipelineDiagramUI : UserControl
         foreach(var o in _useCase.GetInitializationObjects().Reverse())
         {
             var b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
-            pInitializationObjects.Controls.Add(b);                    
+            pInitializationObjects.Controls.Add(b);
         }
 
         try
@@ -148,33 +148,33 @@ public partial class PipelineDiagramUI : UserControl
 
                     //create it
                     var pipelineInstance = _pipelineFactory.Create(pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
-                    
+
                     //initialize it (unless it is design time)
                     if(!_useCase.IsDesignTime)
                         pipelineInstance.Initialize(_useCase.GetInitializationObjects().ToArray());
-                        
+
                 }
                 catch (Exception ex)
                 {
                     pipelineSmiley.Fatal(ex);
                 }
-                
+
                 //There is a pipeline set but we might have been unable to fully realize it so setup stuff based on PipelineComponents
-                
+
                 //was there an explicit instance?
                 if (_useCase.ExplicitSource != null)
                     AddExplicit(_useCase.ExplicitSource);//if so add it
-                else 
+                else
                     //there wasn't an explicit one so there was a PipelineComponent maybe? albiet one that might be broken?
                 if (pipeline.SourcePipelineComponent_ID != null)
                     AddPipelineComponent((int) pipeline.SourcePipelineComponent_ID, PipelineComponentRole.Source, pipeline.Repository);//add the possibly broken PipelineComponent to the diagram
                 else
-                    AddBlankComponent(PipelineComponentRole.Source);//the user hasn't put one in yet 
+                    AddBlankComponent(PipelineComponentRole.Source);//the user hasn't put one in yet
 
 
                 foreach (var middleComponent in pipeline.PipelineComponents.Where( c=>c.ID!= pipeline.SourcePipelineComponent_ID && c.ID != pipeline.DestinationPipelineComponent_ID).OrderBy(comp=>comp.Order))
                     AddPipelineComponent(middleComponent, PipelineComponentRole.Middle);//add the possibly broken PipelineComponent to the diagram
-               
+
                 //was there an explicit instance?
                 if (_useCase.ExplicitDestination != null)
                 {
@@ -188,15 +188,15 @@ public partial class PipelineDiagramUI : UserControl
                 else
                 {
                     AddDividerIfReorderingAvailable();
-                    AddBlankComponent(PipelineComponentRole.Destination);//the user hasn't put one in yet 
+                    AddBlankComponent(PipelineComponentRole.Destination);//the user hasn't put one in yet
                 }
 
 
                 return;
             }
-            
 
-            //Fallback 
+
+            //Fallback
             //user has not picked a pipeline yet, show him the shell (factory)
             //factory has no source, add empty source
             if (_useCase.ExplicitSource == null)
@@ -266,7 +266,7 @@ public partial class PipelineDiagramUI : UserControl
         //PipelineComponents can never be locked because they are user setup things
         component.IsLocked = false;
     }
-        
+
     private void AddDividerIfReorderingAvailable()
     {
         if(!AllowReOrdering)
@@ -317,7 +317,7 @@ public partial class PipelineDiagramUI : UserControl
                 $"PreInitialize failed on Explicit (locked component) {component.Value.GetType().Name}",e);
         }
     }
-        
+
     private void AddBlankComponent(PipelineComponentRole role)
     {
         var toAdd = new DataFlowComponentVisualisation(role, null, component_shouldAllowDrop);
@@ -378,7 +378,7 @@ public partial class PipelineDiagramUI : UserControl
 
         RefreshUIFromDatabase();
     }
-        
+
     private void HandleReorder(PipelineComponentVisualisation forReorder, DividerLineControl divider)
     {
         forReorder.PipelineComponent.Order =  GetOrderMakingSpaceIfNessesary(forReorder,divider);
@@ -472,7 +472,7 @@ public partial class PipelineDiagramUI : UserControl
             {
                 //found divider  so mark this as the insertion order point
                 toReturn = newOrder;
-                newOrder++;   
+                newOrder++;
             }
         }
 

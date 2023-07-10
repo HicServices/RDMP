@@ -71,14 +71,14 @@ public class FavouriteColumnProvider
                 _activator.FavouritesProvider.RemoveFavourite(this, o);
             else
                 _activator.FavouritesProvider.AddFavourite(this, o);
-                
+
             try
             {
                 _tlv.RefreshObject(o);
             }
             catch (ArgumentException)
             {
-                    
+
             }
         }
     }

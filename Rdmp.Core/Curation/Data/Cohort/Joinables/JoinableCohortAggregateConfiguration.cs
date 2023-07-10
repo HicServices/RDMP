@@ -15,10 +15,10 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Cohort.Joinables;
 
 /// <summary>
-/// Relationship object which indicates that a given AggregateConfiguration is a 'PatientIndexTable'.  In order to be compatible as a 'PatientIndexTable' the 
-/// AggregateConfiguration must have one IsExtractionIdentifier AggregateDimension and usually at least one other column which has useful values in it (e.g. 
-/// admission dates).  The patient index table can then be used as part of other AggregateConfigurations in a CohortIdentificationConfiguration (e.g. 'find 
-/// all people in Deaths dataset who died within 3 months of having a prescription for drug Y' - where Prescriptions is the 'PatientIndexTable'. 
+/// Relationship object which indicates that a given AggregateConfiguration is a 'PatientIndexTable'.  In order to be compatible as a 'PatientIndexTable' the
+/// AggregateConfiguration must have one IsExtractionIdentifier AggregateDimension and usually at least one other column which has useful values in it (e.g.
+/// admission dates).  The patient index table can then be used as part of other AggregateConfigurations in a CohortIdentificationConfiguration (e.g. 'find
+/// all people in Deaths dataset who died within 3 months of having a prescription for drug Y' - where Prescriptions is the 'PatientIndexTable'.
 /// </summary>
 public class JoinableCohortAggregateConfiguration : DatabaseEntity
 {
@@ -48,7 +48,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
 
     /// <summary>
     /// Gets all the users of the patient index table, these <see cref="AggregateConfiguration"/> will be joined against the patient index table at query generation time.
-    /// <para>The returned objects are <see cref="JoinableCohortAggregateConfigurationUse"/> which is the mandate to link against us.  Use 
+    /// <para>The returned objects are <see cref="JoinableCohortAggregateConfigurationUse"/> which is the mandate to link against us.  Use
     /// <see cref="JoinableCohortAggregateConfigurationUse.AggregateConfiguration"/> to fetch the actual <see cref="AggregateConfiguration"/></para>
     /// </summary>
     [NoMappingToDatabase]
@@ -103,7 +103,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     }
 
     /// <summary>
-    /// Mandates that the passed <see cref="AggregateConfiguration"/> should join with this patient index table at query generation time.  The <paramref name="user"/> must 
+    /// Mandates that the passed <see cref="AggregateConfiguration"/> should join with this patient index table at query generation time.  The <paramref name="user"/> must
     /// be part of the same <see cref="CohortIdentificationConfiguration"/> as the patient index table (<see cref="CohortIdentificationConfiguration_ID"/>)
     /// </summary>
     /// <param name="user"></param>

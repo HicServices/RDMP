@@ -50,7 +50,7 @@ public class SingleScheduleConsecutiveDateStrategy : IJobDateGenerationStrategy
             if (_lastAssignedLoadDate.Date >= DateTime.Now.Date)
                 if (!allowLoadingFutureDates)//if user does not want to load future dates
                     return dates;//he is done
-                
+
             //it is not a future date or user wants to allow loading of future dates
             dates.Add(_lastAssignedLoadDate);
         }

@@ -56,7 +56,7 @@ public class SqlQueryBuilderHelper
     /// <inheritdoc cref="QueryTimeColumn.SetLookupStatus"/>
     public static void FindLookups(ISqlQueryBuilder qb)
     {
-        //if there is only one table then user us selecting stuff from the lookup table only 
+        //if there is only one table then user us selecting stuff from the lookup table only
         if (qb.TablesUsedInQuery.Count == 1)
             return;
 
@@ -65,8 +65,8 @@ public class SqlQueryBuilderHelper
 
 
     /// <summary>
-    /// Must be called only after the ISqlQueryBuilder.TablesUsedInQuery has been set (see GetTablesUsedInQuery).  This method will resolve how 
-    /// the various tables can be linked together.  Throws QueryBuildingException if it is not possible to join the tables with any known 
+    /// Must be called only after the ISqlQueryBuilder.TablesUsedInQuery has been set (see GetTablesUsedInQuery).  This method will resolve how
+    /// the various tables can be linked together.  Throws QueryBuildingException if it is not possible to join the tables with any known
     /// JoinInfos / Lookup knowledge
     /// </summary>
     /// <param name="qb"></param>
@@ -138,7 +138,7 @@ public class SqlQueryBuilderHelper
                             throw new QueryBuildingException(
                                 $"Found {availableJoins.Length} possible Joins for {table1.Name} and {table2.Name}, did not know which to use.  Available joins were:{Environment.NewLine}{possibleJoinsWere}{Environment.NewLine} It was not possible to configure a Composite Join because:{Environment.NewLine}{additionalErrorMessageWhyWeCantDoComboJoin}");
                     }
-                        
+
                     if (!Joins.Contains(availableJoins[0]))
                         Joins.Add(availableJoins[0]);
                 }
@@ -178,13 +178,13 @@ public class SqlQueryBuilderHelper
     {
         //from all columns
         return from column in qb.SelectColumns
-            where 
+            where
                 (
-                    column.IsLookupForeignKey 
-                    && 
-                    column.IsLookupForeignKeyActuallyUsed(qb.SelectColumns) 
+                    column.IsLookupForeignKey
+                    &&
+                    column.IsLookupForeignKeyActuallyUsed(qb.SelectColumns)
                 )
-                || 
+                ||
                 column.IsIsolatedLookupDescription //this is when there are no foreign key columns in the SelectedColumns set but there is still a lookup description field so we have to link to the table anyway
             select column.LookupTable;
     }
@@ -289,7 +289,7 @@ public class SqlQueryBuilderHelper
         if (tables.Length == 1)
             return tables[0]; // go with that
 
-        // what tables have IsExtractionIdentifier column(s)? 
+        // what tables have IsExtractionIdentifier column(s)?
         var extractionIdentifierTables = qb.SelectColumns
             .Where(c => c.IColumn?.IsExtractionIdentifier ?? false)
             .Select(t => t.UnderlyingColumn?.TableInfo_ID)
@@ -319,7 +319,7 @@ public class SqlQueryBuilderHelper
         foreach(var table in toReturn.ToArray())
         {
             var available = table.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
-                
+
             foreach (var newAvailableJoin in available)
             {
                 foreach (var availableTable in new TableInfo[]{newAvailableJoin.PrimaryKey.TableInfo,newAvailableJoin.ForeignKey.TableInfo})
@@ -335,7 +335,7 @@ public class SqlQueryBuilderHelper
                         }
                     }
                 }
-                        
+
             }
         }
             
@@ -344,8 +344,8 @@ public class SqlQueryBuilderHelper
     }
 
     /// <summary>
-    /// Generates the FROM sql including joins for all the <see cref="TableInfo"/> required by the <see cref="ISqlQueryBuilder"/>.  <see cref="JoinInfo"/> must exist for 
-    /// this process to work 
+    /// Generates the FROM sql including joins for all the <see cref="TableInfo"/> required by the <see cref="ISqlQueryBuilder"/>.  <see cref="JoinInfo"/> must exist for
+    /// this process to work
     /// </summary>
     /// <param name="qb"></param>
     /// <returns></returns>
@@ -374,7 +374,7 @@ public class SqlQueryBuilderHelper
             else if (qb.TablesUsedInQuery.Count(t => t.IsPrimaryExtractionTable) == 1) //has the user picked one to be primary?
             {
                 firstTable = qb.TablesUsedInQuery.Single(t => t.IsPrimaryExtractionTable);
-                    
+
                 //has user tried to make a lookup table the primary table!
                 if(TableIsLookupTable(firstTable,qb))
                     throw new QueryBuildingException(
@@ -386,11 +386,11 @@ public class SqlQueryBuilderHelper
 
                 //can we discard all tables but one based on the fact that they are look up tables?
                 //maybe! lookup tables are tables where there is an underlying column from that table that is a lookup description
-                var winners = 
-                    qb.TablesUsedInQuery.Where(t=> 
+                var winners =
+                    qb.TablesUsedInQuery.Where(t=>
                             !TableIsLookupTable(t,qb))
                         .ToArray();
-                    
+
                 //if we have discarded all but 1 it is the only table that does not have any lookup descriptions in it so clearly the correct table to start joins from
                 if (winners.Length == 1)
                     firstTable = winners[0];
@@ -398,15 +398,15 @@ public class SqlQueryBuilderHelper
                     throw new QueryBuildingException(
                         $"There were {qb.TablesUsedInQuery.Count} Tables ({string.Join(",", qb.TablesUsedInQuery)}) involved in the query, some of them might have been lookup tables but there was no clear table to start joining from, either mark one of the TableInfos IsPrimaryExtractionTable or refine your query columns / create new lookup relationships");
             }
-                
+
             toReturn += firstTable.Name; //simple case "FROM tableX"
         }
         else
         if (qb.PrimaryExtractionTable != null)
         {
-            //user has specified which table to start from 
+            //user has specified which table to start from
             toReturn += qb.PrimaryExtractionTable.Name;
-                
+
             //now find any joins which involve the primary extraction table
             for (var i = 0; i < qb.JoinsUsedInQuery.Count; i++)
                 if (qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
@@ -425,7 +425,7 @@ public class SqlQueryBuilderHelper
                 if (qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
                 {
                     var pkTableId = qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID;
-        
+
                     //don't double JOIN to the same table twice even using different routes (see Test_FourTables_MultipleRoutes)
                     if (!tablesAddedSoFar.Contains(pkTableId))
                     {
@@ -445,8 +445,8 @@ public class SqlQueryBuilderHelper
                     var fkTableID = qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID;
 
 
-                    //if we have already seen foreign key table before 
-                    //if we already have 
+                    //if we have already seen foreign key table before
+                    //if we already have
                     if (tablesAddedSoFar.Contains(fkTableID) && tablesAddedSoFar.Contains(pkTableID))
                         unneededJoins.Add(qb.JoinsUsedInQuery[i]);
                     else if (tablesAddedSoFar.Contains(fkTableID))
@@ -464,7 +464,7 @@ public class SqlQueryBuilderHelper
                                     Environment.NewLine; //add foreign instead
                         tablesAddedSoFar.Add(fkTableID);
                     }
-                                
+
                     else
                         throw new NotImplementedException(
                             "We are having to add a Join for a table that is not 1 level down from the PrimaryExtractionTable");
@@ -502,7 +502,7 @@ public class SqlQueryBuilderHelper
     private static bool TableIsLookupTable(ITableInfo tableInfo,ISqlQueryBuilder qb)
     {
         return
-            //tables where there is any columns which 
+            //tables where there is any columns which
             qb.SelectColumns.Any(
                 //are lookup descriptions and belong to this table
                 c => c.IsLookupDescription && c.UnderlyingColumn.TableInfo_ID == tableInfo.ID);
@@ -651,7 +651,7 @@ public class SqlQueryBuilderHelper
     }
     /// <summary>
     /// Returns the unique database server type <see cref="IQuerySyntaxHelper"/> by evaluating the <see cref="TableInfo"/> used in the query.
-    /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para> 
+    /// <para>Throws <see cref="QueryBuildingException"/> if the tables are from mixed server types (e.g. MySql mixed with Oracle)</para>
     /// </summary>
     /// <param name="tablesUsedInQuery"></param>
     /// <returns></returns>

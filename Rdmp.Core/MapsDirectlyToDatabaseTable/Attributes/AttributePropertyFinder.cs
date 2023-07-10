@@ -20,7 +20,7 @@ public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Att
 {
     private readonly Dictionary<Type, HashSet<PropertyInfo>> _properties = new();
 
-    public AttributePropertyFinder(IEnumerable<IMapsDirectlyToDatabaseTable> objects) 
+    public AttributePropertyFinder(IEnumerable<IMapsDirectlyToDatabaseTable> objects)
     {
         foreach (var type in objects.Select(o => o.GetType()).Distinct())
         {

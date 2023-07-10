@@ -19,7 +19,7 @@ public class PlatformDatabaseCreationOptions
 {
     [Value(0, Required = true, HelpText = "The Microsoft SQL Server on which to create the platform databases (does not have to be the same as your data repository server)")]
     public string ServerName { get; set; }
-        
+
     [Value(1, Required = true, HelpText = "The prefix to append to all databases created")]
     public string Prefix { get; set; }
 
@@ -37,7 +37,7 @@ public class PlatformDatabaseCreationOptions
 
     [Option('k', "Skip Pipelines", Default = false, HelpText = "Skips creating the default Pipelines and Managed Server References in the Catalogue database once created.")]
     public bool SkipPipelines { get; set; }
-        
+
     [Option('e', "ExampleDatasets", Default = false, HelpText = "Create example datasets, projects, extraction configurations and cohort queries")]
     public bool ExampleDatasets{get;set;}
 

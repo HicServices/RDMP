@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 
 /// <summary>
-/// Used to indicate when an ID column contains the ID of another RDMP object.  Decorate the foreign key object. This can be involve going 
+/// Used to indicate when an ID column contains the ID of another RDMP object.  Decorate the foreign key object. This can be involve going
 /// between databases or even servers e.g. between DataExport and Catalogue libraries or between Catalogue and plugin databases
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
@@ -25,7 +25,7 @@ public class RelationshipAttribute : Attribute
     /// The decorated property
     /// </summary>
     public string PropertyName { get; set; }
-        
+
     public RelationshipType Type { get; set; }
 
     /// <summary>

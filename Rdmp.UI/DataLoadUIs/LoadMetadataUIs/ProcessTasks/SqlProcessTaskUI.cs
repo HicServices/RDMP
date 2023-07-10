@@ -27,7 +27,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 /// <summary>
 /// Lets you view/edit a single SQL file execution load task.  This SQL script will be run at the appropriate time in the data load (depending on which stage it is at and the order in the
 /// stage.  The SQL will be executed on the database/server that corresponds to the stage.  So an Adjust RAW script cannot modify STAGING since those tables won't even exist at the time of
-/// execution and might even be on a different server.  
+/// execution and might even be on a different server.
 /// 
 /// <para>You should avoid modifying Live tables directly with SQL since it circumvents the 'no duplication', 'RAW->STAGING->LIVE super transaction' model of RDMP.</para>
 /// </summary>
@@ -78,9 +78,9 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
                 _scintilla = factory.Create(new RDMPCombineableFactory());
                 groupBox1.Controls.Add(_scintilla);
                 _scintilla.SavePointLeft += ScintillaOnSavePointLeft;
-                ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;    
+                ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
             }
-            
+
             SetupAutocomplete();
 
             try
@@ -99,7 +99,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
         }
     }
 
-        
+
     private void SetupAutocomplete()
     {
         //if there's an old one dispose it
@@ -166,5 +166,5 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SqlProcessTaskUI_Design, UserControl>))]
 public abstract class SqlProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
 {
-        
+
 }

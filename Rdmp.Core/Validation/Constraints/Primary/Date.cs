@@ -24,7 +24,7 @@ public class Date : PrimaryConstraint
     {
         _ukCulture = new CultureInfo("en-GB");
     }
-        
+
     /// <summary>
     /// Validate a string representation of a UK (ONLY) date of the format d[d]/m[m]/yy[yy].
     /// The standard C# DateTime.Parse() method is used, which accepts alternative separators such as '.' and '-'.
@@ -43,7 +43,7 @@ public class Date : PrimaryConstraint
                     var s = (string)value;
                     DateTime.Parse(s, _ukCulture.DateTimeFormat);
 
-                    if (NotAFullySpecifiedDate(s)) 
+                    if (NotAFullySpecifiedDate(s))
                         return new ValidationFailure("Partial dates not allowed.",this);
                 }
                 catch (FormatException ex)

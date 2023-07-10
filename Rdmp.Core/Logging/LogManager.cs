@@ -20,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// Entry point for the RDMP relational logging database.  This class requires to be pointed at an existing logging database with the correct schema (Defined 
+/// Entry point for the RDMP relational logging database.  This class requires to be pointed at an existing logging database with the correct schema (Defined
 /// in HIC.Logging.Database - See DatabaseCreation.exe for how to do this). See Logging.cd for the full hierarchy of concepts.
 /// 
 /// <para>You can both create new logging records and fetch old ones.  New logging objects are generally maintained for future use e.g. when you want to record
@@ -29,7 +29,7 @@ namespace Rdmp.Core.Logging;
 /// blank and it will be unclear if a process blue screened or if it all went fine (other than the ongoing accumulation of log events, errors etc).</para>
 /// 
 /// <para>Fetching old records is done based on ID, Task Name etc and is also handled by this class. The objects returned will be ArchivalDataLoadInfo objects
-/// which are immutable and include the full hierarchy of sub concepts (errors, progress messages, which tables were loaded with how many records etc - 
+/// which are immutable and include the full hierarchy of sub concepts (errors, progress messages, which tables were loaded with how many records etc -
 /// See Logging.cd).</para>
 /// </summary>
 public class LogManager : ILogManager
@@ -40,7 +40,7 @@ public class LogManager : ILogManager
     /// If the Server was set from a persistent database reference this property will store it e.g. a logging ExternalDatabaseServer
     /// </summary>
     public IDataAccessPoint DataAccessPointIfAny { get; private set; }
-        
+
     /// <summary>
     /// Event triggered every time a new <see cref="IDataLoadInfo"/> is created.
     /// </summary>
@@ -91,7 +91,7 @@ public class LogManager : ILogManager
         return GetAsTable(
             $"SELECT {prefix} * FROM {filter.LoggingTable} {where} ORDER BY ID {(sortDesc ? "Desc" : "Asc")}");
     }
-        
+
     private DataTable GetAsTable(string sql)
     {
         var dt = new DataTable();
@@ -181,7 +181,7 @@ public class LogManager : ILogManager
             else
             {
                 cmd.Cancel();
-                        
+
                 if (rTask.IsFaulted && rTask.Exception != null)
                     throw rTask.Exception.GetExceptionIfExists<Exception>() ?? rTask.Exception;
 
@@ -205,7 +205,7 @@ public class LogManager : ILogManager
         return Convert.ToInt32(cmd.ExecuteScalar());
     }
 
-        
+
 
     public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description, string suggestedRollbackCommand, bool isTest)
     {

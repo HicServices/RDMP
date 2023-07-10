@@ -25,14 +25,14 @@ namespace Rdmp.Core.DataLoad.Modules.FileOperations;
 
 /// <summary>
 /// load component which Unzips files in ForLoading
-/// <para>Searches the forLoading directory for *.zip and unzips all entries in all zip archives found.  If the forLoading directory already contains a file with the same name then 
+/// <para>Searches the forLoading directory for *.zip and unzips all entries in all zip archives found.  If the forLoading directory already contains a file with the same name then
 /// it is overwritten (unless the file size is also the same in which case the entry is skipped)</para>
 /// </summary>
 public class FileUnzipper : IPluginDataProvider
 {
     [DemandsInitialization("Leave blank to extract all zip archives or populate with a REGULAR EXPRESSION to extract only specific zip filenames e.g. \"nhs_readv2*\\.zip\" - notice the escaped dot to match the dot exactly")]
     public Regex ZipArchivePattern { get; set; }
-        
+
     [DemandsInitialization("Leave blank to extract all files or populate with a REGULAR EXPRESSION to extract only specific files e.g. \".*\\.txt\" to extract all .txt files - notice how the pattern is a regular expression, so the dot must be escaped to prevent matching anything")]
     public Regex ZipEntryPattern { get; set; }
 
@@ -51,7 +51,7 @@ public class FileUnzipper : IPluginDataProvider
             if (ZipArchivePattern != null && !string.IsNullOrWhiteSpace(ZipArchivePattern.ToString()) &&
                 !ZipArchivePattern.IsMatch(fileInfo.Name)) continue;
             using var zipFile = ZipFile.Open(fileInfo.FullName,ZipArchiveMode.Read);
-            //fire event telling user we found some files in the zip file 
+            //fire event telling user we found some files in the zip file
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, zipFile.Entries.Aggregate("Identified the following zip entries:",(s,n)=>
                 $"{n.Name},").TrimEnd(',')));
 
@@ -60,13 +60,13 @@ public class FileUnzipper : IPluginDataProvider
             {
                 if(entry.Length == 0)
                     continue;
-                            
+
                 //if we are matching everything or we are matching on a regex that matches the entry name
                 if (ZipEntryPattern != null && !string.IsNullOrWhiteSpace(ZipEntryPattern.ToString()) &&
                     !ZipEntryPattern.IsMatch(entry.Name)) continue;
                 //extract it
                 var existingFile = job.LoadDirectory.ForLoading.GetFiles(entry.Name).FirstOrDefault();
-                        
+
                 if(existingFile != null && existingFile.Length == entry.Length)
                     continue;
 
@@ -79,10 +79,10 @@ public class FileUnzipper : IPluginDataProvider
 
     private void UnzipWithEvents(ZipArchiveEntry entry, ILoadDirectory destination, IDataLoadJob job)
     {
-        //create a task 
+        //create a task
         var entryDestination = Path.Combine(destination.ForLoading.FullName, entry.Name);
         using var unzipJob = Task.Factory.StartNew(() => entry.ExtractToFile(entryDestination, true));
-            
+
         //create a stopwatch to time how long bits take
         var s = Stopwatch.StartNew();
         var f = new FileInfo(entryDestination);
@@ -106,7 +106,7 @@ public class FileUnzipper : IPluginDataProvider
     {
         return new FileUnzipper();
     }
-        
+
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
     {
@@ -132,7 +132,7 @@ public class FileUnzipper : IPluginDataProvider
         }
     }
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
         if (ZipArchivePattern != null)

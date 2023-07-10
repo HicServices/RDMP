@@ -30,7 +30,7 @@ public class WebFileDownloader : IPluginDataProvider
 
     [DemandsInitialization("The full URI to a file that will be downloaded into project ForLoading directory, must be a valid Uri", Mandatory = true)]
     public Uri UriToFile { get; set; }
-        
+
     [DemandsInitialization("Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
     public DataAccessCredentials WebsenseCredentials { get; set; }
 
@@ -62,7 +62,7 @@ public class WebFileDownloader : IPluginDataProvider
         }
         using var response = CreateNewRequest(UriToFile.AbsoluteUri,credentials);
         using var writer = File.Create(destinationFile.FullName);
-        //download the file 
+        //download the file
         response.CopyTo(writer,1<<20);
     }
 
@@ -107,7 +107,7 @@ public class WebFileDownloader : IPluginDataProvider
     {
     }
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
         notifier.OnCheckPerformed(UriToFile == null

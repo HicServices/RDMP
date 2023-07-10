@@ -62,7 +62,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
         get => _username;
         set => SetField(ref _username, value);
     }
-        
+
     /// <inheritdoc/>
     public string Password
     {

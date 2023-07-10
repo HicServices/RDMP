@@ -25,7 +25,7 @@ namespace Rdmp.UI.LoadExecutionUIs;
 public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
 {
     private ICacheProgress _cacheProgress;
-        
+
     public ExecuteCacheProgressUI()
     {
         InitializeComponent();
@@ -67,5 +67,5 @@ public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CachingEngineUI_Design, UserControl>))]
 public abstract class CachingEngineUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>
 {
-        
+
 }

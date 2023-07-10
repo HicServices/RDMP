@@ -48,7 +48,7 @@ public class PickAnyConstructorJsonConverter:JsonConverter
     }
 
     /// <summary>
-    /// Returns a hydrated object from <paramref name="reader"/> by invoking the appropriate constructor identified by <see cref="ObjectConstructor.GetConstructors"/> 
+    /// Returns a hydrated object from <paramref name="reader"/> by invoking the appropriate constructor identified by <see cref="ObjectConstructor.GetConstructors"/>
     /// whitch matches the parameters provided to <see cref="PickAnyConstructorJsonConverter"/> when it was constructed.
     /// 
     /// <para>If the <paramref name="objectType"/> is <see cref="IPickAnyConstructorFinishedCallback"/> then <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction"/>

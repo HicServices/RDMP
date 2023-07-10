@@ -81,7 +81,7 @@ public partial class SimpleSetOperation : UserControl
         else
         {
             container.Order = 2;
-            container.Name = "Exclusion Criteria";    
+            container.Name = "Exclusion Criteria";
         }
 
         container.SaveToDatabase();

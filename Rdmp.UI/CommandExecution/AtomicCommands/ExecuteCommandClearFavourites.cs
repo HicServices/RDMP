@@ -26,16 +26,16 @@ public class ExecuteCommandClearFavourites : BasicUICommandExecution
         {
             var first = Activator.FavouritesProvider.CurrentFavourites.First();
 
-            foreach (var f in Activator.FavouritesProvider.CurrentFavourites) 
+            foreach (var f in Activator.FavouritesProvider.CurrentFavourites)
                 f.DeleteInDatabase();
-                
+
             //now that we have deleted them it is definitely not possible anymore
             SetImpossible("You do not have any Favourites");
 
             Activator.FavouritesProvider.CurrentFavourites.Clear();
 
             Publish(first);
-                
+
         }
     }
 }

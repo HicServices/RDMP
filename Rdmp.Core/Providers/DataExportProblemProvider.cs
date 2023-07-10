@@ -17,7 +17,7 @@ namespace Rdmp.Core.Providers;
 public class DataExportProblemProvider:ProblemProvider
 {
     private DataExportChildProvider _exportChildProvider;
-        
+
     /// <inheritdoc/>
     public override void RefreshProblems(ICoreChildProvider childProvider)
     {

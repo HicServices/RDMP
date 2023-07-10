@@ -50,7 +50,7 @@ public class Gatherer
     }
 
     /// <summary>
-    /// Invokes the relevant overload if it exists. 
+    /// Invokes the relevant overload if it exists.
     /// <seealso cref="CanGatherDependencies"/>
     /// </summary>
     /// <param name="databaseEntity"></param>
@@ -89,7 +89,7 @@ public class Gatherer
         var root = new GatheredObject(loadMetadata);
 
         //and the catalogues behind the load
-        foreach (var cata in loadMetadata.GetAllCatalogues()) 
+        foreach (var cata in loadMetadata.GetAllCatalogues())
             root.Children.Add(GatherDependencies(cata));
 
         //and the load operations
@@ -117,7 +117,7 @@ public class Gatherer
             
         return root;
     }
-        
+
     public GatheredObject GatherDependencies(IFilter filter)
     {
         var root = new GatheredObject(filter);
@@ -148,7 +148,7 @@ public class Gatherer
             //don't add a reference to the thing we are gathering dependencies on!
             if(Equals(o,c))
                 continue;
-                
+
             foreach (var propertyInfo in propertyFinder.GetProperties(o))
             {
                 var sql = (string)propertyInfo.GetValue(o);

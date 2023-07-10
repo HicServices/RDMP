@@ -24,7 +24,7 @@ namespace Rdmp.Core.Reports.ExtractionTime;
 
 /// <summary>
 /// Generates a Microsoft Word docx file containing information about a researchers extract including the file generated, the number of rows, distinct patients, the
-/// filters used in the extraction query, any parameters etc.  Optionally includes a validation table which counts the number of rows extracted that passed ValidationXML 
+/// filters used in the extraction query, any parameters etc.  Optionally includes a validation table which counts the number of rows extracted that passed ValidationXML
 /// </summary>
 public class WordDataWriter : DocXHelper
 {
@@ -48,7 +48,7 @@ public class WordDataWriter : DocXHelper
             throw new NotSupportedException(
                 $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
-        
+
     private static object oLockOnWordUsage = new();
     private IExecuteDatasetExtractionDestination _destination;
 
@@ -76,7 +76,7 @@ public class WordDataWriter : DocXHelper
                 rowCount = 5;
 
             var t = InsertTable(document, rowCount, 2);
-                    
+
             var rownum = 0;
             if (_destination.GeneratesFiles)
             {
@@ -94,7 +94,7 @@ public class WordDataWriter : DocXHelper
             SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
             SetTableCell(t,rownum,1, request.IsBatchResume ? "unknown (batching was used)" : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
             rownum++;
-                    
+
             SetTableCell(t,rownum,0,"Dataset Line Count");
             SetTableCell(t,rownum,1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
             rownum++;
@@ -104,7 +104,7 @@ public class WordDataWriter : DocXHelper
                 SetTableCell(t,rownum,0,"MD5");
                 SetTableCell(t,rownum,1,FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
                 rownum++;
-                    
+
                 var f = new FileInfo(_destination.OutputFile);
                 SetTableCell(t,rownum,0,"File Size");
                 SetTableCell(t,rownum,1, $"{f.Length}bytes ({f.Length / 1024}KB)");
@@ -192,7 +192,7 @@ public class WordDataWriter : DocXHelper
         {
             result.Append(buff);
             result.Append(' ');
-                
+
             //skip a character (should be a -, if not something has gone badly wrong)
             var skipped = sr.Read();
             if(!(skipped == '-' || skipped == -1))
@@ -296,12 +296,12 @@ public class WordDataWriter : DocXHelper
                     supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", "Value was always NULL"));
                 else
                     supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", value.DataTypeObservedInRuntimeBuffer.ToString()));
-                
+
 
             //add it with supplemental values
             if(value.CatalogueItem != null)
                 supplementalData.Add(value.CatalogueItem ,supplementalValuesForThisOne.ToArray());
-                
+
         }
 
         catalogueMetaData.AddMetaDataForColumns(supplementalData.Keys.ToArray(),supplementalData);

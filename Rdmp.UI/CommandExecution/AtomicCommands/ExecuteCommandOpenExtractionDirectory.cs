@@ -73,7 +73,7 @@ internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution
                 {
                     _dir = new DirectoryInfo(parents[0]);
                 }
-                        
+
             }
         }
         catch (Exception)

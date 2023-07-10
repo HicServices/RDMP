@@ -127,7 +127,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
                 var combineable = new CatalogueCombineable(catalogue);
 
                 UpdateIsImpossibleFor(combineable);
-                    
+
                 if(IsImpossible)
                     throw new ImpossibleCommandException(this, ReasonCommandImpossible);
 

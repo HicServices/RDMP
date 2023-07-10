@@ -38,7 +38,7 @@ public class ReleaseEngine
     public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsToRelease { get; private set; }
 
     public ReleaseEngineSettings ReleaseSettings { get; set; }
-        
+
     public ReleaseAudit ReleaseAudit { get; set; }
 
     public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener, ReleaseAudit releaseAudit)
@@ -79,7 +79,7 @@ public class ReleaseEngine
             
         ReleaseSuccessful = true;
     }
-        
+
     protected virtual StreamWriter PrepareAuditFile()
     {
         var sw = new StreamWriter(Path.Combine(ReleaseAudit.ReleaseFolder.FullName, "contents.txt"));
@@ -269,13 +269,13 @@ public class ReleaseEngine
             throw new Exception(
                 $"Folder \"{globalsDirectoryInfo.FullName}\" contains subdirectories, this is not permitted");
     }
-        
+
     protected void CutTreeRecursive(DirectoryInfo from, DirectoryInfo into, StreamWriter audit, int tabDepth)
     {
         //found files in current directory
         foreach (var file in from.GetFiles())
         {
-            //audit as -Filename at tab indent 
+            //audit as -Filename at tab indent
             AuditFileCreation(file.Name, audit, tabDepth);
             file.CopyTo(Path.Combine(into.FullName, file.Name));
         }

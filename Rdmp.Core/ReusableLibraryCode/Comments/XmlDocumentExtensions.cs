@@ -12,7 +12,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Comments;
 public static class XmlDocumentExtensions
 {
     public static void IterateThroughAllNodes(
-        this XmlDocument doc, 
+        this XmlDocument doc,
         Action<XmlNode> elementVisitor)
     {
         if (doc != null && elementVisitor != null)
@@ -25,7 +25,7 @@ public static class XmlDocumentExtensions
     }
 
     public static void IterateThroughAllNodes(
-        this XmlNode node, 
+        this XmlNode node,
         Action<XmlNode> elementVisitor)
     {
             
@@ -37,7 +37,7 @@ public static class XmlDocumentExtensions
     }
 
     private static void doIterateNode(
-        XmlNode node, 
+        XmlNode node,
         Action<XmlNode> elementVisitor)
     {
         elementVisitor(node);

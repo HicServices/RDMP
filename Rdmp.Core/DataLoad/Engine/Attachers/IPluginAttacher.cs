@@ -11,5 +11,5 @@ namespace Rdmp.Core.DataLoad.Engine.Attachers;
 /// </summary>
 public interface IPluginAttacher : IAttacher
 {
-        
+
 }

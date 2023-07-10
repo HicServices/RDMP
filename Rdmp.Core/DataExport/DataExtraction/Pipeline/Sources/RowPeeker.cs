@@ -60,7 +60,7 @@ internal class RowPeeker
 
         return chunk;
     }
-        
+
     /// <summary>
     /// Reads records one at a time from the <paramref name="source"/> until a record is read where the
     /// <paramref name="equalityFunc"/> returns false.  Rows read (that passed <paramref name="equalityFunc"/>)

@@ -25,12 +25,12 @@ public interface ILoadProgress :INamed, ICheckable
 
     /// <summary>
     /// Records how far through the process of loading data into this dataset.  This is updated at the end of a successful data load for a given date range (E.g. the next 10 days
-    /// due to be loaded) 
+    /// due to be loaded)
     /// </summary>
     DateTime? DataLoadProgress { get; set; }
 
     /// <summary>
-    /// The data load that this object records progress for.  You can have multiple <see cref="ILoadProgress"/> for a single <see cref="ILoadMetadata"/> (data load) for example you 
+    /// The data load that this object records progress for.  You can have multiple <see cref="ILoadProgress"/> for a single <see cref="ILoadMetadata"/> (data load) for example you
     /// might have loaded Tayside data into biochemistry up to 2017-01-01 but for Fife you have only loaded data up to 2015-01-01 so far.
     /// </summary>
     int LoadMetadata_ID { get; set; }
@@ -44,13 +44,13 @@ public interface ILoadProgress :INamed, ICheckable
     /// </summary>
     ICacheProgress CacheProgress { get; }
 
-        
+
     /// <summary>
     /// Do not use, is not respected
     /// </summary>
     [Obsolete("Not respected")]
     bool IsDisabled { get; set; }
-        
+
     /// <summary>
     /// The number of days to load each time the DLE is run with the <see cref="ILoadProgress"/>
     /// </summary>

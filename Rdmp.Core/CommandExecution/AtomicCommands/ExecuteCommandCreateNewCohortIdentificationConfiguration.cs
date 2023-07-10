@@ -30,7 +30,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
     /// yet on this command.
     /// </summary>
     public bool PromptToPickAProject { get; set; } = false;
-        
+
     /// <summary>
     /// The folder to put the new <see cref="CohortIdentificationConfiguration"/> in.  Defaults to <see cref="FolderHelper.Root"/>
     /// </summary>

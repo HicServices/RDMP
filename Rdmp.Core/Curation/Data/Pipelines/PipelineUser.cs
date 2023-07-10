@@ -12,7 +12,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
-/// Helper for standardising access to properties on a class which reference a Pipeline.  Because many classes reference Pipelines and some reference multiple Pipelines 
+/// Helper for standardising access to properties on a class which reference a Pipeline.  Because many classes reference Pipelines and some reference multiple Pipelines
 /// we use this class to abstract that away.  For example the CacheProgress constructor says to use "Pipeline_ID" int property.
 /// 
 /// <para>Currently used primarily by PipelineSelectionUIFactory </para>
@@ -36,7 +36,7 @@ public class PipelineUser:IPipelineUser
 
     /// <summary>
     /// Declares that the given <paramref name="property"/> (which must be nullable int) stores the ID (or null) of a <see cref="Pipeline"/> declared
-    /// in the RDMP platform databases.  The property must belong to <paramref name="user"/> 
+    /// in the RDMP platform databases.  The property must belong to <paramref name="user"/>
     /// </summary>
     /// <param name="property"></param>
     /// <param name="user"></param>
@@ -63,12 +63,12 @@ public class PipelineUser:IPipelineUser
             if (_catalogueRepository == null)
                 throw new Exception(
                     $"Repository of Host '{User}' was not an ICatalogueRepository or a IDataExportRepository.  user came from a Repository called '{user.Repository.GetType().Name}' in this case you will need to specify the ICatalogueRepository property to this method so we know where to fetch Pipelines from");
-                
+
         }
         Getter = Get;
         Setter = Set;
     }
-        
+
     /// <summary>
     /// Gets a <see cref="PipelineUser"/> targetting <see cref="CacheProgress.Pipeline_ID"/>
     /// </summary>

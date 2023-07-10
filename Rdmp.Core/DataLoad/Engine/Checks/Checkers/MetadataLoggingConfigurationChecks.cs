@@ -24,7 +24,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         _loadMetadata = loadMetadata;
     }
 
-        
+
 
     public void Check(ICheckNotifier notifier)
     {
@@ -35,7 +35,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         if (catalogues.Any() && catalogues.All(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)))
         {
             string proposedName;
-                
+
             bool fix;
 
             if(catalogues.Length == 1)
@@ -55,7 +55,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
                         new CheckEventArgs(
                             $"Catalogues {string.Join(",", catalogues.Select(c => c.Name))} do not have a logging task specified",
                             CheckResult.Fail, null, $"Create a new Logging Task called '{proposedName}'?"));
-                    
+
             }
 
             if (fix)
@@ -63,7 +63,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             else
                 return;
         }
-                
+
         #region Fix missing LoggingDataTask
         var missingTasks = catalogues.Where(c=>string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
         var potentialTasks = catalogues.Except(missingTasks).Select(c=>c.LoggingDataTask).Distinct().ToArray();
@@ -105,7 +105,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             }
             else
             {
-                    
+
                 var defaults = _loadMetadata.CatalogueRepository;
                 var defaultLoggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
@@ -126,7 +126,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         }
         #endregion
 
-        string distinctLoggingTask = null; 
+        string distinctLoggingTask = null;
         try
         {
             distinctLoggingTask = _loadMetadata.GetDistinctLoggingTask();
@@ -137,7 +137,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Catalogues could not agreed on a single Logging Task", CheckResult.Fail, e));
         }
-               
+
 
         try
         {
@@ -169,7 +169,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Could reach default logging server", CheckResult.Fail, e));
         }
-        
+
     }
 
     private void CreateNewLoggingTaskFor(ICheckNotifier notifier,ICatalogue[] catalogues, string proposedName)
@@ -192,7 +192,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         else
         {
             loggingServer = catarepo.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
-                
+
             if(loggingServer == null)
                 throw new Exception("There is no default logging server!");
         }

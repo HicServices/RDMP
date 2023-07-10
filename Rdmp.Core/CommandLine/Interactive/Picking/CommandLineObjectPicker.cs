@@ -19,7 +19,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 public class CommandLineObjectPicker
 {
     public IReadOnlyCollection<CommandLineObjectPickerArgumentValue> Arguments { get; }
-        
+
     public CommandLineObjectPickerArgumentValue this[int i] => Arguments.ElementAt(i);
 
     public int Length => Arguments.Count;
@@ -68,7 +68,7 @@ public class CommandLineObjectPicker
         //what constructor we are trying to match it to.
         return new CommandLineObjectPickerArgumentValue(arg,idx);
     }
-        
+
     /// <summary>
     /// Returns true if the given <paramref name="idx"/> exists and is populated with a value of the expected <paramref name="paramType"/>
     /// </summary>

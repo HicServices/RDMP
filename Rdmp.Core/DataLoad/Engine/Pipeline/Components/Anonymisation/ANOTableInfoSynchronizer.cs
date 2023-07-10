@@ -43,11 +43,11 @@ public class ANOTableInfoSynchronizer
         {
             var anoTable = columnInfoWithANOTransform.ANOTable;
             anoTable.Check(ThrowImmediatelyCheckNotifier.Quiet);
-                
+
             if(!anoTable.GetRuntimeDataType(LoadStage.PostLoad).Equals(columnInfoWithANOTransform.Data_type))
                 throw new ANOConfigurationException(
                     $"Mismatch between anoTable.GetRuntimeDataType(LoadStage.PostLoad) = {anoTable.GetRuntimeDataType(LoadStage.PostLoad)} and column {columnInfoWithANOTransform} datatype = {columnInfoWithANOTransform.Data_type}");
-                
+
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"ANOTable {anoTable} has shared compatible datatype {columnInfoWithANOTransform.Data_type} with ColumnInfo {columnInfoWithANOTransform}", CheckResult.Success));

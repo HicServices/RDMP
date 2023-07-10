@@ -60,7 +60,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
                 };
             }
 
-    
+
             btnLaunchCustomUI.Text = $"Launch Custom UI ({_uiType.Name})";
             btnLaunchCustomUI.Width = btnLaunchCustomUI.PreferredSize.Width;
         }
@@ -69,7 +69,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             btnLaunchCustomUI.Enabled = false;
         }
     }
-        
+
     private void btnLaunchCustomUI_Click(object sender, EventArgs e)
     {
         try
@@ -77,7 +77,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             var dataClassInstance = (ICustomUIDrivenClass)_args.InitialValue;
 
             var uiInstance = Activator.CreateInstance(_uiType);
-                
+
             var instanceAsCustomUI = (ICustomUI) uiInstance;
             instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 

@@ -18,9 +18,9 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Type manager which supports loading assemblies from both the bin directory and plugin directories.  Types discovered are indexed
-/// according to name so they can be built on demand later on.  
+/// according to name so they can be built on demand later on.
 /// 
-/// <para>Handles assembly resolution problems, binding redirection and partial assembly loading (e.g. if only some of the Types in the 
+/// <para>Handles assembly resolution problems, binding redirection and partial assembly loading (e.g. if only some of the Types in the
 /// assembly could be resolved).</para>
 /// </summary>
 public class SafeDirectoryCatalog
@@ -422,7 +422,7 @@ public class SafeDirectoryCatalog
     /// Assemblies which could not be loaded
     /// </summary>
     public Dictionary<string,Exception> BadAssembliesDictionary { get; }
-        
+
     /// <summary>
     /// Delegate for skipping certain dlls
     /// </summary>
@@ -457,7 +457,7 @@ public class SafeDirectoryCatalog
             if (directory is null)
                 continue;
             if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory); //empty directory 
+                Directory.CreateDirectory(directory); //empty directory
 
             foreach(var f in Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories))
             {

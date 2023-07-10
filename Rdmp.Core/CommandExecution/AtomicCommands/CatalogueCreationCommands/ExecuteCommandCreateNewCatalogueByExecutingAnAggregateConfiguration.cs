@@ -75,7 +75,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
 
         var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration, _cohort, _table);
 
-        var runner = BasicActivator.GetPipelineRunner(new DialogArgs { 
+        var runner = BasicActivator.GetPipelineRunner(new DialogArgs {
                 WindowTitle = "Create Table from AggregateConfiguration",
                 TaskDescription = "Select a Pipeline compatible with reading data from an AggregateConfiguration.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
             }

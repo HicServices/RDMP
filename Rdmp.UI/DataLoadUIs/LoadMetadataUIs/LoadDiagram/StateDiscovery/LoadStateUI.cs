@@ -57,7 +57,7 @@ public partial class LoadStateUI : UserControl
                 throw new ArgumentOutOfRangeException(nameof(state));
         }
     }
-        
+
     public enum LoadState
     {
         Unknown,

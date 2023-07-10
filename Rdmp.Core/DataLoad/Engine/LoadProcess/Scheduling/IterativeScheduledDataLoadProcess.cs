@@ -50,8 +50,8 @@ public class IterativeScheduledDataLoadProcess : ScheduledDataLoadProcess
 
         // Run the data load process
         JobProvider = jobProvider;
-            
-        //Do a data load 
+
+        //Do a data load
         ExitCodeType result;
         while((result = base.Run(loadCancellationToken,payload)) == ExitCodeType.Success) //stop if it said not required
         {

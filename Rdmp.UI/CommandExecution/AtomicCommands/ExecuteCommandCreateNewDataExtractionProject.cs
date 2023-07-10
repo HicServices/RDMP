@@ -45,7 +45,7 @@ public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecut
             Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
 
             if (wizard.ExtractionConfigurationCreatedIfAny != null)
-            { 
+            {
                 //now execute it
                 var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
                 if (!executeCommand.IsImpossible)

@@ -143,7 +143,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     {
         var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueRepository;
 
-        var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs { 
+        var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs {
             WindowTitle = "Commit Cohort",
             TaskDescription = $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes successfully a new Saved Cohort will be created and the cohort identifiers stored in '{request?.NewCohortDefinition?.LocationOfCohort?.Name ?? "Unknown"}'."
         },request, Pipeline);
@@ -158,7 +158,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             var logManager = new LogManager(loggingServer);
             logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
-            //create a db listener 
+            //create a db listener
             var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, description);
 
             //make all messages go to both the db and the UI

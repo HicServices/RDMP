@@ -30,11 +30,11 @@ public interface ISupplementalExtractionResults : IExtractionResults, IReference
     int? ExtractionConfiguration_ID { get; }
 
     /// <summary>
-    /// True if the artifact extracted did not relate to a specific dataset (e.g. a Lookup) but to extract as a while.  This is determined 
+    /// True if the artifact extracted did not relate to a specific dataset (e.g. a Lookup) but to extract as a while.  This is determined
     /// by looking at whether <see cref="CumulativeExtractionResults_ID"/> or <see cref="ExtractionConfiguration_ID"/> is populated.
     /// </summary>
     bool IsGlobal { get; }
-        
+
     /// <summary>
     /// The Name of the object that was extracted (this is the logical name not the path e.g. "HelpDocs pdf file")
     /// </summary>

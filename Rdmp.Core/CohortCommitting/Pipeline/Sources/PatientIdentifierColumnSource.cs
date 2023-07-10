@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 
 /// <summary>
-/// Pipeline source component that generates a DataTable containing all the unique patient identifiers in the column referenced by the <see cref="IPipelineRequirement{T}"/> 
+/// Pipeline source component that generates a DataTable containing all the unique patient identifiers in the column referenced by the <see cref="IPipelineRequirement{T}"/>
 /// <see cref="ExtractionInformation"/>.
 /// </summary>
 public class PatientIdentifierColumnSource:IPluginDataFlowSource<DataTable>, IPipelineRequirement<ExtractionInformation>
@@ -28,7 +28,7 @@ public class PatientIdentifierColumnSource:IPluginDataFlowSource<DataTable>, IPi
 
     [DemandsInitialization("How long to wait for the select query to run before giving up in seconds",DemandType.Unspecified,60)]
     public int Timeout { get; set; }
-        
+
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         if (_haveSentData)

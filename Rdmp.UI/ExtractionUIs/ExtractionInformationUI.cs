@@ -33,15 +33,15 @@ namespace Rdmp.UI.ExtractionUIs;
 /// <para>Start by deciding whether a given Column is extractable by ticking Yes or No.  Then choose an extraction category, a column will only appear in DataExportManager as extractable if
 /// it is Core, Supplemental or SpecialApprovalRequired (Internal and Deprecated columns cannot be extracted).  </para>
 /// 
-/// <para>You should have a single field across all your datasets which identifies your cohorts (patients) e.g. PatientId.  If this column contains PatientIds then tick 'Is Extraction 
+/// <para>You should have a single field across all your datasets which identifies your cohorts (patients) e.g. PatientId.  If this column contains PatientIds then tick 'Is Extraction
 /// Identifier', very occasionally you might have multiple columns containing PatientIds e.g. Birth records might have a column for MotherId and a column for BabyId both of which contain
 /// PatientIds (if this is the case then just tick both as 'Is Extraction Identifier'.  </para>
 /// 
-/// <para>You can edit the Extraction Code which is a single line of SELECT SQL.  If you change this to include a function or something else make sure to include an alias 
+/// <para>You can edit the Extraction Code which is a single line of SELECT SQL.  If you change this to include a function or something else make sure to include an alias
 /// (e.g. 'UPPER(MyTable.MyColumn) as MyColumn')</para>
 /// 
 /// <para>You can also view the Filters that are associated with this column.  These are centrally curated and validated (Make sure to validate your filters!!!) pieces of WHERE logic which
-/// can be used in Data Extraction and Cohort Identification with the dataset.  For example the Prescribing.DrugCode column could have 2 filters 'Prescription Painkillers' and 
+/// can be used in Data Extraction and Cohort Identification with the dataset.  For example the Prescribing.DrugCode column could have 2 filters 'Prescription Painkillers' and
 /// 'Diabetes Drugs'.  Filters should be adequately documented with name and description such that a data analyst can use them without necessarily understanding the SQL implementation.
 /// For more information on configuring Filters see ExtractionFilterUI.</para>
 /// 
@@ -54,7 +54,7 @@ namespace Rdmp.UI.ExtractionUIs;
 public partial class ExtractionInformationUI : ExtractionInformationUI_Design, ISaveableUI
 {
     public ExtractionInformation ExtractionInformation { get; private set; }
-        
+
     //Editor that user can type into
     private Scintilla QueryEditor;
 
@@ -174,7 +174,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
                 // there was a problem working out the runtime name.  Maybe it is missing an alias or whatever
                 // so we can't do this rename - no big deal
             }
-                
+
         }
 
         return true;
@@ -212,7 +212,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
 
             var autoComplete = new AutoCompleteProviderWin(_querySyntaxHelper);
             autoComplete.Add(ExtractionInformation.CatalogueItem.Catalogue);
-                
+
             autoComplete.RegisterForEvents(QueryEditor);
             isFirstTimeSetupCalled = false;
         }
@@ -236,7 +236,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             pSql.Controls.Add(QueryEditor);
             
     }
-        
+
     private void cbHashOnDataRelease_CheckedChanged(object sender, EventArgs e)
     {
         //Create alias if it doesn't have one yet
@@ -262,7 +262,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             QueryEditor.Text = commentRegex.Replace(QueryEditor.Text, $"/* ${{comment}} */{Environment.NewLine}");
         }
     }
-        
+
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
         e.Cancel = false;
@@ -297,7 +297,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
         return $"{name} ({ ExtractionInformation.CatalogueItem.Catalogue.Name } Extraction Logic)";
     }
 }
-    
+
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionInformationUI_Design, UserControl>))]
 public abstract class ExtractionInformationUI_Design : RDMPSingleDatabaseObjectControl<ExtractionInformation>
 {

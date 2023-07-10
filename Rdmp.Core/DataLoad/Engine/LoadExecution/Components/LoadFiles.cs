@@ -25,10 +25,10 @@ public class LoadFiles : CompositeDataLoadComponent
     {
         Description = Description = "LoadFiles";
     }
-        
+
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        if (Skip(job)) 
+        if (Skip(job))
             return ExitCodeType.Error;
             
         var toReturn = ExitCodeType.Success; //This default will be returned unless there is an explicit DataProvider or collection of runtime tasks to run which return a different result (See below)
@@ -51,7 +51,7 @@ public class LoadFiles : CompositeDataLoadComponent
         {
             // We can only clean up ForLoading after the job is finished, so give it the necessary disposal operation
             job.PushForDisposal(new DeleteForLoadingFilesOperation(job));
-                
+
         }
 
         return toReturn;

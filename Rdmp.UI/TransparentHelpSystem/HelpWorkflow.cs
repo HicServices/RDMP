@@ -27,7 +27,7 @@ public class HelpWorkflow
     private CancellationTokenSource _cancellationTokenSource;
     public HelpStage RootStage { get; set; }
     public HelpStage CurrentStage { get; set; }
-        
+
     public HelpWorkflow(Control hostControl, Guid workflowGuid, IHelpWorkflowProgressProvider progressProvider):this(hostControl,null,progressProvider)
     {
         WorkflowGuid = workflowGuid;

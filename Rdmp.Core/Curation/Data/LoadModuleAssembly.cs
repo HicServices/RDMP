@@ -45,7 +45,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         get => _bin;
         set => SetField(ref _bin,value);
     }
-        
+
     /// <summary>
     /// The user who uploaded the dll
     /// </summary>
@@ -63,7 +63,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         get => _uploadDate;
         set => SetField(ref _uploadDate,value);
     }
-        
+
     /// <summary>
     /// The plugin this file forms a part of (each <see cref="Plugin"/> will usually have multiple dlls as part of its dependencies)
     /// </summary>
@@ -77,7 +77,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     #endregion
 
     #region Relationships
-        
+
     /// <inheritdoc cref="Plugin_ID"/>
     [NoMappingToDatabase]
     public Plugin Plugin => _knownPlugin.Value;
@@ -115,7 +115,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         Plugin_ID = Convert.ToInt32(r["Plugin_ID"]);
         ClearAllInjections();
     }
-        
+
     internal LoadModuleAssembly(ShareManager shareManager, ShareDefinition shareDefinition)
     {
         shareManager.UpsertAndHydrate(this, shareDefinition);
@@ -141,7 +141,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
             yield return (e.Name,ms2);
         }
     }
-        
+
     /// <summary>
     /// Downloads the plugin nupkg to the given directory
     /// </summary>

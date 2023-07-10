@@ -57,5 +57,5 @@ public interface ICombineableFactory
     /// <param name="modelObject">A C# object e.g. <see cref="Rdmp.Core.Curation.Data.Catalogue"/> that dragging has begun on</param>
     /// <returns></returns>
     ICombineToMakeCommand Create(object modelObject);
-        
+
 }

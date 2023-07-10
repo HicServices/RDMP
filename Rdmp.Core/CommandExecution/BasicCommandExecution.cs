@@ -26,9 +26,9 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Basic implementation of ICommandExecution ensures that if a command is marked IsImpossible then it cannot be run.  Call SetImpossible to render your command 
-/// un runnable with the given arguments.  You cannot make an IsImpossible command Possible again (therefore you should probably make this discision in your 
-/// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure 
+/// Basic implementation of ICommandExecution ensures that if a command is marked IsImpossible then it cannot be run.  Call SetImpossible to render your command
+/// un runnable with the given arguments.  You cannot make an IsImpossible command Possible again (therefore you should probably make this discision in your
+/// constructor).  Override Execute to provide the implementation logic of your command but make sure to leave the base.Execute() call in first to ensure
 /// IsImpossible is respected in the unlikely event that some code or user attempts to execute an impossible command.
 /// 
 /// <para>Override GetCommandHelp and GetCommandName to change the presentation layer of the command (if applicable).</para>
@@ -187,7 +187,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         IsImpossible = false;
         ReasonCommandImpossible = null;
     }
-        
+
     /// <summary>
     /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
     /// </summary>
@@ -208,7 +208,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         if(o is DatabaseEntity d)
             BasicActivator.Publish(d);
     }
-        
+
     /// <summary>
     /// Reports a low visibility error to the <see cref="IBasicActivateItems.GlobalErrorCheckNotifier"/>.  Throws <paramref name="ex"/>
     /// with <paramref name="msg"/> if no global errors handler is registered
@@ -222,7 +222,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
 
         BasicActivator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Fail, ex));
     }
-        
+
     /// <summary>
     /// Displays the given message to the user
     /// </summary>
@@ -243,7 +243,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     }
 
     /// <summary>
-    /// Displays the given message to the user, calling String.Format 
+    /// Displays the given message to the user, calling String.Format
     /// </summary>
     /// <param name="message"></param>
     /// <param name="objects">Objects to use for {0},{1} etc tokens in <paramref name="message"/></param>
@@ -273,7 +273,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     {
         return TypeText(header, prompt, 500, null, out text);
     }
-        
+
     /// <inheritdoc cref="IBasicActivateItems.ShowException"/>
     protected void ShowException(string message, Exception exception)
     {
@@ -289,7 +289,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <returns></returns>
     protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
     {
-        return SelectOne(new DialogArgs { 
+        return SelectOne(new DialogArgs {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
         },availableObjects, out var selected) ? selected : null;
@@ -318,7 +318,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <returns></returns>
     protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
     {
-        return SelectOne(new DialogArgs { 
+        return SelectOne(new DialogArgs {
             InitialSearchText = initialSearchText,
             AllowAutoSelect = allowAutoSelect
         },repository.GetAllObjects<T>().ToList(),out var answer) ? answer: null;
@@ -408,7 +408,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     {
         BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
     }
-        
+
     protected DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
     {
         return BasicActivator.SelectDatabase(allowDatabaseCreation, taskDescription);
@@ -515,11 +515,11 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// </summary>
     public static bool HasCommandNameOrAlias(Type commandType, string name)
     {
-        return 
-            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
-            || 
-            commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) 
-            || 
+        return
+            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase)
+            ||
+            commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase)
+            ||
             commandType.GetCustomAttributes<AliasAttribute>(false)
                 .Any(a=>a.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase));
     }
@@ -528,7 +528,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     /// <summary>
     /// <para>
     /// Performs the <paramref name="toRun"/> action within a <see cref="Commit"/> (if
-    /// commits are supported by platform).  Returns true if no commit was used or commit 
+    /// commits are supported by platform).  Returns true if no commit was used or commit
     /// was completed successfully.  Returns false if commit was abandonned (e.g. by user cancelling).
     /// </para>
     /// <remarks> If commit is abandoned then <paramref name="trackObjects"/> will all be reverted
@@ -573,7 +573,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
                 if(o is IRevertable re)
                 {
                     re.RevertToDatabaseState();
-                }   
+                }
             }
         }
 

@@ -38,7 +38,7 @@ public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject
     {
         if(_project == null)
         {
-            //project is not known so get all projects 
+            //project is not known so get all projects
             var valid = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
 
             //except if the cic is the launch point
@@ -61,7 +61,7 @@ public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject
             //cic is not known (but project is thanks to above block)
             var valid =
                 BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>();
-                
+
             //allow them to select any cic where it does not already belong to the project
             valid =
                 valid.Where(v =>

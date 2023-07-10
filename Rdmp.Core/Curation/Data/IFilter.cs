@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// A line of WHERE sql which can be combined in IContainers.  IFilters can be either ConcreteFilter (there is persisted user defined database object that makes 
+/// A line of WHERE sql which can be combined in IContainers.  IFilters can be either ConcreteFilter (there is persisted user defined database object that makes
 /// up the IFilter) or SpontaneouslyInventedFilter.
 /// </summary>
 public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,ICheckable, IMightBeReadOnly
@@ -29,7 +29,7 @@ public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,I
     /// Human readable description of what the WHERE logic is supposed to achieve (e.g. Tayside records only)
     /// </summary>
     string Description { get; set; }
-        
+
     /// <summary>
     /// True if the <see cref="IFilter"/> should always be used with the <see cref="Catalogue"/> it is associated with if any (See <see cref="GetCatalogue"/>).
     /// 
@@ -66,16 +66,16 @@ public interface IFilter : ICollectSqlParameters, INamed,IHasQuerySyntaxHelper,I
 
     /// <summary>
     /// Gets an appropriate <see cref="IFilterFactory"/> for creating arguments and other filters of the Type compatible the derrived class (e.g. if the <see cref="IFilter"/> is an
-    /// <see cref="ExtractionFilter"/> then an <see cref="ExtractionFilterFactory"/>  would be returned). 
+    /// <see cref="ExtractionFilter"/> then an <see cref="ExtractionFilterFactory"/>  would be returned).
     /// </summary>
     /// <returns></returns>
     IFilterFactory GetFilterFactory();
 
     /// <summary>
-    /// Gets the <see cref="Catalogue"/> that this <see cref="IFilter"/> is designed to be run on.  This should return a value regardless of the Type of <see cref="IFilter"/> e.g. 
+    /// Gets the <see cref="Catalogue"/> that this <see cref="IFilter"/> is designed to be run on.  This should return a value regardless of the Type of <see cref="IFilter"/> e.g.
     /// master level or deployed as part of project extractions / cohort identification configurations.
     /// </summary>
     /// <returns></returns>
     Catalogue GetCatalogue();
-        
+
 }

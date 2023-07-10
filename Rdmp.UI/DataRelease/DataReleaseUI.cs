@@ -36,7 +36,7 @@ namespace Rdmp.UI.DataRelease;
 /// a research project.  There is no going back once you have sent the package to the researcher, if you have accidentally included the wrong datasets or supplied identifiable data
 /// (e.g. in a free text field) then you are in big trouble.  For this reason the 'Release' process is a tightly controlled sequence which the RDMP undertakes to try to reduce error.
 /// 
-/// <para>In this control you will see all the currently selected datasets in a project's configuration(s) and the state of the dataset extraction (from the RDMP's perspective) as well 
+/// <para>In this control you will see all the currently selected datasets in a project's configuration(s) and the state of the dataset extraction (from the RDMP's perspective) as well
 /// as the status of the 'Environment' (Ticketing System).  Right clicking on a dataset will give you options appropriate to its state.</para>
 /// 
 /// <para>Extraction of large datasets can take days or weeks and a project extraction is an ongoing exercise.  It is possible that by the time you come to release a project some of the
@@ -60,7 +60,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private IPipelineSelectionUI _pipelineSelectionUI1;
     private IMapsDirectlyToDatabaseTable[] _globals;
     private DataExportChildProvider _childProvider;
-        
+
     private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
 
 
@@ -227,18 +227,18 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         tlvReleasePotentials.DisableObjects(_globals);
         //tlvReleasePotentials.DisableObject(_globalsNode);
     }
-        
+
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
         base.ConsultAboutClosing(sender, e);
         checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
-        
+
     public override string GetTabName()
     {
         return $"Release: {_project}";
     }
-        
+
     public void TickAllFor(ExtractionConfiguration configuration)
     {
         tlvReleasePotentials.UncheckAll();

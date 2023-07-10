@@ -20,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 
 /// <summary>
-/// Migrates from STAGING to LIVE a single table (with a MigrationColumnSet).  This is an UPSERT (new replaces old) operation achieved (in SQL) with MERGE and 
+/// Migrates from STAGING to LIVE a single table (with a MigrationColumnSet).  This is an UPSERT (new replaces old) operation achieved (in SQL) with MERGE and
 /// UPDATE (based on primary key).  Both tables must be on the same server.  A MERGE sql statement will be created using LiveMigrationQueryHelper and executed
 /// within a transaction.
 /// </summary>
@@ -138,15 +138,15 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
 
             //t1.Name = t2.Name, t1.Age=T2.Age etc
             sqlLines.Add(new CustomLine(string.Join(",",toSet), QueryComponent.SET));
-                
-            //also update the hic_dataLoadRunID field                
+
+            //also update the hic_dataLoadRunID field
             if(!job.LoadMetadata.IgnoreTrigger)
                 sqlLines.Add(new CustomLine(
                     $"t1.{syntax.EnsureWrapped(SpecialFieldNames.DataLoadRunID)}={dataLoadInfoID}",QueryComponent.SET));
 
             //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
             sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(c=>GetORLine(c,syntax))), QueryComponent.WHERE));
-                
+
             //the join
             sqlLines.AddRange(columnsToMigrate.PrimaryKeys.Select(p => new CustomLine(string.Format("t1.{0} = t2.{0}", syntax.EnsureWrapped(p.GetRuntimeName())), QueryComponent.JoinInfoJoin)));
 

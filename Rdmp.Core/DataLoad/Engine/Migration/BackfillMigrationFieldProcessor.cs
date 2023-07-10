@@ -17,10 +17,10 @@ namespace Rdmp.Core.DataLoad.Engine.Migration;
 /// </summary>
 public class BackfillMigrationFieldProcessor : IMigrationFieldProcessor
 {
-    public bool NoBackupTrigger 
-    { 
+    public bool NoBackupTrigger
+    {
         get => false;
-        set 
+        set
         {
             if(!value)
                 throw new NotSupportedException("NoBackupTrigger must be false to perform this migration");

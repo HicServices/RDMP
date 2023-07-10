@@ -34,7 +34,7 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
 
     private IFilter[] _offerFilters;
     private bool offerCatalogueFilters;
-        
+
     public bool OfferCatalogueFilters
     {
         get => offerCatalogueFilters;

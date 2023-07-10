@@ -41,7 +41,7 @@ public partial class DataGeneratorUI : UserControl
             cbGenerate.Text = value != null ? value.GetType().Name:"";
         }
     }
-        
+
     public int GetSize()
     {
         return 10* (int)Math.Pow(10, trackBar1.Value);
@@ -67,7 +67,7 @@ public partial class DataGeneratorUI : UserControl
         Thread.Start();
 
     }
-        
+
     private void ValueOnRowsGenerated(object sender, RowsGeneratedEventArgs e)
     {
         if (InvokeRequired)

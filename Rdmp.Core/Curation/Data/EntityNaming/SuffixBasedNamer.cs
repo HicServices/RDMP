@@ -22,7 +22,7 @@ public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
         {LoadBubble.Live, ""},
         {LoadBubble.Archive, "_Archive"}
     };
-        
+
     /// <inheritdoc/>
     public virtual string GetDatabaseName(string rootDatabaseName, LoadBubble stage)
     {

@@ -38,7 +38,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting;
 
 /// <summary>
 /// Allows you to import a flat file into your database with appropriate column data types based on the values read from the file.  This data table will then be referenced by an RDMP
-/// Catalogue which can be used to interact with it through RDMP.  
+/// Catalogue which can be used to interact with it through RDMP.
 /// </summary>
 public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 {
@@ -130,7 +130,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         switch (state)
         {
             case State.SelectFile:
-                    
+
                 //turn things off
                 pbFile.Visible = false;
                 lblFile.Visible = false;
@@ -142,12 +142,12 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
                 gbPickDatabase.Enabled = false;
                 btnConfirmDatabase.Enabled = false;
                 gbTableName.Enabled = false;
-                    
+
                 _selectedFile = null;
 
                 //turn things on
                 btnBrowse.Visible = true;
-                    
+
                 break;
             case State.FileSelected:
 
@@ -295,9 +295,9 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             ragSmileyFile.Fatal(exception);
         }
     }
-        
+
     private IProject _projectSpecific;
-        
+
     private void btnConfirmDatabase_Click(object sender, EventArgs e)
     {
         var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
@@ -375,7 +375,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
             var dest = (DataTableUploadDestination) engine.DestinationObject;
             dest.TableNamerDelegate = () => tbTableName.Text;
-                
+
             using var cts = new CancellationTokenSource();
             var t =Task.Run(() =>
                 {
@@ -425,7 +425,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             var confirm = MessageBox.Show(
                 $"A table named {expectTable.GetFullyQualifiedName()} has been created as part of this import. Do you want to keep it?",
                 "Confirm", MessageBoxButtons.YesNo);
-            if (confirm == DialogResult.No) 
+            if (confirm == DialogResult.No)
                 expectTable.Drop();
         }
     }
@@ -444,12 +444,12 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         if (catalogue is DatabaseEntity de)
         {
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(de));
-            
+
             MessageBox.Show(
                 $"Successfully imported new Dataset '{catalogue}'.\r\nThe edit functionality will now open.");
 
             Activator.WindowArranger.SetupEditAnything(this, catalogue);
-                
+
         }
         if (cbAutoClose.Checked)
             Close();
@@ -470,7 +470,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     private void tbTableName_TextChanged(object sender, EventArgs e)
     {
         if(!string.IsNullOrWhiteSpace(tbTableName.Text))
-            //if the sane name doesn't match the 
+            //if the sane name doesn't match the
             tbTableName.ForeColor = !tbTableName.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(tbTableName.Text),
                 StringComparison.CurrentCultureIgnoreCase) ? Color.Red : Color.Black;
     }

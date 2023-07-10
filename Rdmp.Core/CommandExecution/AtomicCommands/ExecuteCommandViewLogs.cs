@@ -27,7 +27,7 @@ public class ExecuteCommandViewLogs : BasicCommandExecution, IAtomicCommand
     protected ExternalDatabaseServer[] _loggingServers;
 
     [UseWithCommandLine(
-        ParameterHelpList = "<root> <table?> <id?>", 
+        ParameterHelpList = "<root> <table?> <id?>",
         ParameterHelpBreakdown = @"root object to view logs for or logging server
 table? Only required if <root> is logging server, specifies the table to view e.g. DataLoadRun
 int? Optional, if <root> is logging server this can be a specific audit id to show")]

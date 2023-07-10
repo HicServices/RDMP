@@ -72,7 +72,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
         Constructors.Add(typeof(ProjectCohortIdentificationConfigurationAssociation),(rep,r)=>new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository)rep,r));
         Constructors.Add(typeof(SelectedDataSetsForcedJoin), (rep, r) => new SelectedDataSetsForcedJoin((IDataExportRepository)rep, r));
     }
-        
+
     public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
     {
         return GetAllObjects<CumulativeExtractionResults>(
@@ -86,13 +86,13 @@ public class DataExportRepository : TableRepository, IDataExportRepository
             ? constructor(this, reader)
             : ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
     }
-        
+
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
         var eds = GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault();
         return eds == null ? new CatalogueExtractabilityStatus(false, false) : eds.GetCatalogueExtractabilityStatus();
     }
-        
+
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
     {
         return SelectAll<SelectedDataSets>(@"
@@ -111,7 +111,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 
     public override T[] GetAllObjects<T>()
     {
-        if (!_caches.ContainsKey(typeof(T))) 
+        if (!_caches.ContainsKey(typeof(T)))
             _caches.Add(typeof(T), new RowVerCache<T>(this));
 
         return _caches[typeof(T)].GetAllObjects<T>();
@@ -161,8 +161,8 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     }
 
     /// <summary>
-    /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/> and updates the cached package contents 
-    /// in memory.  
+    /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/> and updates the cached package contents
+    /// in memory.
     /// 
     /// <para>This change is immediately written to the database</para>
     ///
@@ -192,8 +192,8 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 
 
     /// <summary>
-    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents 
-    /// in memory.  
+    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents
+    /// in memory.
     /// 
     /// <para>This change is immediately written to the database</para>
     ///

@@ -20,7 +20,7 @@ public class ExecuteCommandPutIntoFolder: BasicCommandExecution
 {
     private readonly IHasFolder[] _toMove;
     private readonly string _folder;
-        
+
     public ExecuteCommandPutIntoFolder(IBasicActivateItems activator, IHasFolderCombineable cmd, string targetModel)
         :this(activator,new []{cmd.Folderable},targetModel)
     {
@@ -54,7 +54,7 @@ public class ExecuteCommandPutIntoFolder: BasicCommandExecution
             {
                 // if there's a single current value for the folder
                 // of these objects (i.e. they are only operating on one item
-                // or on several items in the same folder).  Then make the 
+                // or on several items in the same folder).  Then make the
                 // popup text box show the old value.  Otherwise show the root \
                 var current = _toMove.Select(m => m.Folder).Distinct().ToArray();
                 var oldValue = current.Length == 1 ? current[0] : "\\";

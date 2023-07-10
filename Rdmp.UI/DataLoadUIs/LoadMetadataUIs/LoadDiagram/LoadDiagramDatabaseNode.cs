@@ -28,7 +28,7 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
     public readonly DiscoveredDatabase Database;
     private readonly TableInfo[] _loadTables;
     private readonly HICDatabaseConfiguration _config;
-        
+
     public LoadDiagramState State { get; set; }
 
     public string DatabaseName { get; }
@@ -48,7 +48,7 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
 
         _anticipatedChildren.AddRange(_loadTables.Select(t => new LoadDiagramTableNode(this, t, _bubble, _config)));
     }
-        
+
     public IEnumerable<object> GetChildren()
     {
         return _anticipatedChildren.Cast<object>().Union(_unplannedChildren);
@@ -77,7 +77,7 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
             return;
         }
 
-        //database does exist 
+        //database does exist
         State = LoadDiagramState.Found;
 
         //so check the children (tables) for state
@@ -96,7 +96,7 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
                 _unplannedChildren.Add(new UnplannedTable(discoveredTable));
             }
     }
-        
+
     #region equality
     protected bool Equals(LoadDiagramDatabaseNode other)
     {

@@ -28,7 +28,7 @@ namespace Rdmp.UI.DataQualityUIs;
 public partial class DQEExecutionControlUI : DQEExecutionControl_Design
 {
     private Catalogue _catalogue;
-        
+
     public DQEExecutionControlUI()
     {
         InitializeComponent();
@@ -58,7 +58,7 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
         CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue), "Validation Rules...");
         CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator){OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
     }
-        
+
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
         base.ConsultAboutClosing(sender,e);

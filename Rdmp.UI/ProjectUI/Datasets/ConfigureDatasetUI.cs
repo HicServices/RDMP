@@ -41,7 +41,7 @@ namespace Rdmp.UI.ProjectUI.Datasets;
 /// <para>On the left you can see all the available columns and transforms in the selected dataset (see ExtractionConfigurationUI for selecting datasets).  You can add these by selecting them
 /// and pressing the '>' button.  On the right the QueryBuilder will show you what columns are currently included in the researchers extract. </para>
 /// 
-/// <para>Depending on which columns you have selected the QueryBuilder may be unable to generate a query (for example if you do not add the IsExtractionIdentifier column - See 
+/// <para>Depending on which columns you have selected the QueryBuilder may be unable to generate a query (for example if you do not add the IsExtractionIdentifier column - See
 /// ExtractionInformationUI).</para>
 /// </summary>
 public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSubscriber
@@ -49,7 +49,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
     public SelectedDataSets SelectedDataSet { get; private set; }
     private IExtractableDataSet _dataSet;
     private ExtractionConfiguration _config;
-        
+
     //constructor
     public ConfigureDatasetUI()
     {
@@ -226,7 +226,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         foreach (var ei in toAdd)
         {
             var ci = Activator.CoreChildProvider.AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
-                
+
             ei.InjectKnown(ci);
             if (ci.ColumnInfo_ID != null)
                 ei.InjectKnown(ci.ColumnInfo);
@@ -291,7 +291,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         //compare regular columns on their ID in the catalogue
         return selectedColumns.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == info.ID);
     }
-                      
+
 
     private void btnInclude_Click(object sender, EventArgs e)
     {
@@ -424,7 +424,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             cmd.Execute();
     }
 
-        
+
     private void OlvSelected_ItemActivate(object sender, EventArgs e)
     {
         var ei = (olvSelected.SelectedObject as ExtractableColumn)?.CatalogueExtractionInformation;
@@ -432,7 +432,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         if(ei != null)
         {
             var cmd = new ExecuteCommandShow(Activator,ei,1);
-                
+
             if(!cmd.IsImpossible)
                 cmd.Execute();
         }
@@ -539,9 +539,9 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
         olvAvailable.SelectObjects(
             olvAvailable.Objects.OfType<ExtractionInformation>()
-                .Where(ei =>      
+                .Where(ei =>
                     //select core columns
-                    ei.ExtractionCategory == ExtractionCategory.Core 
+                    ei.ExtractionCategory == ExtractionCategory.Core
                     // or ProjectSpecific ones if it is the main dataset
                     || (extractionIsFor == ei.CatalogueItem.Catalogue_ID && ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
                 ).ToArray());
@@ -584,7 +584,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             }
             else
             {
-                return CheckState.Checked; 
+                return CheckState.Checked;
             }
 
         throw new Exception("Expected to have handled all situations!");
@@ -677,7 +677,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             //if it has Join Infos
             if (node.JoinInfos.Any())
             {
-                //Find all the joins columns 
+                //Find all the joins columns
                 var cols = node.JoinInfos.Select(j => j.PrimaryKey).ToArray();
 
                 ColumnInfo toEmphasise = null;
@@ -687,7 +687,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
                     toEmphasise = cols[0]; //emphasise it to the user
                 else
                 {
-                    if(Activator.SelectObject(new DialogArgs 
+                    if(Activator.SelectObject(new DialogArgs
                        {
                            TaskDescription = "There are multiple columns involved in the join, which do you want to navigate to?"
                        },cols,out var selected))
@@ -722,7 +722,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
                 {
                     otherTable = selected;
                 }
-                        
+
             }
 
             if(otherTable != null)
@@ -780,7 +780,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             foreach (var c in olvSelected.Objects.OfType<ExtractableColumn>().ToArray())
                 if(c.CatalogueExtractionInformation_ID == ei.ID)
                 {
-                    c.InjectKnown(ei); 
+                    c.InjectKnown(ei);
                     olvSelected.RefreshObject(c);
                 }
         }
@@ -799,5 +799,5 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ConfigureDatasetUI_Design, UserControl>))]
 public abstract class ConfigureDatasetUI_Design : RDMPSingleDatabaseObjectControl<SelectedDataSets>
 {
-        
+
 }

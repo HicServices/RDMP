@@ -46,7 +46,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
         {
             if(!SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var cata))
                 return;
-                
+
             _catalogue = new CatalogueCombineable(cata);
         }
             

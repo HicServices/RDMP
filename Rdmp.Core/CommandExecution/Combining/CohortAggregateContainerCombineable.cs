@@ -26,7 +26,7 @@ public class CohortAggregateContainerCombineable : ICombineToMakeCommand
         ParentContainerIfAny = AggregateContainer.GetParentContainerIfAny();
     }
 
-        
+
 
     public string GetSqlString()
     {

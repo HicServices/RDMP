@@ -26,7 +26,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     private string _name;
     private string _description;
     private bool _requiresSynchronousAccess;
-        
+
     /// <inheritdoc/>
     [NotNull]
     [Unique]
@@ -49,7 +49,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
         get => _requiresSynchronousAccess;
         set => SetField(ref  _requiresSynchronousAccess, value);
     }
-        
+
     /// <summary>
     /// The serialized string of <see cref="PermissionWindowPeriods"/> which is written/read from the catalogue database
     /// </summary>
@@ -132,13 +132,13 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
         RequiresSynchronousAccess = Convert.ToBoolean(r["RequiresSynchronousAccess"]);
         PermissionPeriodConfig = r["PermissionPeriodConfig"].ToString();
     }
-        
+
     /// <inheritdoc/>
     public override string ToString()
     {
         return $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
     }
-        
+
     /// <inheritdoc/>
     public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
     {

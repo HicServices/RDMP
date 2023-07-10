@@ -21,7 +21,7 @@ namespace Rdmp.Core.Caching;
 public class CachingPreExecutionChecker : ICheckable
 {
     private readonly ICacheProgress _cacheProgress;
-        
+
     public CachingPreExecutionChecker(ICacheProgress cacheProgress)
     {
         _cacheProgress = cacheProgress;
@@ -52,7 +52,7 @@ public class CachingPreExecutionChecker : ICheckable
                 var checker = new PipelineChecker(pipeline);
                 checker.Check(notifier);
             }
-                
+
             if (_cacheProgress.CacheFillProgress == null && _cacheProgress.LoadProgress.OriginDate == null)
                 //if we don't know what dates to request
                 notifier.OnCheckPerformed(
@@ -68,7 +68,7 @@ public class CachingPreExecutionChecker : ICheckable
             }
 
             var shortfall = _cacheProgress.GetShortfall();
-                
+
             if (shortfall <= TimeSpan.Zero)
                 if (_cacheProgress.CacheLagPeriod == null)
                 {

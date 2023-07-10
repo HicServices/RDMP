@@ -35,7 +35,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
         DiscoveredTable existingTable,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
         IProject projectSpecific,
-            
+
         [DemandsInitialization(Desc_TargetFolder,DefaultValue = "\\")]
         string targetFolder = "\\") : base(activator,projectSpecific, targetFolder)
     {
@@ -58,7 +58,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
 
         if(c == null || !c.Exists())
         {
-            if(BasicActivator.IsInteractive 
+            if(BasicActivator.IsInteractive
                && BasicActivator.YesNo("You have cancelled Catalogue creation.  Do you want to delete the TableInfo metadata reference (this will not affect any database tables)?", "Delete TableInfo", out var chosen)
                && chosen)
             {

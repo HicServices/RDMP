@@ -33,7 +33,7 @@ public class DashboardControlFactory
 
     private bool IsCompatibleType(Type arg)
     {
-        return 
+        return
             typeof (IDashboardableControl).IsAssignableFrom(arg)
             &&
             typeof(UserControl).IsAssignableFrom(arg);

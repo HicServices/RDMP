@@ -32,7 +32,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
 /// Data load component for loading RAW tables with records read from a remote database server.  Runs the specified query (which can include a date parameter)
-/// and inserts the results of the query into RAW. 
+/// and inserts the results of the query into RAW.
 /// </summary>
 public class RemoteTableAttacher: Attacher, IPluginAttacher
 {
@@ -87,7 +87,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
     private const string StartDateParameter = "@startDate";
     private const string EndDateParameter = "@endDate";
-        
+
     private DiscoveredDatabase _remoteDatabase;
 
     /// <summary>
@@ -128,7 +128,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
             //use integrated security if this fails
         }
     }
-        
+
     public override void Check(ICheckNotifier notifier)
     {
 
@@ -136,7 +136,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
         {
             if (!string.IsNullOrWhiteSpace(RemoteServer))
                 notifier.OnCheckPerformed(new CheckEventArgs("RemoteServer must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
-                
+
             if (!string.IsNullOrWhiteSpace(RemoteDatabaseName))
                 notifier.OnCheckPerformed(new CheckEventArgs("RemoteDatabaseName must be blank when you have specified a RemoteServerReference", CheckResult.Fail));
 
@@ -150,7 +150,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
         {
             if (string.IsNullOrWhiteSpace(RemoteServer))
                 notifier.OnCheckPerformed(new CheckEventArgs("RemoteServer is a Required field (unless you specify a RemoteServerReference)", CheckResult.Fail));
-                
+
             if (string.IsNullOrWhiteSpace(RemoteDatabaseName))
                 notifier.OnCheckPerformed(new CheckEventArgs("RemoteDatabaseName is a Required field (unless you specify a RemoteServerReference)", CheckResult.Fail));
         }
@@ -170,7 +170,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
             try
             {
-                    
+
                 try
                 {
                     Setup();
@@ -179,7 +179,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs("Failed to setup username/password - proceeding with Integrated Security", CheckResult.Warning, e));
                 }
-                    
+
                 CheckTablesExist(notifier);
             }
             catch (Exception e)
@@ -207,7 +207,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
                     var setDataLoadProgressDateToOriginDate = notifier.OnCheckPerformed(new CheckEventArgs(
                         $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date", CheckResult.Fail, null,
-                        $"Set the data load progress date to the OriginDate minus one Day? {Environment.NewLine}Set DataLoadProgress = {Progress.OriginDate} -1 day = {fixDate}")); 
+                        $"Set the data load progress date to the OriginDate minus one Day? {Environment.NewLine}Set DataLoadProgress = {Progress.OriginDate} -1 day = {fixDate}"));
                     if(setDataLoadProgressDateToOriginDate)
                     {
                         Progress.DataLoadProgress = fixDate;
@@ -219,7 +219,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
                 else
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date",CheckResult.Fail, null));
-                    
+
             }
 
             if (ProgressUpdateStrategy == null)
@@ -274,7 +274,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
             //still worthwhile doing this incase we cannot connect to the server
             var tables = _remoteDatabase.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
-                
+
             //overrides table level checks
             if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
                 return;
@@ -313,7 +313,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
                 remoteUsername = RemoteTableAccessCredentials.Username;
                 remotePassword = RemoteTableAccessCredentials.GetDecryptedPassword();
             }
-            
+
             _remoteDatabase = new DiscoveredServer(RemoteServer, RemoteDatabaseName,DatabaseType, remoteUsername, remotePassword).GetCurrentDatabase();
         }
     }
@@ -321,7 +321,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
     {
         if (job == null)
             throw new Exception("Job is Null, we require to know the job to build a DataFlowPipeline");
-      
+
         ThrowIfInvalidRemoteTableName();
 
         var syntax = _remoteDatabase.Server.GetQuerySyntaxHelper();
@@ -332,10 +332,10 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
             sql = RemoteSelectSQL;
         else
             sql = $"Select * from {syntax.EnsureWrapped(RemoteTableName)}";
-            
+
         var scheduleMismatch = false;
 
-        //if there is a load progress 
+        //if there is a load progress
         if (Progress != null)
             try
             {
@@ -381,7 +381,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
         }
 
         string rawTableName;
-            
+
         if(RAWTableToLoad != null)
         {
             rawTableName = RAWTableToLoad.GetRuntimeName(LoadStage.AdjustRaw, job.Configuration.DatabaseNamer);
@@ -390,7 +390,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
         {
             rawTableName = RAWTableName;
         }
-                        
+
         var destination = new SqlBulkInsertDestination(_dbInfo, rawTableName, Enumerable.Empty<string>());
 
         var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
@@ -429,8 +429,8 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
             ProgressUpdateStrategy.AddAppropriateDisposeStep((ScheduledDataLoadJob) job,_dbInfo);
 
         }
-                
-            
+
+
         return ExitCodeType.Success;
     }
 

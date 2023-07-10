@@ -134,7 +134,7 @@ public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtraction
     }
 
     /// <summary>
-    /// Creates a new audit record in the data export database for describing an extraction attempt of the given <paramref name="dataset"/> in the 
+    /// Creates a new audit record in the data export database for describing an extraction attempt of the given <paramref name="dataset"/> in the
     /// extraction <paramref name="configuration"/>.
     /// </summary>
     /// <param name="repository"></param>

@@ -10,7 +10,7 @@ namespace Rdmp.Core.Providers.Nodes.UsedByNodes;
 
 public interface IObjectUsedByOtherObjectNode:IMasqueradeAs
 {
-        
+
 }
 
 public interface IObjectUsedByOtherObjectNode<out T> : IObjectUsedByOtherObjectNode

@@ -18,8 +18,8 @@ namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
 /// Displays complicated many dimension pivot Aggregate graphs in an understandable format.  Requires a result data table that contains an axis in the first column of hte data table
-/// followed by any number (usually high e.g. 500+) additional columns which contain values that correspond to the axis.  A typical usage of this control would be to display drug 
-/// prescriptions by month where there are thousands of different prescribeable drugs.  
+/// followed by any number (usually high e.g. 500+) additional columns which contain values that correspond to the axis.  A typical usage of this control would be to display drug
+/// prescriptions by month where there are thousands of different prescribeable drugs.
 /// 
 /// <para>The HeatmapUI renders each column as a row of heat map with each cell in the column as a 'pixel' (where the pixel width depends on the number of increments in the axis).  The color
 /// of each pixel ranges from blue to red (with 0 appearing as black).  The effect of this is to show the distribution of popular vs rare pivot values across time (or whatever the axis is).</para>
@@ -51,7 +51,7 @@ public partial class HeatmapUI : UserControl
     //              Heat Lines                                                   |
     //              Heat Lines                                                   |
     //              Heat Lines                                                   |
-    //              ...                        plot area                         | 
+    //              ...                        plot area                         |
     //                                                                           |
     //                                                                           |
     //                                                                           |
@@ -59,10 +59,10 @@ public partial class HeatmapUI : UserControl
     //////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    ///Table is interpreted in the following way: 
+    ///Table is interpreted in the following way:
     /// - First column is the axis in direction X (horizontally) containing (in order) the axis label values that will be each pixel in each heat lane
     /// - Each subsequent column (HeatLine1, HeatLine2 etc above) is a horizontal line of the heatmap with each pixel intensity being determined by the value on the corresponding date (in the first column)
-        
+
     private RainbowColorPicker _rainbow = new(NumberOfColors);
     private const double MinPixelHeight = 15.0;
     private const double MaxPixelHeight = 20.0;
@@ -91,7 +91,7 @@ public partial class HeatmapUI : UserControl
             {
                 var m1 = colorRegex.Match(tokens[0]);
                 var m2 = colorRegex.Match(tokens[1]);
-                    
+
                 if(m1.Success && m2.Success)
                 {
                     var fromColor = Color.FromArgb(
@@ -117,7 +117,7 @@ public partial class HeatmapUI : UserControl
 
             //skip the first column (which will be the X axis values)  then compute the maximum value in any cell in the data table, this is the brightest pixel in heatmap
             //the minimum value will be the darkest pixel
-            
+
             _maxValueInDataTable = double.MinValue;
             _minValueInDataTable = double.MaxValue;
 
@@ -149,7 +149,7 @@ public partial class HeatmapUI : UserControl
     private double _maxValueInDataTable;
     private double _minValueInDataTable;
     private bool _crashedPainting;
-        
+
 
     private const int NumberOfColors = 256;
 
@@ -262,18 +262,18 @@ public partial class HeatmapUI : UserControl
                 var heatPixelWidth = GetHeatPixelWidth();
 
                 var brush = new SolidBrush(Color.Black);
-                    
+
                 //for each line of pixels in heatmap
                 for (var x = 0; x < _dataTable.Rows.Count; x++)
                 {
                     //draw the line this way -------------> with pixels of width heatPixelWidth/Height
-                    
+
                     //skip the first y value which is the x axis value
                     for (var y = 1; y < _dataTable.Columns.Count; y++)
                     {
                         //the value we are drawing
                         var cellValue = ToDouble(_dataTable.Rows[x][y]);
-                        
+
                         //if the cell value is 0 render it as black
                         if (Math.Abs(cellValue - _minValueInDataTable) < 0.0000000001 && Math.Abs(_minValueInDataTable) < 0.0000000001)
                             brush.Color = Color.Black;
@@ -288,32 +288,32 @@ public partial class HeatmapUI : UserControl
                         e.Graphics.FillRectangle(brush, (float)(x * heatPixelWidth), (float)(y * heatPixelHeight), (float)heatPixelWidth, (float)heatPixelHeight);
                     }
                 }
-                
+
                 var labelStartX = Width - _currentLabelsWidth;
-                
-                
+
+
                 //draw the labels
                 for (var i = 1; i < _dataTable.Columns.Count; i++)
                 {
                     var labelStartY = i*heatPixelHeight;
-                    
+
                     var name = _dataTable.Columns[i].ColumnName;
 
                     e.Graphics.DrawString(name, font, Brushes.Black, new PointF((float)labelStartX, (float)labelStartY));
                 }
-    
+
                 double lastAxisStart = -500;
                 double lastAxisLabelWidth = -500;
 
                 var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : this.GetVisibleArea();
-                    
-                    
+
+
                 var visibleClipBoundsTop = visibleArea.Top;
 
-                //now draw the axis 
+                //now draw the axis
                 //axis starts at the first visible pixel
                 double axisYStart = Math.Max(0, visibleClipBoundsTop);
-                    
+
                 e.Graphics.FillRectangle(Brushes.White, 0, (int)axisYStart, Width, (int)heatPixelHeight);
 
                 //draw the axis labels
@@ -326,7 +326,7 @@ public partial class HeatmapUI : UserControl
                         continue;
 
                     lastAxisStart = axisXStart;
-                    
+
                     var label = _dataTable.Rows[i][0].ToString();
 
                     //draw the axis label text with 1 pixel left and right so that there is space for the axis black line

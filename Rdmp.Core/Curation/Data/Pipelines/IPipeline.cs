@@ -12,7 +12,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
-/// Describes the flow of strongly typed objects (usually DataTables) from a source to a destination (e.g. extracting linked cohort data into a flat file ).  
+/// Describes the flow of strongly typed objects (usually DataTables) from a source to a destination (e.g. extracting linked cohort data into a flat file ).
 /// This entity is the serialized version of <see cref="IDataFlowPipelineEngine"/> (built by a <see cref="IDataFlowPipelineEngineFactory"/> ).
 /// 
 /// <para>Each <see cref="Pipeline"/> is composed of a sequence of <see cref="PipelineComponent"/> which can each perform specific jobs e.g. 'clean strings', 'substitute column X for column Y by mapping values off of remote server B'.</para>
@@ -31,7 +31,7 @@ public interface IPipeline : IInjectKnown<IPipelineComponent[]>, INamed
     /// what the pipeline is supposed to do.
     /// </summary>
     string Description { get; set; }
-        
+
     /// <summary>
     /// The component acting as the source of the pipeline and producing data (e.g. by reading a flat file).  This
     /// can be null if the <see cref="IPipelineUseCase"/> has a fixed runtime source instance instead.

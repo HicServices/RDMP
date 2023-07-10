@@ -77,7 +77,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     #endregion
 
 
-        
+
     private int _count = -1;
 
 
@@ -109,7 +109,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     }
 
     private Dictionary<string, string> _releaseToPrivateKeyDictionary;
-        
+
     #region Relationships
     /// <inheritdoc cref="ExternalCohortTable_ID"/>
     [NoMappingToDatabase]
@@ -212,13 +212,13 @@ where
         return r.Read() ? new ExternalCohortDefinitionData(r, ExternalCohortTable.Name) : ExternalCohortDefinitionData.Orphan;
     }
 
-        
+
     private Lazy<IExternalCohortDefinitionData> _cacheData;
     private Lazy<IExternalCohortTable> _knownExternalCohortTable;
     private int _originID;
 
     /// <summary>
-    /// Creates a new cohort reference in the data export database.  This must resolve (via <paramref name="originalId"/>) to 
+    /// Creates a new cohort reference in the data export database.  This must resolve (via <paramref name="originalId"/>) to
     /// a row in the external cohort database (<paramref name="externalSource"/>).
     /// </summary>
     /// <param name="repository"></param>
@@ -257,7 +257,7 @@ where
     }
 
     private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
-        
+
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
@@ -265,7 +265,7 @@ where
     }
 
     #region Stuff for executing the actual queries described by this class (generating cohorts etc)
-        
+
     /// <inheritdoc/>
     public DataTable FetchEntireCohort()
     {
@@ -287,7 +287,7 @@ where
                 
         return dtReturn;
     }
-        
+
     /// <inheritdoc/>
     public string WhereSQL()
     {
@@ -333,9 +333,9 @@ where
 
         return cmd.ExecuteScalar();
     }
-        
+
     #endregion
-        
+
     /// <summary>
     /// Returns details of all cohorts held in <paramref name="externalSource"/> (that have at least one identifier mapping).
     /// </summary>
@@ -398,7 +398,7 @@ where
         toReturn.EndLoadData();
         return toReturn;
     }
-        
+
     /// <inheritdoc/>
     public string GetReleaseIdentifier(bool runtimeName = false)
     {
@@ -438,7 +438,7 @@ where
     {
         return ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
     }
-        
+
 
     /// <inheritdoc/>
     public DiscoveredDatabase GetDatabaseServer()
@@ -449,7 +449,7 @@ where
     //these need to be private since ReverseAnonymiseDataTable will likely be called in batch
     private int _reverseAnonymiseProgressFetchingMap;
     private int _reverseAnonymiseProgressReversing;
-        
+
     /// <summary>
     /// Indicates whether the database described in ExternalCohortTable is unreachable or if the cohort has since been deleted etc.
     /// </summary>
@@ -471,7 +471,7 @@ where
 
             var map = FetchEntireCohort();
 
-                
+
             var sw = new Stopwatch();
             sw.Start();
             //dictionary of released values (for the cohort) back to private values
@@ -485,7 +485,7 @@ where
                         haveWarnedAboutTop1AlreadyCount--;
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"Top 1-ing will occur for release identifier {r[releaseIdentifier]} because it maps to multiple private identifiers"));
-                            
+
                     }
                     else
                     {

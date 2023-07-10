@@ -40,7 +40,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
         set => SetField(ref  _aggregateFilterID, value);
     } // changing this is required for cloning functionality i.e. clone parameter then point it to new parent
 
-        
+
     /// <inheritdoc/>
     [Sql]
     public string ParameterSQL
@@ -48,7 +48,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
         get => _parameterSQL;
         set => SetField(ref  _parameterSQL, value);
     }
-         
+
     /// <inheritdoc/>
     [Sql]
     public string Value
@@ -86,7 +86,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     }
 
     /// <summary>
-    /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this 
+    /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this
     /// constructor.
     /// </summary>
     /// <param name="repository"></param>

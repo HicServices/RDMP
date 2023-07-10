@@ -21,16 +21,16 @@ public partial class RichTextBoxEx : RichTextBox
     [ StructLayout( LayoutKind.Sequential )]
     private struct CHARFORMAT2_STRUCT
     {
-        public uint	cbSize; 
-        public uint   dwMask; 
-        public uint   dwEffects; 
-        public int    yHeight; 
-        public int    yOffset; 
-        public int	crTextColor; 
-        public byte     bCharSet; 
-        public byte     bPitchAndFamily; 
+        public uint	cbSize;
+        public uint   dwMask;
+        public uint   dwEffects;
+        public int    yHeight;
+        public int    yOffset;
+        public int	crTextColor;
+        public byte     bCharSet;
+        public byte     bPitchAndFamily;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst=32)]
-        public char[]   szFaceName; 
+        public char[]   szFaceName;
         public ushort	wWeight;
         public ushort	sSpacing;
         public int		crBackColor; // Color.ToArgb() -> int
@@ -141,7 +141,7 @@ public partial class RichTextBoxEx : RichTextBox
     }
 
     /// <summary>
-    /// Insert a given text at a given position as a link. 
+    /// Insert a given text at a given position as a link.
     /// </summary>
     /// <param name="text">Text to be inserted</param>
     /// <param name="position">Insert position</param>
@@ -156,7 +156,7 @@ public partial class RichTextBoxEx : RichTextBox
         SetSelectionLink(true);
         Select(position + text.Length, 0);
     }
-		
+
     /// <summary>
     /// Insert a given text at at the current input position as a link.
     /// The link text is followed by a hash (#) and the given hyperlink text, both of
@@ -250,7 +250,7 @@ public partial class RichTextBoxEx : RichTextBox
 
         int state;
         // dwMask holds the information which properties are consistent throughout the selection:
-        if ((cf.dwMask & mask) == mask) 
+        if ((cf.dwMask & mask) == mask)
         {
             if ((cf.dwEffects & effect) == effect)
                 state = 1;

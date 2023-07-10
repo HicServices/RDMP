@@ -96,7 +96,7 @@ public class SelectedDataSetsChecker : ICheckable
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     ErrorCodes.ExtractionInformationMissing,
-                    Environment.NewLine + 
+                    Environment.NewLine +
                     string.Join(Environment.NewLine, orphans.Select(o => o.GetRuntimeName()).ToArray()))
             );
         }
@@ -215,7 +215,7 @@ public class SelectedDataSetsChecker : ICheckable
                         CheckResult.Fail, e));
                     return;
                 }
-                    
+
                 try
                 {
                     using var r = cmd.ExecuteReader();

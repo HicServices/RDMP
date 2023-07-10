@@ -40,7 +40,7 @@ public class FixedWidthFormatFile
         //now add values
         for (var index = 0; index < readAllLines.Length-1; index++)
         {
-            //skip header line 
+            //skip header line
             var cellsOnRowAsSplitString = readAllLines[index + 1].Split(',');
 
             FormatColumns[index].From = int.Parse(cellsOnRowAsSplitString[0]);
@@ -50,7 +50,7 @@ public class FixedWidthFormatFile
 
             //It's ok to ommmit this column for specific rows (that aren't dates)
             if (cellsOnRowAsSplitString.Length >4)
-                FormatColumns[index].DateFormat = cellsOnRowAsSplitString[4].Replace("ccyy","yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong 
+                FormatColumns[index].DateFormat = cellsOnRowAsSplitString[4].Replace("ccyy","yyyy"); //some people think that ccyy is a valid way of expressing year formats... they are wrong
 
             if (FormatColumns[index].From + FormatColumns[index].Size -1 != FormatColumns[index].To)
                 throw new FlatFileLoadException(
@@ -107,7 +107,7 @@ public class FixedWidthFormatFile
 
                 //substring in order to get cell data
                 var value = readAllLine.Substring(fixedWidthColumn.From-1, fixedWidthColumn.Size);
-                      
+
                 //if its a null
                 if (string.IsNullOrWhiteSpace(value))
                     dataRow[fixedWidthColumn.Field] = DBNull.Value;
@@ -120,7 +120,7 @@ public class FixedWidthFormatFile
                     }
                     catch (Exception e)
                     {
-                            
+
                         throw new Exception(
                             $"The value '{value}' was rejected by DateTime.ParseExact using the listed date time format '{fixedWidthColumn.DateFormat}'",e);
                     }

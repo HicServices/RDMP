@@ -30,12 +30,12 @@ public class DoNothingDataProvider : IDataProvider
         return ExitCodeType.Success;
             
     }
-        
+
     public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
     {
     }
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
             

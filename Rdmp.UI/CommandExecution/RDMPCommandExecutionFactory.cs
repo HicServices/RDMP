@@ -118,7 +118,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         return _proposers.Any(p => p.CanActivate(target));
     }
-        
+
     private ICommandExecution CreateWhenTargetIsProcessTask(ICombineToMakeCommand cmd, ProcessTask targetProcessTask, InsertOption insertOption)
     {
         return cmd is ProcessTaskCombineable sourceProcessTaskCommand

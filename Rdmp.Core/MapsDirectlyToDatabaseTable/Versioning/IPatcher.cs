@@ -19,7 +19,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 public interface IPatcher
 {
     /// <summary>
-    /// Returns the assembly containing all the Sql scripts to run to bring the database up to the current version.  These scripts 
+    /// Returns the assembly containing all the Sql scripts to run to bring the database up to the current version.  These scripts
     /// must be Embedded Resources and are usually in the same assembly as the <see cref="IPatcher"/>.
     /// </summary>
     /// <returns></returns>

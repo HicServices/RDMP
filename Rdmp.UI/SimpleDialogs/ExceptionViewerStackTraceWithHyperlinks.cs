@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-/// Displays an in-depth technical report about an error that occurred during a task.  The error messages and the location in each class file in the stack is displayed including line 
+/// Displays an in-depth technical report about an error that occurred during a task.  The error messages and the location in each class file in the stack is displayed including line
 /// numbers if a .pdb is available.  The pdb files for all RDMP code is shipped with the RDMP installer.
 /// 
 /// <para>Additionally as part of the build process of RDMP applications the built codebase is zipped into a file called SourceCodeForSelfAwareness.zip clicking one of the hyperlinks in
@@ -92,8 +92,8 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 
         for (var i = 0; i < lines.Length; i++)
         {
-                
-             
+
+
             //Any other things you want to not be a hyperlink because they give no useful context to the error can be added here and they will not appear as hyperlinks
             var lineIsMessageConstructor = lines[i].Contains("ReusableLibraryCode.Checks.CheckEventArgs..ctor");
 
@@ -176,7 +176,7 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
         }
             
     }
-        
+
     private void button1_Click(object sender, EventArgs e)
     {
         Close();

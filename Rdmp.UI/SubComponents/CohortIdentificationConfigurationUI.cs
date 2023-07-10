@@ -34,8 +34,8 @@ using Timer = System.Windows.Forms.Timer;
 namespace Rdmp.UI.SubComponents;
 
 /// <summary>
-/// Allows you to view/edit a CohortIdentificationConfiguration.  You should start by giving it a meaningful name e.g. 'Project 132 Cases - Deaths caused by diabetic medication' 
-/// and a comprehensive description e.g. 'All patients in Tayside and Fife who are over 16 at the time of their first prescription of a diabetic medication (BNF chapter 6.1) 
+/// Allows you to view/edit a CohortIdentificationConfiguration.  You should start by giving it a meaningful name e.g. 'Project 132 Cases - Deaths caused by diabetic medication'
+/// and a comprehensive description e.g. 'All patients in Tayside and Fife who are over 16 at the time of their first prescription of a diabetic medication (BNF chapter 6.1)
 /// and died within 6 months'.  An accurate up-to-date description will help future data analysts to understand the configuration.
 /// 
 /// <para>If you have a large data repository or plan to use lots of different datasets or complex filters in your CohortIdentificationCriteria you should configure a caching database
@@ -133,7 +133,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         tt.SetToolTip(btnAbortLoad, "Cancels execution of any running cohort sets");
     }
 
-        
+
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
         Common.Activator = Activator;
@@ -155,13 +155,13 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             Common.RecreateAllTasks();
         }
     }
-        
+
     private void refreshColumnValues(object sender, EventArgs e)
     {
         if(!tlvCic.IsDisposed)
             tlvCic.RefreshObjects(tlvCic.Objects.Cast<object>().ToArray());
     }
-        
+
     public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
     {
         base.SetDatabaseObject(activator,databaseObject);
@@ -263,7 +263,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         return $"Execute:{base.GetTabName()}";
     }
-        
+
     private void ticket_TicketTextChanged(object sender, EventArgs e)
     {
         Common.Configuration.Ticket = ticket.TicketText;
@@ -369,7 +369,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             e.Menu.Items.Add(
                 new ToolStripMenuItem("View Crash Message", null,
                     (s, ev) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null });
-                
+
             e.Menu.Items.Add(
                 BuildItem("Clear Object from Cache", c, a => a.SubqueriesCached > 0,
                     a =>

@@ -37,7 +37,7 @@ public class ShareManager
     private const char PersistenceSeparator = '|';
 
     /// <summary>
-    /// Delegate method for populating environment specific properties e.g. <see cref="ICatalogue.LiveLoggingServer_ID"/> when importing 
+    /// Delegate method for populating environment specific properties e.g. <see cref="ICatalogue.LiveLoggingServer_ID"/> when importing
     /// <see cref="ShareDefinition"/> since this ID will be different from the origin.
     /// </summary>
     public LocalReferenceGetterDelegate LocalReferenceGetter;
@@ -93,7 +93,7 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Deserializes the given persistence string (created by <see cref="GetPersistenceString"/>) into an actual database object.  The 
+    /// Deserializes the given persistence string (created by <see cref="GetPersistenceString"/>) into an actual database object.  The
     /// <paramref name="persistenceString"/> is a pointer (ID / SharingUI) of the object not a value serialization.  If you want to export the
     /// definition use <see cref="ShareDefinition"/> or Gatherer instead
     /// </summary>
@@ -162,7 +162,7 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Returns an existing export definition for the object o or generates a new one.  This will give you a SharingUID and 
+    /// Returns an existing export definition for the object o or generates a new one.  This will give you a SharingUID and
     /// enable the object for sharing with other users who have RDMP.
     /// </summary>
     /// <param name="o"></param>
@@ -365,7 +365,7 @@ public class ShareManager
 
     /// <summary>
     /// When importing a <paramref name="shareDefinition"/> for a child class with a parent, this method will return the ID of parent for the given <paramref name="property"/>
-    /// on the child.  For example if you are importing a <see cref="ShareDefinition"/> for a <see cref="CatalogueItem"/> then the property <see cref="CatalogueItem.Catalogue_ID"/> should 
+    /// on the child.  For example if you are importing a <see cref="ShareDefinition"/> for a <see cref="CatalogueItem"/> then the property <see cref="CatalogueItem.Catalogue_ID"/> should
     /// have the ID of the locally held <see cref="Catalogue"/> to which it will become a part of.
     /// </summary>
     /// <param name="property">The child class property you need to fill e.g. <see cref="CatalogueItem.Catalogue_ID"/></param>
@@ -433,7 +433,7 @@ public class ShareManager
             SetValue(prop,kvp.Value,o);
         }
     }
-        
+
     public void UpsertAndHydrate<T>(T toCreate, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
     {
         IRepository repo;
@@ -474,14 +474,14 @@ public class ShareManager
             }
 
             toCreate.Repository = actual.Repository;
-                
+
             //commit the updated values to the database
             repo.SaveToDatabase(toCreate);
         }
         else
         {
             //It's an INSERT i.e. create a new database copy with the correct foreign key values and update the memory copy
-                
+
             //for each relationship property on the class we are trying to hydrate
             foreach (var property in TableRepository.GetPropertyInfos(typeof(T)))
             {
@@ -497,7 +497,7 @@ public class ShareManager
                     {
                         case RelationshipType.OptionalSharedObject:
                         case RelationshipType.SharedObject:
-                                
+
                             //Confirm that the share definition includes the knowledge that there's a parent class to this object
                             if (!shareDefinition.RelationshipProperties.ContainsKey(relationshipAttribute))
                                 //if it doesn't but the field is optional, ignore it
@@ -537,7 +537,7 @@ public class ShareManager
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
-                        
+
                     //get the ID of the local import of the parent
                     propertiesDictionary[property.Name] = newValue;
                 }
@@ -551,7 +551,7 @@ public class ShareManager
         }
     }
 
-        
+
     public static void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
     {
         //sometimes json decided to swap types on you e.g. int64 for int32

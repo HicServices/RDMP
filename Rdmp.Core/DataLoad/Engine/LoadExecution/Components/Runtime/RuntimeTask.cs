@@ -31,7 +31,7 @@ public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask,ICheckable
 {
     public RuntimeArgumentCollection RuntimeArguments { get; set; }
     public IProcessTask ProcessTask { get; set; }
-        
+
     public abstract bool Exists();
 
     public abstract void Abort(IDataLoadEventListener postLoadEventListener);

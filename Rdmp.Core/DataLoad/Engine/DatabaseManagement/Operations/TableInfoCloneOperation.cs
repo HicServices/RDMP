@@ -73,7 +73,7 @@ public class TableInfoCloneOperation
         RemoveTableFromDatabase(tableToRemove, _hicDatabaseConfiguration.DeployInfo[_copyToBubble]);
     }
 
-        
+
     public void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo,tableName))
@@ -82,10 +82,10 @@ public class TableInfoCloneOperation
         dbInfo.ExpectTable(tableName).Drop();
     }
 
-        
+
     private bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
     {
-        return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase) 
+        return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)
             ||
             dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
     }
@@ -124,14 +124,14 @@ public class TableInfoCloneOperation
             //drop hic_ columns
             if (SpecialFieldNames.IsHicPrefixed(colName) && dropHICColumns)
                 drop = true;
-                
+
             //if the ColumnInfo is explicitly marked to be ignored
             if(_tableInfo.ColumnInfos.Any(c=>c.IgnoreInLoads && c.GetRuntimeName(_copyToBubble.ToLoadStage()).Equals(colName)))
             {
                 _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,$"{colName} will be dropped because it is marked IgnoreInLoads"));
                 drop = true;
             }
-                    
+
 
             //also drop any columns we have specifically been told to ignore in the DLE configuration
             if(_hicDatabaseConfiguration.IgnoreColumns != null && _hicDatabaseConfiguration.IgnoreColumns.IsMatch(colName))

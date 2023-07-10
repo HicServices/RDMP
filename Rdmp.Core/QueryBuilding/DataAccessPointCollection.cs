@@ -141,7 +141,7 @@ public class DataAccessPointCollection
     }
 
     /// <summary>
-    /// Returns comma separated list of <see cref="Points"/> 
+    /// Returns comma separated list of <see cref="Points"/>
     /// </summary>
     /// <returns></returns>
     public override string ToString()

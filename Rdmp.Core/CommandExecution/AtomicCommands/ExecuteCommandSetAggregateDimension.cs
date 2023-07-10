@@ -22,7 +22,7 @@ public class ExecuteCommandSetAggregateDimension : BasicCommandExecution, IAtomi
     private ExtractionInformation[] _available;
     private ExtractionInformation _extractionInformation;
 
-    public ExecuteCommandSetAggregateDimension(IBasicActivateItems activator, 
+    public ExecuteCommandSetAggregateDimension(IBasicActivateItems activator,
         [DemandsInitialization("The AggregateConfiguration which you want to change the extraction identifier on")]
         AggregateConfiguration ac,
         [DemandsInitialization("The extractable column in the Catalogue which should be created as a new AggregateDimension on the aggregate.  Or null to prompt at runtime",DefaultValue = true)]

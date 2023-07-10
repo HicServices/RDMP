@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Rdmp.Core.Curation.Data.Defaults;
 
 public static class ServerDefaults
-{        
+{
     /// <summary>
     /// The value that will actually be stored in the ServerDefaults table as a dictionary (see constructor for population
     /// </summary>
@@ -27,5 +27,5 @@ public static class ServerDefaults
         //this doesn't actually map to a field in the database, it is a bit of an abuse fo the defaults system
         StringExpansionDictionary.Add(PermissableDefaults.DQE, "DQE");
         StringExpansionDictionary.Add(PermissableDefaults.RAWDataLoadServer, "RAWDataLoadServer");
-    }        
+    }
 }

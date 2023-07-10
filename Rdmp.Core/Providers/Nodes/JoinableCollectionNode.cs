@@ -12,7 +12,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6 
+/// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6
 /// months of a prescription for drug X).  See <see cref="JoinableCohortAggregateConfiguration"/>.
 /// </summary>
 public class JoinableCollectionNode:Node,IOrderable
@@ -48,7 +48,7 @@ public class JoinableCollectionNode:Node,IOrderable
         return "";
     }
     public int? CumulativeRowCount { set; get; }
-        
+
 
     public string GetStateDescription()
     {
@@ -59,7 +59,7 @@ public class JoinableCollectionNode:Node,IOrderable
     {
         return "";
     }
-        
+
     public string ElapsedTime = "";
 
     public string GetCachedQueryUseCount()

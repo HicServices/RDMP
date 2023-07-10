@@ -23,7 +23,7 @@ using Rdmp.UI.TransparentHelpSystem;
 namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
-/// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the 
+/// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the
 /// UI will show the checking/executing progress messages).  This class ensures that the behaviour is the same between console run rdmp and the UI applications.
 /// </summary>
 public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClosing
@@ -37,7 +37,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     public bool IsExecuting => _runningTask is { IsCompleted: false };
 
     /// <summary>
-    /// Called every time the execution of the runner completes (does not get called if the runner was detached - running 
+    /// Called every time the execution of the runner completes (does not get called if the runner was detached - running
     /// in a seperate process).
     /// </summary>
     public event EventHandler<ExecutionEventArgs> ExecutionFinished;
@@ -95,15 +95,15 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
     private GracefulCancellationTokenSource _cancellationTokenSource;
     private Task _runningTask;
-        
-        
+
+
     private void btnRunChecks_Click(object sender, EventArgs e)
     {
         IRunner runner;
 
         try
         {
-            var command = CommandGetter(CommandLineActivity.check);    
+            var command = CommandGetter(CommandLineActivity.check);
             runner = RunnerFactory.CreateRunner(Activator,command);
         }
         catch (Exception ex)
@@ -137,7 +137,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
                 ragChecks.OnCheckPerformed(new CheckEventArgs($"Checks resulted in {worst}",worst));
                 //update the bit flag
                 ChecksPassed = worst <= CheckResult.Warning;
-                
+
                 //enable other buttons now based on the new state
                 SetButtonStates();
 
@@ -245,7 +245,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
                 ragChecks.Warning(new Exception("Checks have not been run yet"));
 
             btnRunChecks.Enabled = true;
-                
+
             btnExecute.Enabled = false;
             btnAbortLoad.Enabled = false;
             return;

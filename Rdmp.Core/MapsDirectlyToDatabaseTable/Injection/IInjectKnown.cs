@@ -16,7 +16,7 @@ public interface IInjectKnown
 
 /// <summary>
 /// Defines that the implementing class has an expensive operation for fetching a T but that a known instance might already be
-/// available (e.g. in a cache) which can be injected into it. 
+/// available (e.g. in a cache) which can be injected into it.
 /// </summary>
 /// <example>
 /// <code>
@@ -26,7 +26,7 @@ public interface IInjectKnown
 /// 
 ///     public Bob()
 ///     {
-///         ClearAllInjections();   
+///         ClearAllInjections();
 ///     }
 /// 
 ///     public void InjectKnown(byte[] instance)

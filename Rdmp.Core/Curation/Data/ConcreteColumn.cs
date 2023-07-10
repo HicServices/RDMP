@@ -17,8 +17,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Common abstract base class for ExtractionInformation (how to extract a given ColumnInfo) and ExtractableColumn (clone into data export database of an 
-/// ExtractionInformation - i.e. 'extract column A on for Project B Configuration 'Cases' where A would be an ExtractionInformation defined in the Catalogue 
+/// Common abstract base class for ExtractionInformation (how to extract a given ColumnInfo) and ExtractableColumn (clone into data export database of an
+/// ExtractionInformation - i.e. 'extract column A on for Project B Configuration 'Cases' where A would be an ExtractionInformation defined in the Catalogue
 /// database and copied out for use in the data extraction configuration).
 /// 
 /// <para>Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)</para>
@@ -26,7 +26,7 @@ namespace Rdmp.Core.Curation.Data;
 public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,IComparable
 {
     #region Database Properties
- 
+
     private string _selectSql;
     private string _alias;
     private bool _hashOnDataRelease;

@@ -10,7 +10,7 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 
 /// <summary>
-/// Collection of all saved cohort lists (<see cref="ExtractableCohort"/>) which were saved against a <see cref="Project"/>.  Cohorts are 
+/// Collection of all saved cohort lists (<see cref="ExtractableCohort"/>) which were saved against a <see cref="Project"/>.  Cohorts are
 /// associated with the <see cref="Project"/> via the project number.
 /// </summary>
 public class ProjectSavedCohortsNode:Node,IOrderable

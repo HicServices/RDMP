@@ -23,7 +23,7 @@ public class ExecuteCommandSetArgument : BasicCommandExecution
     private readonly object _value;
 
     private readonly bool _promptUser;
-        
+
     public ExecuteCommandSetArgument(IBasicActivateItems activator,IArgumentHost _, IArgument arg, object value):base(activator)
     {
         _arg = arg;
@@ -52,7 +52,7 @@ public class ExecuteCommandSetArgument : BasicCommandExecution
     /// <param name="activator"></param>
     /// <param name="picker"></param>
     [UseWithCommandLine(
-        ParameterHelpList = "<component> <argName> <argValue>", 
+        ParameterHelpList = "<component> <argName> <argValue>",
         ParameterHelpBreakdown = @"component    Module to set value on e.g. ProcessTask:1
 argName Name of an argument to set on the component e.g. Retry
 argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
@@ -133,7 +133,7 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
             {
                 return;
             }
-                
+
         }
 
         _arg.SetValue(value);

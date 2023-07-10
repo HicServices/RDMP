@@ -14,7 +14,7 @@ namespace Rdmp.Core.Validation.Constraints.Primary;
 public class AlphaNumeric : PrimaryConstraint
 {
     public const string RegExp = @"^[A-Za-z0-9]([A-Za-z0-9]*)$";
-        
+
     public override ValidationFailure Validate(object value)
     {
         if (value == null)

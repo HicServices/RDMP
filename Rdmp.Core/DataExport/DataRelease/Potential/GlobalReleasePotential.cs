@@ -16,7 +16,7 @@ public abstract class GlobalReleasePotential : ICheckable
 {
     protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
     protected readonly ISupplementalExtractionResults GlobalResult;
-        
+
     public IMapsDirectlyToDatabaseTable RelatedGlobal { get; protected set; }
     public Releaseability Releasability { get; protected set; }
 
@@ -36,7 +36,7 @@ public abstract class GlobalReleasePotential : ICheckable
         {
             var table = RelatedGlobal as SupportingSQLTable;
             if (table == null)
-            { 
+            {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"The executed Global {GlobalResult.ExtractedName} has a SQL script but the extracted type ({GlobalResult.ReferencedObjectType}) is not a SupportingSQLTable", CheckResult.Fail));
                 Releasability = Releaseability.ExtractionSQLDesynchronisation;

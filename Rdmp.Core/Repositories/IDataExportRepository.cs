@@ -33,9 +33,9 @@ public interface IDataExportRepository : IRepository, IExtractableDataSetPackage
     /// Handles forbidding deleting stuff / cascading deletes into other objects
     /// </summary>
     IObscureDependencyFinder ObscureDependencyFinder { get; set; }
-        
+
     IDataExportPropertyManager DataExportPropertyManager { get; }
-        
+
     IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset);
     IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults);
 }

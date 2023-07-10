@@ -19,20 +19,20 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 
 /// <summary>
 /// Destination component for Cohort Creation Pipelines, responsible for bulk inserting patient identifiers into the cohort database specified in the
-/// ICohortCreationRequest.  This 
+/// ICohortCreationRequest.  This
 /// </summary>
 public class BasicCohortDestination : IPluginCohortDestination
 {
     private string _privateIdentifier;
     private string _releaseIdentifier;
-        
+
     /// <summary>
     /// The cohort blueprint we are trying to create.
     /// </summary>
     public ICohortCreationRequest Request { get; private set; }
-        
+
     private string _fk;
-        
+
     [DemandsInitialization("Set one of these if you plan to upload lists of patients and want RDMP to automatically allocate an anonymous ReleaseIdentifier", TypeOf = typeof(IAllocateReleaseIdentifiers),DefaultValue=typeof(ProjectConsistentGuidReleaseIdentifierAllocator))]
     public Type ReleaseIdentifierAllocator { get; set; }
 
@@ -77,11 +77,11 @@ public class BasicCohortDestination : IPluginCohortDestination
 
                 //get the private cohort id
                 var priv = row[_privateIdentifier];
-                        
+
                 //already handled these folks?
-                if (_cohortDictionary.ContainsKey(priv) || IsNull(priv)) 
+                if (_cohortDictionary.ContainsKey(priv) || IsNull(priv))
                     continue;
-                       
+
                 //no, allocate them an ID (or null if there is no allocator)
                 _cohortDictionary.Add(priv, _allocator == null? DBNull.Value : _allocator.AllocateReleaseIdentifier(priv));
             }
@@ -93,14 +93,14 @@ public class BasicCohortDestination : IPluginCohortDestination
             {
                 //get the private cohort id
                 var priv = row[_privateIdentifier];
-                        
+
                 //already handled these folks?
                 if (_cohortDictionary.ContainsKey(priv) || IsNull(priv))
                     continue;
-                        
+
                 //and the release id specified in the input table
                 var release = row[_releaseIdentifier];
-                        
+
                 //if it was blank
                 if (IsNull(release))
                 {
@@ -124,7 +124,7 @@ public class BasicCohortDestination : IPluginCohortDestination
         return null;
     }
 
-        
+
     private bool IsNull(object o)
     {
         return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
@@ -170,7 +170,7 @@ public class BasicCohortDestination : IPluginCohortDestination
                         dt.Columns.Add(_releaseIdentifier);
                     }
 
-                    //add the ID as another column 
+                    //add the ID as another column
                     dt.Columns.Add(_fk);
 
                     foreach (var kvp in _cohortDictionary)
@@ -184,14 +184,14 @@ public class BasicCohortDestination : IPluginCohortDestination
                             dt.Rows.Add(kvp.Key, kvp.Value, Request.NewCohortDefinition.ID);
                         }
                     }
-                            
+
 
                     bulkCopy.Upload(dt);
                 }
 
                 connection.ManagedTransaction.CommitAndCloseConnection();
             }
-            catch 
+            catch
             {
                 connection.ManagedTransaction.AbandonAndCloseConnection();
                 throw;

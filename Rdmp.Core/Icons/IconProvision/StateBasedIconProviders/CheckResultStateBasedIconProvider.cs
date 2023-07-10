@@ -23,7 +23,7 @@ public class CheckResultStateBasedIconProvider : IObjectStateBasedIconProvider
         _warning = Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
         _tick = Image.Load<Rgba32>(CatalogueIcons.TinyGreen);
     }
-        
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         return o is not CheckResult result

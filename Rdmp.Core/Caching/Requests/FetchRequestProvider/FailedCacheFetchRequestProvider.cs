@@ -12,13 +12,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Requests.FetchRequestProvider;
 
 /// <summary>
-/// Sometimes during caching you will identify a period of time that cannot be fetched because of problems outwith your control (the remote server data is missing etc).  
+/// Sometimes during caching you will identify a period of time that cannot be fetched because of problems outwith your control (the remote server data is missing etc).
 /// These periods are modeled by ICacheFetchFailure.  This Provider allows you to load a batch of failures and re try them.
 /// </summary>
 public class FailedCacheFetchRequestProvider : ICacheFetchRequestProvider
 {
     public ICacheFetchRequest Current { get; private set; }
-        
+
     private readonly ICacheProgress _cacheProgress;
     private readonly int _batchSize;
 

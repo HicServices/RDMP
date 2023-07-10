@@ -47,7 +47,7 @@ public abstract class AlterTableCommandExecution :BasicCommandExecution
             return;
         }
     }
-        
+
     protected bool Synchronize()
     {
         var sync = new TableInfoSynchronizer(TableInfo);

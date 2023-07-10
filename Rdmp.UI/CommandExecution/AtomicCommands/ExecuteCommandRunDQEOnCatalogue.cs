@@ -19,7 +19,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandRunDQEOnCatalogue:BasicUICommandExecution,IAtomicCommandWithTarget
 {
     private Catalogue _catalogue;
-        
+
     [UseWithObjectConstructor]
     public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator,Catalogue catalogue): base(activator)
     {

@@ -19,7 +19,7 @@ public class PermissionWindowPeriod
     /// Which day this period is in (periods cannot cross day boundaries)
     /// </summary>
     public int DayOfWeek { get; set; }
-        
+
     // XML Serialiser doesn't support TimeSpan :(
 
     /// <summary>

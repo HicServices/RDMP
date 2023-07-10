@@ -51,9 +51,9 @@ internal class MaxLengthRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabas
         try
         {
             var col = table.DiscoverColumn(PropertyToCheckName);
-                
-            return col.DataType.GetCSharpDataType() == typeof(string) ? 
-                col.DataType.GetLengthIfString() : 
+
+            return col.DataType.GetCSharpDataType() == typeof(string) ?
+                col.DataType.GetLengthIfString() :
                 null;
         }
         catch (Exception)

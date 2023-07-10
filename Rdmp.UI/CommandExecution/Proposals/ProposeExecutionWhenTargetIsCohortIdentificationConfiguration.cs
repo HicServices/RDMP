@@ -16,7 +16,7 @@ internal class ProposeExecutionWhenTargetIsCohortIdentificationConfiguration:RDM
     public ProposeExecutionWhenTargetIsCohortIdentificationConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {
     }
-        
+
     public override bool CanActivate(CohortIdentificationConfiguration target)
     {
         return true;

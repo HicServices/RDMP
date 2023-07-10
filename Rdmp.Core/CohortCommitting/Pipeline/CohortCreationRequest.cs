@@ -32,7 +32,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
     //for pipeline editing initialization when no known cohort is available
 
     #region Things that can be turned into cohorts
-        
+
     private FlatFileToLoad _fileToLoad;
     private ExtractionInformation _extractionIdentifierColumn;
     private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
@@ -51,7 +51,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
             Push(value);
         }
     }
-        
+
     public CohortIdentificationConfiguration CohortIdentificationConfiguration
     {
         get => _cohortIdentificationConfiguration;
@@ -73,7 +73,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
             Push(_extractionIdentifierColumn);
         }
     }
-        
+
     private void Pop(object oldValue)
     {
         if (oldValue != null && InitializationObjects.Contains(oldValue))
@@ -88,7 +88,7 @@ public sealed class CohortCreationRequest : PipelineUseCase,ICohortCreationReque
 
     public IProject Project { get; private set; }
     public ICohortDefinition NewCohortDefinition { get; set; }
-        
+
     public ExtractableCohort CohortCreatedIfAny { get; set; }
 
     public string DescriptionForAuditLog { get; set; }

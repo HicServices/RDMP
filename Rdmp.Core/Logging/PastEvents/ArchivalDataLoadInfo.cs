@@ -50,7 +50,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
             $"{Description}(ID={ID}) - {StartTime} - {(EndTime != null ? EndTime.ToString() : "<DidNotFinish>")}{elapsed}";
     }
 
-    
+
     /// <summary>
     /// All tables loaded during the run
     /// </summary>
@@ -69,7 +69,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     private readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
     private readonly Lazy<List<ArchivalFatalError>> _knownErrors;
     private readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
-        
+
     public string Description { get; set; }
 
     /// <summary>
@@ -80,7 +80,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
 
     }
-        
+
     internal ArchivalDataLoadInfo(DbDataReader r,DiscoveredDatabase loggingDatabase)
     {
         _loggingDatabase = loggingDatabase;
@@ -122,7 +122,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         while(r.Read())
         {
             var audit = new ArchivalTableLoadInfo(this, r, _loggingDatabase);
-                        
+
             if((audit.Inserts??0) <= 0 && (audit.Updates??0) <= 0 && (audit.Deletes??0) <= 0 && UserSettings.HideEmptyTableLoadRunAudits)
             {
                 continue;

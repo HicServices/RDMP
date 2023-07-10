@@ -47,7 +47,7 @@ public interface IBasicActivateItems
     List<IPluginUserInterface> PluginUserInterfaces { get; }
 
     /// <summary>
-    /// Component for fetching xmldoc comments from the codebase 
+    /// Component for fetching xmldoc comments from the codebase
     /// </summary>
     public CommentStore CommentStore { get; }
 
@@ -56,8 +56,8 @@ public interface IBasicActivateItems
     /// </summary>
     /// <param name="aggregate"></param>
     void ShowGraph(AggregateConfiguration aggregate);
-        
-        
+
+
 
     /// <summary>
     /// Display information about the logged activities of the <paramref name="rootObject"/>
@@ -108,7 +108,7 @@ public interface IBasicActivateItems
     /// </summary>
     /// <param name="dataTable"></param>
     void ShowData(DataTable dataTable);
-        
+
     /// <summary>
     /// Returns the repository that stores objects of the given <paramref name="type"/> (Must be <see cref="IMapsDirectlyToDatabaseTable"/>).
     /// Throws if no compatible repo is found.
@@ -127,7 +127,7 @@ public interface IBasicActivateItems
     /// Component class for discovering the default DQE, Logging servers etc configured in the current RDMP database
     /// </summary>
     IServerDefaults ServerDefaults { get; }
-        
+
     /// <summary>
     /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
     /// </summary>
@@ -193,7 +193,7 @@ public interface IBasicActivateItems
     /// <param name="initialSearchText"></param>
     /// <returns></returns>
     IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
-        
+
     /// <inheritdoc cref="SelectMany(string, Type, IMapsDirectlyToDatabaseTable[], string)"/>
     IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects);
 
@@ -256,7 +256,7 @@ public interface IBasicActivateItems
     /// <returns></returns>
     FileInfo SelectFile(string prompt);
 
-        
+
     /// <summary>
     /// Prompts user to select multiple files on disk that must exist and match the <paramref name="pattern"/>
     /// </summary>
@@ -274,7 +274,7 @@ public interface IBasicActivateItems
     /// <param name="pattern">Pattern to restrict files to e.g. *.csv</param>
     /// <returns></returns>
     FileInfo SelectFile(string prompt,string patternDescription, string pattern);
-        
+
 
     /// <summary>
     /// User must supply a basic value type e.g. string, double, int
@@ -316,7 +316,7 @@ public interface IBasicActivateItems
 
 
     /// <summary>
-    /// Offers the user a binary choice for whether they want to proceede on a dangerous/complex operation.  Returns true if 
+    /// Offers the user a binary choice for whether they want to proceede on a dangerous/complex operation.  Returns true if
     /// environment is not interactive or an external setting auto confirms e.g. a command line argument etc
     /// </summary>
     /// <param name="text">The question to pose</param>
@@ -339,7 +339,7 @@ public interface IBasicActivateItems
     /// <param name="title"></param>
     /// <param name="message"></param>
     void Show(string title, string message);
-        
+
     /// <summary>
     /// Prompts user to provide some textual input
     /// </summary>
@@ -370,7 +370,7 @@ public interface IBasicActivateItems
     /// <param name="taskDescription"></param>
     /// <returns></returns>
     DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
-        
+
     /// <summary>
     /// Shows the given error message to the user, optionally with the <paramref name="exception"/> stack trace / Message with high visibility
     /// </summary>
@@ -378,7 +378,7 @@ public interface IBasicActivateItems
     /// <param name="exception"></param>
     void ShowException(string errorText, Exception exception);
 
-        
+
     /// <summary>
     /// Block until the <paramref name="task"/> is completed with optionally showing the user some kind of ongoing operation
     /// indication (ui) and letting them cancel the task with the <paramref name="cts"/>.

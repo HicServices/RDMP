@@ -29,7 +29,7 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
     [UseWithObjectConstructor]
     public ExecuteCommandSyncTableInfo(IBasicActivateItems activator,
         [DemandsInitialization("The RDMP metadata object to synchronize with the underlying database state")]
-        ITableInfo table, 
+        ITableInfo table,
         [DemandsInitialization("True to also synchronize any ANOTables (anonymisation tables) associated with the TableInfo")]
         bool alsoSyncAno,
         [DemandsInitialization("True to accept all changes without prompting")]
@@ -59,7 +59,7 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
 
         try
         {
-                
+
             var wasSynchedsuccessfully = syncher.Synchronize(listener);
 
             if (wasSynchedsuccessfully)

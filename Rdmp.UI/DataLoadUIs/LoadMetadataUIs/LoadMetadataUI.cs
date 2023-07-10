@@ -25,7 +25,7 @@ public partial class LoadMetadataUI : LoadMetadataUI_Design, ISaveableUI
         InitializeComponent();
         AssociatedCollection = RDMPCollection.DataLoad;
     }
-        
+
     protected override void SetBindings(BinderWithErrorProviderFactory rules, LoadMetadata databaseObject)
     {
         base.SetBindings(rules, databaseObject);

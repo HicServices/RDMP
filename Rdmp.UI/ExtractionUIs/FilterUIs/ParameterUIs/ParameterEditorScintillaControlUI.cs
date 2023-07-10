@@ -101,7 +101,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
             //get the lines that make up the selection (freetext sql)
             for (var i = section.LineStart; i <= section.LineEnd; i++)
                 sql += QueryEditor.Lines[i].Text;
-                
+
             //pass the section its sql text an it will tell us if it is borked or changed or unchanged
             var changed = section.CheckForChanges(sql);
 
@@ -124,9 +124,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
     }
 
     private List<ParameterEditorScintillaSection> Sections = new();
-        
+
     /// <summary>
-    /// Updates the Sql code for the current state of the <see cref="Options"/> 
+    /// Updates the Sql code for the current state of the <see cref="Options"/>
     /// </summary>
     public void RegenerateSQL()
     {
@@ -159,16 +159,16 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 {
                     ProblemObjects.TryAdd(parameter, errorException);
                 }
-                    
+
 
                 var toAdd = QueryBuilder.GetParameterDeclarationSQL(parameter);
 
                 var lineCount = GetLineCount(toAdd);
 
-                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += lineCount - 1, parameter, 
-                        
+                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += lineCount - 1, parameter,
+
                     !Options.ShouldBeReadOnly(parameter),
-                        
+
                     toAdd));
 
                 sql += toAdd;
@@ -181,7 +181,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         catch (Exception ex)
         {
             QueryEditor.Text = ex.ToString();
-                
+
             IsBroken = true;
 
             if (ex is QueryBuildingException exception)
@@ -201,7 +201,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 highlighter.HighlightLine(QueryEditor, i, Color.LightGray);
     }
 
-        
+
 
     private static int GetLineCount(string s)
     {

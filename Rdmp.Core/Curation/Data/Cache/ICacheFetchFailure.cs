@@ -41,7 +41,7 @@ public interface ICacheFetchFailure : ISaveable, IDeleteable,IMapsDirectlyToData
 
     /// <summary>
     /// The date at which we were able to make a succesful request for the time period defined by <see cref="FetchRequestStart"/> and <see cref="FetchRequestEnd"/>.  If this
-    /// date is populated then it means that although we were unable to fetch the period when we first requested it we were subsequently able to rerun that period and the 
+    /// date is populated then it means that although we were unable to fetch the period when we first requested it we were subsequently able to rerun that period and the
     /// remote endpoint was succesfully able to return to us the results
     /// </summary>
     DateTime? ResolvedOn { get; set; }

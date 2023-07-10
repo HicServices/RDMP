@@ -18,7 +18,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 public partial class PickDatabase : PickObjectBase
 {
     public override string Format => "DatabaseType:{DatabaseType}:[Name:{DatabaseName}:]{ConnectionString}";
-    public override string Help => 
+    public override string Help =>
         @"DatabaseType (Required):
     MicrosoftSQLServer
     MySql
@@ -36,7 +36,7 @@ ConnectionString (Required)";
     };
 
     public PickDatabase() : base(null,
-        PickDbRegex()) 
+        PickDbRegex())
     {
             
     }

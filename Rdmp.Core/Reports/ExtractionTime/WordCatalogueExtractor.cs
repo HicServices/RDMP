@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Reports.ExtractionTime;
 
 /// <summary>
-/// Generates tables in a Microsoft Word document describing a Catalogue, its CatalogueItems and any Issues associated with it.  This is used in data extraction 
+/// Generates tables in a Microsoft Word document describing a Catalogue, its CatalogueItems and any Issues associated with it.  This is used in data extraction
 /// to generate metadata documents for the researchers to read (See WordDataWriter)
 /// </summary>
 public class WordCatalogueExtractor: DocXHelper
@@ -97,16 +97,16 @@ public class WordCatalogueExtractor: DocXHelper
         foreach (var catalogueItem in cataItems)
         {
             InsertHeader(_document,catalogueItem.Name,2);
-                
+
             requiredRowsCount = CountWriteableProperties(catalogueItem);
-                
+
             //allocate extra space for supplementalData
             if(supplementalData != null)
                 requiredRowsCount += supplementalData[catalogueItem].Length;
-                
+
             //create a new table
             var t = InsertTable(_document, requiredRowsCount, 2);
-                
+
             if(supplementalData!=null && supplementalData.TryGetValue(catalogueItem, out var data))
                 GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem,data);
             else
@@ -137,7 +137,7 @@ public class WordCatalogueExtractor: DocXHelper
         //generate a row for each property
         foreach (var property in propertyInfo)
         {
-                
+
             //Check whether property can be written to
             if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name) && (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType == typeof(string)))
             {
@@ -163,6 +163,6 @@ public class WordCatalogueExtractor: DocXHelper
 
         //table.AutoFit = AutoFit.Contents;
     }
-        
-        
+
+
 }

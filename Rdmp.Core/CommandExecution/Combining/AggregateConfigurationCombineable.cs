@@ -38,7 +38,7 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
     /// Comprehensive list of all <see cref="CohortAggregateContainer"/> in the tree hierarchy of the  <see cref="Aggregate"/> <see cref="CohortIdentificationConfigurationIfAny"/>
     /// </summary>
     public List<CohortAggregateContainer> AllContainersInTreeIfPartOfOne { get; private set; }
-        
+
     /// <summary>
     /// True if the <see cref="Aggregate"/> is <see cref="AggregateConfiguration.IsJoinablePatientIndexTable"/>
     /// </summary>

@@ -20,7 +20,7 @@ public class StageArgs : IStageArgs
 {
     public DiscoveredDatabase DbInfo { get; private set; }
     public ILoadDirectory RootDir { get; private set; }
-        
+
     //Mandatory
     public LoadStage LoadStage { get; private set; }
 

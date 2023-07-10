@@ -45,7 +45,7 @@ public class PatcherManager
         foreach (var patcherType in MEF.GetTypes<PluginPatcher>().Where(type => type.IsPublic))
         {
             PluginPatcher instance = null;
-                
+
             try
             {
                 instance = (PluginPatcher)ObjectConstructor.Construct(patcherType);

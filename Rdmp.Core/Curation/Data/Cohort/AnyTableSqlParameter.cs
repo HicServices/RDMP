@@ -56,7 +56,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     private string _parameterSQL;
     private string _value;
     private string _comment;
-        
+
     /// <inheritdoc/>
     [Sql]
     public string ParameterSQL
@@ -99,7 +99,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <summary>
     /// Declares that a new <see cref="ISqlParameter"/> (e.g. 'DECLARE @bob as varchar(10)') exists for the parent database object.  The object
     /// should be of a type which passes <see cref="IsSupportedType"/>.  When the object is used for query generation by an <see cref="QueryBuilding.ISqlQueryBuilder"/>
-    /// then the parameter will be used 
+    /// then the parameter will be used
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>

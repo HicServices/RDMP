@@ -16,8 +16,8 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context X).  For example you might have a DataAccessCredentials 
-/// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a seperate DataAccessCredentials called 
+/// Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context X).  For example you might have a DataAccessCredentials
+/// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a seperate DataAccessCredentials called
 /// 'ReadonlyUserAccount' and give tables A,B,C and D permission to use it under DataAccessContext.Any
 /// 
 /// <para></para>
@@ -26,10 +26,10 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 {
     private readonly CatalogueRepository _repository;
 
-    //returns of querying these links are either 
+    //returns of querying these links are either
     //          Dictionary<DataAccessContext,DataAccessCredentials> for all links where there is only one access point 1 - M (1 point many credentials)
     //OR        Dictionary<DataAccessContext, List<TableInfo>>      for all links where the query originates with a credentials M-M (credential is used by many users under many different contexts including potentially used by the same user under two+ different contexts)
-        
+
     //Cannot query Find all links between [collection of access points] and [collection of credentials] yet (probably never need to do this)
 
     /// <summary>
@@ -108,7 +108,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
             //gets the first liscenced usage
             if (r.Read())
             {
-                //there is one 
+                //there is one
                 //get it by its id
                 toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
 
@@ -167,7 +167,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 
             var tid = Convert.ToInt32(r["TableInfo_ID"]);
             var cid = Convert.ToInt32(r["DataAccessCredentials_ID"]);
-                    
+
             //async error? someone created a new credential usage between the allCredentials array being fetched and us reaching this methods execution?
             if (!allTablesDictionary.ContainsKey(tid) || !allCredentialsDictionary.ContainsKey(cid))
                 continue;//should be super rare never gonna happen

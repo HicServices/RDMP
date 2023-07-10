@@ -18,7 +18,7 @@ namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 /// caller will store/use somehow.
 /// </summary>
 public partial class SetSQLDialog : Form
-{   
+{
     public Scintilla QueryEditor;
     private bool _designMode;
 

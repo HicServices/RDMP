@@ -33,7 +33,7 @@ public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
     {
         return Cohort;
     }
-        
+
     protected bool Equals(LinkedCohortNode other)
     {
         return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);

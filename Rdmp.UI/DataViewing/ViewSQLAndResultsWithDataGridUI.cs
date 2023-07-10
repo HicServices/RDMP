@@ -180,7 +180,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
             _originalSql = sql;
             //update the editor to show the user the SQL
             _scintilla.Text = sql;
-                
+
             _server.TestConnection();
 
             if(UserSettings.AutoRunSqlQueries)
@@ -257,7 +257,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
                 _cmd.CommandTimeout = _timeoutControls.Timeout;
 
                 var a = server.GetDataAdapter(_cmd);
-                        
+
                 var dt = new DataTable();
 
                 a.Fill(dt);
@@ -332,7 +332,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         //enable the reset button only if the SQL has changed (e.g. user is typing stuff)
         btnResetSql.Enabled = !_originalSql.Equals(_scintilla.Text);
     }
-        
+
     private void RunQuery()
     {
         var selected = _scintilla.SelectedText;

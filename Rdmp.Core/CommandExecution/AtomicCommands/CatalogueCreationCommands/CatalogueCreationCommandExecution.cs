@@ -12,7 +12,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 public abstract class CatalogueCreationCommandExecution : BasicCommandExecution, IAtomicCommandWithTarget
 {
     protected IProject ProjectSpecific;
-        
+
     public string TargetFolder {get;set; }
 
     protected const string Desc_ProjectSpecificParameter = "Optionally associate the Catalogue created with a specific Project, otherwise Null";

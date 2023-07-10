@@ -139,7 +139,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
                 $"Value '{value}' was found in row but not in corresponding referential integrity column {OtherColumnInfo}", this);
     }
 
-        
+
 
     public void Check(ICheckNotifier checker)
     {
@@ -204,7 +204,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     /// </summary>
     private void GetUniqueValues()
     {
-        if(OtherColumnInfo == null) 
+        if(OtherColumnInfo == null)
             throw new NotSupportedException("No ColumnInfo has been selected yet! unable to populate constraint HashSet");
 
 

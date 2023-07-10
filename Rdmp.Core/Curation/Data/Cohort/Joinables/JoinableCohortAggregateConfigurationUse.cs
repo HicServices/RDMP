@@ -124,7 +124,7 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
 
     private const string ToStringPrefix = "JOIN Against:";
     private string _toStringName;
-        
+
     /// <inheritdoc/>
     public override string ToString()
     {

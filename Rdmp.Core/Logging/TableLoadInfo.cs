@@ -121,7 +121,7 @@ public class TableLoadInfo : ITableLoadInfo
         }
     }
 
-    #region Property setup 
+    #region Property setup
 
     /// <summary>
     /// Increases or Gets the number of Updated records, use += instead of trying to set a specific value.  Important:Make sure you increment with Affected Rows, not just UPDATE commands sent)

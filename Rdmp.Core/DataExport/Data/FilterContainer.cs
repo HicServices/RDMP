@@ -71,8 +71,8 @@ public class FilterContainer : ConcreteContainer, IContainer
     {
         return Operation.ToString();
     }
-        
-        
+
+
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
     {
         //clone ourselves

@@ -22,7 +22,7 @@ public class MigrateStagingToLive : DataLoadComponent
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
-        
+
     public MigrateStagingToLive(HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;

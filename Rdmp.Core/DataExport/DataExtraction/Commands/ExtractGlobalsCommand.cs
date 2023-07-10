@@ -24,7 +24,7 @@ public class ExtractGlobalsCommand : ExtractCommand
     public GlobalsBundle Globals { get; set; }
 
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-        
+
     public List<IExtractionResults> ExtractionResults { get; private set; }
 
     public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project, ExtractionConfiguration configuration, GlobalsBundle globals):base(configuration)

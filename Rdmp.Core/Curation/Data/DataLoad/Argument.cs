@@ -79,7 +79,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     private string _value;
     private string _type;
     private string _description;
-        
+
     /// <inheritdoc/>
     public string Name
     {
@@ -183,8 +183,8 @@ public abstract class Argument : DatabaseEntity, IArgument
             return new Regex(value);
 
         var concreteType = GetConcreteSystemType(type);
-            
-        //try to enum it 
+
+        //try to enum it
         if (typeof(Enum).IsAssignableFrom(concreteType))
             return Enum.Parse(concreteType, value);
 
@@ -249,7 +249,7 @@ public abstract class Argument : DatabaseEntity, IArgument
                 var t = MEF.GetType(concreteType.FullName);
 
                 result = (ICustomUIDrivenClass) ObjectConstructor.Construct(t, (ICatalogueRepository) Repository);
-                     
+
             }
             catch (Exception e)
             {
@@ -338,7 +338,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         return type;
     }
-        
+
     /// <inheritdoc/>
     public void SetType(Type t)
     {
@@ -358,7 +358,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     {
         switch (o)
         {
-            //anything implementing this interface is permitted 
+            //anything implementing this interface is permitted
             case ICustomUIDrivenClass @class:
                 return @class.SaveStateToString();
             case null:
@@ -421,7 +421,7 @@ public abstract class Argument : DatabaseEntity, IArgument
                         throw new Exception(
                             $"Cannot set value {o} (of Type {o.GetType().FullName}) to on ProcessTaskArgument because it has an incompatible Type specified ({type.FullName})");
                     }
-                        
+
             }
         }
 
@@ -455,7 +455,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         return instance;
     }
-        
+
     private string SerializeDictionary(IDictionary dictionary)
     {
         using var sw = new StringWriter();
@@ -465,7 +465,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
             xmlWriter.WriteStartDocument();
             xmlWriter.WriteStartElement("dictionary");
-                    
+
             foreach (DictionaryEntry entry in dictionary)
             {
                 var keyObject = entry.Key;
@@ -473,9 +473,9 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                 var valueObject = entry.Value;
                 var valueObjectType = valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
-                        
+
                 xmlWriter.WriteStartElement("entry");
-                        
+
                 xmlWriter.WriteStartElement("key");
                 xmlWriter.WriteAttributeString("type", keyObjectType);
                 xmlWriter.WriteAttributeString("o", Serialize(keyObject,keyObjectType));
@@ -488,7 +488,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                 xmlWriter.WriteEndElement();
             }
-                    
+
             xmlWriter.WriteEndDocument();
             xmlWriter.Close();
 

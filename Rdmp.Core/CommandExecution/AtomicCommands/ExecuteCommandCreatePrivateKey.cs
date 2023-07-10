@@ -29,7 +29,7 @@ public class ExecuteCommandCreatePrivateKey : BasicCommandExecution
         }
 
         var existing = _encryption.GetKeyFileLocation();
-        if (existing != null) 
+        if (existing != null)
             SetImpossible($"There is already a key file at '{existing}'");
     }
 

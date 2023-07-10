@@ -22,7 +22,7 @@ public class DatabaseCloner : IDisposeAfterDataLoad
 {
     private readonly HICDatabaseConfiguration _hicDatabaseConfiguration;
     private readonly List<TableInfoCloneOperation> _tablesCreated;
-    private readonly List<DiscoveredDatabase> _databasesCreated; 
+    private readonly List<DiscoveredDatabase> _databasesCreated;
 
     public DatabaseCloner(HICDatabaseConfiguration hicDatabaseConfiguration)
     {
@@ -44,7 +44,7 @@ public class DatabaseCloner : IDisposeAfterDataLoad
 
         return dbInfo;
     }
-        
+
     public void CreateTablesInDatabaseFromCatalogueInfo(IDataLoadEventListener listener, TableInfo tableInfo, LoadBubble copyToStage)
     {
         if (copyToStage == LoadBubble.Live)
@@ -132,5 +132,5 @@ public class DatabaseCloner : IDisposeAfterDataLoad
             dbInfo.Drop();
     }
 
-   
+
 }

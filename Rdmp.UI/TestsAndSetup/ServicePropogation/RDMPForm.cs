@@ -15,8 +15,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 /// <summary>
 /// TECHNICAL: Base class for all Forms in all RDMP applications which require to know where the DataCatalogue Repository and/or DataExportManager Repository databases are stored.
-/// IMPORTANT: You MUST set RepositoryLocator = X after calling the constructor on any RDMPForm before showing it (see RDMPFormInitializationTests) this will ensure that OnLoad is 
-/// able to propagate the locator to all child controls (RDMPUserControl).  
+/// IMPORTANT: You MUST set RepositoryLocator = X after calling the constructor on any RDMPForm before showing it (see RDMPFormInitializationTests) this will ensure that OnLoad is
+/// able to propagate the locator to all child controls (RDMPUserControl).
 /// </summary>
 [TechnicalUI]
 public class RDMPForm : Form, IRDMPControl
@@ -25,7 +25,7 @@ public class RDMPForm : Form, IRDMPControl
     /// Whether escape keystrokes should trigger form closing (defaults to true).
     /// </summary>
     public bool CloseOnEscape { get; set; }
-        
+
     protected readonly bool VisualStudioDesignMode;
     public IActivateItems Activator { get; private set; }
 
@@ -56,7 +56,7 @@ public class RDMPForm : Form, IRDMPControl
     {
         Activator = activator;
     }
-        
+
     private void RDMPForm_KeyDown(object sender, KeyEventArgs e)
     {
         if (((e.KeyCode == Keys.W && e.Control) || e.KeyCode == Keys.Escape) && CloseOnEscape)

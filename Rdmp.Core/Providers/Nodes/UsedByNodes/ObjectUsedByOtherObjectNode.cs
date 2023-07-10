@@ -16,9 +16,9 @@ namespace Rdmp.Core.Providers.Nodes.UsedByNodes;
 /// </summary>
 /// <typeparam name="T">The Type of the parent <see cref="User"/></typeparam>
 /// <typeparam name="T2">The type of <see cref="ObjectBeingUsed"/> by the parent</typeparam>
-public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObjectNode<T,T2> 
-    where T:class 
-    where T2:class 
+public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObjectNode<T,T2>
+    where T:class
+    where T2:class
 {
     /// <summary>
     /// The string representation of the <see cref="ObjectUsedByOtherObjectNode{T,T2}"/> when it <see cref="IsEmptyNode"/>
@@ -29,7 +29,7 @@ public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObject
     /// The parent object which uses another object
     /// </summary>
     public T User { get; }
-        
+
     /// <summary>
     /// The object being used by the <see cref="User"/>
     /// </summary>
@@ -39,7 +39,7 @@ public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObject
     /// True if <see cref="ObjectBeingUsed"/> is null
     /// </summary>
     public bool IsEmptyNode => ObjectBeingUsed == null;
-        
+
     /// <summary>
     /// Creates a new instance describing the object and user
     /// </summary>
@@ -52,7 +52,7 @@ public class ObjectUsedByOtherObjectNode<T, T2> : Node, IObjectUsedByOtherObject
     }
 
     /// <summary>
-    /// Returns the <see cref="ObjectBeingUsed"/> 
+    /// Returns the <see cref="ObjectBeingUsed"/>
     /// </summary>
     /// <returns></returns>
     public object MasqueradingAs()

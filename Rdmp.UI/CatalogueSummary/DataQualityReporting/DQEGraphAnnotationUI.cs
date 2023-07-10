@@ -14,7 +14,7 @@ internal class DQEGraphAnnotationUI
     private readonly DQEGraphAnnotation _underlyingAnnotationObject;
     public LineAnnotation Annotation { get; set; }
     public TextAnnotation TextAnnotation { get; set; }
-        
+
     public override bool Equals(object obj)
     {
         if (obj is null) return false;

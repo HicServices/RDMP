@@ -138,7 +138,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
 
             var ecById = childProvider.ExtractionConfigurations.ToDictionary(k=>k.ID);
 
-            // The root object that makes most sense to the user e.g. they select an extraction 
+            // The root object that makes most sense to the user e.g. they select an extraction
             var fromConfiguration
                 =
                 childProvider.AllCohortIdentificationConfigurations.Where(IsEligible)
@@ -150,7 +150,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
                 Show("There are no extractions or cohort builder configurations of this dataset that use filters");
                 return;
             }
-                
+
             if(SelectOne(fromConfiguration,out var selected))
             {
                 if(selected is ExtractionConfiguration ec)
@@ -173,7 +173,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
 
     private void Import(IContainer from)
     {
-        var factory = 
+        var factory =
             _into != null ? _into.GetFilterFactory() : _intoSubContainer.GetFilterFactory();
             
         IContainer intoContainer;
@@ -185,7 +185,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
             newRoot.SaveToDatabase();
             _into.RootFilterContainer_ID = newRoot.ID;
             _into.SaveToDatabase();
-                
+
             intoContainer = newRoot;
         }
         else
@@ -204,7 +204,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
             subContainer.SaveToDatabase();
             into.AddChild(subContainer);
 
-            DeepClone(subContainer,container,factory);            
+            DeepClone(subContainer,container,factory);
         }
             
         var wizard = new FilterImportWizard(BasicActivator);

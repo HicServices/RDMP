@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandReOrderAggregateContainer : BasicUICommandExecution 
+internal class ExecuteCommandReOrderAggregateContainer : BasicUICommandExecution
 {
     private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainerCombineable;
 

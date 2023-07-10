@@ -31,7 +31,7 @@ public class StandardDatabaseHelper
         {
             var stageName = DatabaseNamer.GetDatabaseName(liveDatabase.GetRuntimeName(), stage);
             DatabaseInfoList.Add(stage, stage == LoadBubble.Raw ? rawServer.ExpectDatabase(stageName) : liveDatabase.Server.ExpectDatabase(stageName));
-                
+
         }
     }
 

@@ -26,9 +26,9 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
     public List<SupportingDocument> Documents { get; private set; }
     public List<SupportingSQLTable> SupportingSQL { get; private set; }
     public List<IBundledLookupTable> LookupTables { get; private set; }
-        
 
-    public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents, SupportingSQLTable[] supportingSQL, ITableInfo[] lookupTables) : 
+
+    public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents, SupportingSQLTable[] supportingSQL, ITableInfo[] lookupTables) :
         base(
             new [] {(object)dataSet}.Union(documents).Union(supportingSQL).Union(lookupTables).ToArray() //pass all the objects to the base class so it can allocate initial States
         )
@@ -43,7 +43,7 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
         : this(dataSet, Array.Empty<SupportingDocument>(), Array.Empty<SupportingSQLTable>(), Array.Empty<TableInfo>())
     {
     }
-        
+
     public override string ToString()
     {
         return $"{DataSet} Bundle";

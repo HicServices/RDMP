@@ -30,11 +30,11 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
     public bool PromptToPickReplacement {get;set;}
 
     [UseWithObjectConstructor]
-    public ExecuteCommandReplacedBy(IBasicActivateItems activator, 
+    public ExecuteCommandReplacedBy(IBasicActivateItems activator,
         [DemandsInitialization("The object that is being retired.  If its Type supports being marked IsDeprecated then it must be true")]
-        IMapsDirectlyToDatabaseTable deprecated, 
+        IMapsDirectlyToDatabaseTable deprecated,
         [DemandsInitialization("The object that replaces the retired one.  Pass null to clear the replacement relationship")]
-        IMapsDirectlyToDatabaseTable replacement) 
+        IMapsDirectlyToDatabaseTable replacement)
         : base(activator)
     {
             
@@ -71,7 +71,7 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
         }
 
         var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
-        foreach (var existing in 
+        foreach (var existing in
                  cataRepo.GetExtendedProperties(ExtendedProperty.ReplacedBy, Deprecated))
         {
             // delete any old references to who we are replaced by

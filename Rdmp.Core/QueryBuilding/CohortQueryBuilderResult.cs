@@ -70,7 +70,7 @@ public class CohortQueryBuilderResult
     /// The final SQL that should be executed on the <see cref="TargetServer"/>
     /// </summary>
     public string Sql { get; private set; }
-        
+
     /// <summary>
     /// The location at which the <see cref="Sql"/> should be run (may be a data server or a cache server or they may be one and the same!)
     /// </summary>
@@ -100,7 +100,7 @@ public class CohortQueryBuilderResult
         if (cacheServer != null)
         {
             CacheManager = new CachedAggregateConfigurationResultsManager(CacheServer);
-                
+
             try
             {
                 PluginCohortCompilers = new PluginCohortCompilerFactory(cacheServer.CatalogueRepository.MEF).CreateAll();
@@ -152,7 +152,7 @@ public class CohortQueryBuilderResult
 
         Sql = BuildSql(d,parameterManager);
     }
-        
+
     private string BuildSql(CohortAggregateContainer container,ParameterManager parameterManager)
     {
         Dictionary<CohortQueryBuilderDependency, string> sqlDictionary;
@@ -161,7 +161,7 @@ public class CohortQueryBuilderResult
         if (Dependencies.All(d => d.SqlFullyCached != null))
         {
             SetTargetServer(GetCacheServer(),"all dependencies are fully cached"); //run on the cache server
-                
+
             //all are cached
             CountOfCachedSubQueries = CountOfSubQueries;
 
@@ -183,9 +183,9 @@ public class CohortQueryBuilderResult
                     //The cache and dataset are on the same server so run it
                     SetTargetServer(DependenciesSingleServer.GetDistinctServer(),
                         $"not all dependencies are cached while {uncached}");
-                        
+
                     CountOfCachedSubQueries = Dependencies.Count(d=>d.SqlFullyCached != null);
-                        
+
                     sqlDictionary =
                         Dependencies.ToDictionary(k => k,
                             v =>  v.SqlFullyCached?.Use(parameterManager) ??
@@ -245,7 +245,7 @@ public class CohortQueryBuilderResult
 
             if(toWrite is AggregateConfiguration)
                 sql += TabIn(sqlDictionary.Single(kvp => Equals(kvp.Key.CohortSet, toWrite)).Value, tabs);
-                
+
             if (toWrite is CohortAggregateContainer sub)
                 sql += WriteContainers(sub, syntaxHelper, sqlDictionary, tabs + 1);
 
@@ -403,7 +403,7 @@ public class CohortQueryBuilderResult
             _log.AppendLine($"Evaluating '{dependency.CohortSet}'");
             foreach (var dependantTable in dependency.CohortSet.Catalogue.GetTableInfoList(false))
                 HandleDependency(dependency,false, dependantTable);
-                
+
             if (dependency.JoinedTo != null)
             {
                 _log.AppendLine($"Evaluating '{dependency.JoinedTo}'");
@@ -427,7 +427,7 @@ public class CohortQueryBuilderResult
                 //if there's no cache server that's a problem!
                 if(CacheServer == null)
                     throw new QueryBuildingException($"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
-                    
+
                 //there is a cache server, perhaps we can dodge 'dependantTable' by going to cache instead
                 var canUseCacheForDependantTable =
                     (isPatientIndexTable ? dependency.SqlJoinableCached : dependency.SqlFullyCached)
@@ -469,13 +469,13 @@ public class CohortQueryBuilderResult
         }   
     }
 
-        
+
     private void SetCacheUsage(CacheUsage value, string thereIsNoCacheServer)
     {
         CacheUsageDecision = value;
         _log.AppendLine($"Setting {nameof(CacheUsageDecision)} to {value} because {thereIsNoCacheServer}");
     }
-        
+
     private void ThrowIfAlreadyBuilt()
     {
         if (_alreadyBuilt)
@@ -483,7 +483,7 @@ public class CohortQueryBuilderResult
             
         _alreadyBuilt = true;
     }
-        
+
     public string TabIn(string str, int numberOfTabs)
     {
         if (string.IsNullOrWhiteSpace(str))

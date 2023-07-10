@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Describes a relationship between 3 ColumnInfos in which 2 are from a lookup table (e.g. z_drugName), these are a primary
-/// key (e.g. DrugCode) and a description (e.g. HumanReadableDrugName).  And a third ColumnInfo from a different table (e.g. 
+/// key (e.g. DrugCode) and a description (e.g. HumanReadableDrugName).  And a third ColumnInfo from a different table (e.g.
 /// Prescribing) which is a foreign key (e.g. DrugPrescribed).
 /// 
 /// <para>The QueryBuilder uses this information to work out how to join together various tables in a query.  Note that it is possible
@@ -28,8 +28,8 @@ namespace Rdmp.Core.Curation.Data;
 /// (referential integrity) between their lookup tables and main datasets due to dirty data / missing lookup values.  These are all
 /// concepts which the RDMP is familiar with and built to handle.</para>
 /// 
-/// <para>Note also that you can have one or more LookupCompositeJoinInfo for when you need to join particularly ugly lookups (e.g. if you 
-/// have the same DrugCode meaning different things based on the prescribing board - you need to join on both drugName and 
+/// <para>Note also that you can have one or more LookupCompositeJoinInfo for when you need to join particularly ugly lookups (e.g. if you
+/// have the same DrugCode meaning different things based on the prescribing board - you need to join on both drugName and
 /// prescriberHealthboard).</para>
 /// </summary>
 public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
@@ -90,22 +90,22 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
     #endregion
-        
+
     #region Relationships
     /// <summary>
-    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version 
+    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
     public ColumnInfo Description => _description ??= Repository.GetObjectByID<ColumnInfo>(Description_ID);
 
     /// <summary>
-    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version 
+    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
     public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <summary>
-    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version 
+    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
     public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
@@ -220,7 +220,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
                 
         return toReturn.ToArray();
     }
-     
+
     /// <summary>
     /// Checks that the Lookup configuration is legal (e.g. not a table linking against itself etc).
     /// </summary>
@@ -236,7 +236,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {ID}", CheckResult.Fail));
     }
-        
+
     /// <inheritdoc/>
     public override void SaveToDatabase()
     {

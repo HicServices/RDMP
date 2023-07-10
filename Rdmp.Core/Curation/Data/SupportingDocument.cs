@@ -17,7 +17,7 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes a document (e.g. PDF / Excel file etc) which is useful for understanding a given dataset (Catalogue).  This can be marked as Extractable in which case 
+/// Describes a document (e.g. PDF / Excel file etc) which is useful for understanding a given dataset (Catalogue).  This can be marked as Extractable in which case
 /// every time the dataset is extracted the file will also be bundled along with it (so that researchers can also benefit from the file).
 /// 
 /// <para>You can also mark SupportingDocuments as Global in which case they will be provided (if Extractable) to researchers regardless of which datasets they have selected
@@ -133,7 +133,7 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
         Extractable = (bool)r["Extractable"];
         IsGlobal = Convert.ToBoolean(r["IsGlobal"]);
     }
-        
+
     /// <inheritdoc/>
     public override string ToString()
     {

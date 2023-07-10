@@ -77,7 +77,7 @@ public class ItemValidator
     {
         foreach (ISecondaryConstraint secondaryConstraint in SecondaryConstraints)
         {
-                
+
             try
             {
                 var result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);
@@ -126,7 +126,7 @@ public class ItemValidator
 
         AddSecondaryConstraint(b);
     }
-        
+
     public void OccursBefore(string comparatorFieldName)
     {
         var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);

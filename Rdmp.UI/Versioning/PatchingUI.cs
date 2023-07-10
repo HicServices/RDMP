@@ -29,7 +29,7 @@ public partial class PatchingUI : Form
 {
     private readonly DiscoveredDatabase _database;
     private readonly ITableRepository _repository;
-                
+
     private bool _yesToAll;
     private IPatcher _patcher;
 
@@ -66,8 +66,8 @@ public partial class PatchingUI : Form
             var toMem = new ToMemoryCheckNotifier(checksUI1);
 
             var mds = new MasterDatabaseScriptExecutor(_database);
-                
-                
+
+
             mds.PatchDatabase(_patcher,toMem,PreviewPatch,
                 ()=>MessageBox.Show("Backup Database First", "Backup", MessageBoxButtons.YesNo) == DialogResult.Yes);
 
@@ -87,7 +87,7 @@ public partial class PatchingUI : Form
                 _repository.ClearUpdateCommandCache();
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success, null));
             }
-                
+
             checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Successful", CheckResult.Success, null));
 
             if (MessageBox.Show("Application will now restart", "Close?", MessageBoxButtons.YesNo) == DialogResult.Yes)

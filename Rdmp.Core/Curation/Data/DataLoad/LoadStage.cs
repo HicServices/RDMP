@@ -14,15 +14,15 @@ public enum LoadStage
 {
     /// <summary>
     /// Processes in this category should result in the generation or modification of files (e.g.
-    ///  FTP file download, unzip local file etc).  The data load engine will not provide processes 
-    /// in this stage with any information about the database being loaded (but it will provide 
+    ///  FTP file download, unzip local file etc).  The data load engine will not provide processes
+    /// in this stage with any information about the database being loaded (but it will provide
     /// the root project directory so that processes know where to generate files into)"
     /// </summary>
     GetFiles,
 
     /// <summary>
     /// Processes in this category should be concerned with moving data from the project directory
-    /// into the RAW database.  The data load engine will provide both the root directory and the 
+    /// into the RAW database.  The data load engine will provide both the root directory and the
     /// location of the RAW database.
     /// </summary>
     Mounting,
@@ -38,15 +38,15 @@ public enum LoadStage
     AdjustRaw,
 
     /// <summary>
-    /// "Processes in this category should be concerned with modifying the content (not structure) of the data in the 
-    /// STAGING database.  This data will be annonymous.  After all processes have been executed and assuming the _STAGING 
+    /// "Processes in this category should be concerned with modifying the content (not structure) of the data in the
+    /// STAGING database.  This data will be annonymous.  After all processes have been executed and assuming the _STAGING
     /// database structure still matches the LIVE structure, the data load engine will use the primary key informtion
     /// defined in the Catalogue ColumnInfos to merge the new data into the current LIVE database
     /// </summary>
     AdjustStaging,
-        
+
     /// <summary>
-    /// "Processes in this category are executed after the new data has been merged into the LIVE database.  This 
+    /// "Processes in this category are executed after the new data has been merged into the LIVE database.  This
     /// is your opportunity to update dependent data, run longitudinal/dataset wide cleaning algorithms etc."
     /// </summary>
     PostLoad

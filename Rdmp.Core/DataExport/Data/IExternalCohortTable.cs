@@ -46,7 +46,7 @@ public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDepend
     string DefinitionTableName { get; set; }
 
     /// <summary>
-    /// The column in the cohort table which contains private identifiers (e.g. 'chi').  This column must contain identifiers in the same format 
+    /// The column in the cohort table which contains private identifiers (e.g. 'chi').  This column must contain identifiers in the same format
     /// as the datasets you want to link with when performing project extractions.
     /// </summary>
     string PrivateIdentifierField { get; set; }
@@ -61,13 +61,13 @@ public interface IExternalCohortTable : ICheckable, IDataAccessPoint, IHasDepend
     /// The name of the field in the cohort (mapping) table which is a foreign key into <see cref="DefinitionTableName"/> (cohort descriptions) table (e.g. cohortDefinition_id).
     /// </summary>
     string DefinitionTableForeignKeyField { get; set; }
-        
+
     /// <summary>
     /// Returns an object for connecting to/interacting with the cohort database referenced by this object.
     /// </summary>
     /// <returns></returns>
     DiscoveredDatabase Discover();
-        
+
     /// <summary>
     /// Returns the cohort table (linkage table with the <see cref="PrivateIdentifierField"/> and <see cref="ReleaseIdentifierField"/>)
     /// </summary>

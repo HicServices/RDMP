@@ -22,7 +22,7 @@ public abstract class PluginRepository:TableRepository
     public ExternalDatabaseServer ExternalDatabaseServer { get; set; }
 
     /// <summary>
-    /// Sets up the repository for reading and writing objects out of the given <paramref name="externalDatabaseServer"/>.  
+    /// Sets up the repository for reading and writing objects out of the given <paramref name="externalDatabaseServer"/>.
     /// </summary>
     /// <param name="externalDatabaseServer">The database to connect to</param>
     /// <param name="dependencyFinder">Optional class that can forbid deleting objects because you have dependencies on them in your database (e.g. if your custom object has a field Catalogue_ID)</param>

@@ -20,12 +20,12 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes in a single line of SELECT SQL a transform to perform on an underlying ColumnInfo.  ExtractionInformation is the technical implementation 
+/// Describes in a single line of SELECT SQL a transform to perform on an underlying ColumnInfo.  ExtractionInformation is the technical implementation
 /// of what is described by a CatalogueItem.  Most ExtractionInformations in your database will just be direct extraction (verbatim) of the ColumnInfo
 /// however you might have simple transformations e.g. 'UPPER([MyDatabase]..[Users].[Name]' or even call complex SQL scalar functions for example
 /// 'fn_CleanDrugCode([Prescribing]..[Items].[DrugCode])'
 /// 
-/// <para>Note that alias is stored separately because it is useful for GetRuntimeName().  Also note that you should not have newlines in your SelectSQL 
+/// <para>Note that alias is stored separately because it is useful for GetRuntimeName().  Also note that you should not have newlines in your SelectSQL
 /// since this will likely confuse QueryBuilder.</para>
 /// 
 /// <para>The interface ExtractionInformationUI handles all of these requirements transparentely.  Also recorded in ExtractionInformation is ExtractionCategory
@@ -37,12 +37,12 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
 {
-        
-    #region Properties 
-        
+
+    #region Properties
+
     private int _catalogueItemID;
     private ExtractionCategory _extractionCategory;
-        
+
     /// <summary>
     /// The virtual column (description, name etc) to which this <see cref="ExtractionInformation"/> provides extraction SELECT SQL for.
     /// </summary>
@@ -53,7 +53,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     }
 
     /// <summary>
-    /// Which governance conditions is this column/transform extractable under (e.g. Core, SpecialApprovalRequired etc) 
+    /// Which governance conditions is this column/transform extractable under (e.g. Core, SpecialApprovalRequired etc)
     /// </summary>
     public ExtractionCategory ExtractionCategory
     {
@@ -66,7 +66,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
             SetField(ref _extractionCategory, value);
         }
     }
-        
+
     #endregion
 
     #region Relationships
@@ -79,12 +79,12 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
 
     /// <summary>
     /// The ColumnInfo that underlies this extractable column.  ExtractionInformation allows for transforms, governance rules and indicates extractability (Core / Supplemental etc)
-    /// while the ColumnInfo is the concrete/immutable reference to the underlying column in the database from which the SelectSQL is executed.  This determines what tables are 
-    /// joined on during query generation and which servers are connected to during query execution etc.  
+    /// while the ColumnInfo is the concrete/immutable reference to the underlying column in the database from which the SelectSQL is executed.  This determines what tables are
+    /// joined on during query generation and which servers are connected to during query execution etc.
     /// 
-    /// <para>This field can be null only if the <see cref="ColumnInfo"/> has been deleted rendering this an orphan and broken.  This is considered a problem by 
+    /// <para>This field can be null only if the <see cref="ColumnInfo"/> has been deleted rendering this an orphan and broken.  This is considered a problem by
     /// <see cref="CatalogueProblemProvider"/> and as such it is the users responsibility to fix it, you shouldn't worry too much about null
-    /// checking this field.</para> 
+    /// checking this field.</para>
     /// </summary>
     [NoMappingToDatabase]
     public override ColumnInfo ColumnInfo => _knownColumninfo.Value;
@@ -143,7 +143,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         {
             var cata = catalogueItem.Catalogue;
             cata.ClearAllInjections();
-                
+
             var eiMax = cata.GetAllExtractionInformation(ExtractionCategory.Any).MaxBy(ei => ei.Order);
 
             return eiMax == null ? 1 : eiMax.Order + 1;

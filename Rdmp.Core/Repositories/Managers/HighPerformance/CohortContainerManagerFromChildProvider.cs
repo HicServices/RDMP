@@ -30,7 +30,7 @@ internal class CohortContainerManagerFromChildProvider:CohortContainerManager
     }
 
     /// <summary>
-    /// Returns cached answers without running database queries 
+    /// Returns cached answers without running database queries
     /// </summary>
     /// <param name="parent"></param>
     /// <returns></returns>

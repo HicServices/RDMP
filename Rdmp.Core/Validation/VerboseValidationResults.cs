@@ -94,11 +94,11 @@ public class VerboseValidationResults
             //now record the worst case event
             if (worstConsequences.ContainsValue(Consequence.InvalidatesRow))
                 CountOfRowsInvalidated++;
-                
+
             foreach (var itemValidator in worstConsequences.Keys)
             {
                 var columnName = itemValidator.TargetProperty;
-                    
+
                 //increment the most damaging consequence count for this cell
                 DictionaryOfFailure[columnName][worstConsequences[itemValidator]]++;
             }

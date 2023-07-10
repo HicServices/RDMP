@@ -31,7 +31,7 @@ public class DitaCatalogueExtractor : ICheckable
 {
     //use http://sourceforge.net/projects/dita-ot/files/DITA-OT%20Stable%20Release/DITA%20Open%20Toolkit%201.8/DITA-OT1.8.M2_full_easy_install_bin.zip/download
     //to convert .dita files into html
-        
+
     private readonly ICatalogueRepository _repository;
     private readonly DirectoryInfo _folderToCreateIn;
 
@@ -98,7 +98,7 @@ public class DitaCatalogueExtractor : ICheckable
             foreach (var ci in cataItems)
             {
                 xml.AppendLine($"<topicref href=\"{GetFileNameForCatalogueItem(c, ci)}\"/>");
-                CreateCatalogueItemFile(c,ci);        
+                CreateCatalogueItemFile(c,ci);
             }
             xml.AppendLine($"</topicref>");
 
@@ -111,7 +111,7 @@ public class DitaCatalogueExtractor : ICheckable
 
     }
 
-      
+
 
     private string GetFileNameForCatalogueItem(Catalogue c,CatalogueItem ci)
     {
@@ -196,7 +196,7 @@ public class DitaCatalogueExtractor : ICheckable
                 continue;
             if (property.GetCustomAttributes(typeof(NoMappingToDatabase)).Any())
                 continue;
-                
+
             //Check whether property can be written to
             if (property.CanRead && (property.PropertyType is not { IsValueType: false, IsEnum: false } ||
                                      property.PropertyType == typeof(string)))
@@ -257,7 +257,7 @@ public class DitaCatalogueExtractor : ICheckable
         File.WriteAllText(Path.Combine(_folderToCreateIn.FullName, filename), xml);
     }
 
-        
+
     /// <summary>
     /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronymns etc
     /// </summary>
@@ -272,7 +272,7 @@ public class DitaCatalogueExtractor : ICheckable
             var suggestion = GetAcronymSuggestionFromCatalogueName(c.Name);
             var useSuggestion = notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue {c.Name} has no Acronym", CheckResult.Fail, null,
                 $"Assign it a suggested acronym: '{suggestion}'?"));
-                
+
             if(useSuggestion)
             {
                 c.Acronym = suggestion;
@@ -291,7 +291,7 @@ public class DitaCatalogueExtractor : ICheckable
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Duplication in acronym between Catalogues {catas[i]} and {catas[j]}, duplicate acronym value is {acronym}", CheckResult.Fail, null));
             }
-                
+
         }
     }
 

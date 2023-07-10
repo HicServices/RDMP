@@ -28,7 +28,7 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
     /// </summary>
     private bool _userMustPick;
 
-    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems activator,ExtractableDataSetCombineable sourceExtractableDataSetCombineable, ExtractionConfiguration targetExtractionConfiguration) 
+    public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems activator,ExtractableDataSetCombineable sourceExtractableDataSetCombineable, ExtractionConfiguration targetExtractionConfiguration)
         : this(activator,targetExtractionConfiguration)
     {
         SetExtractableDataSets(false,sourceExtractableDataSetCombineable.ExtractableDataSets);
@@ -51,11 +51,11 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
         //if we don't yet know what datasets to add (i.e. haven't called SetExtractableDataSets)
         if (_toadd == null)
             if (itemActivator.CoreChildProvider is DataExportChildProvider childProvider)
-            { 
+            {
                 //use the ones that are not already in the ExtractionConfiguration
                 var _datasets = childProvider.GetDatasets(targetExtractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
                 var _importableDataSets = childProvider.ExtractableDataSets.Except(_datasets)
-                        
+
                     //where it can be used in any Project OR this project only
                     .Where(ds => ds.Project_ID == null || ds.Project_ID == targetExtractionConfiguration.Project_ID).ToArray();
 
@@ -66,7 +66,7 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
                 SetImpossible("CoreChildProvider was not DataExportChildProvider");
             }            
     }
-        
+
     private void SetExtractableDataSets(bool userMustPick,params IExtractableDataSet[] toAdd)
     {
         _userMustPick = userMustPick;

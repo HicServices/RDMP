@@ -15,7 +15,7 @@ using Rdmp.Core.Validation;
 namespace Rdmp.UI.Validation;
 
 /// <summary>
-/// Allows you to recover from a mismatch in columns in a Catalogue when validation rules were originally written for it and the state it is in now.  You will automatically see this 
+/// Allows you to recover from a mismatch in columns in a Catalogue when validation rules were originally written for it and the state it is in now.  You will automatically see this
 /// form when editting the Validation rules on a Catalogue that has had CatalogueItems that previously had validation removed/renamed.  The Form prompts you to drag and drop matching columns
 /// to indicate whether any new columns are symantically the same as the old ones that had disapeared (e.g. where a column has changed names).  Also allows you to delete the orphans (validation
 /// rules for columns that are no longer there/extractable).
@@ -23,7 +23,7 @@ namespace Rdmp.UI.Validation;
 public partial class ResolveMissingTargetPropertiesUI : Form
 {
     private string[] AvailableColumns { get; set; }
-        
+
     public ResolveMissingTargetPropertiesUI( Validator validator, ExtractionInformation[] availableColumns)
     {
         if (validator == null && availableColumns == null)
@@ -94,7 +94,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
         _dragTarget = null;
     }
 
-      
+
     private void lbMissingReferences_MouseMove(object sender, MouseEventArgs e)
     {
         if(_dragTarget != null && MouseButtons == MouseButtons.Left)

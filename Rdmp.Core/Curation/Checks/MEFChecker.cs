@@ -41,7 +41,7 @@ public class MEFChecker : ICheckable
 
     /// <summary>
     /// Looks for the class name within the defined Types in all assemblies loaded in MEF.  If you pass an ICheckNotifier which responds to ProposedFixes and the class
-    /// is found under a different namespace (e.g. due to the coder of the plugin refactoring the class to a new location in his assembly) then the callback 
+    /// is found under a different namespace (e.g. due to the coder of the plugin refactoring the class to a new location in his assembly) then the callback
     /// userAcceptedSubstitution will be invoked.  Use AcceptAllCheckNotifier if you want the callback to always be called.
     /// </summary>
     /// <param name="notifier"></param>

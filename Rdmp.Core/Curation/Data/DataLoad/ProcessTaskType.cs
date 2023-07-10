@@ -21,21 +21,21 @@ public enum ProcessTaskType
     /// ProcessTask is to run an SQL file directly on the server
     /// </summary>
     SQLFile,
-        
+
     /// <summary>
-    /// ProcessTask is to instantiate the IAttacher class Type specified in Path and hydrate its [DemandsInitialization] properties with values matching 
+    /// ProcessTask is to instantiate the IAttacher class Type specified in Path and hydrate its [DemandsInitialization] properties with values matching
     /// ProcessTaskArguments and run it in the specified load stage in an AttacherRuntimeTask wrapper.
     /// </summary>
     Attacher,
 
     /// <summary>
-    /// ProcessTask is to instantiate the IDataProvider class Type specified in Path and hydrate its [DemandsInitialization] properties with values matching 
+    /// ProcessTask is to instantiate the IDataProvider class Type specified in Path and hydrate its [DemandsInitialization] properties with values matching
     /// ProcessTaskArguments and run it in the specified load stage in an DataProviderRuntimeTask wrapper.
     /// </summary>
     DataProvider,
-        
+
     /// <summary>
-    /// ProcessTask is to instantiate the IMutilateDataTables class Type specified in Path and hydrate its [DemandsInitialization] properties with values matching 
+    /// ProcessTask is to instantiate the IMutilateDataTables class Type specified in Path and hydrate its [DemandsInitialization] properties with values matching
     /// ProcessTaskArguments and run it in the specified load stage in an MutilateDataTablesRuntimeTask wrapper.
     /// </summary>
     MutilateDataTable

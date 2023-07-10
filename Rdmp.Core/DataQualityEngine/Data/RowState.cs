@@ -37,7 +37,7 @@ public class RowState
         ValidatorXML = r["ValidatorXML"].ToString();
     }
 
-        
+
 
     public RowState(Evaluation evaluation, int dataLoadRunID, int correct, int missing, int wrong,int invalid, string validatorXml,string pivotCategory, DbConnection con, DbTransaction transaction)
     {

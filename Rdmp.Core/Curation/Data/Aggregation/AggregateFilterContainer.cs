@@ -16,18 +16,18 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Aggregation;
 
 /// <summary>
-/// All AggregateFilters must be contained within an AggregateFilterContainer at Query Generation time.  This tells QueryBuilder how to use brackets and whether to AND / OR 
+/// All AggregateFilters must be contained within an AggregateFilterContainer at Query Generation time.  This tells QueryBuilder how to use brackets and whether to AND / OR
 /// the various filter lines.  The AggregateFilterContainer serves the same purpose as the FilterContainer in Data Export Manager but for AggregateConfigurations (GROUP BY queries)
 /// 
-/// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
+/// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer).
 /// The class deals with all this transparently via GetSubContainers.</para>
 /// </summary>
 public class AggregateFilterContainer : ConcreteContainer, IDisableable
 {
     #region Database Properties
-        
+
     private bool _isDisabled;
-        
+
 
     /// <inheritdoc/>
     public bool IsDisabled
@@ -91,7 +91,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     }
 
     /// <summary>
-    /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those 
+    /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those
     /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
     /// </summary>
     /// <returns></returns>
@@ -135,7 +135,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
 
     /// <summary>
     /// Returns the AggregateConfiguration for which this container is either the root container for or part of the root container subcontainer tree.
-    /// Returns null if the container is somehow an orphan. 
+    /// Returns null if the container is somehow an orphan.
     /// </summary>
     /// <returns></returns>
     public AggregateConfiguration GetAggregate()

@@ -73,7 +73,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
         return dataFlowEngine;
     }
-        
+
     /// <summary>
     /// Returns the thing that is not null or throws an exception because both are blank.  also throws if both are populated
     /// </summary>
@@ -157,7 +157,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     }
 
     /// <summary>
-    /// Sets the value of a property on instance toReturn. 
+    /// Sets the value of a property on instance toReturn.
     /// </summary>
     /// <param name="toBuild">IPipelineComponent which is the persistence record - the template of what to build</param>
     /// <param name="toReturn">An instance of the Class referenced by IPipelineComponent.Class (or in the case of [DemandsNestedInitializationAttribute] a reference to the nested property)</param>

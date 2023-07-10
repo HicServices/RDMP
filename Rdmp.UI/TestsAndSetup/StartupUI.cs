@@ -253,7 +253,7 @@ public partial class StartupUI : Form, ICheckNotifier
                 break;
 
             case RDMPPlatformDatabaseStatus.RequiresPatching:
-                    
+
                 if (MessageBox.Show($"Patching Required on database of type {eventArgs.Patcher.Name}", "Patch",
                         MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
@@ -310,7 +310,7 @@ public partial class StartupUI : Form, ICheckNotifier
                 break;
             case CheckResult.Warning:
             case CheckResult.Fail:
-                    
+
                 //MEF failures are only really warnings
                 args.Result = CheckResult.Warning;
                 break;
@@ -322,7 +322,7 @@ public partial class StartupUI : Form, ICheckNotifier
         return ragSmiley1.OnCheckPerformed(args);
     }
 
-        
+
     private void StartupUIMainForm_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Escape)
@@ -338,7 +338,7 @@ public partial class StartupUI : Form, ICheckNotifier
             if ( ragSmiley1.IsFatal())
                 DoNotContinue = true;
     }
-        
+
     private void BtnChoosePlatformDatabases_Click(object sender, EventArgs e)
     {
         _choosePlatformsUI = new ChoosePlatformDatabasesUI(_startup.RepositoryLocator);

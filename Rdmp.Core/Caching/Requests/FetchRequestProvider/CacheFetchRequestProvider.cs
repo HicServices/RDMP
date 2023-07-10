@@ -18,7 +18,7 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
 
     private ICacheFetchRequest _initialRequest;
     public ICacheFetchRequest Current { get; private set; }
-        
+
     /// <summary>
     /// Sets up the class to generate <see cref="ICacheFetchRequest"/> for the given <see cref="ICacheProgress"/>
     /// </summary>

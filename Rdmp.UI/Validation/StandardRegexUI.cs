@@ -23,7 +23,7 @@ namespace Rdmp.UI.Validation;
 /// M, F or U with nothing else allowed.  Rather than having each data analyst type the same regular expression into the validation rules of each column you can create a StandardRegex.
 /// This StandardRegex will then be available as a validation rule for any column (See <see cref="ValidationSetupUI"/>).
 /// 
-/// <para>Because regular expressions can get pretty complicated both a concept name and a verbose description that explains what the pattern matches and what it won't match.  You can also 
+/// <para>Because regular expressions can get pretty complicated both a concept name and a verbose description that explains what the pattern matches and what it won't match.  You can also
 /// test your implementation by typing values into the 'Testing Box' and clicking Test.  For example if you typed in 'Male' with the above pattern it would fail validation because it
 /// is not either an M or a F or a U.  If your pattern was [MFU] then it would pass because it contains an M! </para>
 /// </summary>
@@ -54,7 +54,7 @@ public partial class StandardRegexUI : StandardRegexUI_Design, ISaveableUI
         Bind(tbRegex,"Text","Regex", r=>r.Regex);
         Bind(tbDescription,"Text","Description", r => r.Description);
     }
-        
+
     private void btnTest_Click(object sender, EventArgs e)
     {
         if (string.IsNullOrWhiteSpace(tbTesting.Text))

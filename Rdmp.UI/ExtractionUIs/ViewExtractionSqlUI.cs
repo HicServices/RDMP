@@ -31,7 +31,7 @@ namespace Rdmp.UI.ExtractionUIs;
 /// Allows you to view the Extraction SQL that is built by the QueryBuilder when extracting or running data quality engine against a dataset (Catalogue).  Includes options for
 /// you to display only Core extraction fields or also supplemental / special approval.
 /// 
-/// <para>If you have an ExtractionFilters configured on your Catalogue then you can tick them to view their SQL implementation.  Because these are master filters and this dialog 
+/// <para>If you have an ExtractionFilters configured on your Catalogue then you can tick them to view their SQL implementation.  Because these are master filters and this dialog
 /// is for previewing only, no AND/OR container trees are included in the WHERE logic (See ExtractionFilterUI for more info about filters).</para>
 /// 
 /// <para>If for some reason you see an error instead of your extraction SQL then read the description and take the steps it suggests (e.g. if it is complaining about not knowing
@@ -47,14 +47,14 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
     private ToolStripButton rbInternal = new("Internal");
 
     private ToolStripButton btnRun = new("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
-        
+
     private Scintilla QueryPreview;
     public ViewExtractionSqlUI()
     {
         InitializeComponent();
-            
+
         #region Query Editor setup
-            
+
         QueryPreview = new ScintillaTextEditorFactory().Create();
         QueryPreview.ReadOnly = true;
 
@@ -90,7 +90,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
     }
 
     private bool bLoading;
-        
+
 
     private void RefreshUIFromDatabase()
     {
@@ -105,14 +105,14 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
             bLoading = true;
 
             var extractionInformations = GetSelectedExtractionInformations();
-                
+
             //add the available filters
             SetupAvailableFilters(extractionInformations);
-                
+
             //generate SQL -- only make it readonly after setting the .Text otherwise it ignores the .Text setting even though it is programatical
             QueryPreview.ReadOnly = false;
 
-                
+
             var collection = GetCollection(extractionInformations);
 
             QueryPreview.Text = collection.GetSql();
@@ -213,7 +213,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
         CommonFunctionality.AddToMenu(new ExecuteCommandReOrderColumns(Activator, _catalogue));
             
     }
-        
+
     public override string GetTabName()
     {
         return $"{base.GetTabName()}(SQL)";

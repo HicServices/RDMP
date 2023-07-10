@@ -18,7 +18,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 
 /// <summary>
-/// Shows a given Aggregate Graph with an additional IFilter applied.  This can be used for checking that a filter SQL is working how you intend by giving you a view you are already 
+/// Shows a given Aggregate Graph with an additional IFilter applied.  This can be used for checking that a filter SQL is working how you intend by giving you a view you are already
 /// familiar with (the graph you created) but with the addition of the filter.  You can also launch the graph normally (See AggregateGraph) to see a side by side comparison
 /// </summary>
 public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
@@ -29,7 +29,7 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
     {
         InitializeComponent();
     }
-        
+
     protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration)
     {
         var basicQueryBuilder =  base.GetQueryBuilder(aggregateConfiguration);

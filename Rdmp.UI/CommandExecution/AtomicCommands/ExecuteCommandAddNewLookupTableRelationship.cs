@@ -53,7 +53,7 @@ public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecuti
             {
                 //make sure they really wanted to do this?
                 if (YesNo( GetLookupConfirmationText(), "Create Lookup"))
-                { 
+                {
                     //get them to pick a Catalogue the table provides descriptions for
                     if(!SelectOne(_lookupTableInfoIfKnown.Repository, out cata))
                         return;
@@ -77,7 +77,7 @@ public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecuti
 
     private string GetLookupConfirmationText()
     {
-        return 
+        return
             $@"You have chosen to make '{_lookupTableInfoIfKnown }' a Lookup Table (e.g T = Tayside, F=Fife etc).  In order to do this you will need to pick which Catalogue the column
 provides a description for (a given TableInfo can be a Lookup for many columns in many datasets).";
     }

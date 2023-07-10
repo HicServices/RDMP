@@ -99,10 +99,10 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
             return;
         }
 
-        foreach (var discoveredTable in selected) 
-        { 
+        foreach (var discoveredTable in selected)
+        {
             var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, discoveredTable);
-                
+
             //import the table
             importer.DoImport(out var ti, out var cis);
 

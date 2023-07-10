@@ -21,7 +21,7 @@ public class BoundDouble :  Bound
 
     [Description("Optional, Requires the value being validated to be LOWER than this number")]
     public double? Upper { get; set; }
-        
+
     public BoundDouble()
     {
         Inclusive = true;
@@ -48,7 +48,7 @@ public class BoundDouble :  Bound
         {
             return new ValidationFailure("Invalid format for double ",this);
         }
-          
+
 
         if (Lower.HasValue || Upper.HasValue)
             if (value != null && !IsWithinRange(v))
@@ -57,7 +57,7 @@ public class BoundDouble :  Bound
         if (value != null && !IsWithinRange(v, otherColumns, otherColumnNames))
             return new ValidationFailure(CreateViolationReportUsingFieldNames(v), this);
 
-//            if (v < Lower || v > Upper) 
+//            if (v < Lower || v > Upper)
 //                throw new ValidationException("Value [" + v + "] out of range. Expected a value between " + Lower + " and " + Upper + ".");
 
         return null;
@@ -157,7 +157,7 @@ public class BoundDouble :  Bound
     {
         return $"[{s}]";
     }
-        
+
     public BoundDouble And(int upper)
     {
         Upper = upper;

@@ -11,7 +11,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.QueryBuilding.Options;
 
 /// <summary>
-/// Describes which parts of an <see cref="AggregateBuilder"/> are compatible with a given <see cref="AggregateConfiguration"/> under a given usage case (e.g. acting as an 
+/// Describes which parts of an <see cref="AggregateBuilder"/> are compatible with a given <see cref="AggregateConfiguration"/> under a given usage case (e.g. acting as an
 /// aggregate graph).
 /// </summary>
 public interface IAggregateBuilderOptions
@@ -39,7 +39,7 @@ public interface IAggregateBuilderOptions
     IColumn[] GetAvailableWHEREColumns(AggregateConfiguration aggregate);
 
     /// <summary>
-    /// Indicates whether a given part of functionality in <see cref="AggregateBuilder"/> is compatible with the <see cref="AggregateConfiguration"/> given 
+    /// Indicates whether a given part of functionality in <see cref="AggregateBuilder"/> is compatible with the <see cref="AggregateConfiguration"/> given
     /// its current state and role it is playing e.g. as a graph, cohort set etc
     /// </summary>
     /// <param name="section">The functionality you want to know if is supported</param>
@@ -56,7 +56,7 @@ public interface IAggregateBuilderOptions
     IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate);
 
     /// <summary>
-    /// Gets <see cref="ISqlParameter"/> declared by the <see cref="AggregateConfiguration"/> combined with any that exist 
+    /// Gets <see cref="ISqlParameter"/> declared by the <see cref="AggregateConfiguration"/> combined with any that exist
     /// at a global environment level.
     /// </summary>
     /// <param name="aggregate"></param>
@@ -73,13 +73,13 @@ public interface IAggregateBuilderOptions
 
 
 /// <summary>
-/// Indicates whether or not a given <see cref="AggregateConfiguration"/> (GROUP BY) can have a count(*), max(x) etc column given the 
+/// Indicates whether or not a given <see cref="AggregateConfiguration"/> (GROUP BY) can have a count(*), max(x) etc column given the
 /// current configuration and role it is playing.
 /// </summary>
 public enum CountColumnRequirement
 {
     /// <summary>
-    /// <see cref="AggregateConfiguration"/> cannot have a count/max etc column.  
+    /// <see cref="AggregateConfiguration"/> cannot have a count/max etc column.
     /// </summary>
     CannotHaveOne,
 

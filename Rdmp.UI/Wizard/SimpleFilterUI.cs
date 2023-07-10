@@ -21,7 +21,7 @@ namespace Rdmp.UI.Wizard;
 /// <summary>
 /// Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to view and edit the parameters (if any) of a Filter you have added (or was Mandatory) on a dataset.  For example if
 /// you have a Filter 'Drug Prescribed' on the dataset 'Prescribing' typing "'Paracetamol'" into the parameter will likely restrict the cohort to matching only those patients who have ever
-/// been prescribed Paracetamol.  
+/// been prescribed Paracetamol.
 /// 
 /// <para>If the control is Readonly (disabled / greyed out) then it is probably a Mandatory filter on your dataset and you will not be able to remove it.</para>
 /// 
@@ -31,7 +31,7 @@ public partial class SimpleFilterUI : UserControl
 {
     private readonly IActivateItems _activator;
     private readonly ExtractionFilter _filter;
-        
+
     public event Action RequestDeletion;
 
     private int rowHeight = 30;
@@ -120,7 +120,7 @@ public partial class SimpleFilterUI : UserControl
             ddKnownGoodValues.DataSource = l;
             pbKnownValueSets.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet)
                 .ImageToBitmap();
-                
+
             pbKnownValueSets.Left = lblFilterName.Right;
             ddKnownGoodValues.Left = pbKnownValueSets.Right;
 

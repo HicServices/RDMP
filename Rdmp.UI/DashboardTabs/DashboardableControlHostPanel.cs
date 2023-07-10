@@ -79,7 +79,7 @@ public partial class DashboardableControlHostPanel : RDMPUserControl
         if (_editMode)
             e.Graphics.FillRectangle(Brushes.Black, 0, 0, Width, Height);
     }
-        
+
     public void NotifyEditModeChange(bool isEditModeOn)
     {
         _editMode = isEditModeOn;

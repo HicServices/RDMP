@@ -69,7 +69,7 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
         {
             progressUi.ShowRunning(false);
 
-            //then on the UI thread 
+            //then on the UI thread
             if(s.IsFaulted)
                 return;
 

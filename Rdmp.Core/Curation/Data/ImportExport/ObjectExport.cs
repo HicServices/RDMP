@@ -24,7 +24,7 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
     #region Database Properties
 
     private string _sharingUID;
-        
+
     #endregion
 
     /// <summary>
@@ -36,7 +36,7 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
         get => _sharingUID;
         set => SetField(ref _sharingUID, value);
     }
-        
+
     /// <inheritdoc cref="SharingUID"/>
     [NoMappingToDatabase]
     public Guid SharingUIDAsGuid => Guid.Parse(SharingUID);

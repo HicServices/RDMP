@@ -118,7 +118,7 @@ internal class NightmareDatasets : DataGenerator
                     }
 
                     first = false;
-                }           
+                }
             }
 
             // half of the Catalogues have IsExtractionIdentifier
@@ -214,13 +214,13 @@ internal class NightmareDatasets : DataGenerator
         {
             var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository,
                 $"Cohort Query {GetRandomGPCode(r)}");
-                
+
             // 25% of cics are associated with a specific project
             if(r.Next(4) == 0)
             {
                 var projSpecific = new ProjectCohortIdentificationConfigurationAssociation(_repos.DataExportRepository, Projects.GetRandom(r), cic);
             }
-                
+
         }
     }
 

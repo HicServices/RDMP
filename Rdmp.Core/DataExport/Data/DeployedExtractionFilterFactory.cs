@@ -27,7 +27,7 @@ public class DeployedExtractionFilterFactory : IFilterFactory
     {
         _repository = repository;
     }
-    
+
     /// <inheritdoc/>
     public IFilter CreateNewFilter(string name)
     {

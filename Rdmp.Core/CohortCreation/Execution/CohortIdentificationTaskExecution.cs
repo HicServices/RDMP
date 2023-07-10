@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the 
+/// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the
 /// identifiers themselves (once complete), cancellation token etc.
 /// </summary>
 public class CohortIdentificationTaskExecution: IDisposable
@@ -89,7 +89,7 @@ public class CohortIdentificationTaskExecution: IDisposable
             
     }
 
-        
+
     public void GetCohortAsync(int commandTimeout)
     {
         if(Identifiers != null)

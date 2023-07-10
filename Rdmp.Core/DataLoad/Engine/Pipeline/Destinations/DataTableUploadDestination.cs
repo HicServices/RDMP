@@ -29,9 +29,9 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
 /// <summary>
-/// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform 
+/// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform
 /// targets (MySql , Sql Server etc).  Normally the SQL Data Types and column names will be computed from the DataTable and a table will be created with the
-/// name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in which case a basic bulk insert will take 
+/// name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in which case a basic bulk insert will take
 /// place.
 /// </summary>
 public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>, IPipelineRequirement<DiscoveredDatabase>
@@ -46,10 +46,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
     [DemandsInitialization(AllowResizingColumnsAtUploadTime_Description, DefaultValue = true)]
     public bool AllowResizingColumnsAtUploadTime { get; set; }
-        
+
     [DemandsInitialization(AllowLoadingPopulatedTables_Description, DefaultValue = false)]
     public bool AllowLoadingPopulatedTables { get; set; }
-        
+
     [DemandsInitialization(AlterTimeout_Description, DefaultValue = 300)]
     public int AlterTimeout { get; set; }
 
@@ -67,11 +67,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public string TargetTableName { get; private set; }
 
     /// <summary>
-    /// True if a new table was created or re-created by the execution of this destination.  False if 
+    /// True if a new table was created or re-created by the execution of this destination.  False if
     /// the table already existed e.g. data was simply added
     /// </summary>
     public bool CreatedTable { get; private set; }
-        
+
     private IBulkCopy _bulkcopy;
     private int _affectedRows;
 
@@ -133,7 +133,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             else
             if (string.IsNullOrWhiteSpace(toProcess.TableName))
                 throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
-            else                
+            else
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
         }
 
@@ -161,7 +161,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (_discoveredTable.Exists())
             {
                 tableAlreadyExistsButEmpty = true;
-                    
+
                 if(!AllowLoadingPopulatedTables)
                     if (_discoveredTable.IsEmpty())
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -169,14 +169,14 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     else
                         throw new Exception(
                             $"There is already a table called {TargetTableName} at the destination {_database}");
-                    
+
                 if (AllowResizingColumnsAtUploadTime)
                     _dataTypeDictionary = _discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetGuesser(),StringComparer.CurrentCultureIgnoreCase);
             }
             else
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Determined that the table name {TargetTableName} is unique at destination {_database}"));
-                
+
             //create connection to destination
             if (!tableAlreadyExistsButEmpty)
             {
@@ -193,7 +193,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
             _managedConnection = _server.BeginNewTransactedConnection();
             _bulkcopy = _discoveredTable.BeginBulkInsert(Culture,_managedConnection.ManagedTransaction);
-                
+
             _firstTime = false;
         }
 
@@ -206,7 +206,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             swTimeSpentWriting.Start();
 
             _affectedRows += _bulkcopy.Upload(toProcess);
-                    
+
             swTimeSpentWriting.Stop();
             listener.OnProgress(this, new ProgressEventArgs($"Uploading to {TargetTableName}", new ProgressMeasurement(_affectedRows, ProgressType.Records), swTimeSpentWriting.Elapsed));
         }
@@ -232,7 +232,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             foreach (var symbol in invalidSymbols)
             {
                 toProcess.TableName = toProcess.TableName.Replace(symbol.ToString(), "");
-            }   
+            }
         }
 
         foreach(DataColumn col in toProcess.Columns)
@@ -284,11 +284,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
         var tbl = _database.ExpectTable(TargetTableName);
         var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
-            
+
         //Get the current estimates from the datatype computer
         var oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess),StringComparer.CurrentCultureIgnoreCase);
 
-        //columns in 
+        //columns in
         var sharedColumns = new List<string>();
 
         //for each destination column
@@ -297,16 +297,16 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (toProcess.Columns.Contains(col))
                 sharedColumns.Add(col); //it is a shared column
 
-            
-            
-        //adjust the computer to 
+
+
+        //adjust the computer to
         //for each shared column adjust the corresponding computer for all rows
         Parallel.ForEach(sharedColumns, col =>
         {
             var guesser = _dataTypeDictionary[col];
             foreach (DataRow row in toProcess.Rows)
                 guesser.AdjustToCompensateForValue(row[col]);
-        });            
+        });
 
         //see if any have changed
         foreach (DataColumn column in toProcess.Columns)
@@ -328,20 +328,20 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Considered resizing column '{column}' from '{col.DataType.SQLType }' to '{ newSqlType }' but decided not to because:{reason}"));
                     continue;
                 }
-                    
+
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                     $"Resizing column '{column}' from '{col.DataType.SQLType}' to '{newSqlType}'"));
 
                 //try changing the Type to the legit type
                 col.DataType.AlterTypeTo(newSqlType, _managedConnection.ManagedTransaction, AlterTimeout);
-                    
+
                 changesMade = true;
             }
 
             if(changesMade)
                 _bulkcopy.InvalidateTableSchema();
         }
-            
+
         swMeasuringStrings.Stop();
         listener.OnProgress(this,new ProgressEventArgs("Measuring DataType Sizes",new ProgressMeasurement(_affectedRows + toProcess.Rows.Count,ProgressType.Records),swMeasuringStrings.Elapsed));
     }
@@ -384,7 +384,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 if (pipelineFailureExceptionIfAny != null)
                 {
                     _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
-                        
+
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back successfully"));
 
                     _bulkcopy?.Dispose();
@@ -409,7 +409,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         {
             //Find the columns in the destination
             var allColumns = _discoveredTable.DiscoverColumns();
-                
+
             //if there are not yet any primary keys
             if(allColumns.All(c=>!c.IsPrimaryKey))
             {
@@ -469,7 +469,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         _database = value;
         _server = value.Server;
     }
-        
+
     /// <summary>
     /// Declare that the column of name columnName (which might or might not appear in DataTables being uploaded) should always have the associated database type (e.g. varchar(59))
     /// The columnName is Case insensitive.  Note that if AllowResizingColumnsAtUploadTime is true then these datatypes are only the starting types and might get changed later to

@@ -44,7 +44,7 @@ public interface IActivateItems:IBasicActivateItems
     IArrangeWindows WindowArranger { get;}
 
     Form ShowWindow(Control singleControlForm, bool asDocument = false);
-        
+
     /// <summary>
     /// Component for starting drag or copy operations
     /// </summary>
@@ -54,7 +54,7 @@ public interface IActivateItems:IBasicActivateItems
     /// Component for suggesting completion options for an ongoing drag or paste
     /// </summary>
     ICommandExecutionFactory CommandExecutionFactory { get;}
-        
+
     /// <summary>
     /// Records when objects are accessed by the user through the UI to allow navigation to recent objects
     /// </summary>
@@ -78,11 +78,11 @@ public interface IActivateItems:IBasicActivateItems
     /// <returns></returns>
     T Activate<T>(IPersistableObjectCollection collection) where T : Control,IObjectCollectionControl, new();
 
-        
+
     bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
     bool HasProblem(object model);
     string DescribeProblemIfAny(object model);
-        
+
 
     /// <summary>
     /// Returns xml doc comments from the CommentStore for the given class (or null if it is undocumented)
@@ -102,7 +102,7 @@ public interface IActivateItems:IBasicActivateItems
     /// <param name="form"></param>
     /// <returns></returns>
     DialogResult ShowDialog(Form form);
-        
+
     /// <summary>
     /// Closes the Form <paramref name="f"/> and reports the <paramref name="reason"/> to the user
     /// in a highly visible way
@@ -140,7 +140,7 @@ public interface IActivateItems:IBasicActivateItems
     /// <param name="initialSelectionIfAny">Initial root objects to be in scope (or null if not known)</param>
     /// <param name="initialSearch">The value to set the search textbox to on load if objects are being selected during this operation, or null.</param>
     void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny, string initialSearch);
-        
+
     /// <summary>
     /// Returns all currently open session uis
     /// </summary>

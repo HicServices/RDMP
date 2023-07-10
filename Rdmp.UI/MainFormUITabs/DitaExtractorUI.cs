@@ -17,7 +17,7 @@ namespace Rdmp.UI.MainFormUITabs;
 
 /// <summary>
 /// RDMP supports extracting all your metadata into DITA format (http://dita.xml.org/ - DITA OASIS Standard).  This is an XML standard with good tool support.  This form lets you
-/// export your entire metadata descriptive database into a collection of DITA files.  This might be useful to you for some reason (e.g. to produce offline PDFs etc) but really 
+/// export your entire metadata descriptive database into a collection of DITA files.  This might be useful to you for some reason (e.g. to produce offline PDFs etc) but really
 /// the recommended route is to use the built in metadata reports (e.g. MetadataReportUI).  Alternatively you can run queries directly on the RDMP Data Catalogue database
 /// which is a super relational database with many tables (Catalogue, CatalogueItem, SupportingDocument etc etc).
 /// 

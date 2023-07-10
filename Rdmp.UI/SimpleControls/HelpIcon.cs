@@ -32,7 +32,7 @@ public partial class HelpIcon : UserControl
     {
         InitializeComponent();
     }
-        
+
     public void SetHelpText(string title, string hoverText, HelpWorkflow workflow = null)
     {
         _workFlow = workflow;

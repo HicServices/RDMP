@@ -101,7 +101,7 @@ public abstract partial class Patcher:IPatcher
 
         var files = new SortedDictionary<string, Patch>();
 
-        //get all resources out of 
+        //get all resources out of
         foreach (var manifestResourceName in assembly.GetManifestResourceNames())
         {
             var match = upgradePatchesRegexPattern.Match(manifestResourceName);

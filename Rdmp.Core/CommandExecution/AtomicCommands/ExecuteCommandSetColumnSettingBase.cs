@@ -21,7 +21,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
     private readonly string _commandName;
     private ConcreteColumn[] _selectedDataSetColumns;
     private ConcreteColumn[] _alreadyMarkedInConfiguration;
-        
+
     /// <summary>
     /// Explicit columns to pick rather than prompting to choose at runtime
     /// </summary>
@@ -133,7 +133,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         }
         else
         {
-            if (SelectMany(new DialogArgs { 
+            if (SelectMany(new DialogArgs {
                     InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
                     AllowSelectingNull = true,
                     WindowTitle = $"Set {_commandProperty}",

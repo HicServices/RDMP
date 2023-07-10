@@ -20,7 +20,7 @@ namespace Rdmp.Core.DataExport.Data;
 public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>, IInjectKnown<IExtractionConfiguration>, IInjectKnown<ISelectedDataSetsForcedJoin[]>,IDeletableWithCustomMessage
 {
     #region Database Properties
-        
+
     private int _extractionConfiguration_ID;
     private int _extractableDataSet_ID;
     private int? _rootFilterContainer_ID;
@@ -115,7 +115,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
         ClearAllInjections();
         InjectKnown(dataSet);
     }
-        
+
     /// <summary>
     /// Returns the <see cref="ExtractableDataSet"/> name
     /// </summary>

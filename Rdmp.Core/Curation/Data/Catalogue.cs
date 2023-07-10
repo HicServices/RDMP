@@ -38,7 +38,7 @@ namespace Rdmp.Core.Curation.Data;
 public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
 {
     #region Database Properties
-        
+
     private string _acronym;
     private string _name;
     private string _folder = FolderHelper.Root;
@@ -85,10 +85,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     private bool _isInternalDataset;
     private bool _isColdStorageDataset;
     private int? _liveLoggingServerID;
-        
+
     private Lazy<CatalogueItem[]> _knownCatalogueItems;
-        
-        
+
+
     /// <inheritdoc/>
     [Unique]
     [DoNotImportDescriptions(AllowOverwriteIfBlank = true)]
@@ -399,7 +399,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Identifier for a ticket in your <see cref="ITicketingSystem"/> for documenting / auditing work on the Catalogue and for 
+    /// Identifier for a ticket in your <see cref="ITicketingSystem"/> for documenting / auditing work on the Catalogue and for
     /// recording issues (if you are not using the RDMP issue system (see CatalogueItemIssue))
     /// </summary>
     public string Ticket
@@ -407,7 +407,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         get => _ticket;
         set => SetField(ref _ticket, value);
     }
-        
+
     /// <inheritdoc/>
     [DoNotExtractProperty]
     public string LoggingDataTask
@@ -435,7 +435,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [DoNotExtractProperty]
-    [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference, ValueGetter=nameof(GetAllExtractionInformation))] 
+    [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference, ValueGetter=nameof(GetAllExtractionInformation))]
     public int? PivotCategory_ExtractionInformation_ID
     {
         get => _pivotCategoryExtractionInformationID;
@@ -477,7 +477,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         get => _liveLoggingServerID;
         set => SetField(ref  _liveLoggingServerID, value);
     }
-        
+
     /// <inheritdoc/>
     public DateTime? DatasetStartDate
     {
@@ -549,7 +549,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         /// No CatalogueType has been specified
         /// </summary>
         Unknown,
-            
+
         /// <summary>
         /// Catalogue data relates to a research study
         /// </summary>
@@ -563,7 +563,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         /// <summary>
         /// Catalogue data is collected by a national registry
         /// </summary>
-        NationalRegistry, 
+        NationalRegistry,
 
         /// <summary>
         /// Catalogue data is collected by a healthcare provider
@@ -629,7 +629,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         /// No granularity has been specified
         /// </summary>
         Unknown,
-            
+
         /// <summary>
         /// Contains data relating to multiple nations
         /// </summary>
@@ -668,7 +668,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Declares a new empty virtual dataset with the given Name.  This will not have any virtual columns and will not be tied to any underlying tables.  
+    /// Declares a new empty virtual dataset with the given Name.  This will not have any virtual columns and will not be tied to any underlying tables.
     /// 
     /// <para>The preferred method of getting a Catalogue is to use <see cref="TableInfoImporter"/> and <see cref="ForwardEngineerCatalogue"/></para>
     /// </summary>
@@ -691,7 +691,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         if (LiveLoggingServer_ID == null)
         {
             var liveLoggingServer = repository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
-                
+
             if(liveLoggingServer != null)
                 LiveLoggingServer_ID = liveLoggingServer.ID;
         }
@@ -735,7 +735,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                 Type = typeAsEnum;
             else
                 throw new Exception($" r[\"Type\"] had value {type} which is not contained in Enum CatalogueType");
-                    
+
         }
 
         //Periodicity - with handling for invalid enum values listed in database
@@ -763,7 +763,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             else
                 throw new Exception(
                     $" r[\"granularity\"] had value {granularity} which is not contained in Enum CatalogueGranularity");
-              
+
         }
 
         Geographical_coverage = r["Geographical_coverage"].ToString();
@@ -825,7 +825,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         ClearAllInjections();
     }
-        
+
     internal Catalogue(ShareManager shareManager, ShareDefinition shareDefinition)
     {
         shareManager.UpsertAndHydrate(this,shareDefinition);
@@ -853,7 +853,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos 
+    /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -900,7 +900,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
                 using var con = server.GetConnection();
                 con.Open();
-                        
+
                 string sql;
                 try
                 {
@@ -909,7 +909,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                         TopX = 1
                     };
                     qb.AddColumnRange(extractionInformations);
-                    
+
                     sql = qb.SQL;
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}", CheckResult.Success));
@@ -921,7 +921,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                             CheckResult.Fail, e));
                     return;
                 }
-                
+
                 using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
                 {
                     cmd.CommandTimeout = 10;
@@ -933,7 +933,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
                 }
-                        
+
                 con.Close();
             }
             catch (Exception e)
@@ -965,7 +965,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         return lookupTables.ToArray();
     }
-        
+
     /// <inheritdoc/>
     public void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
     {
@@ -1004,7 +1004,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters).ToArray();
     }
-        
+
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase, out IDataAccessPoint distinctAccessPoint)
     {
@@ -1053,7 +1053,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <summary>
     /// Use to set LoadMetadata to null without first performing Disassociation checks.  This should only be used for in-memory operations such as cloning
-    /// This (if saved to the original database it was read from) could create orphans - load stages that relate to the disassociated catalogue.  But if 
+    /// This (if saved to the original database it was read from) could create orphans - load stages that relate to the disassociated catalogue.  But if
     /// you are cloning a catalogue and dropping the LoadMetadata then you won't be saving the dropped state to the original database ( you will be saving it
     /// to the clone database so it won't be a problem).
     /// </summary>
@@ -1069,14 +1069,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public LogManager GetLogManager()
     {
-        if(LiveLoggingServer_ID == null) 
+        if(LiveLoggingServer_ID == null)
             throw new Exception($"No live logging server set for Catalogue {Name}");
                 
         var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
         return new LogManager(server);
     }
-        
+
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
@@ -1101,7 +1101,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         return Repository.GetAllObjects<SupportingDocument>().Where(o => Fetch(o, fetch)).ToArray();
     }
-        
+
     /// <inheritdoc/>
     public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
     {

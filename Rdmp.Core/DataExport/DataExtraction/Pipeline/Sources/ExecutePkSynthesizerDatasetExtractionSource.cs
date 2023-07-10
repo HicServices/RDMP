@@ -22,7 +22,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 
 /// <summary>
 /// Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on <see cref="IColumn.IsPrimaryKey"/> of the
-/// columns extracted and is not garuanteed to actually be unique (depending on how you have configured the flags).  
+/// columns extracted and is not garuanteed to actually be unique (depending on how you have configured the flags).
 /// 
 /// <para>The primary use case for this is when extracting to database where you want to have meaningful primary keys</para>
 /// </summary>
@@ -64,7 +64,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
 
         return Request.QueryBuilder.SQL;
     }
-        
+
     private IEnumerable<ITableInfo> GetProperTables()
     {
         if(Request.QueryBuilder.SQLOutOfDate)
@@ -86,7 +86,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
 
         if (catalogueItemPkColumns.Any())
             chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c => catalogueItemPkColumns.Contains(c.ColumnName, StringComparer.CurrentCultureIgnoreCase)).ToArray();
-        else 
+        else
         if (_synthesizePkCol)
             chunk.PrimaryKey = new[] { chunk.Columns[SYNTH_PK_COLUMN] };
                 
@@ -113,7 +113,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'", CheckResult.Fail));
-                
+
         }
         else
             notifier.OnCheckPerformed(new CheckEventArgs(

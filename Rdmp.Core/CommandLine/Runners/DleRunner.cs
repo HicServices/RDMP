@@ -36,7 +36,7 @@ public class DleRunner:Runner
     {
         _options = options;
     }
-        
+
     public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener, ICheckNotifier checkNotifier,GracefulCancellationToken token)
     {
         ILoadProgress loadProgress = GetObjectFromCommandLineString<LoadProgress>(locator, _options.LoadProgress);
@@ -64,10 +64,10 @@ public class DleRunner:Runner
         switch (_options.Command)
         {
             case CommandLineActivity.run:
-                    
+
                 var loggingServer = loadMetadata.GetDistinctLoggingDatabase();
                 var logManager = new LogManager(loggingServer);
-                    
+
                 // Create the pipeline to pass into the DataLoadProcess object
                 var dataLoadFactory = new HICDataLoadFactory(loadMetadata, databaseConfiguration,flags,locator.CatalogueRepository, logManager);
 
@@ -81,7 +81,7 @@ public class DleRunner:Runner
                     var whichLoadProgress = loadProgress != null ? (ILoadProgressSelectionStrategy) new SingleLoadProgressSelectionStrategy(loadProgress) : new AnyAvailableLoadProgressSelectionStrategy(loadMetadata);
 
                     var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress);
-                    
+
                     dataLoadProcess = _options.Iterative
                         ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener, databaseConfiguration) :
                         new SingleJobScheduledDataLoadProcess(locator, loadMetadata, checkable, execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener, databaseConfiguration);
@@ -91,18 +91,18 @@ public class DleRunner:Runner
                     dataLoadProcess = new DataLoadProcess(locator, loadMetadata, checkable, logManager, listener, execution, databaseConfiguration);
 
                 var exitCode = dataLoadProcess.Run(token);
-            
+
                 //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
                 return exitCode == ExitCodeType.Success || exitCode == ExitCodeType.OperationNotRequired? 0: (int)exitCode;
             case CommandLineActivity.check:
-                    
+
                 checkable.Check(checkNotifier);
-                    
+
                 return 0;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-        
+
 }

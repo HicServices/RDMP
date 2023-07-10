@@ -21,7 +21,7 @@ internal abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDat
     protected readonly Control Control;
 
     /// <summary>
-    /// The member on <see cref="ToTest"/> that 
+    /// The member on <see cref="ToTest"/> that
     /// </summary>
     protected readonly string PropertyToCheckName;
     protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)

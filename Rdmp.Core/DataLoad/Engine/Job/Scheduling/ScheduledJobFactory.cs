@@ -28,7 +28,7 @@ public abstract class ScheduledJobFactory : IJobFactory
         LogManager = logManager;
     }
 
-        
+
     public abstract bool HasJobs();
 
 

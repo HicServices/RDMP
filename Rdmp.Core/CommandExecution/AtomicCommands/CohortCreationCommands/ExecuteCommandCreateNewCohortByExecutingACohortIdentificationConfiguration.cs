@@ -59,7 +59,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         return "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
     }
-        
+
     public override void Execute()
     {
         base.Execute();

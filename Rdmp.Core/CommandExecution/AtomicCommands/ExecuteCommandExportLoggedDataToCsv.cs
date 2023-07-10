@@ -19,7 +19,7 @@ public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
 {
     private LogViewerFilter _filter;
     private ExternalDatabaseServer[] _loggingServers;
-        
+
     [UseWithObjectConstructor]
     public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator,LoggingTables table, int idIfAny)
         : this(activator,new LogViewerFilter(table,idIfAny <= 0 ? (int?) null:idIfAny))
@@ -76,7 +76,7 @@ order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter
 
             var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
                 CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
-                    
+
             extract.DoExtraction();
         }
     }

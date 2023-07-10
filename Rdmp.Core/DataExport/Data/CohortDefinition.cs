@@ -11,8 +11,8 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// This data class reflects a single row in a cohortDefinition table (see <see cref="ExternalCohortTable"/>).  It may also reflect 
-/// one that does not exist yet in which case it will have a null ID (e.g. in the case where you are trying to create a new cohort 
+/// This data class reflects a single row in a cohortDefinition table (see <see cref="ExternalCohortTable"/>).  It may also reflect
+/// one that does not exist yet in which case it will have a null ID (e.g. in the case where you are trying to create a new cohort
 /// using an identifier list).
 /// </summary>
 public class CohortDefinition : ICohortDefinition
@@ -28,7 +28,7 @@ public class CohortDefinition : ICohortDefinition
 
     /// <inheritdoc/>
     public int ProjectNumber { get; set; }
-        
+
     /// <inheritdoc/>
     public IExternalCohortTable LocationOfCohort { get; private set; }
 
@@ -38,7 +38,7 @@ public class CohortDefinition : ICohortDefinition
     /// <summary>
     /// Sets up a new row for inserting (or reporting) from an <see cref="ExternalCohortTable"/>.
     /// </summary>
-    /// <param name="id">The ID row read from the table (this is not an RDMP ID, it is an <see cref="IExtractableCohort.OriginID"/>).  Pass null if you 
+    /// <param name="id">The ID row read from the table (this is not an RDMP ID, it is an <see cref="IExtractableCohort.OriginID"/>).  Pass null if you
     /// are trying to insert a new row and expect the database to allocate the ID itself as an autonum</param>
     /// <param name="description">Unique string identifying the cohort, this should be the same for all cohorts that are versions of one another</param>
     /// <param name="version">The version number where there are multiple revisions to a cohort over time (these must share the same <paramref name="description"/>)</param>
@@ -58,7 +58,7 @@ public class CohortDefinition : ICohortDefinition
                     ? "Cohorts must have a description"
                     : $"There is a cohort (with ID {id}) in {locationOfCohort.DefinitionTableName} which has a blank/null description.  You must fix this.");
     }
-        
+
     /// <inheritdoc/>
     public bool IsAcceptableAsNewCohort(out string matchDescription)
     {
@@ -88,7 +88,7 @@ public class CohortDefinition : ICohortDefinition
             matchDescription =
                 $"Error occurred when checking for existing cohorts in the Project.  We were looking in {LocationOfCohort + Environment.NewLine + Environment.NewLine} Error was: {ExceptionHelper.ExceptionToListOfInnerMessages(ex)}";
 
-            return false;    
+            return false;
         }
 
         //did not find any conflicting cohort definitions

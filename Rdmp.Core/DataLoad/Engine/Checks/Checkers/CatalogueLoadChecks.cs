@@ -85,7 +85,7 @@ internal class CatalogueLoadChecks:ICheckable
 
 
     #region These methods check TableInfos (Lookup including lookups)
-  
+
     private void CheckTableInfo(TableInfo tableInfo, ICheckNotifier notifier)
     {
         //get all columns
@@ -118,7 +118,7 @@ internal class CatalogueLoadChecks:ICheckable
                 if(runSynchronizationAgain)
                     CheckTableInfoSynchronization(tableInfo, notifier);
             }
-                
+
             if (!_databaseConfiguration.RequiresStagingTableCreation)
             {
                 //Important:
@@ -291,8 +291,8 @@ internal class CatalogueLoadChecks:ICheckable
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"{nameof(MigrationColumnSet)} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}", CheckResult.Fail, e));
         }
-            
-        //live columns 
+
+        //live columns
         foreach (var col in liveCols)
             if (!SpecialFieldNames.IsHicPrefixed(col) && col.IsAutoIncrement)    //must start hic_ if they are identities
                 notifier.OnCheckPerformed(new CheckEventArgs(

@@ -72,7 +72,7 @@ public class ExecuteCommandChangeExtractability:BasicCommandExecution,IAtomicCom
                 Show($"{_catalogue} is already extractable");
                 return;
             }
-                    
+
             Publish(_catalogue);
         }
         else

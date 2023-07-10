@@ -9,7 +9,7 @@ using System.Threading;
 namespace Rdmp.Core.DataFlowPipeline;
 
 /// <summary>
-/// Wrapper for two System.Threading.CancellationTokens.  One for Stopping (please stop when you are finished with the current job) and one for Aborting (please stop 
+/// Wrapper for two System.Threading.CancellationTokens.  One for Stopping (please stop when you are finished with the current job) and one for Aborting (please stop
 /// as soon as possible).  If you like you can just specify the same token twice and nobody will be any the wiser. Remember that System.Threading.CancellationToken is
 /// for checking if cancellation is requested, in order to create and trigger cancellation you need a System.Threading.CancellationTokenSource handily you can use
 /// GracefulCancellationTokenSource to do that and then just reference .Token property.
@@ -32,7 +32,7 @@ public class GracefulCancellationToken
     public GracefulCancellationToken() : this(default, default)
     {
     }
-         
+
     /// <summary>
     /// Creates a new <see cref="GracefulCancellationToken"/> using the provided stop and abort tokens.  You can pass
     /// the same CancellationToken for both parameters if you only want to support abort.

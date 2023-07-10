@@ -28,14 +28,14 @@ public class MEFFileDownloadProgressEventArgs
     }
 
     public DirectoryInfo DownloadDirectory { get; set; }
-        
+
     public int DllsSeenInCatalogue { get; set; }
     public int CurrentDllNumber { get; set; }
 
     public MEFFileDownloadEventStatus Status { get; set; }
 
-    public string FileBeingProcessed { get; set; } 
-    public bool IncludesPdbFile{get; set;} 
+    public string FileBeingProcessed { get; set; }
+    public bool IncludesPdbFile{get; set;}
     public Exception Exception { get; set; }
 
 }

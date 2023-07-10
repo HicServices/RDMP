@@ -9,7 +9,7 @@ using System.Reflection;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <summary>
-/// Class for documenting properties declared as [DemandsInitialization] in a class.  Includes the DemandsInitializationAttribute (Description, Mandatory etc) and the 
+/// Class for documenting properties declared as [DemandsInitialization] in a class.  Includes the DemandsInitializationAttribute (Description, Mandatory etc) and the
 /// PropertyInfo (reflection) of the class as well as the parent propertyinfo if PropertyInfo is defined in a [DemandsNestedInitialization] sub component class of the
 /// of the class being evaluated.
 /// </summary>

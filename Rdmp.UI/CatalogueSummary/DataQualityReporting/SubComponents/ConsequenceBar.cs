@@ -27,7 +27,7 @@ public partial class ConsequenceBar : UserControl
     public static Color MissingColor = Color.Orange;
     public static Color WrongColor = Color.IndianRed;
     public static Color InvalidColor = Color.Red;
-        
+
     public static Color HasValuesColor = Color.Black;
     public static Color IsNullColor = Color.LightGray;
 
@@ -36,7 +36,7 @@ public partial class ConsequenceBar : UserControl
     public double Missing { get; set; }
     public double Wrong { get; set; }
     public double DBNull { get; set; }
-        
+
     public string Label { get; set; }
 
     protected override void OnPaintBackground(PaintEventArgs e)

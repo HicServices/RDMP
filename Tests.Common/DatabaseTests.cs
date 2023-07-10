@@ -65,7 +65,7 @@ public partial class DatabaseTests
     public ICatalogueRepository CatalogueRepository => RepositoryLocator.CatalogueRepository;
 
     /// <summary>
-    /// Gets an <see cref="ICatalogueRepository"/> that points to a 
+    /// Gets an <see cref="ICatalogueRepository"/> that points to a
     /// database server or throws with <see cref="Assert.Inconclusive()"/>
     /// </summary>
     public CatalogueRepository CatalogueTableRepository
@@ -82,7 +82,7 @@ public partial class DatabaseTests
     public IDataExportRepository DataExportRepository => RepositoryLocator.DataExportRepository;
 
     /// <summary>
-    /// Gets an <see cref="IDataExportRepository"/> that points to a 
+    /// Gets an <see cref="IDataExportRepository"/> that points to a
     /// database server or throws with <see cref="Assert.Inconclusive()"/>
     /// </summary>
     public DataExportRepository DataExportTableRepository
@@ -99,8 +99,8 @@ public partial class DatabaseTests
     }
     protected SqlConnectionStringBuilder UnitTestLoggingConnectionString;
     protected SqlConnectionStringBuilder DataQualityEngineConnectionString;
-        
-        
+
+
     protected DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
 
     private readonly DiscoveredServer _discoveredMySqlServer;
@@ -132,7 +132,7 @@ public partial class DatabaseTests
         //see if there is a local text file first
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,settingsFile));
 
-        if (!f.Exists) 
+        if (!f.Exists)
             throw new FileNotFoundException($"Could not find file '{f.FullName}'");
 
         using var s = new StreamReader(f.OpenRead());
@@ -154,7 +154,7 @@ public partial class DatabaseTests
             ValidateCertificate = false
         };
 
-        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ? 
+        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ?
             new RepositoryProvider(GetFreshYamlRepository()) :
             new PlatformDatabaseCreationRepositoryFinder(opts);
 
@@ -200,7 +200,7 @@ public partial class DatabaseTests
         if (TestDatabaseSettings.MySql != null)
         {
             var builder = new MySqlConnectionStringBuilder(TestDatabaseSettings.MySql);
-                
+
             foreach (string k in builder.Keys)
             {
                 if (k is "server" or "database" or "user id" or "password")
@@ -294,7 +294,7 @@ public partial class DatabaseTests
             
         return builder;
     }
-        
+
     /// <summary>
     /// Deletes all objects in the Catalogue and DataExport databases
     /// </summary>
@@ -479,7 +479,7 @@ public partial class DatabaseTests
                 Console.WriteLine($"Ignoring exception {e.Message} during db clean up");
             }
     }
-   
+
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         {
             if (args.Exception != null && args.Status!=RDMPPlatformDatabaseStatus.Healthy && args.Status!=RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
@@ -507,8 +507,8 @@ public partial class DatabaseTests
     {
         Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
     }
-        
-        
+
+
     public const string BlitzDatabases = @"
 --If you want to blitz everything out of your test catalogue and data export database(s) then run the following SQL (adjusting for database names):
 
@@ -801,7 +801,7 @@ delete from {1}..Project
         foreach (var t in tables.Order.Reverse())
             try
             {
-                    
+
                 t.Drop();
             }
             catch (Exception ex)
@@ -812,7 +812,7 @@ delete from {1}..Project
         foreach (var t in database.DiscoverTableValuedFunctions())
             try
             {
-                    
+
                 t.Drop();
             }
             catch (Exception ex)
@@ -888,7 +888,7 @@ delete from {1}..Project
 
 
     [Flags]
-    public enum TestLowPrivilegePermissions 
+    public enum TestLowPrivilegePermissions
     {
         Reader = 1,
         Writer = 2,

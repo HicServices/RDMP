@@ -20,18 +20,18 @@ public enum Releaseability
     /// Something went wrong while RDMP was trying to determine the releasability of the dataset (figuring out if the files and current configuration match.)
     /// </summary>
     ExceptionOccurredWhileEvaluatingReleaseability,
-        
+
     /// <summary>
     /// The RDMP has no record of an extraction having taken place on the dataset (including a failed one)
     /// </summary>
     NeverBeenSuccessfullyExecuted,
-        
+
     /// <summary>
     /// The RDMP has a record of the dataset being extracted but either the extracted data file or accompanying metadata file(s) was
     /// not found in the correct location on disk (either it was moved or the extraction crashed halfway through)
     /// </summary>
     ExtractFilesMissing,
-        
+
     /// <summary>
     /// Because project extractions can take some time to do it is possible that another data analyst (or you without realising it) makes a change to a dataset
     /// in the project which has already been extracted (e.g. selecting an additional column for extraction).  If this happens your extracted file will be wrong
@@ -41,14 +41,14 @@ public enum Releaseability
     ExtractionSQLDesynchronisation,
 
     /// <summary>
-    /// Similar to <see cref="ExtractionSQLDesynchronisation"/> except that the change to the configuration is to switch to a different cohort.  This is the worst 
+    /// Similar to <see cref="ExtractionSQLDesynchronisation"/> except that the change to the configuration is to switch to a different cohort.  This is the worst
     /// case scenario for release error where you supply a file to a researcher when the file doesn't even relate to the cohort he is asking for (or has ethics approval
     /// for).
     /// </summary>
     CohortDesynchronisation,
 
     /// <summary>
-    /// Considered only a warning.  You have changed the definition of columns for your extract (overridden the catalogue version of one or more columns - See 
+    /// Considered only a warning.  You have changed the definition of columns for your extract (overridden the catalogue version of one or more columns - See
     /// ConfigureDatasetUI for how to do this).  Alternatively this can occur if someone has edited the master Catalogue implementation of a transform which is part
     /// of your configuration (Configuration is outdated vs the catalogue).  You should evaluate the differences and make sure they are intended before doing a release.
     /// </summary>

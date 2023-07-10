@@ -39,7 +39,7 @@ internal class ExecuteSqlInDleStage
         {
             Dictionary<int,Stopwatch> performance;
 
-                
+
             using (var con = db.Server.GetConnection())
             {
                 con.Open();

@@ -25,7 +25,7 @@ public partial class ArgumentValueBoolUI : UserControl, IArgumentValueUI
     {
         InitializeComponent();
     }
-        
+
     public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
     {
         _args = args;

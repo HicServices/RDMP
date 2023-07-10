@@ -19,7 +19,7 @@ public class RDMPBootStrapper
 {
     private string _catalogueConnection;
     private string _dataExportConnection;
-        
+
     /// <summary>
     /// The last used connection string arguments when launching using this factory class.  Typically the boot strapper
     /// should only ever be used once so you can safely query this field but best to check that it is not null anyway.
@@ -33,8 +33,8 @@ public class RDMPBootStrapper
         _formConstructor = constructor;
     }
 
-    private static readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase){ 
-            
+    private static readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase){
+
         // This error seems to come from ObjectTreeView but seems harmless
         "Value cannot be null. (Parameter 'owningItem')"
     };

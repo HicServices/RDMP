@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data.Cache;
 
 /// <summary>
-/// Describes a failed attempt to contact a caching service including the time it occurred and any associated Exception as well as whether it has been 
+/// Describes a failed attempt to contact a caching service including the time it occurred and any associated Exception as well as whether it has been
 /// resolved.  Any object of type ICacheFetchRequest (with paired Exception) can be used to create a failure record.
 /// </summary>
 public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure

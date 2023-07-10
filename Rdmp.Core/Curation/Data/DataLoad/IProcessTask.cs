@@ -36,7 +36,7 @@ public interface IProcessTask : IRevertable, IArgumentHost, IOrderable, IDisable
     /// <inheritdoc cref="DataLoad.ProcessTaskType"/>
     ProcessTaskType ProcessTaskType { get; }
 
-        
+
     /// <summary>
     /// Deprecated property
     /// </summary>

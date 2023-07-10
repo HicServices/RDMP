@@ -30,7 +30,7 @@ internal class ExecuteCommandBrowseLookup : BasicUICommandExecution,IAtomicComma
         var colInfo = filter.GetColumnInfoIfExists();
 
         if (colInfo != null)
-            _lookup = 
+            _lookup =
                 colInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey).FirstOrDefault() ??
                 colInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description).FirstOrDefault();
 

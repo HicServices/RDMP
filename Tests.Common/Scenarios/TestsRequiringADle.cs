@@ -29,7 +29,7 @@ namespace Tests.Common.Scenarios;
 /// </summary>
 public class TestsRequiringADle:TestsRequiringA
 {
-                
+
     protected int RowsBefore;
     protected int RowsNow => LiveTable.GetRowCount();
 
@@ -151,7 +151,7 @@ public class TestsRequiringADle:TestsRequiringA
         File.WriteAllLines(fi.FullName,contents);
         return fi;
     }
-               
+
     public void RunDLE(int timeoutInMilliseconds)
     {
         RunDLE(TestLoadMetadata,timeoutInMilliseconds,false);

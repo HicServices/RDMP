@@ -25,7 +25,7 @@ public class MissingFieldsChecker : ICheckable
     {
         _repository = repository;
     }
-        
+
     public void Check(ICheckNotifier notifier)
     {
         var server = _repository.DiscoveredServer;
@@ -79,7 +79,7 @@ public class MissingFieldsChecker : ICheckable
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Could not find Table called {type.Name} (which implements IMapsDirectlyToDatabaseTable)",CheckResult.Fail, null));
-            return;   
+            return;
         }
             
         notifier.OnCheckPerformed(new CheckEventArgs($"Found Table {type.Name}", CheckResult.Success, null));

@@ -39,7 +39,7 @@ public enum DiscardedColumnDestination
 }
 
 /// <summary>
-/// Describes a column that is provided to your institution by a data provider but which is not loaded into your LIVE database table.  This column might be very sensitive, 
+/// Describes a column that is provided to your institution by a data provider but which is not loaded into your LIVE database table.  This column might be very sensitive,
 /// irrelevant to you etc.  Each discarded column has a destination (DiscardedColumnDestination)  e.g. it might be dropped completely or routed into an identifier dump for
 /// when you still want to store information such as Who an MRI was for but do not want it sitting in your live dataset for governance/anonymisation reasons.
 /// 
@@ -197,9 +197,9 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
     {
         return GetRuntimeName();
     }
-        
+
     /// <summary>
-    /// true if destination for column is to store in identifier dump including undiluted versions of dilutes 
+    /// true if destination for column is to store in identifier dump including undiluted versions of dilutes
     /// (Dilution involves making clean values dirty for purposes of anonymisation and storing the clean values in
     /// the Identifier Dump).
     /// </summary>

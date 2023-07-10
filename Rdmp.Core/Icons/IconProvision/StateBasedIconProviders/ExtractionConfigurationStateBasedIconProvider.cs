@@ -14,7 +14,7 @@ public class ExtractionConfigurationStateBasedIconProvider : IObjectStateBasedIc
 {
     private readonly Image<Rgba32> _normal;
     private readonly Image<Rgba32> _frozen;
-        
+
     public ExtractionConfigurationStateBasedIconProvider(DataExportIconProvider iconProvider)
     {
         _normal = Image.Load<Rgba32>(CatalogueIcons.ExtractionConfiguration);

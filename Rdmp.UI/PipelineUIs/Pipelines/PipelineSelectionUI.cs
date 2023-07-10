@@ -22,10 +22,10 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private readonly IActivateItems _activator;
     private IPipelineUseCase _useCase;
     private readonly ICatalogueRepository _repository;
-        
+
     private IPipeline _pipeline;
     public event Action PipelineDeleted = delegate { };
-        
+
     public event EventHandler PipelineChanged;
     private IPipeline _previousSelection;
 
@@ -87,7 +87,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             ? ddPipelines.Items.OfType<Pipeline>().Single()
             : "<<None>>";
     }
-        
+
     public PipelineSelectionUI(IActivateItems activator,IPipelineUseCase useCase, ICatalogueRepository repository)
     {
         _activator = activator;
@@ -133,7 +133,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             if(showAll)
             {
                 render = $"\u2713 {render}";
-            }   
+            }
 
             TextRenderer.DrawText(e.Graphics, render, italic , new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.CornflowerBlue, TextFormatFlags.Left);
         }
@@ -227,13 +227,13 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         {
             var clone = p.Clone();
             RefreshPipelineList();
-                
+
             //select the clone
             ddPipelines.SelectedItem = clone;
         }
     }
 
-        
+
     /// <summary>
     /// Turns the control into a single line ui control
     /// </summary>

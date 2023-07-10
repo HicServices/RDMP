@@ -26,7 +26,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 
 /// <summary>
 /// Lets you view/edit a single data load module.  This is a pre-canned class e.g. FTPDownloader or a custom plugin you have written.  You should ensure
-/// that the Name field accurately describes (in plenty of detail) what the module/script is intended to do.  
+/// that the Name field accurately describes (in plenty of detail) what the module/script is intended to do.
 /// 
 /// <para>These can be either:
 /// Attacher - Run the named C# class (which implements the interface IAttacher).  This only works in Mounting stage.  This usually results in records being loaded into the RAW bubble (e.g. AnySeparatorFileAttacher)
@@ -66,7 +66,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
             var repo = databaseObject.CatalogueRepository;
 
             _argumentCollection = new ArgumentCollectionUI();
-                
+
             var className = databaseObject.GetClassNameWhoArgumentsAreFor();
 
             if(string.IsNullOrWhiteSpace(className))
@@ -123,7 +123,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
             var lmd = _processTask.LoadMetadata;
             var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
             var mefTask = (IMEFRuntimeTask) factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
-            
+
             _ragSmiley.StartChecking(mefTask.MEFPluginClassInstance);
         }
         catch (Exception e)

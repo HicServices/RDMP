@@ -25,12 +25,12 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents;
 
 /// <summary>
 /// This control offers the preferred method of telling RDMP about your existing datasets.  It lets you select a table on your server and then forward engineer an RDMP Catalogue
-/// which lets you build a data load for the table, document its columns, configure extraction logic etc.  
+/// which lets you build a data load for the table, document its columns, configure extraction logic etc.
 /// 
 /// <para>Start by entering the details of your table (server, database, table etc).  If you specify username/password then SQL Authentication will be used and the credentials will be
 /// stored along with the table (See PasswordEncryptionKeyLocationUI for details), if you do not enter username/password then Windows Authentication will be used (preferred).  </para>
 /// 
-/// <para>Clicking Import will create TableInfo / ColumnInfo objects in your Data Catalogue database and then ConfigureCatalogueExtractabilityUI will be launched which lets you pick which 
+/// <para>Clicking Import will create TableInfo / ColumnInfo objects in your Data Catalogue database and then ConfigureCatalogueExtractabilityUI will be launched which lets you pick which
 /// columns are extractable and which contains the Patient Identifier (e.g. CHI number / NHS number etc).  See ConfigureCatalogueExtractabilityUI for full details. </para>
 /// </summary>
 public partial class ImportSQLTableUI : RDMPForm
@@ -83,7 +83,7 @@ public partial class ImportSQLTableUI : RDMPForm
             }
 
             btnImport.Enabled = true;
-                    
+
         }
         catch (Exception exception)
         {
@@ -105,8 +105,8 @@ public partial class ImportSQLTableUI : RDMPForm
         }
         else
         {
-            // logic to add credentials 
-            // parent.SetCredentials(); 
+            // logic to add credentials
+            // parent.SetCredentials();
             Importer.DoImport(out var ti,out var cols);
 
             if(ti is DatabaseEntity de)

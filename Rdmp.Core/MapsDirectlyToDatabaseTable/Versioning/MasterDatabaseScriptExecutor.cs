@@ -40,14 +40,14 @@ public class MasterDatabaseScriptExecutor
     public const string RoundhouseScriptsRunTable = "ScriptsRun";
 
     private const string InitialDatabaseScriptName = @"Initial Database Setup";
-        
+
     public MasterDatabaseScriptExecutor(DiscoveredDatabase database)
     {
         Database = database;
     }
-        
+
     public bool BinaryCollation { get; set; }
-        
+
     public bool CreateDatabase(Patch initialCreationPatch, ICheckNotifier notifier)
     {
         try
@@ -76,7 +76,7 @@ public class MasterDatabaseScriptExecutor
                     using var cmd = Database.Server.GetCommand(
                         $"CREATE DATABASE {Database} COLLATE Latin1_General_BIN2", con);
                     cmd.ExecuteNonQuery();
-                }    
+                }
                 else
                     Database.Create();
 
@@ -104,7 +104,7 @@ public class MasterDatabaseScriptExecutor
 
             }, RoundhouseSchemaName);
 
-                
+
             Database.CreateTable("Version", new[]
             {
                 new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, IsPrimaryKey = true},
@@ -115,10 +115,10 @@ public class MasterDatabaseScriptExecutor
                 new DatabaseColumnRequest("entered_by",new DatabaseTypeRequest(typeof(string),50))
 
             }, RoundhouseSchemaName);
-                
-                
+
+
             RunSQL(new KeyValuePair<string, Patch>(InitialDatabaseScriptName, initialCreationPatch));
-                
+
             notifier.OnCheckPerformed(new CheckEventArgs("Tables created", CheckResult.Success, null));
 
             notifier.OnCheckPerformed(new CheckEventArgs("Setup Completed successfully", CheckResult.Success, null));
@@ -158,7 +158,7 @@ public class MasterDatabaseScriptExecutor
         SetVersion(kvp.Key,kvp.Value.DatabaseVersionNumber.ToString());
             
     }
-        
+
     private string CalculateHash(string input)
     {
         // step 1, calculate SHA512 hash from input
@@ -194,7 +194,7 @@ public class MasterDatabaseScriptExecutor
         {
             {"repository_path", name},
             {"version", version},
-                
+
             {"entry_date", now},
             {"modified_date", now},
             {"entered_by", Environment.UserName}
@@ -218,9 +218,9 @@ public class MasterDatabaseScriptExecutor
                 notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
 
                 Database.CreateBackup($"Full backup of {Database}");
-            
+
                 notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
-                
+
             }
             catch (Exception e)
             {
@@ -249,17 +249,17 @@ public class MasterDatabaseScriptExecutor
                     {
                         throw new Exception($"Failed to apply patch '{ patch.Key }'",e);
                     }
-                        
+
 
                     notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success, null));
                 }
                 else
                     throw new Exception($"User decided not to execute patch {patch.Key} - aborting ");
             }
-                
+
             SetVersion("Patching",maxPatchVersion.ToString());
             notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}", CheckResult.Success));
-                
+
             return true;
 
         }
@@ -330,7 +330,7 @@ public class MasterDatabaseScriptExecutor
                     //we found it and it was intact
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",CheckResult.Success, null));
-                    
+
                     //do not apply this patch
                     toApply.Remove(patch.locationInAssembly);
 
@@ -358,7 +358,7 @@ public class MasterDatabaseScriptExecutor
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Cannot apply patch {futurePatch.locationInAssembly} because its database version number is {futurePatch.DatabaseVersionNumber} which is higher than the currently loaded host assembly ({patcher.GetDbAssembly().FullName}). ", CheckResult.Fail, null));
             stop = true;
-                
+
         }
 
         if (stop)

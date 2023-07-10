@@ -20,7 +20,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 public class ExtractCommandCollection
 {
     public IExtractDatasetCommand[] Datasets { get; set; }
-        
+
 
     public ExtractCommandCollection(IEnumerable<ExtractDatasetCommand> datasetBundles)
     {

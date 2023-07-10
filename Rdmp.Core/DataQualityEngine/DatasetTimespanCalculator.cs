@@ -16,9 +16,9 @@ namespace Rdmp.Core.DataQualityEngine;
 /// <summary>
 /// Calculates the date range of data held in a dataset (Catalogue).  Optionally you can 'discardOutliers' this includes any dates in which there are
 /// 1000 times less records than the non zero average month.  For example if you have 3 records in 01/01/2090 then they would be discarded if you had
-///  an average of 3000+ records per month (after ignoring months where there are no records).  
+///  an average of 3000+ records per month (after ignoring months where there are no records).
 /// 
-/// <para>IMPORTANT: You must have run the DQE on the dataset before this class can be used and the results are based on the last DQE run on the dataset not 
+/// <para>IMPORTANT: You must have run the DQE on the dataset before this class can be used and the results are based on the last DQE run on the dataset not
 /// the live table</para>
 /// </summary>
 public class DatasetTimespanCalculator : IDetermineDatasetTimespan
@@ -100,7 +100,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         foreach (DataRow row in dt.Rows)
         {
             var currentValue = Convert.ToInt32(row["CountOfRecords"]);
-                
+
             if(currentValue == 0)
                 continue;
 

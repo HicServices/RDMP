@@ -19,7 +19,7 @@ namespace Rdmp.Core.DataLoad.Engine.Migration;
 /// Migrates records from STAGING database tables to LIVE database tables by applying the OverwriteMigrationStrategy (MERGE statement - colloquially known
 /// as UPSERT) using a shared database transaction for all tables (if one fails they will all rollback).
 /// </summary>
-public class MigrationHost 
+public class MigrationHost
 {
     private readonly DiscoveredDatabase _sourceDbInfo;
     private readonly DiscoveredDatabase _destinationDbInfo;

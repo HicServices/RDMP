@@ -80,7 +80,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         base.SetItemActivator(activator);
 
         CommonTreeFunctionality.SetUp(
-            RDMPCollection.DataExport, 
+            RDMPCollection.DataExport,
             tlvDataExport,
             Activator,
             olvName,
@@ -110,7 +110,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             {
                 tlvDataExport.Expand(dataExportChildProvider.ProjectRootFolder);
             }
-                
+
             _isFirstTime = false;
         }
 
@@ -138,7 +138,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         var cohortSubmenu = new ToolStripMenuItem("Cohort");
         cohortSubmenu.DropDownItems.AddRange(
             new[] {
-                
+
                 // from cic
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null) { OverrideCommandName = "From Cohort Builder Query" }),
 
@@ -147,7 +147,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
                 // from catalogue
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromCatalogue(Activator,(Catalogue)null) { OverrideCommandName = "From Catalogue" }),
-                
+
                 // from table
                 uiFactory.CreateMenuItem(new ExecuteCommandCreateNewCohortFromTable(Activator,null) { OverrideCommandName = "From Table" })
             });

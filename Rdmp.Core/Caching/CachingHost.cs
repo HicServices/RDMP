@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching;
 
 /// <summary>
-/// Boot straps a 
+/// Boot straps a
 /// </summary>
 public class CachingHost
 {
@@ -27,17 +27,17 @@ public class CachingHost
     /// The cacheable tasks that the host will be running
     /// </summary>
     public ICacheProgress CacheProgress { get; set; }
-        
+
     /// <summary>
     /// True if the host is attempting to back fill the cache with failed date ranges from the past
     /// </summary>
     public bool RetryMode { get; set; }
-        
+
     private readonly ICatalogueRepository _repository;
-        
-    // this is more because we can't retrieve CacheWindows from LoadProgresss (yet) 
+
+    // this is more because we can't retrieve CacheWindows from LoadProgresss (yet)
     private List<PermissionWindowCacheDownloader> _downloaders;
-        
+
     /// <summary>
     /// True to shut down once the <see cref="PermissionWindow"/> for the <see cref="CacheProgress"/> is exceeded.  False
     /// to sleep until it becomes permissible again.
@@ -55,7 +55,7 @@ public class CachingHost
     }
 
     /// <summary>
-    /// Runs the first (which must be the only) <see cref="CacheProgress"/> 
+    /// Runs the first (which must be the only) <see cref="CacheProgress"/>
     /// </summary>
     /// <param name="listener"></param>
     /// <param name="cancellationToken"></param>
@@ -75,7 +75,7 @@ public class CachingHost
 
         RetrieveNewDataForCache(listener, cancellationToken);
     }
-        
+
     private void RetrieveNewDataForCache(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Retrieving new data"));
@@ -114,7 +114,7 @@ public class CachingHost
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var result = RetryMode ? 
+                var result = RetryMode ?
                     downloader.RetryDownload(listener, cancellationToken) :
                     downloader.Download(listener, cancellationToken);
 

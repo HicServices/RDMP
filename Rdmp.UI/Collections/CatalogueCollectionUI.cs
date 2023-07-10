@@ -25,11 +25,11 @@ namespace Rdmp.UI.Collections;
 /// <summary>
 /// Main window for Data Management, this Control lets you view all your datasets, curate descriptive metadata, configure extractable columns, generate reports etc
 /// 
-/// <para>The tree shows you all the datasets you have configured for use with the RDMP.  Double clicking on a dataset (called a Catalogue) will show you the descriptive data you 
+/// <para>The tree shows you all the datasets you have configured for use with the RDMP.  Double clicking on a dataset (called a Catalogue) will show you the descriptive data you
 /// have recorded. Right clicking a Catalogue will give you access to operations relevant to Catalogues (e.g. viewing dataset extraction logic if any).  Right clicking a
 /// CatalogueItem will give you access to operations relevant to CatalogueItems (e.g. adding an Issue).  And so on.</para>
 /// 
-/// <para>Each Catalogue has 1 or more CatalogueItems (visible through the CatalogueItems tab), these are the columns in the dataset that are maintained by RDMP. If you have very 
+/// <para>Each Catalogue has 1 or more CatalogueItems (visible through the CatalogueItems tab), these are the columns in the dataset that are maintained by RDMP. If you have very
 /// wide data tables with hundreds of columns you might only configure a subset of those columns (the ones most useful  to researchers) for extraction.</para>
 /// 
 /// <para>You can also drag Catalogues between folders or into other Controls (e.g. dragging a Catalogue into a CohortIdentificationCollectionUI container to add the dataset to the identification
@@ -79,7 +79,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     //The color to highlight each Catalogue based on its extractability status
 
 
-    /// <summary> 
+    /// <summary>
     /// Clean up any resources being used.
     /// </summary>
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -153,7 +153,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             isFirstTime = false;
         }
     }
-        
+
     public void ApplyFilters()
     {
         if(bLoading)
@@ -170,7 +170,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         ExtractionBroken,
         TOP1Worked
     }
-        
+
     private object FilterAspectGetter(object rowObject)
     {
         try
@@ -282,7 +282,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         ApplyFilters();
     }
-        
+
     public static bool IsRootObject(object root)
     {
         // The root ICatalogue FolderNode is a root element in this tree

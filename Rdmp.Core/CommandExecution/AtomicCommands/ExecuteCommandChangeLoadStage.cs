@@ -15,7 +15,7 @@ public class ExecuteCommandChangeLoadStage : BasicCommandExecution
 {
     private readonly ProcessTask _sourceProcessTask;
     private readonly LoadStageNode _targetStage;
-        
+
     [UseWithObjectConstructor]
     public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTask processTask, LoadStage stage) :
         this(activator, new ProcessTaskCombineable(processTask), new LoadStageNode(processTask.LoadMetadata,stage))

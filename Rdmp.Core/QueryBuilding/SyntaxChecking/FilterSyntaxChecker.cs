@@ -11,7 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding.SyntaxChecking;
 
 /// <summary>
-/// Checks bracket parity of where SQL of IFilter and syntax validity of parameters which are char based 
+/// Checks bracket parity of where SQL of IFilter and syntax validity of parameters which are char based
 /// </summary>
 public class FilterSyntaxChecker : SyntaxChecker
 {

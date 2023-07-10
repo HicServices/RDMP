@@ -15,13 +15,13 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 /// Describes a specific use case for executing an IPipeline under.  This includes specifying the type T of the data flow, if there is an explicit
 /// source/destination component instance which must be used, what objects are available for PreInitialize on components (GetInitializationObjects).
 /// 
-/// <para>An instance of IPipelineUseCase is not just the general case (which is defined by IDataFlowPipelineContext) but the specific hydrated use case 
+/// <para>An instance of IPipelineUseCase is not just the general case (which is defined by IDataFlowPipelineContext) but the specific hydrated use case
 /// e.g. 'I want to Release Project 205'.</para>
 /// </summary>
 public interface IPipelineUseCase : IHasDesignTimeMode
 {
     /// <summary>
-    /// All the objects available for executing the Pipeline.  
+    /// All the objects available for executing the Pipeline.
     /// <para>OR: If <see cref="IHasDesignTimeMode.IsDesignTime"/> then an array of the Types of objects that should be around at runtime
     /// when performing the task described by the PipelineUseCase</para>
     /// </summary>
@@ -34,7 +34,7 @@ public interface IPipelineUseCase : IHasDesignTimeMode
     /// <param name="pipelines"></param>
     /// <returns></returns>
     IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines);
-        
+
     /// <summary>
     /// Returns true if the <paramref name="pipeline"/> is compatible with the use case
     /// </summary>

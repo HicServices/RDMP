@@ -48,7 +48,7 @@ public class ExecuteCommandAddFavourite : BasicCommandExecution
         }
         else
         {
-                
+
             BasicActivator.SelectAnythingThen("Add Favourite",
                 a =>
                 {

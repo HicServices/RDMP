@@ -105,7 +105,7 @@ public class CataloguePipelinesAndReferencesCreation
 
     public void CreatePipelines()
     {
-        var bulkInsertCsvPipe = 
+        var bulkInsertCsvPipe =
             CreatePipeline("BULK INSERT: CSV Import File (manual column-type editing)", typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
         var bulkInsertCsvPipewithAdjuster =
             CreatePipeline("BULK INSERT: CSV Import File (automated column-type detection)", typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
@@ -141,7 +141,7 @@ public class CataloguePipelinesAndReferencesCreation
         d.SetValue(value);
         d.SaveToDatabase();
     }
-        
+
     private Pipeline CreatePipeline(string nameOfPipe, Type sourceType, Type destinationTypeIfAny, params Type[] componentTypes)
     {
         if (componentTypes == null || componentTypes.Length == 0)
@@ -168,7 +168,7 @@ public class CataloguePipelinesAndReferencesCreation
         {
             var source = new PipelineComponent(_repositoryLocator.CatalogueRepository, pipe, sourceType, 0);
             source.CreateArgumentsForClassIfNotExists(sourceType);
-            pipe.SourcePipelineComponent_ID = source.ID;    
+            pipe.SourcePipelineComponent_ID = source.ID;
         }
             
         if (destinationTypeIfAny != null)

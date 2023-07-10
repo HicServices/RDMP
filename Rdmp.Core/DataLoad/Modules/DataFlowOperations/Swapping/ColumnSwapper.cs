@@ -69,7 +69,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
     [DemandsInitialization(@"Setting this to true will leave the original input column in your DataTable (so your table will have both input and output columns instead of a substitution)", DefaultValue = true)]
     public bool KeepInputColumnToo { get; set; }
-                
+
     private CultureInfo _culture;
     [DemandsInitialization("The culture to use e.g. when Type translations are required")]
     public CultureInfo Culture
@@ -79,7 +79,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
     }
 
     private Dictionary<object,List<object>> _mappingTable;
-        
+
     /// <summary>
     /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
     /// </summary>
@@ -160,15 +160,15 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                 catch (Exception ex)
                 {
                     throw new Exception($"Error building Type conversion decider for the mapping table key type {_keyType}",ex);
-                }   
+                }
             }
-                    
+
         }
                 
         foreach (DataRow row in toProcess.Rows)
         {
             var fromValue = row[idxFrom];
-                
+
             //ignore null inputs, pass them straight through
             if(fromValue == DBNull.Value)
             {
@@ -194,7 +194,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                     toDrop.Add(row);
                     continue;
                 }
-                
+
             //we do have the key value!
             var results = _mappingTable[fromValue];
 
@@ -211,7 +211,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                             $"The value '{fromValue}' maps to multiple output values:{string.Join(",", results.Select(v => $"'{v}'"))}");
 
                     case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
-                            
+
                         //substitute for the first alias (bob=>Frank)
                         row[idxTo] = results.First();
 

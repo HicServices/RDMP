@@ -18,7 +18,7 @@ public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : Ba
     private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator, AggregateConfiguration aggregate, CohortIdentificationConfiguration cic) 
+    public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator, AggregateConfiguration aggregate, CohortIdentificationConfiguration cic)
         : this(activator,new AggregateConfigurationCombineable(aggregate),cic)
     {
 

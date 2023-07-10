@@ -44,5 +44,5 @@ public class PreLoadDiscardedColumnsNode:Node
         return TableInfo != null ? TableInfo.GetHashCode() : 0;
     }
 
-     
+
 }

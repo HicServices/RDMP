@@ -44,7 +44,7 @@ public interface IDataFlowSource<out T>
 
 
     /// <summary>
-    /// This method is used at Design Time to help the user building a valid pipeline.  In theory the method should return a sample DataTable (or T) which is then 
+    /// This method is used at Design Time to help the user building a valid pipeline.  In theory the method should return a sample DataTable (or T) which is then
     /// available programmatically for checks and stuff.
     /// 
     /// <para>In practice just returning null will work fine (it means no preview is available) or you can return an empty object with the compatible schema.</para>

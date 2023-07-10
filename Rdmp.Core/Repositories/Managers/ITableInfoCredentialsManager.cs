@@ -17,8 +17,8 @@ namespace Rdmp.Core.Repositories.Managers;
 public interface ITableInfoCredentialsManager
 {
     /// <summary>
-    /// Declares that the given <paramref name="tableInfo"/> can be accessed using the <paramref name="credentials"/> (username / encrypted password) under the 
-    /// usage <paramref name="context"/> 
+    /// Declares that the given <paramref name="tableInfo"/> can be accessed using the <paramref name="credentials"/> (username / encrypted password) under the
+    /// usage <paramref name="context"/>
     /// </summary>
     /// <param name="credentials"></param>
     /// <param name="tableInfo"></param>
@@ -44,14 +44,14 @@ public interface ITableInfoCredentialsManager
     ///  Answers the question, "what is the best credential (if any) to use under the given context"
     /// 
     /// <para>Tries to find a DataAccessCredentials for the supplied TableInfo.  For example you are trying to find a username/pasword to use with the TableInfo when performing
-    /// a DataLoad, this method will first return any explicit usage allowances (if there is a credential liscenced for use during DataLoad) if no such credentials exist 
+    /// a DataLoad, this method will first return any explicit usage allowances (if there is a credential liscenced for use during DataLoad) if no such credentials exist
     /// it will then check for a credential which is liscenced for Any usage (can be used for data load, data export etc) and return that else it will return null</para>
     /// </summary>
     /// <param name="tableInfo"></param>
     /// <param name="context"></param>
     /// <returns></returns>
     DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context);
-        
+
     /// <summary>
     /// Fetches all <see cref="DataAccessCredentials"/> (username and encrypted password) that can be used to access the <see cref="TableInfo"/> under any
     /// <see cref="DataAccessContext"/>)
@@ -77,7 +77,7 @@ public interface ITableInfoCredentialsManager
 
     /// <summary>
     /// Returns the existing <see cref="DataAccessCredentials"/> if any which match the unencrypted <paramref name="username"/> and <paramref name="password"/> combination.  Throws
-    /// if there are more than 1 
+    /// if there are more than 1
     /// </summary>
     /// <param name="username"></param>
     /// <param name="password"></param>

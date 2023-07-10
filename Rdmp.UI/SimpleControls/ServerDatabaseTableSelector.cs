@@ -105,7 +105,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         btnPickCredentials.Enabled = false;
     }
 
-        
+
     #region Async Stuff
 
     private void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
@@ -161,7 +161,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         cbxTable.Focus();
     }
 
-        
+
 
 
     //do work
@@ -188,7 +188,7 @@ public partial class ServerDatabaseTableSelector : UserControl
             {
                 SetState(ex);
                 _listDatabasesAsyncResult = Array.Empty<string>();
-            }   
+            }
         }
     }
 
@@ -234,7 +234,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         SetLoading(false);
         cbxDatabase.Focus();
     }
-        
+
     //aborting
     private void AbortWorkers()
     {
@@ -339,7 +339,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     {
         UpdateDatabaseList();
     }
-        
+
     private void UpdateTableList()
     {
         if (string.IsNullOrWhiteSpace(cbxServer.Text) || string.IsNullOrWhiteSpace(cbxDatabase.Text))
@@ -451,7 +451,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         if (db == null)
             return null;
 
-        //They made up a table that may or may not exist 
+        //They made up a table that may or may not exist
         if(!string.IsNullOrWhiteSpace(Table))
             return db.ExpectTable(Table);
 
@@ -467,7 +467,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     {
         return _helper.GetConnectionStringBuilder(cbxServer.Text, cbxDatabase.Text, tbUsername.Text, tbPassword.Text);
     }
-        
+
     private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
         if(llLoading.Text == CancelConnection)
@@ -480,7 +480,7 @@ public partial class ServerDatabaseTableSelector : UserControl
             {
                 ExceptionViewer.Show(_exception);
             }
-                
+
         }
             
     }

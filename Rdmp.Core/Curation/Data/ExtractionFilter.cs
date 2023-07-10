@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Defines as a single line SQL Where statement, a way of reducing the scope of a data extraction / aggregation etc.  For example, 
+/// Defines as a single line SQL Where statement, a way of reducing the scope of a data extraction / aggregation etc.  For example,
 /// 'Only prescriptions for diabetes medications'.  An ExtractionFilter can have 0 or more ExtractionFilterParameters which allows
 /// you to define a more versatile filter e.g. 'Only prescriptions for drug @bnfCode'
 /// 
@@ -36,7 +36,7 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<ExtractionFilterParameterSet[]>
 {
-     
+
     #region Database Properties
     private int _extractionInformationID;
     private Lazy<ExtractionFilterParameterSet[]> _knownExtractionFilterParameterSets;
@@ -95,7 +95,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     {
         return ExtractionFilterParameters.ToArray();
     }
-        
+
     #region Relationships
 
     /// <inheritdoc cref="ExtractionInformation_ID"/>
@@ -151,9 +151,9 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
     {
         return Name;
     }
-        
+
     //we are an extraction filter ourselves! so obviously we werent cloned from one! (this is for aggregate and data export filters and satisfies IFilter).  Actually we can
-    //be cloned via the publishing (elevation) from a custom filter defined at Aggregate level for example.  But in this case we don't need to know the ID anyway since we 
+    //be cloned via the publishing (elevation) from a custom filter defined at Aggregate level for example.  But in this case we don't need to know the ID anyway since we
     //become the new master anyway since we are at the highest level for filters
 
     /// <summary>
@@ -165,7 +165,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
         get => null;
         set => throw new NotSupportedException("ClonedFromExtractionFilter_ID is only supported on lower level filters e.g. DeployedExtractionFilter and AggregateFilter");
     }
-        
+
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {

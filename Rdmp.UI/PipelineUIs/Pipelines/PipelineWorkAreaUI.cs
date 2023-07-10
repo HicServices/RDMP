@@ -24,7 +24,7 @@ using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 namespace Rdmp.UI.PipelineUIs.Pipelines;
 
 /// <summary>
-/// Main component control of ConfigurePipelineUI (See ConfigurePipelineUI for details).  Shows you all compatible components on the left including any plugin components.  Components in 
+/// Main component control of ConfigurePipelineUI (See ConfigurePipelineUI for details).  Shows you all compatible components on the left including any plugin components.  Components in
 /// red are not compatible with the current context for example a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is
 /// not available.
 /// </summary>
@@ -72,7 +72,7 @@ public partial class PipelineWorkAreaUI : UserControl
         {
             //middle and destination components
             var allComponentTypes = _catalogueRepository.MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
-                
+
             //source components (list of all types with MEF exports of )
             var allSourceTypes = _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
@@ -129,7 +129,7 @@ public partial class PipelineWorkAreaUI : UserControl
         _pipelineDiagram.SetTo(pipeline,useCase);
     }
 
-        
+
     private void olvComponents_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         var model = (AdvertisedPipelineComponentTypeUnderContext)e.Model;

@@ -30,14 +30,14 @@ public class BackupDatabaseMutilation:IMutilateDataTables
     [DemandsInitialization("The number of months the backup will expire after", Mandatory = true)]
     public int MonthsTillExpiry { get; set; }
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
         if (DatabaseToBackup == null)
             notifier.OnCheckPerformed(new CheckEventArgs("No TableInfo is set, don't know what to backup", CheckResult.Fail, null));
     }
 
-        
+
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
             

@@ -103,7 +103,7 @@ public class DQEStateOverDataLoadRunId
     }
 
     private bool _correctValuesCalculated;
-        
+
     /// <summary>
     /// Calculates the final counts for each Column based on the validation failures documented to date.  You can only call this method once and it
     /// must be called before committing to database.

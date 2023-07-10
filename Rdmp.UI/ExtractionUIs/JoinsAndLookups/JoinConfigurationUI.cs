@@ -25,7 +25,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 
 /// <summary>
 /// Many researchers like flat tables they can load into SPSS or STATA or Excel and thus would prefer not to deal with multiple tables if possible.  Storing datasets as flat
-/// tables however is often suboptimal in terms of performance and storage space.  Therefore it is possible to configure a dataset (Catalogue) which includes columns from 
+/// tables however is often suboptimal in terms of performance and storage space.  Therefore it is possible to configure a dataset (Catalogue) which includes columns from
 /// multiple tables.  For example if you have a Header and Results table in which Header tells you when a test was done and by whom including sample volume etc and each test
 /// gives multiple results (white blood cell count, red blood cell count etc) then you will obviously want to store it as two separate tables.
 /// 
@@ -36,12 +36,12 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 /// integrity constraints into your database!).</para>
 ///  
 /// <para>You might wonder why you have to configure JoinInfo information into RDMP when it is possibly already implemented in your data model (e.g. with foreign key constraints).  The
-/// explicit record in the RDMP database allows you to hold corrupt/unlinkable data (which would violate a foreign key constraint) and still know that the tables must be joined. 
+/// explicit record in the RDMP database allows you to hold corrupt/unlinkable data (which would violate a foreign key constraint) and still know that the tables must be joined.
 /// Additionally it lets you configure joins between tables in different databases and to specify an explicit direction (LEFT / RIGHT / INNER) which is always the same when it comes
 /// time to extract your data for researchers.</para>
 /// 
 /// <para>If you need to join on more than 1 column then just create a JoinInfo for each pair of columns (making sure the direction - LEFT/RIGHT/INNER matches).  For example if the join is
-/// Header.LabNumber = Results.LabNumber AND Header.Hospital = Results.Hospital (because of crossover in LabNumber between hospitals) then you would configure a JoinInfo for 
+/// Header.LabNumber = Results.LabNumber AND Header.Hospital = Results.Hospital (because of crossover in LabNumber between hospitals) then you would configure a JoinInfo for
 /// Header.LabNumber = Results.LabNumber and another for Header.Hospital = Results.Hospital.</para>
 /// </summary>
 public partial class JoinConfigurationUI : JoinConfiguration_Design
@@ -65,7 +65,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
         olvRightColumns.RowHeight = 19;
         AssociatedCollection = RDMPCollection.Tables;
     }
-        
+
     public override void SetDatabaseObject(IActivateItems activator, TableInfo databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
@@ -153,7 +153,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
             if(fks.Any(f => f.TableInfo_ID != _rightTableInfo.ID))
                 throw new Exception("All Foreign Keys must come from the Right hand TableInfo");
 
-                
+
             ExtractionJoinType joinType;
             if(rbAllLeftHandTableRecords.Checked)
                 joinType = ExtractionJoinType.Right; //confusing I know, basically JoinInfo database record has fk,pk and direction field assuming fk joins via that direction to pk which is the opposite to the layout of this form
@@ -171,7 +171,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
                 if (cataRepo.GetAllObjects<JoinInfo>().Any(j => j.PrimaryKey_ID == pks[i].ID && j.ForeignKey_ID == fks[i].ID))
                     throw new Exception($"Join already exists between {fks[i]} and {pks[i].ID}");
 
-                
+
             if (actuallyDoIt)
             {
                 for (var i = 0; i < pks.Length; i++)
@@ -197,7 +197,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     {
         UpdateValidityAssessment(true);
     }
-        
+
     private void tbFilterLeft_TextChanged(object sender, EventArgs e)
     {
         olvLeftColumns.UseFiltering = true;

@@ -170,7 +170,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
 
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
     }
-         
+
     internal ProcessTask(ShareManager shareManager, ShareDefinition shareDefinition)
     {
         shareManager.UpsertAndHydrate(this,shareDefinition);
@@ -220,7 +220,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                 //process task belongs in that stage anyway so nothing is prohibited
                 if (stage == (LoadStage == LoadStage.Mounting? LoadStage.AdjustRaw:LoadStage))
                     continue;
-                        
+
                 //figure out what is prohibited
                 var prohibitedSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage),null, tableInfo.GetRuntimeName(stage));
 
@@ -271,7 +271,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                         new CheckEventArgs(
                             $"Name of ProcessTask '{Name}' (ID={ID}) references file '{match.Value}' but the Path of the ProcessTask is '{Path}'", CheckResult.Fail));
             }
-                
+
         }
     }
 
@@ -329,12 +329,12 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                     //clone it but rewire it to the proper ProcessTask parent (the clone)
                     argument.ShallowClone(clone);
                 }
-            
+
                 //the values passed into parameter
                 clone.LoadMetadata_ID = loadMetadata.ID;
                 clone.LoadStage = loadStage;
                 clone.SaveToDatabase();
-                    
+
                 //it worked
                 cataRepository.EndTransaction(true);
 
@@ -376,7 +376,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
 
     /// <summary>
     /// Returns true if the <see cref="ProcessTaskType"/> is allowed to happen during the given <see cref="LoadStage"/>  (e.g. you can't use an IAttacher to
-    /// load data into STAGING/LIVE - only RAW). 
+    /// load data into STAGING/LIVE - only RAW).
     /// </summary>
     /// <param name="type"></param>
     /// <param name="stage"></param>

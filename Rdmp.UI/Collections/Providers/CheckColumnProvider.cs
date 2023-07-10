@@ -43,7 +43,7 @@ public class CheckColumnProvider
 
         return toReturn;
     }
-        
+
     private Task checkingTask;
     public void CheckCheckables()
     {
@@ -84,7 +84,7 @@ public class CheckColumnProvider
     {
         if (_tree.InvokeRequired)
         {
-            _tree.Invoke(new MethodInvoker(EnsureChecksColumnVisible));  
+            _tree.Invoke(new MethodInvoker(EnsureChecksColumnVisible));
             return;
         }
 

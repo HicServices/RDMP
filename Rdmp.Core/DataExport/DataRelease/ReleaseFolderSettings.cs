@@ -20,7 +20,7 @@ public class ReleaseFolderSettings:ICheckable
 
     [DemandsInitialization("If unchecked, it will report an error if the destination folder does not exists", DefaultValue = true)]
     public bool CreateReleaseDirectoryIfNotFound { get; set; }
-        
+
     public ReleaseFolderSettings()
     {
         CreateReleaseDirectoryIfNotFound = true;

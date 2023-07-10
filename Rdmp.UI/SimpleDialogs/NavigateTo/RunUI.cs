@@ -24,7 +24,7 @@ public partial class RunUI : RDMPForm
     private readonly Dictionary<string, Type> _commandsDictionary;
 
     private readonly CommandInvoker _commandCaller;
-                
+
     public RunUI(IActivateItems activator):base(activator)
     {
         InitializeComponent();

@@ -38,7 +38,7 @@ public class HistoryProvider
         typeof(CohortIdentificationConfiguration),
         typeof(LoadMetadata)
     };
-        
+
     /// <summary>
     /// Creates a new history provider and loads the users history from the persistence file (<see cref="UserSettings.RecentHistory"/>)
     /// </summary>
@@ -48,14 +48,14 @@ public class HistoryProvider
         try
         {
             var history = UserSettings.RecentHistory;
-            
+
             if (string.IsNullOrWhiteSpace(history))
                 return;
 
             foreach (var s in history.Split(new []{Environment.NewLine},StringSplitOptions.RemoveEmptyEntries))
             {
                 var entry = HistoryEntry.Deserialize(s, locator);
-                
+
                 if(entry != null)
                     History.Add(entry);
             }
@@ -80,11 +80,11 @@ public class HistoryProvider
         foreach (var group in History.GroupBy(o => o.Object.GetType()))
         {
             var recentsOfType = group.ToList().OrderByDescending(e=>e.Date).Take(numberOfEntries).ToList();
-                
+
             //save x of each Type
             sb.AppendLine(string.Join(Environment.NewLine,recentsOfType.Select(h=>h.Serialize())));
             newHistory.AddRange(recentsOfType);
-                
+
         }
 
         History = newHistory;

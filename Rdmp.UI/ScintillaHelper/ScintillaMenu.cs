@@ -16,7 +16,7 @@ namespace Rdmp.UI.ScintillaHelper;
 [DesignerCategory("")]
 internal class ScintillaMenu:ContextMenuStrip
 {
-        
+
     private readonly Scintilla _scintilla;
     private ToolStripMenuItem _miUndo;
     private ToolStripMenuItem _miRedo;
@@ -144,11 +144,11 @@ internal class ScintillaMenu:ContextMenuStrip
 
     private void SetWord(string oldWord, string newWord)
     {
-        //make sure the current word matches the old word we are replacing 
+        //make sure the current word matches the old word we are replacing
         //(I guess somehow an async something could have changed the text while the menu was open)
         if(!string.Equals(GetCurrentWord(),oldWord))
             return;
-            
+
         var pos = _scintilla.CurrentPosition;
         var wordStart = _scintilla.WordStartPosition(pos, true);
         var wordEnd = _scintilla.WordEndPosition(pos, true);

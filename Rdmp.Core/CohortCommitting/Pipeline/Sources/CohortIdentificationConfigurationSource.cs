@@ -91,16 +91,16 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         var cohortCompiler = new CohortCompiler(_cohortIdentificationConfiguration);
 
         ICompileable rootContainerTask;
-        //no caching set up so no point in running CohortCompilerRunner 
+        //no caching set up so no point in running CohortCompilerRunner
         if(_cohortIdentificationConfiguration.QueryCachingServer_ID == null)
             rootContainerTask = RunRootContainerOnlyNoCaching(cohortCompiler);
         else
             rootContainerTask =  RunAllTasksWithRunner(cohortCompiler,listener);
-            
+
         if(rootContainerTask.State == CompilationState.Executing)
         {
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Root container task was unexpectedly still executing... let's give it a little longer to run"));
-                
+
             var countdown = Math.Max(5000,Timeout*1000);
             while(rootContainerTask.State == CompilationState.Executing && countdown>0)
             {
@@ -173,7 +173,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Clearing Cohort Identifier Cache"));
 
             var cacheManager = new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
-                
+
             cohortCompiler.AddAllTasks(false);
             foreach (var cacheable in cohortCompiler.Tasks.Keys.OfType<ICacheableTask>())
                 cacheable.ClearYourselfFromCache(cacheManager);

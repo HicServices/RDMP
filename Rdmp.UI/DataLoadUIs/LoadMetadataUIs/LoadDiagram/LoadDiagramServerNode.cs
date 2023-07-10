@@ -24,7 +24,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     private readonly LoadBubble _bubble;
     private readonly DiscoveredDatabase _database;
     private readonly string _description;
-        
+
     public string ErrorDescription { get; private set; }
 
     private Dictionary<DiscoveredDatabase, TableInfo[]> _liveDatabaseDictionary;
@@ -83,7 +83,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     {
         return _description;
     }
-        
+
     public void DiscoverState()
     {
         foreach (var db in Children)

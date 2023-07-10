@@ -17,10 +17,10 @@ namespace Rdmp.Core.Validation.Constraints.Secondary;
 public class RegularExpression : SecondaryConstraint
 {
     private string _pattern;
-        
+
     public RegularExpression()
     {
-        // Required for serialisation. 
+        // Required for serialisation.
     }
 
     public RegularExpression(string pattern)

@@ -26,7 +26,7 @@ public partial class DataAccessCredentialsUI : DataAccessCredentialsUI_Design, I
 
         AssociatedCollection = RDMPCollection.Tables;
     }
-        
+
     protected override void SetBindings(BinderWithErrorProviderFactory rules, DataAccessCredentials databaseObject)
     {
         base.SetBindings(rules, databaseObject);

@@ -63,7 +63,7 @@ public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IRefe
     {
         return AreProbablySameType(ReferencedObjectType, type);
     }
-        
+
     /// <summary>
     /// True if the <paramref name="o"/> is the object that is explicitly referenced by this class instance
     /// </summary>
@@ -84,7 +84,7 @@ public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IRefe
             storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
             storedTypeName.Equals(candidate.FullName, StringComparison.CurrentCultureIgnoreCase);
     }
-        
+
     /// <summary>
     /// Returns the instance of the object referenced by this class or null if it no longer exists (e.g. has been deleted)
     /// </summary>
@@ -94,7 +94,7 @@ public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IRefe
     {
         return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
     }
-        
+
     /// <summary>
     /// Returns true if the object referenced by this class still exists in the database
     /// </summary>

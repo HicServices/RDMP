@@ -77,7 +77,7 @@ public class RdmpMockFactory
     {
         return Mock.Of<ITableInfo>(p=>
             p.Name == table.GetFullyQualifiedName() &&
-            p.Database==table.Database.GetRuntimeName() && 
+            p.Database==table.Database.GetRuntimeName() &&
             p.DatabaseType==table.Database.Server.DatabaseType &&
             p.IsTableValuedFunction == (table.TableType == TableType.TableValuedFunction) &&
             p.Discover(It.IsAny<DataAccessContext>())==table);

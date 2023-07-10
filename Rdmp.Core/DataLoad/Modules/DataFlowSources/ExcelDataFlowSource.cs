@@ -39,7 +39,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     [DemandsInitialization(WorkSheetName_DemandDescription)]
     public string WorkSheetName { get; set; }
-        
+
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
     public bool MakeHeaderNamesSane { get; set; }
 
@@ -50,7 +50,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     private DataTable dataReadFromFile;
     private bool haveDispatchedDataTable;
-        
+
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         dataReadFromFile ??= GetAllData(listener, cancellationToken);
@@ -62,7 +62,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             
         return dataReadFromFile;
     }
-        
+
     private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         var sw = new Stopwatch();
@@ -109,7 +109,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
         return toReturn;
     }
-        
+
     /// <summary>
     /// Returns all data held in the current <paramref name="worksheet"/>.  The first row of data becomes the headers.  Throws away fully blank columns/rows.
     /// </summary>
@@ -219,7 +219,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                 if (IsDateWithoutTime(format))
                     return cell.DateCellValue.ToString("yyyy-MM-dd");
-                        
+
                 if(IsDateWithTime(format))
                     return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -231,7 +231,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     : f.Format(cell.NumericCellValue, CultureInfo.InvariantCulture);
 
             case CellType.String:
-                    
+
                 var v = cell.StringCellValue;
 
                 //if it is blank or 'null' then leave it null

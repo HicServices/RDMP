@@ -41,7 +41,7 @@ public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecuti
                 o.Name.Equals(ci.Name, StringComparison.CurrentCultureIgnoreCase) &&
                 !string.IsNullOrWhiteSpace(o.Description));
 
-            if (match != null) 
+            if (match != null)
                 ExecuteCommandImportCatalogueItemDescription.CopyNonIDValuesAcross(match, ci, true);
 
         }

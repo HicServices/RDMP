@@ -14,9 +14,9 @@ public class ExecuteCommandMoveCohortAggregateContainerIntoSubContainer : BasicC
 {
     private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainer;
     private readonly CohortAggregateContainer _targetCohortAggregateContainer;
-        
+
     [UseWithObjectConstructor]
-    public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainer toMove, CohortAggregateContainer into) 
+    public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainer toMove, CohortAggregateContainer into)
         : this(activator,new CohortAggregateContainerCombineable(toMove),into)
     {
 

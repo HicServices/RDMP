@@ -40,19 +40,19 @@ public class ExecuteCommandSet:BasicCommandExecution
     /// The new value chosen by the user during command execution
     /// </summary>
     public object NewValue { get; private set; }
-        
+
     /// <summary>
-    /// True if the command was successfully completed 
+    /// True if the command was successfully completed
     /// </summary>
     public bool Success { get; private set; }
 
     [UseWithObjectConstructor]
     public ExecuteCommandSet(IBasicActivateItems activator,
-            
+
         [DemandsInitialization("A single object on which you want to change a given property")]
         IMapsDirectlyToDatabaseTable setOn,
         [DemandsInitialization("Name of a property you want to change e.g. Description")]
-        string property, 
+        string property,
         [DemandsInitialization("New value to assign, this will be parsed into a valid Type if property is not a string")]
         string value):base(activator)
     {
@@ -190,7 +190,7 @@ public class ExecuteCommandSet:BasicCommandExecution
                     populatedNewValueWithRelationship = true;
                 }
             }
-                
+
             if(!populatedNewValueWithRelationship)
             {
                 if (BasicActivator.SelectValueType(GetDialogArgs(on), _property.PropertyType, _property.GetValue(on), out var chosen))

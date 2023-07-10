@@ -27,7 +27,7 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
 
         [DemandsInitialization("The configuration to change the cohort on")]
         ExtractionConfiguration extractionConfiguration,
-            
+
         [DemandsInitialization("The cohort to pick")]
         ExtractableCohort cohort = null):base(activator)
     {
@@ -92,7 +92,7 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
                    TaskDescription = "Select the existing Cohort you would like to be used for your Extraction Configuration."
                }, _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID && !c.IsDeprecated).ToList(), out var selected))
             {
-                pick = selected;                
+                pick = selected;
             }
 
         if(pick != null)

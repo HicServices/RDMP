@@ -33,7 +33,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 
 /// <summary>
-///  This control functions in two ways. 
+///  This control functions in two ways.
 /// 
 /// <para>Firstly it allows you to visualise both the anticipated tables that will be created during a data load (See LoadMetadataUI) including columns which vary by stage e.g. hic_validFrom which
 /// is computed and only in LIVE and primary keys which are unconstrained (nullable) in RAW.</para>
@@ -45,7 +45,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 /// <para>You can click check the state at any time even during a load or after a failed load (Where bubbles RAW and STAGING will be left for you to debug).  Double clicking a Table will allow you
 /// to see what is in the table and let you run diagnostic SQL you type to run on it (this lets you debug what went wrong with your load / the data you were supplied with).</para>
 /// 
-/// <para>The way that tables/databases are determined is via UNIONing all the TableInfos of all the Catalogues that are associated with the load (including any linked lookup tables).  See 
+/// <para>The way that tables/databases are determined is via UNIONing all the TableInfos of all the Catalogues that are associated with the load (including any linked lookup tables).  See
 /// LoadMetadataCollectionUI for changing this.</para>
 /// </summary>
 public partial class LoadDiagramUI : LoadDiagram_Design
@@ -60,7 +60,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     {
         DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
     };
-        
+
     public LoadDiagramUI()
     {
         InitializeComponent();
@@ -98,7 +98,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             {
                 //for live just use the TableInfo!
                 Activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
-                return;   
+                return;
             }
             else
                 table = tableNode.Table; //otherwise it's a non Live bubble table or an unplanned table somewhere so use Arbitrary table Data Viewing

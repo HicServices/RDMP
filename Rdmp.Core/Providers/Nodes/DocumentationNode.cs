@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and SupportingSQLTables 
+/// Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and SupportingSQLTables
 /// </summary>
 public class DocumentationNode:Node
 {

@@ -20,7 +20,7 @@ namespace Rdmp.Core.Curation;
 public class SimpleStringValueEncryption : IEncryptStrings
 {
     private readonly RSACryptoServiceProvider _turing=new ();
-        
+
     private const string Key =
         @"<?xml version=""1.0"" encoding=""utf-16""?>
 <RSAParameters xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
@@ -62,9 +62,9 @@ public class SimpleStringValueEncryption : IEncryptStrings
         var key = Convert.ToBase64String(_turing.Encrypt(keyBlock, true));
         return $"$js1${key}${cipherText}$";
     }
-        
+
     /// <summary>
-    /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
+    /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString()
     /// </summary>
     /// <param name="toDecrypt"></param>
     /// <returns></returns>

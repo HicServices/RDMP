@@ -34,7 +34,7 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>, INamed
 {
-        
+
     #region Database Properties
 
     private int _tableInfoID;
@@ -92,7 +92,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    ///  User specified free text field.  Not used for anything by RDMP. 
+    ///  User specified free text field.  Not used for anything by RDMP.
     /// <para> Use <see cref="Collation"/> instead</para>
     /// </summary>
     public string Format
@@ -146,7 +146,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         get => _regexPattern;
         set => SetField(ref  _regexPattern, value);
     }
-        
+
     /// <summary>
     /// Not used for anything by RDMP.
     /// <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML"/>)</para>
@@ -177,7 +177,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         get => _collation;
         set => SetField(ref  _collation, value);
     }
-        
+
     /// <summary>
     /// The importance of this column in resolving primary key collisions during data loads (in RAW).  Columns with a lower number are consulted first when resolving
     /// collisions.  E.g. are the colliding records different on this column? if yes use <see cref="DuplicateRecordResolutionIsAscending"/> to pick which to delete
@@ -239,7 +239,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public IEnumerable<CatalogueItem> CatalogueItems => Repository.GetAllObjectsWithParent<CatalogueItem>(this);
 
     #endregion
-        
+
     /// <summary>
     /// Notional usage status of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
     /// </summary>
@@ -356,7 +356,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
             
     }
-        
+
     ///<inheritdoc/>
     public string GetRuntimeName()
     {
@@ -407,7 +407,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         {
             //if it has an ANO transform
             if (ANOTable_ID != null)
-                return ANOTable.GetRuntimeDataType(loadStage);    //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet 
+                return ANOTable.GetRuntimeDataType(loadStage);    //get the datatype from the ANOTable because ColumnInfo is of mutable type depending on whether it has been anonymised yet
 
             //it doesn't have an ANOtransform but it might be the subject of dilution
             var discard = TableInfo.PreLoadDiscardedColumns.SingleOrDefault(c=>c.GetRuntimeName().Equals(GetRuntimeName(),StringComparison.InvariantCultureIgnoreCase));
@@ -421,7 +421,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         //The user is asking about a stage other than RAW so tell them about the final column type state
         return Data_type;
     }
-        
+
     /// <summary>
     /// Connects to the live database referenced by this <seealso cref="ColumnInfo"/> and discovers the column returning the
     /// live state of the column.
@@ -472,7 +472,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Checks the ANO status of the column is valid (and matching on datatypes etc).  
+    /// Checks the ANO status of the column is valid (and matching on datatypes etc).
     /// <para>Does not check for synchronization against the underlying database.</para>
     /// </summary>
     /// <param name="notifier"></param>
@@ -524,7 +524,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
     /// <summary>
     /// Returns true if the Data_type is numerical (decimal or int) according to the DBMS it resides in.  Returns
-    /// false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything 
+    /// false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything
     /// else goes wrong resolving the Type.
     /// </summary>
     /// <returns></returns>

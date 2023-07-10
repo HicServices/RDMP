@@ -28,15 +28,15 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
     {
         CommandGetter = commandGetter;
 
-        // repository locator must be one of these types for us to properly assemble 
+        // repository locator must be one of these types for us to properly assemble
         // CLI args
         _cataTableRepo = activator.RepositoryLocator.CatalogueRepository as TableRepository;
         _yamlRepository = activator.RepositoryLocator.CatalogueRepository as YamlRepository;
         _dataExportTableRepo = activator.RepositoryLocator.DataExportRepository as TableRepository;
-            
+
         if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
             SetImpossible("Current repository is not not TableRepository/YamlRepository");
-            
+
     }
 
     /// <summary>

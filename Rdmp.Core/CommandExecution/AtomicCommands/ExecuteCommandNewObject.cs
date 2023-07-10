@@ -52,7 +52,7 @@ public class ExecuteCommandNewObject:BasicCommandExecution
     /// <param name="activator"></param>
     /// <param name="picker"></param>
     [UseWithCommandLine(
-        ParameterHelpList = "<type> <arg1> <arg2> <etc>", 
+        ParameterHelpList = "<type> <arg1> <arg2> <etc>",
         ParameterHelpBreakdown = @"type	The object to create e.g. Catalogue
 args    Dynamic list of values to satisfy the types constructor")]
     public ExecuteCommandNewObject(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
@@ -92,8 +92,8 @@ args    Dynamic list of values to satisfy the types constructor")]
             instance = (DatabaseEntity)Construct(_type,
 
                 //use the IRepository constructor of the _type
-                ()=>ObjectConstructor.GetRepositoryConstructor(_type), 
-                
+                ()=>ObjectConstructor.GetRepositoryConstructor(_type),
+
                 //first argument is the Type, the rest are fed into the constructor of _type
                 _picker?.Arguments?.Skip(1));
         }

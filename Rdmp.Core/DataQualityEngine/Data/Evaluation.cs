@@ -43,7 +43,7 @@ public class Evaluation : DatabaseEntity
         set => rowStates = value;
     }
 
-        
+
     private ColumnState[] columnStates;
 
     [NoMappingToDatabase]
@@ -112,7 +112,7 @@ public class Evaluation : DatabaseEntity
                 {"DateOfEvaluation" , DateTime.Now}
             });
     }
-        
+
 
     internal void AddRowState( int dataLoadRunID, int correct, int missing, int wrong, int invalid, string validatorXml,string pivotCategory,DbConnection con, DbTransaction transaction)
     {

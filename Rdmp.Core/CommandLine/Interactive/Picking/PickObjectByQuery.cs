@@ -25,7 +25,7 @@ public class PickObjectByQuery: PickObjectBase
         @"Type: must be an RDMP object type e.g. Catalogue, Project etc.
 Property: must be a property of the Type class.
 NamePattern: must be a value that could appear for the given Property.  Comparison will be via ToString on property value.";
-        
+
     public override IEnumerable<string> Examples => new []
     {
         "CatalogueItem?Catalogue_ID:55", 

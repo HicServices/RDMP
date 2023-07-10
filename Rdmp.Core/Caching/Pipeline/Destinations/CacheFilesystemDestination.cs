@@ -34,9 +34,9 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
 {
     [DemandsInitialization("Root directory for the cache. This overrides the default LoadDirectory cache location. This might be needed if you are caching a very large data set which needs its own dedicated storage resource, for example.",DemandType.Unspecified,null)]
     public DirectoryInfo CacheDirectory { get; set; }
-        
+
     public abstract ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
-        
+
     public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
     {
         // CacheDirectory overrides LoadDirectory, so only set CacheDirectory if it is null (i.e. no alternative cache location has been configured in the destination component)
@@ -50,7 +50,7 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
     /// </summary>
     /// <returns></returns>
     public abstract ICacheLayout CreateCacheLayout();
-        
+
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
     }

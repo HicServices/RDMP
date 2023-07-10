@@ -70,7 +70,7 @@ public class ParameterEditorScintillaSection
                 &&
                 newPrototype.ParameterSQL.Equals(Parameter.ParameterSQL))
                 return FreeTextParameterChangeResult.NoChangeMade;
-                
+
             Parameter.Comment = newPrototype.Comment;
             Parameter.Value = newPrototype.Value;
             Parameter.ParameterSQL = newPrototype.ParameterSQL;

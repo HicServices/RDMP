@@ -48,7 +48,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
         _file = file;
     }
-        
+
     public override void Execute()
     {
         base.Execute();

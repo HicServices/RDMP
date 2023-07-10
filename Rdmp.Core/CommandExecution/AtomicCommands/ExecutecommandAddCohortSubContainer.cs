@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution,IAtomicCommand
 {
     private CohortAggregateContainer _container;
-        
+
     public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container):base(activator)
     {
         Weight = 0.12f;

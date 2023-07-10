@@ -32,7 +32,7 @@ public class PreExecutionChecker :  ICheckable
     /// </summary>
     public bool HardFail { get; private set; }
 
-    public PreExecutionChecker(ILoadMetadata loadMetadata, HICDatabaseConfiguration overrideDatabaseConfiguration) 
+    public PreExecutionChecker(ILoadMetadata loadMetadata, HICDatabaseConfiguration overrideDatabaseConfiguration)
     {
         _loadMetadata = loadMetadata;
         _databaseConfiguration = overrideDatabaseConfiguration ?? new HICDatabaseConfiguration(loadMetadata);
@@ -64,7 +64,7 @@ public class PreExecutionChecker :  ICheckable
             var createDatabase = _notifier.OnCheckPerformed(new CheckEventArgs($"{failureMessage}: {dbInfo}", CheckResult.Fail, null,
                 $"Create {dbInfo.GetRuntimeName()} on {dbInfo.Server.Name}"));
 
-                
+
             if (createDatabase)
                 dbInfo.Server.CreateDatabase(dbInfo.GetRuntimeName());
         }
@@ -121,7 +121,7 @@ public class PreExecutionChecker :  ICheckable
 
             var tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
             var table = dbInfo.ExpectTable(tableName);
-                    
+
             if(!table.Exists())
                 throw new Exception(
                     $"PreExecutionChecker spotted that table does not exist:{table} it was about to check whether the TableInfo matched the columns or not");
@@ -195,10 +195,10 @@ public class PreExecutionChecker :  ICheckable
         }
     }
 
- 
+
     private ICheckNotifier _notifier;
 
- 
+
     public void Check(ICheckNotifier notifier)
     {
         _notifier = notifier;
@@ -241,7 +241,7 @@ public class PreExecutionChecker :  ICheckable
             
     }
 
-        
+
 
     private void AtLeastOneTaskCheck()
     {
@@ -251,7 +251,7 @@ public class PreExecutionChecker :  ICheckable
                     $"There are no ProcessTasks defined for '{_loadMetadata}'",
                     CheckResult.Fail));
     }
-                
+
     public void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo))

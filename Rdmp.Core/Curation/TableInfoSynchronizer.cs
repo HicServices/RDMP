@@ -32,7 +32,7 @@ public class TableInfoSynchronizer
 
     /// <summary>
     /// Synchronizes the TableInfo against the underlying database to ensure the Catalogues understanding of what columns exist, what are primary keys,
-    /// collation types etc match the reality.  Pass in an alternative 
+    /// collation types etc match the reality.  Pass in an alternative
     /// </summary>
     /// <param name="tableToSync"></param>
     public TableInfoSynchronizer(ITableInfo tableToSync)
@@ -117,9 +117,9 @@ public class TableInfoSynchronizer
         else
             importer = new TableInfoImporter(_repository, _toSyncTo.Name, _toSyncTo.GetCurrentDatabase().GetRuntimeName(), _tableToSync.GetRuntimeName(), _tableToSync.DatabaseType, username: usr, password: pwd, importFromSchema: _tableToSync.Schema, importTableType:_tableToSync.IsView ? TableType.View:TableType.Table);
 
-        var newColumnsInLive = 
+        var newColumnsInLive =
             liveColumns.Where(
-                live => !catalogueColumns.Any(columnInfo => 
+                live => !catalogueColumns.Any(columnInfo =>
                     columnInfo.GetRuntimeName()
                         .Equals(live.GetRuntimeName()))).ToArray();
 
@@ -129,7 +129,7 @@ public class TableInfoSynchronizer
             //see if user wants to add missing columns
             var addMissingColumns = notifier.OnCheckPerformed(new CheckEventArgs(
                 $"The following columns are missing from the TableInfo:{string.Join(",", newColumnsInLive.Select(c => c.GetRuntimeName()))}",CheckResult.Fail,null,"The ColumnInfos will be created and added to the TableInfo"));
-                
+
             var added = new List<ColumnInfo>();
 
             if(addMissingColumns)
@@ -144,7 +144,7 @@ public class TableInfoSynchronizer
         }
 
         //See if we need to delete any ColumnInfos
-        var columnsInCatalogueButSinceDisapeared = 
+        var columnsInCatalogueButSinceDisapeared =
             catalogueColumns
                 .Where(columnInfo => !liveColumns.Any( //there are not any
                         c=>columnInfo.GetRuntimeName().Equals(c.GetRuntimeName())) //columns with the same name between discovery/columninfo
@@ -154,7 +154,7 @@ public class TableInfoSynchronizer
         {
             foreach (var columnInfo in columnsInCatalogueButSinceDisapeared)
             {
-                    
+
                 var deleteExtraColumnInfos = notifier.OnCheckPerformed(new CheckEventArgs(
                     $"The ColumnInfo {columnInfo.GetRuntimeName()} no longer appears in the live table.",CheckResult.Fail,null,
                     $"Delete ColumnInfo {columnInfo.GetRuntimeName()}"));
@@ -209,7 +209,7 @@ public class TableInfoSynchronizer
 
                     //In the Catalogue
                     c.ExecuteForwardEngineering(relatedCatalogues[0],out var cata,out var cis, out var eis);
-                        
+
                     //make them extractable only as internal since it is likely they could contain sensitive data if user is just used to hammering Ok on all dialogues
                     foreach (var e in eis)
                     {
@@ -229,7 +229,7 @@ public class TableInfoSynchronizer
         foreach (var columnInfo in _tableToSync.ColumnInfos)
         {
             var liveState = liveColumns.Single(c => c.GetRuntimeName().Equals(columnInfo.GetRuntimeName()));
-                
+
             //deal with mismatch in type
             if (!liveState.DataType.SQLType.Equals(columnInfo.Data_type))
                 if (notifier.OnCheckPerformed(new CheckEventArgs(
@@ -269,7 +269,7 @@ public class TableInfoSynchronizer
         foreach (var cataColumn in columnsInCatalogue)
         {
             var catalogueValue = cataloguePropertyGetter.GetValue(cataColumn);
-                
+
             //find the corresponding DiscoveredColumn
             var matchingLiveColumn = liveColumns.Single(ci => ci.GetRuntimeName().Equals(cataColumn.GetRuntimeName()));
             var liveValue = discoveredPropertyGetter.GetValue(matchingLiveColumn);
@@ -291,7 +291,7 @@ public class TableInfoSynchronizer
 
         return IsSynched;
     }
-        
+
     private bool SynchronizeParameters(TableValuedFunctionImporter importer, ICheckNotifier notifier)
     {
         var discoveredParameters = _toSyncTo.GetCurrentDatabase().ExpectTableValuedFunction(_tableToSync.GetRuntimeName(),_tableToSync.Schema).DiscoverParameters();
@@ -333,7 +333,7 @@ public class TableInfoSynchronizer
                     existingCatalogueReference.ParameterSQL = dbDefinition;
                     existingCatalogueReference.SaveToDatabase();
                 }
-            }   
+            }
         }
 
         //Find redundant parameters - parameters that the catalogue knows about but no longer appear in the table valued function signature in the database
@@ -350,7 +350,7 @@ public class TableInfoSynchronizer
                     return false;
 
                 ((IDeleteable)currentParameter).DeleteInDatabase();
-                    
+
             }
 
         return true;

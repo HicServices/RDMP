@@ -33,7 +33,7 @@ public class CheckEntireDataLoadProcess :  ICheckable
         LoadMetadata = loadMetadata;
 
     }
-        
+
     public void Check(ICheckNotifier notifier)
     {
         var catalogueLoadChecks = new CatalogueLoadChecks(LoadMetadata, _loadConfigurationFlags, _databaseConfiguration);
@@ -71,7 +71,7 @@ public class CheckEntireDataLoadProcess :  ICheckable
             metadataLoggingConfigurationChecks.Check(notifier);
 
             preExecutionChecks.Check(notifier);
-                
+
             if(!preExecutionChecks.HardFail)
                 catalogueLoadChecks.Check(notifier);
 

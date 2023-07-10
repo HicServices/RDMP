@@ -19,7 +19,7 @@ using TypeGuesser;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Calculates the Extraction SQL for extracting a given ExtractDatasetCommand.  This is done by creating a normal QueryBuilder and then adding adjustment 
+/// Calculates the Extraction SQL for extracting a given ExtractDatasetCommand.  This is done by creating a normal QueryBuilder and then adding adjustment
 /// components to it to link against the cohort, drop the private identifier column, add the release identifier column etc.
 /// </summary>
 public class ExtractionQueryBuilder
@@ -32,7 +32,7 @@ public class ExtractionQueryBuilder
     }
 
     /// <summary>
-    /// This produces the SQL that would retrieve the specified dataset columns including any JOINS 
+    /// This produces the SQL that would retrieve the specified dataset columns including any JOINS
     /// 
     /// <para>It uses:
     /// QueryBuilder and then it adds some custom lines for linking to the cohort</para>
@@ -58,11 +58,11 @@ public class ExtractionQueryBuilder
         var memoryRepository = new MemoryRepository();
             
         switch (request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier))
-        { 
+        {
             //no extraction identifiers
             case 0: throw new Exception(
-                $"There are no Columns in this dataset ({request}) marked as IsExtractionIdentifier"); 
-                    
+                $"There are no Columns in this dataset ({request}) marked as IsExtractionIdentifier");
+
             //a single extraction identifier e.g. CHI X died on date Y with conditions a,b and c
             case 1: substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository,request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false,syntaxHelper));
                 break;
@@ -123,7 +123,7 @@ public class ExtractionQueryBuilder
 
             //add the JOIN in after any other joins
             queryBuilder.AddCustomLine(cohortJoin, QueryComponent.JoinInfoJoin);
-                
+
             //add the filter cohortID because our new Cohort system uses ID number and a giant combo table with all the cohorts in it we need to say Select XX from XX join Cohort Where Cohort number = Y
             queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.WHERE);
         }

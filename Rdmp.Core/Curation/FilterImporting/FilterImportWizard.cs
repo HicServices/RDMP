@@ -134,7 +134,7 @@ public class FilterImportWizard
         }, typeof(ExtractionFilter), filtersThatCouldBeImported);
 
         if (results is not null)
-        { 
+        {
             foreach (var f in results)
             {
                 var i = Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope,null);

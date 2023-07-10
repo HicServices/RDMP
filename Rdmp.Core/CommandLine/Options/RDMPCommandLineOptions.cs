@@ -42,7 +42,7 @@ public abstract class RDMPCommandLineOptions
 
     [Option(Required =false, HelpText = @"Log StartUp output")]
     public bool LogStartup{get;set;}
-        
+
     [Option(Required = false, HelpText = @"Command to run on the engine: 'run' or 'check' ", Default = CommandLineActivity.run)]
     public CommandLineActivity Command { get; set; } = CommandLineActivity.run;
 

@@ -85,7 +85,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
     }
     private DashboardControl _dashboardControlDatabaseRecord;
     private GoodBadCataloguePieChartObjectCollection _collection;
-        
+
     private void GenerateChart()
     {
         chart1.Visible = false;
@@ -98,7 +98,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         PopulateAsEmptyDescriptionsChart();
     }
-        
+
     private void PopulateAsEmptyDescriptionsChart()
     {
         try
@@ -110,13 +110,13 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
                 chart1.DataSource = null;
                 chart1.Visible = false;
                 lblNoIssues.Visible = true;
-                    
+
                 return;
             }
 
             var countPopulated = 0;
             var countNotPopulated = 0;
-                    
+
             foreach (var ci in catalogueItems)
                 if (string.IsNullOrWhiteSpace(ci.Description))
                     countNotPopulated++;
@@ -129,7 +129,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
             dt.Rows.Add(new object[] { countNotPopulated, $"Missing ({countNotPopulated})" });
             dt.Rows.Add(new object[] { countPopulated, $"Populated ({countPopulated})" });
-                
+
             chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
             chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;
 
@@ -258,7 +258,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         SaveCollectionChanges();
         GenerateChart();
     }
-        
+
     private void btnRefresh_Click(object sender, EventArgs e)
     {
         GenerateChart();
@@ -271,7 +271,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         _dashboardControlDatabaseRecord.SaveCollectionState(_collection);
     }
-        
+
     private void btnShowLabels_CheckStateChanged(object sender, EventArgs e)
     {
         _collection.ShowLabels = btnShowLabels.Checked;
@@ -288,7 +288,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
            }, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)).ToArray(),out var selected))
         {
             var cmd = new ExecuteCommandShow(Activator, selected, 1);
-            cmd.Execute();   
+            cmd.Execute();
         }
     }
 }

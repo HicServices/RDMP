@@ -39,7 +39,7 @@ internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
                 foreach (var cata in allCatalogues.OrderBy(c => c.Name))
                 {
                     var cataGraphs = availableGraphs.Where(g => g.Catalogue_ID == cata.ID).ToArray();
-                        
+
                     //if there are no graphs belonging to the Catalogue skip it
                     if(!cataGraphs.Any())
                         continue;

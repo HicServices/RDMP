@@ -21,7 +21,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution,IAtomicCommand
 {
     private readonly CohortIdentificationConfiguration _cic;
-        
+
     public ExecuteCommandCreateNewQueryCacheDatabase(IActivateItems activator, CohortIdentificationConfiguration configuration):base(activator)
     {
         _cic = configuration;
@@ -48,7 +48,7 @@ public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution
             _cic.SaveToDatabase();
 
             SetDefaultIfNotExists(newServer,PermissableDefaults.CohortIdentificationQueryCachingServer_ID,true);
-                
+
             Publish(_cic);
         }
     }

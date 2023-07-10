@@ -39,7 +39,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
     public override void Execute()
     {
-        if(_catalogue == null) 
+        if(_catalogue == null)
             SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository));
 
         _project ??= SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);

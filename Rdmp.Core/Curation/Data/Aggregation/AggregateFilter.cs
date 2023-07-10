@@ -82,7 +82,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     {
         return AggregateFilterParameters.ToArray();
     }
-        
+
     ///<inheritdoc/>
     [NoMappingToDatabase]
     public override IContainer FilterContainer => FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;
@@ -137,7 +137,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     {
         return Name;
     }
-        
+
     /// <inheritdoc/>
     public override ColumnInfo GetColumnInfoIfExists()
     {
@@ -176,7 +176,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     }
 
     /// <summary>
-    /// Removes the AggregateFilter from any AggregateFilterContainer (AND/OR) that it might be a part of 
+    /// Removes the AggregateFilter from any AggregateFilterContainer (AND/OR) that it might be a part of
     /// effectively turning it into a disconnected orphan.
     /// </summary>
     public void MakeIntoAnOrphan()

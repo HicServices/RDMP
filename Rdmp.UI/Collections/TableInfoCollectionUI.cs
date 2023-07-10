@@ -70,7 +70,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             Activator.ShowWindow(c, true);
         }
     }
-        
+
     public void SelectTableInfo(TableInfo toSelect)
     {
         tlvTableInfos.SelectObject(toSelect);
@@ -91,7 +91,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         base.SetItemActivator(activator);
 
         CommonTreeFunctionality.SetUp(
-            RDMPCollection.Tables, 
+            RDMPCollection.Tables,
             tlvTableInfos,
             activator,
             olvColumn1,
@@ -136,13 +136,13 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         if(e.Object is DataAccessCredentials)
             tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
             
-        if(e.Object is Catalogue || e.Object is TableInfo) 
+        if(e.Object is Catalogue || e.Object is TableInfo)
             tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
 
         if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
             tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
     }
-        
+
     public static bool IsRootObject(object root)
     {
         return
@@ -153,7 +153,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             root is AllDataAccessCredentialsNode ||
             root is AllANOTablesNode ||
             root is AllServersNode ||
-            root is AllConnectionStringKeywordsNode || 
+            root is AllConnectionStringKeywordsNode ||
             root is AllStandardRegexesNode ||
             root is AllDashboardsNode;
 

@@ -21,7 +21,7 @@ public class TestDatabasesSettings
 
     public string SqlServerLowPrivilegeUsername { get; set; }
     public string SqlServerLowPrivilegePassword { get; set; }
-        
+
     public string MySql { get; set; }
     public string MySqlLowPrivilegeUsername { get; set; }
     public string MySqlLowPrivilegePassword { get; set; }
@@ -29,7 +29,7 @@ public class TestDatabasesSettings
     public string Oracle { get; set; }
     public string OracleLowPrivilegeUsername { get; set; }
     public string OracleLowPrivilegePassword { get; set; }
-        
+
     public string PostgreSql { get; set; }
     public string PostgreSqlLowPrivilegeUsername { get; set; }
     public string PostgreSqlLowPrivilegePassword { get; set; }
@@ -49,7 +49,7 @@ public class TestDatabasesSettings
         };
     }
 
-        
+
 
     public string GetLowPrivilegePassword(DatabaseType databaseType)
     {

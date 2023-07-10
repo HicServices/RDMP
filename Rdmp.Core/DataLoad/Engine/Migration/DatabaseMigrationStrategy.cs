@@ -57,7 +57,7 @@ public abstract class DatabaseMigrationStrategy
             cancellationToken.ThrowIfCancellationRequested();
         }
     }
-        
+
     public event TableMigrationComplete TableMigrationCompleteHandler;
 
     protected virtual void OnTableMigrationCompleteHandler(string tableName, int numInserts, int numUpdates)

@@ -19,7 +19,7 @@ internal class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionPro
     public ProposeExecutionWhenTargetIsLoadStageNode(IActivateItems itemActivator) : base(itemActivator)
     {
     }
-        
+
     public override bool CanActivate(LoadStageNode target)
     {
         return false;

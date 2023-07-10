@@ -13,7 +13,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 
 /// <summary>
-/// Identifies all extractable components of a given ExtractionConfiguration (all datasets).  These are returned as an ExtractCommandCollection.  
+/// Identifies all extractable components of a given ExtractionConfiguration (all datasets).  These are returned as an ExtractCommandCollection.
 /// </summary>
 public class ExtractCommandCollectionFactory
 {

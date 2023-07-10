@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project extracts will appear when 
+/// The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project extracts will appear when
 /// an ExtractionConfiguration is executed.  It is also the location where the Release Engine will pick them up from when it bundles together a
 /// release package.
 /// </summary>
@@ -29,7 +29,7 @@ public class ExtractionDirectory : IExtractionDirectory
     public const string METADATA_FOLDER_NAME = "MetadataShareDefs";
 
     public DirectoryInfo ExtractionDirectoryInfo { get; private set; }
-        
+
     public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
         : this(rootExtractionDirectory, configuration, DateTime.Now)
     {

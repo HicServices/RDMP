@@ -26,7 +26,7 @@ public abstract class Bound : SecondaryConstraint
 
     [Description("When ticked allows values that are EXACTLY THE SAME AS either the Upper or Lower boundary (including field boundaries) to pass validation")]
     public bool Inclusive { get; set; }
-        
+
 
     protected object LookupFieldNamed(string name, object[] otherColumns, object[] otherColumnNames)
     {
@@ -45,7 +45,7 @@ public abstract class Bound : SecondaryConstraint
         throw new MissingFieldException($"Validation failed: Comparator field [{name}] not found in dictionary.");
     }
 
-        
+
 
     public override void RenameColumn(string originalName, string newName)
     {

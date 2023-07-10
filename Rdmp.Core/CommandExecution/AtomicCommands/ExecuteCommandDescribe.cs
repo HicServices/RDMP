@@ -31,7 +31,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
     public string HelpShown { get; private set; }
 
     [UseWithCommandLine(
-        ParameterHelpList = "<command,type or object>", 
+        ParameterHelpList = "<command,type or object>",
         ParameterHelpBreakdown = @"An object (or array of objects) to describe (e.g. Catalogue:bob) or Type name, or the name of a command")]
     public ExecuteCommandDescribe(IBasicActivateItems activator,CommandLineObjectPicker picker):base(activator)
     {
@@ -54,15 +54,15 @@ public class ExecuteCommandDescribe:BasicCommandExecution
             // Maybe they typed the alias or name of a command
             _nonDatabaseObjectToDescribe = new CommandInvoker(BasicActivator).GetSupportedCommands()
                 .FirstOrDefault(t=>HasCommandNameOrAlias(t,picker[0].RawValue));
-                
-                    
+
+
             if(_nonDatabaseObjectToDescribe == null)
                 SetImpossible("Did not recognise parameter as a valid command");
         }
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandDescribe(IBasicActivateItems activator, 
+    public ExecuteCommandDescribe(IBasicActivateItems activator,
         IMapsDirectlyToDatabaseTable[] toDescribe):base(activator)
     {
         _databaseObjectToDescribe = toDescribe;
@@ -218,7 +218,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
             {
                 var req = new RequiredArgument(p);
 
-                //automatic delegates require no user input or CLI entry (e.g. IActivateItems)                
+                //automatic delegates require no user input or CLI entry (e.g. IActivateItems)
                 if (invoker.GetDelegate(req).IsAuto)
                     continue;
 
@@ -278,10 +278,10 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         try
         {
             if(BasicActivator is ConsoleInputManager)
-            {              
+            {
                 var name = req.Name.Length < nameColWidth ? req.Name.PadRight(nameColWidth) : req.Name[..nameColWidth];
                 var type = req.Type.Name.Length < typeColWidth ? req.Type.Name.PadRight(typeColWidth) : req.Type.Name[..typeColWidth];
-                    
+
                 var desc = req.DemandIfAny?.Description;
 
 
@@ -314,7 +314,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
         return $"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}";
     }
-        
+
     private static string Wrap(string longString, int width, int indent)
     {
         var words = longString.Split(' ');

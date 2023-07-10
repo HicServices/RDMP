@@ -26,7 +26,7 @@ namespace Rdmp.Core.DataExport.Data;
 /// <para>Once you have executed, extracted and released an ExtractionConfiguration then it becomes 'frozen' IsReleased and it is not possible to edit it.  This is intended
 /// to ensure that once data has gone out the door the configuration that generated the data is immutable.</para>
 /// 
-/// <para>If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name 
+/// <para>If you need to perform a repeat extraction (e.g. an update of data 5 years on) then you should 'Clone' the ExtractionConfiguration in the Project and give it a new name
 /// e.g. 'Cases - 5 year update'.</para>
 /// </summary>
 public interface IExtractionConfiguration:INamed,IHasDependencies, IMightBeReadOnly, ILoggedActivityRootObject
@@ -91,7 +91,7 @@ public interface IExtractionConfiguration:INamed,IHasDependencies, IMightBeReadO
 
     /// <inheritdoc cref="Cohort_ID"/>
     IExtractableCohort Cohort { get;}
-        
+
     /// <summary>
     /// The <see cref="IPipeline"/> which should be used to extract the linked datasets unless the user specifies a specific alternative.
     /// </summary>
@@ -106,7 +106,7 @@ public interface IExtractionConfiguration:INamed,IHasDependencies, IMightBeReadO
     int? CohortIdentificationConfiguration_ID { get; set; }
 
     /// <summary>
-    /// The <see cref="IPipeline"/> which should be executed during 'Cohort Refresh' in order to turn the query 
+    /// The <see cref="IPipeline"/> which should be executed during 'Cohort Refresh' in order to turn the query
     /// (<see cref="CohortIdentificationConfiguration_ID"/>) into an <see cref="IExtractableCohort"/>.
     /// </summary>
     int? CohortRefreshPipeline_ID { get; set; }
@@ -119,7 +119,7 @@ public interface IExtractionConfiguration:INamed,IHasDependencies, IMightBeReadO
     IProject GetProject();
 
     /// <summary>
-    /// Returns all global <see cref="ISqlParameter"/> which can be used in WHERE filters of <see cref="ISelectedDataSets"/> being extracted in this 
+    /// Returns all global <see cref="ISqlParameter"/> which can be used in WHERE filters of <see cref="ISelectedDataSets"/> being extracted in this
     /// <see cref="IExtractionConfiguration"/>.  This helps avoid replication of values e.g. record extraction window start/end.
     /// </summary>
     ISqlParameter[] GlobalExtractionFilterParameters { get; }

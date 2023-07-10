@@ -24,14 +24,14 @@ public class ToFileDataLoadEventListener : IDataLoadEventListener
         _logger = NLog.LogManager.GetLogger(logger);
     }
 
-    public ToFileDataLoadEventListener(Type logger) 
+    public ToFileDataLoadEventListener(Type logger)
         : this(logger.FullName)
     { }
 
     public ToFileDataLoadEventListener(object logger)
         : this(logger.GetType())
     { }
-        
+
     public void OnNotify(object sender, NotifyEventArgs e)
     {
         _logger = NLog.LogManager.GetLogger(sender.GetType().FullName);

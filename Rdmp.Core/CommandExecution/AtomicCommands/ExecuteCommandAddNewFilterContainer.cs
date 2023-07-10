@@ -74,7 +74,7 @@ public class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
         {
             if(_container == null)
                 throw new Exception("Command should take container or host but both were null");
-               
+
             _container.AddChild(newContainer);
         }
             

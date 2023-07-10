@@ -37,7 +37,7 @@ using Rdmp.UI.TreeHelper;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row 
+/// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row
 /// height, child nodes etc.
 /// </summary>
 public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
@@ -57,13 +57,13 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public CopyPasteProvider CopyPasteProvider { get; private set; }
     public FavouriteColumnProvider FavouriteColumnProvider { get; private set; }
     public TreeNodeParentFinder ParentFinder { get; private set; }
-        
+
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-        
+
     public OLVColumn FavouriteColumn { get; private set; }
 
     public bool IsSetup { get; private set; }
-        
+
     public Func<IActivateItems,IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
 
     public OLVColumn IDColumn { get; set; }
@@ -78,11 +78,11 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public Type[] AxeChildren { get; set; }
 
     public Type[] MaintainRootObjects { get; set; }
-        
+
     public RDMPCollectionCommonFunctionalitySettings Settings { get; private set; }
 
     public event EventHandler<MenuBuiltEventArgs> MenuBuilt;
-         
+
     private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new()
     {
         {RDMPCollection.Tables,new Guid("8f24d624-acad-45dd-862b-01b18dfdd9a2")},
@@ -449,7 +449,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         if (e.Model is IDisableable { IsDisabled: true } disableable)
         {
             e.Item.ForeColor = Color.FromArgb(152,152,152);
-                
+
             //make it italic
             if(!e.Item.Font.Italic)
                 e.Item.Font = new Font(e.Item.Font,FontStyle.Italic);
@@ -471,7 +471,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
     }
-        
+
     // Tracks when RefreshContextMenuStrip is called to prevent rebuilding on select and right click in rapid succession
     private object _lastMenuObject;
     private DateTime _lastMenuBuilt = DateTime.Now;
@@ -491,7 +491,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         if(_lastMenuObject == Tree.SelectedObject && DateTime.Now.Subtract(_lastMenuBuilt) < TimeSpan.FromSeconds(2))
             return;
 
-        //clear the old menu strip first so old shortcuts cannot be activated during 
+        //clear the old menu strip first so old shortcuts cannot be activated during
         _menu?.Dispose();
 
         if(Tree.SelectedObjects.Count <= 1)
@@ -666,7 +666,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
                 //found a menu with compatible constructor arguments
                 if (menu != null)
-                {                        
+                {
                     MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
                     return Sort(menu);
                 }
@@ -674,7 +674,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 //no compatible menus so just return default menu
                 var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
                 defaultMenu.AddCommonMenuItems(this);
-                    
+
                 MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(defaultMenu,o));
                 return Sort(defaultMenu);
             }
@@ -713,7 +713,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
     private Dictionary<Type,Type> _cachedMenuCompatibility = new();
-        
+
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {
         var args = new RDMPContextMenuStripArgs(_activator,Tree,o)

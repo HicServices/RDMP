@@ -22,7 +22,7 @@ public class SpontaneouslyInventedFilter:ConcreteFilter
 {
     private readonly MemoryCatalogueRepository _repo;
     private readonly ISqlParameter[] _filterParametersIfAny;
-        
+
     /// <summary>
     /// Creates a new temporary (unsaveable) filter in the given memory <paramref name="repo"/>
     /// </summary>

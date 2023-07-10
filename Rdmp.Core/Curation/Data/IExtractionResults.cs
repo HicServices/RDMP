@@ -27,7 +27,7 @@ public interface IExtractionResults : IReferenceOtherObject,IMapsDirectlyToDatab
     /// <summary>
     /// Type of the destination (final) component in the <see cref="IPipeline"/> used for extraction.  This is required so that
     /// artifacts can be collected again e.g. for release (Releasing from a flat file destination is different from releasing
-    /// from a to database extraction).  
+    /// from a to database extraction).
     /// </summary>
     string DestinationType { get; }
 
@@ -44,7 +44,7 @@ public interface IExtractionResults : IReferenceOtherObject,IMapsDirectlyToDatab
     /// <summary>
     /// Null if the extraction completed succesfully.  Otherwise populated with the fatal error that caused the extraction to stop.
     /// 
-    /// <para>If this is not null then the extraction is considered to have been a failure.</para> 
+    /// <para>If this is not null then the extraction is considered to have been a failure.</para>
     /// </summary>
     string Exception { get; set; }
 
@@ -60,7 +60,7 @@ public interface IExtractionResults : IReferenceOtherObject,IMapsDirectlyToDatab
 
 
     /// <summary>
-    /// Finalises an ongoing extraction audit.  This should only be called once at the end of the extraction process.  
+    /// Finalises an ongoing extraction audit.  This should only be called once at the end of the extraction process.
     /// </summary>
     /// <param name="destinationType">Type of the destination (final) component in the <see cref="IPipeline"/> used for extraction</param>
     /// <param name="destinationDescription"></param>

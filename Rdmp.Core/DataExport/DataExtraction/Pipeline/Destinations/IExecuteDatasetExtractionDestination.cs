@@ -31,14 +31,14 @@ public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent
     string OutputFile { get; }
     int SeparatorsStrippedOut { get; }
     string DateFormat { get; }
-        
+
     /// <summary>
     /// Returns a string suitable for naming the extracted artifact e.g. "Biochemistry", or "BIO".  Should not contain a file extension.
     /// </summary>
     /// <returns></returns>
     string GetFilename();
-        
-        
+
+
     /// <summary>
     /// Provide a short description of where the <see cref="ExtractionDestination"/> puts rows e.g. a file path for a csv
     /// </summary>

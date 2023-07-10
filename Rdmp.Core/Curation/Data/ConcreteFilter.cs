@@ -20,9 +20,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Abstract base class for all IFilters which are database entities (Stored in the Catalogue/Data Export database as objects). 
+/// Abstract base class for all IFilters which are database entities (Stored in the Catalogue/Data Export database as objects).
 /// 
-/// <para>ConcreteFilter is used to provide UI editing of an IFilter without having to add persistence / DatabaseEntity logic to IFilter (which would break 
+/// <para>ConcreteFilter is used to provide UI editing of an IFilter without having to add persistence / DatabaseEntity logic to IFilter (which would break
 /// SpontaneouslyInventedFilters)</para>
 /// </summary>
 public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
@@ -32,7 +32,7 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
     {
             
     }
-        
+
     /// <inheritdoc/>
     protected ConcreteFilter():base()
     {
@@ -90,7 +90,7 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
     /// <summary>
     /// Returns all the immediate <see cref="ISqlParameter"/> which are declared on the IFilter.  These are sql parameters e.g. 'DECLARE @startDate as datetime' with a defined
     /// Value, the parameter should be referenced by the <see cref="WhereSQL"/> of the IFilter.  This may not be representative of the final values used in query building if
-    /// there are higher level/global overriding parameters e.g. declared at <see cref="AggregateConfiguration"/> or 
+    /// there are higher level/global overriding parameters e.g. declared at <see cref="AggregateConfiguration"/> or
     /// <see cref="CohortIdentificationConfiguration"/>
     /// </summary>
     /// <returns></returns>
@@ -101,11 +101,11 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
     /// <inheritdoc cref="FilterContainer_ID"/>
     [NoMappingToDatabase]
     public abstract IContainer FilterContainer { get; }
-        
+
     #endregion
 
     /// <summary>
-    /// If an IFilter is associated with a specific ColumnInfo then this method returns it.  This is really only the case for master Catalogue level filters 
+    /// If an IFilter is associated with a specific ColumnInfo then this method returns it.  This is really only the case for master Catalogue level filters
     /// (<see cref="ExtractionFilter"/>)
     /// </summary>
     /// <returns></returns>
@@ -113,21 +113,21 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
 
     /// <summary>
     /// When overriden in a derrived class, creates an <see cref="IFilterFactory"/> which can be used to create new correctly typed <see cref="ISqlParameter"/> for use with
-    /// the current <see cref="IFilter"/> 
+    /// the current <see cref="IFilter"/>
     /// </summary>
-    /// <remarks>Most IFilter implementations require their own specific type of IContainer, ISqlParameter etc and they only work with those concrete classes.  Therefore the 
+    /// <remarks>Most IFilter implementations require their own specific type of IContainer, ISqlParameter etc and they only work with those concrete classes.  Therefore the
     /// IFilterFactory is needed to create those correct concrete classes when all you have is a reference to the interface</remarks>
     /// <returns></returns>
     public abstract IFilterFactory GetFilterFactory();
 
     /// <summary>
     /// Every IFilter is ultimately tied to a single <see cref="Catalogue"/> either because it is a master filter declared on a column in one or because it is being used
-    /// in the extraction of a dataset or an <see cref="AggregateConfiguration"/> graph / cohort set which are again tied to a 
-    /// single <see cref="Catalogue"/>.   When overridden this method returns the associated Catalogue. 
+    /// in the extraction of a dataset or an <see cref="AggregateConfiguration"/> graph / cohort set which are again tied to a
+    /// single <see cref="Catalogue"/>.   When overridden this method returns the associated Catalogue.
     /// </summary>
     /// <returns></returns>
     public abstract Catalogue GetCatalogue();
-        
+
     /// <summary>
     /// Returns an appropriately typed <see cref="IQuerySyntaxHelper"/> depending on the DatabaseType of the Catalogue that it relates to.
     /// </summary>

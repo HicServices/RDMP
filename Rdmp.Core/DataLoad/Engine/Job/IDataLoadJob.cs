@@ -37,7 +37,7 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
 
     /// <summary>
     /// Collection of all calls to <see cref="CrashAtEnd"/>.  If there are any
-    /// of these at the end of the load they will be notified and a crash exit code will be 
+    /// of these at the end of the load they will be notified and a crash exit code will be
     /// returned (but otherwise the load will complete normally).
     /// </summary>
     IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages { get; }
@@ -50,7 +50,7 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     void CloseLogging();
 
     HICDatabaseConfiguration Configuration { get; }
-        
+
     /// <summary>
     /// True to automatically skip creating/dropping the RAW database
     /// </summary>
@@ -65,7 +65,7 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     void CreateTablesInStage(DatabaseCloner cloner,LoadBubble stage);
 
     void PushForDisposal(IDisposeAfterDataLoad disposeable);
-        
+
     /// <summary>
     /// Returns all <see cref="ColumnInfo"/> in <see cref="RegularTablesToLoad "/> and <see cref="LookupTablesToLoad"/>
     /// </summary>

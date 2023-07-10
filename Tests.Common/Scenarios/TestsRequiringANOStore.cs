@@ -34,7 +34,7 @@ public class TestsRequiringANOStore:TestsRequiringA
 
         CreateReferenceInCatalogueToANODatabase();
     }
-        
+
     private void CreateANODatabase()
     {
         if (ANOStore_Database.Exists())
@@ -74,7 +74,7 @@ public class TestsRequiringANOStore:TestsRequiringA
                 colWithANOTransform.ANOTable_ID = null;
                 colWithANOTransform.SaveToDatabase();
             }
-                
+
             TruncateANOTable(lingeringTablesReferencingServer);
             lingeringTablesReferencingServer.DeleteInDatabase();
         }

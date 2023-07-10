@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.FilterImporting;
 /// Facilitates the import of one IFilter type into the scope of another IFilter collection.  IFilters are lines of WHERE Sql.  This class is what allows you to import
 /// a Catalogue level filter (ExtractionFilter) into specific deployment containers e.g. during cohort creation task you can import a copy of 'prescribed @drugX' into
 /// your AggregateFilterContainer (this will actually create an AggregateFilter) and then import 2 more copies of that IFilter.  This class ensures that parameter names
-/// are unique so you can change the value of @drugX for each new IFilter imported. 
+/// are unique so you can change the value of @drugX for each new IFilter imported.
 /// </summary>
 public class FilterImporter
 {
@@ -53,7 +53,7 @@ public class FilterImporter
     /// <returns></returns>
     public IFilter ImportFilter(IContainer containerToImportOneInto, IFilter fromMaster, IFilter[] existingFiltersAlreadyInScope)
     {
-        if(fromMaster is ExtractionFilter extractionFilter && extractionFilter.ExtractionInformation.ColumnInfo == null) 
+        if(fromMaster is ExtractionFilter extractionFilter && extractionFilter.ExtractionInformation.ColumnInfo == null)
             throw new Exception(
                 $"Could not import filter {extractionFilter} because it could not be traced back to a ColumnInfo");
 
@@ -72,23 +72,23 @@ public class FilterImporter
 
         //Ensure that the new filter has a unique name within the scope
         var name = fromMaster.Name;
-            
+
         while (existingFiltersAlreadyInScope.Any(f => f.Name.Equals(name)))
             name = $"Copy of {name}";
 
-        //create the filter 
+        //create the filter
         var newFilter = _factory.CreateNewFilter(name);
-            
+
         //Now copy across all the values from the master
         newFilter.Description = fromMaster.Description;
         newFilter.IsMandatory = fromMaster.IsMandatory;
         newFilter.WhereSQL = fromMaster.WhereSQL;
 
-        //if we are down cloning from a master ExtractionFilter so record that the new filter is 
+        //if we are down cloning from a master ExtractionFilter so record that the new filter is
         if(fromMaster is ExtractionFilter)
             newFilter.ClonedFromExtractionFilter_ID = fromMaster.ID;//make the new filters parent the master
 
-        //if we are up cloning we are publishing a child into being a new master catalogue filter (ExtractionFilter) 
+        //if we are up cloning we are publishing a child into being a new master catalogue filter (ExtractionFilter)
         if (newFilter is ExtractionFilter)
         {
             newFilter.Description +=
@@ -107,7 +107,7 @@ public class FilterImporter
         var existingFiltersParametersAlreadyInScope = existingFiltersAlreadyInScope.SelectMany(f => f.GetAllParameters()).ToArray();
 
         //now create parameters while respecting globals
-        var parameterCreator = new ParameterCreator(_factory, _globals, AlternateValuesToUseForNewParameters ?? fromMaster.GetAllParameters()); 
+        var parameterCreator = new ParameterCreator(_factory, _globals, AlternateValuesToUseForNewParameters ?? fromMaster.GetAllParameters());
         parameterCreator.CreateAll(newFilter, existingFiltersParametersAlreadyInScope); //Create the parameters while handling the existing parameters in scope
 
         return newFilter;

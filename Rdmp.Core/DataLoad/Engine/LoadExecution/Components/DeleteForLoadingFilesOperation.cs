@@ -24,7 +24,7 @@ public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
         _job = job;
     }
 
-        
+
     public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
     {
         // We only delete ForLoading files after a successful load
@@ -37,22 +37,22 @@ public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
             {
                 //just skip it but tell user you are skipping it
                 postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "No files found in ForLoading so not bothering to try and delete."));
-                return;  
+                return;
             }
 
             // Check if the attacher has communicated its intent to handle archiving
             var archivingHandledByAttacher = File.Exists(Path.Combine(LoadDirectory.ForLoading.FullName, "attacher_is_handling_archiving"));
-                    
+
             if (!archivingHandledByAttacher && !ArchiveHasBeenCreated())
             {
                 postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                     $"Refusing to delete files in ForLoading: the load has reported success but there is no archive of this dataset (was expecting the archive to be called '{_job.ArchiveFilepath}', check LoadMetadata.CacheArchiveType if the file extension is not what you expect)"));
-                return;   
+                return;
             }
 
             _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Deleting files in ForLoading ({LoadDirectory.ForLoading.FullName})"));
-                
+
             if (archivingHandledByAttacher)
             {
                 LoadDirectory.ForLoading.EnumerateFiles().Where(info => info.Name != "attacher_is_handling_archiving").ToList().ForEach(info => info.Delete());

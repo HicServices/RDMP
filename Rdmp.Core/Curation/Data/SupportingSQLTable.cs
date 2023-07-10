@@ -18,14 +18,14 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes an SQL query that can be run to generate useful information for the understanding of a given Catalogue (dataset).  If it is marked as 
+/// Describes an SQL query that can be run to generate useful information for the understanding of a given Catalogue (dataset).  If it is marked as
 /// Extractable then it will be bundled along with the Catalogue every time it is extracted.  This can be used as an alternative to definining Lookups
 /// through the Lookup class or to extract other useful administrative data etc to be provided to researchers
 /// 
 /// <para>It is VITAL that you do not use this as a method of extracting sensitive/patient data as this data is run as is and is not joined against a cohort
 /// or anonymised in anyway.</para>
 /// 
-/// <para>If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of what datasets they have asked for in 
+/// <para>If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of what datasets they have asked for in
 /// an extraction, this is useful for large lookups like ICD / SNOMED CT which are likely to be used by many datasets. </para>
 /// </summary>
 public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
@@ -84,7 +84,7 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     /// <summary>
     /// If true then the query will be executed and the resulting table will be copied to the output directory of project extractions that include the <see cref="Catalogue_ID"/>.
     /// 
-    /// <para>This will fail if the query contains mulitple select statements.  Ensure that there is no identifiable data returned by the query since it will not be linked 
+    /// <para>This will fail if the query contains mulitple select statements.  Ensure that there is no identifiable data returned by the query since it will not be linked
     /// against the project cohort / anonymised in any way.</para>
     /// </summary>
     public bool Extractable
@@ -165,7 +165,7 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
         SQL = r["SQL"] as string;
 
         if(r["ExternalDatabaseServer_ID"] == null || r["ExternalDatabaseServer_ID"] == DBNull.Value)
-            ExternalDatabaseServer_ID = null; 
+            ExternalDatabaseServer_ID = null;
         else
             ExternalDatabaseServer_ID = Convert.ToInt32(r["ExternalDatabaseServer_ID"]); 
 
@@ -177,9 +177,9 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     {
         return Name;
     }
-        
+
     /// <summary>
-    /// Returns the decrypted connection string you can use to access the data (fetched from ExternalDatabaseServer_ID - which can be null).  If there is no 
+    /// Returns the decrypted connection string you can use to access the data (fetched from ExternalDatabaseServer_ID - which can be null).  If there is no
     /// ExternalDatabaseServer_ID associated with the SupportingSQLTable then a NotSupportedException will be thrown
     /// </summary>
     /// <returns></returns>

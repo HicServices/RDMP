@@ -89,13 +89,13 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
             .Select(p => p.Name)
             .ToArray());
     }
-        
+
     private void tbPassword_TextChanged(object sender, EventArgs e)
     {
         if(!bloading)
             _server.Password = tbPassword.Text;
     }
-        
+
     private void btnClearKnownType_Click(object sender, EventArgs e)
     {
         _server.CreatedByAssembly = null;

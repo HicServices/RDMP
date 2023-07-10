@@ -23,7 +23,7 @@ public class ExecuteCommandExportPlugins : BasicCommandExecution
     {
             
     }
-        
+
     [UseWithObjectConstructor]
     public ExecuteCommandExportPlugins(IBasicActivateItems activator, DirectoryInfo outputDirectory):base(activator)
     {

@@ -33,5 +33,5 @@ internal class CommandInvokerArrayDelegate : CommandInvokerDelegate
     {
         return t.IsArray && HandledType.IsAssignableFrom(t.GetElementType());
     }
-        
+
 }

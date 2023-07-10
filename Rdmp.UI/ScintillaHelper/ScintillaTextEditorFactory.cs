@@ -39,7 +39,7 @@ public partial class ScintillaTextEditorFactory
     /// <summary>
     /// Creates a new SQL (default) Scintilla editor with highlighting
     /// </summary>
-    /// <param name="commandFactory">Unless your control is going to be 100% ReadOnly then you should supply an <see cref="ICombineableFactory"/> to allow dragging and  
+    /// <param name="commandFactory">Unless your control is going to be 100% ReadOnly then you should supply an <see cref="ICombineableFactory"/> to allow dragging and
     /// dropping components into the window.  The <see cref="ICombineableFactory"/> will decide whether the given object can be translated into an <see cref="ICombineToMakeCommand"/> and hence into a unique bit of SQL
     /// to add to the editor</param>
     /// <param name="language">Determines highlighting, options include mssql,csharp or null</param>

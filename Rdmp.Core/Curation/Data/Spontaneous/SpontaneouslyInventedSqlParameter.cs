@@ -27,7 +27,7 @@ public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParamete
 
     [Sql]
     public string Value { get; set; }
-        
+
     public string Comment { get; set; }
 
     public SpontaneouslyInventedSqlParameter(MemoryRepository repo, string declarationSql, string value, string comment, IQuerySyntaxHelper syntaxHelper):base(repo)

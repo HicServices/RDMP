@@ -167,9 +167,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     #endregion
-        
+
     #region Relationships
-        
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IProject Project => Repository.GetObjectByID<Project>(Project_ID);
@@ -290,14 +290,14 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         });
     }
     /// <summary>
-    /// Provides a short human readable representation of the <see cref="Project"/> to which this 
+    /// Provides a short human readable representation of the <see cref="Project"/> to which this
     /// <see cref="ExtractionConfiguration"/> is associated with
     /// </summary>
     /// <param name="shortString">True for a short representation.  False for a longer representation.</param>
     /// <returns></returns>
     public string GetProjectHint(bool shortString)
     {
-        return 
+        return
             shortString ? $"({ Project.ProjectNumber})" :
                 $"'{Project.Name}' (PNo. { Project.ProjectNumber})";
     }
@@ -386,13 +386,13 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         {
             try
             {
-                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort 
+                //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort
                 var clone = ShallowClone();
 
                 //find each of the selected datasets for ourselves and clone those too
                 foreach (SelectedDataSets selected in SelectedDataSets)
                 {
-                    //clone the link meaning that the dataset is now selected for the clone configuration too 
+                    //clone the link meaning that the dataset is now selected for the clone configuration too
                     var newSelectedDataSet = new SelectedDataSets(repo, clone, selected.ExtractableDataSet, null);
 
                     // now clone each of the columns for each of the datasets that we just created links to (make them the same as the old configuration
@@ -406,7 +406,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                     //clone should copy accross the forced joins (if any)
                     foreach (var oldForcedJoin in Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(selected))
                         new SelectedDataSetsForcedJoin((IDataExportRepository) Repository, newSelectedDataSet,oldForcedJoin.TableInfo);
-                       
+
                     // clone should copy any ExtractionProgresses
                     if(selected.ExtractionProgressIfAny != null)
                     {
@@ -415,7 +415,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
                         // Notice that we do not set the ProgressDate because the cloned copy should be extracting from the begining
                         // when it is run.  We don't want the user to have to manually reset it
-                        clonedProgress.SaveToDatabase();                            
+                        clonedProgress.SaveToDatabase();
                     }
 
                     try
@@ -427,7 +427,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                         if (rootContainer == null)
                             continue;
 
-                        //there was one to clone so clone it recursively (all subcontainers) including filters then set the root filter to the new clone 
+                        //there was one to clone so clone it recursively (all subcontainers) including filters then set the root filter to the new clone
                         var cloneRootContainer = rootContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
                         newSelectedDataSet.RootFilterContainer_ID = cloneRootContainer.ID;
                         newSelectedDataSet.SaveToDatabase();
@@ -683,7 +683,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
         return lm;
     }
-        
+
     /// <inheritdoc/>
     public void Unfreeze()
     {
@@ -707,14 +707,14 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
         var cata = sds.ExtractableDataSet.Catalogue;
 
-        return 
+        return
             cata.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableGlobals)
                 .Cast<IMapsDirectlyToDatabaseTable>()
                 .Union(
                     cata.GetAllSupportingDocuments(FetchOptions.ExtractableGlobals))
                 .ToArray();
     }
-        
+
     /// <inheritdoc/>
     public override void DeleteInDatabase()
     {

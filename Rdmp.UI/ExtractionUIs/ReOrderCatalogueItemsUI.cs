@@ -30,7 +30,7 @@ namespace Rdmp.UI.ExtractionUIs;
 /// a list, the middle section of a SELECT statement or pretty much anything else.
 /// 
 /// <para>Once a desired order is entered the class will attempt to find the first item in the desired order.  Assuming
-/// this item is found then the location of this field becomes the 'insertion' point for reordering and all fields 
+/// this item is found then the location of this field becomes the 'insertion' point for reordering and all fields
 /// that the user pasted in are reordered into this point.</para>
 /// 
 /// <para>At any time you can look at the 'New Order' section to see the new order that columns will be in if you accept the
@@ -113,7 +113,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             }
         }
     }
-        
+
     private void RecomputeOrderAndHighlight()
     {
         WorkOutReOrderVariables();
@@ -124,7 +124,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     }
 
     /// <summary>
-    /// Figures out what strings in the users desired order are actually in the extraction and computes 
+    /// Figures out what strings in the users desired order are actually in the extraction and computes
     /// currentOrderStartReorderAtIndex and itemsToReOrderAndOfsetRelativeToFirst which are used for
     /// highlighting and to WorkOutNewOrderAndAddToNewOrderListbox
     /// </summary>
@@ -248,22 +248,22 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
                 if (e.Index == indexOfStartOfReordingInNewOrderListbox)
                     e.Graphics.FillRectangle(new SolidBrush(Color.LawnGreen), e.Bounds);
                 else
-                if (itemsToReOrderAndOffsetRelativeToFirst != null 
+                if (itemsToReOrderAndOffsetRelativeToFirst != null
                     && e.Index <= itemsToReOrderAndOffsetRelativeToFirst.Count + indexOfStartOfReordingInNewOrderListbox
                     && e.Index > indexOfStartOfReordingInNewOrderListbox)
                     e.Graphics.FillRectangle(new SolidBrush(Color.Purple), e.Bounds);
                 else
                     e.Graphics.FillRectangle(new SolidBrush(listBox.BackColor), e.Bounds);
-                
+
             }
 
             e.Graphics.DrawString(listBox.Items[e.Index].ToString(), lbDesiredOrder.Font, new SolidBrush(Color.Black), e.Bounds);
-                
+
         }
     }
 
     private object oDrawLock = new();
-        
+
 
     private void lbDesiredOrder_DrawItem(object sender, DrawItemEventArgs e)
     {
@@ -280,7 +280,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             else
                 e.Graphics.FillRectangle(new SolidBrush(lbDesiredOrder.BackColor),e.Bounds );
 
-            e.Graphics.DrawString(lbDesiredOrder.Items[e.Index] as string,lbDesiredOrder.Font,new SolidBrush(lbDesiredOrder.ForeColor),e.Bounds );  
+            e.Graphics.DrawString(lbDesiredOrder.Items[e.Index] as string,lbDesiredOrder.Font,new SolidBrush(lbDesiredOrder.ForeColor),e.Bounds );
         }
             
     }

@@ -27,10 +27,10 @@ public abstract class ExtractCommand:IExtractCommand
     }
 
     public abstract DirectoryInfo GetExtractionDirectory();
-        
+
     public abstract string DescribeExtractionImplementation();
     public ExtractCommandState State { get; private set; }
-        
+
     public void ElevateState(ExtractCommandState newState)
     {
         State = newState;

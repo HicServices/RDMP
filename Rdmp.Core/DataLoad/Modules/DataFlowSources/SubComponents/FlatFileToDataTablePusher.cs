@@ -118,7 +118,7 @@ public class FlatFileToDataTablePusher
                     if (_bufferOverrunsWhereColumnValueWasBlank > 0)
                         errorMessage +=
                             $" ( {_bufferOverrunsWhereColumnValueWasBlank} Previously lines also suffered from buffer overruns but the overrunning values were empty so we had ignored them up until now)";
-                        
+
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, errorMessage));
                     eventHandlers.BadDataFound(lineToPush);
                     break;
@@ -127,7 +127,7 @@ public class FlatFileToDataTablePusher
             //if we are ignoring this header
             if(_headers.IgnoreColumnsList.Contains(_headers[i]))
                 continue;
-                
+
             //it's an empty header, don't bother populating it
             if (_headers[i].IsBasicallyNull())
                 if (!lineToPush[i].IsBasicallyNull())
@@ -166,13 +166,13 @@ public class FlatFileToDataTablePusher
             var currentRow = dt.Rows.Add();
             foreach (var kvp in rowValues)
                 currentRow[kvp.Key] = kvp.Value;
-                
+
             return 1;
         }
 
         return 0;
     }
-        
+
     private bool DealWithTooFewCellsOnCurrentLine(CsvReader reader, FlatFileLine lineToPush, IDataLoadEventListener listener,FlatFileEventHandlers eventHandlers)
     {
         if(!_attemptToResolveNewlinesInRecords)
@@ -256,7 +256,7 @@ public class FlatFileToDataTablePusher
         return true;
     }
 
-        
+
 
     public DataTable StronglyTypeTable(DataTable workingTable, ExplicitTypingCollection explicitTypingCollection)
     {
@@ -280,7 +280,7 @@ public class FlatFileToDataTablePusher
             var computedType = new Guesser();
             computedType.AdjustToCompensateForValues(col);
 
-            //Type based on the contents of the column 
+            //Type based on the contents of the column
             if (computedType.ShouldDowngradeColumnTypeToMatchCurrentEstimate(col))
             {
                 dtCloned.Columns[col.ColumnName].DataType = computedType.Guess.CSharpType;
@@ -298,10 +298,10 @@ public class FlatFileToDataTablePusher
             foreach (DataRow row in workingTable.Rows)
                 dtCloned.Rows.Add(row.ItemArray.Select((v,idx)=>
 
-                    deciders.TryGetValue(idx,out var typer) && v is string s? 
+                    deciders.TryGetValue(idx,out var typer) && v is string s?
                         typer.Parse(s) :
                         v).ToArray());
-                
+
             return dtCloned;
         }
 

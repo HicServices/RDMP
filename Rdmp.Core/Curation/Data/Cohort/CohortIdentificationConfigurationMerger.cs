@@ -55,13 +55,13 @@ public class CohortIdentificationConfigurationMerger
         {
             // Create a new master configuration
             var cicMaster = new CohortIdentificationConfiguration(_repository,$"Merged cics (IDs {string.Join(",",cics.Select(c=>c.ID))})" );
-                
+
             // With a single top level container with the provided operation
             cicMaster.CreateRootContainerIfNotExists();
             var rootContainer = cicMaster.RootCohortAggregateContainer;
             rootContainer.Operation = operation;
             rootContainer.SaveToDatabase();
-                
+
             //Grab the root container of each of the input cics
             foreach(var cic in cicClones)
             {
@@ -73,15 +73,15 @@ public class CohortIdentificationConfigurationMerger
 
                 //add to the new master cic root container
                 rootContainer.AddChild(container);
-                    
+
                 // Make the new name of all the AggregateConfigurations match the new master cic
                 foreach(var child in container.GetAllAggregateConfigurationsRecursively())
                     EnsureNamingConvention(cicMaster,child);
-                    
+
                 // Delete the old now empty clones
                 cic.DeleteInDatabase();
-            }                
-                
+            }
+
             //finish transaction
             _repository.EndTransaction(true);
 
@@ -126,16 +126,16 @@ public class CohortIdentificationConfigurationMerger
 
                 //add them into the target SET operation container you are importing into
                 into.AddChild(container);
-                    
+
                 // Make the new name of all the AggregateConfigurations match the owner of import into container
                 foreach(var child in container.GetAllAggregateConfigurationsRecursively())
                     EnsureNamingConvention(cicInto,child);
-                    
+
                 // Delete the old now empty clones
                 cic.DeleteInDatabase();
-            }                
-                
-            //finish transaction                
+            }
+
+            //finish transaction
             _repository.EndTransaction(true);
         }
     }
@@ -173,7 +173,7 @@ public class CohortIdentificationConfigurationMerger
             
         try
         {
-            // clone the input cic 
+            // clone the input cic
             cic = cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
 
             // grab the new clone root container
@@ -191,18 +191,18 @@ public class CohortIdentificationConfigurationMerger
             {
                 // create a new config
                 var newCic = new CohortIdentificationConfiguration(_repository,$"Un Merged { subContainer.Name } ({subContainer.ID }) ");
-                    
+
                 //take the container we are splitting out
                 subContainer.MakeIntoAnOrphan();
 
                 //make it the root container of the new cic
                 newCic.RootCohortAggregateContainer_ID = subContainer.ID;
                 newCic.SaveToDatabase();
-                                        
+
                 // Make the new name of all the AggregateConfigurations match the new cic
                 foreach(var child in subContainer.GetAllAggregateConfigurationsRecursively())
                     EnsureNamingConvention(newCic,child);
-                    
+
                 toReturn.Add(newCic);
             }
 

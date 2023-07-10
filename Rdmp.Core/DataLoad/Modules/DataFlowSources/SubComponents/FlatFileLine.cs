@@ -16,7 +16,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 public class FlatFileLine
 {
     /// <summary>
-    /// The RAW file line number that this line reflects.  Where a record spans multiple lines (e.g. when it has newlines in quote qualified fields) it 
+    /// The RAW file line number that this line reflects.  Where a record spans multiple lines (e.g. when it has newlines in quote qualified fields) it
     /// seems to be the last line number in the record
     /// </summary>
     public int LineNumber { get; private set; }

@@ -20,8 +20,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomicCommand
 {
     private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        
-    public ExecuteCommandChoosePlatformDatabase(IActivateItems activator) 
+
+    public ExecuteCommandChoosePlatformDatabase(IActivateItems activator)
     {
         if (activator != null)
             Initialize(activator.RepositoryLocator);
@@ -43,7 +43,7 @@ public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomi
     {
         return "Change which RDMP platform metadata databases you are connected to";
     }
-        
+
     public override void Execute()
     {
         base.Execute();

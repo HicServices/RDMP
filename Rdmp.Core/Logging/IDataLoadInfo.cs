@@ -21,6 +21,6 @@ public interface IDataLoadInfo
     void CloseAndMarkComplete();
     int ID { get; }
     DiscoveredServer DatabaseSettings { get; }
-        
+
     bool IsClosed { get; }
 }

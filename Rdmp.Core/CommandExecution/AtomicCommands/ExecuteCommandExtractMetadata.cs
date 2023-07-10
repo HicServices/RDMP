@@ -24,17 +24,17 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
     private readonly string _newlineSub;
     private readonly string _commaSub;
 
-    public ExecuteCommandExtractMetadata(IBasicActivateItems basicActivator, 
-        Catalogue[] catalogues, 
+    public ExecuteCommandExtractMetadata(IBasicActivateItems basicActivator,
+        Catalogue[] catalogues,
         [DemandsInitialization("Where new files should be generated")]
         DirectoryInfo outputDirectory,
 
         [DemandsInitialization("Template file in which keys such as $Name will be replaced with the corresponding Catalogue entry")]
-        FileInfo template, 
+        FileInfo template,
         [DemandsInitialization("How output files based on the template should be named.  Uses same replacement strategy as template contents e.g. $Name.xml")]
-        string fileNaming, 
+        string fileNaming,
         [DemandsInitialization("True to append all outputs into a single file.  False to output a new file for every Catalogue")]
-        bool oneFile, 
+        bool oneFile,
         [DemandsInitialization("Optional, specify a replacement for newlines when found in fields e.g. <br/>.  Leave as null to leave newlines intact.")]
         string newlineSub,
         [DemandsInitialization("Optional, specify a replacement for the token $Comma (defaults to ',')",DefaultValue = ",")]

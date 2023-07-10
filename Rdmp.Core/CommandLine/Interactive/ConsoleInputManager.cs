@@ -41,7 +41,7 @@ public class ConsoleInputManager : BasicActivateItems
     /// Set to true to throw on any blocking input methods (e.g. <see cref="TypeText"/>)
     /// </summary>
     public bool DisallowInput { get; set; }
-        
+
     /// <summary>
     /// Creates a new instance connected to the provided RDMP platform databases
     /// </summary>
@@ -99,7 +99,7 @@ public class ConsoleInputManager : BasicActivateItems
     {
         throw exception ?? new Exception(errorText);
     }
-        
+
     public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
     {
         if (DisallowInput)
@@ -194,7 +194,7 @@ public class ConsoleInputManager : BasicActivateItems
 
             if(picker.Examples.Any())
             {
-                    
+
                 sb.AppendLine();
                 sb.Append($"Examples:");
                 foreach (var example in picker.Examples)
@@ -349,7 +349,7 @@ public class ConsoleInputManager : BasicActivateItems
 
             var searchPattern = file[(idxLastSlash+1)..];
             var dirStr = file[..idxLastSlash];
-                    
+
             var dir = new DirectoryInfo(dirStr);
 
             return !dir.Exists
@@ -360,14 +360,14 @@ public class ConsoleInputManager : BasicActivateItems
         return new[]{ new FileInfo(file) };
 
     }
-        
+
 
     protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue,out object chosen)
     {
         chosen = UsefulStuff.ChangeType(AnsiConsole.Ask<string>(GetPromptFor(args)), paramType);
         return true;
     }
-        
+
     public override bool YesNo(DialogArgs args, out bool chosen)
     {
         var result = GetString(args, new List<string> { "Yes","No","Cancel"});
@@ -375,7 +375,7 @@ public class ConsoleInputManager : BasicActivateItems
         //user made a non-cancel decision?
         return result != "Cancel" && !string.IsNullOrWhiteSpace(result);
     }
-        
+
     public string GetString(DialogArgs args, List<string> options)
     {
         var chosen = AnsiConsole.Prompt(
@@ -408,9 +408,9 @@ public class ConsoleInputManager : BasicActivateItems
         {
             Console.WriteLine(load.Description);
             Console.WriteLine(load.StartTime);
-                
+
             Console.WriteLine($"Errors:{load.Errors.Count}");
-                
+
             foreach(var error in load.Errors)
             {
                 error.GetSummary(out var title, out var body, out _, out _);
@@ -418,19 +418,19 @@ public class ConsoleInputManager : BasicActivateItems
                 Console.WriteLine($"\t{title}");
                 Console.WriteLine($"\t{body}");
             }
-                                
+
             Console.WriteLine("Tables Loaded:");
 
             foreach(var t in load.TableLoadInfos)
             {
                 Console.WriteLine($"\t{t}: I={t.Inserts:N0} U={t.Updates:N0} D={t.Deletes:N0}");
-                
-                foreach(var source in t.DataSources)    
+
+                foreach(var source in t.DataSources)
                     Console.WriteLine($"\t\tSource:{source.Source}");
             }
-                
+
             Console.WriteLine("Progress:");
-                
+
             foreach(var p in load.Progress)
             {
                 Console.WriteLine($"\t{p.Date} {p.Description}");
@@ -480,7 +480,7 @@ public class ConsoleInputManager : BasicActivateItems
     {
         AnsiConsole.Status()
             .Spinner(Spinner.Known.Star)
-            .Start(title, ctx => 
+            .Start(title, ctx =>
                 base.Wait(title, task, cts)
             );
     }

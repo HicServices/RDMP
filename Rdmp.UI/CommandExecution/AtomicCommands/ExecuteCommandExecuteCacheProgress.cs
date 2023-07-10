@@ -26,7 +26,7 @@ public class ExecuteCommandExecuteCacheProgress:BasicUICommandExecution,IAtomicC
     {
         _cp = cp;
     }
-        
+
     public ExecuteCommandExecuteCacheProgress(IActivateItems activator)
         : base(activator)
     {

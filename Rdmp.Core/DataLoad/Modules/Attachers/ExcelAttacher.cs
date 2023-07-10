@@ -34,7 +34,7 @@ public class ExcelAttacher:FlatFileAttacher
 
     [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
     public string AddFilenameColumnNamed { get; set; }
-        
+
     [DemandsInitialization("Forces specific overridden headers to be for columns, this is a comma separated string that will effectively replace the column headers found in the excel file.  The number of headers MUST match the number in the original file.  This option should be used when you have a excel file with stupid names that you want to rationalise into sensible database column names")]
     public string ForceReplacementHeaders { get; set; }
 
@@ -67,7 +67,7 @@ public class ExcelAttacher:FlatFileAttacher
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
                 $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)}"));
-                
+
             if (replacementHeadersSplit.Length != _dataTable.Columns.Count)
                 listener.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Error,
@@ -118,7 +118,7 @@ public class ExcelAttacher:FlatFileAttacher
                             else
                                 targetRow[column.ColumnName] = dr[column.ColumnName];//copy values into the destination
                         }
-                        else 
+                        else
                         if (AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch)//it is an extra destination column, see if that is allowed
                             targetRow[column.ColumnName] = DBNull.Value;
                         else
@@ -145,8 +145,8 @@ public class ExcelAttacher:FlatFileAttacher
     private void GenerateColumnNameMismatchErrors(List<string> columnsExcelButNotInDataTable, List<string> columnsInDataTableButNotInExcel)
     {
         //if there are unmatched columns in the flat file
-        if (columnsExcelButNotInDataTable.Any() || 
-                
+        if (columnsExcelButNotInDataTable.Any() ||
+
             //or there are unmatched columns in the destination (and we are not happy just leaving those as null)
             (columnsInDataTableButNotInExcel.Any() && ! AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch))
             throw new Exception(

@@ -21,7 +21,7 @@ public class ExecuteCommandOptions : RDMPCommandLineOptions
     [Value(0,HelpText = "The command to run e.g. Delete.  Leave blank for interactive mode")]
     public string CommandName { get; set; }
 
-        
+
     [Value(1,HelpText = "The arguments to provide for the command e.g. Catalogue:12")]
     public IEnumerable<string> CommandArgs { get; set; }
 
@@ -33,7 +33,7 @@ public class ExecuteCommandOptions : RDMPCommandLineOptions
     /// </summary>
     /// <value></value>
     public RdmpScript Script {get;set;}
-        
+
     [Usage]
     public static IEnumerable<Example> Examples
     {

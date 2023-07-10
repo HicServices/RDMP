@@ -27,7 +27,7 @@ public class DataAccessCredentialsFactory
     }
 
     /// <summary>
-    /// Ensures that the passed username/password combination are used to access the TableInfo under the provided context.  This will either create a new DataAccessCredentials 
+    /// Ensures that the passed username/password combination are used to access the TableInfo under the provided context.  This will either create a new DataAccessCredentials
     /// or wire up the TableInfo with a new usage permission to an existing one (if the same username/password combination already exists).
     /// </summary>
     /// <param name="tableInfoCreated"></param>

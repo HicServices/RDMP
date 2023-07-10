@@ -42,7 +42,7 @@ public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
             throw new Exception($"Could not identify a Type called {typeName} in any loaded assemblies");
 
     }
-        
+
     public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
     {
         var instanceOfParentType = Activator.CreateInstance(_typeOfUnderlyingClass);

@@ -54,7 +54,7 @@ public abstract class ManyRunner: Runner
             case CommandLineActivity.none:
                 break;
             case CommandLineActivity.run:
-                        
+
                 var runnables = GetRunnables();
 
                 foreach (var runnable in runnables)
@@ -121,7 +121,7 @@ public abstract class ManyRunner: Runner
     protected abstract void AfterRun();
 
     protected abstract ICheckable[] GetCheckables(ICheckNotifier checkNotifier);
-        
+
     protected abstract object[] GetRunnables();
     protected abstract void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener);
 

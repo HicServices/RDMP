@@ -36,7 +36,7 @@ public class AggregateCountColumn:SpontaneousObject,IColumn
     {
         _sql = sql;
     }
-        
+
     /// <summary>
     /// Initializes the <see cref="IQuerySyntaxHelper"/> for the column and optionally ensures that it has an alias.  If no <see cref="Alias"/> has
     /// been specified or was found in the current sql then <see cref="DefaultAliasName"/> is set.
@@ -82,7 +82,7 @@ public class AggregateCountColumn:SpontaneousObject,IColumn
     /// <inheritdoc/>
     [Sql]
     public string SelectSQL { get; set; }
-        
+
     /// <inheritdoc/>
     public string Alias{get; private set; }
 

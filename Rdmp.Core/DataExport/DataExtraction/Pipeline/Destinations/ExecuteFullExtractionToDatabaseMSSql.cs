@@ -56,10 +56,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          You must have either $a or $d
          ",Mandatory=true,DefaultValue="$c_$d")]
     public string TableNamingPattern { get; set; }
-        
+
     [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
     public bool DropTableIfLoadFails { get; set; }
-        
+
     [DemandsInitialization(DataTableUploadDestination.AlterTimeout_Description, DefaultValue = 300)]
     public int AlterTimeout { get; set; }
 
@@ -78,7 +78,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private bool _tableDidNotExistAtStartOfLoad;
     private bool _isTableAlreadyNamed;
     private DataTable _toProcess;
-        
+
     public ExecuteFullExtractionToDatabaseMSSql():base(false)
     {
 
@@ -104,7 +104,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination = PrepareDestination(job, _toProcess);
         OutputFile = _toProcess.TableName;
     }
-                
+
     protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
     {
         // empty batches are allowed when using batch/resume
@@ -122,10 +122,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         LinesWritten += toProcess.Rows.Count;
     }
-        
+
     private DataTableUploadDestination PrepareDestination(IDataLoadEventListener listener, DataTable toProcess)
     {
-        //see if the user has entered an extraction server/database 
+        //see if the user has entered an extraction server/database
         if (TargetDatabaseServer == null)
             throw new Exception("TargetDatabaseServer (the place you want to extract the project data to) property has not been set!");
 
@@ -180,7 +180,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
         _destination = new DataTableUploadDestination();
-            
+
         PrimeDestinationTypesBasedOnCatalogueTypes(listener,toProcess);
 
         _destination.AllowResizingColumnsAtUploadTime = true;
@@ -217,7 +217,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Did not copy Types for ExtractionInformation {extractionInformation} (ID={extractionInformation.ID}) because it had no associated ColumnInfo"));
                 continue;
             }
-                    
+
             if(extractionInformation.IsProperTransform())
             {
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Did not copy Types for ExtractionInformation {extractionInformation} (ID={extractionInformation.ID}) because it is a Transform"));
@@ -225,14 +225,14 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             }
 
             var destinationType = GetDestinationDatabaseType(extractionInformation);
-                
-            //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
+
+            //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a
             //transform but it is a good starting point.  We don't want to create a varchar(10) column in the destination if the origin dataset (Catalogue) is a varchar(100)
             //since it will just confuse the user.  Bear in mind these data types can be degraded later by the destination
             var columnName = extractionInformation.Alias ?? catItem.ColumnInfo.GetRuntimeName();
             var addedType = _destination.AddExplicitWriteType(columnName, destinationType);
             addedType.IsPrimaryKey = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
-                
+
             //if user wants to copy collation types and the destination server is the same type as the origin server
             if (CopyCollations && _destinationDatabase.Server.DatabaseType == catItem.ColumnInfo.TableInfo.DatabaseType)
                 addedType.Collation = catItem.ColumnInfo.Collation;
@@ -339,7 +339,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 if(_destinationDatabase != null)
                 {
                     var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
-                        
+
                     if(tbl.Exists())
                     {
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -350,8 +350,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 }
             }
 
-            if(pipelineFailureExceptionIfAny == null 
-               && _request.IsBatchResume 
+            if(pipelineFailureExceptionIfAny == null
+               && _request.IsBatchResume
                && MakeFinalTableDistinctWhenBatchResuming
                && _destinationDatabase != null
                && _toProcess != null)
@@ -412,7 +412,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         return DestinationType.Database;
     }
-        
+
     public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
     {
         return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
@@ -425,7 +425,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
     }
-        
+
     protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory, IExtractionConfiguration configuration,IDataLoadEventListener listener, out int linesWritten,
         out string destinationDescription)
     {
@@ -460,7 +460,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
     }
 
-        
+
     protected override void TryExtractLookupTableImpl(BundledLookupTable lookup, DirectoryInfo lookupDir,
         IExtractionConfiguration requestConfiguration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
     {
@@ -529,7 +529,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         if (TargetDatabaseServer == null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Target database server property has not been set (This component does not know where to extract data to!), " +
-                                                         "to fix this you must edit the pipeline and choose an ExternalDatabaseServer to extract to)", 
+                                                         "to fix this you must edit the pipeline and choose an ExternalDatabaseServer to extract to)",
                 CheckResult.Fail));
             return;
         }
@@ -612,13 +612,13 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not determine table name", CheckResult.Fail,ex));
                     return;
                 }
-                    
+
                 // if the expected table exists and we are not doing a batch resume
                 if(tables.Any(t=>t.GetRuntimeName().Equals(tableName))  && !_request.IsBatchResume)
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase, tableName,database));
                 }
-                    
+
             }
             else
                 notifier.OnCheckPerformed(new CheckEventArgs($"Confirmed that database {database} is empty of tables", CheckResult.Success));

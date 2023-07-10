@@ -26,7 +26,7 @@ public class HistoryEntry : IMasqueradeAs
         Object = o;
         Date = date;
     }
-        
+
     public string Serialize()
     {
         return $"{PersistStringHelper.GetObjectCollectionPersistString(Object)}{PersistStringHelper.ExtraText}{Date}";

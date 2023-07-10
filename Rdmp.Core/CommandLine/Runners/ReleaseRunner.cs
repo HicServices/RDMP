@@ -71,7 +71,7 @@ public class ReleaseRunner:ManyRunner
                     _configurations = _configurations.ToList().Union(new[] { s.ExtractionConfiguration }).ToArray();
                 }
             }
-                    
+
         }
         else
             _selectedDatasets = _configurations.SelectMany(c=>c.SelectedDataSets).ToArray();
@@ -100,7 +100,7 @@ public class ReleaseRunner:ManyRunner
             toReturn.Add(new GlobalsReleaseChecker(RepositoryLocator, _configurations));
             toReturn.AddRange(_configurations.First()
                 .GetGlobals()
-                .Select(availableGlobal => 
+                .Select(availableGlobal =>
                     new GlobalsReleaseChecker(RepositoryLocator, _configurations, availableGlobal).GetEvaluator()));
         }
 
@@ -231,8 +231,8 @@ public class ReleaseRunner:ManyRunner
         var allDdatasets = _configurations.SelectMany(ec => ec.GetAllExtractableDataSets()).ToList();
         var selectedDatasets = data.SelectedDatasets.Values.SelectMany(sd => sd.ToList()).ToList();
 
-        data.ReleaseState = allDdatasets.Count != selectedDatasets.Count 
-            ? ReleaseState.DoingPatch 
+        data.ReleaseState = allDdatasets.Count != selectedDatasets.Count
+            ? ReleaseState.DoingPatch
             : ReleaseState.DoingProperRelease;
 
         try

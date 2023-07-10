@@ -22,7 +22,7 @@ namespace Rdmp.UI.SimpleDialogs.Revertable;
 public partial class RevertablePropertyDifferenceUI : RDMPUserControl
 {
     private readonly RevertablePropertyDifference _difference;
-        
+
     public RevertablePropertyDifferenceUI(RevertablePropertyDifference difference)
     {
         _difference = difference;
@@ -41,7 +41,7 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         lblDbProperty.Text = $"{_difference.Property.Name} in Database";
         lblMemoryProperty.Text = $"{_difference.Property.Name} in Memory";
     }
-        
+
     private Scintilla QueryEditorBefore;
     private Scintilla QueryEditorAfter;
 
@@ -75,7 +75,7 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         {
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
                 highlighter.HighlightLine(QueryEditorBefore,i, Color.Pink);
-                    
+
             for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
                 highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
         }

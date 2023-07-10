@@ -26,7 +26,7 @@ public class ColumnState
 
     public int? ID { get; private set; }
     public int? Evaluation_ID { get;private set; }
-        
+
     public string ItemValidatorXML { get; set; }
 
     public int CountMissing
@@ -86,7 +86,7 @@ public class ColumnState
             _countDbNull = value;
         }
     }
-        
+
     public string PivotCategory { get; private set; }
 
     public bool IsCommitted { get; private set; }
@@ -158,5 +158,5 @@ public class ColumnState
         IsCommitted = true;
     }
 
-        
+
 }

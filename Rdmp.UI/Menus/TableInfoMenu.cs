@@ -44,7 +44,7 @@ internal class TableInfoMenu : RDMPContextMenuStrip
     }
 
 
-        
+
     private void ConfigureTableInfoParameters(TableInfo tableInfo)
     {
         ParameterCollectionUI.ShowAsDialog(_activator,new ParameterCollectionUIOptionsFactory().Create(tableInfo));

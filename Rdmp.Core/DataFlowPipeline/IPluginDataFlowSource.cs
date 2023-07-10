@@ -14,5 +14,5 @@ namespace Rdmp.Core.DataFlowPipeline;
 /// <typeparam name="T"></typeparam>
 public interface IPluginDataFlowSource<T>:IDataFlowSource<T>,ICheckable
 {
-        
+
 }

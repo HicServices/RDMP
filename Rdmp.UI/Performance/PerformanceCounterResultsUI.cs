@@ -21,7 +21,7 @@ namespace Rdmp.UI.Performance;
 /// <summary>
 /// Displays detailed breakdown of database queries sent by the RDMP during Performance Logging (See PerformanceCounterUI).  The colour of the row indicates the number of times a database
 /// query was sent from that point in the call stack.  Note that this is the number of calls not the time taken to execute the call so you could see poor performance in UI interaction and
-/// see lots of red calls but the actual slow query might only be called once. 
+/// see lots of red calls but the actual slow query might only be called once.
 /// 
 /// </summary>
 public partial class PerformanceCounterResultsUI : UserControl
@@ -73,7 +73,7 @@ public partial class PerformanceCounterResultsUI : UserControl
 
     private bool collapseToMethod = false;
     private ComprehensiveQueryPerformanceCounter _performanceCounter;
-        
+
     private int _worstOffenderCount;
 
     public static Color GetHeat(double fraction)
@@ -102,24 +102,24 @@ public partial class PerformanceCounterResultsUI : UserControl
 
             //get the stack trace split by line reversed so the root is at the top
             var lines = stackTrace.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Reverse().ToArray();
-                   
+
             lines = lines.Where(l=>!isSystemCall.IsMatch(l)).ToArray();
-                
+
             if(lines.Length == 0)
                 continue;
-                
+
             if(collapseToMethod)
             {
-                    
+
                 var uniqueMethodLines = new List<string>();
 
                 var lastMethodName = StackFramesTree.GetMethodName(lines[0]);
                 uniqueMethodLines.Add(lines[0]);
-                    
+
                 for (var i = 1; i < lines.Length; i++)
                 {
                     var currentMethodName = StackFramesTree.GetMethodName(lines[i]);
-                        
+
                     //if there is no method name or it is not new
                     if(currentMethodName == null || lastMethodName.Equals(currentMethodName))
                         continue;

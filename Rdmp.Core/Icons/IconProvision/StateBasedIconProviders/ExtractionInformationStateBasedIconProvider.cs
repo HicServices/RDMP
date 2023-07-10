@@ -36,7 +36,7 @@ public class ExtractionInformationStateBasedIconProvider : IObjectStateBasedIcon
 
         _noIconAvailable = Image.Load<Rgba32>(CatalogueIcons.NoIconAvailable);
     }
-        
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
             
@@ -53,7 +53,7 @@ public class ExtractionInformationStateBasedIconProvider : IObjectStateBasedIcon
         if (ei.IsPrimaryKey)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
-        if (ei.HashOnDataRelease) 
+        if (ei.HashOnDataRelease)
             toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
         return toReturn;

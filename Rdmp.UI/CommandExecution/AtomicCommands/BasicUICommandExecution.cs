@@ -22,7 +22,7 @@ public abstract class BasicUICommandExecution:BasicCommandExecution
     {
         Activator = activator;
     }
-        
+
     protected FileInfo SelectSaveFile(string filter)
     {
         var sfd = new SaveFileDialog

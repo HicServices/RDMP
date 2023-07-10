@@ -81,7 +81,7 @@ public class ClonedFilterChecker:ICheckable
                     throw new ExpectedIdenticalStringsException("Expected WHERE SQL to be identical", parent.WhereSQL,_child.WhereSQL);
                 }
                 catch (ExpectedIdenticalStringsException ex)
-                { 
+                {
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             $"{_child.GetType().Name} called '{_child}' (ID={_child.ID}) WhereSQL does not match the parent it was originally cloned from (ExtractionFilter ID={_allegedParent}).  You might have made a deliberate change in your copy or it might mean that someone has corrected the parent since you first cloned it",

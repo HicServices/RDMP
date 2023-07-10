@@ -19,7 +19,7 @@ public interface IArgument:IMapsDirectlyToDatabaseTable,ISaveable
     /// The name of the Property which this object stores the value of.  The Property should be decorated with [DemandsInitialization]
     /// </summary>
     string Name { get; set; }
-        
+
     /// <summary>
     /// Record of <see cref="DemandsInitializationAttribute.Description"/> as it was specified when the <see cref="IArgument"/> was created
     /// </summary>
@@ -47,7 +47,7 @@ public interface IArgument:IMapsDirectlyToDatabaseTable,ISaveable
     /// </summary>
     /// <returns></returns>
     object GetValueAsSystemType();
-        
+
     /// <summary>
     /// Parses the current <see cref="Type"/> string into a <see cref="System.Type"/>
     /// </summary>
@@ -55,7 +55,7 @@ public interface IArgument:IMapsDirectlyToDatabaseTable,ISaveable
     Type GetSystemType();
 
     /// <summary>
-    /// Similar to <see cref="GetSystemType"/> except it will look for a non interface/abstract derrived class e.g. if <see cref="Type"/> is <see cref="ICatalogue"/> 
+    /// Similar to <see cref="GetSystemType"/> except it will look for a non interface/abstract derrived class e.g. if <see cref="Type"/> is <see cref="ICatalogue"/>
     /// it will return <see cref="Catalogue"/>
     /// </summary>
     /// <returns></returns>

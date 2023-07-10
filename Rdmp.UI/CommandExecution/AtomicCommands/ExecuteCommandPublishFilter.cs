@@ -55,7 +55,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
 
         _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
 
-        var toAddTo = SelectOne(new DialogArgs { 
+        var toAddTo = SelectOne(new DialogArgs {
             WindowTitle = "Associated Column",
             TaskDescription = "All filters must be associated with a single column.  Pick which column to associate this filter with."},_allExtractionInformations);
 
@@ -75,7 +75,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
                 }
                 return;
             }
-                
+
             new FilterImporter(new ExtractionFilterFactory(toAddTo), null).ImportFilter(null, _filter, null);
             MessageBox.Show("Publish successful");
         }

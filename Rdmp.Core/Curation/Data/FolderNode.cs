@@ -18,7 +18,7 @@ namespace Rdmp.Core.Curation.Data;
 /// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/ 
+public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/
     where T: class, IHasFolder
 {
     public string Name { get; set; }
@@ -55,7 +55,7 @@ public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensur
             {
                 sb.Insert(0, $"{p.Name}\\");
             }
-                                
+
             p = p.Parent;
         }
 

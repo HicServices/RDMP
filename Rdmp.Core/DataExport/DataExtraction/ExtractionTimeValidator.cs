@@ -15,7 +15,7 @@ using Rdmp.Core.Validation;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// Applies Catalogue.ValidationXML to rows extracted during a Data Extraction Pipeline (See ExecuteDatasetExtractionSource).  Because the columns which 
+/// Applies Catalogue.ValidationXML to rows extracted during a Data Extraction Pipeline (See ExecuteDatasetExtractionSource).  Because the columns which
 /// are extracted can be a subset of the columns in the Catalogue and can include transforms the validation rules have to be adjusted (some are not applied).
 /// 
 /// <para>A count of the number of rows failing validation is stored in VerboseValidationResults (divided by column) and is available for writing to the word
@@ -27,9 +27,9 @@ public class ExtractionTimeValidator
 {
     private readonly ICatalogue _catalogue;
     private readonly List<IColumn> _columnsToExtract;
-        
+
     private bool _initialized;
-  
+
     public Validator Validator { get; set; }
     public VerboseValidationResults Results { get; set; }
 

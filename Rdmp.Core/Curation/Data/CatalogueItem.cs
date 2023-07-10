@@ -39,7 +39,7 @@ namespace Rdmp.Core.Curation.Data;
 public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
 {
     #region Database Properties
-        
+
     private string _Name;
     private string _Statistical_cons;
     private string _Research_relevance;
@@ -145,7 +145,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <summary>
     /// The ID of the underlying <see cref="ColumnInfo"/> to which this CatalogueItem describes.  This can be null if the underlying column has been deleted / removed.
     /// You can have multiple <see cref="CatalogueItem"/>s in a <see cref="Catalogue"/> that share the same underlying <see cref="ColumnInfo"/> if one of them is a transform
-    /// e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core"/>) but only release the full postcode with 
+    /// e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core"/>) but only release the full postcode with
     /// <see cref="ExtractionCategory.SpecialApprovalRequired"/>.
     /// </summary>
     [Relationship(typeof(ColumnInfo), RelationshipType.IgnoreableLocalReference)]  //will appear as empty, then the user can guess from a table
@@ -321,7 +321,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
-        
+
     /// <summary>
     /// Copies the descriptive metadata from one <see cref="CatalogueItem"/> (this) into a new <see cref="CatalogueItem"/> in the supplied <paramref name="cataToImportTo"/>
     /// </summary>
@@ -333,8 +333,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             throw new ArgumentException("Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
 
         var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, Name);
-            
-        //Get all the properties           
+
+        //Get all the properties
         var propertyInfo = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         //Assign all source property to taget object 's properties
@@ -347,7 +347,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         }
 
         clone.SaveToDatabase();
-            
+
         return clone;
     }
 

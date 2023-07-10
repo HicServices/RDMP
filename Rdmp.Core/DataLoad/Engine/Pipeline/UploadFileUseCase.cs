@@ -35,7 +35,7 @@ public sealed class UploadFileUseCase:PipelineUseCase
         context.MustHaveDestination = typeof(DataTableUploadDestination);
         return context;
     }
-        
+
     private UploadFileUseCase():base(new []
     {
         typeof (FlatFileToLoad),

@@ -17,7 +17,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandOpenInExplorer:BasicUICommandExecution
 {
     private readonly FileSystemInfo _info;
-        
+
     public ExecuteCommandOpenInExplorer(IActivateItems activator,FileSystemInfo info) : base(activator)
     {
         _info = info; 

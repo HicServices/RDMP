@@ -27,13 +27,13 @@ namespace Rdmp.UI.CohortUI;
 
 /// <summary>
 /// Describes a named cohort in one of your Cohort Databases (you might only have 1 cohort database - See ExternalCohortTable).  Each cohort is associated with a specific
-/// Project.  Cohorts can have 'custom data', these are researcher datasets or datasets specific to the project extraction that are not needed for any other project (for example 
-/// questionnaire data which relates to the cohort).  
+/// Project.  Cohorts can have 'custom data', these are researcher datasets or datasets specific to the project extraction that are not needed for any other project (for example
+/// questionnaire data which relates to the cohort).
 /// 
-/// <para>The SQL window will show what SQL the QueryBuilder has produced to view the cohort and any accompanying custom data tables.  You can use this SQL to check that cohorts have the 
+/// <para>The SQL window will show what SQL the QueryBuilder has produced to view the cohort and any accompanying custom data tables.  You can use this SQL to check that cohorts have the
 /// correct identifiers in them etc.</para>
 ///  
-/// <para>You can upload new files as custom data for the selected cohort by clicking 'Import New Custom Data File For Cohort...'  This will let you select a file and run it through a 
+/// <para>You can upload new files as custom data for the selected cohort by clicking 'Import New Custom Data File For Cohort...'  This will let you select a file and run it through a
 /// Pipeline to create a new data table in the cohort database that is like a project specific dataset.</para>
 /// 
 /// <para>A cohort is implemented as a private and release identifier column set and joined at data extraction time to your data repository datasets (the private identifiers are striped out
@@ -66,7 +66,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
             toShow += Environment.NewLine;
 
             var externalCohortTable = _extractableCohort.ExternalCohortTable;
-                
+
             var sql =
                 $"SELECT * FROM {externalCohortTable.TableName}{Environment.NewLine} WHERE {_extractableCohort.WhereSQL()}";
 
@@ -87,7 +87,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
             QueryPreview.ReadOnly = true;
         }
     }
-        
+
     public ExtractableCohortUI()
     {
         InitializeComponent();
@@ -123,7 +123,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     private Scintilla auditLogEditor;
 
-        
+
 
     public override void SetDatabaseObject(IActivateItems activator, ExtractableCohort databaseObject)
     {
@@ -174,13 +174,13 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         {
             tlvCohortUsage.ClearObjects();
             tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e=>e.Cohort_ID == _extractableCohort.ID).ToArray());
-                
+
             tlvPreviousVersions.ClearObjects();
             tlvPreviousVersions.AddObjects(
                 dx.Cohorts.Where(
                     c =>
                         c.ID != _extractableCohort.ID &&
-                        c.ExternalCohortTable_ID == _extractableCohort.ExternalCohortTable_ID && 
+                        c.ExternalCohortTable_ID == _extractableCohort.ExternalCohortTable_ID &&
                         c.GetExternalData().ExternalDescription ==
                         _extractableCohort.GetExternalData().ExternalDescription &&
                         c.ExternalProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray());
@@ -231,11 +231,11 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
             {
                 TaskDescription = $"There are multiple Projects with the ProjectNumber {_extractableCohort.ExternalProjectNumber}.  Which would you like to see?"
             }, projects);
-                
+
             if(show != null)
             {
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(show, 1));
-            }   
+            }
         }
     }
 

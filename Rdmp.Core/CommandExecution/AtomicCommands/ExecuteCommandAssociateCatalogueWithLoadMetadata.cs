@@ -21,7 +21,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicCommandExecut
     private readonly Catalogue[] _availableCatalogues;
     private readonly ICatalogue[] _otherCatalogues;
     private Catalogue[] _chosenCatalogues;
-        
+
     [UseWithObjectConstructor]
     public ExecuteCommandAssociateCatalogueWithLoadMetadata(IBasicActivateItems activator, LoadMetadata loadMetadata, Catalogue[] toAssociate) : this(activator,loadMetadata)
     {

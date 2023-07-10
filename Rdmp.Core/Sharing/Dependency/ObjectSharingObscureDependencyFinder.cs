@@ -40,5 +40,5 @@ public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
         if (oTableWrapperObject.GetType() != typeof (ObjectImport))
             _shareManager.DeleteAllOrphanImportDefinitions();
     }
-    
+
 }

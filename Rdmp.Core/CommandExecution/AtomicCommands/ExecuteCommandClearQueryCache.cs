@@ -29,7 +29,7 @@ public class ExecuteCommandClearQueryCache : BasicCommandExecution
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="cic"></param>
-    public ExecuteCommandClearQueryCache(IBasicActivateItems activator, 
+    public ExecuteCommandClearQueryCache(IBasicActivateItems activator,
         [DemandsInitialization("The Cohort Builder query for which you want to invalidate all cache entries")]
         CohortIdentificationConfiguration cic) :base(activator)
     {

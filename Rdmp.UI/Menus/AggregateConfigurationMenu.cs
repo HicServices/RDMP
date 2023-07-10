@@ -35,10 +35,10 @@ internal class AggregateConfigurationMenu :RDMPContextMenuStrip
         {
             //with a cic (it really should do!)
             var cic = aggregate.GetCohortIdentificationConfigurationIfAny();
-                
+
             if (cic != null)
             {
-                //find other non cohort aggregates (graphs) 
+                //find other non cohort aggregates (graphs)
                 AggregateConfiguration[] graphsAvailableInCatalogue;
 
                 try

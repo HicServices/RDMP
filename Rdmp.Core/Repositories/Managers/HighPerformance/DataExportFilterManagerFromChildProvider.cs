@@ -20,7 +20,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 internal class DataExportFilterManagerFromChildProvider : DataExportFilterManager
 {
     private readonly Dictionary<int, List<FilterContainer>> _subcontainers = new();
-        
+
     private Dictionary<int, List<DeployedExtractionFilter>> _containersToFilters;
 
     /// <summary>
@@ -49,7 +49,7 @@ internal class DataExportFilterManagerFromChildProvider : DataExportFilterManage
         }
         r.Close();
     }
-        
+
     /// <summary>
     /// Returns all subcontainers found in the <paramref name="parent"/> (results are returned from the cache created during class construction)
     /// </summary>

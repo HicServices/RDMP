@@ -50,10 +50,10 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 /// stick to anonymising only categorical fields that compromise patient or carer anonymity (GP Codes, Patient identifiers etc).  Also if you never intend to process or even host certain columns
 /// (e.g. Firstname / Surname) then you can drop the fields entirely as part of data loading through the PreLoadDiscardedColumn mechanism).</para>
 /// 
-/// <para>If the data in your column already conforms to a known type that you have anonymised before (e.g. 'GP Code' in another dataset) and the datatype matches exactly (e.g. varchar(4)) then you  
+/// <para>If the data in your column already conforms to a known type that you have anonymised before (e.g. 'GP Code' in another dataset) and the datatype matches exactly (e.g. varchar(4)) then you
 /// can select an existing ANOTable and push the data straight through into ANO format.</para>
 /// 
-/// <para>If not then you will need to type in a name (beginning with ANO) that refers to the type (e.g. ANOPatientIdentifier) and give it a meaningful suffix (e.g. 'P' for patient) and select 
+/// <para>If not then you will need to type in a name (beginning with ANO) that refers to the type (e.g. ANOPatientIdentifier) and give it a meaningful suffix (e.g. 'P' for patient) and select
 /// Create ANOTable.  Adjust the Integer/Character count till the preview data looks pleasing and no errors are reported then Finalise the choice.</para>
 /// 
 /// <para></para>
@@ -62,7 +62,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 {
     private ColumnInfo _columnInfo;
     private bool _yesToAll;
-        
+
     public ColumnInfo ColumnInfo
     {
         get => _columnInfo;
@@ -135,7 +135,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
 
             GeneratePreviews();
-                
+
             RefreshServers();
         }
         catch (Exception e)
@@ -143,7 +143,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             activator.KillForm(ParentForm,e);
         }
     }
-        
+
     private void RefreshServers()
     {
         if (ColumnInfo == null)
@@ -200,7 +200,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
             qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
             qb.TopX = 10;
-                    
+
             var rowsRead = false;
 
             using (var cmd = server.GetCommand(qb.SQL, con))
@@ -213,7 +213,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                     rowsRead = true;
                 }
             }
-                    
+
             if(!rowsRead)
             {
                 lblPreviewDataIsFictional.Visible = true;
@@ -239,7 +239,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                     preview.Rows.Add("-1", DBNull.Value);
                     preview.Rows.Add("-1", DBNull.Value);
                 }
-                    
+
             }
 
             con.Close();
@@ -337,7 +337,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         gbCreateNewANOTable.Enabled = false;
     }
 
-     
+
     private void btnFinalise_Click(object sender, EventArgs e)
     {
         //if it is not pushed, push it now

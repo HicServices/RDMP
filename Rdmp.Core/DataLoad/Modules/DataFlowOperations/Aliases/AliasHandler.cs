@@ -69,7 +69,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                             $"Found Alias in input data and ResolutionStrategy is {ResolutionStrategy}, aliased value was {r[AliasColumnInInputDataTables]}");
 
                     case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
-                            
+
                         //Get all aliases for the input value
                         foreach (var alias in aliasList)
                         {
@@ -83,7 +83,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                             //Add it to our new rows collection
                             newRows.Add(newRow);
                         }
-                            
+
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -184,7 +184,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
             var input = r[0];
             var alias = r[1];
-                            
+
             if(input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
                 throw new AliasTableFetchException("Alias table contained nulls");
 

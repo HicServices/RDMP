@@ -25,7 +25,7 @@ public interface IPluginCohortCompiler
     /// <param name="ac"></param>
     /// <returns></returns>
     bool ShouldRun(AggregateConfiguration ac);
-        
+
     /// <summary>
     /// Return true if the <paramref name="catalogue"/> is of a type that should be handled by your class
     /// by calling your API.
@@ -36,7 +36,7 @@ public interface IPluginCohortCompiler
 
 
     /// <summary>
-    /// Must be implemented such that by the time the method completes the <paramref name="cache"/> 
+    /// Must be implemented such that by the time the method completes the <paramref name="cache"/>
     /// is populated with an identifier list that matches the expectations of <paramref name="ac"/>
     /// </summary>
     /// <param name="ac"></param>
@@ -45,7 +45,7 @@ public interface IPluginCohortCompiler
     void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Return true if the <paramref name="oldDescription"/> does not match the logic currently 
+    /// Return true if the <paramref name="oldDescription"/> does not match the logic currently
     /// stored in <paramref name="aggregate"/>
     /// </summary>
     /// <param name="aggregate"></param>

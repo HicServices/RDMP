@@ -325,7 +325,7 @@ public class CohortIdentificationConfigurationUICommon
             {
                 Activator.Show("Confirm Close",
                     $"There are {aliveCount} Tasks currently executing, you must cancel them before closing");
-                
+
                 return true;
             }
 

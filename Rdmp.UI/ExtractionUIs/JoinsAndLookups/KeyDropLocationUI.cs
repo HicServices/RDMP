@@ -20,7 +20,7 @@ public partial class KeyDropLocationUI : UserControl
 {
     private JoinKeyType _keyType;
     public ColumnInfo SelectedColumn { get; private set; }
-        
+
     public JoinKeyType KeyType
     {
         get => _keyType;
@@ -49,7 +49,7 @@ public partial class KeyDropLocationUI : UserControl
         btnClear.Image = FamFamFamIcons.delete.ImageToBitmap();
         btnClear.Enabled = false;
     }
-        
+
     private void tbPk1_DragEnter(object sender, DragEventArgs e)
     {
         e.Effect = DragDropEffects.None;

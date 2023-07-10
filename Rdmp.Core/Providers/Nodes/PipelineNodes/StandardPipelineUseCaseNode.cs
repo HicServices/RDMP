@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.Comments;
 namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 
 /// <summary>
-/// Collection of all the Pipelines compatible with a given use case. 
+/// Collection of all the Pipelines compatible with a given use case.
 /// </summary>
 public class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
 {
@@ -26,7 +26,7 @@ public class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
         _commentStore = commentStore;
         UseCase = useCase;
     }
-        
+
     public string WhatIsThis()
     {
         var useCaseType = UseCase.GetType();

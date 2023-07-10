@@ -44,7 +44,7 @@ internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
         {
 
             destinationOrder = _targetProcessTask.Order - 1;
-                
+
             foreach (var pt in lmd.ProcessTasks)
             {
                 //don't change the current one again

@@ -36,7 +36,7 @@ public class DublinCoreDefinition
     /// Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public string Description { get; set; }
-        
+
     /// <summary>
     /// Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
@@ -51,7 +51,7 @@ public class DublinCoreDefinition
     /// Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>
     public Uri Identifier { get; set; }
-        
+
     /// <summary>
     /// Dublin Core property see http://www.dublincore.org/documents/dces/
     /// </summary>

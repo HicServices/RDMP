@@ -24,13 +24,13 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
 {
     protected readonly DelimitedFlatFileDataFlowSource Source;
-        
+
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeaders_DemandDescription)]
     public string ForceHeaders {
         get => Source.ForceHeaders;
         set => Source.ForceHeaders = value;
     }
-        
+
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreQuotes_DemandDescription)]
     public bool IgnoreQuotes
     {
@@ -71,7 +71,7 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
         get => Source.IgnoreBadReads;
         set => Source.IgnoreBadReads = value;
     }
-        
+
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription,DefaultValue = true)]
     public bool ThrowOnEmptyFiles
     {
@@ -112,7 +112,7 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
             StronglyTypeInputBatchSize = 0
         };
     }
-    
+
     private IDataLoadEventListener _listener;
     private FileInfo _currentFile;
 
@@ -132,7 +132,7 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
             foreach (DataRow row in dt.Rows)
                 if (row[AddFilenameColumnNamed] == DBNull.Value)
                     row[AddFilenameColumnNamed] = _currentFile.FullName;
-                
+
         }
         return dt.Rows.Count;
     }

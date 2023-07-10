@@ -11,7 +11,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
 
 /// <summary>
-/// Request to cache an AggregateConfiguration that is a 'patient index table' (See JoinableCohortAggregateConfiguration).  This will include patient 
+/// Request to cache an AggregateConfiguration that is a 'patient index table' (See JoinableCohortAggregateConfiguration).  This will include patient
 /// identifier and some useful columns (e.g. 'prescription dates for methadone by patient id').  The resulting cached DataTable will be joined against
 /// patient identifier lists to answer questions such as 'who has been hospitalised (SMR01) within 6 months of a prescription for methadone'.
 /// 

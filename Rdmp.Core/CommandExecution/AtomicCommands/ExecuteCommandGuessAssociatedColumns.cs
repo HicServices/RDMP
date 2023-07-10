@@ -75,10 +75,10 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
                 //note that this else branch also deals with case where guesses is empty
 
                 var acceptedOne = false;
-                    
+
                 for (var i = 0; i < guesses.Length; i++)
                 {
-                    //ask confirmation 
+                    //ask confirmation
                     if (!BasicActivator.IsInteractive || BasicActivator.YesNo(
                             $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}", "Multiple matched guesses"))
                     {

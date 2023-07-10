@@ -65,7 +65,7 @@ e.g. /$i/$a")]
     public TableLoadInfo TableLoadInfo { get; private set; }
 
     public DirectoryInfo DirectoryPopulated { get; private set; }
-        
+
     public int SeparatorsStrippedOut { get; set; }
 
     public int LinesWritten { get; protected set; }
@@ -195,7 +195,7 @@ e.g. /$i/$a")]
     protected abstract void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch);
 
     /// <summary>
-    /// Called after each batch is written, allows you to flush your stream (if required) 
+    /// Called after each batch is written, allows you to flush your stream (if required)
     /// </summary>
     /// <param name="job"></param>
     /// <param name="cancellationToken"></param>
@@ -204,10 +204,10 @@ e.g. /$i/$a")]
     {
 
     }
-         
+
     /// <inheritdoc/>
     public abstract void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny);
-        
+
     /// <inheritdoc/>
     public abstract void Abort(IDataLoadEventListener listener);
 
@@ -235,12 +235,12 @@ e.g. /$i/$a")]
     }
 
     #endregion
-        
+
 
     #region Release Related Methods
 
     /// <inheritdoc/>
-    public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);        
+    public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
     /// <inheritdoc/>
     public abstract GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck);
     /// <inheritdoc/>
@@ -292,7 +292,7 @@ e.g. /$i/$a")]
         //extract lookups
         foreach (BundledLookupTable lookup in datasetBundle.LookupTables)
         {
-                
+
             datasetBundle.States[lookup] = TryExtractLookupTable(lookup, lookupDir,job)
                 ? ExtractCommandState.Completed
                 : ExtractCommandState.Crashed;
@@ -346,7 +346,7 @@ e.g. /$i/$a")]
                 $"SELECT * FROM {lookup.TableInfo.Name}", DateTime.Now) }, -1);
             tableLoadInfo.Inserts = linesWritten;
             tableLoadInfo.CloseAndArchive();
-                
+
             //audit in cumulative extraction results (determines release-ability of artifacts).
             if (_request is ExtractDatasetCommand)
             {
@@ -357,7 +357,7 @@ e.g. /$i/$a")]
             }
 
             return true;
-                
+
         }
         catch (Exception e)
         {
@@ -367,7 +367,7 @@ e.g. /$i/$a")]
             return false;
         }
     }
-        
+
     /// <summary>
     /// Extracts the <paramref name="doc"/> into the supplied <paramref name="directory"/> (unless overridden to put it somewhere else)
     /// </summary>
@@ -427,7 +427,7 @@ e.g. /$i/$a")]
             var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", target, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
 
             TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten,out var description);
-                
+
             sw.Stop();
 
             //end auditing it
@@ -492,5 +492,5 @@ e.g. /$i/$a")]
         destinationDescription = extractTableVerbatim.OutputFilename;
     }
     #endregion
-        
+
 }

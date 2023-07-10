@@ -43,7 +43,7 @@ public class RDMPCombineableFactory:ICombineableFactory
         if (o?.ModelObjects == null)
             return null;
 
-        //does the data object already contain a command? 
+        //does the data object already contain a command?
         if (o.ModelObjects.OfType<ICombineToMakeCommand>().Count() == 1)
             return o.ModelObjects.OfType<ICombineToMakeCommand>().Single();//yes
 
@@ -173,7 +173,7 @@ public class RDMPCombineableFactory:ICombineableFactory
             //if array contains anything that isn't a T
             if (o is not T o1)
                 return null; //it's not an array of T
-                
+
             toReturn.Add(o1);
         }
 

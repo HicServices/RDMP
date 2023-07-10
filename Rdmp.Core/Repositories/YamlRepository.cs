@@ -96,7 +96,7 @@ public class YamlRepository : MemoryDataExportRepository
                 Directory.CreateSubdirectory(t.Name);
                 continue;
             }
-            
+
             lock(lockFs)
             {
                 foreach (var yaml in typeDir.EnumerateFiles("*.yaml"))
@@ -134,7 +134,7 @@ public class YamlRepository : MemoryDataExportRepository
 
     private int ObjectDependencyOrder(Type arg)
     {
-        // Load Plugin objects before dependent children 
+        // Load Plugin objects before dependent children
         if (arg == typeof(Rdmp.Core.Curation.Data.Plugin))
             return 1;
 
@@ -211,7 +211,7 @@ public class YamlRepository : MemoryDataExportRepository
             if (oTableWrapperObject is LoadModuleAssembly lma)
             {
                 File.Delete(GetNupkgPath(lma));
-            }             
+            }
         }
     }
 
@@ -449,14 +449,14 @@ public class YamlRepository : MemoryDataExportRepository
                 CredentialsDictionary.Add(table, valDictionary);
             }
 
-            
+
         }
     }
     private void SaveCredentialsDictionary()
     {
         var serializer = new Serializer();
 
-        var ids = 
+        var ids =
             CredentialsDictionary.ToDictionary(
                 k => k.Key.ID,
                 v => v.Value.ToDictionary(k => k.Key, v => v.Value.ID));

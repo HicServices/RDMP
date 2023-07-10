@@ -15,7 +15,7 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding.Options;
 
 /// <summary>
-/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running as a 'cohort set' 
+/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running as a 'cohort set'
 /// </summary>
 public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
 {
@@ -69,7 +69,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
             //change the SelectSQL to the table alias of the joinable used (see CohortQueryBuilder.AddJoinablesToBuilder)
             foreach (var dimension in hackedDimensions)
                 dimension.SelectSQL = $"{tableAlias}.{dimension.GetRuntimeName()}";
-                
+
             toReturn.AddRange(hackedDimensions);
         }
 

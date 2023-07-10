@@ -184,7 +184,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         return new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
     }
-        
+
     /// <inheritdoc/>
     public DiscoveredDatabase Discover()
     {
@@ -224,7 +224,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         return tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
     }
-        
+
 
     /// <summary>
     /// Checks that the remote cohort storage database described by this class exists and contains a compatible schema.
@@ -243,7 +243,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     }
 
     #region Stuff for checking the remote (not data export manager) table where the cohort is allegedly stored
-        
+
     /// <inheritdoc/>
     public bool IDExistsInCohortTable(int originID)
     {
@@ -275,7 +275,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             if (cohortTable.Exists())
             {
                 notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}", CheckResult.Success, null));
-                    
+
                 DiscoverPrivateIdentifier();
                 DiscoverReleaseIdentifier();
                 DiscoverDefinitionTableForeignKey();
@@ -291,7 +291,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
                     $"Found table {DefinitionTableName} in database {Database}", CheckResult.Success, null));
 
                 var cols = foundCohortDefinitionTable.DiscoverColumns();
-                    
+
                 foreach (var requiredField in CohortDefinitionTable_RequiredFields)
                     ComplainIfColumnMissing(DefinitionTableName, cols, requiredField, notifier);
             }
@@ -305,13 +305,13 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
                 $"Could not check table intactness for ExternalCohortTable '{Name}'", CheckResult.Fail, e));
         }
     }
-        
+
     private void CheckCohortDatabaseAccessible(ICheckNotifier notifier)
     {
         try
         {
             DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport).TestConnection();
-              
+
             notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success, null));
         }
         catch (Exception e)
@@ -319,7 +319,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to Cohort database called '{Name}'", CheckResult.Fail, e));
         }
     }
-        
+
     /// <inheritdoc/>
     public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
     {
@@ -345,10 +345,10 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
                 $"Could not find required field {tofind} in table {tableNameFullyQualified}(It had the following columns:{columns.Aggregate("", (s, n) => $"{s}{n},")})",
                 CheckResult.Fail, null));
     }
-        
+
 
     #region IDataAccessCredentials and IDataAccessPoint delegation
-        
+
     /// <inheritdoc/>
     public string Password
     {
@@ -464,7 +464,7 @@ description as {syntax.EnsureWrapped("Description")},
    {syntax.EnsureWrapped("dtCreated")}";
 
     }
-        
+
     /// <summary>
     /// Returns SQL query for listing all cohorts stored in the database referenced by this <see cref="ExternalCohortTable"/>.
     /// This includes only the ids, project numbers, version, description etc not the actual patient identifiers themselves.
@@ -484,7 +484,7 @@ description as {syntax.EnsureWrapped("Description")},
    {DefinitionTableName}";
 
     }
-        
+
     /// <summary>
     /// Returns nothing
     /// </summary>

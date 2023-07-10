@@ -83,7 +83,7 @@ internal class ExecuteCommandRunner:IRunner
         }
 
 
-        _picker = 
+        _picker =
             _options.CommandArgs != null && _options.CommandArgs.Any() ?
                 new CommandLineObjectPicker(_options.CommandArgs, _input) :
                 null;
@@ -240,7 +240,7 @@ internal class ExecuteCommandRunner:IRunner
             if(inQuotes == null && (c == '\'' || c == '"') && word.Length == 0)
             {
                 inQuotes = c;
-            }                
+            }
             else
             if(c == inQuotes)
             {
@@ -248,7 +248,7 @@ internal class ExecuteCommandRunner:IRunner
                 inQuotes = null;
             }
             else
-            if(c == ' ' && inQuotes == null) 
+            if(c == ' ' && inQuotes == null)
             {
                 //break character outside of quotes
                 var resultWord = word.ToString().Trim();

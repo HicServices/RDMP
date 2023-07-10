@@ -26,7 +26,7 @@ public partial class DataFlowComponentVisualisation : UserControl
 {
     public object Value { get; set; }
     private readonly PipelineComponentRole _role;
-        
+
     private ICheckable _checkable;
     private MandatoryPropertyChecker _mandatoryChecker;
 
@@ -126,9 +126,9 @@ public partial class DataFlowComponentVisualisation : UserControl
     protected bool _isEmpty ;
     private Pen _emptyPen = new(new SolidBrush(Color.Black));
     protected Pen _fullPen = new(new SolidBrush(Color.Black));
-        
 
-        
+
+
     protected override void OnPaintBackground(PaintEventArgs e)
     {
         base.OnPaintBackground(e);

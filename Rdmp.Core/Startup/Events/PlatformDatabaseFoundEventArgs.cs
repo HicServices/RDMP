@@ -16,7 +16,7 @@ namespace Rdmp.Core.Startup.Events;
 /// 
 /// <para>Includes the evaluated status of the database (does it need patching etc) and the <see cref="Patcher"/> which contains the schema script definitions).</para>
 /// 
-/// <para>It is important that all platform Databases exactly match the runtime libraries for managing saving/loading objects therefore if the Status is 
+/// <para>It is important that all platform Databases exactly match the runtime libraries for managing saving/loading objects therefore if the Status is
 /// RequiresPatching it is imperative that you patch the database and restart the application (happens automatically with StartupUI).</para>
 /// </summary>
 public class PlatformDatabaseFoundEventArgs

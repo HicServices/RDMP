@@ -16,7 +16,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects;
 
 /// <summary>
 /// Shows the state of a single pipeline component within a data flow pipeline (See 'Pipelines' in UserManual.md).  This includes the Type of the pipeline
-/// component, whether the software was able to create an instance of the type and whether it passed checking.  Components can be either a Source, Middle (of which there can be any 
+/// component, whether the software was able to create an instance of the type and whether it passed checking.  Components can be either a Source, Middle (of which there can be any
 /// number) or Destination.  Objects (usually DataTables) flow through the pipeline and are processed by each component in turn.
 /// 
 /// <para>But first the pipeline must be constructed, this component is used as part of <see cref="PipelineDiagramUI"/> to let you adjust the order / add new components etc into your pipeline.  The pipeline
@@ -91,7 +91,7 @@ internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
 
 
     public event PipelineComponentSelectedHandler ComponentSelected;
-        
+
     private void Anywhere_MouseDown(object sender, MouseEventArgs e)
     {
         if(e.Button != MouseButtons.Left)

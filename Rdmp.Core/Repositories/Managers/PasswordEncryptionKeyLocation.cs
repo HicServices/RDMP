@@ -92,7 +92,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
 
     /// <summary>
     /// Creates a new private RSA encryption key certificate at the given location and sets the catalogue repository to use it for encrypting passwords.
-    /// This will make any existing serialized passwords irretrievable unless you restore and reset the original key file location. 
+    /// This will make any existing serialized passwords irretrievable unless you restore and reset the original key file location.
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>

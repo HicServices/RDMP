@@ -18,10 +18,10 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the 
+/// Provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the
 /// <see cref="SafeDirectoryCatalog"/>.  It also includes methods for creating instances of the exported Types.
 /// 
-/// <para>The class name MEF is a misnomer because historically we used the Managed Extensibility Framework (but now we 
+/// <para>The class name MEF is a misnomer because historically we used the Managed Extensibility Framework (but now we
 /// just grab everything with reflection)</para>
 /// </summary>
 public class MEF
@@ -121,13 +121,13 @@ public class MEF
         SafeDirectoryCatalog = result;
         HaveDownloadedAllAssemblies = true;
     }
-        
+
     public void SetupMEFIfRequired()
     {
         if (!HaveDownloadedAllAssemblies)
             throw new NotSupportedException("MEF was not loaded by Startup?!!");
     }
-        
+
     public Dictionary<string, Exception> ListBadAssemblies()
     {
         SetupMEFIfRequired();
@@ -137,7 +137,7 @@ public class MEF
 
     /// <summary>
     /// 
-    /// <para>Turns the legit C# name: 
+    /// <para>Turns the legit C# name:
     /// DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</para>
     /// 
     /// <para>Into a proper C# code:
@@ -177,7 +177,7 @@ public class MEF
     }
 
     /// <summary>
-    /// Returns all MEF exported classes decorated with the specified generic export e.g. 
+    /// Returns all MEF exported classes decorated with the specified generic export e.g.
     /// </summary>
     /// <param name="genericType"></param>
     /// <param name="typeOfT"></param>
@@ -195,7 +195,7 @@ public class MEF
 
         return _types.Value.Values.Distinct().AsEnumerable();
     }
-                
+
     /// <summary>
     /// Creates an instance of the named class with the provided constructor arguments
     /// </summary>

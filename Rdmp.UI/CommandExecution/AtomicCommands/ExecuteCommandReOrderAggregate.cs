@@ -16,7 +16,7 @@ internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
 {
     private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
     private CohortAggregateContainer _parentContainer;
-        
+
     private IOrderable _targetOrder;
     private readonly InsertOption _insertOption;
 

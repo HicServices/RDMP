@@ -37,7 +37,7 @@ internal class ExtractCommandStateMonitor
 
         foreach (var (key, value) in cmd.DatasetBundle.States.ToArray()) toUpdateSubstates[key] = value;
     }
-        
+
     public IEnumerable<object> GetAllChangedObjects(IExtractDatasetCommand cmd)
     {
         if (CommandStates[cmd] != cmd.State)

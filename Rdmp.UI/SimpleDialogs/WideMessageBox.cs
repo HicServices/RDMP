@@ -98,7 +98,7 @@ public partial class WideMessageBox : Form
         btnBack.Enabled = _navigationStack.Any();
 
         btnViewStackTrace.Visible = args.EnvironmentDotStackTrace != null;
-            
+
         richTextBox1.Font = new Font(FontFamily.GenericMonospace, richTextBox1.Font.Size);
         richTextBox1.Select(0, 0);
         richTextBox1.WordWrap = true;
@@ -113,8 +113,8 @@ public partial class WideMessageBox : Form
             message = title;
             title = null;
         }
-            
-        //Replace single newlines with double new lines 
+
+        //Replace single newlines with double new lines
         if (Args.FormatAsParagraphs && CommentStore != null)
             message = CommentStore.FormatAsParagraphs(message);
 
@@ -133,7 +133,7 @@ public partial class WideMessageBox : Form
         SetMessage(message, args.KeywordNotToAdd);
 
         ApplyTheme(args.Theme);
-            
+
         if (args.Theme == WideMessageBoxTheme.Help)
             SetViewSourceCodeButton(args.Title);
     }

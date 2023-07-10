@@ -44,7 +44,7 @@ public class DashboardEditModeFunctionality
 
     private EditModeAction _plannedAction = EditModeAction.None;
     private UserControl _plannedControl;
-        
+
     private EditModeAction _actionUnderway;
     private UserControl _actionUnderwayOnControl;
 
@@ -76,16 +76,16 @@ public class DashboardEditModeFunctionality
         //if we are changing a control currently
         if(_actionUnderwayOnControl != null)
         {
-                
+
             _actionUnderwayOnControl.Location = new Point(
                 (int)(Math.Round(_actionUnderwayOnControl.Location.X / 5.0) * 5),
                 (int)(Math.Round(_actionUnderwayOnControl.Location.Y / 5.0) * 5));
-                
+
             _actionUnderwayOnControl.Size = new Size(
                 (int)(Math.Round(_actionUnderwayOnControl.Size.Width / 5.0) * 5),
                 (int)(Math.Round(_actionUnderwayOnControl.Size.Height / 5.0) * 5));
-                
-                
+
+
             //save changes
             foreach (var kvp in _layoutUI.ControlDictionary)
             {
@@ -98,7 +98,7 @@ public class DashboardEditModeFunctionality
                     kvp.Key.SaveToDatabase();
                 }
             }
-                
+
         }
 
         _plannedAction = EditModeAction.Move;
@@ -168,28 +168,28 @@ public class DashboardEditModeFunctionality
 
                 _actionUnderwayOnControl.Size
                     = new Size(
-                            
+
                         //Do not resize below the minimum size
                         Math.Max(MinimumControlSize,
 
                             //do not allow resizing beyond the right of the control it is hosted in
-                            Math.Min(layoutUIVisibleArea.Width - _actionUnderwayOnControl.Location.X, 
+                            Math.Min(layoutUIVisibleArea.Width - _actionUnderwayOnControl.Location.X,
 
                                 //change width by the length of the vector X
                                 _actionUnderwayOnControl.Width + (int)vector.X))
-                            
+
                         ,
-                               
+
                         //Do not resize below the minimum size
                         Math.Max(MinimumControlSize,
 
                             //do not allow resizing beyond the bottom of the control it is hosted in
-                            Math.Min(layoutUIVisibleArea.Height - _actionUnderwayOnControl.Location.Y, 
+                            Math.Min(layoutUIVisibleArea.Height - _actionUnderwayOnControl.Location.Y,
 
                                 _actionUnderwayOnControl.Height + (int)vector.Y))
                     );
 
-                    
+
 
                 _actionUnderwayOnControl.Invalidate();
             }
@@ -211,7 +211,7 @@ public class DashboardEditModeFunctionality
             _plannedControl = (UserControl) sender;
         }
     }
-        
+
     /// <summary>
     /// Returns true if the cursor is within the bottom right 5 pixels of a control
     /// </summary>

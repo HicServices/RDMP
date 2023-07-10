@@ -21,13 +21,13 @@ namespace Rdmp.UI.ChecksUI;
 
 /// <summary>
 /// There are two main event systems in play in the RDMP.  There is Checking and Progress.  Checking activities are tasks that should be supervised and can block asking the user
-/// whether or not a proposed fix to a problem should be applied (See ChecksUI).  Progress activities are messages only and can also include numerical update messages indicating 
+/// whether or not a proposed fix to a problem should be applied (See ChecksUI).  Progress activities are messages only and can also include numerical update messages indicating
 /// that progress is made towards a fixed number e.g. you could get 1000 messages over the course of an hour reporting how close towards a goal of 1,000,000 records a given task is.
 /// 
 /// <para>This control covers the checking event system. For information about the progress system see ProgressUI.</para>
 /// 
 /// <para>Used throughout the RDMP software to inform the user about the progress or checking of an activity.  Messages will appear along with a result (Success,Fail,Warning) and optionally
-/// an Exception if one was generated.  Double clicking a message lets you view a StackTrace and even view the source code (See ViewSourceCodeDialog) where the message was generated 
+/// an Exception if one was generated.  Double clicking a message lets you view a StackTrace and even view the source code (See ViewSourceCodeDialog) where the message was generated
 /// (even if it wasn't an Exception).</para>
 /// 
 /// <para>You can copy and paste values out of the listbox using Ctrl+C and Ctrl+V to paste.</para>
@@ -127,9 +127,9 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
 
     public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
 
-    private Thread _checkingThread; 
+    private Thread _checkingThread;
     private YesNoYesToAllDialog yesNoYesToAllDialog;
-        
+
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
@@ -214,7 +214,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
                 $"Why did you propose the fix {args.ProposedFix} when there is was no problem (don't specify a proposedFix if you are passing in CheckResult.Success)");
 
         //there is a suggested fix, see if the user has subscribed to the fix handler (i.e. the fix handler tells the class whether the user wants to apply this specific fix, like maybe a messagebox or something gets shown and it returns true to apply the fix)
-        return MakeChangePopup.ShowYesNoMessageBoxToApplyFix(AllowsYesNoToAll ? yesNoYesToAllDialog : null, 
+        return MakeChangePopup.ShowYesNoMessageBoxToApplyFix(AllowsYesNoToAll ? yesNoYesToAllDialog : null,
             args.Message, args.ProposedFix);
     }
 
@@ -223,7 +223,7 @@ public partial  class ChecksUI : UserControl, ICheckNotifier
         _results.Add(args);
         outOfDate = true; 
     }
-        
+
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
         olvChecks.ModelFilter = new TextMatchFilter(olvChecks,tbFilter.Text);

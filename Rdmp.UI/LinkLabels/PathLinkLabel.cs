@@ -39,7 +39,7 @@ public class PathLinkLabel : Label
             ExceptionViewer.Show(exception);
         }
     }
-        
+
     protected override void OnPaint(PaintEventArgs e)
     {
         //paint background

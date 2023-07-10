@@ -26,7 +26,7 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.Curation.Data.Aggregation;
 
 /// <summary>
-/// Entry point for the aggregation system.  This class describes what a given aggregation is supposed to achieve (e.g. summarise the number of records in a 
+/// Entry point for the aggregation system.  This class describes what a given aggregation is supposed to achieve (e.g. summarise the number of records in a
 /// dataset by region over time since 2001 to present).  An AggregateConfiguration belongs to a given Catalogue and is the hanging-off point for the rest of
 /// the configuration (e.g. AggregateDimension / AggregateFilter)
 /// 
@@ -40,7 +40,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// <para>The above labels are informal terms.  Use IsCohortIdentificationAggregate and IsJoinablePatientIndexTable to determine what type a given
 /// AggregateConfiguration is. </para>
 /// 
-/// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
+/// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification
 /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
 /// </summary>
 public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper,
@@ -62,7 +62,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
 
     /// <summary>
-    /// The count(*) or sum(*) or count(distinct chi) etc column of an AggregateConfiguration group by 
+    /// The count(*) or sum(*) or count(distinct chi) etc column of an AggregateConfiguration group by
     /// </summary>
     public string CountSQL
     {
@@ -71,7 +71,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     }
 
     /// <summary>
-    /// The ID of the Catalogue (dataset) that the AggregateConfiguration belongs to.  This determines which tables/server it will be run on in addition to what filters/columns are 
+    /// The ID of the Catalogue (dataset) that the AggregateConfiguration belongs to.  This determines which tables/server it will be run on in addition to what filters/columns are
     /// importable etc.
     /// </summary>
     public int Catalogue_ID
@@ -141,7 +141,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         get => _havingSQL;
         set => SetField(ref  _havingSQL, value);
     }
-        
+
     /// <summary>
     /// ID of the AND/OR container of filters (which might be empty) that will restrict the records matched by the AggregateConfiguration GROUP by.  All filters/containers will
     /// be processed recursively and built up into appropriate WHERE sql at query building time.
@@ -160,9 +160,9 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     }
 
     /// <summary>
-    /// Specify instead of RootFilterContainer_ID to indicate that this AggregateConfiguration should instead use the filters of a different AggregateConfiguration.  This is 
-    /// generally only useful if you have an AggregateConfiguration which you are using in cohort generation (e.g. prescriptions for drug x) and you want to generate another 
-    /// AggregateConfiguration which is a graph of those results by year and you don't want to duplicate the filter configuration.  
+    /// Specify instead of RootFilterContainer_ID to indicate that this AggregateConfiguration should instead use the filters of a different AggregateConfiguration.  This is
+    /// generally only useful if you have an AggregateConfiguration which you are using in cohort generation (e.g. prescriptions for drug x) and you want to generate another
+    /// AggregateConfiguration which is a graph of those results by year and you don't want to duplicate the filter configuration.
     /// </summary>
     public int? OverrideFiltersByUsingParentAggregateConfigurationInstead_ID
     {
@@ -264,9 +264,9 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public ITableInfo[] ForcedJoins => CatalogueRepository.AggregateForcedJoinManager.GetAllForcedJoinsFor(this);
 
     /// <summary>
-    /// When an AggregateConfiguration is used in a cohort identification capacity it can have one or more 'patient index tables' defined e.g. 
+    /// When an AggregateConfiguration is used in a cohort identification capacity it can have one or more 'patient index tables' defined e.g.
     /// 'Give me all prescriptions for morphine' (Prescribing) 'within 6 months of patient being discharged from hospital' (SMR01).  In this case
-    /// a join is done against the secondary dataset. 
+    /// a join is done against the secondary dataset.
     /// 
     /// <para>This property returns all such 'patient index table' AggregateConfigurations which are currently being used by this AggregateConfiguration
     /// for building its join.</para>
@@ -367,7 +367,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             
         ClearAllInjections();
     }
-        
+
     internal AggregateConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         Name = r["Name"] as string;
@@ -414,7 +414,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
     /// <summary>
     /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
-    /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to 
+    /// what fact that the AggregateConfiguration is definetly one by passing the JoinableCohortAggregateConfiguration that makes it one.  Pass null in to
     /// indicate that the AggregateConfiguration is definetly NOT ONE.  See also the method <see cref="IsJoinablePatientIndexTable"/>
     /// </summary>
     public void InjectKnown(JoinableCohortAggregateConfiguration instance)
@@ -474,7 +474,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
     /// <summary>
     /// Specifies that that given <see cref="ExtractionInformation"/> should become a new SELECT column in the GROUP BY of this AggregateConfiguration.  This
-    /// column will also appear in the ORDER BY and GROUP BY sections of the query when built by <see cref="AggregateBuilder"/>.  Finally if the column comes 
+    /// column will also appear in the ORDER BY and GROUP BY sections of the query when built by <see cref="AggregateBuilder"/>.  Finally if the column comes
     /// from a novel underlying TableInfo then that new table will also be included in the FROM section of the query (e.g. with a join).
     /// </summary>
     /// <param name="basedOnColumn"></param>
@@ -483,7 +483,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         ClearAllInjections();
         return new AggregateDimension((ICatalogueRepository) basedOnColumn.Repository, basedOnColumn, this);
     }
-        
+
     /// <summary>
     /// Sets up a new <see cref="AggregateBuilder"/> with all the columns (See <see cref="AggregateDimensions"/>), WHERE logic (See <see cref="RootFilterContainer"/>, Pivot
     /// etc.
@@ -605,9 +605,9 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     private int? _orderWithinKnownContainer;
     private int? _overrideFiltersByUsingParentAggregateConfigurationInsteadID;
     private int? _rootFilterContainerID;
-        
+
     private bool orderFetchAttempted;
-        
+
 
 
     /// <summary>
@@ -624,7 +624,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method returns
     /// true if there is an associated JoinableCohortAggregateConfiguration that would make an ordinary AggregateConfiguration into a 'Patient Index Table'.
     /// </summary>
-    /// <returns>true if the AggregateConfiguration is part of a cic fulfilling the role of 'Patient Index Table' as defined by the existence of a 
+    /// <returns>true if the AggregateConfiguration is part of a cic fulfilling the role of 'Patient Index Table' as defined by the existence of a
     ///  JoinableCohortAggregateConfiguration object</returns>
     public bool IsJoinablePatientIndexTable()
     {
@@ -632,7 +632,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     }
 
     /// <summary>
-    /// If the AggregateConfiguration is set up as a cohort identification set or patient index table then this method will return the associated 
+    /// If the AggregateConfiguration is set up as a cohort identification set or patient index table then this method will return the associated
     /// <see cref="CohortIdentificationConfiguration"/> that it is a part of.
     /// </summary>
     /// <returns></returns>
@@ -644,11 +644,11 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         if (container != null)
             return container.GetCohortIdentificationConfiguration();
-            
+
         //it is not part of a container, maybe it is a joinable?
         var joinable = Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault();
 
-        //it is a joinable (Patient Index Table) so return it 
+        //it is a joinable (Patient Index Table) so return it
         return joinable?.CohortIdentificationConfiguration;
     }
 
@@ -716,7 +716,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     }
 
     /// <summary>
-    /// Deletes the AggregateConfiguration.  This includes removing it from its <see cref="CohortAggregateContainer"/> if it is part of one.  Also includes deleting its 
+    /// Deletes the AggregateConfiguration.  This includes removing it from its <see cref="CohortAggregateContainer"/> if it is part of one.  Also includes deleting its
     /// <see cref="JoinableCohortAggregateConfiguration"/> if it is a 'patient index table'.
     /// </summary>
     /// <exception cref="NotSupportedException">Thrown if the AggregateConfiguration is a patient index table that is being used by other AggregateConfigurations</exception>

@@ -91,7 +91,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
             {
                 var isBigProblem = !SpecialFieldNames.IsHicPrefixed(columnInDestination);
 
-                job.OnNotify(this, 
+                job.OnNotify(this,
                     new NotifyEventArgs(isBigProblem?ProgressEventType.Error:ProgressEventType.Warning, //hic_ columns could be ok if missing so only warning, otherwise go error
                         $"Column {columnInDestination.GetRuntimeName()} appears in destination table ({Table}) but is not in the pipeline (will probably be left as NULL)"));
 
@@ -109,7 +109,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         {
 
             _recordsWritten += chunk.Rows.Count;
-                
+
             if (TableLoadInfo != null)
                 TableLoadInfo.Inserts = _recordsWritten;
         }
@@ -140,7 +140,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
     }
 
     private bool _isDisposed;
-        
+
 
     private void CloseConnection(IDataLoadEventListener listener)
     {

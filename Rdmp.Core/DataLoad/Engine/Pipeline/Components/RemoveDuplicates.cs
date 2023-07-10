@@ -25,7 +25,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     private int totalDuplicatesFound;
 
     private Dictionary<int, List<DataRow>> _uniqueHashesSeen = new();
-        
+
     /// <summary>
     /// Turns off notify messages about number of duplicates found/replaced
     /// </summary>
@@ -72,7 +72,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
         }
         return toReturn;
     }
-        
+
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
     }
@@ -92,7 +92,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     /// for an array is unique even if the contents are the same.
     /// </summary>
     /// <remarks>
-    /// See Jon Skeet (C# MVP) response in the StackOverflow thread 
+    /// See Jon Skeet (C# MVP) response in the StackOverflow thread
     /// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
     /// </remarks>
     /// <param name="array">The array to generate a hash code for.</param>

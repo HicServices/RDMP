@@ -48,12 +48,12 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
 
         if (!_explicitNewValuePassed)
         {
-                
+
             if (TypeText($"Rename {_nameable.GetType().Name}", "Name", 500, _nameable.Name,out var text))
             {
                 while(UsefulStuff.IsBadName(text))
                 {
-                        
+
                     if(YesNo("Name contains illegal characters, do you want to use it anyway?","Bad Name"))
                     {
                         //user wants to use the name anyway
@@ -63,7 +63,7 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
                     //user does not want to use the bad name
 
                     //type a new one then
-                        
+
                     if(!TypeText($"Rename {_nameable.GetType().Name}", "Name", 2000, _nameable.Name, out text))
                         return;
                 }

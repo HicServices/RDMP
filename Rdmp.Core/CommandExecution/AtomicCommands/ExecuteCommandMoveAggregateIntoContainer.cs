@@ -17,7 +17,7 @@ public class ExecuteCommandMoveAggregateIntoContainer : BasicCommandExecution
     private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandMoveAggregateIntoContainer(IBasicActivateItems activator, AggregateConfiguration toMove, CohortAggregateContainer into) 
+    public ExecuteCommandMoveAggregateIntoContainer(IBasicActivateItems activator, AggregateConfiguration toMove, CohortAggregateContainer into)
         : this(activator,new AggregateConfigurationCombineable(toMove), into)
     {
 

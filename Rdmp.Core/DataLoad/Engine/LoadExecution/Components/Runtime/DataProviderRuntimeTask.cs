@@ -62,7 +62,7 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         return true;
     }
-        
+
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {
     }

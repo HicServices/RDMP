@@ -73,7 +73,7 @@ public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, II
     #endregion
 
     #region Relationships
-        
+
     /// <inheritdoc cref="ExtractionConfiguration_ID"/>
     [NoMappingToDatabase]
     public ExtractionConfiguration ExtractionConfiguration => Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);

@@ -26,7 +26,7 @@ public class MigrateRAWToStaging : DataLoadComponent
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
 
     private readonly Stack<IDisposeAfterDataLoad> _toDispose = new();
-                
+
     public MigrateRAWToStaging(HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
@@ -38,7 +38,7 @@ public class MigrateRAWToStaging : DataLoadComponent
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        if (Skip(job)) 
+        if (Skip(job))
             return ExitCodeType.Error;
 
 

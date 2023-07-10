@@ -18,7 +18,7 @@ namespace Rdmp.Core.DataLoad.Modules.FTP;
 /// <summary>
 /// load component which downloads files from a remote SFTP (Secure File Transfer Protocol) server to the ForLoading directory
 /// 
-/// <para>Operates in the same way as <see cref="FTPDownloader"/> except that it uses SSH.  In addition this 
+/// <para>Operates in the same way as <see cref="FTPDownloader"/> except that it uses SSH.  In addition this
 /// class will not bother downloading any files that already exist in the forLoading directory (have the same name - file size is NOT checked)</para>
 /// </summary>
 public class SFTPDownloader:FTPDownloader
@@ -44,10 +44,10 @@ public class SFTPDownloader:FTPDownloader
 
             sftp.ConnectionInfo.Timeout = new TimeSpan(0, 0, 0, TimeoutInSeconds);
             sftp.Connect();
-                
+
             //if there is a specified remote directory then reference it otherwise reference it locally (or however we were told about it from GetFileList())
             var fullFilePath = !string.IsNullOrWhiteSpace(RemoteDirectory) ? Path.Combine(RemoteDirectory, file) : file;
-                
+
             var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
             //register for events

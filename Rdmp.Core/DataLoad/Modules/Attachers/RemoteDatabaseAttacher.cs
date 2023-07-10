@@ -24,7 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Data load component for loading RAW tables with records read from a remote database server. 
+/// Data load component for loading RAW tables with records read from a remote database server.
 /// Fetches all table from the specified database to load all catalogues specified.
 /// </summary>
 public class RemoteDatabaseAttacher: Attacher, IPluginAttacher
@@ -110,7 +110,7 @@ False - Trigger an error reporting the missing table(s)
             var source = new DbDataCommandDataFlowSource(sql, $"Fetch data from {dbFrom} to populate RAW table {table}", dbFrom.Server.Builder, Timeout == 0 ? 50000 : Timeout);
 
             var destination = new SqlBulkInsertDestination(_dbInfo, table, Enumerable.Empty<string>());
-                
+
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
             var context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo | PipelineUsage.FixedDestination);
 

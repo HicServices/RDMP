@@ -25,7 +25,7 @@ public class PipelineChecker : ICheckable
     {
         _pipeline = pipeline;
     }
-        
+
     /// <summary>
     /// Checks that all the components defined in the pipeline are found using a MEFChecker.  This will also handle classes changing namespaces by updating
     /// class name reference.

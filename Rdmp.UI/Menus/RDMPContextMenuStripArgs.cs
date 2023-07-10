@@ -23,10 +23,10 @@ public class RDMPContextMenuStripArgs
 
     public IActivateItems ItemActivator { get; set; }
     public IMasqueradeAs Masquerader { get; set; }
-        
+
     public TreeListView Tree { get; set; }
     public object Model { get; set; }
-        
+
     public RDMPContextMenuStripArgs(IActivateItems itemActivator)
     {
         ItemActivator = itemActivator;

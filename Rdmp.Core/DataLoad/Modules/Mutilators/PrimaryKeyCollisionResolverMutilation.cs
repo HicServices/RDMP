@@ -23,10 +23,10 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 /// one and discard the earlier one.
 /// 
 ///  <para>This is a very dangerous operation which uses the primary key collision resolution order (Accessible through CatalogueManager by right clicking a
-/// TableInfo and choosing 'Configure Primary Key Collision Resolution') to delete records in a preferred order, fully eliminating primary key collisions.  
+/// TableInfo and choosing 'Configure Primary Key Collision Resolution') to delete records in a preferred order, fully eliminating primary key collisions.
 /// It is a very good idea to not have this task until you are absolutely certain that your primary key is correct and that the duplicate records being deleted
-/// are the correct decisions e.g. delete an older record in a given load batch and not simply erasing vast swathes of data!.  The Data Load Engine will tell 
-/// you with a warning when records are deleted and how many.  If you notice a lot of deletion then try removing this component and manually inspecting the data 
+/// are the correct decisions e.g. delete an older record in a given load batch and not simply erasing vast swathes of data!.  The Data Load Engine will tell
+/// you with a warning when records are deleted and how many.  If you notice a lot of deletion then try removing this component and manually inspecting the data
 /// in the RAW database after the data load fails (due to unresolved primary key conflicts)</para>
 /// 
 /// <para>This component requires that a collision resolution order has been configured on the TableInfo (See ConfigurePrimaryKeyCollisionResolution)</para>
@@ -42,7 +42,7 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
     {
 
     }
-   
+
     private DiscoveredDatabase _dbInfo;
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {

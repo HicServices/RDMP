@@ -14,7 +14,7 @@ public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
 {
     private readonly string _pattern;
     private readonly bool _explicitPatternProvided;
-        
+
     [UseWithObjectConstructor]
     public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator, string pattern):base(activator)
     {

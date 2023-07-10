@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Attachers;
 
 /// <summary>
-/// A Class which will run during Data Load Engine execution and result in the creation or population of a RAW database, the database may or not require 
+/// A Class which will run during Data Load Engine execution and result in the creation or population of a RAW database, the database may or not require
 /// to already exist (e.g. MDFAttacher would expect it not to exist but AnySeparatorFileAttacher would require the tables/databases already exist).
 /// </summary>
 public abstract class Attacher : IAttacher
@@ -43,7 +43,7 @@ public abstract class Attacher : IAttacher
     public abstract ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
 
     public ILoadDirectory LoadDirectory { get; set; }
-        
+
     public bool RequestsExternalDatabaseCreation { get; private set; }
 
     public virtual void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
@@ -51,7 +51,7 @@ public abstract class Attacher : IAttacher
         LoadDirectory = directory;
         _dbInfo = dbInfo;
     }
-        
+
     protected Attacher(bool requestsExternalDatabaseCreation)
     {
         RequestsExternalDatabaseCreation = requestsExternalDatabaseCreation;
@@ -59,6 +59,6 @@ public abstract class Attacher : IAttacher
 
     public abstract void Check(ICheckNotifier notifier);
 
-        
+
     public abstract void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener);
 }

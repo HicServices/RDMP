@@ -31,7 +31,7 @@ using IContainer = Rdmp.Core.Curation.Data.IContainer;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in 
+/// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in
 /// dictionaries and arrays in memory instead of the database.
 /// </summary>
 public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
@@ -110,7 +110,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
         ObscureDependencyFinder = dependencyFinder;
     }
-        
+
 
     public LogManager GetDefaultLogManager()
     {
@@ -183,7 +183,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     {
         Defaults[toChange] = externalDatabaseServer;
     }
-        
+
     public override void Clear()
     {
         base.Clear();
@@ -196,7 +196,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     }
 
     #region ITableInfoToCredentialsLinker
-        
+
     /// <summary>
     /// records which credentials can be used to access the table under which contexts
     /// </summary>
@@ -313,7 +313,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #endregion
 
     #region ICohortContainerLinker
-    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents = new (); 
+    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents = new ();
 
     public CohortAggregateContainer GetParent(AggregateConfiguration child)
     {
@@ -350,7 +350,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
             Order = order;
         }
     }
-        
+
     public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
     {
         var o = CohortContainerContents.SelectMany(kvp => kvp.Value).SingleOrDefault(c => c.Orderable.Equals(configuration));
@@ -403,7 +403,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #region IFilterContainerManager
 
     protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new ();
-        
+
     public IContainer[] GetSubContainers(IContainer container)
     {
         return !WhereSubContainers.ContainsKey(container) ? Array.Empty<IContainer>() : WhereSubContainers[container].ToArray();

@@ -25,7 +25,7 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
 {
     public ExtractionProgress ExtractionProgress => (ExtractionProgress)DatabaseObject;
     public IDetermineDatasetTimespan TimespanCalculator { get; set; } = new DatasetTimespanCalculator();
-        
+
     private Tuple<DateTime?, DateTime?> dqeResult;
 
     public ExtractionProgressUI()

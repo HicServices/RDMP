@@ -15,7 +15,7 @@ using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Audit of parents for a given object in the CatalogueChildProvider hierarchy that is used to populate RDMPCollectionUIs.  Every object that is not a root level 
+/// Audit of parents for a given object in the CatalogueChildProvider hierarchy that is used to populate RDMPCollectionUIs.  Every object that is not a root level
 /// object will have a DescendancyList.  Normally any DatabaseEntity (or node class) has only one DescendancyList (path to reach it) however you can flag BetterRouteExists
 /// on a DescendancyList to indicate that if another DescendancyList is found for the object then that one is to be considered 'better' and used instead.  For example
 /// AggregateConfigurations which are modelling a cohort apper both under their respective Catalogue and their CohortIdentificationConfiguration but sometimes one is an
@@ -76,7 +76,7 @@ public class DescendancyList
     public bool IsEmpty => !Parents.Any();
 
     /// <summary>
-    /// Returns a new instance of DescendancyList that includes the new parent appended to the end of parent hierarchy. You can only add to the end so 
+    /// Returns a new instance of DescendancyList that includes the new parent appended to the end of parent hierarchy. You can only add to the end so
     /// if you have Root=>Grandparent then the only thing you should add is Parent.
     /// </summary>
     /// <param name="anotherKnownParent"></param>
@@ -152,7 +152,7 @@ public class DescendancyList
     /// <returns></returns>
     public object GetMostDescriptiveParent()
     {
-        return Parents.LastOrDefault(parent => 
+        return Parents.LastOrDefault(parent =>
             !TypesThatAreNotUsefulParents.Contains(parent.GetType())
             &&
             parent is not IContainer
@@ -160,7 +160,7 @@ public class DescendancyList
     }
     /// <summary>
     /// Returns all <see cref="Parents"/> which are meaningful to the user in locating the object within
-    /// a hierarchy 
+    /// a hierarchy
     /// </summary>
     /// <returns></returns>
     public IEnumerable<object> GetUsefulParents()

@@ -40,7 +40,7 @@ public class IconFactory
         // Get an Hicon for myBitmap.
         var Hicon = bmp.ImageToBitmap().GetHicon();
 
-        // Create a new icon from the handle. 
+        // Create a new icon from the handle.
         return Icon.FromHandle(Hicon);
     }
 }

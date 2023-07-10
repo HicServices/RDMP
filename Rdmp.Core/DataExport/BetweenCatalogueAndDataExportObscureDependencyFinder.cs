@@ -44,7 +44,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
         {
             //they are deleting a catalogue! see if it has an ExtractableDataSet associated with it
             var dependencies = _serviceLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID" , cata.ID).ToArray();
-            
+
             //we have any dependant catalogues?
             if(dependencies.Any())
                 throw new Exception(

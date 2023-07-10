@@ -219,7 +219,7 @@ internal class RDMPApplicationSettings : ISettings
             {
                 return defaultValue;
             }
-                
+
         }
 
         return null != value ? (T) value : defaultValue;
@@ -395,7 +395,7 @@ internal class RDMPApplicationSettings : ISettings
     #region AddOrUpdateValue
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -409,7 +409,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -423,7 +423,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -435,7 +435,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -449,7 +449,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -461,7 +461,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -473,7 +473,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -485,7 +485,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -497,7 +497,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>

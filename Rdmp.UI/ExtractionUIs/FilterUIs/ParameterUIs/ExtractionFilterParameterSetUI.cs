@@ -26,7 +26,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterSetUI_Design, ISaveableUI
 {
     private ExtractionFilterParameterSet _extractionFilterParameterSet;
-        
+
     public ExtractionFilterParameterSet ExtractionFilterParameterSet
     {
         get => _extractionFilterParameterSet;

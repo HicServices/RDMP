@@ -20,7 +20,7 @@ internal class ExecuteCommandCreateNewDashboard : BasicUICommandExecution, IAtom
     {
 
     }
-        
+
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
         return iconProvider.GetImage(RDMPConcept.DashboardLayout, OverlayKind.Add);

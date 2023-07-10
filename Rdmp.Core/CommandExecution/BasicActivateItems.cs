@@ -121,7 +121,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     /// <inheritdoc/>
     public event EmphasiseItemHandler Emphasise;
-        
+
     /// <inheritdoc/>
     public List<IPluginUserInterface> PluginUserInterfaces { get; private set; } = new();
 
@@ -304,7 +304,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     {
         var available =
             RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
-                .Where(t => 
+                .Where(t =>
                     (baseTypeIfAny == null || baseTypeIfAny.IsAssignableFrom(t)) &&
                     (allowAbstract || !t.IsAbstract) &&
                     (allowInterfaces || !t.IsInterface))
@@ -332,7 +332,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     {
         if(o is IMapsDirectlyToDatabaseTable m)
         {
-            // if a plugin user interface exists to handle editing this then let them handle it instead of launching the 
+            // if a plugin user interface exists to handle editing this then let them handle it instead of launching the
             // normal UI
             foreach (var pluginInterface in PluginUserInterfaces)
             {
@@ -368,7 +368,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return CoreChildProvider.GetAllSearchables()
             .Keys.Where(t.IsInstanceOfType);
     }
-        
+
     /// <inheritdoc/>
     public abstract void ShowException(string errorText, Exception exception);
 
@@ -401,7 +401,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             if (didDelete)
             {
                 PublishNearest(deleteable);
-            }   
+            }
 
             return didDelete;
         }
@@ -443,7 +443,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                             $"Filter has {children.Length} value sets defined.  Deleting filter will also delete these.  Confirm?",
                             "Delete"))
                         return false;
-                    
+
                     foreach (var child in children)
                     {
                         child.DeleteInDatabase();
@@ -467,7 +467,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                     {
                         Show($"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
                         return false;
-                    }                       
+                    }
                 }
 
                 break;
@@ -490,7 +490,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                 if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
                 {
                     foreach(var e in exports)
-                        e.DeleteInDatabase(); 
+                        e.DeleteInDatabase();
                 }
                 else
                     return false;
@@ -507,7 +507,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
                 $"Delete {deleteable.GetType().Name}"))
         {
             deleteable.DeleteInDatabase();
-                
+
             if (databaseObject == null)
             {
                 var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
@@ -608,7 +608,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     /// <inheritdoc/>
     public abstract DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
-        
+
     /// <inheritdoc/>
     public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
         IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null)
@@ -671,7 +671,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     /// <inheritdoc/>
     public abstract FileInfo SelectFile(string prompt, string patternDescription, string pattern);
-        
+
     /// <inheritdoc/>
     public abstract FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern);
 
@@ -680,13 +680,13 @@ public abstract class BasicActivateItems : IBasicActivateItems
     {
         return new List<CommandInvokerDelegate>();
     }
-        
+
     /// <inheritdoc/>
     public virtual IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
     {
         return new PipelineRunner(useCase,pipeline);
     }
-        
+
     /// <inheritdoc/>
     public virtual CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
     {
@@ -716,7 +716,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         return new CohortCreationRequest(project,new CohortDefinition(null,name,version,projectNumber.Value,externalCohortTable),RepositoryLocator.DataExportRepository,cohortInitialDescription);
     }
-        
+
     /// <inheritdoc/>
     public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string catalogueFolder)
     {

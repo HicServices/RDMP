@@ -139,7 +139,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
         else
         {
             var f = LocationOfFiles.GetFiles().FirstOrDefault(f=>f.Name.Equals(Pattern, StringComparison.OrdinalIgnoreCase));
-                
+
             if (f != null)
                 infos.Add(f);
 
@@ -173,7 +173,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
         if(!atLeastOne)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,$"No {(Directories ? "Directories": "Files")} were found matching Pattern {Pattern} in {LocationOfFiles.FullName}"));
     }
-        
+
     /// <summary>
     /// Called when <see cref="PerPatient"/> is true.  Called once per private identifier.  Note that it is possible for 2 private identifiers to map to the same release identifier - be careful
     /// </summary>

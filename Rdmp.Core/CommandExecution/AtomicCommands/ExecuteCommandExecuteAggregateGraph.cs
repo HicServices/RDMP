@@ -50,7 +50,7 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
         {
             BasicActivator.ShowGraph(_aggregate);
         }
-    }        
+    }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {

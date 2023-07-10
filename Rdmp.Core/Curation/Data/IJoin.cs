@@ -10,7 +10,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Describes how to join two tables together.  This is used to during Query Building (See JoinHelper) to build the JOIN section of the query once all required tables
-/// have been identified (See SqlQueryBuilderHelper).  
+/// have been identified (See SqlQueryBuilderHelper).
 /// </summary>
 public interface IJoin
 {
@@ -25,7 +25,7 @@ public interface IJoin
     ColumnInfo PrimaryKey { get; }
 
     /// <summary>
-    /// The collation type to apply to the join if <see cref="ForeignKey"/> and <see cref="PrimaryKey"/> have different column collations.  If there are <see cref="ISupplementalJoin"/> 
+    /// The collation type to apply to the join if <see cref="ForeignKey"/> and <see cref="PrimaryKey"/> have different column collations.  If there are <see cref="ISupplementalJoin"/>
     /// then they must match on <see cref="Collation"/>
     /// 
     /// <para>Only set this if you are sure you have a collation problem</para>
@@ -36,9 +36,9 @@ public interface IJoin
     /// Which SQL join keyword to use when linking the <see cref="PrimaryKey"/> and <see cref="ForeignKey"/>.
     /// </summary>
     ExtractionJoinType ExtractionJoinType { get; }
-        
+
     /// <summary>
-    /// If it is nessesary to join on more than one column, use this method to indicate the aditional fk / pk pairs (they must belong to the same TableInfos as the 
+    /// If it is nessesary to join on more than one column, use this method to indicate the aditional fk / pk pairs (they must belong to the same TableInfos as the
     /// main IJoin)
     /// </summary>
     /// <returns></returns>

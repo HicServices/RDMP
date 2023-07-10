@@ -73,7 +73,7 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
     {
         return State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
     }
-        
+
     public ICombineToMakeCommand GetCombineable()
     {
 

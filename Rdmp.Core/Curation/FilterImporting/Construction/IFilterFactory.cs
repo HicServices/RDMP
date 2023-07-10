@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.FilterImporting.Construction;
 public interface IFilterFactory
 {
     /// <summary>
-    /// Creates a new blank <see cref="IFilter"/> with the provided <paramref name="name"/>.  Each implementation of this method may return a 
+    /// Creates a new blank <see cref="IFilter"/> with the provided <paramref name="name"/>.  Each implementation of this method may return a
     /// different Type of filter but should be consistent with a given implementation.
     /// </summary>
     /// <param name="name"></param>
@@ -39,14 +39,14 @@ public interface IFilterFactory
     Type GetRootOwnerType();
 
     /// <summary>
-    /// If the IFilter Type is designed to be held in IContainers then this method should return the Type of IContainer e.g. AggregateFilters belong in 
+    /// If the IFilter Type is designed to be held in IContainers then this method should return the Type of IContainer e.g. AggregateFilters belong in
     /// AggregateFilterContainers
     /// </summary>
     /// <returns></returns>
     Type GetIContainerTypeIfAny();
 
     /// <summary>
-    /// Creates a new filter container of the appropriate Type 
+    /// Creates a new filter container of the appropriate Type
     /// </summary>
     /// <returns></returns>
     IContainer CreateNewContainer();

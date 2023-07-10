@@ -64,7 +64,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     /// <param name="destination"></param>
     /// <param name="listener"></param>
     /// <param name="pipelineSource"></param>
-    public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source, 
+    public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source,
         IDataFlowDestination<T> destination, IDataLoadEventListener listener,
         IPipeline pipelineSource = null)
     {
@@ -131,7 +131,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         finally
         {
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Preparing to Dispose of DataFlowPipelineEngine components"));
-                
+
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"About to Dispose {Source}"));
             try
             {

@@ -20,7 +20,7 @@ namespace Rdmp.UI.Collections;
 public abstract class RDMPCollectionUI : RDMPCollectionUI_Design,IConsultableBeforeClosing
 {
     public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; private set; }
-        
+
     protected RDMPCollectionUI()
     {
         CommonTreeFunctionality = new RDMPCollectionCommonFunctionality();

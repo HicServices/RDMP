@@ -23,13 +23,13 @@ public interface ICacheLayout
     string DateFormat { get; }
     CacheArchiveType ArchiveType { get; }
     CacheFileGranularity CacheFileGranularity { get; }
-        
+
     //Consider taking these as parameters to your constructor - see CacheLayout abstract class for how you should probably implement this interface
     ILoadCachePathResolver Resolver {  get; }
     DirectoryInfo RootDirectory { get; }
-        
+
     // some interface for looking up filename
-    DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener); 
+    DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener);
     DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener);
     void CreateIfNotExists(IDataLoadEventListener listener);
     bool CheckExists(DateTime archiveDate, IDataLoadEventListener listener);
@@ -39,5 +39,5 @@ public interface ICacheLayout
     // requested by DLE
     Queue<DateTime> GetSortedDateQueue(IDataLoadEventListener listener);
     bool CheckCacheFilesAvailability(IDataLoadEventListener listener);
-        
+
 }

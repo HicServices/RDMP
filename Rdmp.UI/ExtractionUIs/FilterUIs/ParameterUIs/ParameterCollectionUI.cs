@@ -27,7 +27,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 /// Filters, Aggregates, Extractions etc can all make use of SQL parameters (e.g. @drugName).  This dialog appears any time you are viewing/editing the parameters associated with a
 /// given parameter use case.  If you do not understand what SQL parameters (aka variables) are then you should read up on this before using this control.
 /// 
-/// <para>The following help instructions will relate to the context of editing a Filter and configuring some parameters but is equally applicable to configuring global parameters on an 
+/// <para>The following help instructions will relate to the context of editing a Filter and configuring some parameters but is equally applicable to configuring global parameters on an
 /// extraction or in a cohort identification configuration etc.</para>
 /// 
 /// <para>The first time you use a parameter in your filter (e.g. @drugName), a template SQL Parameter will be created (probably as a varchar(50)).  You should adjust the Declare SQL such
@@ -39,7 +39,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 /// 'Overriding' parameters, these are available for use at lower levels but cannot be changed (because the new Value would be applied to all users of the global i.e. all datasets in the
 /// extraction, not just the one you are editing).</para>
 /// 
-/// <para>So to return to the above example, if you create a filter 'Prescriptions collected after date X' with the SQL 'dateCollected > @dateOfCollection'.  When you save the Filter the 
+/// <para>So to return to the above example, if you create a filter 'Prescriptions collected after date X' with the SQL 'dateCollected > @dateOfCollection'.  When you save the Filter the
 /// parameter @dateOfCollection will be created (unless there is already a global with the same name/type).</para>
 /// 
 /// <para>Sometimes the Globals are explicit fixed value parameters for example the @ProjectNumber in a data extraction, in this case the Parameter cannot be modified period.</para>
@@ -135,7 +135,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         foreach (ParameterLevel level in Enum.GetValues(typeof (ParameterLevel)))
         {
             var parametersFoundAtThisLevel = Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[level];
-                
+
             //add them to the collection
             if (parametersFoundAtThisLevel.Any())
                 olvParameters.AddObjects(parametersFoundAtThisLevel);
@@ -236,10 +236,10 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (dialog.ShowDialog() == DialogResult.OK)
         {
             var newParameter = Options.CreateNewParameter(dialog.ResultText.Trim());
-                
+
             Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
-                
-            RefreshParametersFromDatabase();   
+
+            RefreshParametersFromDatabase();
         }
     }
 
@@ -299,7 +299,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
             if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
                 revertible.SaveToDatabase();
-                
+
             //if the name has changed handle renaming
             if(oldParameterName != null)
                 if (Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
@@ -309,8 +309,8 @@ public partial class ParameterCollectionUI : RDMPUserControl
                     if((owner ?? (object)parameter) is DatabaseEntity toRefresh)
                         Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(toRefresh));
                 }
-                        
-                
+
+
             //anything that was a problem before
             var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;
             DisableRelevantObjects();
@@ -325,7 +325,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
          
     }
-        
+
     private object GroupKeyGetter(object rowObject)
     {
         var sqlParameter = (ISqlParameter)rowObject;
@@ -378,13 +378,13 @@ public partial class ParameterCollectionUI : RDMPUserControl
         {
 
             var sqlParameter = (ISqlParameter)rowObject;
-            
+
             if (parameterEditorScintillaControl1.ProblemObjects.ContainsKey(sqlParameter))
                 return "Warning.png";
 
             if (Options.IsOverridden(sqlParameter))
                 return "Overridden.png";
-          
+
             if(Options.IsHigherLevel(sqlParameter))
                 return "Locked.png";
         }
@@ -412,7 +412,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     private bool CanOverride(ISqlParameter sqlParameter)
     {
         return sqlParameter != null &&
-               //if it is not already overridden 
+               //if it is not already overridden
                !Options.IsOverridden(sqlParameter) &&
                //and it exists at a lower level
                Options.ParameterManager.GetLevelForParameter(sqlParameter) < Options.CurrentLevel;
@@ -440,5 +440,5 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (e.RowObject is ISqlParameter p && Options.ShouldBeReadOnly(p))
             e.Cancel = true;
     }
-        
+
 }

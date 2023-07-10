@@ -19,7 +19,7 @@ using TypeGuesser;
 namespace Rdmp.Core.CohortCommitting;
 
 /// <summary>
-/// Creates an ExternalCohortTable database implementation.  The implementation will be based on your live IsExtractionIdentifier columns 
+/// Creates an ExternalCohortTable database implementation.  The implementation will be based on your live IsExtractionIdentifier columns
 /// (PrivateIdentifierPrototype) and a release identifier allocation strategy (<see cref="IAllocateReleaseIdentifiers"/>)
 ///  e.g. varchar(10) private patient identifier gets mapped to a new GUID.
 /// 
@@ -38,7 +38,7 @@ public class CreateNewCohortDatabaseWizard
 
     private string _releaseIdentifierFieldName = "ReleaseId";
     private string _definitionTableForeignKeyField = "cohortDefinition_id";
-        
+
 
     public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase,ICatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository,bool allowNullReleaseIdentifiers)
     {
@@ -47,7 +47,7 @@ public class CreateNewCohortDatabaseWizard
         _dataExportRepository = dataExportRepository;
         _targetDatabase = targetDatabase;
     }
-        
+
     public PrivateIdentifierPrototype[] GetPrivateIdentifierCandidates()
     {
         //get the extraction identifiers
@@ -95,14 +95,14 @@ public class CreateNewCohortDatabaseWizard
         {
             var definitionTable = _targetDatabase.CreateTable("CohortDefinition", new[]
             {
-                new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){AllowNulls = false,IsAutoIncrement = true,IsPrimaryKey = true}, 
-                new DatabaseColumnRequest("projectNumber",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
-                new DatabaseColumnRequest("version",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false}, 
+                new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){AllowNulls = false,IsAutoIncrement = true,IsPrimaryKey = true},
+                new DatabaseColumnRequest("projectNumber",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false},
+                new DatabaseColumnRequest("version",new DatabaseTypeRequest(typeof(int))){AllowNulls =  false},
                 new DatabaseColumnRequest("description",new DatabaseTypeRequest(typeof(string),3000)){AllowNulls =  false},
                 new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){AllowNulls =  false,Default=MandatoryScalarFunctions.GetTodaysDate}
             });
 
-                
+
             var idColumn = definitionTable.DiscoverColumn("id");
             var foreignKey = new DatabaseColumnRequest(_definitionTableForeignKeyField,new DatabaseTypeRequest(typeof (int)), false) {IsPrimaryKey = true};
 
@@ -157,7 +157,7 @@ public class CreateNewCohortDatabaseWizard
             notifier.OnCheckPerformed(new CheckEventArgs("Finished", CheckResult.Success));
 
             return pointer;
-                
+
         }
         catch (Exception e)
         {

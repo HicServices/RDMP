@@ -64,7 +64,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
             throw new Exception("Project must have a ProjectNumber so that it can be used as a seed in random cohort sampling");
 
         var expectedFieldName = GetPrivateFieldName();
-            
+
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,$"Looking for column called '{expectedFieldName}' in the data in order to produce a sample"));
 
         if (!toProcess.Columns.Contains(expectedFieldName))

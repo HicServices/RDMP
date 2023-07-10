@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandExecution;
 /// <see cref="CatalogueCombineable"/> can  be translated into <see cref="ExecuteCommandPutIntoFolder"/> (an ICommandExecution) by combining it with a
 /// <see cref="IFolderNode"/>.  But you could equally turn it into an <see cref="ExecuteCommandAddCatalogueToCohortIdentificationSetContainer"/> (also an ICommandExecution) by combining it with a CohortAggregateContainer.
 /// 
-/// <para>ICommand should reflect a single object and contain all useful information discovered about the object so that the ICommandExecutionFactory can make a 
+/// <para>ICommand should reflect a single object and contain all useful information discovered about the object so that the ICommandExecutionFactory can make a
 /// good decision about what ICommandExecution to create as the user drags it about the place.</para>
 /// </summary>
 public interface ICombineToMakeCommand

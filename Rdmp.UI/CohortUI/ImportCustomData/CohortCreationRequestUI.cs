@@ -25,9 +25,9 @@ namespace Rdmp.UI.CohortUI.ImportCustomData;
 
 /// <summary>
 /// Once you have created a cohort database, this dialog lets you upload a new cohort into it.  You will already have selected a file which contains the private patient identifiers of
-/// those you wish to be in the cohort.  Next you must create or choose an existing Project for which the cohort belongs.  
+/// those you wish to be in the cohort.  Next you must create or choose an existing Project for which the cohort belongs.
 /// 
-/// <para>Once you have chosen the project you can choose to either create a new cohort for use with the project (use this if you have multiple cohorts in the project e.g. 'Cases' and 
+/// <para>Once you have chosen the project you can choose to either create a new cohort for use with the project (use this if you have multiple cohorts in the project e.g. 'Cases' and
 /// 'Controls').  Or 'Revised version of existing cohort' for if you made a mistake with your first version of a cohort or if you are doing a refresh of the cohort (e.g. after 5 years
 /// it is likely there will be different patients that match the research study criteria so a new version of the cohort is appropriate).</para>
 /// </summary>
@@ -35,7 +35,7 @@ public partial class CohortCreationRequestUI : RDMPForm
 {
     private readonly IExternalCohortTable _target;
     private IDataExportRepository _repository;
-        
+
     public string CohortDescription
     {
         get => tbDescription.Text;
@@ -65,7 +65,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         });
     }
 
-        
+
     public CohortCreationRequest Result { get; set; }
     public IProject Project { get; set; }
 
@@ -154,7 +154,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         DialogResult = DialogResult.Cancel;
         Close();
     }
-        
+
     private void rbNewCohort_CheckedChanged(object sender, EventArgs e)
     {
         gbNewCohort.Enabled = true;
@@ -210,7 +210,7 @@ public partial class CohortCreationRequestUI : RDMPForm
             {
                 MessageBox.Show("You must select a Project");
             }
-                    
+
             return;
         }
 
@@ -245,11 +245,11 @@ public partial class CohortCreationRequestUI : RDMPForm
 
             dialog.Controls.Add(ok);
             dialog.Controls.Add(cancel);
-                    
+
             dialog.Height = p.Height + 80;
             dialog.Width = p.Width + 10;
             dialog.Controls.Add(p);
-                
+
             ok.Anchor = AnchorStyles.Bottom;
             cancel.Anchor  = AnchorStyles.Bottom;
 

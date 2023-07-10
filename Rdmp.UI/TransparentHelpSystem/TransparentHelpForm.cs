@@ -12,7 +12,7 @@ using System.Windows.Forms;
 namespace Rdmp.UI.TransparentHelpSystem;
 
 /// <summary>
-/// Transparent windows Form which allows a pseudo greyout to occur over all controls in a window except for the location you want the users attention focused.  This includes the 
+/// Transparent windows Form which allows a pseudo greyout to occur over all controls in a window except for the location you want the users attention focused.  This includes the
 /// addition of a temporary HelpBox which describes what the user is expected to do (See HelpBox).
 /// </summary>
 [TechnicalUI]
@@ -33,7 +33,7 @@ public partial class TransparentHelpForm:Form
     private Timer timer = new();
     private Color _transparencyColor;
     private SolidBrush _highlightBrush;
-        
+
     public TransparentHelpForm(Control host)
     {
         _host = host;
@@ -90,7 +90,7 @@ public partial class TransparentHelpForm:Form
 
         Invalidate(true);
     }
-        
+
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
@@ -113,7 +113,7 @@ public partial class TransparentHelpForm:Form
             e.Graphics.FillRectangle(_highlightBrush, clientLocation.X, clientLocation.Y, _currentHelpBox.Width, _currentHelpBox.Height);
         }
     }
-        
+
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         timer.Stop();
@@ -194,7 +194,7 @@ public partial class TransparentHelpForm:Form
         {
             if(_currentHelpBox.Width < availableSpaceHorizontally)
                 return highlightBottomLeft;
-                
+
             //not enough space horizontally so try to move MSG to left till there is enough space
             /**************HOST CONTROL BOUNDS***********
             * 

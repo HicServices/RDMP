@@ -25,9 +25,9 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 /// Allows you to specify values for any IArgumentHost class.  This control is used by the user at 'design time' (e.g. when they are building a data load configuration) and the values
 /// are then populated into instantiated runtime instances (not that this control cares about how that happens).  You will see a list of all properties marked with [DemandsInitialization]
 /// on the argument host class.  Selecting the Argument will display the help text associated with the argument (user friendly message telling them what they are supposed to put in for that
-/// property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a string property will show a text box - See ArgumentUI).  
+/// property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a string property will show a text box - See ArgumentUI).
 /// </summary>
-public partial class ArgumentCollectionUI : UserControl 
+public partial class ArgumentCollectionUI : UserControl
 {
     public Dictionary<IArgument, RequiredPropertyInfo> DemandDictionary;
     private Type _argumentsAreFor;
@@ -87,7 +87,7 @@ public partial class ArgumentCollectionUI : UserControl
         }
 
     }
-        
+
     private void RefreshArgumentList()
     {
         var argumentFactory = new ArgumentFactory();
@@ -170,7 +170,7 @@ public partial class ArgumentCollectionUI : UserControl
         }
         catch (Exception e)
         {
-                
+
             //add the text value value and report the error
             if(_valueUisFactory.CanHandleInvalidStringData(args.Type))
                 args.InitialValue = argument.Value;
@@ -186,7 +186,7 @@ public partial class ArgumentCollectionUI : UserControl
         args.Setter = v =>
         {
             ragSmiley.Reset();
-                
+
             try
             {
                 argument.SetValue(v);

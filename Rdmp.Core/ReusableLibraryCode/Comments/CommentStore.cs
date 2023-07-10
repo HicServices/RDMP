@@ -37,7 +37,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         "ScintillaNET.xml",
         "nunit.framework.xml"
     };
-        
+
     public virtual void ReadComments(params string[] locations)
     {
         foreach (var location in locations)
@@ -64,7 +64,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         doc.IterateThroughAllNodes(AddXmlDoc);
 
     }
-        
+
     /// <summary>
     /// Adds the given member xml doc to the <see cref="CommentStore"/>
     /// </summary>
@@ -192,7 +192,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    public string this[string index] => _dictionary.TryGetValue(index,out var r) ? r : null; // Indexer declaration  
+    public string this[string index] => _dictionary.TryGetValue(index,out var r) ? r : null; // Indexer declaration
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
     {

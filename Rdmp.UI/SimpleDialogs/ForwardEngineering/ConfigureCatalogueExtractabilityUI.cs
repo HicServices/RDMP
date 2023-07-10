@@ -44,17 +44,17 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering;
 /// If you choose to you can make these CatalogueItems extractable by creating ExtractionInformation too or you may choose to do this by hand later on (in CatalogueItemUI).  It is likely that
 /// you don't want to release every column in the dataset to researchers so make sure to review the extractability of the columns created. </para>
 /// 
-/// <para>You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This column must be the same (logically/datatype) across all your datasets i.e. 
+/// <para>You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This column must be the same (logically/datatype) across all your datasets i.e.
 /// you can use either CHI number or NHS Number but you can't mix and match (but you could have fields with different names e.g. PatCHI, PatientCHI, MotherCHI, FatherChiNo etc).</para>
 /// 
-/// <para>The final alternative is to add the imported Columns to another already existing Catalogue.  Only use this option if you know it is possible to join the new table with the other 
+/// <para>The final alternative is to add the imported Columns to another already existing Catalogue.  Only use this option if you know it is possible to join the new table with the other
 /// table(s) that underlie the selected Catalogue (e.g. if you are importing a Results table which joins to a Header table in the dataset Biochemistry on primary/foreign key LabNumber).
 /// If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)</para>
 /// </summary>
 public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 {
     private object[] _extractionCategories;
-        
+
     private string NotExtractable = "Not Extractable";
     private ICatalogue _catalogue;
     private ITableInfo _tableInfo;
@@ -77,7 +77,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     private BinderWithErrorProviderFactory _binder;
 
     private ObjectSaverButton objectSaverButton1 = new();
-        
+
     /// <summary>
     /// True if we are making programatic changes to values and shouldn't respond to control events (e.g. dropdown changes)
     /// </summary>
@@ -340,7 +340,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Bounds = cellEditEventArgs.CellBounds
             };
-                
+
             cbx.Items.AddRange(_extractionCategories);
             cbx.SelectedItem = n.ExtractionInformation != null ? (object) n.ExtractionInformation.ExtractionCategory : NotExtractable;
             cellEditEventArgs.Control = cbx;
@@ -613,7 +613,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         public CatalogueItem CatalogueItem;
         public ColumnInfo ColumnInfo;
         public ExtractionInformation ExtractionInformation;
-            
+
         public ColPair(CatalogueItem ci, ColumnInfo col, ExtractionInformation ei)
         {
             CatalogueItem = ci;

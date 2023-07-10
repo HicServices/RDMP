@@ -28,7 +28,7 @@ public class IdentifierDumpServerUsageNode:Node,IDeleteable
     {
         return $"Usage of:{IdentifierDumpServer.Name}";
     }
-        
+
     protected bool Equals(IdentifierDumpServerUsageNode other)
     {
         return Equals(TableInfo, other.TableInfo);

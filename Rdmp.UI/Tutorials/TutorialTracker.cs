@@ -22,7 +22,7 @@ namespace Rdmp.UI.Tutorials;
 public class TutorialTracker : IHelpWorkflowProgressProvider
 {
     private readonly IActivateItems _activator;
-        
+
     public List<Tutorial> TutorialsAvailable { get; private set; }
 
     public TutorialTracker(IActivateItems activator)

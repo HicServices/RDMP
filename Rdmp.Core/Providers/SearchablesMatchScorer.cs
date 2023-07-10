@@ -23,7 +23,7 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Scores objects as to how relevant they are to a given search string 
+/// Scores objects as to how relevant they are to a given search string
 /// </summary>
 public class SearchablesMatchScorer
 {
@@ -132,7 +132,7 @@ public class SearchablesMatchScorer
         if(showOnlyTypes != null && TypeNames != null)
             //add the explicit types only if the search text does not contain any explicit type names
             if(string.IsNullOrWhiteSpace(searchText) || !TypeNames.Intersect(searchText.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
-                foreach (var showOnlyType in showOnlyTypes) 
+                foreach (var showOnlyType in showOnlyTypes)
                     searchText = $"{searchText} {showOnlyType.Name}";
 
         //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
@@ -268,7 +268,7 @@ public class SearchablesMatchScorer
             return score /10;
             
         //if we are bumping up matches
-        if (score > 0 && BumpMatches.Contains(kvp.Key)) 
+        if (score > 0 && BumpMatches.Contains(kvp.Key))
             score += BumpWeight;
 
         return score;
@@ -335,7 +335,7 @@ public class SearchablesMatchScorer
     /// <returns>True if the item should be shown to the user based on filters</returns>
     public static bool Filter(object modelObject, DescendancyList descendancy, bool includeInternal, bool includeDeprecated, bool includeColdStorage, bool includeProjectSpecific, bool includeNonExtractable)
     {
-        //doesn't relate to us... 
+        //doesn't relate to us...
         if (modelObject is not ICatalogue cata)
         {
             // or are we one of these things that can be tied to a catalogue

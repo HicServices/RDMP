@@ -28,7 +28,7 @@ public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
     public AnySeparatorFileAttacher() : base('A')
     {
     }
-        
+
     public override void Check(ICheckNotifier notifier)
     {
         base.Check(notifier);

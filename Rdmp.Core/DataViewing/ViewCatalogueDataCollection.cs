@@ -40,13 +40,13 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
     }
 
     /// <summary>
-    /// Persistence constructor 
+    /// Persistence constructor
     /// </summary>
     public ViewCatalogueDataCollection()
     {
 
     }
-        
+
     private void BuildBuilder()
     {
         if(builder != null)
@@ -62,7 +62,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
         // if there are no explicit columns use all
         if (!cols.Any())
         {
-            cols = 
+            cols =
                 Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
                     .Union(Catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
                     .ToArray();

@@ -48,7 +48,7 @@ public partial class ExampleDatasetsCreation
     private IBasicActivateItems _activator;
     public const int NumberOfPeople = 5000;
     public const int NumberOfRowsPerDataset = 10000;
-        
+
     public ExampleDatasetsCreation(IBasicActivateItems activator,IRDMPPlatformRepositoryServiceLocator repos)
     {
         _repos = repos;
@@ -130,7 +130,7 @@ public partial class ExampleDatasetsCreation
             },
             "current_postcode",
             "current_gp",
-            "previous_gp", 
+            "previous_gp",
             "date_of_birth");
 
 
@@ -311,9 +311,9 @@ public partial class ExampleDatasetsCreation
         foreach(var c in catalogues)
         {
             //Get its extractableness
-            var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault() 
+            var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault()
                       ?? new ExtractableDataSet(_repos.DataExportRepository,c); //or make it extractable
-                
+
             extractionConfiguration.AddDatasetToConfiguration(eds);
         }
 
@@ -583,7 +583,7 @@ UNPIVOT
             
         return ti;
     }
-        
+
     private ICatalogue ImportCatalogue(DiscoveredTable tbl)
     {
         return ImportCatalogue(ImportTableInfo(tbl));

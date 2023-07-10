@@ -142,10 +142,10 @@ public class ExtractTableVerbatim
         if(_stream != null)
             sw = new StreamWriter(_stream);
         else
-        { 
+        {
             if(_outputDirectory == null)
                 throw new Exception($"{nameof(_outputDirectory)} cannot be null when using file output mode (only with an explicit stream out).");
-                    
+
             if(filename == null)
                 throw new Exception($"{nameof(filename)} cannot be null when using file output mode (only with an explicit stream out).");
 

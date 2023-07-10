@@ -106,7 +106,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         Class = r["Class"].ToString();
         Name = r["Name"].ToString();
     }
-        
+
     /// <inheritdoc/>
     public IEnumerable<IArgument> GetAllArguments()
     {

@@ -171,7 +171,7 @@ public sealed class NotifyPropertyChangedInvocatorAttribute : Attribute
 /// <item><code>
 /// // A method that returns null if the parameter is null, and not null if the parameter is not null
 /// [ContractAnnotation("null => null; notnull => notnull")]
-/// public object Transform(object data) 
+/// public object Transform(object data)
 /// </code></item>
 /// <item><code>
 /// [ContractAnnotation("s:null=>false; =>true,result:notnull; =>false, result:null")]
@@ -297,7 +297,7 @@ public sealed class UsedImplicitlyAttribute : Attribute
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 public sealed class MeansImplicitUseAttribute : Attribute
 {
-    public MeansImplicitUseAttribute() 
+    public MeansImplicitUseAttribute()
         : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default) { }
 
     public MeansImplicitUseAttribute(ImplicitUseKindFlags useKindFlags)
@@ -316,7 +316,7 @@ public sealed class MeansImplicitUseAttribute : Attribute
     [UsedImplicitly] public ImplicitUseKindFlags UseKindFlags { get; private set; }
     [UsedImplicitly] public ImplicitUseTargetFlags TargetFlags { get; private set; }
 }
-  
+
 [Flags]
 public enum ImplicitUseKindFlags
 {

@@ -24,7 +24,7 @@ internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewS
     }
 
     /// <summary>
-    /// Persistence constructor 
+    /// Persistence constructor
     /// </summary>
     public ViewSupportingSqlCollection()
     {

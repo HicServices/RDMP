@@ -29,7 +29,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Wizard;
 
 /// <summary>
-/// Provides a single screen allowing you to execute a CohortIdentificationConfiguration or load an IdentifierList into the snapshot store, allocate release identifiers and build an 
+/// Provides a single screen allowing you to execute a CohortIdentificationConfiguration or load an IdentifierList into the snapshot store, allocate release identifiers and build an
 /// extraction project with specific datasets.  Each time you use this user interface you will get a new Project so do not use the wizard if you already have an existing Project e.g.
 /// if you want to do a project refresh or adjust a cohort etc (In such a case you should use CohortIdentificationCollectionUI to add a new ExtractionConfiguration/Cohort to your existing
 /// Project).
@@ -131,7 +131,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             //cic
             if (typeof(CohortIdentificationConfigurationSource).IsAssignableFrom(sourceType))
                 ddCicPipeline.Items.Add(pipeline);
-                
+
             //flat file
             if (typeof(DelimitedFlatFileDataFlowSource).IsAssignableFrom(sourceType))
                 ddFilePipeline.Items.Add(pipeline);
@@ -141,7 +141,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         foreach (var dd in new ComboBox[]{ddCicPipeline,ddExtractionPipeline,ddFilePipeline})
         {
             if (dd.Items.Count == 1)
-                dd.SelectedItem = dd.Items[0]; //select it                
+                dd.SelectedItem = dd.Items[0]; //select it
         }
             
     }
@@ -173,7 +173,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         try
         {
             _projectNumber = int.Parse(tbProjectNumber.Text);
-                
+
             var collisionProject = _existingProjects.FirstOrDefault(p => p.ProjectNumber == _projectNumber);
             if(collisionProject != null)
                 ragProjectNumber.Warning(new Exception(
@@ -247,7 +247,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 source.Check(ragCic);
 
                 ClearFile();
-                    
+
             }
             finally
             {
@@ -366,7 +366,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             Cursor = Cursors.Default;
 
             ExtractionConfigurationCreatedIfAny = _configuration;
-                
+
             DialogResult = DialogResult.OK;
             MessageBox.Show("Project Created Successfully");
             Close();

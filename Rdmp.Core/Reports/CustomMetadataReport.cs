@@ -32,7 +32,7 @@ public partial class CustomMetadataReport
     /// </summary>
     private Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new();
 
-        
+
     /// <summary>
     /// Control line that begins looping Catalogues
     /// </summary>
@@ -68,7 +68,7 @@ public partial class CustomMetadataReport
     public string CommaSubstitution { get; set; } = ",";
 
     /// <summary>
-    /// The repository where column completeness metrics will come from.  Note this is usually the same source as <see cref="TimespanCalculator"/> 
+    /// The repository where column completeness metrics will come from.  Note this is usually the same source as <see cref="TimespanCalculator"/>
     /// </summary>
     public DQERepository DQERepository { get; set; }
 
@@ -276,7 +276,7 @@ public partial class CustomMetadataReport
                         {
                             for (var i=0;i<catalogues.Length;i++)
                             {
-                                var element = 
+                                var element =
                                     i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
 
                                 var newContents = DoReplacements(section.Body.ToArray(), catalogues[i],section, element);
@@ -294,7 +294,7 @@ public partial class CustomMetadataReport
                 {
                     var newContents = DoReplacements(templateBody, catalogue,null,ElementIteration.NotIterating);
 
-                    if (oneFile) 
+                    if (oneFile)
                         outFile.WriteLine(newContents);
                     else
                     {
@@ -434,7 +434,7 @@ public partial class CustomMetadataReport
                     if (copy.Contains(r.Key))
                         copy = copy.Replace(r.Key, ValueToString(r.Value(catalogue)));
                 }
-                    
+
                 // when iterating we need to respect iteration symbols (e.g. $Comma).
                 if(iteration == ElementIteration.NotIterating)
                 {
@@ -498,7 +498,7 @@ public partial class CustomMetadataReport
         for(var j=0;j< catalogueItems.Length; j++)
         {
             sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
-                j < catalogueItems.Length -1 ? 
+                j < catalogueItems.Length -1 ?
                     ElementIteration.RegularElement : ElementIteration.LastElement));
         }
                 

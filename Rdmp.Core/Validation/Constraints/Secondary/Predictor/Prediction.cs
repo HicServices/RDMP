@@ -19,7 +19,7 @@ public class Prediction : SecondaryConstraint
     [Description("The current value enforces a prediction about the value of this other field")]
     [ExpectsColumnNameAsInput]
     public string TargetColumn { get; set; }
-        
+
     [Description("The prediction rule that takes as input the current value and uses it to check the target column matches expectations")]
     public PredictionRule Rule { get; set; }
 

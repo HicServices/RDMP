@@ -18,7 +18,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Describes a specific key/value pair that should always be used (unless overriden by an API requirement) in connection strings to servers of the given <see cref="DatabaseType"/>
-/// by RDMP.  For example you could specify Encrypt = true to force all connections made to go through SSL (requires certificates / certificate validation etc).  Be careful when creating 
+/// by RDMP.  For example you could specify Encrypt = true to force all connections made to go through SSL (requires certificates / certificate validation etc).  Be careful when creating
 /// these as they apply to all users of the system and can make servers unreachable if a syntactically valid but unresolvable connection string is created.
 /// 
 /// <para>Checks will ensure that the keyword is a valid connection string keyword for the given <see cref="DatabaseType"/> and thus you will not get syntactically illegal connection strings</para>
@@ -31,7 +31,7 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     private string _name;
     private string _value;
     #endregion
-        
+
     /// <summary>
     /// The DBMS (Oracle / MySql etc) which this keyword should be used when connecting to
     /// </summary>

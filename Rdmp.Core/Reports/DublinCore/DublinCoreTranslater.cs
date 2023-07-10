@@ -15,7 +15,7 @@ namespace Rdmp.Core.Reports.DublinCore;
 public class DublinCoreTranslater
 {
     /// <summary>
-    /// Populates the given <paramref name="toFill"/> with the descriptions stored in <paramref name="fillWith"/>.   This will overwrite previous values. 
+    /// Populates the given <paramref name="toFill"/> with the descriptions stored in <paramref name="fillWith"/>.   This will overwrite previous values.
     /// 
     /// <para>Not all object types T are supported</para>
     /// </summary>

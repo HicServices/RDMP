@@ -50,7 +50,7 @@ public class FlatFileEventHandlers
 
         _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"File {_fileToLoad} is empty"));
     }
-        
+
     public bool ReadingExceptionOccurred(ReadingExceptionOccurredArgs args)
     {
         var line = new FlatFileLine(args.Exception.Context);

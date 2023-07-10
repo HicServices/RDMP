@@ -21,7 +21,7 @@ public class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicC
     public string PropertyName { get; }
     public string Value { get; }
     public bool Strict { get; }
-        
+
     /// <summary>
     /// Set to true to prompt user for the <see cref="Value"/> at execution time (e.g. for interactive UIs)
     /// </summary>
@@ -98,7 +98,7 @@ public class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicC
             {
                 new ExtendedProperty(cataRepo, o, PropertyName, newValue);
             }
-                    
+
         }
 
         if(SetOn.Any())

@@ -22,7 +22,7 @@ public class AggregationContainerTask : Compileable,IOrderable
 {
     private CohortAggregateContainer[] _parentContainers;
     public CohortAggregateContainer Container { get; set; }
-        
+
     public CohortAggregateContainer[] SubContainers { get; set; }
     public AggregateConfiguration[] ContainedConfigurations { get; set; }
 

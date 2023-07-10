@@ -56,7 +56,7 @@ public class RemotePushingService
         foreach (var remote in remotes)
         {
             done.Add(remote.Name, 0);
-                    
+
             foreach (var toSend in toSendAll)
             {
                 if(!_gatherer.CanGatherDependencies(toSend))
@@ -77,7 +77,7 @@ public class RemotePushingService
 
                 var remote1 = remote;
                 var toSend1 = toSend;
-                               
+
                 var sender = new Task(() =>
                 {
                     using var client = new HttpClient(handler);

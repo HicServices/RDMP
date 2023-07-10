@@ -94,7 +94,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 
         return periodList;
     }
-        
+
     public void RebuildPermissionWindowPeriods()
     {
         var periodList = new List<PermissionWindowPeriod>();
@@ -108,7 +108,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
 
         _permissionWindow.SetPermissionWindowPeriods(periodList);
     }
-        
+
     private void tbDay_TextChanged(object sender, EventArgs e)
     {
         ragSmiley1.Reset();

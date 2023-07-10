@@ -12,7 +12,7 @@ namespace Rdmp.Core.Curation.Data;
 public enum LoadBubble
 {
     /// <summary>
-    /// The temporary unconstrained database created during a data load execution into which identifiable data is loaded and data 
+    /// The temporary unconstrained database created during a data load execution into which identifiable data is loaded and data
     /// integrity issues (null records, normalisation etc) occurs
     /// </summary>
     Raw,

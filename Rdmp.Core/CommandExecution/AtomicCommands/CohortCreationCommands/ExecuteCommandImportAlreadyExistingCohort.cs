@@ -32,7 +32,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         }
     }
 
-        
+
     [UseWithObjectConstructor]
     public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, int originIDToImport)  : this(activator,externalCohortTable,null)
     {
@@ -51,7 +51,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
             if(!SelectOne(available,out ect,null,true))
             {
                 return;
-            }   
+            }
         }
 
 

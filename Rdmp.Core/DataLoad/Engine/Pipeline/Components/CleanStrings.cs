@@ -110,7 +110,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                 $"Skipping CleanString on table {target.GetRuntimeName()} because there are no String columns in the table"));
     }
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
             

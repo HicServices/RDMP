@@ -30,7 +30,7 @@ public class DataLoadJob : IDataLoadJob
     private readonly IDataLoadEventListener _listener;
 
     public int JobID { get; set; }
-        
+
     private readonly ILogManager _logManager;
     public ILoadMetadata LoadMetadata { get; private set; }
 
@@ -39,7 +39,7 @@ public class DataLoadJob : IDataLoadJob
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
     private Stack<IDisposeAfterDataLoad> _disposalStack = new();
-        
+
     public HICDatabaseConfiguration Configuration { get; set; }
     public object Payload { get; set; }
 

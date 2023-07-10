@@ -17,7 +17,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 /// </summary>
 public class ExcludeRight3OfUKPostcodes: DilutionOperation
 {
-    public ExcludeRight3OfUKPostcodes() : 
+    public ExcludeRight3OfUKPostcodes() :
         base(new DatabaseTypeRequest(typeof(string),4))
     {
     }
@@ -30,10 +30,10 @@ public class ExcludeRight3OfUKPostcodes: DilutionOperation
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"IPreLoadDiscardedColumn {ColumnToDilute} is of datatype {ColumnToDilute.SqlDataType} which is incompatible with this dilution operation (it must be char/varchar)", CheckResult.Fail));
     }
-        
+
     public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
     {
-        return 
+        return
 
             string.Format(@"
 

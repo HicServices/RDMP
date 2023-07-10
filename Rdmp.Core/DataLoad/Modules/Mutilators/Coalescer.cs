@@ -29,7 +29,7 @@ public class Coalescer : MatchingTablesMutilator
     {
             
     }
-        
+
     protected override void MutilateTable(IDataLoadEventListener job, ITableInfo tableInfo, DiscoveredTable table)
     {
         var server = table.Database.Server;

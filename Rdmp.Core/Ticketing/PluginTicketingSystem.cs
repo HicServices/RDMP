@@ -14,7 +14,7 @@ public abstract class PluginTicketingSystem : ITicketingSystem
 {
     protected IDataAccessCredentials Credentials { get; set; }
     protected string Url { get; set; }
-        
+
     protected PluginTicketingSystem(TicketingSystemConstructorParameters parameters)
     {
         Credentials = parameters.Credentials;
