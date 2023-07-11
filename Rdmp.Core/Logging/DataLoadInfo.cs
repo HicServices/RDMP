@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Serialization;
 using FAnsi.Discovery;
 
 namespace Rdmp.Core.Logging;
@@ -208,7 +209,7 @@ SELECT @@IDENTITY;", con);
         using var con = DatabaseSettings.GetConnection();
         con.Open();
 
-        //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
+        //look up the fatal error ID (get hte name of the Enum so that we can refactor if necessary without breaking the code looking for a constant string)
         var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
                 
@@ -232,6 +233,7 @@ SELECT @@IDENTITY;", con);
             CloseAndMarkComplete();
     }
 
+    [XmlType("DataLoadInfo.ProgressEventType")]
     public enum ProgressEventType
     {
         OnInformation,
