@@ -21,8 +21,7 @@ public class ExternalCohortTableUITests : UITests
         Assert.IsNotNull(ui);
 
         //because cohort table doesnt actually go to a legit database the source should have been forbidlisted during the child provider stage (not really related to our UI).
-        AssertErrorWasShown(ExpectedErrorType.GlobalErrorCheckNotifier,
-            "Could not reach cohort 'My cohorts' (it may be slow responding or inaccessible");
+        AssertErrorWasShown(ExpectedErrorType.GlobalErrorCheckNotifier,"Could not reach cohort 'My cohorts' (it may be slow responding or inaccessible");
         AssertNoErrors(ExpectedErrorType.Fatal);
         AssertNoErrors(ExpectedErrorType.KilledForm);
         AssertNoErrors(ExpectedErrorType.ErrorProvider);

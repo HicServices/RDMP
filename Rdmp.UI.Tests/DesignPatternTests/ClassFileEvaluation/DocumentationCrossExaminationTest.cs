@@ -303,7 +303,7 @@ internal class DocumentationCrossExaminationTest
         {
             var isDesignerFile = file.Contains(".Designer.cs");
 
-            if (file.Contains("CodeTutorials"))
+            if(file.Contains("CodeTutorials"))
                 continue;
 
             //don't look in the packages dir!
@@ -488,9 +488,9 @@ internal class DocumentationCrossExaminationTest
                     if (glossaryHeaders.Contains(match.Value))
                     {
                         //It's already got a link on it e.g. [DBMS] or it's "UNION - sometext"
-                        if (match.Index - 1 > 0
-                            &&
-                            (line[match.Index - 1] == '[' || line[match.Index - 1] == '"'))
+                        if(match.Index - 1 > 0
+                           &&
+                           (line[match.Index-1] == '[' || line[match.Index-1] == '"'))
                             continue;
 
 

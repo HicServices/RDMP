@@ -233,7 +233,7 @@ internal partial class ConsoleGuiSqlEditor : Window
                     }
                 }
 
-                MessageBox.Query("File Saved", "Save completed", "Ok");
+                MessageBox.Query("File Saved","Save completed","Ok");
             }
         }
         catch (Exception ex)
@@ -327,8 +327,8 @@ internal partial class ConsoleGuiSqlEditor : Window
             var dt = new DataTable();
             da.Fill(dt);
 
-            Application.MainLoop.Invoke(() => { 
-                            
+            Application.MainLoop.Invoke(() => {
+
                 tableView.Table = dt;
 
                 // if query resulted in some data show it

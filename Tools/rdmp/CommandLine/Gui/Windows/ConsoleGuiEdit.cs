@@ -115,7 +115,7 @@ internal class ConsoleGuiEdit : Window
     }
 
     /// <summary>
-    /// A list view entry with the value of the field and 
+    /// A list view entry with the value of the field and
     /// </summary>
     private class PropertyInListView
     {

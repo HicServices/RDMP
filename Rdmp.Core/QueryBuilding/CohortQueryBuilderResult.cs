@@ -106,8 +106,7 @@ public class CohortQueryBuilderResult
 
             try
             {
-                PluginCohortCompilers =
-                    new PluginCohortCompilerFactory(cacheServer.CatalogueRepository.MEF).CreateAll();
+                PluginCohortCompilers = PluginCohortCompilerFactory.CreateAll();
             }
             catch (Exception ex)
             {

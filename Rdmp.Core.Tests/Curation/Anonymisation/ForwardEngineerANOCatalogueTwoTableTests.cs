@@ -185,7 +185,7 @@ GO";
 
             var cmd = _destinationDatabase.Server.GetCommand(qb.SQL, con);
 
-            Assert.DoesNotThrow(() => cmd.ExecuteNonQuery());
+            Assert.DoesNotThrow(()=>cmd.ExecuteNonQuery());
         }
 
         Console.WriteLine($"Final migrated combo dataset SQL was:{qb.SQL}");

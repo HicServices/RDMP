@@ -21,11 +21,6 @@ namespace Rdmp.Core.Tests.CommandLine;
 
 public class AbstractBaseRunnerTests : UnitTests
 {
-    [OneTimeSetUp]
-    public void SetupMef()
-    {
-        SetupMEF();
-    }
 
     [SetUp]
     public void CleanRemnants()

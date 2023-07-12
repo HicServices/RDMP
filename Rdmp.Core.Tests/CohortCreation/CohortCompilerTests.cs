@@ -164,10 +164,8 @@ public class CohortCompilerTests : CohortIdentificationTests
             {
                 case TestCompilerAddAllTasksTestCase.CIC:
                     tasks = compiler.AddAllTasks(includeSubcontainers);
-                    Assert.AreEqual(joinable,
-                        tasks.OfType<JoinableTask>().Single().Joinable); //should be a single joinable
-                    Assert.AreEqual(includeSubcontainers ? 7 : 6,
-                        tasks.Count); //all joinables, aggregates and root container 
+                    Assert.AreEqual(joinable,tasks.OfType<JoinableTask>().Single().Joinable); //should be a single joinable
+                    Assert.AreEqual(includeSubcontainers?7:6,tasks.Count); //all joinables, aggregates and root container
 
                     break;
                 case TestCompilerAddAllTasksTestCase.RootContainer:

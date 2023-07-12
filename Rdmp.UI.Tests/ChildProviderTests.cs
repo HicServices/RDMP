@@ -81,6 +81,7 @@ internal class ChildProviderTests : UITests
         }
 
 
+
         foreach (var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p => !skip.Contains(p.Name)))
         {
             var val1 = field.GetValue(cp1);
@@ -114,7 +115,7 @@ internal class ChildProviderTests : UITests
 
         var badFields = new List<string>();
 
-        foreach (var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p => !skip.Contains(p.Name)))
+        foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))
             try
             {
                 Assert.AreSame(field.GetValue(cp1), field.GetValue(cp2),
@@ -124,6 +125,8 @@ internal class ChildProviderTests : UITests
             {
                 badFields.Add(field.Name);
             }
+
+        Assert.IsEmpty(badFields);
 
         Assert.IsEmpty(badFields);
     }

@@ -26,7 +26,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public IAttacher Attacher { get; private set; }
     public ICheckable MEFPluginClassInstance => Attacher;
 
-    public AttacherRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
+    public AttacherRuntimeTask(IProcessTask task, RuntimeArgumentCollection args)
         : base(task, args)
     {
         //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name
@@ -38,7 +38,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
             throw new ArgumentException(
                 $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IAttacher)}");
 
-        Attacher = mef.CreateA<IAttacher>(ProcessTask.Path);
+        Attacher = MEF.CreateA<IAttacher>(ProcessTask.Path);
         SetPropertiesForClass(RuntimeArguments, Attacher);
         Attacher.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
     }

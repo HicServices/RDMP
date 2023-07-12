@@ -75,8 +75,7 @@ public class EndToEndTableValuedFunction : DatabaseTests
         CreateANormalCatalogue();
 
         //create a cohort database using wizard
-        var cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase, CatalogueRepository,
-            DataExportRepository, false);
+        var cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase,CatalogueRepository,DataExportRepository,false);
 
         _externalCohortTable = cohortDatabaseWizard.CreateDatabase(
             new PrivateIdentifierPrototype(_nonTvfExtractionIdentifier)
@@ -147,9 +146,9 @@ public class EndToEndTableValuedFunction : DatabaseTests
 
         //create a pipeline for executing this CIC and turning it into a cohort
         _pipe = new Pipeline(CatalogueRepository, "CREATE COHORT:By Executing CIC");
-            
+
         var source = new PipelineComponent(CatalogueRepository, _pipe,typeof (CohortIdentificationConfigurationSource), 0, "CIC Source");
-            
+
         _project = new Project(DataExportRepository, "TvfProject")
         {
             ProjectNumber = 12,
@@ -377,7 +376,7 @@ end
 
         //declare a global parameter of 1 on the aggregate
         _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => null);
-            
+
         //it should have imported the global parameter as part of the import right?
         Assert.AreEqual(1, _cicAggregate.GetAllParameters().Length);
 

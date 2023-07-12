@@ -40,8 +40,6 @@ internal class Patch68FixNamespacesTest:UnitTests
 
         SetupMEF();
 
-        MEF.SafeDirectoryCatalog.AddType(typeof(FAnsi.DatabaseType));
-
         foreach (var oldClass in ExpectedClasses)
         {
             var newClass = substitutions.Aggregate(oldClass, (current, kvp) => current.Replace(kvp.Key, kvp.Value));
@@ -51,6 +49,8 @@ internal class Patch68FixNamespacesTest:UnitTests
             Assert.IsNotNull(foundNow,"Patch did not work correctly for Type '{0}' which after renaming became '{1}'", oldClass, newClass);
 
         }
+
+
     }
 
     private string[] ExpectedClasses

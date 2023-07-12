@@ -72,13 +72,13 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         //      DependenciesEvaluation dependencies = new DependenciesEvaluation();
         //      dependencies.FindProblems(sln);
 
-        InterfaceDeclarationsCorrect.FindProblems(CatalogueRepository.MEF);
+        InterfaceDeclarationsCorrect.FindProblems();
 
         var documented = new AllImportantClassesDocumented();
         documented.FindProblems(_csFilesFound);
 
         var uiStandardisationTest = new UserInterfaceStandardisationChecker();
-        uiStandardisationTest.FindProblems(_csFilesFound, RepositoryLocator.CatalogueRepository.MEF);
+        uiStandardisationTest.FindProblems(_csFilesFound);
 
         var crossExamination = new DocumentationCrossExaminationTest(solutionDir);
         crossExamination.FindProblems(_csFilesFound);
@@ -87,14 +87,14 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         var otherTestRunner = new RDMPFormInitializationTests();
         otherTestRunner.FindUninitializedForms(_csFilesFound);
 
-        var propertyChecker = new SuspiciousRelationshipPropertyUse(CatalogueRepository.MEF);
+        var propertyChecker = new SuspiciousRelationshipPropertyUse();
         propertyChecker.FindPropertyMisuse(_csFilesFound);
 
         var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
-        ExplicitDatabaseNameChecker.FindProblems(_csFilesFound);
+        explicitDatabaseNamesChecker.FindProblems(_csFilesFound);
 
         var noMappingToDatabaseComments = new AutoCommentsEvaluator();
-        AutoCommentsEvaluator.FindProblems(CatalogueRepository.MEF, _csFilesFound);
+        noMappingToDatabaseComments.FindProblems(_csFilesFound);
 
         CopyrightHeaderEvaluator.FindProblems(_csFilesFound);
 
@@ -252,7 +252,7 @@ public class CopyrightHeaderEvaluator
 
 public partial class AutoCommentsEvaluator
 {
-    public static void FindProblems(MEF mef, List<string> csFilesFound)
+    public void FindProblems(List<string> csFilesFound)
     {
         var suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
@@ -271,6 +271,7 @@ public partial class AutoCommentsEvaluator
 
             for (var i = 0; i < text.Length; i++)
             {
+
                 //////////////////////////////////No Mapping Properties////////////////////////////////////////////////////
                 if (text[i].Trim().Equals("[NoMappingToDatabase]"))
                 {
@@ -286,6 +287,7 @@ public partial class AutoCommentsEvaluator
                         var m = PublicRegex().Match(next);
                         if (m.Success)
                         {
+
                             var whitespace = m.Groups[1].Value;
                             var member = m.Groups[3].Value;
 

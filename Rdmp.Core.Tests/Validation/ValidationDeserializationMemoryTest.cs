@@ -28,7 +28,7 @@ public class ValidationDeserializationMemoryTest
         {
             var deser = Validator.LoadFromXml(xml);
 
-            if (i % 500 == 0)
+            if(i%500==0)
             {
                 GC.Collect();
                 Console.WriteLine($"Committed Bytes:{Process.GetCurrentProcess().WorkingSet64}");

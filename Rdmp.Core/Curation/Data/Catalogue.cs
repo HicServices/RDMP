@@ -725,7 +725,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     internal Catalogue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        if (r["LoadMetadata_ID"] != DBNull.Value)
+        if(r["LoadMetadata_ID"] != DBNull.Value)
             LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString());
 
         Acronym = r["Acronym"].ToString();
@@ -740,7 +740,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         if (r["LiveLoggingServer_ID"] == DBNull.Value)
             LiveLoggingServer_ID = null;
         else
-            LiveLoggingServer_ID = (int)r["LiveLoggingServer_ID"];
+            LiveLoggingServer_ID = (int) r["LiveLoggingServer_ID"];
 
         ////Type - with handling for invalid enum values listed in database
         var type = r["Type"];
@@ -828,6 +828,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             DatasetStartDate = (DateTime)oDatasetStartDate;
 
 
+
         ValidatorXML = r["ValidatorXML"] as string;
 
         Ticket = r["Ticket"] as string;
@@ -882,15 +883,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                     $"Catalogue name {Name} (ID={ID}) does not follow naming conventions reason:{reason}",
                     CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue name {Name} follows naming conventions ",
-                CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue name {Name} follows naming conventions ",CheckResult.Success));
 
         var tables = GetTableInfoList(true);
         foreach (var t in tables)
             t.Check(notifier);
 
         var extractionInformations = GetAllExtractionInformation(ExtractionCategory.Core);
-            
+
         if (extractionInformations.Any())
         {
             var missingColumnInfos = false;
@@ -1092,7 +1092,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         if(LiveLoggingServer_ID == null)
             throw new Exception($"No live logging server set for Catalogue {Name}");
-                
+
         var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
         return new LogManager(server);
@@ -1105,7 +1105,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         iDependOn.AddRange(CatalogueItems);
 
-        if (LoadMetadata != null)
+        if(LoadMetadata != null)
             iDependOn.Add(LoadMetadata);
 
         return iDependOn.ToArray();
@@ -1289,10 +1289,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             return false;
         }
 
-        if (CatalogueRepository.MEF == null)
-            throw new Exception("MEF has not been loaded yet so cannot find compatible IPluginCohortCompilers");
-
-        plugin = new PluginCohortCompilerFactory(CatalogueRepository.MEF)
+        plugin = PluginCohortCompilerFactory
             .CreateAll().FirstOrDefault(p => p.ShouldRun(this));
 
         return true;

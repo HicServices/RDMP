@@ -125,21 +125,29 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// <summary>
     /// Unpack the plugin DLL files, excluding any Windows specific dlls when not running on Windows
     /// </summary>
-    public IEnumerable<ValueTuple<string,MemoryStream>> GetContents()
+    internal static IEnumerable<ValueTuple<string,MemoryStream>> GetContents(Stream pluginStream)
     {
         var isWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
-        using var ms = new MemoryStream(Bin);
-        using var zip = new ZipFile(ms);
-        foreach (ZipEntry e in zip)
+        using var zip = new ZipFile(pluginStream);
+        foreach (var e in zip.Cast<ZipEntry>()
+                     .Where(static e => e.IsFile && e.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                     .Where(e => isWin || !e.Name.Contains("/windows/")))
         {
-            if (!e.IsFile || !e.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)) continue;
-            if (isWin && e.Name.Contains("/windows/")) continue;
             using var s = zip.GetInputStream(e);
             using var ms2 = new MemoryStream();
             s.CopyTo(ms2);
             ms2.Position = 0;
             yield return (e.Name,ms2);
         }
+    }
+
+    /// <summary>
+    /// Unpack the plugin DLL files, excluding any Windows specific dlls when not running on Windows
+    /// </summary>
+    internal IEnumerable<ValueTuple<string, MemoryStream>> GetContents()
+    {
+        using var ms = new MemoryStream(Bin);
+        return GetContents(ms);
     }
 
     /// <summary>

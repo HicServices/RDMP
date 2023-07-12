@@ -110,6 +110,8 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         }
 
         btnCreateNewCohortSource.Enabled = sources.Length == 0;
+
+        btnCreateNewCohortSource.Enabled = sources.Length == 0;
     }
 
     private void IdentifyCompatiblePipelines()
@@ -151,7 +153,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             if (dd.Items.Count == 1)
                 dd.SelectedItem = dd.Items[0]; //select it
         }
-            
+
     }
 
     private void btnBrowse_Click(object sender, EventArgs e)
@@ -230,8 +232,8 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
         lblCohortFile.Text = _cohortFile.Name;
         btnSelectClearCohortFile.Text = "Clear";
-        btnSelectClearCohortFile.Left =
-            Math.Min(gbFile.Width - btnSelectClearCohortFile.Width, lblCohortFile.Right + 5);
+        btnSelectClearCohortFile.Left = Math.Min(gbFile.Width - btnSelectClearCohortFile.Width, lblCohortFile.Right + 5);
+
     }
 
     private void cbxCohort_SelectionChangeCommitted(object sender, EventArgs e)
@@ -264,6 +266,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         }
 
         gbFile.Enabled = cic == null;
+
     }
 
     private void btnClearCohort_Click(object sender, EventArgs e)
@@ -386,6 +389,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         {
             Cursor = Cursors.Default;
         }
+
     }
 
     private string AllRequiredDataPresent()

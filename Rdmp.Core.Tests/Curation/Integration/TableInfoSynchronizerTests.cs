@@ -71,13 +71,13 @@ public class TableInfoSynchronizerTests : DatabaseTests
         if (acceptChanges)
         {
             //accept changes should result in a synchronized table
-            Assert.AreEqual(true, synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-            Assert.AreEqual(1, tableInfoCreated.ColumnInfos.Length); //should only be 1 remaining 
+            Assert.AreEqual(true,synchronizer.Synchronize(new AcceptAllCheckNotifier()));
+            Assert.AreEqual(1,tableInfoCreated.ColumnInfos.Length);//should only be 1 remaining
         }
         else
         {
             var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
-            Assert.AreEqual("The ColumnInfo Address no longer appears in the live table.", ex.Message);    
+            Assert.AreEqual("The ColumnInfo Address no longer appears in the live table.", ex.Message);
         }
     }
 

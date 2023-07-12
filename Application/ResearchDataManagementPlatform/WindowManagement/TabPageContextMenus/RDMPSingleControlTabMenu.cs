@@ -42,7 +42,7 @@ public class RDMPSingleControlTabMenu : ContextMenuStrip
             var gotoMenu = new ToolStripMenuItem(AtomicCommandFactory.GoTo) { Enabled = false };
             Items.Add(gotoMenu);
 
-            foreach (var cmd in builder.GetCommands(single.DatabaseObject).OfType<ExecuteCommandShow>())
+            foreach(var cmd in builder.GetCommands(single.DatabaseObject).OfType<ExecuteCommandShow>())
             {
                 gotoMenu.DropDownItems.Add(uiFactory.CreateMenuItem(cmd));
                 gotoMenu.Enabled = true;

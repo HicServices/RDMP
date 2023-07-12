@@ -68,6 +68,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
     }
 
 
+
     public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
         var newTabName = _control.GetTabName();

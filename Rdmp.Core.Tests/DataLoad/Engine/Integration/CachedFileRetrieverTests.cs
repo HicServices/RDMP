@@ -38,8 +38,7 @@ public class CachedFileRetrieverTests : DatabaseTests
         _lpMock.CacheProgress.Returns(_cpMock);
     }
 
-    [Test(Description =
-        "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]
+    [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]
     public void AttemptToLoadDataWithFilesInForLoading_DisagreementBetweenCacheAndForLoading()
     {
         var tempDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
@@ -55,7 +54,7 @@ public class CachedFileRetrieverTests : DatabaseTests
 
             // Set SetUp retriever
             var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
-                
+
             var retriever = new TestCachedFileRetriever
             {
                 ExtractFilesFromArchive = false,
@@ -107,7 +106,8 @@ public class CachedFileRetrieverTests : DatabaseTests
             {
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
-                Layout = cacheLayout
+                Layout =  cacheLayout
+
             };
 
             // Set SetUp job
@@ -174,10 +174,14 @@ public class CachedFileRetrieverTests : DatabaseTests
 
     private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
     {
-        var catalogue = Substitute.For<ICatalogue>();
-        catalogue.GetTableInfoList(false).Returns(Array.Empty<TableInfo>());
-        catalogue.GetLookupTableInfoList().Returns(Array.Empty<TableInfo>());
-        catalogue.LoggingDataTask.Returns("TestLogging");
+        var catalogue = Mock.Of<ICatalogue>(c =>
+            c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
+            c.GetLookupTableInfoList()==Array.Empty<TableInfo>() &&
+            c.LoggingDataTask == "TestLogging"
+        );
+            
+        var logManager = Mock.Of<ILogManager>();
+        var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues()==new[] { catalogue });
 
         var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, ThrowImmediatelyDataLoadEventListener.Quiet, null)
             {

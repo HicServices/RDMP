@@ -78,7 +78,7 @@ public class HangingConnectionTest : DatabaseTests
                 r.GetValues(vals);
                 throw new Exception(
                     $"Someone is locking {testDbName}:{Environment.NewLine}{string.Join(",", vals)}");
-                        
+
             }
     }
 }

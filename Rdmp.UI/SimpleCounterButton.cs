@@ -58,6 +58,7 @@ public class SimpleCounterButton : ToolStripButton
             e.Graphics.DrawString(label,labelFont,Brushes.Black,labelRect);
 
         }
+
     }
 
 

@@ -16,7 +16,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTests
 {
     private TestableTableValuedFunction _function = new();
-        
+
     public void CreateFunction()
     {
         _function.Create(GetCleanedServer(DatabaseType.MicrosoftSQLServer), CatalogueRepository);
@@ -99,7 +99,7 @@ SET @name='fish';
 	[" + TestDatabaseNames.Prefix +
                         @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 )
-", cic.ID)),
+",cic.ID)),
                 CollapseWhitespace(builder.SQL));
 
             //now override JUST @name
@@ -108,7 +108,7 @@ SET @name='fish';
      Value = "'lobster'"
  };
             param1.SaveToDatabase();
-                
+
             var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);")
  {
      Value = "'monkey'"
@@ -156,6 +156,7 @@ SET @name_2='monkey';
             cic.DeleteInDatabase();
             config1.DeleteInDatabase();
             config2.DeleteInDatabase();
+
         }
     }
 }

@@ -19,15 +19,15 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests;
 [Category("Unit")]
 public class FilterImporterTests : UnitTests
 {
+
     [Test]
     public void FilterCreated_NewFilterGetsSameName()
     {
         //Thing we will be cloning
-        var master = Substitute.For<IFilter>();
-        master.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
-
-        master.Name.Returns("Space Odyssey");
-
+        var master = Mock.Of<IFilter>(x =>
+            x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
+            x.Name == "Space Odyssey");
+            
         //The factory will return this value
         var constructed = Substitute.For<IFilter>();
         constructed.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
@@ -110,18 +110,19 @@ public class FilterImporterTests : UnitTests
     public void FilterCreated_ParametersWithMasterExplicitTyping()
     {
         //The filter we are cloning
-        var master = Substitute.For<IFilter>();
-        master.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
-        master.Name.Returns("Space Odyssey");
-        master.WhereSQL.Returns("@hall = 'active'");
+        var master = Mock.Of<IFilter>(x =>
+            x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance &&
+            x.Name == "Space Odyssey" &&
+            x.WhereSQL == "@hall = 'active'");
 
         //The existing parameter declared on the filter we are cloning
-        var masterParameter = Substitute.For<ISqlParameter>();
-        masterParameter.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
-        masterParameter.ParameterName.Returns("@hall");
-        masterParameter.Comment.Returns("SomeComment");
-        masterParameter.Value.Returns("500");
-        masterParameter.ParameterSQL.Returns("DECLARE @hall AS int");
+        var masterParameter = Mock.Of<ISqlParameter>(
+            x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
+                 x.ParameterName=="@hall" &&
+                 x.Comment == "SomeComment" &&
+                 x.Value == "500" &&
+                 x.ParameterSQL == "DECLARE @hall AS int"
+        );
 
         master.GetAllParameters().Returns(new[] { masterParameter });
         //We expect that the filter we are cloning will be asked what its parameters are once (and we tell them the param above)
@@ -170,10 +171,9 @@ public class FilterImporterTests : UnitTests
         existingParameter.ParameterName.Returns("@hall");
 
         //The filter to which the above existing parameter belongs
-        var existing = Substitute.For<IFilter>();
-        existing.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
-        existing.GetAllParameters().Returns(new[] { existingParameter });
-
+        var existing = Mock.Of<IFilter>(x =>
+            x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance&&
+            x.GetAllParameters()==new[] { existingParameter });
         existing.Name = "Space Odyssey";
 
         //The return value for our Mock factory
@@ -223,10 +223,10 @@ public class FilterImporterTests : UnitTests
         existingParameter.ParameterName.Returns("@hall");
 
         //The filter to which the above existing parameter belongs
-        var existing = Substitute.For<IFilter>();
-        existing.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
-        existing.GetAllParameters().Returns(new[] { existingParameter });
-        existing.Name.Returns("Space Odyssey");
+        var existing = Mock.Of<IFilter>(x =>
+            x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance &&
+            x.GetAllParameters()==new[] { existingParameter });
+        existing.Name = "Space Odyssey";
 
         //The return value for our Mock factory
         var constructed = Substitute.For<IFilter>();

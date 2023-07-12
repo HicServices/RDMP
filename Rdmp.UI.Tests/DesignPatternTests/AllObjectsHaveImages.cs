@@ -34,7 +34,7 @@ public class AllObjectsHaveImages : DatabaseTests
             //not required , it's only ever dependent on itself and it doesn't have any visualisation on Catalogue / Export
         };
 
-        var missingConcepts = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+        var missingConcepts = Core.Repositories.MEF.GetAllTypes()
             .Where(t => typeof(IHasDependencies).IsAssignableFrom(t) && !t.IsInterface)
             .Where(type => !typeof(IMasqueradeAs).IsAssignableFrom(type))
             .Select(type => type.Name)

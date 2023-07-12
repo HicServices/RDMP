@@ -22,6 +22,7 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -34,9 +35,8 @@ public class CustomDateCachingTests : DatabaseTests
     [TestCase(true)]
     public void FetchMultipleDays_Success(bool singleDay)
     {
-        var mef = RepositoryLocator.CatalogueRepository.MEF;
-        mef.AddTypeToCatalogForTesting(typeof(TestCacheSource));
-        mef.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
+        MEF.AddTypeToCatalogForTesting(typeof(TestCacheSource));
+        MEF.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
 
         // Create a pipeline that will record the cache chunks
         var sourceComponent = Substitute.For<IPipelineComponent>();
@@ -49,12 +49,14 @@ public class CustomDateCachingTests : DatabaseTests
         destinationComponent.GetClassAsSystemType().Returns(typeof(TestCacheDestination));
         destinationComponent.GetAllArguments().Returns(Array.Empty<IArgument>());
 
-        var pipeline = Substitute.For<IPipeline>();
-        pipeline.Repository.Returns(CatalogueRepository);
-        pipeline.Source.Returns(sourceComponent);
-        pipeline.Destination.Returns(destinationComponent);
-        pipeline.Repository.Returns(CatalogueRepository);
-        pipeline.PipelineComponents.Returns(Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
+        var pipeline = Mock.Of<IPipeline>(p=>
+            p.Repository == CatalogueRepository &&
+            p.Source==sourceComponent &&
+            p.Destination==destinationComponent &&
+            p.Repository == CatalogueRepository &&
+            p.PipelineComponents==Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
+
+        var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme",true);
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
@@ -127,6 +129,8 @@ public class TestCacheChunk : ICacheChunk
     {
         Request = new CacheFetchRequest(null, fetchDate) { ChunkPeriod = new TimeSpan(1, 0, 0) };
     }
+
+
 }
 
 public class TestCacheSource : CacheSource<TestCacheChunk>
@@ -154,8 +158,7 @@ public class TestCacheSource : CacheSource<TestCacheChunk>
     }
 }
 
-public class TestCacheDestination : IPluginDataFlowComponent<ICacheChunk>, IDataFlowDestination<ICacheChunk>,
-    ICacheFileSystemDestination
+public class TestCacheDestination : IPluginDataFlowComponent<ICacheChunk>, IDataFlowDestination<ICacheChunk>, ICacheFileSystemDestination
 {
     public static TestCacheChunk ProcessPipelineData(TestCacheChunk toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken) => toProcess;

@@ -34,7 +34,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
     {
         InitializeComponent();
 
-        if (VisualStudioDesignMode)
+        if(VisualStudioDesignMode)
             return;
 
         inclusionCriteria1.SetupFor(Activator);
@@ -101,10 +101,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
             return;
         }
 
-        if (cbUseWizard.Checked &&
-            !Activator.YesNo(
-                "Are you sure you are happy with your configuration, this wizard will close after creating?",
-                "Confirm"))
+        if(cbUseWizard.Checked && !Activator.YesNo("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm"))
             return;
 
         var cic = CreateCohortIdentificationConfiguration();

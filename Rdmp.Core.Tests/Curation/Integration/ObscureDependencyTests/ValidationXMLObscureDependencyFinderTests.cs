@@ -77,7 +77,7 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
             //and explode
             Assert.Throws<ValidationXmlDependencyException>(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
 
-            Assert.AreEqual(0, finder.CataloguesWithBrokenValidationXml.Count);
+            Assert.AreEqual(0,finder.CataloguesWithBrokenValidationXml.Count);
 
             //now clear the validation XML
             testData.catalogue.ValidatorXML =

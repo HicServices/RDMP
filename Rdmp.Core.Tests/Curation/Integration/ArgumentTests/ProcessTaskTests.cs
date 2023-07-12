@@ -60,8 +60,8 @@ public class ProcessTaskTests : DatabaseTests
         var parent1 = new LoadMetadata(CatalogueRepository);
         var parent2 = new LoadMetadata(CatalogueRepository);
 
-        //make sure we didn't magically create the same ID somehow 
-        Assert.AreNotEqual(parent1.ID, parent2.ID);
+        //make sure we didn't magically create the same ID somehow
+        Assert.AreNotEqual(parent1.ID,parent2.ID);
 
         //setup things to clone in parent1
         var processTask1 = new ProcessTask(CatalogueRepository, parent1, LoadStage.AdjustRaw);
@@ -107,13 +107,13 @@ public class ProcessTaskTests : DatabaseTests
 
             //////////////////////////////////////////////////////////////////CHECK CLONAGE OF ARGUMENTS ////////////////////////////////////////////////////////////
 
-            var clonearg = clone.ProcessTaskArguments.SingleOrDefault();
+            var clonearg= clone.ProcessTaskArguments.SingleOrDefault();
             Assert.NotNull(clonearg);
 
-            Assert.AreNotEqual(clonearg.ID, arg.ID);
-            Assert.AreEqual(clonearg.GetType(), arg.GetType());
-            Assert.AreEqual(clonearg.Name, arg.Name);
-            Assert.AreEqual(clonearg.Value, arg.Value);
+            Assert.AreNotEqual(clonearg.ID,arg.ID);
+            Assert.AreEqual(clonearg.GetType(),arg.GetType());
+            Assert.AreEqual(clonearg.Name,arg.Name);
+            Assert.AreEqual(clonearg.Value,arg.Value);
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             clone.DeleteInDatabase();

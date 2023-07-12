@@ -85,9 +85,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
             Assert.AreEqual(new DateTime(2001, 1, 1), dt.Rows[0]["DateOfBirth"]);
             Assert.AreEqual(2001, dt.Rows[0]["YearOfBirth"]);
 
-            Assert.AreEqual(_columnToTransform.Data_type,
-                destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
-            Assert.AreEqual("int", destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
+            Assert.AreEqual(_columnToTransform.Data_type, destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
+            Assert.AreEqual("int",destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
 
             AssertLookupsEtcExist(dbToExtractTo);
         }
@@ -168,7 +167,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
 
         Import(lookupTbl, out var ti, out var columnInfos);
 
-        var lookup = new Lookup(CatalogueRepository, columnInfos[0],
+        var lookup =  new Lookup(CatalogueRepository, columnInfos[0],
             _columnToTransform,
             columnInfos[1],
             ExtractionJoinType.Left, null);

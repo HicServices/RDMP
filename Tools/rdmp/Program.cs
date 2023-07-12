@@ -33,13 +33,14 @@ internal class Program
     {
         try
         {
-            var nlog = Path.Combine(AppContext.BaseDirectory, "NLog.config");
+            var nlog = Path.Combine(AppContext.BaseDirectory ,"NLog.config");
 
             if (File.Exists(nlog))
             {
                 LogManager.ThrowConfigExceptions = false;
                 LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
             }
+
         }
         catch (Exception ex)
         {
@@ -167,8 +168,8 @@ internal class Program
         var start = new Startup.Startup(repo);
         var badTimes = false;
 
-        start.DatabaseFound += (s, e) =>
-        {
+        start.DatabaseFound += (s,e)=>{
+
             var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
 
             switch (e.Status)

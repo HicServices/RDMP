@@ -29,15 +29,16 @@ internal class LinkerTests : DatabaseTests
 
             //now you can add as many links as you want, it just skips them
             lazor.SetColumnInfo(velocityColumn);
-            Assert.AreEqual(lazor.ColumnInfo, velocityColumn);
+            Assert.AreEqual(lazor.ColumnInfo,velocityColumn);
+
         }
         finally
         {
             lazor.DeleteInDatabase(); //delete child
             predator.DeleteInDatabase(); //delete parent
 
-            velocityColumn.DeleteInDatabase(); //delete child
-            highEnergyTable.DeleteInDatabase(); //delete parent
+            velocityColumn.DeleteInDatabase();//delete child
+            highEnergyTable.DeleteInDatabase();//delete parent
         }
     }
 
@@ -63,9 +64,8 @@ internal class LinkerTests : DatabaseTests
         lazor.SetColumnInfo(velocityColumn);
         Assert.IsTrue(lazor.ColumnInfo.ID == velocityColumn.ID);
 
-        ////////////////cleanup ---- Delete everything that we created -------- ////////////// 
-        velocityColumn
-            .DeleteInDatabase(); //delete causes CASCADE: CatalogueItem no longer associated with ColumnInfo because ColumnInfo died
+        ////////////////cleanup ---- Delete everything that we created -------- //////////////
+        velocityColumn.DeleteInDatabase(); //delete causes CASCADE: CatalogueItem no longer associated with ColumnInfo because ColumnInfo died
 
         lazor.RevertToDatabaseState();
 

@@ -223,7 +223,7 @@ internal class YamlRepositoryTests
         // delete the root filter
         ac.RootFilterContainer.DeleteInDatabase();
 
-        // A fresh repo loaded from the same directory 
+        // A fresh repo loaded from the same directory
         var repo3 = new YamlRepository(dir);
 
         // all these things should be gone

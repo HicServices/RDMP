@@ -27,10 +27,12 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
 
     public DataLoadProgressUpdateInfoTests()
     {
-        var cata = Substitute.For<ICatalogue>();
-        cata.LoggingDataTask.Returns("NothingTask");
-        cata.GetTableInfoList(false).Returns(Array.Empty<TableInfo>());
-        cata.GetLookupTableInfoList().Returns(Array.Empty<TableInfo>());
+        var cata = Mock.Of<ICatalogue>(
+            c=> c.LoggingDataTask == "NothingTask" &&
+                c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
+                c.GetLookupTableInfoList() == Array.Empty<TableInfo>());
+            
+        var lmd = Mock.Of<ILoadMetadata>(m => m.GetAllCatalogues() == new[] { cata });
 
         var lmd = Substitute.For<ILoadMetadata>();
         lmd.GetAllCatalogues().Returns(new[] { cata });

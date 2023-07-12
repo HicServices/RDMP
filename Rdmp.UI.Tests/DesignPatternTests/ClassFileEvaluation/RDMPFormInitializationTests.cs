@@ -30,7 +30,7 @@ public class RDMPFormInitializationTests
     private Regex methodCalls = new("^\\s*([A-Za-z0-9]*)\\s?\\(", RegexOptions.Multiline);
     private Regex rdmpFormClasses = new("class\\s+(.*)\\s*:\\s*RDMPForm");
     private Regex rdmpControlClasses = new("class\\s+(.*)\\s*:\\s*RDMPUserControl");
-        
+
     public void FindUninitializedForms(List<string> csFiles )
     {
         foreach (var readToEnd in csFiles.Select(File.ReadAllText))
@@ -44,9 +44,9 @@ public class RDMPFormInitializationTests
         sbFindInstantiations.AppendJoin("|", _rdmpFormClassNames.Select(Regex.Escape));
         sbFindInstantiations.Append(")\\s*\\(");
 
-        if (_fails.Any())
-            Assert.Fail(
-                "Fix the problems above (anything marked FAIL:) then Clean and Recompile the ENTIRE solution to ensure a fresh copy of SourceCodeForSelfAwareness.zip gets created and run the test again");
+        if(_fails.Any())
+            Assert.Fail("Fix the problems above (anything marked FAIL:) then Clean and Recompile the ENTIRE solution to ensure a fresh copy of SourceCodeForSelfAwareness.zip gets created and run the test again");
+
     }
 
     private void DealWithRDMPUserControls(string readToEnd)

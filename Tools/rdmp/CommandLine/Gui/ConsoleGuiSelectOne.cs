@@ -27,9 +27,8 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
     /// </summary>
     public const int MaxMatches = 100;
 
-    public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available) :
-        base("Open", "Ok",
-            true, null)
+    public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available):base("Open","Ok",
+        true,null)
     {
         _activator = activator;
 

@@ -33,7 +33,7 @@ public class EndToEndDLETest : TestsRequiringADle
 
         var tbl = db.CreateTable("Troll Select * Loll", new DatabaseColumnRequest[]
         {
-            new("group by",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey = true}, 
+            new("group by",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey = true},
             new(",,,,",new DatabaseTypeRequest(typeof(string)))
         });
 

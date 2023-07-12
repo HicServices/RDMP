@@ -135,7 +135,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
             var ex = Assert.Throws<ArgumentException>(() => _checker.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
 
             Assert.AreEqual(@"Class AnySeparatorFileAttacher has a Mandatory property 'Separator' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",ex.Message);
-                
+
 
             Assert.AreEqual(
                 @"Class AnySeparatorFileAttacher has a Mandatory property 'Separator' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",

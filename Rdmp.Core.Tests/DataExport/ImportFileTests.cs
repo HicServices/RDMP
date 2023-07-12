@@ -50,7 +50,7 @@ public class ImportFileTests : DatabaseTests
 
             source.PreInitialize(new FlatFileToLoad(new FileInfo(file)), ThrowImmediatelyDataLoadEventListener.Quiet);//this is the file we want to load
             source.Check(ThrowImmediatelyCheckNotifier.Quiet);
-                
+
             var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
             var database = server.ExpectDatabase(databaseName);
 
@@ -60,7 +60,7 @@ public class ImportFileTests : DatabaseTests
             server.ChangeDatabase(databaseName);
 
             var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-                
+
             var tbl = database.CreateTable(dt.TableName, dt);
             var tableName = tbl.GetRuntimeName();
 
@@ -117,6 +117,7 @@ public class ImportFileTests : DatabaseTests
             {
                 //Couldn't delete temporary file... oh well
             }
+
         }
     }
 

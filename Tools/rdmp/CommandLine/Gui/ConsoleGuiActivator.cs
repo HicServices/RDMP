@@ -114,6 +114,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
     }
 
 
+
     public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
         bool requireSaneHeaderText)
     {
@@ -214,14 +215,16 @@ internal class ConsoleGuiActivator : BasicActivateItems
         var selected = openDir.FilePath?.ToString();
 
         return selected == null ? null : new DirectoryInfo(selected);
+
+        return selected == null ? null : new DirectoryInfo(selected);
     }
 
     public override FileInfo SelectFile(string prompt)
     {
         using var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
-            
+
         return openDir.FilePaths.Count == 1 ? new FileInfo(openDir.FilePaths[0]):null;
     }
 
@@ -317,7 +320,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         GetDialogDimensions(out var w, out var h);
 
-        var dlg = new Dialog("Error", w, h, btnOk, btnStack);
+        var dlg = new Dialog("Error",w,h,btnOk,btnStack);
         dlg.Add(textView);
 
         Application.MainLoop.Invoke(() =>

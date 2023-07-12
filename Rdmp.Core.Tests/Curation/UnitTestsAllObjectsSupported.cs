@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation;
@@ -28,11 +27,8 @@ internal class UnitTestsAllObjectsSupported:UnitTests
     public void TestAllSupported()
     {
         //load all DatabaseEntity types
-        var mef = new MEF();
-        mef.Setup(new SafeDirectoryCatalog(IgnoreAllErrorsCheckNotifier.Instance, TestContext.CurrentContext.TestDirectory));
-
-        var types = mef.GetAllTypes()
-            .Where(t => typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+        var types = MEF.GetAllTypes()
+            .Where(static t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
 
         var methods = typeof(UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
         var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
@@ -42,8 +38,7 @@ internal class UnitTestsAllObjectsSupported:UnitTests
         foreach (var t in types)
         {
             //ignore these types too
-            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||
-                typeof(SpontaneousObject).IsAssignableFrom(t))
+            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous", StringComparison.Ordinal) || typeof(SpontaneousObject).IsAssignableFrom(t))
                 continue;
 
             DatabaseEntity instance = null;

@@ -56,6 +56,8 @@ public class NormalDataExtractionTests : TestsRequiringAnExtractionConfiguration
             var extractionDirectory = new ExtractionDirectory(TestContext.CurrentContext.WorkDirectory, _configuration);
 
 
+            var ex = Assert.Throws<NotSupportedException>(() => {var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet); });
+
             var ex = Assert.Throws<NotSupportedException>(() =>
             {
                 var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet);

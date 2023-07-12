@@ -113,7 +113,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
 
             var cmd = server.GetCommand($"Select * from ID_{BulkTestsData.BulkDataTable}", con);
             var r = cmd.ExecuteReader();
-                    
+
             //make sure the values in the ID table match the ones we originally had in the pipeline
             while (r.Read())
                 if (!chiToSurnameDictionary[r["chi"].ToString()].Any())
@@ -184,7 +184,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         //now delete it!
         preDiscardedColumn2.DeleteInDatabase();
 
-        //now create a new dumper and watch it go crazy 
+        //now create a new dumper and watch it go crazy
         var dumper2 = new IdentifierDumper(tableInfoCreated);
 
         try
@@ -271,7 +271,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
             var notifier = new ToMemoryCheckNotifier(new AcceptAllCheckNotifier());
             dumper.Check(notifier);
 
-            Assert.IsTrue(notifier.Messages.Any(m =>
+            Assert.IsTrue(notifier.Messages.Any(m=>
                 m.Result == CheckResult.Warning
                 &&
                 m.Message.Contains("Table ID_BulkData was not found")));

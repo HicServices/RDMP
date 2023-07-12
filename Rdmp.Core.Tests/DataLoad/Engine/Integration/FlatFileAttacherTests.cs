@@ -109,6 +109,8 @@ public class FlatFileAttacherTests : DatabaseTests
             var ex = Assert.Throws<FlatFileLoadException>(() =>
                 attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
 
+            var ex = Assert.Throws<FlatFileLoadException>(()=>attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
+
             Assert.IsNotNull(ex.InnerException);
             StringAssert.StartsWith(
                 "Your separator does not appear in the headers line of your file (bob.csv) but the separator ',' does",
@@ -146,6 +148,7 @@ public class FlatFileAttacherTests : DatabaseTests
 
         File.Delete(filename);
     }
+
 
 
     [Test]
@@ -186,8 +189,8 @@ public class FlatFileAttacherTests : DatabaseTests
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
             Assert.IsTrue(r.Read());
-            Assert.AreEqual("Bob", r["name"]);
-            Assert.AreEqual(new DateTime(2001, 01, 13), r["name2"]);
+            Assert.AreEqual("Bob",r["name"]);
+            Assert.AreEqual(new DateTime(2001,01,13), r["name2"]);
 
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Franky", r["name"]);
@@ -402,21 +405,23 @@ public class FlatFileAttacherTests : DatabaseTests
         File.Delete(filename);
     }
 
-    [TestCase(DatabaseType.MySql, "27/01/2001", "en-GB", "en-GB")]
-    [TestCase(DatabaseType.MySql, "27/01/2001", "en-GB", "en-us")]
-    [TestCase(DatabaseType.MySql, "01/27/2001", "en-us", "en-us")]
-    [TestCase(DatabaseType.MySql, "01/27/2001", "en-us", "en-GB")]
-    [TestCase(DatabaseType.MicrosoftSQLServer, "27/01/2001", "en-GB", "en-GB")]
-    [TestCase(DatabaseType.MicrosoftSQLServer, "27/01/2001", "en-GB", "en-us")]
-    [TestCase(DatabaseType.MicrosoftSQLServer, "01/27/2001", "en-us", "en-us")]
-    [TestCase(DatabaseType.MicrosoftSQLServer, "01/27/2001", "en-us", "en-GB")]
-    [TestCase(DatabaseType.Oracle, "27/01/2001", "en-GB", "en-GB")]
-    [TestCase(DatabaseType.Oracle, "27/01/2001", "en-GB", "en-us")]
-    [TestCase(DatabaseType.Oracle, "01/27/2001", "en-us", "en-us")]
-    [TestCase(DatabaseType.Oracle, "01/27/2001", "en-us", "en-GB")]
-    public void Test_FlatFileAttacher_AmbiguousDates(DatabaseType type, string val, string attacherCulture,
-        string threadCulture)
-    {
+    [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-GB")]
+    [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-us")]
+    [TestCase(DatabaseType.MySql,"01/27/2001","en-us", "en-us")]
+    [TestCase(DatabaseType.MySql,"01/27/2001","en-us", "en-GB")]
+
+    [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB","en-GB")]
+    [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB","en-us")]
+    [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-us")]
+    [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-GB")]
+
+    [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-GB")]
+    [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-us")]
+    [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-us")]
+    [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-GB")]
+
+    public void Test_FlatFileAttacher_AmbiguousDates(DatabaseType type,string val,string attacherCulture, string threadCulture)
+    { 
         Thread.CurrentThread.CurrentCulture = new CultureInfo(threadCulture);
 
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");

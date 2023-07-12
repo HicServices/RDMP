@@ -154,7 +154,7 @@ internal class DublinCoreTests
     }
 
     /// <summary>
-    /// This test also appears in the Rdmp.UI.Tests project since it behaves differently in different runtime. 
+    /// This test also appears in the Rdmp.UI.Tests project since it behaves differently in different runtime.
     /// </summary>
     [Test]
     public void Test_DublinCore_WriteReadFile_NetCore()

@@ -24,6 +24,7 @@ public class LoadMetadataTests : DatabaseTests
 
         try
         {
+
             loadMetadata.LocationOfFlatFiles = TestContext.CurrentContext.TestDirectory;
             loadMetadata.SaveToDatabase();
 

@@ -42,7 +42,7 @@ internal class ConsoleGuiBigListBox<T>
 
     private Task _currentFilterTask;
     private object _taskCancellationLock = new();
-        
+
     private ListView _listView;
     private bool _changes;
     private TextField _mainInput;
@@ -168,8 +168,7 @@ internal class ConsoleGuiBigListBox<T>
 
             win.Add(searchLabel);
 
-            _mainInput = new TextField("")
-            {
+            _mainInput = new TextField ("") {
                 X = Pos.Right(searchLabel),
                 Y = Pos.Bottom(_listView),
                 Width = 30
@@ -180,7 +179,7 @@ internal class ConsoleGuiBigListBox<T>
 
             win.Add(_mainInput);
             _mainInput.SetFocus();
-                
+
             _mainInput.TextChanged += s =>
             {
                 // Don't update the UI while user is hammering away on the keyboard
@@ -231,8 +230,8 @@ internal class ConsoleGuiBigListBox<T>
                 var oldSelected = _listView.SelectedItem;
                 _listView.SetSource(_collection.ToList());
 
-                if (oldSelected < _collection.Count)
-                    _listView.SelectedItem = oldSelected;
+                if(oldSelected < _collection.Count)
+                    _listView.SelectedItem = oldSelected ;
 
                 _changes = false;
                 return true;
@@ -270,7 +269,7 @@ internal class ConsoleGuiBigListBox<T>
                 _collection = result;
                 _changes = true;
             }
-                    
+
         }, cts.Token);       
     }
 

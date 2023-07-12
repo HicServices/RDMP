@@ -174,8 +174,7 @@ internal class MarkdownCodeBlockTests
 
             #endregion
 
-            private void AddChildren(ExtractionConfiguration frozenExtractionConfigurationsNode,
-                DescendancyList descendancy)
+            private void AddChildren(ExtractionConfiguration frozenExtractionConfigurationsNode, DescendancyList descendancy)
             {
                 throw new NotImplementedException();
             }
@@ -304,5 +303,6 @@ internal class MarkdownCodeBlockTests
 
             #endregion
         }
+
     }
 }

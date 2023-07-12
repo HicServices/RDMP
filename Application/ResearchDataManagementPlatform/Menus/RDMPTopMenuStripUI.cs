@@ -102,7 +102,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var exeDir = UsefulStuff.GetExecutableDirectory();
         AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
 
-        // also add yaml files from wherever they got their original yaml file 
+        // also add yaml files from wherever they got their original yaml file
         if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory?.FullName))
         {
             AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
@@ -214,6 +214,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void openExeDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
     {
+
         try
         {
             UsefulStuff.ShowPathInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
@@ -242,7 +243,6 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         report.GenerateReport(Activator.RepositoryLocator.CatalogueRepository.CommentStore,
             new PopupChecksUI("Generating class summaries", false),
             Activator.CoreIconProvider,
-            Activator.RepositoryLocator.CatalogueRepository.MEF,
             true);
     }
 
@@ -303,6 +303,8 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             Activator.GlobalErrorCheckNotifier.OnCheckPerformed(
                 new CheckEventArgs("Failed to BuildSwitchInstanceMenuItems", CheckResult.Fail, ex));
         }
+
+        launchAnotherInstanceToolStripMenuItem.ToolTipText = "Start another copy of the RDMP process targetting the same (or another) RDMP platform database";
 
         launchAnotherInstanceToolStripMenuItem.ToolTipText =
             "Start another copy of the RDMP process targetting the same (or another) RDMP platform database";
@@ -371,6 +373,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
                 _windowManager.Navigation.Resume();
             }
+
         }
 
 
@@ -482,8 +485,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var file = new FileInfo(Path.GetTempFileName());
-        File.WriteAllLines(file.FullName,
-            Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t => t.FullName));
+        File.WriteAllLines(file.FullName, Rdmp.Core.Repositories.MEF.GetAllTypes().Select(t=>t.FullName));
         UsefulStuff.ShowPathInWindowsExplorer(file);
     }
 
@@ -568,7 +570,10 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void terminateProcessToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (Activator.YesNo("Terminate the process without saving?", "Terminate")) Process.GetCurrentProcess().Kill();
+        if(Activator.YesNo("Terminate the process without saving?","Terminate"))
+        {
+            Process.GetCurrentProcess().Kill();
+        }
     }
 
     private void findMultipleToolStripMenuItem_Click(object sender, EventArgs e)

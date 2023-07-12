@@ -55,9 +55,8 @@ public class ExtractionRunner : ManyRunner
 
     protected override void Initialize()
     {
-        _configuration =
-            GetObjectFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,
-                _options.ExtractionConfiguration);
+
+        _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,_options.ExtractionConfiguration);
         _project = _configuration.Project;
         _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
 
@@ -95,10 +94,8 @@ public class ExtractionRunner : ManyRunner
             var extractDatasetCommand = ExtractCommandCollectionFactory.Create(RepositoryLocator, sds);
             commands.Add(extractDatasetCommand);
 
-            lock (_oLock)
-            {
-                ExtractCommands.Add(sds, extractDatasetCommand);
-            }
+            lock(_oLock)
+                ExtractCommands.Add(sds,extractDatasetCommand);
         }
 
         return commands.ToArray();
@@ -112,9 +109,9 @@ public class ExtractionRunner : ManyRunner
 
         var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, dataLoadInfo);
         var fork =
-            datasetCommand != null
-                ? new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand))
-                : new ForkDataLoadEventListener(logging, listener);
+            datasetCommand != null ?
+                new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand)):
+                new ForkDataLoadEventListener(logging, listener);
 
         if(runnable is ExtractGlobalsCommand globalCommand)
         {
@@ -203,6 +200,7 @@ public class ExtractionRunner : ManyRunner
 
                 return sds == null ? null : ExtractCommands[sds].State;
             }
+        }
 
         return null;
     }

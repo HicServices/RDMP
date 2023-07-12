@@ -26,7 +26,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace ResearchDataManagementPlatform.WindowManagement;
 
 /// <summary>
-/// Translates Controls into docked tabs (DockContent).  Provides overloads for the two main control Types IRDMPSingleDatabaseObjectControl and 
+/// Translates Controls into docked tabs (DockContent).  Provides overloads for the two main control Types IRDMPSingleDatabaseObjectControl and
 /// IObjectCollectionControl (for <see cref="RDMPCollectionUI"/> see <see cref="WindowManager"/>).
 /// </summary>
 public class WindowFactory
@@ -57,8 +57,7 @@ public class WindowFactory
         return content;
     }
 
-    public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,
-        IRDMPSingleDatabaseObjectControl control, Image<Rgba32> image, IMapsDirectlyToDatabaseTable databaseObject)
+    public PersistableSingleDatabaseObjectDockContent Create(IActivateItems activator, RefreshBus refreshBus,IRDMPSingleDatabaseObjectControl control, Image<Rgba32> image, IMapsDirectlyToDatabaseTable databaseObject)
     {
         var content = new PersistableSingleDatabaseObjectDockContent(control, databaseObject, refreshBus);
         _windowManager.AddWindow(content);
@@ -147,7 +146,7 @@ public class WindowFactory
 
             //register the event handler
             activator.RefreshBus.AfterPublish += Handler;
-                
+
         }
     }
 }

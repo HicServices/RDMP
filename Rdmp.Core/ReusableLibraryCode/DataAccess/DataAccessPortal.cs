@@ -26,30 +26,30 @@ public static class DataAccessPortal
         return _instance;
     }
 
-    public static DiscoveredServer ExpectDistinctServer(IDataAccessPoint[] collection, DataAccessContext context,
-        bool setInitialDatabase) =>
-        GetServer(GetDistinct(collection, context, setInitialDatabase), context, setInitialDatabase);
+    private DataAccessPortal()
+    {
+
+    }
 
     private static DiscoveredServer GetServer(IDataAccessPoint dataAccessPoint, DataAccessContext context,
         bool setInitialDatabase)
     {
         var credentials = dataAccessPoint.GetCredentialsIfExists(context);
 
-        if (string.IsNullOrWhiteSpace(dataAccessPoint.Server))
+        if(string.IsNullOrWhiteSpace(dataAccessPoint.Server))
             throw new NullReferenceException(
                 $"Could not get connection string because Server was null on dataAccessPoint '{dataAccessPoint}'");
 
         string dbName = null;
 
-        if (setInitialDatabase)
-            if (!string.IsNullOrWhiteSpace(dataAccessPoint.Database))
+        if(setInitialDatabase)
+            if(!string.IsNullOrWhiteSpace(dataAccessPoint.Database))
                 dbName = dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database);
             else
                 throw new Exception(
                     $"Could not get server with setInitialDatabase=true because no Database was set on IDataAccessPoint {dataAccessPoint}");
 
-        var server = new DiscoveredServer(dataAccessPoint.Server, dbName, dataAccessPoint.DatabaseType,
-            credentials?.Username, credentials?.GetDecryptedPassword());
+        var server = new DiscoveredServer(dataAccessPoint.Server,dbName,dataAccessPoint.DatabaseType,credentials?.Username, credentials?.GetDecryptedPassword());
 
         return server;
     }
@@ -119,9 +119,11 @@ public static class DataAccessPortal
                     $"IDataAccessPoint collection could not agree on a single Password to use to access the data under context {context} (Servers were {string.Join($",{Environment.NewLine}", collection.Select(c => $"{c} = {c.Database} - {c.DatabaseType}"))})");
 
 
+
         ///////////////////////////////////////////////////////////////////////////////
 
         //the bit that actually matters:
         return first;
+
     }
 }

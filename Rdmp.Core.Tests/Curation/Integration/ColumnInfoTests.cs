@@ -15,6 +15,9 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 internal class ColumnInfoTests : DatabaseTests
 {
+
+
+
     [Test]
     public void CreateNewColumnInfoInDatabase_NewColumns_NewColumnsAreEqualAfterSave()
     {
@@ -41,6 +44,7 @@ internal class ColumnInfoTests : DatabaseTests
             Assert.AreEqual(child.Status, childAfter.Status);
             Assert.AreEqual(child.RegexPattern, childAfter.RegexPattern);
             Assert.AreEqual(child.ValidationRules, childAfter.ValidationRules);
+
         }
         finally
         {
@@ -56,7 +60,7 @@ internal class ColumnInfoTests : DatabaseTests
 
         try
         {
-            var ci = new ColumnInfo(CatalogueRepository, "MyAwesomeColumn", "varchar(1000)", parent);
+            var ci = new ColumnInfo(CatalogueRepository, "MyAwesomeColumn","varchar(1000)", parent);
 
             try
             {

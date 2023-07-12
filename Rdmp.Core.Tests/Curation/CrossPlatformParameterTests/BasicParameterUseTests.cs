@@ -55,7 +55,7 @@ public class BasicParameterUseTests : DatabaseTests
             var tbl = db.ExpectTable(tableName);
 
             var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            importer.DoImport(out var ti, out var ci);
+            importer.DoImport(out var ti,out var ci);
 
             var engineer = new ForwardEngineerCatalogue(ti, ci);
             engineer.ExecuteForwardEngineering(out var cata, out var cis, out var ei);

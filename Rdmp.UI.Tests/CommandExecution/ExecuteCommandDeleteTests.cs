@@ -67,11 +67,12 @@ internal class ExecuteCommandDeleteTests : UITests
     }
 
 
-    [Test]
-    [UITimeout(50000)]
+    [Test, UITimeout(50000)]
     public void Test_Delete2RootContainers_IsImpossible()
     {
         var container1 = WhenIHaveA<CohortAggregateContainer>();
+
+        var container2= WhenIHaveA<CohortAggregateContainer>();
 
         var cmd = new ExecuteCommandDelete(ItemActivator, new IDeleteable[]{container1,container2});
 
@@ -82,8 +83,7 @@ internal class ExecuteCommandDeleteTests : UITests
     }
 
 
-    [Test]
-    [UITimeout(50000)]
+    [Test, UITimeout(50000)]
     public void Test_DeleteNonRootContainer_Possible()
     {
         var container = WhenIHaveA<CohortAggregateContainer>();

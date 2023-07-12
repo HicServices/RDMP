@@ -13,6 +13,8 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
 
 public class MicrosoftAggregateBuilderTests : AggregateBuilderTestsBase
 {
+
+
     [Test]
     public void TestAggregateBuilding_NoConfigurationOneDimension()
     {

@@ -111,6 +111,7 @@ public class ExtractionInformationTests : DatabaseTests
 
         try
         {
+
             //define extraction information
             //change some values and then save it
             extractInfo = new ExtractionInformation(CatalogueRepository, cataItem, columnInfo, "dave")

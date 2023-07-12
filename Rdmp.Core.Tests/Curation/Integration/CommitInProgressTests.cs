@@ -43,7 +43,7 @@ public class CommitInProgressTests : DatabaseTests
 
     /// <summary>
     /// Tests that when there is a <see cref="CommitInProgress"/> on object(s) e.g. <see cref="Catalogue"/>
-    /// that uses transactions.  Cancelling the <see cref="CommitInProgress"/> will leave everything back 
+    /// that uses transactions.  Cancelling the <see cref="CommitInProgress"/> will leave everything back
     /// how it was
     /// </summary>
     [Test]

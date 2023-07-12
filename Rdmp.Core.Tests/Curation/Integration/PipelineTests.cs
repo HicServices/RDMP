@@ -30,6 +30,8 @@ public class PipelineTests : DatabaseTests
             var pipelineComponent =
                 new PipelineComponent(CatalogueRepository, pipeline, typeof(BasicAnonymisationEngine), 0);
 
+            var pipelineComponent = new PipelineComponent(CatalogueRepository, pipeline, typeof (BasicAnonymisationEngine), 0);
+
             try
             {
                 Assert.AreEqual(pipelineComponent.Class, typeof(BasicAnonymisationEngine).FullName);
@@ -55,6 +57,7 @@ public class PipelineTests : DatabaseTests
                 }
                 finally
                 {
+
                     argument1.DeleteInDatabase();
                     argument2.DeleteInDatabase();
                 }

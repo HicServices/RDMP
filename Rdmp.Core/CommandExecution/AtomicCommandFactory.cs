@@ -296,7 +296,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             //yield return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator,ac);
         }
 
-        if (Is(o, out IContainer container))
+        if(Is(o,out  IContainer container))
         {
             var targetOperation = container.Operation == FilterContainerOperation.AND ? "OR" : "AND";
             yield return new ExecuteCommandSet(_activator,container,nameof(IContainer.Operation),targetOperation){OverrideCommandName = $"Set Operation to {targetOperation}" };
@@ -309,7 +309,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.Aggregate);
         }
 
-        if (Is(o, out AggregatesNode an))
+        if(Is(o,out AggregatesNode an))
             yield return new ExecuteCommandAddNewAggregateGraph(_activator, an.Catalogue);
 
         if (Is(o, out AllANOTablesNode _))
@@ -595,7 +595,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandNewObject(_activator,()=>new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", ti)){OverrideCommandName = "Add New ColumnInfo" };
         }
 
-        if (Is(o, out ColumnInfo colInfo))
+        if(Is(o,out ColumnInfo colInfo))
         {
             yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, colInfo) { SuggestedCategory = View };
             yield return new ExecuteCommandViewData(_activator, ViewType.Aggregate, colInfo)
@@ -651,6 +651,10 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out ExtractionProgress progress))
             yield return new ExecuteCommandResetExtractionProgress(_activator, progress);
+        }
+
+        if(Is(o, out ExtractionConfiguration ec))
+        {
 
         if (Is(o, out ExtractionConfiguration ec))
         {
@@ -873,8 +877,11 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandDisableOrEnable(_activator, disable);
 
         // If the root object is deletable offer deleting
-        if (Is(o, out IDeleteable deletable))
-            yield return new ExecuteCommandDelete(_activator, deletable) { SuggestedShortcut = "Delete" };
+        if(Is(o,out IDeleteable deletable))
+            yield return new ExecuteCommandDelete(_activator,deletable){SuggestedShortcut="Delete" };
+
+        if(Is(o, out ReferenceOtherObjectDatabaseEntity reference))
+            yield return new ExecuteCommandShowRelatedObject(_activator,reference);
 
         if (Is(o, out ReferenceOtherObjectDatabaseEntity reference))
             yield return new ExecuteCommandShowRelatedObject(_activator, reference);

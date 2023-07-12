@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+using Rdmp.Core.Repositories;
 using Tests.Common.Helpers;
 using Tests.Common.Scenarios;
 
@@ -22,11 +23,11 @@ public class EndToEndDLECacheTest : TestsRequiringADle
     [Test]
     public void RunEndToEndDLECacheTest()
     {
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         const int timeoutInMilliseconds = 120000;
-            
+
         var lmd = TestLoadMetadata;
 
         var lp = new LoadProgress(CatalogueRepository,lmd)
@@ -63,7 +64,7 @@ public class EndToEndDLECacheTest : TestsRequiringADle
         var csvFile = CreateFileInForLoading("bob.csv", 10, new Random(5000));
 
         //and move it to the cache and give it a date in the range we expect for the cached data
-        csvFile.MoveTo(Path.Combine(LoadDirectory.Cache.FullName, "2001-01-09.csv"));
+        csvFile.MoveTo(Path.Combine(LoadDirectory.Cache.FullName,"2001-01-09.csv"));
 
         RunDLE(timeoutInMilliseconds);
 
@@ -76,7 +77,7 @@ public class EndToEndDLECacheTest : TestsRequiringADle
         Assert.AreEqual(0, LoadDirectory.Cache.GetFiles().Length);
         Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Length);
         Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Length);
-            
+
         var archiveFile = LoadDirectory.ForArchiving.GetFiles()[0];
         Assert.AreEqual(".zip", archiveFile.Extension);
 

@@ -43,20 +43,8 @@ public class UITests : UnitTests
     /// </summary>
     private TestActivateItems InitializeItemActivator()
     {
-        _itemActivator = new TestActivateItems(this, Repository)
-        {
-            RepositoryLocator =
-            {
-                CatalogueRepository =
-                {
-                    MEF = MEF
-                }
-            }
-        };
-
-        //if mef was loaded for this test then this is supported otherwise not
-        if (MEF != null)
-            _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
+        _itemActivator = new TestActivateItems(this,Repository);
+        _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
         return _itemActivator;
     }
 
@@ -372,20 +360,17 @@ public class UITests : UnitTests
     /// <param name="action"></param>
     protected void ForEachUI(Action<IRDMPSingleDatabaseObjectControl> action)
     {
-        SetupMEF();
-
         var types = typeof(Catalogue).Assembly.GetTypes()
             .Where(t => t != null && typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
             .ToArray();
 
         var uiTypes = typeof(CatalogueUI).Assembly.GetTypes()
-            .Where(t => t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t)
-                                  && !t.IsAbstract && !t.IsInterface
-                                  && t.BaseType != null
-                                  && t.BaseType.BaseType != null
-                                  && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
+            .Where(t=>t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t)
+                                && !t.IsAbstract && !t.IsInterface
+                                && t.BaseType?.BaseType != null
+                                && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
 
-        var methods = typeof(UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
         var objectsToTest = types
@@ -413,10 +398,30 @@ public class UITests : UnitTests
 
             try
             {
-                ui = (IRDMPSingleDatabaseObjectControl)genericAndLaunch.Invoke(this, new object[] { o, true });
+                //todo
+                var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 && m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
 
-                if (ui is IDisposable d)
-                    d.Dispose();
+                //ensure that the method supports the Type
+                var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
+
+                IRDMPSingleDatabaseObjectControl ui;
+
+                try
+                {
+                    ui = (IRDMPSingleDatabaseObjectControl) genericAndLaunch.Invoke(this,new object[]{o,true});
+
+                    if(ui is IDisposable d)
+                        d.Dispose();
+                }
+                catch(Exception ex)
+                {
+                    throw new Exception(
+                        $"Failed to construct '{uiType}'.  Code to reproduce is:{Environment.NewLine}{ShowCode(o.GetType(), uiType)}",ex);
+                }
+
+
+                action(ui);
+                ClearResults();
             }
             catch (Exception ex)
             {

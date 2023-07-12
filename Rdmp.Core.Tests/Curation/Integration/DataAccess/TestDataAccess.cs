@@ -26,6 +26,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess;
 
 public class TestDataAccess : DatabaseTests
 {
+
     #region Distinct Connection String (from Collection tests - Failing)
 
     [Test]
@@ -216,7 +217,7 @@ public class TestDataAccess : DatabaseTests
             t.SaveToDatabase();
 
             //t has no credentials
-            var server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
+            var server = DataAccessPortal.GetInstance().ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
             Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
             Assert.AreEqual("fish", ((SqlConnectionStringBuilder)server.Builder).DataSource);
@@ -258,7 +259,7 @@ public class TestDataAccess : DatabaseTests
     }
 
 
-    internal class TestAccessPoint : IDataAccessPoint, IDataAccessCredentials
+    internal class TestAccessPoint:IDataAccessPoint,IDataAccessCredentials
     {
         public string Server { get; set; }
         public string Database { get; set; }

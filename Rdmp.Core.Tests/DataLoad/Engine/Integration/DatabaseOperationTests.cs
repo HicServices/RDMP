@@ -69,13 +69,13 @@ internal class DatabaseOperationTests : DatabaseTests
             Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(
                 $"{testLiveDatabaseName}_RAW").Exists());
 
-            //now create a catalogue and wire it SetUp to the table TEST on the test database server 
+            //now create a catalogue and wire it SetUp to the table TEST on the test database server
             var cata = SetupATestCatalogue(builder, testLiveDatabaseName, "Table_1");
 
             //now clone the catalogue data structures to MachineName
             foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
                 cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo, LoadBubble.Raw);
-                
+
             Assert.IsTrue(raw.Exists());
             Assert.IsTrue(raw.ExpectTable("Table_1").Exists());
         }
@@ -90,7 +90,7 @@ internal class DatabaseOperationTests : DatabaseTests
                 }
                 catch (Exception e)
                 {
-                    //always clean SetUp everything 
+                    //always clean SetUp everything
                     Console.WriteLine(e);
                 }
         }
@@ -114,7 +114,7 @@ internal class DatabaseOperationTests : DatabaseTests
         //and the TableInfo
         toCleanUp.Push(tableInfo);
 
-        //for each column we will add a new one to the 
+        //for each column we will add a new one to the
         foreach (var col in columnInfos)
         {
             //create it with the same name

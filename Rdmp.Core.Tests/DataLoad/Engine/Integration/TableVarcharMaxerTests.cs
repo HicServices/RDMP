@@ -34,8 +34,8 @@ public class TableVarcharMaxerTests : DatabaseTests
 
         var tbl = db.CreateTable("Fish", new[]
         {
-            new DatabaseColumnRequest("Dave", new DatabaseTypeRequest(typeof(string), 100)),
-            new DatabaseColumnRequest("Frank", new DatabaseTypeRequest(typeof(int)))
+            new DatabaseColumnRequest("Dave",new DatabaseTypeRequest(typeof(string),100)),
+            new DatabaseColumnRequest("Frank",new DatabaseTypeRequest(typeof(int)))
         });
 
         Import(tbl, out var ti, out var cols);
@@ -50,7 +50,7 @@ public class TableVarcharMaxerTests : DatabaseTests
         maxer.Initialize(db,LoadStage.AdjustRaw);
         maxer.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
 
-        var job = Mock.Of<IDataLoadJob>(x => 
+        var job = Mock.Of<IDataLoadJob>(x =>
             x.RegularTablesToLoad==new List<ITableInfo> {ti} &&
             x.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
 
@@ -83,8 +83,8 @@ public class TableVarcharMaxerTests : DatabaseTests
 
         var tbl = db.CreateTable("Fi ; '`sh", new[]
         {
-            new DatabaseColumnRequest("Da'   ,,;ve", new DatabaseTypeRequest(typeof(string), 100)),
-            new DatabaseColumnRequest("Frrrrr ##' ank", new DatabaseTypeRequest(typeof(int)))
+            new DatabaseColumnRequest("Da'   ,,;ve",new DatabaseTypeRequest(typeof(string),100)),
+            new DatabaseColumnRequest("Frrrrr ##' ank",new DatabaseTypeRequest(typeof(int)))
         });
 
         Import(tbl, out var ti, out var cols);

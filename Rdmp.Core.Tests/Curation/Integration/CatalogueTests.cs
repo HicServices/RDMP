@@ -450,7 +450,9 @@ public class CatalogueTests : UnitTests
                 ci1_2.SetColumnInfo(c2);
                 ci2_1.SetColumnInfo(c2);
                 ci2_2.SetColumnInfo(c1);
+
             }
+
 
 
             var catas = t.GetAllRelatedCatalogues();
@@ -529,7 +531,7 @@ public class CatalogueTests : UnitTests
 
 
     /// <summary>
-    /// Tests when you have 
+    /// Tests when you have
     /// \
     /// \ somefolder
     ///   +cata1

@@ -201,6 +201,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
                     consoleOutput.Insert(0, line);
                     Application.MainLoop.Invoke(() => _results.SetNeedsDisplay());
                 }
+
             }
         });
     }

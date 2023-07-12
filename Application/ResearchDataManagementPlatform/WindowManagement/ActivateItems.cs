@@ -87,7 +87,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public RefreshBus RefreshBus { get; }
 
     public IArrangeWindows WindowArranger { get; }
-        
+
     public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
     {
         if (databaseEntity is DatabaseEntity de)
@@ -181,14 +181,12 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
                 break;
         }
 
-        c?.SetItemActivator(this);
-
-        var content = WindowFactory.Create(this, singleControlForm, name, null);
+        var content = WindowFactory.Create(this,singleControlForm,name , null);
 
         if (asDocument)
             content.Show(_mainDockPanel, DockState.Document);
         else
-            content.Show(_mainDockPanel, new Rectangle(0, 0, width, height));
+            content.Show(_mainDockPanel,new Rectangle(0,0,width,height));
 
         return content;
     }
@@ -289,8 +287,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
     }
 
-    public string GetDocumentation(Type type) =>
-        RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
+    public string GetDocumentation(Type type)
+    {
+        return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
+    }
 
     public string CurrentDirectory => Environment.CurrentDirectory;
 
@@ -342,8 +342,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public T Activate<T, T2>(T2 databaseObject)
         where T : RDMPSingleDatabaseObjectControl<T2>, new()
-        where T2 : DatabaseEntity =>
-        Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
+        where T2 : DatabaseEntity
+    {
+        return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
+    }
 
     public T Activate<T>(IPersistableObjectCollection collection)
         where T : Control, IObjectCollectionControl, new()
@@ -434,7 +436,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         switch (c)
         {
             //it has a database object so call SetDatabaseObject
-            //if we get here then Instruction wasn't for a 
+            //if we get here then Instruction wasn't for a
             case IObjectCollectionControl uiCollection:
                 return Activate(uiCollection, instruction.ObjectCollection);
             case IRDMPSingleDatabaseObjectControl uiInstance:
@@ -615,8 +617,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     }
 
 
-    public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args,
-        IMapsDirectlyToDatabaseTable[] availableObjects)
+    public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
     {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
@@ -910,7 +911,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
-            _mainDockPanel.Invoke(() => SelectAnythingThen(args, callback));
+            _mainDockPanel.Invoke(() => SelectAnythingThen(args,callback));
             return;
         }
 

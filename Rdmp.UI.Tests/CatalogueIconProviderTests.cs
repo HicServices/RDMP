@@ -33,7 +33,7 @@ internal class CatalogueIconProviderTests: UITests
     public void CatalogueIconProvider_HasImage_AllObjectsHave()
     {
         var objectCount = 0;
-        var provider = new DataExportIconProvider(RepositoryLocator, null);
+        var provider = new DataExportIconProvider(RepositoryLocator,null);
 
         foreach (var obj in WhenIHaveAll())
         {
@@ -43,15 +43,14 @@ internal class CatalogueIconProviderTests: UITests
             {
                 d.IsDisabled = true;
 
-                Assert.IsTrue(IsBlackAndWhite(provider.GetImage(obj, OverlayKind.Add)),
-                    $"Grayscaling failed for Object of Type '{obj.GetType().Name}' did not have an image");
+                Assert.IsTrue(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Grayscaling failed for Object of Type '{obj.GetType().Name}' did not have an image");
 
                 d.IsDisabled = false;
                 Assert.IsFalse(IsBlackAndWhite(provider.GetImage(obj, OverlayKind.Add)),
                     $"Enabled Object of Type '{obj.GetType().Name}' was unexpectedly Grayscale");
             }
 
-            Assert.IsTrue(provider.HasIcon(obj), $"Object of Type '{obj.GetType().Name}' did not have an image");
+            Assert.IsTrue(provider.HasIcon(obj),$"Object of Type '{obj.GetType().Name}' did not have an image");
             objectCount++;
         }
 

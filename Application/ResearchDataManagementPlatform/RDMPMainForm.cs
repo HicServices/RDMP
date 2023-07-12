@@ -33,7 +33,7 @@ namespace ResearchDataManagementPlatform;
 /// <summary>
 /// Main entry point into the RDMP software.  Hosts all tab collections and document windows for all RDMP tasks.  See CatalogueCollectionUI , DataExportCollectionUI ,
 ///  TableInfoCollectionUI , LoadMetadataCollectionUI and CohortIdentificationCollectionUI
-/// See 
+/// See
 /// </summary>
 public partial class RDMPMainForm : RDMPForm
 {
@@ -123,7 +123,7 @@ public partial class RDMPMainForm : RDMPForm
                 instanceDescription =
                     $" - {connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name}";
             }
-            if (database != null) 
+            if (database != null)
                 _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";
         }
 
@@ -166,8 +166,7 @@ public partial class RDMPMainForm : RDMPForm
         Loading = false;
     }
 
-    public override string Text
-    {
+    public override string Text {
         get => base.Text;
         set => base.Text = $"{value} v{_version} {_connectedTo}".Trim();
     }
@@ -207,7 +206,7 @@ public partial class RDMPMainForm : RDMPForm
         var uniEncoding = new UnicodeEncoding();
 
         // You might not want to use the outer using statement that I have
-        // I wasn't sure how long you would need the MemoryStream object    
+        // I wasn't sure how long you would need the MemoryStream object
         using var ms = new MemoryStream();
         using var sw = new StreamWriter(ms, uniEncoding);
         sw.Write(target.LayoutData);

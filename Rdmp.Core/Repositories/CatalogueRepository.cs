@@ -48,9 +48,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     public IJoinManager JoinManager { get; set; }
 
     /// <inheritdoc/>
-    public MEF MEF { get; set; }
-
-    /// <inheritdoc/>
     public CommentStore CommentStore { get; set; }
 
     /// <inheritdoc/>
@@ -80,7 +77,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         TableInfoCredentialsManager = new TableInfoCredentialsManager(this);
         JoinManager = new JoinManager(this);
         CohortContainerManager = new CohortContainerManager(this);
-        MEF = new MEF();
         FilterManager = new AggregateFilterManager(this);
         EncryptionManager = new PasswordEncryptionKeyLocation(this);
         PluginManager = new PluginManager(this);

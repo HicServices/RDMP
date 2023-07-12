@@ -50,7 +50,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
 
     private Type[] GetProcessTaskTypes()
     {
-        return BasicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().
+        return Repositories.MEF.GetAllTypes().
             Where(t=>
                 // must not be interface or abstract
                 !(t.IsInterface || t.IsAbstract) &&

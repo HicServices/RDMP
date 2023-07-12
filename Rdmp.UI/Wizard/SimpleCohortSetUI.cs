@@ -243,7 +243,7 @@ public partial class SimpleCohortSetUI : UserControl
 
         var aggregate = cmd.AggregateCreatedIfAny;
 
-        var filterOp = (FilterContainerOperation)ddAndOr.SelectedItem;
+        var filterOp = (FilterContainerOperation) ddAndOr.SelectedItem;
 
         IContainer filterContainer;
         if (aggregate.RootFilterContainer_ID != null)

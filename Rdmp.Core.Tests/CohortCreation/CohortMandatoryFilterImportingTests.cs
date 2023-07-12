@@ -49,8 +49,8 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
         try
         {
-            importedAggregate =
-                cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue, null);
+
+            importedAggregate = cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue,null);
 
             Assert.AreEqual(ChangeDescription.NoChanges, importedAggregate.HasLocalChanges().Evaluation);
 
@@ -71,6 +71,7 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
             Assert.AreEqual(filter.ID, importedFilters[0].ClonedFromExtractionFilter_ID);
             //the WHERE SQL of the filters should be the same
             Assert.AreEqual(filter.WhereSQL, importedFilters[0].WhereSQL);
+
         }
         finally
         {
@@ -112,7 +113,7 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
         AnyTableSqlParameter global = null;
 
         if (createAGlobalOverrideBeforeHand)
-        {    
+        {
             global = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,parameterSQL)
                 {
                     Value = "'At Least 1000 Dragons'"
@@ -212,9 +213,8 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
         try
         {
-            //import the Catalogue               
-            importedAggregate =
-                cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue, null);
+            //import the Catalogue
+            importedAggregate = cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue, null);
             var importedAggregateFilterContainer = importedAggregate.RootFilterContainer;
 
             //Must have a root container

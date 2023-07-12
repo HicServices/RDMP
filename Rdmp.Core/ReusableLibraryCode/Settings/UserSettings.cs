@@ -482,7 +482,7 @@ public static class UserSettings
         if (columnGuid == Guid.Empty)
             return;
 
-        SetColumnVisible(columnGuid.ToString("N"), visible);
+        SetColumnVisible(columnGuid.ToString("N"),visible);
     }
 
     public static void SetColumnVisible(string colIdentifier, bool visible)

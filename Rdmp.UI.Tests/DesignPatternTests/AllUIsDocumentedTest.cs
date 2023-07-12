@@ -65,7 +65,7 @@ public class AllUIsDocumentedTest : UnitTests
     private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)
     {
         SetupMEF();
-        foreach (var type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
+        foreach (var type in Core.Repositories.MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
         {
             if (type.Namespace == null)
                 continue;

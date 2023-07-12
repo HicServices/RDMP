@@ -10,7 +10,6 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks;
@@ -22,15 +21,12 @@ public class CheckEntireDataLoadProcess : ICheckable
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
-    private readonly MEF _mef;
     public ILoadMetadata LoadMetadata { get; set; }
 
-    public CheckEntireDataLoadProcess(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
-        HICLoadConfigurationFlags loadConfigurationFlags, MEF mef)
+    public CheckEntireDataLoadProcess(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
         _loadConfigurationFlags = loadConfigurationFlags;
-        _mef = mef;
         LoadMetadata = loadMetadata;
     }
 

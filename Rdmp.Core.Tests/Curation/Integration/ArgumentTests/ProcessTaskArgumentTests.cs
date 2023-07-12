@@ -198,6 +198,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
         }
         finally
         {
+
             lmd.DeleteInDatabase();
         }
     }

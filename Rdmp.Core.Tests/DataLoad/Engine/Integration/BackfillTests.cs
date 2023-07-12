@@ -22,6 +22,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class BackfillTests : FromToDatabaseTests
 {
+
     private ICatalogue _catalogue;
 
 
@@ -899,7 +900,7 @@ public class BackfillTests : FromToDatabaseTests
         using (var con = (SqlConnection)To.Server.GetConnection())
         {
             con.Open();
-            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})", con).ExecuteNonQuery();
+            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery();
         }
     }
 

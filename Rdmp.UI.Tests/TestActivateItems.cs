@@ -144,7 +144,12 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
 
     public string DescribeProblemIfAny(object model)
     {
-        return _problemProviders.Select(p => p.DescribeProblem(model)).SingleOrDefault(prob => prob != null);
+        return _problemProviders.Select(p => p.DescribeProblem(model)).SingleOrDefault(prob=>prob != null);
+    }
+
+    public string GetDocumentation(Type type)
+    {
+        return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
     }
 
     public string GetDocumentation(Type type) =>
@@ -188,6 +193,7 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
 
     public void ApplyTo(ToolStrip item)
     {
+
     }
 
     public bool ApplyThemeToMenus { get; set; }
@@ -276,7 +282,44 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
         throw new NotImplementedException();
     }
 
-    public IEnumerable<SessionCollectionUI> GetSessions() => throw new NotImplementedException();
+    public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override DirectoryInfo SelectDirectory(string prompt)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override FileInfo SelectFile(string prompt)
+    {
+        return SelectFile(prompt, null, null);
+    }
+
+    public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+    {
+        throw new NotImplementedException();
+    }
+    public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue,out object chosen)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialSelectionIfAny, string initialSearch)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<SessionCollectionUI> GetSessions()
+    {
+        throw new NotImplementedException();
+    }
 
     public override void ShowData(IViewSQLAndResultsCollection collection)
     {

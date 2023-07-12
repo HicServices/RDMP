@@ -442,17 +442,13 @@ public partial class DatabaseTests
     [OneTimeSetUp]
     protected virtual void OneTimeSetUp()
     {
-        //if it is the first time
-        if (_startup == null)
-        {
-            _startup = new Startup(RepositoryLocator);
+        // Only run the first time
+        if (_startup != null) return;
 
-            _startup.DatabaseFound += StartupOnDatabaseFound;
-            _startup.PluginPatcherFound += StartupOnPluginPatcherFound;
-            _startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
-        }
-
-        RepositoryLocator.CatalogueRepository.MEF.Setup(_startup.MEFSafeDirectoryCatalog);
+        _startup = new Startup(RepositoryLocator);
+        _startup.DatabaseFound += StartupOnDatabaseFound;
+        _startup.PluginPatcherFound += StartupOnPluginPatcherFound;
+        _startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
     }
 
     /// <summary>

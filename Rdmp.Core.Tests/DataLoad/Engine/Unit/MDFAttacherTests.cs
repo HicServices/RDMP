@@ -17,6 +17,7 @@ using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -124,12 +125,14 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(ldf, "fish");
 
             var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
-            var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
-                serverDatabasePath, null);
+            var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null);
 
 
             Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
             Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
+
+            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf", locations.CopyToLdf);
+            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.CopyToMdf);
 
             Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf",
                 locations.CopyToLdf);
@@ -168,9 +171,8 @@ public class MDFAttacherTests : DatabaseTests
             File.WriteAllText(ldf2, "fish");
 
             var serverDatabasePath = TestContext.CurrentContext.WorkDirectory;
-            Assert.Throws<MultipleMatchingFilesException>(() =>
-                new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
-                    serverDatabasePath, null));
+            Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null));
+
         }
         finally
         {
@@ -255,10 +257,13 @@ public class MDFAttacherTests : DatabaseTests
         }
     }
 
-    public class MyClass : IAttacher, ICheckable
+    public class MyClass:IAttacher,ICheckable
     {
-        public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken) =>
+        public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+        {
             throw new NotImplementedException();
+        }
+
 
 
         public void Check(ICheckNotifier notifier)
@@ -277,6 +282,7 @@ public class MDFAttacherTests : DatabaseTests
         }
 
         public static string GetDescription() => "Test class that does nothing";
+
 
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
@@ -316,7 +322,8 @@ public class MDFAttacherTests : DatabaseTests
 
         try
         {
-            var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
+
+            var attacher = MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
             Assert.IsNotNull(attacher);

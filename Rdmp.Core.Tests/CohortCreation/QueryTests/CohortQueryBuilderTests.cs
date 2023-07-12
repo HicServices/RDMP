@@ -111,7 +111,8 @@ FROM
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )"
-                    , cohortIdentificationConfiguration.ID))
+
+                    ,cohortIdentificationConfiguration.ID))
                 , CollapseWhitespace(builder.SQL));
         }
         finally
@@ -124,7 +125,7 @@ FROM
     [Test]
     public void TestOrdering_AggregateThenContainer()
     {
-        //set the order so that a configuration is in position 1 
+        //set the order so that a configuration is in position 1
         rootcontainer.AddChild(aggregate1, 1);
 
         //then a container in position 2
@@ -176,7 +177,7 @@ FROM
 		[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 	)
 
-)", cohortIdentificationConfiguration.ID))
+)",cohortIdentificationConfiguration.ID))
                 ,
                 CollapseWhitespace(builder.SQL));
         }
@@ -191,7 +192,7 @@ FROM
     [Test]
     public void TestOrdering_ContainerThenAggregate()
     {
-        //set the order so that a configuration is in position 1 
+        //set the order so that a configuration is in position 1
         rootcontainer.AddChild(aggregate1, 2);
 
         //then a container in position 2
@@ -203,7 +204,7 @@ FROM
         container1.AddChild(aggregate2, 1);
         container1.AddChild(aggregate3, 2);
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         try
         {
@@ -333,7 +334,7 @@ WHERE
 (
 /*hithere*/
 1=@abracadabra
-)", cohortIdentificationConfiguration.ID)),
+)",cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder2.SQL));
 
 
@@ -713,6 +714,7 @@ SET @bob='Boom!';
                     CollapseWhitespace(builder.SQL));
             else
                 Assert.AreEqual(
+
                     CollapseWhitespace(
                         string.Format(
                             @"DECLARE @bob AS varchar(10);
@@ -906,6 +908,7 @@ SET @bob_2='Boom!';
 )
 ", cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder.SQL));
+
         }
         finally
         {

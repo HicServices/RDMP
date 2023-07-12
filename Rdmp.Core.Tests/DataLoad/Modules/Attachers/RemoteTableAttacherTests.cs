@@ -73,7 +73,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
         RunAttachStageWithNormalJob(attacher, db);
     }
 
-    [TestCaseSource(typeof(All), nameof(All.DatabaseTypesWithBoolFlags))]
+    [TestCaseSource(typeof(All),nameof(All.DatabaseTypesWithBoolFlags))]
     public void TestRemoteTableAttacher_WithLoadProgress(DatabaseType dbType, bool mismatchProgress)
     {
         var db = GetCleanedServer(dbType);

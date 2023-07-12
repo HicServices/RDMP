@@ -113,10 +113,10 @@ public class ImportAndTestTests : DatabaseTests
             new AnyTableSqlParameter(CatalogueRepository, _function.TableInfoCreated, "DECLARE @fish as int");
         var checker = new ToMemoryCheckNotifier();
         _function.TableInfoCreated.Check(checker);
-
-        Assert.IsTrue(checker.Messages.Any(m => m.Result == CheckResult.Fail
-                                                &&
-                                                m.Message.Contains(expectedMessage)));
+            
+        Assert.IsTrue(checker.Messages.Any(m=>m.Result == CheckResult.Fail
+                                              &&
+                                              m.Message.Contains(expectedMessage)));
 
         var syncer = new TableInfoSynchronizer(_function.TableInfoCreated);
 

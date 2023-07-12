@@ -71,8 +71,8 @@ public class CohortTests : TestsRequiringACohort
                 {
                     var found = bitsTofind.Any();
 
-                    foreach (var s in bitsTofind)
-                        if (!m.ToLower().Contains(s.ToLower()))
+                    foreach(var s in bitsTofind)
+                        if(!m.ToLower().Contains(s.ToLower()))
                             found = false;
 
                     return found;

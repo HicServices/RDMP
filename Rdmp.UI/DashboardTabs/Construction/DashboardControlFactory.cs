@@ -26,8 +26,10 @@ public class DashboardControlFactory
         _startLocationForNewControls = startLocationForNewControls;
     }
 
-    public Type[] GetAvailableControlTypes() => _activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
-        .Where(IsCompatibleType).ToArray();
+    public Type[] GetAvailableControlTypes()
+    {
+        return Core.Repositories.MEF.GetAllTypes().Where(IsCompatibleType).ToArray();
+    }
 
     private bool IsCompatibleType(Type arg)
     {

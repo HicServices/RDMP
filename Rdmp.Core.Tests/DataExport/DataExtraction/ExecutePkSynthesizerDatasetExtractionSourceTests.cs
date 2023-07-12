@@ -28,7 +28,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
 {
     //C24D365B7C271E2C1BC884B5801C2961
     private Regex reghex = new(@"^HASHED: [A-F\d]{32}");
-        
+
     [SetUp]
     protected override void SetUp()
     {
@@ -199,6 +199,10 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
                 dt.Columns.Cast<DataColumn>().Where(col => pkColumnInfos.Contains(col.ColumnName)).ToArray();
 
         dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
+            
+        var tbl = Database.CreateTable(testTableName,
+            dt,
+            new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50))});
 
         var tbl = Database.CreateTable(testTableName,
             dt,
@@ -256,6 +260,8 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         extractionConfiguration.AddDatasetToConfiguration(extractableDataSet);
 
         foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental))
+        {
             extractionConfiguration.AddColumnToExtraction(extractableDataSet, ei);
+        }
     }
 }

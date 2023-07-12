@@ -47,7 +47,7 @@ public class ImportFilesDataProviderTests : DatabaseTests
 
         //it doesn't know what to load yet
         Assert.Throws<Exception>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
-            
+
         //now it does
         provider.DirectoryPath = sourceDir.FullName;
 

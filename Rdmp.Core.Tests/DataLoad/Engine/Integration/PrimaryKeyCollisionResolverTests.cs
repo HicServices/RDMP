@@ -39,7 +39,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             c3.SaveToDatabase();
 
             Assert.DoesNotThrow(() => mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet));
-            
+
         }
         finally
         {

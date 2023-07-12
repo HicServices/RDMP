@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -41,8 +42,8 @@ public class EndToEndCacheTest : DatabaseTests
     {
         base.SetUp();
 
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
         _LoadDirectory =
@@ -62,7 +63,7 @@ public class EndToEndCacheTest : DatabaseTests
         _lp = new LoadProgress(CatalogueRepository, _lmd);
         _cp = new CacheProgress(CatalogueRepository, _lp);
 
-        _lp.OriginDate = new DateTime(2001, 1, 1);
+        _lp.OriginDate = new DateTime(2001,1,1);
         _lp.SaveToDatabase();
 
         _testPipeline =
@@ -79,8 +80,8 @@ public class EndToEndCacheTest : DatabaseTests
     [Test]
     public void FireItUpManually()
     {
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         var cachingHost = new CachingHost(CatalogueRepository)
         {

@@ -620,7 +620,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var children = new HashSet<object>();
 
-        foreach (var doc in AllGovernanceDocuments.Where(d => d.GovernancePeriod_ID == governancePeriod.ID))
+        foreach (var doc in AllGovernanceDocuments.Where(d=>d.GovernancePeriod_ID == governancePeriod.ID))
             children.Add(doc);
 
         AddToDictionaries(children, descendancy);
@@ -704,10 +704,11 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         children.Add(OtherPipelinesNode);
         OtherPipelinesNode.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
-        AddToDictionaries(unknownPipelines, descendancy.Add(OtherPipelinesNode));
+        AddToDictionaries(unknownPipelines,descendancy.Add(OtherPipelinesNode));
 
         //it is the first standard use case
         AddToDictionaries(children, descendancy);
+
     }
 
     private IEnumerable<Pipeline> AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
@@ -753,8 +754,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(PipelineComponent pipelineComponent, DescendancyList descendancy)
     {
-        var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID)
-            .ToArray();
+        var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID).ToArray();
 
         var children = new HashSet<object>(components);
 
@@ -828,7 +828,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             AddChildren(c, descendancy.Add(c));
         }
-            
+
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
@@ -844,7 +844,10 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
 
         //add loads in folder
-        foreach (var lmd in folder.ChildObjects) AddChildren(lmd, descendancy.Add(lmd));
+        foreach(var lmd in folder.ChildObjects)
+        {
+            AddChildren(lmd, descendancy.Add(lmd));
+        }
 
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
@@ -979,8 +982,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         var args = AllProcessTasksArguments.Where(
             a => a.ProcessTask_ID == procesTask.ID).ToArray();
 
-        if (args.Any())
-            AddToDictionaries(new HashSet<object>(args), descendancy);
+        if(args.Any())
+            AddToDictionaries(new HashSet<object>(args),descendancy);
     }
 
     private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
@@ -1198,9 +1201,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
 
         if (ci.ColumnInfo_ID.HasValue && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
-            childObjects.Add(new LinkedColumnInfoNode(ci, col));
+            childObjects.Add(new LinkedColumnInfoNode(ci,col));
 
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+        AddToDictionaries(new HashSet<object>(childObjects),descendancy);
     }
 
     private void AddChildren(ExtractionInformation extractionInformation, DescendancyList descendancy)
@@ -1258,8 +1261,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //it has an associated query cache
         if (cic.QueryCachingServer_ID != null)
-            children.Add(new QueryCacheUsedByCohortIdentificationNode(cic,
-                AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
+            children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
 
         var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
         foreach (var p in parameters) children.Add(p);
@@ -1358,7 +1360,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         var databases =
             serverNode.Tables.GroupBy(
                     k => k.Database ?? TableInfoDatabaseNode.NullDatabaseNode, StringComparer.CurrentCultureIgnoreCase)
-                .Select(g => new TableInfoDatabaseNode(g.Key, serverNode, g));
+                .Select(g=> new TableInfoDatabaseNode(g.Key, serverNode, g));
 
         foreach (var db in databases)
         {
@@ -1391,7 +1393,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(TableInfo tableInfo, DescendancyList descendancy)
     {
         //add empty hashset
-        var children = new HashSet<object>();
+        var children =  new HashSet<object>();
 
         //if the table has an identifier dump listed
         if (tableInfo.IdentifierDumpServer_ID != null)
@@ -1467,8 +1469,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
     {
-        if (list.IsEmpty)
-            throw new ArgumentException("DescendancyList cannot be empty", nameof(list));
+        if(list.IsEmpty)
+            throw new ArgumentException("DescendancyList cannot be empty",nameof(list));
 
         //document that the last parent has these as children
         var parent = list.Last();
@@ -1478,7 +1480,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
         foreach (var o in children)
-            _descendancyDictionary.AddOrUpdate(o, list, (k, v) => HandleDescendancyCollision(k, v, list));
+            _descendancyDictionary.AddOrUpdate(o, list,(k,v)=> HandleDescendancyCollision(k,v,list));
 
 
         foreach (var masquerader in children.OfType<IMasqueradeAs>())
@@ -1493,6 +1495,7 @@ public class CatalogueChildProvider : ICoreChildProvider
                 AllMasqueraders[key].Add(masquerader);
             }
         }
+
     }
 
     private static DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute,

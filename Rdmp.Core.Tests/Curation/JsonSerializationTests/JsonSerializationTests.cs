@@ -52,6 +52,7 @@ public class JsonSerializationTests : DatabaseTests
     //todo null Catalogue test case
 }
 
+
 public class MySerializeableTestClass
 {
     public string Title { get; set; }

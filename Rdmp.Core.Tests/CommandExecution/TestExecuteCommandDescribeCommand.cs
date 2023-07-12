@@ -13,6 +13,7 @@ namespace Rdmp.Core.Tests.CommandExecution;
 
 internal class TestExecuteCommandDescribeCommand : CommandCliTests
 {
+
     /// <summary>
     /// Asserts that the help text <paramref name="forCommand"/> matches your <paramref name="expectedHelp"/> text
     /// </summary>

@@ -71,37 +71,11 @@ public class LookupTest : DatabaseTests
         finally
         {
             //cleanup
-            try
-            {
-                child.DeleteInDatabase();
-            }
-            catch (Exception)
-            {
-            }
+            try{child.DeleteInDatabase();}catch (Exception){}
+            try{child2.DeleteInDatabase();}catch (Exception){}
+            try{child3.DeleteInDatabase();}catch (Exception){}
+            try{parent.DeleteInDatabase();}catch (Exception){}
 
-            try
-            {
-                child2.DeleteInDatabase();
-            }
-            catch (Exception)
-            {
-            }
-
-            try
-            {
-                child3.DeleteInDatabase();
-            }
-            catch (Exception)
-            {
-            }
-
-            try
-            {
-                parent.DeleteInDatabase();
-            }
-            catch (Exception)
-            {
-            }
         }
     }
 

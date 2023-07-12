@@ -46,18 +46,17 @@ internal class DataAccessPortalCollectionTests
     {
         var collection = new DataAccessPointCollection(true);
 
-        var _dap = Substitute.For<IDataAccessPoint>();
-        _dap.Server = ("loco");
-        _dap.Database = ("B");
-        _dap.DatabaseType = (DatabaseType.Oracle);
+        collection.Add(Mock.Of<IDataAccessPoint>(m =>
+            m.Server == "loco" &&
+            m.Database == "B" &&
+            m.DatabaseType == DatabaseType.Oracle &&
+            m.GetQuerySyntaxHelper() == OracleQuerySyntaxHelper.Instance));
 
-        var _dap0 = Substitute.For<IDataAccessPoint>();
-        _dap0.Server = ("loco");
-        _dap0.Database = ("A");
-        _dap0.DatabaseType = (DatabaseType.Oracle);
-
-        collection.Add(_dap0);
-        collection.Add(_dap);
+        collection.Add(Mock.Of<IDataAccessPoint>(m =>
+            m.Server == "loco" &&
+            m.Database == "B" &&
+            m.DatabaseType == DatabaseType.Oracle &&
+            m.GetQuerySyntaxHelper() == OracleQuerySyntaxHelper.Instance));
 
         Assert.AreEqual(2, collection.Points.Count);
 

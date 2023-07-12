@@ -156,10 +156,7 @@ internal class CommandLineObjectPickerTests : UnitTests
     [TestCase(typeof(PickObjectByName))]
     public void Pickers_ShouldAllHaveValidExamples_MatchingRegex(Type pickerType)
     {
-        var mem = new MemoryDataExportRepository
-        {
-            MEF = MEF
-        };
+        var mem = new MemoryDataExportRepository();
 
         //create some objects that the examples can successfully reference
         new Catalogue(mem.CatalogueRepository, "mycata1"); //ID = 1
@@ -236,7 +233,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         var cata1 = WhenIHaveA<Catalogue>();
         var cata2 = WhenIHaveA<Catalogue>();
 
-        // c is short for Catalogue 
+        // c is short for Catalogue
         // so this would be the use case 'rdmp cmd list Catalogue' where user can instead write 'rdmp cmd list c'
         var picker = new CommandLineObjectPicker(new[] { $"c" }, GetActivator());
 

@@ -87,4 +87,6 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         d.CloseAndMarkComplete();
     }
+
+
 }

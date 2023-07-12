@@ -66,13 +66,12 @@ public class UserInterfaceStandardisationChecker
         typeof(RDMPMainForm)
     };
 
-    public void FindProblems(List<string> csFilesList, MEF mef)
+    public void FindProblems(List<string> csFilesList)
     {
         _csFilesList = csFilesList;
 
         //All node classes should have equality compare members so that tree expansion works properly
-        foreach (var nodeClass in mef.GetAllTypes()
-                     .Where(t => typeof(Node).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+        foreach (var nodeClass in MEF.GetAllTypes().Where(t => typeof(Node).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             if (nodeClass.Namespace == null || nodeClass.Namespace.StartsWith("System"))
                 continue;
@@ -105,8 +104,7 @@ public class UserInterfaceStandardisationChecker
         }
 
         //All Menus should correspond to a data class
-        foreach (var menuClass in mef.GetAllTypes().Where(t =>
-                     typeof(RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+        foreach (var menuClass in MEF.GetAllTypes().Where(t => typeof (RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             //the basic class from which all are inherited or a menu for FolderNode<X>
             if (menuClass == typeof(RDMPContextMenuStrip) || menuClass.Name.EndsWith("FolderMenu"))
@@ -142,7 +140,7 @@ public class UserInterfaceStandardisationChecker
             //expect something like this
             //public AutomationServerSlotsMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
             var expectedConstructorSignature = $"{menuClass.Name}(RDMPContextMenuStripArgs args,{expectedClassName}";
-            ConfirmFileHasText(menuClass, expectedConstructorSignature);
+            ConfirmFileHasText(menuClass,expectedConstructorSignature);
 
             var fields = menuClass.GetFields(
                 BindingFlags.NonPublic |
@@ -157,8 +155,7 @@ public class UserInterfaceStandardisationChecker
         }
 
         //Drag and drop / Activation - Execution Proposal system
-        foreach (var proposalClass in mef.GetAllTypes().Where(t =>
-                     typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+        foreach (var proposalClass in MEF.GetAllTypes().Where(t => typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             if (proposalClass.Namespace.Contains("Rdmp.UI.Tests.DesignPatternTests"))
                 continue;
@@ -180,11 +177,11 @@ public class UserInterfaceStandardisationChecker
         }
 
         //Make sure all user interface classes have the suffix UI
-        foreach(var uiType in mef.GetAllTypes().Where(t => 
+        foreach(var uiType in MEF.GetAllTypes().Where(t =>
                     typeof(RDMPUserControl).IsAssignableFrom(t)||typeof(RDMPForm).IsAssignableFrom(t)
                     && !t.IsAbstract && !t.IsInterface))
         {
-                
+
             if(!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))
             {
                 if (excusedUIClasses.Contains(uiType))
@@ -240,5 +237,6 @@ public class UserInterfaceStandardisationChecker
             if (hasText)
                 problems.Add($"File '{file}' contains unexpected text '{expectedString}'");
         }
+
     }
 }

@@ -83,4 +83,7 @@ public class ItemValidatorTest
 
         Assert.AreEqual("CHI check digit did not match", result.Message);
     }
+
+
+
 }

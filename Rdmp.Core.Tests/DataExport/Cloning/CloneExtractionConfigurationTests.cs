@@ -98,6 +98,8 @@ AND
                 var request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
                 request2.GenerateQueryBuilder();
 
+                Assert.AreEqual(request.QueryBuilder.SQL,request2.QueryBuilder.SQL);
+
                 Assert.AreEqual(request.QueryBuilder.SQL, request2.QueryBuilder.SQL);
             }
             finally
@@ -107,6 +109,7 @@ AND
         }
         finally
         {
+
             filter.DeleteInDatabase();
         }
     }

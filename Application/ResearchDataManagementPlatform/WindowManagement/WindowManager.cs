@@ -40,7 +40,7 @@ public class WindowManager
     private readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new();
     private readonly List<RDMPSingleControlTab>  _trackedWindows = new();
     private readonly List<DockContent> _trackedAdhocWindows = new();
-        
+
     public NavigationTrack<INavigation> Navigation { get; private set; }
     public event TabChangedHandler TabChanged;
 
@@ -156,14 +156,15 @@ public class WindowManager
 
         CollectionCreated?.Invoke(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
 
-        collection.CommonTreeFunctionality.Tree.SelectionChanged += (s, e) =>
+        collection.CommonTreeFunctionality.Tree.SelectionChanged += (s,e)=>
         {
-            if (collection.CommonTreeFunctionality.Tree.SelectedObject is IMapsDirectlyToDatabaseTable im)
+            if(collection.CommonTreeFunctionality.Tree.SelectedObject is IMapsDirectlyToDatabaseTable im)
                 Navigation.Append(new CollectionNavigation(im));
         };
 
         return toReturn;
     }
+
 
 
     private PersistableToolboxDockContent Show(RDMPCollection collection, RDMPCollectionUI control, string label,
@@ -291,7 +292,7 @@ public class WindowManager
         if (_home == null)
         {
             _home = new HomeUI(ActivateItems);
-                
+
             _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", Image.Load<Rgba32>(FamFamFamIcons.application_home));
             _homeContent.Closed += (s, e) => _home = null;
             _homeContent.Show(_mainDockPanel, DockState.Document);

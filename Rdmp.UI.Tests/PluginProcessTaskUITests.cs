@@ -11,19 +11,13 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 
 namespace Rdmp.UI.Tests;
 
 internal class PluginProcessTaskUITests : UITests
 {
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
 
     [Test]
     [UITimeout(20000)]
@@ -57,8 +51,7 @@ internal class PluginProcessTaskUITests : UITests
         AssertNoErrors(ExpectedErrorType.Any);
     }
 
-    [Test]
-    [UITimeout(20000)]
+    [Test,UITimeout(20000)]
     public void PluginProcessTaskUI_InvalidParameter_Date()
     {
         MEF.AddTypeToCatalogForTesting(typeof(OmgDates));

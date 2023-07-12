@@ -20,6 +20,7 @@ namespace Rdmp.Core.Tests.DataExport;
 [Category("Unit")]
 public class ProjectCohortIdentificationConfigurationAssociationTests
 {
+
     [Test]
     public void TestOrphanCic()
     {

@@ -43,7 +43,7 @@ internal class AggregateEditorUITests:UITests
 
         //create a new dimension to the config in the database
         _=new AggregateDimension(Repository, ei, config);
-            
+
         //publish a refresh
         Publish(config);
 
@@ -67,7 +67,7 @@ internal class AggregateEditorUITests:UITests
     public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
     {
         var config = GetAggregateConfigurationWithNoDimensions(out var dateEi,out var otherEi);
-            
+
         var dimDate = new AggregateDimension(Repository, dateEi, config);
         var dimOther = new AggregateDimension(Repository, otherEi, config);
         config.ClearAllInjections();
@@ -104,7 +104,7 @@ internal class AggregateEditorUITests:UITests
         //these commands should be impossible
         var cmd = new ExecuteCommandAddNewAggregateGraph(ItemActivator, cata);
         Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.Contains("no extractable columns", cmd.ReasonCommandImpossible);
+        StringAssert.Contains("no extractable columns",cmd.ReasonCommandImpossible);
 
         //and if the broken config is activated
         var ui = AndLaunch<AggregateEditorUI>(config);
@@ -114,6 +114,7 @@ internal class AggregateEditorUITests:UITests
         Assert.AreEqual(ui.ParentForm, killed.Key);
         StringAssert.Contains("no extractable columns", killed.Value.Message);
     }
+
 
 
     private AggregateConfiguration GetAggregateConfigurationWithNoDimensions() =>

@@ -99,7 +99,7 @@ public class CatalogueUITests : UITests
         ui.tbAcronym.Text = "AB";
 
         //it tells me that I have to make it unique
-        AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Must be unique");
+        AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Must be unique");
 
         //so I make it unique
         ui.tbAcronym.Text = "ABC";

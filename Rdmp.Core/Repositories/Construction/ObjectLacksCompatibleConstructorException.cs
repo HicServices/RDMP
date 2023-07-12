@@ -19,5 +19,6 @@ public class ObjectLacksCompatibleConstructorException : Exception
     /// <param name="msg"></param>
     public ObjectLacksCompatibleConstructorException(string msg) : base(msg)
     {
+
     }
 }

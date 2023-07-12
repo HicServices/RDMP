@@ -215,6 +215,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         Console.WriteLine(builder.SQL);
         try
         {
+
             using (var con = (SqlConnection)Database.Server.GetConnection())
             {
                 con.Open();
@@ -493,7 +494,8 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
 
         try
         {
-            var builderForCaching = new CohortQueryBuilder(aggregate2, null, null);
+
+            var builderForCaching = new CohortQueryBuilder(aggregate2, null,null);
 
             var cacheDt = new DataTable();
             using (var con = (SqlConnection)Database.Server.GetConnection())
@@ -561,6 +563,7 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
         {
             queryCachingDatabaseServer.DeleteInDatabase();
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName).Drop();
+
         }
     }
 }

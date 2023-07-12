@@ -25,13 +25,6 @@ namespace Rdmp.Core.Tests.CommandExecution;
 /// </summary>
 public abstract class CommandCliTests : UnitTests
 {
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
-
     protected CommandInvoker GetInvoker()
     {
         var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet)
@@ -43,7 +36,7 @@ public abstract class CommandCliTests : UnitTests
         return invoker;
     }
 
-    protected IBasicActivateItems GetMockActivator()
+    protected Mock<IBasicActivateItems> GetMockActivator()
     {
         var mock = Substitute.For<IBasicActivateItems>();
         mock.RepositoryLocator.Returns(RepositoryLocator);

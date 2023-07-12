@@ -41,7 +41,7 @@ internal class TypeTextOrCancelDialogTests : UITests
 
         var s = sb.ToString();
 
-        var dlg = new TypeTextOrCancelDialog(s, s, 5000);
+        var dlg = new TypeTextOrCancelDialog(s,s,5000);
 
         //pretend like we launched it
         LastUserInterfaceLaunched = dlg;
@@ -54,4 +54,5 @@ internal class TypeTextOrCancelDialogTests : UITests
         Assert.GreaterOrEqual(dlg.Width, 540);
         Assert.LessOrEqual(dlg.Width, 840);
     }
+
 }

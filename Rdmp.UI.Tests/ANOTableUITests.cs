@@ -39,7 +39,7 @@ internal class ANOTableUITests : UITests
         srv.SaveToDatabase();
 
         AndLaunch<ANOTableUI>(anoTable);
-            
+
         //should be an error on the server showing that it is misconfigured
         AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Server is not an ANO server");
         AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not reach ANO Server");
@@ -49,4 +49,6 @@ internal class ANOTableUITests : UITests
 
         anoTable.DeleteInDatabase();
     }
+
+
 }

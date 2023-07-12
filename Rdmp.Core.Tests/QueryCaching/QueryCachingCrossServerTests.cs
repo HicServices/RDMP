@@ -672,9 +672,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         return new JoinableCohortAggregateConfiguration(CatalogueRepository, cic, ac);
     }
 
-    private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db,
-        PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName,
-        string paramValue)
+    private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
 
@@ -750,6 +748,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
             var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
             parameter.Value = paramValue;
             parameter.SaveToDatabase();
+
         }
         else
         {

@@ -70,11 +70,10 @@ public partial class PipelineWorkAreaUI : UserControl
         try
         {
             //middle and destination components
-            var allComponentTypes = _catalogueRepository.MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
+            var allComponentTypes = MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
 
             //source components (list of all types with MEF exports of )
-            var allSourceTypes =
-                _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
+            var allSourceTypes = MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
             _allComponents = new List<AdvertisedPipelineComponentTypeUnderContext>();
 

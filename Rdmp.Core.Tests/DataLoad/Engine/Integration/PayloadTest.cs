@@ -17,6 +17,7 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -42,7 +43,7 @@ public class PayloadTest : DatabaseTests
         };
         lmd.SaveToDatabase();
 
-        CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
+        MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
 
         b.catalogue.LoadMetadata_ID = lmd.ID;
         b.catalogue.LoggingDataTask = "TestPayloadInjection";
@@ -86,10 +87,12 @@ public class PayloadTest : DatabaseTests
 
         public override void Check(ICheckNotifier notifier)
         {
+
         }
 
         public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
         {
+
         }
     }
 }

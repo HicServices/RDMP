@@ -76,8 +76,7 @@ public partial class HomeBoxUI : UserControl
             else
             {
                 toolStrip1.Items.Remove(btnNew);
-                btnNewDropdown.DropDownItems.AddRange(newCommands.Select(factory.CreateMenuItem).Cast<ToolStripItem>()
-                    .ToArray());
+                btnNewDropdown.DropDownItems.AddRange(newCommands.Select(factory.CreateMenuItem).Cast<ToolStripItem>().ToArray());
             }
 
             olvName.AspectGetter = o => ((HistoryEntry)o).Object.ToString();

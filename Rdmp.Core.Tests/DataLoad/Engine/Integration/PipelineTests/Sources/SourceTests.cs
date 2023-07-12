@@ -198,9 +198,10 @@ public class SourceTests : DatabaseTests
         IPipelineRequirement<TableInfo>, IPipelineRequirement<LoadModuleAssembly>
     {
         public TableInfo PreInitToThis { get; private set; }
-
-        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-            GracefulCancellationToken cancellationToken) => throw new NotImplementedException();
+        public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {

@@ -184,6 +184,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
     }
 
 
+
     [Test]
     [TestCase(false, false)]
     [TestCase(false, true)]
@@ -449,8 +450,10 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         for (var i = 0; i < eiSource.Length; i++)
         {
-            Assert.AreEqual(eiSource[i].Order, eiDestination[i].Order,
-                "ExtractionInformations in the source and destination Catalogue should have the same order");
+            Assert.AreEqual(eiSource[i].Order , eiDestination[i].Order,"ExtractionInformations in the source and destination Catalogue should have the same order");
+
+            Assert.AreEqual(eiSource[i].GetRuntimeName(),
+                eiDestination[i].GetRuntimeName().Replace("ANO",""), "ExtractionInformations in the source and destination Catalogue should have the same names (excluding ANO prefix)");
 
             Assert.AreEqual(eiSource[i].GetRuntimeName(),
                 eiDestination[i].GetRuntimeName().Replace("ANO", ""),

@@ -129,8 +129,7 @@ internal class ConsoleMainWindow
             TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter)
         };
         _treeView.AddObjects(
-            new string[]
-            {
+            new string[]{
                 Catalogues,
                 Projects,
                 Loads,
@@ -237,7 +236,10 @@ internal class ConsoleMainWindow
 
     private string AspectGetter(object model)
     {
-        if (model is IContainer container) return $"{container} ({container.Operation})";
+        if (model is IContainer container)
+        {
+            return $"{container} ({container.Operation})";
+        }
 
         if (model is CohortAggregateContainer setContainer) return $"{setContainer} ({setContainer.Operation})";
 
@@ -281,9 +283,12 @@ internal class ConsoleMainWindow
     {
         try
         {
-            var dlg = new ConsoleGuiSelectOne(_activator, null);
+            var dlg = new ConsoleGuiSelectOne(_activator,null);
 
-            if (dlg.ShowDialog()) Show(dlg.Selected);
+            if (dlg.ShowDialog())
+            {
+                Show(dlg.Selected);
+            }
         }
         catch (Exception e)
         {
@@ -401,8 +406,11 @@ internal class ConsoleMainWindow
         try
         {
             // Top level brackets for the tree view
-            if (ReferenceEquals(model, Catalogues))
-                return new[] { _activator.CoreChildProvider.CatalogueRootFolder };
+            if (ReferenceEquals(model , Catalogues))
+                return new []{_activator.CoreChildProvider.CatalogueRootFolder };
+
+            if (ReferenceEquals(model , Projects)  && dx != null)
+                return new[] { dx.ProjectRootFolder};
 
             if (ReferenceEquals(model, Projects) && dx != null)
                 return new[] { dx.ProjectRootFolder };
@@ -410,10 +418,10 @@ internal class ConsoleMainWindow
             if (ReferenceEquals(model, Loads))
                 return new[] { _activator.CoreChildProvider.LoadMetadataRootFolder };
 
-            if (ReferenceEquals(model, CohortConfigs))
+            if (ReferenceEquals(model , CohortConfigs))
                 return new[] { _activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder };
 
-            if (ReferenceEquals(model, BuiltCohorts) && dx != null)
+            if (ReferenceEquals(model , BuiltCohorts) && dx != null)
                 return dx.CohortSources;
 
             if (ReferenceEquals(model, Other))
@@ -463,7 +471,7 @@ internal class ConsoleMainWindow
 
         if (type == typeof(Project))
             return Projects;
-        if (type == typeof(LoadMetadata))
+        if(type == typeof(LoadMetadata))
             return Loads;
         if (type == typeof(FolderNode<LoadMetadata>))
             return Loads;

@@ -165,8 +165,8 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
             { "DatabaseType", DatabaseType.MicrosoftSQLServer }
         };
 
-        if (creatorIfAny != null)
-            parameters.Add("CreatedByAssembly", creatorIfAny.Name);
+        if(creatorIfAny != null)
+            parameters.Add("CreatedByAssembly" , creatorIfAny.Name);
 
         Repository = repository;
         _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository, DatabaseType.MicrosoftSQLServer);
@@ -178,8 +178,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         var repo = shareManager.RepositoryLocator.CatalogueRepository;
         Repository = repo;
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository,
-            DatabaseType.MicrosoftSQLServer /*will get changed by UpsertAndHydrate*/);
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/);
 
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }

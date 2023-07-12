@@ -92,6 +92,7 @@ public class CredentialsTests : DatabaseTests
         finally
         {
             newCredentials.DeleteInDatabase();
+
         }
     }
 
@@ -179,6 +180,9 @@ public class CredentialsTests : DatabaseTests
 
 
             Assert.AreEqual(creds, tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad));
+
+
+            Assert.AreEqual(creds, tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad));
         }
         finally
         {
@@ -256,7 +260,8 @@ public class CredentialsTests : DatabaseTests
 
         try
         {
-            tableInfo1.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
+
+            tableInfo1.SetCredentials(creds,DataAccessContext.InternalDataProcessing);
             tableInfo2.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
             tableInfo1.SaveToDatabase();
             tableInfo2.SaveToDatabase();
@@ -319,7 +324,7 @@ public class CredentialsTests : DatabaseTests
         {
             t.Server = "myserver";
             t.Database = "mydatabase";
-                
+
             cred = new DataAccessCredentials(CatalogueRepository, "bob")
             {
                 Username = "bob",
@@ -347,13 +352,15 @@ public class CredentialsTests : DatabaseTests
             Assert.False(constr.IntegratedSecurity);
             Assert.AreEqual("bob", constr.UserID);
             Assert.AreEqual("pass", constr.Password);
+
+
         }
         finally
         {
             t.DeleteInDatabase();
             cred?.DeleteInDatabase();
             c.DeleteInDatabase();//no need to delete ci because of cascades
-                
+
         }
     }
 
