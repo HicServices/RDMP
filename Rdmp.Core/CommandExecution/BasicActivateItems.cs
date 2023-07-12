@@ -136,7 +136,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
         ServerDefaults = RepositoryLocator.CatalogueRepository;
-            
+
         //Shouldn't ever change externally to your session so doesn't need constantly refreshed
         FavouritesProvider = new FavouritesProvider(this);
 
@@ -183,10 +183,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     private void ConstructPluginChildProviders()
     {
-        // if startup has not taken place then we won't have any plugins
-        if (RepositoryLocator.CatalogueRepository.MEF == null)
-            return;
-
         PluginUserInterfaces = new List<IPluginUserInterface>();
 
         foreach (var pluginType in MEF.GetTypes<IPluginUserInterface>())
@@ -303,7 +299,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     public bool SelectType(DialogArgs args, Type baseTypeIfAny, bool allowAbstract, bool allowInterfaces, out Type chosen)
     {
         var available =
-            RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+            MEF.GetAllTypes()
                 .Where(t =>
                     (baseTypeIfAny == null || baseTypeIfAny.IsAssignableFrom(t)) &&
                     (allowAbstract || !t.IsAbstract) &&
@@ -353,7 +349,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     /// <param name="o"></param>
     protected virtual void ActivateImpl(object o)
     {
-            
+
     }
     /// <inheritdoc/>
     public virtual IEnumerable<T> GetAll<T>()
@@ -415,7 +411,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
     protected virtual bool InteractiveDelete(IDeleteable deleteable)
     {
         var databaseObject = deleteable as DatabaseEntity;
-            
+
         switch (databaseObject)
         {
             case Catalogue c:
@@ -705,7 +701,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             else
                 throw new Exception("User chose not to enter a Project number and none was provided");
 
-            
+
         if(SelectValueType("enter version number for cohort",typeof(int),0,out var chosenVersion))
         {
             version = (int)chosenVersion;

@@ -33,7 +33,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
     public CreateNewCohortIdentificationConfigurationUI(IActivateItems activator):base(activator)
     {
         InitializeComponent();
-            
+
         if(VisualStudioDesignMode)
             return;
 
@@ -98,7 +98,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
             MessageBox.Show("Enter a name for your Cohort Identification Criteria");
             return;
         }
-            
+
         if(cbUseWizard.Checked && !Activator.YesNo("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm"))
             return;
 

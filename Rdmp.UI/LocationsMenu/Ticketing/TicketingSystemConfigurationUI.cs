@@ -64,8 +64,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             throw new Exception("You have multiple TicketingSystemConfiguration configured, open the table TicketingSystemConfiguration and delete one of them");
 
         _ticketingSystemConfiguration = ticketing.SingleOrDefault();
-        var mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
-            
+
         cbxType.Items.Clear();
         cbxType.Items.AddRange(MEF.GetTypes<ITicketingSystem>().Select(t=>t.FullName).ToArray());
 

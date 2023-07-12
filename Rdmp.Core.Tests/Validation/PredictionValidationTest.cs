@@ -80,7 +80,7 @@ internal class PredictionValidationTest
 
         Assert.IsNull(v.Validate(TestConstants.ValidChiAndConsistentSex));
     }
-        
+
     [Test]
     public void Validate_ChiIsNull_Valid()
     {
@@ -158,7 +158,7 @@ internal class PredictionValidationTest
     }
 
     #endregion
-        
+
     private static Validator CreateInitialisedValidator(SecondaryConstraint prediction)
     {
         var i = new ItemValidator

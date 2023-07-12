@@ -208,7 +208,7 @@ public static partial class UsefulStuff
     {
         return !string.IsNullOrWhiteSpace(AppDomain.CurrentDomain.BaseDirectory)
             ? new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
-            : new DirectoryInfo(Environment.CurrentDirectory);
+            : new DirectoryInfo(typeof(UsefulStuff).Assembly.Location);
     }
 
     public static string HashFile(string filename, int retryCount = 6)

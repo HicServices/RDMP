@@ -24,6 +24,9 @@
     <NoWarn>$(NoWarn);NU5104</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
+      <SGenTypes>Rdmp.Core.DataLoad.Modules.DataProvider.WebServiceConfiguration</SGenTypes>
+  </PropertyGroup>
+  <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>

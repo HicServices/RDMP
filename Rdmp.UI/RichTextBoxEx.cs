@@ -187,7 +187,7 @@ public partial class RichTextBoxEx : RichTextBox
 
         //if it ends with whitespace then we have to put that outside the RTF
         var suffix = string.Concat(text.Reverse().TakeWhile(c => c == '\r' || c == '\n' || c == ' ' || c == '\t').Reverse());
-            
+
         SelectionStart = position;
         SelectedRtf = $@"{{\rtf1\ansi {text.TrimEnd()}\v #{hyperlink}\v0}}";
         Select(position, text.Length + hyperlink.Length + 1);
@@ -226,7 +226,7 @@ public partial class RichTextBoxEx : RichTextBox
         cf.dwEffects = effect;
 
         var wpar = new IntPtr(SCF_SELECTION);
-        var lpar = Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) ); 
+        var lpar = Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) );
         Marshal.StructureToPtr(cf, lpar, false);
 
         var res = SendMessage(Handle, EM_SETCHARFORMAT, wpar, lpar);
@@ -241,7 +241,7 @@ public partial class RichTextBoxEx : RichTextBox
         cf.szFaceName = new char[32];
 
         var wpar = new IntPtr(SCF_SELECTION);
-        var lpar = 	Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) ); 
+        var lpar = 	Marshal.AllocCoTaskMem( Marshal.SizeOf( cf ) );
         Marshal.StructureToPtr(cf, lpar, false);
 
         var res = SendMessage(Handle, EM_GETCHARFORMAT, wpar, lpar);
@@ -261,7 +261,7 @@ public partial class RichTextBoxEx : RichTextBox
         {
             state = -1;
         }
-			
+
         Marshal.FreeCoTaskMem(lpar);
         return state;
     }

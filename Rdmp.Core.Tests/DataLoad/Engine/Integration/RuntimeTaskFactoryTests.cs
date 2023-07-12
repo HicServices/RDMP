@@ -31,13 +31,13 @@ public class RuntimeTaskFactoryTests : DatabaseTests
         task.Path = className;
         task.ProcessTaskType = ProcessTaskType.DataProvider;
         task.SaveToDatabase();
-            
+
         try
         {
-            var ex = Assert.Throws<Exception>(() => f.Create(task, new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), Mock.Of<ILoadDirectory>())));
+            var ex = Assert.Throws<Exception>(() => RuntimeTaskFactory.Create(task, new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), Mock.Of<ILoadDirectory>())));
             Assert.IsTrue(ex.InnerException.Message.Contains("marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
         }
-        finally 
+        finally
         {
             task.DeleteInDatabase();
             lmd.DeleteInDatabase();

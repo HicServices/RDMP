@@ -66,7 +66,7 @@ public class ArchiveFilesTests : DatabaseTests
             directoryHelper.TearDown();
         }
     }
-        
+
     [Test]
     public void CreateArchiveWithNoFiles_ShouldThrow()
     {
@@ -95,5 +95,5 @@ public class ArchiveFilesTests : DatabaseTests
             directoryHelper.TearDown();
         }
     }
-      
+
 }

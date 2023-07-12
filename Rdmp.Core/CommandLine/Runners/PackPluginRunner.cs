@@ -84,7 +84,7 @@ public class PackPluginRunner : IRunner
                 $"Plugin version {pluginVersion} is incompatible with current running version of RDMP ({runningSoftwareVersion}).");
 
         UploadFile(repositoryLocator,checkNotifier,toCommit,pluginVersion,rdmpDependencyVersion);
-            
+
         return 0;
     }
 

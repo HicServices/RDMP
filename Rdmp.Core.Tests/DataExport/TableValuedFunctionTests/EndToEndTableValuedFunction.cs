@@ -71,29 +71,29 @@ public class EndToEndTableValuedFunction:DatabaseTests
 
         //create a normal catalogue
         CreateANormalCatalogue();
-            
+
         //create a cohort database using wizard
         var cohortDatabaseWizard = new CreateNewCohortDatabaseWizard(_discoveredCohortDatabase,CatalogueRepository,DataExportRepository,false);
-            
+
         _externalCohortTable = cohortDatabaseWizard.CreateDatabase(
             new PrivateIdentifierPrototype(_nonTvfExtractionIdentifier)
             ,ThrowImmediatelyCheckNotifier.Quiet);
 
         //create a table valued function
         CreateTvfCatalogue(cohortDatabaseNameWillBe);
-            
-        //Test 1 
+
+        //Test 1
         TestThatQueryBuilderWithoutParametersBeingSetThrowsQueryBuildingException();
 
         PopulateCohortDatabaseWithRecordsFromNonTvfCatalogue();
-            
-        //Test 2 
+
+        //Test 2
         TestWithParameterValueThatRowsAreReturned();
 
-        //Test 3 
+        //Test 3
         TestUsingTvfForAggregates();
 
-        //Test 4 
+        //Test 4
         TestAddingTvfToCIC();
 
         //Test 5
@@ -118,10 +118,10 @@ public class EndToEndTableValuedFunction:DatabaseTests
         //get rid of the cohort identification configuration
         _cic.DeleteInDatabase();
         _pipe.DeleteInDatabase();
-            
+
         //get rid of the cohort database
         _discoveredCohortDatabase.Drop();
-            
+
         _nonTvfCatalogue.DeleteInDatabase();
         _nonTvfTableInfo.DeleteInDatabase();
 
@@ -135,7 +135,7 @@ public class EndToEndTableValuedFunction:DatabaseTests
         //create a cohort identification configuration (identifies people from datasets using set operations - see CohortManager)
         _cic = new CohortIdentificationConfiguration(CatalogueRepository, "TbvfCIC");
         _cic.CreateRootContainerIfNotExists();
-            
+
         //turn the catalogue _nonTvfCatalogue into a cohort set and add it to the root container
         var newAggregate = _cic.CreateNewEmptyConfigurationForCatalogue(_nonTvfCatalogue,(s,e)=> throw new Exception("Did not expect there to be more than 1!"));
 
@@ -144,9 +144,9 @@ public class EndToEndTableValuedFunction:DatabaseTests
 
         //create a pipeline for executing this CIC and turning it into a cohort
         _pipe = new Pipeline(CatalogueRepository, "CREATE COHORT:By Executing CIC");
-            
+
         var source = new PipelineComponent(CatalogueRepository, _pipe,typeof (CohortIdentificationConfigurationSource), 0, "CIC Source");
-            
+
         _project = new Project(DataExportRepository, "TvfProject")
         {
             ProjectNumber = 12,
@@ -160,7 +160,7 @@ public class EndToEndTableValuedFunction:DatabaseTests
         _pipe.DestinationPipelineComponent_ID = destination.ID;
         _pipe.SaveToDatabase();
 
-        //create pipeline arguments 
+        //create pipeline arguments
         source.CreateArgumentsForClassIfNotExists<CohortIdentificationConfigurationSource>();
         destination.CreateArgumentsForClassIfNotExists<BasicCohortDestination>();
 
@@ -253,7 +253,7 @@ end
 
     private void TestThatQueryBuilderWithoutParametersBeingSetThrowsQueryBuildingException()
     {
-        //we should have problems reading from the table valued function 
+        //we should have problems reading from the table valued function
         var qb = new QueryBuilder("", "");
 
         //table valued function should have 2 fields (chi and definitionID)
@@ -375,7 +375,7 @@ end
 
         //declare a global parameter of 1 on the aggregate
         _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => null);
-            
+
         //it should have imported the global parameter as part of the import right?
         Assert.AreEqual(1, _cicAggregate.GetAllParameters().Length);
 
@@ -383,7 +383,7 @@ end
         root.AddChild(_cicAggregate,2);
 
         //So container is:
-        // EXCEPT 
+        // EXCEPT
         //People in _nonTvfCatalogue (3)
         //People in _tvfCatalogue (with @numberOfRecords = 1) (1)
 

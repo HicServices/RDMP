@@ -17,7 +17,7 @@ public class MyVS2015BlueTheme : VS2015BlueTheme, ITheme
 {
     private ThemeExtender _extender;
     public bool ApplyThemeToMenus { get; set; }
-        
+
     public MyVS2015BlueTheme()
     {
         var manager = new System.Resources.ResourceManager("WeifenLuo.WinFormsUI.ThemeVS2015.Resources", typeof(WeifenLuo.WinFormsUI.ThemeVS2015.VS2015ThemeBase).Assembly);

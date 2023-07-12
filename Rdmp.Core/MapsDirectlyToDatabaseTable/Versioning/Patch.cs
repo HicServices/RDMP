@@ -76,7 +76,7 @@ public class Patch : IComparable
 
             var description = lines[1][(idx + DescriptionKey.Length)..].Trim(':', ' ', '\n', '\r', '/', '*');
             Description = description;
-        } 
+        }
     }
 
     /// <summary>
@@ -155,7 +155,7 @@ public class Patch : IComparable
         allPatchesInAssembly = patcher.GetAllPatchesInAssembly(database);
 
         var databaseAssemblyName = patcher.GetDbAssembly().GetName();
-            
+
         if (databaseAssemblyName.Version < databaseVersion)
             return PatchingState.SoftwareBehindDatabase;
 

@@ -56,15 +56,15 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
     }
 
     /// <summary>
-    /// This is a giant scenario test in which we create a cohort of 5 people and a dataset with a single row with 1 person in it and a result field (the basic setup for 
-    /// TestsRequiringAnExtractionConfiguration).  
+    /// This is a giant scenario test in which we create a cohort of 5 people and a dataset with a single row with 1 person in it and a result field (the basic setup for
+    /// TestsRequiringAnExtractionConfiguration).
     /// 
     /// <para>1.We run the extraction.
     /// 2.We create a cohort refresh query that pulls the 1 dude from the above single row table
     /// 3.We configure a query caching server which the cohort query is setup to use so that after executing the sql to identify the person it will cache the identifier list (of 1)
     /// 4.We then the ExtractionConfiguration that its refresh pipeline is a cohort query builder query and build a pipeline for executing the cic and using basic cohort destination
     /// 5.We then run the refresh pipeline which should execute the cic and cache the record and commit it as a new version of cohort for the ExtractionConfiguration
-    /// 6.We then truncate the live table, this will result in the cic returning nobody 
+    /// 6.We then truncate the live table, this will result in the cic returning nobody
     /// 7.Without touching the cache we run the cohort refresh pipeline again</para>
     /// 
     /// <para>Thing being tested: After 7 we are confirming that the refresh failed because there was nobody identified by the query, furthermore we then test that the progress messages sent
@@ -117,7 +117,7 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
 
             //give it a single table query to fetch distinct chi from test data
             var agg = cic.CreateNewEmptyConfigurationForCatalogue(_catalogue, null);
-                
+
             //add the sub query as the only entry in the cic (in the root container)
             cic.CreateRootContainerIfNotExists();
             cic.RootCohortAggregateContainer.AddChild(agg,1);
@@ -147,12 +147,12 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
 
             //get a new engine
             engine = new CohortRefreshEngine(toMem, _configuration);
-                
+
             //execute it
             var ex = Assert.Throws<PipelineCrashedException>(()=>engine.Execute());
 
             Assert.IsTrue(ex.InnerException.InnerException.Message.Contains("CohortIdentificationCriteria execution resulted in an empty dataset"));
-                
+
             //expected this message to happen
             //that it did clear the cache
             Assert.AreEqual(1,toMem.EventsReceivedBySender.SelectMany(kvp=>kvp.Value).Count(msg=>msg.Message.Equals("Clearing Cohort Identifier Cache")));

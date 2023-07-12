@@ -71,7 +71,7 @@ namespace ResearchDataManagementPlatform.Menus;
 public partial class RDMPTopMenuStripUI : RDMPUserControl
 {
     private WindowManager _windowManager;
-        
+
     private SaveMenuItem _saveToolStripMenuItem;
     private AtomicCommandUIFactory _atomicCommandUIFactory;
 
@@ -105,7 +105,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var exeDir = UsefulStuff.GetExecutableDirectory();
         AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
 
-        // also add yaml files from wherever they got their original yaml file 
+        // also add yaml files from wherever they got their original yaml file
         if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory?.FullName))
         {
             AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
@@ -184,7 +184,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var cmd = new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
         cmd.Execute();
     }
-        
+
 
     private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -211,7 +211,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     {
         new ExecuteCommandGenerateTestDataUI(Activator).Execute();
     }
-        
+
     private void showPerformanceCounterToolStripMenuItem_Click(object sender, EventArgs e)
     {
         new PerformanceCounterUI().Show();
@@ -219,7 +219,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void openExeDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
     {
-            
+
         try
         {
             UsefulStuff.ShowPathInWindowsExplorer(UsefulStuff.GetExecutableDirectory());
@@ -248,7 +248,6 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         report.GenerateReport(Activator.RepositoryLocator.CatalogueRepository.CommentStore,
             new PopupChecksUI("Generating class summaries", false),
             Activator.CoreIconProvider,
-            Activator.RepositoryLocator.CatalogueRepository.MEF,
             true);
     }
 
@@ -264,7 +263,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
         _windowManager = windowManager;
         _atomicCommandUIFactory = new AtomicCommandUIFactory(Activator);
-            
+
 
         //top menu strip setup / adjustment
         LocationsMenu.DropDownItems.Add(new DataExportMenu(Activator));
@@ -307,7 +306,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             Activator.GlobalErrorCheckNotifier.OnCheckPerformed(
                 new CheckEventArgs("Failed to BuildSwitchInstanceMenuItems", CheckResult.Fail, ex));
         }
-            
+
         launchAnotherInstanceToolStripMenuItem.ToolTipText = "Start another copy of the RDMP process targetting the same (or another) RDMP platform database";
 
         if(switchToInstanceToolStripMenuItem.DropDownItems.Count > 1)
@@ -371,13 +370,13 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
                 _windowManager.Navigation.Resume();
             }
-                    
+
         }
-                
+
 
         _saveToolStripMenuItem.Saveable = saveable;
     }
-        
+
     /// <summary>
     /// Updates the enabled status (greyed out) of the Forward/Back menu items (includes the use of keyobard shortcuts)
     /// </summary>
@@ -386,7 +385,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         navigateBackwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanBack();
         navigateForwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanForward();
     }
-        
+
 
     private void codeGenerationToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -483,7 +482,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var file = new FileInfo(Path.GetTempFileName());
-        File.WriteAllLines(file.FullName,Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t=>t.FullName));
+        File.WriteAllLines(file.FullName, Rdmp.Core.Repositories.MEF.GetAllTypes().Select(t=>t.FullName));
         UsefulStuff.ShowPathInWindowsExplorer(file);
     }
 
@@ -523,7 +522,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             Activator.Show("Cannot Query Database", cmd.ReasonCommandImpossible);
             return;
         }
-                
+
         cmd.Execute();
     }
 
@@ -569,7 +568,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         if(Activator.YesNo("Terminate the process without saving?","Terminate"))
         {
             Process.GetCurrentProcess().Kill();
-        }   
+        }
     }
 
     private void findMultipleToolStripMenuItem_Click(object sender, EventArgs e)

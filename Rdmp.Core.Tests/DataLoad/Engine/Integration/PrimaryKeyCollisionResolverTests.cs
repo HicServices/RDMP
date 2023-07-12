@@ -40,7 +40,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             c3.SaveToDatabase();
 
             Assert.DoesNotThrow(() => mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet));
-            
+
         }
         finally
         {
@@ -86,7 +86,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
         StringAssert.Contains("Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",ex.Message);
     }
 
-    [Test]     
+    [Test]
     public void GenerateSQL_OrderCorrect()
     {
         SetupTableInfos(out var t, out var c1, out var c2,out var c3);
@@ -114,7 +114,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             //column 2 has the following null substitute, is Ascending order and is the first of two
             Assert.IsTrue(sql.Contains("ISNULL([col2],-9223372036854775808) ASC,"));
 
-            //column 3 has the following null substitute and is descending and is not followed by another column 
+            //column 3 has the following null substitute and is descending and is not followed by another column
             Assert.IsTrue(sql.Contains("ISNULL([col3],-2147483648) DESC"));
         }
         finally

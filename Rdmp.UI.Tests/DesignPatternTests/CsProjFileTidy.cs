@@ -45,7 +45,7 @@ internal class CsProjFileTidy
         doc.LoadXml(allText);
 
         //var compilables = doc.GetElementsByTagName("Compile");
-            
+
 
         RecursivelyProcessSubfolders(csProjFile.Directory);
     }
@@ -54,7 +54,7 @@ internal class CsProjFileTidy
     {
         foreach (var enumerateFile in directory.EnumerateFiles("*.cs"))
             ConfirmClassNameAndNamespaces(enumerateFile);
-            
+
         foreach (var dir in directory.EnumerateDirectories())
         {
             if(dir.Name.Equals("bin") || dir.Name.Equals("obj"))
@@ -63,7 +63,7 @@ internal class CsProjFileTidy
             RecursivelyProcessSubfolders(dir);
         }
     }
-        
+
     private void ConfirmClassNameAndNamespaces(FileInfo csFile)
     {
         if(Ignorelist.Contains(csFile.Name))
@@ -98,7 +98,7 @@ internal class CsProjFileTidy
                     $"Expected file {csFile.FullName} to have namespace {expectedNamespace} but its listed namespace is {actualNamespace}");
 
         }
-            
+
 
         //it's probably a enum or interface or delegates file
         if(classes.Count ==0)
@@ -121,7 +121,7 @@ internal class CsProjFileTidy
         }
         else
         {
-                
+
             var firstClassNameInFile = classes[0].Groups[2].Value;
 
             if (firstClassNameInFile.Contains("_Design"))

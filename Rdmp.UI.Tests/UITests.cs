@@ -31,7 +31,7 @@ public class UITests : UnitTests
 {
     private TestActivateItems _itemActivator;
     private ToMemoryCheckNotifier _checkResults;
-        
+
     public Control LastUserInterfaceLaunched { get; set; }
 
     protected TestActivateItems ItemActivator => _itemActivator?? InitializeItemActivator();
@@ -42,23 +42,11 @@ public class UITests : UnitTests
     /// </summary>
     private TestActivateItems InitializeItemActivator()
     {
-        _itemActivator = new TestActivateItems(this,Repository)
-        {
-            RepositoryLocator =
-            {
-                CatalogueRepository =
-                {
-                    MEF = MEF
-                }
-            }
-        };
-
-        //if mef was loaded for this test then this is supported otherwise not
-        if(MEF != null)
-            _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
+        _itemActivator = new TestActivateItems(this,Repository);
+        _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
         return _itemActivator;
     }
-        
+
     /// <summary>
     /// 'Launches' a new instance of the UI defined by Type T which must be compatible with the provided <paramref name="o"/>.  The UI will not
     /// visibly appear but will be mounted on a Form and generally should behave like live ones.
@@ -94,7 +82,7 @@ public class UITests : UnitTests
         ClearResults();
 
         var f = new Form();
-            
+
         f.Controls.Add(ui);
         CreateControls(ui);
 
@@ -103,7 +91,7 @@ public class UITests : UnitTests
             rdmpUi.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
             rdmpUi.CommonFunctionality.OnFatal += CommonFunctionalityOnFatal;
         }
-            
+
         LastUserInterfaceLaunched = ui;
     }
 
@@ -117,7 +105,7 @@ public class UITests : UnitTests
         _itemActivator?.Results.Clear();
 
         _checkResults = null;
-            
+
         LastUserInterfaceLaunched = null;
     }
     /// <summary>
@@ -145,7 +133,7 @@ public class UITests : UnitTests
 
         Assert.Fail($"Command was Impossible because:{cmd.ReasonCommandImpossible}");
     }
-        
+
     private void CommonFunctionalityOnBeforeChecking(object sender, EventArgs eventArgs)
     {
         //intercept checking and replace with our own in memory checks
@@ -185,14 +173,14 @@ public class UITests : UnitTests
                 Assert.IsEmpty(ItemActivator.Results.FatalCalls);
                 break;
             case ExpectedErrorType.FailedCheck:
-                    
+
                 //there must have been something checked that failed with the provided message
                 if (_checkResults != null)
                     Assert.IsEmpty(_checkResults.Messages.Where(m => m.Result == CheckResult.Fail));
                 break;
             case ExpectedErrorType.ErrorProvider:
                 Assert.IsEmpty(GetAllErrorProviderErrorsShown());
-                    
+
                 break;
             case ExpectedErrorType.GlobalErrorCheckNotifier:
 
@@ -222,7 +210,7 @@ public class UITests : UnitTests
     }
 
     /// <summary>
-    /// Checks that the given <paramref name="expectedContainsText"/> was displayed to the user at the 
+    /// Checks that the given <paramref name="expectedContainsText"/> was displayed to the user at the
     /// given <paramref name="expectedErrorLevel"/>
     /// </summary>
     /// <param name="expectedErrorLevel">The error level to be checked.  Do not pass 'Any'</param>
@@ -367,18 +355,15 @@ public class UITests : UnitTests
     /// <param name="action"></param>
     protected void ForEachUI(Action<IRDMPSingleDatabaseObjectControl> action)
     {
-        SetupMEF();
-
         var types = typeof(Catalogue).Assembly.GetTypes()
             .Where(t => t != null && typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
 
         var uiTypes = typeof(CatalogueUI).Assembly.GetTypes()
-            .Where(t=>t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t) 
+            .Where(t=>t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t)
                                 && !t.IsAbstract && !t.IsInterface
-                                && t.BaseType != null 
-                                && t.BaseType.BaseType != null
+                                && t.BaseType?.BaseType != null
                                 && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
-            
+
         var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
@@ -398,7 +383,7 @@ public class UITests : UnitTests
             {
                 //todo
                 var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 && m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
-                
+
                 //ensure that the method supports the Type
                 var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
 
@@ -407,7 +392,7 @@ public class UITests : UnitTests
                 try
                 {
                     ui = (IRDMPSingleDatabaseObjectControl) genericAndLaunch.Invoke(this,new object[]{o,true});
-                        
+
                     if(ui is IDisposable d)
                         d.Dispose();
                 }
@@ -416,7 +401,7 @@ public class UITests : UnitTests
                     throw new Exception(
                         $"Failed to construct '{uiType}'.  Code to reproduce is:{Environment.NewLine}{ShowCode(o.GetType(), uiType)}",ex);
                 }
-                    
+
 
                 action(ui);
                 ClearResults();
@@ -427,7 +412,7 @@ public class UITests : UnitTests
     private string ShowCode(Type t, Type uiType)
     {
         var sb = new StringBuilder();
-            
+
         sb.AppendLine("using NUnit.Framework;");
         sb.AppendLine($"using {t.Namespace};");
         sb.AppendLine($"using {uiType.Namespace};");
@@ -448,7 +433,7 @@ public class UITests : UnitTests
         sb.AppendLine("\t\t\tAssert.IsNotNull(ui);");
         sb.AppendLine("\t\t\t//AssertNoErrors(ExpectedErrorType.Fatal);");
         sb.AppendLine("\t\t\t//AssertNoErrors(ExpectedErrorType.KilledForm);");
-            
+
         sb.AppendLine("\t\t}");
 
         sb.AppendLine("\t}");

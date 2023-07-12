@@ -36,7 +36,7 @@ public class AllObjectsHaveImages:DatabaseTests
 
         };
 
-        var missingConcepts = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+        var missingConcepts = Core.Repositories.MEF.GetAllTypes()
             .Where(t => typeof(IHasDependencies).IsAssignableFrom(t) && !t.IsInterface)
             .Where(type => !typeof(IMasqueradeAs).IsAssignableFrom(type))
             .Select(type => type.Name)

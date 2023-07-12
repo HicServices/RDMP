@@ -59,7 +59,7 @@ public class DleRunner:Runner
             DoMigrateFromStagingToLive = !_options.StopAfterSTAGING
         };
 
-        var checkable = new CheckEntireDataLoadProcess(loadMetadata, databaseConfiguration, flags, locator.CatalogueRepository.MEF); 
+        var checkable = new CheckEntireDataLoadProcess(loadMetadata, databaseConfiguration, flags); 
 
         switch (_options.Command)
         {

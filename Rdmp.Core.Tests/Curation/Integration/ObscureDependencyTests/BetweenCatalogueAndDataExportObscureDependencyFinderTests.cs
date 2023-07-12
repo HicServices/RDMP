@@ -28,7 +28,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
 
         //there is a new dataset which is linked to Catalogue
         var dataset = new ExtractableDataSet(DataExportRepository,cata);
-            
+
         //and suddenly we cannot delete the catalogue
         var ex = Assert.Throws<Exception>(() => obscura.ThrowIfDeleteDisallowed(cata));
         Assert.IsTrue(ex.Message.Contains("Cannot delete Catalogue MyCata because there are ExtractableDataSets which depend on them "));
@@ -42,11 +42,11 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
 
         //and because there is now no longer a dataset dependency on the catalogue we can delete it
         Assert.DoesNotThrow(() => obscura.ThrowIfDeleteDisallowed(cata));
-            
+
         //and the delete works too
         cata.DeleteInDatabase();
 
-        //both objects still exist in memory of course but we should be able to see they have disapeared 
+        //both objects still exist in memory of course but we should be able to see they have disapeared
         Assert.IsTrue(dataset.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
         Assert.IsTrue(cata.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
     }

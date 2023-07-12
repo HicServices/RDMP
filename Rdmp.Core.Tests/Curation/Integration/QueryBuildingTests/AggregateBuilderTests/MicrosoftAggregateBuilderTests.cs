@@ -13,8 +13,8 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
 
 public class MicrosoftAggregateBuilderTests:AggregateBuilderTestsBase
 {
-       
-        
+
+
     [Test]
     public void TestAggregateBuilding_NoConfigurationOneDimension()
     {
@@ -32,7 +32,7 @@ Col1
 order by 
 Col1"),CollapseWhitespace(builder.SQL));
     }
-        
+
     /// <summary>
     /// Tests the systems ability to figure out the alias of the count column when it has " AS " (e.g. in a cast scalar function)
     /// </summary>

@@ -53,7 +53,7 @@ public class FlatFileAttacherTests : DatabaseTests
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
-                
+
             var cmdCreateTable = _database.Server.GetCommand(
                 $"CREATE Table {_database.GetRuntimeName()}..Bob([name] [varchar](500),[name2] [varchar](500))",con);
             cmdCreateTable.ExecuteNonQuery();
@@ -109,7 +109,7 @@ public class FlatFileAttacherTests : DatabaseTests
         {
 
             var ex = Assert.Throws<FlatFileLoadException>(()=>attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
-                
+
             Assert.IsNotNull(ex.InnerException);
             StringAssert.StartsWith("Your separator does not appear in the headers line of your file (bob.csv) but the separator ',' does", ex.InnerException.Message);
             return;
@@ -132,11 +132,11 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Bob",r["name"]);
             Assert.AreEqual("Munchousain", r["name2"]);
-                    
+
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Franky", r["name"]);
             Assert.AreEqual("Hollyw9ood", r["name2"]);
-                
+
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Manny2", r["name"]);
             Assert.AreEqual("Ok", r["name2"]);
@@ -148,7 +148,7 @@ public class FlatFileAttacherTests : DatabaseTests
     }
 
 
-        
+
     [Test]
     public void Test_ExplicitDateTimeFormat_Attachment()
     {
@@ -190,7 +190,7 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Bob",r["name"]);
             Assert.AreEqual(new DateTime(2001,01,13), r["name2"]);
-                    
+
             Assert.IsTrue(r.Read());
             Assert.AreEqual("Franky", r["name"]);
             Assert.AreEqual(new DateTime(2002,01,13), r["name2"]);
@@ -409,7 +409,7 @@ public class FlatFileAttacherTests : DatabaseTests
         File.Delete(filename);
 
     }
-        
+
     [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-GB")]
     [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-us")]
     [TestCase(DatabaseType.MySql,"01/27/2001","en-us", "en-us")]
@@ -419,7 +419,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB","en-us")]
     [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-us")]
     [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-GB")]
-                
+
     [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-GB")]
     [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-us")]
     [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-us")]
@@ -441,7 +441,7 @@ public class FlatFileAttacherTests : DatabaseTests
 
         var db = GetCleanedServer(type);
 
-        var tbl = 
+        var tbl =
             db.CreateTable("AmbiguousDatesTestTable",
                 new []{new DatabaseColumnRequest("dob",new DatabaseTypeRequest(typeof(DateTime)))}
             );

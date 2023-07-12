@@ -33,7 +33,7 @@ internal class DitaExtractorTests : DatabaseTests
             _directoryHelper.SetUp();
 
             var random = new Random();
-                
+
             //delete all catalogues with duplicate names
             var catalogues = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
 
@@ -54,7 +54,7 @@ internal class DitaExtractorTests : DatabaseTests
             _setupException = e;
         }
     }
-        
+
     [SetUp]
     protected override void SetUp()
     {
@@ -103,7 +103,7 @@ internal class DitaExtractorTests : DatabaseTests
             Assert.IsTrue(File.ReadAllText(ditaCatalogueAsDotDitaFile.FullName).Contains(ditaTestCatalogue.Description));
 
         }
-        finally 
+        finally
         {
             ditaTestCatalogue.DeleteInDatabase();
             foreach (var file in testDir.GetFiles())

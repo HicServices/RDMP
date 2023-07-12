@@ -62,7 +62,7 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
             else
                 Assert.AreEqual(DateTime.Parse(expectedDilute), result);
         }
-        finally  
+        finally
         {
             con.ManagedTransaction.AbandonAndCloseConnection();
         }
@@ -109,7 +109,7 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
             UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
 
             var result = server.GetCommand("SELECT * from ExcludeRight3OfPostcodes", con).ExecuteScalar();
-             
+
             if(expectedDilute == null)
                 Assert.AreEqual(DBNull.Value, result);
             else
@@ -132,7 +132,7 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
     {
         var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging,null) == "DiluteToBitFlagTests");
         var col = Mock.Of<IPreLoadDiscardedColumn>(c=>
-            c.TableInfo == tbl && 
+            c.TableInfo == tbl &&
             c.GetRuntimeName() =="TestField");
 
         var o = new CrushToBitFlag
@@ -153,7 +153,7 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
             UsefulStuff.ExecuteBatchNonQuery(sql, con.Connection, con.Transaction);
 
             var result = server.GetCommand("SELECT * from DiluteToBitFlagTests", con).ExecuteScalar();
-                    
+
             Assert.AreEqual(expectedDilute, Convert.ToBoolean(result));
         }
         finally
@@ -161,7 +161,7 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
             con.ManagedTransaction.AbandonAndCloseConnection();
         }
     }
-        
+
     [Test]
     public void Dilution_WithNamer_Test()
     {

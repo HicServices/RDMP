@@ -37,7 +37,7 @@ internal class IMightBeReadOnlyTests : UnitTests
             
         Assert.AreEqual("fff is Frozen",reason);
     }
-        
+
     [Test]
     public void IsReadonly_ExtractionFilterContainer()
     {
@@ -64,7 +64,7 @@ internal class IMightBeReadOnlyTests : UnitTests
     }
 
 
-        
+
     [Test]
     public void IsReadonly_AggregateFilter()
     {
@@ -85,7 +85,7 @@ internal class IMightBeReadOnlyTests : UnitTests
             
         Assert.AreEqual("fff is Frozen",reason);
     }
-        
+
     [Test]
     public void IsReadonly_DeployedExtractionFilter()
     {

@@ -98,7 +98,7 @@ public class CredentialsTests : DatabaseTests
         finally
         {
             newCredentials.DeleteInDatabase();
-                
+
         }
     }
 
@@ -145,10 +145,10 @@ public class CredentialsTests : DatabaseTests
         {
             creds.Name = "Test";
             creds.SaveToDatabase();
-                
+
             //now create the association as Any
             tableInfo.SetCredentials(creds, DataAccessContext.Any);
-                
+
             //because the credential is liscenced to be used under ANY context, you can make requests under any of the specific contexts and be served the Any result
             var creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             Assert.NotNull(creds2);
@@ -185,8 +185,8 @@ public class CredentialsTests : DatabaseTests
             //now create the association as Any
             tableInfo.SetCredentials(creds, DataAccessContext.DataLoad);
             tableInfo.SetCredentials(creds2, DataAccessContext.Any);
-                
-                
+
+
             Assert.AreEqual(creds, tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad));
 
         }
@@ -266,7 +266,7 @@ public class CredentialsTests : DatabaseTests
 
         try
         {
-            
+
             tableInfo1.SetCredentials(creds,DataAccessContext.InternalDataProcessing);
             tableInfo2.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
             tableInfo1.SaveToDatabase();
@@ -326,7 +326,7 @@ public class CredentialsTests : DatabaseTests
         {
             t.Server = "myserver";
             t.Database = "mydatabase";
-                
+
             cred = new DataAccessCredentials(CatalogueRepository, "bob")
             {
                 Username = "bob",
@@ -347,14 +347,14 @@ public class CredentialsTests : DatabaseTests
             Assert.AreEqual("bob", constr.UserID);
             Assert.AreEqual("pass", constr.Password);
 
-     
+
         }
-        finally 
+        finally
         {
             t.DeleteInDatabase();
             cred?.DeleteInDatabase();
             c.DeleteInDatabase();//no need to delete ci because of cascades
-                
+
         }
 
     }

@@ -22,7 +22,7 @@ public class SimpleCohortIdentificationTests:DatabaseTests
         {
             Assert.IsTrue(config.Exists());
             Assert.AreEqual("franky",config.Name);
-            
+
             config.Description = "Hi there";
             config.SaveToDatabase();
 
@@ -30,7 +30,7 @@ public class SimpleCohortIdentificationTests:DatabaseTests
             var config2 = CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(config.ID);
             Assert.AreEqual("Hi there", config2.Description);
         }
-        finally 
+        finally
         {
             config.DeleteInDatabase();
             Assert.IsFalse(config.Exists());
@@ -69,7 +69,7 @@ public class SimpleCohortIdentificationTests:DatabaseTests
         {
             Assert.AreEqual(0, container.GetSubContainers().Length);
 
-              
+
             Assert.AreEqual(0, container.GetSubContainers().Length);
 
             //set container to parent

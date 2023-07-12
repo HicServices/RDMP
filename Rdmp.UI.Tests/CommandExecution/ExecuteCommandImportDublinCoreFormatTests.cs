@@ -16,7 +16,7 @@ internal class ExecuteCommandImportDublinCoreFormatTests
 {
 
     /// <summary>
-    /// This test also appears in the Rdmp.Tests project since it behaves differently in different runtime. 
+    /// This test also appears in the Rdmp.Tests project since it behaves differently in different runtime.
     /// </summary>
     [Test]
     public void Test_DublinCore_WriteReadFile_Net461()

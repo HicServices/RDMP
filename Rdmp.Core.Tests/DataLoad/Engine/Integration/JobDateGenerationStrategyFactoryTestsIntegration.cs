@@ -18,6 +18,7 @@ using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using Rdmp.Core.DataLoad.Modules.DataProvider;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 using Tests.Common.Helpers;
@@ -37,8 +38,8 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
     {
         base.SetUp();
 
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         _lmd = new LoadMetadata(CatalogueRepository, "JobDateGenerationStrategyFactoryTestsIntegration");
         _lp = new LoadProgress(CatalogueRepository, _lmd)
@@ -73,7 +74,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
             Name = "DoNothing"
         };
         pt.SaveToDatabase();
-            
+
         var ex = Assert.Throws<CacheDataProviderFindingException>(() => _factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet));
         Assert.IsTrue(ex.Message.StartsWith("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider"));
     }
@@ -181,7 +182,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
         var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true);
         _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
         _lmd.SaveToDatabase();
-            
+
         var pipeAssembler = new TestDataPipelineAssembler("CacheProvider_Normal", CatalogueRepository);
         pipeAssembler.ConfigureCacheProgressToUseThePipeline(_cp);
 
@@ -189,14 +190,14 @@ public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
         {
             var strategy = _factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet);
             Assert.AreEqual(typeof(SingleScheduleCacheDateTrackingStrategy), strategy.GetType());
-                
+
             var dates = strategy.GetDates(10, false);
             Assert.AreEqual(0,dates.Count); //zero dates to load because no files in cache
 
             File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-02.zip"),"bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
             File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-03.zip"), "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
             File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-05.zip"), "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
-                
+
             strategy = _factory.Create(_lp,ThrowImmediatelyDataLoadEventListener.Quiet);
             Assert.AreEqual(typeof(SingleScheduleCacheDateTrackingStrategy), strategy.GetType());
             dates = strategy.GetDates(10, false);

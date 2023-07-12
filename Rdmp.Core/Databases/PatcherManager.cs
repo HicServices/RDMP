@@ -40,9 +40,9 @@ public class PatcherManager
         };
     }
 
-    public IEnumerable<PluginPatcher> GetTier3Patchers(MEF mef,PluginPatcherFoundHandler events)
+    public IEnumerable<PluginPatcher> GetTier3Patchers(PluginPatcherFoundHandler events)
     {
-        foreach (var patcherType in MEF.GetTypes<PluginPatcher>().Where(type => type.IsPublic))
+        foreach (var patcherType in MEF.GetTypes<PluginPatcher>().Where(static type => type.IsPublic))
         {
             PluginPatcher instance = null;
 
@@ -65,10 +65,9 @@ public class PatcherManager
     /// <summary>
     /// Returns all Tier 2 and 3 patchers (that could be constructed)
     /// </summary>
-    /// <param name="mef"></param>
     /// <returns></returns>
-    public IEnumerable<IPatcher> GetAllPatchers(MEF mef)
+    public IEnumerable<IPatcher> GetAllPatchers()
     {
-        return Tier2Patchers.Union(GetTier3Patchers(mef,null));
+        return Tier2Patchers.Union(GetTier3Patchers(null));
     }
 }

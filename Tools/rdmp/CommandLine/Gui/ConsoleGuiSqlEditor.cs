@@ -230,7 +230,7 @@ internal partial class ConsoleGuiSqlEditor : Window
                         w.NextRecord();
                     }
                 }
-                    
+
                 MessageBox.Query("File Saved","Save completed","Ok");
             }
         }
@@ -297,7 +297,7 @@ internal partial class ConsoleGuiSqlEditor : Window
             _btnRunOrCancel.SetNeedsDisplay();
         }
     }
-        
+
     private void SetReadyToRun()
     {
         _btnRunOrCancel.Text = "Run";
@@ -326,8 +326,8 @@ internal partial class ConsoleGuiSqlEditor : Window
             var dt = new DataTable();
             da.Fill(dt);
 
-            Application.MainLoop.Invoke(() => { 
-                            
+            Application.MainLoop.Invoke(() => {
+
                 tableView.Table = dt;
 
                 // if query resulted in some data show it

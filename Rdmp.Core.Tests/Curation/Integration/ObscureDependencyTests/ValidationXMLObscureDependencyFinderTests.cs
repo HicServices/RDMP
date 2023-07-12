@@ -33,7 +33,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
         //this guy should be a usual suspect!
         Assert.IsTrue(finder.TheUsualSuspects.Any(s => s.Type == typeof(ReferentialIntegrityConstraint)));
 
-        var testXML = 
+        var testXML =
             @"<?xml version=""1.0"" encoding=""utf-16""?>
 <Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
   <ItemValidators>
@@ -73,10 +73,10 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
 
             //we expect the validation XML to find the reference
             var finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);
-                
+
             //and explode
             Assert.Throws<ValidationXmlDependencyException>(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
-                
+
             Assert.AreEqual(0,finder.CataloguesWithBrokenValidationXml.Count);
 
             //now clear the validation XML
@@ -98,7 +98,7 @@ public class ValidationXMLObscureDependencyFinderTests: DatabaseTests
             testData.DeleteCatalogue();
         }
     }
-        
+
     [Test]
     public void Test_DeleteAColumnInfoThatIsReferenced()
     {

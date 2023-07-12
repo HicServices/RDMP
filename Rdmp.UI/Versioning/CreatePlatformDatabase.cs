@@ -77,7 +77,7 @@ public partial class CreatePlatformDatabase : Form
             MessageBox.Show("Setup already underway");
             return;
         }
-            
+
         var createSql = _patcher.GetInitialCreateScriptContents(db);
         var patches = _patcher.GetAllPatchesInAssembly(db);
 
@@ -85,7 +85,7 @@ public partial class CreatePlatformDatabase : Form
             "The following SQL is about to be executed:", createSql.EntireScript);
 
         var executor = new MasterDatabaseScriptExecutor(db);
-            
+
         if (preview.ShowDialog() == DialogResult.OK)
         {
             _tCreateDatabase = Task.Run(()=>

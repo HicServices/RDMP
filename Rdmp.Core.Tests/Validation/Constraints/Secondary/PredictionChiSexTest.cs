@@ -14,7 +14,7 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Secondary;
 internal class PredictionChiSexTest
 {
     private readonly DateTime _wrongType = DateTime.Now;
-        
+
     [Test]
     public void Validate_IncompatibleChiType_ThrowsException()
     {

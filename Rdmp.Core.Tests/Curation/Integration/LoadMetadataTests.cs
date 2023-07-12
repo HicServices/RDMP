@@ -24,10 +24,10 @@ public class LoadMetadataTests : DatabaseTests
 
         try
         {
-                
+
             loadMetadata.LocationOfFlatFiles = TestContext.CurrentContext.TestDirectory;
             loadMetadata.SaveToDatabase();
-                
+
             var loadMetadataWithIdAfterwards = CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
             Assert.AreEqual(loadMetadataWithIdAfterwards.LocationOfFlatFiles, TestContext.CurrentContext.TestDirectory);
         }
@@ -49,13 +49,13 @@ public class LoadMetadataTests : DatabaseTests
             loadMetadata.SaveToDatabase();
             Assert.IsFalse(loadMetadata.IgnoreTrigger);
             loadMetadata.SaveToDatabase();
-                
+
             loadMetadata.IgnoreTrigger = true;
             Assert.IsTrue(loadMetadata.IgnoreTrigger);
             loadMetadata.RevertToDatabaseState();
             Assert.IsFalse(loadMetadata.IgnoreTrigger);
 
-                
+
             loadMetadata.IgnoreTrigger = true;
             Assert.IsTrue(loadMetadata.IgnoreTrigger);
             loadMetadata.SaveToDatabase();

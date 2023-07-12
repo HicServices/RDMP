@@ -106,7 +106,7 @@ public class Plugin : DatabaseEntity,INamed
             {"PluginVersion", pluginVersion ?? new Version(0,0,0,0)},
             {"RdmpVersion", rdmpVersion ?? new Version(0,0,0,0)}
         });
-            
+
     }
 
     internal Plugin(ICatalogueRepository repository, DbDataReader r) : base(repository, r)

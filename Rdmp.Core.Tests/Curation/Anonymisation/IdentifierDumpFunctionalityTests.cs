@@ -80,7 +80,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         try
         {
             dumper.Check(new AcceptAllCheckNotifier());
-                
+
             var dt = _bulkData.GetDataTable(1000);
 
             Assert.AreEqual(1000,dt.Rows.Count);
@@ -111,7 +111,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
 
             var cmd = server.GetCommand($"Select * from ID_{BulkTestsData.BulkDataTable}", con);
             var r = cmd.ExecuteReader();
-                    
+
             //make sure the values in the ID table match the ones we originally had in the pipeline
             while (r.Read())
                 if (!chiToSurnameDictionary[r["chi"].ToString()].Any())
@@ -161,7 +161,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
                 SqlDataType = "varchar(50)"
             };
         preDiscardedColumn2.SaveToDatabase();
-            
+
         //give it the correct server
         tableInfoCreated.IdentifierDumpServer_ID = IdentifierDump_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
@@ -183,7 +183,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         //now delete it!
         preDiscardedColumn2.DeleteInDatabase();
 
-        //now create a new dumper and watch it go crazy 
+        //now create a new dumper and watch it go crazy
         var dumper2 = new IdentifierDumper(tableInfoCreated);
 
         try
@@ -198,7 +198,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             using (var con = server.GetConnection())
             {
                 con.Open();
-                    
+
                 //leave the identifier dump in the way we found it (empty)
                 var cmdDrop = server.GetCommand($"DROP TABLE ID_{BulkTestsData.BulkDataTable}", con);
                 cmdDrop.ExecuteNonQuery();
@@ -273,7 +273,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             dumper.Check(notifier);
 
             Assert.IsTrue(notifier.Messages.Any(m=>
-                m.Result == CheckResult.Warning 
+                m.Result == CheckResult.Warning
                 &&
                 m.Message.Contains("Table ID_BulkData was not found")));
         }
@@ -355,14 +355,14 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             tableInfoCreated.SaveToDatabase();
 
             var dumper = new IdentifierDumper(tableInfoCreated);
-            
+
             //table doesnt exist yet it should work
             dumper.Check(new AcceptAllCheckNotifier());
-            
+
             //now it is varbinary
             preDiscardedColumn1.SqlDataType = "varbinary(200)";
             preDiscardedColumn1.SaveToDatabase();
-             
+
             //get a new dumper because we have changed the pre load discarded column
             dumper = new IdentifierDumper(tableInfoCreated);
             //table doesnt exist yet it should work

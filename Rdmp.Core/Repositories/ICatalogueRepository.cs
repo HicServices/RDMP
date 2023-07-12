@@ -51,12 +51,6 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
 
 
     /// <summary>
-    /// Supports creation of objects using Reflection and discovery of Types based on Managed Extensibility Framework Export attributes.
-    /// </summary>
-    MEF MEF { get; set; }
-
-
-    /// <summary>
     /// Stores class comments discovered at startup
     /// </summary>
     CommentStore CommentStore { get; set; }

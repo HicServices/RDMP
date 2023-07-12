@@ -14,7 +14,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests;
 public class PipelineReadPerformanceTest:DatabaseTests
 {
     private BulkTestsData _bulkTestData;
-        
+
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
     {
@@ -24,7 +24,7 @@ public class PipelineReadPerformanceTest:DatabaseTests
         _bulkTestData.SetupTestData();
 
     }
-        
+
     [Test]
     public void BulkTestDataContainsExpectedNumberOfRows()
     {

@@ -22,7 +22,7 @@ public class ExcelConversionTest
 {
     private readonly Stack<DirectoryInfo> _dirsToCleanUp = new();
     private DirectoryInfo _parentDir;
-        
+
     [OneTimeSetUp]
     protected virtual void OneTimeSetUp()
     {
@@ -41,7 +41,7 @@ public class ExcelConversionTest
                 dir.Delete(true);
         }
     }
-        
+
     private LoadDirectory CreateLoadDirectoryForTest(string directoryName)
     {
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName,true);
@@ -91,7 +91,7 @@ public class ExcelConversionTest
 
         Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
     }
-        
+
     private void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
     {
         var f = new FileInfo(targetFile);

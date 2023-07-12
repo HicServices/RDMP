@@ -82,7 +82,7 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
 
         var config = Repository.GetObjectByID<ExtractionConfiguration>(ec1.ExtractionConfiguration_ID);
                
-        var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator().Object, 
+        var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator().Object,
             ec1.CatalogueExtractionInformation.CatalogueItem.Catalogue,
             config
             , "happyfun");

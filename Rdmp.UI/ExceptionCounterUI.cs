@@ -40,7 +40,7 @@ public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
         base.OnPaint(e);
-            
+
         var exceptionCount = Math.Min(_events.Messages.Count, 10);
 
         if(exceptionCount > 0)

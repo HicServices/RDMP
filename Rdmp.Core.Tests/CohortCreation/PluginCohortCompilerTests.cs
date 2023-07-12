@@ -190,7 +190,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         // add it to the cohort config
         cic.CreateRootContainerIfNotExists();
 
-        // Add the regular table 
+        // Add the regular table
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator, new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
         Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
         cmd.Execute();

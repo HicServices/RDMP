@@ -165,7 +165,7 @@ internal class MarkdownCodeBlockTests
                 AddToDictionaries(children,descendancy);
             }
             #endregion
-                
+
             private void AddChildren(ExtractionConfiguration frozenExtractionConfigurationsNode, DescendancyList descendancy)
             {
                 throw new NotImplementedException();
@@ -299,6 +299,6 @@ internal class MarkdownCodeBlockTests
             }
             #endregion
         }
-            
+
     }
 }

@@ -47,7 +47,7 @@ public class ProcessTaskChecks : ICheckable
 
 
         var factory = new RuntimeTaskFactory(_loadMetadata.CatalogueRepository);
-        var created = factory.Create(processTask, dictionary.LoadArgs[processTask.LoadStage]);
+        var created = RuntimeTaskFactory.Create(processTask, dictionary.LoadArgs[processTask.LoadStage]);
 
         created.Check(notifier);
     }

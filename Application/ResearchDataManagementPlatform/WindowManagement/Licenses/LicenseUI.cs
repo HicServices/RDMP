@@ -43,7 +43,7 @@ public partial class LicenseUI : Form
         }
         catch (Exception ex)
         {
-            ExceptionViewer.Show(ex);   
+            ExceptionViewer.Show(ex);
         }
     }
 

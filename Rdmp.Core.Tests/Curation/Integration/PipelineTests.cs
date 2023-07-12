@@ -28,7 +28,7 @@ public class PipelineTests : DatabaseTests
             Assert.AreEqual(pipeline.Name,"Bob");
 
             var pipelineComponent = new PipelineComponent(CatalogueRepository, pipeline, typeof (BasicAnonymisationEngine), 0);
-                
+
             try
             {
                 Assert.AreEqual(pipelineComponent.Class,typeof(BasicAnonymisationEngine).FullName);
@@ -52,9 +52,9 @@ public class PipelineTests : DatabaseTests
                     var argument2Copy = CatalogueRepository.GetObjectByID<PipelineComponentArgument>(argument2.ID);
                     Assert.AreEqual(dt,argument2Copy.GetValueAsSystemType());
                 }
-                finally 
+                finally
                 {
-                        
+
                     argument1.DeleteInDatabase();
                     argument2.DeleteInDatabase();
                 }
@@ -65,7 +65,7 @@ public class PipelineTests : DatabaseTests
             }
 
         }
-        finally 
+        finally
         {
             pipeline.DeleteInDatabase();
         }

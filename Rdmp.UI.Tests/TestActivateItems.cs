@@ -85,7 +85,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
         _uiTests.AndLaunch(singleControlForm);
         return singleControlForm.FindForm();
     }
-        
+
     public override void Publish(IMapsDirectlyToDatabaseTable o)
     {
         base.Publish(o);
@@ -152,7 +152,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     {
         return _problemProviders.Select(p => p.DescribeProblem(model)).SingleOrDefault(prob=>prob != null);
     }
-        
+
     public string GetDocumentation(Type type)
     {
         return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
@@ -166,7 +166,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
         return DialogResult.OK;
     }
 
-        
+
     public void KillForm(Form f, Exception reason)
     {
         Results.KilledForms.Add(f,reason);
@@ -195,12 +195,12 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
 
     public void ApplyTo(ToolStrip item)
     {
-            
+
     }
 
     public bool ApplyThemeToMenus { get; set; }
 
-        
+
     /// <summary>
     /// The answer to give when asked <see cref="YesNo"/>
     /// </summary>
@@ -211,11 +211,11 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
         if (YesNoResponse.HasValue)
         {
             chosen = YesNoResponse.Value;
-                
+
             //'user' consciously chose a value
             return true;
         }
-                
+
 
         throw new Exception($"Did not expect to be asked a question but we were asked :{args}");
     }
@@ -251,7 +251,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     {
         task.Wait(cts.Token);
     }
-        
+
     public override List<CommandInvokerDelegate> GetDelegates()
     {
         return new List<CommandInvokerDelegate>
@@ -280,7 +280,7 @@ public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     {
         return SelectFile(prompt, null, null);
     }
-        
+
     public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
     {
         throw new NotImplementedException();

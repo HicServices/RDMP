@@ -1372,7 +1372,7 @@ $DQE_StartDate
 $DQE_StartDay          
 $DQE_StartMonth        
 $DQE_StartYear";
-            
+
 
         Setup2Catalogues(out var c1, out var c2);
 

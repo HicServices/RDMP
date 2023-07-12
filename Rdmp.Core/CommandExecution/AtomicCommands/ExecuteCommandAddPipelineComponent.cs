@@ -62,7 +62,6 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         // if command doesn't know which to add, ask user
         if (add == null)
         {
-            var mef = BasicActivator.RepositoryLocator.CatalogueRepository.MEF;
             var context = _useCaseIfAny?.GetContext();
             var offer = new List<Type>();
 
@@ -70,7 +69,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
 
             //get any source and flow components compatible with any context
             offer.AddRange(
-                mef.GetAllTypes()
+                Repositories.MEF.GetAllTypes()
                     .Where(t => !t.IsInterface && !t.IsAbstract)
                     .Where(t => t.FindInterfaces(Filter, null).Any())
                     .Where(t=> context == null || context.IsAllowable(t))

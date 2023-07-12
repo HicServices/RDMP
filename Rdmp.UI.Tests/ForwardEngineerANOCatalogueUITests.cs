@@ -20,7 +20,7 @@ internal class ForwardEngineerANOCatalogueUITests : UITests
 
         var eiChi = WhenIHaveA<ExtractionInformation>();
         var cata = eiChi.CatalogueItem.Catalogue;
-            
+
         AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
 
         AssertNoErrors(ExpectedErrorType.Any);

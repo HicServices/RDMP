@@ -50,7 +50,7 @@ public class PreInitializeTests
         context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, (IFish)fish);
         Assert.AreEqual(fishUser.IFish, fish);
     }
-           
+
     [Test]
     public void TestDownCasting()
     {

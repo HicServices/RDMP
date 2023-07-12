@@ -30,7 +30,6 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IP
     protected ICacheFetchRequest Request;
 
     protected ICatalogueRepository CatalogueRepository;
-    protected MEF MEF;
 
     /// <summary>
     /// Enforces behaviour required for logging unsuccessful cache requests and providing implementation-independent checks, so that the plugin author
@@ -97,7 +96,6 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IP
     public void PreInitialize(ICatalogueRepository value, IDataLoadEventListener listener)
     {
         CatalogueRepository = value;
-        MEF = value.MEF;
     }
 
 

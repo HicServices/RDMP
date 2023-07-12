@@ -87,7 +87,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
             {
                 MessageBox.ErrorQuery("Cannot Commit", cmd.ReasonCommandImpossible);
             }
-                
+
         };
         Application.MainLoop.AddTimeout(TimeSpan.FromSeconds(2), RefreshTableCallback);
 
@@ -160,7 +160,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         {
             var factory = new ConsoleGuiContextMenuFactory(_activator);
             var menu = factory.Create(Array.Empty<object>(), o);
-                
+
             if(menu != null)
             {
                 var p = tableview1.CellToScreen(obj.Col, obj.Row);

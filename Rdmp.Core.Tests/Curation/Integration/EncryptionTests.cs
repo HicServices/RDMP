@@ -57,10 +57,10 @@ public class EncryptionTests : DatabaseTests
         {
             //as soon as you set a password it should be encrypted by the credentials class in memory
             creds.Password = "fish";
-                
+
             Assert.AreNotEqual("fish", creds.Password);
             Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
-                
+
             //set the password to the encrypted password
             creds.Password = creds.Password;
 
@@ -89,7 +89,7 @@ public class EncryptionTests : DatabaseTests
             creds.Password = "fish";
             Assert.AreNotEqual("fish",creds.Password);
             Assert.AreEqual("fish", creds.GetDecryptedPassword());//but we should still be able to decrypt it
-            
+
             //save it
             creds.SaveToDatabase();
             using (var con = CatalogueTableRepository.GetConnection())
@@ -108,7 +108,7 @@ public class EncryptionTests : DatabaseTests
             Assert.AreEqual(creds.Password,newCopy.Password);//passwords should match
             Assert.AreNotEqual("fish",creds.Password);//neither should be fish
             Assert.AreNotEqual("fish", newCopy.Password);
-            
+
             //both should decrypt to the same value (fish
             Assert.AreEqual("fish",creds.GetDecryptedPassword());
             Assert.AreEqual("fish", newCopy.GetDecryptedPassword());
@@ -191,7 +191,7 @@ public class EncryptionTests : DatabaseTests
             }
 
             var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
-                
+
             Assert.AreEqual("fish",newCopy.GetDecryptedPassword());
             Assert.AreNotEqual("fish", newCopy.Password);
         }
@@ -214,5 +214,5 @@ public class EncryptionTests : DatabaseTests
         var ex = Assert.Throws<InvalidOperationException>(() => TestFreakyPasswordValues(password));
         Assert.AreEqual("The free text Value supplied to this class was too long to be encrypted (Length of string was 201)", ex.Message);
     }
-        
+
 }

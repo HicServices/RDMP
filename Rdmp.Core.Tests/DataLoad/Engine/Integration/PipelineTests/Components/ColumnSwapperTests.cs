@@ -257,7 +257,7 @@ internal class ColumnSwapperTests:DatabaseTests
 
                 AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
                 Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
-                    
+
                 //we get the first alias (4)
                 AreBasicallyEquals(4, resultDt.Rows[1]["Out"]);
                 Assert.AreEqual("Dandy", resultDt.Rows[1]["Name"]);
@@ -511,7 +511,7 @@ internal class ColumnSwapperTests:DatabaseTests
         Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
     }
 
-        
+
     /// <summary>
     /// Tests the systems ability to compare a string input data table with an integer in the database
     /// </summary>

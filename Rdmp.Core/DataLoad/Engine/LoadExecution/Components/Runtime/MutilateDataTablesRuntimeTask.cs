@@ -26,7 +26,7 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public IMutilateDataTables MutilateDataTables { get; set; }
     public ICheckable MEFPluginClassInstance => MutilateDataTables;
 
-    public MutilateDataTablesRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
+    public MutilateDataTablesRuntimeTask(IProcessTask task, RuntimeArgumentCollection args)
         : base(task, args)
     {
         //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name
@@ -38,7 +38,7 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
             throw new ArgumentException(
                 $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IMutilateDataTables)}");
 
-        MutilateDataTables = mef.CreateA<IMutilateDataTables>(ProcessTask.Path);
+        MutilateDataTables = MEF.CreateA<IMutilateDataTables>(ProcessTask.Path);
         SetPropertiesForClass(RuntimeArguments, MutilateDataTables);
         MutilateDataTables.Initialize(stageArgs.DbInfo, ProcessTask.LoadStage);
     }

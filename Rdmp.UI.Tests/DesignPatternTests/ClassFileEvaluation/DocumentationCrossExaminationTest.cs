@@ -153,9 +153,9 @@ internal class DocumentationCrossExaminationTest
         "ProposedFixes",
         "PropertyX",
         "FamilyMembers",
-            
+
         //CreatingANewCollectionTreeNode.md
-        "FolderOfX", 
+        "FolderOfX",
 
         //PluginWriting.md
         "MyPluginUserInterface",
@@ -198,7 +198,7 @@ internal class DocumentationCrossExaminationTest
         "SexDescription",
         "SexDescriptionLong",
         "MyTransform",
-            
+
         "MyObject",
         "MyObjectMenu",
         "AllServersNodeMenu",
@@ -299,10 +299,10 @@ internal class DocumentationCrossExaminationTest
         foreach (var file in csFilesFound)
         {
             var isDesignerFile = file.Contains(".Designer.cs");
-                
+
             if(file.Contains("CodeTutorials"))
                 continue;
-                
+
             //don't look in the packages dir!
             if(file.Contains("packages"))
                 continue;
@@ -317,7 +317,7 @@ internal class DocumentationCrossExaminationTest
 
                     if (!fileCommentTokens.ContainsKey(file))
                         fileCommentTokens.Add(file, new HashSet<string>());
-                        
+
                     //its a comment extract all pascal case words
                     foreach (Match word in Regex.Matches(line, @"\b([A-Z]\w+){2,}"))
                         fileCommentTokens[file].Add(word.Value);
@@ -340,7 +340,7 @@ internal class DocumentationCrossExaminationTest
 
             fileCommentTokens.Add(mdFile,new HashSet<string>());
             var fileContents = File.ReadAllText(mdFile);
-                
+
             foreach (Match m in MatchMdReferences.Matches(fileContents))
             foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
                 fileCommentTokens[mdFile].Add(word.Value);
@@ -387,7 +387,7 @@ internal class DocumentationCrossExaminationTest
         var rEndCodeBlock = new Regex("```");
 
         var markdownCodeBlocks = new Dictionary<string, string>();
-            
+
         var lines = File.ReadAllLines(mdFile);
 
         for (var i = 0; i < lines.Length; i++)
@@ -429,7 +429,7 @@ internal class DocumentationCrossExaminationTest
             var code = Regex.Replace(m.Groups[1].Value, "\\s+", " ");
             var docs = Regex.Replace(kvp.Value, "\\s+", " ");
 
-            Assert.AreEqual(code.Trim(), docs.Trim(),        
+            Assert.AreEqual(code.Trim(), docs.Trim(),
                 $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
         }
     }
@@ -437,21 +437,21 @@ internal class DocumentationCrossExaminationTest
     private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
     {
         const string glossaryRelativePath = "./Documentation/CodeTutorials/Glossary.md";
-            
+
         var rGlossary = new Regex("##([A-z ]*)");
         var rWords = new Regex(@"\[?\w*\]?");
         var rGlossaryLink = new Regex(@"^\[\w*\]:");
 
         var glossaryPath = Path.Combine(_slndir.FullName, glossaryRelativePath);
-            
+
         //don't evaluate the glossary!
         if(Path.GetFileName(mdFile) == "Glossary.md")
             return;
-            
+
         if (Path.GetFileName(mdFile) == "template.md")
             return;
 
-        var glossaryHeaders = 
+        var glossaryHeaders =
             new HashSet<string>(
                 File.ReadAllLines(glossaryPath)
                     .Where(l=>rGlossary.IsMatch(l))
@@ -471,7 +471,7 @@ internal class DocumentationCrossExaminationTest
 
             if(string.IsNullOrWhiteSpace(line))
                 continue;
-                
+
             //don't complain about the glossary links at the bottom of the file.
             if(rGlossaryLink.IsMatch(line))
                 continue;
@@ -487,8 +487,8 @@ internal class DocumentationCrossExaminationTest
                     if (glossaryHeaders.Contains(match.Value))
                     {
                         //It's already got a link on it e.g. [DBMS] or it's "UNION - sometext"
-                        if(match.Index - 1 > 0 
-                           && 
+                        if(match.Index - 1 > 0
+                           &&
                            (line[match.Index-1] == '[' || line[match.Index-1] == '"'))
                             continue;
 
@@ -522,7 +522,7 @@ internal class DocumentationCrossExaminationTest
                 }
             }
         }
-            
+
         // ReSharper disable once RedundantLogicalConditionalExpressionOperand
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if (suggestedLinks.Any() && ReWriteMarkdownToReferenceGlossary)

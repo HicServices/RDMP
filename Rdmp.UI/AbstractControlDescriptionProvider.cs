@@ -30,7 +30,7 @@ public class AbstractControlDescriptionProvider<TAbstract, TBase> : TypeDescript
         if (objectType == typeof(TAbstract))
             objectType = typeof(TBase);
 
-            
+
         return base.CreateInstance(provider, objectType, argTypes, args);
     }
 }

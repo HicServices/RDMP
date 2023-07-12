@@ -66,7 +66,7 @@ public partial class HomeUI : RDMPUserControl,ILifetimeSubscriber
         );
         boxDataLoad.SetUp(Activator,"Data Load",typeof(LoadMetadata),_uiFactory,new ExecuteCommandCreateNewLoadMetadata(_activator));
     }
-        
+
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);

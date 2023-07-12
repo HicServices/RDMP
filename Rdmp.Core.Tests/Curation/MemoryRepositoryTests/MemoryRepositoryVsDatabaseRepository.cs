@@ -62,7 +62,7 @@ internal class MemoryRepositoryVsDatabaseRepository:DatabaseTests
 
         UnitTests.AssertAreEqual(memAggregate, dbAggregate);
     }
-        
+
     [Test]
     public void TestMemoryRepository_LiveLogging()
     {
@@ -114,7 +114,7 @@ internal class MemoryRepositoryVsDatabaseRepository:DatabaseTests
 
     }
 
-        
 
-        
+
+
 }

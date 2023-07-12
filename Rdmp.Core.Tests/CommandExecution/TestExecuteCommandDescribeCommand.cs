@@ -13,7 +13,7 @@ namespace Rdmp.Core.Tests.CommandExecution;
 
 internal class TestExecuteCommandDescribeCommand : CommandCliTests
 {
-        
+
     /// <summary>
     /// Asserts that the help text <paramref name="forCommand"/> matches your <paramref name="expectedHelp"/> text
     /// </summary>
@@ -43,7 +43,7 @@ deletables	IDeleteable[]	The object(s) you want to delete.  If multiple you must
     [Test]
     public void Test_ImportTableInfo_CommandHelp()
     {
-        AssertHelpIs( 
+        AssertHelpIs(
             @" ImportTableInfo <table> <createCatalogue> 
 
 PARAMETERS:

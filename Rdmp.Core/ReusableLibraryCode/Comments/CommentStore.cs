@@ -80,7 +80,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
         if(memberName == null || string.IsNullOrWhiteSpace(summary))
             return;
-                
+
         //it's a Property get Type.Property (not fully specified)
         if (memberName.StartsWith("P:") || memberName.StartsWith("T:"))
             Add(GetLastTokens(memberName),summary.Trim());
@@ -90,9 +90,9 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     {
         if (summaryTag == null)
             return null;
-            
+
         var sb = new StringBuilder();
-            
+
         summaryTag.IterateThroughAllNodes(
             n =>
             {
@@ -284,10 +284,10 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <returns></returns>
     public string FormatAsParagraphs(string message)
     {
-            
+
         message = Regex.Replace(message, $"{Environment.NewLine}\\s*",Environment.NewLine + Environment.NewLine);
         message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", m => m.Groups[2].Value);
-            
+
         return message;
     }
 }

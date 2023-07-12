@@ -16,7 +16,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
 {
     private TestableTableValuedFunction _function = new();
-        
+
     public void CreateFunction()
     {
         _function.Create(GetCleanedServer(DatabaseType.MicrosoftSQLServer), CatalogueRepository);
@@ -50,13 +50,13 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
             //make the string column the extraction identifier
             _function.ExtractionInformations[1].IsExtractionIdentifier = true;
             _function.ExtractionInformations[1].SaveToDatabase();
-                
+
             //add the extraction identtifier as the only dimension one ach of the aggregate configurations that we will use for the cohort identification query
             new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config1);
             new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config2);
 
             Assert.IsNull(cic.RootCohortAggregateContainer_ID);
-                
+
             //create a root container for it
             var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
 
@@ -96,7 +96,7 @@ SET @name='fish';
 	FROM 
 	[" + TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 )
-",cic.ID)), 
+",cic.ID)),
                 CollapseWhitespace(builder.SQL));
 
             //now override JUST @name
@@ -105,7 +105,7 @@ SET @name='fish';
      Value = "'lobster'"
  };
             param1.SaveToDatabase();
-                
+
             var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);")
  {
      Value = "'monkey'"
@@ -151,7 +151,7 @@ SET @name_2='monkey';
             cic.DeleteInDatabase();
             config1.DeleteInDatabase();
             config2.DeleteInDatabase();
-                
+
         }
     }
 }

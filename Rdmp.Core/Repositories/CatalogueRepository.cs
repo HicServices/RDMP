@@ -48,9 +48,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     public IJoinManager JoinManager { get; set; }
 
     /// <inheritdoc/>
-    public MEF MEF { get; set; }
-
-    /// <inheritdoc/>
     public CommentStore CommentStore { get; set; }
 
     /// <inheritdoc/>
@@ -79,7 +76,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         TableInfoCredentialsManager = new TableInfoCredentialsManager(this);
         JoinManager = new JoinManager(this);
         CohortContainerManager = new CohortContainerManager(this);
-        MEF = new MEF();
         FilterManager = new AggregateFilterManager(this);
         EncryptionManager = new PasswordEncryptionKeyLocation(this);
         PluginManager = new PluginManager(this);
@@ -87,7 +83,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         CommentStore = new CommentStoreWithKeywords();
 
         ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
-            
+
         //Shortcuts to improve performance of ConstructEntity (avoids reflection)
         Constructors.Add(typeof(Catalogue),(rep, r) => new Catalogue((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(CohortAggregateContainer),(rep,r)=>new CohortAggregateContainer((ICatalogueRepository)rep, r));
@@ -282,7 +278,7 @@ select 0", con.Connection, con.Transaction);
             ClearDefault(toChange);
             return;
         }
-                
+
 
         var oldValue = GetDefaultFor(toChange);
 

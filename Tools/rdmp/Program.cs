@@ -32,7 +32,7 @@ internal class Program
     private static int Main(string[] args)
     {
         try
-        {    
+        {
             var nlog = Path.Combine(AppContext.BaseDirectory ,"NLog.config");
 
             if (File.Exists(nlog))
@@ -40,7 +40,7 @@ internal class Program
                 LogManager.ThrowConfigExceptions = false;
                 LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
             }
-                    
+
         }
         catch(Exception ex)
         {
@@ -155,7 +155,7 @@ internal class Program
         return 0;
     }
 
-        
+
     private static int Run(PatchDatabaseOptions opts)
     {
         opts.PopulateConnectionStringsFromYamlIfMissing(ThrowImmediatelyCheckNotifier.Quiet);
@@ -173,9 +173,9 @@ internal class Program
         var badTimes = false;
 
         start.DatabaseFound += (s,e)=>{
-                
+
             var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
-                     
+
             switch (e.Status)
             {
                 case Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching:

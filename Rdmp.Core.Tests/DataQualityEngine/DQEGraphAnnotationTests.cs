@@ -26,9 +26,9 @@ public class DQEGraphAnnotationTests:DatabaseTests
 
             var dqeRepo = new DQERepository(CatalogueRepository);
             var evaluation = new Evaluation(dqeRepo, c);
-            
+
             var annotation = new DQEGraphAnnotation(dqeRepo,1, 2, 3, 4, "Fishesfly", evaluation,DQEGraphType.TimePeriodicityGraph,"ALL");
-                
+
             Assert.AreEqual(annotation.StartX,1);
             Assert.AreEqual(annotation.StartY, 2);
             Assert.AreEqual(annotation.EndX, 3);
@@ -47,9 +47,9 @@ public class DQEGraphAnnotationTests:DatabaseTests
             annotation.SaveToDatabase();
 
             annotation.Text = "";
-                
+
             //new copy is flibble
-            Assert.AreEqual("flibble", dqeRepo.GetObjectByID<DQEGraphAnnotation>(annotation.ID).Text); 
+            Assert.AreEqual("flibble", dqeRepo.GetObjectByID<DQEGraphAnnotation>(annotation.ID).Text);
 
             annotation.DeleteInDatabase();
         }

@@ -182,13 +182,13 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         Console.WriteLine(builder.SQL);
         try
         {
-                
+
             using (var con = (SqlConnection)Database.Server.GetConnection())
             {
                 con.Open();
 
                 using var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
-                    
+
                 //can read at least one row
                 Assert.IsTrue(dbReader.Read());
             }
@@ -310,7 +310,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
             filterContainer1.DeleteInDatabase();
 
             filterContainer2.DeleteInDatabase();
-                
+
             joinable2.Users[0].DeleteInDatabase();
             joinable2.DeleteInDatabase();
         }
@@ -439,7 +439,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
             
         try
         {
-                
+
             var builderForCaching = new CohortQueryBuilder(aggregate2, null,null);
 
             var cacheDt = new DataTable();
@@ -504,12 +504,12 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
                 joinable2.DeleteInDatabase();
             }
         }
-        finally 
+        finally
         {
 
             queryCachingDatabaseServer.DeleteInDatabase();
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName).Drop();
-                
+
         }
             
             

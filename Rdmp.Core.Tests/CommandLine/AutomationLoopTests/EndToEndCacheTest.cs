@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -42,9 +43,9 @@ public class EndToEndCacheTest : DatabaseTests
     {
         base.SetUp();
 
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
-            
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+
         _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
         _LoadDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), @"EndToEndCacheTest", true);
         _lmd.LocationOfFlatFiles = _LoadDirectory.RootPath.FullName;
@@ -59,8 +60,8 @@ public class EndToEndCacheTest : DatabaseTests
         _cata.SaveToDatabase();
 
         _lp = new LoadProgress(CatalogueRepository, _lmd);
-        _cp = new CacheProgress(CatalogueRepository, _lp); 
-            
+        _cp = new CacheProgress(CatalogueRepository, _lp);
+
         _lp.OriginDate = new DateTime(2001,1,1);
         _lp.SaveToDatabase();
 
@@ -77,8 +78,8 @@ public class EndToEndCacheTest : DatabaseTests
     [Test]
     public void FireItUpManually()
     {
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-        RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         var cachingHost = new CachingHost(CatalogueRepository)
         {
@@ -94,7 +95,7 @@ public class EndToEndCacheTest : DatabaseTests
         var cacheFiles = _LoadDirectory.Cache.GetFiles().Select(fi => fi.Name).ToArray();
         for (var i = -NumDaysToCache; i < 0; i++)
         {
-            var filename = $"{DateTime.Now.AddDays(i):yyyyMMdd}.csv"; 
+            var filename = $"{DateTime.Now.AddDays(i):yyyyMMdd}.csv";
             Assert.IsTrue(cacheFiles.Contains(filename), filename + " not found");
         }
     }

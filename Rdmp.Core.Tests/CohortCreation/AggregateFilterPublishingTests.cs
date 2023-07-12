@@ -24,7 +24,7 @@ public class AggregateFilterPublishingTests:CohortIdentificationTests
     private AggregateFilterContainer _container;
 
     private ExtractionInformation _chiExtractionInformation;
-                       
+
     [OneTimeSetUp]
     protected override void SetUp()
     {
@@ -116,16 +116,16 @@ public class AggregateFilterPublishingTests:CohortIdentificationTests
         //before it is a shortcut it has no filters
         Assert.IsFalse(shortcutAggregate.GetQueryBuilder().SQL.Contains("WHERE"));
 
-        //make it a shortcut 
+        //make it a shortcut
         shortcutAggregate.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = aggregate1.ID;
         shortcutAggregate.SaveToDatabase();
 
         var sqlShortcut = shortcutAggregate.GetQueryBuilder().SQL;
-            
+
         //shortcut should have its own dimensions
         Assert.IsTrue(sqlShortcut.Contains("[sex]"));
         Assert.IsFalse(sqlShortcut.Contains("[chi]"));
-            
+
         //but should have a REFERENCE (not a clone!) to aggregate 1's filters
         Assert.IsTrue(sqlShortcut.Contains("folk=1"));
 
@@ -138,7 +138,7 @@ public class AggregateFilterPublishingTests:CohortIdentificationTests
         if(CatalogueRepository is TableRepository)
         {
             Assert.Throws<SqlException>(aggregate1.DeleteInDatabase);
-        }   
+        }
 
         //delete the child
         shortcutAggregate.DeleteInDatabase();

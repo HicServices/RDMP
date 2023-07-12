@@ -116,7 +116,7 @@ public class ExtractionInformationTests : DatabaseTests
 
         try
         {
-           
+
             //define extraction information
             //change some values and then save it
             extractInfo = new ExtractionInformation(CatalogueRepository, cataItem, columnInfo, "dave")
@@ -125,7 +125,7 @@ public class ExtractionInformationTests : DatabaseTests
                 ExtractionCategory = ExtractionCategory.Supplemental
             };
             extractInfo.SaveToDatabase();
-                
+
             //confirm the insert worked
             Assert.AreEqual(extractInfo.SelectSQL,"dave");
 

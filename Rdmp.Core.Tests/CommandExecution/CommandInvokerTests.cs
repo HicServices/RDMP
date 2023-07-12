@@ -17,13 +17,6 @@ namespace Rdmp.Core.Tests.CommandExecution;
 
 public class CommandInvokerTests : UnitTests
 {
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
-
     [Test]
     [Timeout(5000)]
     public void Test_ListSupportedCommands_NoPicker()
@@ -73,7 +66,7 @@ public class CommandInvokerTests : UnitTests
     private class GenericTestCommand<T> : BasicCommandExecution
     {
         private readonly T _arg;
-            
+
         public GenericTestCommand(T a)
         {
             _arg = a;
@@ -91,7 +84,7 @@ public class CommandInvokerTests : UnitTests
     {
         private readonly T1 _a;
         private readonly T2 _b;
-            
+
         public GenericTestCommand(T1 a, T2 b)
         {
             _a = a;

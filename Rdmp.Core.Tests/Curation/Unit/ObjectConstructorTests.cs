@@ -26,16 +26,16 @@ public class ObjectConstructorTests : UnitTests
         //anyone can construct on object!
         ObjectConstructor.Construct(typeof(TestClass1),testarg);
         ObjectConstructor.Construct(typeof(TestClass1), testarg2);
-            
+
         //basic case - identical Type parameter
         var instance = (TestClass2)ObjectConstructor.Construct(typeof(TestClass2), testarg);
         Assert.AreEqual(instance.A.Text, "amagad");
-        //also allowed because testarg2 is a testarg derived class 
+        //also allowed because testarg2 is a testarg derived class
         ObjectConstructor.Construct(typeof(TestClass2), testarg2);
 
-        //not allowed because class 3 explicitly requires a TestArg2 
+        //not allowed because class 3 explicitly requires a TestArg2
         Assert.Throws<ObjectLacksCompatibleConstructorException>(()=>ObjectConstructor.Construct(typeof(TestClass3), testarg));
-            
+
         //allowed
         ObjectConstructor.Construct(typeof(TestClass3), testarg2);
 
@@ -57,7 +57,7 @@ public class ObjectConstructorTests : UnitTests
     {
         //blank constructors are only used if no params are specified
         Assert.IsNotNull(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor)));
-            
+
         //no constructor taking an int
         Assert.IsNull(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor),8));
     }
@@ -66,11 +66,11 @@ public class ObjectConstructorTests : UnitTests
     public void GetRepositoryConstructor_AllDatabaseEntities_OneWinningConstructor()
     {
         SetupMEF();
-            
+
         var countCompatible = 0;
 
         var badTypes = new Dictionary<Type,Exception>();
-        foreach (var t in MEF.GetAllTypes().Where(typeof(DatabaseEntity).IsAssignableFrom))
+        foreach (var t in Core.Repositories.MEF.GetAllTypes().Where(typeof(DatabaseEntity).IsAssignableFrom))
         {
             try
             {
@@ -90,7 +90,7 @@ public class ObjectConstructorTests : UnitTests
 
     private class TestClassDefaultConstructor
     {
-            
+
     }
 
 
@@ -98,7 +98,7 @@ public class ObjectConstructorTests : UnitTests
     {
         public TestClass1(object o)
         {
-                
+
         }
     }
 
@@ -160,7 +160,7 @@ public class ObjectConstructorTests : UnitTests
 
     private class TestArg2:TestArg
     {
-             
+
     }
 
     private class TestArg3 : TestArg2

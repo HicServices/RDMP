@@ -29,7 +29,7 @@ public class ExtractionConfigurationTest : DatabaseTests
         ExtractionInformation extractionInformation=null;
 
         try
-        {             
+        {
             //setup catalogue side of things
             cata = new Catalogue(CatalogueRepository, "unit_test_ExtractableColumnTest_Cata");
             cataItem = new CatalogueItem(CatalogueRepository, cata, "unit_test_ExtractableColumnTest_CataItem");
@@ -48,7 +48,7 @@ public class ExtractionConfigurationTest : DatabaseTests
             _ = new ExtractableColumn(DataExportRepository, dataSet, configuration, extractionInformation, 0, "Hashme2(Name)");
             Assert.AreEqual(configuration.GetAllExtractableColumnsFor(dataSet).Length, 1);
         }
-        finally 
+        finally
         {
             extractionInformation?.DeleteInDatabase();
             column?.DeleteInDatabase();

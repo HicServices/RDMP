@@ -11,19 +11,13 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 
 namespace Rdmp.UI.Tests;
 
 internal class PluginProcessTaskUITests : UITests
 {
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
 
     [Test,UITimeout(20000)]
     public void PluginProcessTaskUI_NoClass()
@@ -53,7 +47,7 @@ internal class PluginProcessTaskUITests : UITests
         AndLaunch<PluginProcessTaskUI>(pt);
         AssertNoErrors(ExpectedErrorType.Any);
     }
-        
+
     [Test,UITimeout(20000)]
     public void PluginProcessTaskUI_InvalidParameter_Date()
     {
@@ -61,7 +55,7 @@ internal class PluginProcessTaskUITests : UITests
         var pt = WhenIHaveA<ProcessTask>();
         pt.Path = typeof(OmgDates).FullName;
         var arg = pt.CreateArgumentsForClassIfNotExists<OmgDates>().Single();
-            
+
         //set the argument value to 2001
         arg.SetValue(new DateTime(2001,01,01));
         pt.SaveToDatabase();
@@ -74,7 +68,7 @@ internal class PluginProcessTaskUITests : UITests
 
         //set the text to something nasty that won't compile
         tb.Text = "hahahah fff";
-            
+
         Publish(pt);
         AssertNoErrors(ExpectedErrorType.Any);
 

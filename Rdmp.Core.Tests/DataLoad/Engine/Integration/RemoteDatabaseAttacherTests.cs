@@ -63,8 +63,8 @@ public class RemoteDatabaseAttacherTests:DatabaseTests
         lm.CreateNewLoggingTaskIfNotExists("amagad");
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 
-        var job = Mock.Of<IDataLoadJob>(p => 
-            p.RegularTablesToLoad==new List<ITableInfo> {ti} && 
+        var job = Mock.Of<IDataLoadJob>(p =>
+            p.RegularTablesToLoad==new List<ITableInfo> {ti} &&
             p.LookupTablesToLoad==new List<ITableInfo>() && p.DataLoadInfo==dli);
             
         switch (scenario)
@@ -98,7 +98,7 @@ public class RemoteDatabaseAttacherTests:DatabaseTests
 
         externalServer.DeleteInDatabase();
     }
-        
+
     public enum Scenario
     {
         /// <summary>

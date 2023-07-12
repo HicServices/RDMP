@@ -27,11 +27,11 @@ public class ImportFilesDataProviderTests:DatabaseTests
     {
         var sourceDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).CreateSubdirectory("subdir");
         var targetDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).CreateSubdirectory("loaddir");
-            
+
         //make sure target is empty
         foreach (var f in targetDir.GetFiles())
             f.Delete();
-            
+
         var originpath = Path.Combine(sourceDir.FullName, "myFile.txt");
 
         File.WriteAllText(originpath,"fish");
@@ -46,7 +46,7 @@ public class ImportFilesDataProviderTests:DatabaseTests
 
         //it doesn't know what to load yet
         Assert.Throws<Exception>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
-            
+
         //now it does
         provider.DirectoryPath = sourceDir.FullName;
 
@@ -62,7 +62,7 @@ public class ImportFilesDataProviderTests:DatabaseTests
         //execute the provider
         provider.Fetch(job, new GracefulCancellationToken());
 
-        //destination is empty because nothing matched 
+        //destination is empty because nothing matched
         Assert.IsEmpty(targetDir.GetFiles());
 
         //give it correct pattern

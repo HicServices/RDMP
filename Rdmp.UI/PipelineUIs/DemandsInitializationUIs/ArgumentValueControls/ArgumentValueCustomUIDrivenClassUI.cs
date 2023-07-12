@@ -48,7 +48,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             if (_uiType == null)
             {
                 var shortUIClassName = $"{t.Name}UI";
-                var candidates = _args.CatalogueRepository.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName)).ToArray();
+                var candidates = Core.Repositories.MEF.GetAllTypes().Where(type => type.Name.Equals(shortUIClassName)).ToArray();
 
                 _uiType = candidates.Length switch
                 {

@@ -71,12 +71,12 @@ public class TableInfoSynchronizerTests:DatabaseTests
         {
             //accept changes should result in a synchronized table
             Assert.AreEqual(true,synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-            Assert.AreEqual(1,tableInfoCreated.ColumnInfos.Length);//should only be 1 remaining 
+            Assert.AreEqual(1,tableInfoCreated.ColumnInfos.Length);//should only be 1 remaining
         }
         else
         {
             var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
-            Assert.AreEqual("The ColumnInfo Address no longer appears in the live table.", ex.Message);    
+            Assert.AreEqual("The ColumnInfo Address no longer appears in the live table.", ex.Message);
         }
             
     }
@@ -122,13 +122,13 @@ public class TableInfoSynchronizerTests:DatabaseTests
             Assert.AreEqual(TABLE_NAME,cata.Name);
             Assert.AreEqual(2, cataItems.Length);
             Assert.AreEqual(2, extractionInformations.Length);
-            
+
             using (var con = _server.GetConnection())
             {
                 con.Open();
                 _server.GetCommand($"ALTER TABLE {TABLE_NAME} ADD Birthday datetime not null", con).ExecuteNonQuery();
             }
-            
+
             var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
 
             if (acceptChanges)

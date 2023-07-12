@@ -492,7 +492,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void BuildCohortCohortAggregateContainers()
     {
         AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
-            
+
 
         //if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
         //just use the one that is configured on the repository.
@@ -508,7 +508,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
 
         BuildAggregateDimensions();
-            
+
         //to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
         OrphanAggregateConfigurations = new HashSet<AggregateConfiguration>(AllAggregateConfigurations.Where(ac => ac.IsCohortIdentificationAggregate));
 
@@ -561,8 +561,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var p in AllCompatiblePlugins)
             children.Add(p);
-        
-        var expiredPluginsNode = new AllExpiredPluginsNode(); 
+
+        var expiredPluginsNode = new AllExpiredPluginsNode();
         children.Add(expiredPluginsNode);
         AddChildren(expiredPluginsNode,descendancy.Add(expiredPluginsNode));
 
@@ -596,10 +596,10 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(GovernancePeriod governancePeriod, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
-            
+
         foreach (var doc in AllGovernanceDocuments.Where(d=>d.GovernancePeriod_ID == governancePeriod.ID))
             children.Add(doc);
-            
+
         AddToDictionaries(children, descendancy);
     }
 
@@ -682,16 +682,16 @@ public class CatalogueChildProvider : ICoreChildProvider
         children.Add(OtherPipelinesNode);
         OtherPipelinesNode.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
         AddToDictionaries(unknownPipelines,descendancy.Add(OtherPipelinesNode));
-            
+
         //it is the first standard use case
         AddToDictionaries(children, descendancy);
-            
+
     }
 
     private IEnumerable<Pipeline> AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
-            
+
         var repo = new MemoryRepository();
 
         //Could be an issue here if a pipeline becomes compatible with multiple use cases.
@@ -731,7 +731,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(PipelineComponent pipelineComponent, DescendancyList descendancy)
     {
         var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID).ToArray();
-            
+
         var children = new HashSet<object>(components);
 
         AddToDictionaries(children, descendancy);
@@ -805,7 +805,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             AddChildren(c, descendancy.Add(c));
         }
-            
+
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
@@ -825,7 +825,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             AddChildren(lmd, descendancy.Add(lmd));
         }
-            
+
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
@@ -887,7 +887,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         var childObjects = new HashSet<object>();
 
         var lmd = allSchedulesNode.LoadMetadata;
-            
+
         foreach (var lp in AllLoadProgresses.Where(p => p.LoadMetadata_ID == lmd.ID))
         {
             AddChildren(lp,descendancy.Add(lp));
@@ -959,7 +959,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var args = AllProcessTasksArguments.Where(
             a => a.ProcessTask_ID == procesTask.ID).ToArray();
-            
+
         if(args.Any())
             AddToDictionaries(new HashSet<object>(args),descendancy);
     }
@@ -1023,7 +1023,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //do we have any foreign key fields into this lookup table
         var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
-            
+
         var docs = AllSupportingDocuments.Where(d => d.Catalogue_ID == c.ID).ToArray();
         var sql = AllSupportingSQL.Where(d => d.Catalogue_ID == c.ID).ToArray();
 
@@ -1062,7 +1062,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             foreach (var regularAggregate in regularAggregates)
                 AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
         }
-                        
+
         //finalise
         AddToDictionaries(new HashSet<object>(childObjects),descendancy);
     }
@@ -1144,7 +1144,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddChildren((AggregateFilter)f, descendancy.Add(f));
             childrenObjects.Add(f);
         }
-            
+
         //add our children to the dictionary
         AddToDictionaries(new HashSet<object>(childrenObjects),descendancy);
     }
@@ -1169,14 +1169,14 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (ci.ColumnInfo_ID.HasValue && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
             childObjects.Add(new LinkedColumnInfoNode(ci,col));
-            
+
         AddToDictionaries(new HashSet<object>(childObjects),descendancy);
     }
 
     private void AddChildren(ExtractionInformation extractionInformation, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
-            
+
         foreach (var filter in AllCatalogueFilters.Where(f => f.ExtractionInformation_ID == extractionInformation.ID))
         {
             //add the filter as a child of the
@@ -1228,7 +1228,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         //it has an associated query cache
         if (cic.QueryCachingServer_ID != null)
             children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
-            
+
         var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
         foreach(var p in parameters)
         {
@@ -1329,7 +1329,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             serverNode.Tables.GroupBy(
                     k => k.Database ?? TableInfoDatabaseNode.NullDatabaseNode, StringComparer.CurrentCultureIgnoreCase)
                 .Select(g=> new TableInfoDatabaseNode(g.Key, serverNode, g));
-            
+
         foreach (var db in databases)
         {
             children.Add(db);
@@ -1362,7 +1362,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         //add empty hashset
         var children =  new HashSet<object>();
-            
+
         //if the table has an identifier dump listed
         if (tableInfo.IdentifierDumpServer_ID != null)
         {
@@ -1371,7 +1371,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
             children.Add(new IdentifierDumpServerUsageNode(tableInfo, server));
         }
-            
+
         //get the discarded columns in this table
         var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Where(c => c.TableInfo_ID == tableInfo.ID));
 
@@ -1442,17 +1442,17 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         if(list.IsEmpty)
             throw new ArgumentException("DescendancyList cannot be empty",nameof(list));
-         
+
         //document that the last parent has these as children
         var parent = list.Last();
 
         _childDictionary.AddOrUpdate(parent,
             children, (p, s) => children);
-            
+
         //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
         foreach (var o in children)
             _descendancyDictionary.AddOrUpdate(o, list,(k,v)=> HandleDescendancyCollision(k,v,list));
-            
+
 
         foreach (var masquerader in children.OfType<IMasqueradeAs>())
         {
@@ -1464,7 +1464,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             lock(AllMasqueraders)
                 AllMasqueraders[key].Add(masquerader);
         }
-            
+
     }
 
     private DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute, DescendancyList newRoute)
@@ -1653,7 +1653,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
             if(newObjectsFound.Any())
                 GetPluginChildren(newObjectsFound);
-        }   
+        }
     }
 
     public IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o)
@@ -1767,7 +1767,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         PipelineUseCases = otherCat.PipelineUseCases;
         OrphanAggregateConfigurationsNode = otherCat.OrphanAggregateConfigurationsNode;
         TemplateAggregateConfigurationsNode = otherCat.TemplateAggregateConfigurationsNode;
-        AllCatalogueParameters = otherCat.AllCatalogueParameters;  
+        AllCatalogueParameters = otherCat.AllCatalogueParameters;
         AllCatalogueValueSets = otherCat.AllCatalogueValueSets;
         AllCatalogueValueSetValues = otherCat.AllCatalogueValueSetValues ;
         OrphanAggregateConfigurations = otherCat.OrphanAggregateConfigurations;
@@ -1813,7 +1813,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (cataDescendancy == null)
             return false;
-            
+
         FetchCatalogueItems();
 
         foreach(var ci in AllCatalogueItems.Where(ci=>ci.ID == ei.CatalogueItem_ID))

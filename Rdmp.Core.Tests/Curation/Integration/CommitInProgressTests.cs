@@ -43,7 +43,7 @@ public class CommitInProgressTests : DatabaseTests
 
     /// <summary>
     /// Tests that when there is a <see cref="CommitInProgress"/> on object(s) e.g. <see cref="Catalogue"/>
-    /// that uses transactions.  Cancelling the <see cref="CommitInProgress"/> will leave everything back 
+    /// that uses transactions.  Cancelling the <see cref="CommitInProgress"/> will leave everything back
     /// how it was
     /// </summary>
     [Test]
@@ -54,7 +54,7 @@ public class CommitInProgressTests : DatabaseTests
         Assert.AreEqual(ChangeDescription.NoChanges,c.HasLocalChanges().Evaluation,
             "We just created this Catalogue, how can db copy be different?!");
 
-        var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c) 
+        var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c)
         {
             UseTransactions = true
         });

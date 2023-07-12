@@ -48,7 +48,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
                 ExtractionCategory = ExtractionCategory.Core
             };
             ei.SaveToDatabase();
-            
+
             //make it part of the ExtractionConfiguration
             var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet, (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
                 {
@@ -65,7 +65,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         {
             _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
             _configuration.SaveToDatabase();
-                
+
             var dbname = TestDatabaseNames.GetConsistentName($"{_project.Name}_{_project.ProjectNumber}");
             dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
             if (dbToExtractTo.Exists())
@@ -85,7 +85,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
             Assert.AreEqual(_columnToTransform.Data_type, destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
             Assert.AreEqual("int",destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
-                
+
             AssertLookupsEtcExist(dbToExtractTo);
         }
         finally
@@ -166,7 +166,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
         Import(lookupTbl, out var ti, out var columnInfos);
 
-        var lookup =  new Lookup(CatalogueRepository, columnInfos[0], 
+        var lookup =  new Lookup(CatalogueRepository, columnInfos[0],
             _columnToTransform,
             columnInfos[1],
             ExtractionJoinType.Left,null);

@@ -93,7 +93,7 @@ public class GovernanceTests:DatabaseTests
         var gov = GetGov();
         gov.Name = "TestExpiryBeforeStarting";
 
-        //valid to start with 
+        //valid to start with
         gov.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         gov.EndDate = DateTime.MinValue;
@@ -107,7 +107,7 @@ public class GovernanceTests:DatabaseTests
         var gov = GetGov();
         gov.Name = "NeverExpires";
 
-        //valid to start with 
+        //valid to start with
         var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
         Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex?.Message);
 
@@ -132,7 +132,7 @@ public class GovernanceTests:DatabaseTests
             var governedCatalogue = allCatalogues[0];
             Assert.AreEqual(governedCatalogue, c); //we now govern C
         }
-        finally 
+        finally
         {
             gov.DeleteGovernanceRelationshipTo(c);
             Assert.AreEqual(gov.GovernedCatalogues.Count(), 0); //we govern c nevermore!

@@ -69,7 +69,7 @@ public class ParameterManagerTests
         Assert.AreEqual(1, final.Length);
         Assert.AreEqual(overridingParameter, final[0]);
     }
-        
+
     [Test]
     public void FindOverridenParameters_CaseSensitivityTest()
     {

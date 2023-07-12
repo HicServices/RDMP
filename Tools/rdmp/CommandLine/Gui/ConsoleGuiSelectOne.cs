@@ -26,7 +26,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
     /// The maximum number of objects to show in the list box
     /// </summary>
     public const int MaxMatches = 100;
-        
+
     public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available):base("Open","Ok",
         true,null)
     {
@@ -53,7 +53,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
                 return "Null";
 
             var parent = childProvider.GetDescendancyListIfAnyFor(o)?.GetMostDescriptiveParent();
-                
+
             return parent != null ? $"{o.ID} {o.GetType().Name} {o} ({parent})" : $"{o.ID} {o.GetType().Name} {o}";
         };
 
@@ -92,7 +92,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
              
         if(int.TryParse(txtId.Text.ToString(), out var searchForID))
             _scorer.ID = searchForID;
-        else 
+        else
             _scorer.ID = null;
 
         var dict = _scorer.ScoreMatches(_masterCollection, searchText,null, token);

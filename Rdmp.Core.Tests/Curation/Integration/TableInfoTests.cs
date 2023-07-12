@@ -102,7 +102,7 @@ internal class TableInfoTests : DatabaseTests
             Assert.AreEqual("TestTableName", table.GetRuntimeName(LoadBubble.Live));
 
         }
-        finally 
+        finally
         {
             c.DeleteInDatabase();
             table.DeleteInDatabase();

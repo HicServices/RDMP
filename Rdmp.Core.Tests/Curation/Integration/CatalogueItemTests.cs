@@ -142,14 +142,14 @@ internal class CatalogueItemTests : DatabaseTests
             Assert.AreEqual(cloneChild.Statistical_cons, child.Statistical_cons);
             Assert.AreEqual(cloneChild.Topic, child.Topic);
         }
-        finally 
+        finally
         {
             cloneChild?.DeleteInDatabase();
 
             child.DeleteInDatabase();
             parent.DeleteInDatabase();
             parent2.DeleteInDatabase();
-                
+
         }
     }
 

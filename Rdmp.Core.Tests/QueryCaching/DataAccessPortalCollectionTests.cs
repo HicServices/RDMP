@@ -48,13 +48,13 @@ internal class DataAccessPortalCollectionTests
         collection.Add(Mock.Of<IDataAccessPoint>(m =>
             m.Server == "loco" &&
             m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle && 
+            m.DatabaseType == DatabaseType.Oracle &&
             m.GetQuerySyntaxHelper() == OracleQuerySyntaxHelper.Instance));
 
         collection.Add(Mock.Of<IDataAccessPoint>(m =>
             m.Server == "loco" &&
             m.Database == "B" &&
-            m.DatabaseType == DatabaseType.Oracle && 
+            m.DatabaseType == DatabaseType.Oracle &&
             m.GetQuerySyntaxHelper() == OracleQuerySyntaxHelper.Instance));
 
         Assert.AreEqual(2, collection.Points.Count);

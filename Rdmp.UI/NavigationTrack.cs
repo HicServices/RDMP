@@ -158,7 +158,7 @@ public class NavigationTrack<T>
             Activate(r);
 
         _navigationStack.Push(r);
-            
+
         Changed?.Invoke(this,EventArgs.Empty);
 
         return r;

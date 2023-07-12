@@ -474,7 +474,7 @@ public static class UserSettings
     {
         if (columnGuid == Guid.Empty)
             return;
-            
+
         SetColumnVisible(columnGuid.ToString("N"),visible);
     }
 
@@ -518,11 +518,11 @@ public static class UserSettings
             return;
 
         var l = GetHistoryForControl(guid).ToList();
-            
+
         if (l.Contains(v))
             return;
 
-        l.Add(v);            
+        l.Add(v);
 
         SetHistoryForControl(guid, l.Distinct().ToList());
     }

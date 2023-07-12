@@ -66,7 +66,7 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         using (var md5 = MD5.Create())
         {
-            hashAsBytes = md5.ComputeHash(memory);    
+            hashAsBytes = md5.ComputeHash(memory);
         }
 
         var ds = new DataSource[] { new("nothing", DateTime.Now) };
@@ -87,6 +87,6 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         d.CloseAndMarkComplete();
     }
-    
+
 
 }

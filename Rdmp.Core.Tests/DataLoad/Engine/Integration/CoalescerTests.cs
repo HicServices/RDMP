@@ -59,7 +59,7 @@ public class CoalescerTests:DatabaseTests
                 dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, DBNull.Value });
                 dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, randInt });
             }
-                 
+
             if(randCompleteness >=2)
             {
                 dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, DBNull.Value, DBNull.Value });

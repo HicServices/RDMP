@@ -24,7 +24,7 @@ internal class ExecuteCommandClearFavouritesTests : UITests
         var myFavCatalogue = WhenIHaveA<Catalogue>();
 
         ItemActivator.FavouritesProvider.AddFavourite(this,myFavCatalogue);
-            
+
         cmd = new ExecuteCommandClearFavourites(ItemActivator);
         Assert.IsFalse(cmd.IsImpossible);
     }
@@ -40,20 +40,20 @@ internal class ExecuteCommandClearFavouritesTests : UITests
         ItemActivator.FavouritesProvider.AddFavourite(this,mProject);
 
         Assert.AreEqual(2, ItemActivator.FavouritesProvider.CurrentFavourites.Count);
-            
+
         //when we say no to deleting them
         ItemActivator.YesNoResponse = false;
 
         var cmd = new ExecuteCommandClearFavourites(ItemActivator);
         cmd.Execute();
-            
+
         //they should not be deleted!
         Assert.AreEqual(2, ItemActivator.FavouritesProvider.CurrentFavourites.Count);
 
         //when we say yes to deleting them
         ItemActivator.YesNoResponse = true;
         cmd.Execute();
-            
+
         //they should not be deleted
         Assert.IsEmpty(ItemActivator.FavouritesProvider.CurrentFavourites);
     }

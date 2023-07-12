@@ -32,5 +32,5 @@ internal class ExternalDatabaseServerUITests : UITests
         ui.GetObjectSaverButton().Save();
         Assert.AreEqual("", server.Username);
     }
-        
+
 }

@@ -20,7 +20,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 public class CohortQueryBuilderTests : CohortIdentificationTests
 {
     private readonly string _scratchDatabaseName = TestDatabaseNames.GetConsistentName("ScratchArea");
-        
+
     [Test]
     public void TestGettingAggregateJustFromConfig_DistinctCHISelect()
     {
@@ -33,7 +33,7 @@ distinct
 FROM 
 [" + _scratchDatabaseName + @"].[dbo].[BulkData]", cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
     }
-        
+
     [Test]
     public void TestGettingAggregateJustFromConfig_SelectStar()
     {
@@ -110,11 +110,11 @@ FROM
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )"
-       
+
                     ,cohortIdentificationConfiguration.ID))
                 , CollapseWhitespace(builder.SQL));
         }
-        finally 
+        finally
         {
             rootcontainer.RemoveChild(aggregate1);
             rootcontainer.RemoveChild(aggregate2);
@@ -124,7 +124,7 @@ FROM
     [Test]
     public void TestOrdering_AggregateThenContainer()
     {
-        //set the order so that a configuration is in position 1 
+        //set the order so that a configuration is in position 1
         rootcontainer.AddChild(aggregate1, 1);
 
         //then a container in position 2
@@ -177,7 +177,7 @@ FROM
 	)
 
 )",cohortIdentificationConfiguration.ID))
-                , 
+                ,
                 CollapseWhitespace(builder.SQL));
         }
         finally
@@ -191,7 +191,7 @@ FROM
     [Test]
     public void TestOrdering_ContainerThenAggregate()
     {
-        //set the order so that a configuration is in position 1 
+        //set the order so that a configuration is in position 1
         rootcontainer.AddChild(aggregate1, 2);
 
         //then a container in position 2
@@ -202,7 +202,7 @@ FROM
         //container 1 contains both other aggregates
         container1.AddChild(aggregate2, 1);
         container1.AddChild(aggregate3, 2);
-            
+
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         try
@@ -336,7 +336,7 @@ WHERE
 (
 /*hithere*/
 1=@abracadabra
-)",cohortIdentificationConfiguration.ID)), 
+)",cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder2.SQL));
 
 
@@ -656,15 +656,15 @@ SET @abracadabra=1;
         foreach (var filter in new IFilter[]{filter1_1,filter1_2,filter2_1,filter2_2})
         {
             filter.WhereSQL = "@bob = 'bob'";
-            filter.SaveToDatabase();     
+            filter.SaveToDatabase();
             //get it to create the parameters for us
             new ParameterCreator(new AggregateFilterFactory(repo), null, null).CreateAll(filter, null);
-                
+
             //get the parameter it just created, set its value and save it
             var param = (AggregateFilterParameter) filter.GetAllParameters().Single();
             param.Value = "'Boom!'";
             param.ParameterSQL = "DECLARE @bob AS varchar(10);";
-                
+
             //if test case is different values then we change the values of the parameters
             if (!valuesAreSame && (filter.Equals(filter2_1) || Equals(filter, filter2_2)))
                 param.Value = "'Grenades Are Go'";
@@ -725,7 +725,7 @@ SET @bob='Boom!';
             {
                 Assert.AreEqual(
 
-                    CollapseWhitespace( 
+                    CollapseWhitespace(
                         string.Format(
                             @"DECLARE @bob AS varchar(10);
 SET @bob='Grenades Are Go';
@@ -778,7 +778,7 @@ SET @bob_2='Boom!';
             filter1_2.DeleteInDatabase();
             filter2_1.DeleteInDatabase();
             filter2_2.DeleteInDatabase();
-                 
+
             AND1.DeleteInDatabase();
             AND2.DeleteInDatabase();
 
@@ -828,7 +828,7 @@ SET @bob_2='Boom!';
             rootcontainer.RemoveChild(aggregate2);
         }
     }
-        
+
     [Test]
     public void TestGettingAggregateSQLFromEntirity_Filter_IsDisabled()
     {
@@ -924,7 +924,7 @@ SET @bob_2='Boom!';
 )
 ", cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder.SQL));
-                
+
         }
         finally
         {

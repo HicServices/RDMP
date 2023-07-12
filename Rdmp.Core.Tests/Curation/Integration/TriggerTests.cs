@@ -27,13 +27,13 @@ public class TriggerTests :DatabaseTests
     private DiscoveredTable _table;
     private DiscoveredTable _archiveTable;
     private DiscoveredDatabase _database;
-        
+
 
     public void CreateTable(DatabaseType dbType)
     {
         _database = GetCleanedServer(dbType);
 
-        _table =_database.CreateTable("TriggerTests",new DatabaseColumnRequest[]{ 
+        _table =_database.CreateTable("TriggerTests",new DatabaseColumnRequest[]{
             new("name",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false },
             new("bubbles",new DatabaseTypeRequest(typeof(int)))
         });
@@ -84,7 +84,7 @@ public class TriggerTests :DatabaseTests
     {
         _database = GetCleanedServer(dbType);
 
-        _table =_database.CreateTable("Trol lol My Table Select * from Group by fish",new DatabaseColumnRequest[]{ 
+        _table =_database.CreateTable("Trol lol My Table Select * from Group by fish",new DatabaseColumnRequest[]{
             new("My Lovely Column Select * From Lolz",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false,IsPrimaryKey = true},
             new("ANormalColumnName",new DatabaseTypeRequest(typeof(int))),
             new("Group By Meeee Colll trollolol",new DatabaseTypeRequest(typeof(int)))
@@ -123,11 +123,11 @@ public class TriggerTests :DatabaseTests
         AlterTest_InvalidThenRecreateItAndItsValidAgain(dbType);
             
         _table.Insert(new Dictionary<string, object>
-        { 
+        {
             {"name","Franky" } ,
             {"bubbles",3 } ,
             {"hic_validFrom",new DateTime(2001,1,2)} ,
-            {"hic_dataLoadRunID",7 } 
+            {"hic_dataLoadRunID",7 }
         });
 
         var liveOldRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
@@ -149,7 +149,7 @@ public class TriggerTests :DatabaseTests
             Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"));
             //legacy boundary case?
             Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"));
-            
+
             //legacy today it is 99
             Assert.AreEqual(99, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"));
         }
@@ -173,11 +173,11 @@ public class TriggerTests :DatabaseTests
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
             
         _table.Insert(new Dictionary<string, object>
-        { 
+        {
             {"name","Franky" } ,
             {"bubbles",3 } ,
             {"hic_validFrom",new DateTime(2001,1,2)} ,
-            {"hic_dataLoadRunID",7 } 
+            {"hic_dataLoadRunID",7 }
         });
             
         Thread.Sleep(1000);

@@ -28,7 +28,7 @@ internal class Patch68FixNamespacesTest:UnitTests
         var patch = p.GetAllPatchesInAssembly(null).Single(kvp=>kvp.Key == "068_FixNamespaces.sql").Value;
 
         var findSubsRegex = new Regex(@"REPLACE\(.*,'(.*)','(.*)'\)");
-            
+
         var substitutions = new Dictionary<string, string>();
 
         foreach (Match match in findSubsRegex.Matches(patch.EntireScript))
@@ -38,10 +38,8 @@ internal class Patch68FixNamespacesTest:UnitTests
 
             substitutions.Add(match.Groups[1].Value,match.Groups[2].Value);
         }
-            
-        SetupMEF();
 
-        MEF.SafeDirectoryCatalog.AddType(typeof(FAnsi.DatabaseType));
+        SetupMEF();
 
         foreach (var oldClass in ExpectedClasses)
         {
@@ -52,7 +50,7 @@ internal class Patch68FixNamespacesTest:UnitTests
             Assert.IsNotNull(foundNow,"Patch did not work correctly for Type '{0}' which after renaming became '{1}'", oldClass, newClass);
 
         }
-                
+
 
     }
     private string[] ExpectedClasses

@@ -36,13 +36,9 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
     public List<Catalogue> CataloguesWithBrokenValidationXml = new();
 
 
-    private readonly MEF _mef;
-
     public ValidationXMLObscureDependencyFinder(ICatalogueRepositoryServiceLocator catalogueRepositoryServiceLocator)
     {
         Validator.LocatorForXMLDeserialization ??= catalogueRepositoryServiceLocator;
-
-        _mef = catalogueRepositoryServiceLocator.CatalogueRepository.MEF;
     }
 
     private bool initialized;
@@ -52,7 +48,7 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
         initialized = true;
 
         //get all the SecondaryConstraints
-        foreach (var constraintType in _mef.GetAllTypes().Where(c => typeof(ISecondaryConstraint).IsAssignableFrom(c)))
+        foreach (var constraintType in MEF.GetAllTypes().Where(c => typeof(ISecondaryConstraint).IsAssignableFrom(c)))
         {
             //get all properties and fields which map to a database object
             var props = constraintType.GetProperties().Where(p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.PropertyType)).ToList();
@@ -83,19 +79,15 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
 
     public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        //dependency can only be initialized if mef is setup
         if(!initialized)
-            if(_mef == null)
-                return;
-            else
-                Initialize();
+            Initialize();
 
         ThrowIfDeleteDisallowed(oTableWrapperObject,0);
     }
 
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-            
+
     }
 
     private void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject, int depth)
@@ -151,7 +143,7 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
     {
         //we already forbidlisted this Catalogue because it has dodgy XML that cant be deserialized properly
         var forbidlisted = CataloguesWithBrokenValidationXml.SingleOrDefault(c => c.ID == firstPassSuspect.ID);
-            
+
         //it was forbidlisted because it had dodgy XML, if the xml hasn't changed it will still be broken so give up
         if(forbidlisted != null)
             if(forbidlisted.ValidatorXML.Equals(firstPassSuspect.ValidatorXML))

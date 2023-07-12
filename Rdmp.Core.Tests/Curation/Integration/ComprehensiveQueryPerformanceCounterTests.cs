@@ -34,7 +34,7 @@ public class ComprehensiveQueryPerformanceCounterTests : DatabaseTests
 
             var commands = pCounter.DictionaryOfQueries.Values.ToArray();
             Assert.IsTrue(commands.Any(c => c.QueryText.Contains("SELECT * FROM [Catalogue] WHERE ID=")));
-                
+
             cata.DeleteInDatabase();
         }
         finally

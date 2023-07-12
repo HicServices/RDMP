@@ -11,16 +11,9 @@ using System.Linq;
 
 namespace Rdmp.Core.CohortCreation.Execution;
 
-internal class PluginCohortCompilerFactory
+internal static class PluginCohortCompilerFactory
 {
-    private MEF _mef;
-
-    public PluginCohortCompilerFactory(MEF mef)
-    {
-        _mef = mef;
-    }
-
-    internal IReadOnlyCollection<IPluginCohortCompiler> CreateAll()
+    internal static IReadOnlyCollection<IPluginCohortCompiler> CreateAll()
     {
         return MEF.GetTypes<IPluginCohortCompiler>()
             .Select(Activator.CreateInstance)

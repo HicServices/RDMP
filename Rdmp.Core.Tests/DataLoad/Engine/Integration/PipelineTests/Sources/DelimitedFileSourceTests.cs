@@ -222,7 +222,7 @@ public class DelimitedFileSourceTests
         }
         finally
         {
-            source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);    
+            source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
             
     }
@@ -487,7 +487,7 @@ old"",2001-01-05");
             Assert.AreEqual(5, dt.Rows.Count);
             Assert.AreEqual(@"5
     The first",dt.Rows[0][1]);
-                      
+
         }
         finally
         {
@@ -557,7 +557,7 @@ old"",2001-01-05");
             source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }   
     }
-        
+
 
     [Test]
     public void OverrideHeadersAndTab()

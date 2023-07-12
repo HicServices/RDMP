@@ -19,7 +19,7 @@ internal class CohortIdentificationConfigurationUnitTests:UITests
     private void GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic)
     {
         cic = WhenIHaveA<CohortIdentificationConfiguration>();
-             
+
         cic.CreateRootContainerIfNotExists();
 
         //clear anything old
@@ -41,7 +41,7 @@ internal class CohortIdentificationConfigurationUnitTests:UITests
         DeleteOldAggregates();
 
         GetObjects(out var cata, out var cic);
-            
+
         //we should be able to add it
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
         AssertCommandIsPossible(cmd);
@@ -72,17 +72,17 @@ internal class CohortIdentificationConfigurationUnitTests:UITests
     public void Test_AggregateConfigurationOrder_MovingAggregatesBetweenContainers()
     {
         GetObjects(out var cata, out var cic);
-            
+
         //we should be able to add it to root container
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
         cmd.Execute();
 
-            
+
         //create a subcontainer
         var subcontainer = new CohortAggregateContainer(Repository, SetOperation.INTERSECT);
         cic.RootCohortAggregateContainer.AddChild(subcontainer);
 
-        //add the second ac to the subcontainer 
+        //add the second ac to the subcontainer
         var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),subcontainer);
         cmd2.Execute();
 
@@ -109,7 +109,7 @@ internal class CohortIdentificationConfigurationUnitTests:UITests
 
         all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
 
-        //should now look like this 
+        //should now look like this
         //Root
         //  Ac2
         //  INTERSECT (empty)

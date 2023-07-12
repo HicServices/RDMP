@@ -47,20 +47,20 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public IJoinManager JoinManager { get; private set; }
 
-    public MEF MEF
+    public CommentStore CommentStore { get; set; }
+
+    private IObscureDependencyFinder _odf;
+    public IObscureDependencyFinder ObscureDependencyFinder
     {
-        get => _mef;
+        get => _odf;
         set
         {
-            _mef = value;
-            if(ObscureDependencyFinder is CatalogueObscureDependencyFinder odf && this is IDataExportRepository dxm)
-                odf.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(new RepositoryProvider(dxm));
+            _odf = value;
+            if (_odf is CatalogueObscureDependencyFinder catFinder && this is IDataExportRepository dataExportRepository)
+                catFinder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(new RepositoryProvider(dataExportRepository));
         }
     }
 
-    public CommentStore CommentStore { get; set; }
-
-    public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
     public string ConnectionString => null;
     public DbConnectionStringBuilder ConnectionStringBuilder => null;
     public DiscoveredServer DiscoveredServer => null;
@@ -446,7 +446,6 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #region IGovernanceManager
 
     protected Dictionary<GovernancePeriod,HashSet<ICatalogue>> GovernanceCoverage { get; set; } = new ();
-    private MEF _mef;
 
     public virtual void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {

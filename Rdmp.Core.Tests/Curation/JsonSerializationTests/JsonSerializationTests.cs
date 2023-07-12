@@ -50,8 +50,8 @@ public class JsonSerializationTests:DatabaseTests
 
     //todo null Catalogue test case
 }
-    
-    
+
+
 public class MySerializeableTestClass
 {
     public string Title { get; set; }
@@ -64,7 +64,7 @@ public class MySerializeableTestClass
     {
         _sm = new ShareManager(locator);
     }
-        
+
     public MySerializeableTestClass(ShareManager sm)
     {
         _sm = sm;

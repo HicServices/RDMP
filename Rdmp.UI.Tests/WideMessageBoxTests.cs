@@ -69,7 +69,7 @@ internal class WideMessageBoxTests:UITests
 
         //pretend like we launched it
         LastUserInterfaceLaunched = wmb;
-            
+
         //the title and body should be a reasonable length
         Assert.AreEqual(WideMessageBox.MAX_LENGTH_TITLE,GetControl<Label>().Single().Text.Length);
         Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<RichTextBox>().Single().Text.Length);

@@ -31,7 +31,7 @@ public class LogManagerTest : DatabaseTests
     private string _dataLoadTaskName;
     private LogManager _logManager;
 
-        
+
     /// <summary>
     /// Add a bunch of data load runs for the tests in this fixture
     /// </summary>
@@ -45,7 +45,7 @@ public class LogManagerTest : DatabaseTests
             var lds = new DiscoveredServer(UnitTestLoggingConnectionString);
 
             var manager = new LogManager(lds);
-                
+
             _dataLoadTaskName = "LogTest";
 
             _dataLoadTaskHelper = new DataLoadTaskHelper(lds);
@@ -93,7 +93,7 @@ public class LogManagerTest : DatabaseTests
             Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(_setupException,true));
     }
 
-        
+
     [Test]
     public void TestLastLoadStatusassemblage()
     {

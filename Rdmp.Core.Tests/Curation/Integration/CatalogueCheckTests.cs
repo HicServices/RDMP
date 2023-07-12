@@ -54,7 +54,7 @@ public class CatalogueCheckTests:DatabaseTests
         tbl.Truncate();
         cata.Check(tomemory);
 
-        //now it should warn us that it is empty 
+        //now it should warn us that it is empty
         Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());
 
         tbl.Drop();

@@ -24,7 +24,7 @@ public class SimpleCounterButton : ToolStripButton
         get => _count;
         set
         {
-            _count = value; 
+            _count = value;
             Invalidate();
         }
     }
@@ -58,7 +58,7 @@ public class SimpleCounterButton : ToolStripButton
             e.Graphics.DrawString(label,labelFont,Brushes.Black,labelRect);
 
         }
-            
+
     }
 
 

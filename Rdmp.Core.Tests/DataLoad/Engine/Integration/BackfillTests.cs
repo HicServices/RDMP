@@ -22,9 +22,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class BackfillTests : FromToDatabaseTests
 {
-        
+
     private ICatalogue _catalogue;
-        
+
 
     [SetUp]
     protected override void SetUp()
@@ -32,7 +32,7 @@ public class BackfillTests : FromToDatabaseTests
         base.SetUp();
 
         BlitzMainDataTables();
-            
+
         DeleteTables(From);
         DeleteTables(To);
     }
@@ -621,7 +621,7 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(stagingSamplesSql, connection);
             cmd.ExecuteNonQuery();
         }
-            
+
         #endregion
 
         Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
@@ -847,7 +847,7 @@ public class BackfillTests : FromToDatabaseTests
         using(var con = (SqlConnection)To.Server.GetConnection())
         {
             con.Open();
-            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery(); 
+            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery();
         }
     }
 
@@ -856,7 +856,7 @@ public class BackfillTests : FromToDatabaseTests
     {
         #region Set SetUp databases
         CreateTables("Header", "ID int NOT NULL, Discipline varchar(32) NOT NULL", "ID");
-            
+
         CreateTables("Samples",
             "ID int NOT NULL, HeaderID int NOT NULL, SampleDate DATETIME, Description varchar(1024)",
             "CONSTRAINT FK_Header_Samples FOREIGN KEY (HeaderID) REFERENCES Header (ID)");
@@ -864,7 +864,7 @@ public class BackfillTests : FromToDatabaseTests
         CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int",
             "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
-        #endregion  
+        #endregion
 
         #region Set SetUp catalogue entities
 
@@ -997,7 +997,7 @@ public class BackfillTests : FromToDatabaseTests
     {
         var ti = AddTableToCatalogue(databaseName, "Samples", "ID", out ciList, true);
         _catalogue.Name = databaseName;
-            
+
         // todo: what should this text actually look like
         _catalogue.Time_coverage = "[Samples].[SampleDate]";
         _catalogue.SaveToDatabase();
@@ -1034,9 +1034,9 @@ public class BackfillTests : FromToDatabaseTests
     {
         var table = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName).ExpectTable(tableName);
         var resultsImporter = new TableInfoImporter(CatalogueRepository, table);
-            
+
         resultsImporter.DoImport(out var ti, out ciList);
-            
+
         var pkResult = ciList.Single(info => info.GetRuntimeName().Equals(pkName));
         pkResult.IsPrimaryKey = true;
         pkResult.SaveToDatabase();

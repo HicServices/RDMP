@@ -130,7 +130,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         {
             if (Equals(_selfCertifyingDataAccessPoint.DatabaseType, value))
                 return;
-                
+
             var old = _selfCertifyingDataAccessPoint.DatabaseType;
             _selfCertifyingDataAccessPoint.DatabaseType = value;
             OnPropertyChanged(old, value);
@@ -162,10 +162,10 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
             {"Name", name},
             {"DatabaseType",DatabaseType.MicrosoftSQLServer}
         };
-            
+
         if(creatorIfAny != null)
             parameters.Add("CreatedByAssembly" , creatorIfAny.Name);
-            
+
         Repository = repository;
         _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository,DatabaseType.MicrosoftSQLServer);
         repository.InsertAndHydrate(this, parameters);
@@ -176,7 +176,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         var repo = shareManager.RepositoryLocator.CatalogueRepository;
         Repository = repo;
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/); 
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/);
 
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }

@@ -35,7 +35,7 @@ public class TicketingSystemFactory
     {
         return string.IsNullOrWhiteSpace(typeName)
             ? throw new NullReferenceException("Type name was blank, cannot create ITicketingSystem")
-            : _repository.MEF.CreateA<ITicketingSystem>(typeName, new TicketingSystemConstructorParameters(url, credentials));
+            : MEF.CreateA<ITicketingSystem>(typeName, new TicketingSystemConstructorParameters(url, credentials));
     }
 
     public ITicketingSystem CreateIfExists(TicketingSystemConfiguration ticketingSystemConfiguration)

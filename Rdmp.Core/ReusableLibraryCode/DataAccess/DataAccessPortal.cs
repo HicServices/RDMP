@@ -28,7 +28,7 @@ public class DataAccessPortal
 
     private DataAccessPortal()
     {
-            
+
     }
 
     public DiscoveredServer ExpectServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase=true)
@@ -47,22 +47,22 @@ public class DataAccessPortal
     private DiscoveredServer GetServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase)
     {
         var credentials = dataAccessPoint.GetCredentialsIfExists(context);
-            
+
         if(string.IsNullOrWhiteSpace(dataAccessPoint.Server))
             throw new NullReferenceException(
                 $"Could not get connection string because Server was null on dataAccessPoint '{dataAccessPoint}'");
- 
+
         string dbName = null;
-                                   
+
         if(setInitialDatabase)
             if(!string.IsNullOrWhiteSpace(dataAccessPoint.Database))
                 dbName = dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database);
             else
                 throw new Exception(
                     $"Could not get server with setInitialDatabase=true because no Database was set on IDataAccessPoint {dataAccessPoint}");
-            
+
         var server = new DiscoveredServer(dataAccessPoint.Server,dbName,dataAccessPoint.DatabaseType,credentials?.Username, credentials?.GetDecryptedPassword());
-                      
+
         return server;
     }
 
@@ -103,7 +103,7 @@ public class DataAccessPortal
                         $"All data access points must be into the same database, access points '{first}' and '{accessPoint}' are into different databases", firstDbName, currentDbName);
             }
         }
-            
+
         //There can be only one - credentials (but there might not be any)
         var credentials = collection.Select(t => t.GetCredentialsIfExists(context)).ToArray();
 
@@ -123,14 +123,14 @@ public class DataAccessPortal
             if(credentials.Select(c=>c.GetDecryptedPassword()).Distinct().Count() != 1)
                 throw new Exception(
                     $"IDataAccessPoint collection could not agree on a single Password to use to access the data under context {context} (Servers were {string.Join($",{Environment.NewLine}", collection.Select(c => $"{c} = {c.Database} - {c.DatabaseType}"))})");
-                
-                
-                
+
+
+
         ///////////////////////////////////////////////////////////////////////////////
 
         //the bit that actually matters:
         return first;
-            
+
     }
 
 }

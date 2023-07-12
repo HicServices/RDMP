@@ -43,7 +43,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
         externalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, "QueryCacheForUnitTests",p);
         externalDatabaseServer.SetProperties(queryCacheDatabase);
     }
-                
+
     [Test]
     public void TestGettingAggregateJustFromConfig_DistinctCHISelect()
     {
@@ -72,7 +72,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
 	FROM 
 	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 )
-",cohortIdentificationConfiguration.ID)), 
+",cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder.SQL));
 
             var server = queryCacheDatabase.Server;
@@ -112,7 +112,7 @@ FROM
         finally
         {
             cohortIdentificationConfiguration.RootCohortAggregateContainer.RemoveChild(aggregate1);
-                
+
         }
 
     }

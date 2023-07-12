@@ -46,7 +46,7 @@ public class DistincterTests : DatabaseTests
         for (var i = 0; i < batchCount; i++)
         {
             var randInt = r.Next(int.MaxValue);
-                
+
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
             dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
         }

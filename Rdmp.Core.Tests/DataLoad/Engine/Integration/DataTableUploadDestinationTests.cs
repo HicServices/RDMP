@@ -32,7 +32,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
-            
+
         var dt1 = new DataTable();
         dt1.Columns.Add("name", typeof (string));
         dt1.Rows.Add(new []{"Fish"});
@@ -48,7 +48,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
         var expectedText =
             "BulkInsert failed on data row 1 the complaint was about source column <<name>> which had value <<BigFish>> destination data type was <<varchar(4)>>";
-            
+
         Assert.IsNotNull(ex.InnerException);
         StringAssert.Contains(expectedText,ex.InnerException.Message);
 
@@ -118,7 +118,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
             sql = $"{sql.TrimEnd(',')})";
 
             Console.Write($"About to execute:{sql}");
-                
+
             //problem is with the column name which appears at order 0 in the destination dataset (name with width 1)
             using (var con = db.Server.GetConnection())
             {
@@ -144,7 +144,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
 
             var exceptionMessage = ex.InnerException.Message;
             var interestingBit = exceptionMessage[(exceptionMessage.IndexOf(": <<", StringComparison.Ordinal) + ": ".Length)..];
-                
+
             var expectedErrorMessage =
                 $"<<{errorColumn}>> which had value <<{dt1.Rows[0][errorColumn]}>> destination data type was <<varchar(1)>>";
             StringAssert.Contains(expectedErrorMessage,interestingBit);
@@ -185,7 +185,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             con.Open();
             db.Server.GetCommand(sql, con).ExecuteNonQuery();
         }
-            
+
         //the bulk insert is
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -206,7 +206,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         const string expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
         StringAssert.Contains(expectedErrorMessage, interestingBit);
-            
+
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
 
         if(tbl.Exists())
@@ -230,7 +230,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
 
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
-            
+
         Assert.AreEqual("DataTable 'MyEmptyTable' had no Columns!", ex.Message);
     }
     [Test]
@@ -247,7 +247,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.Columns.Add("GoTeamGo");
         dt1.TableName = "MyEmptyTable";
         var ex = Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
-            
+
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
 
         Assert.AreEqual("DataTable 'MyEmptyTable' had no Rows!", ex.Message);
@@ -283,7 +283,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
         Assert.AreEqual(2,db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
 
-            
+
     }
 
     [Test]
@@ -306,7 +306,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.Rows.Add(new object[] { 5 });
 
         dt1.TableName = "DataTableUploadDestinationTests";
-            
+
         destination.ProcessPipelineData(dt1, toConsole, token);
         destination.Dispose(toConsole, null);
 
@@ -331,12 +331,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var dt1 = new DataTable();
         dt1.Columns.Add("mycol");
         dt1.Rows.Add(new[] {batch1Value});
-            
+
         dt1.TableName = "DataTableUploadDestinationTests";
         try
         {
             destination.ProcessPipelineData(dt1, toConsole, token);
-            
+
             var dt2 = new DataTable();
             dt2.Columns.Add("mycol");
             dt2.Rows.Add(new object[] { batch2Value });
@@ -349,7 +349,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(toConsole, e);
             throw;
         }
-            
+
         Assert.AreEqual(expectedDatatypeInDatabase, db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mycol").DataType.SQLType);
     }
 
@@ -447,7 +447,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt2.Rows.Add(new[] { "00000.00000" });
         dt2.Rows.Add(new[] { "0" });
         dt2.Rows.Add(new string[] { null });
-        dt2.Rows.Add(new [] { "" }); 
+        dt2.Rows.Add(new [] { "" });
         dt2.Rows.Add(new[] { DBNull.Value });
         dt2.TableName = "DataTableUploadDestinationTests";
 
@@ -477,14 +477,14 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         new object[] {"varchar(10)",new object[]{"12:01","2001-01-01"}, new object[]{"12:01","2001-01-01"}}
     };
 
-        
+
     [Test, TestCaseSource(nameof(_sourceLists))]
     public void DataTypeEstimation(string expectedDatatypeInDatabase, object[] rowValues, object[] expectedValuesReadFromDatabase)
     {
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
-            
+
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
 
@@ -493,7 +493,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         foreach (var rowValue in rowValues)
             dt1.Rows.Add(new[] {rowValue});
-            
+
         dt1.TableName = "DataTableUploadDestinationTests";
 
         destination.ProcessPipelineData(dt1, toConsole, token);
@@ -523,7 +523,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var token = new GracefulCancellationToken();
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
-            
+
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
@@ -545,7 +545,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         //should have 2 rows
         Assert.AreEqual(sendTheZero?2:1, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
-            
+
         //should be decimal
 
         Assert.AreEqual(sendTheZero ?"decimal(19,18)":"decimal(18,18)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
@@ -558,7 +558,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var server = db.Server;
 
         var table = db.CreateTable("TestResizing",
-            new DatabaseColumnRequest[] 
+            new DatabaseColumnRequest[]
             {
                 new("MyInteger",new DatabaseTypeRequest(typeof(int))),
                 new("MyMaxString",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
@@ -570,7 +570,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         using var con = server.GetConnection();
         con.Open();
-                
+
         //should not allow nulls before
         Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
         //do resize
@@ -579,7 +579,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         //rediscover it to get the new state in database (it should now be 500 and still shouldn't allow nulls)
         AssertIsStringWithLength(table.DiscoverColumn("StringNotNull"), 500);
 
-                
+
         Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
 
         //do the same with the one that allows nulls
@@ -587,7 +587,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
         table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
         table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
-                
+
         AssertIsStringWithLength(table.DiscoverColumn("StringAllowNull"), 105);
         Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
 
@@ -603,7 +603,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
         Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
-                
+
         con.Close();
     }
 
@@ -660,7 +660,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             DBNull.Value,   //StringAllowNull
             "f"             //StringPk
         );
-            
+
         var dt2 = dt.Clone();
         dt2.Rows.Clear();
         dt2.Rows.Add("1",    //MyInteger
@@ -676,7 +676,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             AllowResizingColumnsAtUploadTime = true
         };
         dest.PreInitialize(db,ThrowImmediatelyDataLoadEventListener.Quiet);
-            
+
         dest.ProcessPipelineData(dt,ThrowImmediatelyDataLoadEventListener.Quiet,new GracefulCancellationToken());
         dest.ProcessPipelineData(dt2, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
@@ -698,7 +698,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var dt = new DataTable("TestFreeText");
         dt.Columns.Add("MyFreeText");
         dt.Rows.Add(testValue);
-            
+
         var dest = new DataTableUploadDestination
         {
             AllowResizingColumnsAtUploadTime = true
@@ -749,7 +749,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.AreEqual("decimal(3,3)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col2").DataType.SQLType);
         Assert.AreEqual("bit", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col3").DataType.SQLType);
         Assert.AreEqual("tinyint", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col4").DataType.SQLType);
-            
+
         Assert.AreEqual("varbinary(max)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col5").DataType.SQLType);
     }
 
@@ -791,7 +791,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     public void MySqlTest_Simple()
     {
         var token = new GracefulCancellationToken();
-            
+
         var db = GetCleanedServer(DatabaseType.MySql);
 
         var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
@@ -799,7 +799,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         var destination = new DataTableUploadDestination();
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
-            
+
         var dt = new DataTable();
         dt.Columns.Add("mystringcol", typeof(string));
         dt.Columns.Add("mynum", typeof(string));
@@ -811,7 +811,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         //drop the millisecond part
         var now = DateTime.Now;
         now = new DateTime(now.Year,now.Month,now.Day,now.Hour,now.Minute,now.Second);
-            
+
         dt.Rows.Add(new object[] { "Anhoy there \"mates\"", "999", "2001-01-01", now,null});
         dt.TableName = "DataTableUploadDestinationTests";
 
@@ -907,7 +907,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 using var bulk = tbl.BeginBulkInsert();
                 bulk.Upload(dtAlreadyThereData);
             }
-            
+
             //create the destination component (what we want to test)
             var destinationComponent = new DataTableUploadDestination
             {
@@ -929,7 +929,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
             //tell the destination component to process the data
             destinationComponent.ProcessPipelineData(dt, listener,new GracefulCancellationToken());
-            
+
             destinationComponent.Dispose(listener,null);
             Assert.AreEqual(targetTableIsEmpty?3:4, tbl.GetRowCount());
         }
@@ -978,7 +978,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,null);
 
         var tbl = db.ExpectTable("MyTable");
-            
+
         Assert.AreEqual(2,tbl.GetRowCount());
         Assert.IsTrue(tbl.DiscoverColumns().Single().IsPrimaryKey);
 
@@ -1000,7 +1000,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         try
         {
-                
+
             //upload a single row of already existing data
             var dtAlreadyThereData = new DataTable();
             dtAlreadyThereData.Columns.Add("Name");
@@ -1009,7 +1009,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
             using (var bulk = tbl.BeginBulkInsert())
                 bulk.Upload(dtAlreadyThereData);
-                
+
             //create the destination component (what we want to test)
             var destinationComponent = new DataTableUploadDestination
             {
@@ -1063,12 +1063,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet,ex);
             throw;
         }
-                       
+
         //in the database it should be typed
         Assert.AreEqual(typeof(decimal),db.ExpectTable("ff").DiscoverColumn("mycol").DataType.GetCSharpDataType());
 
         var dt2 = db.ExpectTable("ff").GetDataTable();
-            
+
         Assert.IsTrue((decimal)dt2.Rows[0][0]  == (decimal)-0.0000410235746055587);
 
     }
@@ -1195,7 +1195,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         Assert.AreEqual(
 
-            //if all we got are nulls we should have a DateTime otherwise we had 1/true so the only usable data type is string 
+            //if all we got are nulls we should have a DateTime otherwise we had 1/true so the only usable data type is string
             giveNullValuesOnly ? typeof(DateTime) : typeof(string),
 
             tt.GetCSharpTypeForSQLDBType(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType.SQLType));
@@ -1264,7 +1264,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             destination.Dispose(toConsole, ex);
             throw;
         }
-            
+
         Assert.IsTrue(db.ExpectTable("DataTableUploadDestinationTests").Exists());
         Assert.AreEqual(2, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
 
@@ -1275,7 +1275,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.AreEqual(expectedTypeForBatch2, tt.GetCSharpTypeForSQLDBType(colAfter.DataType.SQLType));
     }
 
-        
+
     [Test]
     public void TwoBatch_ExplicitRealDataType()
     {

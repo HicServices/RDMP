@@ -28,7 +28,7 @@ public class DashboardControlFactory
 
     public Type[] GetAvailableControlTypes()
     {
-        return _activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(IsCompatibleType).ToArray();
+        return Core.Repositories.MEF.GetAllTypes().Where(IsCompatibleType).ToArray();
     }
 
     private bool IsCompatibleType(Type arg)
@@ -50,7 +50,7 @@ public class DashboardControlFactory
         var controlType = Core.Repositories.MEF.GetType(toCreate.ControlType);
 
         var instance = CreateControl(controlType);
-            
+
         return Hydrate((IDashboardableControl)instance, toCreate);
     }
 
@@ -65,7 +65,7 @@ public class DashboardControlFactory
     public DashboardControl Create(DashboardLayout forLayout, Type t, out DashboardableControlHostPanel theControlCreated)
     {
         var instance = CreateControl(t);
-            
+
         //get the default size requirements of the control as it exists post construction
         var w = instance.Width;
         var h = instance.Height;
@@ -79,7 +79,7 @@ public class DashboardControlFactory
     private DashboardableControlHostPanel Hydrate(IDashboardableControl theControlCreated, DashboardControl dbRecord)
     {
         var emptyCollection = theControlCreated.ConstructEmptyCollection(dbRecord);
-            
+
         foreach (var objectUse in dbRecord.ObjectsUsed)
         {
             var o = _activator.RepositoryLocator.GetArbitraryDatabaseObject(objectUse.ReferencedObjectRepositoryType, objectUse.ReferencedObjectType, objectUse.ReferencedObjectID);
@@ -116,7 +116,7 @@ public class DashboardControlFactory
 
         instance.Dock = DockStyle.None;
         instance.Anchor = AnchorStyles.Top | AnchorStyles.Left;
-            
+
         return instance;
     }
 

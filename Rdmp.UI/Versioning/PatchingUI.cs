@@ -38,7 +38,7 @@ public partial class PatchingUI : Form
         _database = database;
         _repository = repository;
         _patcher = patcher;
-            
+
         InitializeComponent();
 
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)

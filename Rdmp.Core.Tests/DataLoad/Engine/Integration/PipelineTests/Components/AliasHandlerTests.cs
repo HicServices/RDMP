@@ -65,7 +65,7 @@ public class AliasHandlerTests  : DatabaseTests
         };
     }
 
-        
+
 
     [Test]
     public void ThrowBecause_ColumnNotInInputDataTable()

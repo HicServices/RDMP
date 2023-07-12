@@ -69,7 +69,7 @@ public class ArgumentValueUIFactory
 
                 toReturn =
                     new ArgumentValueComboBoxUI(activator,
-                        catalogueRepository.MEF.GetAllTypes()
+                        MEF.GetAllTypes()
                             .Where(t => args.Required.Demand.TypeOf.IsAssignableFrom(t))
                             .ToArray());
             }
@@ -100,7 +100,7 @@ public class ArgumentValueUIFactory
         }
 
         ((Control)toReturn).Dock = DockStyle.Fill;
-            
+
         toReturn.SetUp(activator, args);
         return toReturn;
     }

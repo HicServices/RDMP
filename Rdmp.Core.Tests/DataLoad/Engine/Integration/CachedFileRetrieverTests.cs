@@ -36,7 +36,7 @@ public class CachedFileRetrieverTests : DatabaseTests
         _cpMock = Mock.Of<ICacheProgress>();
         _lpMock = Mock.Of<ILoadProgress>(l=>l.CacheProgress == _cpMock);
     }
-               
+
     [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]
     public void AttemptToLoadDataWithFilesInForLoading_DisagreementBetweenCacheAndForLoading()
     {
@@ -53,16 +53,16 @@ public class CachedFileRetrieverTests : DatabaseTests
 
             // Set SetUp retriever
             var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
-                
+
             var retriever = new TestCachedFileRetriever
             {
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
                 Layout = cacheLayout
             };
-                
+
             // Set SetUp job
-            var job = CreateTestJob(loadDirectory); 
+            var job = CreateTestJob(loadDirectory);
             job.DatesToRetrieve = new List<DateTime>
             {
                 new(2016, 01, 02)
@@ -101,11 +101,11 @@ public class CachedFileRetrieverTests : DatabaseTests
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
                 Layout =  cacheLayout
-                    
+
             };
-                
+
             // Set SetUp job
-            var job = CreateTestJob(loadDirectory); 
+            var job = CreateTestJob(loadDirectory);
             job.DatesToRetrieve = new List<DateTime>
             {
                 new(2016, 01, 01)
@@ -169,7 +169,7 @@ public class CachedFileRetrieverTests : DatabaseTests
 
     private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
     {
-        var catalogue = Mock.Of<ICatalogue>(c => 
+        var catalogue = Mock.Of<ICatalogue>(c =>
             c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
             c.GetLookupTableInfoList()==Array.Empty<TableInfo>() &&
             c.LoggingDataTask == "TestLogging"

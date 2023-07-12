@@ -122,7 +122,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
 
             var lmd = _processTask.LoadMetadata;
             var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
-            var mefTask = (IMEFRuntimeTask) factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
+            var mefTask = (IMEFRuntimeTask) RuntimeTaskFactory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
 
             _ragSmiley.StartChecking(mefTask.MEFPluginClassInstance);
         }

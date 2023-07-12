@@ -67,7 +67,7 @@ public class ImportAndTestTests : DatabaseTests
         Assert.IsFalse(r.Read());
     }
 
-        
+
     [Test]
     public void ImportFunctionIntoCatalogue()
     {
@@ -113,7 +113,7 @@ public class ImportAndTestTests : DatabaseTests
         var checker = new ToMemoryCheckNotifier();
         _function.TableInfoCreated.Check(checker);
             
-        Assert.IsTrue(checker.Messages.Any(m=>m.Result == CheckResult.Fail 
+        Assert.IsTrue(checker.Messages.Any(m=>m.Result == CheckResult.Fail
                                               &&
                                               m.Message.Contains(expectedMessage)));
 
@@ -222,7 +222,7 @@ public class ImportAndTestTests : DatabaseTests
     {
         _function.TableInfoCreated.Check(ThrowImmediatelyCheckNotifier.QuietPicky);
     }
-        
+
     [Test]
     public void CatalogueCheckingWorks()
     {

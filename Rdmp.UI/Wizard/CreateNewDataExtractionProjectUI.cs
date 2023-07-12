@@ -54,7 +54,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     public CreateNewDataExtractionProjectUI(IActivateItems activator):base(activator)
     {
         InitializeComponent();
-            
+
         _existingProjects = activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
         var highestNumber = _existingProjects.Max(p => p.ProjectNumber);
 
@@ -98,15 +98,15 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             ddCohortSources.SelectedItem = sources[0];
             ddCohortSources.Enabled = false;
         }
-            
-        btnCreateNewCohortSource.Enabled = sources.Length == 0; 
+
+        btnCreateNewCohortSource.Enabled = sources.Length == 0;
 
     }
 
     private void IdentifyCompatiblePipelines()
     {
         var p = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
-            
+
         foreach (var pipeline in p)
         {
             var source = pipeline.Source;
@@ -143,7 +143,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             if (dd.Items.Count == 1)
                 dd.SelectedItem = dd.Items[0]; //select it
         }
-            
+
     }
 
     private void btnBrowse_Click(object sender, EventArgs e)
@@ -169,7 +169,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             _projectNumber = -1;
             return;
         }
-            
+
         try
         {
             _projectNumber = int.Parse(tbProjectNumber.Text);
@@ -223,7 +223,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         lblCohortFile.Text = _cohortFile.Name;
         btnSelectClearCohortFile.Text = "Clear";
         btnSelectClearCohortFile.Left = Math.Min(gbFile.Width - btnSelectClearCohortFile.Width, lblCohortFile.Right + 5);
-            
+
     }
 
     private void cbxCohort_SelectionChangeCommitted(object sender, EventArgs e)
@@ -254,9 +254,9 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                 Cursor.Current = Cursors.Default;
             }
         }
-            
+
         gbFile.Enabled = cic == null;
-            
+
     }
 
     private void btnClearCohort_Click(object sender, EventArgs e)
@@ -379,7 +379,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         {
             Cursor = Cursors.Default;
         }
-            
+
     }
 
     private string AllRequiredDataPresent()

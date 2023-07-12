@@ -183,7 +183,7 @@ GO";
             con.Open();
 
             var cmd = _destinationDatabase.Server.GetCommand(qb.SQL, con);
-                
+
             Assert.DoesNotThrow(()=>cmd.ExecuteNonQuery());
         }
 

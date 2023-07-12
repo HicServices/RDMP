@@ -16,15 +16,11 @@ namespace Rdmp.Core.Curation.Checks;
 /// </summary>
 public class BadAssembliesChecker : ICheckable
 {
-    private readonly MEF _mefPlugins;
-
     /// <summary>
     /// Prepares to check the currently loaded assemblies defined in the MEF (Call CatalogueRepository.MEF to get the MEF), call Check to start the checking process
     /// </summary>
-    /// <param name="mefPlugins"></param>
-    public BadAssembliesChecker(MEF mefPlugins)
+    public BadAssembliesChecker()
     {
-        _mefPlugins = mefPlugins;
     }
 
     /// <summary>
@@ -33,17 +29,17 @@ public class BadAssembliesChecker : ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        foreach (var badAssembly in _mefPlugins.ListBadAssemblies())
+        foreach (var badAssembly in MEF.ListBadAssemblies())
             notifier.OnCheckPerformed(new CheckEventArgs($"Could not load assembly {badAssembly.Key}", CheckResult.Fail, badAssembly.Value));
 
-        foreach (var t in _mefPlugins.GetAllTypes())
+        foreach (var t in MEF.GetAllTypes())
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"Found Type {t}", CheckResult.Success, null));
 
             if (typeof(ICheckable).IsAssignableFrom(t))
                 try
                 {
-                    _mefPlugins.CreateA<ICheckable>(t.FullName);
+                    MEF.CreateA<ICheckable>(t.FullName);
                 }
                 catch (Exception ex)
                 {

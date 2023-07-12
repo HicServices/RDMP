@@ -37,7 +37,7 @@ public class AllUIsDocumentedTest : UnitTests
             "CommandExecution.AtomicCommands.PluginCommands",
             "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
 
-        Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(IAtomicCommand), 
+        Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(IAtomicCommand),
             "CommandExecution",
             "CommandExecution.AtomicCommands",
             "CommandExecution.AtomicCommands.PluginCommands",
@@ -49,7 +49,7 @@ public class AllUIsDocumentedTest : UnitTests
         //menus
         Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ContextMenuStrip), "Menus"));
         Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ToolStripMenuItem), "Menus.MenuItems"));
-            
+
         foreach (var error in Errors)
             Console.WriteLine($"FATAL NAMESPACE ERROR FAILURE:{error}");
 
@@ -66,9 +66,9 @@ public class AllUIsDocumentedTest : UnitTests
     {
 
         SetupMEF();
-        foreach (var type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
+        foreach (var type in Core.Repositories.MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
         {
-            if (type.Namespace == null) 
+            if (type.Namespace == null)
                 continue;
 
             //don't validate classes in testing code

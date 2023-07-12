@@ -58,7 +58,7 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
         aggregate1.Name = "fish";
         Assert.IsFalse(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregate1));
 
-        //add a clone using aggregate1 as a template 
+        //add a clone using aggregate1 as a template
         var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1,null);
         //add the clone
         rootcontainer.AddChild(clone, 0);
@@ -241,7 +241,7 @@ sex=@sex
             beforeSQL = Regex.Replace(beforeSQL, "cic_[0-9]+_", "");
             cloneSQL = Regex.Replace(cloneSQL, "cic_[0-9]+_", "");
 
-            //the SQL should be the same for them 
+            //the SQL should be the same for them
             Assert.AreEqual(beforeSQL,cloneSQL);
 
             var containerClone = clone.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
@@ -249,7 +249,7 @@ sex=@sex
                 .Select(ag => ag.RootFilterContainer).Single();
 
             Assert.AreNotEqual(container, containerClone);
-                
+
             //cleanup phase
             clone.DeleteInDatabase();
             containerClone.DeleteInDatabase();

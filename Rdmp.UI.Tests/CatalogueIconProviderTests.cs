@@ -35,7 +35,7 @@ internal class CatalogueIconProviderTests: UITests
     {
         var objectCount = 0;
         var provider = new DataExportIconProvider(RepositoryLocator,null);
-            
+
         foreach (var obj in WhenIHaveAll())
         {
             var img = provider.GetImage(obj, OverlayKind.None);
@@ -45,11 +45,11 @@ internal class CatalogueIconProviderTests: UITests
                 d.IsDisabled = true;
 
                 Assert.IsTrue(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Grayscaling failed for Object of Type '{obj.GetType().Name}' did not have an image");
-                    
+
                 d.IsDisabled = false;
                 Assert.IsFalse(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Enabled Object of Type '{obj.GetType().Name}' was unexpectedly Grayscale");
             }
-                    
+
             Assert.IsTrue(provider.HasIcon(obj),$"Object of Type '{obj.GetType().Name}' did not have an image");
             objectCount++;
         }
@@ -71,7 +71,7 @@ internal class CatalogueIconProviderTests: UITests
         Assert.IsTrue(IsBlackAndWhite(provider.GetImage(ac)),"Image was expected to be Grayscale but wasn't'");
     }
 
-        
+
     /// <summary>
     /// Exposes a potential infinite loop / stack overflow where an object is masquerading as an IMasquerade
     /// </summary>

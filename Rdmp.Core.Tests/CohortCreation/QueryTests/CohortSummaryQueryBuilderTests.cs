@@ -29,7 +29,7 @@ public class CohortSummaryQueryBuilderTests:DatabaseTests
     private AggregateConfiguration acCohort;
     private AggregateConfiguration acDataset;
     private ExtractionInformation ei_Chi;
-        
+
     private CohortIdentificationConfiguration cic;
     private ExtractionInformation ei_Year;
 

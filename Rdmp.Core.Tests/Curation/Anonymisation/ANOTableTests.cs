@@ -32,7 +32,7 @@ public class ANOTableTests:TestsRequiringANOStore
     [TestCase("bit")]
     public void CreateAnANOTable_PushAs(string datatypeForPush)
     {
-            
+
         var anoTable = GetANOTable();
         Assert.AreEqual("ANOMyTable", anoTable.TableName);
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation =20;
@@ -40,8 +40,8 @@ public class ANOTableTests:TestsRequiringANOStore
         anoTable.PushToANOServerAsNewTable(datatypeForPush, ThrowImmediatelyCheckNotifier.Quiet);
 
         var discoveredTable = ANOStore_Database.DiscoverTables(false).SingleOrDefault(t => t.GetRuntimeName().Equals("ANOMyTable"));
-            
-        //server should have 
+
+        //server should have
         Assert.NotNull(discoveredTable);
         Assert.IsTrue(discoveredTable.Exists());
 
@@ -88,7 +88,7 @@ public class ANOTableTests:TestsRequiringANOStore
             anoTable.DeleteInDatabase();
         }
     }
-        
+
     [Test]
     public void CreateAnANOTable_CharCountNegative()
     {
@@ -105,7 +105,7 @@ public class ANOTableTests:TestsRequiringANOStore
         }
             
     }
-        
+
     [Test]
     public void CreateAnANOTable_IntCountNegative()
     {
@@ -259,13 +259,13 @@ public class ANOTableTests:TestsRequiringANOStore
             var val = r.NextDouble() * 9999999999;
             val = Math.Round(val);
             var valAsString = val.ToString(CultureInfo.InvariantCulture);
-                
+
             while (valAsString.Length < 10)
                 valAsString = $"0{valAsString}";
 
             uniqueSourceSet.Add(valAsString);
 
-            dt.Rows.Add(valAsString, DBNull.Value);//duplicates    
+            dt.Rows.Add(valAsString, DBNull.Value);//duplicates
         }
         Console.WriteLine($"Time to allocate in C# memory:{sw.Elapsed}");
         Console.WriteLine($"Allocated {dt.Rows.Count} identifiers ({uniqueSourceSet.Count} unique ones)");

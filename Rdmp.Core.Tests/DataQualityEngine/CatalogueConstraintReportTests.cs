@@ -182,7 +182,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
         _catalogue.ValidatorXML = null;
 
-        //it has no validator XML currently 
+        //it has no validator XML currently
         Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
         var ex = Assert.Throws<Exception>(()=>report.Check(ThrowImmediatelyCheckNotifier.Quiet));
@@ -195,7 +195,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
         _catalogue.ValidatorXML = "fish";
-        //it has no validator XML currently 
+        //it has no validator XML currently
         Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
         var ex = Assert.Throws<Exception>(()=>report.Check(ThrowImmediatelyCheckNotifier.Quiet));
@@ -209,7 +209,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
         _catalogue.ValidatorXML = dodgyColumnXML;
-        //it has no validator XML currently 
+        //it has no validator XML currently
         Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
         var ex = Assert.Throws<Exception>(()=>report.Check(ThrowImmediatelyCheckNotifier.Quiet));

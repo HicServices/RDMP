@@ -686,7 +686,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
             throw new ArgumentException("Repository failed to properly hydrate this class");
-                        
+
         //if there is a default logging server
         if (LiveLoggingServer_ID == null)
         {
@@ -695,7 +695,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             if(liveLoggingServer != null)
                 LiveLoggingServer_ID = liveLoggingServer.ID;
         }
-            
+
 
         ClearAllInjections();
     }
@@ -709,8 +709,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         : base(repository, r)
     {
         if(r["LoadMetadata_ID"] != DBNull.Value)
-            LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString()); 
-          
+            LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString());
+
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
         Description = r["Description"].ToString();
@@ -724,7 +724,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             LiveLoggingServer_ID = null;
         else
             LiveLoggingServer_ID = (int) r["LiveLoggingServer_ID"];
-            
+
         ////Type - with handling for invalid enum values listed in database
         var type = r["Type"];
         if (type == null || type == DBNull.Value)
@@ -784,7 +784,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         Resource_owner = r["Resource_owner"].ToString();
         Attribution_citation = r["Attribution_citation"].ToString();
         Access_options = r["Access_options"].ToString();
-            
+
         Country_of_origin = r["Country_of_origin"].ToString();
         Data_standards = r["Data_standards"].ToString();
         Administrative_contact_name = r["Administrative_contact_name"].ToString();
@@ -806,7 +806,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         else
             DatasetStartDate = (DateTime) oDatasetStartDate;
 
-            
+
         ValidatorXML = r["ValidatorXML"] as string;
 
         Ticket = r["Ticket"] as string;
@@ -865,13 +865,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                     CheckResult.Fail));
         else
             notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue name {Name} follows naming conventions ",CheckResult.Success));
-            
+
         var tables = GetTableInfoList(true);
         foreach (var t in tables)
             t.Check(notifier);
 
         var extractionInformations = GetAllExtractionInformation(ExtractionCategory.Core);
-            
+
         if (extractionInformations.Any())
         {
             var missingColumnInfos = false;
@@ -1071,7 +1071,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         if(LiveLoggingServer_ID == null)
             throw new Exception($"No live logging server set for Catalogue {Name}");
-                
+
         var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
         return new LogManager(server);
@@ -1083,7 +1083,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         var iDependOn = new List<IHasDependencies>();
 
         iDependOn.AddRange(CatalogueItems);
-            
+
         if(LoadMetadata != null)
             iDependOn.Add(LoadMetadata);
 
@@ -1272,12 +1272,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             return false;
         }
 
-        if(CatalogueRepository.MEF == null)
-        {
-            throw new Exception("MEF has not been loaded yet so cannot find compatible IPluginCohortCompilers");
-        }
-
-        plugin = new PluginCohortCompilerFactory(CatalogueRepository.MEF)
+        plugin = PluginCohortCompilerFactory
             .CreateAll().FirstOrDefault(p => p.ShouldRun(this));
 
         return true;
@@ -1289,7 +1284,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         var sb = new StringBuilder();
         sb.Append(base.GetSummary(includeName, includeID));
-            
+
         if (extractionPrimaryKeys.Any())
             sb.AppendLine($"Extraction Primary Key(s): {extractionPrimaryKeys.ToBeautifulString()}");
 

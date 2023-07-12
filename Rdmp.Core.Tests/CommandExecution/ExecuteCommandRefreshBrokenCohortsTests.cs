@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-internal class ExecuteCommandRefreshBrokenCohortsTests 
+internal class ExecuteCommandRefreshBrokenCohortsTests
 {
 
     [Test]

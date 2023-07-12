@@ -206,7 +206,7 @@ public class CommandInvoker
 
     public IEnumerable<Type> GetSupportedCommands()
     {
-        return _basicActivator.RepositoryLocator.CatalogueRepository?.MEF?.GetAllTypes()?.Where(t=>WhyCommandNotSupported(t) is null) ?? throw new Exception("MEF property has not been initialized on the activator");
+        return MEF.GetAllTypes()?.Where(t=>WhyCommandNotSupported(t) is null) ?? throw new Exception("MEF property has not been initialized on the activator");
     }
 
     /// <summary>
@@ -283,7 +283,7 @@ public class CommandInvoker
             throw new Exception($"Unrecognised extra parameter {picker[idx].RawValue}");
 
         var instance = (IAtomicCommand)constructorInfo.Invoke(parameterValues.ToArray());
-        
+
         if (instance.IsImpossible)
         {
             CommandImpossible?.Invoke(this,new CommandEventArgs(instance));

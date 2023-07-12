@@ -153,7 +153,7 @@ public class CohortCompilerTests:CohortIdentificationTests
 
             cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
             cohortIdentificationConfiguration.SaveToDatabase();
-                
+
             //The bit we are testing
             List<ICompileable> tasks;
             switch (testCase)
@@ -161,7 +161,7 @@ public class CohortCompilerTests:CohortIdentificationTests
                 case TestCompilerAddAllTasksTestCase.CIC:
                     tasks = compiler.AddAllTasks(includeSubcontainers);
                     Assert.AreEqual(joinable,tasks.OfType<JoinableTask>().Single().Joinable); //should be a single joinable
-                    Assert.AreEqual(includeSubcontainers?7:6,tasks.Count); //all joinables, aggregates and root container 
+                    Assert.AreEqual(includeSubcontainers?7:6,tasks.Count); //all joinables, aggregates and root container
 
                     break;
                 case TestCompilerAddAllTasksTestCase.RootContainer:

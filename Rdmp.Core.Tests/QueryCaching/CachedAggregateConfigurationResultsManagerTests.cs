@@ -42,7 +42,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
 
     }
 
-        
+
     [Test]
     public void CommitResults_CreatesTablessuccessfully()
     {
@@ -89,7 +89,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         Assert.IsNotNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList, SomeComplexBitOfSqlCode));
         Assert.IsNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList, "select name,height,scalecount from fish"));
     }
-        
+
 
     [Test]
     public void Throws_BecauseItHasDuplicates()
@@ -112,15 +112,15 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
 
 
         //If this unit test suddenly starts failing you might have changed the value of CachedAggregateConfigurationResultsManager.CachingPrefix (see sql variable below and make it match the const - the unit test is divorced because why would you want to change that eh!, 'Cached:' is very clear)
-            
-        //this is a cache fetch request that we are trying to inception recache 
+
+        //this is a cache fetch request that we are trying to inception recache
         var sql = @"/*Cached:cic_65_People in DMPTestCatalogue*/
 	select * from [cache]..[IndexedExtractionIdentifierList_AggregateConfiguration217]";
 
         var ex = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, _myColSpecification, 30)));
         Assert.IsTrue(ex.Message.Contains("This is referred to as Inception Caching and isn't allowed"));
 
-            
+
     }
 
     [Test]
@@ -141,7 +141,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         using (var con = DataAccessPortal.GetInstance().ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
         {
             con.Open();
-                
+
             var da = new SqlDataAdapter($"Select * from {resultTable.GetFullyQualifiedName()}",
                 (SqlConnection) con);
             da.Fill(dt2);
@@ -152,7 +152,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         Assert.IsTrue(dt2.Rows.Cast<DataRow>().Any(r => (string)r[0] == "0101010102"));
 
     }
-        
+
     private const string SomeComplexBitOfSqlCode =
         @"USE [QueryCachingDatabase]
 GO

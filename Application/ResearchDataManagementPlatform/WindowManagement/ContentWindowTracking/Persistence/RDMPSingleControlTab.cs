@@ -19,7 +19,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 
 /// <summary>
-/// TECHNICAL: Base class for all dockable tabs that host a single control 
+/// TECHNICAL: Base class for all dockable tabs that host a single control
 /// </summary>
 [System.ComponentModel.DesignerCategory("")]
 [TechnicalUI]

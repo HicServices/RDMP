@@ -38,18 +38,16 @@ namespace Rdmp.Core.Startup;
 /// </summary>
 public class Startup
 {
-    public SafeDirectoryCatalog MEFSafeDirectoryCatalog { get; private set; }
-
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
-    public event FoundPlatformDatabaseHandler DatabaseFound = delegate { };
+    public event FoundPlatformDatabaseHandler DatabaseFound = static delegate { };
     //public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
 
     /// <summary>
     /// Set to true to ignore unpatched platform databases
     /// </summary>
-    public bool SkipPatching { get; set; }
+    public bool SkipPatching { get; init; }
 
-    public PluginPatcherFoundHandler PluginPatcherFound = delegate { };
+    public PluginPatcherFoundHandler PluginPatcherFound = static delegate { };
 
     private readonly PatcherManager _patcherManager = new();
 
@@ -107,7 +105,7 @@ public class Startup
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Could not apply ConnectionStringKeywords",CheckResult.Fail, ex));
             }
-            
+
 
         //only load data export manager if catalogue worked
         if (!foundCatalogue) return;
@@ -139,7 +137,7 @@ public class Startup
 
     private void FindTier3Databases(ICatalogueRepository catalogueRepository,ICheckNotifier notifier)
     {
-        foreach (var patcher in _patcherManager.GetTier3Patchers(catalogueRepository.MEF,PluginPatcherFound))
+        foreach (var patcher in _patcherManager.GetTier3Patchers(PluginPatcherFound))
             FindWithPatcher(patcher,notifier);
     }
 
@@ -155,7 +153,7 @@ public class Startup
         // it's not a database we are getting this data from then assume it's good to go
         if (repository is not ITableRepository tableRepository)
             return true;
-                
+
         //check we can reach it
         var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
         notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",CheckResult.Success));
@@ -221,12 +219,15 @@ public class Startup
 
 
     #region MEF
-
-    private void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
+    /// <summary>
+    /// Load the plugins from the platform DB
+    /// </summary>
+    /// <param name="catalogueRepository"></param>
+    /// <param name="notifier"></param>
+    private static void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
-        catalogueRepository.MEF ??= new MEF();
         foreach (var (name, body) in catalogueRepository.PluginManager.GetCompatiblePlugins()
-                     .SelectMany(p => p.LoadModuleAssemblies).SelectMany(a => a.GetContents()))
+                     .SelectMany(static p => p.LoadModuleAssemblies).SelectMany(static a => a.GetContents()))
         {
             try
             {
@@ -243,15 +244,12 @@ public class Startup
                 body.Dispose();
             }
         }
-        //AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
-            
-        MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(notifier, Array.Empty<string>());
-        catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
-            
+
         if (CatalogueRepository.SuppressHelpLoading) return;
+
         notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
         var sw = Stopwatch.StartNew();
-        catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory, "SourceCodeForSelfAwareness.zip");
+        catalogueRepository.CommentStore.ReadComments( "SourceCodeForSelfAwareness.zip");
         sw.Stop();
         notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
 

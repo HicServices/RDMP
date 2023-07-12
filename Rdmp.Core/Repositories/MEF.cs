@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Reflection;
 using System.Threading;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
@@ -24,11 +24,12 @@ namespace Rdmp.Core.Repositories;
 /// <para>The class name MEF is a misnomer because historically we used the Managed Extensibility Framework (but now we
 /// just grab everything with reflection)</para>
 /// </summary>
-public class MEF
+public static class MEF
 {
     // TODO: Cache/preload this for AOT later; figure out generic support
     private static Lazy<ReadOnlyDictionary<string, Type>> _types=null;
     private static readonly ConcurrentDictionary<Type, Type[]> TypeCache=new();
+    private static readonly Dictionary<string,Exception> badAssemblies = new();
 
     static MEF()
     {
@@ -55,7 +56,7 @@ public class MEF
             {
                 foreach (var type in assembly.GetTypes())
                 {
-                    foreach (var alias in new []{Tail(type.FullName),type.FullName,Tail(type.FullName).ToUpperInvariant(),type.FullName?.ToUpperInvariant()}.Where(x=>x is not null).Distinct())
+                    foreach (var alias in new []{Tail(type.FullName),type.FullName,Tail(type.FullName).ToUpperInvariant(),type.FullName?.ToUpperInvariant()}.Where(static x=>x is not null).Distinct())
                         if (!typeByName.TryAdd(alias, type) &&
                             type.FullName?.StartsWith("Rdmp.Core", StringComparison.OrdinalIgnoreCase) == true)
                         {
@@ -67,6 +68,8 @@ public class MEF
             }
             catch (Exception e)
             {
+                lock(badAssemblies)
+                    badAssemblies.TryAdd(assembly.FullName, e);
                 Console.WriteLine(e);
             }
         }
@@ -79,12 +82,6 @@ public class MEF
         return off==0?full:full[off..];
     }
 
-    public bool HaveDownloadedAllAssemblies;
-    public SafeDirectoryCatalog SafeDirectoryCatalog;
-
-    public MEF()
-    {
-    }
 
     /// <summary>
     /// Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup"/>).  Returns null
@@ -93,18 +90,18 @@ public class MEF
     /// <para>This method supports both fully qualified Type names and Name only (although this is slower).  Answers
     /// are cached.</para>
     /// </summary>
-    /// <param name="type"></param>
+    /// <param name="typeName"></param>
     /// <returns></returns>
-    public static Type GetType(string type)
-    {            
-        if(string.IsNullOrWhiteSpace(type))
-            throw new ArgumentNullException(nameof(type));
+    public static Type GetType(string typeName)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(typeName);
 
         // Try for exact match, then caseless match, then tail match, then tail caseless match
-        if (_types.Value.TryGetValue(type, out var type1)) return type1;
-        if (_types.Value.TryGetValue(type.ToUpperInvariant(), out var type3)) return type3;
-        if (_types.Value.TryGetValue(Tail(type), out var type2)) return type2;
-        return _types.Value.TryGetValue(Tail(type).ToUpperInvariant(), out var type4) ? type4 : null;
+        if (_types.Value.TryGetValue(typeName, out var type)) return type;
+        if (_types.Value.TryGetValue(typeName.ToUpperInvariant(), out type)) return type;
+        if (_types.Value.TryGetValue(Tail(typeName), out type)) return type;
+
+        return _types.Value.TryGetValue(Tail(typeName).ToUpperInvariant(), out type) ? type : null;
     }
 
     public static Type GetType(string type, Type expectedBaseClass)
@@ -116,23 +113,11 @@ public class MEF
                 $"Found Type {t?.FullName} for '{type}' did not implement expected base class/interface '{expectedBaseClass}'")
             : t;
     }
-    public void Setup(SafeDirectoryCatalog result)
-    {
-        SafeDirectoryCatalog = result;
-        HaveDownloadedAllAssemblies = true;
-    }
 
-    public void SetupMEFIfRequired()
+    public static IReadOnlyDictionary<string, Exception> ListBadAssemblies()
     {
-        if (!HaveDownloadedAllAssemblies)
-            throw new NotSupportedException("MEF was not loaded by Startup?!!");
-    }
-
-    public Dictionary<string, Exception> ListBadAssemblies()
-    {
-        SetupMEFIfRequired();
-
-        return SafeDirectoryCatalog.BadAssembliesDictionary;
+        lock (badAssemblies)
+            return new ReadOnlyDictionary<string, Exception>(badAssemblies);
     }
 
     /// <summary>
@@ -148,11 +133,13 @@ public class MEF
     public static string GetCSharpNameForType(Type t)
     {
         if (!t.IsGenericType) return t.Name;
+
         if (t.GenericTypeArguments.Length != 1)
             throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
+
         var genericTypeName = t.GetGenericTypeDefinition().Name;
 
-        Debug.Assert(genericTypeName.EndsWith("`1"));
+        Debug.Assert(genericTypeName.EndsWith("`1", StringComparison.Ordinal));
         genericTypeName = genericTypeName[..^"`1".Length];
 
         var underlyingType = t.GenericTypeArguments.Single().Name;
@@ -173,7 +160,7 @@ public class MEF
     /// <returns></returns>
     private static IEnumerable<Type> GetTypes(Type type)
     {
-        return TypeCache.GetOrAdd(type,target=> _types.Value.Values.Where(t => !t.IsInterface && !t.IsAbstract).Where(target.IsAssignableFrom).Distinct().ToArray());
+        return TypeCache.GetOrAdd(type, static target=> _types.Value.Values.Where(t => !t.IsInterface && !t.IsAbstract).Where(target.IsAssignableFrom).Distinct().ToArray());
     }
 
     /// <summary>
@@ -182,17 +169,14 @@ public class MEF
     /// <param name="genericType"></param>
     /// <param name="typeOfT"></param>
     /// <returns></returns>
-    public IEnumerable<Type> GetGenericTypes(Type genericType, Type typeOfT)
+    public static IEnumerable<Type> GetGenericTypes(Type genericType, Type typeOfT)
     {
         var target = genericType.MakeGenericType(typeOfT);
         return _types.Value.Values.Where(t => !t.IsAbstract && !t.IsGenericType && target.IsAssignableFrom(t)).Distinct();
-        //return GetTypes(genericType.MakeGenericType(typeOfT));
     }
 
-    public IEnumerable<Type> GetAllTypes()
+    public static IEnumerable<Type> GetAllTypes()
     {
-        SetupMEFIfRequired();
-
         return _types.Value.Values.Distinct().AsEnumerable();
     }
 
@@ -201,7 +185,7 @@ public class MEF
     /// </summary>
     /// <typeparam name="T">The base/interface of the Type you want to create e.g. IAttacher</typeparam>
     /// <returns></returns>
-    public T CreateA<T>(string typeToCreate, params object[] args)
+    public static T CreateA<T>(string typeToCreate, params object[] args)
     {
         var typeToCreateAsType = GetType(typeToCreate) ?? throw new Exception($"Could not find Type '{typeToCreate}'");
 
@@ -215,7 +199,7 @@ public class MEF
         return instance;
     }
 
-    public void AddTypeToCatalogForTesting(Type p0)
+    public static void AddTypeToCatalogForTesting(Type p0)
     {
         if (!_types.Value.ContainsKey(p0.FullName ?? throw new ArgumentNullException(nameof(p0))))
             throw new Exception($"Type {p0.FullName} was not preloaded");

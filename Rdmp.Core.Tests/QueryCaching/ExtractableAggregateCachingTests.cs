@@ -52,7 +52,7 @@ public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
 
     }
 
-        
+
     [Test]
     public void BasicCase()
     {

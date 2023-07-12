@@ -46,7 +46,7 @@ public class PermissionWindowTests:DatabaseTests
         var newPeriod2 = periods[1];
         Assert.AreEqual(17, newPeriod2.Start.Hours);
     }
-        
+
     [Test]
     public void TestCurrentlyWithinPermissionPeriod()
     {

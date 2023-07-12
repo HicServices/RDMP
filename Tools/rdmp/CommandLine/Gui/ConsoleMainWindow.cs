@@ -41,7 +41,7 @@ internal class ConsoleMainWindow
     private MenuItem mi_green;
     private ColorScheme _greenColorScheme;
     private MouseFlags _rightClick = MouseFlags.Button3Clicked;
-        
+
     // Last time the mouse moved and where it moved to
     private Point _lastMousePos = new(0,0);
     private DateTime _lastMouseMove = DateTime.Now;
@@ -129,7 +129,7 @@ internal class ConsoleMainWindow
             TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter)
         };
         _treeView.AddObjects(
-            new string[]{ 
+            new string[]{
                 Catalogues,
                 Projects,
                 Loads,
@@ -243,7 +243,7 @@ internal class ConsoleMainWindow
     {
         if (model is IContainer container)
         {
-            return $"{container} ({container.Operation})"; 
+            return $"{container} ({container.Operation})";
         }
 
         if (model is CohortAggregateContainer setContainer)
@@ -303,7 +303,7 @@ internal class ConsoleMainWindow
         try
         {
             var dlg = new ConsoleGuiSelectOne(_activator,null);
-                
+
             if (dlg.ShowDialog())
             {
                 Show(dlg.Selected);
@@ -318,7 +318,7 @@ internal class ConsoleMainWindow
     private void Show(object selected)
     {
         var desc = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(selected);
-            
+
         // In main RDMP, Projects are root level items so have no descendancy.  But in the console
         // gui we have a root category so give it a descendancy now so that expansion works properly
         if(selected is IProject)
@@ -329,7 +329,7 @@ internal class ConsoleMainWindow
         if(desc == null)
             return;
 
-        // In the main RDMP, we have a specific node for these but in console gui we have a text 
+        // In the main RDMP, we have a specific node for these but in console gui we have a text
         // category, fix the descendency for these objects
         if(desc.Parents.Length  > 0 && desc.Parents[0] is AllCohortsNode)
         {
@@ -370,7 +370,7 @@ internal class ConsoleMainWindow
         menu.Show();
     }
 
-        
+
     private void treeView_KeyPress(View.KeyEventEventArgs obj)
     {
         if(!_treeView.CanFocus || !_treeView.HasFocus)
@@ -407,7 +407,7 @@ internal class ConsoleMainWindow
                     {
                         // it is a single object selection
                         _activator.DeleteWithConfirmation(d);
-                    }							
+                    }
 
                     break;
             }
@@ -442,16 +442,16 @@ internal class ConsoleMainWindow
             // Top level brackets for the tree view
             if (ReferenceEquals(model , Catalogues))
                 return new []{_activator.CoreChildProvider.CatalogueRootFolder };
-                
+
             if (ReferenceEquals(model , Projects)  && dx != null)
                 return new[] { dx.ProjectRootFolder};
 
             if (ReferenceEquals(model , Loads))
                 return new[] { _activator.CoreChildProvider.LoadMetadataRootFolder };
-                
+
             if (ReferenceEquals(model , CohortConfigs))
                 return new[] { _activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder };
-                
+
             if (ReferenceEquals(model , BuiltCohorts) && dx != null)
                 return dx.CohortSources;
 
@@ -502,7 +502,7 @@ internal class ConsoleMainWindow
 
         if(type == typeof(Project))
             return Projects;
-        if(type == typeof(LoadMetadata))	
+        if(type == typeof(LoadMetadata))
             return Loads;
         if (type == typeof(FolderNode<LoadMetadata>))
             return Loads;

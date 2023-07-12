@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 public class BackfillSqlHelperTests : FromToDatabaseTests
 {
     private ICatalogue _catalogue;
-        
+
     #region Housekeeping
 
     [SetUp]
@@ -32,7 +32,7 @@ public class BackfillSqlHelperTests : FromToDatabaseTests
         DeleteTables(From);
         DeleteTables(To);
     }
-        
+
     #endregion
 
     [Test]

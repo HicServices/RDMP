@@ -31,7 +31,7 @@ public class ShareLoadMetadataTests : UnitTests
         var lmd = new LoadMetadata(Repository, "MyLmd");
 
         var lmd2 = ShareToNewRepository(lmd);
-            
+
         //different repos so not identical
         Assert.IsFalse(ReferenceEquals(lmd,lmd2));
         Assert.AreEqual(lmd.Name, lmd2.Name);
@@ -43,7 +43,7 @@ public class ShareLoadMetadataTests : UnitTests
         //create an object
         LoadMetadata lmd1;
         var lmd2 = ShareToNewRepository(lmd1 = WhenIHaveA<LoadMetadata>());
-            
+
         var cata1 = lmd1.GetAllCatalogues().Single();
         var cata2 = lmd2.GetAllCatalogues().Single();
 
@@ -54,7 +54,7 @@ public class ShareLoadMetadataTests : UnitTests
         Assert.AreEqual(lmd1.Name, lmd2.Name);
         Assert.AreEqual(cata1.Name, cata2.Name);
     }
-        
+
     /// <summary>
     /// Tests sharing a basic process task load metadata
     /// </summary>
@@ -64,17 +64,17 @@ public class ShareLoadMetadataTests : UnitTests
         //create an object
         LoadMetadata lmd1;
         var lmd2 = ShareToNewRepository(lmd1=WhenIHaveA<ProcessTaskArgument>().ProcessTask.LoadMetadata);
-            
+
         var pt1 = lmd1.ProcessTasks.Single();
         var pt2 = lmd2.ProcessTasks.Single();
-            
+
         //different repos so not identical
         Assert.IsFalse(ReferenceEquals(lmd1,lmd2));
         AssertAreEqual(lmd1,lmd2);
-            
+
         Assert.IsFalse(ReferenceEquals(pt1,pt2));
         AssertAreEqual(pt1,pt2);
-            
+
         Assert.IsFalse(ReferenceEquals(pt1.ProcessTaskArguments.Single(),pt2.ProcessTaskArguments.Single()));
         AssertAreEqual(pt1.ProcessTaskArguments.Single(),pt2.ProcessTaskArguments.Single());
     }
@@ -89,7 +89,7 @@ public class ShareLoadMetadataTests : UnitTests
         var lmd1 = WhenIHaveA<LoadMetadata>();
 
         SetupMEF();
-            
+
         var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting)
         {
             ProcessTaskType = ProcessTaskType.Attacher,
@@ -105,7 +105,7 @@ public class ShareLoadMetadataTests : UnitTests
 
 
         var lmd2 = ShareToNewRepository(lmd1);
-            
+
         //different repos so not identical
         Assert.IsFalse(ReferenceEquals(lmd1,lmd2));
         AssertAreEqual(lmd1,lmd2);
@@ -121,10 +121,10 @@ public class ShareLoadMetadataTests : UnitTests
 
         var stg = Mock.Of<IStageArgs>(x => x.LoadStage==LoadStage.Mounting);
 
-        f.Create(pt1, stg);
+        RuntimeTaskFactory.Create(pt1, stg);
     }
 
-        
+
     /// <summary>
     /// Tests sharing a <see cref="LoadMetadata"/> with a <see cref="ProcessTask"/> which has a reference argument (to
     /// another object in the database.
@@ -158,18 +158,17 @@ public class ShareLoadMetadataTests : UnitTests
         pta.SaveToDatabase();
 
         //check that reflection can assemble the master ProcessTask
-        var t = (MutilateDataTablesRuntimeTask) f.Create(pt1, stg);
+        var t = (MutilateDataTablesRuntimeTask) RuntimeTaskFactory.Create(pt1, stg);
         Assert.IsNotNull(((SafePrimaryKeyCollisionResolverMutilation)t.MEFPluginClassInstance).ColumnToResolveOn);
-            
+
         //share to the second repository (which won't have that ColumnInfo)
         var lmd2 = ShareToNewRepository(lmd1);
-            
+
         //create a new reflection factory for the new repo
         var f2 = new RuntimeTaskFactory(lmd2.CatalogueRepository);
-        lmd2.CatalogueRepository.MEF = MEF;
-            
+
         //when we create the shared instance it should not have a valid value for ColumnInfo (since it wasn't - and shouldn't be shared)
-        var t2 = (MutilateDataTablesRuntimeTask) f2.Create(lmd2.ProcessTasks.Single(), stg);
+        var t2 = (MutilateDataTablesRuntimeTask) RuntimeTaskFactory.Create(lmd2.ProcessTasks.Single(), stg);
         Assert.IsNull(((SafePrimaryKeyCollisionResolverMutilation)t2.MEFPluginClassInstance).ColumnToResolveOn);
 
     }
@@ -177,7 +176,7 @@ public class ShareLoadMetadataTests : UnitTests
     private LoadMetadata ShareToNewRepository(LoadMetadata lmd)
     {
         var gatherer = new Gatherer(RepositoryLocator);
-            
+
         Assert.IsTrue(gatherer.CanGatherDependencies(lmd));
         var rootObj = gatherer.GatherDependencies(lmd);
 

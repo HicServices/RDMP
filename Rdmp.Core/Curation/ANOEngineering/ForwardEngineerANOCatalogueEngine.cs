@@ -334,7 +334,7 @@ public class ForwardEngineerANOCatalogueEngine
         //it's one we migrated ourselves
         if (_parenthoodDictionary.TryGetValue(col, out var value))
             return (ColumnInfo)value;
-            
+
         //it's one that was already existing before we did ANO migration e.g. a SkippedTableInfo (this can happen when there are 2+ tables underlying a Catalogue and you have already ANO one of those Tables previously (e.g. when it is a shared table with other Catalogues)
 
         //find a reference to the new ColumnInfo Location (note that it is possible the TableInfo was skipped, in which case we should still expect to find ColumnInfos that reference the new location because you must have created it somehow right?)

@@ -90,8 +90,7 @@ public class CohortCompiler
 
         try
         {
-            PluginCohortCompilers =
-                new PluginCohortCompilerFactory(CohortIdentificationConfiguration.CatalogueRepository.MEF).CreateAll();
+            PluginCohortCompilers = PluginCohortCompilerFactory.CreateAll();
         }
         catch (Exception ex)
         {

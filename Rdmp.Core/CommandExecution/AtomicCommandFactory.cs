@@ -265,7 +265,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             //yield return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator,ac);
         }
-            
+
         if(Is(o,out  IContainer container))
         {
             var targetOperation = container.Operation == FilterContainerOperation.AND ? "OR" : "AND";
@@ -278,7 +278,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.TOP_100);
             yield return new ExecuteCommandViewFilterMatchData(_activator, container, ViewType.Aggregate);
         }
-            
+
         if(Is(o,out AggregatesNode an))
             yield return new ExecuteCommandAddNewAggregateGraph(_activator, an.Catalogue);
 
@@ -561,7 +561,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandSyncTableInfo(_activator,ti,true,false);
             yield return new ExecuteCommandNewObject(_activator,()=>new ColumnInfo(_activator.RepositoryLocator.CatalogueRepository, Guid.NewGuid().ToString(), "fish", ti)){OverrideCommandName = "Add New ColumnInfo" };
         }
-                
+
         if(Is(o,out ColumnInfo colInfo))
         {
             yield return new ExecuteCommandViewData(_activator, ViewType.TOP_100, colInfo) { SuggestedCategory = View };
@@ -613,7 +613,7 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             yield return new ExecuteCommandResetExtractionProgress(_activator, progress);
         }
-            
+
         if(Is(o, out ExtractionConfiguration ec))
         {
 
@@ -770,7 +770,7 @@ public class AtomicCommandFactory : CommandFactoryBase
         // If the root object is deletable offer deleting
         if(Is(o,out IDeleteable deletable))
             yield return new ExecuteCommandDelete(_activator,deletable){SuggestedShortcut="Delete" };
-                      
+
         if(Is(o, out ReferenceOtherObjectDatabaseEntity reference))
             yield return new ExecuteCommandShowRelatedObject(_activator,reference);
 

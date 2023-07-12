@@ -56,7 +56,7 @@ public class ItemValidatorTest
         Assert.IsTrue(result.Message.Contains(nameof(DateTime)));
             
     }
-        
+
     [Test]
     public void ValidateAll_ValidData_Succeeds()
     {
@@ -85,5 +85,5 @@ public class ItemValidatorTest
     }
 
 
-    
+
 }

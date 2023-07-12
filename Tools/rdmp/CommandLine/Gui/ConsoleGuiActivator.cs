@@ -110,7 +110,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         h = Math.Max(10,Math.Min(20,  h - 2));
     }
 
-        
+
 
     public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
         bool requireSaneHeaderText)
@@ -185,7 +185,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
     }
 
     public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
-    {  
+    {
         var dlg = new ConsoleGuiSelectMany(this, args.WindowTitle, available);
         Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
 
@@ -201,11 +201,11 @@ internal class ConsoleGuiActivator : BasicActivateItems
             CanChooseDirectories = true,
             CanChooseFiles = false
         };
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
         var selected = openDir.FilePath?.ToString();
-            
+
         return selected == null ? null : new DirectoryInfo(selected);
 
     }
@@ -213,9 +213,9 @@ internal class ConsoleGuiActivator : BasicActivateItems
     public override FileInfo SelectFile(string prompt)
     {
         using var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
-            
+
         return openDir.FilePaths.Count == 1 ? new FileInfo(openDir.FilePaths[0]):null;
     }
 
@@ -226,7 +226,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             AllowsMultipleSelection = false,
             AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
         };
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
         var selected = openDir.FilePaths.Count==1?openDir.FilePaths[0]:null;
@@ -244,7 +244,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             AllowsMultipleSelection = true,
             AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
         };
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
         return openDir.FilePaths?.Select(f=>new FileInfo(f))?.ToArray();
@@ -309,7 +309,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         GetDialogDimensions(out var w, out var h);
 
-        var dlg = new Dialog("Error",w,h,btnOk,btnStack);            
+        var dlg = new Dialog("Error",w,h,btnOk,btnStack);
         dlg.Add(textView);
 
         Application.MainLoop.Invoke(() =>

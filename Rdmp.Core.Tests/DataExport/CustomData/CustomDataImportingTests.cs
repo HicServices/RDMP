@@ -41,7 +41,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             var customDataCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("custTable99.csv"));
 
             Assert.IsNotNull(customDataCsv);
-            
+
             var lines = File.ReadAllLines(customDataCsv.FullName);
 
             Assert.AreEqual("SuperSecretThing,ReleaseID",lines[0]);

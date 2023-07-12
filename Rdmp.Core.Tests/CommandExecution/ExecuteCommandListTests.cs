@@ -26,7 +26,7 @@ internal class TestsExecuteCommandList : CommandCliTests
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
             new CommandLineObjectPicker(new string[]{ "Catalogue"}, GetActivator()));
     }
-        
+
     [Test]
     public void Test_ExecuteCommandList_OneCatalogueParsing()
     {

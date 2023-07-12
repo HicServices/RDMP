@@ -31,7 +31,7 @@ public class ProcessTaskTests : DatabaseTests
             var clone = processTask1.CloneToNewLoadMetadataStage(test,LoadStage.GetFiles);
             Assert.AreNotSame(clone.ID, processTask1.ID);
             Assert.IsFalse(clone.ID == processTask1.ID);
-            
+
             //get fresh copy out of database to ensure it is still there
             var orig = CatalogueRepository.GetObjectByID<ProcessTask>(processTask1.ID);
             clone = CatalogueRepository.GetObjectByID<ProcessTask>(clone.ID);
@@ -47,7 +47,7 @@ public class ProcessTaskTests : DatabaseTests
 
             clone.DeleteInDatabase();
         }
-        finally 
+        finally
         {
             processTask1.DeleteInDatabase();
             test.DeleteInDatabase();
@@ -60,8 +60,8 @@ public class ProcessTaskTests : DatabaseTests
         //setup parents
         var parent1 = new LoadMetadata(CatalogueRepository);
         var parent2 = new LoadMetadata(CatalogueRepository);
-            
-        //make sure we didn't magically create the same ID somehow 
+
+        //make sure we didn't magically create the same ID somehow
         Assert.AreNotEqual(parent1.ID,parent2.ID);
 
         //setup things to clone in parent1
@@ -77,7 +77,7 @@ public class ProcessTaskTests : DatabaseTests
         processTask1.Name = "Franky";
         processTask1.Order = 999;
         processTask1.SaveToDatabase();
-            
+
         try
         {
             //clone to parent 2
@@ -89,14 +89,14 @@ public class ProcessTaskTests : DatabaseTests
             //get fresh copy out of database to ensure it is still there
             var orig = CatalogueRepository.GetObjectByID<ProcessTask>(processTask1.ID);
             clone = CatalogueRepository.GetObjectByID<ProcessTask>(clone.ID);
-                
+
             //ids must have changed
             Assert.IsFalse(orig.ID == clone.ID);
 
             //load stages must be correct per what we requested
             Assert.AreEqual(LoadStage.AdjustRaw, orig.LoadStage);
             Assert.AreEqual(LoadStage.GetFiles, clone.LoadStage);
-                
+
             //all regular values must have been cloned successfully
             Assert.AreEqual(orig.Order, clone.Order);
             Assert.AreEqual(orig.Path, clone.Path);
@@ -105,17 +105,17 @@ public class ProcessTaskTests : DatabaseTests
             Assert.AreEqual(parent1.ID, orig.LoadMetadata_ID);
             Assert.AreEqual(parent2.ID, clone.LoadMetadata_ID);
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                
+
             //////////////////////////////////////////////////////////////////CHECK CLONAGE OF ARGUMENTS ////////////////////////////////////////////////////////////
 
-            var clonearg= clone.ProcessTaskArguments.SingleOrDefault(); 
+            var clonearg= clone.ProcessTaskArguments.SingleOrDefault();
             Assert.NotNull(clonearg);
 
             Assert.AreNotEqual(clonearg.ID,arg.ID);
             Assert.AreEqual(clonearg.GetType(),arg.GetType());
             Assert.AreEqual(clonearg.Name,arg.Name);
             Assert.AreEqual(clonearg.Value,arg.Value);
-                
+
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             clone.DeleteInDatabase();
         }

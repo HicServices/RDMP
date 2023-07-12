@@ -19,13 +19,13 @@ namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests;
 [Category("Unit")]
 public class FilterImporterTests : UnitTests
 {
-        
+
     [Test]
     public void FilterCreated_NewFilterGetsSameName()
     {
         //Thing we will be cloning
-        var master = Mock.Of<IFilter>(x => 
-            x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance && 
+        var master = Mock.Of<IFilter>(x =>
+            x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
             x.Name == "Space Odyssey");
             
         //The factory will return this value
@@ -100,14 +100,14 @@ public class FilterImporterTests : UnitTests
     {
         //The filter we are cloning
         var master = Mock.Of<IFilter>(x =>
-            x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance && 
-            x.Name == "Space Odyssey" && 
+            x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance &&
+            x.Name == "Space Odyssey" &&
             x.WhereSQL == "@hall = 'active'");
 
         //The existing parameter declared on the filter we are cloning
         var masterParameter = Mock.Of<ISqlParameter>(
             x => x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
-                 x.ParameterName=="@hall" && 
+                 x.ParameterName=="@hall" &&
                  x.Comment == "SomeComment" &&
                  x.Value == "500" &&
                  x.ParameterSQL == "DECLARE @hall AS int"
@@ -155,7 +155,7 @@ public class FilterImporterTests : UnitTests
         var existingParameter = Mock.Of<ISqlParameter>(x => x.ParameterName=="@hall");
 
         //The filter to which the above existing parameter belongs
-        var existing = Mock.Of<IFilter>(x => 
+        var existing = Mock.Of<IFilter>(x =>
             x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance&&
             x.GetAllParameters()==new[] { existingParameter });
         existing.Name = "Space Odyssey";
@@ -201,7 +201,7 @@ public class FilterImporterTests : UnitTests
         var existingParameter = Mock.Of<ISqlParameter>(x => x.ParameterName=="@hall");
 
         //The filter to which the above existing parameter belongs
-        var existing = Mock.Of<IFilter>(x => 
+        var existing = Mock.Of<IFilter>(x =>
             x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance &&
             x.GetAllParameters()==new[] { existingParameter });
         existing.Name = "Space Odyssey";

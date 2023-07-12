@@ -55,7 +55,7 @@ public class ProcessTaskCheckingTests:DatabaseTests
         _task = new ProcessTask(CatalogueRepository, _lmd, LoadStage.GetFiles);
         _checker = new ProcessTaskChecks(_lmd);
     }
-                
+
 
     [Test]
     [TestCase(null,ProcessTaskType.Executable)]
@@ -132,7 +132,7 @@ public class ProcessTaskCheckingTests:DatabaseTests
             var ex = Assert.Throws<ArgumentException>(() => _checker.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
 
             Assert.AreEqual(@"Class AnySeparatorFileAttacher has a Mandatory property 'Separator' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",ex.Message);
-                
+
 
         }
         finally
@@ -153,7 +153,7 @@ public class ProcessTaskCheckingTests:DatabaseTests
             _task.LoadStage = LoadStage.Mounting;
             _task.Path = typeof(AnySeparatorFileAttacher).FullName;
             _task.SaveToDatabase();
-                
+
             //create the arguments
             var args = ProcessTaskArgument.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>(_task);
 
@@ -168,7 +168,7 @@ public class ProcessTaskCheckingTests:DatabaseTests
             var separator = (ProcessTaskArgument)args.Single(a => a.Name.Equals("Separator"));
             separator.Value = ",";
             separator.SaveToDatabase();
-                
+
             var results = new ToMemoryCheckNotifier();
             _checker.Check(results);
 

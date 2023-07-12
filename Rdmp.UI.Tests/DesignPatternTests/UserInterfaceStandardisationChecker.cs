@@ -39,11 +39,11 @@ public class UserInterfaceStandardisationChecker
         //it's a singleton because you can only have one decryption certificate for an RDMP as opposed to other SingletonNode classses that represent collections e.g. AllTableInfos is the only collection of TableInfos but it's a collection
         typeof(DecryptionPrivateKeyNode),
         typeof(ArbitraryFolderNode),
-            
+
         //excused because although singletons they have dynamic names / they are basically a collection
         typeof(OtherPipelinesNode),
         typeof(StandardPipelineUseCaseNode),
-            
+
         //the base class
         typeof(Node)
 
@@ -68,12 +68,12 @@ public class UserInterfaceStandardisationChecker
 
     };
 
-    public void FindProblems(List<string> csFilesList,MEF mef)
+    public void FindProblems(List<string> csFilesList)
     {
         _csFilesList = csFilesList;
 
         //All node classes should have equality compare members so that tree expansion works properly
-        foreach (var nodeClass in mef.GetAllTypes().Where(t => typeof(Node).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+        foreach (var nodeClass in MEF.GetAllTypes().Where(t => typeof(Node).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             if(nodeClass.Namespace == null || nodeClass.Namespace.StartsWith("System"))
                 continue;
@@ -89,7 +89,7 @@ public class UserInterfaceStandardisationChecker
             //if it's an ObjectUsedByOtherObjectNode then it will already have GetHashCode implemented
             if (typeof (IObjectUsedByOtherObjectNode).IsAssignableFrom(nodeClass))
                 continue;
-                
+
             if (typeof(ExtractionArbitraryFolderNode).IsAssignableFrom(nodeClass))
                 continue;
 
@@ -99,7 +99,7 @@ public class UserInterfaceStandardisationChecker
 
                 if(!nodeClass.Name.StartsWith("All"))
                     problems.Add($"Class '{nodeClass.Name}' is a SingletonNode but its name doesn't start with All");
-                    
+
                 continue;
             }
 
@@ -107,12 +107,12 @@ public class UserInterfaceStandardisationChecker
         }
 
         //All Menus should correspond to a data class
-        foreach (var menuClass in mef.GetAllTypes().Where(t => typeof (RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
-        { 
+        foreach (var menuClass in MEF.GetAllTypes().Where(t => typeof (RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+        {
             //the basic class from which all are inherited or a menu for FolderNode<X>
             if(menuClass == typeof(RDMPContextMenuStrip) || menuClass.Name.EndsWith("FolderMenu"))
                 continue;
-                
+
             //We are looking at something like AutomationServerSlotsMenu
             if (!menuClass.Name.EndsWith("Menu"))
             {
@@ -144,7 +144,7 @@ public class UserInterfaceStandardisationChecker
             //public AutomationServerSlotsMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
             var expectedConstructorSignature = $"{menuClass.Name}(RDMPContextMenuStripArgs args,{expectedClassName}";
             ConfirmFileHasText(menuClass,expectedConstructorSignature);
-                
+
             var fields = menuClass.GetFields(
                 BindingFlags.NonPublic |
                 BindingFlags.Instance);
@@ -155,9 +155,9 @@ public class UserInterfaceStandardisationChecker
                 problems.Add(
                     $"Menu '{menuClass}' contains a private field called '{activatorField.Name}'.  You should instead use base class protected field RDMPContextMenuStrip._activator");
         }
-            
+
         //Drag and drop / Activation - Execution Proposal system
-        foreach (var proposalClass in mef.GetAllTypes().Where(t => typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+        foreach (var proposalClass in MEF.GetAllTypes().Where(t => typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
         {
             if(proposalClass.Namespace.Contains("Rdmp.UI.Tests.DesignPatternTests"))
                 continue;
@@ -177,18 +177,18 @@ public class UserInterfaceStandardisationChecker
                 problems.Add(
                     $"Found proposal called '{proposalClass}' but couldn't find a corresponding data class called '{toLookFor}.cs'");
         }
-            
+
         //Make sure all user interface classes have the suffix UI
-        foreach(var uiType in mef.GetAllTypes().Where(t => 
+        foreach(var uiType in MEF.GetAllTypes().Where(t =>
                     typeof(RDMPUserControl).IsAssignableFrom(t)||typeof(RDMPForm).IsAssignableFrom(t)
                     && !t.IsAbstract && !t.IsInterface))
         {
-                
+
             if(!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))
             {
                 if (excusedUIClasses.Contains(uiType))
                     continue;
-                    
+
                 //also allow Screen1, Screen2 etc
                 if(Regex.IsMatch(uiType.Name,@"Screen\d") && uiType.IsNotPublic)
                     continue;
@@ -238,6 +238,6 @@ public class UserInterfaceStandardisationChecker
             if(hasText)
                 problems.Add($"File '{file}' contains unexpected text '{expectedString}'");
         }
-            
+
     }
 }

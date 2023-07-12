@@ -75,7 +75,7 @@ public partial class ConsoleGuiUserSettings {
         {
             UserSettings.SetErrorReportingLevelFor(code, (CheckResult)newValue);
             row[1] = newValue.ToString();
-                
+
             Application.MainLoop.Invoke(()=>tableview1.Update());
         }
     }

@@ -45,8 +45,8 @@ public class CatalogueTests : UnitTests
 
         c.DeleteInDatabase();
     }
-        
-        
+
+
     [Test]
     public void update_changeNameOfCatalogue_passes()
     {
@@ -273,7 +273,7 @@ public class CatalogueTests : UnitTests
             Assert.Contains(t1,allTables);
             Assert.Contains(t2, allTables);
             Assert.Contains(t3, allTables);
-            
+
             var normalTablesOnly = cata.GetTableInfoList(false).ToArray();
             Assert.AreEqual(2,normalTablesOnly.Length);
             Assert.Contains(t1,normalTablesOnly);
@@ -294,7 +294,7 @@ public class CatalogueTests : UnitTests
         finally
         {
             lookup.DeleteInDatabase();
-                
+
             t1.DeleteInDatabase();
             t2.DeleteInDatabase();
             t3.DeleteInDatabase();
@@ -365,7 +365,7 @@ public class CatalogueTests : UnitTests
             c.DeleteInDatabase();
         }
     }
-        
+
     [Test]
     public void CatalogueFolder_CannotHaveDoubleSlashes()
     {
@@ -458,10 +458,10 @@ public class CatalogueTests : UnitTests
                 ci1_2.SetColumnInfo(c2);
                 ci2_1.SetColumnInfo(c2);
                 ci2_2.SetColumnInfo(c1);
-                    
+
             }
-                
-                
+
+
 
             var catas = t.GetAllRelatedCatalogues();
             Assert.AreEqual(2, catas.Length);
@@ -543,7 +543,7 @@ public class CatalogueTests : UnitTests
 
 
     /// <summary>
-    /// Tests when you have 
+    /// Tests when you have
     /// \
     /// \ somefolder
     ///   +cata1

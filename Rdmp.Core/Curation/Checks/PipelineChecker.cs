@@ -33,12 +33,10 @@ public class PipelineChecker : ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        var mef = ((ICatalogueRepository)_pipeline.Repository).MEF;
-            
         foreach (var component in _pipeline.PipelineComponents)
         {
             var copy = component;
-            var mefChecker = new MEFChecker(mef, component.Class, delegate(string s) { copy.Class = s; copy.SaveToDatabase(); });
+            var mefChecker = new MEFChecker(component.Class, delegate(string s) { copy.Class = s; copy.SaveToDatabase(); });
             mefChecker.Check(notifier);
         }
     }

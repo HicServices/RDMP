@@ -29,9 +29,9 @@ internal class ExecuteCommandAlterColumnTypeTests:DatabaseTests
 
         var ui = new UITests();
         var activator = new TestActivateItems(ui, new MemoryDataExportRepository());
-                       
+
         var myCol = tbl.DiscoverColumn("myCol");
-            
+
         //should have started out as 10
         Assert.AreEqual(10, myCol.DataType.GetLengthIfString());
 

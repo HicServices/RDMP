@@ -162,7 +162,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
         var expectedFileName = $"rdmp{(EnvironmentInfo.IsLinux ? "" : ".exe")}";
 
-        // try in the location we ran from 
+        // try in the location we ran from
         var binary = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, expectedFileName);
 
         if (!File.Exists(binary))
@@ -204,7 +204,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
                     consoleOutput.Insert(0,line);
                     Application.MainLoop.Invoke(()=>_results.SetNeedsDisplay());
                 }
-                    
+
             }
         });
     }

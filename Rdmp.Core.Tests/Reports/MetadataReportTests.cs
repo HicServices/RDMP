@@ -53,7 +53,7 @@ internal class MetadataReportTests:UnitTests
         ei.CatalogueItem.ClearAllInjections();
         ei.ClearAllInjections();
 
-        var reporter = new MetadataReport(Repository, 
+        var reporter = new MetadataReport(Repository,
             new MetadataReportArgs(new[] {ei.CatalogueItem.Catalogue})
         );
         var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);

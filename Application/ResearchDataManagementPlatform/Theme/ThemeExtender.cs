@@ -18,7 +18,7 @@ internal class ThemeExtender
     private const string Env = "Environment";
 
     public Color TextBoxBackground { get; set; }
-        
+
     public Color ComboBoxBackground { get; set; }
     public Color ComboBoxText { get; set; }
 

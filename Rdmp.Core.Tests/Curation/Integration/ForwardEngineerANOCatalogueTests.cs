@@ -184,7 +184,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         Assert.IsTrue(exports > 0);
     }
 
-        
+
 
     [Test]
     [TestCase(false,false)]
@@ -278,7 +278,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             var ex = Assert.Throws<Exception>(engine.Execute);
             Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called"));
             Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "[Necks].[SpineColor]"));
-                
+
             return;
         }
 
@@ -308,7 +308,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
         Assert.IsTrue(newCataItems.Select(ci=>ci.ColumnInfo).Contains(newSpineColorColumnInfo));
     }
-        
+
     [Test]
     public void CreateANOVersionTest_LookupsAndExtractionInformations()
     {
@@ -438,8 +438,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         for (var i = 0; i < eiSource.Length; i++)
         {
             Assert.AreEqual(eiSource[i].Order , eiDestination[i].Order,"ExtractionInformations in the source and destination Catalogue should have the same order");
-                
-            Assert.AreEqual(eiSource[i].GetRuntimeName(), 
+
+            Assert.AreEqual(eiSource[i].GetRuntimeName(),
                 eiDestination[i].GetRuntimeName().Replace("ANO",""), "ExtractionInformations in the source and destination Catalogue should have the same names (excluding ANO prefix)");
 
             Assert.AreEqual(eiSource[i].ExtractionCategory, eiDestination[i].ExtractionCategory, "Old / New ANO ExtractionInformations did not match on ExtractionCategory");

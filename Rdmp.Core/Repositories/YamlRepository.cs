@@ -52,8 +52,6 @@ public class YamlRepository : MemoryDataExportRepository
         if (File.Exists(GetEncryptionKeyPathFile()))
             EncryptionKeyPath = File.ReadAllText(GetEncryptionKeyPathFile());
 
-        MEF = new MEF();
-
         // Don't create new objects with the ID of existing objects
         NextObjectId = Objects.IsEmpty ? 0 : Objects.Max(o => o.Key.ID);
     }

@@ -45,7 +45,7 @@ public partial class PipelineWorkAreaUI : UserControl
         _catalogueRepository = catalogueRepository;
 
         InitializeComponent();
-            
+
         olvComponents.BuildGroups(olvRole, SortOrder.Ascending);
         olvComponents.AlwaysGroupByColumn = olvRole;
         olvComponents.FullRowSelect = true;
@@ -71,10 +71,10 @@ public partial class PipelineWorkAreaUI : UserControl
         try
         {
             //middle and destination components
-            var allComponentTypes = _catalogueRepository.MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
+            var allComponentTypes = MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
 
             //source components (list of all types with MEF exports of )
-            var allSourceTypes = _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
+            var allSourceTypes = MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
             _allComponents = new List<AdvertisedPipelineComponentTypeUnderContext>();
 
@@ -133,9 +133,9 @@ public partial class PipelineWorkAreaUI : UserControl
     private void olvComponents_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         var model = (AdvertisedPipelineComponentTypeUnderContext)e.Model;
-            
+
         var RightClickMenu = new ContextMenuStrip();
-            
+
         if (model != null)
         {
             if(!model.IsCompatible())

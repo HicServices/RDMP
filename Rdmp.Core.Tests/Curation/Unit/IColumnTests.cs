@@ -151,8 +151,8 @@ internal class IColumnTests
             
     }
 
-    [Test] 
-        
+    [Test]
+
     public void CheckSyntax_IColumn_ThrowBecauseInvalidSelectSQL()
     {
         var tc = new TestColumn

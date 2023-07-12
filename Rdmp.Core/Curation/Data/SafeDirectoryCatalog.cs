@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Rdmp.Core.ReusableLibraryCode;
-using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data;
 
@@ -23,12 +22,12 @@ namespace Rdmp.Core.Curation.Data;
 /// <para>Handles assembly resolution problems, binding redirection and partial assembly loading (e.g. if only some of the Types in the
 /// assembly could be resolved).</para>
 /// </summary>
-public class SafeDirectoryCatalog
+public static class SafeDirectoryCatalog
 {
     /// <summary>
     /// These assemblies do not load correctly and should be ignored (they produce warnings on Startup)
     /// </summary>
-    public static readonly HashSet<string> Ignore = new() {
+    internal static readonly HashSet<string> Ignore = new() {
 
 "0harmony.dll",
 "accessibility.dll",
@@ -414,203 +413,4 @@ public class SafeDirectoryCatalog
     };
 
 
-    private readonly object _oTypesLock = new();
-    private readonly HashSet<Type> _types = new();
-    public readonly ConcurrentDictionary<string,Type> TypesByName = new ();
-
-    /// <summary>
-    /// Assemblies which could not be loaded
-    /// </summary>
-    public Dictionary<string,Exception> BadAssembliesDictionary { get; }
-
-    /// <summary>
-    /// Delegate for skipping certain dlls
-    /// </summary>
-    public static Func<FileInfo,bool> IgnoreDll { get; set; }
-
-    /// <summary>
-    /// Creates a new list of MEF plugin classes from the dlls/files in the directory list provided
-    /// </summary>
-    /// <param name="listener"></param>
-    /// <param name="directories"></param>
-    public SafeDirectoryCatalog(ICheckNotifier listener, params string[] directories)
-    {
-        BadAssembliesDictionary = new Dictionary<string, Exception>();
-
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-        {
-            try
-            {
-                foreach (var type in assembly.GetTypes())
-                    AddType(type);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-        var files = new HashSet<FileInfo>();
-                       
-        foreach (var directory in directories)
-        {
-            if (directory is null)
-                continue;
-            if (!Directory.Exists(directory))
-                Directory.CreateDirectory(directory); //empty directory
-
-            foreach(var f in Directory.EnumerateFiles(directory, "*.dll", SearchOption.AllDirectories))
-            {
-                var newOne = new FileInfo(f);
-                var existing = files.SingleOrDefault(d => d.Name.Equals(newOne.Name));
-
-                // don't load the cli dir
-                if (IgnoreDll?.Invoke(newOne) == true)
-                    continue;
-
-                if (existing == null)
-                {
-                    files.Add(newOne);
-                    continue;
-                }
-
-
-                // Need to resolve duplicate/conflict:
-                var existingOneVersion = FileVersionInfo.GetVersionInfo(existing.FullName);
-                var newOneVersion = FileVersionInfo.GetVersionInfo(newOne.FullName);
-
-                FileInfo winner;
-
-                // if we already have a copy of this exact dll we don't care about loading it
-                if (FileVersionsAreEqual(newOneVersion, existingOneVersion))
-                {
-                    // no need to spam user with warnings about duplicated dlls
-                    continue;
-                }
-
-                if (FileVersionGreaterThan(newOneVersion, existingOneVersion))
-                {
-                    files.Remove(existing);
-                    files.Add(newOne);
-                    winner = newOne;
-                }
-                else
-                {
-                    winner = existing;
-                }
-
-                listener?.OnCheckPerformed(new CheckEventArgs(
-                    $"Found 2 copies of {newOne.Name}.  They were {existing.FullName} ({existingOneVersion.FileVersion}) and {newOne.FullName} ({newOneVersion.FileVersion}).  Only {winner.FullName} will be loaded",
-                    CheckResult.Success));
-            }
-        }
-
-        // Find and load all the DLLs which are not ignored
-        foreach(var file in files)
-            LoadDll(file,listener);
-    }
-
-    private void LoadDll(FileInfo f, ICheckNotifier listener)
-    {
-        Assembly ass = null;
-        if (Ignore.Contains(f.Name.ToLowerInvariant()))
-          return;
-            
-        try
-        {
-            ass = AssemblyResolver.LoadFile(f);
-            AddTypes(f, ass.GetTypes(), listener);
-        }
-        catch (ReflectionTypeLoadException ex)
-        {
-            //if we loaded the assembly and some types
-            if (ex.Types.Any() && ass != null)
-            {
-                listener?.OnCheckPerformed(new CheckEventArgs(
-                    ErrorCodes.CouldOnlyHalfLoadDll,
-                    ex,null,
-                    ex.Types.Count(t => t != null),
-                    ex.Types.Length,
-                    f.Name));
-
-                AddTypes(f, ex.Types, listener); //the assembly is bad but at least some of the Types were legit
-            }
-            else
-                AddBadAssembly(f, ex, listener); //the assembly could not be loaded properly
-        }
-        catch (BadImageFormatException)
-        {
-            listener?.OnCheckPerformed(new CheckEventArgs($"Did not load '{f}' because it is not a dotnet assembly", CheckResult.Success));
-        }
-        catch (Exception ex)
-        {
-            AddBadAssembly(f, ex, listener);
-        }
-            
-    }
-
-    /// <summary>
-    /// Returns true if the two versions have the same FileMajorPart, FileMinorPart and FileBuildPart version numbers
-    /// </summary>
-    /// <param name="newOneVersion"></param>
-    /// <param name="existingOneVersion"></param>
-    /// <returns></returns>
-    private static bool FileVersionsAreEqual(FileVersionInfo newOneVersion, FileVersionInfo existingOneVersion)
-    {
-        return newOneVersion.FileMajorPart == existingOneVersion.FileMajorPart &&
-               newOneVersion.FileMinorPart == existingOneVersion.FileMinorPart &&
-               newOneVersion.FileBuildPart == existingOneVersion.FileBuildPart;
-    }
-
-    /// <summary>
-    /// Returns true if the <paramref name="newOneVersion"/> is a later version than <paramref name="existingOneVersion"/>.
-    /// Does not consider private build part e.g. 1.0.0-alpha1 and 1.0.0-alpha2 are not considered different
-    /// </summary>
-    /// <param name="newOneVersion"></param>
-    /// <param name="existingOneVersion"></param>
-    /// <returns></returns>
-    private static bool FileVersionGreaterThan(FileVersionInfo newOneVersion, FileVersionInfo existingOneVersion)
-    {
-        if (newOneVersion.FileMajorPart > existingOneVersion.FileMajorPart)
-            return true;
-        // This is needed to ensure that 1.2.0 is seen as older than 2.0.0
-        if (newOneVersion.FileMajorPart < existingOneVersion.FileMajorPart)
-            return false;
-
-        // First part equal, so use second as tie-breaker:
-        if (newOneVersion.FileMinorPart > existingOneVersion.FileMinorPart)
-            return true;
-        if (newOneVersion.FileMinorPart < existingOneVersion.FileMinorPart)
-            return false;
-
-        return newOneVersion.FileBuildPart > existingOneVersion.FileBuildPart;
-    }
-
-    private void AddBadAssembly(FileInfo f, Exception ex,ICheckNotifier listener)
-    {
-        if (BadAssembliesDictionary.ContainsKey(f.FullName)) return;    // Only report each failure once
-        BadAssembliesDictionary.Add(f.FullName, ex);
-        listener?.OnCheckPerformed(new CheckEventArgs(ErrorCodes.CouldNotLoadDll, null,ex,f.FullName));
-    }
-
-    private void AddTypes(FileInfo f, Type[] types, ICheckNotifier listener)
-    {
-        foreach(var t in types.Where(t => t is { FullName: not null } && !TypesByName.ContainsKey(t.FullName)))
-            AddType(t);
-
-        //tell them as we go how far we are through
-        listener?.OnCheckPerformed(new CheckEventArgs($"Successfully loaded Assembly {f.FullName} into memory", CheckResult.Success));
-    }
-
-    internal void AddType(Type type, string typeNameOrAlias=null)
-    {
-        typeNameOrAlias??=type.FullName;
-        //only add it if it is novel
-        TypesByName.TryAdd(typeNameOrAlias, type);
-
-        lock (_oTypesLock)
-        {
-            _types.Add(type);
-        }
-    }
 }

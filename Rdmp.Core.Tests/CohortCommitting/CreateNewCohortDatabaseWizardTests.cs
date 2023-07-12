@@ -37,7 +37,7 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
 
     private ExtractionInformation _extractionInfo1;
     private ExtractionInformation _extractionInfo2;
-        
+
     [SetUp]
     protected override void SetUp()
     {
@@ -65,7 +65,7 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
 
     private string cohortDatabaseName;
 
-        
+
     [Test]
     public void TestMissingColumnInfos()
     {

@@ -122,13 +122,13 @@ internal class ConsoleGuiEdit : Window
     }
 
     /// <summary>
-    /// A list view entry with the value of the field and 
+    /// A list view entry with the value of the field and
     /// </summary>
     private class PropertyInListView
     {
         public PropertyInfo PropertyInfo;
         public string DisplayMember;
-            
+
         public IMapsDirectlyToDatabaseTable Object;
 
         public PropertyInListView(PropertyInfo p, IMapsDirectlyToDatabaseTable o)

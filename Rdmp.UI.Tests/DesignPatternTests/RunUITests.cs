@@ -37,7 +37,7 @@ public class RunUITests:DatabaseTests
             typeof(ExecuteCommandExpandAllNodes),
             typeof(ExecuteCommandViewCohortAggregateGraph),
             typeof(ExecuteCommandExecuteExtractionAggregateGraph),
-                
+
             typeof(ExecuteCommandAddNewCatalogueItem),
 
             typeof(ExecuteCommandCreateNewFilter),
@@ -53,7 +53,7 @@ public class RunUITests:DatabaseTests
 
             typeof(ExecuteCommandShowXmlDoc),
             typeof(ImpossibleCommand),
-     
+
             typeof(ExecuteCommandChangeLoadStage),
             typeof(ExecuteCommandReOrderProcessTask),
             typeof(ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer),
@@ -82,20 +82,19 @@ public class RunUITests:DatabaseTests
     {
         var uiTests = new UITests();
         var activator = new TestActivateItems(uiTests, new MemoryDataExportRepository());
-        activator.RepositoryLocator.CatalogueRepository.MEF = CatalogueRepository.MEF;
 
         allowedToBeIncompatible.AddRange(activator.GetIgnoredCommands());
 
         var commandCaller = new CommandInvoker(activator);
-            
+
         Assert.IsTrue(commandCaller.WhyCommandNotSupported(typeof(ExecuteCommandDelete)) is null);
 
-        var notSupported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+        var notSupported = MEF.GetAllTypes()
             .Where(t=>typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface) //must be something we would normally expect to be a supported Type
             .Except(allowedToBeIncompatible) //and isn't a permissible one
             .Where(t => commandCaller.WhyCommandNotSupported(t) is not null) //but for some reason isn't
             .ToArray();
-            
+
         Assert.AreEqual(0,notSupported.Length,"The following commands were not compatible with RunUI:" + Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
     }
 
@@ -118,10 +117,10 @@ public class RunUITests:DatabaseTests
     }
 
     private class TestCommandDiscoveredDatabase:BasicCommandExecution
-    {   
+    {
         public TestCommandDiscoveredDatabase(IBasicActivateItems activator,DiscoveredDatabase _):base(activator)
         {
-                
+
         }
     }
 
@@ -129,7 +128,7 @@ public class RunUITests:DatabaseTests
     {
         public TestCommandLotsOfParameters(IRDMPPlatformRepositoryServiceLocator _1, DiscoveredDatabase _2, DirectoryInfo _3):base()
         {
-                
+
         }
     }
 
@@ -137,7 +136,7 @@ public class RunUITests:DatabaseTests
     {
         public TestCommandTypeParameter(IRDMPPlatformRepositoryServiceLocator _1, Type _2):base()
         {
-                
+
         }
     }
 

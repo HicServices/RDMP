@@ -101,7 +101,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
 
     }
 
-        
+
     [Test]
     public void TestImportTree_FromCohortIdentificationConfiguration_ToSelectedDatasets_PreserveOperation()
     {

@@ -53,7 +53,7 @@ public class ExtractionRunner : ManyRunner
 
     protected override void Initialize()
     {
-            
+
         _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,_options.ExtractionConfiguration);
         _project = _configuration.Project;
         _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
@@ -81,14 +81,14 @@ public class ExtractionRunner : ManyRunner
             _globalsCommand = new ExtractGlobalsCommand(RepositoryLocator, _project, _configuration, globals);
             commands.Add(_globalsCommand);
         }
-            
+
         var factory = new ExtractCommandCollectionFactory();
 
         foreach (var sds in GetSelectedDataSets())
         {
             var extractDatasetCommand = factory.Create(RepositoryLocator, sds);
             commands.Add(extractDatasetCommand);
-                
+
             lock(_oLock)
                 ExtractCommands.Add(sds,extractDatasetCommand);
         }
@@ -103,7 +103,7 @@ public class ExtractionRunner : ManyRunner
         var datasetCommand = runnable as ExtractDatasetCommand;
 
         var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, dataLoadInfo);
-        var fork = 
+        var fork =
             datasetCommand != null ?
                 new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand)):
                 new ForkDataLoadEventListener(logging, listener);
@@ -154,10 +154,10 @@ public class ExtractionRunner : ManyRunner
             if (runnable is ExtractDatasetCommand datasetCommand)
                 checkables.Add(new SelectedDataSetsChecker(_activator,datasetCommand.SelectedDataSets,  false, _pipeline));
         }
-            
+
         return checkables.ToArray();
     }
-        
+
     private ISelectedDataSets[] GetSelectedDataSets()
     {
         if (_options.Datasets == null || !_options.Datasets.Any())
@@ -197,7 +197,7 @@ public class ExtractionRunner : ManyRunner
                 return sds == null ? null : ExtractCommands[sds].State;
             }
         }
-            
+
         return null;
     }
 

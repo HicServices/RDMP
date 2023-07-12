@@ -27,7 +27,7 @@ public class WindowArranger : IArrangeWindows
         _activator = activator;
         _windowManager =windowManager;
     }
-        
+
     public void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o)
     {            
         _activator.RequestItemEmphasis(this, new EmphasiseRequest(o));

@@ -42,7 +42,7 @@ public class AggregationTests :DatabaseTests
 
         Console.WriteLine(queryBuilder.SQL);
     }
-        
+
     [TestCase(false)]
     [TestCase(true)]
     public void GenerateAggregateViaAggregateConfigurationTest(bool memoryRepo)
@@ -61,7 +61,7 @@ public class AggregationTests :DatabaseTests
             aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
 
             var queryBuilder = agg.GetQueryBuilder();
-                
+
             Assert.AreEqual(
                 $@"DECLARE @startNumber AS int;
 SET @startNumber=5;
@@ -76,7 +76,7 @@ FROM
 [{TestDatabaseNames.Prefix}ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 HAVING
 count(*)>1", queryBuilder.SQL);
-                
+
         }
         finally
         {
@@ -108,7 +108,7 @@ count(*)>1", queryBuilder.SQL);
             Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
             Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
 
-            //should have this version of things 
+            //should have this version of things
             Assert.IsTrue(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
             Assert.IsTrue(queryBuilder.SQL.Contains(@"SET @name='lobster';"));
 

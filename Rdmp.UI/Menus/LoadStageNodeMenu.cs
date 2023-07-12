@@ -21,12 +21,10 @@ namespace Rdmp.UI.Menus;
 internal class LoadStageNodeMenu : RDMPContextMenuStrip
 {
     private readonly LoadStageNode _loadStageNode;
-    private MEF _mef;
 
     public LoadStageNodeMenu(RDMPContextMenuStripArgs args, LoadStageNode loadStageNode) : base(args, loadStageNode)
     {
         _loadStageNode = loadStageNode;
-        _mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
 
         args.SkipCommand<ExecuteCommandCreateNewClassBasedProcessTask>();
             

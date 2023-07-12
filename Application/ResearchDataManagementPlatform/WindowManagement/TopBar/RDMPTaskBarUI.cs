@@ -20,12 +20,12 @@ using Rdmp.UI.Theme;
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar;
 
 /// <summary>
-/// Allows you to access the main object collections that make up the RDMP.  These include 
+/// Allows you to access the main object collections that make up the RDMP.  These include
 /// </summary>
 public partial class RDMPTaskBarUI : UserControl
 {
     private WindowManager _manager;
-        
+
     private const string CreateNewLayout = "<<New Layout>>";
 
     public RDMPTaskBarUI()
@@ -194,7 +194,7 @@ public partial class RDMPTaskBarUI : UserControl
         return collectionToToggle;
     }
 
-        
+
     private void cbx_DropDownClosed(object sender, EventArgs e)
     {
         var cbx = (ToolStripComboBox)sender;

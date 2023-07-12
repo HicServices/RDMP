@@ -17,7 +17,7 @@ internal class ConfigureDatasetUITests : UITests
     {
         var sds = WhenIHaveA<SelectedDataSets>();
         var ui = AndLaunch<ConfigureDatasetUI>(sds);
-            
+
         AssertNoErrors();
 
         var publishCount = 0;
@@ -35,7 +35,7 @@ internal class ConfigureDatasetUITests : UITests
         Assert.AreEqual(1,publishCount);
 
         AssertNoErrors();
-            
+
         //should now be no columns in the extraction configuration
         Assert.IsEmpty(sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet));
 

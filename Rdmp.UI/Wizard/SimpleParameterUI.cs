@@ -49,7 +49,7 @@ public partial class SimpleParameterUI : UserControl
             tbValue.Text = "";
             return;
         }
-            
+
         tbValue.Text = correctValue.Value;
     }
 

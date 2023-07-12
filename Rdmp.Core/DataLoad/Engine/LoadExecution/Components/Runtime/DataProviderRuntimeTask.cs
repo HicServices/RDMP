@@ -25,7 +25,7 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public IDataProvider Provider { get; private set; }
     public ICheckable MEFPluginClassInstance => Provider;
 
-    public DataProviderRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
+    public DataProviderRuntimeTask(IProcessTask task, RuntimeArgumentCollection args)
         : base(task, args)
     {
         var classNameToInstantiate = task.Path;
@@ -34,7 +34,7 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
             throw new ArgumentException(
                 $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IDataProvider)}");
 
-        Provider = mef.CreateA<IDataProvider>(classNameToInstantiate);
+        Provider = MEF.CreateA<IDataProvider>(classNameToInstantiate);
 
         try
         {

@@ -30,7 +30,7 @@ public class ParameterCreatorTests
 
         factory.Verify();
     }
-        
+
 
     [Test]
     public void SingleParameterTest_NullReturnFromConstruct_Throws()
@@ -46,7 +46,7 @@ public class ParameterCreatorTests
 
         Assert.IsTrue(ex.Message.StartsWith("Parameter construction method returned null"));
     }
-       
+
     [Test]
     public void SingleParameterTest_OneParameter_CreateCalled()
     {
@@ -72,14 +72,14 @@ public class ParameterCreatorTests
         var p = new Mock<ISqlParameter>();//save should be called because there is no VAlue on the parameter
         p.Setup(m => m.SaveToDatabase());
 
-        var existingParameter = Mock.Of<ISqlParameter>(x => 
+        var existingParameter = Mock.Of<ISqlParameter>(x =>
             x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance &&
             x.ParameterName=="@bob"
         );
 
         var f = Mock.Of<IFilter>(x =>
             x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance &&
-            x.WhereSQL == "@bob = 'bob'" && 
+            x.WhereSQL == "@bob = 'bob'" &&
             x.GetAllParameters() == new[] {existingParameter});
 
         var factory = new Mock<IFilterFactory>();
@@ -90,9 +90,9 @@ public class ParameterCreatorTests
         creator.CreateAll(f, null);//no matter how many times we call create it shouldn't make more because there is already one
 
         p.Verify(m=> m.SaveToDatabase(),Times.Never);
-        factory.Verify(m=> m.CreateNewParameter(f, It.IsAny<string>()),Times.Never); //should never be called because the filter already has 
+        factory.Verify(m=> m.CreateNewParameter(f, It.IsAny<string>()),Times.Never); //should never be called because the filter already has
     }
-        
+
     [Test]
     public void SingleParameterTest_GlobalOverrides_CreateNotCalled()
     {
@@ -165,7 +165,7 @@ public class ParameterCreatorTests
     [TestCase("([MyTable].[MyCol] = @name) OR ...", "@name", "@name2", "([MyTable].[MyCol] = @name2) OR ...")]
     [TestCase("[MyTable].[MyCol] = @name2", "@name", "@cthulhu", "[MyTable].[MyCol] = @name2")]//No match since it is a substring
     [TestCase("[MyTable].[MyCol] = @name_2", "@name", "@cthulhu", "[MyTable].[MyCol] = @name_2")]
-    [TestCase("[MyTable].[MyCol] = @name@@coconuts", "@name", "@cthulhu", "[MyTable].[MyCol] = @name@@coconuts")]//No match since @ is a legit word to use in a parameter name making @name@coconuts legal name for a 
+    [TestCase("[MyTable].[MyCol] = @name@@coconuts", "@name", "@cthulhu", "[MyTable].[MyCol] = @name@@coconuts")]//No match since @ is a legit word to use in a parameter name making @name@coconuts legal name for a
     [TestCase("@a=a", "@a", "@b", "@b=a")]
     [TestCase(@"a=@a
     OR

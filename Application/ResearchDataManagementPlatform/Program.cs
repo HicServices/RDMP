@@ -22,17 +22,13 @@ internal static partial class Program
 {
     [LibraryImport("kernel32.dll")]
     private static partial void AttachConsole(int dwProcessId);
-  
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
         private static void Main(string[] args)
         {
-            // if user has the command line built and runnable from the windows
-            // client then don't load the dlls (or we end up with 2 copies!).
-            SafeDirectoryCatalog.IgnoreDll = f => Path.GetFileName(f.DirectoryName)?.Equals("cli")==true;
-
             try
             {
                 AttachConsole(-1);

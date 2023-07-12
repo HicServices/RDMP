@@ -73,14 +73,14 @@ public class LookupTest : DatabaseTests
 
             Assert.Throws<ArgumentException>(()=>new Lookup(CatalogueRepository, child, child2, child3, ExtractionJoinType.Left, null));
         }
-        finally 
+        finally
         {
             //cleanup
             try{child.DeleteInDatabase();}catch (Exception){}
             try{child2.DeleteInDatabase();}catch (Exception){}
             try{child3.DeleteInDatabase();}catch (Exception){}
             try{parent.DeleteInDatabase();}catch (Exception){}
-                
+
         }
     }
 
@@ -174,7 +174,7 @@ public class LookupTest : DatabaseTests
             composite = new LookupCompositeJoinInfo(CatalogueRepository, lookup, fk2, pk2);
 
             Assert.AreEqual(composite.OriginalLookup_ID, lookup.ID);
-                    
+
             Assert.AreEqual(composite.PrimaryKey.ID, pk2.ID);
             Assert.AreEqual(composite.PrimaryKey_ID, pk2.ID);
             Assert.AreEqual(composite.PrimaryKey.Name, pk2.Name);
@@ -207,9 +207,9 @@ public class LookupTest : DatabaseTests
             desc?.DeleteInDatabase();
             fk?.DeleteInDatabase();
             pk?.DeleteInDatabase();
-            fk2?.DeleteInDatabase(); 
+            fk2?.DeleteInDatabase();
             pk2?.DeleteInDatabase();
-            fkTable?.DeleteInDatabase(); 
+            fkTable?.DeleteInDatabase();
             pkTable?.DeleteInDatabase();
         }
     }

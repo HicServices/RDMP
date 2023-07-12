@@ -75,7 +75,7 @@ public partial class SimpleFilterUI : UserControl
         var parameters = filter.ExtractionFilterParameters.ToArray();
 
         SetupKnownGoodValues();
-            
+
         for (var i = 0; i < parameters.Length; i++)
         {
             var currentRowPanel = new Panel
@@ -108,7 +108,7 @@ public partial class SimpleFilterUI : UserControl
     private void SetupKnownGoodValues()
     {
         var knownGoodValues = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(_filter);
-            
+
         if (knownGoodValues.Any())
         {
             pbKnownValueSets.Visible = true;
@@ -130,7 +130,7 @@ public partial class SimpleFilterUI : UserControl
             pbKnownValueSets.Visible = false;
             ddKnownGoodValues.Visible = false;
         }
- 
+
 
     }
 
@@ -160,15 +160,15 @@ public partial class SimpleFilterUI : UserControl
     {
         var importer = new FilterImporter(factory, null);
         var newFilter = importer.ImportFilter(filterContainer,_filter, alreadyExisting);
-            
+
         foreach (var parameterUi in parameterUis)
             parameterUi.HandleSettingParameters(newFilter);
 
         //if there are known good values
         if (ddKnownGoodValues.SelectedItem != null && ddKnownGoodValues.SelectedItem as string != string.Empty)
             newFilter.Name += $"_{ddKnownGoodValues.SelectedItem}";
-            
-           
+
+
         newFilter.FilterContainer_ID = filterContainer.ID;
         newFilter.SaveToDatabase();
 

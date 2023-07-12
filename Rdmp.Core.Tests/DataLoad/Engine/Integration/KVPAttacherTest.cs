@@ -122,7 +122,7 @@ public class KVPAttacherTest:DatabaseTests
 
             attacher.TargetDataTableKeyColumnName = "Test";
             attacher.TargetDataTableValueColumnName = "Result";
-                
+
             attacher.Initialize(projectDir,db);
 
             attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());

@@ -154,7 +154,7 @@ public class HICPipelineTests : DatabaseTests
     internal class DatabaseHelper : IDisposable
     {
         private DiscoveredServer _server;
-            
+
 
         public DiscoveredDatabase DatabaseToLoad { get; private set; }
         public void SetUp(DiscoveredServer server)
@@ -234,7 +234,7 @@ public class HICPipelineTests : DatabaseTests
 
             // Create the Catalogue entities for the dataset
             catalogueEntities.Create(CatalogueTableRepository, databaseHelper.DatabaseToLoad, loadDirectory);
-                
+
             if (overrideRAW)
             {
                 external = new ExternalDatabaseServer(CatalogueRepository, "RAW Server",null);
@@ -257,7 +257,7 @@ public class HICPipelineTests : DatabaseTests
             };
 
             //run checks (with ignore errors if we are sending dodgy credentials)
-            RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, 
+            RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
                 sendDodgyCredentials?
                     (ICheckNotifier) IgnoreAllErrorsCheckNotifier.Instance: new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
@@ -265,7 +265,7 @@ public class HICPipelineTests : DatabaseTests
             options.Command = CommandLineActivity.run;
             var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options);
 
-                
+
             if (sendDodgyCredentials)
             {
                 var ex = Assert.Throws<Exception>(()=>runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(), new GracefulCancellationToken()));

@@ -27,7 +27,7 @@ public class ValidationDeserializationMemoryTest
         for (var i = 0; i < 1000; i++)
         {
             var deser = Validator.LoadFromXml(xml);
-                
+
             if(i%500==0)
             {
                 GC.Collect();

@@ -44,7 +44,7 @@ public class RuntimeTaskPackager
             return new List<IRuntimeTask>();
 
         var factory = new RuntimeTaskFactory(_repository);
-        return tasksForThisLoadStage.Select(processTask => factory.Create(processTask, _loadArgsDictionary[processTask.LoadStage])).Cast<IRuntimeTask>().OrderBy(task => task.ProcessTask.Order).ToList();
+        return tasksForThisLoadStage.Select(processTask => RuntimeTaskFactory.Create(processTask, _loadArgsDictionary[processTask.LoadStage])).Cast<IRuntimeTask>().OrderBy(task => task.ProcessTask.Order).ToList();
     }
 
     public IEnumerable<IRuntimeTask> GetAllRuntimeTasks()
@@ -64,7 +64,7 @@ public class RuntimeTaskPackager
         var tasks = new List<IDataLoadComponent>();
 
         foreach (var task in GetRuntimeTasksForStage(loadStage))
-            tasks.Add(factory.Create(task.ProcessTask, _loadArgsDictionary[loadStage]));
+            tasks.Add(RuntimeTaskFactory.Create(task.ProcessTask, _loadArgsDictionary[loadStage]));
 
         return new CompositeDataLoadComponent(tasks) { Description = descriptionForComponent };
     }

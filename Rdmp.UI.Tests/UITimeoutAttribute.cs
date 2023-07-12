@@ -78,10 +78,10 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                     threadException = ex;
                 }
             });
-            if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)) 
+            if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                 thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
-                
+
             try
             {
                 while (thread.IsAlive && (_timeout > 0  || Debugger.IsAttached))
@@ -99,7 +99,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 
                     //if it still has a window handle then presumably needs further treatment
                     IntPtr handle;
-                            
+
                     while((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
                     {
                         if(closeAttempts-- <=0)
@@ -108,7 +108,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                         var sbClass = new StringBuilder(100);
 
                         GetClassName(handle, sbClass, 100);
-                                
+
                         //Is it a yes/no dialog
                         if (sbClass.ToString() == YesNoDialog && GetDlgItem(handle, IDNO) != IntPtr.Zero)
                             //with a no button
@@ -119,7 +119,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 
                     throw new Exception("UI test did not complete after timeout");
                 }
-                    
+
 
                 if (threadException != null)
                     throw threadException;

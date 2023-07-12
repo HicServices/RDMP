@@ -126,12 +126,12 @@ public class UnitTests
         if (typeof(T) == typeof(Catalogue))
             return (T)(object)Save(new Catalogue(repository, "Mycata"));
 
-            
+
         if (typeof(T) == typeof(ExtendedProperty))
         {
             return (T)(object)new ExtendedProperty(repository,Save(new Catalogue(repository, "Mycata")),"TestProp",0);
         }
-                
+
 
         if (typeof(T) == typeof(CatalogueItem))
         {
@@ -255,19 +255,19 @@ public class UnitTests
         {
             return (T)(object)WhenIHaveA(repository,out ShareManager _);
         }
-            
+
         if (typeof (T) == typeof(ObjectImport))
         {
             var export = WhenIHaveA(repository, out ShareManager sm);
             return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
         }
-            
+
         if (typeof (T) == typeof(WindowLayout))
             return (T)(object)new WindowLayout(repository,"My window arrangement","<html><body>ignore this</body></html>");
 
         if (typeof (T) == typeof(RemoteRDMP))
             return (T)(object)new RemoteRDMP(repository);
-            
+
         if (typeof (T) == typeof(CohortIdentificationConfiguration))
             return (T)(object)new CohortIdentificationConfiguration(repository,"My cic");
 
@@ -278,17 +278,17 @@ public class UnitTests
             cic.EnsureNamingConvention(config);
             return (T)(object)new JoinableCohortAggregateConfiguration(repository,cic,config);
         }
-            
+
         if (typeof (T) == typeof(JoinableCohortAggregateConfigurationUse))
         {
             var joinable = WhenIHaveA<JoinableCohortAggregateConfiguration>(repository);
             var config = WhenIHaveCohortAggregateConfiguration(repository, "Aggregate");
             return (T)(object)joinable.AddUser(config);
         }
-            
+
         if (typeof (T) == typeof(Rdmp.Core.Curation.Data.Plugin))
             return (T)(object)new Rdmp.Core.Curation.Data.Plugin(repository,new FileInfo("bob.nupkg"),new Version(1,1,1),new Version(1,1,1));
-            
+
         if (typeof (T) == typeof(LoadModuleAssembly))
         {
             var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.nupkg");
@@ -296,7 +296,7 @@ public class UnitTests
 
             return (T)(object)new LoadModuleAssembly(repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>(repository));
         }
-            
+
         if (typeof (T) == typeof(AggregateContinuousDateAxis))
         {
             var config = WhenIHaveA(repository, out var dateEi,out _);
@@ -308,10 +308,10 @@ public class UnitTests
 
             return (T)(object)new AggregateContinuousDateAxis(repository,dim);
         }
-            
+
         if (typeof (T) == typeof(AggregateDimension))
             return (T)(object) WhenIHaveA<AggregateConfiguration>(repository).AggregateDimensions[0];
-            
+
         if (typeof (T) == typeof(AggregateFilterContainer))
         {
             var config = WhenIHaveA<AggregateConfiguration>(repository);
@@ -325,7 +325,7 @@ public class UnitTests
             var container = WhenIHaveA<AggregateFilterContainer>(repository);
             return (T)(object)new AggregateFilter(repository,"My Filter",container);
         }
-            
+
         if (typeof (T) == typeof(AggregateFilterParameter))
         {
             var filter = WhenIHaveA<AggregateFilter>(repository);
@@ -343,14 +343,14 @@ public class UnitTests
 
         if (typeof (T) == typeof(CacheFetchFailure))
             return (T)(object)new CacheFetchFailure(repository,WhenIHaveA<CacheProgress>(repository),DateTime.Now.Subtract(new TimeSpan(1,0,0,0)),DateTime.Now,new Exception("It didn't work"));
-            
+
         if (typeof (T) == typeof(CohortAggregateContainer))
         {
             var cic = WhenIHaveA<CohortIdentificationConfiguration>(repository);
             cic.CreateRootContainerIfNotExists();
             return (T)(object)cic.RootCohortAggregateContainer;
         }
-            
+
         if (typeof (T) == typeof(AnyTableSqlParameter))
         {
             var cic = WhenIHaveA<CohortIdentificationConfiguration>(repository);
@@ -359,10 +359,10 @@ public class UnitTests
 
         if (typeof (T) == typeof(DataAccessCredentials))
             return (T)(object)new DataAccessCredentials(repository,"My credentials");
-            
+
         if (typeof (T) == typeof(GovernancePeriod))
             return (T)(object)new GovernancePeriod(repository);
-            
+
         if (typeof (T) == typeof(GovernanceDocument))
         {
             var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "myfile.txt"));
@@ -371,7 +371,7 @@ public class UnitTests
 
         if (typeof (T) == typeof(PermissionWindow))
             return (T)(object)new PermissionWindow(repository);
-            
+
 
         if (typeof (T) == typeof(JoinInfo))
         {
@@ -399,7 +399,7 @@ public class UnitTests
 
         if (typeof (T) == typeof(PipelineComponent))
             return (T)(object)new PipelineComponent(repository, WhenIHaveA<Pipeline>(repository), typeof(ColumnForbidder),0,"My Component");
-            
+
         if (typeof (T) == typeof(PipelineComponentArgument))
         {
             var comp = WhenIHaveA<PipelineComponent>(repository);
@@ -408,15 +408,15 @@ public class UnitTests
 
         if (typeof (T) == typeof(PreLoadDiscardedColumn))
             return (T)(object)new PreLoadDiscardedColumn(repository,WhenIHaveA<TableInfo>(repository),"MyDiscardedColumn");
-                        
-                       
+
+
         if (typeof (T) == typeof(ProcessTask))
             return (T)(object)new ProcessTask(repository,WhenIHaveA<LoadMetadata>(repository),LoadStage.AdjustRaw);
 
         if (typeof (T) == typeof(ProcessTaskArgument))
             return (T)(object)new ProcessTaskArgument(repository,WhenIHaveA<ProcessTask>(repository));
 
-                
+
         if (typeof (T) == typeof(StandardRegex))
             return (T)(object)new StandardRegex(repository);
 
@@ -431,10 +431,10 @@ public class UnitTests
 
         if (typeof (T) == typeof(Project))
             return (T)(object)new Project(repository,"My Project");
-            
+
         if (typeof (T) == typeof(ExtractionConfiguration))
             return (T)(object)new ExtractionConfiguration(repository,WhenIHaveA<Project>(repository));
-            
+
         if (typeof (T) == typeof(ExtractableDataSet))
         {
             //To make an extractable dataset we need an extraction identifier (e.g. chi) that will be linked in the cohort
@@ -449,10 +449,10 @@ public class UnitTests
 
             return (T)(object)new ExtractableDataSet(repository,ei.CatalogueItem.Catalogue);
         }
-            
+
         if (typeof (T) == typeof(CumulativeExtractionResults))
             return (T)(object)new CumulativeExtractionResults(repository,WhenIHaveA<ExtractionConfiguration>(repository),WhenIHaveA<ExtractableDataSet>(repository),"SELECT * FROM Anywhere");
-            
+
         if (typeof (T) == typeof(SelectedDataSets))
         {
             var eds = WhenIHaveA<ExtractableDataSet>(repository);
@@ -465,7 +465,7 @@ public class UnitTests
 
             return (T)(object)new SelectedDataSets(repository,config,eds, null);
         }
-                
+
 
         if (typeof (T) == typeof(ReleaseLog))
         {
@@ -487,8 +487,8 @@ public class UnitTests
 
         if (typeof (T) == typeof(ExtractableDataSetPackage))
             return (T)(object)new ExtractableDataSetPackage(repository,"My Cool Package");
-            
-            
+
+
         if (typeof (T) == typeof(SupplementalExtractionResults))
         {
             return (T)(object)new SupplementalExtractionResults(repository,WhenIHaveA<CumulativeExtractionResults>(repository),"Select * from Lookup",WhenIHaveA<SupportingSQLTable>(repository));
@@ -496,10 +496,10 @@ public class UnitTests
 
         if (typeof (T) == typeof(SelectedDataSetsForcedJoin))
             return (T)(object)new SelectedDataSetsForcedJoin(repository,WhenIHaveA<SelectedDataSets>(repository),WhenIHaveA<TableInfo>(repository));
-            
+
         if (typeof (T) == typeof(ProjectCohortIdentificationConfigurationAssociation))
             return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(repository,WhenIHaveA<Project>(repository),WhenIHaveA<CohortIdentificationConfiguration>(repository));
-            
+
         if (typeof (T) == typeof(ExternalCohortTable))
             return Save((T)(object)new ExternalCohortTable(repository,"My cohorts",DatabaseType.MicrosoftSQLServer)
             {
@@ -529,7 +529,7 @@ public class UnitTests
 
             return (T)(object) config.GetAllExtractableColumnsFor(eds).Single();
         }
-            
+
         if (typeof (T) == typeof(FilterContainer))
         {
             var sds = WhenIHaveA<SelectedDataSets>(repository);
@@ -539,8 +539,8 @@ public class UnitTests
 
             return (T)(object)container;
         }
-                              
-            
+
+
         if (typeof (T) == typeof(DeployedExtractionFilter))
         {
             var container = WhenIHaveA<FilterContainer>(repository);
@@ -602,7 +602,7 @@ public class UnitTests
         ti1.Database = "MyDb";
         ti1.SaveToDatabase();
         col1 = new ColumnInfo(repository, "ParentCol", "varchar(10)", ti1);
-         
+
         ti2 = WhenIHaveA<TableInfo>(repository);
         ti2.Name = "ChildTable";
         ti2.Database = "MyDb";
@@ -660,8 +660,6 @@ public class UnitTests
         return s;
     }
 
-    protected MEF MEF;
-
     /// <summary>
     /// Call if your test needs to access classes via MEF.  Loads all dlls in the test directory.
     /// 
@@ -669,9 +667,6 @@ public class UnitTests
     /// </summary>
     protected void SetupMEF()
     {
-        MEF = new MEF();
-        MEF.Setup(new SafeDirectoryCatalog(IgnoreAllErrorsCheckNotifier.Instance,TestContext.CurrentContext.TestDirectory));
-        Repository.CatalogueRepository.MEF = MEF;
     }
 
     //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
@@ -782,7 +777,7 @@ public class UnitTests
         var repo = new object[] { Repository };
         var types = typeof(Catalogue).Assembly.GetTypes()
             .Where(t => !t.Name.StartsWith("Spontaneous") && !SkipTheseTypes.Contains(t.Name) && typeof (DatabaseEntity).IsAssignableFrom(t) && !typeof(SpontaneousObject).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface);
-            
+
         foreach (var t in types)
         {
             Console.Error.WriteLine("WhenIHaveAll: {0}", t.Name);

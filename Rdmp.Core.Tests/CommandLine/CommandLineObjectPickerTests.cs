@@ -89,7 +89,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         Assert.AreEqual(val,picker[0].GetValueForParameterOfType(typeof(string)));
         Assert.IsTrue(picker.HasArgumentOfType(0, typeof(string)));
     }
-        
+
     [Test]
     public void Test_PickCatalogueByID_PickTwo()
     {
@@ -102,7 +102,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         Assert.Contains(cata1,picker[0].DatabaseEntities);
         Assert.Contains(cata2,picker[0].DatabaseEntities);
     }
-        
+
     [Test]
     public void Test_PickCatalogueByName_PickTwo()
     {
@@ -159,10 +159,7 @@ internal class CommandLineObjectPickerTests : UnitTests
     [TestCase(typeof(PickObjectByName))]
     public void Pickers_ShouldAllHaveValidExamples_MatchingRegex(Type pickerType)
     {
-        var mem = new MemoryDataExportRepository
-        {
-            MEF = MEF
-        };
+        var mem = new MemoryDataExportRepository();
 
         //create some objects that the examples can successfully reference
         new Catalogue(mem.CatalogueRepository, "mycata1"); //ID = 1
@@ -186,7 +183,7 @@ internal class CommandLineObjectPickerTests : UnitTests
             Assert.IsNotNull(result);
         }
     }
-        
+
     [Test]
     public void PickTypeName()
     {
@@ -237,7 +234,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         var cata1 = WhenIHaveA<Catalogue>();
         var cata2 = WhenIHaveA<Catalogue>();
 
-        // c is short for Catalogue 
+        // c is short for Catalogue
         // so this would be the use case 'rdmp cmd list Catalogue' where user can instead write 'rdmp cmd list c'
         var picker = new CommandLineObjectPicker(new[] { $"c" }, GetActivator());
 

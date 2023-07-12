@@ -58,7 +58,7 @@ internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsB
                 throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
-        
+
     [Test]
     public void BadCSV_UnclosedQuote_IgnoreQuotes()
     {

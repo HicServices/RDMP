@@ -30,8 +30,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 {
     [TestCase(DatabaseType.MicrosoftSQLServer,typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.MySql, typeof(QueryCachingPatcher))]
-    [TestCase(DatabaseType.Oracle, typeof(QueryCachingPatcher))] 
-    [TestCase(DatabaseType.PostgreSql, typeof(QueryCachingPatcher))] 
+    [TestCase(DatabaseType.Oracle, typeof(QueryCachingPatcher))]
+    [TestCase(DatabaseType.PostgreSql, typeof(QueryCachingPatcher))]
     [TestCase(DatabaseType.MicrosoftSQLServer, typeof(DataQualityEnginePatcher))]
     public void Create_QueryCache(DatabaseType dbType,Type patcherType)
     {
@@ -650,7 +650,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         return new JoinableCohortAggregateConfiguration(CatalogueRepository, cic, ac);
     }
-        
+
     private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
     {
         var syntax = db.Server.GetQuerySyntaxHelper();
@@ -721,7 +721,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
             var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
             parameter.Value = paramValue;
             parameter.SaveToDatabase();
-                
+
         }
         else
             filter.WhereSQL = whereSqlFirstHalf + paramValue;
@@ -730,7 +730,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     }
 
     /// <summary>
-    /// Creates a table HospitalAdmissions with no filters 
+    /// Creates a table HospitalAdmissions with no filters
     /// </summary>
     /// <param name="db"></param>
     /// <param name="people"></param>

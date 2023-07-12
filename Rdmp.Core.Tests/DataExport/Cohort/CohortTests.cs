@@ -39,7 +39,7 @@ public class CohortTests : TestsRequiringACohort
         Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
             
     }
-        
+
     [Test]
     public void TestSelf_RecordAllFailures()
     {
@@ -72,7 +72,7 @@ public class CohortTests : TestsRequiringACohort
                 {
                     var found = bitsTofind.Any();
 
-                    foreach(var s in bitsTofind) 
+                    foreach(var s in bitsTofind)
                         if(!m.ToLower().Contains(s.ToLower()))
                             found = false;
 

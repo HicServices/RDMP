@@ -67,7 +67,6 @@ public abstract class PickObjectBase
     /// <returns></returns>
     protected bool IsDatabaseObjectType(string possibleTypeName, out Type t)
     {
-        var mef = Activator.RepositoryLocator.CatalogueRepository.MEF ?? throw new Exception("MEF not loaded yet, program may not have loaded startup");
         try
         {
             t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? Repositories.MEF.GetType(possibleTypeName);

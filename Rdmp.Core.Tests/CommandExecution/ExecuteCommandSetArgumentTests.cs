@@ -48,7 +48,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.StartsWith("Could not find argument called 'fff' on ",cmd.ReasonCommandImpossible);             
     }
-        
+
     [Test]
     public void TestSetArgument_ArgumentWrongType()
     {
@@ -67,7 +67,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         StringAssert.StartsWith("Provided value 'yyy' does not match expected Type 'Int32' of ",cmd.ReasonCommandImpossible);        
     }
 
-        
+
     [Test]
     public void TestSetArgument_Int_Valid()
     {
@@ -85,7 +85,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
 
         Assert.AreEqual(5,pta.GetValueAsSystemType());
     }
-        
+
     [Test]
     public void TestSetArgument_Catalogue_Valid()
     {

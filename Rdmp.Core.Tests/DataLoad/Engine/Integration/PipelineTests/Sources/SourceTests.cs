@@ -196,7 +196,7 @@ public class SourceTests:DatabaseTests
         {
             throw new NotImplementedException();
         }
-            
+
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             throw new NotImplementedException();
