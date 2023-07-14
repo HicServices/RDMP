@@ -33,13 +33,12 @@ public class CohortQueryBuilderHelper
     /// <param name="aggregate"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public CohortQueryBuilderDependencySql GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
+    public static CohortQueryBuilderDependencySql GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
     {
         var isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
 
         //make sure it is a valid configuration
-        string reason;
-        if (!aggregate.IsAcceptableAsCohortGenerationSource(out reason))
+        if (!aggregate.IsAcceptableAsCohortGenerationSource(out var reason))
             throw new QueryBuildingException(
                 $"Cannot generate a cohort using AggregateConfiguration {aggregate} because:{reason}");
 
@@ -126,7 +125,7 @@ public class CohortQueryBuilderHelper
         return toReturn;
     }
 
-    public void AddJoinToBuilder(AggregateConfiguration user,IColumn usersExtractionIdentifier,AggregateBuilder builder, QueryBuilderArgs args)
+    public static void AddJoinToBuilder(AggregateConfiguration user,IColumn usersExtractionIdentifier,AggregateBuilder builder, QueryBuilderArgs args)
     {
         var joinableTableAlias = args.JoinIfAny.GetJoinTableAlias();
         var joinDirection = args.JoinIfAny.GetJoinDirectionSQL();
@@ -158,7 +157,7 @@ public class CohortQueryBuilderHelper
             $" {joinDirection} Join ({Environment.NewLine}{TabIn(args.JoinSql.Sql, 1)}{Environment.NewLine}){joinableTableAlias}{Environment.NewLine}on {usersExtractionIdentifier.SelectSQL} = {joinableTableAlias}.{joinOn.GetRuntimeName()}",QueryComponent.JoinInfoJoin);
     }
         
-    public string TabIn(string str, int numberOfTabs)
+    public static string TabIn(string str, int numberOfTabs)
     {
         if (string.IsNullOrWhiteSpace(str))
             return str;

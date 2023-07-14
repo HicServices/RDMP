@@ -40,13 +40,11 @@ namespace Rdmp.UI.ExtractionUIs;
 public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 {
     private Catalogue _catalogue;
-        
-    ToolStripButton rbCore = new ToolStripButton("Core");
-    ToolStripButton rbSupplemental = new ToolStripButton("Supplemental"){Checked = true};
-    ToolStripButton rbSpecialApproval = new ToolStripButton("Special Approval");
-    ToolStripButton rbInternal = new ToolStripButton("Internal");
-
-    ToolStripButton btnRun = new ToolStripButton("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
+    private ToolStripButton rbCore = new("Core");
+    private ToolStripButton rbSupplemental = new("Supplemental"){Checked = true};
+    private ToolStripButton rbSpecialApproval = new("Special Approval");
+    private ToolStripButton rbInternal = new("Internal");
+    private ToolStripButton btnRun = new("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
         
     private Scintilla QueryPreview;
     public ViewExtractionSqlUI()
@@ -112,7 +110,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
             //generate SQL -- only make it readonly after setting the .Text otherwise it ignores the .Text setting even though it is programatical
             QueryPreview.ReadOnly = false;
 
-                
+
             var collection = GetCollection(extractionInformations);
 
             QueryPreview.Text = collection.GetSql();
@@ -221,8 +219,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
 
     private void olv_ItemActivate(object sender, EventArgs e)
     {
-        var o = ((ObjectListView)sender).SelectedObject as IMapsDirectlyToDatabaseTable;
-        if(o != null)
+        if(((ObjectListView)sender).SelectedObject is IMapsDirectlyToDatabaseTable o)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
     }
 

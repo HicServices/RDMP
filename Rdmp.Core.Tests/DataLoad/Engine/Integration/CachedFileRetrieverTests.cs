@@ -53,14 +53,14 @@ public class CachedFileRetrieverTests : DatabaseTests
 
             // Set SetUp retriever
             var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
-                
-            var retriever = new TestCachedFileRetriever()
+
+            var retriever = new TestCachedFileRetriever
             {
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
                 Layout = cacheLayout
             };
-                
+
             // Set SetUp job
             var job = CreateTestJob(loadDirectory); 
             job.DatesToRetrieve = new List<DateTime>
@@ -96,14 +96,14 @@ public class CachedFileRetrieverTests : DatabaseTests
             // Set SetUp retriever
             var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
 
-            var retriever = new TestCachedFileRetriever()
+            var retriever = new TestCachedFileRetriever
             {
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
                 Layout =  cacheLayout
                     
             };
-                
+
             // Set SetUp job
             var job = CreateTestJob(loadDirectory); 
             job.DatesToRetrieve = new List<DateTime>
@@ -140,7 +140,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             // Set SetUp retriever
             var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
 
-            var retriever = new TestCachedFileRetriever()
+            var retriever = new TestCachedFileRetriever
             {
                 ExtractFilesFromArchive = false,
                 LoadProgress = _lpMock,
@@ -174,12 +174,14 @@ public class CachedFileRetrieverTests : DatabaseTests
             c.GetLookupTableInfoList()==Array.Empty<TableInfo>() &&
             c.LoggingDataTask == "TestLogging"
         );
-            
+
         var logManager = Mock.Of<ILogManager>();
         var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues()==new[] { catalogue });
 
-        var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null);
-        j.LoadProgress = _lpMock;
+        var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null)
+            {
+                LoadProgress = _lpMock
+            };
         return j;
     }
 }

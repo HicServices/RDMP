@@ -26,15 +26,15 @@ public class CustomMetadataReport
     /// Substitutions that are used during template value replacement e.g. $Name => Catalogue.Name
     /// </summary>
 
-    Dictionary<string,Func<Catalogue,object>> Replacements = new Dictionary<string, Func<Catalogue,object>>();
+    private Dictionary<string,Func<Catalogue,object>> Replacements = new();
 
     /// <summary>
     /// Substitutions that are used during template value replacement when inside a '$foreach CatalogueItem' block e.g. $Name => CatalogueItem.Name
     /// </summary>
 
-    Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new Dictionary<string, Func<CatalogueItem,object>>();
+    private Dictionary<string,Func<CatalogueItem,object>> ReplacementsCatalogueItem = new();
 
-        
+
     /// <summary>
     /// Control line that begins looping Catalogues
     /// </summary>
@@ -70,7 +70,7 @@ public class CustomMetadataReport
     public string CommaSubstitution { get; set; } = ",";
 
     /// <summary>
-    /// The repository where column completeness metrics will come from.  Note this is usually the same source as <see cref="TimespanCalculator"/> 
+    /// The repository where column completeness metrics will come from.  Note this is usually the same source as <see cref="TimespanCalculator"/>
     /// </summary>
     public DQERepository DQERepository { get; set; }
 
@@ -96,13 +96,13 @@ public class CustomMetadataReport
 
         //add basic properties
         foreach (var prop in typeof(Catalogue).GetProperties())
-            Replacements.Add($"${prop.Name}", (c) => prop.GetValue(c));
+            Replacements.Add($"${prop.Name}", c => prop.GetValue(c));
 
         //add basic properties TableInfo
         foreach (var prop in typeof(TableInfo).GetProperties())
         {
             // if it's not already a property of Catalogue
-            Replacements.TryAdd($"${prop.Name}", (c) => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
+            Replacements.TryAdd($"${prop.Name}", c => GetTable(c) == null ? null : prop.GetValue(GetTable(c)));
         }
 
         AddDQEReplacements();
@@ -111,13 +111,13 @@ public class CustomMetadataReport
 
         //add basic properties CatalogueItem
         foreach (var prop in typeof(CatalogueItem).GetProperties())
-            ReplacementsCatalogueItem.Add($"${prop.Name}", (s) => prop.GetValue(s));
+            ReplacementsCatalogueItem.Add($"${prop.Name}", s => prop.GetValue(s));
 
         //add basic properties ColumnInfo
         foreach (var prop in typeof(ColumnInfo).GetProperties())
         {
             // if it's not already a property of CatalogueItem
-            ReplacementsCatalogueItem.TryAdd($"${prop.Name}", (s) => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
+            ReplacementsCatalogueItem.TryAdd($"${prop.Name}", s => s.ColumnInfo_ID == null ? null : prop.GetValue(s.ColumnInfo));
         }
 
         try
@@ -132,56 +132,56 @@ public class CustomMetadataReport
             
     }
 
-    private ITableInfo GetTable(Catalogue c)
+    private static ITableInfo GetTable(Catalogue c)
     {
-        return c.GetTableInfosIdeallyJustFromMainTables().OrderBy(t => t.IsPrimaryExtractionTable).FirstOrDefault();
+        return c.GetTableInfosIdeallyJustFromMainTables().MinBy(t => t.IsPrimaryExtractionTable);
     }
 
     private void AddDQEReplacements()
     {
         // Catalogue level shortcuts
         Replacements.Add("$DQE_StartDate",
-            (c) => GetStartDate(c)?.ToString());
+            c => GetStartDate(c)?.ToString());
         Replacements.Add("$DQE_EndDate",
-            (c) => GetEndDate(c)?.ToString());
+            c => GetEndDate(c)?.ToString());
         Replacements.Add("$DQE_DateRange",
-            (c) => TimespanCalculator?.GetHumanReadableTimespanIfKnownOf(c, true, out _));
+            c => TimespanCalculator?.GetHumanReadableTimespanIfKnownOf(c, true, out _));
 
         Replacements.Add("$DQE_StartYear",
-            (c) => GetStartDate(c)?.ToString("yyyy"));
+            c => GetStartDate(c)?.ToString("yyyy"));
         Replacements.Add("$DQE_StartMonth",
-            (c) => GetStartDate(c)?.ToString("MM"));
+            c => GetStartDate(c)?.ToString("MM"));
         Replacements.Add("$DQE_StartDay",
-            (c) => GetStartDate(c)?.ToString("dd"));
+            c => GetStartDate(c)?.ToString("dd"));
 
         Replacements.Add("$DQE_EndYear",
-            (c) => GetEndDate(c)?.ToString("yyyy"));
+            c => GetEndDate(c)?.ToString("yyyy"));
         Replacements.Add("$DQE_EndMonth",
-            (c) => GetEndDate(c)?.ToString("MM"));
+            c => GetEndDate(c)?.ToString("MM"));
         Replacements.Add("$DQE_EndDay",
-            (c) => GetEndDate(c)?.ToString("dd"));
+            c => GetEndDate(c)?.ToString("dd"));
 
         Replacements.Add("$DQE_DateOfEvaluation",
-            (c) => GetFromEvaluation(c, (e) => e.DateOfEvaluation));
+            c => GetFromEvaluation(c, e => e.DateOfEvaluation));
         Replacements.Add("$DQE_CountTotal",
-            (c) => GetFromEvaluation(c, (e) => e.GetRecordCount()));
+            c => GetFromEvaluation(c, e => e.GetRecordCount()));
 
         ReplacementsCatalogueItem.Add("$DQE_PercentNull",
-            (ci) => GetPercentNull(ci));
+            ci => GetPercentNull(ci));
 
         ReplacementsCatalogueItem.Add("$DQE_CountCorrect",
-            (ci) => GetFromColumnState(ci, (s) => s.CountCorrect));
+            ci => GetFromColumnState(ci, s => s.CountCorrect));
         ReplacementsCatalogueItem.Add("$DQE_CountInvalidatesRow",
-            (ci) => GetFromColumnState(ci, (s) => s.CountInvalidatesRow));
+            ci => GetFromColumnState(ci, s => s.CountInvalidatesRow));
         ReplacementsCatalogueItem.Add("$DQE_CountMissing",
-            (ci) => GetFromColumnState(ci, (s) => s.CountMissing));
+            ci => GetFromColumnState(ci, s => s.CountMissing));
         ReplacementsCatalogueItem.Add("$DQE_CountWrong",
-            (ci) => GetFromColumnState(ci, (s) => s.CountWrong));
+            ci => GetFromColumnState(ci, s => s.CountWrong));
         ReplacementsCatalogueItem.Add("$DQE_CountTotal",
-            (ci) => GetFromColumnState(ci, (s) => s.CountCorrect + s.CountMissing + s.CountWrong + s.CountInvalidatesRow));
+            ci => GetFromColumnState(ci, s => s.CountCorrect + s.CountMissing + s.CountWrong + s.CountInvalidatesRow));
 
         ReplacementsCatalogueItem.Add("$DQE_CountDBNull",
-            (ci) => GetFromColumnState(ci, (s) => s.CountDBNull));
+            ci => GetFromColumnState(ci, s => s.CountDBNull));
     }
 
     private object GetFromEvaluation(Catalogue c, Func<Evaluation, object> func)
@@ -217,7 +217,7 @@ public class CustomMetadataReport
             return null;
         }
 
-        return $"{((int)(columnStats.CountDBNull / (double)total * 100))}%";
+        return $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
     }
 
     private Evaluation GetEvaluation(CatalogueItem ci)
@@ -257,7 +257,7 @@ public class CustomMetadataReport
     {
         if(catalogues == null || !catalogues.Any())
             return;
-            
+
         var templateBody = File.ReadAllLines(template.FullName);
 
         var outname = DoReplacements(new []{fileNaming},catalogues.First(),null,ElementIteration.NotIterating).Trim();
@@ -281,9 +281,9 @@ public class CustomMetadataReport
                         }
                         else
                         {
-                            for (var i=0;i<catalogues.Length;i++)
+                            for (var i =0;i<catalogues.Length;i++)
                             {
-                                var element = 
+                                var element =
                                     i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
 
                                 var newContents = DoReplacements(section.Body.ToArray(), catalogues[i],section, element);
@@ -301,7 +301,7 @@ public class CustomMetadataReport
                 {
                     var newContents = DoReplacements(templateBody, catalogue,null,ElementIteration.NotIterating);
 
-                    if (oneFile) 
+                    if (oneFile)
                         outFile.WriteLine(newContents);
                     else
                     {
@@ -324,7 +324,7 @@ public class CustomMetadataReport
         }   
     }
 
-    private IEnumerable<CatalogueSection> SplitCatalogueLoops(string[] templateBody)
+    private static IEnumerable<CatalogueSection> SplitCatalogueLoops(string[] templateBody)
     {
         if(templateBody.Length == 0)
             yield break;
@@ -332,7 +332,7 @@ public class CustomMetadataReport
         CatalogueSection currentSection = null;
         var depth = 0;
 
-        for(var i=0;i< templateBody.Length ;i++)
+        for(var i =0;i< templateBody.Length ;i++)
         {
             var str = templateBody[i];
 
@@ -357,7 +357,7 @@ public class CustomMetadataReport
                         yield return currentSection;
                     else
                         throw new CustomMetadataReportException($"Unexpected '{str}' before the end of the last one on line {i+1}",i+1);
-                    
+
                 // start new section looping Catalogues
                 currentSection = new CatalogueSection(false,i);
                 depth = 1;
@@ -391,8 +391,7 @@ public class CustomMetadataReport
                 // it's just a regular line of text
 
                 //if it's the first line of a new block we get a plaintext block
-                if(currentSection == null)
-                    currentSection = new CatalogueSection(true,i);
+                currentSection ??= new CatalogueSection(true,i);
 
                 currentSection.Body.Add(str);
             }
@@ -401,7 +400,7 @@ public class CustomMetadataReport
         if(currentSection != null)
             if(currentSection.IsPlainText)
                 yield return currentSection;
-            else 
+            else
                 throw new CustomMetadataReportException($"Reached end of template without finding an expected {EndLoop}",templateBody.Length);
     }
 
@@ -446,7 +445,7 @@ public class CustomMetadataReport
                     if (copy.Contains(r.Key))
                         copy = copy.Replace(r.Key, ValueToString(r.Value(catalogue)));
                 }
-                    
+
                 // when iterating we need to respect iteration symbols (e.g. $Comma).
                 if(iteration == ElementIteration.NotIterating)
                 {
@@ -507,10 +506,10 @@ public class CustomMetadataReport
         if(!blockTerminated)
             throw new CustomMetadataReportException($"Expected {EndLoop} to match $foreach which started on line {index+1+sectionOffset}",index+1+sectionOffset);
 
-        for(var j=0;j< catalogueItems.Length; j++)
+        for(var j =0;j< catalogueItems.Length; j++)
         {
             sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
-                j < catalogueItems.Length -1 ? 
+                j < catalogueItems.Length -1 ?
                     ElementIteration.RegularElement : ElementIteration.LastElement));
         }
                 
@@ -569,7 +568,7 @@ public class CustomMetadataReport
         return template.TrimEnd();
     }
 
-    private void ThrowIfContainsIterationElements(string template)
+    private static void ThrowIfContainsIterationElements(string template)
     {
         if(template.Contains(Comma))
         {

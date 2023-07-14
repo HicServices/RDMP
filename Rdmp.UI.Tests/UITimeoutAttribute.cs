@@ -18,7 +18,7 @@ using NUnit.Framework.Internal.Commands;
 namespace Rdmp.UI.Tests;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
+internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 {
     private readonly int _timeout;
 
@@ -28,16 +28,16 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
     /// <param name="timeout">timeout in milliseconds</param>
     public UITimeoutAttribute(int timeout)
     {
-        this._timeout = timeout;
+        _timeout = timeout;
     }
 
     /// <inheritdoc/>
     public TestCommand Wrap(TestCommand command)
     {
-        return new TimeoutCommand(command, this._timeout);
+        return new TimeoutCommand(command, _timeout);
     }
 
-    private class TimeoutCommand : DelegatingTestCommand
+    private partial class TimeoutCommand : DelegatingTestCommand
     {
         private int _timeout;
 
@@ -46,19 +46,19 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
             _timeout = timeout;
         }
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        private static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, int wParam, IntPtr lParam);
+        [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
+        private static partial IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, IntPtr lParam);
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
-        [DllImport("user32.dll")]
-        static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
+        [LibraryImport("user32.dll")]
+        private static partial IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
         private string YesNoDialog = "#32770";
 
-        private const UInt32 WM_CLOSE = 0x0010;
-        private const UInt32 WM_COMMAND = 0x0111;
+        private const uint WM_CLOSE = 0x0010;
+        private const uint WM_COMMAND = 0x0111;
         private int IDNO = 7;
 
 
@@ -78,16 +78,16 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                     threadException = ex;
                 }
             });
-            if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows)) 
+            if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                 thread.SetApartmentState(ApartmentState.STA);
             thread.Start();
-                
+
             try
             {
                 while (thread.IsAlive && (_timeout > 0  || Debugger.IsAttached))
                 {
-                    Task.Delay(100).Wait();
-                    _timeout -= 100;
+                    if (!thread.Join(_timeout) && !Debugger.IsAttached)
+                        _timeout = 0;
                 }
 
                 var closeAttempts = 10;
@@ -99,7 +99,7 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
 
                     //if it still has a window handle then presumably needs further treatment
                     IntPtr handle;
-                            
+
                     while((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
                     {
                         if(closeAttempts-- <=0)
@@ -108,18 +108,18 @@ class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                         var sbClass = new StringBuilder(100);
 
                         GetClassName(handle, sbClass, 100);
-                                
+
                         //Is it a yes/no dialog
                         if (sbClass.ToString() == YesNoDialog && GetDlgItem(handle, IDNO) != IntPtr.Zero)
                             //with a no button
                             SendMessage(handle, WM_COMMAND, IDNO, IntPtr.Zero); //click NO!
                         else
-                            SendMessage(handle, WM_CLOSE, 0, IntPtr.Zero); //click NO!
+                            SendMessage(handle, WM_CLOSE, 0, IntPtr.Zero); //click close
                     }
 
                     throw new Exception("UI test did not complete after timeout");
                 }
-                    
+
 
                 if (threadException != null)
                     throw threadException;

@@ -22,7 +22,7 @@ public abstract class PickObjectBase
 
     protected Regex Regex { get; }
     protected readonly IBasicActivateItems Activator;
-        
+
     public virtual bool IsMatch(string arg, int idx)
     {
         return Regex.IsMatch(arg);
@@ -55,12 +55,8 @@ public abstract class PickObjectBase
 
     protected Type ParseDatabaseEntityType(string objectType, string arg, int idx)
     {
-        var t = GetTypeFromShortCodeIfAny(objectType) ?? Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(objectType);
-
-        if(t == null)
-            throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
-
-        if(!typeof(DatabaseEntity).IsAssignableFrom(t))
+        var t = (GetTypeFromShortCodeIfAny(objectType) ?? Activator.RepositoryLocator.CatalogueRepository.MEF.GetType(objectType)) ?? throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
+        if (!typeof(DatabaseEntity).IsAssignableFrom(t))
             throw new CommandLineObjectPickerParseException("Type specified must be a DatabaseEntity",idx,arg);
 
         return t;
@@ -75,11 +71,7 @@ public abstract class PickObjectBase
     /// <returns></returns>
     protected bool IsDatabaseObjectType(string possibleTypeName, out Type t)
     {
-        var mef = Activator.RepositoryLocator.CatalogueRepository.MEF;
-
-        if (mef == null)
-            throw new Exception("MEF not loaded yet, program may not have loaded startup");
-
+        var mef = Activator.RepositoryLocator.CatalogueRepository.MEF ?? throw new Exception("MEF not loaded yet, program may not have loaded startup");
         try
         {
             t = GetTypeFromShortCodeIfAny(possibleTypeName) ?? mef.GetType(possibleTypeName);
@@ -93,10 +85,10 @@ public abstract class PickObjectBase
         return t != null
                && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
     }
-    protected Type GetTypeFromShortCodeIfAny(string possibleShortCode)
+    protected static Type GetTypeFromShortCodeIfAny(string possibleShortCode)
     {
-        return SearchablesMatchScorer.ShortCodes.ContainsKey(possibleShortCode) ?
-            SearchablesMatchScorer.ShortCodes[possibleShortCode] :
+        return SearchablesMatchScorer.ShortCodes.TryGetValue(possibleShortCode, out var code) ?
+            code :
             null;
     }
     protected IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
@@ -111,8 +103,8 @@ public abstract class PickObjectBase
         var repo = Activator.GetRepositoryFor(type);
         return repo.GetAllObjects(type);
     }
-        
-    Dictionary<string,Regex> patternDictionary = new Dictionary<string, Regex>();
+
+    private Dictionary<string,Regex> patternDictionary = new();
 
     /// <summary>
     /// Returns true if the <paramref name="pattern"/> (which is a simple non regex e.g. "Bio*") matches the ToString of <paramref name="o"/>
@@ -128,14 +120,14 @@ public abstract class PickObjectBase
             
         return patternDictionary[pattern].IsMatch(o.ToString());
     }
-        
+
     /// <summary>
     /// Takes a key value pair in a string e.g. "Schema:dbo" and returns the substring "dbo".  Trims leading and trailing ':'.  Returns null if <paramref name="keyValueString"/> is null
     /// </summary>
     /// <param name="key"></param>
     /// <param name="keyValueString"></param>
     /// <returns></returns>
-    protected string Trim(string key, string keyValueString)
+    protected static string Trim(string key, string keyValueString)
     {
         if (string.IsNullOrWhiteSpace(keyValueString))
             return null;
@@ -143,7 +135,7 @@ public abstract class PickObjectBase
         if(!keyValueString.StartsWith(key,StringComparison.CurrentCultureIgnoreCase))
             throw new ArgumentException($"Provided value '{keyValueString}' did not start with expected key '{key}'");
 
-        return keyValueString.Substring(key.Length).Trim(':');
+        return keyValueString[key.Length..].Trim(':');
     }
 
     public virtual IEnumerable<string> GetAutoCompleteIfAny()

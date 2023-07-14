@@ -73,7 +73,7 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     /// <param name="cic"></param>
     public ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, Project project, CohortIdentificationConfiguration cic)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>()
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"Project_ID",project.ID},
             {"CohortIdentificationConfiguration_ID",cic.ID}

@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
-class IdentifierDumperSynchronizer
+internal class IdentifierDumperSynchronizer
 {
     private readonly IdentifierDumper _parent;
     private readonly ExternalDatabaseServer _dump;
@@ -39,7 +39,7 @@ class IdentifierDumperSynchronizer
 
 
         //dump database is required so check connection to it
-        var server = DataAccessPortal.GetInstance().ExpectServer(_dump, DataAccessContext.DataLoad);
+        var server = DataAccessPortal.ExpectServer(_dump, DataAccessContext.DataLoad);
         var tables = server.GetCurrentDatabase().DiscoverTables(false);
 
         using (var con = server.GetConnection())
@@ -79,18 +79,14 @@ class IdentifierDumperSynchronizer
             var columnsInTheIdentifiersDumpTable = server.ExpectDatabase(_dump.Database).ExpectTable(identifiersTable).DiscoverColumns();
 
             #region Pk Mismatches between dump and live
-                
+
             //Are all origin primary keys in the dump and also primary keys in the dump?
             foreach (var originPk in primaryKeyColumnInfos)
             {
                 var expectedColName = originPk.GetRuntimeName(LoadStage.AdjustRaw);
 
-                var match = columnsInTheIdentifiersDumpTable.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedColName));
-
-                if (match == null)
-                    throw new ANOConfigurationException(
+                var match = columnsInTheIdentifiersDumpTable.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedColName)) ?? throw new ANOConfigurationException(
                         $"Column {originPk} is a primary key column but is not in Identifier dump table {identifiersTable}");
-
                 if (!match.IsPrimaryKey)
                     throw new ANOConfigurationException(
                         $"Column {originPk} is a primary key column but in Identifier dump {identifiersTable} it is not part of the primary key");
@@ -115,7 +111,7 @@ class IdentifierDumperSynchronizer
 
                 if(_parent.ColumnsToRouteToSomewhereElse.Any(d=>d.GetRuntimeName().Equals(columnNameInDump)))//it's something we were expecting to dump
                     continue;
-                    
+
                 //these are also expected don't warn user about them
                 if (columnNameInDump == SpecialFieldNames.ValidFrom || columnNameInDump == SpecialFieldNames.DataLoadRunID)
                     continue;
@@ -181,7 +177,7 @@ class IdentifierDumperSynchronizer
             foreach (var columnInIdentifierDump in columnsInTheIdentifiersDumpTable)
             {
                 //try to find a ColumnInfo in the catalogue that has the same name as the identifier dump column we found when interrogating the database
-                var columnThatShouldHaveTheSameType 
+                var columnThatShouldHaveTheSameType
                     = allColumnsInLiveDatabase.FirstOrDefault(
                         col => col.GetRuntimeName().Equals(columnInIdentifierDump.GetRuntimeName()));
 
@@ -200,9 +196,9 @@ class IdentifierDumperSynchronizer
                     $"Fields have unexpected types in table {identifiersTable} :{typeMismatchesMessages.Aggregate(Environment.NewLine, (s, v) => s + Environment.NewLine + v)}");
 
             #endregion
-                
+
         }
-            
+
     }
 
     private void AddColumnToDump(PreLoadDiscardedColumn column, DbConnection con)

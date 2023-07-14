@@ -31,7 +31,7 @@ public abstract class RDMPUserControl : UserControl, IRDMPControl
     //constructor
     protected RDMPUserControl()
     {
-        VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        VisualStudioDesignMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
         CommonFunctionality = new RDMPControlCommonFunctionality(this);
     }
 

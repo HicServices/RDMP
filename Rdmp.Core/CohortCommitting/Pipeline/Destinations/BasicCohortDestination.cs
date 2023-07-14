@@ -43,8 +43,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     public bool MigrateUsages { get; set; }
 
     private IAllocateReleaseIdentifiers _allocator = null;
-        
-    readonly Dictionary<object, object> _cohortDictionary = new Dictionary<object, object>();
+    private readonly Dictionary<object, object> _cohortDictionary = new();
 
     /// <summary>
     /// Extracts private identifiers from table <paramref name="toProcess"/> and allocates release identifiers.  Cohort is only finalised and comitted into the database
@@ -61,7 +60,7 @@ public class BasicCohortDestination : IPluginCohortDestination
         //if user has picked an allocator get an instance
         if (ReleaseIdentifierAllocator != null && _allocator == null)
         {
-            _allocator = (IAllocateReleaseIdentifiers) new ObjectConstructor().Construct(ReleaseIdentifierAllocator);
+            _allocator = (IAllocateReleaseIdentifiers) ObjectConstructor.Construct(ReleaseIdentifierAllocator);
             _allocator.Initialize(Request);
         }
             
@@ -97,7 +96,7 @@ public class BasicCohortDestination : IPluginCohortDestination
                 //already handled these folks?
                 if (_cohortDictionary.ContainsKey(priv) || IsNull(priv))
                     continue;
-                        
+
                 //and the release id specified in the input table
                 var release = row[_releaseIdentifier];
                         
@@ -125,7 +124,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     }
 
         
-    private bool IsNull(object o)
+    private static bool IsNull(object o)
     {
         if (o == null || o == DBNull.Value)
             return true;
@@ -227,7 +226,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     public virtual void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
     {
         Request = value;
-            
+
         var target = Request.NewCohortDefinition.LocationOfCohort;
 
         var syntax = target.GetQuerySyntaxHelper();

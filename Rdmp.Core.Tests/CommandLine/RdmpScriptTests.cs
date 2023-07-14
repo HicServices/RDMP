@@ -16,7 +16,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;
 
-class RdmpScriptTests : UnitTests
+internal class RdmpScriptTests : UnitTests
 {
     [TestCase("NewObject Catalogue 'trog dor'","trog dor")]
     [TestCase("NewObject Catalogue \"trog dor\"","trog dor")]
@@ -28,9 +28,9 @@ class RdmpScriptTests : UnitTests
         foreach(var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
             c.DeleteInDatabase();
 
-        var runner = new ExecuteCommandRunner(new ExecuteCommandOptions()
+        var runner = new ExecuteCommandRunner(new ExecuteCommandOptions
         {
-            Script = new RdmpScript()
+            Script = new RdmpScript
             {
                 Commands = new[] {command}
             }
@@ -56,9 +56,9 @@ class RdmpScriptTests : UnitTests
         foreach(var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
             c.DeleteInDatabase();
 
-        var runner = new ExecuteCommandRunner(new ExecuteCommandOptions()
+        var runner = new ExecuteCommandRunner(new ExecuteCommandOptions
         {
-            Script = new RdmpScript()
+            Script = new RdmpScript
             {
                 Commands = new[]
                 {

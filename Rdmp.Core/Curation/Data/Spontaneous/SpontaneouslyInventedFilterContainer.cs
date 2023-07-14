@@ -12,9 +12,9 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// Spontaneous (memory only) implementation of IContainer.  
+/// Spontaneous (memory only) implementation of IContainer.
 /// 
-/// <para>IContainers are collections of subcontainers and WHERE statements e.g. 
+/// <para>IContainers are collections of subcontainers and WHERE statements e.g.
 /// (
 ///     --age is above 5
 ///     Age > 5
@@ -24,7 +24,7 @@ namespace Rdmp.Core.Curation.Data.Spontaneous;
 /// )</para>
 /// 
 /// <para>Most IContainers come from the DataCatalogue/DataExport Database and are a hierarchical list of filters the user wants to use to create a query.  But sometimes IN CODE,
-/// we want to create an impromptu container and ram some additional filters we have either also invented or have pulled out of the Catalogue into the container.  This 
+/// we want to create an impromptu container and ram some additional filters we have either also invented or have pulled out of the Catalogue into the container.  This
 /// Class lets you do that, it creates a 'memory only' container which cannot be saved/deleted etc but can be used in query building by ISqlQueryBuilders.</para>
 /// 
 /// <para>See also SpontaneouslyInventedFilter</para>
@@ -42,10 +42,10 @@ public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContaine
 
         if (filtersIfAny != null)
             foreach (var filter in filtersIfAny)
-                if(filter is SpontaneouslyInventedFilter)
-                    AddChild(filter);
-                else
-                    AddChild(new SpontaneouslyInventedFilter(repo,this,filter.WhereSQL,filter.Name,filter.Description,filter.GetAllParameters())); 
+                AddChild(filter is SpontaneouslyInventedFilter
+                    ? filter
+                    : new SpontaneouslyInventedFilter(repo, this, filter.WhereSQL, filter.Name, filter.Description,
+                        filter.GetAllParameters()));
 
         Operation = operation;
     }

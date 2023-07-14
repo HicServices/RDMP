@@ -71,7 +71,7 @@ using Rectangle = System.Drawing.Rectangle;
 namespace ResearchDataManagementPlatform.WindowManagement;
 
 /// <summary>
-/// Central class for RDMP main application, this class provides access to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child 
+/// Central class for RDMP main application, this class provides access to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child
 /// provision etc.  See IActivateItems for full details
 /// </summary>
 public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubscriber
@@ -85,11 +85,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public ITheme Theme { get; private set; }
 
     public RefreshBus RefreshBus { get; private set; }
-        
-    readonly UIObjectConstructor _constructor = new UIObjectConstructor();
+
+    private readonly UIObjectConstructor _constructor = new();
 
     public IArrangeWindows WindowArranger { get; private set; }
-        
+
     public override void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
     {
         if(databaseEntity is DatabaseEntity de)
@@ -125,21 +125,23 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         RefreshBus = refreshBus;
 
         RefreshBus.ChildProvider = CoreChildProvider;
-            
+
         HistoryProvider = new HistoryProvider(repositoryLocator);
-            
+
         WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
-            
+
         CommandFactory = new RDMPCombineableFactory();
         CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
 
-        ProblemProviders = new List<IProblemProvider>();
-        ProblemProviders.Add(new DataExportProblemProvider());
-        ProblemProviders.Add(new CatalogueProblemProvider());
+        ProblemProviders = new List<IProblemProvider>
+        {
+            new DataExportProblemProvider(),
+            new CatalogueProblemProvider()
+        };
         RefreshProblemProviders();
 
         RefreshBus.Subscribe(this);
-            
+
         // We can run subprocesses
         IsAbleToLaunchSubprocesses = true;
     }
@@ -155,10 +157,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         return provider;
     }
-        
+
 
     public Form ShowWindow(Control singleControlForm, bool asDocument = false)
-    { 
+    {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
         {
@@ -168,7 +170,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         var width = singleControlForm.Size.Width + SystemInformation.BorderSize.Width;
         var height = singleControlForm.Size.Height + SystemInformation.BorderSize.Height;
 
-        //use the .Text or fallback on .Name 
+        //use the .Text or fallback on .Name
         var name = string.IsNullOrWhiteSpace(singleControlForm.Text)
             ? singleControlForm.Name ?? singleControlForm.GetType().Name//or worst case scenario use the type name!
             : singleControlForm.Text;
@@ -178,20 +180,19 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
                 $"Control '{singleControlForm}' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
 
         var c = singleControlForm as RDMPUserControl;
-            
-        if(c != null)
-            c.SetItemActivator(this);
+
+        c?.SetItemActivator(this);
 
         var content = WindowFactory.Create(this,singleControlForm,name , null);
-            
+
         if (asDocument)
             content.Show(_mainDockPanel,DockState.Document);
         else
             content.Show(_mainDockPanel,new Rectangle(0,0,width,height));
-            
+
         return content;
     }
-                
+
     public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
     {
         // if on wrong Thread
@@ -205,12 +206,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         //ensure a relevant Toolbox is available
         var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(request.ObjectToEmphasise);
-        object root = null;
 
-        if (descendancy != null)
-            root = descendancy.Parents.FirstOrDefault();
-        else
-            root = request.ObjectToEmphasise; //assume maybe o is a root object itself?
+        var root = descendancy != null
+            ? descendancy.Parents.FirstOrDefault()
+            : request.ObjectToEmphasise; //assume maybe o is a root object itself?
 
         if (root is CohortIdentificationConfiguration cic)
             Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
@@ -221,8 +220,8 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
         //Look at assignments to Sender, the invocation list can change the Sender!
         var args = new EmphasiseEventArgs(request);
-        base.OnEmphasise(this,args);
-            
+        OnEmphasise(this,args);
+
         //might be different than sender that was passed in
         if(args.Sender is DockContent content)
             content.Activate();
@@ -297,7 +296,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
     }
-        
+
     public string GetDocumentation(Type type)
     {
         return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
@@ -338,7 +337,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         f.Close();
-        ExceptionViewer.Show("Window Closed",reason);
+        WideMessageBox.Show("Window Closed",reason);
     }
     public void OnRuleRegistered(IBinderRule rule)
     {
@@ -362,7 +361,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         return Activate<T, T2>(databaseObject, CoreIconProvider.GetImage(databaseObject));
     }
-        
+
     public T Activate<T>(IPersistableObjectCollection collection)
         where T: Control,IObjectCollectionControl,new()
 
@@ -376,7 +375,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
             return existing;
         }
-                
+
 
         var uiInstance = new T();
         Activate(uiInstance, collection);
@@ -428,7 +427,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         {
             existingHostedControlInstance = existing.Control;
             existing.Activate();
-                
+
             // only refresh if there are changes to some of the underlying objects
             if(collection.DatabaseObjects.OfType<IRevertable>().Any(r=>r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent))
                 existing.HandleUserRequestingTabRefresh(this);
@@ -441,17 +440,14 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         if (instruction.DatabaseObject != null && instruction.ObjectCollection != null)
             throw new ArgumentException("DeserializeInstruction cannot have both a DatabaseObject and an ObjectCollection");
 
-        var c = (Control)_constructor.Construct(instruction.UIControlType,activator,true);
+        var c = (Control)UIObjectConstructor.Construct(instruction.UIControlType,activator,true);
 
-        var uiInstance = c as IRDMPSingleDatabaseObjectControl;
-        var uiCollection = c as IObjectCollectionControl;
 
         //it has a database object so call SetDatabaseObject
-        if (uiCollection != null)
-            //if we get here then Instruction wasn't for a 
+        if (c is IObjectCollectionControl uiCollection)
+            //if we get here then Instruction wasn't for a
             return Activate(uiCollection, instruction.ObjectCollection);
-        else
-        if (uiInstance != null)
+        if (c is IRDMPSingleDatabaseObjectControl uiInstance)
         {
             var databaseObject = instruction.DatabaseObject;
 
@@ -476,13 +472,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
             return floatable;
         }
-        else
-        {
-            return (DockContent)activator.ShowWindow(c, true);
-        }
+        return (DockContent)activator.ShowWindow(c, true);
     }
 
-    private void SetTabText(DockContent floatable, INamedTab tab)
+    private static void SetTabText(DockContent floatable, INamedTab tab)
     {
         var tabText = tab.GetTabName();
         var tabToolTipText = tab.GetTabToolTip();
@@ -581,7 +574,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true,this);
         dialog.ShowDialog();
-            
+
         if (dialog.DialogResult != DialogResult.OK)
             return null;
 
@@ -596,9 +589,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => SelectTable(allowDatabaseCreation, taskDescription));
         }
 
-        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true,this);
-        dialog.AllowTableValuedFunctionSelection = true;
-            
+        var dialog = new ServerDatabaseTableSelectorDialog(taskDescription, true, true, this)
+        {
+            AllowTableValuedFunctionSelection = true
+        };
+
         dialog.ShowDialog();
 
         if (dialog.DialogResult != DialogResult.OK)
@@ -641,7 +636,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         yield return typeof (ExecuteCommandCreateNewFileBasedProcessTask);
     }
 
-        
+
     public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects)
     {
         // if on wrong Thread
@@ -690,7 +685,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return true;
         }
 
-        selected = default(T);
+        selected = default;
         return false;
     }
 
@@ -705,8 +700,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return rtn;
         }
 
-        var pick = new SelectDialog<T>(args,this, available, false);
-        pick.AllowMultiSelect = true;
+        var pick = new SelectDialog<T>(args, this, available, false)
+        {
+            AllowMultiSelect = true
+        };
 
         if (pick.ShowDialog() == DialogResult.OK)
         {
@@ -714,7 +711,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return true;
         }
 
-        selected = default(T[]);
+        selected = default;
         return false;
     }
     public override DirectoryInfo SelectDirectory(string prompt)
@@ -729,7 +726,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         {
             if (fb.ShowDialog() == DialogResult.OK)
                 return new DirectoryInfo(fb.SelectedPath);
-            
+
             return null;
         }
     }
@@ -766,11 +763,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
                 return new FileInfo(fb.FileName);
             }
-            
+
             return null;
-        }        
+        }
     }
-        
+
     public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
     {
         // if on wrong Thread
@@ -786,7 +783,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
             if (fb.ShowDialog() == DialogResult.OK)
                 return fb.FileNames.Select(f=>new FileInfo(f)).ToArray();
-            
+
             return null;
         }
     }
@@ -830,9 +827,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return null;
         }
 
-        var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false);
-        selectDialog.AllowMultiSelect = true;
-            
+        var selectDialog = new SelectDialog<IMapsDirectlyToDatabaseTable>(args, this, availableObjects, false)
+        {
+            AllowMultiSelect = true
+        };
+
         if (selectDialog.ShowDialog() == DialogResult.OK)
         {
             var ms = selectDialog.MultiSelected.ToList();
@@ -840,7 +839,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
             for(var i = 0;i<ms.Count;i++)
                 toReturn.SetValue(ms[i],i);
-                
+
             return toReturn.Cast<IMapsDirectlyToDatabaseTable>().ToArray();
         }
 
@@ -851,7 +850,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         return new List<CommandInvokerDelegate>
         {
-            new CommandInvokerDelegate(typeof(IActivateItems),true,(p)=>this)
+            new CommandInvokerDelegate(typeof(IActivateItems),true,p=>this)
         };
     }
     public void StartSession(string sessionName, IEnumerable<IMapsDirectlyToDatabaseTable> initialObjects, string initialSearch)
@@ -864,10 +863,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
                 TaskDescription = "Pick which objects you want added to the session window.  You can always add more later",
                 InitialSearchText = initialSearch,
 
-                IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle),
+                IsFind = sessionName.StartsWith(ExecuteCommandStartSession.FindResultsTitle)
             },typeof(IMapsDirectlyToDatabaseTable),CoreChildProvider.GetAllSearchables().Keys.ToArray())?.ToList();
 
-            if(initialObjects == null || initialObjects.Count() == 0)
+            if(initialObjects == null || !initialObjects.Any())
             {
                 // user cancelled picking objects
                 return;
@@ -881,7 +880,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         panel.Show(_mainDockPanel,DockState.DockLeft);
     }
 
-        
+
     /// <inheritdoc/>
     public IEnumerable<SessionCollectionUI> GetSessions()
     {
@@ -890,9 +889,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public override IPipelineRunner GetPipelineRunner(DialogArgs args,IPipelineUseCase useCase, IPipeline pipeline)
     {
-        var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args,useCase, this);
-        configureAndExecuteDialog.Dock = DockStyle.Fill;
-            
+        var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args, useCase, this)
+        {
+            Dock = DockStyle.Fill
+        };
+
         return configureAndExecuteDialog;
     }
 
@@ -905,7 +906,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
-                
+
         if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
             ui.CohortDescription = $"{cohortInitialDescription} ({Environment.UserName} - {DateTime.Now})";
 
@@ -923,10 +924,12 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription,projectSpecific,folder));
         }
 
-        var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific);
-        ui.TargetFolder = folder;
+        var ui = new ConfigureCatalogueExtractabilityUI(this, tableInfo, initialDescription, projectSpecific)
+        {
+            TargetFolder = folder
+        };
         ui.ShowDialog();
-            
+
         return ui.CatalogueCreatedIfAny;
     }
     public override ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
@@ -954,14 +957,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var wizard = new CreateNewCohortIdentificationConfigurationUI(this);
 
-        if (wizard.ShowDialog() == DialogResult.OK)
-        {
-            cic = wizard.CohortIdentificationCriteriaCreatedIfAny;
-        }
-        else
-        {
-            cic = null;
-        }
+        cic = wizard.ShowDialog() == DialogResult.OK ? wizard.CohortIdentificationCriteriaCreatedIfAny : null;
 
         // Wizard was shown so that's a thing
         return true;
@@ -971,7 +967,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
-        { 
+        {
             _mainDockPanel.Invoke(() => SelectAnythingThen(args,callback));
             return;
         }
@@ -1052,7 +1048,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     }
 
     public override void ShowData(System.Data.DataTable table)
-    { 
+    {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
         {

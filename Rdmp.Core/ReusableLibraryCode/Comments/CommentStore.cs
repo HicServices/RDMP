@@ -23,10 +23,9 @@ namespace Rdmp.Core.ReusableLibraryCode.Comments;
 /// </summary>
 public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 {
-    private readonly Dictionary<string,string> _dictionary = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+    private readonly Dictionary<string,string> _dictionary = new(StringComparer.CurrentCultureIgnoreCase);
 
-    private string[] _ignoreHelpFor = new[]
-    {
+    private string[] _ignoreHelpFor = {
         "CsvHelper.xml",
         "Google.Protobuf.xml",
         "MySql.Data.xml",
@@ -39,7 +38,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         "ScintillaNET.xml",
         "nunit.framework.xml"
     };
-        
+
     public virtual void ReadComments(params string[] locations)
     {
         foreach (var location in locations)
@@ -54,7 +53,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
                 using (var zip = new LibArchiveReader(location))
                     foreach(var xml in zip.Entries())
                         if (xml.Name.EndsWith(".xml",true,CultureInfo.InvariantCulture))
-                            using (var content=xml.Stream)
+                            using (var content =xml.Stream)
                                 ReadComments(content);
         }
     }
@@ -66,7 +65,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         doc.IterateThroughAllNodes(AddXmlDoc);
 
     }
-        
+
     /// <summary>
     /// Adds the given member xml doc to the <see cref="CommentStore"/>
     /// </summary>
@@ -82,19 +81,19 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
         if(memberName == null || string.IsNullOrWhiteSpace(summary))
             return;
-                
+
         //it's a Property get Type.Property (not fully specified)
         if (memberName.StartsWith("P:") || memberName.StartsWith("T:"))
             Add(GetLastTokens(memberName),summary.Trim());
     }
 
-    private string GetSummaryAsText(XmlElement summaryTag)
+    private static string GetSummaryAsText(XmlElement summaryTag)
     {
         if (summaryTag == null)
             return null;
-            
+
         var sb = new StringBuilder();
-            
+
         summaryTag.IterateThroughAllNodes(
             n =>
             {
@@ -118,7 +117,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         return sb.ToString();
     }
 
-    private string TrimSummary(string value)
+    private static string TrimSummary(string value)
     {
         return value == null ? null : Regex.Replace(value,@"\s+"," ").Trim();
     }
@@ -129,7 +128,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <param name="memberName"></param>
     /// <param name="partsToGet"></param>
     /// <returns></returns>
-    private string GetLastTokens(string memberName, int partsToGet)
+    private static string GetLastTokens(string memberName, int partsToGet)
     {
         //throw away any preceding "T:", "M:" etc
         memberName = memberName[(memberName.IndexOf(':') + 1)..];
@@ -145,7 +144,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
             : string.Join(".", matches.Reverse().Take(partsToGet).Reverse());
     }
 
-    private string GetLastTokens(string memberName)
+    private static string GetLastTokens(string memberName)
     {
         if (memberName.StartsWith("P:"))
             return GetLastTokens(memberName, 2);
@@ -155,7 +154,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
         if (memberName.StartsWith("M:"))
             return GetLastTokens(memberName, 2);
-            
+
         return memberName;
     }
 
@@ -197,7 +196,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    public string this[string index] => _dictionary.ContainsKey(index) ? _dictionary[index] : null; // Indexer declaration  
+    public string this[string index] => _dictionary.TryGetValue(index,out var value) ? value : null; // Indexer declaration
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
     {
@@ -293,12 +292,12 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>
-    public string FormatAsParagraphs(string message)
+    public static string FormatAsParagraphs(string message)
     {
-            
+
         message = Regex.Replace(message, $"{Environment.NewLine}\\s*",Environment.NewLine + Environment.NewLine);
-        message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", (m) => m.Groups[2].Value);
-            
+        message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", m => m.Groups[2].Value);
+
         return message;
     }
 }

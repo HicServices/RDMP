@@ -28,14 +28,14 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 /// <summary>
 /// See ITableRepository
 /// </summary>
-abstract public class TableRepository : ITableRepository
+public abstract class TableRepository : ITableRepository
 {
     //fields
     protected DbConnectionStringBuilder _connectionStringBuilder;
     public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
-    private static object _oLockUpdateCommands = new object();
-    private UpdateCommandStore _updateCommandStore = new UpdateCommandStore();
+    private static object _oLockUpdateCommands = new();
+    private UpdateCommandStore _updateCommandStore = new();
     public bool SupportsCommits => true;
 
     //'accessors'
@@ -47,11 +47,10 @@ abstract public class TableRepository : ITableRepository
     /// <summary>
     /// Constructors for quickly resolving <see cref="ConstructEntity"/> calls rather than relying on reflection e.g. ObjectConstructor
     /// </summary>
-    protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>>();
+    protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new();
 
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-
-    Lazy<DiscoveredTable[]> _tables;
+    private Lazy<DiscoveredTable[]> _tables;
 
     //If you are calling this constructor then make sure to set the connection strings in your derived class constructor
     public TableRepository()
@@ -160,12 +159,12 @@ abstract public class TableRepository : ITableRepository
         }
     }
 
-    protected void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
+    protected static void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         foreach (DbParameter p in cmd.Parameters)
         {
             var prop = oTableWrapperObject.GetType().GetProperty(p.ParameterName.Trim('@'));
-                
+
             var propValue = prop.GetValue(oTableWrapperObject, null);
                 
             //if it is a complex type but IConvertible e.g. CatalogueFolder
@@ -179,7 +178,7 @@ abstract public class TableRepository : ITableRepository
         cmd.Parameters["@ID"].Value = oTableWrapperObject.ID;
     }
 
-    private void SetParameterToValue(DbParameter p, object propValue)
+    private static void SetParameterToValue(DbParameter p, object propValue)
     {
         p.Value = propValue switch
         {
@@ -510,8 +509,7 @@ abstract public class TableRepository : ITableRepository
 
     public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID= null) where T : IMapsDirectlyToDatabaseTable
     {
-        if (columnWithObjectID == null)
-            columnWithObjectID = $"{typeof(T).Name}_ID";
+        columnWithObjectID ??= $"{typeof(T).Name}_ID";
 
         using (var opener = GetConnection())
         {
@@ -530,7 +528,7 @@ abstract public class TableRepository : ITableRepository
             if (!idsToReturn.Any())
                 return Enumerable.Empty<T>();
 
-            return GetAllObjects<T>($"WHERE ID in ({String.Join(",", idsToReturn)})");
+            return GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})");
         }
     }
     /// <summary>
@@ -546,10 +544,9 @@ abstract public class TableRepository : ITableRepository
     /// <param name="columnWithObjectID"></param>
     /// <param name="dbNullSubstition"></param>
     /// <returns></returns>
-    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null, T dbNullSubstition = default(T)) where T : IMapsDirectlyToDatabaseTable
+    public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null, T dbNullSubstition = default) where T : IMapsDirectlyToDatabaseTable
     {
-        if (columnWithObjectID == null)
-            columnWithObjectID = $"{typeof(T).Name}_ID";
+        columnWithObjectID ??= $"{typeof(T).Name}_ID";
 
         if (selectQuery.ToLower().Contains("order by "))
             throw new Exception("Select Query contained an ORDER BY statment in it!");
@@ -578,7 +575,7 @@ abstract public class TableRepository : ITableRepository
                 return Enumerable.Empty<T>();
 
 
-            var toReturn =  GetAllObjects<T>($"WHERE ID in ({String.Join(",", idsToReturn)})").ToList();
+            var toReturn =  GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})").ToList();
 
             //this bit of hackery is if your a crazy person who hates transparency and wants something like ColumnInfo.Missing to appear in the return list instead of an empty return list
             if(dbNullSubstition != null)
@@ -651,7 +648,7 @@ abstract public class TableRepository : ITableRepository
         }
     }
 
-    public DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
+    public static DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
     {
         var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction);
         if (parameters == null) return cmd;
@@ -659,7 +656,7 @@ abstract public class TableRepository : ITableRepository
         return PrepareCommand(cmd, parameters);
     }
 
-    public DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
+    public static DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
     {
         foreach (var kvp in parameters)
         {
@@ -699,9 +696,9 @@ abstract public class TableRepository : ITableRepository
         Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
     }
 
-    private object ongoingConnectionsLock = new object();
-    private readonly Dictionary<Thread,IManagedConnection> ongoingConnections = new Dictionary<Thread, IManagedConnection>();
-    private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new Dictionary<Thread, IManagedTransaction>();
+    private object ongoingConnectionsLock = new();
+    private readonly Dictionary<Thread,IManagedConnection> ongoingConnections = new();
+    private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new();
 
 
     public IManagedConnection GetConnection()
@@ -733,8 +730,8 @@ abstract public class TableRepository : ITableRepository
         lock (ongoingConnectionsLock)
         {
             //see if Thread dictionary has it
-            if (ongoingConnections.ContainsKey(Thread.CurrentThread))
-                ongoingConnection = ongoingConnections[Thread.CurrentThread];
+            if (ongoingConnections.TryGetValue(Thread.CurrentThread, out var connection))
+                ongoingConnection = connection;
             else
             {
                 ongoingConnections.Add(Thread.CurrentThread, null);
@@ -743,8 +740,8 @@ abstract public class TableRepository : ITableRepository
 
 
             //see if Thread dictionary has it
-            if (ongoingTransactions.ContainsKey(Thread.CurrentThread))
-                ongoingTransaction = ongoingTransactions[Thread.CurrentThread];
+            if (ongoingTransactions.TryGetValue(Thread.CurrentThread, out var transaction))
+                ongoingTransaction = transaction;
             else
             {
                 ongoingTransactions.Add(Thread.CurrentThread, null);
@@ -823,8 +820,8 @@ abstract public class TableRepository : ITableRepository
         return (DateTime)o;
     }
 
-    Dictionary<Type,bool> _knownSupportedTypes = new Dictionary<Type,bool>();
-    object oLockKnownTypes = new object();
+    private Dictionary<Type,bool> _knownSupportedTypes = new();
+    private object oLockKnownTypes = new();
 
     public bool SupportsObjectType(Type type)
     {
@@ -876,8 +873,7 @@ abstract public class TableRepository : ITableRepository
     {
         var toReturn = new List<IMapsDirectlyToDatabaseTable>();
 
-        if (_compatibleTypes == null)
-            _compatibleTypes = GetCompatibleTypes();
+        _compatibleTypes ??= GetCompatibleTypes();
 
         foreach (var type in _compatibleTypes)
             try

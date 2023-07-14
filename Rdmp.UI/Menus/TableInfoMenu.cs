@@ -16,7 +16,7 @@ using Rdmp.UI.SimpleDialogs;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class TableInfoMenu : RDMPContextMenuStrip
+internal class TableInfoMenu : RDMPContextMenuStrip
 {
 
     public TableInfoMenu(RDMPContextMenuStripArgs args, TableInfo tableInfo)
@@ -47,7 +47,7 @@ class TableInfoMenu : RDMPContextMenuStrip
         
     private void ConfigureTableInfoParameters(TableInfo tableInfo)
     {
-        ParameterCollectionUI.ShowAsDialog(_activator,new ParameterCollectionUIOptionsFactory().Create(tableInfo));
+        ParameterCollectionUI.ShowAsDialog(_activator,ParameterCollectionUIOptionsFactory.Create(tableInfo));
     }
 
 }

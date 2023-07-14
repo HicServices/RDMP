@@ -14,7 +14,7 @@ namespace Rdmp.Core.Validation.Constraints.Primary;
 /// A Constraint specifying that the date must be a valid, delimited EU format date. e.g. 25-09-67 or 25-9-1967.
 /// As such, the leftmost digits are assumed to be the DAY value and the rightmost digits, the YEAR value.
 /// </summary>
-public class Date : PrimaryConstraint
+public partial class Date : PrimaryConstraint
 {
     private const string RegExp = @"^(\d{1,2})(\.|/|-)(\d{1,2})(\.|/|-)(\d{2}(\d{2})?)$";
 
@@ -24,7 +24,7 @@ public class Date : PrimaryConstraint
     {
         _ukCulture = new CultureInfo("en-GB");
     }
-        
+
     /// <summary>
     /// Validate a string representation of a UK (ONLY) date of the format d[d]/m[m]/yy[yy].
     /// The standard C# DateTime.Parse() method is used, which accepts alternative separators such as '.' and '-'.
@@ -37,13 +37,13 @@ public class Date : PrimaryConstraint
 
         if (value == null)
             return null;
-            
+
         try
         {
             var s = (string)value;
             DateTime.Parse(s, _ukCulture.DateTimeFormat);
 
-            if (NotAFullySpecifiedDate(s)) 
+            if (NotAFullySpecifiedDate(s))
                 return new ValidationFailure("Partial dates not allowed.",this);
         }
         catch (FormatException ex)
@@ -56,18 +56,21 @@ public class Date : PrimaryConstraint
 
     private static bool NotAFullySpecifiedDate(string s)
     {
-        var match = Regex.Match(s, RegExp);
+        var match = DateRegex().Match(s);
         return !match.Success;
     }
 
 
     public override void RenameColumn(string originalName, string newName)
     {
-            
+
     }
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
         return "Checks that the data type is DateTime or a string which can be parsed into a valid DateTime";
     }
+
+    [GeneratedRegex("^(\\d{1,2})(\\.|/|-)(\\d{1,2})(\\.|/|-)(\\d{2}(\\d{2})?)$")]
+    private static partial Regex DateRegex();
 }

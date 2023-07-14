@@ -26,25 +26,31 @@ public class EndToEndDLECacheTest:TestsRequiringADle
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
         var timeoutInMilliseconds = 120000;
-            
+
         var lmd = TestLoadMetadata;
 
-        var lp = new LoadProgress(CatalogueRepository,lmd);
-        lp.DataLoadProgress = new DateTime(2001,1,1);
-        lp.DefaultNumberOfDaysToLoadEachTime = 10;
+        var lp = new LoadProgress(CatalogueRepository,lmd)
+        {
+            DataLoadProgress = new DateTime(2001,1,1),
+            DefaultNumberOfDaysToLoadEachTime = 10
+        };
         lp.SaveToDatabase();
 
-        var cp = new CacheProgress(CatalogueRepository, lp);
-        cp.CacheFillProgress = new DateTime(2001,1,11); //10 days available to load
+        var cp = new CacheProgress(CatalogueRepository, lp)
+        {
+            CacheFillProgress = new DateTime(2001,1,11) //10 days available to load
+        };
         cp.SaveToDatabase();
 
         var assembler = new TestDataPipelineAssembler("RunEndToEndDLECacheTest pipe", CatalogueRepository);
         assembler.ConfigureCacheProgressToUseThePipeline(cp);
 
         //setup the cache process task
-        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.GetFiles);
-        pt.Path = typeof (BasicCacheDataProvider).FullName;
-        pt.ProcessTaskType = ProcessTaskType.DataProvider;
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.GetFiles)
+        {
+            Path = typeof (BasicCacheDataProvider).FullName,
+            ProcessTaskType = ProcessTaskType.DataProvider
+        };
         pt.SaveToDatabase();
         pt.CreateArgumentsForClassIfNotExists<BasicCacheDataProvider>();
 
@@ -63,10 +69,10 @@ public class EndToEndDLECacheTest:TestsRequiringADle
 
         Assert.AreEqual(10,RowsNow - RowsBefore);
 
-        Assert.AreEqual(0,LoadDirectory.Cache.GetFiles().Count());
-        Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Count());
-        Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Count());
-            
+        Assert.AreEqual(0, LoadDirectory.Cache.GetFiles().Length);
+        Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Length);
+        Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Length);
+
         var archiveFile = LoadDirectory.ForArchiving.GetFiles()[0];
         Assert.AreEqual(".zip",archiveFile.Extension);
 

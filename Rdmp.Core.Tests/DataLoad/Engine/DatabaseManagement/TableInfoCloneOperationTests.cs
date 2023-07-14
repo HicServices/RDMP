@@ -14,25 +14,25 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.DatabaseManagement;
 
-class TableInfoCloneOperationTests : DatabaseTests
+internal class TableInfoCloneOperationTests : DatabaseTests
 {
     [Test]
     public void Test_CloneTable()
     {
         var dt = new DataTable();
         dt.Columns.Add("FF");
-            
+
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var tbl = db.CreateTable("MyTable",dt);
 
         Import(tbl,out var ti, out _);
-            
+
         var config = new HICDatabaseConfiguration(tbl.Database.Server);
 
         //create a RAW table schema called TableName_Isolation
         var cloner = new TableInfoCloneOperation(config,(TableInfo)ti,LoadBubble.Live,new ThrowImmediatelyDataLoadEventListener());
         cloner.CloneTable(tbl.Database, tbl.Database,tbl, $"{tbl.GetRuntimeName()}_copy", true, true, true, ti.PreLoadDiscardedColumns);
-             
+
         var tbl2 = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_copy");
 
         Assert.IsTrue(tbl2.Exists());

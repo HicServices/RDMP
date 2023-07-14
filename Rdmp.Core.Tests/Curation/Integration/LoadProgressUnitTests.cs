@@ -61,12 +61,12 @@ public class LoadProgressUnitTests : UnitTests
         lp.DataLoadProgress = DateTime.Now;
             
         lp.Check(new ThrowImmediatelyCheckNotifier());
-            
+
         var stratFactory = new JobDateGenerationStrategyFactory(new AnyAvailableLoadProgressSelectionStrategy(lp.LoadMetadata));
         var strat = stratFactory.Create(lp,new ThrowImmediatelyDataLoadEventListener());
-            
+
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"LoadProgress_JobFactory_NoDates",true);
-            
+
         var lmd = lp.LoadMetadata;
         lmd.LocationOfFlatFiles = dir.RootPath.FullName;
             
@@ -77,7 +77,7 @@ public class LoadProgressUnitTests : UnitTests
         }
             
         lmd.SaveToDatabase();
-            
+
         var jobFactory = new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
         var job = jobFactory.Create(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), null);
 

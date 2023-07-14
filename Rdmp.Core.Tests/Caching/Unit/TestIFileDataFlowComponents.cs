@@ -48,7 +48,7 @@ public class MoveToDirectory : IFileDataFlowDestination
 
     public void Dispose(IDataLoadEventListener listener)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }
 

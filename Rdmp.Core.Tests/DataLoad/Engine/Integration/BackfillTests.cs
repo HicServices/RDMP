@@ -22,9 +22,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class BackfillTests : FromToDatabaseTests
 {
-        
+
     private ICatalogue _catalogue;
-        
+
 
     [SetUp]
     protected override void SetUp()
@@ -32,7 +32,7 @@ public class BackfillTests : FromToDatabaseTests
         base.SetUp();
 
         BlitzMainDataTables();
-            
+
         DeleteTables(From);
         DeleteTables(To);
     }
@@ -89,10 +89,9 @@ public class BackfillTests : FromToDatabaseTests
         CreateTables("Samples", "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
 
         // Set SetUp catalogue entities
-        ColumnInfo[] ciSamples;
-        AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples, true);
+        AddTableToCatalogue(DatabaseName, "Samples", "ID", out ColumnInfo[] ciSamples, true);
 
-        Assert.AreEqual(5, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(5, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
     }
 
     private void Mutilate(string timeColumnName)
@@ -248,11 +247,9 @@ public class BackfillTests : FromToDatabaseTests
         CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID", "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
         // Set SetUp catalogue entities
-        ColumnInfo[] ciSamples;
-        ColumnInfo[] ciResults; 
 
-        var tiSamples = AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples, true);
-        AddTableToCatalogue(DatabaseName, "Results", "ID", out ciResults);
+        var tiSamples = AddTableToCatalogue(DatabaseName, "Samples", "ID", out var ciSamples, true);
+        AddTableToCatalogue(DatabaseName, "Results", "ID", out var ciResults);
 
         _catalogue.Time_coverage = "[Samples].[SampleDate]";
         _catalogue.SaveToDatabase();
@@ -260,7 +257,7 @@ public class BackfillTests : FromToDatabaseTests
         tiSamples.IsPrimaryExtractionTable = true;
         tiSamples.SaveToDatabase();
 
-        Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Samples (1:M) Results join
         new JoinInfo(CatalogueRepository,ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
@@ -494,11 +491,9 @@ public class BackfillTests : FromToDatabaseTests
             "CONSTRAINT [FK_Headers_Samples] FOREIGN KEY (HeaderID) REFERENCES Headers (ID)");
 
         // Set SetUp catalogue entities
-        ColumnInfo[] ciSamples;
-        ColumnInfo[] ciHeaders;
 
-        var tiSamples = AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples, true);
-        AddTableToCatalogue(DatabaseName, "Headers", "ID", out ciHeaders);
+        var tiSamples = AddTableToCatalogue(DatabaseName, "Samples", "ID", out var ciSamples, true);
+        AddTableToCatalogue(DatabaseName, "Headers", "ID", out var ciHeaders);
 
         _catalogue.Time_coverage = "[Samples].[SampleDate]";
         _catalogue.SaveToDatabase();
@@ -506,7 +501,7 @@ public class BackfillTests : FromToDatabaseTests
         tiSamples.IsPrimaryExtractionTable = true;
         tiSamples.SaveToDatabase();
 
-        Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
 
         // Headers (1:M) Samples join
         new JoinInfo(CatalogueRepository,ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
@@ -626,7 +621,7 @@ public class BackfillTests : FromToDatabaseTests
             cmd = new SqlCommand(stagingSamplesSql, connection);
             cmd.ExecuteNonQuery();
         }
-            
+
         #endregion
 
         Mutilate($"[{DatabaseName}].[dbo].[Samples].[SampleDate]");
@@ -831,9 +826,9 @@ public class BackfillTests : FromToDatabaseTests
         if (pkColumn == null || string.IsNullOrWhiteSpace(pkColumn))
             throw new InvalidOperationException("Primary Key column is required.");
 
-        var pkConstraint = String.Format("CONSTRAINT PK_{0} PRIMARY KEY ({1})", tableName, pkColumn);
+        var pkConstraint = $"CONSTRAINT PK_{tableName} PRIMARY KEY ({pkColumn})";
         var stagingTableDefinition = $"{columnDefinitions}, {pkConstraint}";
-        var liveTableDefinition = columnDefinitions + String.Format(", hic_validFrom DATETIME, hic_dataLoadRunID int, " + pkConstraint);
+        var liveTableDefinition = columnDefinitions + string.Format(", hic_validFrom DATETIME, hic_dataLoadRunID int, " + pkConstraint);
 
         if (fkConstraintString != null)
         {
@@ -851,7 +846,7 @@ public class BackfillTests : FromToDatabaseTests
         using(var con = (SqlConnection)To.Server.GetConnection())
         {
             con.Open();
-            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery(); 
+            new SqlCommand($"CREATE TABLE {tableName} ({liveTableDefinition})",con).ExecuteNonQuery();
         }
     }
 
@@ -860,7 +855,7 @@ public class BackfillTests : FromToDatabaseTests
     {
         #region Set SetUp databases
         CreateTables("Header", "ID int NOT NULL, Discipline varchar(32) NOT NULL", "ID");
-            
+
         CreateTables("Samples",
             "ID int NOT NULL, HeaderID int NOT NULL, SampleDate DATETIME, Description varchar(1024)",
             "CONSTRAINT FK_Header_Samples FOREIGN KEY (HeaderID) REFERENCES Header (ID)");
@@ -868,16 +863,16 @@ public class BackfillTests : FromToDatabaseTests
         CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int",
             "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
-        #endregion  
+        #endregion
 
         #region Set SetUp catalogue entities
-        ColumnInfo[] ciSamples;
-        var tiSamples = AddSamplesTableToCatalogue(DatabaseName, out ciSamples);
+
+        var tiSamples = AddSamplesTableToCatalogue(DatabaseName, out var ciSamples);
         var tiResults = AddResultsTableToCatalogue(DatabaseName, ciSamples);
         var tiHeaders = AddHeaderTableToCatalogue(DatabaseName, ciSamples);
 
         // should be all entities set SetUp now
-        Assert.AreEqual(15, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
+        Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
         #endregion
 
         // add data
@@ -1001,7 +996,7 @@ public class BackfillTests : FromToDatabaseTests
     {
         var ti = AddTableToCatalogue(databaseName, "Samples", "ID", out ciList, true);
         _catalogue.Name = databaseName;
-            
+
         // todo: what should this text actually look like
         _catalogue.Time_coverage = "[Samples].[SampleDate]";
         _catalogue.SaveToDatabase();
@@ -1010,8 +1005,7 @@ public class BackfillTests : FromToDatabaseTests
 
     private ITableInfo AddResultsTableToCatalogue(string databaseName, ColumnInfo[] ciSamples)
     {
-        ColumnInfo[] ciList;
-        var ti = AddTableToCatalogue(databaseName, "Results", "ID", out ciList);
+        var ti = AddTableToCatalogue(databaseName, "Results", "ID", out var ciList);
 
         // setup join infos
         new JoinInfo(CatalogueRepository,ciList.Single(info => info.GetRuntimeName().Equals("SampleID")),
@@ -1022,8 +1016,7 @@ public class BackfillTests : FromToDatabaseTests
 
     private ITableInfo AddHeaderTableToCatalogue(string databaseName, ColumnInfo[] ciSamples)
     {
-        ColumnInfo[] ciList;
-        var ti = AddTableToCatalogue(databaseName, "Header", "ID", out ciList);
+        var ti = AddTableToCatalogue(databaseName, "Header", "ID", out var ciList);
 
         // setup join infos
         new JoinInfo(CatalogueRepository,ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
@@ -1040,9 +1033,9 @@ public class BackfillTests : FromToDatabaseTests
     {
         var table = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName).ExpectTable(tableName);
         var resultsImporter = new TableInfoImporter(CatalogueRepository, table);
-            
+
         resultsImporter.DoImport(out var ti, out ciList);
-            
+
         var pkResult = ciList.Single(info => info.GetRuntimeName().Equals(pkName));
         pkResult.IsPrimaryKey = true;
         pkResult.SaveToDatabase();
@@ -1050,10 +1043,8 @@ public class BackfillTests : FromToDatabaseTests
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ciList);
         if (createCatalogue)
         {
-            CatalogueItem[] cataItems;
-            ExtractionInformation[] extractionInformations;
 
-            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out cataItems, out extractionInformations);
+            forwardEngineer.ExecuteForwardEngineering(out _catalogue, out CatalogueItem[] cataItems, out ExtractionInformation[] extractionInformations);
         }
         else
             forwardEngineer.ExecuteForwardEngineering(_catalogue);
@@ -1076,7 +1067,7 @@ internal class IdentityTableNamingScheme : INameDatabasesAndTablesDuringLoads
         return tableName;
     }
 
-    public bool IsNamedCorrectly(string tableName, LoadBubble convention)
+    public static bool IsNamedCorrectly(string tableName, LoadBubble convention)
     {
         return true;
     }

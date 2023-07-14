@@ -34,8 +34,8 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     public string ToShortString()
     {
         var s = ToString();
-        if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-            return $"{s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength)}...";
+        if (s.Length > MaxDescriptionLength)
+            return $"{s[..MaxDescriptionLength]}...";
         return s;
     }
 
@@ -68,9 +68,9 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     /// </summary>
     public List<ArchivalProgressLog> Progress => _knownProgress.Value;
 
-    readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
-    readonly Lazy<List<ArchivalFatalError>> _knownErrors;
-    readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
+    private readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
+    private readonly Lazy<List<ArchivalFatalError>> _knownErrors;
+    private readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
         
     public string Description { get; set; }
 
@@ -106,14 +106,13 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
 
     public int CompareTo(object obj)
     {
-        var other = obj as ArchivalDataLoadInfo;
-        if (other != null)
+        if (obj is ArchivalDataLoadInfo other)
             if (StartTime == other.StartTime)
                 return 0;
             else
                 return StartTime > other.StartTime ? 1 : -1;
 
-        return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
 
     private List<ArchivalTableLoadInfo> GetTableInfos()
@@ -134,10 +133,8 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
                     {
                         continue;
                     }
-                    else
-                    {
-                        toReturn.Add(audit);
-                    }
+
+                    toReturn.Add(audit);
                 }   
         }
 

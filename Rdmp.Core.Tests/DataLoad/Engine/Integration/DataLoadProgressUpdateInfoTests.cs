@@ -27,10 +27,10 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     public DataLoadProgressUpdateInfoTests()
     {
         var cata = Mock.Of<ICatalogue>(
-            c=> c.LoggingDataTask == "NothingTask" && 
+            c=> c.LoggingDataTask == "NothingTask" &&
                 c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
                 c.GetLookupTableInfoList() == Array.Empty<TableInfo>());
-            
+
         var lmd = Mock.Of<ILoadMetadata>(m => m.GetAllCatalogues() == new[] { cata });
 
         _job = new ScheduledDataLoadJob(null,"fish", Mock.Of<ILogManager>(), lmd, null, new ThrowImmediatelyDataLoadJob(),null);
@@ -51,20 +51,22 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
         var updateInfo = new DataLoadProgressUpdateInfo();
         Assert.AreEqual(DataLoadProgressUpdateStrategy.UseMaxRequestedDay,updateInfo.Strategy);
 
-        _job.DatesToRetrieve = new List<DateTime>();
-        _job.DatesToRetrieve.Add(new DateTime(2001,1,1));
-        _job.DatesToRetrieve.Add(new DateTime(2001, 1, 2));
-        _job.DatesToRetrieve.Add(new DateTime(2001, 1, 3));
+        _job.DatesToRetrieve = new List<DateTime>
+        {
+            new DateTime(2001, 1, 1),
+            new DateTime(2001, 1, 2),
+            new DateTime(2001, 1, 3)
+        };
         try
         {
             var added = (UpdateProgressIfLoadsuccessful)updateInfo.AddAppropriateDisposeStep(_job, null);
-                
-                
+
+
             Assert.AreEqual(new DateTime(2001, 1, 3), added.DateToSetProgressTo);
         }
         finally
         {
-            _job.DatesToRetrieve.Clear();    
+            _job.DatesToRetrieve.Clear();
         }
             
     }
@@ -72,9 +74,11 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     [Test]
     public void AddRAWSQLStrategy_NoSQL()
     {
-        var updateInfo = new DataLoadProgressUpdateInfo();
-        updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
-            
+        var updateInfo = new DataLoadProgressUpdateInfo
+        {
+            Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW
+        };
+
         var ex = Assert.Throws<Exception>(()=>updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
         Assert.IsTrue(ex.Message.StartsWith("Strategy is ExecuteScalarSQLInRAW but there is no ExecuteScalarSQL"));
@@ -83,10 +87,12 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     [Test]
     public void AddRAWSQLStrategy_SQLDodgy_SqlCrashes()
     {
-        var updateInfo = new DataLoadProgressUpdateInfo();
-        updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
-            
-        updateInfo.ExecuteScalarSQL = "SELECT Top 1 BarrelORum from CaptainMorgansSpicedRumBarrel";
+        var updateInfo = new DataLoadProgressUpdateInfo
+        {
+            Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW,
+            ExecuteScalarSQL = "SELECT Top 1 BarrelORum from CaptainMorgansSpicedRumBarrel"
+        };
+
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
         Assert.IsTrue(ex.Message.StartsWith("Failed to execute the following SQL in the RAW database"));
@@ -96,10 +102,12 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     [Test]
     public void AddRAWSQLStrategy_SQLDodgy_SqlReturnsNull()
     {
-        var updateInfo = new DataLoadProgressUpdateInfo();
-        updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
-            
-        updateInfo.ExecuteScalarSQL = "SELECT null";
+        var updateInfo = new DataLoadProgressUpdateInfo
+        {
+            Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW,
+            ExecuteScalarSQL = "SELECT null"
+        };
+
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
         Assert.IsTrue(ex.Message.Contains("ExecuteScalarSQL"));
@@ -109,10 +117,12 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     [Test]
     public void AddRAWSQLStrategy_SQLDodgy_SqlReturnsNonDate()
     {
-        var updateInfo = new DataLoadProgressUpdateInfo();
-        updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
-            
-        updateInfo.ExecuteScalarSQL = "SELECT 'fishfish'";
+        var updateInfo = new DataLoadProgressUpdateInfo
+        {
+            Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW,
+            ExecuteScalarSQL = "SELECT 'fishfish'"
+        };
+
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
         Assert.AreEqual("ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:fishfish",ex.Message);
@@ -122,14 +132,18 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
     [Test]
     public void AddRAWSQLStrategy_SQLCorrect()
     {
-        _job.DatesToRetrieve = new List<DateTime>();
-        _job.DatesToRetrieve.Add(new DateTime(2001,1,6));
-        _job.DatesToRetrieve.Add(new DateTime(2001,1,7));
-        _job.DatesToRetrieve.Add(new DateTime(2001,1,8));
+        _job.DatesToRetrieve = new List<DateTime>
+        {
+            new DateTime(2001, 1, 6),
+            new DateTime(2001, 1, 7),
+            new DateTime(2001, 1, 8)
+        };
 
-        var updateInfo = new DataLoadProgressUpdateInfo();
-        updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
-        updateInfo.ExecuteScalarSQL = "SELECT '2001-01-07'";
+        var updateInfo = new DataLoadProgressUpdateInfo
+        {
+            Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW,
+            ExecuteScalarSQL = "SELECT '2001-01-07'"
+        };
 
         var added = (UpdateProgressIfLoadsuccessful)updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
             

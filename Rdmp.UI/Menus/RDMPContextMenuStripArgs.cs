@@ -19,14 +19,14 @@ namespace Rdmp.UI.Menus;
 /// </summary>
 public class RDMPContextMenuStripArgs
 {
-    private HashSet<Type> _skipCommands = new HashSet<Type>();
+    private HashSet<Type> _skipCommands = new();
 
     public IActivateItems ItemActivator { get; set; }
     public IMasqueradeAs Masquerader { get; set; }
-        
+
     public TreeListView Tree { get; set; }
     public object Model { get; set; }
-        
+
     public RDMPContextMenuStripArgs(IActivateItems itemActivator)
     {
         ItemActivator = itemActivator;
@@ -70,8 +70,8 @@ public class RDMPContextMenuStripArgs
 
         while (p != null)
         {
-            if (p is T)
-                return (T)p;
+            if (p is T control)
+                return control;
 
             p = p.Parent;
         }

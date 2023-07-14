@@ -104,7 +104,7 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
             sbInsert.Append(" FOR UPDATE");
 
         var insertSql = sbInsert.ToString();
-            
+
         var cmd = server.GetCommand(insertSql, _managedConnection);
         cmd.CommandTimeout = Timeout;
 
@@ -148,7 +148,7 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
                     ,dataLoadInfoID),QueryComponent.SET));
 
             //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
-            sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(c=>GetORLine(c,syntax))), QueryComponent.WHERE));
+            sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(c=> GetORLine(c,syntax))), QueryComponent.WHERE));
                 
             //the join
             sqlLines.AddRange(columnsToMigrate.PrimaryKeys.Select(p => new CustomLine(string.Format("t1.{0} = t2.{0}", syntax.EnsureWrapped(p.GetRuntimeName())), QueryComponent.JoinInfoJoin)));
@@ -191,7 +191,7 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         }
     }
 
-    private string GetORLine(DiscoveredColumn c, IQuerySyntaxHelper syntax)
+    private static string GetORLine(DiscoveredColumn c, IQuerySyntaxHelper syntax)
     {
         return string.Format("(t1.{0} <> t2.{0} OR (t1.{0} is null AND t2.{0} is not null) OR (t2.{0} is null AND t1.{0} is not null))", syntax.EnsureWrapped(c.GetRuntimeName()));
     }

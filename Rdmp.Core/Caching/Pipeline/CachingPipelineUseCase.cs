@@ -21,10 +21,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Pipeline;
 
 /// <summary>
-/// Describes the use case under which a caching is attempted for a given ICacheProgress.  This involves working out the ICacheFetchRequestProvider, 
+/// Describes the use case under which a caching is attempted for a given ICacheProgress.  This involves working out the ICacheFetchRequestProvider,
 /// PermissionWindow etc.  Since the use case is used both for creating an engine for execution and for determining which IPipelines are compatible
 /// with the use case the class can be used at execution and design time.  Therefore it is legal to define the use case even when the ICacheProgress does
-/// not have a configured caching pipeline e.g. to facilitate the user selecting/creating an appropriate pipeline in the first place (set throwIfNoPipeline 
+/// not have a configured caching pipeline e.g. to facilitate the user selecting/creating an appropriate pipeline in the first place (set throwIfNoPipeline
 /// to false under such circumstances).
 /// </summary>
 public sealed class CachingPipelineUseCase:PipelineUseCase
@@ -52,14 +52,10 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
         else
             _permissionWindow = cacheProgress.PermissionWindow;
             
-        if(_providerIfAny == null)
-        {
-            _providerIfAny = new CacheFetchRequestProvider(_cacheProgress)
+        _providerIfAny ??= new CacheFetchRequestProvider(_cacheProgress)
             {
                 PermissionWindow = _permissionWindow
             };
-                
-        }
 
         _pipeline = _cacheProgress.Pipeline;
 
@@ -103,23 +99,19 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
     public ICacheFileSystemDestination CreateDestinationOnly( IDataLoadEventListener listener)
     {
         // get the current destination
-        var destination = GetEngine(_pipeline, listener).DestinationObject;
-            
-        if(destination == null)
-            throw new Exception($"{_cacheProgress} does not have a DestinationComponent in its Pipeline");
-
-        if(!(destination is ICacheFileSystemDestination))
+        var destination = GetEngine(_pipeline, listener).DestinationObject ?? throw new Exception($"{_cacheProgress} does not have a DestinationComponent in its Pipeline");
+        if (destination is not ICacheFileSystemDestination systemDestination)
             throw new NotSupportedException(
                 $"{_cacheProgress} pipeline destination is not an ICacheFileSystemDestination, it was {_cacheProgress.GetType().FullName}");
             
-        return (ICacheFileSystemDestination) destination;
+        return systemDestination;
     }
 
     public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener)
     {
         return GetEngine(_pipeline, listener);
     }
-        
+
 
     /// <summary>
     /// Design time types

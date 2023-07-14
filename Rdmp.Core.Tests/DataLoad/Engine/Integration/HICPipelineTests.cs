@@ -93,20 +93,15 @@ public class HICPipelineTests : DatabaseTests
 
         public void Dispose()
         {
-            if (Catalogue != null)
-                Catalogue.DeleteInDatabase();
+            Catalogue?.DeleteInDatabase();
 
-            if (LoadMetadata != null)
-                LoadMetadata.DeleteInDatabase();
+            LoadMetadata?.DeleteInDatabase();
 
-            if (ColumnInfo != null)
-                ColumnInfo.DeleteInDatabase();
+            ColumnInfo?.DeleteInDatabase();
 
-            if (TableInfo != null)
-                TableInfo.DeleteInDatabase();
+            TableInfo?.DeleteInDatabase();
 
-            if (Credentials != null)
-                Credentials.DeleteInDatabase();
+            Credentials?.DeleteInDatabase();
         }
 
         private void SetupLoadProcessTasks(ICatalogueRepository catalogueRepository)
@@ -138,7 +133,7 @@ public class HICPipelineTests : DatabaseTests
                 new Tuple<string, string, Type>("MaximumErrorsToReport", "0", typeof (int)),
                 new Tuple<string, string, Type>("IgnoreColumns", null, typeof (string)),
                 new Tuple<string, string, Type>("IgnoreBadReads", "false", typeof (bool)),
-                new Tuple<string, string, Type>("AddFilenameColumnNamed", null, typeof (string)),
+                new Tuple<string, string, Type>("AddFilenameColumnNamed", null, typeof (string))
 
             };
                 
@@ -159,7 +154,7 @@ public class HICPipelineTests : DatabaseTests
     internal class DatabaseHelper : IDisposable
     {
         private DiscoveredServer _server;
-            
+
 
         public DiscoveredDatabase DatabaseToLoad { get; private set; }
         public void SetUp(DiscoveredServer server)
@@ -239,7 +234,7 @@ public class HICPipelineTests : DatabaseTests
 
             // Create the Catalogue entities for the dataset
             catalogueEntities.Create(CatalogueTableRepository, databaseHelper.DatabaseToLoad, loadDirectory);
-                
+
             if (overrideRAW)
             {
                 external = new ExternalDatabaseServer(CatalogueRepository, "RAW Server",null);
@@ -255,20 +250,22 @@ public class HICPipelineTests : DatabaseTests
                 defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, external);
             }
 
-            var options = new DleOptions();
-            options.LoadMetadata = catalogueEntities.LoadMetadata.ID.ToString();
-            options.Command = CommandLineActivity.check;
+            var options = new DleOptions
+            {
+                LoadMetadata = catalogueEntities.LoadMetadata.ID.ToString(),
+                Command = CommandLineActivity.check
+            };
 
             //run checks (with ignore errors if we are sending dodgy credentials)
-            new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), 
+            RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options).Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
                 sendDodgyCredentials?
                     (ICheckNotifier) new IgnoreAllErrorsCheckNotifier(): new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
             //run load
             options.Command = CommandLineActivity.run;
-            var runner = new RunnerFactory().CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options);
+            var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator),options);
 
-                
+
             if (sendDodgyCredentials)
             {
                 var ex = Assert.Throws<Exception>(()=>runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken()));
@@ -279,7 +276,7 @@ public class HICPipelineTests : DatabaseTests
                 runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
 
-            var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").OrderByDescending(f=>f.FullName).FirstOrDefault();
+            var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f=>f.FullName);
             Assert.NotNull(archiveFile,"Archive file has not been created by the load.");
             Assert.IsFalse(loadDirectory.ForLoading.EnumerateFileSystemInfos().Any());
 
@@ -289,8 +286,7 @@ public class HICPipelineTests : DatabaseTests
             //reset the original RAW server
             defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, oldDefault);
 
-            if (external != null)
-                external.DeleteInDatabase();
+            external?.DeleteInDatabase();
 
             testDir.Delete(true);
 

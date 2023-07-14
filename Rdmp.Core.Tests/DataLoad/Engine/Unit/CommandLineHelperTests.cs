@@ -16,14 +16,14 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
 
 [Category("Unit")]
-class CommandLineHelperTests
+internal class CommandLineHelperTests
 {
     [Test]
     public void TestGetValueString()
     {
         var date = new DateTime(2004, 1, 1);
         Assert.AreEqual("\"2004-01-01\"", CommandLineHelper.GetValueString(date));
-            
+
 
         var fi = new FileInfo(TestContext.CurrentContext.TestDirectory);
         Assert.AreEqual($@"""{TestContext.CurrentContext.TestDirectory}""", CommandLineHelper.GetValueString(fi));
@@ -34,7 +34,7 @@ class CommandLineHelperTests
         ImplementationManager.Load<MicrosoftSQLImplementation>();
 
         //notice how server and db don't actually exist, thats cool they implement IMightNotExist
-        var dbInfo = new DiscoveredServer(new SqlConnectionStringBuilder(){DataSource = "server"}).ExpectDatabase("db");
+        var dbInfo = new DiscoveredServer(new SqlConnectionStringBuilder {DataSource = "server"}).ExpectDatabase("db");
         Assert.AreEqual("--database-name=db --database-server=server", CommandLineHelper.CreateArgString("DbInfo", dbInfo));
     }
 

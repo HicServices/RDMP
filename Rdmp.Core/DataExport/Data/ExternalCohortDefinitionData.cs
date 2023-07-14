@@ -51,7 +51,7 @@ public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public DateTime? ObjectToNullableDateTime(object o)
+    public static DateTime? ObjectToNullableDateTime(object o)
     {
         if (o == null || o == DBNull.Value)
             return null;
@@ -63,12 +63,12 @@ public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
     /// Describes the lack of available external data for an <see cref="ExtractableCohort"/> because the data has
     /// been deleted from the cohort database
     /// </summary>
-    public static IExternalCohortDefinitionData Orphan { get; } = new ExternalCohortDefinitionData()
+    public static IExternalCohortDefinitionData Orphan { get; } = new ExternalCohortDefinitionData
     {
         ExternalProjectNumber = -1,
         ExternalDescription = "Orphan Cohort",
         ExternalVersion = -1,
         ExternalCohortTableName = null,
-        ExternalCohortCreationDate = null,
+        ExternalCohortCreationDate = null
     };
 }

@@ -208,7 +208,7 @@ public class LogManagerTest : DatabaseTests
 
         var creator = new MasterDatabaseScriptExecutor(db);
         creator.CreateAndPatchDatabase(new LoggingDatabasePatcher(), new AcceptAllCheckNotifier());
-            
+
         var lm = new LogManager(db.Server);
 
         lm.CreateNewLoggingTaskIfNotExists("blarg");

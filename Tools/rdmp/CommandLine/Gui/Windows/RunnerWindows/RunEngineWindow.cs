@@ -19,15 +19,15 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
+internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOptions
 {
     private Process process;
     private ListView _results;
     protected readonly IBasicActivateItems BasicActivator;
     private readonly Func<T> commandGetter;
 
-    private object lockList = new object();
-    private List<string> consoleOutput = new List<string>();
+    private object lockList = new();
+    private List<string> consoleOutput = new();
     private ColorScheme _red;
     private ColorScheme _yellow;
     private ColorScheme _white;
@@ -105,8 +105,7 @@ class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOpti
     {
         try
         {
-            if (process != null)
-                process.Kill();
+            process?.Kill();
         }
         catch (Exception ex)
         {
@@ -163,7 +162,7 @@ class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOpti
 
         var expectedFileName = $"rdmp{(EnvironmentInfo.IsLinux ? "" : ".exe")}";
 
-        // try in the location we ran from 
+        // try in the location we ran from
         var binary = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, expectedFileName);
 
         if (!File.Exists(binary))
@@ -205,7 +204,7 @@ class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOpti
                     consoleOutput.Insert(0,line);
                     Application.MainLoop.Invoke(()=>_results.SetNeedsDisplay());
                 }
-                    
+
             }
         });
     }
@@ -222,14 +221,7 @@ class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOpti
 
             var str = consoleOutput[item];
 
-            if (str.Length > width)
-            {
-                str = str.Substring(0, width);
-            }
-            else
-            {
-                str = str.PadRight(width,' ');
-            }
+            str = str.Length > width ? str[..width] : str.PadRight(width,' ');
 
             _results.Move(col, line);
 
@@ -247,7 +239,7 @@ class RunEngineWindow<T> : Window, IListDataSource where T : RDMPCommandLineOpti
 
             driver.SetAttribute(selected ? scheme.Focus : scheme.Normal);
             driver.AddStr(str);
-        }                
+        }
     }
 
     public bool IsMarked(int item)

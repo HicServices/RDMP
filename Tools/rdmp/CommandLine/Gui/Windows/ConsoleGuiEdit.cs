@@ -16,7 +16,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows;
 
-class ConsoleGuiEdit : Window
+internal class ConsoleGuiEdit : Window
 {
     private readonly IBasicActivateItems _activator;
     private List<PropertyInListView> collection;
@@ -63,9 +63,9 @@ class ConsoleGuiEdit : Window
         };
         btnClose.Clicked += ()=>Application.RequestStop();
             
-        this.Add(list);
-        this.Add(btnSet);
-        this.Add(btnClose);
+        Add(list);
+        Add(btnSet);
+        Add(btnClose);
     }
 
     private void SetProperty(bool setNull)

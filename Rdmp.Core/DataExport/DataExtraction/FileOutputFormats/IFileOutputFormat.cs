@@ -8,7 +8,7 @@ using System.Data;
 
 namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 
-interface IFileOutputFormat
+internal interface IFileOutputFormat
 {
 
     string GetFileExtension();

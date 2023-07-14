@@ -29,9 +29,12 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public static class UsefulStuff
 {
-    public static readonly Regex RegexThingsThatAreNotNumbersOrLetters = new("[^0-9A-Za-z]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
-    public static readonly Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores = new("[^0-9A-Za-z_]+",RegexOptions.Compiled|RegexOptions.CultureInvariant);
-    private static readonly Regex NullWithSpaces = new(@"^\s*null\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+    public static readonly Regex RegexThingsThatAreNotNumbersOrLetters =
+        new("[^0-9A-Za-z]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    public static readonly Regex RegexThingsThatAreNotNumbersOrLettersOrUnderscores =
+        new("[^0-9A-Za-z_]+", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+    private static readonly Regex NullWithSpaces = new(@"^\s*null\s*$",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     public static bool IsBasicallyNull(this string result)
     {
@@ -111,7 +114,7 @@ public static class UsefulStuff
 
 
     // find quoted field names at end of line
-    private static readonly Regex RDoubleQuotes = new ("\"([^\"]+)\"$");
+    private static readonly Regex RDoubleQuotes = new("\"([^\"]+)\"$");
     private static readonly Regex RSingleQuotes = new("'([^']+)'$");
     private static readonly Regex RBacktickQuotes = new("`([^']+)`$");
     private static readonly Regex RSquareBrackets = new(@"\[([^[]+)]$");
@@ -127,8 +130,8 @@ public static class UsefulStuff
 
         //trim off [db]..[tbl] 1 
         for (var i = 0; i < split.Length; i++)
-            split[i] = Regex.Replace(split[i], @"\s+[\d\s]*$", "");    
-            
+            split[i] = Regex.Replace(split[i], @"\s+[\d\s]*$", "");
+
         //identifies the last word in a collection of multiple words (requires you .Trim() so we don't get ending whitespace match)
         var regexLastWord = new Regex("\\s[^\\s]*$");
         foreach (var s in split)
@@ -136,9 +139,9 @@ public static class UsefulStuff
             //clean the string
 
             var toAdd = s.Trim();
-            if (toAdd.Contains("."))
+            if (toAdd.Contains('.'))
                 toAdd = toAdd[(toAdd.LastIndexOf(".", StringComparison.Ordinal) + 1)..];
-                
+
             var gotDelimitedMatch = false;
 
             // if user has really horrible names like with spaces and stuff
@@ -356,7 +359,7 @@ public static class UsefulStuff
     public static string GetHumanReadableByteSize(long len)
     {
         string[] sizes = { "bytes", "KB", "MB", "GB", "TB", "PB" };
-            
+
         var order = 0;
         while (len >= 1024 && order + 1 < sizes.Length)
         {
@@ -535,7 +538,7 @@ public static class UsefulStuff
                 throw new Exception(
                     $"Although there were the same number of files in Globals directories {first.FullName} and {other.FullName}, there were differing file names ({file1.Name} and {file2.Name})");
 
-            if (!UsefulStuff.HashFile(file1.FullName).Equals(UsefulStuff.HashFile(file2.FullName)))
+            if (!HashFile(file1.FullName).Equals(HashFile(file2.FullName)))
                 throw new Exception(
                     $"File found in Globals directory which has a different MD5 from another Globals file.  Files were \"{file1.FullName}\" and \"{file2.FullName}\"");
         }

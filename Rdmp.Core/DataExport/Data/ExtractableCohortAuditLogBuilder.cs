@@ -18,20 +18,19 @@ namespace Rdmp.Core.DataExport.Data;
 /// </summary>
 public class ExtractableCohortAuditLogBuilder
 {
-    Regex _regexGetID = new Regex(@"\(ID=(\d+)\)");
-    Regex _regexGetFilePath = new Regex(@$"{InFile} '(.*)'");
-    Regex _regexGetColumn = new Regex(@$"{InColumn} '(.*)'");
+    private Regex _regexGetID = new(@"\(ID=(\d+)\)");
+    private Regex _regexGetFilePath = new(@$"{InFile} '(.*)'");
+    private Regex _regexGetColumn = new(@$"{InColumn} '(.*)'");
 
     /// <summary>
     /// regex for picking up <see cref="CohortIdentificationConfiguration"/> IDs from audit log based on a legacy way of
     /// writing that ID into the <see cref="ExtractableCohort.AuditLog"/>
     /// </summary>
-    Regex _legacyCic = new Regex(@"Created by running cic ([\d]+)");
-
-    const string InFile = "Patient identifiers in file";
-    const string InColumn = "Patient identifiers in column ";
-    const string InCohortIdentificationConfiguration = "Patients in CohortIdentificationConfiguration";
-    const string InExtractionInformation = "All patient identifiers in ExtractionInformation";
+    private Regex _legacyCic = new(@"Created by running cic ([\d]+)");
+    private const string InFile = "Patient identifiers in file";
+    private const string InColumn = "Patient identifiers in column ";
+    private const string InCohortIdentificationConfiguration = "Patients in CohortIdentificationConfiguration";
+    private const string InExtractionInformation = "All patient identifiers in ExtractionInformation";
 
     /// <summary>
     /// Returns a human readable description recording that an <see cref="ExtractableCohort"/>
@@ -39,7 +38,7 @@ public class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="cic"></param>
     /// <returns></returns>
-    public string GetDescription(CohortIdentificationConfiguration cic)
+    public static string GetDescription(CohortIdentificationConfiguration cic)
     {
         return $"{InCohortIdentificationConfiguration} '{cic}' (ID={cic.ID})";
     }
@@ -50,13 +49,13 @@ public class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="extractionIdentifierColumn"></param>
     /// <returns></returns>
-    public string GetDescription(ExtractionInformation extractionIdentifierColumn)
+    public static string GetDescription(ExtractionInformation extractionIdentifierColumn)
     {
         return
             $"{InExtractionInformation} '{extractionIdentifierColumn.CatalogueItem.Catalogue}.{extractionIdentifierColumn.GetRuntimeName()}'  (ID={extractionIdentifierColumn.ID})";
     }
 
-    internal string GetDescription(DiscoveredColumn col)
+    internal static string GetDescription(DiscoveredColumn col)
     {
         return $"{InColumn} '{col.GetFullyQualifiedName()}'";
     }
@@ -67,7 +66,7 @@ public class ExtractableCohortAuditLogBuilder
     /// </summary>
     /// <param name="file"></param>
     /// <returns></returns>
-    public string GetDescription(FileInfo file)
+    public static string GetDescription(FileInfo file)
     {
         return $"{InFile} '{file.FullName}'";
     }
@@ -146,7 +145,7 @@ public class ExtractableCohortAuditLogBuilder
         return GetObjectFromLog<T>(m, repository);
     }
 
-    private T GetObjectFromLog<T>(Match m, IRepository repository) where T : class, IMapsDirectlyToDatabaseTable
+    private static T GetObjectFromLog<T>(Match m, IRepository repository) where T : class, IMapsDirectlyToDatabaseTable
     {
         try
         {

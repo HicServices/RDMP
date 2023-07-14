@@ -12,7 +12,7 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.Repositories.Managers;
 
-class DataExportFilterManager : IFilterManager
+internal class DataExportFilterManager : IFilterManager
 {
     private readonly DataExportRepository _dataExportRepository;
 
@@ -49,7 +49,7 @@ class DataExportFilterManager : IFilterManager
     /// <inheritdoc/>
     public void AddSubContainer(IContainer parent, IContainer child)
     {
-        if (!(child is FilterContainer))
+        if (child is not FilterContainer)
             throw new NotSupportedException();
 
         _dataExportRepository.Insert("INSERT INTO FilterContainerSubcontainers(FilterContainer_ParentID,FilterContainerChildID) VALUES (@FilterContainer_ParentID, @FilterContainerChildID)", new Dictionary<string, object>

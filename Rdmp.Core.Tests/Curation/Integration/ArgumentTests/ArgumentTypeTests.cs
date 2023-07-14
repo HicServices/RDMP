@@ -20,11 +20,10 @@ public class ArgumentTypeTests:UnitTests
     protected override void OneTimeSetUp()
     {
         base.OneTimeSetUp();
-        base.SetupMEF();
+        SetupMEF();
     }
 
-    object[] _expectedAnswers = new object[]
-    {
+    private object[] _expectedAnswers = {
         5,
         new CultureInfo("en-us"),
         CultureInfo.CurrentCulture
@@ -52,7 +51,7 @@ public class ArgumentTypeTests:UnitTests
 
     }
 
-    class TestClassDemandingDouble
+    private class TestClassDemandingDouble
     {
         [DemandsInitialization("some field",defaultValue:1)]
         public double MyVar { get; set; }

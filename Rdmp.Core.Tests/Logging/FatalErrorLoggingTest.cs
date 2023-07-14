@@ -14,12 +14,12 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Logging;
 
-class FatalErrorLoggingTest : DatabaseTests
+internal class FatalErrorLoggingTest : DatabaseTests
 {
     [TestCase]
     public void CreateNewDataLoadTask()
     {
-            
+
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
             
         lm.CreateNewLoggingTaskIfNotExists("Fish");
@@ -39,10 +39,10 @@ class FatalErrorLoggingTest : DatabaseTests
             "Test case for fatal error generation",
             "No rollback is possible/required as no database rows are actually inserted",
             true, new DiscoveredServer(UnitTestLoggingConnectionString));
-           
+
         var ds = new DataSource[]{ new DataSource("nothing",DateTime.Now)};
 
-            
+
 
         var t = new TableLoadInfo(d, "Unit test only", "Unit test only", ds, 5);
         t.Inserts += 3; //simulate that it crashed after 3

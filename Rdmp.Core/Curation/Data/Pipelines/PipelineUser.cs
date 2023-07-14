@@ -59,9 +59,8 @@ public class PipelineUser:IPipelineUser
                 throw new Exception("User does not have a Repository! how can it be a DatabaseEntity!");
 
             _catalogueRepository = User.Repository as ICatalogueRepository;
-            var dataExportRepo = User.Repository as IDataExportRepository;
 
-            if (dataExportRepo != null)
+            if (User.Repository is IDataExportRepository dataExportRepo)
                 _catalogueRepository = dataExportRepo.CatalogueRepository;
 
             if (_catalogueRepository == null)

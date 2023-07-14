@@ -25,9 +25,9 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 /// Allows you to specify values for any IArgumentHost class.  This control is used by the user at 'design time' (e.g. when they are building a data load configuration) and the values
 /// are then populated into instantiated runtime instances (not that this control cares about how that happens).  You will see a list of all properties marked with [DemandsInitialization]
 /// on the argument host class.  Selecting the Argument will display the help text associated with the argument (user friendly message telling them what they are supposed to put in for that
-/// property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a string property will show a text box - See ArgumentUI).  
+/// property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a string property will show a text box - See ArgumentUI).
 /// </summary>
-public partial class ArgumentCollectionUI : UserControl 
+public partial class ArgumentCollectionUI : UserControl
 {
     public Dictionary<IArgument, RequiredPropertyInfo> DemandDictionary;
     private Type _argumentsAreFor;
@@ -56,7 +56,7 @@ public partial class ArgumentCollectionUI : UserControl
         _parent = parent;
         _argumentsAreFor = argumentsAreForUnderlyingType;
         _activator = activator;
-            
+
         var typeLoadable = !(_argumentsAreFor == null);
 
         lblTypeUnloadable.Visible = !typeLoadable;
@@ -73,7 +73,7 @@ public partial class ArgumentCollectionUI : UserControl
             lblClassName.Text = UsefulStuff.PascalCaseStringToHumanReadable(_argumentsAreFor.Name);
 
         helpIcon1.Left = lblClassName.Right;
-            
+
         if (_argumentsAreFor != null)
         {
             var summary = catalogueRepository.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
@@ -87,11 +87,11 @@ public partial class ArgumentCollectionUI : UserControl
         }
 
     }
-        
+
     private void RefreshArgumentList()
     {
         var argumentFactory = new ArgumentFactory();
-        DemandDictionary = argumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
+        DemandDictionary = ArgumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
 
         lblNoArguments.Visible = !DemandDictionary.Any();
         pArguments.Visible = DemandDictionary.Any();
@@ -103,12 +103,12 @@ public partial class ArgumentCollectionUI : UserControl
         pArguments.SuspendLayout();
 
         float maxArgNameWidth = 0;
-            
+
         if(DemandDictionary.Any())
         {
-            var g = this.CreateGraphics();
+            var g = CreateGraphics();
             maxArgNameWidth = DemandDictionary.Select(a =>
-                    g.MeasureString(UsefulStuff.PascalCaseStringToHumanReadable(a.Value.Name), Label.DefaultFont).Width)
+                    g.MeasureString(UsefulStuff.PascalCaseStringToHumanReadable(a.Value.Name), DefaultFont).Width)
                 .Max();
         }
 
@@ -121,15 +121,17 @@ public partial class ArgumentCollectionUI : UserControl
     }
 
 
-    private Label GetLabelHeader(string caption)
+    private static Label GetLabelHeader(string caption)
     {
-        var label = new Label();
-        label.Text = caption;
-        label.BackColor = Color.DarkGray;
-        label.Dock = DockStyle.Top;
+        var label = new Label
+        {
+            Text = caption,
+            BackColor = Color.DarkGray,
+            Dock = DockStyle.Top,
 
-        label.TextAlign = ContentAlignment.MiddleCenter;
-            
+            TextAlign = ContentAlignment.MiddleCenter
+        };
+
         return label;
     }
 
@@ -154,10 +156,12 @@ public partial class ArgumentCollectionUI : UserControl
         if (required.Demand.Mandatory && string.IsNullOrWhiteSpace(argument.Value))
             ragSmiley.Fatal(new Exception($"Property {argument.Name} is Mandatory"));
 
-        var args = new ArgumentValueUIArgs();
-        args.Parent = parent;
-        args.Type = argument.GetSystemType();
-        args.ContextText = required.Demand.ContextText;
+        var args = new ArgumentValueUIArgs
+        {
+            Parent = parent,
+            Type = argument.GetSystemType(),
+            ContextText = required.Demand.ContextText
+        };
 
         try
         {
@@ -166,23 +170,19 @@ public partial class ArgumentCollectionUI : UserControl
         }
         catch (Exception e)
         {
-                
             //add the text value value and report the error
-            if(_valueUisFactory.CanHandleInvalidStringData(args.Type))
-                args.InitialValue = argument.Value;
-            else
-                args.InitialValue = null;
+            args.InitialValue = ArgumentValueUIFactory.CanHandleInvalidStringData(args.Type) ? argument.Value : null;
 
             ragSmiley.Fatal(e);
         }
 
-            
+
         args.Required = required;
         args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
-        args.Setter = (v) =>
+        args.Setter = v =>
         {
             ragSmiley.Reset();
-                
+
             try
             {
                 argument.SetValue(v);
@@ -203,9 +203,11 @@ public partial class ArgumentCollectionUI : UserControl
         var valueui = (Control)_valueUisFactory.Create(_activator, args);
         valueui.Dock = DockStyle.Fill;
 
-        var p = new Panel();
-        p.Height = Math.Max(Math.Max(lblClassName.Height,helpIcon.Height),valueui.Height);
-        p.Dock = DockStyle.Top;
+        var p = new Panel
+        {
+            Height = Math.Max(Math.Max(lblClassName.Height, helpIcon.Height), valueui.Height),
+            Dock = DockStyle.Top
+        };
 
         name.Location = new Point(0,0);
         p.Controls.Add(name);
@@ -219,11 +221,13 @@ public partial class ArgumentCollectionUI : UserControl
 
         name.Height = p.Height;
 
-        var hr = new Label();
-        hr.AutoSize = false;
-        hr.BorderStyle = BorderStyle.FixedSingle;
-        hr.Height = 1;
-        hr.Dock = DockStyle.Bottom;
+        var hr = new Label
+        {
+            AutoSize = false,
+            BorderStyle = BorderStyle.FixedSingle,
+            Height = 1,
+            Dock = DockStyle.Bottom
+        };
         p.Controls.Add(hr);
 
         valueui.BringToFront();
@@ -231,15 +235,12 @@ public partial class ArgumentCollectionUI : UserControl
         p.BringToFront();
     }
 
-    private string GetSystemTypeName(Type type)
+    private static string GetSystemTypeName(Type type)
     {
         if (typeof(Enum).IsAssignableFrom(type))
             return "Enum";
 
-        if (type == null)
-            return null;
-
-        return type.Name;
+        return type?.Name;
     }
 
     private void btnViewSourceCode_Click(object sender, EventArgs e)

@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
 {
-    ExtractionInformation[] _extractionInformations;
+    private ExtractionInformation[] _extractionInformations;
     private bool _isProjectSpecific;
     private readonly ExtractionCategory? _category;
 
@@ -30,7 +30,7 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
             SetImpossible("No ExtractionInformations found");
 
         _extractionInformations = eis;
-        this._category = category;
+        _category = category;
 
         _isProjectSpecific = false;
 
@@ -72,7 +72,7 @@ public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-            
+
         var c = _category;
 
         if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core, out var category))

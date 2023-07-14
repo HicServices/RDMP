@@ -22,7 +22,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 
 /// <summary>
 /// Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on <see cref="IColumn.IsPrimaryKey"/> of the
-/// columns extracted and is not garuanteed to actually be unique (depending on how you have configured the flags).  
+/// columns extracted and is not garuanteed to actually be unique (depending on how you have configured the flags).
 /// 
 /// <para>The primary use case for this is when extracting to database where you want to have meaningful primary keys</para>
 /// </summary>
@@ -44,10 +44,9 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
             if (primaryKeys.Any())
             {
                 string newSql;
-                if (primaryKeys.Length > 1) // no need to do anything if there is only one.
-                    newSql = $"CONCAT({String.Join(",'_',", primaryKeys.Select(apk => apk.ToString()))})";
-                else
-                    newSql = primaryKeys.Single().Name;
+                newSql = primaryKeys.Length > 1
+                    ? $"CONCAT({string.Join(",'_',", primaryKeys.Select(apk => apk.ToString()))})"
+                    : primaryKeys.Single().Name; // no need to do anything if there is only one.
 
                 var syntaxHelper = Request.Catalogue.GetQuerySyntaxHelper();
 
@@ -56,7 +55,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
                     {
                         HashOnDataRelease = true,
                         IsPrimaryKey = true,
-                        Order = -1,
+                        Order = -1
                     });
                 _synthesizePkCol = true;
             }
@@ -64,7 +63,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
 
         return Request.QueryBuilder.SQL;
     }
-        
+
     private IEnumerable<ITableInfo> GetProperTables()
     {
         if(Request.QueryBuilder.SQLOutOfDate)
@@ -86,7 +85,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
 
         if (catalogueItemPkColumns.Any())
             chunk.PrimaryKey = chunk.Columns.Cast<DataColumn>().Where(c => catalogueItemPkColumns.Contains(c.ColumnName, StringComparer.CurrentCultureIgnoreCase)).ToArray();
-        else 
+        else
         if (_synthesizePkCol)
             chunk.PrimaryKey = new[] { chunk.Columns[SYNTH_PK_COLUMN] };
                 
@@ -113,7 +112,7 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'", CheckResult.Fail));
-                
+
         }
         else
             notifier.OnCheckPerformed(new CheckEventArgs(
@@ -124,14 +123,11 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
     {
         foreach (var column in Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions))
         {
-            var ri = column as ReleaseIdentifierSubstitution;
-            var ec = column as ExtractableColumn;
-
-            if(ri != null)
+            if (column is ReleaseIdentifierSubstitution ri)
                 if (ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey)
                     yield return ri;
 
-            if (ec != null && ec.IsPrimaryKey)
+            if (column is ExtractableColumn ec && ec.IsPrimaryKey)
                 yield return ec;
         }
     }

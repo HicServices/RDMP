@@ -11,7 +11,7 @@ using Rdmp.UI.SimpleDialogs.Governance;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsGovernanceDocument : RDMPCommandExecutionProposal<GovernanceDocument>
+internal class ProposeExecutionWhenTargetIsGovernanceDocument : RDMPCommandExecutionProposal<GovernanceDocument>
 {
     public ProposeExecutionWhenTargetIsGovernanceDocument(IActivateItems itemActivator) : base(itemActivator)
     {

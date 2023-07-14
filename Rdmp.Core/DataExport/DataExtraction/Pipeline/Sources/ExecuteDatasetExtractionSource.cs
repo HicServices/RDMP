@@ -40,11 +40,10 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 
     public const string AuditTaskName = "DataExtraction";
 
-    private readonly List<string> _extractionIdentifiersidx = new List<string>();
-        
-    private bool _cancel = false;   
-        
-    ICatalogue _catalogue;
+    private readonly List<string> _extractionIdentifiersidx = new();
+
+    private bool _cancel = false;
+    private ICatalogue _catalogue;
 
     protected const string ValidationColumnName = "RowValidationResult";
 
@@ -68,13 +67,13 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
 SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
 OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
-        ,DefaultValue = Sources.DistinctStrategy.SqlDistinct)]
+        ,DefaultValue = DistinctStrategy.SqlDistinct)]
     public DistinctStrategy DistinctStrategy { get; set; }
 
-        
+
     [DemandsInitialization("When DBMS is SqlServer then HASH JOIN should be used instead of regular JOINs")]
     public bool UseHashJoins { get; set; }
-        
+
     [DemandsInitialization("When DBMS is SqlServer and the extraction is for any of these datasets then HASH JOIN should be used instead of regular JOINs")]
     public Catalogue[] UseHashJoinsForCatalogues { get; set; }
 
@@ -143,11 +142,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     private bool firstGlobalChunk = true;
     private int _rowsRead;
 
-    private RowPeeker _peeker = new RowPeeker();
+    private RowPeeker _peeker = new();
 
     public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        // we are in the Global Commands case, let's return an empty DataTable (not null) 
+        // we are in the Global Commands case, let's return an empty DataTable (not null)
         // so we can trigger the destination to extract the globals docs and sql
         if (GlobalsRequest != null)
         {
@@ -156,7 +155,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             {
                 //unless we are checking, start auditing
                 StartAuditGlobals();
-                    
+
                 firstGlobalChunk = false;
                 return new DataTable(ExtractionDirectory.GLOBALS_DATA_NAME);
             }
@@ -168,26 +167,27 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             throw new Exception("Component has not been initialized before being asked to GetChunk(s)");
 
         Request.ElevateState(ExtractCommandState.WaitingForSQLServer);
-            
+
         if(_cancel)
             throw new Exception("User cancelled data extraction");
-            
+
         if (_hostedSource == null)
         {
             StartAudit(Request.QueryBuilder.SQL);
-               
+
             if(Request.DatasetBundle.DataSet.DisableExtraction)
                 throw new Exception(
                     $"Cannot extract {Request.DatasetBundle.DataSet} because DisableExtraction is set to true");
 
             _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
                 $"ExecuteDatasetExtraction {Request.DatasetBundle.DataSet}",
-                Request.GetDistinctLiveDatabaseServer().Builder, 
-                ExecutionTimeout);
-
-            // If we are running in batches then always allow empty extractions
-            _hostedSource.AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume;
-            _hostedSource.BatchSize = BatchSize;
+                Request.GetDistinctLiveDatabaseServer().Builder,
+                ExecutionTimeout)
+            {
+                // If we are running in batches then always allow empty extractions
+                AllowEmptyResultSets = AllowEmptyExtractions || Request.IsBatchResume,
+                BatchSize = BatchSize
+            };
         }
 
         DataTable chunk = null;
@@ -197,7 +197,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             chunk = _hostedSource.GetChunk(listener, cancellationToken);
 
             chunk = _peeker.AddPeekedRowsIfAny(chunk);
-                
+
             //if we are trying to distinct the records in memory based on release id
             if (DistinctStrategy == DistinctStrategy.OrderByAndDistinctInMemory)
             {
@@ -206,7 +206,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 if(chunk != null && chunk.Rows.Count > 0)
                 {
                     //last release id in the current chunk
-                    var lastReleaseId = chunk.Rows[chunk.Rows.Count-1][releaseIdentifierColumn];
+                    var lastReleaseId = chunk.Rows[^1][releaseIdentifierColumn];
 
                     _peeker.AddWhile(_hostedSource,r=>Equals(r[releaseIdentifierColumn], lastReleaseId),chunk);
                     chunk = MakeDistinct(chunk,listener,cancellationToken);
@@ -224,15 +224,15 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         {
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Read from source failed",e));
         }
-            
+
         if(cancellationToken.IsCancellationRequested)
             throw new Exception("Data read cancelled because our cancellationToken was set, aborting data reading");
-            
+
         //if the first chunk is null
         if (firstChunk && chunk == null && !AllowEmptyExtractions)
             throw new Exception(
-                $"There is no data to load, query returned no rows, query was:{Environment.NewLine}{(_hostedSource.Sql ?? Request.QueryBuilder.SQL)}");
-            
+                $"There is no data to load, query returned no rows, query was:{Environment.NewLine}{_hostedSource.Sql ?? Request.QueryBuilder.SQL}");
+
         //not the first chunk anymore
         firstChunk = false;
 
@@ -258,7 +258,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         //first line - let's see what columns we wrote out
         //looks at the buffer and computes any transforms performed on the column
-                    
+
 
         _timeSpentValidating.Start();
         //build up the validation report (Missing/Wrong/Etc) - this has no mechanical effect on the extracted data just some metadata that goes into a flat file
@@ -279,7 +279,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
                 ExtractionTimeValidator = null;
             }
         _timeSpentValidating.Stop();
-            
+
         _timeSpentBuckettingDates.Start();
         if (ExtractionTimeTimeCoverageAggregator != null)
         {
@@ -287,7 +287,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             foreach (DataRow row in chunk.Rows)
                 ExtractionTimeTimeCoverageAggregator.ProcessRow(row);
-                
+
             listener.OnProgress(this, new ProgressEventArgs("Bucketting Dates",new ProgressMeasurement(_rowsBucketted,ProgressType.Records),_timeSpentCalculatingDISTINCT.Elapsed ));
         }
         _timeSpentBuckettingDates.Stop();
@@ -324,9 +324,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     /// <param name="listener"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    private DataTable MakeDistinct(DataTable chunk, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+    private static DataTable MakeDistinct(DataTable chunk, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
-        var removeDuplicates = new RemoveDuplicates(){NoLogging=true};
+        var removeDuplicates = new RemoveDuplicates {NoLogging=true};
         return removeDuplicates.ProcessPipelineData(chunk, listener, cancellationToken);
     }
 
@@ -378,7 +378,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             //user wants to run order by the release ID and resolve duplicates in batches as they are read
             case DistinctStrategy.OrderByAndDistinctInMemory:
-                    
+
                 //remove the DISTINCT keyword from the query
                 ((QueryBuilder)Request.QueryBuilder).SetLimitationSQL("");
 
@@ -441,7 +441,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         return sql;
 
     }
-        
+
     private void StartAudit(string sql)
     {
         var dataExportRepo = Request.DataExportRepository;
@@ -450,11 +450,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         if (Request.IsBatchResume)
         {
-            var match = previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID);
-            if(match == null)
-            {
-                throw new Exception($"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
-            }
+            var match = previousAudit.FirstOrDefault(a => a.ExtractableDataSet_ID == Request.DatasetBundle.DataSet.ID) ?? throw new Exception($"Could not find previous CumulativeExtractionResults for dataset {Request.DatasetBundle.DataSet} despite the Request being marked as a batch resume");
             Request.CumulativeExtractionResults = match;
         }
         else
@@ -529,7 +525,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
             //get up to 1000 records
             da.Fill(0, 1000, toReturn);
-                
+
             con.Close();
         }
 
@@ -538,10 +534,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
     {
-        if (value is ExtractDatasetCommand)
-            Initialize(value as ExtractDatasetCommand);
-        if (value is ExtractGlobalsCommand)
-            Initialize(value as ExtractGlobalsCommand);
+        if (value is ExtractDatasetCommand datasetCommand)
+            Initialize(datasetCommand);
+        if (value is ExtractGlobalsCommand command)
+            Initialize(command);
     }
 
     public virtual void Check(ICheckNotifier notifier)

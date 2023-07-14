@@ -73,8 +73,8 @@ public class CacheFetchRequestProviderTests
             .Returns(failuresPage2)
             .Returns(new List<ICacheFetchFailure>())
             .Throws<InvalidOperationException>();
-                
-            
+
+
         var provider = new FailedCacheFetchRequestProvider(cacheProgress.Object, 2);
 
         // We should get three ICacheFetchRequests in total, followed by a null to signify that there are no more ICacheFetchRequests
@@ -116,7 +116,7 @@ public class CacheFetchRequestProviderTests
         previousFailure.Verify();
     }
 
-    private Mock<ICacheFetchFailure> GetFailureMock()
+    private static Mock<ICacheFetchFailure> GetFailureMock()
     {
         var failure = Mock.Of<ICacheFetchFailure>(f=>
             f.FetchRequestEnd == DateTime.Now &&

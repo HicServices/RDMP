@@ -24,7 +24,7 @@ public class LoadDiagramUITests : UITests
         var ui = AndLaunch<LoadDiagramUI>(lmd);
 
         //it isn't impossible to show us
-        base.AssertCommandIsPossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd));
+        AssertCommandIsPossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd));
 
         AssertNoErrors(ExpectedErrorType.Any);
 

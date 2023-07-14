@@ -13,7 +13,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandSetArgumentTests : CommandCliTests
+internal class ExecuteCommandSetArgumentTests : CommandCliTests
 {
     [Test]
     public void TestSetArgument_WrongArgCount()
@@ -40,7 +40,7 @@ class ExecuteCommandSetArgumentTests : CommandCliTests
     public void TestSetArgument_NoArgumentFound()
     {
         var pt = WhenIHaveA<ProcessTask>();
-            
+
 
         var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff","yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object,picker);

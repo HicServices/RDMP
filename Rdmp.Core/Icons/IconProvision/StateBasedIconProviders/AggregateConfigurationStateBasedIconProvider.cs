@@ -35,7 +35,7 @@ public class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIco
 
         if (o is not AggregateConfiguration ac)
             return null;
-            
+
         var img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
 
         if (ac.IsJoinablePatientIndexTable())

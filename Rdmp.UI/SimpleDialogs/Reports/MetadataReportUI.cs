@@ -41,9 +41,9 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 /// </summary>
 public partial class MetadataReportUI : RDMPForm
 {
-    MetadataReport _report;
+    private MetadataReport _report;
     private readonly Catalogue[] _catalogues;
-    bool _firstTime = true;
+    private bool _firstTime = true;
 
     public MetadataReportUI(IActivateItems activator,ICatalogue[] initialSelection = null):base(activator)
     {
@@ -157,8 +157,7 @@ public partial class MetadataReportUI : RDMPForm
 
     private void ConfigureMetadataReport_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if(_report != null)
-            _report.Abort();
+        _report?.Abort();
 
         aggregateGraph1.AbortLoadGraph();
     }

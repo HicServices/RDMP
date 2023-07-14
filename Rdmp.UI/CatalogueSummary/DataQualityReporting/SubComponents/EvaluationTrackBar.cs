@@ -41,28 +41,29 @@ public partial class EvaluationTrackBar : UserControl
         }
     }
 
-    private List<Label> labels = new List<Label>();
+    private List<Label> labels = new();
     public event EvaluationSelectedHandler EvaluationSelected;
 
     private void RefreshUI()
     {
         if (Evaluations == null || Evaluations.Length == 0)
         {
-            this.Enabled = false;
+            Enabled = false;
             return;
         }
-        else if (Evaluations.Length == 1)
+
+        if (Evaluations.Length == 1)
         {
-            //there is only 1 
+            //there is only 1
             Enabled = false;
             EvaluationSelected(this, Evaluations.Single());
         }
         else
-            this.Enabled = true;//let user drag around the trackbar if he wants
+            Enabled = true;//let user drag around the trackbar if he wants
 
         foreach (var label in labels)
         {
-            this.Controls.Remove(label);
+            Controls.Remove(label);
             label.Dispose();
         }
         labels.Clear();
@@ -76,21 +77,23 @@ public partial class EvaluationTrackBar : UserControl
 
         for (var i = 0; i < Evaluations.Length; i++)
         {
-            var ratio = ((double)i)/(Evaluations.Length-1);
+            var ratio = (double)i/(Evaluations.Length-1);
 
 
             var x = tbEvaluation.Left + (int) (ratio * tbEvaluation.Width);
             var y = tbEvaluation.Bottom - 10;
 
-            var l = new Label();
-            l.Text = Evaluations[i].DateOfEvaluation.ToString("d");
-            l.Location = new Point(x - (l.PreferredWidth / 2), y);
-              
-            this.Controls.Add(l);
+            var l = new Label
+            {
+                Text = Evaluations[i].DateOfEvaluation.ToString("d")
+            };
+            l.Location = new Point(x - l.PreferredWidth / 2, y);
+
+            Controls.Add(l);
             l.BringToFront();
-                
+
             labels.Add(l);
-                
+
         }
             
         tbEvaluation.Value = tbEvaluation.Maximum;

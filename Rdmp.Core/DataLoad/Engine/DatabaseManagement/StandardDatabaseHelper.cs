@@ -18,7 +18,7 @@ public class StandardDatabaseHelper
 {
     public INameDatabasesAndTablesDuringLoads DatabaseNamer { get; set; }
 
-    public Dictionary<LoadBubble, DiscoveredDatabase> DatabaseInfoList = new Dictionary<LoadBubble, DiscoveredDatabase>();
+    public Dictionary<LoadBubble, DiscoveredDatabase> DatabaseInfoList = new();
 
     //Constructor
     internal StandardDatabaseHelper(DiscoveredDatabase liveDatabase, INameDatabasesAndTablesDuringLoads namer,DiscoveredServer rawServer)
@@ -27,7 +27,7 @@ public class StandardDatabaseHelper
 
             
 
-        foreach (var stage in new[] {LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live,})
+        foreach (var stage in new[] {LoadBubble.Raw, LoadBubble.Staging, LoadBubble.Live })
         {
             var stageName = DatabaseNamer.GetDatabaseName(liveDatabase.GetRuntimeName(), stage);
             DatabaseInfoList.Add(stage, stage == LoadBubble.Raw ? rawServer.ExpectDatabase(stageName) : liveDatabase.Server.ExpectDatabase(stageName));

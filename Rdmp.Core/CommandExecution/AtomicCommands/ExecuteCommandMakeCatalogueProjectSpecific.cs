@@ -39,11 +39,10 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
     public override void Execute()
     {
-        if(_catalogue == null) 
+        if(_catalogue == null)
             SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository));
 
-        if(_project == null)
-            _project = SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
+        _project ??= SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
 
         if(_project == null || _catalogue == null)
             return;
@@ -51,7 +50,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         base.Execute();
 
         var eds = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
-            
+
         var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
 
         if(alreadyInConfiguration != null)
@@ -76,11 +75,11 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is Catalogue)
-            SetCatalogue((Catalogue) target);
+        if (target is Catalogue catalogue)
+            SetCatalogue(catalogue);
 
-        if (target is Project)
-            _project = (Project) target;
+        if (target is Project project)
+            _project = project;
 
         return this;
     }

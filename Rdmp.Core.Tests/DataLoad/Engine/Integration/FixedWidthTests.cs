@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class FixedWidthTests :DatabaseTests
 {
-    private FixedWidthFormatFile CreateFormatFile()
+    private static FixedWidthFormatFile CreateFormatFile()
     {
         var fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"FixedWidthFormat.csv"));
 
@@ -31,7 +31,7 @@ public class FixedWidthTests :DatabaseTests
 
         return new FixedWidthFormatFile(fileInfo);
     }
-        
+
     [Test]
     public void TestLoadingFormat()
     {
@@ -104,7 +104,7 @@ public class FixedWidthTests :DatabaseTests
             streamWriter.WriteLine("002705600000SHAW                LENA                LC 852251978100119941031");
             streamWriter.Flush();
             streamWriter.Close();
-                
+
             var dataTable = formatFile.GetDataTableFromFlatFile(new FileInfo(tempFileToCreate));
             Assert.AreEqual(dataTable.Rows.Count,2);
             Assert.AreEqual("0026440", dataTable.Rows[0]["gmc"]);
@@ -115,10 +115,10 @@ public class FixedWidthTests :DatabaseTests
             Assert.AreEqual("38051", dataTable.Rows[0]["practice_code"]);
             Assert.AreEqual(new DateTime(2004, 4, 1), dataTable.Rows[0]["date_into_practice"]);
             Assert.AreEqual(new DateTime(2009,5,1), dataTable.Rows[0]["date_out_of_practice"]);
-                
+
 
         }
-        finally 
+        finally
         {
             File.Delete(tempFileToCreate);
         }
@@ -154,18 +154,17 @@ public class FixedWidthTests :DatabaseTests
         var parentDir = workingDir.CreateSubdirectory("FixedWidthTests");
 
         var toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("TestHeaderMatching"));
-        if (toCleanup != null)
-            toCleanup.Delete(true);
+        toCleanup?.Delete(true);
 
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "TestHeaderMatching");
 
 
         //create the file we will be trying to load
-        if(testCase == FixedWidthTestCase.InsufficientLengthOfCharactersInFileToLoad)
-            File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "file.txt"), @"12345
-12");
-        else
-            File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName , "file.txt"),@"12345
+        File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "file.txt"),
+            testCase == FixedWidthTestCase.InsufficientLengthOfCharactersInFileToLoad
+                ? @"12345
+12"
+                : @"12345
 67890");
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
@@ -211,12 +210,12 @@ public class FixedWidthTests :DatabaseTests
                     ex = Assert.Throws<FlatFileLoadException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("testCase");
+                    throw new ArgumentOutOfRangeException(nameof(testCase));
             }
-              
+
             //Assert the expected error result is the real one
             Assert.IsTrue(errorRegex.IsMatch(ex.Message));
-                
+
 
         }
         finally

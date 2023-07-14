@@ -15,7 +15,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
+internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
 {
     private readonly IBasicActivateItems _activator;
     private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _masterCollection;
@@ -26,40 +26,34 @@ class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
     /// The maximum number of objects to show in the list box
     /// </summary>
     public const int MaxMatches = 100;
-        
+
     public ConsoleGuiSelectOne(IBasicActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> available):base("Open","Ok",
         true,null)
     {
         _activator = activator;
-            
-        if(available != null)
-        {
-            _masterCollection = available.ToDictionary(k=>k,v=>activator.CoreChildProvider.GetDescendancyListIfAnyFor(v));
-        }
-        else
-        {
-            _masterCollection = _activator.CoreChildProvider.GetAllSearchables();
-        }
-            
+
+        _masterCollection = available != null ? available.ToDictionary(k=>k,v=>activator.CoreChildProvider.GetDescendancyListIfAnyFor(v)) : _activator.CoreChildProvider.GetAllSearchables();
+
         _publicCollection = _masterCollection.Select(v=>v.Key).ToList();
         SetAspectGet(_activator.CoreChildProvider);
     }
 
     private void SetAspectGet(ICoreChildProvider childProvider)
     {
-        AspectGetter = (o) =>
+        AspectGetter = o =>
         {
             if (o == null)
                 return "Null";
 
             var parent = childProvider.GetDescendancyListIfAnyFor(o)?.GetMostDescriptiveParent();
-                
+
             return parent != null ? $"{o.ID} {o.GetType().Name} {o} ({parent})" : $"{o.ID} {o.GetType().Name} {o}";
         };
 
-        _scorer = new SearchablesMatchScorer();
-        _scorer.TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),StringComparer.CurrentCultureIgnoreCase);
-
+        _scorer = new SearchablesMatchScorer
+        {
+            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),StringComparer.CurrentCultureIgnoreCase)
+        };
     }
 
     protected override void AddMoreButtonsAfter(Window win, Button btnCancel)
@@ -69,8 +63,9 @@ class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
             Y = Pos.Top(btnCancel)
         };
         win.Add(lbl);
-            
-        txtId = new TextField(){
+
+        txtId = new TextField
+        {
             X = Pos.Right(lbl),
             Y = Pos.Top(lbl),
             Width = 5
@@ -86,10 +81,10 @@ class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
     {
         if(token.IsCancellationRequested)
             return new List<IMapsDirectlyToDatabaseTable>();
-             
+
         if(int.TryParse(txtId.Text.ToString(), out var searchForID))
             _scorer.ID = searchForID;
-        else 
+        else
             _scorer.ID = null;
 
         var dict = _scorer.ScoreMatches(_masterCollection, searchText, token,null);
@@ -98,6 +93,6 @@ class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
         if(dict == null)
             return new List<IMapsDirectlyToDatabaseTable>();
 
-        return _scorer.ShortList(dict, MaxMatches,_activator);
+        return SearchablesMatchScorer.ShortList(dict, MaxMatches,_activator);
     }
 }

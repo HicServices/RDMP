@@ -21,7 +21,7 @@ using PointF = Terminal.Gui.PointF;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
+internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 {
     private readonly AggregateConfiguration aggregate;
     private GraphView graphView;
@@ -30,7 +30,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
     public ConsoleGuiViewGraph(IBasicActivateItems activator, AggregateConfiguration aggregate) :
         base (activator, new ViewAggregateExtractUICollection(aggregate) { TopX = null })
     {
-        graphView = new GraphView()
+        graphView = new GraphView
         {
             Width = Dim.Fill(),
             Height = Dim.Fill()
@@ -86,9 +86,9 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         }
 
         var titleWidth = aggregate.Name.Sum(c => Rune.ColumnWidth(c));
-        var titleStartX = (boundsWidth / 2) - (titleWidth / 2);
+        var titleStartX = boundsWidth / 2 - titleWidth / 2;
 
-        var title = new TextAnnotation()
+        var title = new TextAnnotation
         {
             ScreenPosition = new Point(titleStartX, 0),
             Text = aggregate.Name,
@@ -127,7 +127,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.AxisX.Increment = xIncrement * 10;
         graphView.AxisX.ShowLabelsEvery = 1;
         graphView.AxisX.Text = axis.AxisIncrement.ToString();
-        graphView.AxisX.LabelGetter = (v) =>
+        graphView.AxisX.LabelGetter = v =>
         {
             var x = (int)v.Value;
             return x < 0 || x >= dt.Rows.Count ? "" : dt.Rows[x][0].ToString();
@@ -138,10 +138,10 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         var colors = GetColors(dt.Columns.Count - 1);
 
-        for (var i=1;i<dt.Columns.Count;i++)
+        for (var i =1;i<dt.Columns.Count;i++)
         {
 
-            var series = new PathAnnotation() { LineColor = colors[i - 1],BeforeSeries = true };
+            var series = new PathAnnotation { LineColor = colors[i - 1],BeforeSeries = true };
             var row = 0;
 
             foreach (DataRow dr in dt.Rows)
@@ -162,8 +162,8 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         graphView.CellSize = new PointF(xIncrement, yIncrement);
 
-        graphView.AxisY.LabelGetter = (v) => FormatValue(v.Value,minY,maxY);
-        graphView.MarginLeft = (uint)(Math.Max(FormatValue(maxY, minY, maxY).Length, FormatValue(minY, minY, maxY).Length)) + 1;
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value,minY,maxY);
+        graphView.MarginLeft = (uint)Math.Max(FormatValue(maxY, minY, maxY).Length, FormatValue(minY, minY, maxY).Length) + 1;
 
         var legend = GetLegend(dt,boundsWidth,boundsHeight);
 
@@ -234,7 +234,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // Configure Axis, Margins etc
 
         // make sure whole graph fits on axis
-        var xIncrement = (max - min) / (boundsWidth);
+        var xIncrement = (max - min) / boundsWidth;
 
         // 1 bar per row of console
         graphView.CellSize = new PointF(xIncrement, 1);
@@ -248,7 +248,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // work out how to space x axis without scrolling
         graphView.AxisX.Increment = 10 * xIncrement;
         graphView.AxisX.ShowLabelsEvery = 1;
-        graphView.AxisX.LabelGetter = (v) => FormatValue(v.Value, min, max);
+        graphView.AxisX.LabelGetter = v => FormatValue(v.Value, min, max);
         graphView.AxisX.Text = countColumnName;
 
         graphView.AxisY.Increment = 1;
@@ -258,7 +258,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.ScrollOffset = new PointF(0, barSeries.Bars.Count - boundsHeight + 4);
     }
 
-    private List<Attribute> GetColors(int numberNeeded)
+    private static List<Attribute> GetColors(int numberNeeded)
     {
         var colors = new Attribute[15];
 
@@ -298,7 +298,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // Configure legend
         var legend = GetLegend(dt,boundsWidth,boundsHeight);
 
-        for(var i=1;i < dt.Columns.Count; i++)
+        for(var i =1;i < dt.Columns.Count; i++)
         {
             legend.AddEntry(new GraphCellToRender(mediumStiple, colors[i-1]), dt.Columns[i].ColumnName);
         }
@@ -339,12 +339,12 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         graphView.Series.Add(barSeries);
         graphView.MarginBottom = 2;
-        graphView.MarginLeft = (uint)(Math.Max(FormatValue(max,min,max).Length, FormatValue(min, min, max).Length))+1;
+        graphView.MarginLeft = (uint)Math.Max(FormatValue(max,min,max).Length, FormatValue(min, min, max).Length)+1;
             
         // work out how to space x axis without scrolling
         graphView.AxisY.Increment = yIncrement*5;
         graphView.AxisY.ShowLabelsEvery = 1;
-        graphView.AxisY.LabelGetter = (v) => FormatValue(v.Value, min, max);
+        graphView.AxisY.LabelGetter = v => FormatValue(v.Value, min, max);
         graphView.AxisY.Text = countColumnName;
 
         graphView.AxisX.Increment = numberOfBars+1;
@@ -352,7 +352,7 @@ class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.AxisX.Increment = 0;
         graphView.AxisX.Text = dt.Columns[0].ColumnName;
     }
-    private string FormatValue(float val, float min, float max)
+    private static string FormatValue(float val, float min, float max)
     {
         if (val < min)
             return "";

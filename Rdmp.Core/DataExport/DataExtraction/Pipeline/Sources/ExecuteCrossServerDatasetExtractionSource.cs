@@ -51,9 +51,9 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         return base.GetChunk(listener, cancellationToken);
     }
         
-    private List<DiscoveredTable> tablesToCleanup = new List<DiscoveredTable>();
+    private List<DiscoveredTable> tablesToCleanup = new();
 
-    public static Semaphore OneCrossServerExtractionAtATime = new Semaphore(1, 1);
+    public static Semaphore OneCrossServerExtractionAtATime = new(1, 1);
     private DiscoveredServer _server;
     private DiscoveredDatabase _tempDb;
     private bool _semaphoreObtained;
@@ -64,7 +64,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     private bool _doNotMigrate;
 
     private string _tablename = null;
-    private object _tableName = new object();
+    private object _tableName = new();
 
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
     {
@@ -80,11 +80,11 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         }
             
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Original (unhacked) SQL was {sql}", null));
-            
+
         //now replace database with tempdb
         var extractableCohort = Request.ExtractableCohort;
         var extractableCohortSource = extractableCohort.ExternalCohortTable;
-            
+
         var syntaxHelperFactory = new QuerySyntaxHelperFactory();
         var sourceSyntax = syntaxHelperFactory.Create(extractableCohortSource.DatabaseType);
         var destinationSyntax = syntaxHelperFactory.Create(_server.DatabaseType);
@@ -186,7 +186,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    protected bool AreOnSameServer(DiscoveredServer a, DiscoveredServer b)
+    protected static bool AreOnSameServer(DiscoveredServer a, DiscoveredServer b)
     {
         return
             string.Equals(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase) &&
@@ -223,7 +223,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
             else
                 throw new Exception(
                     $"Database '{_tempDb}' did not exist on server '{_server}' and CreateAndDestroyTemporaryDatabaseIfNotExists was false");
-  
+
 
         var tbl = _tempDb.ExpectTable(GetTableName() ?? cohortDataTable.TableName);
             

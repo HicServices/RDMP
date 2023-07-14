@@ -32,7 +32,7 @@ public partial class LicenseUI : Form
             rtLicense.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
-                    btnAccept_Click(btnAccept, new EventArgs());
+                    btnAccept_Click(btnAccept, EventArgs.Empty);
 
                 // prevents it going BONG!
                 e.SuppressKeyPress = true;
@@ -43,7 +43,7 @@ public partial class LicenseUI : Form
         }
         catch (Exception ex)
         {
-            ExceptionViewer.Show(ex);   
+            ExceptionViewer.Show(ex);
         }
     }
 
@@ -56,7 +56,7 @@ public partial class LicenseUI : Form
     {
         UserSettings.LicenseAccepted = _thirdParth.GetHashOfLicense();
         allowClose = true;
-        this.Close();
+        Close();
     }
 
     private void btnDecline_Click(object sender, EventArgs e)

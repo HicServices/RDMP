@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTests;
 
-class QueryBuilderUnitTests:UnitTests
+internal class QueryBuilderUnitTests:UnitTests
 {
     [Test]
     public void Test_IsPrimaryExtractionTable_TwoTables()
@@ -30,7 +30,7 @@ class QueryBuilderUnitTests:UnitTests
         builder.AddColumn(new ColumnInfoToIColumn(Repository,c1));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
 
-        var ex = Assert.Throws<QueryBuildingException>(()=>{var s = builder.SQL;});
+        var ex = Assert.Throws<QueryBuildingException>(()=>{ var s = builder.SQL;});
 
         StringAssert.Contains("There are multiple tables marked as IsPrimaryExtractionTable",ex.Message);
     }
@@ -87,7 +87,7 @@ class QueryBuilderUnitTests:UnitTests
         c4.SaveToDatabase();
         c4.TableInfo.Name = "t4";
         c4.TableInfo.SaveToDatabase();
-                
+
 
         /*       c2
          *     /    \

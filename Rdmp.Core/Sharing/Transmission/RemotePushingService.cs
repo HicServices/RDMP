@@ -66,7 +66,7 @@ public class RemotePushingService
                 var share = _gatherer.GatherDependencies(toSend).ToShareDefinitionWithChildren(_shareManager);
                 var json = JsonConvertExtensions.SerializeObject(share, _repositoryLocator);
 
-                var handler = new HttpClientHandler()
+                var handler = new HttpClientHandler
                 {
                     Credentials = new NetworkCredential(remote.Username, remote.GetDecryptedPassword())
                 };
@@ -77,7 +77,7 @@ public class RemotePushingService
 
                 var remote1 = remote;
                 var toSend1 = toSend;
-                               
+
                 var sender = new Task(() =>
                 {
                     using (var client = new HttpClient(handler))
@@ -111,7 +111,6 @@ public class RemotePushingService
 
         await Task.WhenAll(tasks);
 
-        if (callback != null)
-            callback();
+        callback?.Invoke();
     }
 }

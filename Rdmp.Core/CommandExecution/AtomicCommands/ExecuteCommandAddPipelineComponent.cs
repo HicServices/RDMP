@@ -30,7 +30,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
     private readonly IPipelineUseCase _useCaseIfAny;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddPipelineComponent(IBasicActivateItems activator, 
+    public ExecuteCommandAddPipelineComponent(IBasicActivateItems activator,
         [DemandsInitialization("The pipeline to add the component to")]
         IPipeline pipeline,
         [DemandsInitialization("The Type of component to add")]
@@ -67,7 +67,7 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
             var context = _useCaseIfAny?.GetContext();
             var offer = new List<Type>();
 
-            TypeFilter filter = (t, o) => t.IsGenericType &&
+            bool filter(Type t, object o) => t.IsGenericType &&
                                           (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
                                            t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
 
@@ -87,9 +87,9 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         if (add == null) return;
 
         // check if it is a source or destination (or if both are false it is a middle component)
-        TypeFilter sourceFilter = (t, o) =>
+        bool sourceFilter(Type t, object o) =>
             t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
-        TypeFilter destFilter = (t, o) =>
+        bool destFilter(Type t, object o) =>
             t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
 
         var isSource = add.FindInterfaces(sourceFilter, null).Any();

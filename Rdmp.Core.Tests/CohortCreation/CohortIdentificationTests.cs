@@ -47,23 +47,29 @@ public class CohortIdentificationTests : FromToDatabaseTests
         testData.ImportAsCatalogue();
 
         aggregate1 =
-            new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate1");
-        aggregate1.CountSQL = null;
+            new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate1")
+            {
+                CountSQL = null
+            };
         aggregate1.SaveToDatabase();
 
         new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate1);
 
         aggregate2 =
-            new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate2");
+            new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate2")
+            {
+                CountSQL = null
+            };
 
-        aggregate2.CountSQL = null;
         aggregate2.SaveToDatabase();
 
         new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate2);
 
         aggregate3 =
-            new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate3");
-        aggregate3.CountSQL = null;
+            new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate3")
+            {
+                CountSQL = null
+            };
         aggregate3.SaveToDatabase();
 
         new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate3);

@@ -18,5 +18,5 @@ public class SqlAttribute : Attribute
     /// <summary>
     /// True to skip the component when executing (but still show it at design time).
     /// </summary>
-    bool IsDisabled { get; set; }
+    private bool IsDisabled { get; set; }
 }

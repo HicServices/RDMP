@@ -11,7 +11,7 @@ using Rdmp.UI.MainFormUITabs.SubComponents;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsExternalDatabaseServer : RDMPCommandExecutionProposal<ExternalDatabaseServer>
+internal class ProposeExecutionWhenTargetIsExternalDatabaseServer : RDMPCommandExecutionProposal<ExternalDatabaseServer>
 {
     public ProposeExecutionWhenTargetIsExternalDatabaseServer(IActivateItems itemActivator)
         : base(itemActivator)

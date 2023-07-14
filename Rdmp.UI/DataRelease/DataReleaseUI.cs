@@ -36,7 +36,7 @@ namespace Rdmp.UI.DataRelease;
 /// a research project.  There is no going back once you have sent the package to the researcher, if you have accidentally included the wrong datasets or supplied identifiable data
 /// (e.g. in a free text field) then you are in big trouble.  For this reason the 'Release' process is a tightly controlled sequence which the RDMP undertakes to try to reduce error.
 /// 
-/// <para>In this control you will see all the currently selected datasets in a project's configuration(s) and the state of the dataset extraction (from the RDMP's perspective) as well 
+/// <para>In this control you will see all the currently selected datasets in a project's configuration(s) and the state of the dataset extraction (from the RDMP's perspective) as well
 /// as the status of the 'Environment' (Ticketing System).  Right clicking on a dataset will give you options appropriate to its state.</para>
 /// 
 /// <para>Extraction of large datasets can take days or weeks and a project extraction is an ongoing exercise.  It is possible that by the time you come to release a project some of the
@@ -60,8 +60,8 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private IPipelineSelectionUI _pipelineSelectionUI1;
     private IMapsDirectlyToDatabaseTable[] _globals;
     private DataExportChildProvider _childProvider;
-        
-    private ArbitraryFolderNode _globalsNode = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
+
+    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
 
 
     private bool _isExecuting;
@@ -114,30 +114,24 @@ public partial class DataReleaseUI : DataReleaseUI_Design
     private object Releaseability_AspectGetter(object rowObject)
     {
         var state = GetState(rowObject);
-        return state == null ? null : state.ToString();
+        return state?.ToString();
     }
 
     private object GetState(object rowObject)
     {
-        var releaseRunner = checkAndExecuteUI1.CurrentRunner as ReleaseRunner;
-        var sds = rowObject as ISelectedDataSets;
-        var configuration = rowObject as IExtractionConfiguration;
-        var supportingDocument = rowObject as SupportingDocument;
-        var supportingSqlTable = rowObject as SupportingSQLTable;
-
-        if (releaseRunner == null)
+        if (checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner)
             return null;
 
-        if (configuration != null)
+        if (rowObject is IExtractionConfiguration configuration)
             return releaseRunner.GetState(configuration);
 
-        if (sds != null)
+        if (rowObject is ISelectedDataSets sds)
             return releaseRunner.GetState(sds);
 
-        if (supportingDocument != null)
+        if (rowObject is SupportingDocument supportingDocument)
             return releaseRunner.GetState(supportingDocument);
 
-        if (supportingSqlTable != null)
+        if (rowObject is SupportingSQLTable supportingSqlTable)
             return releaseRunner.GetState(supportingSqlTable);
 
         if (rowObject.Equals(_globalsNode))
@@ -148,7 +142,7 @@ public partial class DataReleaseUI : DataReleaseUI_Design
 
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
     {
-        return new ReleaseOptions()
+        return new ReleaseOptions
         {
             Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
             Configurations = ToIdList(
@@ -158,24 +152,21 @@ public partial class DataReleaseUI : DataReleaseUI_Design
                 _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? Array.Empty<int>() : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
             ),
             Command = activityRequested,
-            ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
+            ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode)
         };
     }
 
-    private string ToIdList(int[] ints)
+    private static string ToIdList(int[] ints)
     {
         return string.Join(",", ints.Select(i => i.ToString()).ToArray());
     }
 
     private IEnumerable ChildrenGetter(object model)
     {
-        var p = model as Project;
-        var ec = model as ExtractionConfiguration;
-
-        if (p != null)
+        if (model is Project p)
             return _configurations = _childProvider.GetActiveConfigurationsOnly(p);
 
-        if (ec != null)
+        if (model is ExtractionConfiguration ec)
             return _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
 
         if (Equals(model, _globalsNode))
@@ -248,18 +239,18 @@ public partial class DataReleaseUI : DataReleaseUI_Design
         tlvReleasePotentials.DisableObjects(_globals);
         //tlvReleasePotentials.DisableObject(_globalsNode);
     }
-        
+
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
         base.ConsultAboutClosing(sender, e);
         checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
-        
+
     public override string GetTabName()
     {
         return $"Release: {_project}";
     }
-        
+
     public void TickAllFor(ExtractionConfiguration configuration)
     {
         tlvReleasePotentials.UncheckAll();

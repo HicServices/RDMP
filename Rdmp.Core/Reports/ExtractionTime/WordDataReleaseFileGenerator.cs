@@ -27,7 +27,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     protected IExtractableCohort Cohort { get; set; }
     protected IProject Project { get; set; }
 
-    const int CohortCountTimeoutInSeconds = 600; // 10 minutes
+    private const int CohortCountTimeoutInSeconds = 600; // 10 minutes
 
     public WordDataReleaseFileGenerator(IExtractionConfiguration configuration, IDataExportRepository repository)
     {
@@ -40,7 +40,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         Cohort = _repository.GetObjectByID<ExtractableCohort>((int) Configuration.Cohort_ID);
 
-        ExtractionResults = 
+        ExtractionResults =
             Configuration.CumulativeExtractionResults
                 .OrderBy(
                     c => _repository.GetObjectByID<ExtractableDataSet>(c.ExtractableDataSet_ID).ToString()
@@ -52,21 +52,18 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         FileInfo f;
 
-        if (string.IsNullOrWhiteSpace(saveAsFilename))
-            f = GetUniqueFilenameInWorkArea("ReleaseDocument");
-        else
-            f = new FileInfo(saveAsFilename);
+        f = string.IsNullOrWhiteSpace(saveAsFilename) ? GetUniqueFilenameInWorkArea("ReleaseDocument") : new FileInfo(saveAsFilename);
 
         // Create an instance of Word  and make it visible.=
         using (var document = GetNewDocFile(f))
         {
-                
+
             //actually changes it to landscape :)
             SetLandscape(document);
-                               
+
             InsertHeader(document, $"Project:{Project.Name}",1);
             InsertHeader(document, Configuration.Name,2);
-                
+
             var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
             if(disclaimer != null)
@@ -81,7 +78,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             InsertParagraph(document,Environment.NewLine);
 
             CreateFileSummary(document);
-                                
+
             //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
             if (string.IsNullOrWhiteSpace(saveAsFilename))
                 ShowFile(f);
@@ -101,7 +98,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             requiredRows++;
         if (hasTicket)
             requiredRows++;
-            
+
         var table = InsertTable(document, requiredRows, 2);
 
         if(hasTicket)
@@ -149,7 +146,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     private void CreateCohortDetailsTable(XWPFDocument document)
     {
         var table = InsertTable(document, 2, 4);
-            
+
         var tableLine = 0;
 
         SetTableCell(table,tableLine, 0, "Version");
@@ -157,9 +154,9 @@ public class WordDataReleaseFileGenerator : DocXHelper
         SetTableCell(table,tableLine, 2, "Date Extracted");
         SetTableCell(table,tableLine, 3, "Unique Individuals");
         tableLine++;
-            
+
         SetTableCell(table,tableLine, 0, Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
-        SetTableCell(table,tableLine, 1, string.Format("{0} (ID={1}, OriginID={2})" , Cohort,Cohort.ID,Cohort.OriginID));//description fetched from remote table
+        SetTableCell(table,tableLine, 1, $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})");//description fetched from remote table
 
         var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString() : "Never";
         SetTableCell(table,tableLine, 2, lastExtracted);
@@ -169,7 +166,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     private void CreateFileSummary(XWPFDocument document)
     {
         var table = InsertTable(document, ExtractionResults.Length + 1, 5);
-            
+
         var tableLine = 0;
 
         SetTableCell(table,tableLine, 0, "Data Requirement");
@@ -182,7 +179,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         foreach (var result in ExtractionResults)
         {
             var filename = GetFileName(result);
-                
+
             SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
             SetTableCell(table,tableLine, 1,result.FiltersUsed);
             SetTableCell(table,tableLine, 2,filename);
@@ -190,7 +187,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             SetTableCell(table,tableLine, 4,result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
             tableLine++;
         }
-           
+
     }
 
     private string GetFileName(ICumulativeExtractionResults result)
@@ -205,8 +202,8 @@ public class WordDataReleaseFileGenerator : DocXHelper
         if (result.DestinationDescription.StartsWith(Project.ExtractionDirectory,
                 StringComparison.CurrentCultureIgnoreCase))
         {
-            var relative = result.DestinationDescription.Substring(Project.ExtractionDirectory.Length).Replace('\\', '/');
-                
+            var relative = result.DestinationDescription[Project.ExtractionDirectory.Length..].Replace('\\', '/');
+
             return $"./{relative.Trim('/')}";
         }
 

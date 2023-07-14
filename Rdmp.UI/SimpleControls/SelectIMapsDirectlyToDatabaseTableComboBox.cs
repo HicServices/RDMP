@@ -40,7 +40,7 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
                 else
                     suggestComboBox1.SelectedIndex = -1;
 
-                suggestComboBox1_SelectedIndexChanged(this,new EventArgs());
+                suggestComboBox1_SelectedIndexChanged(this,EventArgs.Empty);
             }
         }
     }
@@ -54,17 +54,16 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
     {
         InitializeComponent();
 
-        suggestComboBox1.PropertySelector = (s) => s.Cast<object>().Select(o => o == null ? "<None>>": o.ToString());
+        suggestComboBox1.PropertySelector = s => s.Cast<object>().Select(o => o == null ? "<None>>": o.ToString());
         suggestComboBox1.SelectedIndexChanged += suggestComboBox1_SelectedIndexChanged;
     }
 
-    void suggestComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    private void suggestComboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
         if(_settingUp)
             return;
 
-        if(SelectedItemChanged != null)
-            SelectedItemChanged(this,new EventArgs());
+        SelectedItemChanged?.Invoke(this,EventArgs.Empty);
     }
 
     public void SetUp(IEnumerable<IMapsDirectlyToDatabaseTable> available)
@@ -81,13 +80,13 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
             if(before == -1)
                 suggestComboBox1.SelectedIndex = -1;
         }
-        finally 
+        finally
         {
             _settingUp = false;
         }
     }
 
-    private void lPick_Click(object sender, System.EventArgs e)
+    private void lPick_Click(object sender, EventArgs e)
     {
         if(_activator.SelectObject(new DialogArgs
            {
@@ -105,5 +104,5 @@ public partial class SelectIMapsDirectlyToDatabaseTableComboBox : UserControl
 
     }
 
-        
+
 }

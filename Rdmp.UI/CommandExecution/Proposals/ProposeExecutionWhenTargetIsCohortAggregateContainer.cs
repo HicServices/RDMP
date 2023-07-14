@@ -14,7 +14,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPCommandExecutionProposal<CohortAggregateContainer>
+internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPCommandExecutionProposal<CohortAggregateContainer>
 {
     public ProposeExecutionWhenTargetIsCohortAggregateContainer(IActivateItems activator):base(activator)
     {
@@ -43,15 +43,14 @@ class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPCommandExecutio
             return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,sourceCatalogueCombineable, targetCohortAggregateContainer);
 
         //source is aggregate
-        var sourceAggregateCommand = cmd as AggregateConfigurationCombineable;
 
-        if (sourceAggregateCommand != null)
+        if (cmd is AggregateConfigurationCombineable sourceAggregateCommand)
         {
             //if it is not already involved in cohort identification 
             if(!sourceAggregateCommand.Aggregate.IsCohortIdentificationAggregate)
                 return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
 
-                
+
             var cic = sourceAggregateCommand.CohortIdentificationConfigurationIfAny;
 
             if(cic != null && !cic.Equals(targetCohortAggregateContainer.GetCohortIdentificationConfiguration()))
@@ -59,31 +58,27 @@ class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPCommandExecutio
                 //its a cic aggregate but it is one outside of our tree so instead offer adding (not moving/reordering)
                 return new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(ItemActivator,sourceAggregateCommand, targetCohortAggregateContainer);
             }
-            else
-            {
-                //we are dragging around inside our own tree
+            //we are dragging around inside our own tree
 
-                //it is involved in cohort identification already, presumably it's a reorder?
-                if(sourceAggregateCommand.ContainerIfAny != null)
-                    if(insertOption == InsertOption.Default)
-                        return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
-                    else
-                        return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer, insertOption);
+            //it is involved in cohort identification already, presumably it's a reorder?
+            if(sourceAggregateCommand.ContainerIfAny != null)
+                if(insertOption == InsertOption.Default)
+                    return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
+                else
+                    return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer, insertOption);
                 
-                //it's a patient index table
-                if (sourceAggregateCommand.IsPatientIndexTable)
-                    return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
+            //it's a patient index table
+            if (sourceAggregateCommand.IsPatientIndexTable)
+                return new ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
                 
                 
-                //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
-                return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
-            }
+            //ok it IS a cic aggregate but it doesn't have any container so it must be an orphan
+            return new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, sourceAggregateCommand, targetCohortAggregateContainer);
         }
 
         //source is another container (UNION / INTERSECT / EXCEPT)
-        var sourceCohortAggregateContainerCommand = cmd as CohortAggregateContainerCombineable;
 
-        if (sourceCohortAggregateContainerCommand != null)
+        if (cmd is CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand)
         {
             //can never drag the root container elsewhere
             if (sourceCohortAggregateContainerCommand.ParentContainerIfAny == null)

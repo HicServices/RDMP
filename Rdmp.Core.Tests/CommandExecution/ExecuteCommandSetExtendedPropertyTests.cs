@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
+internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
 {
     [Test]
     public void CommandImpossible_BecausePropertyDoesNotExist()

@@ -34,7 +34,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
 
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(new Dictionary<string, string>
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
         {
             {"ShowPeriod", ShowPeriod.ToString()},
             {"IgnoreRows", IgnoreRows.ToString()}
@@ -43,7 +43,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
 
     public override void LoadExtraText(string s)
     {
-        var dict = Helper.LoadDictionaryFromString(s);
+        var dict = PersistStringHelper.LoadDictionaryFromString(s);
 
         //if it's empty we just use the default values we are set up for
         if (dict == null || !dict.Any())
@@ -56,7 +56,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
     public void AddCatalogue(Catalogue catalogue)
     {
         if(catalogue == null)
-            throw new ArgumentException("Catalogue must not be null", "catalogue");
+            throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Add(catalogue);
     }
@@ -64,7 +64,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
     public void RemoveCatalogue(Catalogue catalogue)
     {
         if(catalogue == null)
-            throw new ArgumentException("Catalogue must not be null", "catalogue");
+            throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Remove(catalogue);
     }

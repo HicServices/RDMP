@@ -18,7 +18,7 @@ public abstract class Compileable:ICompileable
 {
     protected readonly CohortCompiler _compiler;
     private CompilationState _state;
-        
+
     public CohortAggregateContainer ParentContainerIfAny { get; set; }
     public bool? IsFirstInContainer { get; set; }
 
@@ -50,8 +50,7 @@ public abstract class Compileable:ICompileable
         {
             _state = value;
             var h = StateChanged;
-            if(h != null)
-                h(this,new EventArgs());
+            h?.Invoke(this,EventArgs.Empty);
         }
         get => _state;
     }
@@ -64,9 +63,9 @@ public abstract class Compileable:ICompileable
 
     public event EventHandler StateChanged;
     public Exception CrashMessage { get; set; }
-        
+
     public int FinalRowCount { set; get; }
-        
+
     public int? CumulativeRowCount { set; get; }
 
     public abstract IMapsDirectlyToDatabaseTable Child { get; }
@@ -79,10 +78,7 @@ public abstract class Compileable:ICompileable
     public TimeSpan? ElapsedTime {
         get
         {
-            if (Stopwatch == null)
-                return null;
-
-            return Stopwatch.Elapsed;
+            return Stopwatch?.Elapsed;
         }
     }
 

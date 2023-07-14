@@ -25,6 +25,6 @@ public partial class LoadStageIconUI : UserControl
     {
         pictureBox1.Image = iconProvider.GetImage(stage).ImageToBitmap();
         lblLoadStage.Text = stage.ToString();
-        this.Width = lblLoadStage.Right;
+        Width = lblLoadStage.Right;
     }
 }

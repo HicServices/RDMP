@@ -19,8 +19,8 @@ namespace Rdmp.Core.QueryBuilding;
 /// <summary>
 /// The SELECT portion of QueryBuilder is built up via AddColumn which takes an IColumn.  Each IColumn is a single line of SELECT Sql which might be as
 /// simple as the name of a column but might be a method with an alias or even a count e.g. 'sum(distinct mycol) as Total'.  These IColumns are wrapped by
-/// QueryTimeColumn which is a wrapper for IColumn which is gradually populated with facts discovered during QueryBuilding such as whether it is from a Lookup 
-/// Table, whether it maps to an underlying ColumnInfo etc.  These facts are used later on by QueryBuilder to decide which tables/joins are needed in the FROM 
+/// QueryTimeColumn which is a wrapper for IColumn which is gradually populated with facts discovered during QueryBuilding such as whether it is from a Lookup
+/// Table, whether it maps to an underlying ColumnInfo etc.  These facts are used later on by QueryBuilder to decide which tables/joins are needed in the FROM
 /// section of the query etc
 /// </summary>
 public class QueryTimeColumn: IComparable
@@ -32,7 +32,7 @@ public class QueryTimeColumn: IComparable
     public bool IsIsolatedLookupDescription { get; set; }
 
     /// <summary>
-    /// The <see cref="UnderlyingColumn"/> is NOT from a <see cref="Lookup"/> but it is a code column (foreign key) which could be linked to a <see cref="Lookup"/>. 
+    /// The <see cref="UnderlyingColumn"/> is NOT from a <see cref="Lookup"/> but it is a code column (foreign key) which could be linked to a <see cref="Lookup"/>.
     /// The <see cref="Lookup"/> will be included in the query if one or more description columns follow this column in the query
     /// </summary>
     public bool IsLookupForeignKey { get; private set; }
@@ -89,7 +89,7 @@ public class QueryTimeColumn: IComparable
         if (obj is QueryTimeColumn == false)
             throw new Exception(".Equals only works for objects of type QueryTimeColumn");
 
-        var other = (obj as QueryTimeColumn);
+        var other = obj as QueryTimeColumn;
         return
             other.IColumn.Equals(IColumn);
     }
@@ -97,17 +97,17 @@ public class QueryTimeColumn: IComparable
     /// <inheritdoc/>
     public int CompareTo(object obj)
     {
-        if (obj is QueryTimeColumn)
+        if (obj is QueryTimeColumn column)
         {
-            return this.IColumn.Order -
-                   (obj as QueryTimeColumn).IColumn.Order;
+            return IColumn.Order -
+                   column.IColumn.Order;
         }
 
         return 0;
     }
 
     /// <summary>
-    /// Computes and records the <see cref="Lookup"/> related facts about all the <see cref="QueryTimeColumn"/> provided when building a query which requires the 
+    /// Computes and records the <see cref="Lookup"/> related facts about all the <see cref="QueryTimeColumn"/> provided when building a query which requires the
     /// supplied list of <paramref name="tablesUsedInQuery"/>.
     /// </summary>
     /// <param name="ColumnsInOrder"></param>
@@ -120,12 +120,12 @@ public class QueryTimeColumn: IComparable
 
         var firstTable = tablesUsedInQuery.FirstOrDefault();
 
-        var allAvailableLookups = Array.Empty<Lookup>(); 
+        var allAvailableLookups = Array.Empty<Lookup>();
 
         if(firstTable != null)
             allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();
-                
-        for (var i = 0; i < ColumnsInOrder.Count(); i++)
+
+        for (var i = 0; i < ColumnsInOrder.Length; i++)
         {
             //it is a custom column
             if (ColumnsInOrder[i].UnderlyingColumn == null)
@@ -186,7 +186,7 @@ public class QueryTimeColumn: IComparable
                             //any lookup where there is...
                             ColumnsInOrder.Any(
                                 qtc =>
-                                    //a column with an ID equal to the fk 
+                                    //a column with an ID equal to the fk
                                     qtc.UnderlyingColumn != null && qtc.UnderlyingColumn.ID == l.ForeignKey_ID)).ToArray();
 
 
@@ -214,14 +214,14 @@ public class QueryTimeColumn: IComparable
 
                 if (supplementalJoins != null)
                     foreach (var supplementalJoin in supplementalJoins)
-                        if (!tablesUsedInQuery.Any(t => t.ID == supplementalJoin.ForeignKey.TableInfo_ID))
+                        if (tablesUsedInQuery.All(t => t.ID != supplementalJoin.ForeignKey.TableInfo_ID))
                             throw new QueryBuildingException(
                                 $"Lookup requires supplemental join to column {supplementalJoin.ForeignKey} which is contained in a table that is not part of the SELECT column collection");
             }
         }
     }
 
-      
+
     /// <summary>
     /// Returns the line of SELECT Sql for this column that will appear in the final query
     /// </summary>
@@ -231,20 +231,18 @@ public class QueryTimeColumn: IComparable
     /// <returns></returns>
     public string GetSelectSQL(string hashingPattern, string salt,IQuerySyntaxHelper syntaxHelper)
     {
-        var toReturn = this.IColumn.SelectSQL;
+        var toReturn = IColumn.SelectSQL;
 
         //deal with hashing
-        if (string.IsNullOrWhiteSpace(salt) == false && this.IColumn.HashOnDataRelease)
+        if (string.IsNullOrWhiteSpace(salt) == false && IColumn.HashOnDataRelease)
         {
-            if (string.IsNullOrWhiteSpace(this.IColumn.Alias))
+            if (string.IsNullOrWhiteSpace(IColumn.Alias))
                 throw new ArgumentException(
-                    $"IExtractableColumn {this.IColumn} is missing an Alias (required for hashing)");
+                    $"IExtractableColumn {IColumn} is missing an Alias (required for hashing)");
 
             //if there is no custom hashing pattern
-            if (string.IsNullOrWhiteSpace(hashingPattern))
-                toReturn = syntaxHelper.HowDoWeAchieveMd5(toReturn); //use the DBMS specific one
-            else
-                toReturn = string.Format(hashingPattern,toReturn, salt); //otherwise use the custom one
+            toReturn = string.IsNullOrWhiteSpace(hashingPattern) ? syntaxHelper.HowDoWeAchieveMd5(toReturn) : //use the DBMS specific one
+                string.Format(hashingPattern,toReturn, salt); //otherwise use the custom one
         }
 
         // the SELECT SQL may span multiple lines, so collapse it to a single line cleaning up any whitespace issues, e.g. to avoid double spaces in the collapsed version
@@ -252,10 +250,10 @@ public class QueryTimeColumn: IComparable
             toReturn.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(s => s.Trim());
         toReturn = string.Join(" ", trimmedSelectSQL);
-                
+
         //append alias to the end of the line if there is an alias
-        if (!string.IsNullOrWhiteSpace(this.IColumn.Alias))
-            toReturn += syntaxHelper.AliasPrefix + this.IColumn.Alias.Trim();
+        if (!string.IsNullOrWhiteSpace(IColumn.Alias))
+            toReturn += syntaxHelper.AliasPrefix + IColumn.Alias.Trim();
 
         //cannot be both, we check for this earlier (see SetLookupStatus)
         Debug.Assert(!(IsLookupDescription && IsLookupForeignKey));
@@ -301,7 +299,7 @@ public class QueryTimeColumn: IComparable
 
     /// <summary>
     /// For a given column that <see cref="IsLookupForeignKey"/> returns true if there is an associated column from the lookup (i.e. a description column). This
-    /// should determine whether or not to link to the table in the FROM section of the query. 
+    /// should determine whether or not to link to the table in the FROM section of the query.
     /// </summary>
     /// <param name="selectColumns"></param>
     /// <returns></returns>
@@ -311,6 +309,6 @@ public class QueryTimeColumn: IComparable
             return false;
 
         //see if the description is used anywhere in the actual query columns!
-        return selectColumns.Any(c => c.IsLookupDescription && c.LookupTable.ID == this.LookupTable.ID);
+        return selectColumns.Any(c => c.IsLookupDescription && c.LookupTable.ID == LookupTable.ID);
     }
 }

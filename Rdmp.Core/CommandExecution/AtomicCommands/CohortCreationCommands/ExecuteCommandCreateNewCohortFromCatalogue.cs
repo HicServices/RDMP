@@ -89,13 +89,10 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
 
     public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        var cata = target as Catalogue;
-        var ei = target as ExtractionInformation;
-
-        if (cata != null)
+        if (target is Catalogue cata)
             SetExtractionIdentifierColumn(GetExtractionInformationFromCatalogue(cata));
 
-        if (ei != null)
+        if (target is ExtractionInformation ei)
             SetExtractionIdentifierColumn(ei);
 
         return base.SetTarget(target);
@@ -137,7 +134,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         base.Execute();
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
-        var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(_extractionIdentifierColumn));
+        var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(_extractionIdentifierColumn));
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)

@@ -17,7 +17,7 @@ namespace Rdmp.UI.Wizard;
 
 /// <summary>
 /// Provides streamlined/simplified access to the cohort creation functionality of RDMP.  The UI lets you pick from existing datasets and existing filters created by your Data Manager for
-/// interacting with those datasets including specifying values for arguments e.g. TestCode = 'CRE'.  
+/// interacting with those datasets including specifying values for arguments e.g. TestCode = 'CRE'.
 /// 
 /// <para>Initially you are limited to 2 inclusion criteria and 2 exclsuion criteria (datasets).  Upon completing the wizard you will be taken to the execution screen of the Cohort Identification
 /// Configuration created.  There you can test/refine your configuration as well as add more datasets and deeper nesting of set operations as required.</para>
@@ -25,8 +25,8 @@ namespace Rdmp.UI.Wizard;
 /// </summary>
 public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 {
-    private Size _smallSize = new Size(755, 140);
-    private Size _bigSize = new Size(1368, 876);
+    private Size _smallSize = new(755, 140);
+    private Size _bigSize = new(1368, 876);
 
     public CohortIdentificationConfiguration CohortIdentificationCriteriaCreatedIfAny { get;private set; }
 
@@ -42,7 +42,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
         setOperationInclude.SetupFor(Activator, true);
         setOperationExclude.SetupFor(Activator, false);
 
-        this.Size = _smallSize;
+        Size = _smallSize;
     }
 
     private void CheckBoxChanged(object sender, EventArgs e)
@@ -165,7 +165,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
     {
         if (e.KeyCode == Keys.Enter)
         {
-            btnGo_Click(this, new EventArgs());
+            btnGo_Click(this, EventArgs.Empty);
         }
     }
 
@@ -174,14 +174,11 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
         pnlWizard.Visible = cbUseWizard.Checked;
         pnlWizard.Enabled = cbUseWizard.Checked;
 
-        if (cbUseWizard.Checked)
-            this.Size = _bigSize;
-        else
-            this.Size = _smallSize;
+        Size = cbUseWizard.Checked ? _bigSize : _smallSize;
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 }

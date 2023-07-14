@@ -47,7 +47,7 @@ public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommand
                     $"Catalogue Name is '{_targetCatalogue.Name}' but ShareDefinition is for, '{first.Properties["Name"]}'.  Import Anyway?", "Import Anyway?"))
                 return;
 
-        shareManager.ImportPropertiesOnly(_targetCatalogue, first);
+        ShareManager.ImportPropertiesOnly(_targetCatalogue, first);
         _targetCatalogue.SaveToDatabase();
 
         var liveCatalogueItems = _targetCatalogue.CatalogueItems;
@@ -60,12 +60,8 @@ public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommand
 
             var shareName = (string)sd.Properties["Name"];
 
-            var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName));
-
-            if (existingMatch == null)
-                existingMatch = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _targetCatalogue, shareName);
-
-            shareManager.ImportPropertiesOnly(existingMatch, sd);
+            var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName)) ?? new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _targetCatalogue, shareName);
+            ShareManager.ImportPropertiesOnly(existingMatch, sd);
             existingMatch.SaveToDatabase();
         }
 

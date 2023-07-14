@@ -31,14 +31,14 @@ public class CohortCompilerRunner
 
     private CohortIdentificationConfiguration _cic;
     private ExternalDatabaseServer _queryCachingServer;
-        
+
     /// <summary>
     /// The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
-    /// and you don't have a dependant UI etc.  Setting false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) 
+    /// and you don't have a dependant UI etc.  Setting false will add all joinables, subqueries etc and the root container (final answer for who is in cohort)
     /// but not the other subcontainers (if there were any in the first place!).  Defaults to true.
     /// </summary>
     public bool RunSubcontainers { get; set; }
-        
+
     /// <summary>
     /// Creates a new runner for the given <paramref name="compiler"/> which will facilitate running its Tasks in a sensible order using result caching if possible
     /// </summary>
@@ -70,7 +70,7 @@ public class CohortCompilerRunner
         RunningFinalTotals,
         Finished
     }
-        
+
     public ICompileable Run(CancellationToken token)
     {
         try
@@ -82,7 +82,7 @@ public class CohortCompilerRunner
 
             SetPhase(Phase.RunningJoinableTasks);
 
-            Parallel.ForEach(_cic.GetAllJoinables(), (j) => Compiler.AddTask(j, globals));
+            Parallel.ForEach(_cic.GetAllJoinables(), j => Compiler.AddTask(j, globals));
 
             Compiler.CancelAllTasks(false);
 
@@ -95,7 +95,7 @@ public class CohortCompilerRunner
             SetPhase(Phase.RunningAggregateTasks);
 
             // Add all aggregates
-            Parallel.ForEach(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), (c) => Compiler.AddTask(c, globals)); 
+            Parallel.ForEach(_cic.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively(), c => Compiler.AddTask(c, globals));
 
             Compiler.CancelAllTasks(false);
 
@@ -114,16 +114,16 @@ public class CohortCompilerRunner
                 Parallel.ForEach(
                     _cic.RootCohortAggregateContainer.GetAllSubContainersRecursively().Where(
                         c=>CohortQueryBuilderResult.IsEnabled(c,Compiler.CoreChildProvider)),
-                    (a)=>Compiler.AddTask(a, globals));
+                    a=>Compiler.AddTask(a, globals));
             }
-                        
+
 
             Compiler.CancelAllTasks(false);
 
             RunAsync(Compiler.Tasks.Keys.Where(c => c.State == CompilationState.NotScheduled && c.IsEnabled()), token);
 
             SetPhase(Phase.Finished);
-            
+
             return toReturn;
         }
         catch (OperationCanceledException)
@@ -154,7 +154,7 @@ public class CohortCompilerRunner
 
         token.ThrowIfCancellationRequested();
 
-        foreach (var c in toCache) 
+        foreach (var c in toCache)
             Compiler.CacheSingleTask(c, _queryCachingServer);
     }
 
@@ -163,7 +163,6 @@ public class CohortCompilerRunner
         ExecutionPhase = p;
 
         var h = PhaseChanged;
-        if (h != null)
-            h(this,new EventArgs());
+        h?.Invoke(this,EventArgs.Empty);
     }
 }

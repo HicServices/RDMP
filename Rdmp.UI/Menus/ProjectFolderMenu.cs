@@ -11,7 +11,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class ProjectFolderMenu : RDMPContextMenuStrip
+internal class ProjectFolderMenu : RDMPContextMenuStrip
 {
     public ProjectFolderMenu(RDMPContextMenuStripArgs args, FolderNode<Project> folder)
         : base(args, folder)

@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandDeprecateTests : CommandCliTests
+internal class ExecuteCommandDeprecateTests : CommandCliTests
 {
     [Test]
     public void TestDeprecateCommand()

@@ -14,7 +14,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-class ChiValidationTest : ValidationTests
+internal class ChiValidationTest : ValidationTests
 {
 
     [Test]
@@ -24,18 +24,21 @@ class ChiValidationTest : ValidationTests
         var validator = new Validator();
 
         // 2. Create new ItemValidator - this is respoonsible for validating an individual item in the target object
-        var chi = new ItemValidator();
-
-        // 3. Set the ItemValidator's PrimaryConstraint (must be valid CHI)
-        // (using Validator's CreateConstraint() method to create a Primary Constraint (CHI))
-        chi.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong);
+        var chi = new ItemValidator
+        {
+            // 3. Set the ItemValidator's PrimaryConstraint (must be valid CHI)
+            // (using Validator's CreateConstraint() method to create a Primary Constraint (CHI))
+            PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong)
+        };
 
         // 4. Add the ItemValidator to our Validator, specifying the item it should validate against
         validator.AddItemValidator(chi, "chi", typeof(string));
 
         // 5. Create a target object (dictionary) against which to validate
-        var domainObject = new Dictionary<string, object>();
-        domainObject.Add("chi", TestConstants._VALID_CHI);
+        var domainObject = new Dictionary<string, object>
+        {
+            { "chi", TestConstants._VALID_CHI }
+        };
 
         // 6. Validate, passing in the target object to be validated against - ValidationFailure or null is returned
         Assert.IsNull(validator.Validate(domainObject));
@@ -48,11 +51,12 @@ class ChiValidationTest : ValidationTests
         var validator = new Validator();
 
         // 2. Create new ItemValidator - this is respoonsible for validating an individual item in the target object
-        var chi = new ItemValidator();
-
-        // 3. Set the ItemValidator's PrimaryConstraint (must be valid CHI)
-        // (using Validator's CreateConstraint() method to create a Primary Constraint (CHI))
-        chi.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
+        var chi = new ItemValidator
+        {
+            // 3. Set the ItemValidator's PrimaryConstraint (must be valid CHI)
+            // (using Validator's CreateConstraint() method to create a Primary Constraint (CHI))
+            PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong)
+        };
 
         // 4. Add the ItemValidator to our Validator, specifying the item it should validate against
         validator.AddItemValidator(chi, "chi", typeof(string));
@@ -71,9 +75,11 @@ class ChiValidationTest : ValidationTests
         validator.AddItemValidator(age, "age", typeof(int));
 
         // 8. Create a target object (dictionary) against which to validate
-        var domainObject = new Dictionary<string, object>();
-        domainObject.Add("chi", TestConstants._VALID_CHI);
-        domainObject.Add("age", 12);
+        var domainObject = new Dictionary<string, object>
+        {
+            { "chi", TestConstants._VALID_CHI },
+            { "age", 12 }
+        };
 
         // 9. Validate, passing in the target object to be validated against
         Assert.IsNull(validator.Validate(domainObject));

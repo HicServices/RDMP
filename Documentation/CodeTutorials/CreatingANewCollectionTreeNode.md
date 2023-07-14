@@ -59,13 +59,13 @@ namespace Rdmp.Core.Providers.Nodes
 } 
 ```
 
-NOTE: If a node can only ever appear once in any collection (e.g. it is a unique top level node) then you can instead inherit from SingletonNode and skip the rest of this section.  If you are an SingletonNode then your class name should start with All e.g. AllCakesNode, AllCarsNode etc.
+NOTE: If a node can only ever appear once in any collection (e.g. it is a unique top level node) then you can instead inherit from SingletonNode and skip the rest of this section.  If you are a SingletonNode then your class name should start with All e.g. AllCakesNode, AllCarsNode etc.
 
-Assuming you dont have a SingletonNode then you should add constructor arguments sufficient to uniquely identify which instance you have.  In this case we will have an `FrozenExtractionConfigurationsNode` instance for every `Project` so we need a reference to which `Project` we relate to.
+Assuming you don't have a SingletonNode then you should add constructor arguments sufficient to uniquely identify which instance you have.  In this case we will have an `FrozenExtractionConfigurationsNode` instance for every `Project` so we need a reference to which `Project` we relate to.
 
 <!--- df7d2bb4cd6145719f933f6f15218b1a --->
 ```csharp
-class FrozenExtractionConfigurationsNode
+private class FrozenExtractionConfigurationsNode
 {
     public Project Project { get; set; }
 
@@ -85,7 +85,7 @@ Finally we need to implement 'Equality members', this ensures that Object List V
 
 <!--- a93fd8b3d1fb4ad8975ef8cf9c384236 --->
 ```csharp
-class FrozenExtractionConfigurationsNode
+private class FrozenExtractionConfigurationsNode
 {
 	public Project Project { get; set; }
 
@@ -106,15 +106,15 @@ class FrozenExtractionConfigurationsNode
 
 	public override bool Equals(object obj)
 	{
-		if (ReferenceEquals(null, obj)) return false;
+		if (obj is null) return false;
 		if (ReferenceEquals(this, obj)) return true;
-		if (obj.GetType() != this.GetType()) return false;
+		if (obj.GetType() != GetType()) return false;
 		return Equals((FrozenExtractionConfigurationsNode) obj);
 	}
 
 	public override int GetHashCode()
 	{
-		return (Project != null ? Project.GetHashCode() : 0);
+		return Project != null ? Project.GetHashCode() : 0;
 	}
 }
 ```

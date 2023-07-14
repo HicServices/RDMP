@@ -17,7 +17,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components;
 [Category("Unit")]
 public class TransposerTests
 {
-    DataTable dt = new DataTable();
+    private DataTable dt = new();
 
 
     [OneTimeSetUp]
@@ -82,8 +82,10 @@ public class TransposerTests
 
         var dr = dt.Rows.Add("32 GramMax", "55", "0", "5");
 
-        var transposer = new Transposer();
-        transposer.MakeHeaderNamesSane = true;
+        var transposer = new Transposer
+        {
+            MakeHeaderNamesSane = true
+        };
         var actual = transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
             
         Assert.IsTrue(actual.Columns.Contains("_32GramMax"));

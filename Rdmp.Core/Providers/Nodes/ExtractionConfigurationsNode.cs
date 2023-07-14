@@ -33,15 +33,15 @@ public class ExtractionConfigurationsNode:Node,IOrderable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((ExtractionConfigurationsNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return (Project != null ? Project.GetHashCode() : 0);
+        return Project != null ? Project.GetHashCode() : 0;
     }
 
     public int Order { get => 3;

@@ -87,7 +87,7 @@ public class ExecuteCommandSetAxis : BasicCommandExecution
                 throw new Exception($"Aggregate {aggregate} already has an axis");
             }
 
-            var opts = new AggregateBuilderOptionsFactory().Create(aggregate);
+            var opts = AggregateBuilderOptionsFactory.Create(aggregate);
             AggregateDimension match = null;
 
             if (askAtRuntime)

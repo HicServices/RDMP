@@ -101,8 +101,7 @@ public partial class AggregateTopXUI : RDMPUserControl
         }
 
         //user is typing something illegal like 'ive got a lovely bunch o coconuts'
-        int i;
-        if (!int.TryParse(tbTopX.Text, out i))
+        if (!int.TryParse(tbTopX.Text, out var i))
         {
             //not an int
             tbTopX.ForeColor = Color.Red;
@@ -138,9 +137,7 @@ public partial class AggregateTopXUI : RDMPUserControl
         if(_topX == null || ddOrderByDimension.SelectedItem == null)
             return;
 
-        var dimension = ddOrderByDimension.SelectedItem as AggregateDimension;
-
-        if (dimension != null)
+        if (ddOrderByDimension.SelectedItem is AggregateDimension dimension)
             _topX.OrderByDimensionIfAny_ID = dimension.ID;
         else
             _topX.OrderByDimensionIfAny_ID = null; //means use count column 

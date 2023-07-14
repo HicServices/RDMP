@@ -43,16 +43,16 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     private RDMPCollectionCommonFunctionality tlvANOTablesCommonFunctionality;
     private RDMPCollectionCommonFunctionality tlvTableInfoMigrationsCommonFunctionality;
     private ForwardEngineerANOCataloguePlanManager _planManager;
-        
+
     public ForwardEngineerANOCatalogueUI()
     {
         InitializeComponent();
         serverDatabaseTableSelector1.HideTableComponents();
 
 
-        olvSuffix.AspectGetter = (o) => o is ANOTable ? ((ANOTable) o).Suffix : null;
-        olvNumberOfCharacters.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfCharactersToUseInAnonymousRepresentation: null;
-        olvNumberOfDigits.AspectGetter = (o) => o is ANOTable ? (object) ((ANOTable)o).NumberOfIntegersToUseInAnonymousRepresentation : null;
+        olvSuffix.AspectGetter = o => o is ANOTable table ? table.Suffix : null;
+        olvNumberOfCharacters.AspectGetter = o => o is ANOTable table ? (object) table.NumberOfCharactersToUseInAnonymousRepresentation: null;
+        olvNumberOfDigits.AspectGetter = o => o is ANOTable table ? (object) table.NumberOfIntegersToUseInAnonymousRepresentation : null;
 
         olvMigrationPlan.AspectGetter += MigrationPlanAspectGetter;
             
@@ -83,10 +83,9 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object MigrationPlanAspectGetter(object rowobject)
     {
-        var col = rowobject as ColumnInfo;
         var table = rowobject as TableInfo;
 
-        if (col != null)
+        if (rowobject is ColumnInfo col)
             return _planManager.GetPlanForColumnInfo(col).Plan;
 
         if (_planManager.SkippedTables.Contains(table))
@@ -97,9 +96,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private Image PickedANOTable_ImageGetter(object rowObject)
     {
-        var ci = rowObject as ColumnInfo;
-
-        if (ci != null && _planManager.GetPlanForColumnInfo(ci).ANOTable != null)
+        if (rowObject is ColumnInfo ci && _planManager.GetPlanForColumnInfo(ci).ANOTable != null)
             return imageList1.Images["ANOTable"];
 
         return null;
@@ -107,9 +104,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object PickedANOTableAspectGetter(object rowobject)
     {
-        var col = rowobject as ColumnInfo;
-
-        if (col != null)
+        if (rowobject is ColumnInfo col)
         {
             var plan = _planManager.GetPlanForColumnInfo(col);
 
@@ -125,9 +120,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object DilutionAspectGetter(object rowobject)
     {
-        var col = rowobject as ColumnInfo;
-
-        if (col != null)
+        if (rowobject is ColumnInfo col)
         {
             var plan = _planManager.GetPlanForColumnInfo(col);
 
@@ -142,9 +135,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     }
     private string Dilution_ImageGetter(object rowobject)
     {
-        var col = rowobject as ColumnInfo;
-
-        if (col != null)
+        if (rowobject is ColumnInfo col)
         {
             var plan = _planManager.GetPlanForColumnInfo(col);
 
@@ -157,10 +148,9 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object DestinationTypeAspectGetter(object rowobject)
     {
-        var ci = rowobject as ColumnInfo;
         try
         {
-            if (ci != null)
+            if (rowobject is ColumnInfo ci)
                 return _planManager.GetPlanForColumnInfo(ci).GetEndpointDataType();
         }
         catch (Exception)
@@ -174,17 +164,13 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private object DestinationExtractionCategoryAspectGetter(object rowobject)
     {
-        var ci = rowobject as ColumnInfo;
         try
         {
-            if (ci != null)
+            if (rowobject is ColumnInfo ci)
             {
                 var plan = _planManager.GetPlanForColumnInfo(ci);
 
-                if (plan.ExtractionCategoryIfAny.HasValue)
-                    return plan.ExtractionCategoryIfAny;
-
-                return null;
+                return plan.ExtractionCategoryIfAny;
             }
         }
         catch (Exception)
@@ -198,7 +184,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     #endregion
 
-    void tlvTableInfoMigrations_CellEditStarting(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+    private void tlvTableInfoMigrations_CellEditStarting(object sender, CellEditEventArgs e)
     {
         if (e.RowObject is TableInfo)
             e.Cancel = true;
@@ -206,12 +192,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
         if (e.Column == olvDestinationType)
             e.Cancel = true;
 
-        var col = e.RowObject as ColumnInfo;
 
         if (e.Column == olvMigrationPlan)
             e.Control.Bounds = e.CellBounds;
 
-        if (col != null)
+        if (e.RowObject is ColumnInfo col)
         {
             var plan = _planManager.GetPlanForColumnInfo(col);
 
@@ -253,9 +238,11 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                     return;
                 }
 
-                var cbx = new ComboBox();
-                cbx.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbx.Bounds = e.CellBounds;
+                var cbx = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Bounds = e.CellBounds
+                };
                 cbx.Items.AddRange(_planManager.DilutionOperations.ToArray());
                 e.Control = cbx;
             }
@@ -269,13 +256,15 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                     return;
                 }
 
-                var cbx = new ComboBox();
-                cbx.DropDownStyle = ComboBoxStyle.DropDownList;
-                cbx.Bounds = e.CellBounds;
+                var cbx = new ComboBox
+                {
+                    DropDownStyle = ComboBoxStyle.DropDownList,
+                    Bounds = e.CellBounds
+                };
 
                 var list = Enum.GetValues(typeof (ExtractionCategory)).Cast<object>().Select(s=>s.ToString()).ToList();
                 list.Add("Clear");
-                    
+
                 cbx.Items.AddRange(list.ToArray());
                 e.Control = cbx;
 
@@ -285,14 +274,12 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
         }
     }
-        
-    void tlvTableInfoMigrations_CellEditFinishing(object sender, BrightIdeasSoftware.CellEditEventArgs e)
+
+    private void tlvTableInfoMigrations_CellEditFinishing(object sender, CellEditEventArgs e)
     {
         try
         {
-            var col = e.RowObject as ColumnInfo;
-
-            if(col == null)
+            if(e.RowObject is not ColumnInfo col)
                 return;
 
             var plan = _planManager.GetPlanForColumnInfo(col);
@@ -305,7 +292,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                 var cbx = (ComboBox)e.Control;
                 plan.Dilution = (IDilutionOperation)cbx.SelectedItem;
             }
-                
+
             if (e.Column == olvDestinationExtractionCategory)
             {
                 var cbx = (ComboBox)e.Control;
@@ -313,11 +300,10 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                     plan.ExtractionCategoryIfAny = null;
                 else
                 {
-                    ExtractionCategory c;
-                    ExtractionCategory.TryParse((string) cbx.SelectedItem, out c);
+                    Enum.TryParse((string) cbx.SelectedItem, out ExtractionCategory c);
                     plan.ExtractionCategoryIfAny = c;
                 }
-                        
+
             }
         }
         catch (Exception exception)
@@ -327,7 +313,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
         Check();
     }
-        
+
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
@@ -350,17 +336,17 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
             //Set up tree view to show ANO Tables that are usable
             tlvANOTablesCommonFunctionality = new RDMPCollectionCommonFunctionality();
             tlvANOTablesCommonFunctionality.SetUp(RDMPCollection.None, tlvANOTables, activator, olvANOTablesName, null, settings);
-                
+
             tlvANOTables.AddObject(activator.CoreChildProvider.AllANOTablesNode);
             tlvANOTables.ExpandAll();
-                
+
             //Setup tree view to show all TableInfos that you are trying to Migrate
             tlvTableInfoMigrationsCommonFunctionality = new RDMPCollectionCommonFunctionality();
             tlvTableInfoMigrationsCommonFunctionality.SetUp(RDMPCollection.None, tlvTableInfoMigrations, activator, olvTableInfoName, null, settings);
-                
+
             //don't display anything below ColumnInfo
             tlvTableInfoMigrationsCommonFunctionality.AxeChildren = new[] {typeof (ColumnInfo)};
-                
+
             _setup = true;
         }
             
@@ -400,10 +386,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private void tlvTableInfoMigrations_FormatCell(object sender, FormatCellEventArgs e)
     {
-            
-        var ci = e.Model as ColumnInfo;
-
-        if (ci != null)
+        if (e.Model is ColumnInfo ci)
             if (_planManager.GetPlanForColumnInfo(ci).IsMandatory)
                 e.SubItem.BackColor = lblMandatory.BackColor;
 
@@ -477,10 +460,12 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
 
     private void CreateAttacher(ITableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
     {
-        var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
-        pt.ProcessTaskType = ProcessTaskType.Attacher;
-        pt.Name = $"Read from {t}";
-        pt.Path = typeof(RemoteTableAttacher).FullName;
+        var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting)
+            {
+                ProcessTaskType = ProcessTaskType.Attacher,
+                Name = $"Read from {t}",
+                Path = typeof(RemoteTableAttacher).FullName
+            };
         pt.SaveToDatabase();
 
         pt.CreateArgumentsForClassIfNotExists<RemoteTableAttacher>();
@@ -569,14 +554,18 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     private void btnSavePlan_Click(object sender, EventArgs e)
     {
 
-        var sfd = new SaveFileDialog();
-        sfd.Filter = "Plans (*.plan)|*.plan";
+        var sfd = new SaveFileDialog
+        {
+            Filter = "Plans (*.plan)|*.plan"
+        };
         if (sfd.ShowDialog() == DialogResult.OK)
         {
             var fi = new FileInfo(sfd.FileName);
 
-            var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(Activator, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
-            cmdAnoTablesToo.ShowInExplorer = false;
+            var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFile(Activator, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory)
+                {
+                    ShowInExplorer = false
+                };
 
             if (!cmdAnoTablesToo.IsImpossible)
                 cmdAnoTablesToo.Execute();
@@ -591,8 +580,10 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
     {
         try
         {
-            var ofd = new OpenFileDialog();
-            ofd.Filter = "Plans (*.plan)|*.plan";
+            var ofd = new OpenFileDialog
+            {
+                Filter = "Plans (*.plan)|*.plan"
+            };
             if (ofd.ShowDialog() == DialogResult.OK)
             {
                 var fi = new FileInfo(ofd.FileName);

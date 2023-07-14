@@ -32,13 +32,13 @@ namespace Rdmp.UI.PieCharts;
 /// </summary>
 public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableControl
 {
-    private ToolStripButton btnSingleCatalogue = new ToolStripButton("Single",CatalogueIcons.Catalogue.ImageToBitmap()) { Name = "btnSingleCatalogue" };
-    private ToolStripButton btnAllCatalogues = new ToolStripButton("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()){Name= "btnAllCatalogues" };
-    private ToolStripButton btnRefresh = new ToolStripButton("Refresh",FamFamFamIcons.text_list_bullets.ImageToBitmap()) { Name = "btnRefresh" };
-    private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Type:"){Name= "toolStripLabel1" };
-    private ToolStripButton btnShowLabels = new ToolStripButton("Labels",FamFamFamIcons.text_align_left.ImageToBitmap()) { Name = "btnShowLabels", CheckOnClick = true };
+    private ToolStripButton btnSingleCatalogue = new("Single",CatalogueIcons.Catalogue.ImageToBitmap()) { Name = "btnSingleCatalogue" };
+    private ToolStripButton btnAllCatalogues = new("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()){Name= "btnAllCatalogues" };
+    private ToolStripButton btnRefresh = new("Refresh",FamFamFamIcons.text_list_bullets.ImageToBitmap()) { Name = "btnRefresh" };
+    private ToolStripLabel toolStripLabel1 = new("Type:"){Name= "toolStripLabel1" };
+    private ToolStripButton btnShowLabels = new("Labels",FamFamFamIcons.text_align_left.ImageToBitmap()) { Name = "btnShowLabels", CheckOnClick = true };
 
-    private List<ToolStripMenuItem> _flagOptions = new List<ToolStripMenuItem>();
+    private List<ToolStripMenuItem> _flagOptions = new();
 
     public GoodBadCataloguePieChart()
     {
@@ -46,10 +46,10 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         btnViewDataTable.Image = CatalogueIcons.TableInfo.ImageToBitmap();
 
-        this.btnAllCatalogues.Click += new System.EventHandler(this.btnAllCatalogues_Click);
-        this.btnSingleCatalogue.Click += new System.EventHandler(this.btnSingleCatalogue_Click);
-        this.btnShowLabels.CheckStateChanged += new System.EventHandler(this.btnShowLabels_CheckStateChanged);
-        this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
+        btnAllCatalogues.Click += new EventHandler(btnAllCatalogues_Click);
+        btnSingleCatalogue.Click += new EventHandler(btnSingleCatalogue_Click);
+        btnShowLabels.CheckStateChanged += new EventHandler(btnShowLabels_CheckStateChanged);
+        btnRefresh.Click += new EventHandler(btnRefresh_Click);
             
         //put edit mode on for the designer
         NotifyEditModeChange(false);
@@ -74,8 +74,10 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
     private void AddFlag(string caption, Func<GoodBadCataloguePieChartObjectCollection,bool> getProp, Action<GoodBadCataloguePieChartObjectCollection,bool> setProp)
     {
-        var btn = new ToolStripMenuItem(caption);
-        btn.Checked = getProp(_collection);
+        var btn = new ToolStripMenuItem(caption)
+        {
+            Checked = getProp(_collection)
+        };
         btn.CheckedChanged += (sender,e) =>{setProp(_collection,((ToolStripMenuItem)sender).Checked);};
         btn.CheckedChanged += (s, e) => GenerateChart();
         btn.CheckOnClick = true;
@@ -83,20 +85,19 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
     }
     private DashboardControl _dashboardControlDatabaseRecord;
     private GoodBadCataloguePieChartObjectCollection _collection;
-        
+
     private void GenerateChart()
     {
         chart1.Visible = false;
         lblNoIssues.Visible = false;
 
-        if (_collection.IsSingleCatalogueMode)
-            gbWhatThisIs.Text = $"Column Descriptions in {_collection.GetSingleCatalogueModeCatalogue()}";
-        else
-            gbWhatThisIs.Text = "Column Descriptions";
+        gbWhatThisIs.Text = _collection.IsSingleCatalogueMode
+            ? $"Column Descriptions in {_collection.GetSingleCatalogueModeCatalogue()}"
+            : "Column Descriptions";
 
         PopulateAsEmptyDescriptionsChart();
     }
-        
+
     private void PopulateAsEmptyDescriptionsChart()
     {
         try
@@ -108,13 +109,13 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
                 chart1.DataSource = null;
                 chart1.Visible = false;
                 lblNoIssues.Visible = true;
-                    
+
                 return;
             }
 
             var countPopulated = 0;
             var countNotPopulated = 0;
-                    
+
             foreach (var ci in catalogueItems)
                 if (string.IsNullOrWhiteSpace(ci.Description))
                     countNotPopulated++;
@@ -127,7 +128,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
             dt.Rows.Add(new object[] { countNotPopulated, $"Missing ({countNotPopulated})" });
             dt.Rows.Add(new object[] { countPopulated, $"Populated ({countPopulated})" });
-                
+
             chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
             chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;
 
@@ -138,7 +139,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         }
         catch (Exception e)
         {
-            ExceptionViewer.Show($"{this.GetType().Name} failed to load data", e);
+            ExceptionViewer.Show($"{GetType().Name} failed to load data", e);
         }
     }
 
@@ -161,7 +162,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
             
     }
 
-    bool _bLoading;
+    private bool _bLoading;
     private bool firstTime = true;
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
@@ -223,8 +224,8 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         if (isEditModeOn)
         {
-            gbWhatThisIs.Location = new Point(l.X, l.Y + 25);//move it down 25 to allow space for tool bar
-            gbWhatThisIs.Size = new Size(s.Width, s.Height - 25);//and adjust height accordingly
+            gbWhatThisIs.Location = l with { Y = l.Y + 25 };//move it down 25 to allow space for tool bar
+            gbWhatThisIs.Size = s with { Height = s.Height - 25 };//and adjust height accordingly
         }
         else
         {
@@ -259,7 +260,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
             GenerateChart();
         }
     }
-        
+
     private void btnRefresh_Click(object sender, EventArgs e)
     {
         GenerateChart();
@@ -272,7 +273,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         _dashboardControlDatabaseRecord.SaveCollectionState(_collection);
     }
-        
+
     private void btnShowLabels_CheckStateChanged(object sender, EventArgs e)
     {
         _collection.ShowLabels = btnShowLabels.Checked;
@@ -289,7 +290,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
            }, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)).ToArray(),out var selected))
         {
             var cmd = new ExecuteCommandShow(Activator, selected, 1);
-            cmd.Execute();   
+            cmd.Execute();
         }
     }
 }

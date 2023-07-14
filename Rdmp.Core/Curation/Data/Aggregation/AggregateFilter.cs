@@ -82,7 +82,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     {
         return AggregateFilterParameters.ToArray();
     }
-        
+
     ///<inheritdoc/>
     [NoMappingToDatabase]
     public override IContainer FilterContainer => FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;
@@ -102,7 +102,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     /// <param name="container"></param>
     public AggregateFilter(ICatalogueRepository repository, string name=null, AggregateFilterContainer container=null)
     {
-        name = name ?? $"New AggregateFilter{Guid.NewGuid()}";
+        name ??= $"New AggregateFilter{Guid.NewGuid()}";
             
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
@@ -137,7 +137,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     {
         return Name;
     }
-        
+
     /// <inheritdoc/>
     public override ColumnInfo GetColumnInfoIfExists()
     {
@@ -161,12 +161,8 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     /// <inheritdoc/>
     public override Catalogue GetCatalogue()
     {
-        var agg = GetAggregate();
-
-        if(agg == null)
-            throw new Exception(
+        var agg = GetAggregate() ?? throw new Exception(
                 $"Cannot determine the Catalogue for AggregateFilter {this} because GetAggregate returned null, possibly the Filter does not belong to any AggregateFilterContainer (i.e. it is an orphan?)");
-
         return agg.Catalogue;
     }
 
@@ -180,7 +176,7 @@ public class AggregateFilter : ConcreteFilter,IDisableable
     }
 
     /// <summary>
-    /// Removes the AggregateFilter from any AggregateFilterContainer (AND/OR) that it might be a part of 
+    /// Removes the AggregateFilter from any AggregateFilterContainer (AND/OR) that it might be a part of
     /// effectively turning it into a disconnected orphan.
     /// </summary>
     public void MakeIntoAnOrphan()

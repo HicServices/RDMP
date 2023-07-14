@@ -35,7 +35,7 @@ public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipeline
 
     public ReleaseAudit ProcessPipelineData(ReleaseAudit toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        var allCatalogues = 
+        var allCatalogues =
             _releaseData.SelectedDatasets.Values.SelectMany(sd => sd.ToList())
                 .Select(sds => sds.ExtractableDataSet.Catalogue)
                 .Distinct()
@@ -48,12 +48,9 @@ public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipeline
             return toProcess;
         }
 
-        var sourceFolder = _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent;
-        if (sourceFolder == null)
-            throw new Exception("Could not find Source Folder. DOes the project have an Extraction Directory defined?");
-
+        var sourceFolder = _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent ?? throw new Exception("Could not find Source Folder. DOes the project have an Extraction Directory defined?");
         var outputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
-            
+
         var cmd = new ExecuteCommandExportObjectsToFile(_activator, allCatalogues, outputFolder);
         cmd.Execute();
             

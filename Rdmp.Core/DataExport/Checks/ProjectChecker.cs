@@ -21,7 +21,7 @@ public class ProjectChecker:ICheckable
 {
     private readonly IProject _project;
     private readonly IBasicActivateItems _activator;
-    IExtractionConfiguration[] _extractionConfigurations;
+    private IExtractionConfiguration[] _extractionConfigurations;
     private DirectoryInfo _projectDirectory;
 
     /// <summary>

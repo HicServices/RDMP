@@ -20,29 +20,29 @@ public partial class ConsequenceBar : UserControl
     public ConsequenceBar()
     {
         InitializeComponent();
-            
+
     }
 
-    public static Color CorrectColor = Color.Green;
-    public static Color MissingColor = Color.Orange;
-    public static Color WrongColor = Color.IndianRed;
-    public static Color InvalidColor = Color.Red;
-        
-    public static Color HasValuesColor = Color.Black;
-    public static Color IsNullColor = Color.LightGray;
+    internal static Color CorrectColor = Color.Green;
+    internal static Color MissingColor = Color.Orange;
+    internal static Color WrongColor = Color.IndianRed;
+    internal static Color InvalidColor = Color.Red;
 
-    public double Correct { get; set; }
-    public double Invalid { get; set; }
-    public double Missing { get; set; }
-    public double Wrong { get; set; }
-    public double DBNull { get; set; }
-        
-    public string Label { get; set; }
+    internal static Color HasValuesColor = Color.Black;
+    internal static Color IsNullColor = Color.LightGray;
+
+    internal double Correct { get; init; }
+    internal double Invalid { get; init; }
+    internal double Missing { get; init; }
+    internal double Wrong { get; init; }
+    internal double DBNull { get; init; }
+
+    internal string Label { get; init; }
 
     protected override void OnPaintBackground(PaintEventArgs e)
     {
         base.OnPaintBackground(e);
-            
+
         //Control looks like this:
         //note that because null count is completely separate from consequence it has its own microbar
 
@@ -64,31 +64,31 @@ public partial class ConsequenceBar : UserControl
         var bNulls = new SolidBrush(IsNullColor);
 
         var totalRecords = Correct + Missing + Invalid + Wrong;
-            
+
         var heightOfNullsBarStart = (int) (Height * 0.8);
         var heightOfNullsBar = (int) (Height/5.0);
-            
+
 
         //draw the nulls bar
-        var valuesRatio = 1 - (DBNull / totalRecords);
+        var valuesRatio = 1 - DBNull / totalRecords;
         var midPointOfNullsBar = (int) (valuesRatio*Width);
 
         //values
         e.Graphics.FillRectangle(bValues,new Rectangle(0,heightOfNullsBarStart,midPointOfNullsBar,heightOfNullsBar));
         e.Graphics.FillRectangle(bNulls,new Rectangle(midPointOfNullsBar,heightOfNullsBarStart,Width-midPointOfNullsBar,heightOfNullsBar));
-            
-            
-        //draw the main bar
-        var correctRightPoint = (int) (((Correct)/totalRecords)*Width);
 
-        var missingWidth = (int) ((Missing/totalRecords)*Width);
+
+        //draw the main bar
+        var correctRightPoint = (int) (Correct/totalRecords*Width);
+
+        var missingWidth = (int) (Missing/totalRecords*Width);
         var missingRightPoint = correctRightPoint + missingWidth;
 
-        var wrongWidth = (int) ((Wrong/totalRecords)*Width);
+        var wrongWidth = (int) (Wrong/totalRecords*Width);
         var wrongRightPoint =  missingRightPoint + wrongWidth;
 
-        var invalidWidth = (int)((Invalid / totalRecords) * Width);
-            
+        var invalidWidth = (int)(Invalid / totalRecords * Width);
+
         e.Graphics.FillRectangle(bCorrect,new Rectangle(0,0,correctRightPoint,heightOfNullsBarStart));
         e.Graphics.FillRectangle(bMissing, new Rectangle(correctRightPoint, 0, missingWidth, heightOfNullsBarStart));
         e.Graphics.FillRectangle(bWrong, new Rectangle(missingRightPoint, 0, wrongWidth, heightOfNullsBarStart));
@@ -115,19 +115,19 @@ public partial class ConsequenceBar : UserControl
             return;
 
         toolTip.SetToolTip(this,
-            $"{Label}{Environment.NewLine}Null:{string.Format("{0:n0}", DBNull)}{GetPercentageText(DBNull)}Correct:{string.Format("{0:n0}", Correct)}{GetPercentageText(Correct)}Missing:{string.Format("{0:n0}", Missing)}{GetPercentageText(Missing)}Wrong:{string.Format("{0:n0}", Wrong)}{GetPercentageText(Wrong)}Invalid:{string.Format("{0:n0}", Invalid)}{GetPercentageText(Invalid).TrimEnd()}"
+            $"{Label}{Environment.NewLine}Null:{DBNull:n0}{GetPercentageText(DBNull)}Correct:{Correct:n0}{GetPercentageText(Correct)}Missing:{Missing:n0}{GetPercentageText(Missing)}Wrong:{Wrong:n0}{GetPercentageText(Wrong)}Invalid:{Invalid:n0}{GetPercentageText(Invalid).TrimEnd()}"
         );
     }
 
     private string GetPercentageText(double fraction)
     {
         var totalRecords = Correct + Missing + Invalid + Wrong;
-        return $"({string.Format("{0:n2}", Truncate((fraction / totalRecords) * 100, 2))}%){Environment.NewLine}";
+        return $"({Truncate(fraction / totalRecords * 100, 2):n2}%){Environment.NewLine}";
     }
 
-    private double Truncate(double value, int digits)
+    private static double Truncate(double value, int digits)
     {
-        var mult = System.Math.Pow(10.0, digits);
-        return System.Math.Truncate(value * mult) / mult;
+        var mult = Math.Pow(10.0, digits);
+        return Math.Truncate(value * mult) / mult;
     }
 }

@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsDashboardLayout:RDMPCommandExecutionProposal<DashboardLayout>
+internal class ProposeExecutionWhenTargetIsDashboardLayout:RDMPCommandExecutionProposal<DashboardLayout>
 {
     public ProposeExecutionWhenTargetIsDashboardLayout(IActivateItems itemActivator) : base(itemActivator)
     {

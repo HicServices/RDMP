@@ -113,7 +113,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         }
     }
 
-    sealed class NoWordMeansShowAllAutocomplete : TextFieldAutocomplete
+    private sealed class NoWordMeansShowAllAutocomplete : TextFieldAutocomplete
     {
         public NoWordMeansShowAllAutocomplete(TextField tb)
         {
@@ -139,7 +139,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         }
     }
 
-    private void AddNoWordMeansShowAllAutocomplete(TextField tb)
+    private static void AddNoWordMeansShowAllAutocomplete(TextField tb)
     {
         var prop = typeof(TextField).GetProperty(nameof(TextField.Autocomplete));
         prop?.SetValue(tb, new NoWordMeansShowAllAutocomplete(tb));
@@ -239,7 +239,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
             _activator.Show("Enter all database details before trying to create");
             return;
         }
-               
+
         var open = new LoadingDialog($"Creating Database '{db}'");
         string message = null;
 

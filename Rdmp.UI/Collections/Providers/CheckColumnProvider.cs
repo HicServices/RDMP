@@ -34,14 +34,16 @@ public class CheckColumnProvider
 
     public OLVColumn CreateColumn()
     {
-        var toReturn = new OLVColumn();
-        toReturn.Text = ChecksColumnName;
-        toReturn.ImageGetter = CheckImageGetter;
-        toReturn.IsEditable = false;
+        var toReturn = new OLVColumn
+        {
+            Text = ChecksColumnName,
+            ImageGetter = CheckImageGetter,
+            IsEditable = false
+        };
 
         return toReturn;
     }
-        
+
     private Task checkingTask;
     public void CheckCheckables()
     {
@@ -69,11 +71,11 @@ public class CheckColumnProvider
                     checkResultsDictionary.Add(checkable, notifier.GetWorst());
             }
         });
-            
+
         EnsureChecksColumnVisible();
         checkingTask.ContinueWith(
             //now load images to UI
-            (t) => _tree.RebuildColumns(), TaskScheduler.FromCurrentSynchronizationContext());
+            t => _tree.RebuildColumns(), TaskScheduler.FromCurrentSynchronizationContext());
 
         checkingTask.Start();
     }
@@ -82,7 +84,7 @@ public class CheckColumnProvider
     {
         if (_tree.InvokeRequired)
         {
-            _tree.Invoke(new MethodInvoker(EnsureChecksColumnVisible));  
+            _tree.Invoke(new MethodInvoker(EnsureChecksColumnVisible));
             return;
         }
 
@@ -95,15 +97,14 @@ public class CheckColumnProvider
         }
     }
 
-    private object ocheckResultsDictionaryLock = new object();
-    Dictionary<ICheckable, CheckResult> checkResultsDictionary = new Dictionary<ICheckable, CheckResult>();
+    private object ocheckResultsDictionaryLock = new();
+    private Dictionary<ICheckable, CheckResult> checkResultsDictionary = new();
 
     public void RecordWorst(ICheckable o, CheckResult result)
     {
         lock (checkResultsDictionary)
         {
-            if (checkResultsDictionary.ContainsKey(o))
-                checkResultsDictionary.Remove(o);
+            checkResultsDictionary.Remove(o);
 
             checkResultsDictionary.Add(o, result);
 
@@ -116,14 +117,13 @@ public class CheckColumnProvider
 
     private Bitmap CheckImageGetter(object rowobject)
     {
-        var checkable = rowobject as ICheckable;
-        if (checkable == null)
+        if (rowobject is not ICheckable checkable)
             return null;
 
         lock (ocheckResultsDictionaryLock)
         {
-            if (checkResultsDictionary.ContainsKey(checkable))
-                return _iconProvider.GetImage(checkResultsDictionary[checkable]).ImageToBitmap();
+            if (checkResultsDictionary.TryGetValue(checkable, out var value))
+                return _iconProvider.GetImage(value).ImageToBitmap();
 
         }
         //not been checked yet

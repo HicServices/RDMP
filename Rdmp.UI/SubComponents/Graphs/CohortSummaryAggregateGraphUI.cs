@@ -43,13 +43,11 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        bool shouldCloseInstead;
-        _collection.RevertIfMatchedInCollectionObjects(e.Object,out shouldCloseInstead);
+        _collection.RevertIfMatchedInCollectionObjects(e.Object,out var shouldCloseInstead);
 
         if (shouldCloseInstead)
         {
-            if(ParentForm != null)
-                ParentForm.Close();
+            ParentForm?.Close();
         }
         else
             //now reload the graph because the change was to a relevant object
@@ -64,7 +62,7 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
             
         BuildMenu(activator);
 
-        base.SetAggregate(activator,_collection.Graph);
+        SetAggregate(activator,_collection.Graph);
         LoadGraphAsync();
     }
 
@@ -88,20 +86,14 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
     {
         var orig = base.GetDescription();
 
-        string restriction;
-        switch (_collection.Adjustment)
+        var restriction = _collection.Adjustment switch
         {
-            case CohortSummaryAdjustment.WhereExtractionIdentifiersIn:
-                restriction =
-                    $"Only showing records for people in cohort set '{(_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny)}')";
-                break;
-            case CohortSummaryAdjustment.WhereRecordsIn:
-                restriction =
-                    $"Only showing records returned by the query defining cohort set '{(_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny)}')";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            CohortSummaryAdjustment.WhereExtractionIdentifiersIn =>
+                $"Only showing records for people in cohort set '{_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny}')",
+            CohortSummaryAdjustment.WhereRecordsIn =>
+                $"Only showing records returned by the query defining cohort set '{_collection.CohortIfAny ?? (object)_collection.CohortContainerIfAny}')",
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         if (_collection.SingleFilterOnly != null)
             restriction += $". Only showing Filter {_collection.SingleFilterOnly}.";
@@ -112,30 +104,24 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     protected override object[] GetRibbonObjects()
     {
-        return new object[]{GetAdjustmentDescription(_collection.Adjustment)};
+        return new object[]{ GetAdjustmentDescription(_collection.Adjustment)};
     }
 
-    private string GetAdjustmentDescription(CohortSummaryAdjustment adjustment)
+    private static string GetAdjustmentDescription(CohortSummaryAdjustment adjustment)
     {
-        switch (adjustment)
+        return adjustment switch
         {
-            case CohortSummaryAdjustment.WhereExtractionIdentifiersIn:
-                return "Graphing All Records For Patients";
-            case CohortSummaryAdjustment.WhereRecordsIn:
-                return "Graphing Cohort Query Result";
-            default:
-                throw new ArgumentOutOfRangeException("adjustment");
-        }
+            CohortSummaryAdjustment.WhereExtractionIdentifiersIn => "Graphing All Records For Patients",
+            CohortSummaryAdjustment.WhereRecordsIn => "Graphing Cohort Query Result",
+            _ => throw new ArgumentOutOfRangeException(nameof(adjustment))
+        };
     }
 
     protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration summary)
     {
-        CohortSummaryQueryBuilder builder;
-
-        if (_collection.CohortIfAny != null)
-            builder = new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny,Activator.CoreChildProvider);
-        else
-            builder = new CohortSummaryQueryBuilder(summary, _collection.CohortContainerIfAny);
+        var builder = _collection.CohortIfAny != null
+            ? new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny, Activator.CoreChildProvider)
+            : new CohortSummaryQueryBuilder(summary, _collection.CohortContainerIfAny);
 
         return builder.GetAdjustedAggregateBuilder(_collection.Adjustment,_collection.SingleFilterOnly);
     }

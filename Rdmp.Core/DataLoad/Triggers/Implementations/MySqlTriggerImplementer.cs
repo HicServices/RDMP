@@ -54,11 +54,8 @@ internal class MySqlTriggerImplementer:TriggerImplementer
     {
         var creationSql = base.CreateTrigger(notifier);
 
-        var sql = string.Format(@"CREATE TRIGGER {0} BEFORE UPDATE ON {1} FOR EACH ROW
-{2};", 
-            GetTriggerName(),
-            _table.GetFullyQualifiedName(),
-            CreateTriggerBody());
+        var sql = $@"CREATE TRIGGER {GetTriggerName()} BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
+{CreateTriggerBody()};";
 
         using (var con = _server.GetConnection())
         {
@@ -68,7 +65,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
             {
                 cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                 cmd.ExecuteNonQuery();
-            }                    
+            }
         }
 
         return creationSql;
@@ -78,28 +75,28 @@ internal class MySqlTriggerImplementer:TriggerImplementer
     {
         // MySql changed how they do default date fields between 5.5 and 5.6
         //https://dba.stackexchange.com/a/132954
- 
-        if (UseOldDateTimeDefaultMethod(table))
-            table.AddColumn(SpecialFieldNames.ValidFrom,"TIMESTAMP DEFAULT CURRENT_TIMESTAMP",true, UserSettings.ArchiveTriggerTimeout);
-        else
-            table.AddColumn(SpecialFieldNames.ValidFrom,"DATETIME DEFAULT CURRENT_TIMESTAMP",true, UserSettings.ArchiveTriggerTimeout);
+
+        table.AddColumn(SpecialFieldNames.ValidFrom,
+            UseOldDateTimeDefaultMethod(table)
+                ? "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+                : "DATETIME DEFAULT CURRENT_TIMESTAMP", true, UserSettings.ArchiveTriggerTimeout);
     }
 
-    public bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
+    public static bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
     {
         using (var con = table.Database.Server.GetConnection())
         {
             con.Open();
             return UseOldDateTimeDefaultMethod(table.GetCommand("SELECT VERSION()", con).ExecuteScalar()?.ToString());
         }
-                
+
     }
 
     public static bool UseOldDateTimeDefaultMethod(string version)
     {
         if (string.IsNullOrWhiteSpace(version))
             return false;
-            
+
         var match = Regex.Match(version,@"(\d+)\.(\d+)");
 
         //If the version string doesn't start with numbers we have bigger problems than creating a default constraint
@@ -115,17 +112,15 @@ internal class MySqlTriggerImplementer:TriggerImplementer
     protected virtual string CreateTriggerBody()
     {
         var syntax = _server.GetQuerySyntaxHelper();
-            
-        return string.Format(@"BEGIN
-    INSERT INTO {0} SET {1},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
 
-	SET NEW.{2} = now();
-  END", _archiveTable.GetFullyQualifiedName(),
-            string.Join(",", _columns.Select(c =>
-                $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}")),
-            syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
+        return $@"BEGIN
+    INSERT INTO {_archiveTable.GetFullyQualifiedName()} SET {string.Join(",", _columns.Select(c =>
+        $"{syntax.EnsureWrapped(c.GetRuntimeName())}=OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
+
+	SET NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} = now();
+  END";
     }
-        
+
     public override TriggerStatus GetTriggerStatus()
     {
         return string.IsNullOrWhiteSpace(GetTriggerBody())? TriggerStatus.Missing : TriggerStatus.Enabled;
@@ -137,7 +132,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         {
             con.Open();
 
-            using(var cmd = _server.GetCommand(string.Format("show triggers like '{0}'", _table.GetRuntimeName()), con))
+            using(var cmd = _server.GetCommand($"show triggers like '{_table.GetRuntimeName()}'", con))
             using(var r = cmd.ExecuteReader())
                 while (r.Read())
                 {
@@ -163,7 +158,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         var sqlNow = CreateTriggerBody();
 
         AssertTriggerBodiesAreEqual(sqlThen,sqlNow);
-            
+
         return true;
     }
 

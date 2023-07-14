@@ -310,14 +310,13 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         IgnoreInLoads = ObjectToNullableBool(r["IgnoreInLoads"]) ?? false;
 
         //try to turn string value in database into enum value
-        ColumnStatus dbStatus;
-        if (ColumnStatus.TryParse(r["Status"].ToString(), out dbStatus))
+        if (Enum.TryParse(r["Status"].ToString(), out ColumnStatus dbStatus))
             Status = dbStatus;
 
         RegexPattern = r["RegexPattern"].ToString();
         ValidationRules = r["ValidationRules"].ToString();
-        IsPrimaryKey = Boolean.Parse(r["IsPrimaryKey"].ToString());
-        IsAutoIncrement = Boolean.Parse(r["IsAutoIncrement"].ToString());
+        IsPrimaryKey = bool.Parse(r["IsPrimaryKey"].ToString());
+        IsAutoIncrement = bool.Parse(r["IsAutoIncrement"].ToString());
 
         if (r["ANOTable_ID"] != DBNull.Value)
             ANOTable_ID = int.Parse(r["ANOTable_ID"].ToString());
@@ -352,10 +351,10 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     {
         if (obj is ColumnInfo)
         {
-            return - (obj.ToString().CompareTo(this.ToString())); //sort alphabetically (reverse)
+            return - obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
         }
             
-        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
+        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
             
     }
         
@@ -380,8 +379,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     ///<inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        if (_cachedQuerySyntaxHelper == null)
-            _cachedQuerySyntaxHelper = TableInfo.GetQuerySyntaxHelper();
+        _cachedQuerySyntaxHelper ??= TableInfo.GetQuerySyntaxHelper();
 
         return _cachedQuerySyntaxHelper;
     }
@@ -389,13 +387,13 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     ///<inheritdoc/>
     public string GetRuntimeName(LoadStage stage)
     {
-        var finalName = this.GetRuntimeName();
+        var finalName = GetRuntimeName();
 
         if (stage <= LoadStage.AdjustRaw)
         {
             //see if it has an ANO Transform on it
             if (ANOTable_ID != null && finalName.StartsWith("ANO"))
-                return finalName.Substring("ANO".Length);
+                return finalName["ANO".Length..];
         }
 
         //any other stage will be the regular final name
@@ -444,7 +442,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public DiscoveredColumn Discover(DataAccessContext context)
     {
         var ti = TableInfo;
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, context);
+        var db = DataAccessPortal.ExpectDatabase(ti, context);
         return db.ExpectTable(ti.GetRuntimeName()).DiscoverColumn(GetRuntimeName());
     }
 
@@ -546,7 +544,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         {
             //is it numerical?
             var cSharpType = GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(Data_type);
-            return (cSharpType == typeof (decimal) || cSharpType == typeof (int));
+            return cSharpType == typeof (decimal) || cSharpType == typeof (int);
         }
         catch (Exception)
         {

@@ -21,12 +21,10 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation;
 
 public class ForwardEngineerANOCatalogueTwoTableTests : TestsRequiringANOStore
 {
-
-    ITableInfo t1;
-    ColumnInfo[] c1;
-
-    ITableInfo t2;
-    ColumnInfo[] c2;
+    private ITableInfo t1;
+    private ColumnInfo[] c1;
+    private ITableInfo t2;
+    private ColumnInfo[] c2;
 
     private ICatalogue cata1;
     private ICatalogue cata2;
@@ -75,7 +73,7 @@ GO
 ALTER TABLE [dbo].[Results]  WITH CHECK ADD  CONSTRAINT [FK_Results_Tests] FOREIGN KEY([TestId])
 REFERENCES [dbo].[Tests] ([TestId])
 GO";
-            
+
         var server = From.Server;
         using (var con = server.GetConnection())
         {
@@ -101,13 +99,15 @@ GO";
             c2.Single(e => e.GetRuntimeName().Equals("TestId")),
             ExtractionJoinType.Left,null);
 
-        _anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOTes", "T");
-        _anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 10;
+        _anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOTes", "T")
+            {
+                NumberOfCharactersToUseInAnonymousRepresentation = 10
+            };
         _anoTable.SaveToDatabase();
         _anoTable.PushToANOServerAsNewTable("int",new ThrowImmediatelyCheckNotifier());
             
         _comboCata = new Catalogue(CatalogueRepository, "Combo Catalogue");
-            
+
         //pk
         var ciTestId = new CatalogueItem(CatalogueRepository, _comboCata, "TestId");
         var colTestId = c1.Single(c => c.GetRuntimeName().Equals("TestId"));
@@ -147,7 +147,7 @@ GO";
         testIdHeadPlan.ANOTable = _anoTable;
 
         plan1.Check(new ThrowImmediatelyCheckNotifier());
-            
+
         var engine1 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, plan1);
         engine1.Execute();
 

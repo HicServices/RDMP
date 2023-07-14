@@ -21,14 +21,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandDelete : BasicCommandExecution
 {
     private readonly IList<IDeleteable> _deletables;
-        
+
     /// <summary>
     /// Flag applies only for deletion where the UI layer is non-interactive.  True to allow
     /// multiple deletes to go ahead without asking.  False to throw exception
     /// </summary>
     private readonly bool _allowDeleteMany;
 
-    public ExecuteCommandDelete(IBasicActivateItems activator, 
+    public ExecuteCommandDelete(IBasicActivateItems activator,
         IDeleteable deletable) : this(activator,new []{ deletable})
     {
         Weight = 50.4f;
@@ -43,10 +43,10 @@ public class ExecuteCommandDelete : BasicCommandExecution
         bool deleteMany = false) : base(activator)
     {
         _deletables = deletables;
-        this._allowDeleteMany = deleteMany;
+        _allowDeleteMany = deleteMany;
         if (_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
-            
+
         var reason = "";
 
         if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))
@@ -59,16 +59,16 @@ public class ExecuteCommandDelete : BasicCommandExecution
     {
         var verb = GetDeleteVerbIfAny();
 
-        return verb != null ? verb : base.GetCommandName();
+        return verb ?? base.GetCommandName();
     }
 
     private string GetDeleteVerbIfAny()
     {
         // if all objects are IDeletableWithCustomMessage
-        if (OverrideCommandName == null && _deletables.Count > 0 && _deletables.All(d => typeof(IDeletableWithCustomMessage).IsAssignableFrom(d.GetType())))
+        if (OverrideCommandName == null && _deletables.Count > 0 && _deletables.All(static d => d is IDeletableWithCustomMessage))
         {
             // Get the verbs (e.g. Remove, Disassociate etc)
-            var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(d => d.GetDeleteVerb()).Distinct().ToArray();
+            var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(static d => d.GetDeleteVerb()).Distinct().ToArray();
 
             // if they agree on one specific verb
             if (verbs.Length == 1)
@@ -86,7 +86,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         // if the thing we are deleting is important and sensitive then we should use a transaction
         if(_deletables.Count > 1 || ShouldUseTransactionsWhenDeleting(_deletables.FirstOrDefault()))
         {
-            base.ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
+            ExecuteWithCommit(ExecuteImpl, GetDescription(), _deletables.OfType<IMapsDirectlyToDatabaseTable>().ToArray());
             PublishNearest();
         }
         else
@@ -95,7 +95,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         }
     }
 
-    private bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
+    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
     {
         return
             deleteable is CatalogueItem ||
@@ -124,7 +124,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
             // Fall through if deleting multiple:
         }
 
-        // if the command did not ask to delete many and it is not interactive (e.g. CLI) then 
+        // if the command did not ask to delete many and it is not interactive (e.g. CLI) then
         // we shouldn't just blindly delete them all
         if (!BasicActivator.IsInteractive && !_allowDeleteMany)
         {
@@ -139,7 +139,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         try
         {
             foreach (var d in _deletables)
-                if (!(d is DatabaseEntity exists) ||
+                if (d is not DatabaseEntity exists ||
                     exists.Exists()) //don't delete stuff that doesn't exist!
                     d.DeleteInDatabase();
         }

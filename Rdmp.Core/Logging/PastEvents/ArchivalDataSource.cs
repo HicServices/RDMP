@@ -43,7 +43,7 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 
         var s = ToString();
         if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-            return $"{s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength)}...";
+            return $"{s[..ArchivalDataLoadInfo.MaxDescriptionLength]}...";
         return s;
     }
 
@@ -54,8 +54,7 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 
     public int CompareTo(object obj)
     {
-        var other = obj as ArchivalDataSource;
-        if (other != null)
+        if (obj is ArchivalDataSource other)
             if (OriginDate == other.OriginDate)
                 return 0;
             else
@@ -71,6 +70,6 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 
             }
 
-        return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
 }

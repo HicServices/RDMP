@@ -10,7 +10,7 @@ using Rdmp.Core.Icons.IconProvision;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class ExtractableDatasetMenu:RDMPContextMenuStrip
+internal class ExtractableDatasetMenu:RDMPContextMenuStrip
 {
     private readonly ExtractableDataSet _dataset;
 

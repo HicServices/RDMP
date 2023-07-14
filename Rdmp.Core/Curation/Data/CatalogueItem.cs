@@ -39,7 +39,7 @@ namespace Rdmp.Core.Curation.Data;
 public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
 {
     #region Database Properties
-        
+
     private string _Name;
     private string _Statistical_cons;
     private string _Research_relevance;
@@ -145,7 +145,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <summary>
     /// The ID of the underlying <see cref="ColumnInfo"/> to which this CatalogueItem describes.  This can be null if the underlying column has been deleted / removed.
     /// You can have multiple <see cref="CatalogueItem"/>s in a <see cref="Catalogue"/> that share the same underlying <see cref="ColumnInfo"/> if one of them is a transform
-    /// e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core"/>) but only release the full postcode with 
+    /// e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core"/>) but only release the full postcode with
     /// <see cref="ExtractionCategory.SpecialApprovalRequired"/>.
     /// </summary>
     [Relationship(typeof(ColumnInfo), RelationshipType.IgnoreableLocalReference)]  //will appear as empty, then the user can guess from a table
@@ -223,7 +223,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             {"Name", name},
             {"Catalogue_ID", parent.ID}
         });
-            
+
         ClearAllInjections();
         parent.ClearAllInjections();
     }
@@ -244,17 +244,11 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
         //Periodicity - with handling for invalid enum values listed in database
         var periodicity = r["Periodicity"];
-        if (periodicity == null || periodicity == DBNull.Value)
-            Periodicity = Catalogue.CataloguePeriodicity.Unknown;
-        else
-        {
-            Catalogue.CataloguePeriodicity periodicityAsEnum;
-
-            if(Catalogue.CataloguePeriodicity.TryParse(periodicity.ToString(), true, out periodicityAsEnum))
-                Periodicity = periodicityAsEnum;
-            else
-                Periodicity = Catalogue.CataloguePeriodicity.Unknown;
-        }
+        Periodicity =
+            periodicity == null || periodicity == DBNull.Value || !Enum.TryParse(periodicity.ToString(), true,
+                out Catalogue.CataloguePeriodicity periodicityAsEnum)
+                ? Catalogue.CataloguePeriodicity.Unknown
+                : periodicityAsEnum;
 
         ClearAllInjections();
     }
@@ -275,7 +269,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     {
         _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfoIfAny);
         _knownExtractionInformation = new Lazy<ExtractionInformation>(FetchExtractionInformationIfAny);
-        _knownCatalogue = new Lazy<Catalogue>(FetchCatalogue); 
+        _knownCatalogue = new Lazy<Catalogue>(FetchCatalogue);
     }
 
     private Catalogue FetchCatalogue()
@@ -322,12 +316,12 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     {
         if (obj is CatalogueItem)
         {
-            return -(obj.ToString().CompareTo(this.ToString())); //sort alphabetically (reverse)
+            return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
         }
 
-        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
+        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
-        
+
     /// <summary>
     /// Copies the descriptive metadata from one <see cref="CatalogueItem"/> (this) into a new <see cref="CatalogueItem"/> in the supplied <paramref name="cataToImportTo"/>
     /// </summary>
@@ -335,25 +329,25 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <returns></returns>
     public CatalogueItem CloneCatalogueItemWithIDIntoCatalogue(Catalogue cataToImportTo)
     {
-        if(this.Catalogue_ID == cataToImportTo.ID)
+        if(Catalogue_ID == cataToImportTo.ID)
             throw new ArgumentException("Cannot clone a CatalogueItem into its own parent, specify a different catalogue to clone into");
 
-        var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, this.Name);
-            
-        //Get all the properties           
-        var propertyInfo = this.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+        var clone = new CatalogueItem((ICatalogueRepository)cataToImportTo.Repository, cataToImportTo, Name);
+
+        //Get all the properties
+        var propertyInfo = GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
         //Assign all source property to taget object 's properties
         foreach (var property in propertyInfo)
         {
             //Check whether property can be written to
             if (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID"))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(System.String)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(string)))
                     property.SetValue(clone, property.GetValue(this, null), null);
         }
 
         clone.SaveToDatabase();
-            
+
         return clone;
     }
 
@@ -368,24 +362,24 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     public IEnumerable<ColumnInfo> GuessAssociatedColumn(ColumnInfo[] guessPool, bool allowPartial = true)
     {
         //exact matches exist so return those
-        var Guess = guessPool.Where(col => col.GetRuntimeName().Equals(this.Name)).ToArray();
+        var Guess = guessPool.Where(col => col.GetRuntimeName().Equals(Name)).ToArray();
         if (Guess.Any())
             return Guess;
 
         //ignore caps match instead
-        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Equals(this.Name.ToLower())).ToArray();
+        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Equals(Name.ToLower())).ToArray();
         if (Guess.Any())
             return Guess;
 
         //ignore caps and remove spaces match instead
-        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Replace(" ", "").Equals(this.Name.ToLower().Replace(" ", ""))).ToArray();
+        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Replace(" ", "").Equals(Name.ToLower().Replace(" ", ""))).ToArray();
         if (Guess.Any())
             return Guess;
 
         if (allowPartial)
             //contains match is final last resort
             return guessPool.Where(col =>
-                col.GetRuntimeName().ToLower().Contains(this.Name.ToLower())
+                col.GetRuntimeName().ToLower().Contains(Name.ToLower())
                 ||
                 Name.ToLower().Contains(col.GetRuntimeName().ToLower()));
 
@@ -423,7 +417,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     /// <param name="columnInfo"></param>
     public void SetColumnInfo(ColumnInfo columnInfo)
     {
-        ColumnInfo_ID = columnInfo == null ? (int?) null : columnInfo.ID;
+        ColumnInfo_ID = columnInfo?.ID;
         SaveToDatabase();
         InjectKnown(columnInfo);
     }
@@ -446,7 +440,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
         sb.AppendLine(SUMMARY_LINE_DIVIDER);
 
-        sb.AppendLine($"Extractable: { FormatForSummary(ExtractionInformation != null)}");
+        sb.AppendLine($"Extractable: {FormatForSummary(ExtractionInformation != null)}");
         sb.AppendLine($"Transforms Data: {FormatForSummary(ExtractionInformation?.IsProperTransform() ?? false)}");
         sb.AppendLine($"Category: {ExtractionInformation?.ExtractionCategory ?? (object)"Not Extractable"}");
 

@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.Providers;
 
-class CatalogueProblemProviderTests : UnitTests
+internal class CatalogueProblemProviderTests : UnitTests
 {
     #region ROOT CONTAINERS
     [Test]
@@ -357,7 +357,7 @@ class CatalogueProblemProviderTests : UnitTests
     public void MixedCollationIsAProblemForJoinInfos_WhenNoExplicitCollation(string nullCollationExpression)
     {
         var ci1 = WhenIHaveA<ExtractionInformation>().CatalogueItem;
-            
+
         var ci2 = WhenIHaveA<ExtractionInformation>().CatalogueItem;
 
         _=new JoinInfo((ICatalogueRepository)ci1.Repository,

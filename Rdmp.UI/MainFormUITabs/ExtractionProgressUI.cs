@@ -89,21 +89,21 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
     }
 
 
-    private void tbDate_TextChanged(object sender, System.EventArgs e)
+    private void tbDate_TextChanged(object sender, EventArgs e)
     {
         if(sender == tbStartDate)
         {
-            SetDate(tbStartDate, (v) => ExtractionProgress.StartDate = v);
+            SetDate(tbStartDate, v => ExtractionProgress.StartDate = v);
         }
 
         if (sender == tbEndDate)
         {
-            SetDate(tbEndDate, (v) => ExtractionProgress.EndDate = v);
+            SetDate(tbEndDate, v => ExtractionProgress.EndDate = v);
         }
 
         if (sender == tbProgress)
         {
-            SetDate(tbProgress, (v) => ExtractionProgress.ProgressDate = v);
+            SetDate(tbProgress, v => ExtractionProgress.ProgressDate = v);
         }
 
     }

@@ -22,7 +22,7 @@ public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
     public PipelineSetter Setter { get; private set; }
 
     public PluginPipelineUser(RequiredPropertyInfo demand, ArgumentValueUIArgs args, object demanderInstance)
-        : base(new Type[] { }) //makes it a design time use case
+        : base(Array.Empty<Type>()) //makes it a design time use case
     {
         Getter = () =>
         {
@@ -32,9 +32,7 @@ public sealed class PluginPipelineUser : PipelineUseCase,IPipelineUser
 
         Setter = v =>args.Setter(v);
 
-        var pipeDemander = demanderInstance as IDemandToUseAPipeline;
-
-        if (pipeDemander == null)
+        if (demanderInstance is not IDemandToUseAPipeline pipeDemander)
             throw new NotSupportedException(
                 $"Class {demanderInstance.GetType().Name} does not implement interface IDemandToUseAPipeline despite having a property which is a Pipeline");
 

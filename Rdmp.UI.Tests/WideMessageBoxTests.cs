@@ -17,7 +17,7 @@ using System;
 
 namespace Rdmp.UI.Tests;
 
-class WideMessageBoxTests:UITests
+internal class WideMessageBoxTests:UITests
 {
     [Test]
     public void Test_WideMessageBox_TinyStrings()
@@ -32,7 +32,7 @@ class WideMessageBoxTests:UITests
 
         // simulate showing the control without actually blocking/firing
         var onShow = typeof(WideMessageBox).GetMethod("OnShown", BindingFlags.NonPublic | BindingFlags.Instance);
-        onShow.Invoke(wmb, new[] { new EventArgs() });
+        onShow.Invoke(wmb, new[] { EventArgs.Empty });
 
         //pretend like we launched it
         LastUserInterfaceLaunched = wmb;
@@ -51,8 +51,8 @@ class WideMessageBoxTests:UITests
         var sb = new StringBuilder();
 
         //send wide message box a million characters
-        for(var i=0;i< 1_000_000; i++)
-            sb.Append("f");
+        for(var i =0;i< 1_000_000; i++)
+            sb.Append('f');
 
         var s = sb.ToString();
         var args = new WideMessageBoxArgs(s,s,s,s,WideMessageBoxTheme.Help);
@@ -65,11 +65,11 @@ class WideMessageBoxTests:UITests
 
         // simulate showing the control without actually blocking/firing
         var onShow = typeof(WideMessageBox).GetMethod("OnShown", BindingFlags.NonPublic | BindingFlags.Instance);
-        onShow.Invoke(wmb, new[] { new EventArgs()});
+        onShow.Invoke(wmb, new[] { EventArgs.Empty });
 
         //pretend like we launched it
         LastUserInterfaceLaunched = wmb;
-            
+
         //the title and body should be a reasonable length
         Assert.AreEqual(WideMessageBox.MAX_LENGTH_TITLE,GetControl<Label>().Single().Text.Length);
         Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<RichTextBox>().Single().Text.Length);

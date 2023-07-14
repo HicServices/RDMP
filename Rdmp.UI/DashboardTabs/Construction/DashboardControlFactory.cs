@@ -33,7 +33,7 @@ public class DashboardControlFactory
 
     private bool IsCompatibleType(Type arg)
     {
-        return 
+        return
             typeof (IDashboardableControl).IsAssignableFrom(arg)
             &&
             typeof(UserControl).IsAssignableFrom(arg);
@@ -65,7 +65,7 @@ public class DashboardControlFactory
     public DashboardControl Create(DashboardLayout forLayout, Type t, out DashboardableControlHostPanel theControlCreated)
     {
         var instance = CreateControl(t);
-            
+
         //get the default size requirements of the control as it exists post construction
         var w = instance.Width;
         var h = instance.Height;
@@ -97,11 +97,12 @@ public class DashboardControlFactory
 
         theControlCreated.SetCollection(_activator,emptyCollection);
 
-        var host = new DashboardableControlHostPanel(_activator, dbRecord, theControlCreated);
-
-        host.Location = new Point(dbRecord.X, dbRecord.Y);
-        host.Width = dbRecord.Width;
-        host.Height = dbRecord.Height;
+        var host = new DashboardableControlHostPanel(_activator, dbRecord, theControlCreated)
+        {
+            Location = new Point(dbRecord.X, dbRecord.Y),
+            Width = dbRecord.Width,
+            Height = dbRecord.Height
+        };
 
         return host;
     }
@@ -109,10 +110,10 @@ public class DashboardControlFactory
     private UserControl CreateControl(Type t)
     {
         if (!IsCompatibleType(t))
-            throw new ArgumentException($"Type '{t}' is not a compatible Type", "t");
+            throw new ArgumentException($"Type '{t}' is not a compatible Type", nameof(t));
 
         var constructor = new ObjectConstructor();
-        var instance = (UserControl)constructor.Construct(t);
+        var instance = (UserControl)ObjectConstructor.Construct(t);
 
         instance.Dock = DockStyle.None;
         instance.Anchor = AnchorStyles.Top | AnchorStyles.Left;

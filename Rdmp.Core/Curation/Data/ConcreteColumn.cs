@@ -17,8 +17,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Common abstract base class for ExtractionInformation (how to extract a given ColumnInfo) and ExtractableColumn (clone into data export database of an 
-/// ExtractionInformation - i.e. 'extract column A on for Project B Configuration 'Cases' where A would be an ExtractionInformation defined in the Catalogue 
+/// Common abstract base class for ExtractionInformation (how to extract a given ColumnInfo) and ExtractableColumn (clone into data export database of an
+/// ExtractionInformation - i.e. 'extract column A on for Project B Configuration 'Cases' where A would be an ExtractionInformation defined in the Catalogue
 /// database and copied out for use in the data extraction configuration).
 /// 
 /// <para>Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)</para>
@@ -26,7 +26,7 @@ namespace Rdmp.Core.Curation.Data;
 public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,IComparable
 {
     #region Database Properties
- 
+
     private string _selectSql;
     private string _alias;
     private bool _hashOnDataRelease;
@@ -51,8 +51,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,ICompa
         set
         {
             //never allow annoying whitespace on this field
-            if (value != null)
-                value = value.Trim();
+            value = value?.Trim();
 
             SetField(ref _selectSql, value);
         }
@@ -99,23 +98,23 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,ICompa
     /// <inheritdoc/>
     protected ConcreteColumn(IRepository repository, DbDataReader r):base(repository,r)
     {
-            
+
     }
 
     /// <inheritdoc/>
     protected ConcreteColumn():base()
     {
-            
+
     }
 
     /// <inheritdoc/>
     public string GetRuntimeName()
     {
         var helper = ColumnInfo == null ? MicrosoftQuerySyntaxHelper.Instance: ColumnInfo.GetQuerySyntaxHelper();
-        if (!String.IsNullOrWhiteSpace(Alias))
+        if (!string.IsNullOrWhiteSpace(Alias))
             return helper.GetRuntimeName(Alias);//.GetRuntimeName(); RDMPQuerySyntaxHelper.GetRuntimeName(this);
 
-        if (!String.IsNullOrWhiteSpace(SelectSQL))
+        if (!string.IsNullOrWhiteSpace(SelectSQL))
             return helper.GetRuntimeName(SelectSQL);
 
         return ColumnInfo.GetRuntimeName();
@@ -134,8 +133,8 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,ICompa
     /// <returns></returns>
     public int CompareTo(object obj)
     {
-        if (obj is IColumn)
-            return this.Order - (obj as IColumn).Order;
+        if (obj is IColumn column)
+            return Order - column.Order;
 
         return 0;
     }

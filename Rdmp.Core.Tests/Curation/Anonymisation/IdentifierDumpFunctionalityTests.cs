@@ -23,9 +23,8 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation;
 public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSuite
 {
     private ITableInfo tableInfoCreated;
-    ColumnInfo[] columnInfosCreated;
-        
-    BulkTestsData _bulkData;
+    private ColumnInfo[] columnInfosCreated;
+    private BulkTestsData _bulkData;
 
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -81,7 +80,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         try
         {
             dumper.Check(new AcceptAllCheckNotifier());
-                
+
             var dt = _bulkData.GetDataTable(1000);
 
             Assert.AreEqual(1000,dt.Rows.Count);
@@ -151,14 +150,18 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
     [Test]
     public void DumpAllIdentifiersInTable_UnexpectedColumnFoundInIdentifierDumpTable()
     {
-        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "surname");
-        preDiscardedColumn1.Destination = DiscardedColumnDestination.StoreInIdentifiersDump;
-        preDiscardedColumn1.SqlDataType = "varchar(20)";
+        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "surname")
+            {
+                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+                SqlDataType = "varchar(20)"
+            };
         preDiscardedColumn1.SaveToDatabase();
 
-        var preDiscardedColumn2 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename");
-        preDiscardedColumn2.Destination = DiscardedColumnDestination.StoreInIdentifiersDump;
-        preDiscardedColumn2.SqlDataType = "varchar(50)";
+        var preDiscardedColumn2 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
+            {
+                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+                SqlDataType = "varchar(50)"
+            };
         preDiscardedColumn2.SaveToDatabase();
             
         //give it the correct server
@@ -185,8 +188,10 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         //now create a new dumper and watch it go crazy 
         var dumper2 = new IdentifierDumper(tableInfoCreated);
 
-        var thrower = new ThrowImmediatelyCheckNotifier();
-        thrower.ThrowOnWarning = true;
+        var thrower = new ThrowImmediatelyCheckNotifier
+        {
+            ThrowOnWarning = true
+        };
 
         try
         {
@@ -200,7 +205,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
             using (var con = server.GetConnection())
             {
                 con.Open();
-                    
+
                 //leave the identifier dump in the way we found it (empty)
                 var cmdDrop = server.GetCommand($"DROP TABLE ID_{BulkTestsData.BulkDataTable}", con);
                 cmdDrop.ExecuteNonQuery();
@@ -249,16 +254,18 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
     [Test]
     public void IdentifierDumperCheckFails_NoTableExists()
     {
-        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename");
-        preDiscardedColumn1.Destination = DiscardedColumnDestination.StoreInIdentifiersDump;
-        preDiscardedColumn1.SqlDataType = "varchar(50)";
+        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
+            {
+                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+                SqlDataType = "varchar(50)"
+            };
         preDiscardedColumn1.SaveToDatabase();
 
         //give it the correct server
         tableInfoCreated.IdentifierDumpServer_ID = IdentifierDump_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
 
-        var existingTable = DataAccessPortal.GetInstance()
+        var existingTable = DataAccessPortal
             .ExpectDatabase(IdentifierDump_ExternalDatabaseServer, DataAccessContext.InternalDataProcessing)
             .ExpectTable("ID_BulkData");
 
@@ -288,15 +295,17 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
     [Test]
     public void IdentifierDumperCheckFails_ServerIsNotADumpServer()
     {
-        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "NationalSecurityNumber");
-        preDiscardedColumn1.Destination = DiscardedColumnDestination.StoreInIdentifiersDump;
-        preDiscardedColumn1.SqlDataType = "varchar(10)";
+        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "NationalSecurityNumber")
+            {
+                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+                SqlDataType = "varchar(10)"
+            };
         preDiscardedColumn1.SaveToDatabase();
             
         //give it the WRONG server
         tableInfoCreated.IdentifierDumpServer_ID = ANOStore_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
-            
+
         var dumper = new IdentifierDumper(tableInfoCreated);
         try
         {
@@ -340,9 +349,11 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
     [Test]
     public void IdentifierDumperCheckFails_LieAboutDatatype()
     {
-        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename");
-        preDiscardedColumn1.Destination = DiscardedColumnDestination.StoreInIdentifiersDump;
-        preDiscardedColumn1.SqlDataType = "varchar(50)";
+        var preDiscardedColumn1 = new PreLoadDiscardedColumn(CatalogueRepository, tableInfoCreated, "forename")
+            {
+                Destination = DiscardedColumnDestination.StoreInIdentifiersDump,
+                SqlDataType = "varchar(50)"
+            };
         preDiscardedColumn1.SaveToDatabase();
         try
         {

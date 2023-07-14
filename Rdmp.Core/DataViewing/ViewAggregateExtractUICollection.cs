@@ -49,7 +49,7 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
     private ExternalDatabaseServer GetCacheServer()
     {
         var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
-        return cic is { QueryCachingServer_ID: { } } ? cic.QueryCachingServer : null;
+        return cic is { QueryCachingServer_ID: not null } ? cic.QueryCachingServer : null;
     }
 
     public IDataAccessPoint GetDataAccessPoint()
@@ -58,11 +58,8 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
 
         //the aggregate has no dimensions
         if (dim != null) return dim.ColumnInfo.TableInfo;
-        var table = AggregateConfiguration.ForcedJoins.FirstOrDefault();
-        if (table == null)
-            throw new Exception(
+        var table = AggregateConfiguration.ForcedJoins.FirstOrDefault() ?? throw new Exception(
                 $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
-
         return table;
 
     }
@@ -98,7 +95,7 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
             autoComplete.Add(AggregateConfiguration);
     }
 
-    AggregateConfiguration AggregateConfiguration => DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
+    private AggregateConfiguration AggregateConfiguration => DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {

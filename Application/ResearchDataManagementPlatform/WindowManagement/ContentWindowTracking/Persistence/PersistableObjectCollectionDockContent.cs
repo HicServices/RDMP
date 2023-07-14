@@ -27,10 +27,10 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
 {
     private readonly IObjectCollectionControl _control;
-        
+
     public const string Prefix = "RDMPObjectCollection";
-        
-    private PersistStringHelper persistStringHelper = new PersistStringHelper();
+
+    private PersistStringHelper persistStringHelper = new();
 
     public IPersistableObjectCollection Collection => _control.GetCollection();
 
@@ -57,7 +57,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         //Output <Prefix>:<The Control Type>:<The Type name of the Collection - must be new()>:
         sb.Append(Prefix + s + _control.GetType().FullName + s  + collection.GetType().Name + s);
 
-        sb.Append(persistStringHelper.GetObjectCollectionPersistString(collection.DatabaseObjects.ToArray()));
+        sb.Append(PersistStringHelper.GetObjectCollectionPersistString(collection.DatabaseObjects.ToArray()));
 
         //now add the bit that starts the user specific text
         sb.Append(PersistStringHelper.ExtraText);
@@ -68,14 +68,13 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         return sb.ToString();
     }
 
-        
+
 
     public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
         var newTabName = _control.GetTabName();
-        var floatWindow = ParentForm as CustomFloatWindow;
 
-        if (floatWindow != null)
+        if (ParentForm is CustomFloatWindow floatWindow)
             floatWindow.Text = newTabName;
 
         TabText = newTabName;
@@ -92,8 +91,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         foreach (var o in collection.DatabaseObjects)
         {
             var revertable = o as IRevertable;
-            if (revertable != null)
-                revertable.RevertToDatabaseState();
+            revertable?.RevertToDatabaseState();
         }
 
         _control.SetCollection(activator,collection);

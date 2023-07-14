@@ -49,8 +49,8 @@ public class CachedAggregateConfigurationResultsManager
 
     public CachedAggregateConfigurationResultsManager(IExternalDatabaseServer server)
     {
-        _server = DataAccessPortal.GetInstance().ExpectServer(server, DataAccessContext.InternalDataProcessing);
-        _database = DataAccessPortal.GetInstance().ExpectDatabase(server, DataAccessContext.InternalDataProcessing);
+        _server = DataAccessPortal.ExpectServer(server, DataAccessContext.InternalDataProcessing);
+        _database = DataAccessPortal.ExpectDatabase(server, DataAccessContext.InternalDataProcessing);
     }
 
     public const string CachingPrefix = "/*Cached:";
@@ -166,7 +166,7 @@ WHERE
         using (var con = _server.GetConnection())
         {
             con.Open();
-                
+
             var nameWeWillGiveTableInCache = $"{operation}_AggregateConfiguration{configuration.ID}";
 
             //either it has no name or it already has name we want so its ok
@@ -184,13 +184,13 @@ WHERE
 
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
-            mgrTable.Insert(new Dictionary<string, object>()
+            mgrTable.Insert(new Dictionary<string, object>
             {
                 { "Committer", Environment.UserName},
                 { "AggregateConfiguration_ID", configuration.ID},
                 { "SqlExecuted", arguments.SQL.Trim()},
                 { "Operation", operation.ToString()},
-                { "TableName", tbl.GetRuntimeName()},
+                { "TableName", tbl.GetRuntimeName()}
             });
 
             arguments.CommitTableDataCompleted(tbl);

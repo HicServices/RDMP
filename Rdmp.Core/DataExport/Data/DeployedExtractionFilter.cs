@@ -164,7 +164,7 @@ public class DeployedExtractionFilter : ConcreteFilter
     {
         base.Check(notifier);
 
-        var checker = new ClonedFilterChecker(this, this.ClonedFromExtractionFilter_ID, ((IDataExportRepository)Repository).CatalogueRepository);
+        var checker = new ClonedFilterChecker(this, ClonedFromExtractionFilter_ID, ((IDataExportRepository)Repository).CatalogueRepository);
         checker.Check(notifier);
     }
 
@@ -179,7 +179,7 @@ public class DeployedExtractionFilter : ConcreteFilter
     {
         if (FilterContainer_ID == null)
             return null;
-            
+
         var container = Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value);
         return container.GetSelectedDataSetsRecursively();
     }

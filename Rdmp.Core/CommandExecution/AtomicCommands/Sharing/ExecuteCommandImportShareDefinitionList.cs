@@ -37,8 +37,10 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
         {
             try
             {
-                var shareManager = new ShareManager(BasicActivator.RepositoryLocator);
-                shareManager.LocalReferenceGetter = LocalReferenceGetter;
+                var shareManager = new ShareManager(BasicActivator.RepositoryLocator)
+                {
+                    LocalReferenceGetter = LocalReferenceGetter
+                };
 
                 foreach (var f in selected)
                     using (var stream = File.Open(f.FullName, FileMode.Open))

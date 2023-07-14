@@ -24,7 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Data load component for loading RAW tables with records read from a remote database server. 
+/// Data load component for loading RAW tables with records read from a remote database server.
 /// Fetches all table from the specified database to load all catalogues specified.
 /// </summary>
 public class RemoteDatabaseAttacher: Attacher, IPluginAttacher
@@ -64,8 +64,6 @@ False - Trigger an error reporting the missing table(s)
     {
         if (job == null)
             throw new Exception("Job is Null, we require to know the job to build a DataFlowPipeline");
-      
-        string sql;
 
         var dbFrom = RemoteSource.Discover(DataAccessContext.DataLoad);
 
@@ -87,19 +85,18 @@ False - Trigger an error reporting the missing table(s)
 
                     //skip it
                     continue;
-                }else
-                {
-                    throw new Exception(
-                        $"Loadable table {table} was NOT found on the remote DB and IgnoreMissingTables is false");
-                }   
+                }
+                throw new Exception(
+                    $"Loadable table {table} was NOT found on the remote DB and IgnoreMissingTables is false");
             }
-                    
 
+
+            string sql;
             if(LoadRawColumnsOnly)
             {
                 var rawColumns = LoadRawColumnsOnly ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw) : tableInfo.ColumnInfos;
                 sql =
-                    $"SELECT {String.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)}";
+                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)}";
             }
             else
             {
@@ -112,7 +109,7 @@ False - Trigger an error reporting the missing table(s)
             var source = new DbDataCommandDataFlowSource(sql, $"Fetch data from {dbFrom} to populate RAW table {table}", dbFrom.Server.Builder, Timeout == 0 ? 50000 : Timeout);
 
             var destination = new SqlBulkInsertDestination(_dbInfo, table, Enumerable.Empty<string>());
-                
+
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
             var context = contextFactory.Create(PipelineUsage.LogsToTableLoadInfo | PipelineUsage.FixedDestination);
 

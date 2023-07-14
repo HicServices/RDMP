@@ -22,7 +22,7 @@ namespace Rdmp.Core.Curation.Data.Cache;
 
 /// <summary>
 /// Records the progress of fetching and caching data from a remote source e.g. a Webservice or Imaging file host.  Each CacheProgress
-/// is tied to a LoadProgress (which itself is tied to a LoadMetadata).  
+/// is tied to a LoadProgress (which itself is tied to a LoadMetadata).
 /// </summary>
 public class CacheProgress : DatabaseEntity, ICacheProgress
 {
@@ -93,7 +93,7 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
     {
         get => _cacheLagPeriodLoadDelay;
         set => SetField(ref  _cacheLagPeriodLoadDelay, value);
-    } 
+    }
 
     #endregion
 
@@ -136,17 +136,17 @@ public class CacheProgress : DatabaseEntity, ICacheProgress
 
         return new CacheLagPeriod(CacheLagPeriodLoadDelay);
     }
-        
+
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriod"/>
     public void SetCacheLagPeriod(CacheLagPeriod cacheLagPeriod)
     {
-        CacheLagPeriod = (cacheLagPeriod == null) ? "" : cacheLagPeriod.ToString();
+        CacheLagPeriod = cacheLagPeriod == null ? "" : cacheLagPeriod.ToString();
     }
 
     /// <inheritdoc cref="ICacheProgress.CacheLagPeriodLoadDelay"/>
     public void SetCacheLagPeriodLoadDelay(CacheLagPeriod cacheLagLoadDelayPeriod)
     {
-        CacheLagPeriodLoadDelay = (cacheLagLoadDelayPeriod == null) ? "" : cacheLagLoadDelayPeriod.ToString();
+        CacheLagPeriodLoadDelay = cacheLagLoadDelayPeriod == null ? "" : cacheLagLoadDelayPeriod.ToString();
     }
 
     public CacheProgress()
@@ -211,7 +211,7 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection,conn.Transaction))
     public TimeSpan GetShortfall()
     {
         var lag = GetCacheLagPeriod();
-        var lastExpectedCacheDate = (lag == null) ? DateTime.Today : lag.CalculateStartOfLagPeriodFrom(DateTime.Today);
+        var lastExpectedCacheDate = lag?.CalculateStartOfLagPeriodFrom(DateTime.Today) ?? DateTime.Today;
 
         TimeSpan shortfall;
         if (CacheFillProgress != null)

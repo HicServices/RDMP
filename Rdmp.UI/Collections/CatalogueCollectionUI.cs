@@ -88,7 +88,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
     protected override void Dispose(bool disposing)
     {
-        if (disposing && (components != null))
+        if (disposing && components != null)
         {
             components.Dispose();
         }
@@ -213,7 +213,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         };
 
         //Things that are always visible regardless
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[]
         {
             new ExecuteCommandCreateNewCatalogueByImportingFileUI(Activator){OverrideCommandName = "Add New Catalogue From File...",Weight = -50.9f},
             new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator) { OverrideCommandName = "Add New Catalogue From Database..." ,Weight = -50.8f},
@@ -227,7 +227,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             new ExecuteCommandAddNewSupportingSqlTable(Activator, null){ Weight = -46.8f},
 
             new ExecuteCommandCreateNewGovernancePeriod(Activator){OverrideCommandName = "Add New Governance Period", Weight = 44.9f },
-            new ExecuteCommandAddNewGovernanceDocument(Activator, null){Weight = 44.9f },
+            new ExecuteCommandAddNewGovernanceDocument(Activator, null){Weight = 44.9f }
         };
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
@@ -239,7 +239,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         RefreshUIFromDatabase(activator.CoreChildProvider.CatalogueRootFolder);
     }
 
-    void _activator_Emphasise(object sender, EmphasiseEventArgs args)
+    private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
     {
         //user wants this object emphasised
         var c = args.Request.ObjectToEmphasise as Catalogue;
@@ -262,17 +262,14 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
         var o = e.Object;
-        var cata = o as Catalogue;
 
-        if(o is GovernancePeriod || o is GovernanceDocument)
+        if (o is GovernancePeriod || o is GovernanceDocument)
             tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
 
-        if (cata != null)
+        if (o is Catalogue cata)
         {
-            var oldFolder = tlvCatalogues.GetParent(cata) as string;
-
             //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
-            if (oldFolder == null || !oldFolder.Equals(cata.Folder))
+            if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
                 RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
             else
                 RefreshUIFromDatabase(o);

@@ -13,7 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-class ColumnInfoTests : DatabaseTests
+internal class ColumnInfoTests : DatabaseTests
 {
 
  
@@ -67,7 +67,7 @@ class ColumnInfoTests : DatabaseTests
            
             try
             {
-                Assert.IsTrue(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent).Count() ==1);
+                Assert.IsTrue(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent).Length == 1);
             }
             finally
             {
@@ -129,9 +129,11 @@ class ColumnInfoTests : DatabaseTests
         var parent = new TableInfo(CatalogueRepository, "Rokkits");
         var column = new ColumnInfo(CatalogueRepository, "MyCol", "varchar(4)", parent);
 
-        var discard = new PreLoadDiscardedColumn(CatalogueRepository, parent, "MyCol");
-        discard.SqlDataType = "varchar(10)";
-        discard.Destination = DiscardedColumnDestination.Dilute;
+        var discard = new PreLoadDiscardedColumn(CatalogueRepository, parent, "MyCol")
+        {
+            SqlDataType = "varchar(10)",
+            Destination = DiscardedColumnDestination.Dilute
+        };
         discard.SaveToDatabase();
 
         Assert.AreEqual("varchar(4)", column.GetRuntimeDataType(LoadStage.PostLoad));

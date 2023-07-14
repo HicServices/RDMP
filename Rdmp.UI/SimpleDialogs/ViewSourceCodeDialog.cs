@@ -27,8 +27,8 @@ public partial class ViewSourceCodeDialog : Form
 {
     private Scintilla QueryEditor;
 
-    private static HashSet<FileInfo> SupplementalSourceZipFiles = new HashSet<FileInfo>();
-    private static object oSupplementalSourceZipFilesLock = new object();
+    private static HashSet<FileInfo> SupplementalSourceZipFiles = new();
+    private static object oSupplementalSourceZipFilesLock = new();
     private const string MainSourceCodeRepo = "SourceCodeForSelfAwareness.zip";
 
     public static void AddSupplementalSourceZipFile(FileInfo f)
@@ -47,8 +47,8 @@ public partial class ViewSourceCodeDialog : Form
 
         if(filename == null)
             return;
-            
-        var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+
+        var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
@@ -78,7 +78,7 @@ public partial class ViewSourceCodeDialog : Form
                 if (lineNumber != -1)
                 {
                     QueryEditor.FirstVisibleLine = Math.Max(0, lineNumber - 10);
-                    new ScintillaLineHighlightingHelper().HighlightLine(QueryEditor, lineNumber - 1, highlightColor);
+                    ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, lineNumber - 1, highlightColor);
                 }
             }
             else
@@ -170,8 +170,7 @@ public partial class ViewSourceCodeDialog : Form
 
     private void olvSourceFiles_ItemActivate(object sender, EventArgs e)
     {
-        var str = olvSourceFiles.SelectedObject as string;
-        if (str != null)
+        if (olvSourceFiles.SelectedObject is string str)
             LoadSourceCode(str, -1, Color.White);
     }
 

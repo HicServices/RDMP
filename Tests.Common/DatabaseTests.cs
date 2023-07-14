@@ -65,7 +65,7 @@ public class DatabaseTests
     public ICatalogueRepository CatalogueRepository => RepositoryLocator.CatalogueRepository;
 
     /// <summary>
-    /// Gets an <see cref="ICatalogueRepository"/> that points to a 
+    /// Gets an <see cref="ICatalogueRepository"/> that points to a
     /// database server or throws with <see cref="Assert.Inconclusive()"/>
     /// </summary>
     public CatalogueRepository CatalogueTableRepository
@@ -82,7 +82,7 @@ public class DatabaseTests
     public IDataExportRepository DataExportRepository => RepositoryLocator.DataExportRepository;
 
     /// <summary>
-    /// Gets an <see cref="IDataExportRepository"/> that points to a 
+    /// Gets an <see cref="IDataExportRepository"/> that points to a
     /// database server or throws with <see cref="Assert.Inconclusive()"/>
     /// </summary>
     public DataExportRepository DataExportTableRepository
@@ -99,8 +99,8 @@ public class DatabaseTests
     }
     protected SqlConnectionStringBuilder UnitTestLoggingConnectionString;
     protected SqlConnectionStringBuilder DataQualityEngineConnectionString;
-        
-        
+
+
     protected DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
 
     private readonly DiscoveredServer _discoveredMySqlServer;
@@ -113,14 +113,14 @@ public class DatabaseTests
     static DatabaseTests()
     {
         Rdmp.Core.Repositories.CatalogueRepository.SuppressHelpLoading = true;
-
-        // Always ignore SSL when running tests
-        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
             
         ImplementationManager.Load<MicrosoftSQLImplementation>();
         ImplementationManager.Load<MySqlImplementation>();
         ImplementationManager.Load<OracleImplementation>();
         ImplementationManager.Load<PostgreSqlImplementation>();
+
+        // Always ignore SSL when running tests
+        DiscoveredServerHelper.AddConnectionStringKeyword(DatabaseType.MicrosoftSQLServer, "TrustServerCertificate", "true", ConnectionStringKeywordPriority.ApiRule);
 
         ReadSettingsFile();
     }
@@ -132,7 +132,7 @@ public class DatabaseTests
         //see if there is a local text file first
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,settingsFile));
 
-        if (!f.Exists) 
+        if (!f.Exists)
             throw new FileNotFoundException($"Could not find file '{f.FullName}'");
 
         using var s = new StreamReader(f.OpenRead());
@@ -145,7 +145,7 @@ public class DatabaseTests
     public DatabaseTests()
     {
 
-        var opts = new PlatformDatabaseCreationOptions()
+        var opts = new PlatformDatabaseCreationOptions
         {
             ServerName = TestDatabaseSettings.ServerName,
             Prefix = TestDatabaseNames.Prefix,
@@ -154,8 +154,8 @@ public class DatabaseTests
             ValidateCertificate = false
         };
 
-        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ? 
-            new RepositoryProvider(GetFreshYamlRepository()) :
+        RepositoryLocator = TestDatabaseSettings.UseFileSystemRepo ?
+            new RepositoryProvider(global::Tests.Common.DatabaseTests.GetFreshYamlRepository()) :
             new PlatformDatabaseCreationRepositoryFinder(opts);
                     
         if(CatalogueRepository is TableRepository cataRepo)
@@ -167,7 +167,7 @@ public class DatabaseTests
             {
                 DealWithMissingTestDatabases(opts,cataRepo);
             }
-                    
+
         }
                 
 
@@ -208,7 +208,7 @@ public class DatabaseTests
         if (TestDatabaseSettings.MySql != null)
         {
             var builder = new MySqlConnectionStringBuilder(TestDatabaseSettings.MySql);
-                
+
             foreach (string k in builder.Keys)
             {
                 if (k is "server" or "database" or "user id" or "password")
@@ -226,7 +226,7 @@ public class DatabaseTests
             _discoveredPostgresServer = new DiscoveredServer(TestDatabaseSettings.PostgreSql, DatabaseType.PostgreSql);
     }
 
-    private void DealWithMissingTestDatabases(PlatformDatabaseCreationOptions opts, TableRepository cataRepo)
+    private static void DealWithMissingTestDatabases(PlatformDatabaseCreationOptions opts, TableRepository cataRepo)
     {
         var mainDb = cataRepo.DiscoveredServer.ExpectDatabase("master");
 
@@ -242,14 +242,13 @@ public class DatabaseTests
             // then create them
             TestContext.Out.WriteLine($"Creating TEST databases on {mainDb.Server} using prefix {opts.Prefix}");
 
-            var creator = new PlatformDatabaseCreation();
-            creator.CreatePlatformDatabases(opts);
+            PlatformDatabaseCreation.CreatePlatformDatabases(opts);
         }
 
         HaveTriedCreatingTestDatabases = true;
     }
 
-    private IDataExportRepository GetFreshYamlRepository()
+    private static IDataExportRepository GetFreshYamlRepository()
     {
         var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Repo"));
             
@@ -262,7 +261,7 @@ public class DatabaseTests
 
     private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)
     {
-        var opts = new PlatformDatabaseCreationOptions()
+        var opts = new PlatformDatabaseCreationOptions
         {
             ServerName = TestDatabaseSettings.ServerName,
             Prefix = prefix,
@@ -292,7 +291,7 @@ public class DatabaseTests
             
         return builder;
     }
-        
+
     /// <summary>
     /// Deletes all objects in the Catalogue and DataExport databases
     /// </summary>
@@ -425,7 +424,7 @@ public class DatabaseTests
         DeleteAll<LoadMetadata>(y);
     }
 
-    private void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable
+    private static void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable
     {
         foreach (var o in y.GetAllObjects<T>())
         {
@@ -478,7 +477,7 @@ public class DatabaseTests
                 Console.WriteLine($"Ignoring exception {e.Message} during db clean up");
             }
     }
-   
+
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         {
             if (args.Exception != null && args.Status!=RDMPPlatformDatabaseStatus.Healthy && args.Status!=RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
@@ -504,15 +503,15 @@ public class DatabaseTests
 
     private void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
     {
-        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
+        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}", args.Status, args.Type.Name, Environment.NewLine, args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
     }
 
     private void StartupOnMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs args)
     {
-        Assert.IsTrue(args.Status is MEFFileDownloadEventStatus.Success or MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is {0} for plugin {1}{2}{3}", args.Status, args.FileBeingProcessed, Environment.NewLine, (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
+        Assert.IsTrue(args.Status is MEFFileDownloadEventStatus.Success or MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is {0} for plugin {1}{2}{3}", args.Status, args.FileBeingProcessed, Environment.NewLine, args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
     }
-        
-        
+
+
     public const string BlitzDatabases = @"
 --If you want to blitz everything out of your test catalogue and data export database(s) then run the following SQL (adjusting for database names):
 
@@ -691,13 +690,13 @@ delete from {1}..Project
     /// </summary>
     /// <param name="sql"></param>
     /// <returns></returns>
-    protected string CollapseWhitespace(string sql)
+    protected static string CollapseWhitespace(string sql)
     {
         //replace all whitespace with single spaces
         return Regex.Replace(sql, @"\s+", " ").Trim();
     }
-        
-    HashSet<DiscoveredDatabase> forCleanup = new HashSet<DiscoveredDatabase>();
+
+    private HashSet<DiscoveredDatabase> forCleanup = new();
 
     /// <summary>
     /// Gets an empty database on the test server of the appropriate DBMS
@@ -775,7 +774,7 @@ delete from {1}..Project
         return (trans,server.GetCurrentDatabase());
     }
 
-    protected void DeleteTables(DiscoveredDatabase database)
+    protected static void DeleteTables(DiscoveredDatabase database)
     {
         var syntax = database.Server.GetQuerySyntaxHelper();
 
@@ -805,7 +804,7 @@ delete from {1}..Project
         foreach (var t in tables.Order.Reverse())
             try
             {
-                    
+
                 t.Drop();
             }
             catch (Exception ex)
@@ -816,7 +815,7 @@ delete from {1}..Project
         foreach (var t in database.DiscoverTableValuedFunctions())
             try
             {
-                    
+
                 t.Drop();
             }
             catch (Exception ex)
@@ -844,13 +843,11 @@ delete from {1}..Project
 
     protected ICatalogue Import(DiscoveredTable tbl, out ITableInfo tableInfoCreated,out ColumnInfo[] columnInfosCreated)
     {
-        CatalogueItem[] catalogueItems;
-        ExtractionInformation[] extractionInformations;
 
-        return Import(tbl, out tableInfoCreated, out columnInfosCreated, out catalogueItems, out extractionInformations);
+        return Import(tbl, out tableInfoCreated, out columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations);
     }
 
-    protected void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
+    protected static void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
     {
         if (resultTable.Columns.Count != rowObjects.Length)
             Assert.Fail(
@@ -896,7 +893,7 @@ delete from {1}..Project
 
 
     [Flags]
-    public enum TestLowPrivilegePermissions 
+    public enum TestLowPrivilegePermissions
     {
         Reader = 1,
         Writer = 2,
@@ -911,7 +908,7 @@ delete from {1}..Project
     }
     protected void SetupLowPrivilegeUserRightsFor(ITableInfo ti, TestLowPrivilegePermissions permissions)
     {
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
+        var db = DataAccessPortal.ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
         SetupLowPrivilegeUserRightsFor(db, permissions, ti);
     }
 
@@ -946,7 +943,7 @@ delete from {1}..Project
     }
 
 
-    private string GrantAccessSql(string username, DatabaseType type, TestLowPrivilegePermissions permissions)
+    private static string GrantAccessSql(string username, DatabaseType type, TestLowPrivilegePermissions permissions)
     {
         switch (type)
         {
@@ -977,14 +974,14 @@ GO
         throw new NotImplementedException();
     }
 
-    protected void Clear(LoadDirectory loadDirectory)
+    protected static void Clear(LoadDirectory loadDirectory)
     {
         DeleteFilesIn(loadDirectory.ForLoading);
         DeleteFilesIn(loadDirectory.ForArchiving);
         DeleteFilesIn(loadDirectory.Cache);
     }
 
-    protected void DeleteFilesIn(DirectoryInfo dir)
+    protected static void DeleteFilesIn(DirectoryInfo dir)
     {
         foreach (var f in dir.GetFiles())
             f.Delete();

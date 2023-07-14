@@ -24,8 +24,8 @@ public class RowVerCache<T>: IRowVerCache where T : IMapsDirectlyToDatabaseTable
 {
     private readonly TableRepository _repository;
 
-    private List<T> _cachedObjects = new List<T>();
-    private object _oLockCachedObjects = new object();
+    private List<T> _cachedObjects = new();
+    private object _oLockCachedObjects = new();
 
     private byte[] _maxRowVer;
     public long _changeTracking;
@@ -134,7 +134,7 @@ FROM
         using (var cmd =
                _repository.DiscoveredServer.GetCommand("select CHANGE_TRACKING_CURRENT_VERSION()", con))
         {
-                    
+
             var result = cmd.ExecuteScalar();
             if(result != DBNull.Value)
                 _changeTracking = Convert.ToInt64(result);

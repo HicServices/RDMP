@@ -18,7 +18,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources;
 [Category("Unit")]
 public abstract class DelimitedFileSourceTestsBase
 {
-    protected FlatFileToLoad CreateTestFile(params string[] contents)
+    protected static FlatFileToLoad CreateTestFile(params string[] contents)
     {
         var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests.txt");
 
@@ -30,7 +30,7 @@ public abstract class DelimitedFileSourceTestsBase
         return new FlatFileToLoad(new FileInfo(filename));
     }
 
-    protected void AssertDivertFileIsExactly(string expectedContents)
+    protected static void AssertDivertFileIsExactly(string expectedContents)
     {
         var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests_Errors.txt");
 
@@ -42,7 +42,7 @@ public abstract class DelimitedFileSourceTestsBase
     }
 
 
-    protected DataTable RunGetChunk(FlatFileToLoad file,BadDataHandlingStrategy strategy, bool throwOnEmpty)
+    protected static DataTable RunGetChunk(FlatFileToLoad file,BadDataHandlingStrategy strategy, bool throwOnEmpty)
     {
         return RunGetChunk(file, s =>
         {
@@ -51,7 +51,7 @@ public abstract class DelimitedFileSourceTestsBase
         });
     }
 
-    protected DataTable RunGetChunk(FlatFileToLoad file, Action<DelimitedFlatFileDataFlowSource> adjust = null)
+    protected static DataTable RunGetChunk(FlatFileToLoad file, Action<DelimitedFlatFileDataFlowSource> adjust = null)
     {
         var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(file, new ThrowImmediatelyDataLoadEventListener());
@@ -59,8 +59,7 @@ public abstract class DelimitedFileSourceTestsBase
         source.StronglyTypeInput = true;//makes the source interpret the file types properly
         source.StronglyTypeInputBatchSize = 100;
         source.AttemptToResolveNewLinesInRecords = true; //maximise potential for conflicts
-        if (adjust != null)
-            adjust(source);
+        adjust?.Invoke(source);
 
         try
         {

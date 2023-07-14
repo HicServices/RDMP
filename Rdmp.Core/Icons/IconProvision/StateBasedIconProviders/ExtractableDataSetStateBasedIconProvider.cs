@@ -22,7 +22,7 @@ public class ExtractableDataSetStateBasedIconProvider : IObjectStateBasedIconPro
     {
         _catalogueIconProvider = catalogueIconProvider;
         _disabled = Image.Load<Rgba32>(CatalogueIcons.ExtractableDataSetDisabled);
-        this._overlayProvider = overlayProvider;
+        _overlayProvider = overlayProvider;
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)

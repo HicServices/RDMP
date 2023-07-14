@@ -31,7 +31,7 @@ internal class ViewSourceCodeToolTip : ToolTip
         Draw += OnDraw;
     }
 
-        
+
     private void OnPopup(object sender, PopupEventArgs e)
     {
         if(Screen.PrimaryScreen != null && Screen.PrimaryScreen.Bounds != Rectangle.Empty)
@@ -44,7 +44,7 @@ internal class ViewSourceCodeToolTip : ToolTip
         e.ToolTipSize = new Size(WIDTH, HEIGHT);
     }
 
-    static Dictionary<string, string[]> SourceFileCache = new Dictionary<string, string[]>();
+    private static Dictionary<string, string[]> SourceFileCache = new();
 
     private void OnDraw(object sender, DrawToolTipEventArgs e)
     {
@@ -56,13 +56,10 @@ internal class ViewSourceCodeToolTip : ToolTip
 
             linenumber = Math.Max(0,linenumber-1);
 
-            var lines = ReadAllLinesCached(filename);
-
-            if(lines == null)
-                throw new FileNotFoundException($"Could not find source code for file:{Path.GetFileName(filename)}");
+            var lines = ReadAllLinesCached(filename) ?? throw new FileNotFoundException($"Could not find source code for file:{Path.GetFileName(filename)}");
 
             //get height of any given line
-            var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts" , e.Font).Height + (LINE_PADDING*2f);
+            var coreLineHeight = e.Graphics.MeasureString("I've got a lovely bunch of coconuts" , e.Font).Height + LINE_PADDING*2f;
 
             var midpointY = HEIGHT/2;
 
@@ -75,7 +72,7 @@ internal class ViewSourceCodeToolTip : ToolTip
 
             var index = linenumber - 1;
             var currentLineY = midpointY - coreLineHeight;
-            
+
             //any other lines we can fit on above the current line
             while(currentLineY > 0 && index >= 0)
             {
@@ -86,7 +83,7 @@ internal class ViewSourceCodeToolTip : ToolTip
 
             index = linenumber + 1;
             currentLineY = midpointY + coreLineHeight;
-            
+
             //while there are lines below us
             while (currentLineY < HEIGHT && index < lines.Length)
             {
@@ -107,12 +104,12 @@ internal class ViewSourceCodeToolTip : ToolTip
         }
     }
 
-    private string[] ReadAllLinesCached(string filename)
+    private static string[] ReadAllLinesCached(string filename)
     {
         if(!SourceFileCache.ContainsKey(filename))
         {
             string[] fileContents;
-                
+
             //if you have the original file
             if (File.Exists(filename))
                 fileContents = File.ReadLines(filename).ToArray();
@@ -125,7 +122,7 @@ internal class ViewSourceCodeToolTip : ToolTip
                     return null;
 
                 fileContents = contentsInOneLine.Split('\n');
-                    
+
             }
 
             SourceFileCache.Add(filename,fileContents);

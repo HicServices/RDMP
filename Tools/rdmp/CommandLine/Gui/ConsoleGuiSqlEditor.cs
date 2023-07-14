@@ -25,7 +25,7 @@ using Rune = System.Rune;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleGuiSqlEditor : Window
+internal class ConsoleGuiSqlEditor : Window
 {
     protected readonly IBasicActivateItems Activator;
     private readonly IViewSQLAndResultsCollection _collection;
@@ -55,28 +55,27 @@ class ConsoleGuiSqlEditor : Window
 
     public ConsoleGuiSqlEditor(IBasicActivateItems activator,IViewSQLAndResultsCollection collection)
     {
-        this.Activator = activator;
-        this._collection = collection;
+        Activator = activator;
+        _collection = collection;
         Modal = true;
         ColorScheme = ConsoleMainWindow.ColorScheme;
 
         // Tabs (query and results)
-        TabView = new TabView() { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
+        TabView = new TabView { Width = Dim.Fill(), Height = Dim.Fill(), Y = 1 };
 
-        textView = new SqlTextView()
+        textView = new SqlTextView
         {
             X = 0,
             Y = 0,
             Width = Dim.Fill(),
             Height = Dim.Fill(),
-            Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n").Replace("\t", "    ")
+            Text = _orignalSql = collection.GetSql().Replace("\r\n", "\n").Replace("\t", "    "),
+            AllowsTab = false
         };
-
-        textView.AllowsTab = false;
 
         TabView.AddTab(queryTab = new Tab("Query", textView),true);
 
-        tableView = new TableView()
+        tableView = new TableView
         {
             X = 0,
             Y = 0,
@@ -95,7 +94,7 @@ class ConsoleGuiSqlEditor : Window
 
         _btnRunOrCancel = new Button("Run"){
             X= 0,
-            Y= 0,
+            Y= 0
         };
 
         _btnRunOrCancel.Clicked += ()=>RunOrCancel();
@@ -108,7 +107,7 @@ class ConsoleGuiSqlEditor : Window
         Add(resetSql);
 
         var clearSql = new Button("Clear S_ql"){
-            X= Pos.Right(resetSql)+1,
+            X= Pos.Right(resetSql)+1
         };
 
         clearSql.Clicked += ()=>ClearSql();
@@ -116,7 +115,7 @@ class ConsoleGuiSqlEditor : Window
 
         var lblTimeout = new Label("Timeout:")
         {
-            X = Pos.Right(clearSql)+1,
+            X = Pos.Right(clearSql)+1
         };
         Add(lblTimeout);
 
@@ -130,14 +129,14 @@ class ConsoleGuiSqlEditor : Window
         Add(tbTimeout);
 
         var btnSave = new Button("Save"){
-            X= Pos.Right(tbTimeout)+1,
+            X= Pos.Right(tbTimeout)+1
         };
         btnSave.Clicked += ()=>Save();
         Add(btnSave);
 
         var btnOpen = new Button("Open")
         {
-            X = Pos.Right(btnSave) + 1,
+            X = Pos.Right(btnSave) + 1
         };
 
         btnOpen.Clicked += OpenFile;
@@ -145,7 +144,7 @@ class ConsoleGuiSqlEditor : Window
         Add(btnOpen);
 
         var btnClose = new Button("Clos_e"){
-            X= Pos.Right(btnOpen) +1,
+            X= Pos.Right(btnOpen) +1
         };
 
 
@@ -157,7 +156,7 @@ class ConsoleGuiSqlEditor : Window
 
         var auto = new AutoCompleteProvider(collection.GetQuerySyntaxHelper());
         collection.AdjustAutocomplete(auto);
-        var bits = auto.Items.SelectMany(auto.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+        var bits = auto.Items.SelectMany(AutoCompleteProvider.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
         textView.Autocomplete.AllSuggestions = bits;
         textView.Autocomplete.MaxWidth = 40;
     }
@@ -231,7 +230,7 @@ class ConsoleGuiSqlEditor : Window
                         w.NextRecord();
                     }
                 }
-                    
+
                 MessageBox.Query("File Saved","Save completed","Ok");
             }
         }
@@ -298,7 +297,7 @@ class ConsoleGuiSqlEditor : Window
             _btnRunOrCancel.SetNeedsDisplay();
         }
     }
-        
+
     private void SetReadyToRun()
     {
         _btnRunOrCancel.Text = "Run";
@@ -316,7 +315,7 @@ class ConsoleGuiSqlEditor : Window
                 return;
             }
 
-            var db = DataAccessPortal.GetInstance().ExpectDatabase(_collection.GetDataAccessPoint(),DataAccessContext.InternalDataProcessing);
+            var db = DataAccessPortal.ExpectDatabase(_collection.GetDataAccessPoint(),DataAccessContext.InternalDataProcessing);
 
             using(var con = db.Server.GetConnection())
             {
@@ -329,8 +328,8 @@ class ConsoleGuiSqlEditor : Window
                     var dt = new DataTable();
                     da.Fill(dt);
 
-                    Application.MainLoop.Invoke(() => { 
-                            
+                    Application.MainLoop.Invoke(() => {
+
                         tableView.Table = dt;
 
                         // if query resulted in some data show it
@@ -343,7 +342,7 @@ class ConsoleGuiSqlEditor : Window
 
 
                     OnQueryCompleted(dt);
-                }   
+                }
             }
         }
         finally
@@ -357,9 +356,9 @@ class ConsoleGuiSqlEditor : Window
             
     }
 
-    private class SqlAutocomplete : Terminal.Gui.TextViewAutocomplete
+    private class SqlAutocomplete : TextViewAutocomplete
     {
-        public override bool IsWordChar(System.Rune rune)
+        public override bool IsWordChar(Rune rune)
         {
             return (char)rune == '_' || base.IsWordChar(rune);
         }
@@ -368,28 +367,30 @@ class ConsoleGuiSqlEditor : Window
     private class SqlTextView : TextView
     {
 
-        private readonly HashSet<string> _keywords = new(new[]
-        {
-            "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE",
-            "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION",
-            "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG",
-            "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
-            "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
-            "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
-            "database", "table", "having", "in", "join", "on", "union", "exists",
-        }, StringComparer.CurrentCultureIgnoreCase);
+        private readonly HashSet<string> _keywords = new(
+            new[]
+            {
+                "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE",
+                "COALESCE", "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT",
+                "COMPLETION", "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT",
+                "CONSTRAINT_CATALOG", "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS",
+                "COPY", "CPU", "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete",
+                "truncate", "as", "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit",
+                "null", "is", "drop", "database", "table", "having", "in", "join", "on", "union", "exists"
+            }, StringComparer.CurrentCultureIgnoreCase);
         private readonly Attribute _blue;
         private readonly Attribute _white;
 
 
         public SqlTextView()
         {
-            Autocomplete = new SqlAutocomplete();
-
-            Autocomplete.ColorScheme = new ColorScheme()
+            Autocomplete = new SqlAutocomplete
             {
-                Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
-                Focus = Driver.MakeAttribute(Color.Black, Color.Cyan),
+                ColorScheme = new ColorScheme
+                {
+                    Normal = Driver.MakeAttribute(Color.Black, Color.Blue),
+                    Focus = Driver.MakeAttribute(Color.Black, Color.Cyan)
+                }
             };
 
             _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
@@ -407,7 +408,7 @@ class ConsoleGuiSqlEditor : Window
             Driver.SetAttribute(_white);
         }
 
-        protected override void SetNormalColor(List<System.Rune> line, int idx)
+        protected override void SetNormalColor(List<Rune> line, int idx)
         {
             Driver.SetAttribute(IsKeyword(line, idx) ? _blue : _white);
         }
@@ -424,7 +425,7 @@ class ConsoleGuiSqlEditor : Window
             return _keywords.Contains(word);
         }
 
-        private string IdxToWord(IEnumerable<Rune> line, int idx)
+        private static string IdxToWord(IEnumerable<Rune> line, int idx)
         {
             var words = Regex.Split(
                 string.Join("", line),

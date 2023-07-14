@@ -24,7 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine;
 
 /// <summary>
-/// Parses strings into relevant <see cref="RDMPCommandLineOptions"/> subclasses 
+/// Parses strings into relevant <see cref="RDMPCommandLineOptions"/> subclasses
 /// and runs appropriate <see cref="Runners.Runner"/>
 /// </summary>
 public class RdmpCommandLineBootStrapper
@@ -32,29 +32,27 @@ public class RdmpCommandLineBootStrapper
 
     public static int HandleArgumentsWithStandardRunner(string[] args, Logger logger,IRDMPPlatformRepositoryServiceLocator existingLocator = null)
     {
-        int returnCode;
         try
         {
-            returnCode =
-                UsefulStuff.GetParser()
-                    .ParseArguments<
-                        DleOptions,
-                        DqeOptions,
-                        CacheOptions,
-                        ExtractionOptions,
-                        ReleaseOptions,
-                        CohortCreationOptions,
-                        ExecuteCommandOptions>(args)
-                    .MapResult(
-                        //Add new verbs as options here and invoke relevant runner
-                        (DleOptions opts) => Run(opts,null, existingLocator),
-                        (DqeOptions opts) => Run(opts, null, existingLocator),
-                        (CacheOptions opts) => Run(opts, null, existingLocator),
-                        (ExtractionOptions opts) => Run(opts, null, existingLocator),
-                        (ReleaseOptions opts) => Run(opts, null, existingLocator),
-                        (CohortCreationOptions opts) => Run(opts, null, existingLocator),
-                        (ExecuteCommandOptions opts) => RunCmd(opts, existingLocator),
-                        errs => 1);
+            var returnCode = UsefulStuff.GetParser()
+                .ParseArguments<
+                    DleOptions,
+                    DqeOptions,
+                    CacheOptions,
+                    ExtractionOptions,
+                    ReleaseOptions,
+                    CohortCreationOptions,
+                    ExecuteCommandOptions>(args)
+                .MapResult(
+                    //Add new verbs as options here and invoke relevant runner
+                    (DleOptions opts) => Run(opts,null, existingLocator),
+                    (DqeOptions opts) => Run(opts, null, existingLocator),
+                    (CacheOptions opts) => Run(opts, null, existingLocator),
+                    (ExtractionOptions opts) => Run(opts, null, existingLocator),
+                    (ReleaseOptions opts) => Run(opts, null, existingLocator),
+                    (CohortCreationOptions opts) => Run(opts, null, existingLocator),
+                    (ExecuteCommandOptions opts) => RunCmd(opts, existingLocator),
+                    errs => 1);
 
             logger.Info($"Exiting with code {returnCode}");
             return returnCode;
@@ -123,7 +121,7 @@ public class RdmpCommandLineBootStrapper
                 listener.OnNotify(typeof(RdmpCommandLineBootStrapper), new NotifyEventArgs(ProgressEventType.Error, "No repository has been specified.  Either create a Databases.yaml file or provide repository connection strings/paths as command line arguments"));
                 return REPO_ERROR;
             }
-                    
+
 
             if (!CheckRepo(repositoryLocator))
             {
@@ -139,7 +137,7 @@ public class RdmpCommandLineBootStrapper
             checker.Worst = LogLevel.Info;
 
         var runner = explicitRunner ??
-                     factory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator, checker), opts);
+                     RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(repositoryLocator, checker), opts);
 
         // Let's not worry about global errors during the CreateRunner process
         // These are mainly UI/GUI and unrelated to the actual process to run

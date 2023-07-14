@@ -23,8 +23,8 @@ namespace Rdmp.UI.Collections;
 /// </summary>
 public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
-    List<IMapsDirectlyToDatabaseTable> favourites = new List<IMapsDirectlyToDatabaseTable>();
-    bool _firstTime = true;
+    private List<IMapsDirectlyToDatabaseTable> favourites = new();
+    private bool _firstTime = true;
     public FavouritesCollectionUI()
     {
         InitializeComponent();
@@ -37,7 +37,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         CommonTreeFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,Activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings());
         CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
-            (a) => new IAtomicCommand[]
+            a => new IAtomicCommand[]
             {
                 new ExecuteCommandAddFavourite(a),
                 new ExecuteCommandClearFavourites(a)

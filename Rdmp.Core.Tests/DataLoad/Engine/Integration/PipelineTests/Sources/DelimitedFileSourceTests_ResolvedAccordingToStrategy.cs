@@ -83,7 +83,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             
         if (throwOnEmpty)
         {
-            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file,  
+            var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file,
                 s =>{ s.ThrowOnEmptyFiles = true; s.ForceHeaders="Name,Address"; s.ForceHeadersReplacesFirstLineInFile = true;}));
             Assert.AreEqual("File DelimitedFileSourceTests.txt is empty", ex.Message);
         }
@@ -124,7 +124,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
 
@@ -160,10 +160,10 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
-        
+
     [TestCase(BadDataHandlingStrategy.DivertRows,true)]
     [TestCase(BadDataHandlingStrategy.ThrowException,false)]
     [TestCase(BadDataHandlingStrategy.ThrowException,true)]
@@ -177,12 +177,12 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             "Other People To Investigate",
             "Dennis,Hes ok,35");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+        void adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = strategy;
             a.AttemptToResolveNewLinesInRecords = tryToResolve;
             a.ThrowOnEmptyFiles = true;
-        };
+        }
 
         switch (strategy)
         {
@@ -202,7 +202,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
 
@@ -217,12 +217,12 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
             "Frank,Is the greatest,100",
             "Bob");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+        void adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = strategy;
             a.AttemptToResolveNewLinesInRecords = tryToResolve;
             a.ThrowOnEmptyFiles = true;
-        };
+        }
 
         switch (strategy)
         {
@@ -242,7 +242,7 @@ public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFil
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
 
@@ -274,7 +274,7 @@ not too bad
 to be honest,Bob,20",
             "Hes ok,Dennis,35");
 
-        var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
+        var ex = Assert.Throws<FlatFileLoadException>(()=> RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
         Assert.AreEqual("Bad data found on line 3",ex.Message);
 
         //looks like a good record followed by 2 bad records
@@ -296,7 +296,7 @@ not too bad
 to be honest",
             "Dennis,35,Hes ok");
 
-        var ex = Assert.Throws<FlatFileLoadException>(()=>RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
+        var ex = Assert.Throws<FlatFileLoadException>(()=> RunGetChunk(file, s => { s.AttemptToResolveNewLinesInRecords = true; }));
         Assert.AreEqual("Bad data found on line 4",ex.Message);
 
         //looks like a good record followed by 2 bad records
@@ -352,5 +352,5 @@ to be honest",
         Assert.AreEqual(100, dt.Rows[0]["BloodGlucose"]);
 
     }
-        
+
 }

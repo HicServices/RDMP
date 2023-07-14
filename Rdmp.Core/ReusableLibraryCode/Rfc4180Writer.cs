@@ -24,9 +24,9 @@ public static class Rfc4180Writer
                 .OfType<DataColumn>()
                 .Select(column => QuoteValue(column.ColumnName));
 
-            writer.WriteLine(String.Join(",", headerValues));
+            writer.WriteLine(string.Join(",", headerValues));
         }
-            
+
         var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new Guesser());
         foreach (var kvp in typeDictionary)
             kvp.Value.AdjustToCompensateForValues(kvp.Key);
@@ -34,11 +34,11 @@ public static class Rfc4180Writer
         foreach (DataRow row in sourceTable.Rows)
         {
             var line = new List<string>();
-                
+
             foreach (DataColumn col in sourceTable.Columns)
                 line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
-                
-            writer.WriteLine(String.Join(",", line));
+
+            writer.WriteLine(string.Join(",", line));
         }
 
         writer.Flush();
@@ -49,23 +49,18 @@ public static class Rfc4180Writer
         if (o == null || o == DBNull.Value)
             return null;
 
-        var s = o as string;
-        if (s != null && allowDates)
+        if (o is string s && allowDates)
         {
-            DateTime dt;
-            if (DateTime.TryParse(s, out dt))
+            if (DateTime.TryParse(s, out var dt))
                 return GetStringRepresentation(dt);
         }
 
-        if (o is DateTime)
-            return GetStringRepresentation((DateTime) o);
+        if (o is DateTime time)
+            return GetStringRepresentation(time);
 
         var str = o.ToString();
 
-        if (escaper != null)
-            str = escaper.Escape(str);
-        else
-            str = str.Replace("\"", "\"\"");
+        str = escaper != null ? escaper.Escape(str) : str.Replace("\"", "\"\"");
 
         return str;
     }

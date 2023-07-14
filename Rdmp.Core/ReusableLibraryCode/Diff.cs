@@ -13,7 +13,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// <summary>
 /// This Class implements the Difference Algorithm published in
 /// "An O(ND) Difference Algorithm and its Variations" by Eugene Myers
-/// Algorithmica Vol. 1 No. 2, 1986, p 251.  
+/// Algorithmica Vol. 1 No. 2, 1986, p 251.
 /// 
 /// <para>There are many C, Java, Lisp implementations public available but they all seem to come
 /// from the same source (diffutils) that is under the (unfree) GNU public License
@@ -57,14 +57,14 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// 
 /// <para>Changes:
 /// 2002.09.20 There was a "hang" in some situations.
-/// Now I undestand a little bit more of the SMS algorithm. 
+/// Now I undestand a little bit more of the SMS algorithm.
 /// There have been overlapping boxes; that where analyzed partial differently.
 /// One return-point is enough.
 /// A assertion was added in CreateDiffs when in debug-mode, that counts the number of equal (no modified) lines in both arrays.
 /// They must be identical.</para>
 /// 
 /// <para>2003.02.07 Out of bounds error in the Up/Down vector arrays in some situations.
-/// The two vetors are now accessed using different offsets that are adjusted using the start k-Line. 
+/// The two vetors are now accessed using different offsets that are adjusted using the start k-Line.
 /// A test case is added. </para>
 /// 
 /// <para>2006.03.05 Some documentation and a direct Diff entry point.</para>
@@ -92,9 +92,9 @@ public class Diff {
     /// Shortest Middle Snake Return Data
     /// </summary>
     private struct SMSRD {
-        internal int x, y; 
-        // internal int u, v;  // 2002.09.20: no need for 2 points 
-    } 
+        internal int x, y;
+        // internal int u, v;  // 2002.09.20: no need for 2 points
+    }
 
 
     #region self-Test
@@ -113,12 +113,12 @@ public class Diff {
       System.Diagnostics.Debug.Listeners.Add(ctl);
 
       System.Console.WriteLine("Diff Self Test...");
-      
+
       // test all changes
       a = "a,b,c,d,e,f,g,h,i,j,k,l".Replace(',', '\n');
       b = "0,1,2,3,4,5,6,7,8,9".Replace(',', '\n');
       System.Diagnostics.Debug.Assert(TestHelper(Diff.DiffText(a, b, false, false, false))
-        == "12.10.0.0*", 
+        == "12.10.0.0*",
         "all-changes test failed.");
       System.Diagnostics.Debug.WriteLine("all-changes test passed.");
       // test all same
@@ -144,20 +144,20 @@ public class Diff {
         == "1.1.0.0*1.1.2.2*0.2.7.7*1.1.11.13*0.1.13.15*",
         "repro20020920 test failed.");
       System.Diagnostics.Debug.WriteLine("repro20020920 test passed.");
-      
+
       // 2003.02.07 - repro
       a = "F".Replace(',', '\n');
       b = "0,F,1,2,3,4,5,6,7".Replace(',', '\n');
       System.Diagnostics.Debug.Assert(TestHelper(Diff.DiffText(a, b, false, false, false))
-        == "0.1.0.0*0.7.1.2*", 
+        == "0.1.0.0*0.7.1.2*",
         "repro20030207 test failed.");
       System.Diagnostics.Debug.WriteLine("repro20030207 test passed.");
-      
+
       // Muegel - repro
       a = "HELLO\nWORLD";
       b = "\n\nhello\n\n\n\nworld\n";
       System.Diagnostics.Debug.Assert(TestHelper(Diff.DiffText(a, b, false, false, false))
-        == "2.8.0.0*", 
+        == "2.8.0.0*",
         "repro20030409 test failed.");
       System.Diagnostics.Debug.WriteLine("repro20030409 test passed.");
 
@@ -165,7 +165,7 @@ public class Diff {
       a = "a,b,-,c,d,e,f,f".Replace(',', '\n');
       b = "a,b,x,c,e,f".Replace(',', '\n');
       System.Diagnostics.Debug.Assert(TestHelper(Diff.DiffText(a, b, false, false, false))
-        == "1.1.2.2*1.0.4.4*1.0.6.5*", 
+        == "1.1.2.2*1.0.4.4*1.0.6.5*",
         "some-changes test failed.");
       System.Diagnostics.Debug.WriteLine("some-changes test passed.");
 
@@ -194,16 +194,16 @@ public class Diff {
     /// <param name="TextA">A-version of the text (usualy the old one)</param>
     /// <param name="TextB">B-version of the text (usualy the new one)</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
-    public Item [] DiffText(string TextA, string TextB) {
-        return(DiffText(TextA, TextB, false, false, false));
+    public static Item [] DiffText(string TextA, string TextB) {
+        return DiffText(TextA, TextB, false, false, false);
     } // DiffText
 
-      
+
     /// <summary>
     /// Find the difference in 2 text documents, comparing by textlines.
     /// The algorithm itself is comparing 2 arrays of numbers so when comparing 2 text documents
     /// each line is converted into a (hash) number. This hash-value is computed by storing all
-    /// textlines into a common hashtable so i can find dublicates in there, and generating a 
+    /// textlines into a common hashtable so i can find dublicates in there, and generating a
     /// new number each time a new textline is inserted.
     /// </summary>
     /// <param name="TextA">A-version of the text (usualy the old one)</param>
@@ -227,7 +227,7 @@ public class Diff {
         LCS(DataA, 0, DataA.Length, DataB, 0, DataB.Length);
         return CreateDiffs(DataA, DataB);
     } // DiffText
-		
+
 
     /// <summary>
     /// Find the difference in 2 arrays of integers.
@@ -259,20 +259,16 @@ public class Diff {
     /// <returns>a array of integers.</returns>
     private static int[] DiffCodes(string aText, Hashtable h, bool trimSpace, bool ignoreSpace, bool ignoreCase) {
         // get all codes of the text
-        string []Lines;
-        int []Codes;
         var lastUsedCode = h.Count;
-        object aCode;
-        string s;
 
         // strip off all cr, only use lf as textline separator.
         aText = aText.Replace("\r", "");
-        Lines = aText.Split('\n');
+        var Lines = aText.Split('\n');
 
-        Codes = new int[Lines.Length];
+        var Codes = new int[Lines.Length];
 
         for (var i = 0; i < Lines.Length; ++i) {
-            s = Lines[i];
+            var s = Lines[i];
             if (trimSpace)
                 s = s.Trim();
 
@@ -282,8 +278,8 @@ public class Diff {
 
             if (ignoreCase)
                 s = s.ToLower();
-        
-            aCode = h[s];
+
+            var aCode = h[s];
             if (aCode == null) {
                 lastUsedCode++;
                 h[s] = lastUsedCode;
@@ -292,7 +288,7 @@ public class Diff {
                 Codes[i] = (int)aCode;
             } // if
         } // for
-        return(Codes);
+        return Codes;
     } // DiffCodes
 
 
@@ -307,13 +303,12 @@ public class Diff {
     /// <param name="UpperB">upper bound of the actual range in DataB (exclusive)</param>
     /// <returns>a MiddleSnakeData record containing x,y and u,v</returns>
     private static SMSRD SMS(DiffData DataA, int LowerA, int UpperA, DiffData DataB, int LowerB, int UpperB) {
-        SMSRD ret;
         var MAX = DataA.Length + DataB.Length + 1;
 
         var DownK = LowerA - LowerB; // the k-line to start the forward search
         var UpK = UpperA - UpperB; // the k-line to start the reverse search
 
-        var Delta = (UpperA - LowerA) - (UpperB - LowerB);
+        var Delta = UpperA - LowerA - (UpperB - LowerB);
         var oddDelta = (Delta & 1) != 0;
 
         // vector for the (0,0) to (x,y) search
@@ -321,13 +316,13 @@ public class Diff {
 
         // vector for the (u,v) to (N,M) search
         var UpVector = new int[2 * MAX + 2];
-      
+
         // The vectors in the publication accepts negative indexes. the vectors implemented here are 0-based
         // and are access using a specific offset: UpOffset UpVector and DownOffset for DownVektor
         var DownOffset = MAX - DownK;
         var UpOffset = MAX - UpK;
-	
-        var  MaxD = ((UpperA - LowerA + UpperB - LowerB) / 2) + 1;
+
+        var MaxD = (UpperA - LowerA + UpperB - LowerB) / 2 + 1;
 		
         // Debug.Write(2, "SMS", String.Format("Search the box: A[{0}-{1}] to B[{2}-{3}]", LowerA, UpperA, LowerB, UpperB));
 
@@ -338,67 +333,68 @@ public class Diff {
         for (var D = 0; D <= MaxD; D++) {
 
             // Extend the forward path.
+            SMSRD ret;
             for (var k = DownK - D; k <= DownK + D; k += 2) {
                 // Debug.Write(0, "SMS", "extend forward path " + k.ToString());
 
                 // find the only or better starting point
-                int x, y;
+                int x;
                 if (k == DownK - D) {
                     x = DownVector[DownOffset + k+1]; // down
                 } else {
                     x = DownVector[DownOffset + k-1] + 1; // a step to the right
-                    if ((k < DownK + D) && (DownVector[DownOffset + k+1] >= x))
+                    if (k < DownK + D && DownVector[DownOffset + k+1] >= x)
                         x = DownVector[DownOffset + k+1]; // down
                 }
-                y = x - k;
+                var y = x - k;
 
                 // find the end of the furthest reaching forward D-path in diagonal k.
-                while ((x < UpperA) && (y < UpperB) && (DataA.data[x] == DataB.data[y])) {
+                while (x < UpperA && y < UpperB && DataA.data[x] == DataB.data[y]) {
                     x++; y++;
                 }
                 DownVector[DownOffset + k] = x;
 
                 // overlap ?
-                if (oddDelta && (UpK-D < k) && (k < UpK+D)) {
+                if (oddDelta && UpK-D < k && k < UpK+D) {
                     if (UpVector[UpOffset + k] <= DownVector[DownOffset + k]) {
                         ret.x = DownVector[DownOffset + k];
                         ret.y = DownVector[DownOffset + k] - k;
-                        // ret.u = UpVector[UpOffset + k];      // 2002.09.20: no need for 2 points 
+                        // ret.u = UpVector[UpOffset + k];      // 2002.09.20: no need for 2 points
                         // ret.v = UpVector[UpOffset + k] - k;
-                        return (ret);
+                        return ret;
                     } // if
                 } // if
 
             } // for k
-				
+
             // Extend the reverse path.
             for (var k = UpK - D; k <= UpK + D; k += 2) {
                 // Debug.Write(0, "SMS", "extend reverse path " + k.ToString());
 
                 // find the only or better starting point
-                int x, y;
+                int x;
                 if (k == UpK + D) {
                     x = UpVector[UpOffset + k-1]; // up
                 } else {
                     x = UpVector[UpOffset + k+1] - 1; // left
-                    if ((k > UpK - D) && (UpVector[UpOffset + k-1] < x))
+                    if (k > UpK - D && UpVector[UpOffset + k-1] < x)
                         x = UpVector[UpOffset + k-1]; // up
                 } // if
-                y = x - k;
+                var y = x - k;
 
-                while ((x > LowerA) && (y > LowerB) && (DataA.data[x-1] == DataB.data[y-1])) {
+                while (x > LowerA && y > LowerB && DataA.data[x-1] == DataB.data[y-1]) {
                     x--; y--; // diagonal
                 }
                 UpVector[UpOffset + k] = x;
 
                 // overlap ?
-                if (! oddDelta && (DownK-D <= k) && (k <= DownK+D)) {
+                if (! oddDelta && DownK-D <= k && k <= DownK+D) {
                     if (UpVector[UpOffset + k] <= DownVector[DownOffset + k]) {
                         ret.x = DownVector[DownOffset + k];
                         ret.y = DownVector[DownOffset + k] - k;
-                        // ret.u = UpVector[UpOffset + k];     // 2002.09.20: no need for 2 points 
+                        // ret.u = UpVector[UpOffset + k];     // 2002.09.20: no need for 2 points
                         // ret.v = UpVector[UpOffset + k] - k;
-                        return (ret);
+                        return ret;
                     } // if
                 } // if
 
@@ -411,7 +407,7 @@ public class Diff {
 
 
     /// <summary>
-    /// This is the divide-and-conquer implementation of the longes common-subsequence (LCS) 
+    /// This is the divide-and-conquer implementation of the longes common-subsequence (LCS)
     /// algorithm.
     /// The published algorithm passes recursively parts of the A and B sequences.
     /// To avoid copying these arrays the lower and upper bounds are passed while the sequences stay constant.
@@ -452,36 +448,34 @@ public class Diff {
 
             // The path is from LowerX to (x,y) and (x,y) ot UpperX
             LCS(DataA, LowerA, smsrd.x, DataB, LowerB, smsrd.y);
-            LCS(DataA, smsrd.x, UpperA, DataB, smsrd.y, UpperB);  // 2002.09.20: no need for 2 points 
+            LCS(DataA, smsrd.x, UpperA, DataB, smsrd.y, UpperB);  // 2002.09.20: no need for 2 points
         }
     } // LCS()
-		
+
 
     /// <summary>Scan the tables of which lines are inserted and deleted,
-    /// producing an edit script in forward order.  
+    /// producing an edit script in forward order.
     /// </summary>
     /// dynamic array
     private static Item[] CreateDiffs(DiffData DataA, DiffData DataB) {
         var a = new ArrayList();
-        Item []result;
 
         int StartA, StartB;
-        int LineA, LineB;
 
-        LineA = 0;
-        LineB = 0;
+        var LineA = 0;
+        var LineB = 0;
         while (LineA < DataA.Length || LineB < DataB.Length) {
-            if ((LineA < DataA.Length) && (! DataA.modified[LineA])
-                                       && (LineB < DataB.Length) && (! DataB.modified[LineB])) {
+            if (LineA < DataA.Length && ! DataA.modified[LineA]
+                                     && LineB < DataB.Length && ! DataB.modified[LineB]) {
                 // equal lines
-                LineA++; 
+                LineA++;
                 LineB++;
 
             } else {
                 // maybe deleted and/or inserted lines
                 StartA = LineA;
                 StartB = LineB;
-  					
+
                 while (LineA < DataA.Length && (LineB >= DataB.Length || DataA.modified[LineA]))
                     // while (LineA < DataA.Length && DataA.modified[LineA])
                     LineA++;
@@ -490,7 +484,7 @@ public class Diff {
                     // while (LineB < DataB.Length && DataB.modified[LineB])
                     LineB++;
 
-                if ((StartA < LineA) || (StartB < LineB)) {
+                if (StartA < LineA || StartB < LineB) {
                     // store a new difference-item
                     a.Add( new Item
                     {
@@ -503,21 +497,21 @@ public class Diff {
             } // if
         } // while
 
-        result = new Item[a.Count];
+        var result = new Item[a.Count];
         a.CopyTo(result);
 
-        return (result);
+        return result;
     }
 
 } // class Diff
 
-/// <summary>Data on one input file being compared.  
+/// <summary>Data on one input file being compared.
 /// </summary>
 internal class DiffData {
 
     /// <summary>Number of elements (lines).</summary>
     internal int Length;
-			
+
     /// <summary>Buffer of numbers that will be compared.</summary>
     internal int[] data;
 
@@ -537,7 +531,7 @@ internal class DiffData {
         Length = initData.Length;
         modified = new bool[Length + 2];
     } // DiffData
-		
+
 } // class DiffData
 
 // namespace

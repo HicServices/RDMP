@@ -47,7 +47,7 @@ public partial class DataGeneratorUI : UserControl
         return 10* (int)Math.Pow(10, trackBar1.Value);
     }
 
-    int sizeAtBeginGeneration = -1;
+    private int sizeAtBeginGeneration = -1;
     public Thread Thread;
     private IDataGenerator _generator;
     public event Action TrackBarMouseUp;
@@ -80,14 +80,14 @@ public partial class DataGeneratorUI : UserControl
         progressBar1.Value = (int)percentProgress;
 
         if (e.IsFinished)
-            if (Completed != null)
-                Completed();
+        {
+            Completed?.Invoke();
+        }
     }
 
     private void trackBar1_MouseUp(object sender, MouseEventArgs e)
     {
-        if (TrackBarMouseUp != null)
-            TrackBarMouseUp();
+        TrackBarMouseUp?.Invoke();
     }
 
     public bool Generate { get => cbGenerate.Checked;

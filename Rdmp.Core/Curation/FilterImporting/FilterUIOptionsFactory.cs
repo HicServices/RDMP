@@ -17,19 +17,15 @@ namespace Rdmp.Core.Curation.FilterImporting;
 /// </summary>
 public class FilterUIOptionsFactory
 {
-    public FilterUIOptions Create(IFilter filter)
+    public static FilterUIOptions Create(IFilter filter)
     {
-        var aggregateFilter = filter as AggregateFilter;
-        var deployedExtractionFilter = filter as DeployedExtractionFilter;
-        var masterCatalogueFilter = filter as ExtractionFilter;
-
-        if (aggregateFilter != null)
+        if (filter is AggregateFilter aggregateFilter)
             return new AggregateFilterUIOptions(aggregateFilter);
 
-        if (deployedExtractionFilter != null)
+        if (filter is DeployedExtractionFilter deployedExtractionFilter)
             return new DeployedExtractionFilterUIOptions(deployedExtractionFilter);
 
-        if (masterCatalogueFilter != null)
+        if (filter is ExtractionFilter masterCatalogueFilter)
             return new ExtractionFilterUIOptions(masterCatalogueFilter);
 
         throw new Exception(

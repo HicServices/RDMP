@@ -23,8 +23,10 @@ public class MySqlAggregateBuilderTests : AggregateBuilderTestsBase
         var builder = new AggregateBuilder(null, "count(*)", null);
         builder.AddColumn(_dimension1);
 
-        var topx = new AggregateTopX(CatalogueRepository, _configuration, 32);
-        topx.OrderByDimensionIfAny_ID = _dimension1.ID;
+        var topx = new AggregateTopX(CatalogueRepository, _configuration, 32)
+        {
+            OrderByDimensionIfAny_ID = _dimension1.ID
+        };
         topx.SaveToDatabase();
 
         builder.AggregateTopX = topx;
@@ -40,7 +42,7 @@ group by
 Col1
 order by 
 Col1 desc
-LIMIT 32"),CollapseWhitespace(builder.SQL.Trim()));
+LIMIT 32"), CollapseWhitespace(builder.SQL.Trim()));
 
 
         topx.DeleteInDatabase();
@@ -57,13 +59,14 @@ LIMIT 32"),CollapseWhitespace(builder.SQL.Trim()));
         var builder = new AggregateBuilder(null, "count(*)", null);
         builder.AddColumn(_dimension1);
 
-        var topx = new AggregateTopX(CatalogueRepository, _configuration, 31);
-        topx.OrderByDirection = AggregateTopXOrderByDirection.Ascending;
+        var topx = new AggregateTopX(CatalogueRepository, _configuration, 31)
+        {
+            OrderByDirection = AggregateTopXOrderByDirection.Ascending
+        };
         builder.AggregateTopX = topx;
 
-        if (useAliasForGroupBy)
-        {
-            Assert.AreEqual(CollapseWhitespace(@"/**/
+        Assert.AreEqual(useAliasForGroupBy
+            ? CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(*) AS MyCount
@@ -73,11 +76,8 @@ group by
 Col1
 order by 
 MyCount asc
-LIMIT 31"), CollapseWhitespace(builder.SQL));
-        }
-        else
-        {
-            Assert.AreEqual(CollapseWhitespace(@"/**/
+LIMIT 31")
+            : CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(*) AS MyCount
@@ -88,8 +88,6 @@ Col1
 order by 
 count(*) asc
 LIMIT 31"), CollapseWhitespace(builder.SQL));
-        }
-            
 
 
         topx.DeleteInDatabase();

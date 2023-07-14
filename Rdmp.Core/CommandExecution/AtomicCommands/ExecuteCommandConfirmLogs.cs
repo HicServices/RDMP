@@ -25,7 +25,7 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
     /// <summary>
     /// Optional time period in which to expect successful logs
     /// </summary>
-    TimeSpan? WithinTime { get; set; }
+    private TimeSpan? WithinTime { get; set; }
 
     /// <summary>
     /// The object which generates logs that you want to check
@@ -48,13 +48,13 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
     /// <param name="withinTime"></param>
     /// <param name="requireLoadedRows"></param>
     public ExecuteCommandConfirmLogs(IBasicActivateItems activator,
-            
+
         [DemandsInitialization("The object you want to confirm passing log entries for")]
         ILoggedActivityRootObject obj,
 
         [DemandsInitialization("Optional time period in which to expect successful logs e.g. 24:00:00 (24 hours)")]
         string withinTime = null,
-            
+
         [DemandsInitialization("Optional.  Pass true to require rows to be loaded if obj is a LoadMetadata")]
         bool requireLoadedRows=false):base(activator)
     {
@@ -89,9 +89,9 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
     {
         // get the latest log entry
         var unfilteredResults = logManager.GetArchivalDataLoadInfos(LogRootObject.GetDistinctLoggingTask(), null, null);
-        var latest = LogRootObject.FilterRuns(unfilteredResults)
-            .Where(a=>!checkInclusionCriteria || Include(a))
-            .FirstOrDefault();
+        var latest = LogRootObject
+            .FilterRuns(unfilteredResults)
+            .FirstOrDefault(a => !checkInclusionCriteria || Include(a));
 
         var messageClarification = checkInclusionCriteria ? " (where rows were loaded)" : "";
 
@@ -137,7 +137,7 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution {
     /// <returns></returns>
     private bool Include(ArchivalDataLoadInfo arg)
     {
-        if (!RequireLoadedRows || !(LogRootObject is ILoadMetadata lmd))
+        if (!RequireLoadedRows || LogRootObject is not ILoadMetadata lmd)
             return true;
 
         var excludeStaging = new Regex("_STAGING");

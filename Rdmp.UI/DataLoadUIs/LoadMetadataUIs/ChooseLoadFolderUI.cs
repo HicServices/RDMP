@@ -17,7 +17,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
 
 /// <summary>
-/// Allows you to either create a new LoadDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading, 
+/// Allows you to either create a new LoadDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading,
 /// Executables etc.  In almost all cases you want to have a different directory for each load, this prevents simultaneous loads tripping over one another.
 /// 
 /// <para>To create a new directory with all the appropriate folders and example configuration files enter the path to an empty folder.  If the folder does not exist yet it will be created
@@ -35,7 +35,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     /// </summary>
     public string Result { get; private set; }
 
-    Regex _endsWithDataFolder = new Regex(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
+    private Regex _endsWithDataFolder = new(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
 
     public ChooseLoadDirectoryUI(IActivateItems activator, ILoadMetadata loadMetadata)
     {
@@ -89,14 +89,14 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             try
             {
                 var dir = new DirectoryInfo(tbCreateNew.Text);
-                
+
                 if(!dir.Exists)
                     dir.Create();
 
                 Result = LoadDirectory.CreateDirectoryStructure(dir.Parent,dir.Name).RootPath.FullName;
 
                 DialogResult = DialogResult.OK;
-                this.Close();
+                Close();
             }
             catch (Exception exception)
             {
@@ -111,7 +111,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
                 var dir = new LoadDirectory(tbUseExisting.Text);
                 Result = dir.RootPath.FullName;
                 DialogResult = DialogResult.OK;
-                this.Close();
+                Close();
             }
             catch (Exception exception)
             {
@@ -119,7 +119,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
                 {
                     Result = tbUseExisting.Text;
                     DialogResult = DialogResult.OK;
-                    this.Close();
+                    Close();
                 }
             }
         }
@@ -128,7 +128,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     private void btnCancel_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
 
     private void btnCreateNewBrowse_Click(object sender, EventArgs e)
@@ -141,8 +141,10 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
 
     private void btnBrowseForExisting_Click(object sender, EventArgs e)
     {
-        var fbd = new FolderBrowserDialog();
-        fbd.ShowNewFolderButton = false;
+        var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
 
         if (fbd.ShowDialog() == DialogResult.OK)
         {

@@ -27,8 +27,10 @@ public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjus
 
         foreach (var column in _columns)
         {
-            var ui = new DatabaseColumnRequestUI(column);
-            ui.Dock = DockStyle.Top;
+            var ui = new DatabaseColumnRequestUI(column)
+            {
+                Dock = DockStyle.Top
+            };
             flowLayoutPanel1.Controls.Add(ui);
         }
 
@@ -36,7 +38,7 @@ public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjus
         ShowDialog();
     }
 
-    private void btnDone_Click(object sender, System.EventArgs e)
+    private void btnDone_Click(object sender, EventArgs e)
     {
         if (_columns == null)
             throw new Exception("AdjustColumns was not called yet");

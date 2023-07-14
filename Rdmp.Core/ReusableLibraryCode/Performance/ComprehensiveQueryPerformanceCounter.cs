@@ -20,7 +20,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Performance;
 /// </summary>
 public class ComprehensiveQueryPerformanceCounter
 {
-    public Dictionary<string,QueryPerformed> DictionaryOfQueries = new Dictionary<string, QueryPerformed>();
+    public Dictionary<string,QueryPerformed> DictionaryOfQueries = new();
         
     public ComprehensiveQueryPerformanceCounter()
     {

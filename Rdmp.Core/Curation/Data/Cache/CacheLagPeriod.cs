@@ -31,7 +31,7 @@ public class CacheLagPeriod
         /// Specifies that the <see cref="Duration"/> is a count of Days
         /// </summary>
         Day
-    };
+    }
 
     /// <summary>
     /// The number of Days/Months etc (See <see cref="Type"/>) to wait before the associated CacheProgress should be run.  This specifies a window of time
@@ -75,12 +75,12 @@ public class CacheLagPeriod
     /// <param name="cacheLagPeriod"></param>
     internal CacheLagPeriod(string cacheLagPeriod)
     {
-        var type = cacheLagPeriod.Substring(cacheLagPeriod.Length - 1);
+        var type = cacheLagPeriod[^1..];
         SetTypeFromString(type);
 
         Duration = string.IsNullOrWhiteSpace(cacheLagPeriod)
             ? DefaultDuration
-            : Convert.ToInt32(cacheLagPeriod.Substring(0, cacheLagPeriod.Length - 1));
+            : Convert.ToInt32(cacheLagPeriod[..^1]);
     }
 
     /// <summary>
@@ -124,17 +124,12 @@ public class CacheLagPeriod
     public override string ToString()
     {
         var s = Duration.ToString();
-        switch (Type)
+        s += Type switch
         {
-            case PeriodType.Month:
-                s += "m";
-                break;
-            case PeriodType.Day:
-                s += "d";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            PeriodType.Month => "m",
+            PeriodType.Day => "d",
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         return s;
     }
@@ -146,15 +141,12 @@ public class CacheLagPeriod
     /// <returns></returns>
     internal DateTime CalculateStartOfLagPeriodFrom(DateTime dt)
     {
-        switch (Type)
+        return Type switch
         {
-            case PeriodType.Month:
-                return dt.AddMonths(Duration*-1);
-            case PeriodType.Day:
-                return dt.AddDays(Duration*-1d);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            PeriodType.Month => dt.AddMonths(Duration * -1),
+            PeriodType.Day => dt.AddDays(Duration * -1d),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     /// <summary>

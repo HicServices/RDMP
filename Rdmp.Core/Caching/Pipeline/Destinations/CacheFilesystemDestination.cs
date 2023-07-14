@@ -23,7 +23,7 @@ public enum CacheFileGranularity
 {
     Hour,
     Day
-};
+}
 
 /// <summary>
 /// Abstract implementation of ICacheFileSystemDestination. Includes checks for CacheLayout construction and read/write permissions to Cache directory.  To implement
@@ -34,9 +34,9 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
 {
     [DemandsInitialization("Root directory for the cache. This overrides the default LoadDirectory cache location. This might be needed if you are caching a very large data set which needs its own dedicated storage resource, for example.",DemandType.Unspecified,null)]
     public DirectoryInfo CacheDirectory { get; set; }
-        
+
     public abstract ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
-        
+
     public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
     {
         // CacheDirectory overrides LoadDirectory, so only set CacheDirectory if it is null (i.e. no alternative cache location has been configured in the destination component)
@@ -54,18 +54,18 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
     /// </summary>
     /// <returns></returns>
     public abstract ICacheLayout CreateCacheLayout();
-        
+
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
     }
 
     public abstract void Abort(IDataLoadEventListener listener);
 
-    public void Stop()
+    public static void Stop()
     {
     }
 
-    public void Abort()
+    public static void Abort()
     {
     }
 
@@ -97,9 +97,10 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
 
         // Check CacheLayout creation
         var cacheLayout = CreateCacheLayout();
-        if (cacheLayout == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("The CacheLayout object in CacheFilesystemDestination is not being constructed correctly", CheckResult.Fail));
-        else
-            notifier.OnCheckPerformed(new CheckEventArgs("CacheLayout object in CacheFilesystemDestination is OK", CheckResult.Success));
+        notifier.OnCheckPerformed(cacheLayout == null
+            ? new CheckEventArgs(
+                "The CacheLayout object in CacheFilesystemDestination is not being constructed correctly",
+                CheckResult.Fail)
+            : new CheckEventArgs("CacheLayout object in CacheFilesystemDestination is OK", CheckResult.Success));
     }
 }

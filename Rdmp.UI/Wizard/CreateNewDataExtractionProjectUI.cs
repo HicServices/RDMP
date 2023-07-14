@@ -29,7 +29,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Wizard;
 
 /// <summary>
-/// Provides a single screen allowing you to execute a CohortIdentificationConfiguration or load an IdentifierList into the snapshot store, allocate release identifiers and build an 
+/// Provides a single screen allowing you to execute a CohortIdentificationConfiguration or load an IdentifierList into the snapshot store, allocate release identifiers and build an
 /// extraction project with specific datasets.  Each time you use this user interface you will get a new Project so do not use the wizard if you already have an existing Project e.g.
 /// if you want to do a project refresh or adjust a cohort etc (In such a case you should use CohortIdentificationCollectionUI to add a new ExtractionConfiguration/Cohort to your existing
 /// Project).
@@ -132,7 +132,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             //cic
             if (typeof(CohortIdentificationConfigurationSource).IsAssignableFrom(sourceType))
                 ddCicPipeline.Items.Add(pipeline);
-                
+
             //flat file
             if (typeof(DelimitedFlatFileDataFlowSource).IsAssignableFrom(sourceType))
                 ddFilePipeline.Items.Add(pipeline);
@@ -142,7 +142,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         foreach (var dd in new ComboBox[]{ddCicPipeline,ddExtractionPipeline,ddFilePipeline})
         {
             if (dd.Items.Count == 1)
-                dd.SelectedItem = dd.Items[0]; //select it                
+                dd.SelectedItem = dd.Items[0]; //select it
         }
             
     }
@@ -174,7 +174,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         try
         {
             _projectNumber = int.Parse(tbProjectNumber.Text);
-                
+
             var collisionProject = _existingProjects.FirstOrDefault(p => p.ProjectNumber == _projectNumber);
             if(collisionProject != null)
                 ragProjectNumber.Warning(new Exception(
@@ -193,9 +193,11 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             ClearFile();
             return;
         }
-            
-        var ofd = new OpenFileDialog();
-        ofd.Filter = "Comma Separated Values|*.csv";
+
+        var ofd = new OpenFileDialog
+        {
+            Filter = "Comma Separated Values|*.csv"
+        };
         var result = ofd.ShowDialog();
 
         if (result == DialogResult.OK)
@@ -238,13 +240,15 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
                 tbCohortName.Text = cic.ToString();
 
-                var source = new CohortIdentificationConfigurationSource();
-                source.Timeout = 5;
+                var source = new CohortIdentificationConfigurationSource
+                {
+                    Timeout = 5
+                };
                 source.PreInitialize(cic,new ThrowImmediatelyDataLoadEventListener());
                 source.Check(ragCic);
 
                 ClearFile();
-                    
+
             }
             finally
             {
@@ -284,8 +288,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             ragExecute.Reset();
 
             //create the project
-            if (_project == null)
-                _project = new Project(Activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
+            _project ??= new Project(Activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
 
             _project.ProjectNumber = int.Parse(tbProjectNumber.Text);
             _project.ExtractionDirectory = tbExtractionDirectory.Text;
@@ -298,8 +301,10 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             if (_configuration == null && cbDefineCohort.Checked)
             {
                 _configuration = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository,
-                    _project);
-                _configuration.Name = "Cases";
+                    _project)
+                {
+                    Name = "Cases"
+                };
                 _configuration.SaveToDatabase();
             }
 
@@ -362,7 +367,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
             Cursor = Cursors.Default;
 
             ExtractionConfigurationCreatedIfAny = _configuration;
-                
+
             DialogResult = DialogResult.OK;
             MessageBox.Show("Project Created Successfully");
             Close();
@@ -413,7 +418,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         if(ddCohortSources.SelectedItem == null)
             return "You must choose an Identifier Allocation database (to put your cohort / anonymous mappings)";
 
-        if(this.cbxCohort.SelectedItem == null && _cohortFile == null)
+        if(cbxCohort.SelectedItem == null && _cohortFile == null)
             return "You must choose either a file or a cohort identification query to build the cohort from";
 
         //no problems
@@ -432,7 +437,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     private void cbDefineCohort_CheckedChanged(object sender, EventArgs e)
     {
         gbCohortAndDatasets.Visible = cbDefineCohort.Checked;
-        this.OnSizeChanged(e);
+        OnSizeChanged(e);
     }
 
     private void cbxDatasets_SelectedIndexChanged(object sender, EventArgs e)
@@ -498,6 +503,6 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 }

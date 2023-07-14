@@ -51,7 +51,7 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
         //if we don't yet know what datasets to add (i.e. haven't called SetExtractableDataSets)
         if (_toadd == null)
             if (itemActivator.CoreChildProvider is DataExportChildProvider childProvider)
-            { 
+            {
                 //use the ones that are not already in the ExtractionConfiguration
                 var _datasets = childProvider.GetDatasets(targetExtractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
                 var _importableDataSets = childProvider.ExtractableDataSets.Except(_datasets)
@@ -83,12 +83,11 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
             
         if (_userMustPick)
         {
-            ExtractableDataSet[] selected;
-            if (!SelectMany(new DialogArgs()
+            if (!SelectMany(new DialogArgs
                 {
                     WindowTitle = "Select Datasets",
                     TaskDescription = "Select the Datasets you would like to be exported as part of your Extraction Configuration."
-                }, _toadd.Cast<ExtractableDataSet>().ToArray(),out selected))
+                }, _toadd.Cast<ExtractableDataSet>().ToArray(),out var selected))
                 return;
 
             foreach (var ds in selected)

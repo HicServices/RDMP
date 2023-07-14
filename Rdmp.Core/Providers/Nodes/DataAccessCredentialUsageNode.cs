@@ -38,21 +38,15 @@ public class DataAccessCredentialUsageNode:Node, IDeleteable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((DataAccessCredentialUsageNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            var hashCode = (Credentials != null ? Credentials.GetHashCode() : 0);
-            hashCode = (hashCode*397) ^ (TableInfo != null ? TableInfo.GetHashCode() : 0);
-            hashCode = (hashCode*397) ^ (int) Context;
-            return hashCode;
-        }
+        return System.HashCode.Combine(Credentials, TableInfo, Context);
     }
 
     public void DeleteInDatabase()

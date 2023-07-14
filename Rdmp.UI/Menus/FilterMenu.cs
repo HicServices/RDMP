@@ -11,7 +11,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus;
 
-class FilterMenu : RDMPContextMenuStrip
+internal class FilterMenu : RDMPContextMenuStrip
 {
     public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
     {

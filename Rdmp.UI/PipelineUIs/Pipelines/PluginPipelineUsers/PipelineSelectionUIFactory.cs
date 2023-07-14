@@ -65,8 +65,7 @@ public class PipelineSelectionUIFactory
         if (text != null)
             c.Text = text;
 
-        if (containerControl != null)
-            containerControl.Controls.Add(c);
+        containerControl?.Controls.Add(c);
 
         return _pipelineSelectionUIInstance;
     }

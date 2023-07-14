@@ -33,15 +33,14 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
     private IPipeline _pipeline;
     public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
-    GracefulCancellationTokenSource cancellation;
+    private GracefulCancellationTokenSource cancellation;
     private int? exitCode;
-
-    HashSet<IDataLoadEventListener> additionals = new HashSet<IDataLoadEventListener>();
+    private HashSet<IDataLoadEventListener> additionals = new();
     private PipelineRunner runner;
     private PipelineEngineEventArgs successArgs;
     private DataTable progressDataTable;
 
-    private List<NotifyEventArgs> notifyEventArgs = new List<NotifyEventArgs>();
+    private List<NotifyEventArgs> notifyEventArgs = new();
 
     public int Count => notifyEventArgs.Count;
     public int Length => notifyEventArgs.Count;
@@ -62,8 +61,8 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
         InitializeComponent();
 
         this.activator = activator;
-        this._useCase = useCase;
-        this._pipeline = pipeline;
+        _useCase = useCase;
+        _pipeline = pipeline;
 
         ColorScheme = ConsoleMainWindow.ColorScheme;
         _compatiblePipelines = useCase.FilterCompatiblePipelines(activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>()).ToArray();
@@ -73,7 +72,7 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
 
         if (pipeline == null && _compatiblePipelines.Length == 1)
         {
-            this._pipeline = _compatiblePipelines[0];
+            _pipeline = _compatiblePipelines[0];
         }
 
         combobox1.Source = new ListWrapper(_compatiblePipelines);
@@ -82,7 +81,7 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
         if (_pipeline != null)
             combobox1.SelectedItem = combobox1.Source.ToList().IndexOf(_pipeline);
 
-        progressDataTable = this._tableView.Table;
+        progressDataTable = _tableView.Table;
         progressDataTable.Columns["Progress"].DataType = typeof(int);
 
         _results.KeyPress += Results_KeyPress;

@@ -51,11 +51,11 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
             return;
         }
 
-        if (!BasicActivator.SelectObject(new DialogArgs()
+        if (!BasicActivator.SelectObject(new DialogArgs
             {
                 EntryLabel = "Patient Identifier Column",
                 TaskDescription = $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
-                AllowAutoSelect = true,
+                AllowAutoSelect = true
             }, tbl.DiscoverColumns(), out var col))
         {
             // user cancelled selecting a column
@@ -65,12 +65,12 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         base.Execute();
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
-        var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(col));
+        var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(col));
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)
             return;
-            
+
         var m = new MemoryCatalogueRepository();
         var fakeCatalogue = new Catalogue(m, tbl.GetFullyQualifiedName());
         var fakeCatalogueItem = new CatalogueItem(m, fakeCatalogue, col.GetRuntimeName());
@@ -78,7 +78,7 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         {
             DatabaseType = tbl.Database.Server.DatabaseType,
             Database = tbl.Database.GetRuntimeName(),
-            Server = tbl.Database.Server.Name,
+            Server = tbl.Database.Server.Name
         };
         var fakeColumnInfo = new ColumnInfo(m, col.GetFullyQualifiedName(), col.DataType.ToString(), fakeTableInfo);
         var fakeExtractionInformation = new ExtractionInformation(m, fakeCatalogueItem, fakeColumnInfo,

@@ -60,12 +60,12 @@ e.g. /$i/$a")]
     //state variables
     protected bool haveOpened = false;
     private bool haveWrittenBundleContents = false;
-    Stopwatch stopwatch = new Stopwatch();
+    private Stopwatch stopwatch = new();
 
     public TableLoadInfo TableLoadInfo { get; private set; }
 
     public DirectoryInfo DirectoryPopulated { get; private set; }
-        
+
     public int SeparatorsStrippedOut { get; set; }
 
     public int LinesWritten { get; protected set; }
@@ -112,8 +112,7 @@ e.g. /$i/$a")]
     {
         var filename = _request.ToString();
 
-        var datasetCommand = _request as IExtractDatasetCommand;
-        if (datasetCommand != null && UseAcronymForFileNaming)
+        if (_request is IExtractDatasetCommand datasetCommand && UseAcronymForFileNaming)
         {
             filename = datasetCommand.Catalogue.Acronym;
             if (string.IsNullOrWhiteSpace(filename))
@@ -164,8 +163,7 @@ e.g. /$i/$a")]
         if (TableLoadInfo.IsClosed)
             throw new Exception(
                 $"TableLoadInfo was closed so could not write number of rows ({LinesWritten}) to audit object - most likely the extraction crashed?");
-        else
-            TableLoadInfo.Inserts = LinesWritten;
+        TableLoadInfo.Inserts = LinesWritten;
 
         Flush(job, cancellationToken,stopwatch);
         stopwatch.Stop();
@@ -197,7 +195,7 @@ e.g. /$i/$a")]
     protected abstract void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch);
 
     /// <summary>
-    /// Called after each batch is written, allows you to flush your stream (if required) 
+    /// Called after each batch is written, allows you to flush your stream (if required)
     /// </summary>
     /// <param name="job"></param>
     /// <param name="cancellationToken"></param>
@@ -206,10 +204,10 @@ e.g. /$i/$a")]
     {
 
     }
-         
+
     /// <inheritdoc/>
     public abstract void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny);
-        
+
     /// <inheritdoc/>
     public abstract void Abort(IDataLoadEventListener listener);
 
@@ -218,7 +216,7 @@ e.g. /$i/$a")]
     {
         if (!string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern))
         {
-            if (ExtractionSubdirectoryPattern.Contains("."))
+            if (ExtractionSubdirectoryPattern.Contains('.'))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "ExtractionSubdirectoryPattern cannot contain dots, it must be relative e.g. $c/$d",
                     CheckResult.Fail));
@@ -237,12 +235,12 @@ e.g. /$i/$a")]
     }
 
     #endregion
-        
+
 
     #region Release Related Methods
 
     /// <inheritdoc/>
-    public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);        
+    public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
     /// <inheritdoc/>
     public abstract GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck);
     /// <inheritdoc/>
@@ -294,7 +292,7 @@ e.g. /$i/$a")]
         //extract lookups
         foreach (BundledLookupTable lookup in datasetBundle.LookupTables)
         {
-                
+
             datasetBundle.States[lookup] = TryExtractLookupTable(lookup, lookupDir,job)
                 ? ExtractCommandState.Completed
                 : ExtractCommandState.Crashed;
@@ -303,11 +301,9 @@ e.g. /$i/$a")]
 
     public DirectoryInfo GetDirectoryFor(IExtractCommand request)
     {
-        var cmd = request as IExtractDatasetCommand;
-
-        if(string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || cmd == null)
+        if(string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || request is not IExtractDatasetCommand cmd)
             return request.GetExtractionDirectory();
-            
+
         var cata = cmd.SelectedDataSets.ExtractableDataSet.Catalogue;
 
         if (ExtractionSubdirectoryPattern.Contains("$a") && string.IsNullOrWhiteSpace(cata.Acronym))
@@ -350,18 +346,18 @@ e.g. /$i/$a")]
                 $"SELECT * FROM {lookup.TableInfo.Name}", DateTime.Now) }, -1);
             tableLoadInfo.Inserts = linesWritten;
             tableLoadInfo.CloseAndArchive();
-                
+
             //audit in cumulative extraction results (determines release-ability of artifacts).
-            if (_request is ExtractDatasetCommand)
+            if (_request is ExtractDatasetCommand command)
             {
-                var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(
                     $"SELECT * FROM {lookup.TableInfo.Name}", lookup.TableInfo);
-                supplementalResult.CompleteAudit(this.GetType(), destinationDescription, linesWritten,false,false);
+                supplementalResult.CompleteAudit(GetType(), destinationDescription, linesWritten,false,false);
             }
 
             return true;
-                
+
         }
         catch (Exception e)
         {
@@ -371,7 +367,7 @@ e.g. /$i/$a")]
             return false;
         }
     }
-        
+
     /// <summary>
     /// Extracts the <paramref name="doc"/> into the supplied <paramref name="directory"/> (unless overridden to put it somewhere else)
     /// </summary>
@@ -388,21 +384,21 @@ e.g. /$i/$a")]
         try
         {
             var outputPath = fetcher.ExtractToDirectory(directory);
-            if (_request is ExtractDatasetCommand)
+            if (_request is ExtractDatasetCommand command)
             {
-                var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
-                supplementalResult.CompleteAudit(this.GetType(), outputPath, 0,false , false);
+                supplementalResult.CompleteAudit(GetType(), outputPath, 0,false , false);
             }
             else
             {
-                var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                var extractGlobalsCommand = _request as ExtractGlobalsCommand;
                 Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
                 var result = new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
                     extractGlobalsCommand.Configuration,
                     null,
                     doc);
-                result.CompleteAudit(this.GetType(), outputPath, 0,false,false);
+                result.CompleteAudit(GetType(), outputPath, 0,false,false);
                 extractGlobalsCommand.ExtractionResults.Add(result);
             }
 
@@ -430,30 +426,30 @@ e.g. /$i/$a")]
             var target = Path.Combine(directory.FullName, $"{sql.Name}.csv");
             var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", target, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
 
-            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten,out var description);
-                
+            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten, out var description);
+
             sw.Stop();
 
             //end auditing it
             tableLoadInfo.Inserts = sqlLinesWritten;
             tableLoadInfo.CloseAndArchive();
 
-            if (_request is ExtractDatasetCommand)
+            if (_request is ExtractDatasetCommand command)
             {
-                var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
-                supplementalResult.CompleteAudit(this.GetType(),description , sqlLinesWritten, false,false);
+                supplementalResult.CompleteAudit(GetType(),description , sqlLinesWritten, false,false);
             }
             else
             {
-                var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
+                var extractGlobalsCommand = _request as ExtractGlobalsCommand;
                 Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
                 var result =
                     new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
                         extractGlobalsCommand.Configuration,
                         sql.SQL,
                         sql);
-                result.CompleteAudit(this.GetType(), description, sqlLinesWritten, false, false);
+                result.CompleteAudit(GetType(), description, sqlLinesWritten, false, false);
                 extractGlobalsCommand.ExtractionResults.Add(result);
             }
 
@@ -496,5 +492,5 @@ e.g. /$i/$a")]
         destinationDescription = extractTableVerbatim.OutputFilename;
     }
     #endregion
-        
+
 }

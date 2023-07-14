@@ -79,7 +79,7 @@ public class ExecuteCommandAddDimension : BasicCommandExecution
     {
         base.Execute();
 
-        var opts = new AggregateBuilderOptionsFactory().Create(aggregate);
+        var opts = AggregateBuilderOptionsFactory.Create(aggregate);
         ExtractionInformation match = null;
 
         var possible = opts.GetAvailableSELECTColumns(aggregate).OfType<ExtractionInformation>().ToArray();

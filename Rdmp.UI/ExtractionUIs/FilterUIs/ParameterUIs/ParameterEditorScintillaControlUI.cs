@@ -101,7 +101,7 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
             //get the lines that make up the selection (freetext sql)
             for (var i = section.LineStart; i <= section.LineEnd; i++)
                 sql += QueryEditor.Lines[i].Text;
-                
+
             //pass the section its sql text an it will tell us if it is borked or changed or unchanged
             var changed = section.CheckForChanges(sql);
 
@@ -122,8 +122,8 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
     {
         return Sections.SingleOrDefault(s=>s.IncludesLine(lineNumber));
     }
-        
-    List<ParameterEditorScintillaSection> Sections = new List<ParameterEditorScintillaSection>();
+
+    private List<ParameterEditorScintillaSection> Sections = new();
         
     /// <summary>
     /// Updates the Sql code for the current state of the <see cref="Options"/> 
@@ -157,16 +157,15 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 }
                 catch (SyntaxErrorException errorException)
                 {
-                    if(!ProblemObjects.ContainsKey(parameter))
-                        ProblemObjects.Add(parameter,errorException);
+                    ProblemObjects.TryAdd(parameter, errorException);
                 }
-                    
+
 
                 var toAdd = QueryBuilder.GetParameterDeclarationSQL(parameter);
 
                 var lineCount = GetLineCount(toAdd);
 
-                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += (lineCount - 1), parameter, 
+                Sections.Add(new ParameterEditorScintillaSection(Options.Refactorer,currentLine, currentLine += lineCount - 1, parameter, 
                         
                     !Options.ShouldBeReadOnly(parameter),
                         
@@ -185,12 +184,9 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
                 
             IsBroken = true;
 
-            var exception = ex as QueryBuildingException;
-            if (exception != null)
+            if (ex is QueryBuildingException exception)
             {
-                foreach (var p in exception.ProblemObjects.OfType<ISqlParameter>())
-                    if(!ProblemObjects .ContainsKey(p))//might have already added it up above
-                        ProblemObjects.Add(p, ex);
+                foreach (var p in exception.ProblemObjects.OfType<ISqlParameter>()) ProblemObjects.TryAdd(p, ex);
 
                 ProblemObjectsFound();
             }
@@ -198,17 +194,17 @@ public partial class ParameterEditorScintillaControlUI : RDMPUserControl
         QueryEditor.ReadOnly = true;
 
         var highlighter = new ScintillaLineHighlightingHelper();
-        highlighter.ClearAll(QueryEditor);
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditor);
 
         foreach (var section in Sections)
             if (!section.Editable)
                 for (var i = section.LineStart; i <= section.LineEnd; i++)
-                    highlighter.HighlightLine(QueryEditor, i, Color.LightGray);
+                    ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, i, Color.LightGray);
     }
 
         
 
-    private int GetLineCount(string s)
+    private static int GetLineCount(string s)
     {
         return s.Count(c => c.Equals('\n'));
     }

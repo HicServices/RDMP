@@ -14,11 +14,11 @@ public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAt
 {
     private readonly DublinCoreDefinition _definition;
     private FileInfo _toExport;
-    readonly DublinCoreTranslater _translater = new DublinCoreTranslater();
+    private readonly DublinCoreTranslater _translater = new();
 
     public ExecuteCommandExportInDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
     {
-        _definition = _translater.GenerateFrom(catalogue);
+        _definition = DublinCoreTranslater.GenerateFrom(catalogue);
         UseTripleDotSuffix = true;
     }
 
@@ -26,7 +26,7 @@ public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAt
     {
         base.Execute();
 
-        if ((_toExport = _toExport ?? BasicActivator.SelectFile("Dublin Core Xml|*.xml")) == null)
+        if ((_toExport ??= BasicActivator.SelectFile("Dublin Core Xml|*.xml")) == null)
             return;
 
         using (var stream = File.OpenWrite(_toExport.FullName))

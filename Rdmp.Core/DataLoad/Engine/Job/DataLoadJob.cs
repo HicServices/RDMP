@@ -30,7 +30,7 @@ public class DataLoadJob : IDataLoadJob
     private readonly IDataLoadEventListener _listener;
 
     public int JobID { get; set; }
-        
+
     private readonly ILogManager _logManager;
     public ILoadMetadata LoadMetadata { get; private set; }
 
@@ -38,8 +38,8 @@ public class DataLoadJob : IDataLoadJob
     public List<ITableInfo> LookupTablesToLoad { get; private set; }
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
-    private Stack<IDisposeAfterDataLoad> _disposalStack = new Stack<IDisposeAfterDataLoad>();
-        
+    private Stack<IDisposeAfterDataLoad> _disposalStack = new();
+
     public HICDatabaseConfiguration Configuration { get; set; }
     public object Payload { get; set; }
 
@@ -64,7 +64,7 @@ public class DataLoadJob : IDataLoadJob
         Description = description;
 
         var catalogues = LoadMetadata.GetAllCatalogues().ToList();
-            
+
         if (LoadMetadata != null)
             _loggingTask = GetLoggingTask(catalogues);
 
@@ -75,7 +75,7 @@ public class DataLoadJob : IDataLoadJob
     private string GetLoggingTask(IEnumerable<ICatalogue> cataloguesToLoad)
     {
         var distinctLoggingTasks = cataloguesToLoad.Select(catalogue => catalogue.LoggingDataTask).Distinct().ToList();
-        if (distinctLoggingTasks.Count() > 1)
+        if (distinctLoggingTasks.Count > 1)
             throw new Exception(
                 $"The catalogues to be loaded do not share the same logging task: {string.Join(", ", distinctLoggingTasks)}");
 
@@ -91,7 +91,7 @@ public class DataLoadJob : IDataLoadJob
         if (string.IsNullOrWhiteSpace(Description))
             throw new Exception("The data load description (for the DataLoadInfo object) must not be empty, please provide a relevant description");
 
-        DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, typeof(DataLoadProcess).Name, Description, "", false);
+        DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, nameof(DataLoadProcess), Description, "", false);
 
         if (DataLoadInfo == null)
             throw new Exception("DataLoadInfo is null");
@@ -114,7 +114,7 @@ public class DataLoadJob : IDataLoadJob
         if (DataLoadInfo == null)
             CreateDataLoadInfo();
 
-        DataLoadInfo.LogFatalError(typeof(DataLoadProcess).Name, message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
+        DataLoadInfo.LogFatalError(nameof(DataLoadProcess), message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
         DataLoadInfo.CloseAndMarkComplete();
     }
 
@@ -125,8 +125,7 @@ public class DataLoadJob : IDataLoadJob
 
     public void CloseLogging()
     {
-        if (DataLoadInfo != null)
-            DataLoadInfo.CloseAndMarkComplete();
+        DataLoadInfo?.CloseAndMarkComplete();
     }
 
     public void LogInformation(string senderName, string message)
@@ -154,7 +153,7 @@ public class DataLoadJob : IDataLoadJob
 
         foreach (TableInfo lookupTableInfo in LookupTablesToLoad)
             cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, lookupTableInfo, stage);
-            
+
         PushForDisposal(cloner);
     }
 

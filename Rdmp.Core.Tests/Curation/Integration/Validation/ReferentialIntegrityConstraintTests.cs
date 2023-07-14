@@ -43,8 +43,10 @@ public class ReferentialIntegrityConstraintTests :DatabaseTests
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
         importer.DoImport(out _tableInfo,out _columnInfo);
 
-        _constraint = new ReferentialIntegrityConstraint(CatalogueRepository);
-        _constraint.OtherColumnInfo = _columnInfo.Single();
+        _constraint = new ReferentialIntegrityConstraint(CatalogueRepository)
+        {
+            OtherColumnInfo = _columnInfo.Single()
+        };
     }
 
     [Test]

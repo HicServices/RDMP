@@ -29,20 +29,17 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
     /// It is used to detect when you are trying to delete an object which has hidden references to it in important serialized bits of 
     /// text (e.g. Catalogue.ValidationXML).
     /// </summary>
-    public List<Suspect> TheUsualSuspects = new List<Suspect>();
+    public List<Suspect> TheUsualSuspects = new();
 
     /// <summary>
     /// Catalogues whose ValidationXML doesn't resolve properly
     /// </summary>
-    public List<Catalogue> CataloguesWithBrokenValidationXml = new List<Catalogue>();
-
-
-    readonly MEF _mef;
+    public List<Catalogue> CataloguesWithBrokenValidationXml = new();
+    private readonly MEF _mef;
 
     public ValidationXMLObscureDependencyFinder(ICatalogueRepositoryServiceLocator catalogueRepositoryServiceLocator)
     {
-        if (Validator.LocatorForXMLDeserialization == null)
-            Validator.LocatorForXMLDeserialization = catalogueRepositoryServiceLocator;
+        Validator.LocatorForXMLDeserialization ??= catalogueRepositoryServiceLocator;
            
         _mef = catalogueRepositoryServiceLocator.CatalogueRepository.MEF;
             
@@ -108,12 +105,11 @@ public class ValidationXMLObscureDependencyFinder:IObscureDependencyFinder
 
         var repository = oTableWrapperObject.Repository;
 
-        var treeObject = oTableWrapperObject as IHasDependencies;
 
         if (depth >= 5)//its fine
             return;
 
-        if (treeObject != null)
+        if (oTableWrapperObject is IHasDependencies treeObject)
         {
             IHasDependencies[] dependants;
 

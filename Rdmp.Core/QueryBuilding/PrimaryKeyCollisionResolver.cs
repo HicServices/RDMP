@@ -50,10 +50,8 @@ WHERE DuplicateCount > 1";
     /// <returns></returns>
     public string GenerateSQL()
     {
-        ColumnInfo[] pks;
-        List<IResolveDuplication> resolvers;
 
-        return GenerateSQL(out pks, out resolvers);
+        return GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers);
     }
 
     private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
@@ -62,7 +60,7 @@ WHERE DuplicateCount > 1";
 
         var cols = _tableInfo.ColumnInfos.ToArray();
         pks = cols.Where(col => col.IsPrimaryKey).ToArray();
-            
+
         if(!pks.Any())
             throw new Exception(
                 $"TableInfo {_tableInfo.GetRuntimeName()} does not have any primary keys defined so cannot resolve primary key collisions");
@@ -74,7 +72,7 @@ WHERE DuplicateCount > 1";
 
         var sql =
             $"/*Notice how entities are not fully indexed with Database, this is because this code will run on RAW servers, prior to reaching STAGING/LIVE - the place where there are primary keys*/{Environment.NewLine}{WithCTE}{Environment.NewLine}AS{Environment.NewLine}({Environment.NewLine}{SelectRownum} OVER({Environment.NewLine}\t PARTITION BY{Environment.NewLine}\t\t {primaryKeys}{Environment.NewLine}\t ORDER BY{Environment.NewLine}\t /*Priority in which order they should be used to resolve duplication of the primary key values, order by:*/{Environment.NewLine}";
-            
+
         resolvers = new List<IResolveDuplication>();
 
         resolvers.AddRange(cols.Where(c => c.DuplicateRecordResolutionOrder != null));
@@ -84,13 +82,13 @@ WHERE DuplicateCount > 1";
             throw new Exception(
                 $"The ColumnInfos of TableInfo {_tableInfo} do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.");
 
-        //order by the priority of columns 
+        //order by the priority of columns
         foreach (var column in resolvers.OrderBy(col => col.DuplicateRecordResolutionOrder))
         {
             if(column is ColumnInfo { IsPrimaryKey: true })
                 throw new Exception(
                     $"Column {column.GetRuntimeName()} is flagged as primary key when it also has a DuplicateRecordResolutionOrder, primary keys cannot be used to resolve duplication since they are the hash!  Resolve this in the CatalogueManager by right clicking the offending TableInfo {_tableInfo.GetRuntimeName()} and editing the resolution order");
-                
+
             sql = AppendRelevantOrderBySql(sql, column);
         }
 
@@ -153,19 +151,16 @@ WHERE DuplicateCount > 1";
     }
 
     /// <summary>
-    /// Generates SQL to show which records would be deleted by primary key collision resolution.  This should be run manually by the data analyst if he is unsure about the 
+    /// Generates SQL to show which records would be deleted by primary key collision resolution.  This should be run manually by the data analyst if he is unsure about the
     /// resolution order / current primary keys
     /// </summary>
     /// <returns></returns>
     public string GeneratePreviewSQL()
     {
-            
-        ColumnInfo[] pks;
-        List<IResolveDuplication> resolvers;
-        var basicSQL = GenerateSQL(out pks, out resolvers);
+        var basicSQL = GenerateSQL(out var pks, out var resolvers);
 
-        var commaSeparatedPKs = String.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
-        var commaSeparatedCols = String.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedPKs = string.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedCols = string.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
 
         //add all the columns to the WITH CTE bit
         basicSQL = basicSQL.Replace(WithCTE, $"WITH CTE ({commaSeparatedPKs},{commaSeparatedCols},DuplicateCount)");
@@ -185,10 +180,10 @@ WHERE DuplicateCount > 1";
         basicSQL += $"\twhere{Environment.NewLine}";
 
         //add the child.pk1 = CTE.pk1 bit to restrict preview only to rows that are going to get compared for nukage
-        basicSQL += String.Join("\r\n\t\tand",pks.Select(pk =>  ("\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)))));
+        basicSQL += string.Join("\r\n\t\tand",pks.Select(pk =>  "\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
 
         basicSQL += $"\tgroup by{Environment.NewLine}";
-        basicSQL += String.Join(",\r\n", pks.Select( pk =>
+        basicSQL += string.Join(",\r\n", pks.Select( pk =>
             $"\t\t{_querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))}"));
 
         basicSQL += $"\t\t{Environment.NewLine}";
@@ -196,13 +191,13 @@ WHERE DuplicateCount > 1";
         basicSQL += $"){Environment.NewLine}";
 
         basicSQL +=
-            $"order by {String.Join(",\r\n", pks.Select(pk => _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))))}";
+            $"order by {string.Join(",\r\n", pks.Select(pk => _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))))}";
         basicSQL += ",DuplicateCount";
 
         return basicSQL;
     }
 
-    private ValueType GetDataType(string dataType)
+    private static ValueType GetDataType(string dataType)
     {
         if (
             dataType.StartsWith("decimal") ||
@@ -253,9 +248,9 @@ WHERE DuplicateCount > 1";
     /// <param name="datatype">The Sql Server column datatype for the column you are substituting</param>
     /// <param name="min">true to substitute null values for the minimum value of the <paramref name="datatype"/>, false to substitute for the maximum</param>
     /// <returns></returns>
-    public string GetNullSubstituteForComparisonsWithDataType(string datatype, bool min)
+    public static string GetNullSubstituteForComparisonsWithDataType(string datatype, bool min)
     {
-        //technically these can go lower (real and float) but how realistic is that espcially when SqlServer plays fast and loose with very small numbers in floats... 
+        //technically these can go lower (real and float) but how realistic is that espcially when SqlServer plays fast and loose with very small numbers in floats...
         if (datatype.Equals("bigint") || datatype.Equals("real") || datatype.StartsWith("float"))
             if (min)
                 return "-9223372036854775808";
@@ -295,7 +290,7 @@ WHERE DuplicateCount > 1";
                 toReturn = "-";
 
             //ignore element zero because elment zero is always a duplicate see https://msdn.microsoft.com/en-us/library/system.text.regularexpressions.match.groups%28v=vs.110%29.aspx
-            if (digits.Groups.Count == 3 && String.IsNullOrWhiteSpace(digits.Groups[2].Value))
+            if (digits.Groups.Count == 3 && string.IsNullOrWhiteSpace(digits.Groups[2].Value))
             {
                 for (var i = 0; i < Convert.ToInt32(digits.Groups[1].Value); i++)
                     toReturn += "9";

@@ -45,8 +45,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
             SetImpossible(
                 $"Cannot publish filter because Catalogue {_catalogue} does not have any ExtractionInformations (extractable columns) we could associate it with");
 
-        string reason;
-        if (!FilterImporter.IsProperlyDocumented(filter, out reason))
+        if (!FilterImporter.IsProperlyDocumented(filter, out var reason))
             SetImpossible($"Filter is not properly documented:{reason}");
     }
 
@@ -54,8 +53,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
     {
         base.Execute();
 
-        if (_catalogue == null)
-            _catalogue = SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
+        _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
 
         var toAddTo = SelectOne(new DialogArgs { 
             WindowTitle = "Associated Column",

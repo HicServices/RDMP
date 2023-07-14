@@ -11,7 +11,7 @@ using Rdmp.Core.Curation.Data.Governance;
 
 namespace Rdmp.Core.Repositories.Managers;
 
-class GovernanceManager : IGovernanceManager
+internal class GovernanceManager : IGovernanceManager
 {
     private readonly CatalogueRepository _catalogueRepository;
 
@@ -22,7 +22,8 @@ class GovernanceManager : IGovernanceManager
 
     public void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {
-        _catalogueRepository.Delete(string.Format(@"DELETE FROM GovernancePeriod_Catalogue WHERE Catalogue_ID={0} AND GovernancePeriod_ID={1}", catalogue.ID, governancePeriod.ID));
+        _catalogueRepository.Delete(
+            $@"DELETE FROM GovernancePeriod_Catalogue WHERE Catalogue_ID={catalogue.ID} AND GovernancePeriod_ID={governancePeriod.ID}");
     }
 
     public void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
@@ -31,8 +32,8 @@ class GovernanceManager : IGovernanceManager
         if (governancePeriod.GovernedCatalogues.Contains(catalogue))
             return;
 
-        _catalogueRepository.Insert(string.Format(
-            @"INSERT INTO GovernancePeriod_Catalogue (Catalogue_ID,GovernancePeriod_ID) VALUES ({0},{1})",catalogue.ID, governancePeriod.ID), null);
+        _catalogueRepository.Insert(
+            $@"INSERT INTO GovernancePeriod_Catalogue (Catalogue_ID,GovernancePeriod_ID) VALUES ({catalogue.ID},{governancePeriod.ID})", null);
     }
 
     /// <inheritdoc/>
@@ -61,7 +62,7 @@ class GovernanceManager : IGovernanceManager
                     }
                 }
             }
-                
+
         }
 
         return toReturn;

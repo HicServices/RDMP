@@ -48,15 +48,13 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <param name="pipeline"></param>
     protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, string cohortName, Project project, IPipeline pipeline) : base(activator)
     {
-        var dataExport = activator.CoreChildProvider as DataExportChildProvider;
-
         //May be null
         _explicitCohortName = cohortName;
         ExternalCohortTable = externalCohortTable;
         Project = project;
         Pipeline = pipeline;
 
-        if (dataExport == null)
+        if (activator.CoreChildProvider is not DataExportChildProvider dataExport)
         {
             SetImpossible("No data export repository available");
             return;
@@ -86,18 +84,14 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         // if we have everything we need to create the cohort right here
         if (!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
             return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription,ect);
-        else
-        {
-            // otherwise we are going to have to ask the user for it
+        // otherwise we are going to have to ask the user for it
 
-            //Get a new request for the source they are trying to populate
-            var req = BasicActivator.GetCohortCreationRequest(ect, Project, auditLogDescription);
+        //Get a new request for the source they are trying to populate
+        var req = BasicActivator.GetCohortCreationRequest(ect, Project, auditLogDescription);
 
-            if (Project == null)
-                Project = req?.Project;
+        Project ??= req?.Project;
 
-            return req;
-        }
+        return req;
     }
 
     /// <summary>
@@ -106,12 +100,12 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <returns></returns>
     public static DialogArgs GetChooseCohortDialogArgs()
     {
-        return new DialogArgs()
+        return new DialogArgs
         {
             WindowTitle = "Choose where to save cohort",
             TaskDescription = "Select the Cohort Database in which to store the identifiers.  If you have multiple methods of anonymising cohorts or manage different types of identifiers (e.g. CHI lists, ECHI lists and/or BarcodeIDs) then you must pick the Cohort Database that matches your cohort identifier type/anonymisation protocol.",
             EntryLabel = "Select Cohort Database",
-            AllowAutoSelect = true,
+            AllowAutoSelect = true
         };
     }
 
@@ -131,11 +125,11 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
     public virtual IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is Project)
-            Project = (Project)target;
+        if (target is Project project)
+            Project = project;
 
-        if (target is ExternalCohortTable)
-            ExternalCohortTable = (ExternalCohortTable)target;
+        if (target is ExternalCohortTable table)
+            ExternalCohortTable = table;
 
         return this;
     }
@@ -145,7 +139,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     {
         var catalogueRepository = BasicActivator.RepositoryLocator.CatalogueRepository;
 
-        var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs { 
+        var pipelineRunner = BasicActivator.GetPipelineRunner(new DialogArgs {
             WindowTitle = "Commit Cohort",
             TaskDescription = $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes succesfully a new Saved Cohort will be created and the cohort identifiers stored in '{request?.NewCohortDefinition?.LocationOfCohort?.Name ?? "Unknown"}'."
         },request, Pipeline);
@@ -160,7 +154,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             var logManager = new LogManager(loggingServer);
             logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
-            //create a db listener 
+            //create a db listener
             var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, description);
 
             //make all messages go to both the db and the UI

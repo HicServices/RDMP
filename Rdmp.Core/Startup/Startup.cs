@@ -54,9 +54,8 @@ public class Startup
     /// </summary>
     public bool SkipPatching { get; set; }
 
-    public PluginPatcherFoundHandler PluginPatcherFound = delegate { }; 
-
-    PatcherManager _patcherManager = new PatcherManager();
+    public PluginPatcherFoundHandler PluginPatcherFound = delegate { };
+    private PatcherManager _patcherManager = new();
 
     #region Constructors
     public Startup(EnvironmentInfo environmentInfo,IRDMPPlatformRepositoryServiceLocator repositoryLocator):this(environmentInfo)
@@ -164,7 +163,7 @@ public class Startup
         // it's not a database we are getting this data from then assume it's good to go
         if (repository is not ITableRepository tableRepository)
             return true;
-                
+
         //check we can reach it
         var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
         notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",CheckResult.Success));
@@ -216,7 +215,7 @@ public class Startup
         {
             try
             {
-                var builder = DataAccessPortal.GetInstance()
+                var builder = DataAccessPortal
                     .ExpectServer(server, DataAccessContext.InternalDataProcessing)
                     .Builder;
 
@@ -257,7 +256,7 @@ public class Startup
             var subdir = Directory.CreateDirectory(subDirName);
 
             dirs.Add(subdir);
-                                                             
+
             var existingFiles = subdir.GetFiles($"*{PackPluginRunner.PluginPackageSuffix}").ToList();
 
             //if we have not downloaded this yet
@@ -268,10 +267,10 @@ public class Startup
                     $"Found existing file '{compatiblePlugins[i].Name}' so didn't bother downloading it.",CheckResult.Success));
                                 
             foreach(var archive in  subdir.GetFiles($"*{PackPluginRunner.PluginPackageSuffix}").ToList())
-            {                    
+            {
                 //get rid of any old out dirs
                 var outDir = subdir.EnumerateDirectories("out").SingleOrDefault();
-                    
+
                 var mustUnzip = true;
 
                 //if there's already an unpacked version

@@ -75,7 +75,7 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
 
         if (template == null)
             return;
-            
+
         var fileNaming =  _fileNaming;
 
         if (fileNaming == null)

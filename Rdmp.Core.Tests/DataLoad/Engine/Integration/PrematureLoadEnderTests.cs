@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-class PrematureLoadEnderTests:DatabaseTests
+internal class PrematureLoadEnderTests:DatabaseTests
 {
     [TestCase(DatabaseType.MySql)]
     [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -25,10 +25,12 @@ class PrematureLoadEnderTests:DatabaseTests
             
         Assert.AreEqual(0,database.DiscoverTables(false).Length);
 
-        var ender = new PrematureLoadEnder();
-        ender.ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase;
-        ender.ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired;
-            
+        var ender = new PrematureLoadEnder
+        {
+            ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase,
+            ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired
+        };
+
         ender.Initialize(database,LoadStage.AdjustRaw);
 
         Assert.AreEqual(ExitCodeType.OperationNotRequired ,ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
@@ -44,9 +46,11 @@ class PrematureLoadEnderTests:DatabaseTests
         dt.Columns.Add("Fish");
 
         database.CreateTable("MyTable", dt);
-        var ender = new PrematureLoadEnder();
-        ender.ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase;
-        ender.ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired;
+        var ender = new PrematureLoadEnder
+        {
+            ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase,
+            ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired
+        };
 
         ender.Initialize(database, LoadStage.AdjustRaw);
 
@@ -64,9 +68,11 @@ class PrematureLoadEnderTests:DatabaseTests
         dt.Rows.Add("myval");
 
         database.CreateTable("MyTable", dt);
-        var ender = new PrematureLoadEnder();
-        ender.ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase;
-        ender.ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired;
+        var ender = new PrematureLoadEnder
+        {
+            ConditionsToTerminateUnder = PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase,
+            ExitCodeToReturnIfConditionMet = ExitCodeType.OperationNotRequired
+        };
 
         ender.Initialize(database, LoadStage.AdjustRaw);
 

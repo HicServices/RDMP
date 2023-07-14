@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 [Alias("lc")]
 [Alias("ListCommands")]
-class ExecuteCommandListSupportedCommands:BasicCommandExecution
+internal class ExecuteCommandListSupportedCommands:BasicCommandExecution
 {
     private readonly string _pattern;
     private readonly bool _verbose;
@@ -28,17 +28,17 @@ class ExecuteCommandListSupportedCommands:BasicCommandExecution
         [DemandsInitialization("Optional. Set to true to display information about the command.  If specified with pattern then pattern will also search the description")]
         bool verbose = false):base(basicActivator)
     {
-        this._pattern = pattern;
-        this._verbose = verbose;
+        _pattern = pattern;
+        _verbose = verbose;
     }
 
     public override void Execute()
     {
         var commandCaller = new CommandInvoker(BasicActivator);
 
-            
+
         var commands = commandCaller.GetSupportedCommands().ToArray();
-        var names = commands.Select(c=>BasicCommandExecution.GetCommandName(c.Name)).ToArray();
+        var names = commands.Select(c=>GetCommandName(c.Name)).ToArray();
         string[] descriptions;
             
              
@@ -58,7 +58,7 @@ class ExecuteCommandListSupportedCommands:BasicCommandExecution
         {
             var tokens = _pattern.Split('*',StringSplitOptions.RemoveEmptyEntries);
 
-            for(var i=0;i<commands.Length;i++)
+            for(var i =0;i<commands.Length;i++)
             {
                 if(tokens.All(t=>names[i].Contains(t,StringComparison.InvariantCultureIgnoreCase)))
                 {
@@ -81,7 +81,7 @@ class ExecuteCommandListSupportedCommands:BasicCommandExecution
         var showAll = onlyShowIndexes.Count == 0;
         var outputCommandDictionary = new Dictionary<string,string>();
 
-        for(var i=0;i<commands.Length;i++)
+        for(var i =0;i<commands.Length;i++)
         {
             if(showAll || onlyShowIndexes.Contains(i))
             {

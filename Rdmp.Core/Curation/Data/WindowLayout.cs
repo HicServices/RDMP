@@ -56,7 +56,7 @@ public class WindowLayout: DatabaseEntity,INamed
     /// <param name="layoutXml">The layout Xml of RDMPMainForm, use GetCurrentLayoutXml to get this, cannot be null</param>
     public WindowLayout(ICatalogueRepository repository, string name, string layoutXml)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>()
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"Name",name},
             {"LayoutData",layoutXml}

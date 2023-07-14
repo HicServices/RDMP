@@ -57,11 +57,11 @@ public class RenameProvider
         if (e.Column != _columnThatSupportsRenaming)
             return;
 
-        if (!(e.RowObject is INamed) || e.RowObject is ITableInfo)
+        if (e.RowObject is not INamed || e.RowObject is ITableInfo)
             e.Cancel = true;
     }
 
-    void OlvOnCellEditFinishing(object sender, CellEditEventArgs e)
+    private void OlvOnCellEditFinishing(object sender, CellEditEventArgs e)
     {
         if(e.RowObject == null)
             return;

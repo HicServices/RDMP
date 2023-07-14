@@ -43,14 +43,12 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
 
     /// <inheritdoc/>
     public ITableInfoCredentialsManager TableInfoCredentialsManager { get; private set; }
-        
+
     /// <inheritdoc/>
     public IJoinManager JoinManager { get; set; }
 
     /// <inheritdoc/>
     public MEF MEF { get; set; }
-        
-    readonly ObjectConstructor _constructor = new ObjectConstructor();
 
     /// <inheritdoc/>
     public CommentStore CommentStore { get; set; }
@@ -63,13 +61,13 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
     public IPluginManager PluginManager { get; private set; }
 
     /// <summary>
-    /// Flag used by Startup processes to determine whether the <see cref="CommentStore"/> should be loaded with documentation from the xmldoc files. 
+    /// Flag used by Startup processes to determine whether the <see cref="CommentStore"/> should be loaded with documentation from the xmldoc files.
     /// </summary>
     public static bool SuppressHelpLoading;
 
     /// <inheritdoc/>
     public IFilterManager FilterManager { get; private set; }
-        
+
     /// <summary>
     /// Sets up an <see cref="IRepository"/> which connects to the database <paramref name="catalogueConnectionString"/> to fetch/create <see cref="DatabaseEntity"/> objects.
     /// </summary>
@@ -146,7 +144,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         Constructors.Add(typeof(TicketingSystemConfiguration),(rep,r)=>new TicketingSystemConfiguration((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(CacheFetchFailure), (rep, r) => new CacheFetchFailure((ICatalogueRepository)rep, r));
     }
-        
+
     /// <inheritdoc/>
     public LogManager GetDefaultLogManager()
     {
@@ -178,19 +176,19 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         throw new NotSupportedException(
             $"There should only ever be one active ticketing system, something has gone very wrong, there are currently {configuration.Length}");
     }
-        
+
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
-        if (Constructors.ContainsKey(t))
-            return Constructors[t](this, reader);
+        if (Constructors.TryGetValue(t, out var constructor))
+            return constructor(this, reader);
 
-        return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
+        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
     }
 
-    private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new ConcurrentDictionary<Type, IRowVerCache>();
+    private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new();
     public override T[] GetAllObjects<T>()
     {
-        return _caches.GetOrAdd(typeof(T),(t)=> new RowVerCache<T>(this))
+        return _caches.GetOrAdd(typeof(T),t=> new RowVerCache<T>(this))
             .GetAllObjects<T>();
     }
 
@@ -205,7 +203,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         IPatcher p = new T();
         return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedBy(p)).ToArray();
     }
-        
+
 
     /// <summary>
     /// Returns all objects of Type T which reference the supplied object <paramref name="o"/>
@@ -238,12 +236,12 @@ select 0", con.Connection, con.Transaction))
     {
 
         return GetAllObjects<Catalogue>(
-            string.Format(@"Where
+            $@"Where
   Catalogue.ID in (Select CatalogueItem.Catalogue_ID from
   CatalogueItem join
   ColumnInfo on ColumnInfo_ID = ColumnInfo.ID
   where
-  TableInfo_ID = {0} )", tableInfo.ID)).ToArray();
+  TableInfo_ID = {tableInfo.ID} )").ToArray();
     }
 
     public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
@@ -273,25 +271,25 @@ select 0", con.Connection, con.Transaction))
             return;
 
         Delete("DELETE FROM ServerDefaults WHERE DefaultType=@DefaultType",
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"DefaultType",ServerDefaults.StringExpansionDictionary[toDelete]}
             },false);
     }
-               
+
 
     /// <inheritdoc/>
     public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", "toChange");
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
         if (externalDatabaseServer == null)
         {
             ClearDefault(toChange);
             return;
         }
-                
+
 
         var oldValue = GetDefaultFor(toChange);
 
@@ -304,12 +302,12 @@ select 0", con.Connection, con.Transaction))
     private void UpdateExistingValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", "toChange");
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
         var sql =
             "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
 
-        var affectedRows = Update(sql, new Dictionary<string, object>()
+        var affectedRows = Update(sql, new Dictionary<string, object>
         {
             {"DefaultType",ServerDefaults.StringExpansionDictionary[toChange]},
             {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}
@@ -323,11 +321,11 @@ select 0", con.Connection, con.Transaction))
     private void InsertNewValue(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
-            throw new ArgumentException("toChange cannot be None", "toChange");
+            throw new ArgumentException("toChange cannot be None", nameof(toChange));
 
         Insert(
             "INSERT INTO ServerDefaults(DefaultType,ExternalDatabaseServer_ID) VALUES (@DefaultType,@ExternalDatabaseServer_ID)",
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"DefaultType",ServerDefaults.StringExpansionDictionary[toChange]},
                 {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}

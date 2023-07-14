@@ -12,7 +12,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCliTests
+internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCliTests
 {
 
     [Test]

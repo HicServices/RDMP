@@ -30,29 +30,29 @@ public class BackupDatabaseMutilation:IMutilateDataTables
     [DemandsInitialization("The number of months the backup will expire after", Mandatory = true)]
     public int MonthsTillExpiry { get; set; }
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
         if (DatabaseToBackup == null)
             notifier.OnCheckPerformed(new CheckEventArgs("No TableInfo is set, don't know what to backup", CheckResult.Fail, null));
     }
 
-        
+
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-            
+
     }
 
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {
         if(loadStage != LoadStage.AdjustStaging && loadStage != LoadStage.PostLoad)
             throw new Exception(
-                $"{typeof(BackupDatabaseMutilation).Name} can only be done in AdjustStaging or PostLoad (this minimises redundant backups that would otherwise be created while you attempt to fix RAW / constraint related load errors)");
+                $"{nameof(BackupDatabaseMutilation)} can only be done in AdjustStaging or PostLoad (this minimises redundant backups that would otherwise be created while you attempt to fix RAW / constraint related load errors)");
     }
 
     public ExitCodeType Mutilate(IDataLoadJob job)
     {
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(DatabaseToBackup, DataAccessContext.DataLoad);
+        var db = DataAccessPortal.ExpectDatabase(DatabaseToBackup, DataAccessContext.DataLoad);
         db.CreateBackup("DataLoadEngineBackup");
         return ExitCodeType.Success;
     }

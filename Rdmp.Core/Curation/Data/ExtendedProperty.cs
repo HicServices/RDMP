@@ -43,7 +43,7 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
     public const string CustomJoinSqlDescription = "Enter the column comparison(s) SQL for the JOIN line.  Your string should include only the boolean comparison logic that follows the ON keyword.  E.g. col1=col2.  You can optionally use substitution tokens {0} and {1} for table name/alias (e.g. for lookup)";
 
     /// <summary>
-    /// Key used in <see cref="ExtendedProperty"/> to indicate that a <see cref="LoadMetadata"/> should not 
+    /// Key used in <see cref="ExtendedProperty"/> to indicate that a <see cref="LoadMetadata"/> should not
     /// attempt to DROP/CREATE its RAW database each time it is run
     /// </summary>
     public const string PersistentRaw = "PersistentRaw";
@@ -117,7 +117,7 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
             {"ReferencedObjectType",setOn.GetType().Name},
             {"ReferencedObjectRepositoryType",setOn.Repository.GetType().Name},
             {"Name", name},
-            {"Type", value.GetType().ToString()},
+            {"Type", value.GetType().ToString()}
         });
 
         SetValue(value);
@@ -145,7 +145,7 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
     {
         return AreProbablySameType(ReferencedObjectType, type);
     }
-        
+
     /// <summary>
     /// True if the <paramref name="o"/> is the object that is explicitly referenced by this class instance
     /// </summary>
@@ -160,13 +160,13 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
                AreProbablySameType(ReferencedObjectRepositoryType, o.Repository.GetType());
     }
 
-    private bool AreProbablySameType(string storedTypeName, Type candidate)
+    private static bool AreProbablySameType(string storedTypeName, Type candidate)
     {
         return
             storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
             storedTypeName.Equals(candidate.FullName, StringComparison.CurrentCultureIgnoreCase);
     }
-        
+
     /// <summary>
     /// Returns the instance of the object referenced by this class or null if it no longer exists (e.g. has been deleted)
     /// </summary>
@@ -176,7 +176,7 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
     {
         return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
     }
-        
+
     /// <summary>
     /// Returns true if the object referenced by this class still exists in the database
     /// </summary>
@@ -227,6 +227,6 @@ public class ExtendedProperty  : Argument,IReferenceOtherObjectWithPersist, IInj
     /// <param name="forObject"></param>
     internal static ExtendedProperty GetProperty(ICatalogueRepository repository, string named, IMapsDirectlyToDatabaseTable forObject)
     {
-        return GetProperties(repository, forObject).Where(e => e.Name.Equals(named)).SingleOrDefault();
+        return GetProperties(repository, forObject).SingleOrDefault(e => e.Name.Equals(named));
     }
 }

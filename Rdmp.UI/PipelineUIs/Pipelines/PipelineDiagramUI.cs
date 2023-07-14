@@ -37,7 +37,7 @@ public partial class PipelineDiagramUI : UserControl
     public bool AllowSelection { get; set; }
     public bool AllowReOrdering { get; set; }
 
-    RAGSmiley pipelineSmiley = new RAGSmiley();
+    private RAGSmiley pipelineSmiley = new();
         
     public IPipelineComponent SelectedComponent;
     public event PipelineComponentSelectedHandler SelectedComponentChanged;
@@ -50,14 +50,14 @@ public partial class PipelineDiagramUI : UserControl
 
     public PipelineDiagramUI(IActivateItems activator)
     {
-        this._activator = activator;
+        _activator = activator;
 
         InitializeComponent();
         AllowSelection = false;
 
-        this.Controls.Add(pipelineSmiley);
+        Controls.Add(pipelineSmiley);
         pipelineSmiley.Anchor = AnchorStyles.Top|AnchorStyles.Right;
-        pipelineSmiley.Left = this.Width - pipelineSmiley.Width - 1;
+        pipelineSmiley.Left = Width - pipelineSmiley.Width - 1;
         pipelineSmiley.Top = 1;
         pipelineSmiley.BringToFront();
 
@@ -120,9 +120,8 @@ public partial class PipelineDiagramUI : UserControl
         _useCase = useCase;
 
         _pipeline = pipeline;
-        if (_pipeline != null)
-            _pipeline.ClearAllInjections();
-            
+        _pipeline?.ClearAllInjections();
+
         //clear the diagram
         flpPipelineDiagram.Controls.Clear();
             
@@ -226,10 +225,8 @@ public partial class PipelineDiagramUI : UserControl
 
     private void AddPipelineComponent(IPipelineComponent toRealize, PipelineComponentRole role)
     {
-        Exception exConstruction;
-            
         //create the pipeline realization (might fail
-        var value = _pipelineFactory.TryCreateComponent(toRealize, out exConstruction);
+        var value = DataFlowPipelineEngineFactory.TryCreateComponent(toRealize, out var exConstruction);
 
         if (role != PipelineComponentRole.Source)
             AddDividerIfReorderingAvailable();
@@ -280,8 +277,7 @@ public partial class PipelineDiagramUI : UserControl
         flpPipelineDiagram.Controls.Add(divider);
     }
 
-
-    void component_Selected(object sender, IPipelineComponent selected)
+    private void component_Selected(object sender, IPipelineComponent selected)
     {
         if (!AllowSelection)
             return;
@@ -298,7 +294,7 @@ public partial class PipelineDiagramUI : UserControl
         ((PipelineComponentVisualisation) sender).IsSelected = true;
         SelectedComponentChanged?.Invoke(this, selected);
 
-        this.Focus();
+        Focus();
     }
 
     private void AddExplicit(object value)
@@ -358,7 +354,7 @@ public partial class PipelineDiagramUI : UserControl
         //if its something else entirely
         if (!arg.Data.GetDataPresent(typeof(PipelineComponentVisualisation)))
             return DragDropEffects.None;
-            
+
         //they are dragging something already on the control (make sure it isn't a source/destination)
         var vis = (PipelineComponentVisualisation)arg.Data.GetData(typeof(PipelineComponentVisualisation));
 
@@ -369,7 +365,7 @@ public partial class PipelineDiagramUI : UserControl
         return DragDropEffects.None;
     }
 
-    void divider_DragDrop(object sender, DragEventArgs e)
+    private void divider_DragDrop(object sender, DragEventArgs e)
     {
         //get the divider which caused the drop event
         var divider = (DividerLineControl)sender;
@@ -459,14 +455,13 @@ public partial class PipelineDiagramUI : UserControl
         for (var i = 0; i < flpPipelineDiagram.Controls.Count; i++)
         {
             var controlAtIndex = flpPipelineDiagram.Controls[i];
-            var pipelineComponentVisAtIndex = flpPipelineDiagram.Controls[i] as PipelineComponentVisualisation;
 
             //do not set the order on the thing being reordered! note that this is null in the case of newly dragged in controls so will never execute continue for new drop operations
             if (controlAtIndex == beingReorderedIfAny)
                 continue;
 
             //found pipeline component
-            if (pipelineComponentVisAtIndex != null)
+            if (flpPipelineDiagram.Controls[i] is PipelineComponentVisualisation pipelineComponentVisAtIndex)
             {
                 //increment the order
                 pipelineComponentVisAtIndex.PipelineComponent.Order = newOrder;
@@ -486,10 +481,9 @@ public partial class PipelineDiagramUI : UserControl
         return toReturn;
     }
 
-    private AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
+    private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
     {
-        var dataObject = e.Data as OLVDataObject;
-        if (dataObject != null)
+        if (e.Data is OLVDataObject dataObject)
         {
             if (dataObject.ModelObjects.Count == 1 &&
                 dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext)

@@ -29,15 +29,15 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
     [UseWithObjectConstructor]
     public ExecuteCommandSyncTableInfo(IBasicActivateItems activator,
         [DemandsInitialization("The RDMP metadata object to synchronize with the underlying database state")]
-        ITableInfo table, 
+        ITableInfo table,
         [DemandsInitialization("True to also synchronize any ANOTables (anonymisation tables) associated with the TableInfo")]
         bool alsoSyncAno,
         [DemandsInitialization("True to accept all changes without prompting")]
         bool autoYes):base(activator)
     {
-        this._tableInfo = table;
-        this._alsoSyncAno = alsoSyncAno;
-        this._autoYes = autoYes;
+        _tableInfo = table;
+        _alsoSyncAno = alsoSyncAno;
+        _autoYes = autoYes;
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -59,13 +59,11 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
 
         try
         {
-                
             var wasSynchedsuccessfully = syncher.Synchronize(listener);
 
-            if (wasSynchedsuccessfully)
-                BasicActivator.Show("Synchronization complete, TableInfo is Synchronized with the live database");
-            else
-                BasicActivator.Show("Synchronization failed");
+            BasicActivator.Show(wasSynchedsuccessfully
+                ? "Synchronization complete, TableInfo is Synchronized with the live database"
+                : "Synchronization failed");
         }
         catch (Exception exception)
         {

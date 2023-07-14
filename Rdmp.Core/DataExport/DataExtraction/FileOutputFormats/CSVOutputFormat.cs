@@ -36,7 +36,7 @@ public class CSVOutputFormat : FileOutputFormat
         DateFormat = dateFormat;
     }
 
-    public override string GetFileExtension() 
+    public override string GetFileExtension()
     {
         return ".csv";
     }
@@ -86,9 +86,7 @@ public class CSVOutputFormat : FileOutputFormat
 
     public string CleanString(object o)
     {
-        var numberOfSeparatorsStrippedOutThisPass = 0;
-
-        var toReturn = CleanString(o, Separator, out numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
+        var toReturn = CleanString(o, Separator, out var numberOfSeparatorsStrippedOutThisPass, DateFormat,RoundFloatsTo);
 
         SeparatorsStrippedOut += numberOfSeparatorsStrippedOutThisPass;
 
@@ -98,14 +96,13 @@ public class CSVOutputFormat : FileOutputFormat
 
     public static string CleanString(object o, string separator, out int separatorsStrippedOut, string dateFormat, int? roundFloatsTo)
     {
-        if (o is DateTime)
+        if (o is DateTime dt)
         {
-            var dt = (DateTime)o;
             separatorsStrippedOut = 0;
             return dt.ToString(dateFormat);
         }
 
-        if(roundFloatsTo.HasValue)
+        if (roundFloatsTo.HasValue)
         {
             separatorsStrippedOut = 0;
             switch(o)
@@ -116,7 +113,7 @@ public class CSVOutputFormat : FileOutputFormat
             }
         }
 
-        //in order to kep a count 
+        //in order to kep a count
         var regexReplace = new Regex(Regex.Escape(separator));
 
         separatorsStrippedOut = 0;

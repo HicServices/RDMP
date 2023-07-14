@@ -41,7 +41,7 @@ public class CohortQueryBuilderDependency
     /// The relationship object describing the JOIN relationship between <see cref="CohortSet"/> and another optional table
     /// </summary>
     public JoinableCohortAggregateConfigurationUse PatientIndexTableIfAny { get; }
-        
+
     /// <summary>
     /// The column in the <see cref="CohortSet"/> that is marked <see cref="IColumn.IsExtractionIdentifier"/>
     /// </summary>
@@ -60,19 +60,19 @@ public class CohortQueryBuilderDependency
     /// <para>This SQL does not include the parameter declaration SQL since it is designed for nesting e.g. in UNION / INTERSECT / EXCEPT hierarchy</para>
     /// </summary>
     public CohortQueryBuilderDependencySql SqlCacheless { get; private set; }
-        
+
     /// <summary>
     /// The raw SQL for the <see cref="CohortSet"/> with a join against the cached artifact for the <see cref="PatientIndexTableIfAny"/>
     /// </summary>
     public CohortQueryBuilderDependencySql SqlPartiallyCached { get;  private set;}
-        
+
     /// <summary>
     /// Sql for a single cache fetch  that pulls the cached result of the <see cref="CohortSet"/> joined to <see cref="PatientIndexTableIfAny"/> (if there was any)
     /// </summary>
     public CohortQueryBuilderDependencySql SqlFullyCached { get;  private set;}
 
     public CohortQueryBuilderDependencySql SqlJoinableCacheless { get; private set; }
-        
+
     public CohortQueryBuilderDependencySql SqlJoinableCached { get; private set; }
 
     /// <summary>
@@ -99,11 +99,7 @@ public class CohortQueryBuilderDependency
         if (PatientIndexTableIfAny != null)
         {
             var join = _childProvider.AllJoinables.SingleOrDefault(j =>
-                j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID);
-
-            if(join == null)
-                throw new Exception("ICoreChildProvider did not know about the provided patient index table");
-
+                j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID) ?? throw new Exception("ICoreChildProvider did not know about the provided patient index table");
             JoinedTo = _childProvider.AllAggregateConfigurations.SingleOrDefault(ac =>
                 ac.ID == join.AggregateConfiguration_ID);
 
@@ -114,9 +110,9 @@ public class CohortQueryBuilderDependency
 
     public override string ToString()
     {
-        return (JoinedTo != null
+        return JoinedTo != null
             ? $"{CohortSet.Name}{PatientIndexTableIfAny.JoinType} JOIN {JoinedTo.Name}"
-            : CohortSet.Name);
+            : CohortSet.Name;
     }
 
     public void Build(CohortQueryBuilderResult parent,ISqlParameter[] globals,CancellationToken cancellationToken)
@@ -124,7 +120,7 @@ public class CohortQueryBuilderDependency
         cancellationToken.ThrowIfCancellationRequested();
 
         var isSolitaryPatientIndexTable = CohortSet.IsJoinablePatientIndexTable();
-            
+
         // if it is a plugin aggregate we only want to ever serve up the cached SQL
         var pluginCohortCompiler = _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(CohortSet));
         var joinedToPluginCohortCompiler = JoinedTo == null ? null : _pluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(JoinedTo)); 
@@ -143,7 +139,7 @@ public class CohortQueryBuilderDependency
 
             // It's a plugin aggregate so only ever run the cached SQL
             SqlFullyCached = GetCacheFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable, pluginCohortCompiler,cancellationToken);
-                    
+
             if(SqlFullyCached == null)
             {
                 throw new Exception($"Aggregate '{CohortSet}' is a plugin aggregate (According to '{pluginCohortCompiler}') but no cached results were found after running.");
@@ -156,7 +152,7 @@ public class CohortQueryBuilderDependency
         {
             if(joinedToPluginCohortCompiler == null)
             {
-                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,
+                SqlJoinableCacheless = CohortQueryBuilderHelper.GetSQLForAggregate(JoinedTo,
                     new QueryBuilderArgs(new QueryBuilderCustomArgs(), //don't respect customizations in the inception bit!
                         globals));
                 SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true, null, cancellationToken);
@@ -175,14 +171,14 @@ public class CohortQueryBuilderDependency
                 // of querying it too.
                 SqlJoinableCacheless = SqlJoinableCached;
             }
-                
+
         }
             
         if (isSolitaryPatientIndexTable)
         {
             //explicit execution of a patient index table on its own
             //the full uncached SQL for the query
-            SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise,globals));
+            SqlCacheless = CohortQueryBuilderHelper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise,globals));
 
             if(SqlJoinableCached != null)
                 throw new QueryBuildingException("Patient index tables can't use other patient index tables!");
@@ -190,14 +186,14 @@ public class CohortQueryBuilderDependency
         else
         {
             //the full uncached SQL for the query
-            SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,
+            SqlCacheless = CohortQueryBuilderHelper.GetSQLForAggregate(CohortSet,
                 new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
                     SqlJoinableCacheless,parent.Customise,globals));
 
-                
+
             //if the joined to table is cached we can generate a partial too with full sql for the outer sql block and a cache fetch join
             if (SqlJoinableCached != null)
-                SqlPartiallyCached = parent.Helper.GetSQLForAggregate(CohortSet,
+                SqlPartiallyCached = CohortQueryBuilderHelper.GetSQLForAggregate(CohortSet,
                     new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
                         SqlJoinableCached,parent.Customise,globals));
         }
@@ -240,7 +236,7 @@ public class CohortQueryBuilderDependency
         IHasFullyQualifiedNameToo existingTable;
 
         // since we might make a plugin API run call we had better lock this to
-        var oLock = AggregateLocks.GetOrAdd(aggregate.ID, (i) => new object());
+        var oLock = AggregateLocks.GetOrAdd(aggregate.ID, i => new object());
         lock (oLock)
         {
             // unless it is a plugin driven aggregate we need to assemble the SQL to check if the cache is stale

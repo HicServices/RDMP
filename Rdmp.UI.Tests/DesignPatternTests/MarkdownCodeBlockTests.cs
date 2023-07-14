@@ -34,10 +34,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 /// This class exists to ensure that code blocks in the markdown documentation compile (at least!).  The guid matches the guid in the markdown file.  The method
 /// <see cref="DocumentationCrossExaminationTest.EnsureCodeBlocksCompile"/> checks that the code in the markdown matches the code here within the same guid region.
 /// </summary>
-class MarkdownCodeBlockTests
+internal class MarkdownCodeBlockTests
 {
     #region df7d2bb4cd6145719f933f6f15218b1a
-    class FrozenExtractionConfigurationsNode
+    private class FrozenExtractionConfigurationsNode
     {
         public Project Project { get; set; }
 
@@ -56,7 +56,7 @@ class MarkdownCodeBlockTests
     private class _a93fd8b3d1fb4ad8975ef8cf9c384236
     {
         #region a93fd8b3d1fb4ad8975ef8cf9c384236
-        class FrozenExtractionConfigurationsNode
+        private class FrozenExtractionConfigurationsNode
         {
             public Project Project { get; set; }
 
@@ -77,15 +77,15 @@ class MarkdownCodeBlockTests
 
             public override bool Equals(object obj)
             {
-                if (ReferenceEquals(null, obj)) return false;
+                if (obj is null) return false;
                 if (ReferenceEquals(this, obj)) return true;
-                if (obj.GetType() != this.GetType()) return false;
+                if (obj.GetType() != GetType()) return false;
                 return Equals((FrozenExtractionConfigurationsNode) obj);
             }
 
             public override int GetHashCode()
             {
-                return (Project != null ? Project.GetHashCode() : 0);
+                return Project != null ? Project.GetHashCode() : 0;
             }
         }
         #endregion
@@ -164,7 +164,7 @@ class MarkdownCodeBlockTests
                 AddToDictionaries(children,descendancy);
             }
             #endregion
-                
+
             private void AddChildren(ExtractionConfiguration frozenExtractionConfigurationsNode, DescendancyList descendancy)
             {
                 throw new NotImplementedException();
@@ -178,7 +178,7 @@ class MarkdownCodeBlockTests
         private class _f243e95a6dc94b3486f44b8f0bb0ed7d
         {
             #region f243e95a6dc94b3486f44b8f0bb0ed7d
-            class AllServersNodeMenu : RDMPContextMenuStrip
+            private class AllServersNodeMenu : RDMPContextMenuStrip
             {
                 public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
                 {
@@ -191,7 +191,7 @@ class MarkdownCodeBlockTests
         private class _cae13dde1de14f5cac984330a222c311
         {
             #region cae13dde1de14f5cac984330a222c311
-            class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+            private class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
             {
                 public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
                 {
@@ -263,9 +263,7 @@ class MarkdownCodeBlockTests
             #region 59f55fa3ef50404291c7ae3996772635
             public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
             {
-                var sourceCatalogueCombineable = cmd as CatalogueCombineable;
-        
-                if(sourceCatalogueCombineable != null)
+                if(cmd is CatalogueCombineable sourceCatalogueCombineable)
                     return new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue);
 
                 return null;
@@ -299,6 +297,6 @@ class MarkdownCodeBlockTests
             }
             #endregion
         }
-            
+
     }
 }

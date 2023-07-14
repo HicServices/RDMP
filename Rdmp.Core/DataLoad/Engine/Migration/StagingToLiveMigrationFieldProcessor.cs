@@ -78,7 +78,7 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
             return false;
 
         // TODO: if a load targets 2 tables with the same name in different databases and one has a column marked ignore it could be ignored in both during load.  Note that `field` parameter is the from column not the to column
-            
+
         //its a column we were told to ignore
         var match = _alsoIgnore.FirstOrDefault(c=>
             c.GetRuntimeName().Equals(field.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase) &&

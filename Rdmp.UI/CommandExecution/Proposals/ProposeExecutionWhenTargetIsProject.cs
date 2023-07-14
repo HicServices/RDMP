@@ -14,7 +14,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
+internal class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
 {
     public ProposeExecutionWhenTargetIsProject(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -33,22 +33,16 @@ class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
     {
         //drop a cic on a Project to associate it with that project
-        var cicCommand = cmd as CohortIdentificationConfigurationCommand;
-        if(cicCommand != null)
+        if(cmd is CohortIdentificationConfigurationCommand cicCommand)
             return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
 
-        var cataCommand = cmd as CatalogueCombineable;
-        if (cataCommand != null)
+        if (cmd is CatalogueCombineable cataCommand)
             return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
 
-        var file = cmd as FileCollectionCombineable;
-
-        if(file != null && file.Files.Length == 1)
+        if(cmd is FileCollectionCombineable file && file.Files.Length == 1)
             return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator,file.Files[0]).SetTarget(project);
 
-        var aggCommand = cmd as AggregateConfigurationCombineable;
-            
-        if(aggCommand != null)
+        if(cmd is AggregateConfigurationCombineable aggCommand)
             return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,aggCommand.Aggregate).SetTarget(project);
 
 

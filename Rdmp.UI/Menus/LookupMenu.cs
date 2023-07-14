@@ -10,7 +10,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class LookupMenu : RDMPContextMenuStrip
+internal class LookupMenu : RDMPContextMenuStrip
 {
     public LookupMenu(RDMPContextMenuStripArgs args, Lookup lookup) : base(args, lookup)
     {

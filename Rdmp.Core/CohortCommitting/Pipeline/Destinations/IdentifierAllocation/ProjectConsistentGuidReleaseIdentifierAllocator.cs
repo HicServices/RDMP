@@ -14,7 +14,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 /// <summary>
 /// Allocates a Guid for each private identifier supplied.  This is similar to <see cref="GuidReleaseIdentifierAllocator"/> except that it will preserve previous
 /// allocations within the <see cref="Project"/>.  For example if you commit a cohort 'Cases' with private id '123' to project '10' then might get a guid 'abc...',
-/// if you then submit verison 2 of the cohort you will get the same guid ('abc...') for persion '123'.  
+/// if you then submit verison 2 of the cohort you will get the same guid ('abc...') for persion '123'.
 /// 
 /// <para>Guids are always different between <see cref="Project"/> for example person 'abc' in project '10' will have a different Guid release identifier than if he
 /// was committed to project '11' and it would be impossible to link the two release identifiers</para>
@@ -36,13 +36,12 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
     public object AllocateReleaseIdentifier(object privateIdentifier)
     {
         //figure out all the historical release ids for private ids in the Project
-        if (_releaseMap == null)
-            _releaseMap = GetReleaseMap();
+        _releaseMap ??= GetReleaseMap();
 
         //if we have a historical release Id use it
-        if (_releaseMap.ContainsKey(privateIdentifier))
-            return _releaseMap[privateIdentifier];
-            
+        if (_releaseMap.TryGetValue(privateIdentifier, out var identifier))
+            return identifier;
+
         //otherwise allocate a new guid and let's record it just for prosperity
         var toReturn = Guid.NewGuid().ToString();
         _releaseMap.Add(privateIdentifier,toReturn);
@@ -87,9 +86,9 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
             using(var r = cohortDatabase.Server.GetCommand(sql, con).ExecuteReader())
                 while (r.Read())
                 {
-                    if(toReturn.ContainsKey(r[priv]))
+                    if(toReturn.TryGetValue(r[priv],out var value))
                         throw new Exception(
-                            $"Private identifier '{r[priv]}' has more than 1 historical release identifier ({string.Join(",", toReturn[r[priv]], r[rel])}");
+                            $"Private identifier '{r[priv]}' has more than 1 historical release identifier ({string.Join(",", value, r[rel])}");
 
                     toReturn.Add(r[priv],r[rel]);
                 }

@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandExecution;
 /// to the element type the delegate is set up for (e.g. we could service a request for <see cref="Catalogue"/>[] when set up for
 /// <see cref="IMapsDirectlyToDatabaseTable"/> elements.
 /// </summary>
-class CommandInvokerArrayDelegate : CommandInvokerDelegate
+internal class CommandInvokerArrayDelegate : CommandInvokerDelegate
 {
     /// <summary>
     /// Declares a new delegate method which returns specific implementations of a base array type

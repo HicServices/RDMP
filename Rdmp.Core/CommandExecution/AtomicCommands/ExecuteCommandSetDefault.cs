@@ -21,8 +21,8 @@ public class ExecuteCommandSetDefault : BasicCommandExecution
 
     public ExecuteCommandSetDefault(IBasicActivateItems basicActivator, PermissableDefaults toSet, ExternalDatabaseServer server):base(basicActivator)
     {
-        this._toSet = toSet;
-        this._server = server;
+        _toSet = toSet;
+        _server = server;
     }
 
     public override void Execute()

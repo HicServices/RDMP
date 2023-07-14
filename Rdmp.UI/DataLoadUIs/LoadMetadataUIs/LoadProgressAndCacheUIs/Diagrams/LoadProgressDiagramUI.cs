@@ -27,12 +27,12 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams;
 /// </summary>
 public partial class LoadProgressDiagramUI : RDMPUserControl
 {
-    LoadProgressAnnotation _annotations;
+    private LoadProgressAnnotation _annotations;
     private LoadProgress _loadProgress;
     private LoadProgressSummaryReport _report;
     public event Action LoadProgressChanged;
 
-    ChartLookAndFeelSetter _chartLookAndFeelSetter = new ChartLookAndFeelSetter();
+    private ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
 
 
     public LoadProgressDiagramUI()
@@ -47,7 +47,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
             
     }
 
-    void olvDQERuns_ButtonClick(object sender, BrightIdeasSoftware.CellClickEventArgs e)
+    private void olvDQERuns_ButtonClick(object sender, CellClickEventArgs e)
     {
         var c = (Catalogue) e.Model;
         new ExecuteCommandRunDQEOnCatalogue(Activator).SetTarget(c).Execute();
@@ -105,7 +105,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
             return;
         }
 
-        olvDQERuns.Height = 100 + (olvDQERuns.RowHeight * olvDQERuns.GetItemCount());
+        olvDQERuns.Height = 100 + olvDQERuns.RowHeight * olvDQERuns.GetItemCount();
         olvDQERuns.Top = splitContainer1.Panel1.Height - olvDQERuns.Height;
         btnRefresh.Top = olvDQERuns.Top;
         ragSmiley1.Top = olvDQERuns.Top;
@@ -118,11 +118,9 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
             splitContainer1.Panel2Collapsed = true;
             return;
         }
-        else
-        {
-            cataloguesRowCountChart.Visible = true;
-            splitContainer1.Panel2Collapsed = _loadProgress.CacheProgress == null;
-        }
+
+        cataloguesRowCountChart.Visible = true;
+        splitContainer1.Panel2Collapsed = _loadProgress.CacheProgress == null;
 
         cataloguesRowCountChart.Palette = ChartColorPalette.None;
         cataloguesRowCountChart.PaletteCustomColors = new[]
@@ -143,7 +141,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         try
         {
             //Catalogue periodicity chart
-            _chartLookAndFeelSetter.PopulateYearMonthChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData, "Count of records");
+            ChartLookAndFeelSetter.PopulateYearMonthChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData, "Count of records");
             
             //Annotations
             _annotations = new LoadProgressAnnotation(_loadProgress, _report.CataloguesPeriodictiyData,
@@ -169,7 +167,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
 
                 cacheState.Palette = ChartColorPalette.None;
                 cacheState.PaletteCustomColors = new[] { Color.Red,Color.Green };
-                _chartLookAndFeelSetter.PopulateYearMonthChart(cacheState, _report.CachePeriodictiyData, "Fetch Failure/Success");
+                ChartLookAndFeelSetter.PopulateYearMonthChart(cacheState, _report.CachePeriodictiyData, "Fetch Failure/Success");
                 splitContainer1.Panel2Collapsed = false;
 
                 cacheState.Series[0].ChartType = SeriesChartType.Column;
@@ -190,8 +188,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
 
     private void cataloguesRowCountChart_AnnotationPositionChanged(object sender, EventArgs e)
     {
-        if(_annotations != null)
-            _annotations.OnAnnotationPositionChanged(sender, e);
+        _annotations?.OnAnnotationPositionChanged(sender, e);
 
         LoadProgressChanged();
     }

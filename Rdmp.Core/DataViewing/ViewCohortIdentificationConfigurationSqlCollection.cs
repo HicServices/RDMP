@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
 
-class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     public bool UseQueryCache { get; set; }
 
@@ -56,12 +56,10 @@ class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectColl
         {
             return cache;
         }
-        else
-        {
-            var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
-            builder.RegenerateSQL();
-            return new SelfCertifyingDataAccessPoint(builder.Results.TargetServer);
-        }
+
+        var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
+        builder.RegenerateSQL();
+        return new SelfCertifyingDataAccessPoint(builder.Results.TargetServer);
     }
 
     public string GetSql()
@@ -84,7 +82,7 @@ class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectColl
     {
     }
 
-    CohortIdentificationConfiguration CohortIdentificationConfiguration => DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
+    private CohortIdentificationConfiguration CohortIdentificationConfiguration => DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {

@@ -11,7 +11,7 @@ using Rdmp.Core.Providers.Nodes.UsedByNodes;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-class OverrideRawServerNode:ObjectUsedByOtherObjectNode<LoadMetadata,ExternalDatabaseServer>,IDeletableWithCustomMessage
+internal class OverrideRawServerNode:ObjectUsedByOtherObjectNode<LoadMetadata,ExternalDatabaseServer>,IDeletableWithCustomMessage
 {
     public OverrideRawServerNode(LoadMetadata user, ExternalDatabaseServer objectBeingUsed) : base(user, objectBeingUsed)
     {

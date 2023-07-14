@@ -25,7 +25,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components;
 
-class ColumnSwapperTests:DatabaseTests
+internal class ColumnSwapperTests:DatabaseTests
 {
     [TestCase(true)]
     [TestCase(false)]
@@ -43,12 +43,14 @@ class ColumnSwapperTests:DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             
-        Import(db.CreateTable("Map", dt),out var map,out var mapCols);
+        Import(db.CreateTable("Map", dt),out var map, out var mapCols);
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-        swapper.KeepInputColumnToo = keepInputColumnToo;
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out")),
+            KeepInputColumnToo = keepInputColumnToo
+        };
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -102,10 +104,12 @@ class ColumnSwapperTests:DatabaseTests
 
         Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-        swapper.KeepInputColumnToo = keepInputColumnToo;
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out")),
+            KeepInputColumnToo = keepInputColumnToo
+        };
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -168,10 +172,12 @@ class ColumnSwapperTests:DatabaseTests
 
         Import(db.CreateTable("Map", dtMap), out var map, out var mapCols);
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-        swapper.KeepInputColumnToo = keepInputColumnToo;
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out")),
+            KeepInputColumnToo = keepInputColumnToo
+        };
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -222,10 +228,12 @@ class ColumnSwapperTests:DatabaseTests
 
         Import(db.CreateTable("Map", dt), out var map, out var mapCols);
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-        swapper.AliasResolutionStrategy = strategy;
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out")),
+            AliasResolutionStrategy = strategy
+        };
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -261,7 +269,7 @@ class ColumnSwapperTests:DatabaseTests
                 AreBasicallyEquals(60, resultDt.Rows[1]["Age"]);
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
             
     }
@@ -284,10 +292,12 @@ class ColumnSwapperTests:DatabaseTests
 
         Import(db.CreateTable("Map", dt), out var map, out var mapCols);
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-        swapper.CrashIfNoMappingsFound = crashIfNoMappingsFound;
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out")),
+            CrashIfNoMappingsFound = crashIfNoMappingsFound
+        };
         swapper.WHERELogic = $"{swapper.MappingToColumn.GetFullyQualifiedName()} < 2"; //throws out all rows but A
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
@@ -331,11 +341,13 @@ class ColumnSwapperTests:DatabaseTests
 
         Import(db.CreateTable("Map", dt), out var map, out var mapCols);
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
-        swapper.WHERELogic = "Proj = $n";
-            
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out")),
+            WHERELogic = "Proj = $n"
+        };
+
         // initialize with a mock that returns ProjectNumber 1
         swapper.PreInitialize(GetMockExtractDatasetCommand(), new ThrowImmediatelyDataLoadEventListener());
 
@@ -378,9 +390,11 @@ class ColumnSwapperTests:DatabaseTests
             
         Import(db.CreateTable("Map", dt), out var map, out var mapCols);
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"))
+        };
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -422,9 +436,11 @@ class ColumnSwapperTests:DatabaseTests
 
         Import(db.CreateTable("Map", dt), out var map, out var mapCols);
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"))
+        };
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -474,9 +490,11 @@ class ColumnSwapperTests:DatabaseTests
 
         Assert.AreEqual(typeof(string),mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), "Expected map to be of string datatype");
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"))
+        };
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -485,7 +503,7 @@ class ColumnSwapperTests:DatabaseTests
         dtToSwap.Columns.Add("In");
         dtToSwap.Columns.Add("Name");
         dtToSwap.Rows.Add(1 /*int*/, "Dave");
-            
+
         var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(1, resultDt.Rows.Count);
@@ -516,9 +534,11 @@ class ColumnSwapperTests:DatabaseTests
 
         Assert.AreEqual(typeof(int),mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), "Expected map to be of int datatype");
 
-        var swapper = new ColumnSwapper();
-        swapper.MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In"));
-        swapper.MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"));
+        var swapper = new ColumnSwapper
+        {
+            MappingFromColumn = mapCols.Single(c => c.GetRuntimeName().Equals("In")),
+            MappingToColumn = mapCols.Single(c => c.GetRuntimeName().Equals("Out"))
+        };
 
         swapper.Check(new ThrowImmediatelyCheckNotifier());
 
@@ -527,7 +547,7 @@ class ColumnSwapperTests:DatabaseTests
         dtToSwap.Columns.Add("In");
         dtToSwap.Columns.Add("Name");
         dtToSwap.Rows.Add("1" /*string*/, "Dave");
-            
+
         var resultDt = swapper.ProcessPipelineData(dtToSwap, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(1, resultDt.Rows.Count);
@@ -535,7 +555,7 @@ class ColumnSwapperTests:DatabaseTests
         Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
     }
 
-    private IExtractDatasetCommand GetMockExtractDatasetCommand()
+    private static IExtractDatasetCommand GetMockExtractDatasetCommand()
     {
         var mockPj = Mock.Of<IProject>(p =>
             p.Name == "My Project" &&

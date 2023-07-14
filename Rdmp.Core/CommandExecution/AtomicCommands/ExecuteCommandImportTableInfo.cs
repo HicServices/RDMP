@@ -38,19 +38,18 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
 
         ICatalogue c = null;
         ITableInfoImporter importer;
-        DiscoveredTable t;
-            
-        t = _table ?? SelectTable(false,"Select table to import");
+
+        var t = _table ?? SelectTable(false,"Select table to import");
 
         if(t == null)
             return;
 
         //if it isn't a table valued function
-        if (t is DiscoveredTableValuedFunction)
-            importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository, (DiscoveredTableValuedFunction) t);
+        if (t is DiscoveredTableValuedFunction function)
+            importer = new TableValuedFunctionImporter(BasicActivator.RepositoryLocator.CatalogueRepository, function);
         else
             importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, t);
-            
+
         importer.DoImport(out var ti, out var cis);
 
         BasicActivator.Show($"Successfully imported new TableInfo { ti.Name} with ID {ti.ID}");

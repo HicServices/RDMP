@@ -35,8 +35,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// Names that are not allowed for user custom parameters because they
     /// are used internally by RMDP query building engines
     /// </summary>
-    public static readonly string[] ProhibitedParameterNames = new string[]
-    {
+    public static readonly string[] ProhibitedParameterNames = {
 
         "@CohortDefinitionID",
         "@ProjectNumber",
@@ -112,7 +111,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
             {"ReferencedObjectID",parent.ID},
             {"ReferencedObjectType",parent.GetType().Name},
             {"ReferencedObjectRepositoryType",parent.Repository.GetType().Name},
-            {"ParameterSQL", parameterSQL},
+            {"ParameterSQL", parameterSQL}
         });
     }
 
@@ -139,9 +138,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper;
-
-        if (parentWithQuerySyntaxHelper == null)
+        if (GetOwnerIfAny() is not IHasQuerySyntaxHelper parentWithQuerySyntaxHelper)
             throw new AmbiguousDatabaseTypeException($"Could not figure out what the query syntax helper is for {this}");
 
         return parentWithQuerySyntaxHelper.GetQuerySyntaxHelper();
@@ -212,9 +209,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        var parent = GetOwnerIfAny() as IHasDependencies;
-
-        if (parent != null)
+        if (GetOwnerIfAny() is IHasDependencies parent)
             return new[] {parent};
 
         return Array.Empty<IHasDependencies>();
@@ -259,7 +254,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
             desc += $"{parameter.ParameterName} is '{parameter.Comment}'";
         }
 
-        return new DialogArgs()
+        return new DialogArgs
         {
             WindowTitle = windowTitle,
             EntryLabel = parameter.ParameterName,

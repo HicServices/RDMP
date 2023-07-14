@@ -50,11 +50,9 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     private string _originalSql;
     private DiscoveredServer _server;
     private AutoCompleteProviderWin _autoComplete;
-        
-    ToolStripButton btnExecuteSql = new ToolStripButton("Run");
-    ToolStripButton btnResetSql = new ToolStripButton("Restore Original SQL");
-
-    readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
+    private ToolStripButton btnExecuteSql = new("Run");
+    private ToolStripButton btnResetSql = new("Restore Original SQL");
+    private readonly ToolStripTimeout _timeoutControls = new();
     private ToolStripLabel _serverHeader;
     private DatabaseTypeIconProvider _databaseTypeIconProvider;
 
@@ -107,8 +105,9 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         //if we don't exist!
         if (_collection.DatabaseObjects.Any())
             if(!((IRevertable)_collection.DatabaseObjects[0]).Exists())
-                if(ParentForm != null)
-                    ParentForm.Close();
+            {
+                ParentForm?.Close();
+            }
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
@@ -173,7 +172,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     {
         try
         {
-            _server = DataAccessPortal.GetInstance()
+            _server = DataAccessPortal
                 .ExpectServer(_collection.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing);
 
             var sql = _collection.GetSql();
@@ -208,7 +207,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         tbErrors.Text = exception.Message;
         tbErrors.Dock = DockStyle.Fill;
             
-        base.CommonFunctionality.Fatal("Query failed",exception);
+        CommonFunctionality.Fatal("Query failed",exception);
     }
 
     private void HideFatal()
@@ -221,7 +220,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
         splitContainer1.Panel2.Controls.Add(dataGridView1);
         splitContainer1.Panel2.Controls.Remove(tbErrors);
-        base.CommonFunctionality.ResetChecks();
+        CommonFunctionality.ResetChecks();
 
     }
 
@@ -258,7 +257,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
                     _cmd.CommandTimeout = _timeoutControls.Timeout;
 
                     var a = server.GetDataAdapter(_cmd);
-                        
+
                     var dt = new DataTable();
 
                     a.Fill(dt);
@@ -285,7 +284,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         });
     }
 
-    private void MorphBinaryColumns(DataTable table)
+    private static void MorphBinaryColumns(DataTable table)
     {
         var targetNames = table.Columns.Cast<DataColumn>()
             .Where(col => col.DataType.Equals(typeof(byte[])))
@@ -326,11 +325,10 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
 
     private void llCancel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-        if(_cmd != null)
-            _cmd.Cancel();
+        _cmd?.Cancel();
     }
 
-    void _scintilla_TextChanged(object sender, EventArgs e)
+    private void _scintilla_TextChanged(object sender, EventArgs e)
     {
         //enable the reset button only if the SQL has changed (e.g. user is typing stuff)
         btnResetSql.Enabled = !_originalSql.Equals(_scintilla.Text);
@@ -349,7 +347,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         _scintilla.Text = _originalSql;
     }
 
-    void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+    private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
     {
         if (e.RowIndex == -1)
             return;

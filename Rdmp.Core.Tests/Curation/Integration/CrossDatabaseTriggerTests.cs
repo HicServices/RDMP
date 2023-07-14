@@ -55,7 +55,7 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         var archiveTable = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_Archive");
         Assert.IsTrue(archiveTable.Exists());
 
-        Assert.AreEqual(7,archiveTable.DiscoverColumns().Count());
+        Assert.AreEqual(7, archiveTable.DiscoverColumns().Length);
 
         Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("name")));
         Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("bubbles")));
@@ -72,21 +72,22 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         using(var con = tbl.Database.Server.GetConnection())
         {
             con.Open();
-            var cmd = tbl.Database.Server.GetCommand(string.Format("INSERT INTO {0}(name,bubbles) VALUES('bob',1)",tbl.GetRuntimeName()),con);
+            var cmd = tbl.Database.Server.GetCommand(
+                $"INSERT INTO {tbl.GetRuntimeName()}(name,bubbles) VALUES('bob',1)",con);
             cmd.ExecuteNonQuery();
-                
+
             Assert.AreEqual(1,tbl.GetRowCount());
             Assert.AreEqual(0,archiveTable.GetRowCount());
 
-            cmd = tbl.Database.Server.GetCommand(string.Format("UPDATE {0} set bubbles=2",tbl.GetRuntimeName()), con);
+            cmd = tbl.Database.Server.GetCommand($"UPDATE {tbl.GetRuntimeName()} set bubbles=2", con);
             cmd.ExecuteNonQuery();
-                
+
             Assert.AreEqual(1, tbl.GetRowCount());
             Assert.AreEqual(1, archiveTable.GetRowCount());
 
             var archive = archiveTable.GetDataTable();
             var dr = archive.Rows.Cast<DataRow>().Single();
-                
+
             Assert.AreEqual(((DateTime)dr["hic_validTo"]).Date,DateTime.Now.Date);
         }
             
@@ -114,10 +115,10 @@ public class CrossDatabaseTriggerTests : DatabaseTests
             Assert.AreEqual(1, tbl.GetRowCount());
             Assert.AreEqual(1, archiveTable.GetRowCount());
 
-            var cmd = tbl.Database.Server.GetCommand(string.Format("UPDATE {0} set amagad=1.0", tbl.GetRuntimeName()), con);
+            var cmd = tbl.Database.Server.GetCommand($"UPDATE {tbl.GetRuntimeName()} set amagad=1.0", con);
             cmd.ExecuteNonQuery();
 
-            cmd = tbl.Database.Server.GetCommand(string.Format("UPDATE {0} set amagad=.09", tbl.GetRuntimeName()), con);
+            cmd = tbl.Database.Server.GetCommand($"UPDATE {tbl.GetRuntimeName()} set amagad=.09", con);
             cmd.ExecuteNonQuery();
 
             Assert.AreEqual(1, tbl.GetRowCount());
@@ -128,9 +129,7 @@ public class CrossDatabaseTriggerTests : DatabaseTests
             Assert.AreEqual(2, archive.Rows.Cast<DataRow>().Count(r => r["amagad"] == DBNull.Value));
         }
 
-        string problems;
-        string worked;
-        implementer.DropTrigger(out problems,out worked);
+        implementer.DropTrigger(out var problems, out string worked);
 
         Assert.IsTrue(string.IsNullOrEmpty(problems));
 

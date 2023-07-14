@@ -54,7 +54,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
         pbDisconnected.Image = CatalogueIcons.ExternalDatabaseServer.ImageToBitmap();
 
-        this.Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
+        Icon = IconFactory.Instance.GetIcon(Image.Load<Rgba32>(CatalogueIcons.Main));
     }
 
 
@@ -75,7 +75,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
     public bool DoNotContinue { get; set; }
 
-    void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
+    private void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
     {
         if(IsDisposed || !IsHandleCreated)
             return;
@@ -98,7 +98,7 @@ public partial class StartupUI : Form, ICheckNotifier
         }
                         
         //25% to 50% is downloading MEF
-        pbLoadProgress.Value = (int) (250 + ((float)eventArgs.CurrentDllNumber / (float)eventArgs.DllsSeenInCatalogue * 250f));
+        pbLoadProgress.Value = (int) (250 + (float)eventArgs.CurrentDllNumber / (float)eventArgs.DllsSeenInCatalogue * 250f);
 
         lblProgress.Text = $"Downloading MEF File {eventArgs.FileBeingProcessed}";
             
@@ -124,11 +124,11 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         if(InvokeRequired)
         {
-            this.Invoke(new MethodInvoker(StartupComplete));
+            Invoke(new MethodInvoker(StartupComplete));
             return;
         }
             
-        if (_startup is { RepositoryLocator.CatalogueRepository: { } })
+        if (_startup is { RepositoryLocator.CatalogueRepository: not null })
             WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
             
         //when things go badly leave the form
@@ -145,7 +145,7 @@ public partial class StartupUI : Form, ICheckNotifier
         pbLoadProgress.Value = 1000;
     }
 
-    void TimerTick(object sender, EventArgs e)
+    private void TimerTick(object sender, EventArgs e)
     {
         var t = (Timer) sender;
             
@@ -224,7 +224,7 @@ public partial class StartupUI : Form, ICheckNotifier
         t.Start();
     }
 
-    RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
+    private RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
     private ChoosePlatformDatabasesUI _choosePlatformsUI;
     private bool _haveWarnedAboutOutOfDate = false;
 
@@ -310,7 +310,7 @@ public partial class StartupUI : Form, ICheckNotifier
             Invoke(new MethodInvoker(() => OnCheckPerformed(args)));
             return false;
         }
-            
+
         //if the message starts with a percentage translate it into the progress bars movement
         var progressHackMessage = new Regex("^(\\d+)%");
         var match = progressHackMessage.Match(args.Message);
@@ -318,7 +318,7 @@ public partial class StartupUI : Form, ICheckNotifier
         if (match.Success)
         {
             var percent = float.Parse(match.Groups[1].Value);
-            pbLoadProgress.Value = (int) (500 + (percent*2.5));//500-750
+            pbLoadProgress.Value = (int) (500 + percent*2.5);//500-750
         }
              
         switch (args.Result)

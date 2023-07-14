@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecutionProposal<CatalogueItemsNode>
+internal class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecutionProposal<CatalogueItemsNode>
 {
     public ProposeExecutionWhenTargetIsCatalogueItemsNode(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -30,13 +30,10 @@ class ProposeExecutionWhenTargetIsCatalogueItemsNode : RDMPCommandExecutionPropo
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
     {
-        var colInfo = cmd as ColumnInfoCombineable;
-        var tableInfo = cmd as TableInfoCombineable;
-
-        if (colInfo != null)
+        if (cmd is ColumnInfoCombineable colInfo)
             return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, colInfo) { Category = target.Category };
-            
-        if (tableInfo != null)
+
+        if (cmd is TableInfoCombineable tableInfo)
             return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, tableInfo.TableInfo.ColumnInfos) { Category = target.Category };
 
         // when dropping onto Core or Supplemental etc

@@ -42,8 +42,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         return new SimpleStringValueEncryption(OpenKeyFile());
     }
 
-
-    Lazy<string> _knownKeyFileLocation;
+    private Lazy<string> _knownKeyFileLocation;
 
     /// <summary>
     /// Gets the physical file path to the currently configured RSA private key for encrypting/decrypting passwords or null if no
@@ -75,7 +74,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         return location is null ? null : File.ReadAllText(location);
     }
 
-    private void DeserializeFromLocation(string keyLocation)
+    private static void DeserializeFromLocation(string keyLocation)
     {
         if (string.IsNullOrWhiteSpace(keyLocation))
             return;

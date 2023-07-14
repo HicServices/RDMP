@@ -60,26 +60,25 @@ public class BundledLookupTable : IBundledLookupTable
     public string GetDataTableFetchSql()
     {
         var catas = TableInfo.GetAllRelatedCatalogues().Where(IsLookupOnlyCatalogue).ToArray();
-        QueryBuilder qb;
 
         if (catas.Length == 1)
         {
             // if there is a Catalogue associated with this TableInfo use its extraction instead
             var cata = catas[0];
-                
-            // Extract core columns only (and definetly not extraction identifiers) 
+
+            // Extract core columns only (and definetly not extraction identifiers)
             var eis = cata.GetAllExtractionInformation(ExtractionCategory.Core)
                 .Where(e=>!e.IsExtractionIdentifier)
                 .ToArray();
 
             if (eis.Length > 0)
             {
-                qb = new QueryBuilder(null, null, new[] { TableInfo });
+                var qb = new QueryBuilder(null, null, new[] { TableInfo });
                 qb.AddColumnRange(eis);
                 return qb.SQL;
             }
-            else
-                throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
+
+            throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
         }
 
         return $"select * from {TableInfo.GetFullyQualifiedName()}";
@@ -87,7 +86,7 @@ public class BundledLookupTable : IBundledLookupTable
 
     /// <summary>
     /// We only want Catalogues where all <see cref="CatalogueItem"/>
-    /// are us (i.e. we don't want to pick up Catalogues where we are 
+    /// are us (i.e. we don't want to pick up Catalogues where we are
     /// Description column slotted in amongst the other columns).
     /// </summary>
     /// <param name="arg"></param>

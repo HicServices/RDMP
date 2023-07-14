@@ -24,7 +24,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 [TechnicalUI]
 public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgumentValueUI
 {
-    Type _uiType;
+    private Type _uiType;
     private ArgumentValueUIArgs _args;
 
     public ArgumentValueCustomUIDrivenClassUI()
@@ -71,14 +71,14 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
         }
     }
         
-    private void btnLaunchCustomUI_Click(object sender, System.EventArgs e)
+    private void btnLaunchCustomUI_Click(object sender, EventArgs e)
     {
         try
         {
             var dataClassInstance = (ICustomUIDrivenClass)_args.InitialValue;
 
             var uiInstance = Activator.CreateInstance(_uiType);
-                
+
             var instanceAsCustomUI = (ICustomUI) uiInstance;
             instanceAsCustomUI.CatalogueRepository = _args.CatalogueRepository;
 

@@ -59,10 +59,12 @@ public abstract class CommandCliTests : UnitTests
     /// <returns></returns>
     protected int Run(params string[] command)
     {
-        var opts = new ExecuteCommandOptions();
-        opts.CommandName = command[0];
-        opts.CommandArgs = command.Skip(1).ToArray();
-            
+        var opts = new ExecuteCommandOptions
+        {
+            CommandName = command[0],
+            CommandArgs = command.Skip(1).ToArray()
+        };
+
         var runner = new ExecuteCommandRunner(opts);
         return runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
             new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());

@@ -38,7 +38,7 @@ public class RDMPForm : Form, IRDMPControl
     {
         KeyPreview = true;
         CloseOnEscape = true;
-        VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        VisualStudioDesignMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
         KeyDown += RDMPForm_KeyDown;
         CommonFunctionality = new RDMPControlCommonFunctionality(this);
     }
@@ -66,8 +66,7 @@ public class RDMPForm : Form, IRDMPControl
         {
             var saveable = this as ISaveableUI;
 
-            if (saveable != null)
-                saveable.GetObjectSaverButton().Save();
+            saveable?.GetObjectSaverButton().Save();
         }
     }
 

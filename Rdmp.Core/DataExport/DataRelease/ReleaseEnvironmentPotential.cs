@@ -64,10 +64,8 @@ public class ReleaseEnvironmentPotential : ICheckable
 
         try
         {
-            Exception e;
-            string reason;
             Assesment = ticketingSystem.GetDataReleaseabilityOfTicket(Project.MasterTicket,
-                Configuration.RequestTicket, Configuration.ReleaseTicket, out reason, out e);
+                Configuration.RequestTicket, Configuration.ReleaseTicket, out var reason, out var e);
             Exception = e;
             Reason = reason;
         }
@@ -92,7 +90,7 @@ public class ReleaseEnvironmentPotential : ICheckable
         notifier.OnCheckPerformed(new CheckEventArgs(message, GetCheckResultFor(Assesment), Exception));
     }
 
-    private CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)
+    private static CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)
     {
         switch (assesment)
         {
@@ -107,7 +105,7 @@ public class ReleaseEnvironmentPotential : ICheckable
                 return CheckResult.Success;
 
             default:
-                throw new ArgumentOutOfRangeException("assesment");
+                throw new ArgumentOutOfRangeException(nameof(assesment));
         }
     }
 }

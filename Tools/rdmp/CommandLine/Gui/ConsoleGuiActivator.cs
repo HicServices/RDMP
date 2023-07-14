@@ -77,14 +77,14 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         using (var dlg = new Dialog(title, w, h, btn) { Modal = true })
         {
-            dlg.Add(new TextView()
+            dlg.Add(new TextView
             {
                 Width = Dim.Fill(),
                 Height = Dim.Fill(1),
                 Text = message.Replace("\r\n", "\n"),
                 ReadOnly = true,
                 AllowsTab = false,
-                WordWrap = true,
+                WordWrap = true
 
             });
             Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
@@ -95,7 +95,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         GetDialogDimensions(out var w, out var h);
 
         // don't use the full height if you're just asking a yes/no question with no big description
-        h = Math.Min(5+((args.TaskDescription?.Length ??0) / 20), h);
+        h = Math.Min(5+(args.TaskDescription?.Length ??0) / 20, h);
 
         var result = MessageBox.Query(w, h, args.WindowTitle ?? "", args.TaskDescription ?? "", "yes", "no", "cancel");
         chosen = result == 0;
@@ -103,7 +103,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         return result != 2;
     }
 
-    private void GetDialogDimensions(out int w, out int h)
+    private static void GetDialogDimensions(out int w, out int h)
     {
         w = Application.Top?.Frame.Width??0;
         h = Application.Top?.Frame.Height??0;
@@ -112,7 +112,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
         h = Math.Max(10,Math.Min(20,  h - 2));
     }
 
-        
+
 
     public override bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
         bool requireSaneHeaderText)
@@ -191,12 +191,12 @@ internal class ConsoleGuiActivator : BasicActivateItems
             return true;
         }
 
-        selected = default(T);
+        selected = default;
         return false;
     }
 
     public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
-    {  
+    {
         var dlg = new ConsoleGuiSelectMany(this, args.WindowTitle, available);
         Application.Run(dlg, ConsoleMainWindow.ExceptionPopup);
 
@@ -210,40 +210,39 @@ internal class ConsoleGuiActivator : BasicActivateItems
             AllowsMultipleSelection = false,
             CanCreateDirectories = true,
             CanChooseDirectories = true,
-            CanChooseFiles = false,
+            CanChooseFiles = false
         };
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
         var selected = openDir.FilePath?.ToString();
-            
+
         return selected == null ? null : new DirectoryInfo(selected);
 
     }
 
     public override FileInfo SelectFile(string prompt)
     {
-        var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
-            
+        using var openDir = new OpenDialog(prompt,"Directory"){AllowsMultipleSelection = false};
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
-        var selected = openDir.FilePaths.FirstOrDefault();
-            
+        var selected = openDir.FilePaths.Count == 1 ? openDir.FilePaths[0] : null;
+
         return selected == null ? null : new FileInfo(selected);
     }
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
     {
-        var openDir = new OpenDialog(prompt,"File")
+        using var openDir = new OpenDialog(prompt,"File")
         {
             AllowsMultipleSelection = false,
             AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
         };
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
-        var selected = openDir.FilePaths.FirstOrDefault();
-
+        var selected = openDir.FilePaths.Count == 1 ? openDir.FilePaths[0] : null;
 
         // entering "null" in a file dialog may return something like "D:\Blah\null"
         if (string.Equals(Path.GetFileName(selected),"null", StringComparison.CurrentCultureIgnoreCase))
@@ -258,7 +257,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             AllowsMultipleSelection = true,
             AllowedFileTypes = pattern == null ? null : new []{pattern.TrimStart('*')}
         };
-            
+
         Application.Run(openDir, ConsoleMainWindow.ExceptionPopup);
 
         return openDir.FilePaths?.Select(f=>new FileInfo(f))?.ToArray();
@@ -296,7 +295,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
     {
         var msg = GetExceptionText(errorText,exception,false);
 
-        var textView = new TextView()
+        var textView = new TextView
         {
             Text = msg,
             X = 0,
@@ -305,7 +304,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
             Height = Dim.Fill() - 2,
             ReadOnly = true,
             AllowsTab = false,
-            WordWrap = true,
+            WordWrap = true
         };
 
         var toggleStack = true;
@@ -323,7 +322,7 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
         GetDialogDimensions(out var w, out var h);
 
-        var dlg = new Dialog("Error",w,h,btnOk,btnStack);            
+        var dlg = new Dialog("Error",w,h,btnOk,btnStack);
         dlg.Add(textView);
 
         Application.MainLoop.Invoke(() =>
@@ -331,12 +330,12 @@ internal class ConsoleGuiActivator : BasicActivateItems
         );
     }
 
-    private ustring GetExceptionText(string errorText, Exception exception, bool includeStackTrace)
+    private static ustring GetExceptionText(string errorText, Exception exception, bool includeStackTrace)
     {
         return Wrap($"{errorText}\n{ExceptionHelper.ExceptionToListOfInnerMessages(exception, includeStackTrace)}", 76);
     }
 
-    private string Wrap(string longString, int width)
+    private static string Wrap(string longString, int width)
     {
         return string.Join("\n",Regex.Matches( longString, $".{{1,{width}}}").Select( m => m.Value ).ToArray());
     }

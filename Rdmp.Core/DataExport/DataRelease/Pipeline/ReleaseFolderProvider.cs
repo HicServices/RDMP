@@ -26,7 +26,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
     private ReleaseData _releaseData;
     private DirectoryInfo _releaseFolder;
 
-    [DemandsNestedInitialization()]
+    [DemandsNestedInitialization]
     public ReleaseFolderSettings FolderSettings { get; set; }
 
     public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -68,7 +68,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
 
     private void PrepareAndCheckReleaseFolder(ICheckNotifier notifier)
     {
-        if (FolderSettings.CustomReleaseFolder != null && !String.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
+        if (FolderSettings.CustomReleaseFolder != null && !string.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
         {
             _releaseFolder = FolderSettings.CustomReleaseFolder;
         }
@@ -79,7 +79,8 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
 
         if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
         {
-            if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Release folder {0} already exists!", _releaseFolder.FullName), CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
+            if (notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Release folder {_releaseFolder.FullName} already exists!", CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
                 _releaseFolder.Delete(true);
             else
                 return;
@@ -98,7 +99,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
             return null;
 
         var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
-        var suffix = String.Empty;
+        var suffix = string.Empty;
         if (_releaseData != null && _releaseData.ConfigurationsForRelease != null && _releaseData.ConfigurationsForRelease.Keys.Any())
         {
             var releaseTicket = _releaseData.ConfigurationsForRelease.Keys.First().ReleaseTicket;
@@ -108,12 +109,9 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
                 throw new Exception("Multiple release tickets seen, this is not allowed!");
         }
 
-        if (String.IsNullOrWhiteSpace(suffix))
+        if (string.IsNullOrWhiteSpace(suffix))
         {
-            if (String.IsNullOrWhiteSpace(p.MasterTicket))
-                suffix = $"{p.ID}_{p.Name}";
-            else
-                suffix = p.MasterTicket;
+            suffix = string.IsNullOrWhiteSpace(p.MasterTicket) ? $"{p.ID}_{p.Name}" : p.MasterTicket;
         }
 
         return new DirectoryInfo(Path.Combine(p.ExtractionDirectory, $"{prefix}_{suffix}"));

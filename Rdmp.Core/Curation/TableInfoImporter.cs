@@ -26,14 +26,14 @@ public class TableInfoImporter:ITableInfoImporter
     private readonly string _importFromServer;
     private readonly string _importDatabaseName;
     private readonly string _importTableName;
-        
+
     private readonly string _username;
     private readonly string _password;
     private readonly DataAccessContext _usageContext;
     private readonly string _importFromSchema;
 
     private readonly DatabaseType _type;
-        
+
     private DiscoveredServer _server;
     private TableType _importTableType;
 
@@ -98,13 +98,10 @@ public class TableInfoImporter:ITableInfoImporter
         _server = new DiscoveredServer(_importFromServer, _importDatabaseName, _type,_username, _password);
     }
     #endregion
-        
+
     /// <inheritdoc/>
     public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
     {
-        string tableName;
-        string databaseName;
-
         try
         {
             _server.TestConnection();
@@ -116,23 +113,23 @@ public class TableInfoImporter:ITableInfoImporter
 
         var querySyntaxHelper = _server.GetQuerySyntaxHelper();
 
-        tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
+        var tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
         if (_type == DatabaseType.MicrosoftSQLServer || _type == DatabaseType.PostgreSql)
             tableName +=
-                $".{(querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny()))}.";
+                $".{querySyntaxHelper.EnsureWrapped(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny())}.";
         else if (_type == DatabaseType.MySql || _type == DatabaseType.Oracle)
             tableName += ".";
         else
             throw new NotSupportedException($"Unknown Type:{_type}");
 
         tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
-        databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
+        var databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
         var discoveredColumns = _server.ExpectDatabase(_importDatabaseName)
             .ExpectTable(_importTableName,_importFromSchema, _importTableType)
             .DiscoverColumns();
-            
+
         var parent = new TableInfo(_repository, tableName)
         {
             DatabaseType = _type,
@@ -164,30 +161,29 @@ public class TableInfoImporter:ITableInfoImporter
     /// <inheritdoc/>
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent,DiscoveredColumn discoveredColumn)
     {
-        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent);
-
-        //if it has an explicitly specified format (Collation)
-        col.Format = discoveredColumn.Format;
-            
-        //if it is a primary key
-        col.IsPrimaryKey = discoveredColumn.IsPrimaryKey;
-        col.IsAutoIncrement = discoveredColumn.IsAutoIncrement;
-        col.Collation = discoveredColumn.Collation;
+        var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent)
+            {
+                //if it has an explicitly specified format (Collation)
+                Format = discoveredColumn.Format,
+                //if it is a primary key
+                IsPrimaryKey = discoveredColumn.IsPrimaryKey,
+                IsAutoIncrement = discoveredColumn.IsAutoIncrement,
+                Collation = discoveredColumn.Collation
+            };
 
         col.SaveToDatabase();
         
 
         return col;
     }
-        
+
     /// <inheritdoc cref="DoImport(out ITableInfo,out ColumnInfo[])"/>
     public void DoImport()
     {
         DoImport(out _, out _);
     }
 
-    private static readonly string[] ProhibitedNames = new[]
-    {
+    private static readonly string[] ProhibitedNames = {
         "ADD",
         "EXTERNAL",
         "PROCEDURE",

@@ -26,7 +26,7 @@ public class ArgumentFactory
     /// <inheritdoc cref = "CreateArgumentsForClassIfNotExistsGeneric(Type,IArgumentHost,IArgument[])"/>
     /// <typeparam name="T">A class with one or more Properties marked with DemandsInitialization</typeparam>
     /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
-    public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>( IArgumentHost host, IArgument[] existingArguments)
+    public static IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>( IArgumentHost host, IArgument[] existingArguments)
     {
         return CreateArgumentsForClassIfNotExistsGeneric(typeof (T),host,existingArguments);
     }
@@ -36,7 +36,7 @@ public class ArgumentFactory
     /// Each one of these that is found is created as a ProcessTaskArgument of the appropriate Name and PropertyType under the parent ProcessTask
     /// </summary>
     /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
-    public IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric(
+    public static IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric(
         Type underlyingClassTypeForWhichArgumentsWillPopulate,IArgumentHost host,
         IArgument[] existingArguments)
     {
@@ -64,9 +64,8 @@ public class ArgumentFactory
             if (attribute.DefaultValue != null)
                 argument.SetValue(attribute.DefaultValue);
 
-            var saveable = argument as ISaveable;
 
-            if (saveable != null)
+            if (argument is ISaveable saveable)
                 saveable.SaveToDatabase();
 
             yield return argument;
@@ -74,13 +73,13 @@ public class ArgumentFactory
     }
 
     /// <summary>
-    /// Gets all public properties of the given <paramref name="classType"/> decorated with <see cref="DemandsInitializationAttribute"/>.  
+    /// Gets all public properties of the given <paramref name="classType"/> decorated with <see cref="DemandsInitializationAttribute"/>.
     /// 
     /// <para>If there are any public properties encountered with <see cref="DemandsNestedInitializationAttribute"/> then the referenced class is also investigated in the same manner.</para>
     /// </summary>
     /// <param name="classType"></param>
     /// <returns></returns>
-    public List<RequiredPropertyInfo> GetRequiredProperties(Type classType)
+    public static List<RequiredPropertyInfo> GetRequiredProperties(Type classType)
     {
         var required = new List<RequiredPropertyInfo>();
             
@@ -115,14 +114,14 @@ public class ArgumentFactory
 
         return required;
     }
-        
+
     /// <summary>
     /// Creates <see cref="IArgument"/> instances for all demanded properties (See <see cref="GetRequiredProperties"/>) of the given class and deletes any old arguments
     /// which are no longer required by the class (e.g. due to an API change).
     /// </summary>
     /// <param name="host"></param>
     /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>
-    public void SyncArgumentsForClass(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
+    public static void SyncArgumentsForClass(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
     {
         if(host.GetClassNameWhoArgumentsAreFor() != underlyingClassTypeForWhichArgumentsWillPopulate.FullName)
             throw new ExpectedIdenticalStringsException("IArgumentHost is not currently hosting the Type requested for sync", host.GetClassNameWhoArgumentsAreFor(), underlyingClassTypeForWhichArgumentsWillPopulate.FullName);
@@ -140,12 +139,8 @@ public class ArgumentFactory
         //handle mismatches of Type/incompatible values / unloaded Types etc
         foreach (var r in required)
         {
-            var existing = existingArguments.SingleOrDefault(e => e.Name == r.Name);
-
-            if(existing == null)
-                throw new Exception(
+            var existing = existingArguments.SingleOrDefault(e => e.Name == r.Name) ?? throw new Exception(
                     $"Despite creating new Arguments for class '{underlyingClassTypeForWhichArgumentsWillPopulate}' we do not have an IArgument called '{r.Name}' in the database (host='{host}')");
-
             if (existing.GetSystemType() != r.PropertyInfo.PropertyType)
             {
                 //user wants to fix the problem
@@ -154,7 +149,7 @@ public class ArgumentFactory
             }
         }
     }
-        
+
     /// <summary>
     /// Synchronizes all arguments (See SyncArgumentsForClass) for the supplied class (<paramref name="underlyingClassTypeForWhichArgumentsWillPopulate"/>) and returns the mapping
     /// between <see cref="IArgument"/> (which stores the value) and public class property (<see cref="RequiredPropertyInfo"/>)
@@ -162,7 +157,7 @@ public class ArgumentFactory
     /// <param name="host"></param>
     /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>
     /// <returns></returns>
-    public Dictionary<IArgument, RequiredPropertyInfo> GetDemandDictionary(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
+    public static Dictionary<IArgument, RequiredPropertyInfo> GetDemandDictionary(IArgumentHost host, Type underlyingClassTypeForWhichArgumentsWillPopulate)
     {
         var toReturn = new Dictionary<IArgument, RequiredPropertyInfo>();
 

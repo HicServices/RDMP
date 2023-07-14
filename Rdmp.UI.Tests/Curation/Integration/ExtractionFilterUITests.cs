@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.UI.Tests.Curation.Integration;
 
-class ExtractionFilterUITests : UITests
+internal class ExtractionFilterUITests : UITests
 {
 
     [Test]
@@ -25,9 +25,11 @@ class ExtractionFilterUITests : UITests
             
         SetupMEF();
 
-        var activator = new TestActivateItems(this, Repository);
-        activator.InteractiveDeletes = true;
-        activator.YesNoResponse = true;
+        var activator = new TestActivateItems(this, Repository)
+        {
+            InteractiveDeletes = true,
+            YesNoResponse = true
+        };
 
         var del = new ExecuteCommandDelete(activator, filter);
         del.Execute();

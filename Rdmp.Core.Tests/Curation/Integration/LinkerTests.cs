@@ -10,7 +10,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-class LinkerTests : DatabaseTests
+internal class LinkerTests : DatabaseTests
 {
     [Test]
     public void AddSameLinkTwice()

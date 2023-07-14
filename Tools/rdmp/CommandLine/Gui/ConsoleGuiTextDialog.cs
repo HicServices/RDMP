@@ -9,7 +9,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleGuiTextDialog
+internal class ConsoleGuiTextDialog
 {
     private readonly DialogArgs _args;
     private readonly string _initialValue;
@@ -19,7 +19,7 @@ class ConsoleGuiTextDialog
     public ConsoleGuiTextDialog(DialogArgs args, string initialValue)
     {
         _args = args;
-        this._initialValue = initialValue;
+        _initialValue = initialValue;
     }
 
     public int? MaxLength { get; set; }
@@ -42,7 +42,7 @@ class ConsoleGuiTextDialog
         var description = new Label
         {
             Text = _args.TaskDescription ?? "",
-            Y = 0,
+            Y = 0
         };
 
         win.Add(description);
@@ -50,12 +50,12 @@ class ConsoleGuiTextDialog
         var entryLabel = new Label
         {
             Text = _args.EntryLabel ?? "",
-            Y = Pos.Bottom(description),
+            Y = Pos.Bottom(description)
         };
 
         win.Add(entryLabel);
 
-        var textField = new TextView()
+        var textField = new TextView
         {
             X = 1,
             Y = Pos.Bottom(entryLabel),
@@ -63,7 +63,7 @@ class ConsoleGuiTextDialog
             Width = Dim.Fill(2),
             Text = _initialValue ?? "",
             AllowsTab = false,
-            AllowsReturn = MaxLength.HasValue ? MaxLength > BasicActivateItems.MultiLineLengthThreshold : false,
+            AllowsReturn = MaxLength > BasicActivateItems.MultiLineLengthThreshold
         };
 
         win.Add(textField);

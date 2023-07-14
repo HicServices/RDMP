@@ -45,10 +45,12 @@ public class VerboseValidationResults
         foreach (var iv in validators)
         {
             DictionaryOfFailure.Add(iv.TargetProperty,null);
-            DictionaryOfFailure[iv.TargetProperty] = new Dictionary<Consequence, int>();
-            DictionaryOfFailure[iv.TargetProperty].Add(Consequence.Missing,0);
-            DictionaryOfFailure[iv.TargetProperty].Add(Consequence.Wrong, 0);
-            DictionaryOfFailure[iv.TargetProperty].Add(Consequence.InvalidatesRow, 0);
+            DictionaryOfFailure[iv.TargetProperty] = new Dictionary<Consequence, int>
+            {
+                { Consequence.Missing, 0 },
+                { Consequence.Wrong, 0 },
+                { Consequence.InvalidatesRow, 0 }
+            };
         }
     }
 
@@ -74,10 +76,9 @@ public class VerboseValidationResults
                         ReasonsRowsInvalidated.Add(
                             $"{subException.SourceItemValidator.TargetProperty}|{subException.SourceConstraint.GetType().Name}");
 
-                if (worstConsequences.Keys.Contains(subException.SourceItemValidator) == true)
+                if (worstConsequences.TryGetValue(subException.SourceItemValidator,out var oldConsequence))
                 {
                     //see if situation got worse
-                    var oldConsequence = worstConsequences[subException.SourceItemValidator];
                     var newConsequence = subException.SourceConstraint.Consequence.Value;
 
                     if (newConsequence > oldConsequence)
@@ -91,7 +92,7 @@ public class VerboseValidationResults
             }
 
             //now record the worst case event
-            if (worstConsequences.Values.Contains(Consequence.InvalidatesRow))
+            if (worstConsequences.ContainsValue(Consequence.InvalidatesRow))
                 CountOfRowsInvalidated++;
                 
             foreach (var itemValidator in worstConsequences.Keys)
@@ -111,7 +112,7 @@ public class VerboseValidationResults
         }
     }
 
-    private void ConfirmIntegrityOfValidationException(ValidationFailure v)
+    private static void ConfirmIntegrityOfValidationException(ValidationFailure v)
     {
         if (v.GetExceptionList() == null)
             throw new NullReferenceException(

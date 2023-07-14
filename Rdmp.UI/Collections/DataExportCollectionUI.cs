@@ -52,49 +52,31 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     private object CohortSourceAspectGetter(object rowObject)
     {
         //if it is a cohort or something masquerading as a cohort
-        var masquerader = rowObject as IMasqueradeAs;
-        var cohort = masquerader != null
+        var cohort = rowObject is IMasqueradeAs masquerader
             ? masquerader.MasqueradingAs() as ExtractableCohort
             : rowObject as ExtractableCohort;
 
         //serve up the ExternalCohortTable name
-        if (cohort != null)
-            return cohort.ExternalCohortTable.Name;
-
-        return null;
+        return cohort?.ExternalCohortTable.Name;
     }
 
     private object ProjectNumberAspectGetter(object rowObject)
     {
-        var p = rowObject as Project;
-            
         var masquerade = rowObject as IMasqueradeAs;
 
-        if (p != null)
+        if (rowObject is Project p)
             return p.ProjectNumber;
 
-        if(masquerade != null)
-        {
-            var c = masquerade.MasqueradingAs() as ExtractableCohort;
-            if (c != null)
-                return c.ExternalProjectNumber;
-        }
-
-        return null;
+        var c = masquerade?.MasqueradingAs() as ExtractableCohort;
+        return c?.ExternalProjectNumber;
     }
 
     private object CohortVersionAspectGetter(object rowObject)
     {
         var masquerade = rowObject as IMasqueradeAs;
 
-        if (masquerade != null)
-        {
-            var c = masquerade.MasqueradingAs() as ExtractableCohort;
-            if (c != null)
-                return c.ExternalVersion;
-        }
-
-        return null;
+        var c = masquerade?.MasqueradingAs() as ExtractableCohort;
+        return c?.ExternalVersion;
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -109,7 +91,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             olvName
         );
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a) => GetWhitespaceRightClickMenu();
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => GetWhitespaceRightClickMenu();
             
         CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(FolderNode<Project>)};
 
@@ -178,7 +160,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
         CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator),"Extraction Configuration",null,NewMenu);
         CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
-            
+
         var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add).ImageToBitmap());
 
         var factory = new AtomicCommandUIFactory(Activator);

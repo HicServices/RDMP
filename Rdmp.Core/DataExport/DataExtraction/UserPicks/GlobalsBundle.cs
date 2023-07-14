@@ -38,15 +38,13 @@ public class GlobalsBundle:Bundle
 
     protected override void OnDropContent(object toDrop)
     {
-        var item = toDrop as SupportingDocument;
-        if (item != null)
+        if (toDrop is SupportingDocument item)
         {
             Documents.Remove(item);
             return;
         }
 
-        var drop = toDrop as SupportingSQLTable;
-        if (drop != null)
+        if (toDrop is SupportingSQLTable drop)
         {
             SupportingSQL.Remove(drop);
             return;

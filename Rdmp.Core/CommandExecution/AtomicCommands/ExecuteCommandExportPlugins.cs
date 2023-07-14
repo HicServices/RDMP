@@ -45,8 +45,7 @@ public class ExecuteCommandExportPlugins : BasicCommandExecution
     {
         base.Execute();
 
-        if (_outDir == null)
-            _outDir = BasicActivator.SelectDirectory("Output directory");
+        _outDir ??= BasicActivator.SelectDirectory("Output directory");
 
         if (_outDir == null)
             return;

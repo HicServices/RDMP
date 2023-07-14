@@ -24,7 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <summary>
-/// Defines an anonymisation method for a group of related columns of the same datatype.  For example 'ANOGPCode' could be an instance/record that defines input of type 
+/// Defines an anonymisation method for a group of related columns of the same datatype.  For example 'ANOGPCode' could be an instance/record that defines input of type
 /// varchar(5) and anonymises into 3 digits and 2 characters with a suffix of _G.  This product would then be used by all ColumnInfos that contain GP codes (current GP
 /// previous GP, Prescriber code etc).  Anonymisation occurs at  ColumnInfo level after being loaded from a RAW data load bubble as is pushed to the STAGING bubble.
 /// 
@@ -164,7 +164,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     }
 
     /// <summary>
-    /// Saves the current state to the database if the <see cref="ANOTable"/> is in a valid state according to <see cref="Check"/> otherwise throws an Exception 
+    /// Saves the current state to the database if the <see cref="ANOTable"/> is in a valid state according to <see cref="Check"/> otherwise throws an Exception
     /// </summary>
     public override void SaveToDatabase()
     {
@@ -181,13 +181,13 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
         DeleteANOTableInANOStore();
         Repository.DeleteFromDatabase(this);
     }
-        
+
     /// <inheritdoc/>
     public override string ToString()
     {
         return TableName;
     }
-        
+
     /// <summary>
     /// Checks that the remote mapping table referenced by this object exists and checks <see cref="ANOTable"/> settings (<see cref="Suffix"/> etc).
     /// </summary>
@@ -239,9 +239,9 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     public DiscoveredTable GetPushedTable()
     {
         if (!Server.WasCreatedBy(new ANOStorePatcher()))
-            throw new Exception(string.Format("ANOTable's Server '{0}' is not an ANOStore.  ANOTable was '{1}'",Server,this));
+            throw new Exception($"ANOTable's Server '{Server}' is not an ANOStore.  ANOTable was '{this}'");
 
-        var tables = DataAccessPortal.GetInstance()
+        var tables = DataAccessPortal
             .ExpectDatabase(Server, DataAccessContext.DataLoad)
             .DiscoverTables(false);
 
@@ -279,14 +279,14 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
     /// <param name="forceTransaction"></param>
     public void PushToANOServerAsNewTable(string identifiableDatatype, ICheckNotifier notifier, DbConnection forceConnection=null,DbTransaction forceTransaction = null)
     {
-        var server = DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);
+        var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
 
         //matches varchar(100) and has capture group 100
         var regexGetLengthOfCharType =new Regex(@".*char.*\((\d*)\)");
         var match = regexGetLengthOfCharType.Match(identifiableDatatype);
 
-        //if user supplies varchar(100) and says he wants 3 ints and 3 chars in his anonymous identifiers he will soon run out of combinations 
-            
+        //if user supplies varchar(100) and says he wants 3 ints and 3 chars in his anonymous identifiers he will soon run out of combinations
+
         if (match.Success)
         {
             var length = Convert.ToInt32(match.Groups[1].Value);
@@ -295,11 +295,11 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
                 NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={(NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation)})", CheckResult.Warning));
+                        $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation})", CheckResult.Warning));
         }
 
         var con = forceConnection ?? server.GetConnection();//use the forced connection or open a new one
-            
+
         try
         {
             if(forceConnection == null)
@@ -313,10 +313,10 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRever
 
         //if table name is ANOChi there are 2 columns Chi and ANOChi in it
         var anonymousColumnName = TableName;
-        var identifiableColumnName = TableName.Substring("ANO".Length);
+        var identifiableColumnName = TableName["ANO".Length..];
 
         var anonymousDatatype =
-            $"varchar({(NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation + "_".Length + Suffix.Length)})";
+            $"varchar({NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation + "_".Length + Suffix.Length})";
 
 
         var sql =
@@ -351,7 +351,7 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
                 return;
             }
         }
-            
+
         try
         {
             if(forceTransaction == null)//if there was no transaction then this has hit the LIVE ANO database and is for real, so save the ANOTable such that it is synchronized with reality
@@ -380,15 +380,15 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         //cache answers
         if(_identifiableDataType == null)
         {
-            var server = DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);
-                
+            var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
+
             var columnsFoundInANO = server.GetCurrentDatabase().ExpectTable(TableName).DiscoverColumns();
 
-            var expectedIdentifiableName = TableName.Substring("ANO".Length);
+            var expectedIdentifiableName = TableName["ANO".Length..];
 
             var anonymous = columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(TableName));
             var identifiable = columnsFoundInANO.SingleOrDefault(c=>c.GetRuntimeName().Equals(expectedIdentifiableName));
-                
+
             if(anonymous == null)
                 throw new Exception(
                     $"Could not find a column called {TableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray())})");
@@ -402,23 +402,17 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         }
 
         //return cached answer
-        switch (loadStage)
+        return loadStage switch
         {
-            case LoadStage.GetFiles:
-                return _identifiableDataType;
-            case LoadStage.Mounting:
-                return _identifiableDataType;
-            case LoadStage.AdjustRaw:
-                return _identifiableDataType;
-            case LoadStage.AdjustStaging:
-                return _anonymousDataType;
-            case LoadStage.PostLoad:
-                return _anonymousDataType;
-            default:
-                throw new ArgumentOutOfRangeException("loadStage");
-        }
+            LoadStage.GetFiles => _identifiableDataType,
+            LoadStage.Mounting => _identifiableDataType,
+            LoadStage.AdjustRaw => _identifiableDataType,
+            LoadStage.AdjustStaging => _anonymousDataType,
+            LoadStage.PostLoad => _anonymousDataType,
+            _ => throw new ArgumentOutOfRangeException(nameof(loadStage))
+        };
     }
-        
+
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {

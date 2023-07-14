@@ -27,7 +27,7 @@ public class LoadDirectory : ILoadDirectory
     public DirectoryInfo DataPath { get; private set; }
     /// <inheritdoc/>
     public DirectoryInfo ExecutablesPath { get; private set; }
-        
+
 
     internal const string ExampleFixedWidthFormatFileContents = @"From,To,Field,Size,DateFormat
 1,7,gmc,7,
@@ -67,19 +67,15 @@ public class LoadDirectory : ILoadDirectory
         Cache = FindFolderInPath(DataPath, "Cache");
     }
 
-    private  DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName)
+    private static DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName)
     {
         return path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
     }
 
-    private DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
+    private static DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
     {
-        var d = path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
-
-        if (d == null)
-            throw new DirectoryNotFoundException(
+        var d = path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault() ?? throw new DirectoryNotFoundException(
                 $"This dataset requires the directory '{folderName}' located at {Path.Combine(path.FullName, folderName)}");
-
         return d;
     }
 

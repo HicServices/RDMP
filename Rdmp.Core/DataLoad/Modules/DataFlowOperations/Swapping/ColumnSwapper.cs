@@ -31,7 +31,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 /// <summary>
 /// Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)
 /// </summary>
-class ColumnSwapper:IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>, IPipelineOptionalRequirement<ICohortCreationRequest>
+internal class ColumnSwapper:IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>, IPipelineOptionalRequirement<ICohortCreationRequest>
 {
     [DemandsInitialization("The column in your pipeline containing input values you want swapped.  Leave null to use the same name as the MappingFromColumn")]
     public string InputFromColumn { get; set; }
@@ -79,12 +79,12 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         set => _culture = value;
     }
 
-    Dictionary<object,List<object>> _mappingTable;
-        
+    private Dictionary<object,List<object>> _mappingTable;
+
     /// <summary>
     /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
     /// </summary>
-    Type _keyType;
+    private Type _keyType;
 
 
     protected IProject _project;
@@ -126,7 +126,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         {
             toProcess.Columns.Add(toColumnName);
         }
-            
+
 
         var idxFrom = toProcess.Columns.IndexOf(fromColumnName);
         var idxTo = toProcess.Columns.IndexOf(toColumnName);
@@ -149,14 +149,14 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
             //work out a suitable anonymous method for converting between the Types
             if(_keyType == typeof(string))
-                typeConversion = (a)=>a.ToString();
+                typeConversion = a=>a.ToString();
             else
             {
                 try
                 {
                     var deciderFactory = new TypeDeciderFactory(Culture);
                     var decider = deciderFactory.Create(_keyType);
-                    typeConversion = (a)=>decider.Parse(a.ToString());
+                    typeConversion = a=>decider.Parse(a.ToString());
                 }
                 catch (Exception ex)
                 {
@@ -195,7 +195,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
                     toDrop.Add(row);
                     continue;
                 }
-                
+
             //we do have the key value!
             var results = _mappingTable[fromValue];
 
@@ -262,7 +262,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
         var fromColumnName = MappingFromColumn.GetRuntimeName();
         var toColumnName = MappingToColumn.GetRuntimeName();
-            
+
         // The number of null key values found in the mapping table (these are ignored)
         var nulls = 0;
 

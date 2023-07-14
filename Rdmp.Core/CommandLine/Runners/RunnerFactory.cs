@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandLine.Runners;
 /// </summary>
 public class RunnerFactory
 {
-    public IRunner CreateRunner(IBasicActivateItems activator,RDMPCommandLineOptions command)
+    public static IRunner CreateRunner(IBasicActivateItems activator,RDMPCommandLineOptions command)
     {
         if (command.Command == CommandLineActivity.none)
             throw new Exception($"No command has been set on '{command.GetType().Name}'");

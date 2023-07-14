@@ -41,7 +41,7 @@ public class ConsoleInputManager : BasicActivateItems
     /// Set to true to throw on any blocking input methods (e.g. <see cref="TypeText"/>)
     /// </summary>
     public bool DisallowInput { get; set; }
-        
+
     /// <summary>
     /// Creates a new instance connected to the provided RDMP platform databases
     /// </summary>
@@ -99,7 +99,7 @@ public class ConsoleInputManager : BasicActivateItems
     {
         throw exception ?? new Exception(errorText);
     }
-        
+
     public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
     {
         if (DisallowInput)
@@ -115,14 +115,14 @@ public class ConsoleInputManager : BasicActivateItems
             Console.WriteLine($"Could not parse value.  Valid Enum values are:{Environment.NewLine}{string.Join(Environment.NewLine,Enum.GetNames(enumType))}" );
             throw;
         }
-            
+
         return true;
     }
 
     public override bool SelectType(DialogArgs args, Type[] available,out Type chosen)
     {
         if (DisallowInput)
-            throw new InputDisallowedException($"Value required for '{args}'"); 
+            throw new InputDisallowedException($"Value required for '{args}'");
 
         var chosenStr = GetString(args, available.Select(t=>t.Name).ToList());
 
@@ -146,7 +146,7 @@ public class ConsoleInputManager : BasicActivateItems
     {
         var value = ReadLineWithAuto(args,new PickObjectBase[]
             {new PickObjectByID(this), new PickObjectByName(this)});
-            
+
         var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
         if(unavailable.Any())
@@ -198,7 +198,7 @@ public class ConsoleInputManager : BasicActivateItems
 
             if(picker.Examples.Any())
             {
-                    
+
                 sb.AppendLine();
                 sb.Append($"Examples:");
                 foreach (var example in picker.Examples)
@@ -208,7 +208,7 @@ public class ConsoleInputManager : BasicActivateItems
                 }
             }
             sb.AppendLine();
-            sb.Append(":");
+            sb.Append(':');
         }
 
         return sb.ToString();
@@ -222,8 +222,8 @@ public class ConsoleInputManager : BasicActivateItems
             {
                 return availableObjects[0];
             }
-            else
-                throw new InputDisallowedException($"Value required for '{args}'");
+
+            throw new InputDisallowedException($"Value required for '{args}'");
         }
 
         if (availableObjects.Length == 0)
@@ -253,7 +253,7 @@ public class ConsoleInputManager : BasicActivateItems
 
     public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
     {
-        for(var i=0;i<available.Length;i++)
+        for(var i =0;i<available.Length;i++)
         {
             Console.WriteLine($"{i}:{available[i]}");
         }
@@ -271,7 +271,7 @@ public class ConsoleInputManager : BasicActivateItems
             }
         }
 
-        selected = default(T);
+        selected = default;
         return false;
     }
 
@@ -358,44 +358,39 @@ public class ConsoleInputManager : BasicActivateItems
             if(idxLastSlash == -1 || asteriskIdx < idxLastSlash)
                 throw new Exception("Wildcards are only supported at the file level");
 
-            var searchPattern = file.Substring(idxLastSlash+1);
-            var dirStr = file.Substring(0,idxLastSlash);
-                    
+            var searchPattern = file[(idxLastSlash+1)..];
+            var dirStr = file[..idxLastSlash];
+
             var dir = new DirectoryInfo(dirStr);
 
             if(!dir.Exists)
                 throw new DirectoryNotFoundException($"Could not find directory:{dirStr}");
-                                        
+
             return dir.GetFiles(searchPattern).ToArray();
         }
-        else
-        {
-            return new[]{ new FileInfo(file) };
-        }
+
+        return new[]{ new FileInfo(file) };
 
     }
-        
+
 
     protected override bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue,out object chosen)
     {
         chosen = UsefulStuff.ChangeType(AnsiConsole.Ask<string>(GetPromptFor(args)), paramType);
         return true;
     }
-        
+
     public override bool YesNo(DialogArgs args, out bool chosen)
     {
         var result = GetString(args, new List<string> { "Yes","No","Cancel"});
 
-            
-        if (result == "Yes")
-            chosen = true;
-        else
-            chosen = false;
-            
+
+        chosen = result == "Yes";
+
         //user made a noncancel decision?
         return result != "Cancel" && !string.IsNullOrWhiteSpace(result);
     }
-        
+
     public string GetString(DialogArgs args, List<string> options)
     {
         var chosen = AnsiConsole.Prompt(
@@ -404,53 +399,53 @@ public class ConsoleInputManager : BasicActivateItems
                 .Title(GetPromptFor(args))
                 .AddChoices(options)
         );
-            
+
         return chosen;
     }
 
     public override void ShowData(IViewSQLAndResultsCollection collection)
     {
         var point = collection.GetDataAccessPoint();
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(point,DataAccessContext.InternalDataProcessing);
+        var db = DataAccessPortal.ExpectDatabase(point,DataAccessContext.InternalDataProcessing);
 
         var sql = collection.GetSql();
 
         var logger = NLog.LogManager.GetCurrentClassLogger();
         logger.Trace($"About to ShowData from Query:{Environment.NewLine}{sql}");
-            
+
         var toRun = new ExtractTableVerbatim(db.Server,sql,Console.OpenStandardOutput(),",",null);
         toRun.DoExtraction();
     }
 
     public override void ShowLogs(ILoggedActivityRootObject rootObject)
     {
-        foreach(var load in base.GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
+        foreach(var load in GetLogs(rootObject).OrderByDescending(l=>l.StartTime))
         {
             Console.WriteLine(load.Description);
             Console.WriteLine(load.StartTime);
-                
+
             Console.WriteLine($"Errors:{load.Errors.Count}");
-                
+
             foreach(var error in load.Errors)
             {
-                error.GetSummary(out var title, out var body, out _, out var _);
+                error.GetSummary(out var title, out var body, out _, out _);
 
                 Console.WriteLine($"\t{title}");
                 Console.WriteLine($"\t{body}");
             }
-                                
+
             Console.WriteLine("Tables Loaded:");
 
             foreach(var t in load.TableLoadInfos)
             {
                 Console.WriteLine($"\t{t}: I={t.Inserts:N0} U={t.Updates:N0} D={t.Deletes:N0}");
-                
-                foreach(var source in t.DataSources)    
+
+                foreach(var source in t.DataSources)
                     Console.WriteLine($"\t\tSource:{source.Source}");
             }
-                
+
             Console.WriteLine("Progress:");
-                
+
             foreach(var p in load.Progress)
             {
                 Console.WriteLine($"\t{p.Date} {p.Description}");
@@ -471,7 +466,7 @@ public class ConsoleInputManager : BasicActivateItems
             return true;
         }
 
-        for(var i=0;i < available.Length; i++)
+        for(var i =0;i < available.Length; i++)
         {
             Console.WriteLine($"{i}:{available[i]}");
         }
@@ -500,12 +495,12 @@ public class ConsoleInputManager : BasicActivateItems
     {
         AnsiConsole.Status()
             .Spinner(Spinner.Known.Star)
-            .Start(title, ctx => 
+            .Start(title, ctx =>
                 base.Wait(title, task, cts)
             );
     }
 
-    public override void ShowData(System.Data.DataTable collection)
+    public override void ShowData(DataTable collection)
     {
         var tbl = new Table();
 

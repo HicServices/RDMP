@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
-class SetNull : IPluginDataFlowComponent<DataTable>
+internal class SetNull : IPluginDataFlowComponent<DataTable>
 {
     [DemandsInitialization("Looks for a column with exactly this name", Mandatory = true)]
     public string ColumnNameToFind { get; set; }
@@ -28,12 +28,12 @@ class SetNull : IPluginDataFlowComponent<DataTable>
     public Regex NullCellsWhereValuesMatch { get; set; }
 
     private int _changes;
-    private Stopwatch _sw = new Stopwatch();
+    private Stopwatch _sw = new();
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         _sw.Start();
-            
+
         var regex = NullCellsWhereValuesMatch ?? new Regex(NullCellsWhereValuesMatchStandard.Regex);
 
         foreach (DataRow row in toProcess.Rows)

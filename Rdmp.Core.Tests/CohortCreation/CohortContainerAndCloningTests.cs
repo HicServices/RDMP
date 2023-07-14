@@ -82,8 +82,7 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
 
             rootcontainer.RemoveChild(clone);
 
-            if (clone.RootFilterContainer != null)
-                clone.RootFilterContainer.DeleteInDatabase();
+            clone.RootFilterContainer?.DeleteInDatabase();
 
             clone.DeleteInDatabase();
         }
@@ -98,8 +97,10 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
         aggregate1.SaveToDatabase();
 
         //with filters
-        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container);
-        filter.WhereSQL = "sex=@sex";
+        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container)
+        {
+            WhereSQL = "sex=@sex"
+        };
 
         //and parameters
         new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
@@ -157,7 +158,7 @@ sex=@sex
 group by 
 ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 order by 
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(aggregateSql));
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]",cohortIdentificationConfiguration.ID)), CollapseWhitespace(aggregateSql));
 
 //the expected differences are
 //1. should not have the count
@@ -208,8 +209,10 @@ sex=@sex
         aggregate1.RootFilterContainer_ID = container.ID;
         aggregate1.SaveToDatabase();
 
-        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container);
-        filter.WhereSQL = "sex=@sex";
+        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container)
+        {
+            WhereSQL = "sex=@sex"
+        };
         new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter,null);
         filter.SaveToDatabase();
 

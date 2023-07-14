@@ -50,9 +50,9 @@ internal class AvailableForceJoinNode : IMasqueradeAs
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((AvailableForceJoinNode) obj);
     }
 
@@ -80,7 +80,7 @@ internal class AvailableForceJoinNode : IMasqueradeAs
             //don't look for self joins
             if(Equals(otherNode , this))
                 continue;
-                
+
             var theirCols = coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray();
 
 

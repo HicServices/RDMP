@@ -24,10 +24,8 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
     [Test]
     public void CrossServerExtraction()
     {
-        ExtractionPipelineUseCase execute;
-        IExecuteDatasetExtractionDestination result;
 
-        base.Execute(out execute, out result);
+        Execute(out ExtractionPipelineUseCase execute, out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
@@ -54,7 +52,7 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
         arguments.Single(a=>a.Name.Equals("FlatFileType")).SaveToDatabase();
             
         AdjustPipelineComponentDelegate?.Invoke(component);
-            
+
         var component2 = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
         var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();
         arguments2.Single(a=>a.Name.Equals("AllowEmptyExtractions")).SetValue(false);
@@ -78,7 +76,7 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
         if (_request.QueryBuilder == null)
             _request.GenerateQueryBuilder();
 
-        var expectedOutput = 
+        var expectedOutput =
             string.Format(@"/*The ID of the cohort in [tempdb]..[Cohort]*/
 DECLARE @CohortDefinitionID AS int;
 SET @CohortDefinitionID=-599;
@@ -109,10 +107,12 @@ WHERE
         e.SaveToDatabase();
         try
         {
-            var s = new ExecuteCrossServerDatasetExtractionSource();
-            s.TemporaryDatabaseName = "tempdb";
+            var s = new ExecuteCrossServerDatasetExtractionSource
+            {
+                TemporaryDatabaseName = "tempdb"
+            };
             s.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
-            var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL, new ThrowImmediatelyDataLoadEventListener() { ThrowOnWarning = true });
+            var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL, new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true });
 
             Assert.AreEqual(expectedOutput.Trim(),hacked.Trim());
         }

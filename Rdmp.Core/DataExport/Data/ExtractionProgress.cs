@@ -92,7 +92,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
     [NoMappingToDatabase]
     public ISelectedDataSets SelectedDataSets => DataExportRepository.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID);
 
-    public void ValidateSelectedColumn(ICheckNotifier notifier,ExtractionInformation ei)
+    public static void ValidateSelectedColumn(ICheckNotifier notifier,ExtractionInformation ei)
     {
         if (ei == null)
         {

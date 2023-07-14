@@ -17,9 +17,10 @@ namespace Rdmp.UI;
 /// </summary>
 public class IconFactory
 {
-    private readonly ConcurrentDictionary<Image<Rgba32>, Icon> _iconDictionary = new();
+    private readonly ConcurrentDictionary<Image<Rgba32>, Icon> _iconDictionary =
+        new();
 
-    public static IconFactory Instance=new();
+    public static IconFactory Instance= new();
     private IconFactory()
     {
 

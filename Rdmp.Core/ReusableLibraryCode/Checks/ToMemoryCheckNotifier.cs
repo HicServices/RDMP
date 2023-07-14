@@ -18,7 +18,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Checks;
 public class ToMemoryCheckNotifier : ICheckNotifier
 {
     private readonly ICheckNotifier _childToPassEventsTo;
-    public List<CheckEventArgs> Messages { get; } = new();
+    public List<CheckEventArgs> Messages { get; } = new List<CheckEventArgs>();
 
     private readonly object _lockList = new();
 

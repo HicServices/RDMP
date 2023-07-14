@@ -26,7 +26,7 @@ public class DeleteCachedFilesOperation : UpdateProgressIfLoadsuccessful
         _cacheFileMappings = cacheFileMappings;
     }
 
-    override public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
         if (exitCode != ExitCodeType.Success)
             return;

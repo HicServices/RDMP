@@ -19,7 +19,7 @@ using TypeGuesser;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Calculates the Extraction SQL for extracting a given ExtractDatasetCommand.  This is done by creating a normal QueryBuilder and then adding adjustment 
+/// Calculates the Extraction SQL for extracting a given ExtractDatasetCommand.  This is done by creating a normal QueryBuilder and then adding adjustment
 /// components to it to link against the cohort, drop the private identifier column, add the release identifier column etc.
 /// </summary>
 public class ExtractionQueryBuilder
@@ -32,7 +32,7 @@ public class ExtractionQueryBuilder
     }
 
     /// <summary>
-    /// This produces the SQL that would retrieve the specified dataset columns including any JOINS 
+    /// This produces the SQL that would retrieve the specified dataset columns including any JOINS
     /// 
     /// <para>It uses:
     /// QueryBuilder and then it adds some custom lines for linking to the cohort</para>
@@ -42,31 +42,27 @@ public class ExtractionQueryBuilder
     {
         if(request.QueryBuilder != null)
             throw new Exception("Creation of a QueryBuilder from a request can only happen once, to access the results of the creation use the cached answer in the request.QueryBuilder property");
-            
+
         if (!request.ColumnsToExtract.Any())
             throw new Exception("No columns are marked for extraction in this configuration");
 
         if(request.ExtractableCohort == null)
             throw new NullReferenceException("No Cohort selected");
-            
-        var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();
 
-        if(databaseType == null)
-            throw new NotSupportedException(
+        var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType() ?? throw new NotSupportedException(
                 $"Catalogue {request.Catalogue} did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
-
-        var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType.Value);
+        var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType);
 
         substitutions = new List<ReleaseIdentifierSubstitution>();
 
         var memoryRepository = new MemoryRepository();
-            
+
         switch (request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier))
-        { 
+        {
             //no extraction identifiers
             case 0: throw new Exception(
-                $"There are no Columns in this dataset ({request}) marked as IsExtractionIdentifier"); 
-                    
+                $"There are no Columns in this dataset ({request}) marked as IsExtractionIdentifier");
+
             //a single extraction identifier e.g. CHI X died on date Y with conditions a,b and c
             case 1: substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository,request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false,syntaxHelper));
                 break;
@@ -77,7 +73,7 @@ public class ExtractionQueryBuilder
                     substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository, columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true,syntaxHelper));
                 break;
         }
-            
+
         var hashingAlgorithm = _repository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
         if (string.IsNullOrWhiteSpace(hashingAlgorithm))
             hashingAlgorithm = null;
@@ -85,9 +81,11 @@ public class ExtractionQueryBuilder
         //identify any tables we are supposed to force join to
         var forcedJoins = request.SelectedDataSets.SelectedDataSetsForcedJoins;
 
-        var queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray());
-        queryBuilder.TopX = request.TopX;
-            
+        var queryBuilder = new QueryBuilder("DISTINCT ", hashingAlgorithm, forcedJoins.Select(s => s.TableInfo).ToArray())
+            {
+                TopX = request.TopX
+            };
+
         queryBuilder.SetSalt(request.Salt.GetSalt());
 
         //add the constant parameters
@@ -109,23 +107,19 @@ public class ExtractionQueryBuilder
 
         //add the users selected filters
         queryBuilder.RootFilterContainer = request.Configuration.GetFilterContainerFor(request.DatasetBundle.DataSet);
-            
+
         var externalCohortTable = _repository.GetObjectByID<ExternalCohortTable>(request.ExtractableCohort.ExternalCohortTable_ID);
 
         if (request.ExtractableCohort != null)
         {
             //the JOIN with the cohort table:
-            string cohortJoin;
-
-            if (substitutions.Count == 1)
-                cohortJoin = $" INNER JOIN {externalCohortTable.TableName} ON {substitutions.Single().JoinSQL}";
-            else
-                cohortJoin =
-                    $" INNER JOIN {externalCohortTable.TableName} ON {string.Join(" OR ", substitutions.Select(s => s.JoinSQL))}";
+            var cohortJoin = substitutions.Count == 1
+                ? $" INNER JOIN {externalCohortTable.TableName} ON {substitutions.Single().JoinSQL}"
+                : $" INNER JOIN {externalCohortTable.TableName} ON {string.Join(" OR ", substitutions.Select(s => s.JoinSQL))}";
 
             //add the JOIN in after any other joins
             queryBuilder.AddCustomLine(cohortJoin, QueryComponent.JoinInfoJoin);
-                
+
             //add the filter cohortID because our new Cohort system uses ID number and a giant combo table with all the cohorts in it we need to say Select XX from XX join Cohort Where Cohort number = Y
             queryBuilder.AddCustomLine(request.ExtractableCohort.WhereSQL(), QueryComponent.WHERE);
         }
@@ -150,7 +144,7 @@ public class ExtractionQueryBuilder
         request.IsBatchResume = batch.ProgressDate.HasValue;
 
         var start = batch.ProgressDate ?? batch.StartDate ?? throw new QueryBuildingException($"It was not possible to build a batch extraction query for '{request}' because there is no {nameof(ExtractionProgress.StartDate)} or {nameof(ExtractionProgress.ProgressDate)} set on the {nameof(ExtractionProgress)}");
-            
+
         if(batch.NumberOfDaysPerBatch <= 0)
         {
             throw new QueryBuildingException($"{ nameof(ExtractionProgress.NumberOfDaysPerBatch)} was {batch.NumberOfDaysPerBatch } for '{request}'");
@@ -158,7 +152,7 @@ public class ExtractionQueryBuilder
 
         var ei = batch.ExtractionInformation;
 
-            
+
         var end = start.AddDays(batch.NumberOfDaysPerBatch);
 
         // Don't load into the future / past end of dataset
@@ -170,19 +164,12 @@ public class ExtractionQueryBuilder
         request.BatchStart = start;
         request.BatchEnd = end;
 
-        string line;
-            
-        if(!request.IsBatchResume)
-        {
+        var line =
             // if it is a first batch, also pull the null dates
-            line = $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null)";
-        }
-        else
-        {
+            !request.IsBatchResume ? $"(({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd) OR {ei.SelectSQL} is null)" :
             // it is a subsequent batch
-            line = $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
-        }
-            
+            $"({ei.SelectSQL} >= @batchStart AND {ei.SelectSQL} < @batchEnd)";
+
 
         queryBuilder.AddCustomLine(line, QueryComponent.WHERE);
 
@@ -195,7 +182,7 @@ public class ExtractionQueryBuilder
         queryBuilder.ParameterManager.AddGlobalParameter(batchEndParameter);
     }
 
-    private string FormatDateAsParameterValue(DateTime dt)
+    private static string FormatDateAsParameterValue(DateTime dt)
     {
         return $"'{dt.Year:D4}-{dt.Month:D2}-{dt.Day:D2}'";
     }
@@ -215,7 +202,7 @@ public class ExtractionQueryBuilder
 
         if (project.ProjectNumber == null)
             throw new ProjectNumberException("Project number has not been entered, cannot create constant paramaters");
-            
+
         if(extractableCohort == null)
             throw new Exception("Cohort has not been selected, cannot create constant parameters");
 

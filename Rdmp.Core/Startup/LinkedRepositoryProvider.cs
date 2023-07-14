@@ -75,7 +75,7 @@ public class LinkedRepositoryProvider : RepositoryProvider
         if (DataExportRepository.ObscureDependencyFinder == null)
             DataExportRepository.ObscureDependencyFinder = new ObjectSharingObscureDependencyFinder(this);
         else
-        if (!(DataExportRepository.ObscureDependencyFinder is ObjectSharingObscureDependencyFinder))
+        if (DataExportRepository.ObscureDependencyFinder is not ObjectSharingObscureDependencyFinder)
             throw new Exception("Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
     }
 
@@ -87,11 +87,8 @@ public class LinkedRepositoryProvider : RepositoryProvider
         {
             if (repoFinder.GetRepositoryType().FullName.Equals(s))
             {
-                var toReturn = repoFinder.GetRepositoryIfAny();
-                if (toReturn == null)
-                    throw new NotSupportedException(
+                var toReturn = repoFinder.GetRepositoryIfAny() ?? throw new NotSupportedException(
                         $"IPluginRepositoryFinder '{repoFinder}' said that it was the correct repository finder for repository of type '{s}' but it was unable to find an existing repository instance (GetRepositoryIfAny returned null)");
-
                 return toReturn;
             }
         }
@@ -110,7 +107,7 @@ public class LinkedRepositoryProvider : RepositoryProvider
 
         //it's a plugin?
         foreach (var type in CatalogueRepository.MEF.GetTypes<IPluginRepositoryFinder>())
-            _pluginRepositoryFinders.Add((IPluginRepositoryFinder)constructor.Construct(type, this));
+            _pluginRepositoryFinders.Add((IPluginRepositoryFinder)ObjectConstructor.Construct(type, this));
     }
 
     public override IEnumerable<IRepository> GetAllRepositories()

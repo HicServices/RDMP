@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 public class ProcessTaskChecks : ICheckable
 {
     private readonly ILoadMetadata _loadMetadata;
-    LoadArgsDictionary dictionary;
+    private LoadArgsDictionary dictionary;
 
     public ProcessTaskChecks(ILoadMetadata loadMetadata)
     {

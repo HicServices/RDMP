@@ -41,14 +41,14 @@ public class MasterDatabaseScriptExecutor
     public const string RoundhouseScriptsRunTable = "ScriptsRun";
 
     private const string InitialDatabaseScriptName = @"Initial Database Setup";
-        
+
     public MasterDatabaseScriptExecutor(DiscoveredDatabase database)
     {
         Database = database;
     }
-        
+
     public bool BinaryCollation { get; set; }
-        
+
     public bool CreateDatabase(Patch initialCreationPatch, ICheckNotifier notifier)
     {
         try
@@ -77,7 +77,7 @@ public class MasterDatabaseScriptExecutor
                     using var cmd = Database.Server.GetCommand(
                         $"CREATE DATABASE {Database} COLLATE Latin1_General_BIN2", con);
                     cmd.ExecuteNonQuery();
-                }    
+                }
                 else
                     Database.Create();
 
@@ -105,7 +105,7 @@ public class MasterDatabaseScriptExecutor
 
             }, RoundhouseSchemaName);
 
-                
+
             Database.CreateTable("Version", new[]
             {
                 new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, IsPrimaryKey = true},
@@ -116,10 +116,10 @@ public class MasterDatabaseScriptExecutor
                 new DatabaseColumnRequest("entered_by",new DatabaseTypeRequest(typeof(string),50))
 
             }, RoundhouseSchemaName);
-                
-                
+
+
             RunSQL(new KeyValuePair<string, Patch>(InitialDatabaseScriptName, initialCreationPatch));
-                
+
             notifier.OnCheckPerformed(new CheckEventArgs("Tables created", CheckResult.Success, null));
 
             notifier.OnCheckPerformed(new CheckEventArgs("Setup Completed successfully", CheckResult.Success, null));
@@ -140,11 +140,11 @@ public class MasterDatabaseScriptExecutor
             con.Open();
             UsefulStuff.ExecuteBatchNonQuery(kvp.Value.GetScriptBody(), con,null, DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds);
         }
-            
+
         var now = DateTime.Now;
 
         Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
-            .Insert(new Dictionary<string, object>()
+            .Insert(new Dictionary<string, object>
             {
                 {"script_name", kvp.Key},
                 {"text_of_script", kvp.Value.EntireScript},
@@ -152,34 +152,25 @@ public class MasterDatabaseScriptExecutor
 
                 {"entry_date", now},
                 {"modified_date", now},
-                {"entered_by", Environment.UserName},
+                {"entered_by", Environment.UserName}
 
             });
 
         SetVersion(kvp.Key,kvp.Value.DatabaseVersionNumber.ToString());
             
     }
-        
-    public string CalculateHash(string input)
-    {
-        // step 1, calculate MD5 hash from input
 
-        var hashProvider = SHA512.Create();
+    public static string CalculateHash(string input)
+    {
+        // step 1, calculate SHA512 hash from input
+
 
         var inputBytes = Encoding.ASCII.GetBytes(input);
 
-        var hash = hashProvider.ComputeHash(inputBytes);
-
+        var hash = SHA512.HashData(inputBytes);
 
         // step 2, convert byte array to hex string
-
-        var sb = new StringBuilder();
-
-        for (var i = 0; i < hash.Length; i++)
-            sb.Append(i.ToString("X2"));
-
-        return sb.ToString();
-
+        return string.Join("", hash.Select(static octet => octet.ToString("X2")));
     }
 
 
@@ -194,11 +185,11 @@ public class MasterDatabaseScriptExecutor
 
         var now = DateTime.Now;
 
-        versionTable.Insert(new Dictionary<string, object>()
+        versionTable.Insert(new Dictionary<string, object>
         {
             {"repository_path", name},
             {"version", version},
-                
+
             {"entry_date", now},
             {"modified_date", now},
             {"entered_by", Environment.UserName}
@@ -222,9 +213,9 @@ public class MasterDatabaseScriptExecutor
                 notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
 
                 Database.CreateBackup($"Full backup of {Database}");
-            
+
                 notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
-                
+
             }
             catch (Exception e)
             {
@@ -256,20 +247,20 @@ public class MasterDatabaseScriptExecutor
                     {
                         throw new Exception($"Failed to apply patch '{ patch.Key }'",e);
                     }
-                        
+
 
                     notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success, null));
                 }
                 else
                     throw new Exception($"User decided not to execute patch {patch.Key} - aborting ");
             }
-                
+
             SetVersion("Patching",maxPatchVersion.ToString());
             notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}", CheckResult.Success, null));
 
             //all went fine
             notifier.OnCheckPerformed(new CheckEventArgs("All patches applied, transaction committed", CheckResult.Success, null));
-                
+
             return true;
 
         }
@@ -280,7 +271,7 @@ public class MasterDatabaseScriptExecutor
         }
     }
 
-    private bool SupportsBackup(DiscoveredDatabase database)
+    private static bool SupportsBackup(DiscoveredDatabase database)
     {
         // Only MS SQL Server has a backup implementation in FAnsi currently
         return database.Server.DatabaseType switch
@@ -340,7 +331,7 @@ public class MasterDatabaseScriptExecutor
                     //we found it and it was intact
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",CheckResult.Success, null));
-                    
+
                     //do not apply this patch
                     toApply.Remove(patch.locationInAssembly);
 
@@ -350,7 +341,7 @@ public class MasterDatabaseScriptExecutor
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Patch evaluation failed", CheckResult.Fail, exception));
             stop = true;
-        }            
+        }
 
         //if any of the patches we are trying to apply are earlier than the latest in the database
         var missedOpportunities = toApply.Values.Where(p => p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
@@ -368,7 +359,7 @@ public class MasterDatabaseScriptExecutor
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Cannot apply patch {futurePatch.locationInAssembly} because its database version number is {futurePatch.DatabaseVersionNumber} which is higher than the currently loaded host assembly ({patcher.GetDbAssembly().FullName}). ", CheckResult.Fail, null));
             stop = true;
-                
+
         }
 
         if (stop)
@@ -386,7 +377,7 @@ public class MasterDatabaseScriptExecutor
 
 
     public Patch[] GetPatchesRun()
-    { 
+    {
         var toReturn = new List<Patch>();
 
         var scriptsRun = Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName);
@@ -425,6 +416,6 @@ public class MasterDatabaseScriptExecutor
 
         //get everything in the /up/ folder that is .sql
         var patches = patcher.GetAllPatchesInAssembly(Database);
-        PatchDatabase(patches,notifier,(p)=>true);//apply all patches without question
+        PatchDatabase(patches,notifier,p=>true);//apply all patches without question
     }
 }

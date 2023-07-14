@@ -30,7 +30,7 @@ T1
 group by 
 Col1
 order by 
-Col1"),CollapseWhitespace(builder.SQL));
+Col1"), CollapseWhitespace(builder.SQL));
     }
         
     /// <summary>
@@ -51,7 +51,7 @@ T1
 group by 
 Col1
 order by 
-Col1"),CollapseWhitespace(builder.SQL));
+Col1"), CollapseWhitespace(builder.SQL));
     }
 
     [Test]
@@ -73,7 +73,7 @@ Col1,
 Col2
 order by 
 Col1,
-Col2")),CollapseWhitespace(builder.SQL));
+Col2")), CollapseWhitespace(builder.SQL));
     }
 
     [Test]
@@ -114,10 +114,12 @@ Col2"), CollapseWhitespace(builder.SQL));
     [TestCase("max(Col2)", false)]
     public void TestAggregateBuilding_NoConfigurationTwoDimension_Top10(string countColField,bool asc)
     {
-        var topX = new AggregateTopX(CatalogueRepository, _configuration, 10);
-        topX.OrderByDirection = asc
-            ? AggregateTopXOrderByDirection.Ascending
-            : AggregateTopXOrderByDirection.Descending;
+        var topX = new AggregateTopX(CatalogueRepository, _configuration, 10)
+        {
+            OrderByDirection = asc
+                ? AggregateTopXOrderByDirection.Ascending
+                : AggregateTopXOrderByDirection.Descending
+        };
         topX.SaveToDatabase();
 
         var beforeCountSQL = _configuration.CountSQL;
@@ -137,7 +139,7 @@ group by
 Col1,
 Col2
 order by 
-{countColField} {(asc ? "asc" : "desc")}"),CollapseWhitespace(builder.SQL));
+{countColField} {(asc ? "asc" : "desc")}"), CollapseWhitespace(builder.SQL));
 
         _configuration.CountSQL = beforeCountSQL;
         topX.DeleteInDatabase();
@@ -148,13 +150,15 @@ order by
     [TestCase(false)]
     public void TestAggregateBuilding_NoConfigurationTwoDimension_Top10DimensionOrder(bool asc)
     {
-        var topX = new AggregateTopX(CatalogueRepository, _configuration, 10);
-        topX.OrderByDimensionIfAny_ID = _dimension1.ID;
-        topX.OrderByDirection = asc
-            ? AggregateTopXOrderByDirection.Ascending
-            : AggregateTopXOrderByDirection.Descending;
+        var topX = new AggregateTopX(CatalogueRepository, _configuration, 10)
+        {
+            OrderByDimensionIfAny_ID = _dimension1.ID,
+            OrderByDirection = asc
+                ? AggregateTopXOrderByDirection.Ascending
+                : AggregateTopXOrderByDirection.Descending
+        };
         topX.SaveToDatabase();
-            
+
         var builder = _configuration.GetQueryBuilder();
 
         Assert.AreEqual(CollapseWhitespace($@"/*MyConfig*/

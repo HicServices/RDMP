@@ -38,9 +38,10 @@ namespace ResearchDataManagementPlatform;
 /// </summary>
 public partial class RDMPMainForm : RDMPForm
 {
-    private readonly PersistenceDecisionFactory _persistenceFactory = new PersistenceDecisionFactory();
+    private readonly PersistenceDecisionFactory _persistenceFactory = new();
     private ITheme _theme;
-    IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
+
+    private IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
     /// <summary>
     /// True while the main form is loading (e.g. from a persistence file)
@@ -84,8 +85,8 @@ public partial class RDMPMainForm : RDMPForm
             new LicenseUI().ShowDialog();
     }
 
-    WindowManager _windowManager;
-    readonly RefreshBus _refreshBus = new RefreshBus();
+    private WindowManager _windowManager;
+    private readonly RefreshBus _refreshBus = new();
     private FileInfo _persistenceFile;
     private ICheckNotifier _globalErrorCheckNotifier;
     private string _version;
@@ -121,7 +122,7 @@ public partial class RDMPMainForm : RDMPForm
             if (connectionStringsFileLoaded != null)
             {
                 instanceDescription =
-                    $" - {(connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name)}";
+                    $" - {connectionStringsFileLoaded.Name ?? connectionStringsFileLoaded.FileLoaded.Name}";
             }
             if (database != null) 
                 _connectedTo = $"({database.GetRuntimeName()} on {database.Server.Name}){instanceDescription}";
@@ -148,12 +149,12 @@ public partial class RDMPMainForm : RDMPForm
                     LoadFromXml(new FileStream(_persistenceFile.FullName, FileMode.Open));
 
                     //load the state using the method
-                }
-                catch (Exception ex)
-                {
-                    _globalErrorCheckNotifier.OnCheckPerformed(
-                        new CheckEventArgs("Could not load window persistence due to error in persistence file",
-                            CheckResult.Fail, ex));
+            }
+            catch (Exception ex)
+            {
+                _globalErrorCheckNotifier.OnCheckPerformed(
+                    new CheckEventArgs("Could not load window persistence due to error in persistence file",
+                        CheckResult.Fail, ex));
 
                 //delete the persistence file and try again
                 MessageBox.Show("Persistence file corrupt, application will restart without persistence");
@@ -287,16 +288,16 @@ public partial class RDMPMainForm : RDMPForm
     {
         try
         {
-            var toolbox = _persistenceFactory.ShouldCreateCollection(persiststring);
+            var toolbox = PersistenceDecisionFactory.ShouldCreateCollection(persiststring);
             if (toolbox.HasValue)
             {
                 var toolboxInstance = _windowManager.Create(toolbox.Value);
                 return toolboxInstance;
             }
 
-            var instruction = _persistenceFactory.ShouldCreateBasicControl(persiststring,RepositoryLocator) ??
-                              _persistenceFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
-                              _persistenceFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
+            var instruction = PersistenceDecisionFactory.ShouldCreateBasicControl(persiststring,RepositoryLocator) ??
+                              PersistenceDecisionFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
+                              PersistenceDecisionFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
 
             if (instruction != null)
                 return _windowManager.ActivateItems.Activate(instruction,_windowManager.ActivateItems);

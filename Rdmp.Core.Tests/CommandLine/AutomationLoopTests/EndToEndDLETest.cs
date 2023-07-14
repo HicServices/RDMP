@@ -34,7 +34,7 @@ public class EndToEndDLETest : TestsRequiringADle
         var tbl = db.CreateTable("Troll Select * Loll",new DatabaseColumnRequest[]
         {
             new DatabaseColumnRequest("group by",new DatabaseTypeRequest(typeof(string),100)){IsPrimaryKey = true}, 
-            new DatabaseColumnRequest(",,,,",new DatabaseTypeRequest(typeof(string))), 
+            new DatabaseColumnRequest(",,,,",new DatabaseTypeRequest(typeof(string)))
         });
 
         CreateFileInForLoading("Troll.csv", new string[]
@@ -44,8 +44,10 @@ public class EndToEndDLETest : TestsRequiringADle
         });
 
         var cata = Import(tbl);
-        var lmd = new LoadMetadata(CatalogueRepository, nameof(TestDle_DodgyColumnNames));
-        lmd.LocationOfFlatFiles = LoadDirectory.RootPath.FullName;
+        var lmd = new LoadMetadata(CatalogueRepository, nameof(TestDle_DodgyColumnNames))
+        {
+            LocationOfFlatFiles = LoadDirectory.RootPath.FullName
+        };
         lmd.SaveToDatabase();
 
         CreateFlatFileAttacher(lmd,"Troll.csv",cata.GetTableInfoList(false).Single());

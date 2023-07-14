@@ -58,7 +58,7 @@ public partial class PerformanceCounterUI : Form
             btnViewPerformanceResults.Enabled = false;
         }
     }
-        
+
     private void CatalogueLibraryPerformanceCounterUI_FormClosing(object sender, FormClosingEventArgs e)
     {
         //clear it before closing always
@@ -70,11 +70,13 @@ public partial class PerformanceCounterUI : Form
 
         //if there aren't any results don't show
         if (DatabaseCommandHelper.PerformanceCounter == null || !DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Any())
-            return;                
+            return;
 
         var f = new Form();
-        var ui = new PerformanceCounterResultsUI();
-        ui.Dock = DockStyle.Fill;
+        var ui = new PerformanceCounterResultsUI
+        {
+            Dock = DockStyle.Fill
+        };
 
         //remove the current counter while this UI is running (the UI is designed to be a snapshot not a realtime view
         var performanceCounter = DatabaseCommandHelper.PerformanceCounter;
@@ -84,9 +86,9 @@ public partial class PerformanceCounterUI : Form
         f.WindowState = FormWindowState.Maximized;
         f.Controls.Add(ui);
 
-        this.TopMost = false;
+        TopMost = false;
         f.ShowDialog();
-        this.TopMost = true;
+        TopMost = true;
 
         //now the viewer has been closed we can reinstantiate the performance counter
         DatabaseCommandHelper.PerformanceCounter = performanceCounter;

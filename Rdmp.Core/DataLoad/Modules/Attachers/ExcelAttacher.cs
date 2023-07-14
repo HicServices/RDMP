@@ -41,16 +41,17 @@ public class ExcelAttacher:FlatFileAttacher
     [DemandsInitialization("By default ALL columns in the source MUST match exactly (by name) the set of all columns in the destination table.  If you enable this option then it is allowable for there to be extra columns in the destination that are not populated (because they are not found in the flat file).  This does not let you discard columns from the source! (all source columns must have mappings but destination columns with no matching source are left null)")]
     public bool AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch { get; set; }
 
-
-    bool _haveServedData = false;
+    private bool _haveServedData = false;
 
     protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
         _haveServedData = false;
         _fileToLoad = fileToLoad;
-        _hostedSource = new ExcelDataFlowSource();
-        _hostedSource.WorkSheetName = WorkSheetName;
-        _hostedSource.AddFilenameColumnNamed = AddFilenameColumnNamed;
+        _hostedSource = new ExcelDataFlowSource
+        {
+            WorkSheetName = WorkSheetName,
+            AddFilenameColumnNamed = AddFilenameColumnNamed
+        };
 
         _hostedSource.PreInitialize(new FlatFileToLoad(fileToLoad),listener);
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -80,7 +81,7 @@ public class ExcelAttacher:FlatFileAttacher
             throw new Exception("Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
     }
 
-    private string GenerateASCIIArtOfSubstitutions(string[] replacementHeadersSplit, DataColumnCollection columns)
+    private static string GenerateASCIIArtOfSubstitutions(string[] replacementHeadersSplit, DataColumnCollection columns)
     {
         var sb = new StringBuilder("");
 

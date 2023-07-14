@@ -13,7 +13,7 @@ using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
+internal class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeline>
 {
     public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator): base(itemActivator)
     {
@@ -23,7 +23,7 @@ class ProposeExecutionWhenTargetIsPipeline : RDMPCommandExecutionProposal<Pipeli
     {
         if(ItemActivator.SelectObject(new DialogArgs
            {
-               TaskDescription = $"The Pipeline '{target.Name}' is not compatible with any known Pipeline use cases.  Select which use case you want to edit it under (which activity best describes what how the Pipeline is supposed to be used?).",
+               TaskDescription = $"The Pipeline '{target.Name}' is not compatible with any known Pipeline use cases.  Select which use case you want to edit it under (which activity best describes what how the Pipeline is supposed to be used?)."
            }, ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(), out var selected))
         {
             var cmd = new ExecuteCommandEditPipelineWithUseCase(ItemActivator, target, selected.UseCase);

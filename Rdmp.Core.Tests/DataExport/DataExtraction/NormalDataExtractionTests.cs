@@ -22,8 +22,6 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
     [Test]
     public void ExtractNormally()
     {
-        ExtractionPipelineUseCase execute;
-        IExecuteDatasetExtractionDestination result;
 
         _catalogue.Name = "TestTable";
         _catalogue.SaveToDatabase();
@@ -31,7 +29,7 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
 
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
             
-        base.Execute(out execute,out result);
+        Execute(out ExtractionPipelineUseCase execute,out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
@@ -55,11 +53,11 @@ public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
             _catalogue.SaveToDatabase();
             _extractableDataSet.RevertToDatabaseState();
 
-                
+
             var extractionDirectory = new ExtractionDirectory(TestContext.CurrentContext.WorkDirectory, _configuration);
 
-            
-            var ex = Assert.Throws<NotSupportedException>(() => {var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet); });
+
+            var ex = Assert.Throws<NotSupportedException>(() => { var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet); });
 
             Assert.AreEqual("Cannot extract dataset Fish;#:::FishFish because it points at Catalogue with an invalid name, name is invalid because:The following invalid characters were found:'#'", ex.Message);
         }

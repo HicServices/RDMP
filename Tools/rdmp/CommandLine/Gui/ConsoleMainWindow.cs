@@ -23,7 +23,7 @@ using Terminal.Gui.Trees;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-class ConsoleMainWindow
+internal class ConsoleMainWindow
 {
     private Window _win;
     private TreeView<object> _treeView;
@@ -41,9 +41,9 @@ class ConsoleMainWindow
     private MenuItem mi_green;
     private ColorScheme _greenColorScheme;
     private MouseFlags _rightClick = MouseFlags.Button3Clicked;
-        
+
     // Last time the mouse moved and where it moved to
-    private Point _lastMousePos = new Point(0,0);
+    private Point _lastMousePos = new(0,0);
     private DateTime _lastMouseMove = DateTime.Now;
 
     public const string Catalogues = "Catalogues";
@@ -73,7 +73,7 @@ class ConsoleMainWindow
         _treeView.RebuildTree();
     }
 
-    private void Quit()
+    private static void Quit()
     {
         Application.RequestStop ();
     }
@@ -87,20 +87,21 @@ class ConsoleMainWindow
                 new MenuItem ("_User Settings...", "", () => ShowUserSettings()),
                 new MenuItem ("_Run...", "", () => Run()),
                 new MenuItem ("_Refresh...", "", () => Publish()),
-                new MenuItem ("_Quit", "", () => Quit()),
+                new MenuItem ("_Quit", "", () => Quit())
             }),
             new MenuBarItem ("_Diagnostics", new MenuItem [] {
-                mi_default = new MenuItem (){Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
-                mi_default = new MenuItem (){Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))},
+                mi_default = new MenuItem {Title = "Query Catalogue", Action = ()=>Query(nameof(CataloguePatcher))},
+                mi_default = new MenuItem {Title = "Query Data Export", Action = ()=>Query(nameof(DataExportPatcher))}
             }),
             new MenuBarItem ("_Color Scheme", new MenuItem [] {
-                mi_default = new MenuItem (){Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
-                mi_green = new MenuItem (){Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)},
-            }),
+                mi_default = new MenuItem {Title = "Default", Checked = true, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_default)},
+                mi_green = new MenuItem {Title = "Green", Checked = false, CheckType = MenuItemCheckStyle.Radio, Action = ()=>SetColorScheme(mi_green)}
+            })
         });
         top.Add (menu);
                 
-        _win = new Window(){
+        _win = new Window
+        {
             X = 0,
             Y = 1, // menu
             Width =  Dim.Fill(1),
@@ -108,28 +109,27 @@ class ConsoleMainWindow
         };
 
         _defaultColorScheme = ColorScheme = _win.ColorScheme;
-        _greenColorScheme = new ColorScheme()
+        _greenColorScheme = new ColorScheme
         {
             Disabled = Application.Driver.MakeAttribute(Color.Black, Color.Black),
             Focus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
             HotFocus = Application.Driver.MakeAttribute(Color.Black, Color.Green),
             HotNormal = Application.Driver.MakeAttribute(Color.BrightYellow, Color.Black),
-            Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black),
+            Normal = Application.Driver.MakeAttribute(Color.Green, Color.Black)
         };
 
 
-        _treeView = new TreeView<object> () {
+        _treeView = new TreeView<object>
+        {
             X = 0,
             Y = 0,
             Width = Dim.Fill(),
-            Height = Dim.Fill()
+            Height = Dim.Fill(),
+            // Determines how to compute children of any given branch
+            TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter)
         };
-
-
-        // Determines how to compute children of any given branch
-        _treeView.TreeBuilder = new DelegateTreeBuilder<object>(ChildGetter);
         _treeView.AddObjects(
-            new string[]{ 
+            new string[]{
                 Catalogues,
                 Projects,
                 Loads,
@@ -147,13 +147,13 @@ class ConsoleMainWindow
         _treeView.KeyPress += treeView_KeyPress;
         _treeView.SelectionChanged += _treeView_SelectionChanged;
         _treeView.AspectGetter = AspectGetter;
-            
+
         var statusBar = new StatusBar (new StatusItem [] {
             new StatusItem(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
             new StatusItem(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
             new StatusItem(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
             new StatusItem(Key.N | Key.CtrlMask, "~^N~ New", () => New()),
-            new StatusItem(Key.F5, "~F5~ Refresh", () => Publish()),
+            new StatusItem(Key.F5, "~F5~ Refresh", () => Publish())
         });
 
         top.Add (statusBar);
@@ -243,7 +243,7 @@ class ConsoleMainWindow
     {
         if (model is IContainer container)
         {
-            return $"{container} ({container.Operation})"; 
+            return $"{container} ({container.Operation})";
         }
 
         if (model is CohortAggregateContainer setContainer)
@@ -305,7 +305,7 @@ class ConsoleMainWindow
         try
         {
             var dlg = new ConsoleGuiSelectOne(_activator,null);
-                
+
             if (dlg.ShowDialog())
             {
                 Show(dlg.Selected);
@@ -320,7 +320,7 @@ class ConsoleMainWindow
     private void Show(object selected)
     {
         var desc = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(selected);
-            
+
         // In main RDMP, Projects are root level items so have no descendancy.  But in the console
         // gui we have a root category so give it a descendancy now so that expansion works properly
         if(selected is IProject)
@@ -331,7 +331,7 @@ class ConsoleMainWindow
         if(desc == null)
             return;
 
-        // In the main RDMP, we have a specific node for these but in console gui we have a text 
+        // In the main RDMP, we have a specific node for these but in console gui we have a text
         // category, fix the descendency for these objects
         if(desc.Parents.Length  > 0 && desc.Parents[0] is AllCohortsNode)
         {
@@ -372,7 +372,7 @@ class ConsoleMainWindow
         menu.Show();
     }
 
-        
+
     private void treeView_KeyPress(View.KeyEventEventArgs obj)
     {
         if(!_treeView.CanFocus || !_treeView.HasFocus)
@@ -409,7 +409,7 @@ class ConsoleMainWindow
                     {
                         // it is a single object selection
                         _activator.DeleteWithConfirmation(d);
-                    }							
+                    }
 
                     break;
             }
@@ -420,7 +420,7 @@ class ConsoleMainWindow
         }
     }
 
-    private IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
+    private static IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
     {
         if(o is IMasqueradeAs masquerade)
             return masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable;
@@ -437,7 +437,7 @@ class ConsoleMainWindow
 
     private IEnumerable<object> ChildGetterUnordered(object model)
     {
-            
+
         var dx = _activator.CoreChildProvider as DataExportChildProvider;
 
         try
@@ -445,16 +445,16 @@ class ConsoleMainWindow
             // Top level brackets for the tree view
             if (ReferenceEquals(model , Catalogues))
                 return new []{_activator.CoreChildProvider.CatalogueRootFolder };
-                
+
             if (ReferenceEquals(model , Projects)  && dx != null)
                 return new[] { dx.ProjectRootFolder};
 
             if (ReferenceEquals(model , Loads))
                 return new[] { _activator.CoreChildProvider.LoadMetadataRootFolder };
-                
+
             if (ReferenceEquals(model , CohortConfigs))
                 return new[] { _activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder };
-                
+
             if (ReferenceEquals(model , BuiltCohorts) && dx != null)
                 return dx.CohortSources;
 
@@ -505,7 +505,7 @@ class ConsoleMainWindow
 
         if(type == typeof(Project))
             return Projects;
-        if(type == typeof(LoadMetadata))	
+        if(type == typeof(LoadMetadata))
             return Loads;
         if (type == typeof(FolderNode<LoadMetadata>))
             return Loads;
@@ -525,10 +525,10 @@ class ConsoleMainWindow
         var commandInvoker = new CommandInvoker(_activator);
         commandInvoker.CommandImpossible += (o, e) => { _activator.Show(
             $"Command Impossible because:{e.Command.ReasonCommandImpossible}");};
-            
+
         var commands = commandInvoker.GetSupportedCommands();
 
-        var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),(t)=>BasicCommandExecution.GetCommandName(t.Name),false);
+        var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),t=>BasicCommandExecution.GetCommandName(t.Name),false);
         if (dlg.ShowDialog())
             try
             {

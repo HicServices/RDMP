@@ -49,7 +49,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     {
         Weight = DEFAULT_WEIGHT;
 
-        if(!(activator.CoreChildProvider is DataExportChildProvider))
+        if(activator.CoreChildProvider is not DataExportChildProvider)
             SetImpossible("Data export functions unavailable");
     }
 
@@ -206,7 +206,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
 
             DeepClone(subContainer,container,factory);            
         }
-            
+
         var wizard = new FilterImportWizard(BasicActivator);
             
         //clone the filters

@@ -13,7 +13,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsPermissionWindow : RDMPCommandExecutionProposal<PermissionWindow>
+internal class ProposeExecutionWhenTargetIsPermissionWindow : RDMPCommandExecutionProposal<PermissionWindow>
 {
     public ProposeExecutionWhenTargetIsPermissionWindow(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -31,8 +31,7 @@ class ProposeExecutionWhenTargetIsPermissionWindow : RDMPCommandExecutionProposa
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PermissionWindow target, InsertOption insertOption = InsertOption.Default)
     {
-        var cacheProgressCommand = cmd as CacheProgressCombineable;
-        if(cacheProgressCommand != null)
+        if(cmd is CacheProgressCombineable cacheProgressCommand)
             return new ExecuteCommandSetPermissionWindow(ItemActivator,cacheProgressCommand.CacheProgress).SetTarget(target);
 
         return null;

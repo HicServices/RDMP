@@ -17,7 +17,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams;
 /// Line on a <see cref="Chart"/> indicating how much progress has been made towards various <see cref="LoadProgress"/> / <see cref="CacheProgressUI"/>
 /// goals.
 /// </summary>
-class LoadProgressAnnotation
+internal class LoadProgressAnnotation
 {
     private readonly LoadProgress _lp;
     private readonly DataTable _dt;
@@ -30,22 +30,18 @@ class LoadProgressAnnotation
 
     public LineAnnotation LineAnnotationCacheProgress { get; private set; }
     public TextAnnotation TextAnnotationCacheProgress { get; private set; }
-        
+
     public LoadProgressAnnotation(LoadProgress lp,DataTable dt, Chart chart)
     {
         _lp = lp;
         _dt = dt;
 
-        LineAnnotation line;
-        TextAnnotation text;
-        GetAnnotations("OriginDate",0.9,lp.OriginDate, chart, out line, out text);
+        GetAnnotations("OriginDate",0.9,lp.OriginDate, chart, out var line, out var text);
         LineAnnotationOrigin = line;
         TextAnnotationOrigin = text;
 
 
-        LineAnnotation line2;
-        TextAnnotation text2;
-        GetAnnotations("Progress", 0.7, lp.DataLoadProgress, chart, out line2, out text2);
+        GetAnnotations("Progress", 0.7, lp.DataLoadProgress, chart, out var line2, out var text2);
         LineAnnotationFillProgress = line2;
         TextAnnotationFillProgress = text2;
 
@@ -53,9 +49,7 @@ class LoadProgressAnnotation
 
         if(cp != null)
         {
-            LineAnnotation line3;
-            TextAnnotation text3;
-            GetAnnotations("Cache Fill", 0.50, cp.CacheFillProgress, chart, out line3, out text3);
+            GetAnnotations("Cache Fill", 0.50, cp.CacheFillProgress, chart, out var line3, out var text3);
             LineAnnotationCacheProgress = line3;
             TextAnnotationCacheProgress = text3;
         }
@@ -83,38 +77,41 @@ class LoadProgressAnnotation
             anchorX = GetXForDate(_dt, date.Value) + 1;
         }
 
-        line = new LineAnnotation();
-        line.IsSizeAlwaysRelative = false;
-        line.AxisX = chart.ChartAreas[0].AxisX;
-        line.AxisY = chart.ChartAreas[0].AxisY;
-        line.AnchorX = anchorX;
-        line.AnchorY = 0;
-        line.Height = maxY * 2;
-        line.LineWidth = 1;
-        line.LineDashStyle = ChartDashStyle.Dot;
-        line.Width = 0;
+        line = new LineAnnotation
+        {
+            IsSizeAlwaysRelative = false,
+            AxisX = chart.ChartAreas[0].AxisX,
+            AxisY = chart.ChartAreas[0].AxisY,
+            AnchorX = anchorX,
+            AnchorY = 0,
+            Height = maxY * 2,
+            LineWidth = 1,
+            LineDashStyle = ChartDashStyle.Dot,
+            Width = 0
+        };
         line.LineWidth = 2;
         line.StartCap = LineAnchorCapStyle.None;
         line.EndCap = LineAnchorCapStyle.None;
         line.AllowSelecting = true;
         line.AllowMoving = true;
 
-        text = new TextAnnotation();
+        text = new TextAnnotation
+        {
+            Text = $"{label}:{Environment.NewLine}{originText}",
+            IsSizeAlwaysRelative = false,
+            AxisX = chart.ChartAreas[0].AxisX,
+            AxisY = chart.ChartAreas[0].AxisY,
+            AnchorX = anchorX,
+            AnchorY = textAnchorY,
 
-        text.Text = $"{label}:{Environment.NewLine}{originText}";
-        text.IsSizeAlwaysRelative = false;
-        text.AxisX = chart.ChartAreas[0].AxisX;
-        text.AxisY = chart.ChartAreas[0].AxisY;
-        text.AnchorX = anchorX;
-        text.AnchorY = textAnchorY;
-
-        text.ForeColor = date == null ? Color.Red : Color.Green;
+            ForeColor = date == null ? Color.Red : Color.Green
+        };
         text.Font = new Font(text.Font, FontStyle.Bold);
 
 
     }
 
-    private int GetXForDate(DataTable dt, DateTime value)
+    private static int GetXForDate(DataTable dt, DateTime value)
     {
         var year = value.Year;
         var month = value.Month;
@@ -127,11 +124,11 @@ class LoadProgressAnnotation
             //we have overstepped
             if (year < currentYear)
                 return i;
-                
+
             //if we are on the month or have overstepped it (axis can have gaps)
             if (year == currentYear && month <= currentMonth)
                 return i;
-                
+
             //if there is no more data, return the last row
             if (i + 1 == dt.Rows.Count)
                 return i;
@@ -140,7 +137,7 @@ class LoadProgressAnnotation
         throw new Exception("Should have returned the last row or the first row by now");
     }
 
-    private double GetMaxY(DataTable dt)
+    private static double GetMaxY(DataTable dt)
     {
         var max = 0;
         var colCount = dt.Columns.Count;

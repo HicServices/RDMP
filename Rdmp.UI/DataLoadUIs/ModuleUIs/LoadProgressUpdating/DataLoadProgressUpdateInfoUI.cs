@@ -67,10 +67,12 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
 
     public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
     {
-        var toReturn = new DataLoadProgressUpdateInfo();
-        toReturn.ExecuteScalarSQL = QueryEditor.Text;
-        toReturn.Timeout = _timeout;
-        toReturn.Strategy = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem;
+        var toReturn = new DataLoadProgressUpdateInfo
+        {
+            ExecuteScalarSQL = QueryEditor.Text,
+            Timeout = _timeout,
+            Strategy = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem
+        };
 
         return toReturn;
     }
@@ -79,28 +81,19 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     {
         var selected = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem;
 
-        var setvisible = selected == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE ||selected == DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
-        pSQL.Visible = setvisible;
-        tbTimeout.Visible = setvisible;
-        lblTimeout.Visible = setvisible;
+        var setVisible = selected is DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE or DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
+        pSQL.Visible = setVisible;
+        tbTimeout.Visible = setVisible;
+        lblTimeout.Visible = setVisible;
 
-        switch (selected)
+        lblWarning.Text = selected switch
         {
-            case DataLoadProgressUpdateStrategy.UseMaxRequestedDay:
-                lblWarning.Text = "";
-                break;
-            case DataLoadProgressUpdateStrategy.DoNothing:
-                lblWarning.Text = "";
-                break;
-            case DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW:
-                lblWarning.Text = WarningRAW;
-                break;
-            case DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE:
-                lblWarning.Text = WarningLIVE;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            DataLoadProgressUpdateStrategy.UseMaxRequestedDay => "",
+            DataLoadProgressUpdateStrategy.DoNothing => "",
+            DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW => WarningRAW,
+            DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE => WarningLIVE,
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         CheckObject();
     }
@@ -111,7 +104,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
     {
         _programaticClose = true;
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
 
     private void btnSave_Click(object sender, EventArgs e)
@@ -145,7 +138,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         }
     }
 
-    void QueryEditor_TextChanged(object sender, EventArgs e)
+    private void QueryEditor_TextChanged(object sender, EventArgs e)
     {
         CheckObject();
     }

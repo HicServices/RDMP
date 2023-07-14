@@ -24,18 +24,13 @@ public class TriggerImplementerFactory
 
     public ITriggerImplementer Create(DiscoveredTable table, bool createDataLoadRunIDAlso = true)
     {
-        switch (_databaseType)
+        return _databaseType switch
         {
-            case DatabaseType.MicrosoftSQLServer:
-                return new MicrosoftSQLTriggerImplementer(table, createDataLoadRunIDAlso);
-            case DatabaseType.MySql:
-                return new MySqlTriggerImplementer(table, createDataLoadRunIDAlso);
-            case DatabaseType.Oracle:
-                return new OracleTriggerImplementer(table, createDataLoadRunIDAlso);
-            case DatabaseType.PostgreSql:
-                return new PostgreSqlTriggerImplementer(table, createDataLoadRunIDAlso);
-            default:
-                throw new ArgumentOutOfRangeException("databaseType");
-        }
+            DatabaseType.MicrosoftSQLServer => new MicrosoftSQLTriggerImplementer(table, createDataLoadRunIDAlso),
+            DatabaseType.MySql => new MySqlTriggerImplementer(table, createDataLoadRunIDAlso),
+            DatabaseType.Oracle => new OracleTriggerImplementer(table, createDataLoadRunIDAlso),
+            DatabaseType.PostgreSql => new PostgreSqlTriggerImplementer(table, createDataLoadRunIDAlso),
+            _ => throw new ArgumentOutOfRangeException(nameof(_databaseType))
+        };
     }
 }

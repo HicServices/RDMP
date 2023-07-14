@@ -23,7 +23,7 @@ public class FailedCacheFetchRequestProvider : ICacheFetchRequestProvider
     private readonly int _batchSize;
 
     private int _start;
-    private Queue<ICacheFetchFailure> _failuresToProvide = new Queue<ICacheFetchFailure>();
+    private Queue<ICacheFetchFailure> _failuresToProvide = new();
 
     public FailedCacheFetchRequestProvider(ICacheProgress cacheProgress, int batchSize = 50)
     {

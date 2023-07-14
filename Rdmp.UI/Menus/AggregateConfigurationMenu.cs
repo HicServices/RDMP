@@ -17,7 +17,7 @@ using Rdmp.UI.SubComponents.Graphs;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class AggregateConfigurationMenu :RDMPContextMenuStrip
+internal class AggregateConfigurationMenu :RDMPContextMenuStrip
 {
     public AggregateConfigurationMenu(RDMPContextMenuStripArgs args, AggregateConfiguration aggregate): base(args, aggregate)
     {
@@ -45,7 +45,7 @@ class AggregateConfigurationMenu :RDMPContextMenuStrip
                 {
                     graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
                 }
-                catch (System.Exception)
+                catch (Exception)
                 {
                     // Occurs if the AggregateConfiguration is badly set up e.g. has too many extraction identifiers
                     graphsAvailableInCatalogue = Array.Empty<AggregateConfiguration>();

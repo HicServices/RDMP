@@ -110,7 +110,7 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     {
         Name = r["Name"].ToString();
 
-        var o=  r["DestinationPipelineComponent_ID"];
+        var o =  r["DestinationPipelineComponent_ID"];
         if (o == DBNull.Value)
             DestinationPipelineComponent_ID = null;
         else
@@ -142,8 +142,10 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     {
         var name = GetUniqueCloneName();
 
-        var clonePipe = new Pipeline((ICatalogueRepository)Repository,name);
-        clonePipe.Description = Description;
+        var clonePipe = new Pipeline((ICatalogueRepository)Repository,name)
+        {
+            Description = Description
+        };
 
         var originalSource = Source;
         if (originalSource != null)

@@ -36,7 +36,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     private IPipelineUseCase _useCase;
     private Type _flowType;
     private ObjectConstructor _constructor;
-        
+
     private Type _engineType;
 
     /// <summary>
@@ -65,9 +65,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// <inheritdoc/>
     public IDataFlowPipelineEngine Create(IPipeline pipeline, IDataLoadEventListener listener)
     {
-        string reason;
-
-        if (!_context.IsAllowable(pipeline, out reason))
+        if (!_context.IsAllowable(pipeline, out var reason))
             throw new Exception($"Cannot create pipeline because: {reason}");
 
         var destination = GetBest(_useCase.ExplicitDestination, CreateDestinationIfExists(pipeline),"destination");
@@ -77,7 +75,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         //new DataFlowPipelineEngine<T>(_context, source, destination, listener, pipeline);
 
         //engine (this is the source, target is the destination)
-        var dataFlowEngine = (IDataFlowPipelineEngine)_constructor.ConstructIfPossible(_engineType, _context, source, destination, listener, pipeline); 
+        var dataFlowEngine = (IDataFlowPipelineEngine)ObjectConstructor.ConstructIfPossible(_engineType, _context, source, destination, listener, pipeline); 
 
         //now go fetch everything that the user has configured for this particular pipeline
         foreach (PipelineComponent toBuild in pipeline.PipelineComponents)
@@ -89,17 +87,17 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
             //if it is the source do not add it
             if (toBuild.ID == pipeline.SourcePipelineComponent_ID)
                 continue;
-                
+
             //get the factory to realize the freaky Export types defined in any assembly anywhere and set their DemandsInitialization properties based on the Arguments
             var component = CreateComponent(toBuild);
-                
+
             //Add the components to the pipeline
             dataFlowEngine.ComponentObjects.Add(component);
         }
 
         return dataFlowEngine;
     }
-        
+
     /// <summary>
     /// Returns the thing that is not null or throws an exception because both are blank.  also throws if both are populated
     /// </summary>
@@ -108,17 +106,17 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// <param name="pipelineConfigurationThing"></param>
     /// <param name="descriptionOfWhatThingIs"></param>
     /// <returns></returns>
-    private T2 GetBest<T2>(T2 explicitThing, T2 pipelineConfigurationThing, string descriptionOfWhatThingIs)
+    private static T2 GetBest<T2>(T2 explicitThing, T2 pipelineConfigurationThing, string descriptionOfWhatThingIs)
     {
         // if explicitThing and pipelineConfigurationThing are both null
         //Means: xplicitThing == null && pipelineConfigurationThing == null
-        if (EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default(T2)))
+        if (EqualityComparer<T2>.Default.Equals(explicitThing, default) && EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
             throw new Exception(
                 $"No explicit {descriptionOfWhatThingIs} was specified and there is no fixed {descriptionOfWhatThingIs} defined in the Pipeline configuration in the Catalogue");
 
         //if one of them only is null - XOR
-        if(EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) ^ EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default(T2)))
-            return EqualityComparer<T2>.Default.Equals(explicitThing, default(T2)) ? pipelineConfigurationThing : explicitThing; //return the not null one
+        if(EqualityComparer<T2>.Default.Equals(explicitThing, default) ^ EqualityComparer<T2>.Default.Equals(pipelineConfigurationThing, default))
+            return EqualityComparer<T2>.Default.Equals(explicitThing, default) ? pipelineConfigurationThing : explicitThing; //return the not null one
 
         //both of them are populated
         throw new Exception(
@@ -133,7 +131,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// <param name="component"></param>
     /// <param name="ex"></param>
     /// <returns></returns>
-    public object TryCreateComponent(IPipelineComponent component, out Exception ex)
+    public static object TryCreateComponent(IPipelineComponent component, out Exception ex)
     {
         ex = null;
         try
@@ -147,14 +145,10 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         }
     }
 
-    private object CreateComponent(IPipelineComponent toBuild)
+    private static object CreateComponent(IPipelineComponent toBuild)
     {
-        var type = toBuild.GetClassAsSystemType();
-            
-        if(type == null)
-            throw new Exception($"Could not find Type '{toBuild.Class}'");
-
-        var toReturn = _constructor.Construct(type);
+        var type = toBuild.GetClassAsSystemType() ?? throw new Exception($"Could not find Type '{toBuild.Class}'");
+        var toReturn = ObjectConstructor.Construct(type);
 
         //all the IArguments we need to initialize the class
         var allArguments = toBuild.GetAllArguments().ToArray();
@@ -166,7 +160,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 
             //see if any demand nested initialization
             var nestedInit =
-                System.Attribute.GetCustomAttributes(propertyInfo)
+                Attribute.GetCustomAttributes(propertyInfo)
                     .FirstOrDefault(a => a is DemandsNestedInitializationAttribute);
 
             //this one does
@@ -187,19 +181,19 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     }
 
     /// <summary>
-    /// Sets the value of a property on instance toReturn. 
+    /// Sets the value of a property on instance toReturn.
     /// </summary>
     /// <param name="toBuild">IPipelineComponent which is the persistence record - the template of what to build</param>
     /// <param name="toReturn">An instance of the Class referenced by IPipelineComponent.Class (or in the case of [DemandsNestedInitializationAttribute] a reference to the nested property)</param>
     /// <param name="propertyInfo">The specific property you are trying to populate on toBuild</param>
     /// <param name="arguments">IArguments of toBuild (the values to populate toReturn with)</param>
     /// <param name="nestedProperty">If you are populating a sub property of the class then pass the instance of the sub property as toBuild and pass the nesting property as nestedProperty</param>
-    private void SetPropertyIfDemanded(IPipelineComponent toBuild,object toReturn, PropertyInfo propertyInfo, IArgument[] arguments, PropertyInfo nestedProperty = null)
+    private static void SetPropertyIfDemanded(IPipelineComponent toBuild,object toReturn, PropertyInfo propertyInfo, IArgument[] arguments, PropertyInfo nestedProperty = null)
     {
         //see if any demand initialization
         var initialization =
             (DemandsInitializationAttribute)
-            System.Attribute.GetCustomAttributes(propertyInfo)
+            Attribute.GetCustomAttributes(propertyInfo)
                 .FirstOrDefault(a => a is DemandsInitializationAttribute);
 
         //this one does
@@ -218,7 +212,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                 if (argument == null)
                     if (initialization.DefaultValue == null && initialization.Mandatory)
                     {
-                        var msg = string.Format("Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}", 
+                        var msg = string.Format("Class {0} has a property {1} marked with DemandsInitialization but no corresponding argument was found in the arguments (PipelineComponentArgument) of the PipelineComponent called {2}",
                             toReturn.GetType().Name ,
                             propertyInfo.Name ,
                             toBuild.Name);
@@ -252,7 +246,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// </summary>
     /// <param name="pipeline"></param>
     /// <returns></returns>
-    public object CreateSourceIfExists(IPipeline pipeline)
+    public static object CreateSourceIfExists(IPipeline pipeline)
     {
         var source = pipeline.Source;
 
@@ -267,7 +261,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// Retrieves and creates an instance of the class described in the blueprint <see cref="IPipeline.Destination"/> if there is one.  Pipelines do not have
     /// to have a destination if the use case requires a fixed destination instance generated at runtime
     /// </summary>
-    public object CreateDestinationIfExists(IPipeline pipeline)
+    public static object CreateDestinationIfExists(IPipeline pipeline)
     {
         var destination = pipeline.Destination;
 

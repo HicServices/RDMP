@@ -127,7 +127,7 @@ FROM
 (select top 1000 FIELDTOEVALUATE as thing from TABLETOEVALUATE  order by newID()) bob";
     #endregion
 
-    TableInfo _parent;
+    private TableInfo _parent;
 
     public PatternPredictor(ColumnInfo columnInfo)
     {
@@ -138,7 +138,7 @@ FROM
     public string GetPattern(int timeoutInMilliseconds)
     {
 
-        var server = DataAccessPortal.GetInstance().ExpectServer(_parent, DataAccessContext.InternalDataProcessing);
+        var server = DataAccessPortal.ExpectServer(_parent, DataAccessContext.InternalDataProcessing);
 
         using(var con = server.GetConnection())
         {

@@ -31,11 +31,10 @@ public class PluginManager : IPluginManager
 
         //nupkg that are compatible with the running software
         var plugins = _repository.GetAllObjects<Curation.Data.Plugin>().Where(a=>a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion,2));
-            
+
         //latest versions
-        var latestVersionsOfPlugins = from p in plugins
-            group p by p.GetShortName() into grp
-            select grp.OrderByDescending(p => p.PluginVersion).FirstOrDefault();
+        var latestVersionsOfPlugins = plugins.GroupBy(static p => p.GetShortName())
+            .Select(static grp => grp.MaxBy(static p => p.PluginVersion));
                         
         return latestVersionsOfPlugins.ToArray();
     }

@@ -16,7 +16,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 public class AllImportantClassesDocumented
 {
     private List<string> _csFilesList;
-    private List<string> problems = new List<string>();
+    private List<string> problems = new();
     private int commentedCount = 0;
     private int commentLineCount = 0;
     private bool strict = false;
@@ -49,7 +49,7 @@ public class AllImportantClassesDocumented
         {
             if(excusedClassFileNames.Contains(Path.GetFileName(f)))
                 continue;
-                
+
             var text = File.ReadAllText(f);
 
             var startAt = text.IndexOf("public class");
@@ -58,14 +58,14 @@ public class AllImportantClassesDocumented
 
             if (startAt != -1)
             {
-                var beforeDeclaration = text.Substring(0, startAt);
+                var beforeDeclaration = text[..startAt];
 
                 var mNamespace = Regex.Match(beforeDeclaration, "namespace (.*)");
 
                 if(!mNamespace.Success)
                     Assert.Fail($"No namespace found in class file {f}");//no namespace in class!
-                    
-                var nameSpace= mNamespace.Groups[1].Value;
+
+                var nameSpace = mNamespace.Groups[1].Value;
 
                 //skip tests
                 if (nameSpace.Contains("Tests"))
@@ -120,16 +120,16 @@ public class AllImportantClassesDocumented
                     var idxLastSlash = f.LastIndexOf("\\");
 
                     if(idxLastSlash != -1)
-                        problems.Add(String.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})", 
-                            f.Substring(f.LastIndexOf("\\") + 1),
-                            f.Substring(0, idxLastSlash))
+                        problems.Add(string.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})", 
+                            f[(f.LastIndexOf("\\") + 1)..],
+                            f[..idxLastSlash])
                         );
                     else
                         problems.Add($"FAIL UNDOCUMENTED CLASS:{f}");
                 }
                 else
                 {
-                    var lines = match.Groups[1].Value.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Count();
+                    var lines = match.Groups[1].Value.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
                     commentLineCount += lines;
                     commentedCount++;
                 }

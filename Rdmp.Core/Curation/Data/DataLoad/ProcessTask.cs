@@ -158,22 +158,19 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
         Name = r["Name"] as string;
         Order = int.Parse(r["Order"].ToString());
 
-        ProcessTaskType processTaskType;
-
-        if (ProcessTaskType.TryParse(r["ProcessTaskType"] as string, out processTaskType))
+        if (Enum.TryParse(r["ProcessTaskType"] as string, out ProcessTaskType processTaskType))
             ProcessTaskType = processTaskType;
         else
             throw new Exception($"Could not parse ProcessTaskType:{r["ProcessTaskType"]}");
 
-        LoadStage loadStage;
-        if (LoadStage.TryParse(r["LoadStage"] as string, out loadStage))
+        if (Enum.TryParse(r["LoadStage"] as string, out LoadStage loadStage))
             LoadStage = loadStage;
         else
             throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");
 
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
     }
-         
+
     internal ProcessTask(ShareManager shareManager, ShareDefinition shareDefinition)
     {
         shareManager.UpsertAndHydrate(this,shareDefinition);
@@ -223,9 +220,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                 //process task belongs in that stage anyway so nothing is prohibited
                 if (stage == (LoadStage == LoadStage.Mounting? LoadStage.AdjustRaw:LoadStage))
                     continue;
-                        
-                //figure out what is prohibited
-                var prohibitedSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage),null, tableInfo.GetRuntimeName(stage));
+
+                    //figure out what is prohibited
+                    var prohibitedSql = tableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage),null, tableInfo.GetRuntimeName(stage));
 
                 //if we reference it, complain
                 if (sql.Contains(prohibitedSql))
@@ -248,10 +245,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
             return;
         }
 
-        if (!File.Exists(Path))
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not find File '{Path}' for ProcessTask '{Name}'", CheckResult.Fail));
-        else
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found File '{Path}'", CheckResult.Success));
+        notifier.OnCheckPerformed(!File.Exists(Path)
+            ? new CheckEventArgs($"Could not find File '{Path}' for ProcessTask '{Name}'", CheckResult.Fail)
+            : new CheckEventArgs($"Found File '{Path}'", CheckResult.Success));
 
 
         var matchingPaths = Repository.GetAllObjects<ProcessTask>().Where(pt => pt.Path.Equals(Path));
@@ -274,7 +270,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                         new CheckEventArgs(
                             $"Name of ProcessTask '{Name}' (ID={ID}) references file '{match.Value}' but the Path of the ProcessTask is '{Path}'", CheckResult.Fail));
             }
-                
+
         }
     }
 
@@ -312,7 +308,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     /// <returns>the new ProcessTask (the clone has a different ID to the parent)</returns>
     public ProcessTask CloneToNewLoadMetadataStage(LoadMetadata loadMetadata, LoadStage loadStage)
     {
-        var cataRepository = ((ICatalogueRepository) Repository);
+        var cataRepository = (ICatalogueRepository) Repository;
 
         //clone only accepts sql connections so make sure we aren't in mysql land or something
         using (cataRepository.BeginNewTransaction())
@@ -332,12 +328,12 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
                     //clone it but rewire it to the proper ProcessTask parent (the clone)
                     argument.ShallowClone(clone);
                 }
-            
+
                 //the values passed into parameter
                 clone.LoadMetadata_ID = loadMetadata.ID;
                 clone.LoadStage = loadStage;
                 clone.SaveToDatabase();
-                    
+
                 //it worked
                 cataRepository.EndTransaction(true);
 
@@ -356,7 +352,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     public IArgument[] CreateArgumentsForClassIfNotExists(Type t)
     {
         var argFactory = new ArgumentFactory();
-        return argFactory.CreateArgumentsForClassIfNotExistsGeneric(
+        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(
                 t,
 
                 //tell it how to create new instances of us related to parent
@@ -379,28 +375,22 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
 
     /// <summary>
     /// Returns true if the <see cref="ProcessTaskType"/> is allowed to happen during the given <see cref="LoadStage"/>  (e.g. you can't use an IAttacher to
-    /// load data into STAGING/LIVE - only RAW). 
+    /// load data into STAGING/LIVE - only RAW).
     /// </summary>
     /// <param name="type"></param>
     /// <param name="stage"></param>
     /// <returns></returns>
     public static bool IsCompatibleStage(ProcessTaskType type, LoadStage stage)
     {
-        switch (type)
+        return type switch
         {
-            case ProcessTaskType.Executable:
-                return true;
-            case ProcessTaskType.SQLFile:
-                return stage != LoadStage.GetFiles;
-            case ProcessTaskType.Attacher:
-                return stage == LoadStage.Mounting;
-            case ProcessTaskType.DataProvider:
-                return true;
-            case ProcessTaskType.MutilateDataTable:
-                return stage != LoadStage.GetFiles;
-            default:
-                throw new ArgumentOutOfRangeException("type");
-        }
+            ProcessTaskType.Executable => true,
+            ProcessTaskType.SQLFile => stage != LoadStage.GetFiles,
+            ProcessTaskType.Attacher => stage == LoadStage.Mounting,
+            ProcessTaskType.DataProvider => true,
+            ProcessTaskType.MutilateDataTable => stage != LoadStage.GetFiles,
+            _ => throw new ArgumentOutOfRangeException(nameof(type))
+        };
     }
 
     /// <summary>
@@ -420,11 +410,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     /// <param name="o"></param>
     public void SetArgumentValue(string parameterName, object o)
     {
-        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName));
-        if (matchingArgument == null)
-            throw new Exception(
+        var matchingArgument = ProcessTaskArguments.SingleOrDefault(p => p.Name.Equals(parameterName)) ?? throw new Exception(
                 $"Could not find a ProcessTaskArgument called '{parameterName}', have you called CreateArgumentsForClassIfNotExists<T> yet?");
-
         matchingArgument.SetValue(o);
         matchingArgument.SaveToDatabase();
     }

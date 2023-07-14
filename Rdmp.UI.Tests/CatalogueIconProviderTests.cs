@@ -17,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.UI.Tests;
 
 [SupportedOSPlatform("windows7.0")]
-class CatalogueIconProviderTests: UITests
+internal class CatalogueIconProviderTests: UITests
 {
 
     [Test]
@@ -25,7 +25,7 @@ class CatalogueIconProviderTests: UITests
     {
         var provider = new CatalogueIconProvider(RepositoryLocator,null);
 
-        var img = provider.GetImage(new System.Object(), OverlayKind.None);
+        var img = provider.GetImage(new object(), OverlayKind.None);
 
         Assert.IsFalse(provider.HasIcon(new object()));
     }
@@ -94,7 +94,7 @@ class CatalogueIconProviderTests: UITests
     }
 
 
-    private bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Rgba32> img)
+    private static bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Rgba32> img)
     {
         var foundColoured = false;
         img.ProcessPixelRows(pixels =>

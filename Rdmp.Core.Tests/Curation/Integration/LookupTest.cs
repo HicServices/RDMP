@@ -31,7 +31,7 @@ public class LookupTest : DatabaseTests
 
         var tiHeader = new TableInfo(CatalogueRepository,"Head");
         var tiHeader_Code = new ColumnInfo(CatalogueRepository,"code","",tiHeader);
-                       
+
         var tiLookup = new TableInfo(CatalogueRepository,"z_HeadLookup");
         var tiLookup_Code = new ColumnInfo(CatalogueRepository,"code","",tiLookup);
         var tiLookup_Desc = new ColumnInfo(CatalogueRepository,"desc","",tiLookup);
@@ -51,7 +51,7 @@ public class LookupTest : DatabaseTests
         new ExtractionInformation(CatalogueRepository,cata2_code,tiHeader_Code,"[tbl]..[code]");
         new ExtractionInformation(CatalogueRepository,cata2_desc,tiLookup_Desc,"[lookup]..[desc]");
             
-        new CatalogueChildProvider(CatalogueRepository,null, new ThrowImmediatelyCheckNotifier(){ThrowOnWarning=true},null);
+        new CatalogueChildProvider(CatalogueRepository,null, new ThrowImmediatelyCheckNotifier {ThrowOnWarning=true},null);
             
     }
 
@@ -200,9 +200,8 @@ public class LookupTest : DatabaseTests
         finally
         {
             //cleanup
-            if(composite != null)
-                composite.DeleteInDatabase();
-    
+            composite?.DeleteInDatabase();
+
             lookup?.DeleteInDatabase();
 
             desc?.DeleteInDatabase();
@@ -270,8 +269,7 @@ public class LookupTest : DatabaseTests
         finally
         {
             //cleanup
-            if (composite != null)
-                composite.DeleteInDatabase();
+            composite?.DeleteInDatabase();
 
             lookup?.DeleteInDatabase();
 
@@ -363,7 +361,7 @@ public class LookupTest : DatabaseTests
     [TestCase(LookupTestCase.SingleKeySingleDescription)]
     public void TestLookupCommand(LookupTestCase testCase)
     {
-        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
         var dt = new DataTable();
         dt.Columns.Add("ID");
@@ -404,7 +402,7 @@ public class LookupTest : DatabaseTests
                 cmd.Execute();
 
                 //sql should not have changed because we didn't create an new ExtractionInformation virtual column
-                Assert.AreEqual(sqlBefore,GetSql(mainCata));
+                Assert.AreEqual(sqlBefore, GetSql(mainCata));
                 break;
             case LookupTestCase.SingleKeySingleDescription:
                 cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk,null, true);
@@ -416,7 +414,7 @@ public class LookupTest : DatabaseTests
                 Assert.IsTrue(sqlAfter.Contains("SendingLocation_Desc"));
                 break;
             default:
-                throw new ArgumentOutOfRangeException("testCase");
+                throw new ArgumentOutOfRangeException(nameof(testCase));
         }
             
         foreach (var d in CatalogueRepository.GetAllObjects<Lookup>())
@@ -432,7 +430,7 @@ public class LookupTest : DatabaseTests
         lookuptbl.Drop();
     }
 
-    private string GetSql(ICatalogue mainCata)
+    private static string GetSql(ICatalogue mainCata)
     {
         mainCata.ClearAllInjections();
 
@@ -445,5 +443,5 @@ public class LookupTest : DatabaseTests
 public enum LookupTestCase
 {
     SingleKeySingleDescriptionNoVirtualColumn,
-    SingleKeySingleDescription,
+    SingleKeySingleDescription
 }

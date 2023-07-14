@@ -77,12 +77,12 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(new Dictionary<string, string>() { { "ViewType", ViewType.ToString() } });
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> { { "ViewType", ViewType.ToString() } });
     }
 
     public override void LoadExtraText(string s)
     {
-        var value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
+        var value = PersistStringHelper.GetValueIfExistsFromPersistString("ViewType", s);
         ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
     }
 
@@ -109,10 +109,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
             return ExtractionInformation.ColumnInfo?.TableInfo;
         }
 
-        if (ColumnInfo != null)
-            return ColumnInfo.TableInfo;
-
-        return null;
+        return ColumnInfo?.TableInfo;
     }
 
     public string GetSql()
@@ -234,6 +231,6 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var c = ColumnInfo;
-        return c != null ? c.GetQuerySyntaxHelper() : null;
+        return c?.GetQuerySyntaxHelper();
     }
 }

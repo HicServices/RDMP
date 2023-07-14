@@ -18,7 +18,7 @@ public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
     [UseWithObjectConstructor]
     public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator, string pattern):base(activator)
     {
-        this._pattern = pattern;
+        _pattern = pattern;
         //if pattern is null but this constructor is used then we shouldn't ask them again what they want
         _explicitPatternProvided = true;
     }

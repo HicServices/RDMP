@@ -246,7 +246,7 @@ public class SqlQueryBuilderHelper
                     else
                         primaryExtractionTable = PickBestPrimaryExtractionTable(qb,primaryExtractionTable, table)
                                                  ?? throw new QueryBuildingException(
-                                                     $"There are multiple tables marked as IsPrimaryExtractionTable:{primaryExtractionTable.Name}(ID={primaryExtractionTable.ID}) and {table.Name}(ID={table.ID})"); ;
+                                                     $"There are multiple tables marked as IsPrimaryExtractionTable:{primaryExtractionTable.Name}(ID={primaryExtractionTable.ID}) and {table.Name}(ID={table.ID})");
             }
         }
 
@@ -359,10 +359,10 @@ public class SqlQueryBuilderHelper
 
         if(qb.TablesUsedInQuery.Count == 0)
             throw new QueryBuildingException("There are no tables involved in the query: We were asked to compute the FROM SQL but qb.TablesUsedInQuery was of length 0");
-            
+
         //IDs of tables we already have in our FROM section
         var tablesAddedSoFar = new HashSet<int>();
-            
+
         //sometimes we find joins between tables that turn out not to be needed e.g. if there are multiple
         //routes through the system e.g. Test_FourTables_MultipleRoutes
         var unneededJoins = new HashSet<JoinInfo>();
@@ -395,11 +395,11 @@ public class SqlQueryBuilderHelper
                         .ToArray();
                     
                 //if we have discarded all but 1 it is the only table that does not have any lookup descriptions in it so clearly the correct table to start joins from
-                if (winners.Count() == 1)
+                if (winners.Length == 1)
                     firstTable = winners[0];
                 else
                     throw new QueryBuildingException(
-                        $"There were {qb.TablesUsedInQuery.Count} Tables ({String.Join(",", qb.TablesUsedInQuery)}) involved in the query, some of them might have been lookup tables but there was no clear table to start joining from, either mark one of the TableInfos IsPrimaryExtractionTable or refine your query columns / create new lookup relationships");
+                        $"There were {qb.TablesUsedInQuery.Count} Tables ({string.Join(",", qb.TablesUsedInQuery)}) involved in the query, some of them might have been lookup tables but there was no clear table to start joining from, either mark one of the TableInfos IsPrimaryExtractionTable or refine your query columns / create new lookup relationships");
             }
                 
             toReturn += firstTable.Name; //simple case "FROM tableX"
@@ -606,7 +606,7 @@ public class SqlQueryBuilderHelper
             toReturn += currentContainer.Operation + Environment.NewLine;
 
         //output each filter also make sure it is tabbed in correctly
-        for (var i = 0; i < filtersInContainer.Count(); i++)
+        for (var i = 0; i < filtersInContainer.Length; i++)
         {
             if (qb.CheckSyntax)
                 filtersInContainer[i].Check(new ThrowImmediatelyCheckNotifier());
@@ -621,7 +621,7 @@ public class SqlQueryBuilderHelper
             toReturn += tabs + singleLineWhereSQL + Environment.NewLine;
 
             //if there are more filters to come
-            if (i + 1 < filtersInContainer.Count())
+            if (i + 1 < filtersInContainer.Length)
                 toReturn += tabs + currentContainer.Operation + Environment.NewLine;
 
         }
@@ -639,8 +639,7 @@ public class SqlQueryBuilderHelper
     private static bool IsEnabled(IContainer container)
     {
         //skip disabled containers
-        var dis = container as IDisableable;
-        return dis == null || !dis.IsDisabled;
+        return container is not IDisableable dis || !dis.IsDisabled;
     }
 
     /// <summary>
@@ -651,8 +650,7 @@ public class SqlQueryBuilderHelper
     private static bool IsEnabled(IFilter filter)
     {
         //skip disabled filters
-        var dis = filter as IDisableable;
-        return dis == null || !dis.IsDisabled;
+        return filter is not IDisableable dis || !dis.IsDisabled;
     }
     /// <summary>
     /// Returns the unique database server type <see cref="IQuerySyntaxHelper"/> by evaluating the <see cref="TableInfo"/> used in the query.
@@ -664,7 +662,7 @@ public class SqlQueryBuilderHelper
     {
         if (!tablesUsedInQuery.Any())
             throw new QueryBuildingException("Could not pick an IQuerySyntaxHelper because the there were no TableInfos used in the query");
-            
+
 
         var databaseTypes = tablesUsedInQuery.Select(t => t.DatabaseType).Distinct().ToArray();
         if(databaseTypes.Length > 1)
@@ -732,11 +730,11 @@ public class SqlQueryBuilderHelper
                 yield return new CustomLine("AND" , QueryComponent.WHERE); //otherwise just AND it with every other filter we currently have configured
 
             //add user custom Filter lines
-            for (var i = 0; i < lines.Count(); i++)
+            for (var i = 0; i < lines.Length; i++)
             {
                 yield return lines[i];
 
-                if (i + 1 < lines.Count())
+                if (i + 1 < lines.Length)
                     yield return new CustomLine("AND" , QueryComponent.WHERE);
             }
             yield break;

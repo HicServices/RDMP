@@ -30,7 +30,7 @@ namespace Rdmp.Core.QueryBuilding;
 public class QueryBuilder : ISqlQueryBuilder
 {
     private readonly ITableInfo[] _forceJoinsToTheseTables;
-    object oSQLLock = new object();
+    private object oSQLLock = new();
 
     /// <inheritdoc/>
     public string SQL
@@ -220,7 +220,7 @@ public class QueryBuilder : ISqlQueryBuilder
                 if (!TablesUsedInQuery.Contains(force))
                     TablesUsedInQuery.Add(force);
 
-        this.PrimaryExtractionTable = primary;
+        PrimaryExtractionTable = primary;
             
         SqlQueryBuilderHelper.FindLookups(this);
 
@@ -240,7 +240,7 @@ public class QueryBuilder : ISqlQueryBuilder
 
         //declare parameters
         ParameterManager.AddParametersFor(Filters);
-            
+
         #endregion
 
         /////////////////////////////////////////////Assemble Query///////////////////////////////
@@ -253,9 +253,8 @@ public class QueryBuilder : ISqlQueryBuilder
         {
             //if the parameter is one that needs to be told what the query syntax helper is e.g. if it's a global parameter designed to work on multiple datasets
             var needsToldTheSyntaxHelper = parameter as IInjectKnown<IQuerySyntaxHelper>;
-            if(needsToldTheSyntaxHelper != null)
-                needsToldTheSyntaxHelper.InjectKnown(QuerySyntaxHelper);
-                
+            needsToldTheSyntaxHelper?.InjectKnown(QuerySyntaxHelper);
+
             if(CheckSyntax)
                 parameter.Check(checkNotifier);
 

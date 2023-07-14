@@ -62,7 +62,7 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
 
         if (c == null)
         {
-            if (BasicActivator.SelectObject(new DialogArgs()
+            if (BasicActivator.SelectObject(new DialogArgs
                 {
                     WindowTitle = "Add SupportingDocument",
                     TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
@@ -86,8 +86,10 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAto
         var created = new List<SupportingDocument>();
         foreach (var f in files)
         {
-            var doc = new SupportingDocument((ICatalogueRepository)c.Repository, c, f.Name);
-            doc.URL = new Uri(f.FullName);
+            var doc = new SupportingDocument((ICatalogueRepository)c.Repository, c, f.Name)
+            {
+                URL = new Uri(f.FullName)
+            };
             doc.SaveToDatabase();
             created.Add(doc);
         }

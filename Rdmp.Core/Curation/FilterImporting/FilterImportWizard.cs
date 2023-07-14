@@ -38,9 +38,7 @@ public class FilterImportWizard
     }
     public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport, ExtractionFilterParameterSet parameterSet)
     {
-        ISqlParameter[] globals;
-        IFilter[] otherFilters;
-        GetGlobalsAndFilters(containerToImportOneInto, out globals, out otherFilters);
+        GetGlobalsAndFilters(containerToImportOneInto, out var globals, out var otherFilters);
         return Import(containerToImportOneInto, filterToImport, globals, otherFilters, parameterSet);
     }
 
@@ -75,7 +73,7 @@ public class FilterImportWizard
                 new FilterImporter(new DeployedExtractionFilterFactory((IDataExportRepository)containerToImportOneInto.Repository), globalParameters);
         else
             throw new ArgumentException(
-                $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}", "containerToImportOneInto");
+                $"Cannot import into IContainer of type {containerToImportOneInto.GetType().Name}", nameof(containerToImportOneInto));
 
         //if there is a parameter value set then tell the importer to use these parameter values instead of the IFilter's default ones
         if (chosenParameterValues != null)
@@ -94,7 +92,6 @@ public class FilterImportWizard
         //If we've not imported values but there is a parameter then ask for their values
         if (chosenParameterValues == null && newFilter.GetAllParameters().Any())
         {
-            string param;
             foreach (var parameter in newFilter.GetAllParameters())
             {
                 var initialText = parameter.Value;
@@ -103,7 +100,7 @@ public class FilterImportWizard
                     initialText = null;
                 }
 
-                if (_activator.IsInteractive && _activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, initialText, out param, false))
+                if (_activator.IsInteractive && _activator.TypeText(AnyTableSqlParameter.GetValuePromptDialogArgs(newFilter, parameter), 255, initialText, out var param, false))
                 {
                     parameter.Value = param;
                     parameter.SaveToDatabase();
@@ -137,7 +134,7 @@ public class FilterImportWizard
         }, typeof(ExtractionFilter), filtersThatCouldBeImported);
 
         if (results is not null)
-        { 
+        {
             foreach (var f in results)
             {
                 var i = Import(containerToImportOneInto, (IFilter)f, globalParameters, otherFiltersInScope,null);
@@ -159,7 +156,7 @@ public class FilterImportWizard
         cancel = false;
 
         //only advertise filter parameter sets if it is a master level filter (Catalogue level)
-        if (!(filter is ExtractionFilter extractionFilterOrNull))
+        if (filter is not ExtractionFilter extractionFilterOrNull)
             return null;
 
         var parameterSets = extractionFilterOrNull.Repository.GetAllObjectsWithParent<ExtractionFilterParameterSet>(extractionFilterOrNull);
@@ -177,8 +174,7 @@ public class FilterImportWizard
 
             if (chosen != null)
                 return chosen as ExtractionFilterParameterSet;
-            else
-                cancel = true;
+            cancel = true;
         }
 
         return null;
@@ -186,15 +182,11 @@ public class FilterImportWizard
 
     private void GetGlobalsAndFilters(IContainer containerToImportOneInto, out ISqlParameter[] globals, out IFilter[] otherFilters)
     {
-        var aggregatecontainer = containerToImportOneInto as AggregateFilterContainer;
-        var filtercontainer = containerToImportOneInto as FilterContainer;
-
-
-        if (aggregatecontainer != null)
+        if (containerToImportOneInto is AggregateFilterContainer aggregatecontainer)
         {
             var aggregate = aggregatecontainer.GetAggregate();
             var factory = new AggregateBuilderOptionsFactory();
-            var options = factory.Create(aggregate);
+            var options = AggregateBuilderOptionsFactory.Create(aggregate);
 
             globals = options.GetAllParameters(aggregate);
             var root = aggregate.RootFilterContainer;
@@ -202,13 +194,9 @@ public class FilterImportWizard
             return;
         }
 
-        if (filtercontainer != null)
+        if (containerToImportOneInto is FilterContainer filtercontainer)
         {
-            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively();
-
-            if(selectedDataSet == null)
-                throw new Exception($"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
-
+            var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ?? throw new Exception($"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
             var config = selectedDataSet.ExtractionConfiguration;
             var root = selectedDataSet.RootFilterContainer;
 

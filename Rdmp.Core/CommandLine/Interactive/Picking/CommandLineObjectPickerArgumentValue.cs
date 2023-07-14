@@ -63,7 +63,7 @@ public class CommandLineObjectPickerArgumentValue
     public bool ExplicitNull =>
         RawValue != null && RawValue.Equals("null", StringComparison.CurrentCultureIgnoreCase);
 
-    Logger _logger = LogManager.GetCurrentClassLogger();
+    private Logger _logger = LogManager.GetCurrentClassLogger();
 
     public CommandLineObjectPickerArgumentValue(string rawValue,int idx)
     {
@@ -119,7 +119,7 @@ public class CommandLineObjectPickerArgumentValue
 
         if (typeof(DiscoveredTable) == paramType)
             return Table;
-            
+
         var element = paramType.GetElementType();
 
         // If paramType is nullable e.g. 'int?' then this is the underlying time i.e. 'int' otherwise null
@@ -165,7 +165,7 @@ public class CommandLineObjectPickerArgumentValue
 
         if (typeof(ICollectSqlParameters) == paramType)
             return GetOneDatabaseEntity<ICollectSqlParameters>();
-            
+
 
         // is it a basic Type (value type or Enum)?
         var basicType = nullableType ?? paramType;
@@ -193,7 +193,7 @@ public class CommandLineObjectPickerArgumentValue
             {
                 _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}':{Environment.NewLine} {string.Join(Environment.NewLine, DatabaseEntities)}");
             }
-                    
+
             return latest;
         }   
 
@@ -243,9 +243,9 @@ public class CommandLineObjectPickerArgumentValue
             if(other.Index != Index || other.RawValue != RawValue)
                 throw new ArgumentException("Merge only arguments of the same object");
 
-            Type = Type ?? other.Type;
-            Database = Database ?? other.Database;
-            Table = Table ?? other.Table;
+            Type ??= other.Type;
+            Database ??= other.Database;
+            Table ??= other.Table;
 
             //if they have some
             if(other.DatabaseEntities != null)
@@ -255,7 +255,7 @@ public class CommandLineObjectPickerArgumentValue
                 else
                 if(other.DatabaseEntities.Any())
                     throw new Exception("Did not know which set to pick during merge.  Both had DatabaseEntitites");
-                
+
         }
 
         return this;

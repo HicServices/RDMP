@@ -28,7 +28,7 @@ public class DocumentationReportDatabaseEntities : DocXHelper
 {
     private MEF _mef;
     private CommentStore _commentStore;
-    private Dictionary<Type, string> Summaries = new Dictionary<Type, string>();
+    private Dictionary<Type, string> Summaries = new();
 
     public void GenerateReport(CommentStore commentStore,ICheckNotifier notifier, IIconProvider iconProvider,MEF mef, bool showFile)
     {
@@ -39,8 +39,8 @@ public class DocumentationReportDatabaseEntities : DocXHelper
             Check(notifier);
 
             using var document = GetNewDocFile("RDMPDocumentation");
-            var t = InsertTable(document,(Summaries.Count *2) +1, 1);
-                    
+            var t = InsertTable(document,Summaries.Count *2 +1, 1);
+
             //Listing Cell header
             SetTableCell(t, 0, 0, "Tables");
 
@@ -49,19 +49,19 @@ public class DocumentationReportDatabaseEntities : DocXHelper
             for (var i = 0; i < Summaries.Count; i++)
             {
                 //creates the run
-                SetTableCell(t, (i*2) + 1, 0, "");
-                        
+                SetTableCell(t, i*2 + 1, 0, "");
+
                 var bmp = iconProvider.GetImage(keys[i]);
 
                 if (bmp != null)
                 {
-                    var para = t.Rows[(i * 2) + 1].GetCell(0).Paragraphs.First();
+                    var para = t.Rows[i * 2 + 1].GetCell(0).Paragraphs.First();
                     var run = para.Runs.FirstOrDefault() ?? para.CreateRun();
                     GetPicture(run,bmp);
                 }
-                SetTableCell(t, (i * 2) + 1, 0, $" {keys[i].Name}");
+                SetTableCell(t, i * 2 + 1, 0, $" {keys[i].Name}");
 
-                SetTableCell(t,(i*2) + 2, 0, Summaries[keys[i]]);
+                SetTableCell(t,i*2 + 2, 0, Summaries[keys[i]]);
             }
 
             if(showFile)

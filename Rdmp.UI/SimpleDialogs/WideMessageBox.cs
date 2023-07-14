@@ -42,9 +42,9 @@ public partial class WideMessageBox : Form
     /// </summary>
     public WideMessageBoxArgs Args { get; set; }
 
-    readonly Stack<WideMessageBoxArgs> _navigationStack = new Stack<WideMessageBoxArgs>();
+    private readonly Stack<WideMessageBoxArgs> _navigationStack = new();
 
-    private static readonly HashSet<string> KeywordIgnoreList = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase)
+    private static readonly HashSet<string> KeywordIgnoreList = new(StringComparer.CurrentCultureIgnoreCase)
     {
         "date",
         "example",
@@ -55,8 +55,8 @@ public partial class WideMessageBox : Form
     #region Static setup of dictionary of keywords
     public static CommentStore CommentStore;
     #endregion
-        
-    Regex className = new Regex(@"^\w+$");
+
+    private Regex className = new(@"^\w+$");
 
     public WideMessageBox(WideMessageBoxArgs args)
     {
@@ -68,8 +68,8 @@ public partial class WideMessageBox : Form
         btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
         //try to resize form to fit bounds
-        this.Size = GetPreferredSizeOfTextControl(richTextBox1);
-        this.Size = new Size(this.Size.Width + 10, this.Size.Height + 150);//leave a bit of padding
+        Size = GetPreferredSizeOfTextControl(richTextBox1);
+        Size = new Size(Size.Width + 10, Size.Height + 150);//leave a bit of padding
 
         richTextBox1.LinkClicked += richTextBox1_LinkClicked;
         btnViewSourceCode.Click += (s, e) => new ViewSourceCodeDialog((string)btnViewSourceCode.Tag).Show();
@@ -85,10 +85,10 @@ public partial class WideMessageBox : Form
         Width = Math.Min(Math.Max(600, Width), theScreen.Bounds.Width - 400);
 
         //if the text is too long vertically just maximise the message box
-        if (this.Height > theScreen.Bounds.Height)
+        if (Height > theScreen.Bounds.Height)
         {
-            this.MaximizedBounds = theScreen.WorkingArea;
-            this.WindowState = FormWindowState.Maximized;
+            MaximizedBounds = theScreen.WorkingArea;
+            WindowState = FormWindowState.Maximized;
         }
     }
     protected void Setup(WideMessageBoxArgs args)
@@ -121,7 +121,7 @@ public partial class WideMessageBox : Form
         //if there is a title
         if (!string.IsNullOrWhiteSpace(title))
         {
-            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title.Substring(0,MAX_LENGTH_TITLE): title;
+            lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title[..MAX_LENGTH_TITLE]: title;
         }
         else
         {
@@ -153,7 +153,7 @@ public partial class WideMessageBox : Form
 
     public static void Show(IHasSummary summary,bool isModalDialog = true)
     {
-        summary.GetSummary(out var title,out var body, out var stackTrace,out var level);
+        summary.GetSummary(out var title, out var body, out var stackTrace, out var level);
         Show(title,body,stackTrace,isModalDialog,null,GetTheme(level));
     }
     public static void Show(string title, DataGridViewRow row, bool isModalDialog = true, WideMessageBoxTheme theme = WideMessageBoxTheme.Help)
@@ -173,7 +173,7 @@ public partial class WideMessageBox : Form
                 var stringval = v == null || v == DBNull.Value ? "NULL" : v.ToString();
 
                 if(stringval.Length > MAX_LENGTH_ELEMENT)
-                    stringval = $"{stringval.Substring(0, MAX_LENGTH_ELEMENT)}...";
+                    stringval = $"{stringval[..MAX_LENGTH_ELEMENT]}...";
 
                 sb.AppendLine($"{c.Name}:{stringval}");
             }
@@ -206,7 +206,7 @@ public partial class WideMessageBox : Form
             WideMessageBoxTheme.Exception => (Image)Images.ErrorIcon.ImageToBitmap(),
             WideMessageBoxTheme.Warning => (Image)Images.WarningIcon.ImageToBitmap(),
             WideMessageBoxTheme.Help => (Image)Images.InformationIcon.ImageToBitmap(),
-            _ => throw new ArgumentOutOfRangeException(nameof(theme)),
+            _ => throw new ArgumentOutOfRangeException(nameof(theme))
         };
 
         Icon = IconFactory.Instance.GetIcon(pbIcon.Image.LegacyToImage());
@@ -214,7 +214,7 @@ public partial class WideMessageBox : Form
 
     private void btnOk_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 
     private void btnCopyToClipboard_Click(object sender, EventArgs e)
@@ -226,7 +226,7 @@ public partial class WideMessageBox : Form
     private void WideMessageBox_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Escape || (e.KeyCode == Keys.W && e.Control))
-            this.Close();
+            Close();
 
         if (e.KeyCode == Keys.Back)
             Back();
@@ -243,9 +243,9 @@ public partial class WideMessageBox : Form
         dialog.Show();
     }
 
-    void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
+    private void richTextBox1_LinkClicked(object sender, LinkClickedEventArgs e)
     {
-        if(e.LinkText.Contains("#"))
+        if(e.LinkText.Contains('#'))
         {
             var split = e.LinkText.Split('#');
             if(split.Length >=2 && CommentStore.ContainsKey(split[1]))
@@ -273,7 +273,7 @@ public partial class WideMessageBox : Form
             message = "";            
 
         if(message.Length > MAX_LENGTH_BODY)
-            message = message.Substring(0,MAX_LENGTH_BODY);
+            message = message[..MAX_LENGTH_BODY];
 
         //if we don't have help documentation available just set the message without looking for hyperlinks
         if (CommentStore == null)
@@ -308,7 +308,7 @@ public partial class WideMessageBox : Form
     /// <param name="keywordNotToAdd"></param>
     /// <param name="word"></param>
     /// <returns></returns>
-    private string GetDocumentationKeyword(string keywordNotToAdd, string word)
+    private static string GetDocumentationKeyword(string keywordNotToAdd, string word)
     {
         if(string.IsNullOrWhiteSpace(word))
             return null;
@@ -340,17 +340,13 @@ public partial class WideMessageBox : Form
 
     public static WideMessageBoxTheme GetTheme(CheckResult result)
     {
-        switch (result)
+        return result switch
         {
-            case CheckResult.Success:
-                return WideMessageBoxTheme.Help;
-            case CheckResult.Warning:
-                return WideMessageBoxTheme.Warning;
-            case CheckResult.Fail:
-                return WideMessageBoxTheme.Exception;
-            default:
-                throw new ArgumentOutOfRangeException("result");
-        }
+            CheckResult.Success => WideMessageBoxTheme.Help,
+            CheckResult.Warning => WideMessageBoxTheme.Warning,
+            CheckResult.Fail => WideMessageBoxTheme.Exception,
+            _ => throw new ArgumentOutOfRangeException(nameof(result))
+        };
     }
 
     private void WideMessageBox_Load(object sender, EventArgs e)
@@ -421,7 +417,7 @@ public partial class WideMessageBox : Form
         }
     }
 
-    private Size GetPreferredSizeOfTextControl(Control c)
+    private static Size GetPreferredSizeOfTextControl(Control c)
     {
         var graphics = c.CreateGraphics();
         var measureString = graphics.MeasureString(c.Text, c.Font);

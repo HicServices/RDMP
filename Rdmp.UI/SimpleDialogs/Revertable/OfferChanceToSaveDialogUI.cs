@@ -11,7 +11,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 namespace Rdmp.UI.SimpleDialogs.Revertable;
 
 /// <summary>
-/// The RDMP uses a database (Catalogue Manager Database / Data Export Manager Database) to store all information about your datasets (Technical, descriptive, validation, attachments 
+/// The RDMP uses a database (Catalogue Manager Database / Data Export Manager Database) to store all information about your datasets (Technical, descriptive, validation, attachments
 /// etc).  Because the system is designed to run with multiple users accessing this database the same time (or by you having multiple applications running at once - like running
 /// CatalogueManager and Data Export Manager at the same time) it is possible that two users/applications will attempt to modify the same record at the same time.
 /// 
@@ -42,8 +42,10 @@ public partial class OfferChanceToSaveDialogUI : Form
         for (var index = 0; index < differences.Differences.Count; index++)
         {
             var d = differences.Differences[index];
-            var toAdd = new RevertablePropertyDifferenceUI(d);
-            toAdd.Dock = DockStyle.Fill;
+            var toAdd = new RevertablePropertyDifferenceUI(d)
+            {
+                Dock = DockStyle.Fill
+            };
             tableLayoutPanel1.Controls.Add(toAdd,0,index);
         }
 
@@ -72,14 +74,14 @@ public partial class OfferChanceToSaveDialogUI : Form
     {
         _revertable.SaveToDatabase();
         DialogResult = DialogResult.Yes;
-        this.Close();
+        Close();
     }
 
     private void btnNo_Click(object sender, EventArgs e)
     {
         _revertable.RevertToDatabaseState();
         DialogResult = DialogResult.No;
-        this.Close();
+        Close();
     }
 
     private void btnViewStackTrace_Click(object sender, EventArgs e)

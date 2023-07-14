@@ -14,12 +14,12 @@ using Tests.Common;
 namespace Rdmp.Core.Tests.Curation;
 
 [Category("Unit")]
-class DublinCoreTests
+internal class DublinCoreTests
 {
     [Test]
     public void TestWritingDocument()
     {
-        var def = new DublinCoreDefinition()
+        var def = new DublinCoreDefinition
         {
             Title =  "ssssshh",
             Alternative =  "O'Rly",
@@ -158,7 +158,7 @@ class DublinCoreTests
     [Test]
     public void Test_DublinCore_WriteReadFile_NetCore()
     {
-        var def1 = new DublinCoreDefinition()
+        var def1 = new DublinCoreDefinition
         {
             Title =  "ssssshh",
             Alternative =  "O'Rly",

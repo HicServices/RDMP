@@ -52,9 +52,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         if(_project == null || _project.ProjectNumber == null)
             return;
 
-        var dxChildProvider = Activator.CoreChildProvider as DataExportChildProvider;
-
-        if(dxChildProvider == null)
+        if(Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
         {
             return;
         }
@@ -73,13 +71,13 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     }
 
     //menu item setup
-    private ContextMenuStrip menu = new ContextMenuStrip();
-    ToolStripMenuItem mi_SetDescription = new ToolStripMenuItem("Set Description");
+    private ContextMenuStrip menu = new();
+    private ToolStripMenuItem mi_SetDescription = new("Set Description");
 
     /// <summary>
     /// Set when the user right clicks a row, so that we can reference the row in the handlers of the ToolStripMenuItems
     /// </summary>
-    int _rightClickedRowExtractionConfigurationID = -1;
+    private int _rightClickedRowExtractionConfigurationID = -1;
 
         
 
@@ -134,12 +132,9 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         tcMasterTicket.SetItemActivator(activator);
     }
 
-    private DataTable LoadDatagridFor(Project value)
+    private static DataTable LoadDatagridFor(Project value)
     {
-        if (value == null)
-            return null;
-
-        var configurations = value.ExtractionConfigurations;
+        var configurations = value?.ExtractionConfigurations;
 
         if (configurations == null || configurations.Length == 0)
             return null;
@@ -205,12 +200,12 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
         return dtToReturn;
     }
-        
+
     #region Right Click Context Menu
 
     #region Menu Items
-        
-    void mi_SetDescription_Click(object sender, EventArgs e)
+
+    private void mi_SetDescription_Click(object sender, EventArgs e)
     {
         var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
@@ -229,7 +224,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         }
     }
 
-    void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
+    private void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
     {
         var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
@@ -258,7 +253,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
         //note that this only deals with clicking cells, to see what happens hwen user clicks in blank area of datagrid see dataGridView1_MouseClick
         if (e.RowIndex >= 0)
-            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                     
                 menu.Items.Clear();
@@ -362,7 +357,8 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         }
             
     }
-    void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)
+
+    private void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)
     {
         _project.MasterTicket = tcMasterTicket.TicketText;
     }
@@ -371,7 +367,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     {
         dataGridView1.Visible = false;
         lblExtractions.Visible = false;
-        this.Height = 190;
+        Height = 190;
     }
 
     private void btnBrowse_Click(object sender, EventArgs e)

@@ -48,7 +48,7 @@ public class MsSqlExtractionReleasePotential : ReleasePotential
         var externalServer = _repositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
         var dbName = extractionResults.DestinationDescription.Split('|')[1];
         var tblName = extractionResults.DestinationDescription.Split('|')[2];
-        var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
+        var server = DataAccessPortal.ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
         var database = server.ExpectDatabase(dbName);
         if (!database.Exists())
         {

@@ -56,7 +56,7 @@ public class ExecuteCommandRelease: BasicUICommandExecution,IAtomicCommandWithTa
         {
 
             _project = (Project)_configuration.Project;
-                
+
             if (_configuration.IsReleased)
                 SetImpossible("ExtractionConfiguration has already been Released");
 
@@ -86,12 +86,8 @@ public class ExecuteCommandRelease: BasicUICommandExecution,IAtomicCommandWithTa
     {
         base.Execute();
 
-        var p = _project;
-
+        var p = _project ?? SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
         if (p == null)
-            p = SelectOne(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>());
-
-        if(p == null)
         {
             // user cancelled picking a Project
             return;

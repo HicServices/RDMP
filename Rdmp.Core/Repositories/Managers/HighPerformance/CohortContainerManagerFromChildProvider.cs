@@ -20,9 +20,9 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 /// 
 /// <para>This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the method on IContainer directly (which goes back to the database).</para>
 /// </summary>
-class CohortContainerManagerFromChildProvider:CohortContainerManager
+internal class CohortContainerManagerFromChildProvider:CohortContainerManager
 {
-    private readonly Dictionary<int, List<IOrderable>> _contents = new Dictionary<int, List<IOrderable>>();
+    private readonly Dictionary<int, List<IOrderable>> _contents = new();
 
     public CohortContainerManagerFromChildProvider(CatalogueRepository repository,CatalogueChildProvider childProvider):base(repository)
     {
@@ -36,8 +36,8 @@ class CohortContainerManagerFromChildProvider:CohortContainerManager
     /// <returns></returns>
     public override IOrderable[] GetChildren(CohortAggregateContainer parent)
     {
-        if (_contents.ContainsKey(parent.ID))
-            return _contents[parent.ID].ToArray();
+        if (_contents.TryGetValue(parent.ID, out var content))
+            return content.ToArray();
 
         return Array.Empty<IOrderable>();
     }

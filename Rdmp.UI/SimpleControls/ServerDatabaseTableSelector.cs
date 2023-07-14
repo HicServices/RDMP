@@ -66,12 +66,12 @@ public partial class ServerDatabaseTableSelector : UserControl
     public event Action SelectionChanged;
     private IDiscoveredServerHelper _helper;
 
-    private BackgroundWorker _workerRefreshDatabases = new BackgroundWorker();
-    CancellationTokenSource _workerRefreshDatabasesToken;
+    private BackgroundWorker _workerRefreshDatabases = new();
+    private CancellationTokenSource _workerRefreshDatabasesToken;
     private string[] _listDatabasesAsyncResult;
 
-    private BackgroundWorker _workerRefreshTables = new BackgroundWorker();
-    CancellationTokenSource _workerRefreshTablesToken;
+    private BackgroundWorker _workerRefreshTables = new();
+    private CancellationTokenSource _workerRefreshTablesToken;
     private List<DiscoveredTable> _listTablesAsyncResult;
 
     private const string CancelConnection = "Cancel Connection";
@@ -92,12 +92,12 @@ public partial class ServerDatabaseTableSelector : UserControl
         _workerRefreshTables.DoWork += UpdateTablesListAsync;
         _workerRefreshTables.WorkerSupportsCancellation = true;
         _workerRefreshTables.RunWorkerCompleted += UpdateTablesAsyncCompleted;
-            
+
         var r = new RecentHistoryOfControls(cbxServer, new Guid("01ccc304-0686-4145-86a5-cc0468d40027"));
-        r.AddHistoryAsItemsToComboBox(cbxServer);
+        RecentHistoryOfControls.AddHistoryAsItemsToComboBox(cbxServer);
 
         var r2 = new RecentHistoryOfControls(cbxDatabase, new Guid("e1a4e7a8-3f7a-4018-8ff5-2fd661ee06a3"));
-        r2.AddHistoryAsItemsToComboBox(cbxDatabase);
+        RecentHistoryOfControls.AddHistoryAsItemsToComboBox(cbxDatabase);
 
         _helper = DatabaseCommandHelper.For(DatabaseType);
 
@@ -153,8 +153,8 @@ public partial class ServerDatabaseTableSelector : UserControl
         else
         if (!e.Cancelled)
         {
-            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(t => ! (t is DiscoveredTableValuedFunction)).ToArray());
-            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(t => t is DiscoveredTableValuedFunction).ToArray());
+            cbxTable.Items.AddRange(_listTablesAsyncResult.Where(static t => t is not DiscoveredTableValuedFunction).ToArray());
+            cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(static t => t is DiscoveredTableValuedFunction).ToArray());
         }
                 
 
@@ -243,15 +243,13 @@ public partial class ServerDatabaseTableSelector : UserControl
         if (_workerRefreshDatabases.IsBusy)
         {
             _workerRefreshDatabases.CancelAsync();
-            if(_workerRefreshDatabasesToken != null)
-                _workerRefreshDatabasesToken.Cancel();
+            _workerRefreshDatabasesToken?.Cancel();
         }
 
         if (_workerRefreshTables.IsBusy)
         {
             _workerRefreshTables.CancelAsync();
-            if(_workerRefreshTablesToken != null)
-                _workerRefreshTablesToken.Cancel();
+            _workerRefreshTablesToken?.Cancel();
         }
     }
     #endregion
@@ -313,8 +311,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         _clearingTable = true;
 
         cbxTableValueFunctions.Text = null;
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
 
         _clearingTable = false;
     }
@@ -327,8 +324,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
         _clearingTable = true;
         cbxTable.Text = null;
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
 
         _clearingTable = false;
     }
@@ -351,8 +347,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         if (string.IsNullOrWhiteSpace(cbxServer.Text) || string.IsNullOrWhiteSpace(cbxDatabase.Text))
             return;
 
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
 
         AbortWorkers();
 
@@ -385,8 +380,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
         SetLoading(true);
 
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
 
 
         if(!_workerRefreshDatabases.IsBusy)
@@ -427,14 +421,12 @@ public partial class ServerDatabaseTableSelector : UserControl
 
         oldUsername = tbUsername.Text;
 
-        if (SelectionChanged != null)
-            SelectionChanged.Invoke();
+        SelectionChanged?.Invoke();
     }
 
     private void tbPassword_TextChanged(object sender, EventArgs e)
     {
-        if (SelectionChanged != null)
-            SelectionChanged.Invoke();
+        SelectionChanged?.Invoke();
     }
 
     public DiscoveredDatabase GetDiscoveredDatabase()
@@ -451,13 +443,11 @@ public partial class ServerDatabaseTableSelector : UserControl
     public DiscoveredTable GetDiscoveredTable()
     {
         //if user selected a specific object from the drop down properly
-        var tbl = cbxTable.SelectedItem as DiscoveredTable;
-        var tblValuedFunction = cbxTableValueFunctions.SelectedItem as DiscoveredTableValuedFunction;
 
-        if(tbl != null)
+        if (cbxTable.SelectedItem is DiscoveredTable tbl)
             return tbl;
 
-        if (tblValuedFunction != null)
+        if (cbxTableValueFunctions.SelectedItem is DiscoveredTableValuedFunction tblValuedFunction)
             return tblValuedFunction;
 
         //Did they at least pick a database
@@ -534,8 +524,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     private void cbxDatabase_TextChanged(object sender, EventArgs e)
     {
-        if (SelectionChanged != null)
-            SelectionChanged();
+        SelectionChanged?.Invoke();
     }
 
     private void databaseTypeUI1_DatabaseTypeChanged(object sender, EventArgs e)

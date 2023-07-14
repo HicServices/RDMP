@@ -29,7 +29,7 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// <summary>
 /// Multi threading management class for CohortQueryBuilder.  Supports starting, executing and cancelling multiple cohort builder objects (ICompileable)
 /// at once.  Every input object (e.g. CohortAggregateContainer) will be assigned a corresponding ICompileable (e.g. AggregationContainerTask) and a
-/// CohortIdentificationTaskExecution.  The ICompileable records how long the query has been running for, how much of the query is cached, whether it 
+/// CohortIdentificationTaskExecution.  The ICompileable records how long the query has been running for, how much of the query is cached, whether it
 /// has been cancelled / crashed etc.  The CohortIdentificationTaskExecution handles the actual execution of the query on the data set database.
 /// 
 /// <para>See CohortCompiler.cd</para>
@@ -42,7 +42,7 @@ public class CohortCompiler
         set {
             _cic = value;
             BuildPluginCohortCompilerList();
-        } 
+        }
     }
     public bool IncludeCumulativeTotals { get; set; }
 
@@ -57,7 +57,7 @@ public class CohortCompiler
     /// </summary>
     public ICoreChildProvider CoreChildProvider
     {
-        get => _coreChildProvider = _coreChildProvider ?? new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier(),null);
+        get => _coreChildProvider ??= new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier(),null);
         set => _coreChildProvider = value;
     }
 
@@ -65,9 +65,9 @@ public class CohortCompiler
     /// Tasks currently running in the compiler, Value can be null if the <see cref="ICompileable"/> is still building
     /// and not running yet.
     /// </summary>
-    public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new Dictionary<ICompileable, CohortIdentificationTaskExecution>();
-        
-    public List<Thread> Threads = new List<Thread>();
+    public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new();
+
+    public List<Thread> Threads = new();
     private ICoreChildProvider _coreChildProvider;
 
     public CohortCompiler(CohortIdentificationConfiguration cohortIdentificationConfiguration)
@@ -108,7 +108,7 @@ public class CohortCompiler
 
             task.Timeout = timeout;
             task.State = CompilationState.Executing;
-                
+
             execution.GetCohortAsync( timeout);
 
             task.FinalRowCount = execution.Identifiers.Rows.Count;
@@ -141,12 +141,12 @@ public class CohortCompiler
         var toReturn = new List<ICompileable>();
         var globals = CohortIdentificationConfiguration.GetAllParameters();
         CohortIdentificationConfiguration.CreateRootContainerIfNotExists();
-            
+
         foreach (var joinable in CohortIdentificationConfiguration.GetAllJoinables())
             toReturn.Add(AddTask(joinable, globals));
 
         toReturn.AddRange( AddTasksRecursively(globals,CohortIdentificationConfiguration.RootCohortAggregateContainer,addSubcontainerTasks));
-            
+
         return toReturn;
     }
 
@@ -185,7 +185,7 @@ public class CohortCompiler
                 toReturn.Add(Task.Run(()=> { return AddTask(container, globals); }));
             }
         }
-                
+
 
         foreach (var c in container.GetOrderedContents())
         {
@@ -214,13 +214,8 @@ public class CohortCompiler
         var aggregate = runnable as AggregateConfiguration;
         var container = runnable as CohortAggregateContainer;
         var joinable = runnable as JoinableCohortAggregateConfiguration;
-        var obj = aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable;
-
-
-        if (obj == null)
-            throw new NotSupportedException(
+        var obj = (aggregate ?? container ?? (IMapsDirectlyToDatabaseTable)joinable) ?? throw new NotSupportedException(
                 $"Expected c to be either AggregateConfiguration or CohortAggregateContainer but it was {runnable.GetType().Name}");
-
         var source = new CancellationTokenSource();
         ICompileable task;
 
@@ -234,7 +229,7 @@ public class CohortCompiler
         {
             // is this a custom aggregate type that gets handled differently e.g. by queriying an API?
             var plugin = PluginCohortCompilers.FirstOrDefault(c => c.ShouldRun(aggregate));
-                
+
             task = plugin != null ?
                 // yes
                 new PluginCohortCompilerTask(aggregate,this,plugin)
@@ -270,16 +265,18 @@ public class CohortCompiler
             //if the container/aggregate being processed isn't the first component in the container
             if (!isFirstInContainer && IncludeCumulativeTotals) //and we want cumulative totals
             {
-                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals,CoreChildProvider);
-                cumulativeQueryBuilder.StopContainerWhenYouReach = (IOrderable) runnable;
+                cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals,CoreChildProvider)
+                    {
+                        StopContainerWhenYouReach = (IOrderable) runnable
+                    };
             }
-                
+
         }
         ExternalDatabaseServer cacheServer = null;
         //if the overall owner has a cache configured
         if (CohortIdentificationConfiguration.QueryCachingServer_ID != null)
         {
-                
+
             cacheServer = CohortIdentificationConfiguration.QueryCachingServer;
             queryBuilder.CacheServer = cacheServer;
 
@@ -287,7 +284,7 @@ public class CohortCompiler
                 cumulativeQueryBuilder.CacheServer = cacheServer;
         }
 
-        //setup cancellation 
+        //setup cancellation
         task.CancellationToken = source.Token;
         task.CancellationTokenSource = source;
         task.State = CompilationState.Building;
@@ -303,10 +300,8 @@ public class CohortCompiler
                     // it's already added, no worries just return the already existing one
                     return c;
                 }
-                else
-                {
-                    CancelTask(c, true);
-                }
+
+                CancelTask(c, true);
             }
 
             Tasks.Add(task, null);
@@ -334,8 +329,8 @@ public class CohortCompiler
         }
 
         task.Log = queryBuilder?.Results?.Log;
-                        
-      
+
+
         var isResultsForRootContainer = container != null && container.ID == CohortIdentificationConfiguration.RootCohortAggregateContainer_ID;
 
 
@@ -345,7 +340,7 @@ public class CohortCompiler
             isResultsForRootContainer,
             queryBuilder?.Results?.TargetServer);
 
-        // task is now built but not yet 
+        // task is now built but not yet
         if(task.State != CompilationState.Crashed)
         {
             task.State = CompilationState.NotScheduled;
@@ -366,7 +361,7 @@ public class CohortCompiler
             throw new KeyNotFoundException("Cannot launch task because it is not in the list of current Tasks");
 
         if(compileable.State != CompilationState.NotScheduled)
-            throw new ArgumentException($"Task must be in state NotScheduled but was {compileable.State}.  Crash message is:{(compileable.CrashMessage?.ToString() ?? "null")}");
+            throw new ArgumentException($"Task must be in state NotScheduled but was {compileable.State}.  Crash message is:{compileable.CrashMessage?.ToString() ?? "null"}");
 
         KickOff(compileable, Tasks[compileable], timeout, cacheOnCompletion);
     }
@@ -394,8 +389,7 @@ public class CohortCompiler
         if (CohortIdentificationConfiguration.QueryCachingServer == null)
             return;
 
-        var cacheable = completedtask as ICacheableTask;
-        if (cacheable != null && cacheable.IsCacheableWhenFinished())
+        if (completedtask is ICacheableTask cacheable && cacheable.IsCacheableWhenFinished())
             CacheSingleTask(cacheable, CohortIdentificationConfiguration.QueryCachingServer);
     }
 
@@ -408,7 +402,7 @@ public class CohortCompiler
 
             if (sql.Trim().StartsWith(CachedAggregateConfigurationResultsManager.CachingPrefix))
                 return;
-                
+
             var manager = new CachedAggregateConfigurationResultsManager(queryCachingServer);
 
             var explicitTypes = new List<DatabaseColumnRequest>();
@@ -427,7 +421,7 @@ public class CohortCompiler
                 var identifierDimension = identifiers[0];
                 var identifierColumnInfo = identifierDimension.ColumnInfo;
                 var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
-                    
+
                 explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
 
                 //make other non transform Types have explicit values
@@ -439,7 +433,7 @@ public class CohortCompiler
                         if(d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) && !d.ExtractionInformation.IsProperTransform())
                         {
                             //then use the origin datatype
-                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(),GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
+                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(), GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
                         }
                     }
                 }
@@ -468,15 +462,15 @@ public class CohortCompiler
     /// <param name="cacheableTask">Where the datatype was read from e.g. Oracle</param>
     /// <param name="queryCachingServer">Where the datatype is going to be stored e.g. Sql Server</param>
     /// <returns></returns>
-    private string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
+    private static string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
     {
         var accessPoints = cacheableTask.GetDataAccessPoints();
 
-        var server = DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.DataExport, false);
-            
+        var server = DataAccessPortal.ExpectDistinctServer(accessPoints, DataAccessContext.DataExport, false);
+
         var sourceSyntax = server.GetQuerySyntaxHelper();
         var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
-            
+
         //if we have a change in syntax e.g. read from Oracle write to Sql Server
         if (sourceSyntax.DatabaseType != destinationSyntax.DatabaseType)
         {
@@ -518,54 +512,46 @@ public class CohortCompiler
     {
         lock(Tasks)
         {
-            if (Tasks.ContainsKey(compileable))
+            if (!Tasks.TryGetValue(compileable, out var execution)) return;
+            if (execution is { IsExecuting: true })
             {
-                var execution = Tasks[compileable];
+                execution.Cancel();
+            }
 
-                if (execution != null && execution.IsExecuting)
-                {
-                    execution.Cancel();
-                }
+            // cancel the source
+            if(
+                compileable.State is CompilationState.Building or CompilationState.Executing)
+            {
+                compileable.CancellationTokenSource.Cancel();
+            }
 
-                // cancel the source
-                if(
-                    compileable.State == CompilationState.Building ||
-                    compileable.State == CompilationState.Executing)
-                {
-                    compileable.CancellationTokenSource.Cancel();
-                }
-                    
-
-                if (alsoClearFromTaskList)
-                {
-                    execution?.Dispose();
-                    Tasks.Remove(compileable);
-                }
+            if (alsoClearFromTaskList)
+            {
+                execution?.Dispose();
+                Tasks.Remove(compileable);
             }
         }
-            
+
     }
 
     public int GetAliveThreadCount()
     {
-        return Threads.Count(t => t.IsAlive);
+        return Threads.Count(static t => t.IsAlive);
     }
 
     public string GetCachedQueryUseCount(ICompileable task)
     {
-        if (!Tasks.ContainsKey(task) || Tasks[task] == null)
+        if (!Tasks.TryGetValue(task,out var execution) || execution == null)
             return "Unknown";
 
-        var execution = Tasks[task];
         return $"{execution.SubqueriesCached}/{execution.SubQueries}";
     }
 
     public bool AreaAllQueriesCached(ICompileable task )
     {
-        if (!Tasks.ContainsKey(task) || Tasks[task] == null)
+        if (!Tasks.TryGetValue(task,out var execution) || execution == null)
             return false;
 
-        var execution = Tasks[task];
         return execution.SubqueriesCached == execution.SubQueries && execution.SubQueries >=1;
     }
 }

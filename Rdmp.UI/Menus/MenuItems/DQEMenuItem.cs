@@ -17,10 +17,10 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Menus.MenuItems;
 
-class DQEMenuItem:RDMPToolStripMenuItem
+internal class DQEMenuItem:RDMPToolStripMenuItem
 {
     private readonly Catalogue _catalogue;
-    readonly IExternalDatabaseServer _dqeServer;
+    private readonly IExternalDatabaseServer _dqeServer;
     public DQEMenuItem(IActivateItems activator, Catalogue catalogue): base(activator, "Data Quality Engine...")
     {
         _catalogue = catalogue;
@@ -43,8 +43,7 @@ class DQEMenuItem:RDMPToolStripMenuItem
         }
         else
         {
-            Exception ex;
-            if (!_dqeServer.Discover(DataAccessContext.InternalDataProcessing).Server.RespondsWithinTime(5, out ex))
+            if (!_dqeServer.Discover(DataAccessContext.InternalDataProcessing).Server.RespondsWithinTime(5, out var ex))
                 ExceptionViewer.Show(ex);
             else
                 new ExecuteCommandRunDQEOnCatalogue(_activator, _catalogue).Execute();

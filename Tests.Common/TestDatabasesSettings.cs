@@ -11,9 +11,11 @@ namespace Tests.Common;
 
 public class TestDatabasesSettings
 {
+#pragma warning disable CA1822 // Mark members as static - that upsets the YAML hack used for loading settings
     public string Prefix { get => TestDatabaseNames.Prefix;
         set => TestDatabaseNames.Prefix = value;
     }
+#pragma warning restore CA1822 // Mark members as static
 
     public string ServerName { get; set; }
     public string Username { get; set; }
@@ -45,7 +47,7 @@ public class TestDatabasesSettings
             DatabaseType.MySql => MySqlLowPrivilegeUsername,
             DatabaseType.Oracle => OracleLowPrivilegeUsername,
             DatabaseType.PostgreSql => PostgreSqlLowPrivilegeUsername,
-            _ => throw new ArgumentOutOfRangeException("databaseType"),
+            _ => throw new ArgumentOutOfRangeException(nameof(databaseType))
         };
     }
 
@@ -59,7 +61,7 @@ public class TestDatabasesSettings
             DatabaseType.MySql => MySqlLowPrivilegePassword,
             DatabaseType.Oracle => OracleLowPrivilegePassword,
             DatabaseType.PostgreSql => PostgreSqlLowPrivilegePassword,
-            _ => throw new ArgumentOutOfRangeException("databaseType"),
+            _ => throw new ArgumentOutOfRangeException(nameof(databaseType))
         };
     }
 }

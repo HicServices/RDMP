@@ -30,7 +30,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
         if (!columns.Any(c => c.GetRuntimeName().Equals("ID")))
             throw new CodeGenerationException("Table must have an ID automnum column to become an IMapsDirectlyToDatabaseTable class");
-            
+
         var classStart = new StringBuilder();
 
         classStart.Append($"public class {_table.GetRuntimeName()}: DatabaseEntity");
@@ -69,13 +69,12 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
             
         foreach (var col in columns.Where(c=>c.GetRuntimeName() != "ID"))
         {
-            string setCode;
-            var type = GetCSharpTypeFor(col,out setCode);
+            var type = GetCSharpTypeFor(col,out var setCode);
             var propertyName = col.GetRuntimeName();
             var fieldString = col.GetRuntimeName();
-                
+
             //cammel case it
-            fieldString = $"_{fieldString.Substring(0, 1).ToLower()}{fieldString.Substring(1)}";
+            fieldString = $"_{fieldString[..1].ToLower()}{fieldString[1..]}";
 
             databaseFields.AppendLine($"\tprivate {type} {fieldString};");
 
@@ -103,16 +102,13 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
     }
 
-    private string GetCSharpTypeFor(DiscoveredColumn col,out string setCode)
+    private static string GetCSharpTypeFor(DiscoveredColumn col,out string setCode)
     {
         var r = $"r[\"{col.GetRuntimeName()}\"]";
 
         if (col.DataType.GetLengthIfString() != -1)
         {
-            if (col.AllowNulls)
-                setCode = $"{r} as string;";
-            else
-                setCode = $"{r}.ToString();";
+            setCode = col.AllowNulls ? $"{r} as string;" : $"{r}.ToString();";
 
             return "string";
         }

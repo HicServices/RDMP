@@ -12,7 +12,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionProposal<IContainer>
+internal class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionProposal<IContainer>
 {
     public ProposeExecutionWhenTargetIsFilterContainer(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -31,10 +31,8 @@ class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionProposal<I
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, IContainer targetContainer, InsertOption insertOption = InsertOption.Default)
     {
-        var sourceFilterCommand = cmd as FilterCombineable;
-
         //drag a filter into a container
-        if (sourceFilterCommand != null)
+        if (cmd is FilterCombineable sourceFilterCommand)
         {
             //if filter is already in the target container
             if (sourceFilterCommand.ImmediateContainerIfAny?.Equals(targetContainer) ?? false)

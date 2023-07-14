@@ -42,12 +42,12 @@ public class ParameterManager
     /// Collection of all the parameters found at each level so far
     /// <para>Do not modify this yourself</para>
     /// </summary>
-    public Dictionary<ParameterLevel,List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new Dictionary<ParameterLevel, List<ISqlParameter>>();
+    public Dictionary<ParameterLevel,List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new();
 
     /// <summary>
     /// Repository for creating temporary aggregate parameters
     /// </summary>
-    private readonly MemoryRepository _memoryRepository = new MemoryRepository();
+    private readonly MemoryRepository _memoryRepository = new();
 
     /// <summary>
     /// Creates a new <see cref="ParameterManager"/> with the specified global parameters
@@ -141,23 +141,22 @@ public class ParameterManager
     public IEnumerable<ISqlParameter> GetFinalResolvedParametersList()
     {
         State = ParameterManagerLifecycleState.Finalized;
-            
+
         var toReturn = new List<ParameterFoundAtLevel>();
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
         foreach (var sqlParameter in kvp.Value)
-            AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter,kvp.Key), toReturn);
-                
+                AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter,kvp.Key), toReturn);
+
 
         //There can be empty parameters during resolution but only if it finds an overriding one further up the hierarchy
         var emptyParameter = toReturn.FirstOrDefault(t => string.IsNullOrWhiteSpace(t.Parameter.Value));
         if(emptyParameter != null)
         {
             var exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
-            var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable;
-                
+
             //problem was in a freaky parameter e.g. a constant one that doesn't come from database (rare to happen I would expect)
-            if(asConcreteObject == null)
+            if(emptyParameter.Parameter is not IMapsDirectlyToDatabaseTable asConcreteObject)
                 throw new QueryBuildingException(exceptionMessage);
                 
             //problem was from a user one from their Catalogue Database, tell them the ProblemObject aswell
@@ -180,7 +179,7 @@ public class ParameterManager
         _memoryRepository.Clear();
     }
 
-    private void AddParameterToCollection(ParameterFoundAtLevel toAdd,List<ParameterFoundAtLevel> existingParameters)
+    private static void AddParameterToCollection(ParameterFoundAtLevel toAdd,List<ParameterFoundAtLevel> existingParameters)
     {
         //see if parameter if we already have one with the same name
         var duplicate = existingParameters.FirstOrDefault(p => p.Parameter.ParameterName.Equals(toAdd.Parameter.ParameterName,StringComparison.InvariantCultureIgnoreCase));
@@ -214,24 +213,21 @@ public class ParameterManager
             existingParameters.Add(toAdd); //its not a duplicate so add it to the list of RequiredParameters 
     }
 
-    private void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1, ParameterFoundAtLevel parameter2)
+    private static void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1, ParameterFoundAtLevel parameter2)
     {
-        var concrete1 = parameter1.Parameter as IMapsDirectlyToDatabaseTable;
-        var concrete2 = parameter2.Parameter as IMapsDirectlyToDatabaseTable;
-
         var concreteObjects = new List<IMapsDirectlyToDatabaseTable>();
 
         var desc1 = $"(Type:{parameter1.Parameter.GetType()}";
         var desc2 = $"(Type:{parameter2.Parameter.GetType()}";
 
 
-        if(concrete1 != null)
+        if(parameter1.Parameter is IMapsDirectlyToDatabaseTable concrete1)
         {
             concreteObjects.Add(concrete1);
             desc1 += $" ID:{concrete1.ID}";
         }
 
-        if(concrete2 != null)
+        if(parameter2.Parameter is IMapsDirectlyToDatabaseTable concrete2)
         {
 
             concreteObjects.Add(concrete2);
@@ -351,7 +347,7 @@ public class ParameterManager
     private static bool AreIdentical(ISqlParameter first, ISqlParameter other)
     {
         var sameSql = AreDeclaredTheSame(first, other);
-            
+
         var value1 = first.Value ?? "";
         var value2 = other.Value??"";
 
@@ -458,7 +454,7 @@ public class ParameterManager
     /// <returns></returns>
     public ParameterLevel? GetLevelForParameter(ISqlParameter parameter)
     {
-        if (ParametersFoundSoFarInQueryGeneration.Count(k => k.Value.Contains(parameter)) == 0)
+        if (!ParametersFoundSoFarInQueryGeneration.Any(k => k.Value.Contains(parameter)))
             return null;
 
         return 
@@ -476,8 +472,10 @@ public class ParameterManager
     /// <returns></returns>
     public ParameterManager Clone()
     {
-        var clone = new ParameterManager(this.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
-        clone.State = State;
+        var clone = new ParameterManager(ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray())
+ {
+     State = State
+ };
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
             clone.ParametersFoundSoFarInQueryGeneration[kvp.Key].AddRange(kvp.Value);
@@ -518,7 +516,7 @@ public class ParameterManager
 
         foreach (ParameterLevel l in Enum.GetValues(typeof(ParameterLevel)))
         {
-            var to = ParametersFoundSoFarInQueryGeneration[l]; 
+            var to = ParametersFoundSoFarInQueryGeneration[l];
             var from = other.ParametersFoundSoFarInQueryGeneration[l];
 
             //add all paramters which are not already represented with an identical parameter

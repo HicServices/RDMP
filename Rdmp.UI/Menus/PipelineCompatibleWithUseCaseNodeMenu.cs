@@ -11,7 +11,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus;
 
-class PipelineMenu : RDMPContextMenuStrip
+internal class PipelineMenu : RDMPContextMenuStrip
 {
     public PipelineMenu(RDMPContextMenuStripArgs args, PipelineCompatibleWithUseCaseNode node): base(args,node)
     {

@@ -11,7 +11,7 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Tests;
 
-class TypeTextOrCancelDialogTests : UITests
+internal class TypeTextOrCancelDialogTests : UITests
 {
     [Test]
     public void Test_TypeTextOrCancelDialog_TinyStrings()
@@ -37,7 +37,7 @@ class TypeTextOrCancelDialogTests : UITests
 
         //send TypeTextOrCancelDialog a million characters
         for (var i = 0; i < 1_000_000; i++)
-            sb.Append("f");
+            sb.Append('f');
 
         var s = sb.ToString();
 

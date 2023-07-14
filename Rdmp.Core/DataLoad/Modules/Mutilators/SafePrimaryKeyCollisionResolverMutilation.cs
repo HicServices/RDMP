@@ -25,7 +25,7 @@ public class SafePrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTabl
 
     [DemandsInitialization("The non primary key column to be used for deduplication.  This must contain different values for the same primary key and you must only want to keep one e.g. DataAge")]
     public ColumnInfo ColumnToResolveOn { get; set; }
-        
+
     [DemandsInitialization(@"Determines behaviour when a primary key collision is the result of one record having null and another not.
 True - Delete the non null record
 False - Delete the null record")]
@@ -49,10 +49,11 @@ False - Delete the larger value")]
 
         //FYI - we are considering whether to delete records from table {0}
 
-        var deleteConditional = 
+        var deleteConditional =
             PreferNulls?
                 //delete rows {0} where {0} is not null and {1} is null - leaving only the null records {1}
-                string.Format("({0} IS NOT NULL AND {1} IS NULL)",t1DotColumn,t2DotColumn):
+                $"({t1DotColumn} IS NOT NULL AND {t2DotColumn} IS NULL)"
+                :
                 string.Format("({1} IS NOT NULL AND {0} IS NULL)",t1DotColumn,t2DotColumn);
 
         deleteConditional += " OR ";
@@ -62,7 +63,7 @@ False - Delete the larger value")]
             ? string.Format("({0} <> {1} AND {0} < {1})", t1DotColumn, t2DotColumn)
             : string.Format("({0} <> {1} AND {1} < {0})", t1DotColumn, t2DotColumn);
 
-             
+
 
         var sql = string.Format(@"DELETE t1 FROM {0} t1
   JOIN {0} t2
@@ -105,7 +106,7 @@ False - Delete the larger value")]
     public ExitCodeType Mutilate(IDataLoadJob job)
     {
         var tbl = _database.ExpectTable(ColumnToResolveOn.TableInfo.GetRuntimeName(_loadStage,job.Configuration.DatabaseNamer));
-        var  pks = ColumnToResolveOn.TableInfo.ColumnInfos.Where(ci => ci.IsPrimaryKey).ToArray();
+        var pks = ColumnToResolveOn.TableInfo.ColumnInfos.Where(ci => ci.IsPrimaryKey).ToArray();
             
         DeleteRows(tbl,pks,job);
 

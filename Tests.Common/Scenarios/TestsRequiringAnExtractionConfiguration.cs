@@ -41,7 +41,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     protected Project _project;
     protected ExtractionConfiguration _configuration;
     protected ExtractionInformation[] _extractionInformations;
-    protected List<IColumn> _extractableColumns = new List<IColumn>();
+    protected List<IColumn> _extractableColumns = new();
     protected ExtractDatasetCommand _request;
 
     private readonly string _testDatabaseName = TestDatabaseNames.GetConsistentName("ExtractionConfiguration");
@@ -49,7 +49,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     protected bool AllowEmptyExtractions = false;
     protected SelectedDataSets _selectedDataSet;
     protected ColumnInfo[] _columnInfos;
-        
+
     /// <summary>
     /// Called when pipeline components are created during <see cref="SetupPipeline"/>.  Allows you to make last minute changes to them e.g. before pipeline is executed
     /// </summary>
@@ -93,8 +93,10 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     {
         _extractableDataSet = new ExtractableDataSet(DataExportRepository, _catalogue);
 
-        _project = new Project(DataExportRepository, _testDatabaseName);
-        _project.ProjectNumber = 1;
+        _project = new Project(DataExportRepository, _testDatabaseName)
+        {
+            ProjectNumber = 1
+        };
 
         Directory.CreateDirectory(ProjectDirectory);
         _project.ExtractionDirectory = ProjectDirectory;
@@ -115,7 +117,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
                 col.IsExtractionIdentifier = true;
 
             col.SaveToDatabase();
-                
+
             _extractableColumns.Add(col);
         }
     }
@@ -132,10 +134,9 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         dt.Rows.Add(new object[] {_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01"});
 
         var tbl = Database.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
-            
-        CatalogueItem[] cataItems;
-        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);
-            
+
+        _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out CatalogueItem[] cataItems, out _extractionInformations);
+
         var _privateID = _extractionInformations.First(e => e.GetRuntimeName().Equals("PrivateID"));
         _privateID.IsExtractionIdentifier = true;
         _privateID.SaveToDatabase();
@@ -146,7 +147,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
     {
         var pipeline = SetupPipeline();
 
-        var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator),new ExtractionOptions()
+        var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator),new ExtractionOptions
         {
             Command = CommandLineActivity.run, ExtractionConfiguration = _configuration.ID.ToString(),
             ExtractGlobals = true, Pipeline = pipeline.ID.ToString()
@@ -168,7 +169,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         var d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
 
         Pipeline pipeline = null;
-            
+
         //because extractable columns is likely to include chi column, it will be removed from the collection (for a substitution identifier)
         var before = _extractableColumns.ToArray();
 
@@ -185,15 +186,14 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         }
         finally
         {
-            if(pipeline != null)
-                pipeline.DeleteInDatabase();
+            pipeline?.DeleteInDatabase();
         }
 
         results =  pipelineUseCase.Destination;
         _extractableColumns = new List<IColumn>(before);
     }
 
-        
+
 
     protected virtual Pipeline SetupPipeline()
     {
@@ -213,7 +213,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         arguments.Single(a => a.Name.Equals("FlatFileType")).SaveToDatabase();
 
         AdjustPipelineComponentDelegate?.Invoke(component);
-            
+
         var component2 = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionSource), -1, "Source");
         var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionSource>().ToArray();
 

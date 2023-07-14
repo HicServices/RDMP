@@ -18,7 +18,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 public class PickTable : PickObjectBase
 {
     public override string Format => "Table:{TableName}:[Schema:{SchemaIfAny}:][IsView:{True/False}]:DatabaseType:{DatabaseType}:Name:{DatabaseName}:{ConnectionString}";
-    public override string Help =>             
+    public override string Help =>
         @"Table (Required): Name of the table you want
 Schema (Optional): leave out this section unless your table is in a sub schema within the Database (MySql doesn't support schemas)
 IsView (Optional): Defaults to false, pass 'true' to instead look for a view
@@ -30,12 +30,12 @@ DatabaseType (Required):
 
 Name: Name of the database it resides in (Optional if in connection string)
 ConnectionString (Required)";
-        
+
     public override IEnumerable<string> Examples => new[]
     {
         "Table:MyTable:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;",
-        "Table:MyTable2:Schema:dbo:IsView:True:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;",
-            
+        "Table:MyTable2:Schema:dbo:IsView:True:DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;"
+
     };
 
 
@@ -47,30 +47,23 @@ ConnectionString (Required)";
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
     {
         var m = MatchOrThrow(arg, idx);
-            
+
         var tableName = m.Groups[1].Value;
         var schema = Trim("Schema:",m.Groups[2].Value);
 
         var isViewStr = Trim("IsView:",m.Groups[3].Value);
-        var isViewBool = isViewStr == null ? false : bool.Parse(isViewStr);
-            
+        var isViewBool = isViewStr != null && bool.Parse(isViewStr);
+
         var dbType = (DatabaseType)Enum.Parse(typeof(DatabaseType),m.Groups[4].Value);
         var dbName = Trim("Name:",m.Groups[5].Value);
         var connectionString = m.Groups[6].Value;
 
         var server = new DiscoveredServer(connectionString, dbType);
 
-        DiscoveredDatabase db;
-
-        if (string.IsNullOrWhiteSpace(dbName))
-            db = server.GetCurrentDatabase();
-        else
-            db = server.ExpectDatabase(dbName);
-
-        if(db == null)
-            throw new CommandLineObjectPickerParseException("Missing database name parameter, it was not in connection string or specified explicitly",idx,arg);
-
-            
+        var db = (string.IsNullOrWhiteSpace(dbName) ? server.GetCurrentDatabase() : server.ExpectDatabase(dbName)) ??
+                 throw new CommandLineObjectPickerParseException(
+                     "Missing database name parameter, it was not in connection string or specified explicitly", idx,
+                     arg);
         return new CommandLineObjectPickerArgumentValue(arg,idx,db.ExpectTable(tableName,schema,isViewBool ? TableType.View:TableType.Table));
     }
 

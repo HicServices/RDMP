@@ -28,12 +28,12 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Validation;
 
 /// <summary>
-/// Validation is an essential part of hosting research data.  If one month all the new records come in with values in gender of 'Male' and 'Female'  when previously they were 'M' or 
-/// 'F' then you want to know about it (because it will affect filters and end users of the data who now have to include 2 different values in their WHERE statements).  In such a 
-/// trivial situation the first step would be to confirm if it is a mistake with the data provider, if not then a decision should be made whether to standardise on the old/new 
+/// Validation is an essential part of hosting research data.  If one month all the new records come in with values in gender of 'Male' and 'Female'  when previously they were 'M' or
+/// 'F' then you want to know about it (because it will affect filters and end users of the data who now have to include 2 different values in their WHERE statements).  In such a
+/// trivial situation the first step would be to confirm if it is a mistake with the data provider, if not then a decision should be made whether to standardise on the old/new
 /// categories and adjust the data load accordingly.
 /// 
-/// <para>But for this to happen at all you need to be able to recognise when such problems occur.  The RDMP handles this by allowing you to specify validation rules on each of the 
+/// <para>But for this to happen at all you need to be able to recognise when such problems occur.  The RDMP handles this by allowing you to specify validation rules on each of the
 /// extractable columns / transforms you make available to researchers.  On the left of this form you can see all the columns/transforms.  By selecting one you can view/edit its'
 /// collection of Secondary Constraints (see SecondaryConstraintUI) and choose a Primary Constraint (Validates the datatype, only use a primary constraint if you have an insane
 /// schema such as using varchar(max) to store 'dates' and have dirty data that includes values like 'last friday' mixed in with legit values).</para>
@@ -41,19 +41,18 @@ namespace Rdmp.UI.Validation;
 public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 {
     private string _noPrimaryConstraintText = "No Primary Constraint Defined";
-        
+
     public Validator Validator { get; private set; }
-     
+
     private bool bSuppressChangeEvents = false;
     private Catalogue _catalogue;
 
     private string ClearSelection = "<<Clear Selection>>";
-        
+
     private ItemValidator SelectedColumnItemValidator {get
     {
-        var ei = olvColumns.SelectedObject as ExtractionInformation;
         //The user has not selected a column
-        if (ei == null)
+        if (olvColumns.SelectedObject is not ExtractionInformation ei)
             return null;
 
         var c = ei.GetRuntimeName();
@@ -68,7 +67,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     public ValidationSetupUI()
     {
         InitializeComponent();
-            
+
         SetupAvailableOperations();
 
         olvColumns.RowHeight = 19;
@@ -81,8 +80,8 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
         ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
-        olvName.ImageGetter = (o) => Activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-    }       
+        olvName.ImageGetter = o => Activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+    }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
@@ -91,17 +90,14 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         CommonFunctionality.AddToMenu(new ExecuteCommandRunDQEOnCatalogue(activator).SetTarget(databaseObject));
         CommonFunctionality.AddToMenu(new ExecuteCommandViewDQEResultsForCatalogue(activator)
             {OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
-            
+
         _catalogue = databaseObject;
-            
+
         SetupComboBoxes(databaseObject);
 
         //get the validation XML
-        if (string.IsNullOrWhiteSpace(databaseObject.ValidatorXML))
-            Validator = new Validator();
-        else
-            Validator = Validator.LoadFromXml(databaseObject.ValidatorXML);
-            
+        Validator = string.IsNullOrWhiteSpace(databaseObject.ValidatorXML) ? new Validator() : Validator.LoadFromXml(databaseObject.ValidatorXML);
+
         var extractionInformations = databaseObject.GetAllExtractionInformation(ExtractionCategory.Any).ToArray();
         Array.Sort(extractionInformations);
 
@@ -142,7 +138,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
             var dialog = new ResolveMissingTargetPropertiesUI(Validator,olvColumns.Objects.Cast<ExtractionInformation>().ToArray());
 
             if(dialog.ShowDialog() == DialogResult.OK)
-                Validator = dialog.AdjustedValidator;    
+                Validator = dialog.AdjustedValidator;
         }
     }
 
@@ -151,7 +147,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         var constraintNames = new List<string>();
         constraintNames.AddRange(Validator.GetPrimaryConstraintNames());
         constraintNames.Sort();
-            
+
         ddPrimaryConstraints.Items.AddRange(constraintNames.ToArray());
         ddPrimaryConstraints.Items.Add(_noPrimaryConstraintText);
 
@@ -176,7 +172,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
         bSuppressChangeEvents = true;
 
-        if (SelectedColumnItemValidator == null || SelectedColumnItemValidator.PrimaryConstraint == null)
+        if (SelectedColumnItemValidator?.PrimaryConstraint == null)
         {
             ddPrimaryConstraints.Text = _noPrimaryConstraintText;
             ddConsequence.SelectedItem = Consequence.Missing;
@@ -184,14 +180,10 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         else
         {
             ddPrimaryConstraints.Text = SelectedColumnItemValidator.PrimaryConstraint.GetType().Name;
-            if (SelectedColumnItemValidator.PrimaryConstraint.Consequence.HasValue)
-                ddConsequence.SelectedItem = SelectedColumnItemValidator.PrimaryConstraint.Consequence.Value;
-            else
-                ddConsequence.SelectedItem = Consequence.Missing;
-
+            ddConsequence.SelectedItem = SelectedColumnItemValidator.PrimaryConstraint.Consequence ?? Consequence.Missing;
         }
 
-        //Make consequence selection only possible if there is a priary constraint selected
+        //Make consequence selection only possible if there is a primary constraint selected
         ddConsequence.Enabled = ddPrimaryConstraints.Text != _noPrimaryConstraintText;
 
         //clear secondary constraints then add them again (it's the only way to be sure)
@@ -201,7 +193,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         if (SelectedColumnItemValidator != null)
             foreach (var secondaryConstraint in SelectedColumnItemValidator.SecondaryConstraints)
                 AddSecondaryConstraintControl(secondaryConstraint);
-            
+
         bSuppressChangeEvents = false;
     }
 
@@ -251,7 +243,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         {
             var secondaryConstriant =
                 Validator.CreateConstraint(ddSecondaryConstraints.Text,Consequence.Missing) as SecondaryConstraint;
-                
+
             SelectedColumnItemValidator.SecondaryConstraints.Add(secondaryConstriant);
             AddSecondaryConstraintControl(secondaryConstriant);
             ObjectSaverButton1.Enable(true);
@@ -270,16 +262,17 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     private void AddSecondaryConstraintControl(SecondaryConstraint secondaryConstriant)
     {
         tableLayoutPanel1.RowCount++;
-            
-        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository,secondaryConstriant,olvColumns.Objects.Cast<ExtractionInformation>().Select(c=>c.GetRuntimeName()).ToArray());
 
-        toAdd.Width = splitContainer1.Panel2.Width;
-        toAdd.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository, secondaryConstriant, olvColumns.Objects.Cast<ExtractionInformation>().Select(c => c.GetRuntimeName()).ToArray())
+        {
+            Width = splitContainer1.Panel2.Width,
+            Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top
+        };
         toAdd.RequestDeletion += SecondaryConstraintRequestDelete;
         tableLayoutPanel1.Controls.Add(toAdd, tableLayoutPanel1.RowCount - 1,0);
-            
+
         //this array always seems to be 1 element long..
-        tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;    
+        tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
     }
 
 
@@ -287,7 +280,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         if(bSuppressChangeEvents)
             return;
-            
+
         if (SelectedColumnItemValidator != null)
             if (SelectedColumnItemValidator.PrimaryConstraint != null)
             {
@@ -303,7 +296,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
                 bSuppressChangeEvents = false;
             }
     }
-        
+
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
         olvColumns.UseFiltering = true;
@@ -376,19 +369,19 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     }
     private void SetTimePeriod(ExtractionInformation selected)
     {
-        _catalogue.TimeCoverage_ExtractionInformation_ID = selected != null ? selected.ID : (int?)null;
+        _catalogue.TimeCoverage_ExtractionInformation_ID = selected?.ID;
     }
 
     private void SetPivot(ExtractionInformation selected)
     {
-        _catalogue.PivotCategory_ExtractionInformation_ID = selected != null ? selected.ID : (int?)null;
+        _catalogue.PivotCategory_ExtractionInformation_ID = selected?.ID;
     }
 
     private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
     {
-        if(Activator.SelectObject(new DialogArgs { 
+        if(Activator.SelectObject(new DialogArgs {
                TaskDescription = "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
-               AllowSelectingNull = true,
+               AllowSelectingNull = true
            }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any),out var selected))
         {
             cbxTimePeriodColumn.SelectedItem = selected;
@@ -401,7 +394,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         if (Activator.SelectObject(new DialogArgs
             {
                 TaskDescription = "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
-                AllowSelectingNull = true,
+                AllowSelectingNull = true
             }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
         {
             cbxPivotColumn.SelectedItem = selected;

@@ -38,7 +38,7 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution,IAto
 
         if(p == null)
         {
-            if (BasicActivator.SelectObject(new DialogArgs()
+            if (BasicActivator.SelectObject(new DialogArgs
                 {
                     WindowTitle = "Add Governance Document",
                     TaskDescription = "Select which GovernancePeriod you want to attach the document to."
@@ -54,8 +54,7 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution,IAto
             }
         }
 
-        if (f == null) 
-            f = BasicActivator.SelectFile("Document to add");
+        f ??= BasicActivator.SelectFile("Document to add");
 
         if(f == null)
             return;

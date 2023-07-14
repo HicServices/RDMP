@@ -90,7 +90,7 @@ public class DataExportProblemProvider:ProblemProvider
     }
 
 
-    private string DescribeProblem(ExtractionDirectoryNode edn)
+    private static string DescribeProblem(ExtractionDirectoryNode edn)
     {
         if(edn.GetDirectoryInfoIfAny() == null)
         {
@@ -99,7 +99,7 @@ public class DataExportProblemProvider:ProblemProvider
 
         return null;
     }
-    private string DescribeProblem(Project project)
+    private static string DescribeProblem(Project project)
     {
         if (project.ProjectNumber == null)
             return "Project has no ProjectNumber";

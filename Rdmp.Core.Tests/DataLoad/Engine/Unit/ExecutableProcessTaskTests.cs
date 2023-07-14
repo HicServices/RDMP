@@ -16,19 +16,21 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
 
 [Category("Unit")]
-class ExecutableProcessTaskTests
+internal class ExecutableProcessTaskTests
 {
     [Test]
     public void TestCreateArgString()
     {
         const string db = "my-db";
 
-        var customArgs = new List<SpontaneouslyInventedArgument>();
-        customArgs.Add(new SpontaneouslyInventedArgument(new MemoryRepository(), "DatabaseName", db));
+        var customArgs = new List<SpontaneouslyInventedArgument>
+        {
+            new SpontaneouslyInventedArgument(new MemoryRepository(), "DatabaseName", db)
+        };
 
         var processTask = Mock.Of<IProcessTask>();
         var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
-            
+
         var argString = task.CreateArgString();
         var expectedArgString = $"--database-name={db}";
 

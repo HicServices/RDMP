@@ -37,7 +37,7 @@ using Rdmp.UI.TreeHelper;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-/// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row 
+/// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row
 /// height, child nodes etc.
 /// </summary>
 public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
@@ -60,15 +60,15 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public CopyPasteProvider CopyPasteProvider { get; private set; }
     public FavouriteColumnProvider FavouriteColumnProvider { get; private set; }
     public TreeNodeParentFinder ParentFinder { get; private set; }
-        
+
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-        
+
     public OLVColumn FavouriteColumn { get; private set; }
 
     public bool IsSetup { get; private set; }
-        
+
     public Func<IActivateItems,IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
-        
+
     public IDColumnProvider IDColumnProvider { get; set; }
     public OLVColumn IDColumn { get; set; }
     public CheckColumnProvider CheckColumnProvider { get; set; }
@@ -82,12 +82,12 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public Type[] AxeChildren { get; set; }
 
     public Type[] MaintainRootObjects { get; set; }
-        
+
     public RDMPCollectionCommonFunctionalitySettings Settings { get; private set; }
 
     public event EventHandler<MenuBuiltEventArgs> MenuBuilt;
-         
-    private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new Dictionary<RDMPCollection, Guid>()
+
+    private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new()
     {
         {RDMPCollection.Tables,new Guid("8f24d624-acad-45dd-862b-01b18dfdd9a2")},
         {RDMPCollection.Catalogue,new Guid("d0f72b03-63f1-487e-9afa-51c03afa7819")},
@@ -95,7 +95,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         {RDMPCollection.SavedCohorts,new Guid("6d0e4560-9357-4ee1-91b6-a182a57f7a6f")},
         {RDMPCollection.Cohort,new Guid("5c7cceb3-4202-47b1-b271-e2eed869d9ef")},
         {RDMPCollection.Favourites,new Guid("39d37439-ac7a-4346-8c79-9867384db92e")},
-        {RDMPCollection.DataLoad,new Guid("600aad33-df6c-4013-ad92-65de19d494cf")},
+        {RDMPCollection.DataLoad,new Guid("600aad33-df6c-4013-ad92-65de19d494cf")}
     };
 
     /// <summary>
@@ -142,7 +142,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         //persist user sort orders
         if (collectionGuid == Guid.Empty) return;
-            
+
         //if we know the sort order for this collection last time
         var lastSort = UserSettings.GetLastColumnSortForCollection(collectionGuid);
 
@@ -178,7 +178,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
     /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
     /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
-    /// <param name="settings">Customise which common behaviorurs are turned on</param>
+    /// <param name="settings">Customise which common behaviours are turned on</param>
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn, OLVColumn renameableColumn,RDMPCollectionCommonFunctionalitySettings settings)
     {
         Settings = settings;
@@ -210,15 +210,15 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         Tree.CellRightClick += CommonRightClick;
         Tree.KeyUp += CommonKeyPress;
-            
+
         if(iconColumn != null)
             iconColumn.ImageGetter += ImageGetter;
-            
+
         if(Tree.RowHeight != 19)
             Tree.RowHeight = 19;
 
         //add colour indicator bar
-        Tree.Location = new Point(Tree.Location.X, tree.Location.Y+3);
+        Tree.Location = Tree.Location with { Y = tree.Location.Y+3 };
         Tree.Height -= 3;
 
         CreateColorIndicator(Tree,collection);
@@ -271,20 +271,20 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         CopyPasteProvider = new CopyPasteProvider();
         CopyPasteProvider.RegisterEvents(tree);
-            
+
         CoreChildProvider = _activator.CoreChildProvider;
-            
+
         _activator.Emphasise += _activator_Emphasise;
 
         Tree.TreeFactory = TreeFactoryGetter;
         Tree.RebuildAll(true);
-            
+
         Tree.FormatRow += Tree_FormatRow;
         Tree.KeyDown += Tree_KeyDown;
 
         if(Settings.AllowSorting)
         {
-            SetupColumnSortTracking(Tree, TreeGuids.ContainsKey(collection) ? TreeGuids[collection] : Guid.Empty);
+            SetupColumnSortTracking(Tree, TreeGuids.TryGetValue(collection, out var guid) ? guid : Guid.Empty);
         }
         else
             foreach (var c in Tree.AllColumns)
@@ -292,7 +292,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     }
 
     public static void Tree_CellToolTipShowing(IActivateItems activator, ToolTipShowingEventArgs e)
-    {            
+    {
         var model = e.Model;
 
         if (model is IMasqueradeAs m)
@@ -330,7 +330,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             body = problem;
             return true;
         }
-        else
+
         if (model is ICanBeSummarised sum)
         {
             isBad = false;
@@ -352,8 +352,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             model?.ToString();
     }
 
-    static DateTime lastInvalidatedCache = DateTime.Now;
-    static Dictionary<object, string> cache = new Dictionary<object, string>();
+    private static DateTime lastInvalidatedCache = DateTime.Now;
+    private static Dictionary<object, string> cache = new();
 
     private static string GetToolTipBody(IActivateItems activator, ICanBeSummarised sum)
     {
@@ -363,8 +363,8 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             lastInvalidatedCache = DateTime.Now;
         }
 
-        if(cache.ContainsKey(sum))
-            return cache[sum];
+        if(cache.TryGetValue(sum, out var body))
+            return body;
 
         var sb = new StringBuilder();
         sb.AppendLine(sum.GetSummary(false, false));
@@ -384,7 +384,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
                 if(val.Length>100)
                 {
-                    val = $"{val.Substring(0, 100)}...";
+                    val = $"{val[..100]}...";
                 }
 
                 sb.AppendLine($"{kvp.Key}: {val}");
@@ -413,7 +413,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
     }
 
-    void Tree_KeyPress(object sender, KeyPressEventArgs e)
+    private void Tree_KeyPress(object sender, KeyPressEventArgs e)
     {
         //Prevents keyboard 'bong' sound occuring when using Enter to activate an object
         if (e.KeyChar == (char)Keys.Enter)
@@ -422,7 +422,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private static void TreeOnAfterSorting(object sender, AfterSortingEventArgs e, Guid collectionGuid)
     {
-        UserSettings.SetLastColumnSortForCollection(collectionGuid, e.ColumnToSort == null ? null:e.ColumnToSort.Text, e.SortOrder == SortOrder.Ascending);
+        UserSettings.SetLastColumnSortForCollection(collectionGuid, e.ColumnToSort?.Text, e.SortOrder == SortOrder.Ascending);
     }
 
     private void CreateColorIndicator(TreeListView tree, RDMPCollection collection)
@@ -432,11 +432,10 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         var indicatorHeight = BackColorProvider.IndicatorBarSuggestedHeight;
 
-        var p = new BackColorProvider();
         var ctrl = new Control
         {
-            BackColor = p.GetColor(collection),
-            Location = new Point(Tree.Location.X, tree.Location.Y - indicatorHeight),
+            BackColor = BackColorProvider.GetColor(collection),
+            Location = Tree.Location with { Y = tree.Location.Y - indicatorHeight },
             Height = indicatorHeight,
             Width = Tree.Width
         };
@@ -449,16 +448,14 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Tree.Parent.Controls.Add(ctrl);
     }
 
-    void Tree_FormatRow(object sender, FormatRowEventArgs e)
+    private void Tree_FormatRow(object sender, FormatRowEventArgs e)
     {
         var hasProblems = _activator.HasProblem(e.Model);
 
-        var disableable = e.Model as IDisableable;
-
-        if (disableable != null && disableable.IsDisabled)
+        if (e.Model is IDisableable disableable && disableable.IsDisabled)
         {
             e.Item.ForeColor = Color.FromArgb(152,152,152);
-                
+
             //make it italic
             if(!e.Item.Font.Italic)
                 e.Item.Font = new Font(e.Item.Font,FontStyle.Italic);
@@ -480,12 +477,13 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         return new RDMPCollectionCommonFunctionalityTreeHijacker(view);
     }
-        
+
     // Tracks when RefreshContextMenuStrip is called to prevent rebuilding on select and right click in rapid succession
     private object _lastMenuObject;
     private DateTime _lastMenuBuilt = DateTime.Now;
     private ContextMenuStrip _menu;
-    HashSet<Keys> _shortcutKeys = new HashSet<Keys>(){
+    private HashSet<Keys> _shortcutKeys = new()
+    {
         Keys.I,
         Keys.Delete,
         Keys.F1,
@@ -498,14 +496,10 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         if(_lastMenuObject == Tree.SelectedObject && DateTime.Now.Subtract(_lastMenuBuilt) < TimeSpan.FromSeconds(2))
             return;
 
-        //clear the old menu strip first so old shortcuts cannot be activated during 
-        if(_menu != null)
-            _menu.Dispose();
+        //clear the old menu strip first so old shortcuts cannot be activated during
+        _menu?.Dispose();
 
-        if(Tree.SelectedObjects.Count <= 1)
-            _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObject);
-        else
-            _menu = GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
+        _menu = Tree.SelectedObjects.Count <= 1 ? GetMenuIfExists(_lastMenuObject = Tree.SelectedObject) : GetMenuIfExists(_lastMenuObject = Tree.SelectedObjects);
 
         _lastMenuBuilt = DateTime.Now;
     }
@@ -538,13 +532,13 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
     }
 
-    void _activator_Emphasise(object sender, EmphasiseEventArgs args)
+    private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
     {
         var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
-                        
+
         //get the parental hierarchy
         var decendancyList = CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
-            
+
         if (decendancyList != null)
         {
             //for each parent in the decendandy list
@@ -575,7 +569,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             {
                 Tree.EndUpdate();
             }
-                
+
         //update index now pin filter is applied
         index = Tree.IndexOf(args.Request.ObjectToEmphasise);
 
@@ -583,7 +577,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         Tree.SelectedObject = args.Request.ObjectToEmphasise;
         Tree.EnsureVisible(index);
 
-            
+
         args.Sender = Tree.FindForm();
     }
 
@@ -617,14 +611,14 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         if (result == null)
             return false;
-            
+
         return result.Cast<object>().Any();
     }
 
     private Bitmap ImageGetter(object rowObject)
     {
         var hasProblems = _activator.HasProblem(rowObject);
-            
+
         return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None).ImageToBitmap();
     }
 
@@ -680,7 +674,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
                 //found a menu with compatible constructor arguments
                 if (menu != null)
-                {                        
+                {
                     MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(menu,o));
                     return Sort(menu);
                 }
@@ -688,11 +682,11 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 //no compatible menus so just return default menu
                 var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
                 defaultMenu.AddCommonMenuItems(this);
-                    
+
                 MenuBuilt?.Invoke(this,new MenuBuiltEventArgs(defaultMenu,o));
                 return Sort(defaultMenu);
             }
-            else
+
             {
                 //it's a right click in whitespace (nothing right clicked)
 
@@ -722,33 +716,28 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
             _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs($"Failed to build menu for {o} of Type {o?.GetType()}",CheckResult.Fail,ex));
             return null;
-        }           
+        }
     }
 
     //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
-    Dictionary<Type,Type> _cachedMenuCompatibility = new Dictionary<Type, Type>();
-        
+    private readonly Dictionary<Type,Type> _cachedMenuCompatibility = new();
+
     private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
     {
-        var args = new RDMPContextMenuStripArgs(_activator,Tree,o);
-        args.Masquerader = oMasquerader ?? o as IMasqueradeAs;
-
-        var objectConstructor = new ObjectConstructor();
+        var args = new RDMPContextMenuStripArgs(_activator,Tree,o)
+        {
+            Masquerader = oMasquerader ?? o as IMasqueradeAs
+        };
 
         var oType = o.GetType();
 
         //if we have encountered this object type before
-        if (_cachedMenuCompatibility.ContainsKey(oType))
+        if (_cachedMenuCompatibility.TryGetValue(oType,out var compatibleMenu))
         {
-            var compatibleMenu = _cachedMenuCompatibility[oType];
-                
             //we know there are no menus compatible with o
-            if (compatibleMenu == null)
-                return null;
-
-            return ConstructMenu(objectConstructor, _cachedMenuCompatibility[oType], args, o);
+            return compatibleMenu == null ? null : ConstructMenu(compatibleMenu, args, o);
         }
-                
+
 
         //now find the first RDMPContextMenuStrip with a compatible constructor
         foreach (var menuType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<RDMPContextMenuStrip>())
@@ -757,37 +746,34 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 continue;
 
             //try constructing menu with:
-            var menu = ConstructMenu(objectConstructor,menuType,args,o);
+            var menu = ConstructMenu(menuType,args,o);
 
             //find first menu that's compatible
             if (menu != null)
             {
-                if (!_cachedMenuCompatibility.ContainsKey(oType))
-                    _cachedMenuCompatibility.Add(oType, menu.GetType());
+                _cachedMenuCompatibility.TryAdd(oType, menu.GetType());
 
                 return menu;
             }
         }
 
         //we know there are no menus compatible with this type
-        if (!_cachedMenuCompatibility.ContainsKey(oType))
-            _cachedMenuCompatibility.Add(oType, null);
+        _cachedMenuCompatibility.TryAdd(oType, null);
 
-        //there are no derrived classes with compatible constructors
+        //there are no derived classes with compatible constructors
         return null;
     }
 
-    private RDMPContextMenuStrip ConstructMenu(ObjectConstructor objectConstructor, Type type, RDMPContextMenuStripArgs args, object o)
+    private RDMPContextMenuStrip ConstructMenu(Type type, RDMPContextMenuStripArgs args, object o)
     {
         //there is a compatible menu Type known
-            
+
         //parameter 1 must be args
         //parameter 2 must be object compatible Type
 
-        var menu = (RDMPContextMenuStrip)objectConstructor.ConstructIfPossible(type, args, o);
-            
-        if(menu != null)
-            menu.AddCommonMenuItems(this);
+        var menu = (RDMPContextMenuStrip)ObjectConstructor.ConstructIfPossible(type, args, o);
+
+        menu?.AddCommonMenuItems(this);
 
         return menu;
     }
@@ -819,7 +805,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
 
         coll.Clear();
-            
+
         var buckets = itemsByBucket.OrderBy(kvp => kvp.Key).ToArray();
 
         for(var i =0;i< buckets.Length;i++)
@@ -869,7 +855,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     public void CommonItemActivation(object sender, EventArgs eventArgs)
     {
         var o = Tree.SelectedObject;
-            
+
         if(o == null)
             return;
 
@@ -897,13 +883,13 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         RefreshObject(e.Object,e.Exists);
 
         //now tell tree view to refresh the object
-            
+
         RefreshContextMenuStrip();
 
         //also refresh anyone who is masquerading as e.Object
         foreach (var masquerader in _activator.CoreChildProvider.GetMasqueradersOf(e.Object))
             RefreshObject(masquerader, e.Exists);
-            
+
     }
 
     private void RefreshObject(object o, bool exists)
@@ -930,7 +916,7 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 }
             }
         }
-                
+
 
         Tree.RebuildAll(true);
         Tree.Sort();

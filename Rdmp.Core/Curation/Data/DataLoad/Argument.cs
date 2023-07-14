@@ -79,7 +79,7 @@ public abstract class Argument : DatabaseEntity, IArgument
     private string _value;
     private string _type;
     private string _description;
-        
+
     /// <inheritdoc/>
     public string Name
     {
@@ -133,7 +133,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         //bool
         if (type.Equals(typeof(bool).ToString()))
         {
-            if (String.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
                 return false;
 
             return Convert.ToBoolean(value);
@@ -185,7 +185,7 @@ public abstract class Argument : DatabaseEntity, IArgument
                 return DateTime.Parse(value);
 
         //null
-        if (String.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(value))
             return null;
 
         if (type.Equals(typeof(Uri).ToString()))
@@ -204,14 +204,13 @@ public abstract class Argument : DatabaseEntity, IArgument
             return new Regex(value);
 
         var concreteType = GetConcreteSystemType(type);
-            
-        //try to enum it 
+
+        //try to enum it
         if (typeof(Enum).IsAssignableFrom(concreteType))
             return Enum.Parse(concreteType, value);
 
         //is it ICustomUIDrivenClass
-        object customType;
-        if (HandleIfICustomUIDrivenClass(value, concreteType, out customType))
+        if (HandleIfICustomUIDrivenClass(value, concreteType, out var customType))
             return customType;
 
         if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(concreteType))
@@ -273,8 +272,8 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                 var constructor = new ObjectConstructor();
 
-                result = (ICustomUIDrivenClass) constructor.Construct(t, (ICatalogueRepository) Repository);
-                     
+                result = (ICustomUIDrivenClass)ObjectConstructor.Construct(t, (ICatalogueRepository) Repository);
+
             }
             catch (Exception e)
             {
@@ -324,18 +323,12 @@ public abstract class Argument : DatabaseEntity, IArgument
             var elementTypeAsString = arrayMatch.Groups[1].Value;
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-            var elementType = CatalogueRepository.MEF.GetType(elementTypeAsString);
-
-            if (elementType == null)
-                throw new Exception(
+            var elementType = CatalogueRepository.MEF.GetType(elementTypeAsString) ?? throw new Exception(
                     $"Could not figure out what SystemType to use for elementType = '{elementTypeAsString}' of Type '{type}'");
-
             return Array.CreateInstance(elementType, 0).GetType();
         }
 
-        Type kType;
-        Type vType;
-        if (IsDictionary(type, out kType, out vType))
+        if (IsDictionary(type, out var kType, out var vType))
         {
             var genericClass = typeof(Dictionary<,>);
             var constructedClass = genericClass.MakeGenericType(kType,vType);
@@ -343,11 +336,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         }
 
         //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-        var anyType = CatalogueRepository.MEF.GetType(type);
-
-        if (anyType == null)
-            throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
-
+        var anyType = CatalogueRepository.MEF.GetType(type) ?? throw new Exception($"Could not figure out what SystemType to use for Type = '{type}'");
         return anyType;
     }
 
@@ -365,7 +354,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         //if it is interface e.g. ITableInfo fetch instead the TableInfo object
         if (type.IsInterface && type.Name.StartsWith("I"))
         {
-            var candidate = CatalogueRepository.MEF.GetType(type.Name.Substring(1)); // chop the 'I' off
+            var candidate = CatalogueRepository.MEF.GetType(type.Name[1..]); // chop the 'I' off
 
             if (!candidate.IsAbstract)
                 return candidate;
@@ -373,7 +362,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         return type;
     }
-        
+
     /// <inheritdoc/>
     public void SetType(Type t)
     {
@@ -391,9 +380,9 @@ public abstract class Argument : DatabaseEntity, IArgument
 
     private string Serialize(object o, string asType)
     {
-        //anything implementing this interface is permitted 
-        if (o is ICustomUIDrivenClass)
-            return ((ICustomUIDrivenClass) o).SaveStateToString();
+        //anything implementing this interface is permitted
+        if (o is ICustomUIDrivenClass @class)
+            return @class.SaveStateToString();
 
         if (o == null)
             return null;
@@ -401,16 +390,18 @@ public abstract class Argument : DatabaseEntity, IArgument
         //We are being asked to store a Type e.g. MyPlugins.MyCustomSQLHacker instead of an instance so easy, we just store the Type as a full name
         if (o is Type)
             return o.ToString();
-                    
+
         //get the system type
         var type = GetSystemType(asType);
 
-        if (o is String)
+        if (o is string)
         {
             if (typeof(IEncryptedString).IsAssignableFrom(type))
             {
-                var encryptor = new EncryptedString(CatalogueRepository);
-                encryptor.Value = o.ToString();
+                var encryptor = new EncryptedString(CatalogueRepository)
+                {
+                    Value = o.ToString()
+                };
                 return encryptor.Value;
             }
 
@@ -427,7 +418,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             var arr = (Array)o;
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type.GetElementType()))
                 return string.Join(",", arr.Cast<IMapsDirectlyToDatabaseTable>().Select(m => m.ID));
-                
+
             throw new NotSupportedException(
                 $"DemandsInitialization arrays must be of Type IMapsDirectlyToDatabaseTable e.g. TableInfo[].  Supplied Type was {type}");
         }
@@ -436,7 +427,7 @@ public abstract class Argument : DatabaseEntity, IArgument
             return SerializeDictionary((IDictionary) o);
 
         //if we already have a known type set on us
-        if (!String.IsNullOrWhiteSpace(asType))
+        if (!string.IsNullOrWhiteSpace(asType))
         {
             //if we are not being passed an Enum
             if (!typeof(Enum).IsAssignableFrom(type))
@@ -457,13 +448,13 @@ public abstract class Argument : DatabaseEntity, IArgument
                         throw new Exception(
                             $"Cannot set value {o} (of Type {o.GetType().FullName}) to on ProcessTaskArgument because it has an incompatible Type specified ({type.FullName})");
                     }
-                        
+
             }
         }
 
-        if (o is IMapsDirectlyToDatabaseTable)
-            return ((IMapsDirectlyToDatabaseTable)o).ID.ToString();
-            
+        if (o is IMapsDirectlyToDatabaseTable table)
+            return table.ID.ToString();
+
         return o.ToString();
     }
 
@@ -496,7 +487,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
         return instance;
     }
-        
+
     private string SerializeDictionary(IDictionary dictionary)
     {
         using (var sw = new StringWriter())
@@ -507,7 +498,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                 xmlWriter.WriteStartDocument();
                 xmlWriter.WriteStartElement("dictionary");
-                    
+
                 foreach (DictionaryEntry entry in dictionary)
                 {
                     var keyObject = entry.Key;
@@ -515,9 +506,9 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                     var valueObject = entry.Value;
                     var valueObjectType = valueObject == null ? typeof(object).ToString() : valueObject.GetType().ToString();
-                        
+
                     xmlWriter.WriteStartElement("entry");
-                        
+
                     xmlWriter.WriteStartElement("key");
                     xmlWriter.WriteAttributeString("type", keyObjectType);
                     xmlWriter.WriteAttributeString("o", Serialize(keyObject,keyObjectType));
@@ -530,7 +521,7 @@ public abstract class Argument : DatabaseEntity, IArgument
 
                     xmlWriter.WriteEndElement();
                 }
-                    
+
                 xmlWriter.WriteEndDocument();
                 xmlWriter.Close();
 

@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
 
 [Category("Unit")]
-class DataFlowComponentTests
+internal class DataFlowComponentTests
 {
     [Test]
     public void ColumnRenamer_NoMatchingColumnAtRuntime()
@@ -90,13 +90,15 @@ class DataFlowComponentTests
 }
 
 [Category("Unit")]
-class ColumnforbidlistTests
+internal class ColumnforbidlistTests
 {
     [Test]
     public void ColumnForbidderTest_MatchingColumn()
     {
-        var forbidlister = new ColumnForbidder();
-        forbidlister.CrashIfAnyColumnMatches = new Regex("^fish$");
+        var forbidlister = new ColumnForbidder
+        {
+            CrashIfAnyColumnMatches = new Regex("^fish$")
+        };
 
         var toProcess = new DataTable();
         toProcess.Columns.Add("ToFind");

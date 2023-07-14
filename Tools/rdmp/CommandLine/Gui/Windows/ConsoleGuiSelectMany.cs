@@ -46,19 +46,21 @@ public class ConsoleGuiSelectMany : Window
         Modal = true;
         ColorScheme = ConsoleMainWindow.ColorScheme;
 
-        lv = new ListView(available);
-        lv.AllowsMarking = true;
-        lv.AllowsMultipleSelection = true;
+        lv = new ListView(available)
+        {
+            AllowsMarking = true,
+            AllowsMultipleSelection = true,
 
-        lv.Width = Dim.Fill();
-        lv.Height = Dim.Fill(1);
+            Width = Dim.Fill(),
+            Height = Dim.Fill(1)
+        };
         lv.KeyPress += Lv_KeyPress;
         Add(lv);
 
         var lblSearch = new Label
         {
             Text = "Search:",
-            Y = Pos.Bottom(lv),
+            Y = Pos.Bottom(lv)
         };
         Add(lblSearch);
 
@@ -73,7 +75,7 @@ public class ConsoleGuiSelectMany : Window
 
         Title = prompt;
             
-        this._activator = activator;
+        _activator = activator;
     }
 
     private void TbSearch_TextChanged(NStack.ustring obj)
@@ -86,7 +88,7 @@ public class ConsoleGuiSelectMany : Window
         var matchingFilter = _original.Except(ticked)
             .Where(o => string.IsNullOrWhiteSpace(search) || o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
             .ToArray();
-            
+
         // make a list of all marked followed by unmarked but matching filter
         var all = ticked.ToList();
         all.AddRange(matchingFilter);
@@ -96,7 +98,7 @@ public class ConsoleGuiSelectMany : Window
         lv.SetSource(all);
 
         // since we changed the source we need to remark the originally ticked ones
-        for(var i=0;i<ticked.Length;i++)
+        for(var i =0;i<ticked.Length;i++)
         {
             lv.Source.SetMark(i, true);
         }

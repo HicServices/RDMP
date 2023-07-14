@@ -22,7 +22,7 @@ internal class ExecuteSqlInDleStage
 {
     private readonly IDataLoadJob _job;
     private readonly LoadStage _loadStage;
-    Regex _regexEntity = new Regex(@"{([CT]):(\d+)}",RegexOptions.IgnoreCase);
+    private Regex _regexEntity = new(@"{([CT]):(\d+)}",RegexOptions.IgnoreCase);
 
     public ExecuteSqlInDleStage(IDataLoadJob job, LoadStage loadStage)
     {
@@ -39,7 +39,7 @@ internal class ExecuteSqlInDleStage
         {
             Dictionary<int,Stopwatch> performance;
 
-                
+
             using (var con = db.Server.GetConnection())
             {
                 con.Open();
@@ -76,30 +76,22 @@ internal class ExecuteSqlInDleStage
             throw new ExecuteSqlFileRuntimeTaskException(
                 $"Error performing substitution in Sql File, Failed to replace match {match.Value} due to parse expectations",e);
         }
-            
+
         var tables = _job.RegularTablesToLoad.Union(_job.LookupTablesToLoad);
-            
+
         var namer = _job.Configuration.DatabaseNamer;
 
         switch (entity)
         {
             case 'T':
-                var toReturnTable = tables.SingleOrDefault(t => t.ID == id);
-
-                if (toReturnTable == null)
-                    throw new ExecuteSqlFileRuntimeTaskException(
+                var toReturnTable = tables.SingleOrDefault(t => t.ID == id) ?? throw new ExecuteSqlFileRuntimeTaskException(
                         $"Failed to find a TableInfo in the load with ID {id}.  All TableInfo IDs referenced in script must be part of the LoadMetadata");
-
                 return toReturnTable.GetRuntimeName(_loadStage, namer);
 
             case 'C':
 
-                var toReturnColumn = tables.SelectMany(t=>t.ColumnInfos).SingleOrDefault(t => t.ID == id);
-
-                if (toReturnColumn == null)
-                    throw new ExecuteSqlFileRuntimeTaskException(
+                var toReturnColumn = tables.SelectMany(t=>t.ColumnInfos).SingleOrDefault(t => t.ID == id) ?? throw new ExecuteSqlFileRuntimeTaskException(
                         $"Failed to find a ColumnInfo in the load with ID {id}.  All ColumnInfo IDs referenced in script must be part of the LoadMetadata");
-
                 var db = toReturnColumn.TableInfo.GetDatabaseRuntimeName(_loadStage, namer);
                 var tbl = toReturnColumn.TableInfo.GetRuntimeName(_loadStage, namer);
                 var col = toReturnColumn.GetRuntimeName(_loadStage);

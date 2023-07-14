@@ -13,7 +13,7 @@ namespace Rdmp.Core.Validation.Constraints.Primary;
 /// Field must contain a chi number, this is a 10 digit number in which the first 6 digits are the patients date of birth and the last 2 digits are
 /// a gender digit and a checksum.  Validation will fail if the checksum is invalid or the value does not match the pattern.
 /// </summary>
-public class Chi : PrimaryConstraint
+public partial class Chi : PrimaryConstraint
 {
     public override ValidationFailure Validate(object value)
     {
@@ -21,21 +21,17 @@ public class Chi : PrimaryConstraint
             return null;
 
 
-        var valueAsString = value as string;
-
-        if(valueAsString == null)
+        if(value is not string valueAsString)
             return new ValidationFailure(
                 $"Incompatible type, CHIs must be strings, value passed was of type {value.GetType().Name}",this);
 
-        string reason;
-
-        if (!IsValidChi(valueAsString, out reason))
+        if (!IsValidChi(valueAsString, out var reason))
             return new ValidationFailure(reason,this);
            
         return null;
     }
 
-        
+
     public override void RenameColumn(string originalName, string newName)
     {
             
@@ -55,20 +51,19 @@ public class Chi : PrimaryConstraint
             return false;
         }
 
-        var dd = columnValueAsString.Substring(0, 2);
+        var dd = columnValueAsString[..2];
         var mm = columnValueAsString.Substring(2, 2);
         var yy = columnValueAsString.Substring(4, 2);
 
-        DateTime outDt;
         //maybe tryparse instead
-        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out outDt) == false)
+        if (DateTime.TryParse($"{dd}/{mm}/{yy}", out DateTime outDt) == false)
         {
             reason = "First 6 numbers of CHI did not constitute a valid date";
             return false;
         }
 
 
-        if (columnValueAsString.Substring(columnValueAsString.Length - 1) != GetCHICheckDigit(columnValueAsString))
+        if (columnValueAsString[^1..] != GetCHICheckDigit(columnValueAsString))
         {
             reason = "CHI check digit did not match";
             return false;
@@ -92,15 +87,15 @@ public class Chi : PrimaryConstraint
         lsCHI = sCHI.Length; // Must be 10!!
 
         sum = 0;
-        c = (int)'0';
+        c = '0';
         for (var i = 0; i < lsCHI - 1; i++)
-            sum += ((int)(sCHI.Substring(i, 1)[0]) - c) * (lsCHI - i);
-        sum = sum % 11;
+            sum += (sCHI.Substring(i, 1)[0] - c) * (lsCHI - i);
+        sum %= 11;
 
         c = 11 - sum;
         if (c == 11) c = 0;
 
-        return ((char)(c + (int)'0')).ToString();
+        return ((char)(c + '0')).ToString();
 
     }
 
@@ -109,16 +104,15 @@ public class Chi : PrimaryConstraint
     /// </summary>
     /// <param name="chi"></param>
     /// <returns>1 for male and 0 for female</returns>
-    public int GetSex(string chi)
+    public static int GetSex(string chi)
     {
-        string errorReport;
 
-        if (!IsValidChiNumber(chi, out errorReport))
+        if (!IsValidChiNumber(chi, out string errorReport))
             throw new ArgumentException("Invalid CHI");
 
         var sexChar = chi[8];
 
-        return (int)(sexChar % 2);
+        return sexChar % 2;
     }
 
     /// <summary>
@@ -137,15 +131,15 @@ public class Chi : PrimaryConstraint
         // Value of 10 indicates a checksum error
         var checkDigit = ComputeChecksum(strChi);
 
-        return (checkDigit != 10 && (int)Char.GetNumericValue(strChi[9]) == checkDigit);
+        return checkDigit != 10 && (int)char.GetNumericValue(strChi[9]) == checkDigit;
     }
 
     private static bool isWellFormedChi(string strChi)
     {
-        if (strChi == null || strChi.Length != 10)
+        if (strChi is not { Length: 10 })
             return false;
 
-        var r = new Regex("^[0-9]{10}$");
+        var r = TenDigits();
         if (!r.IsMatch(strChi))
             return false;
 
@@ -157,7 +151,7 @@ public class Chi : PrimaryConstraint
         var sum = SumDigits(chi);
         var checkDigit = 0;
 
-        var n = (11 - (sum % 11));
+        var n = 11 - sum % 11;
         if (n < 10)
             checkDigit = n;
 
@@ -176,4 +170,6 @@ public class Chi : PrimaryConstraint
         return sum;
     }
 
+    [GeneratedRegex("^[0-9]{10}$")]
+    private static partial Regex TenDigits();
 }

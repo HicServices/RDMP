@@ -197,7 +197,7 @@ public class ReleaseRunner:ManyRunner
             else
             {
                 //it's been extracted!, who extracted it?
-                var destinationThatExtractedIt = (IExecuteDatasetExtractionDestination)new ObjectConstructor().Construct(extractionResults.GetDestinationType());
+                var destinationThatExtractedIt = (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(extractionResults.GetDestinationType());
 
                 //destination tell us how releasable it is
                 var releasePotential = destinationThatExtractedIt.GetReleasePotential(RepositoryLocator, selectedDataSet);
@@ -268,7 +268,7 @@ public class ReleaseRunner:ManyRunner
 
     public object GetState(IExtractionConfiguration configuration)
     {
-        var matches = GetCheckerResults<ReleaseEnvironmentPotential>((rp) => rp.Configuration.Equals(configuration));
+        var matches = GetCheckerResults<ReleaseEnvironmentPotential>(rp => rp.Configuration.Equals(configuration));
 
         if (matches.Length == 0)
             return null;
@@ -327,9 +327,6 @@ public class ReleaseRunner:ManyRunner
     {
         var result = GetSingleCheckerResults<GlobalsReleaseChecker>();
 
-        if (result == null)
-            return null;
-
-        return result.GetWorst();
+        return result?.GetWorst();
     }
 }

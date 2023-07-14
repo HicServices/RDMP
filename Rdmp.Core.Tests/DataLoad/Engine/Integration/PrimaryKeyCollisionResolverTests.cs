@@ -20,16 +20,14 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void PrimaryKeyCollisionResolverMultilation_Check_Passes()
     {
-        TableInfo t;
-        ColumnInfo c1;
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2, out c3);
+        SetupTableInfos(out var t, out var c1, out var c2, out var c3);
         try
         {
-            var mutilation = new PrimaryKeyCollisionResolverMutilation();
-            mutilation.TargetTable = t;
-                
+            var mutilation = new PrimaryKeyCollisionResolverMutilation
+            {
+                TargetTable = t
+            };
+
             c1.IsPrimaryKey = true;
             c1.SaveToDatabase();
 
@@ -42,7 +40,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             c3.SaveToDatabase();
 
             Assert.DoesNotThrow(() => mutilation.Check(new ThrowImmediatelyCheckNotifier()));
-            
+
         }
         finally
         {
@@ -54,15 +52,13 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNoColumnOrderConfigured()
     {
-        TableInfo t;
-        ColumnInfo c1;
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2,out c3);
+        SetupTableInfos(out var t, out ColumnInfo c1, out ColumnInfo c2, out ColumnInfo c3);
         try
         {
-            var mutilation = new PrimaryKeyCollisionResolverMutilation();
-            mutilation.TargetTable = t;
+            var mutilation = new PrimaryKeyCollisionResolverMutilation
+            {
+                TargetTable = t
+            };
             try
             {
 
@@ -85,19 +81,15 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     public void PrimaryKeyCollisionResolverMultilation_Check_ThrowsBecauseNotInitialized()
     {
         var mutilation = new PrimaryKeyCollisionResolverMutilation();
-            
+
         var ex = Assert.Throws<Exception>(()=>mutilation.Check(new ThrowImmediatelyCheckNotifier()));
         StringAssert.Contains("Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",ex.Message);
     }
 
-    [Test]     
+    [Test]
     public void GenerateSQL_OrderCorrect()
     {
-        TableInfo t;
-        ColumnInfo c1;
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2,out c3);
+        SetupTableInfos(out var t, out var c1, out var c2, out var c3);
         try
         {
             c1.IsPrimaryKey = true;
@@ -122,7 +114,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             //column 2 has the following null substitute, is Ascending order and is the first of two
             Assert.IsTrue(sql.Contains("ISNULL([col2],-9223372036854775808) ASC,"));
 
-            //column 3 has the following null substitute and is descending and is not followed by another column 
+            //column 3 has the following null substitute and is descending and is not followed by another column
             Assert.IsTrue(sql.Contains("ISNULL([col3],-2147483648) DESC"));
         }
         finally
@@ -134,11 +126,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void NoColumnOrdersConfigured_ThrowsException()
     {
-        TableInfo t;
-        ColumnInfo c1;
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2, out c3);
+        SetupTableInfos(out var t, out var c1, out ColumnInfo c2, out ColumnInfo c3);
         try
         {
             c1.IsPrimaryKey = true;
@@ -157,12 +145,8 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
     [Test]
     public void NoPrimaryKeys_ThrowsException()
     {
-        TableInfo t;
-        ColumnInfo c1;
-        ColumnInfo c2;
-        ColumnInfo c3;
-        SetupTableInfos(out t, out c1, out c2,out c3);
-           
+        SetupTableInfos(out var t, out ColumnInfo c1, out ColumnInfo c2, out ColumnInfo c3);
+
         try
         {
             var resolver = new PrimaryKeyCollisionResolver(t);

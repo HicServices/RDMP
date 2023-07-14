@@ -39,16 +39,14 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionControl
 {
     public LoadEventsTreeViewObjectCollection Collection {get;set;}
-                
-    private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
+
+    private BackgroundWorker _populateLoadHistory = new();
     private ArchivalDataLoadInfo[] _populateLoadHistoryResults = Array.Empty<ArchivalDataLoadInfo>();
     private CancellationTokenSource _populateLoadHistoryCancel;
-        
-
-    readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
-    readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
-    readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox() { Text = "1000" };
-    readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
+    private readonly ToolStripTextBox _tbFilterBox = new();
+    private readonly ToolStripButton _btnApplyFilter = new("Apply");
+    private readonly ToolStripTextBox _tbToFetch = new() { Text = "1000" };
+    private readonly ToolStripButton _btnFetch = new("Go");
 
     private int _toFetch = 1000;
 
@@ -82,12 +80,12 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDescription, new Guid("6b09f39c-2b88-41ed-a396-42a2d2288952"));
         RDMPCollectionCommonFunctionality.SetupColumnTracking(treeView1, olvDate, new Guid("d0caf588-cff8-4e49-b755-ed9aaf320f1a"));
     }
-        
-    void TbToFetchTextChanged(object sender, EventArgs e)
+
+    private void TbToFetchTextChanged(object sender, EventArgs e)
     {
         try
         {
-            _toFetch = Int32.Parse(_tbToFetch.Text);
+            _toFetch = int.Parse(_tbToFetch.Text);
             _tbToFetch.ForeColor = Color.Black;
         }
         catch (Exception)
@@ -99,31 +97,26 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
     private object olvDescription_AspectGetter(object rowObject)
     {
-        var adi = rowObject as ArchivalDataLoadInfo;
-        if (adi != null)
+        if (rowObject is ArchivalDataLoadInfo adi)
             return adi.ToString();
 
-        var cat = rowObject as LoadEventsTreeView_Category;
-        if (cat != null)
+        if (rowObject is LoadEventsTreeView_Category cat)
             return cat.ToString();
 
-        var fe = rowObject as ArchivalFatalError;
-        if (fe != null)
+        if (rowObject is ArchivalFatalError fe)
             return fe.ToShortString();
 
-        var ti = rowObject as ArchivalTableLoadInfo;
-        if (ti != null)
+        if (rowObject is ArchivalTableLoadInfo ti)
             return
                 $"{ti.TargetTable}(I={WithCommas(ti.Inserts)} U={WithCommas(ti.Updates)} D={WithCommas(ti.Deletes)})";
 
-        var pr = rowObject as ArchivalProgressLog;
-        if (pr != null)
+        if (rowObject is ArchivalProgressLog pr)
             return pr.Description;
 
         throw new NotSupportedException();
     }
 
-    private string WithCommas(int? i)
+    private static string WithCommas(int? i)
     {
         if (!i.HasValue)
             return @"N\A";
@@ -134,36 +127,28 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
     private object olvDate_AspectGetter(object rowObject)
     {
-        var adi = rowObject as ArchivalDataLoadInfo;
-            
-        if(adi != null)
+        if(rowObject is ArchivalDataLoadInfo adi)
             return adi.StartTime;
 
-        var cat = rowObject as LoadEventsTreeView_Category;
-        if (cat != null)
+        if (rowObject is LoadEventsTreeView_Category cat)
             return null;
 
-        var fe = rowObject as ArchivalFatalError;
-        if (fe != null)
+        if (rowObject is ArchivalFatalError fe)
             return fe.Date;
 
-        var ti = rowObject as ArchivalTableLoadInfo;
-        if (ti != null)
+        if (rowObject is ArchivalTableLoadInfo ti)
             return ti.Start;
 
-        var pr = rowObject as ArchivalProgressLog;
-        if (pr != null)
+        if (rowObject is ArchivalProgressLog pr)
             return pr.Date;
             
         throw new NotSupportedException();
     }
 
-    void treeView1_FormatRow(object sender, FormatRowEventArgs e)
+    private void treeView1_FormatRow(object sender, FormatRowEventArgs e)
     {
-        var dli = e.Model as ArchivalDataLoadInfo;
-
         //if it is a data load info thing
-        if (dli != null)
+        if (e.Model is ArchivalDataLoadInfo dli)
             if (dli.HasErrors)
                 e.Item.ForeColor = Color.DarkOrange;
             else if (dli.EndTime == null) //did not end
@@ -176,9 +161,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     {
         var children = new List<object>();
 
-        var dli = model as ArchivalDataLoadInfo;
-
-        if (dli != null)
+        if (model is ArchivalDataLoadInfo dli)
         {
 
             if(dli.Errors.Any())
@@ -191,8 +174,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
                 children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.OrderByDescending(d => d.Start).ToArray(),LoggingTables.TableLoadRun, dli.ID));
         }
 
-        var category = model as LoadEventsTreeView_Category;
-        if (category != null)
+        if (model is LoadEventsTreeView_Category category)
             return category.Children;
 
         return children;
@@ -201,9 +183,9 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     private class LoadEventsTreeView_Category
     {
         public object[] Children { get; set; }
-            
+
         private readonly string _name;
-            
+
         public readonly LoggingTables AssociatedTable;
         public readonly int RunId;
 
@@ -233,7 +215,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         return false;
     }
 
-    void _populateLoadHistory_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    private void _populateLoadHistory_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
         llLoading.Visible = false;
         pbLoading.Visible = false;
@@ -260,12 +242,13 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         treeView1.ClearObjects();
     }
 
-    LogManager _logManager;
-    void _populateLoadHistory_DoWork(object sender, DoWorkEventArgs e)
+    private LogManager _logManager;
+
+    private void _populateLoadHistory_DoWork(object sender, DoWorkEventArgs e)
     {
-        ArchivalDataLoadInfo[] results;
         try
         {
+            ArchivalDataLoadInfo[] results;
             try
             {
                 _logManager = new LogManager(Collection.RootObject.GetDistinctLoggingDatabase());
@@ -318,8 +301,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         if (_populateLoadHistory.IsBusy)
             _populateLoadHistory.CancelAsync();
 
-        if (_populateLoadHistoryCancel != null)
-            _populateLoadHistoryCancel.Cancel();
+        _populateLoadHistoryCancel?.Cancel();
     }
 
     private void llLoading_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -339,16 +321,14 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     {
         var RightClickMenu = new ContextMenuStrip();
 
-        var tli = e.Model as ArchivalTableLoadInfo;
-        var category = e.Model as LoadEventsTreeView_Category;
 
-        if (category != null)
+        if (e.Model is LoadEventsTreeView_Category category)
         {
-            var cmd = new ExecuteCommandViewLogs(Activator,new LogViewerFilter(category.AssociatedTable){Run = category.RunId});
+            var cmd = new ExecuteCommandViewLogs(Activator, new LogViewerFilter(category.AssociatedTable) { Run = category.RunId });
             RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, Activator));
         }
 
-        if (tli != null && Collection?.RootObject is LoadMetadata lmd)
+        if (e.Model is ArchivalTableLoadInfo tli && Collection?.RootObject is LoadMetadata lmd)
         {
             //if it is not a freaky temp table
             if (!tli.TargetTable.EndsWith("_STAGING") && !tli.TargetTable.EndsWith("_RAW"))
@@ -362,15 +342,13 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
                 {
                     mi.Enabled = false;
                     mi.ToolTipText = "No records were changed by this load";
-                }                     
+                }
 
                 RightClickMenu.Items.Add(mi);
             }
         }
 
-        var fatalError = e.Model as ArchivalFatalError;
-
-        if (fatalError != null && _logManager != null)
+        if (e.Model is ArchivalFatalError fatalError && _logManager != null)
         {
             var toResolve = treeView1.SelectedObjects.OfType<ArchivalFatalError>().ToArray();
             RightClickMenu.Items.Add("Resolve Fatal Error(s)", null, (a, b) =>
@@ -399,10 +377,10 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
             
         if(o is ArchivalDataLoadInfo dli)
             new ExecuteCommandViewLogs(Activator,new LogViewerFilter(LoggingTables.DataLoadRun){Run = dli.ID}).Execute();
-        else 
+        else
         if (o is LoadEventsTreeView_Category cat)
             new ExecuteCommandViewLogs(Activator,  new LogViewerFilter(cat.AssociatedTable) { Run = cat.RunId}).Execute();
-        else 
+        else
         if(o is IHasSummary s)
             WideMessageBox.Show(s);
             
@@ -422,12 +400,12 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
             //We manually implement this here because the default TreeView will only copy 340? characters... very weird but hey Windows Forms
             if (sb.Length != 0)
                 Clipboard.SetText(sb.ToString());
-                
+
         }
     }
-        
-        
-        
+
+
+
     public IPersistableObjectCollection GetCollection()
     {
         return Collection;

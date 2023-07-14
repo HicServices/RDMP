@@ -31,7 +31,7 @@ public class ProcessTaskTests : DatabaseTests
             var clone = processTask1.CloneToNewLoadMetadataStage(test,LoadStage.GetFiles);
             Assert.AreNotSame(clone.ID, processTask1.ID);
             Assert.IsFalse(clone.ID == processTask1.ID);
-            
+
             //get fresh copy out of database to ensure it is still there
             var orig = CatalogueRepository.GetObjectByID<ProcessTask>(processTask1.ID);
             clone = CatalogueRepository.GetObjectByID<ProcessTask>(clone.ID);
@@ -66,9 +66,11 @@ public class ProcessTaskTests : DatabaseTests
 
         //setup things to clone in parent1
         var processTask1 = new ProcessTask(CatalogueRepository, parent1, LoadStage.AdjustRaw);
-        var arg = new ProcessTaskArgument(CatalogueRepository, processTask1);
-        arg.Name = "TestArg";
-        arg.SetType(typeof (System.String));
+        var arg = new ProcessTaskArgument(CatalogueRepository, processTask1)
+        {
+            Name = "TestArg"
+        };
+        arg.SetType(typeof (string));
         arg.SetValue("TestValue");
         arg.SaveToDatabase();
 
@@ -103,10 +105,10 @@ public class ProcessTaskTests : DatabaseTests
             Assert.AreEqual(parent1.ID, orig.LoadMetadata_ID);
             Assert.AreEqual(parent2.ID, clone.LoadMetadata_ID);
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                
+
             //////////////////////////////////////////////////////////////////CHECK CLONAGE OF ARGUMENTS ////////////////////////////////////////////////////////////
 
-            var clonearg= clone.ProcessTaskArguments.SingleOrDefault(); 
+            var clonearg = clone.ProcessTaskArguments.SingleOrDefault(); 
             Assert.NotNull(clonearg);
 
             Assert.AreNotEqual(clonearg.ID,arg.ID);

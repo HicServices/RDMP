@@ -12,7 +12,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Rules;
 
-class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
+internal class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 {
     private readonly string _problemDescription;
 
@@ -42,9 +42,7 @@ class UniqueRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 
     private bool AreEqual(T arg, object currentValue)
     {
-        var s = currentValue as string;
-
-        if (s != null)
+        if (currentValue is string s)
             return string.Equals(s, PropertyToCheck(arg) as string, StringComparison.CurrentCultureIgnoreCase);
 
         return Equals(currentValue, PropertyToCheck(arg));

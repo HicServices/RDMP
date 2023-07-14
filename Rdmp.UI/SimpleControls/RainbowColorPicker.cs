@@ -21,13 +21,15 @@ public class RainbowColorPicker
     {
         Colors = new List<Color>();
 
-        var baseColors = new List<Color>();  // create a color list
-        baseColors.Add(Color.RoyalBlue);
-        baseColors.Add(Color.LightSkyBlue);
-        baseColors.Add(Color.LightGreen);
-        baseColors.Add(Color.Yellow);
-        baseColors.Add(Color.Orange);
-        baseColors.Add(Color.Red);
+        var baseColors = new List<Color>
+        {
+            Color.RoyalBlue,
+            Color.LightSkyBlue,
+            Color.LightGreen,
+            Color.Yellow,
+            Color.Orange,
+            Color.Red
+        };  // create a color list
         Colors = interpolateColors(baseColors, numberOfColors);
     }
 
@@ -35,13 +37,15 @@ public class RainbowColorPicker
     {
         Colors = new List<Color>();
 
-        var baseColors = new List<Color>();  // create a color list
-        baseColors.Add(color1);
-        baseColors.Add(color2);
+        var baseColors = new List<Color>
+        {
+            color1,
+            color2
+        };  // create a color list
         Colors = interpolateColors(baseColors, numberOfColors);
     }
 
-    List<Color> interpolateColors(List<Color> stopColors, int count)
+    private static List<Color> interpolateColors(List<Color> stopColors, int count)
     {
         var gradient = new SortedDictionary<float, Color>();
         for (var i = 0; i < stopColors.Count; i++)
@@ -54,8 +58,10 @@ public class RainbowColorPicker
             var bmpCRect = new Rectangle(Point.Empty, bmp.Size);
             var br = new LinearGradientBrush
                 (bmpCRect, Color.Empty, Color.Empty, 0, false);
-            var cb = new ColorBlend();
-            cb.Positions = new float[gradient.Count];
+            var cb = new ColorBlend
+            {
+                Positions = new float[gradient.Count]
+            };
             for (var i = 0; i < gradient.Count; i++)
                 cb.Positions[i] = gradient.ElementAt(i).Key;
             cb.Colors = gradient.Values.ToArray();

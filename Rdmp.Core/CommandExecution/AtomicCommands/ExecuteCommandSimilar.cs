@@ -26,9 +26,8 @@ public class ExecuteCommandSimilar : BasicCommandExecution
     /// Collection of all Types where finding differences between instances is supported by 
     /// <see cref="Include(IMapsDirectlyToDatabaseTable)"/>
     /// </summary>
-    private readonly Type[] _diffSupportedTypes = new Type[]{ typeof(ColumnInfo) };
-
-    ReadOnlyCollection<IMapsDirectlyToDatabaseTable> _matched;
+    private readonly Type[] _diffSupportedTypes = { typeof(ColumnInfo) };
+    private ReadOnlyCollection<IMapsDirectlyToDatabaseTable> _matched;
     /// <summary>
     /// The objects matched by the command (similar or different objects)
     /// </summary>
@@ -139,16 +138,16 @@ public class ExecuteCommandSimilar : BasicCommandExecution
         };
     }
 
-    static readonly char[] trimChars = new char[] { ' ', '[', ']', '\'', '"', '`' };
+    private static readonly char[] trimChars = { ' ', '[', ']', '\'', '"', '`' };
 
-    private bool SimilarWord(string name1, string name2, StringComparison comparisonType)
+    private static bool SimilarWord(string name1, string name2, StringComparison comparisonType)
     {
         if (string.IsNullOrWhiteSpace(name1) || string.IsNullOrWhiteSpace(name2))
             return false;
 
         return string.Equals(
-            name1.Substring(Math.Max(0,name1.LastIndexOf('.'))).Trim(trimChars),
-            name2.Substring(Math.Max(0,name2.LastIndexOf('.'))).Trim(trimChars),
+            name1[Math.Max(0,name1.LastIndexOf('.'))..].Trim(trimChars),
+            name2[Math.Max(0,name2.LastIndexOf('.'))..].Trim(trimChars),
             comparisonType);
     }
 

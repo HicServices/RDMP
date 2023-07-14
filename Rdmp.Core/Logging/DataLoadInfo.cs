@@ -38,7 +38,7 @@ public class DataLoadInfo : IDataLoadInfo
 
     public DiscoveredServer DatabaseSettings => _server;
 
-    private object oLock = new object();
+    private object oLock = new();
         
         
     #region Property setup (these throw exceptions if you try to read them after the record is closed)
@@ -161,7 +161,7 @@ SELECT @@IDENTITY;", con);
 
                     _server.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed,DateTime.Now);
                     _server.AddParameterWithValueToCommand("@ID", cmdUpdateToClosed, ID);
-                        
+
                     var rowsAffected = cmdUpdateToClosed.ExecuteNonQuery();
 
                     if (rowsAffected != 1)
@@ -180,8 +180,8 @@ SELECT @@IDENTITY;", con);
                     throw;
                 }
 
-                //once a record has been commited to the database it is redundant and no further attempts to read/change it should be made by anyone
-                foreach (var t in this.TableLoads.Values)
+                //once a record has been committed to the database it is redundant and no further attempts to read/change it should be made by anyone
+                foreach (var t in TableLoads.Values)
                 {
                     //close any table loads that have not yet completed
                     if (!t.IsClosed)
@@ -192,7 +192,7 @@ SELECT @@IDENTITY;", con);
     }
 
 
-    private Dictionary<int, TableLoadInfo> _TableLoads = new Dictionary<int, TableLoadInfo>();
+    private Dictionary<int, TableLoadInfo> _TableLoads = new();
 
     public Dictionary<int, TableLoadInfo> TableLoads => _TableLoads;
 
@@ -201,7 +201,7 @@ SELECT @@IDENTITY;", con);
         return new TableLoadInfo(this, suggestedRollbackCommand, destinationTable, sources, expectedInserts);
     }
 
-    public static DataLoadInfo Empty= new DataLoadInfo();
+    public static DataLoadInfo Empty= new();
 
     private DataLoadInfo()
     {
@@ -236,7 +236,7 @@ SELECT @@IDENTITY;", con);
             //look up the fatal error ID (get hte name of the Enum so that we can refactor if nessesary without breaking the code looking for a constant string)
             var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
-                
+
             var cmdLookupStatusID = _server.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
             _server.AddParameterWithValueToCommand("@status",cmdLookupStatusID, initialErrorStatus);
 

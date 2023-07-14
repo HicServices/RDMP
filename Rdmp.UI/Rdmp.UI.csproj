@@ -14,7 +14,7 @@
     <description>UI package for plugin development</description>
     <copyright>Copyright 2018-2019</copyright>
     <ProjectGuid>60721bce-e328-45cf-b6d2-b627364fbbfa</ProjectGuid>
-    <TargetFramework>net6.0-windows7.0</TargetFramework>
+    <TargetFramework>net7.0-windows7.0</TargetFramework>
     <Copyright>Copyright ©  2019</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

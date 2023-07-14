@@ -35,7 +35,7 @@ public partial class SimpleCohortSetUI : UserControl
     private bool lockIn = true;
     private bool _knownIdentifiersMode;
 
-    private List<SimpleFilterUI> _filterUIs = new List<SimpleFilterUI>();
+    private List<SimpleFilterUI> _filterUIs = new();
 
     public SimpleCohortSetUI()
     {
@@ -68,9 +68,7 @@ public partial class SimpleCohortSetUI : UserControl
 
     private void cbxCatalogues_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var cata = cbxCatalogues.SelectedItem as Catalogue;
-
-        if (cata == null)
+        if (cbxCatalogues.SelectedItem is not Catalogue cata)
             return;
 
         //if the Catalogue changes clear the old filters because they apply to the last dataset
@@ -180,10 +178,7 @@ public partial class SimpleCohortSetUI : UserControl
 
     private void btnAddFilter_Click(object sender, EventArgs e)
     {
-
-        var f = ddAvailableFilters.SelectedItem as ExtractionFilter;
-
-        if(f == null)
+        if(ddAvailableFilters.SelectedItem is not ExtractionFilter f)
             return;
 
         AddFilter(f);
@@ -224,21 +219,23 @@ public partial class SimpleCohortSetUI : UserControl
 
     public void CreateCohortSet(CohortAggregateContainer targetContainer)
     {
-        var cata = cbxCatalogues.SelectedItem as Catalogue;
-
-        if (cata == null)
+        if (cbxCatalogues.SelectedItem is not Catalogue cata)
             return;
 
-        var cataCommand = new CatalogueCombineable(cata);
-        //use this one
-        cataCommand.ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation;
+        var cataCommand = new CatalogueCombineable(cata)
+        {
+            //use this one
+            ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation
+        };
 
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,cataCommand ,targetContainer);
-        cmd.SkipMandatoryFilterCreation = true;
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,cataCommand ,targetContainer)
+            {
+                SkipMandatoryFilterCreation = true
+            };
         cmd.Execute();
 
         var aggregate = cmd.AggregateCreatedIfAny;
-            
+
         var filterOp = (FilterContainerOperation) ddAndOr.SelectedItem;
 
         IContainer filterContainer;

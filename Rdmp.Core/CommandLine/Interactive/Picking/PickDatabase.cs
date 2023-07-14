@@ -18,7 +18,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking;
 public class PickDatabase : PickObjectBase
 {
     public override string Format => "DatabaseType:{DatabaseType}:[Name:{DatabaseName}:]{ConnectionString}";
-    public override string Help => 
+    public override string Help =>
         @"DatabaseType (Required):
     MicrosoftSQLServer
     MySql
@@ -29,16 +29,16 @@ ConnectionString (Required)";
     public override IEnumerable<string> Examples => new[]
     {
         "DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;",
-             
+
         //see https://stackoverflow.com/questions/4950897/odp-net-integrated-security-invalid-connection-string-argument
         "DatabaseType:Oracle:Name:Bob:Data Source=MyOracleDB;User Id=/;"
-            
+
     };
 
     public PickDatabase() : base(null,
-        new Regex("^DatabaseType:([A-Za-z]+):(Name:[^:]+:)?(.*)$",RegexOptions.IgnoreCase)) 
+        new Regex("^DatabaseType:([A-Za-z]+):(Name:[^:]+:)?(.*)$",RegexOptions.IgnoreCase))
     {
-            
+
     }
 
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
@@ -53,14 +53,11 @@ ConnectionString (Required)";
 
         DiscoveredDatabase db;
 
-        if (string.IsNullOrWhiteSpace(dbName))
-            db = server.GetCurrentDatabase();
-        else
-            db = server.ExpectDatabase(dbName);
+        db = string.IsNullOrWhiteSpace(dbName) ? server.GetCurrentDatabase() : server.ExpectDatabase(dbName);
 
         if(db == null)
             throw new CommandLineObjectPickerParseException("Missing database name parameter, it was not in connection string or specified explicitly",idx,arg);
-            
+
         return new CommandLineObjectPickerArgumentValue(arg,idx,db);
     }
 

@@ -22,11 +22,11 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
 {
     public int Top
     {
-        get => _arguments.ContainsKey(TopKey) ? int.Parse(_arguments[TopKey]) : 100;
+        get => _arguments.TryGetValue(TopKey,out var value) ? int.Parse(value) : 100;
         set => _arguments[TopKey] = value.ToString();
     }
 
-    Dictionary<string, string> _arguments = new Dictionary<string, string>();
+    private Dictionary<string, string> _arguments = new();
     private const string TopKey = "Top";
 
     private const string IncludeCohortIDKey = "IncludeCohortID";
@@ -36,7 +36,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
     /// </summary>
     public bool IncludeCohortID
     {
-        get => _arguments.ContainsKey(IncludeCohortIDKey) ? bool.Parse(_arguments[IncludeCohortIDKey]) : true;
+        get => !_arguments.TryGetValue(IncludeCohortIDKey,out var value) || bool.Parse(value);
         set => _arguments[IncludeCohortIDKey] = value.ToString();
     }
 
@@ -51,11 +51,11 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
 
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(_arguments);
+        return PersistStringHelper.SaveDictionaryToString(_arguments);
     }
     public override void LoadExtraText(string s)
     {
-        _arguments = Helper.LoadDictionaryFromString(s);
+        _arguments = PersistStringHelper.LoadDictionaryFromString(s);
     }
 
     public ExtractableCohort Cohort => DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault();
@@ -107,9 +107,10 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
     /// <returns></returns>
     private string GetSelectList(IExternalCohortTable ect)
     {
-        var selectList = new List<string>();
-
-        selectList.Add(ect.PrivateIdentifierField);
+        var selectList = new List<string>
+        {
+            ect.PrivateIdentifierField
+        };
 
         // if it is not an identifiable extraction
         if (!string.Equals(ect.PrivateIdentifierField, ect.ReleaseIdentifierField))

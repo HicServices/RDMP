@@ -23,7 +23,7 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 /// <summary>
 /// Wrapper for StandardDatabaseHelper (which tells you where RAW, STAGING and LIVE databases are during data load execution).  This class exists for two reasons
 /// 
-/// <para>Firstly to decide (based on IAttachers) whether RAW tables need to be scripted or whether they will appear magically during DLE execution (e.g. by attaching 
+/// <para>Firstly to decide (based on IAttachers) whether RAW tables need to be scripted or whether they will appear magically during DLE execution (e.g. by attaching
 /// an MDF file).</para>
 /// 
 /// <para>Secondly to allow for overriding the RAW database server (which defaults to localhost).  It is a good idea to have RAW on a different server to LIVE/STAGING
@@ -58,7 +58,7 @@ public class HICDatabaseConfiguration
         this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository,lmd.OverrideRAWServer)
     {
         var globalIgnorePattern = GetGlobalIgnorePatternIfAny(lmd.CatalogueRepository);
-            
+
         if(globalIgnorePattern != null && !string.IsNullOrWhiteSpace(globalIgnorePattern.Regex))
             IgnoreColumns = new Regex(globalIgnorePattern.Regex);
 
@@ -79,18 +79,13 @@ public class HICDatabaseConfiguration
     public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
     {
         //respects the override of LIVE server
-        var liveDatabase = liveServer.GetCurrentDatabase();
-
-        if (liveDatabase == null)
-            throw new Exception("Cannot load live without having a unique live named database");
+        var liveDatabase = liveServer.GetCurrentDatabase() ?? throw new Exception("Cannot load live without having a unique live named database");
 
         // Default namer
-        if (namer == null)
-            if(liveServer.DatabaseType == DatabaseType.PostgreSql)
-                //create the DLE tables on the live database because postgres can't handle cross database references
-                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName(),liveDatabase.GetRuntimeName()); 
-            else
-                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
+        //create the DLE tables on the live database because postgres can't handle cross database references
+        namer ??= liveServer.DatabaseType == DatabaseType.PostgreSql
+            ? new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName(), liveDatabase.GetRuntimeName())
+            : new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
 
         //if there are defaults
         if (overrideRAWServer == null && defaults != null)
@@ -98,14 +93,12 @@ public class HICDatabaseConfiguration
 
         DiscoveredServer rawServer;
         //if there was defaults and a raw default server
-        if (overrideRAWServer != null)
-            rawServer = DataAccessPortal.GetInstance().ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false); //get the raw server connection
-        else
-            rawServer = liveServer; //there is no raw override so we will have to use the live server for RAW too.
+        rawServer = overrideRAWServer != null ? DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false) : //get the raw server connection
+            liveServer; //there is no raw override so we will have to use the live server for RAW too.
 
         //populates the servers -- note that an empty rawServer value passed to this method makes it the localhost
         DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer,rawServer);
-            
+
         RequiresStagingTableCreation = true;
     }
 
@@ -123,7 +116,7 @@ public class HICDatabaseConfiguration
 
         foreach (var t in job.RegularTablesToLoad)
             yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));
-            
+
         if(includeLookups)
             foreach (var t in job.LookupTablesToLoad)
                 yield return db.ExpectTable(t.GetRuntimeName(stage, DatabaseNamer));

@@ -6,7 +6,7 @@
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 
-interface IHasLoadDiagramState
+internal interface IHasLoadDiagramState
 {
     LoadDiagramState State { get; }
 }

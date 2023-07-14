@@ -61,7 +61,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         pbCohortSource.Image = CatalogueIcons.ExternalCohortTable.ImageToBitmap();
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
-            TaskDescription = "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in.",
+            TaskDescription = "Describe the cohort you are trying to create.  Which Project it will be extracted with and which ExternalCohortTable it should be stored in."
         });
     }
 
@@ -101,9 +101,7 @@ public partial class CohortCreationRequestUI : RDMPForm
         }
         else if (rbRevisedCohort.Checked)
         {
-
-            var existing = ddExistingCohort.SelectedItem as ExtractableCohort;
-            if (existing == null)
+            if (ddExistingCohort.SelectedItem is not ExtractableCohort existing)
             {
                 MessageBox.Show("You must select an existing cohort");
                 return;
@@ -120,17 +118,21 @@ public partial class CohortCreationRequestUI : RDMPForm
 
             
         //construct the result
-        Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (IDataExportRepository)Project.Repository, tbDescription.Text);
-            
-        Result.NewCohortDefinition.CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort;
-            
+        Result = new CohortCreationRequest(Project, new CohortDefinition(null, name, version, (int)Project.ProjectNumber, _target), (IDataExportRepository)Project.Repository, tbDescription.Text)
+            {
+                NewCohortDefinition =
+                {
+                    CohortReplacedIfAny = ddExistingCohort.SelectedItem as ExtractableCohort
+                }
+            };
+
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
         Result.Check(notifier);
         if (notifier.GetWorst() <= CheckResult.Warning)
         {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
         else
         {
@@ -149,8 +151,8 @@ public partial class CohortCreationRequestUI : RDMPForm
     private void btnCancel_Click(object sender, EventArgs e)
     {
         Result = null;
-        this.DialogResult = DialogResult.Cancel;
-        this.Close();
+        DialogResult = DialogResult.Cancel;
+        Close();
     }
         
     private void rbNewCohort_CheckedChanged(object sender, EventArgs e)
@@ -175,9 +177,7 @@ public partial class CohortCreationRequestUI : RDMPForm
 
     private void ddExistingCohort_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var cohort = ddExistingCohort.SelectedItem as ExtractableCohort;
-
-        if (cohort != null)
+        if (ddExistingCohort.SelectedItem is ExtractableCohort cohort)
         {
             lblNewVersionNumber.Text = (cohort.ExternalVersion + 1).ToString();
             tbExistingCohortSource.Text = cohort.ExternalCohortTable.Name;

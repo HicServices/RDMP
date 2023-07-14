@@ -18,7 +18,7 @@ namespace Rdmp.UI.ChecksUI;
 public partial class RAGSmiley : UserControl, IRAGSmiley
 {
     private bool _alwaysShowHandCursor;
-        
+
     public bool AlwaysShowHandCursor
     {
         get => _alwaysShowHandCursor;
@@ -42,12 +42,12 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
     private void SetCorrectCursor()
     {
         if (AlwaysShowHandCursor || memoryCheckNotifier.Messages.Any())
-            this.Cursor = Cursors.Hand;
+            Cursor = Cursors.Hand;
         else
         if (pbYellow.Tag != null || pbRed.Tag != null)
-            this.Cursor = Cursors.Hand;
+            Cursor = Cursors.Hand;
         else
-            this.Cursor = Cursors.Arrow;
+            Cursor = Cursors.Arrow;
     }
 
     public RAGSmiley()
@@ -60,8 +60,10 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         pbYellow.Visible = false;
         pbRed.Visible = false;
 
-        _timer = new Timer();
-        _timer.Interval = 500;
+        _timer = new Timer
+        {
+            Interval = 500
+        };
         _timer.Tick += Timer_Tick;
         _timer.Start();
     }
@@ -120,7 +122,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
 
     public void ShowMessagesIfAny()
     {
-        pb_Click(this, new EventArgs());
+        pb_Click(this, EventArgs.Empty);
     }
 
     private void pb_Click(object sender, EventArgs e)
@@ -149,7 +151,7 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         _state = CheckResult.Fail;
         _exception = ex;
     }
-        
+
     public void Reset()
     {
         //reset the checks too so as not to leave old check results kicking about
@@ -158,9 +160,9 @@ public partial class RAGSmiley : UserControl, IRAGSmiley
         _exception = null;
     }
 
-    private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
+    private ToMemoryCheckNotifier memoryCheckNotifier = new();
     private Task _checkTask;
-    private object oTaskLock = new object();
+    private object oTaskLock = new();
     private Timer _timer;
     private CheckResult _state;
     private Exception _exception;

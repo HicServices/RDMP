@@ -25,12 +25,12 @@ public abstract class ManyRunner: Runner
     protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
     protected GracefulCancellationToken Token { get;private set; }
 
-    private readonly Dictionary<ICheckable, ToMemoryCheckNotifier> _checksDictionary = new Dictionary<ICheckable, ToMemoryCheckNotifier>();
+    private readonly Dictionary<ICheckable, ToMemoryCheckNotifier> _checksDictionary = new();
 
     /// <summary>
     /// Lock for all operations that read or write to <see cref="_checksDictionary"/>.  Use it if you want to enumerate / read the results
     /// </summary>
-    private readonly object _oLock = new object();
+    private readonly object _oLock = new();
 
     protected ManyRunner(ConcurrentRDMPCommandLineOptions options)
     {
@@ -54,13 +54,12 @@ public abstract class ManyRunner: Runner
             case CommandLineActivity.none:
                 break;
             case CommandLineActivity.run:
-                        
+
                 var runnables = GetRunnables();
 
                 foreach (var runnable in runnables)
                 {
-                    if (semaphore != null)
-                        semaphore.WaitOne();
+                    semaphore?.WaitOne();
 
                     var r = runnable;
                     tasks.Add(Task.Run(() =>
@@ -71,8 +70,7 @@ public abstract class ManyRunner: Runner
                         }
                         finally
                         {
-                            if (semaphore != null)
-                                semaphore.Release();
+                            semaphore?.Release();
                         }
                     }));
                 }
@@ -86,8 +84,7 @@ public abstract class ManyRunner: Runner
                 var checkables = GetCheckables(checkNotifier);
                 foreach (var checkable in checkables)
                 {
-                    if (semaphore != null)
-                        semaphore.WaitOne();
+                    semaphore?.WaitOne();
 
                     var checkable1 = checkable;
                     var memory = new ToMemoryCheckNotifier(checkNotifier);
@@ -103,8 +100,7 @@ public abstract class ManyRunner: Runner
                         }
                         finally
                         {
-                            if (semaphore != null)
-                                semaphore.Release();
+                            semaphore?.Release();
                         }
                     }));
                 }

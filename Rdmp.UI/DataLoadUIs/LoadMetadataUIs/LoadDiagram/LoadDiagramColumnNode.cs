@@ -41,14 +41,11 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
         _column = column;
         _bubble = bubble;
         ColumnName = _column.GetRuntimeName(_bubble.ToLoadStage());
-            
-        var colInfo = _column as ColumnInfo;
-        var preLoadDiscarded = _column as PreLoadDiscardedColumn;
 
-        if (preLoadDiscarded != null)
+        if (_column is PreLoadDiscardedColumn preLoadDiscarded)
             _expectedDataType = preLoadDiscarded.SqlDataType;
         else
-        if (colInfo != null)
+        if (_column is ColumnInfo colInfo)
             _expectedDataType = colInfo.GetRuntimeDataType(_bubble.ToLoadStage());
         else
             throw new Exception(
@@ -77,7 +74,7 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
     {
         return State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
     }
-        
+
     public ICombineToMakeCommand GetCombineable()
     {
 
@@ -111,21 +108,15 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((LoadDiagramColumnNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            var hashCode = (int) _bubble;
-            hashCode = (hashCode*397) ^ (_tableNode != null ? _tableNode.GetHashCode() : 0);
-            hashCode = (hashCode*397) ^ (ColumnName != null ? ColumnName.GetHashCode() : 0);
-            return hashCode;
-        }
+        return HashCode.Combine(_bubble, _tableNode, ColumnName);
     }
 
     public string WhatIsThis()
@@ -135,15 +126,14 @@ public class LoadDiagramColumnNode : Node,ICombineableSource, IHasLoadDiagramSta
             case LoadDiagramState.Different:
             case LoadDiagramState.Anticipated:
             case LoadDiagramState.Found:
-                switch (_bubble)
+                return _bubble switch
                 {
-                    case LoadBubble.Raw:
-                        return
-                            "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)";
-                    case LoadBubble.Staging:
-                        return "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE";
-                }
-                return "A Column that is involved in the load (based on the Catalogues associated with the load)";
+                    LoadBubble.Raw =>
+                        "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)",
+                    LoadBubble.Staging =>
+                        "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE",
+                    _ => "A Column that is involved in the load (based on the Catalogues associated with the load)"
+                };
             case LoadDiagramState.NotFound:
                 return "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
             case LoadDiagramState.New:

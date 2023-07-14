@@ -107,11 +107,9 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olvProperties, olvPropertyName, new Guid("b56adceb-2cd5-4f77-9be7-07fb38baad18"));
     }
 
-
-    void olvCatalogues_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
+    private void olvCatalogues_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        var ci = olvCatalogues.SelectedObject as CatalogueItem;
-        if(ci == null)
+        if(olvCatalogues.SelectedObject is not CatalogueItem ci)
             return;
 
         var menu =  new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(Activator), ci);
@@ -172,11 +170,10 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
     public void displayPreview()
     {
-            
-        var pi = olvProperties.SelectedObject as PropertyInfo;
-        var ci  = olvCatalogues.SelectedObject as CatalogueItem;
 
-        if (pi != null && ci != null)
+        var pi = olvProperties.SelectedObject as PropertyInfo;
+
+        if (pi != null && olvCatalogues.SelectedObject is CatalogueItem ci)
         {
             previewOldValue.ReadOnly = false;
             previewOldValue.Text = Convert.ToString(pi.GetValue(ci, null));
@@ -214,19 +211,19 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
 
         var highlighter = new ScintillaLineHighlightingHelper();
 
-        highlighter.ClearAll(previewNewValue);
-        highlighter.ClearAll(previewOldValue);
+        ScintillaLineHighlightingHelper.ClearAll(previewNewValue);
+        ScintillaLineHighlightingHelper.ClearAll(previewOldValue);
 
         var diff = new Diff();
-        foreach (var item in diff.DiffText(sOld, sNew))
+        foreach (var item in Diff.DiffText(sOld, sNew))
         {
                 
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
-                highlighter.HighlightLine(previewOldValue,i,Color.Pink);
+                ScintillaLineHighlightingHelper.HighlightLine(previewOldValue,i,Color.Pink);
                 
             //if it is single line change
             for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
-                highlighter.HighlightLine(previewNewValue, i, Color.LawnGreen);
+                ScintillaLineHighlightingHelper.HighlightLine(previewNewValue, i, Color.LawnGreen);
 
         }
     }
@@ -234,7 +231,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     //yes = do save and do propogate
     private void btnYes_Click(object sender, EventArgs e)
     {
-        this.DialogResult = DialogResult.Yes;
+        DialogResult = DialogResult.Yes;
 
             
         foreach (CatalogueItem ci in olvCatalogues.CheckedObjects)
@@ -245,21 +242,21 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
             ci.SaveToDatabase();
         }
 
-        this.Close();
+        Close();
     }
 
     //no = do save but don't propagate
     private void btnNo_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.No;
-        this.Close();
+        Close();
     }
 
     //cancel = don't save this and don't propagate
     private void btnCancel_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
             
     }
 

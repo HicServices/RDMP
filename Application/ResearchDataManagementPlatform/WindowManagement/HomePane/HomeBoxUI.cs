@@ -27,7 +27,7 @@ public partial class HomeBoxUI : UserControl
     private bool _doneSetup = false;
     private Type _openType;
 
-    RDMPCollectionCommonFunctionality CommonTreeFunctionality { get;} = new RDMPCollectionCommonFunctionality();
+    private RDMPCollectionCommonFunctionality CommonTreeFunctionality { get;} = new RDMPCollectionCommonFunctionality();
 
     public HomeBoxUI()
     {
@@ -79,8 +79,8 @@ public partial class HomeBoxUI : UserControl
                 btnNewDropdown.DropDownItems.AddRange(newCommands.Select(factory.CreateMenuItem).Cast<ToolStripItem>().ToArray());    
             }
 
-            olvName.AspectGetter = (o) => ((HistoryEntry)o).Object.ToString();
-            CommonTreeFunctionality.SetUp(RDMPCollection.None,olvRecent,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings()
+            olvName.AspectGetter = o => ((HistoryEntry)o).Object.ToString();
+            CommonTreeFunctionality.SetUp(RDMPCollection.None,olvRecent,activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings
             {
                 SuppressChildrenAdder = true
             });

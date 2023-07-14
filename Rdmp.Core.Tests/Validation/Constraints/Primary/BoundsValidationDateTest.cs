@@ -14,7 +14,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-class BoundsValidationDateTest: ValidationTests
+internal class BoundsValidationDateTest: ValidationTests
 {
     private Dictionary<string, object> _d;
 
@@ -164,7 +164,7 @@ class BoundsValidationDateTest: ValidationTests
             
         if(result == null)
             Assert.Fail();
-            
+
         var l = result.GetExceptionList();
 
         StringAssert.EndsWith($"Expected a date greater than [{b.LowerFieldName}].", l[0].Message);

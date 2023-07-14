@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
-class RowDeleter: IPluginDataFlowComponent<DataTable>
+internal class RowDeleter: IPluginDataFlowComponent<DataTable>
 {
     [DemandsInitialization("Looks for a column with exactly this name", Mandatory = true)]
     public string ColumnNameToFind { get; set; }
@@ -27,7 +27,7 @@ class RowDeleter: IPluginDataFlowComponent<DataTable>
     public Regex DeleteRowsWhereValuesMatch { get; set; }
 
     private int _deleted;
-    private Stopwatch _sw = new Stopwatch();
+    private Stopwatch _sw = new();
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {

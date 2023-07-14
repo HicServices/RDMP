@@ -80,7 +80,7 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
 
         //user must have a Catalogue
         var catalogueString = UserSettings.CatalogueConnectionString;
-            
+
         //user may have a DataExportManager
         var dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
 

@@ -31,11 +31,11 @@ public class HistoryEntry : IMasqueradeAs
         Object = o;
         Date = date;
     }
-        
+
     public string Serialize()
     {
         var helper = new PersistStringHelper();
-        return helper.GetObjectCollectionPersistString(Object) + PersistStringHelper.ExtraText + Date;
+        return PersistStringHelper.GetObjectCollectionPersistString(Object) + PersistStringHelper.ExtraText + Date;
     }
 
     public static HistoryEntry Deserialize(string s, IRDMPPlatformRepositoryServiceLocator locator)
@@ -45,12 +45,12 @@ public class HistoryEntry : IMasqueradeAs
         try
         {
             var helper = new PersistStringHelper();
-            e.Date = DateTime.Parse(helper.GetExtraText(s));
+            e.Date = DateTime.Parse(PersistStringHelper.GetExtraText(s));
 
-            var objectString = s.Substring(0, s.IndexOf(PersistStringHelper.ExtraText));
-                
+            var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText)];
 
-            e.Object = helper.GetObjectCollectionFromPersistString(objectString,locator).Single();
+
+            e.Object = PersistStringHelper.GetObjectCollectionFromPersistString(objectString,locator).Single();
         }
         catch (PersistenceException )
         {
@@ -68,15 +68,15 @@ public class HistoryEntry : IMasqueradeAs
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((HistoryEntry) obj);
     }
 
     public override int GetHashCode()
     {
-        return (Object != null ? Object.GetHashCode() : 0);
+        return Object != null ? Object.GetHashCode() : 0;
     }
 
     public object MasqueradingAs()

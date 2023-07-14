@@ -13,7 +13,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
 /// Executes an ExtractionConfiguration's CohortRefreshPipeline which should result in the CohortIdentificationConfiguration associated with the 
-/// ExtractionConfiguration (if any) being recalculated and a new updated set of patient identifiers commited as the next version number in the cohort
+/// ExtractionConfiguration (if any) being recalculated and a new updated set of patient identifiers committed as the next version number in the cohort
 /// database for that ExtractionConfiguration.
 /// 
 /// <para>Use this class if you want to re-run a the patient identifiers of an ExtractionConfiguration without changing the cohort identification configuration
@@ -38,8 +38,7 @@ public class CohortRefreshEngine
         var engine = Request.GetEngine(_configuration.CohortRefreshPipeline,_listener);
 
         //if the refresh pipeline is a cic source
-        var cicSource = engine.SourceObject as CohortIdentificationConfigurationSource;
-        if (cicSource != null)
+        if (engine.SourceObject is CohortIdentificationConfigurationSource cicSource)
         {
             //a cohort identification configuration is a complex query possibly with many cached subqueries, if we are refreshing the cic we will want to clear (and recache) identifiers
             //from the live tables

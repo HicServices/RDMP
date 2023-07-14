@@ -57,7 +57,8 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     /// <param name="parent"></param>
     public PipelineComponentArgument(ICatalogueRepository repository, PipelineComponent parent)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>() { 
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        { 
             {"PipelineComponent_ID",parent.ID},
             {"Name", $"Parameter{Guid.NewGuid()}" },
             {"Type", typeof (string).ToString()} });
@@ -93,12 +94,14 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     /// <inheritdoc/>
     public void Clone(PipelineComponent intoTargetComponent)
     {
-        var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueRepository, intoTargetComponent);
+        var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueRepository, intoTargetComponent)
+            {
+                Name = Name,
+                Value = Value,
+                Type = Type,
+                Description = Description
+            };
 
-        cloneArg.Name = Name;
-        cloneArg.Value = Value;
-        cloneArg.Type = Type;
-        cloneArg.Description = Description;
         cloneArg.SaveToDatabase();
     }
 }

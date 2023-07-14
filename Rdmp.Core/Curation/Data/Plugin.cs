@@ -99,12 +99,12 @@ public class Plugin : DatabaseEntity,INamed
     /// <param name="rdmpVersion"></param>
     public Plugin(ICatalogueRepository repository, FileInfo pluginZipFile, Version pluginVersion, Version rdmpVersion)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>()
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"Name", pluginZipFile.Name},
             {"UploadedFromDirectory", pluginZipFile.DirectoryName},
-            {"PluginVersion", (pluginVersion ?? new Version(0,0,0,0))},
-            {"RdmpVersion", (rdmpVersion ?? new Version(0,0,0,0))}
+            {"PluginVersion", pluginVersion ?? new Version(0,0,0,0)},
+            {"RdmpVersion", rdmpVersion ?? new Version(0,0,0,0)}
         });
             
     }

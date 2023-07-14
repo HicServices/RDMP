@@ -27,9 +27,9 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
     public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject)
     {
-        this._activator = activator;
+        _activator = activator;
         Modal = true;
-        this._rootObject = rootObject;
+        _rootObject = rootObject;
 
         ColorScheme = ConsoleMainWindow.ColorScheme;
 
@@ -38,12 +38,12 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
         var lblToFetch = new Label("Max:")
         {
-            X = Pos.Right(lbl) + 1,
+            X = Pos.Right(lbl) + 1
         };
 
         Add(lblToFetch);
 
-        _tbToFetch = new TextField()
+        _tbToFetch = new TextField
         {
             X = Pos.Right(lblToFetch),
             Text = "1000",
@@ -52,7 +52,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
         Add(_tbToFetch);
 
-        var btnFetch = new Button()
+        var btnFetch = new Button
         {
             X = Pos.Right(_tbToFetch),
             Text = "Go"
@@ -102,7 +102,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
         Add(lblcontains);
 
-        _tbcontains = new TextField()
+        _tbcontains = new TextField
         {
             Y = Pos.Bottom(lbl),
             X = Pos.Right(lblcontains),
@@ -111,15 +111,15 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
         _tbcontains.TextChanged += Tbcontains_TextChanged;
         Add(_tbcontains);
 
-        _treeView = new TreeView<object>()
+        _treeView = new TreeView<object>
         {
             X = 0,
             Y = Pos.Bottom(lblFilter),
             Width = Dim.Fill(),
             Height = Dim.Fill(1),
+            TreeBuilder = this
         };
-        _treeView.TreeBuilder = this;
-        _treeView.ObjectActivated += _treeView_ObjectActivated; ;
+        _treeView.ObjectActivated += _treeView_ObjectActivated;
         Add(_treeView);
 
         var close = new Button("Quit")
@@ -138,24 +138,17 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
     {
         _treeView.ClearObjects();
 
-        if (string.IsNullOrWhiteSpace(_tbcontains.Text?.ToString()))
-        {
-            _treeView.AddObjects(_archivalDataLoadInfos);
-        }
-        else
-        {
-            _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.Description?.Contains(_tbcontains.Text.ToString()) ?? false));
-        }
-            
+        _treeView.AddObjects(string.IsNullOrWhiteSpace(_tbcontains.Text?.ToString())
+            ? _archivalDataLoadInfos
+            : _archivalDataLoadInfos.Where(a => a.Description?.Contains(_tbcontains.Text.ToString()) ?? false));
+
         _treeView.RebuildTree();
         _treeView.SetNeedsDisplay();
     }
 
     private void FetchLogs()
     {
-        int fetch;
-
-        if (!int.TryParse(_tbToFetch.Text.ToString(), out fetch))
+        if (!int.TryParse(_tbToFetch.Text.ToString(), out var fetch))
         {
             fetch = 1000;
         }
@@ -238,8 +231,8 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
     private class Category
     {
-        private LoggingTables _type;
-        private ArchivalDataLoadInfo _dli;
+        private readonly LoggingTables _type;
+        private readonly ArchivalDataLoadInfo _dli;
 
         public Category(ArchivalDataLoadInfo dli, LoggingTables type)
         {
@@ -248,26 +241,24 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
         }
         public override string ToString()
         {
-            switch (_type)
+            return _type switch
             {
-                case LoggingTables.FatalError: return $"Errors ({_dli.Errors.Count:N0})";
-                case LoggingTables.TableLoadRun: return $"Tables Loaded ({_dli.TableLoadInfos.Count:N0})";
-                case LoggingTables.ProgressLog: return $"Progress Log ({_dli.Progress.Count:N0})";
-            }
-
-            return base.ToString();
+                LoggingTables.FatalError => $"Errors ({_dli.Errors.Count:N0})",
+                LoggingTables.TableLoadRun => $"Tables Loaded ({_dli.TableLoadInfos.Count:N0})",
+                LoggingTables.ProgressLog => $"Progress Log ({_dli.Progress.Count:N0})",
+                _ => base.ToString()
+            };
         }
 
         internal IEnumerable<object> GetChildren()
         {
-            switch (_type)
+            return _type switch
             {
-                case LoggingTables.FatalError: return _dli.Errors;
-                case LoggingTables.TableLoadRun: return _dli.TableLoadInfos;
-                case LoggingTables.ProgressLog: return _dli.Progress;
-            }
-
-            return Enumerable.Empty<object>();
+                LoggingTables.FatalError => _dli.Errors,
+                LoggingTables.TableLoadRun => _dli.TableLoadInfos,
+                LoggingTables.ProgressLog => _dli.Progress,
+                _ => Enumerable.Empty<object>()
+            };
         }
     }
 }

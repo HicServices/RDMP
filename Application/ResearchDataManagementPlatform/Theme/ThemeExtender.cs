@@ -12,7 +12,7 @@ using System.Xml.Linq;
 
 namespace ResearchDataManagementPlatform.Theme;
 
-class ThemeExtender
+internal class ThemeExtender
 {
     private XDocument _xml;
     private const string Env = "Environment";
@@ -38,13 +38,10 @@ class ThemeExtender
 
         var environmentElement = _xml.Root.Element("Theme").Elements("Category").FirstOrDefault(item => item.Attribute("Name").Value == category);
 
-        if (environmentElement != null)
-        {
-            var colourElement = environmentElement.Elements("Color").FirstOrDefault(item => item.Attribute("Name").Value == name);
+        var colourElement = environmentElement?.Elements("Color").FirstOrDefault(item => item.Attribute("Name").Value == name);
 
-            if (colourElement != null)
-                color = colourElement.Element(foreground ? "Foreground" : "Background").Attribute("Source").Value;
-        }
+        if (colourElement != null)
+            color = colourElement.Element(foreground ? "Foreground" : "Background").Attribute("Source").Value;
 
         if (color == null)
             return Color.Transparent;

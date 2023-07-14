@@ -36,14 +36,12 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         try
         {
             _request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
-            ExtractionPipelineUseCase useCase;
-            IExecuteDatasetExtractionDestination results;
-            Execute(out useCase, out results);
+            Execute(out ExtractionPipelineUseCase useCase, out var results);
 
             var customDataCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("custTable99.csv"));
 
             Assert.IsNotNull(customDataCsv);
-            
+
             var lines = File.ReadAllLines(customDataCsv.FullName);
 
             Assert.AreEqual("SuperSecretThing,ReleaseID",lines[0]);
@@ -101,16 +99,14 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             dt.Rows.Add(new object[] {"Priv_wtf11", "Frank","2001-10-29"});
             blk.Upload(dt);
         }
-            
-        ExtractionPipelineUseCase useCase;
-        IExecuteDatasetExtractionDestination results;
-        Execute(out useCase, out results);
+
+        Execute(out ExtractionPipelineUseCase useCase, out var results);
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
         Assert.IsNotNull(mainDataTableCsv);
         Assert.AreEqual("TestTable.csv", mainDataTableCsv.Name);
-                
+
         var lines = File.ReadAllLines(mainDataTableCsv.FullName);
 
         Assert.AreEqual("ReleaseID,Name,DateOfBirth,SuperSecretThing", lines[0]);
@@ -142,8 +138,10 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         _selectedDataSet.RootFilterContainer_ID = rootContainer.ID;
         _selectedDataSet.SaveToDatabase();
 
-        var filter = new DeployedExtractionFilter(DataExportRepository, "monkeys only", rootContainer);
-        filter.WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'";
+        var filter = new DeployedExtractionFilter(DataExportRepository, "monkeys only", rootContainer)
+ {
+     WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'"
+ };
         filter.SaveToDatabase();
         rootContainer.AddChild(filter);
 
@@ -160,7 +158,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         //generate a new request (this will include the newly created column)
         _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
-            
+
         var tbl = Database.ExpectTable("TestTable");
         tbl.Truncate();
 
@@ -176,9 +174,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             blk.Upload(dt);
         }
 
-        ExtractionPipelineUseCase useCase;
-        IExecuteDatasetExtractionDestination results;
-        Execute(out useCase, out results);
+        Execute(out ExtractionPipelineUseCase useCase, out var results);
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 

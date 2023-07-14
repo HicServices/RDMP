@@ -29,19 +29,19 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline;
 public sealed class ExtractionPipelineUseCase : PipelineUseCase
 {
     private readonly IPipeline _pipeline;
-    readonly DataLoadInfo _dataLoadInfo;
-        
+    private readonly DataLoadInfo _dataLoadInfo;
+
     public IExtractCommand ExtractCommand { get; set; }
     public ExecuteDatasetExtractionSource Source { get; private set; }
 
     public GracefulCancellationToken Token { get; set; }
 
     /// <summary>
-    /// If Destination is an IExecuteDatasetExtractionDestination then it will be initialized properly with the configuration, cohort etc otherwise the destination will have to react properly 
+    /// If Destination is an IExecuteDatasetExtractionDestination then it will be initialized properly with the configuration, cohort etc otherwise the destination will have to react properly
     /// / dynamically based on what comes down the pipeline just like it would normally e.g. SqlBulkInsertDestination would be a logically permissable destination for an ExtractionPipeline
     /// </summary>
     public IExecuteDatasetExtractionDestination Destination { get; private set; }
-      
+
     public ExtractionPipelineUseCase(IBasicActivateItems activator,IProject project, IExtractCommand extractCommand, IPipeline pipeline, DataLoadInfo dataLoadInfo)
     {
         _dataLoadInfo = dataLoadInfo;
@@ -59,7 +59,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         GenerateContext();
     }
 
-        
+
 
     protected override IDataFlowPipelineContext GenerateContextImpl()
     {
@@ -78,7 +78,6 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     {
         if(ExtractCommand is ExtractDatasetCommand eds)
         {
-            bool runSuccessful;
             bool runAgain;
             var totalFailureCount = 0;
             var consecutiveFailureCount = 0;
@@ -88,6 +87,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                 Token?.ThrowIfStopRequested();
                 Token?.ThrowIfAbortRequested();
 
+                bool runSuccessful;
                 try
                 {
                     runSuccessful = ExecuteOnce(listener);
@@ -96,7 +96,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                 {
                     runSuccessful = false;
                 }
-                    
+
                 if(runSuccessful)
                 {
                     runAgain = IncrementProgressIfAny(eds, listener);
@@ -208,10 +208,10 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                 ExtractCommand.ElevateState(ExtractCommandState.Crashed);
                 _dataLoadInfo.LogFatalError("Execute extraction pipeline", ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
-                if (ExtractCommand is ExtractDatasetCommand)
+                if (ExtractCommand is ExtractDatasetCommand command)
                 {
                     //audit to extraction results
-                    var result = (ExtractCommand as ExtractDatasetCommand).CumulativeExtractionResults;
+                    var result = command.CumulativeExtractionResults;
                     result.Exception = ExceptionHelper.ExceptionToListOfInnerMessages(e, true);
                     result.SaveToDatabase();
                 }
@@ -235,13 +235,13 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
             if (Source.WasCancelled)
             {
-                Destination.TableLoadInfo.DataLoadInfoParent.LogFatalError(this.GetType().Name, "User Cancelled Extraction");
+                Destination.TableLoadInfo.DataLoadInfoParent.LogFatalError(GetType().Name, "User Cancelled Extraction");
                 ExtractCommand.ElevateState(ExtractCommandState.UserAborted);
 
-                if (ExtractCommand is ExtractDatasetCommand)
+                if (ExtractCommand is ExtractDatasetCommand command)
                 {
                     //audit to extraction results
-                    var result = (ExtractCommand as ExtractDatasetCommand).CumulativeExtractionResults;
+                    var result = command.CumulativeExtractionResults;
                     result.Exception = "User Cancelled Extraction";
                     result.SaveToDatabase();
                 }
@@ -281,12 +281,12 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     {
         var engine = base.GetEngine(pipeline, listener);
             
-        Destination = (IExecuteDatasetExtractionDestination)engine.DestinationObject; //record the destination that was created as part of the Pipeline configured            
+        Destination = (IExecuteDatasetExtractionDestination)engine.DestinationObject; //record the destination that was created as part of the Pipeline configured
         Source = (ExecuteDatasetExtractionSource)engine.SourceObject;
             
         return engine;
     }
-        
+
     private void WriteMetadata(IDataLoadEventListener listener)
     {
         ExtractCommand.ElevateState(ExtractCommandState.WritingMetadata);
@@ -303,7 +303,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
             //something about the pipeline resulted i a known unsupported state (e.g. extracting to a database) so we can't use WordDataWritter with this
             // tell user that we could not run the report and set the status to warning
             ExtractCommand.ElevateState(ExtractCommandState.Warning);
-                
+
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Word metadata document NOT CREATED",e));
             return;
         }
@@ -312,7 +312,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         if (wordDataWriter.ExceptionsGeneratingWordFile.Any())
         {
             ExtractCommand.ElevateState(ExtractCommandState.Warning);
-                    
+
             foreach (var e in wordDataWriter.ExceptionsGeneratingWordFile)
                 listener.OnNotify(wordDataWriter, new NotifyEventArgs(ProgressEventType.Warning, "Word metadata document creation caused exception", e));
         }

@@ -41,9 +41,11 @@ public class IDColumnProvider
 
     public OLVColumn CreateColumn()
     {
-        var toReturn = new OLVColumn();
-        toReturn.Text = "ID";
-        toReturn.IsVisible = false;
+        var toReturn = new OLVColumn
+        {
+            Text = "ID",
+            IsVisible = false
+        };
         toReturn.AspectGetter += IDColumnAspectGetter;
         toReturn.IsEditable = false;
         return toReturn;

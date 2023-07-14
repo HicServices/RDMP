@@ -26,7 +26,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
     protected AggregateConfiguration AggregateConfiguration;
     protected CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny;
 
-    private bool _haveSentData = false; 
+    private bool _haveSentData = false;
 
     [DemandsInitialization("The length of time (in seconds) to wait before timing out the SQL command to execute the Aggregate.", DemandType.Unspecified, 10000)]
     public int Timeout { get; set; }
@@ -44,15 +44,11 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
             return builder.SQL;
         }
 
-        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
-
-        if(cic == null)
-            throw new Exception($"There GetCohortIdentificationConfiguration is unknown for '{AggregateConfiguration}'");
-
+        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny() ?? throw new Exception($"There GetCohortIdentificationConfiguration is unknown for '{AggregateConfiguration}'");
         var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(),null);
         return cohortBuilder.SQL;
     }
-        
+
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         if (_haveSentData)
@@ -65,9 +61,8 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
     private DataTable GetDataTable(int timeout, IDataLoadEventListener listener)
     {
-        if (listener != null)
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"About to lookup which server to interrogate for AggregateConfiguration '{AggregateConfiguration}'"));
+        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to lookup which server to interrogate for AggregateConfiguration '{AggregateConfiguration}'"));
 
         var server = AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
 
@@ -78,26 +73,24 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
             var sql = GetSQL();
 
-            if (listener != null)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
+            listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
 
             var dt = new DataTable();
 
             using (var cmd = server.GetCommand(sql, con))
             {
                 cmd.CommandTimeout = timeout;
-                    
+
                 using(var da = server.GetDataAdapter(cmd))
                     da.Fill(dt);
             }
-                
+
 
             dt.TableName = TableName;
 
-            if (listener != null)
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"successfully read {dt.Rows.Count} rows from source"));
+            listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"successfully read {dt.Rows.Count} rows from source"));
 
 
             return dt;

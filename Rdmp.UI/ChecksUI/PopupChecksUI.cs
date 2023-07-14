@@ -28,7 +28,7 @@ public partial class PopupChecksUI : Form,ICheckNotifier
             haveDemandedVisibility = true;
         }
         else
-            this.CreateHandle(); //let windows get a handle on the situation ;)
+            CreateHandle(); //let windows get a handle on the situation ;)
 
         KeyPreview = true;
     }
@@ -84,7 +84,7 @@ public partial class PopupChecksUI : Form,ICheckNotifier
 
     public void StartChecking(ICheckable checkable)
     {
-        this.Show();
+        Show();
         checksUI1.AllChecksComplete += AllChecksComplete;
         checksUI1.StartChecking(checkable);
     }

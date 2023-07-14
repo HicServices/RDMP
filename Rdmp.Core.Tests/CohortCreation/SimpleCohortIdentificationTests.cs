@@ -63,7 +63,7 @@ public class SimpleCohortIdentificationTests:DatabaseTests
     public void Container_Subcontainering()
     {
         var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.UNION);
-            
+
         var container2 = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
         try
         {

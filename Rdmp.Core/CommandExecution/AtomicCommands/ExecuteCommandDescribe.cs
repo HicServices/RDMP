@@ -53,7 +53,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         {
             // Maybe they typed the alias or name of a command
             _nonDatabaseObjectToDescribe = new CommandInvoker(BasicActivator).GetSupportedCommands()
-                .FirstOrDefault(t=>BasicCommandExecution.HasCommandNameOrAlias(t,picker[0].RawValue));
+                .FirstOrDefault(t=>HasCommandNameOrAlias(t,picker[0].RawValue));
                 
                     
             if(_nonDatabaseObjectToDescribe == null)
@@ -148,7 +148,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
             }
 
             sb.Append(p.Name);
-            sb.Append(":");
+            sb.Append(':');
             sb.AppendLine(p.GetValue(o)?.ToString() ?? "NULL");
         }
 
@@ -181,7 +181,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         PopulateBasicCommandInfo(sb,commandType);
 
         var dynamicCtorAttribute = commandCtor?.GetCustomAttribute<UseWithCommandLineAttribute>();
-            
+
         //it is a basic command, one that expects a fixed number of proper objects
         var sbParameters = new StringBuilder();
         sbParameters.AppendLine();
@@ -235,15 +235,15 @@ public class ExecuteCommandDescribe:BasicCommandExecution
                 sbParameters.AppendLine(FormatParameterDescription(req, commandCtor));
             }
 
-            anySyntaxes = ShowSyntax("Pick Database",sbSyntaxes, parameters ,(p) => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase()) || anySyntaxes;
-            anySyntaxes = ShowSyntax("Pick Table",sbSyntaxes, parameters, (p) => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable()) || anySyntaxes;
+            anySyntaxes = ShowSyntax("Pick Database",sbSyntaxes, parameters ,p => typeof(DiscoveredDatabase).IsAssignableFrom(p.ParameterType), new PickDatabase()) || anySyntaxes;
+            anySyntaxes = ShowSyntax("Pick Table",sbSyntaxes, parameters, p => typeof(DiscoveredTable).IsAssignableFrom(p.ParameterType), new PickTable()) || anySyntaxes;
 
-            anySyntaxes = ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, (p) => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType) || anySyntaxes,
+            anySyntaxes = ShowSyntax("Pick RDMP Object",sbSyntaxes, parameters, p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType) || anySyntaxes,
                 new PickObjectByID(BasicActivator),
                 new PickObjectByName(BasicActivator),
                 new PickObjectByQuery(BasicActivator)) || anySyntaxes;
 
-        };
+        }
 
 
         sb.AppendLine();
@@ -256,7 +256,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
     }
 
-    private bool ShowSyntax(string title, StringBuilder sbSyntaxes, ParameterInfo[] parameters, Func<ParameterInfo, bool> selector, params PickObjectBase[] pickers)
+    private static bool ShowSyntax(string title, StringBuilder sbSyntaxes, ParameterInfo[] parameters, Func<ParameterInfo, bool> selector, params PickObjectBase[] pickers)
     {
         if(parameters.Any(selector))
         {
@@ -284,10 +284,10 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         try
         {
             if(BasicActivator is ConsoleInputManager)
-            {              
-                var name = req.Name.Length < nameColWidth ? req.Name.PadRight(nameColWidth) : req.Name.Substring(0,nameColWidth);
-                var type = req.Type.Name.Length < typeColWidth ? req.Type.Name.PadRight(typeColWidth) : req.Type.Name.Substring(0,typeColWidth);
-                    
+            {
+                var name = req.Name.Length < nameColWidth ? req.Name.PadRight(nameColWidth) : req.Name[..nameColWidth];
+                var type = req.Type.Name.Length < typeColWidth ? req.Type.Name.PadRight(typeColWidth) : req.Type.Name[..typeColWidth];
+
                 var desc = req.DemandIfAny?.Description;
 
 
@@ -298,20 +298,17 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
                 if (string.IsNullOrWhiteSpace(desc))
                     return $"{name} {type}";
-                else
-                {
-                    var availableWidth = Console.WindowWidth;
-                    var occupied = nameColWidth + 1 + typeColWidth + 1;
+                var availableWidth = Console.WindowWidth;
+                var occupied = nameColWidth + 1 + typeColWidth + 1;
 
-                    var availableDescriptionWidth = availableWidth - occupied;
+                var availableDescriptionWidth = availableWidth - occupied;
 
-                    if(availableDescriptionWidth < 0)
-                        return $"{name} {type}";
+                if(availableDescriptionWidth < 0)
+                    return $"{name} {type}";
 
-                    var wrappedDesc = Wrap(desc,availableDescriptionWidth,occupied);
+                var wrappedDesc = Wrap(desc,availableDescriptionWidth,occupied);
 
-                    return $"{name} {type} {wrappedDesc}";
-                }
+                return $"{name} {type} {wrappedDesc}";
 
             }
 
@@ -324,7 +321,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         return $"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}";
     }
         
-    private string Wrap(string longString, int width, int indent)
+    private static string Wrap(string longString, int width, int indent)
     {
         var words = longString.Split(' ');
 
@@ -333,7 +330,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         var line = new StringBuilder(width);
         foreach (var word in words)
         {
-            if ((line.Length + word.Length) >= width)
+            if (line.Length + word.Length >= width)
             {
                 newSentence.AppendLine(line.ToString().TrimEnd());
                 newSentence.Append(new string (' ',indent));
@@ -341,7 +338,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
             }
 
             line.Append(word);
-            line.Append(" ");
+            line.Append(' ');
         }
 
         if (line.Length > 0)
@@ -366,7 +363,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         {
             sb.AppendLine($"Aliases:{string.Join(',', aliases.Select(a => a.Name).ToArray())}");
         }
-                
+
         var helpText = help.GetTypeDocumentationIfExists(commandType);
 
         if(helpText != null)
@@ -379,10 +376,10 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         sb.AppendLine("USAGE: ");
                 
         sb.Append(EnvironmentInfo.IsLinux ? "./rdmp" : "./rdmp.exe");
-        sb.Append(" ");
+        sb.Append(' ');
 
         sb.Append(BasicCommandExecution.GetCommandName(commandType.Name));
-        sb.Append(" ");
+        sb.Append(' ');
 
     }
 

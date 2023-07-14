@@ -12,7 +12,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class ProjectMenu:RDMPContextMenuStrip
+internal class ProjectMenu:RDMPContextMenuStrip
 {
     public ProjectMenu(RDMPContextMenuStripArgs args, Project project)
         : base(args,project)

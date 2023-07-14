@@ -25,10 +25,10 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
 /// <summary>
 /// Deletes records in STAGING which are 'older' versions of records that currently exist in LIVE.  Normally RMDP supports a 'newer is better' policy in which
-/// all records loaded in a DLE run automatically replace/add to the LIVE table based on primary key (i.e. a newly loaded record with pk X will result in an 
+/// all records loaded in a DLE run automatically replace/add to the LIVE table based on primary key (i.e. a newly loaded record with pk X will result in an
 /// UPDATE of the values for that record to the new values in STAGING that are being loaded).
 /// 
-/// <para>This component is designed to support loading periods of old data into a LIVE data table that has moved on (i.e. to backfill a dataset) without 
+/// <para>This component is designed to support loading periods of old data into a LIVE data table that has moved on (i.e. to backfill a dataset) without
 /// overwriting newer versions of a record (with primary key x) with old.  For example it is 2011 and you have found a year of data you forgot to load back
 /// in 2009 but you expect that since 2009 there have been historical record updates for records originally generated in 2009 (you want to load all 2009 records
 /// from the historical batch except where there has been an update since).</para>
@@ -42,7 +42,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     private TableInfo _tiWithTimeColumn;
     private BackfillSqlHelper _sqlHelper;
     private MigrationConfiguration _migrationConfiguration;
-        
+
     // Only a test runner can set this
     public bool TestContext { get; set; }
 
@@ -98,7 +98,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     private DiscoveredDatabase GetLiveDatabaseInfo()
     {
         var timePeriodicityTable = TimePeriodicityField.TableInfo;
-        return DataAccessPortal.GetInstance().ExpectDatabase(timePeriodicityTable, DataAccessContext.DataLoad);
+        return DataAccessPortal.ExpectDatabase(timePeriodicityTable, DataAccessContext.DataLoad);
     }
 
     /// <summary>
@@ -113,7 +113,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
         // Find all parents of this table
         var allJoinInfos = repository.GetAllObjects<JoinInfo>();
         var joinsWithThisTableAsChild = allJoinInfos.Where(info => info.ForeignKey.TableInfo_ID == tiCurrent.ID).ToList();
-            
+
         // Infinite recursion check
         var seenBefore = joinPathToTimeTable.Intersect(joinsWithThisTableAsChild).ToList();
         if (seenBefore.Any())
@@ -183,16 +183,12 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
 
     private void UpdateOldParentsThatHaveNewChildren(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, ReverseMigrationQueryHelper queryHelper, MigrationColumnSetQueryHelper mcsQueryHelper)
     {
-        var update = string.Format(@"WITH 
-{0}
+        var update = $@"WITH 
+{GetLiveDataToUpdateStaging(tiCurrent, joinPathToTimeTable)}
 UPDATE CurrentTable
-SET {1}
+SET {queryHelper.BuildUpdateClauseForRow("LiveDataForUpdating", "CurrentTable")}
 FROM 
-LiveDataForUpdating LEFT JOIN {2} AS CurrentTable {3}",
-            GetLiveDataToUpdateStaging(tiCurrent, joinPathToTimeTable),
-            queryHelper.BuildUpdateClauseForRow("LiveDataForUpdating", "CurrentTable"),
-            $"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]",
-            mcsQueryHelper.BuildJoinClause("LiveDataForUpdating", "CurrentTable"));
+LiveDataForUpdating LEFT JOIN {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]"} AS CurrentTable {mcsQueryHelper.BuildJoinClause("LiveDataForUpdating", "CurrentTable")}";
 
         using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())
         {
@@ -235,12 +231,10 @@ LiveDataForUpdating LEFT JOIN {2} AS CurrentTable {3}",
                 $"WITH {GetCurrentOldEntriesSQL(tiCurrent, joinPathToTimeTable)}, EntriesToDelete AS (SELECT DISTINCT CurrentOldEntries.* FROM CurrentOldEntries {string.Join(" ", joins)} WHERE {string.Join(" AND ", wheres)})";
         }
 
-        deleteSql += string.Format(@"
+        deleteSql += $@"
 DELETE CurrentTable
-FROM {0} CurrentTable
-RIGHT JOIN EntriesToDelete {1}",
-            $"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]",
-            mcsQueryHelper.BuildJoinClause("EntriesToDelete", "CurrentTable"));
+FROM {$"[{_dbInfo.GetRuntimeName()}]..[{tiCurrent.GetRuntimeName()}]"} CurrentTable
+RIGHT JOIN EntriesToDelete {mcsQueryHelper.BuildJoinClause("EntriesToDelete", "CurrentTable")}";
 
         using (var connection = (SqlConnection)_dbInfo.Server.GetConnection())
         {
@@ -258,13 +252,12 @@ RIGHT JOIN EntriesToDelete {1}",
     /// <returns></returns>
     private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
     {
-        return string.Format(@"
+        return $@"
 CurrentOldEntries AS (
 SELECT ToLoadWithTime.* FROM 
 
-{0} 
-",
-            _sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable));
+{_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)} 
+";
     }
 
     /// <summary>
@@ -275,12 +268,11 @@ SELECT ToLoadWithTime.* FROM
     /// <returns></returns>
     private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
     {
-        return string.Format(@"
+        return $@"
 LiveDataForUpdating AS (
 SELECT LoadedWithTime.* FROM
 
-{0}",
-            _sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable));
+{_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)}";
     }
 
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
@@ -299,7 +291,7 @@ SELECT LoadedWithTime.* FROM
         }
     }
 
-        
+
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {

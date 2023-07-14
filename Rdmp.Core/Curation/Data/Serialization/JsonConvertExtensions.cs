@@ -25,7 +25,7 @@ public static class JsonConvertExtensions
     public static string SerializeObject(object value, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var databaseEntityJsonConverter = new DatabaseEntityJsonConverter(repositoryLocator);
-            
+
         var settings = new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.None,

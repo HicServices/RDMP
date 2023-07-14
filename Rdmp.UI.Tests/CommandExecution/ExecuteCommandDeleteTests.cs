@@ -13,7 +13,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.Tests.CommandExecution;
 
-class ExecuteCommandDeleteTests : UITests
+internal class ExecuteCommandDeleteTests : UITests
 {
 
     [Test]
@@ -56,7 +56,7 @@ class ExecuteCommandDeleteTests : UITests
         Assert.IsNotNull(container);
         Assert.IsTrue(container.IsRootContainer(),"expected it to be a root container");
 
-        var cmd = new ExecuteCommandDelete(base.ItemActivator, container);
+        var cmd = new ExecuteCommandDelete(ItemActivator, container);
 
         Assert.IsTrue(cmd.IsImpossible,"expected command to be impossible");
         StringAssert.Contains("root container",cmd.ReasonCommandImpossible);
@@ -68,10 +68,10 @@ class ExecuteCommandDeleteTests : UITests
     public void Test_Delete2RootContainers_IsImpossible()
     {
         var container1 = WhenIHaveA<CohortAggregateContainer>();
-            
-        var container2= WhenIHaveA<CohortAggregateContainer>();
 
-        var cmd = new ExecuteCommandDelete(base.ItemActivator, new IDeleteable[]{container1,container2});
+        var container2 = WhenIHaveA<CohortAggregateContainer>();
+
+        var cmd = new ExecuteCommandDelete(ItemActivator, new IDeleteable[]{container1,container2});
 
         Assert.IsTrue(cmd.IsImpossible,"expected command to be impossible");
         StringAssert.Contains("root container",cmd.ReasonCommandImpossible);
@@ -91,7 +91,7 @@ class ExecuteCommandDeleteTests : UITests
 
         container.AddChild(subcontainer);
         Assert.IsFalse(subcontainer.IsRootContainer(),"expected it not to be a root container");
-        var cmd = new ExecuteCommandDelete(base.ItemActivator, subcontainer);
+        var cmd = new ExecuteCommandDelete(ItemActivator, subcontainer);
 
         Assert.IsFalse(cmd.IsImpossible,"expected command to be possible");
 

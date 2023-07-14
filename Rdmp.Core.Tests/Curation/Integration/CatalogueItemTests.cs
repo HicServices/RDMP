@@ -10,7 +10,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-class CatalogueItemTests : DatabaseTests
+internal class CatalogueItemTests : DatabaseTests
 {
 
     [Test]
@@ -86,7 +86,7 @@ class CatalogueItemTests : DatabaseTests
         };
 
         child.SaveToDatabase();
-            
+
         var childAfter = CatalogueRepository.GetObjectByID<CatalogueItem>(child.ID);
 
         Assert.IsTrue(child.Name == childAfter.Name);
@@ -144,8 +144,7 @@ class CatalogueItemTests : DatabaseTests
         }
         finally 
         {
-            if (cloneChild != null)
-                cloneChild.DeleteInDatabase();
+            cloneChild?.DeleteInDatabase();
 
             child.DeleteInDatabase();
             parent.DeleteInDatabase();

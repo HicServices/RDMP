@@ -29,7 +29,7 @@ public class ComponentCompatibilityTests :UnitTests
     {
         var array = MEF.GetTypes<IDataFlowComponent<DataTable>>().ToArray();
 
-        Assert.Greater(array.Count(),0);
+        Assert.Greater(array.Length, 0);
     }
 
     [Test]

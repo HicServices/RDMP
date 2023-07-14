@@ -56,7 +56,7 @@ public class CatalogueItemsNode : Node, IOrderable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != typeof (CatalogueItemsNode)) return false;
         return Equals((CatalogueItemsNode) obj);

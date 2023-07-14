@@ -20,7 +20,7 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
     [Test]
     public void ExtractNormally()
     {
-        AdjustPipelineComponentDelegate = (p) =>
+        AdjustPipelineComponentDelegate = p =>
         {
             if (p.Class.Contains("ExecuteDatasetExtractionSource"))
             {
@@ -30,8 +30,6 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
             }
         };
 
-        ExtractionPipelineUseCase execute;
-        IExecuteDatasetExtractionDestination result;
 
         _catalogue.Name = "TestTable";
         _catalogue.SaveToDatabase();
@@ -40,9 +38,9 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
         var listener = new ToMemoryDataLoadEventListener(true);
 
-        base.Execute(out execute,out result,listener);
+        Execute(out ExtractionPipelineUseCase execute,out var result,listener);
 
-        var messages = 
+        var messages =
             listener.EventsReceivedBySender.SelectMany(m => m.Value)
                 .Where(m=>m.ProgressEventType == ProgressEventType.Information && m.Message.Contains("/*Decided on extraction SQL:*/"))
                 .ToArray();

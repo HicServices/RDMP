@@ -74,7 +74,7 @@ public class MDFAttacherTests : DatabaseTests
 
             //create an already existing file in the 'data' directory (imitates the copy to location)
             File.WriteAllText(Path.Combine(data.FullName, "MyFile.mdf"), "fish");
-                
+
 
             var attacher = new MDFAttacher
             {
@@ -82,11 +82,11 @@ public class MDFAttacherTests : DatabaseTests
             };
 
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
-                
+
             //should be a warning since overwriting is default behaviour
             var ex = Assert.Throws<Exception>(()=>
                 attacher.Attach(
-                    new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true})
+                    new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true})
                     , new GracefulCancellationToken())
             );
 
@@ -125,11 +125,11 @@ public class MDFAttacherTests : DatabaseTests
 
             var serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
             var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null);
-                
+
 
             Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
             Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
-                
+
             Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf", locations.CopyToLdf);
             Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.CopyToMdf);
 
@@ -153,7 +153,7 @@ public class MDFAttacherTests : DatabaseTests
 
         var mdf1 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile1.mdf");
         var mdf2 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile2.mdf");
-            
+
         var ldf1 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile1_log.ldf");
         var ldf2 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile2_log.ldf");
         try
@@ -165,7 +165,7 @@ public class MDFAttacherTests : DatabaseTests
 
             var serverDatabasePath = TestContext.CurrentContext.WorkDirectory;
             Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null));
-                
+
         }
         finally
         {
@@ -243,7 +243,7 @@ public class MDFAttacherTests : DatabaseTests
             File.Delete(ldf);
         }
     }
-       
+
     public class MyClass:IAttacher,ICheckable
     {
         public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -251,7 +251,7 @@ public class MDFAttacherTests : DatabaseTests
             throw new NotImplementedException();
         }
 
-            
+
 
         public void Check(ICheckNotifier notifier)
         {
@@ -268,12 +268,12 @@ public class MDFAttacherTests : DatabaseTests
                 
         }
 
-        public string GetDescription()
+        public static string GetDescription()
         {
             return "Test class that does nothing";
         }
 
-            
+
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
         {
@@ -296,14 +296,10 @@ public class MDFAttacherTests : DatabaseTests
             throw new TypeLoadException($"Type {type} does not implement IAttacher");
 
         //find the blank constructor
-        var constructorInfo = type.GetConstructor(new Type[] {});
-            
-        //if it doesnt have one
-        if(constructorInfo == null)
-            throw new TypeLoadException($"Type {type} does not have a blank constructor");
+        var constructorInfo = type.GetConstructor(Array.Empty<Type>()) ?? throw new TypeLoadException($"Type {type} does not have a blank constructor");
 
         //call the blank constructor and return the reuslts
-        var bob = (IAttacher) constructorInfo.Invoke(new Type[] {});
+        var bob = (IAttacher) constructorInfo.Invoke(Array.Empty<Type>());
 
         
     }
@@ -316,7 +312,7 @@ public class MDFAttacherTests : DatabaseTests
 
         try
         {
-                
+
             var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 

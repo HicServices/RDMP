@@ -87,9 +87,7 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
 
         if (ConditionsToTerminateUnder == PrematureLoadEndCondition.NoFilesInForLoading)
         {
-            var dataLoadJob = job as IDataLoadJob;
-
-            if(dataLoadJob == null)
+            if(job is not IDataLoadJob dataLoadJob)
                 throw new Exception($"IDataLoadEventListener {job} was not an IDataLoadJob (very unexpected)");
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,

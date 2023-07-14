@@ -27,7 +27,7 @@ namespace Rdmp.Core.Providers;
 public class CatalogueProblemProvider : ProblemProvider
 {
     private ICoreChildProvider _childProvider;
-    private HashSet<int> _orphanCatalogueItems = new HashSet<int>();
+    private HashSet<int> _orphanCatalogueItems = new();
     private HashSet<int> _usedJoinables;
     private JoinInfo[] _joinsWithMismatchedCollations = Array.Empty<JoinInfo>();
 
@@ -41,7 +41,7 @@ public class CatalogueProblemProvider : ProblemProvider
     public override void RefreshProblems(ICoreChildProvider childProvider)
     {
         _childProvider = childProvider;
-            
+
         //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
         var orphans = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null);
             
@@ -59,9 +59,9 @@ public class CatalogueProblemProvider : ProblemProvider
         _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
             !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
             !string.IsNullOrWhiteSpace(j.ForeignKey.Collation) &&
-                
+
             // does not have an explicit join collation specified
-            string.IsNullOrWhiteSpace(j.Collation) && 
+            string.IsNullOrWhiteSpace(j.Collation) &&
             !string.Equals(j.PrimaryKey.Collation, j.ForeignKey.Collation)
         ).ToArray();
     }
@@ -69,32 +69,32 @@ public class CatalogueProblemProvider : ProblemProvider
     /// <inheritdoc/>
     protected override string DescribeProblemImpl(object o)
     {
-        if (o is AllGovernanceNode)
-            return DescribeProblem((AllGovernanceNode) o);
+        if (o is AllGovernanceNode node)
+            return DescribeProblem(node);
 
-        if (o is Catalogue)
-            return DescribeProblem((Catalogue)o);
+        if (o is Catalogue catalogue)
+            return DescribeProblem(catalogue);
 
-        if (o is CatalogueItem)
-            return DescribeProblem((CatalogueItem) o);
+        if (o is CatalogueItem item)
+            return DescribeProblem(item);
 
-        if (o is LoadDirectoryNode)
-            return DescribeProblem((LoadDirectoryNode) o);
+        if (o is LoadDirectoryNode directoryNode)
+            return DescribeProblem(directoryNode);
 
-        if (o is ExtractionInformation)
-            return DescribeProblem((ExtractionInformation) o);
+        if (o is ExtractionInformation information)
+            return DescribeProblem(information);
 
-        if (o is IFilter)
-            return DescribeProblem((IFilter) o);
+        if (o is IFilter filter)
+            return DescribeProblem(filter);
 
-        if (o is AggregateConfiguration)
-            return DescribeProblem((AggregateConfiguration) o);
+        if (o is AggregateConfiguration configuration)
+            return DescribeProblem(configuration);
 
-        if (o is DecryptionPrivateKeyNode)
-            return DescribeProblem((DecryptionPrivateKeyNode) o);
+        if (o is DecryptionPrivateKeyNode keyNode)
+            return DescribeProblem(keyNode);
 
-        if (o is AllCataloguesUsedByLoadMetadataNode)
-            return DescribeProblem((AllCataloguesUsedByLoadMetadataNode) o);
+        if (o is AllCataloguesUsedByLoadMetadataNode metadataNode)
+            return DescribeProblem(metadataNode);
 
         if (o is ISqlParameter p)
             return DescribeProblem(p);
@@ -105,14 +105,14 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
+    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
     {
         if (!allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any())
             return "Load has no Catalogues therefore loads no tables";
             
         return null;
     }
-        
+
     public string DescribeProblem(ISqlParameter parameter)
     {
         if (AnyTableSqlParameter.HasProhibitedName(parameter))
@@ -134,32 +134,30 @@ public class CatalogueProblemProvider : ProblemProvider
 
             return "No value defined";
         }
-        else
-        {
-            var v = parameter.Value;
 
-            var g = new Guesser();
+        var v = parameter.Value;
+
+        var g = new Guesser();
                 
-            if(Culture != null)
-                g.Culture = Culture;
+        if(Culture != null)
+            g.Culture = Culture;
 
-            g.AdjustToCompensateForValue(v);
+        g.AdjustToCompensateForValue(v);
 
-            // if user has entered a date as the value
-            if (g.Guess.CSharpType == typeof(DateTime))
+        // if user has entered a date as the value
+        if (g.Guess.CSharpType == typeof(DateTime))
+        {
+            // and there are no delimiters
+            if(v.All(c=>c != '\'' && c != '"'))
             {
-                // and there are no delimiters
-                if(v.All(c=>c != '\'' && c != '"'))
-                {
-                    return "Parameter value looks like a date but is not surrounded by quotes";
-                }
+                return "Parameter value looks like a date but is not surrounded by quotes";
             }
         }
 
         return null;
     }
 
-    public string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
+    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
     {
         if (decryptionPrivateKeyNode.KeyNotSpecified)
             return "No RSA encryption key has been created yet";
@@ -181,7 +179,7 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public string DescribeProblem(IFilter filter)
+    public static string DescribeProblem(IFilter filter)
     {
         if (string.IsNullOrWhiteSpace(filter.WhereSQL))
             return "Filter is blank";
@@ -189,10 +187,9 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public string DescribeProblem(Catalogue catalogue)
+    public static string DescribeProblem(Catalogue catalogue)
     {
-        string reason;
-        if (!Catalogue.IsAcceptableName(catalogue.Name, out reason))
+        if (!Catalogue.IsAcceptableName(catalogue.Name, out var reason))
             return $"Invalid Name:{reason}";
 
         return null;
@@ -227,7 +224,7 @@ public class CatalogueProblemProvider : ProblemProvider
                     expiredCatalogueIds.Remove(i);
         }
 
-        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id]).Where(c => !(c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/)).ToArray();
+        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id]).Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
 
         if (expiredCatalogues.Any())
             return
@@ -241,32 +238,29 @@ public class CatalogueProblemProvider : ProblemProvider
     {
         //Get the Catalogue that this ExtractionInformation is descended from
         var descendancy = _childProvider.GetDescendancyListIfAnyFor(extractionInformation);
-        if (descendancy != null)
+        var catalogue = descendancy?.Parents.OfType<Catalogue>().SingleOrDefault();
+        if (catalogue != null)
         {
-            var catalogue = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
-            if (catalogue != null)
-            {
-                //if we know the Catalogue extractability
-                    
-                //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
-                //otherwise it's a Problem
+            //if we know the Catalogue extractability
 
-                if (catalogue.IsProjectSpecific(null))
-                {
-                    if(extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
-                        return
-                            $"Catalogue {catalogue} is Project Specific Catalogue so all ExtractionCategory should be {ExtractionCategory.ProjectSpecific}";
-                }
-                else if( extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+            //ExtractionCategory.ProjectSpecific should match the Catalogue extractability.IsProjectSpecific
+            //otherwise it's a Problem
+
+            if (catalogue.IsProjectSpecific(null))
+            {
+                if(extractionInformation.ExtractionCategory != ExtractionCategory.ProjectSpecific)
                     return
-                        $"ExtractionCategory is only valid when the Catalogue ('{catalogue}') is also ProjectSpecific";
+                        $"Catalogue {catalogue} is Project Specific Catalogue so all ExtractionCategory should be {ExtractionCategory.ProjectSpecific}";
             }
+            else if( extractionInformation.ExtractionCategory == ExtractionCategory.ProjectSpecific)
+                return
+                    $"ExtractionCategory is only valid when the Catalogue ('{catalogue}') is also ProjectSpecific";
         }
 
         return null;
     }
 
-    private string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
+    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
     {
         if (LoadDirectoryNode.IsEmpty)
             return "No Project Directory has been specified for the load";
@@ -305,7 +299,7 @@ public class CatalogueProblemProvider : ProblemProvider
                 {
                     // then something called 'inclusion criteria' should be the first among them
                     var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().OrderBy(o => o.Order).FirstOrDefault();
-                    if (first != null && (!first.Equals(container)))
+                    if (first != null && !first.Equals(container))
                     {
                         return $"{container.Name} must be the first container in the parent set.  Please re-order it to be the first";
                     }
@@ -315,7 +309,7 @@ public class CatalogueProblemProvider : ProblemProvider
 
         //count children that are not disabled
         var children = _childProvider.GetChildren(container);
-        var enabledChildren = children.Where(o => !(o is IDisableable d) || !d.IsDisabled).ToArray();
+        var enabledChildren = children.Where(o => o is not IDisableable d || !d.IsDisabled).ToArray();
 
         //are there any children with the same order in this container?
         if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))

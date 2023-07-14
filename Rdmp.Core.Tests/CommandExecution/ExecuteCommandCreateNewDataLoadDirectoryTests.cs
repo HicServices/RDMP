@@ -10,7 +10,7 @@ using System.IO;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
+internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
 {
     [Test]
     public void TestCreateNewDataLoadDirectory_CreateDeepFolder_NoLmd()

@@ -23,7 +23,7 @@ using Rdmp.UI.TransparentHelpSystem;
 namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
-/// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the 
+/// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the
 /// UI will show the checking/executing progress messages).  This class ensures that the behaviour is the same between console run rdmp and the UI applications.
 /// </summary>
 public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClosing
@@ -37,7 +37,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     public bool IsExecuting => _runningTask != null && !_runningTask.IsCompleted;
 
     /// <summary>
-    /// Called every time the execution of the runner completes (does not get called if the runner was detached - running 
+    /// Called every time the execution of the runner completes (does not get called if the runner was detached - running
     /// in a seperate process).
     /// </summary>
     public event EventHandler<ExecutionEventArgs> ExecutionFinished;
@@ -82,12 +82,12 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
     private List<HelpStage> BuildHelpStages()
     {
-        var stages = new List<HelpStage>()
+        var stages = new List<HelpStage>
         {
             new HelpStage(btnRunChecks,
                 "Once you are happy with the selections, use this button to run the checks for the selected options."),
             new HelpStage(btnExecute, "This button will execute the required operation in the RDMP UI.\r\n" +
-                                      "Results will be shown below."),
+                                      "Results will be shown below.")
         };
             
         return stages;
@@ -95,16 +95,16 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
     private GracefulCancellationTokenSource _cancellationTokenSource;
     private Task _runningTask;
-        
-        
+
+
     private void btnRunChecks_Click(object sender, EventArgs e)
     {
         IRunner runner;
 
         try
         {
-            var command = CommandGetter(CommandLineActivity.check);    
-            runner = _factory.CreateRunner(Activator,command);
+            var command = CommandGetter(CommandLineActivity.check);
+            runner = RunnerFactory.CreateRunner(Activator,command);
         }
         catch (Exception ex)
         {
@@ -137,7 +137,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
                 ragChecks.OnCheckPerformed(new CheckEventArgs($"Checks resulted in {worst}",worst));
                 //update the bit flag
                 ChecksPassed = worst <= CheckResult.Warning;
-                
+
                 //enable other buttons now based on the new state
                 SetButtonStates();
 
@@ -168,7 +168,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         try
         {
             var command = CommandGetter(CommandLineActivity.run);
-            runner = _factory.CreateRunner(Activator,command);
+            runner = RunnerFactory.CreateRunner(Activator,command);
         }
         catch (Exception ex)
         {
@@ -188,7 +188,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
 
         _runningTask
             //then on the main UI thread (after load completes with success/error
-            .ContinueWith((t) =>
+            .ContinueWith(t =>
                 {
                     //reset the system state because the execution has completed
                     ChecksPassed = false;
@@ -204,9 +204,8 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
                         loadProgressUI1.SetSuccess();
                     }
 
-                    if(ExecutionFinished != null)
-                        ExecutionFinished(this, new ExecutionEventArgs(exitCode));
-                    
+                    ExecutionFinished?.Invoke(this, new ExecutionEventArgs(exitCode));
+
                     //adjust the buttons accordingly
                     SetButtonStates();
                 }
@@ -237,8 +236,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
     private void SetButtonStates()
     {
         var h = StateChanged;
-        if (h != null)
-            h(this, new EventArgs());
+        h?.Invoke(this, EventArgs.Empty);
 
         if (!ChecksPassed)
         {
@@ -247,7 +245,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
                 ragChecks.Warning(new Exception("Checks have not been run yet"));
 
             btnRunChecks.Enabled = true;
-                
+
             btnExecute.Enabled = false;
             btnAbortLoad.Enabled = false;
             return;

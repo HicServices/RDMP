@@ -28,7 +28,7 @@ public class GatherAndShareTests:DatabaseTests
     public void Test_SerializeObject_ShareAttribute()
     {
         var d = new Dictionary<RelationshipAttribute,Guid>();
-            
+
         var json = JsonConvertExtensions.SerializeObject(d,RepositoryLocator);
         var obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json, typeof(Dictionary<RelationshipAttribute, Guid>),RepositoryLocator);
 
@@ -51,11 +51,11 @@ public class GatherAndShareTests:DatabaseTests
         var anoTable = new ANOTable(CatalogueRepository, anoserver, "ANOMagad", "N");
 
         Assert.AreEqual(anoTable.Server_ID,anoserver.ID);
-            
+
         var g = new Gatherer(RepositoryLocator);
         Assert.IsTrue(g.CanGatherDependencies(anoTable));
 
-        var gObj = g.GatherDependencies(anoTable);
+        var gObj = Gatherer.GatherDependencies(anoTable);
             
         //root should be the server
         Assert.AreEqual(gObj.Object,anoserver);
@@ -130,9 +130,9 @@ public class GatherAndShareTests:DatabaseTests
         var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
             $"Imaginary1{PackPluginRunner.PluginPackageSuffix}"));
         File.WriteAllBytes(f1.FullName,new byte[]{0x1,0x2});
-            
+
         var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo(
-            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"),new System.Version(1,1,1),new System.Version(1,1,1));
+            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"),new Version(1,1,1),new Version(1,1,1));
         var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
 
         Assert.AreEqual(lma1.Plugin_ID, plugin.ID);
@@ -140,7 +140,7 @@ public class GatherAndShareTests:DatabaseTests
         var g = new Gatherer(RepositoryLocator);
         Assert.IsTrue(g.CanGatherDependencies(plugin));
 
-        var gObj = g.GatherDependencies(plugin);
+        var gObj = Gatherer.GatherDependencies(plugin);
 
         //root should be the server
         Assert.AreEqual(gObj.Object, plugin);
@@ -153,8 +153,10 @@ public class GatherAndShareTests:DatabaseTests
     public void GatherAndShare_Catalogue_Test(bool goViaJson)
     {
         //Setup some objects under Catalogue that we can share
-        var cata = new Catalogue(CatalogueRepository, "Cata");
-        cata.Periodicity = Catalogue.CataloguePeriodicity.BiMonthly;
+        var cata = new Catalogue(CatalogueRepository, "Cata")
+        {
+            Periodicity = Catalogue.CataloguePeriodicity.BiMonthly
+        };
         cata.SaveToDatabase();
 
         var catalogueItem1 = new CatalogueItem(CatalogueRepository, cata, "Ci1");
@@ -176,7 +178,7 @@ public class GatherAndShareTests:DatabaseTests
         Assert.IsTrue(g.CanGatherDependencies(cata));
 
         //gather the objects depending on Catalogue as a tree
-        var gObj = g.GatherDependencies(cata);
+        var gObj = Gatherer.GatherDependencies(cata);
         Assert.AreEqual(2, gObj.Children.Count); //both cata items
 
         var lmd = new LoadMetadata(CatalogueRepository);
@@ -227,7 +229,7 @@ public class GatherAndShareTests:DatabaseTests
         cata.SaveToDatabase();
 
         //test importing the Catalogue properties only
-        shareManager.ImportPropertiesOnly(cata,shareDefinition[0]);
+        ShareManager.ImportPropertiesOnly(cata,shareDefinition[0]);
             
         //import the defined properties but not name
         Assert.AreEqual("fishfish",cata.Name);
@@ -254,12 +256,14 @@ public class GatherAndShareTests:DatabaseTests
     public void GatherAndShare_ExtractionFilter_Test()
     {
         //Setup some objects under Catalogue
-        var cata = new Catalogue(CatalogueRepository, "Cata");
-        cata.Periodicity = Catalogue.CataloguePeriodicity.BiMonthly;
+        var cata = new Catalogue(CatalogueRepository, "Cata")
+        {
+            Periodicity = Catalogue.CataloguePeriodicity.BiMonthly
+        };
         cata.SaveToDatabase();
 
         var catalogueItem1 = new CatalogueItem(CatalogueRepository, cata, "Ci1");
-            
+
         var tableInfo = new TableInfo(CatalogueRepository, "Myt");
         var colInfo = new ColumnInfo(CatalogueRepository, "[Mt].[C1]", "varchar(10)", tableInfo);
 
@@ -269,24 +273,28 @@ public class GatherAndShareTests:DatabaseTests
         //Setup a Filter under this extractable column (the filter is what we will share)
         var ei = new ExtractionInformation(CatalogueRepository, catalogueItem1, colInfo, "UPPER(C1) as Fish");
 
-        var filter = new ExtractionFilter(CatalogueRepository, "My Filter", ei);
-        filter.Description = "amagad";
-        filter.WhereSQL = "UPPER(C1) = @a";
+        var filter = new ExtractionFilter(CatalogueRepository, "My Filter", ei)
+        {
+            Description = "amagad",
+            WhereSQL = "UPPER(C1) = @a"
+        };
 
         //Give the filter a parameter @a just to make things interesting
         var declaration = filter.GetQuerySyntaxHelper().GetParameterDeclaration("@a", new DatabaseTypeRequest(typeof (string), 1));
         var param = filter.GetFilterFactory().CreateNewParameter(filter, declaration);
-            
+
         //Also create a 'known good value' set i.e. recommended value for the parameter to achive some goal (you can have multiple of these - this will not be shared)
         var set = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Fife");
-        var val = new ExtractionFilterParameterSetValue(CatalogueRepository, set, (ExtractionFilterParameter) param);
-        val.Value = "'FISH'";
+        var val = new ExtractionFilterParameterSetValue(CatalogueRepository, set, (ExtractionFilterParameter) param)
+            {
+                Value = "'FISH'"
+            };
 
         //Gather the dependencies (this is what we are testing)
         var gatherer = new Gatherer(RepositoryLocator);
             
         Assert.IsTrue(gatherer.CanGatherDependencies(filter));
-        var gathered = gatherer.GatherDependencies(filter);
+        var gathered = Gatherer.GatherDependencies(filter);
 
         //gatherer should have gathered the filter and the parameter (but not the ExtractionFilterParameterSet sets)
         Assert.AreEqual(1,gathered.Children.Count);

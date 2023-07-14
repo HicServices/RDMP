@@ -32,7 +32,7 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
     public string Name { get; }
     public string WhereSQL { get; }
 
-    IFilter[] _offerFilters;
+    private IFilter[] _offerFilters;
     private bool offerCatalogueFilters;
         
     public bool OfferCatalogueFilters
@@ -46,7 +46,7 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
                 _offerFilters = c?.GetAllFilters();
 
                 if (_offerFilters ==null || !_offerFilters.Any())
-                    SetImpossible($"There are no Filters declared in Catalogue '{(c?.ToString() ?? "NULL") }'");
+                    SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL" }'");
 
             }
 
@@ -237,8 +237,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
             f = _factory.CreateNewFilter($"New Filter {Guid.NewGuid()}");
         }
 
-        if (container != null)
-            container.AddChild(f);
+        container?.AddChild(f);
 
         if (!string.IsNullOrWhiteSpace(Name))
         {
@@ -264,7 +263,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
     {
 
         var wizard = new FilterImportWizard(BasicActivator);
-            
+
         var import = wizard.ImportManyFromSelection(container, _offerFilters).ToArray();
 
         foreach (var f in import)

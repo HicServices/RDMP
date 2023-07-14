@@ -23,7 +23,7 @@ namespace Rdmp.UI.PipelineUIs.DataObjects;
 /// itself is stored as a reusable resource in the Catalogue Database. </para>
 /// </summary>
 [TechnicalUI]
-class PipelineComponentVisualisation:DataFlowComponentVisualisation
+internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
 {
     private bool _isSelected;
 
@@ -76,7 +76,7 @@ class PipelineComponentVisualisation:DataFlowComponentVisualisation
         if (valueOrNullIfBroken == null)
             ragSmiley1.OnCheckPerformed(new CheckEventArgs("Could not construct object", CheckResult.Fail));
 
-        this.Width = lblText.PreferredWidth + 85;
+        Width = lblText.PreferredWidth + 85;
 
         _isEmpty = false;
 

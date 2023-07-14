@@ -59,10 +59,9 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
             TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw, job.Configuration.DatabaseNamer);
         }
-                
 
-        if(TableName != null)
-            TableName = TableName.Trim();
+
+        TableName = TableName?.Trim();
 
         var timer = new Stopwatch();
         timer.Start();
@@ -73,14 +72,14 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
         var table = _dbInfo.ExpectTable(TableName);
 
-        //table didnt exist!
+        //table didn't exist!
         if (!table.Exists())
             if (!_dbInfo.DiscoverTables(false).Any())//maybe no tables existed
                 throw new FlatFileLoadException("Raw database had 0 tables we could load");
             else//no there are tables just not the one we were looking for
                 throw new FlatFileLoadException($"RAW database did not have a table called:{TableName}");
 
-            
+
         //load the flat file
         var filepattern = FilePattern ?? "*";
 
@@ -240,7 +239,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken);
         
 
-    private void DropEmptyColumns(DataTable dt)
+    private static void DropEmptyColumns(DataTable dt)
     {
         var emptyColumnsSyntheticNames = new Regex("^Column[0-9]+$");
 

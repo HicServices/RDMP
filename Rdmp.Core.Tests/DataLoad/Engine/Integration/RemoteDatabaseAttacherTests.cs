@@ -52,13 +52,13 @@ public class RemoteDatabaseAttacherTests:DatabaseTests
 
         var externalServer = new ExternalDatabaseServer(CatalogueRepository, "MyFictionalRemote",null);
         externalServer.SetProperties(db);
-            
+
         var attacher = new RemoteDatabaseAttacher();
         attacher.Initialize(null,db);
 
         attacher.LoadRawColumnsOnly = scenario == Scenario.AllRawColumns || scenario == Scenario.MissingPreLoadDiscardedColumn;
         attacher.RemoteSource = externalServer;
-            
+
         var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         lm.CreateNewLoggingTaskIfNotExists("amagad");
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
@@ -76,12 +76,12 @@ public class RemoteDatabaseAttacherTests:DatabaseTests
             case Scenario.MissingPreLoadDiscardedColumn:
                 var ex = Assert.Throws<PipelineCrashedException>(() => attacher.Attach(job, new GracefulCancellationToken()));
 
-                Assert.AreEqual("Invalid column name 'MyMissingCol'.", (ex.InnerException.InnerException).InnerException.Message);
+                Assert.AreEqual("Invalid column name 'MyMissingCol'.", ex.InnerException.InnerException.InnerException.Message);
                 return;
             case Scenario.MissingPreLoadDiscardedColumnButSelectStar:
                 break;
             default:
-                throw new ArgumentOutOfRangeException("scenario");
+                throw new ArgumentOutOfRangeException(nameof(scenario));
         }
         attacher.Attach(job, new GracefulCancellationToken());
 

@@ -24,7 +24,7 @@ internal class HousekeepingTests : DatabaseTests
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
         var databaseName = db.GetRuntimeName();
-        var table = db.CreateTable(tableName,new[] {new DatabaseColumnRequest("Id", "int"),});
+        var table = db.CreateTable(tableName,new[] {new DatabaseColumnRequest("Id", "int") });
 
         var server = db.Server;
         using (var con = server.GetConnection())
@@ -39,7 +39,7 @@ internal class HousekeepingTests : DatabaseTests
         var dbInfo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName);
 
         var factory = new TriggerImplementerFactory(dbInfo.Server.DatabaseType);
-            
+
         var triggerImplementer = factory.Create(table);
         var isEnabled = triggerImplementer.GetTriggerStatus();
         Assert.AreEqual(TriggerStatus.Enabled, isEnabled);

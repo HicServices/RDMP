@@ -18,7 +18,7 @@ public class CommentStoreWithKeywords : CommentStore
     public override void ReadComments(params string[] directoriesToLookInForComments)
     {
         base.ReadComments(directoriesToLookInForComments);
-            
+
         var keywords = new FileInfo("./Curation/KeywordHelp.txt");
 
         if(keywords.Exists)

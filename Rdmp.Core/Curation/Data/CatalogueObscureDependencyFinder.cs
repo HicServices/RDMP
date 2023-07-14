@@ -34,7 +34,7 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
     /// <summary>
     /// Plugin and supplemental child IObscureDependencyFinders
     /// </summary>
-    public List<IObscureDependencyFinder> OtherDependencyFinders = new List<IObscureDependencyFinder>();
+    public List<IObscureDependencyFinder> OtherDependencyFinders = new();
         
     /// <inheritdoc/>
     /// <remarks>Consults each <see cref="OtherDependencyFinders"/> to see if deleting is disallowed</remarks>
@@ -70,7 +70,7 @@ public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
         if (OtherDependencyFinders.All(f => f.GetType() != typeof(T)))
         {
             var constructor = new ObjectConstructor();
-            OtherDependencyFinders.Add((T)constructor.Construct(typeof(T), repositoryLocator));
+            OtherDependencyFinders.Add((T)ObjectConstructor.Construct(typeof(T), repositoryLocator));
         }
     }
 }

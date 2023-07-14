@@ -21,7 +21,7 @@ public class FavouriteColumnProvider
 {
     private readonly IActivateItems _activator;
     private readonly TreeListView _tlv;
-    OLVColumn _olvFavourite;
+    private OLVColumn _olvFavourite;
 
     private Bitmap _starFull;
     private Bitmap _starHollow;
@@ -39,8 +39,10 @@ public class FavouriteColumnProvider
 
     public OLVColumn CreateColumn()
     {
-        _olvFavourite = new OLVColumn("Favourite", null);
-        _olvFavourite.Text = "Favourite";
+        _olvFavourite = new OLVColumn("Favourite", null)
+        {
+            Text = "Favourite"
+        };
         _olvFavourite.ImageGetter += FavouriteImageGetter;
         _olvFavourite.IsEditable = false;
         _olvFavourite.Sortable = true;
@@ -48,57 +50,52 @@ public class FavouriteColumnProvider
         // setup value of column as 1 (favourite) or 0 (not favourite)
         _olvFavourite.AspectGetter = FavouriteAspectGetter;
         // but don't actually write that value when rendering (just use for sort etc)
-        _olvFavourite.AspectToStringConverter = (st) => "";
+        _olvFavourite.AspectToStringConverter = st => "";
 
         _tlv.CellClick += OnCellClick;
-            
+
         _tlv.AllColumns.Add(_olvFavourite);
         _tlv.RebuildColumns();
-            
+
         return _olvFavourite;
     }
 
     private void OnCellClick(object sender, CellClickEventArgs cellClickEventArgs)
     {
         var col = cellClickEventArgs.Column;
-        var o = cellClickEventArgs.Model as DatabaseEntity;
 
 
-        if (col == _olvFavourite && o != null)
+        if (col == _olvFavourite && cellClickEventArgs.Model is DatabaseEntity o)
         {
             if (_activator.FavouritesProvider.IsFavourite(o))
                 _activator.FavouritesProvider.RemoveFavourite(this, o);
             else
                 _activator.FavouritesProvider.AddFavourite(this, o);
-                
+
             try
             {
                 _tlv.RefreshObject(o);
             }
             catch (ArgumentException)
             {
-                    
+
             }
         }
     }
 
     private Bitmap FavouriteImageGetter(object rowobject)
     {
-        var o = rowobject as DatabaseEntity;
-
-        if (o != null)
+        if (rowobject is DatabaseEntity o)
             return _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow;
-                    
+
 
         return null;
     }
     private object FavouriteAspectGetter(object rowobject)
     {
-        var o = rowobject as DatabaseEntity;
-
-        if (o != null)
+        if (rowobject is DatabaseEntity o)
             return _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0;
-                    
+
 
         return null;
     }

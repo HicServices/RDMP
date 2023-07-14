@@ -4,11 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-#pragma warning disable 1591
-
 namespace Rdmp.Core.CommandLine.Interactive;
 
-class AutoComplete
+internal class AutoComplete
 {
     private readonly string[] autocompletes;
 
@@ -17,7 +15,7 @@ class AutoComplete
         this.autocompletes = autocompletes?.ToArray() ?? Array.Empty<string>();
     }
 
-    public char[] Separators { get;set;} = new []{ ','};
+    public char[] Separators { get;set;} = { ','};
 
     public string[] GetSuggestions(string text, int index)
     {

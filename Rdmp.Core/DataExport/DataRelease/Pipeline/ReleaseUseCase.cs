@@ -29,7 +29,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
     public ReleaseUseCase(IProject project, ReleaseData releaseData, ICatalogueRepository catalogueRepository)
     {
         ExplicitDestination = null;
-            
+
         var releasePotentials = releaseData.ConfigurationsForRelease.Values.SelectMany(x => x).ToList();
         var releaseTypes = releasePotentials.Select(rp => rp.GetType()).Distinct().ToList();
 
@@ -53,7 +53,7 @@ public sealed class ReleaseUseCase : PipelineUseCase
                     typeof (IExecuteDatasetExtractionDestination));
             var constructor = new ObjectConstructor();
             var destinationUsedAtExtraction =
-                (IExecuteDatasetExtractionDestination)constructor.Construct(destinationType, catalogueRepository);
+                (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(destinationType, catalogueRepository);
 
             var fixedReleaseSource =
                 destinationUsedAtExtraction.GetReleaseSource(catalogueRepository);

@@ -67,11 +67,11 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         dt.Rows.Add(new object[] { "Filli", 32, DBNull.Value }); //update from "DD3 78L" null
         dt.Rows.Add(new object[] { "Mandrake", 32, "DD1 1PS" }); //update from null toTbl "DD1 1PS"
         dt.Rows.Add(new object[] { "Mandrake", 31, "DD1 1PS" }); // insert because Age is unique (and part of pk)
-            
+
         var fromTbl = From.CreateTable($"{DatabaseName}_ToTable_STAGING", dt);
-            
+
         //import the toTbl table as a TableInfo
-        var cata = Import(toTbl,out var ti,out var cis);
+        var cata = Import(toTbl,out var ti, out var cis);
 
         //put the backup trigger on the live table (this will also create the needed hic_ columns etc)
         var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(toTbl);
@@ -92,7 +92,7 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         logManager.CreateNewLoggingTaskIfNotExists("CrossDatabaseMergeCommandTest");
         var dli = logManager.CreateDataLoadInfo("CrossDatabaseMergeCommandTest", "tests", "running test", "", true);
 
-        var job = new ThrowImmediatelyDataLoadJob()
+        var job = new ThrowImmediatelyDataLoadJob
         {
             LoadMetadata = lmd,
             DataLoadInfo = dli,
@@ -100,18 +100,18 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         };
 
         migrationHost.Migrate(job, new GracefulCancellationToken());
-            
+
         var resultantDt = toTbl.GetDataTable();
         Assert.AreEqual(7,resultantDt.Rows.Count);
 
         AssertRowEquals(resultantDt, "Dave", 25, "DD1 1PS");
         AssertRowEquals(resultantDt, "Chutney", 32, DBNull.Value);
         AssertRowEquals(resultantDt, "Mango", 32, DBNull.Value);
-            
+
         AssertRowEquals(resultantDt,"Filli",32,DBNull.Value);
         AssertRowEquals(resultantDt, "Mandrake", 32, "DD1 1PS");
         AssertRowEquals(resultantDt, "Mandrake", 31, "DD1 1PS");
-            
+
         AssertRowEquals(resultantDt, "Dave", 18, "DD3 1AB");
 
 
@@ -124,7 +124,7 @@ public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
         Assert.AreEqual(3, log.TableLoadInfos.Single().Updates);
     }
 
-    private void AssertRowEquals(DataTable resultantDt,string name,int age, object postcode)
+    private static void AssertRowEquals(DataTable resultantDt,string name,int age, object postcode)
     {
         Assert.AreEqual(
             1, resultantDt.Rows.Cast<DataRow>().Count(r => Equals(r["Name"], name) && Equals(r["Age"], age) && Equals(r["Postcode"], postcode)),

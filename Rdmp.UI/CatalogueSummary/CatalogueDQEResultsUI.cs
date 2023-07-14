@@ -53,11 +53,11 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
         _lastSelected = evaluation;
     }
 
-    void dqePivotCategorySelector1_PivotCategorySelectionChanged()
+    private void dqePivotCategorySelector1_PivotCategorySelectionChanged()
     {
         if(_lastSelected ==  null)
             return;
-            
+
         var category = dqePivotCategorySelector1.SelectedPivotCategory;
 
         timePeriodicityChart1.SelectEvaluation(_lastSelected, category ?? "ALL");

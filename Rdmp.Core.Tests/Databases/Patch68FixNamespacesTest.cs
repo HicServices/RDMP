@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Databases;
 
-class Patch68FixNamespacesTest:UnitTests
+internal class Patch68FixNamespacesTest:UnitTests
 {
 
     /// <summary>
@@ -29,7 +29,7 @@ class Patch68FixNamespacesTest:UnitTests
         var patch = p.GetAllPatchesInAssembly(null).Single(kvp=>kvp.Key == "068_FixNamespaces.sql").Value;
 
         var findSubsRegex = new Regex(@"REPLACE\(.*,'(.*)','(.*)'\)");
-            
+
         var substitutions = new Dictionary<string, string>();
 
         foreach (Match match in findSubsRegex.Matches(patch.EntireScript))
@@ -60,8 +60,7 @@ class Patch68FixNamespacesTest:UnitTests
 
     }
     private string[] ExpectedClasses
-        = new[]
-        {
+        = {
             "CachingEngine.PipelineExecution.Destinations.CacheFileGranularity",
             "CatalogueLibrary.Data.ColumnInfo",
             "CatalogueLibrary.Data.DataAccessCredentials",

@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandResetExtractionProgress : BasicCommandExecution
 {
-    List<IExtractionProgress> _toClear = new List<IExtractionProgress>();
+    private List<IExtractionProgress> _toClear = new();
 
     /// <summary>
     /// Clears one or more <see cref="ExtractionProgress"/> on a single <see cref="ExtractionConfiguration"/>
@@ -70,11 +70,8 @@ public class ExecuteCommandResetExtractionProgress : BasicCommandExecution
     private void AddClearTarget(ISelectedDataSets sds)
     {
         var progress = sds.ExtractionProgressIfAny;
-            
-        if (progress == null)
-            return;
 
-        if(progress.ProgressDate != null)
+        if(progress?.ProgressDate != null)
         {
             _toClear.Add(progress);
         }

@@ -28,10 +28,10 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Base class for all objects which are stored in database repositories (e.g. Catalogue database , Data Export database).  This is the abstract implementation of
-/// IMapsDirectlyToDatabaseTable.  You must always have two constructors, one that takes a DbDataReader and is responsible for constructing an instance from a 
+/// IMapsDirectlyToDatabaseTable.  You must always have two constructors, one that takes a DbDataReader and is responsible for constructing an instance from a
 /// record in the database and one that takes the minimum parameters required to satisfy database constraints and is used to create new objects.
 /// 
-/// <para>A DatabaseEntity instance cannot exist without there being a matching record in the database repository.  This is the RDMP design pattern for object permenance, 
+/// <para>A DatabaseEntity instance cannot exist without there being a matching record in the database repository.  This is the RDMP design pattern for object permenance,
 /// sharing and allowing advanced users to update the data model via database queries running directly on the object repository database.</para>
 /// 
 /// <para>A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
@@ -54,7 +54,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public IRepository Repository { get; set; }
-        
+
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public ICatalogueRepository CatalogueRepository => Repository as ICatalogueRepository;
@@ -91,7 +91,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
 
     }
 
-    private bool HasColumn(IDataRecord reader, string columnName)
+    private static bool HasColumn(IDataRecord reader, string columnName)
     {
         for (var i = 0; i < reader.FieldCount; i++)
         {
@@ -108,7 +108,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// <param name="r"></param>
     /// <param name="fieldName"></param>
     /// <returns></returns>
-    protected Uri ParseUrl(DbDataReader r, string fieldName)
+    protected static Uri ParseUrl(DbDataReader r, string fieldName)
     {
         var uri = r[fieldName];
 
@@ -168,7 +168,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected DateTime? ObjectToNullableDateTime(object o)
+    protected static DateTime? ObjectToNullableDateTime(object o)
     {
         if (o == null || o == DBNull.Value)
             return null;
@@ -181,7 +181,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected int? ObjectToNullableInt(object o)
+    protected static int? ObjectToNullableInt(object o)
     {
         if (o == null || o == DBNull.Value)
             return null;
@@ -194,7 +194,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected bool? ObjectToNullableBool(object o)
+    protected static bool? ObjectToNullableBool(object o)
     {
         if (o == null || o == DBNull.Value)
             return null;
@@ -252,7 +252,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     }
 
     /// <summary>
-    /// Copies all properties not marked with [NoMappingToDatabase] or [Relationship] from the this object to the <paramref name="to"/> object. 
+    /// Copies all properties not marked with [NoMappingToDatabase] or [Relationship] from the this object to the <paramref name="to"/> object.
     /// Also skips 'Name' and 'ID'
     /// </summary>
     /// <param name="to"></param>
@@ -261,7 +261,8 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     protected void CopyShallowValuesTo(DatabaseEntity to,bool copyName = false,bool save = true)
     {
         if (GetType() != to.GetType())
-            throw new NotSupportedException(string.Format("Object to must be the same Type as us, we were '{0}' and it was '{1}'",GetType().Name,to.GetType().Name) );
+            throw new NotSupportedException(
+                $"Object to must be the same Type as us, we were '{GetType().Name}' and it was '{to.GetType().Name}'");
 
         var noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(to);
         var relationsFinder = new AttributePropertyFinder<RelationshipAttribute>(to);
@@ -338,10 +339,8 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
             {
                 return;
             }
-            else
-            {
-                throw;
-            }
+
+            throw;
         }
 
         // skip properties marked with 'do not extract'
@@ -354,11 +353,11 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
             if (val is Enum e && Convert.ToInt32(e) == 0 && val is not DatabaseType)
                 return;
 
-            var representation = $"{(includePropertyName? $"{FormatPropertyNameForSummary(prop)}: " : "")}{ FormatForSummary(val)}";
+            var representation = $"{(includePropertyName? $"{FormatPropertyNameForSummary(prop)}: " : "")}{FormatForSummary(val)}";
 
             if (representation.Length > MAX_SUMMARY_ITEM_LENGTH)
             {
-                representation = $"{representation.Substring(0, MAX_SUMMARY_ITEM_LENGTH - 3)}...";
+                representation = $"{representation[..(MAX_SUMMARY_ITEM_LENGTH - 3)]}...";
             }
 
             if (representation.Contains('\n'))
@@ -385,7 +384,7 @@ public abstract class DatabaseEntity : IRevertable,  INotifyPropertyChanged, ICa
     /// </summary>
     /// <param name="val"></param>
     /// <returns></returns>
-    protected string FormatForSummary(object val)
+    protected static string FormatForSummary(object val)
     {
         if(val is bool b)
         {

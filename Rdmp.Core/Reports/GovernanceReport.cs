@@ -25,7 +25,7 @@ public class GovernanceReport:DocXHelper
     private readonly IDetermineDatasetTimespan _timespanCalculator;
     private readonly ICatalogueRepository _repository;
 
-    private readonly CsvConfiguration _csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
+    private readonly CsvConfiguration _csvConfig = new(CultureInfo.CurrentCulture)
     {
         Delimiter = ","
     };
@@ -92,7 +92,7 @@ public class GovernanceReport:DocXHelper
 
                 // next section header
                 writer.WriteField("Active Governance");
-            
+
                 OutputGovernanceList(govs,writer, false);
 
                 writer.NextRecord();
@@ -102,11 +102,11 @@ public class GovernanceReport:DocXHelper
                 OutputGovernanceList(govs,writer, true);
             }
         }
-                
+
         ShowFile(f);
     }
 
-    private string ShortenDescription(string description)
+    private static string ShortenDescription(string description)
     {
         if (string.IsNullOrWhiteSpace(description))
             return description;
@@ -115,9 +115,8 @@ public class GovernanceReport:DocXHelper
         description = description.Replace("\n"," ");
 
         if (description.Length >= 100)
-            return $"{description.Substring(0, 100)}...";
-        else
-            return description;
+            return $"{description[..100]}...";
+        return description;
     }
 
     /// <summary>
@@ -126,7 +125,7 @@ public class GovernanceReport:DocXHelper
     /// <param name="govs"></param>
     /// <param name="writer"></param>
     /// <param name="expired"></param>
-    private void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer, bool expired)
+    private static void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer, bool expired)
     {
         //headers for this section
         writer.WriteField("Governance");

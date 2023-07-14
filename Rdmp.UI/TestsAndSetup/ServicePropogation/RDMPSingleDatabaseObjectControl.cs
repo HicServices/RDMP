@@ -23,8 +23,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 /// <summary>
 /// TECHNICAL: base abstract class for all Controls which are concerned with a single root DatabaseEntity e.g. AggregateGraph is concerned only with an AggregateConfiguration
-/// and its children.  The reason this class exists is to streamline lifetime publish subscriptions (ensuring multiple tabs editting one anothers database objects happens 
-/// in a seamless a way as possible). 
+/// and its children.  The reason this class exists is to streamline lifetime publish subscriptions (ensuring multiple tabs editting one anothers database objects happens
+/// in a seamless a way as possible).
 /// 
 /// </summary>
 /// <typeparam name="T"></typeparam>
@@ -50,7 +50,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     private BinderWithErrorProviderFactory _binder;
 
-    protected ObjectSaverButton ObjectSaverButton1 = new ObjectSaverButton();
+    protected ObjectSaverButton ObjectSaverButton1 = new();
 
     public DatabaseEntity DatabaseObject { get; private set; }
     protected RDMPCollection AssociatedCollection = RDMPCollection.None;
@@ -75,51 +75,49 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
         if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
         {
-            var colorProvider = new BackColorProvider();
-            _colorIndicator = new Control();
-            _colorIndicator.Dock = DockStyle.Top;
-            _colorIndicator.Location = new Point(0, 0);
-            _colorIndicator.Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight);
-            _colorIndicator.TabIndex = 0;
-            _colorIndicator.BackColor = colorProvider.GetColor(AssociatedCollection);
-            this.Controls.Add(this._colorIndicator);
+            _colorIndicator = new Control
+            {
+                Dock = DockStyle.Top,
+                Location = new Point(0, 0),
+                Size = new Size(150, BackColorProvider.IndicatorBarSuggestedHeight),
+                TabIndex = 0,
+                BackColor = BackColorProvider.GetColor(AssociatedCollection)
+            };
+            Controls.Add(_colorIndicator);
         }
 
-        if (_readonlyIndicator == null)
-        {
-            _readonlyIndicator = new Label();
-            _readonlyIndicator.Dock = DockStyle.Top;
-            _readonlyIndicator.Location = new Point(0, 0);
-            _readonlyIndicator.Size = new Size(150, 20);
-            _readonlyIndicator.TabIndex = 0;
-            _readonlyIndicator.TextAlign = ContentAlignment.MiddleLeft;
-            _readonlyIndicator.BackColor = System.Drawing.SystemColors.HotTrack;
-            _readonlyIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            _readonlyIndicator.ForeColor = System.Drawing.Color.Moccasin;
-
-        }
+        _readonlyIndicator ??= new Label
+            {
+                Dock = DockStyle.Top,
+                Location = new Point(0, 0),
+                Size = new Size(150, 20),
+                TabIndex = 0,
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = SystemColors.HotTrack,
+                Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0),
+                ForeColor = Color.Moccasin
+            };
 
         if (databaseObject is IMightBeReadOnly ro)
         {
             if (ro.ShouldBeReadOnly(out var reason))
             {
                 _readonlyIndicator.Text = reason;
-                this.Controls.Add(this._readonlyIndicator);
+                Controls.Add(_readonlyIndicator);
                 ReadOnly = true;
             }
             else
             {
                 //removing it allows us to handle refreshes (where something becomes unfrozen for example)
-                this.Controls.Remove(this._readonlyIndicator);
+                Controls.Remove(_readonlyIndicator);
                 ReadOnly = false;
             }
         }
 
-        if (_binder == null)
-            _binder = new BinderWithErrorProviderFactory(activator);
+        _binder ??= new BinderWithErrorProviderFactory(activator);
 
         SetBindings(_binder, databaseObject);
-            
+
         if(this is ISaveableUI)
         {
             if(UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
@@ -131,8 +129,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
             ObjectSaverButton1.SetupFor(this, databaseObject, activator);
         }
-                
-            
+
+
         var gotoFactory = new GoToCommandFactory(activator);
         foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
         {
@@ -160,7 +158,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 return false;
             }
         }
-            
+
         // before starting a new commit cleanup old one
         CurrentCommit?.Dispose();
 
@@ -178,15 +176,15 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             CurrentCommit = new CommitInProgress(Activator.RepositoryLocator, new CommitInProgressSettings(DatabaseObject));
         }
     }
-    void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
+
+    private void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
     {
-        if (_colorIndicator != null)
-            _colorIndicator.SendToBack();
+        _colorIndicator?.SendToBack();
     }
 
     protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)
     {
-            
+
     }
 
     /// <summary>
@@ -201,14 +199,12 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     /// <param name="updateMode"></param>
     protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter, bool formattingEnabled = true,DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
     {
-        var box = c as ComboBox;
-
         //workaround for only comitting lists on loose focus
-        if (box != null && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
+        if (c is ComboBox box && box.DropDownStyle == ComboBoxStyle.DropDownList && propertyName.Equals("SelectedItem"))
         {
             box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
         }
-            
+
         _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
     }
 
@@ -223,7 +219,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         try
         {
-                
+
             if (string.IsNullOrWhiteSpace(tb.Text))
             {
                 action(null);
@@ -281,9 +277,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     public virtual string GetTabName()
     {
-        var named = DatabaseObject as INamed;
-
-        if (named != null)
+        if (DatabaseObject is INamed named)
             return named.Name;
 
 

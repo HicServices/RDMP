@@ -26,11 +26,8 @@ public class CohortCompilerRunnerTests:DatabaseTests
     [Test]
     public void CacheIdentifierListWithRunner_SimpleCase()
     {
-        DiscoveredDatabase db;
-        CohortIdentificationConfiguration cic;
-        DataTable dt;
 
-        SetupCohort(out db,out cic,out dt);
+        SetupCohort(out DiscoveredDatabase db, out var cic, out var dt);
 
         var compiler = new CohortCompiler(cic);
 
@@ -51,16 +48,12 @@ public class CohortCompilerRunnerTests:DatabaseTests
     [Test]
     public void CacheIdentifierListWithRunner_WithCaching()
     {
-        DiscoveredDatabase db;
-        CohortIdentificationConfiguration cic;
-        DataTable dt;
+        SetupCohort(out var db, out var cic, out var dt);
 
-        SetupCohort(out db, out cic, out dt);
-            
         var e = new MasterDatabaseScriptExecutor(db);
         var p = new QueryCachingPatcher();
         e.CreateAndPatchDatabase(p,new AcceptAllCheckNotifier());
-            
+
         var serverReference = new ExternalDatabaseServer(CatalogueRepository, "Cache", p);
         serverReference.SetProperties(db);
 
@@ -102,8 +95,10 @@ public class CohortCompilerRunnerTests:DatabaseTests
         ei.IsExtractionIdentifier = true;
         ei.SaveToDatabase();
 
-        var agg = new AggregateConfiguration(CatalogueRepository, cata, "MyAgg");
-        agg.CountSQL = null;
+        var agg = new AggregateConfiguration(CatalogueRepository, cata, "MyAgg")
+        {
+            CountSQL = null
+        };
         agg.SaveToDatabase();
         var dimension = new AggregateDimension(CatalogueRepository, ei, agg);
 

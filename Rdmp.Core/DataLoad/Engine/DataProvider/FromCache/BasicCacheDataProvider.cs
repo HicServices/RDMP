@@ -25,7 +25,7 @@ public class BasicCacheDataProvider : CachedFileRetriever
     public override ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         var scheduledJob = ConvertToScheduledJob(job);
-            
+
         var workload = GetDataLoadWorkload(scheduledJob);
         ExtractJobs(scheduledJob);
 

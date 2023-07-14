@@ -17,8 +17,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandSetContainerOperation : BasicCommandExecution
 {
-    private CohortAggregateContainer _container;
-    private SetOperation _operation;
+    private readonly CohortAggregateContainer _container;
+    private readonly SetOperation _operation;
 
     public ExecuteCommandSetContainerOperation(IBasicActivateItems activator, CohortAggregateContainer container, SetOperation operation) : base(activator)
     {
@@ -33,32 +33,29 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
             SetImpossible(reason);
         }
 
-        switch (_operation)
+        Weight = _operation switch
         {
-            case SetOperation.UNION: Weight = 0.21f; break;
-            case SetOperation.EXCEPT: Weight = 0.22f; break;
-            case SetOperation.INTERSECT: Weight = 0.23f; break;
-        }
+            SetOperation.UNION => 0.21f,
+            SetOperation.EXCEPT => 0.22f,
+            SetOperation.INTERSECT => 0.23f,
+            _ => Weight
+        };
     }
 
     public override string GetCommandName()
     {
-        if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-            return OverrideCommandName;
-
-        return $"Set operation {_operation}";
+        return !string.IsNullOrWhiteSpace(OverrideCommandName) ? OverrideCommandName : $"Set operation {_operation}";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        switch(_operation)
+        return _operation switch
         {
-            case SetOperation.EXCEPT: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.EXCEPT));
-            case SetOperation.INTERSECT: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.INTERSECT));
-            case SetOperation.UNION: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.UNION));
-        }
-
-        return base.GetImage(iconProvider);
+            SetOperation.EXCEPT => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.EXCEPT)),
+            SetOperation.INTERSECT => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.INTERSECT)),
+            SetOperation.UNION => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.UNION)),
+            _ => base.GetImage(iconProvider)
+        };
     }
 
     public override void Execute()
@@ -69,7 +66,7 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
 
         //if the old name was UNION and we are changing to INTERSECT Operation then we should probably change the Name too! even if they have something like 'INTERSECT the people who are big and small' and they change to UNION we want it to be changed to 'UNION the people who are big and small'
         if (_container.Name.StartsWith(oldOperation.ToString()))
-            _container.Name = _operation + _container.Name.Substring(oldOperation.ToString().Length);
+            _container.Name = _operation + _container.Name[oldOperation.ToString().Length..];
         else
         {
             if (BasicActivator.TypeText("New name for container?", "You have changed the operation, do you want to give it a new description?", 1000, _container.Name, out var newName, false))

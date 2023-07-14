@@ -25,7 +25,7 @@ namespace Rdmp.Core.Autocomplete;
 /// </summary>
 public class AutoCompleteProvider : IAutoCompleteProvider
 {
-    public HashSet<string> Items { get; set; }  = new ();
+    public HashSet<string> Items { get; set; }  = new HashSet<string>();
 
     /// <summary>
     /// Array of images that items can be depicted with.  Use <see cref="ItemsWithImages"/> to index into
@@ -61,7 +61,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    public IEnumerable<string> GetBits(string arg)
+    public static IEnumerable<string> GetBits(string arg)
     {
         //     yield return arg;
 
@@ -124,8 +124,7 @@ public class AutoCompleteProvider : IAutoCompleteProvider
 
     private void AddUnlessDuplicateImage(string fullySpecified, int idx)
     {
-        if(!ItemsWithImages.ContainsKey(fullySpecified))
-            ItemsWithImages.Add(fullySpecified, idx);
+        ItemsWithImages.TryAdd(fullySpecified, idx);
     }
     public void AddSQLKeywords(IQuerySyntaxHelper syntaxHelper)
     {

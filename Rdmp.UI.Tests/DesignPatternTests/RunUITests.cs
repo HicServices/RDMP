@@ -26,7 +26,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 public class RunUITests:DatabaseTests
 {
     private List<Type> allowedToBeIncompatible
-        = new List<Type>(new[]
+        = new(new[]
         {
             typeof(ExecuteCommandShow),
             typeof(ExecuteCommandSetDataAccessContextForCredentials),

@@ -15,14 +15,16 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Modules.DataFlowOperations;
 
-class SetNullTests
+internal class SetNullTests
 {
     [Test]
     public void TestSetNull_OneCell()
     {
-        var operation = new SetNull();
-        operation.ColumnNameToFind = "b";
-        operation.NullCellsWhereValuesMatch = new Regex("^cat$");
+        var operation = new SetNull
+        {
+            ColumnNameToFind = "b",
+            NullCellsWhereValuesMatch = new Regex("^cat$")
+        };
 
         using (var dt = new DataTable())
         {

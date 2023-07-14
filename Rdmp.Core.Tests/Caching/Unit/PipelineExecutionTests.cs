@@ -18,15 +18,15 @@ namespace Rdmp.Core.Tests.Caching.Unit;
 public class PipelineExecutionTests
 {
     [Ignore("Tests locking we don't actually have")]
-    public void TestSerialPipelineExecution()
+    public static void TestSerialPipelineExecution()
     {
         // set SetUp two engines, one with a locked cache progress/load schedule
         // run the serial execution and ensure that only one engine had its 'ExecutePipeline' method called
         var engine1 = new Mock<IDataFlowPipelineEngine>();
-            
+
 
         var engine2 = new Mock<IDataFlowPipelineEngine>();
-            
+
         var tokenSource = new GracefulCancellationTokenSource();
         var listener = new ThrowImmediatelyDataLoadEventListener();
 
@@ -47,7 +47,7 @@ public class PipelineExecutionTests
     }
 
     [Ignore("Tests locking we don't actually have")]
-    public void TestRoundRobinPipelineExecution()
+    public static void TestRoundRobinPipelineExecution()
     {
         // set SetUp two engines, one with a locked cache progress/load schedule
         // run the serial execution and ensure that only one engine had its 'ExecutePipeline' method called
@@ -66,7 +66,7 @@ public class PipelineExecutionTests
             .Returns(true)
             .Returns(false)
             .Throws<InvalidOperationException>();
-            
+
         // create the execution object
         var pipelineExecutor = new RoundRobinPipelineExecution();
 

@@ -18,7 +18,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFileUI : ExecuteCommandC
 
     public ExecuteCommandCreateNewCatalogueByImportingFileUI(IActivateItems activator,FileInfo file = null) :base(activator,file)
     {
-        this._activator = activator;
+        _activator = activator;
     }
     public override void Execute()
     {

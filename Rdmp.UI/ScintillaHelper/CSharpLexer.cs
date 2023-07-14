@@ -15,7 +15,7 @@ namespace Rdmp.UI.ScintillaHelper;
 /// <summary>
 /// Syntax highlighter for <see cref="Scintilla"/>
 /// </summary>
-public class CSharpLexer
+public partial class CSharpLexer
 {
     public const int StyleDefault = 0;
     public const int StyleKeyword = 1;
@@ -55,12 +55,12 @@ public class CSharpLexer
                         scintilla.SetStyling(1, StyleString);
                         state = STATE_STRING;
                     }
-                    else if (Char.IsDigit(c))
+                    else if (char.IsDigit(c))
                     {
                         state = STATE_NUMBER;
                         goto REPROCESS;
                     }
-                    else if (Char.IsLetter(c))
+                    else if (char.IsLetter(c))
                     {
                         state = STATE_IDENTIFIER;
                         goto REPROCESS;
@@ -87,7 +87,7 @@ public class CSharpLexer
                     break;
 
                 case STATE_NUMBER:
-                    if (Char.IsDigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F') || c == 'x')
+                    if (char.IsDigit(c) || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F' || c == 'x')
                     {
                         length++;
                     }
@@ -101,7 +101,7 @@ public class CSharpLexer
                     break;
 
                 case STATE_IDENTIFIER:
-                    if (Char.IsLetterOrDigit(c))
+                    if (char.IsLetterOrDigit(c))
                     {
                         length++;
                     }
@@ -127,7 +127,10 @@ public class CSharpLexer
     public CSharpLexer(string keywords)
     {
         // Put keywords in a HashSet
-        var list = Regex.Split(keywords ?? string.Empty, @"\s+").Where(l => !string.IsNullOrEmpty(l));
+        var list = Spaces().Split(keywords ?? string.Empty).Where(l => !string.IsNullOrEmpty(l));
         this.keywords = new HashSet<string>(list);
     }
+
+    [GeneratedRegex("\\s+",RegexOptions.CultureInvariant)]
+    private static partial Regex Spaces();
 }

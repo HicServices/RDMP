@@ -11,7 +11,7 @@ using Rdmp.UI.SubComponents;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsCohortIdentificationConfiguration:RDMPCommandExecutionProposal<CohortIdentificationConfiguration>
+internal class ProposeExecutionWhenTargetIsCohortIdentificationConfiguration:RDMPCommandExecutionProposal<CohortIdentificationConfiguration>
 {
     public ProposeExecutionWhenTargetIsCohortIdentificationConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {

@@ -27,8 +27,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAnExtractionConfiguration
 {
     //C24D365B7C271E2C1BC884B5801C2961
-    Regex reghex = new Regex(@"^HASHED: [A-F\d]{32}");
-        
+    private Regex reghex = new(@"^HASHED: [A-F\d]{32}");
+
     [SetUp]
     protected override void SetUp()
     {
@@ -47,7 +47,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count())); // NO new column added
+        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length)); // NO new column added
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("DateOfBirth"));
     }
@@ -62,7 +62,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count()));
+        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length));
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(2));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("ReleaseID"));
     }
@@ -70,14 +70,14 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     [Test]
     public void Test_CatalogueItems_NonExtractedPrimaryKey_AreRespected()
     {
-        var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", new string[] { }, pkColumnInfos: new [] { "DateOfBirth" });
+        var request = SetupExtractDatasetCommand("NonExtractedPrimaryKey_AreRespected", System.Array.Empty<string>(), pkColumnInfos: new [] { "DateOfBirth" });
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
         source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
         var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 1)); // synth PK is added
+        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length + 1)); // synth PK is added
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
@@ -88,14 +88,14 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     [Test]
     public void Test_CatalogueItems_NonExtractedPrimaryKey_MultiTable_PksAreMerged()
     {
-        var request = SetupExtractDatasetCommand("MultiTable_PksAreMerged", new string[] { }, new[] { "DateOfBirth" }, true, true);
-            
+        var request = SetupExtractDatasetCommand("MultiTable_PksAreMerged", System.Array.Empty<string>(), new[] { "DateOfBirth" }, true, true);
+
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
         source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
         var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 3)); // the "desc" column is added to the existing ones
+        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length + 3)); // the "desc" column is added to the existing ones
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
@@ -109,14 +109,14 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     [Test]
     public void Test_CatalogueItems_NonExtractedPrimaryKey_LookupsOnly_IsRespected()
     {
-        var request = SetupExtractDatasetCommand("LookupsOnly_IsRespected", new string[] { }, pkColumnInfos: new[] { "DateOfBirth" }, withLookup: true);
+        var request = SetupExtractDatasetCommand("LookupsOnly_IsRespected", System.Array.Empty<string>(), pkColumnInfos: new[] { "DateOfBirth" }, withLookup: true);
 
         var source = new ExecutePkSynthesizerDatasetExtractionSource();
         source.PreInitialize(request, new ThrowImmediatelyDataLoadEventListener());
         var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Count() + 2)); // the "desc" column is added to the existing ones + the SynthPk
+        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length + 2)); // the "desc" column is added to the existing ones + the SynthPk
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
@@ -125,7 +125,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
 
         Database.ExpectTable("SimpleLookup").Drop();
     }
-        
+
     private void SetupJoin()
     {
         var dt = new DataTable();
@@ -160,7 +160,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         dt.Columns.Add("Description");
 
         dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
-            
+
         var tbl = Database.CreateTable("SimpleLookup", dt, new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
 
         var lookupCata = Import(tbl);
@@ -187,9 +187,9 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
                 dt.Columns.Cast<DataColumn>().Where(col => pkColumnInfos.Contains(col.ColumnName)).ToArray();
 
         dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
-            
-        var tbl = Database.CreateTable(testTableName, 
-            dt, 
+
+        var tbl = Database.CreateTable(testTableName,
+            dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50))});
 
         _catalogue = Import(tbl, out var tableInfo, out var columnInfos, out var cataItems, out var extractionInformations);
@@ -227,8 +227,10 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
     {
         extractableDataSet = new ExtractableDataSet(DataExportRepository, catalogue);
 
-        project = new Project(DataExportRepository, testDbName);
-        project.ProjectNumber = 1;
+        project = new Project(DataExportRepository, testDbName)
+        {
+            ProjectNumber = 1
+        };
 
         Directory.CreateDirectory(ProjectDirectory);
         project.ExtractionDirectory = ProjectDirectory;
@@ -240,7 +242,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
 
         foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental))
         {
-            extractionConfiguration.AddColumnToExtraction(extractableDataSet, ei);   
+            extractionConfiguration.AddColumnToExtraction(extractableDataSet, ei);
         }
     }
 }

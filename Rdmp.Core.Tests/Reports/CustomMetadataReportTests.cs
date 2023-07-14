@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Reports;
 
-class CustomMetadataReportTests : UnitTests
+internal class CustomMetadataReportTests : UnitTests
 {
     [OneTimeSetUp]
     public void Init()
@@ -33,12 +33,16 @@ class CustomMetadataReportTests : UnitTests
         c1.Description = "A cool dataset with interesting stuff";
         c1.SaveToDatabase();
 
-        var c1ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col1");
-        c1ci1.Description = "some info about column 1";
+        var c1ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col1")
+        {
+            Description = "some info about column 1"
+        };
         c1ci1.SaveToDatabase();
 
-        var c1ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col2");
-        c1ci2.Description = "some info about column 2";
+        var c1ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c1, "Col2")
+        {
+            Description = "some info about column 2"
+        };
         c1ci2.SaveToDatabase();
 
         c2 = WhenIHaveA<Catalogue>();
@@ -46,14 +50,20 @@ class CustomMetadataReportTests : UnitTests
         c2.Description = "This is expensive dataset: $30 to use";
         c2.SaveToDatabase();
 
-        var c2ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Name");
-        c2ci1.Description = "Name of the patient";
+        var c2ci1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Name")
+        {
+            Description = "Name of the patient"
+        };
         c2ci1.SaveToDatabase();
-        var c2ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Address");
-        c2ci2.Description = "Where they live";
+        var c2ci2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Address")
+        {
+            Description = "Where they live"
+        };
         c2ci2.SaveToDatabase();
-        var c2ci3 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Postcode");
-        c2ci3.Description = "Patients postcode";
+        var c2ci3 = new CatalogueItem(RepositoryLocator.CatalogueRepository, c2, "Postcode")
+        {
+            Description = "Patients postcode"
+        };
         c2ci3.SaveToDatabase();
     }
 
@@ -158,7 +168,7 @@ class CustomMetadataReportTests : UnitTests
         DateTime? ignore;
 
         var moqDqe = new Mock<IDetermineDatasetTimespan>();
-        moqDqe.Setup((f) => f.GetMachineReadableTimespanIfKnownOf(cata, true, out ignore))
+        moqDqe.Setup(f => f.GetMachineReadableTimespanIfKnownOf(cata, true, out ignore))
             .Returns(new Tuple<DateTime?, DateTime?>(new DateTime(2001, 02, 01), new DateTime(2002, 04, 03)));
 
         reporter.TimespanCalculator = moqDqe.Object;
@@ -265,12 +275,16 @@ class CustomMetadataReportTests : UnitTests
         cata.Description = "A cool dataset with interesting stuff";
         cata.SaveToDatabase();
 
-        var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col1");
-        cataItem1.Description = "some info about column 1";
+        var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col1")
+        {
+            Description = "some info about column 1"
+        };
         cataItem1.SaveToDatabase();
 
-        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2");
-        cataItem2.Description = "some info about column 2";
+        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2")
+        {
+            Description = "some info about column 2"
+        };
         cataItem2.SaveToDatabase();
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));
@@ -444,13 +458,17 @@ $end");
 dataset with interesting stuff";
         cata.SaveToDatabase();
 
-        var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col1");
-        cataItem1.Description = "some info about column 1";
+        var cataItem1 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col1")
+        {
+            Description = "some info about column 1"
+        };
         cataItem1.SaveToDatabase();
 
-        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2");
-        cataItem2.Description = @"some info 
-about column 2";
+        var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "Col2")
+        {
+            Description = @"some info 
+about column 2"
+        };
         cataItem2.SaveToDatabase();
 
         var template = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "template.md"));

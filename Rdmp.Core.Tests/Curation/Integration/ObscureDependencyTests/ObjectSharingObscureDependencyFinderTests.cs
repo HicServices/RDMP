@@ -30,21 +30,21 @@ public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
     {
         var c = new Catalogue(CatalogueRepository,"Catapault");
         var ci = new CatalogueItem(CatalogueRepository, c, "string");
-            
+
         var c2 = new Catalogue(CatalogueRepository,"Catapault (Import)");
         var ci2 = new CatalogueItem(CatalogueRepository, c2, "string (Import)");
 
-        Assert.AreEqual(CatalogueRepository.GetAllObjects<ObjectExport>().Count(), 0);
+        Assert.AreEqual(CatalogueRepository.GetAllObjects<ObjectExport>().Length, 0);
         var ec = _share.GetNewOrExistingExportFor(c);
         var eci = _share.GetNewOrExistingExportFor(ci);
 
         _share.GetImportAs(ec.SharingUID, c2);
         _share.GetImportAs(eci.SharingUID, ci2);
             
-        Assert.AreEqual(2,CatalogueRepository.GetAllObjects<ObjectExport>().Count());
-        Assert.AreEqual(2,CatalogueRepository.GetAllObjects<ObjectImport>().Count());
-        Assert.AreEqual(2,CatalogueRepository.GetAllObjects<ObjectImport>().Count());//successive calls shouldhn't generate extra entries since they are same obj
-        Assert.AreEqual(2,CatalogueRepository.GetAllObjects<ObjectImport>().Count());
+        Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectExport>().Length);
+        Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
+        Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);//successive calls shouldhn't generate extra entries since they are same obj
+        Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
 
         //cannot delete the shared object
         Assert.Throws<Exception>(c.DeleteInDatabase);
@@ -53,7 +53,7 @@ public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
         Assert.DoesNotThrow(c2.DeleteInDatabase);
 
         //now that we deleted the import it should have deleted everything else including the CatalogueItem import which magically disapeared when we deleted the Catalogue via database level cascade events
-        Assert.AreEqual(0,CatalogueRepository.GetAllObjects<ObjectImport>().Count());
+        Assert.AreEqual(0, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
 
         _share.GetImportAs(eci.SharingUID, ci2);
     }

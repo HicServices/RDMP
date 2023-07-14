@@ -31,10 +31,11 @@ public class StandardRegexTests:DatabaseTests
             regex.Regex = "^(Fish)$";
             regex.SaveToDatabase();
 
-            var constraint = new StandardRegexConstraint(CatalogueRepository);
-                
-            constraint.CatalogueStandardRegex = regex;
-                
+            var constraint = new StandardRegexConstraint(CatalogueRepository)
+            {
+                CatalogueStandardRegex = regex
+            };
+
             Assert.IsNull(constraint.Validate("Fish",null,null));
             var failure = constraint.Validate("FishFingers", null, null);
             Assert.IsNotNull(failure);

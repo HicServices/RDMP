@@ -21,7 +21,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 
 /// <summary>
-/// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for processing the headers (or overriding headers) 
+/// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for processing the headers (or overriding headers)
 /// of a CSV (TSV etc) file.
 /// 
 /// <para>The component has two main operational modes after it has read headers: <see cref="GetDataTableWithHeaders"/> and  <see cref="MakeDataTableFitHeaders"/></para>
@@ -42,7 +42,7 @@ public class FlatFileColumnCollection
     private readonly string _ignoreColumns;
 
     /// <summary>
-    /// The columns from the file the user does not want to load into the destination (this will not help 
+    /// The columns from the file the user does not want to load into the destination (this will not help
     /// you avoid bad data).
     /// </summary>
     public HashSet<string> IgnoreColumnsList { get; private set; }
@@ -63,7 +63,7 @@ public class FlatFileColumnCollection
     {
         Start,
         AfterHeadersRead,
-        AfterTableGenerated,
+        AfterTableGenerated
     }
 
     private State _state = State.Start;
@@ -78,14 +78,14 @@ public class FlatFileColumnCollection
     /// and they must never have data in them.  This lets you have a full blank column in the middle of your file e.g. if you have inserted
     /// it via Excel
     /// </summary>
-    public ReadOnlyCollection<DataColumn> UnamedColumns = new ReadOnlyCollection<DataColumn>(Array.Empty<DataColumn>()); //start off with none
+    public ReadOnlyCollection<DataColumn> UnamedColumns = new(Array.Empty<DataColumn>()); //start off with none
 
     public bool FileIsEmpty = false;
 
     /// <summary>
     /// used to advise user if he has selected the wrong separator
     /// </summary>
-    private string[] _commonSeparators = new[] { "|", ",", "    ", "#" };
+    private string[] _commonSeparators = { "|", ",", "    ", "#" };
 
     /// <summary>
     /// Counts the number of headers that are not null
@@ -128,7 +128,7 @@ public class FlatFileColumnCollection
             //user has some specific headers he wants to override with
             _headers = _forceHeaders.Split(new[] { r.Configuration.Delimiter }, StringSplitOptions.None);
         }
-            
+
         //ignore these columns (trimmed and ignoring case)
         if (!string.IsNullOrWhiteSpace(_ignoreColumns))
             IgnoreColumnsList = new HashSet<string>(
@@ -145,7 +145,7 @@ public class FlatFileColumnCollection
             if (!string.IsNullOrWhiteSpace(_headers[i]))
                 _headers[i] = _headers[i].Trim();
 
-        //throw away trailing null headers e.g. the header line "Name,Date,,," 
+        //throw away trailing null headers e.g. the header line "Name,Date,,,"
         var trailingNullHeaders = _headers.Reverse().TakeWhile(s=>s.IsBasicallyNull()).Count();
 
         if (trailingNullHeaders > 0)
@@ -157,7 +157,7 @@ public class FlatFileColumnCollection
                 _headers[i] = QuerySyntaxHelper.MakeHeaderNameSensible(_headers[i]);
     }
 
-        
+
 
     /// <summary>
     /// Creates a new empty DataTable has only the columns found in the headers that were read during <see cref="GetHeadersFromFile"/>
@@ -199,19 +199,18 @@ public class FlatFileColumnCollection
                 unamedColumns.Add(dt.Columns.Add(h));
             else
                 //override type
-            if (_explicitlyTypedColumns != null &&
-                _explicitlyTypedColumns.ExplicitTypesCSharp.ContainsKey(h))
+            if (_explicitlyTypedColumns?.ExplicitTypesCSharp.TryGetValue(h,out var t) == true)
             {
-                var c = dt.Columns.Add(h, _explicitlyTypedColumns.ExplicitTypesCSharp[h]);
+                var c = dt.Columns.Add(h, t);
 
                 //if the user wants a string don't let downstream components pick a different Type (by assuming it is is untyped)
                 if(c.DataType == typeof(string))
-                    c.SetDoNotReType(true); 
+                    c.SetDoNotReType(true);
             }
             else
                 dt.Columns.Add(h);
         }
-            
+
         UnamedColumns = new ReadOnlyCollection<DataColumn>(unamedColumns);
 
         if (duplicateHeaders.Any())
@@ -238,11 +237,11 @@ public class FlatFileColumnCollection
         var ASCIIArt = new StringBuilder();
 
         var headersNotFound = new List<string>();
-           
+
         for (var index = 0; index < _headers.Length; index++)
         {
             ASCIIArt.Append($"[{index}]");
-                
+
             if (dt.Columns.Contains(_headers[index]))    //exact match
             {
                 ASCIIArt.AppendLine($"{_headers[index]}>>>{_headers[index]}");
@@ -303,7 +302,7 @@ public class FlatFileColumnCollection
                 if(_headers[0].Contains(commonSeparator))
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                         $"Your separator does not appear in the headers line of your file ({_toLoad.File.Name}) but the separator '{commonSeparator}' does... did you mean to set the Separator to '{commonSeparator}'? The headers line is:\"{_headers[0]}\""));
-            
+
         listener.OnNotify(this, new NotifyEventArgs(
             headersNotFound.Any()?ProgressEventType.Error : ProgressEventType.Information, //information or warning if there are unrecognised field names
             $"I will now tell you about how the columns in your file do or do not match the columns in your database, Matching flat file columns (or forced replacement headers) against database headers resulted in:{Environment.NewLine}{ASCIIArt}")); //tell them about what columns match what
@@ -346,7 +345,7 @@ public class FlatFileColumnCollection
 
         if(string.IsNullOrWhiteSpace(_forceHeaders))
             throw new Exception("There are no force headers! how did we get here");
-            
+
         if(!_forceHeadersReplacesFirstLineInFile)
             throw new Exception("Headers do not replace the first line in the file, how did we get here!");
 
@@ -368,7 +367,7 @@ public class FlatFileColumnCollection
         if (row.ColumnCount != _headers.Length)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
 
-        StringBuilder discarded = new();
+        var discarded = new StringBuilder();
         for (var i = 0; i < row.ColumnCount; i++)
         {
             if (i > 0)

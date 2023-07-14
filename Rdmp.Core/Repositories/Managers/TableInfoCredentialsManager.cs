@@ -22,7 +22,7 @@ namespace Rdmp.Core.Repositories.Managers;
 /// 
 /// <para></para>
 /// </summary>
-class TableInfoCredentialsManager : ITableInfoCredentialsManager
+internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 {
     private readonly CatalogueRepository _repository;
 
@@ -71,11 +71,11 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     {
         _repository.Delete(
             "DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid and Context =@context",
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"cid", credentials.ID},
                 {"tid", tableInfo.ID},
-                {"context", context},
+                {"context", context}
             });
 
         tableInfo.ClearAllInjections();
@@ -85,7 +85,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
     {
         _repository.Delete("DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid",
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"cid", credentials.ID},
                 {"tid", tableInfo.ID}
@@ -100,7 +100,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
         using (var con = _repository.GetConnection())
         {
             using (var cmd = DatabaseCommandHelper.GetCommand(
-                       $"SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context={((int)DataAccessContext.Any)}) ", con.Connection, con.Transaction))
+                       $"SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context={(int)DataAccessContext.Any}) ", con.Connection, con.Transaction))
             {
                 cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
                 cmd.Parameters["@tid"].Value = tableInfo.ID;
@@ -117,7 +117,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
                         toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
 
                         //if the first record is liscenced for Any
-                        if (Convert.ToInt32(r["Context"]) == ((int) DataAccessContext.Any))
+                        if (Convert.ToInt32(r["Context"]) == (int) DataAccessContext.Any)
                         {
                             //see if there is a more specific second record (e.g. DataLoad)
                             if(r.Read())
@@ -202,14 +202,15 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     /// <inheritdoc/>
     public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
     {
-        var toReturn = new Dictionary<DataAccessContext, List<int>>();
+        var toReturn = new Dictionary<DataAccessContext, List<int>>
+        {
+            { DataAccessContext.Any, new List<int>() },
+            { DataAccessContext.DataExport, new List<int>() },
+            { DataAccessContext.DataLoad, new List<int>() },
+            { DataAccessContext.InternalDataProcessing, new List<int>() },
+            { DataAccessContext.Logging, new List<int>() }
+        };
 
-        toReturn.Add(DataAccessContext.Any, new List<int>());
-        toReturn.Add(DataAccessContext.DataExport, new List<int>());
-        toReturn.Add(DataAccessContext.DataLoad, new List<int>());
-        toReturn.Add(DataAccessContext.InternalDataProcessing, new List<int>());
-        toReturn.Add(DataAccessContext.Logging, new List<int>());
-            
         using (var con = _repository.GetConnection())
         {
             using (var cmd = DatabaseCommandHelper.GetCommand(
@@ -240,7 +241,7 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>
-    private Dictionary<DataAccessContext, int> GetLinksFromReader(DbDataReader r)
+    private static Dictionary<DataAccessContext, int> GetLinksFromReader(DbDataReader r)
     {
         var toReturn = new Dictionary<DataAccessContext, int>();
         //gets the first licenced usage
@@ -280,15 +281,14 @@ class TableInfoCredentialsManager : ITableInfoCredentialsManager
             //there are 0 that match on password
             return null;
         }
-        else
-            //did not find an existing credential that matched on username
-            return null;
+
+        //did not find an existing credential that matched on username
+        return null;
     }
-    private DataAccessContext GetContext(DbDataReader r)
+    private static DataAccessContext GetContext(DbDataReader r)
     {
         //if it's not a valid context something has gone very wrong
-        DataAccessContext context;
-        if (!DataAccessContext.TryParse((string) r["Context"], out context))
+        if (!Enum.TryParse((string) r["Context"], out DataAccessContext context))
             throw new Exception($"Invalid DataAccessContext {r["Context"]}");
 
         return context;

@@ -16,7 +16,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;
 
-class CommandLineObjectPickerTests : UnitTests
+internal class CommandLineObjectPickerTests : UnitTests
 {
 
     [OneTimeSetUp]
@@ -161,15 +161,17 @@ class CommandLineObjectPickerTests : UnitTests
     {
         var oc = new ObjectConstructor();
 
-        var mem = new MemoryDataExportRepository();
-        mem.MEF = MEF;
+        var mem = new MemoryDataExportRepository
+        {
+            MEF = MEF
+        };
 
         //create some objects that the examples can successfully reference
         new Catalogue(mem.CatalogueRepository, "mycata1"); //ID = 1
         new Catalogue(mem.CatalogueRepository, "mycata2"); //ID = 2
         new Catalogue(mem.CatalogueRepository, "mycata3"); //ID = 3
 
-        var picker = (PickObjectBase) oc.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
+        var picker = (PickObjectBase)ObjectConstructor.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
 
         Assert.IsNotEmpty(picker.Help,"No Help for picker {0}",picker);
         Assert.IsNotEmpty(picker.Format,"No Format for picker {0}",picker);
@@ -252,7 +254,7 @@ class CommandLineObjectPickerTests : UnitTests
         // these two belong to the same catalogue
         var ci = WhenIHaveA<CatalogueItem>();
         var ci2 = new CatalogueItem(ci.CatalogueRepository, ci.Catalogue, "My item 2");
-            
+
         // this one belongs to a different catalogue
         var ci3 = WhenIHaveA<CatalogueItem>();
 

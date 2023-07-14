@@ -28,7 +28,7 @@ public partial class SetSQLDialog : Form
     {
         InitializeComponent();
             
-        _designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        _designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (_designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
@@ -44,12 +44,12 @@ public partial class SetSQLDialog : Form
     {
 
         DialogResult = DialogResult.OK;
-        this.Close();
+        Close();
     }
 
     private void button2_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Cancel;
-        this.Close();
+        Close();
     }
 }

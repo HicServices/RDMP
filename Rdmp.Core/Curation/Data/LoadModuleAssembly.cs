@@ -28,7 +28,7 @@ namespace Rdmp.Core.Curation.Data;
 public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
 {
     #region Database Properties
-    private Byte[] _bin;
+    private byte[] _bin;
     private string _committer;
     private DateTime _uploadDate;
     private int _plugin_ID;
@@ -39,12 +39,12 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     /// The assembly (dll) file as a Byte[], use File.WriteAllBytes to write it to disk
     /// </summary>
     [YamlIgnore]
-    public Byte[] Bin
+    public byte[] Bin
     {
         get => _bin;
         set => SetField(ref _bin,value);
     }
-        
+
     /// <summary>
     /// The user who uploaded the dll
     /// </summary>
@@ -62,7 +62,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         get => _uploadDate;
         set => SetField(ref _uploadDate,value);
     }
-        
+
     /// <summary>
     /// The plugin this file forms a part of (each <see cref="Plugin"/> will usually have multiple dlls as part of its dependencies)
     /// </summary>
@@ -76,7 +76,7 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     #endregion
 
     #region Relationships
-        
+
     /// <inheritdoc cref="Plugin_ID"/>
     [NoMappingToDatabase]
     public Plugin Plugin => _knownPlugin.Value;
@@ -114,25 +114,21 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         Plugin_ID = Convert.ToInt32(r["Plugin_ID"]);
         ClearAllInjections();
     }
-        
+
     internal LoadModuleAssembly(ShareManager shareManager, ShareDefinition shareDefinition)
     {
         shareManager.UpsertAndHydrate(this, shareDefinition);
         ClearAllInjections();
     }
 
-        
+
     /// <summary>
     /// Downloads the plugin nupkg to the given directory
     /// </summary>
     /// <param name="downloadDirectory"></param>
     public string DownloadAssembly(DirectoryInfo downloadDirectory)
     {
-        var targetDirectory = downloadDirectory.FullName;
-
-        if (targetDirectory == null)
-            throw new Exception("Could not get currently executing assembly directory");
-
+        var targetDirectory = downloadDirectory.FullName ?? throw new Exception("Could not get currently executing assembly directory");
         if (!downloadDirectory.Exists)
             downloadDirectory.Create();
 
@@ -165,14 +161,14 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
         return targetFile;
     }
 
-    private Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin)
+    private static Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin)
     {
         if(f.Extension != PackPluginRunner.PluginPackageSuffix)
             throw new Exception($"Expected LoadModuleAssembly file to be a {PackPluginRunner.PluginPackageSuffix}");
 
         var allBytes = File.ReadAllBytes(f.FullName);
 
-        var dictionaryParameters = new Dictionary<string, object>()
+        var dictionaryParameters = new Dictionary<string, object>
         {
             {"Bin",allBytes},
             {"Committer",Environment.UserName},

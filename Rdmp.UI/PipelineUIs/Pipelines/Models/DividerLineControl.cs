@@ -25,9 +25,11 @@ public partial class DividerLineControl : UserControl
     {
         _shouldAllowDrop = shouldAllowDrop;
         InitializeComponent();
-        _pen = new Pen(new SolidBrush(Color.Black));
-        _pen.DashPattern = new float[] { 4.0F, 2.0F, 1.0F, 3.0F };
-            
+        _pen = new Pen(new SolidBrush(Color.Black))
+        {
+            DashPattern = new float[] { 4.0F, 2.0F, 1.0F, 3.0F }
+        };
+
         pbDividerLine.Visible = false;
     }
 

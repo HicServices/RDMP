@@ -92,7 +92,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 
         if (m.ShouldBeReadOnly(out var reason))
         {
-            SetImpossible($"{(m is IContainer ? "Container" : ('\'' + m.ToString() + '\''))} is readonly beacause:{reason}");
+            SetImpossible($"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly beacause:{reason}");
         }
     }
     public BasicCommandExecution()
@@ -102,7 +102,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 
     public BasicCommandExecution(IBasicActivateItems basicActivator)
     {
-        this.BasicActivator = basicActivator;
+        BasicActivator = basicActivator;
     }
 
     public virtual void Execute()
@@ -154,7 +154,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
 
     public virtual string GetCommandHelp()
     {
-        return String.Empty;
+        return string.Empty;
     }
 
     public virtual Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -295,7 +295,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     {
         return SelectOne(new DialogArgs { 
             InitialSearchText = initialSearchText,
-            AllowAutoSelect = allowAutoSelect,
+            AllowAutoSelect = allowAutoSelect
         },availableObjects, out var selected) ? selected : null;
 
     }
@@ -324,7 +324,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     {
         return SelectOne(new DialogArgs { 
             InitialSearchText = initialSearchText,
-            AllowAutoSelect = allowAutoSelect,
+            AllowAutoSelect = allowAutoSelect
         },repository.GetAllObjects<T>().ToList(),out var answer) ? answer: null;
     }
 
@@ -360,7 +360,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
         return SelectOne(new DialogArgs
         {
             InitialSearchText = initialSearchText,
-            AllowAutoSelect = allowAutoSelect,
+            AllowAutoSelect = allowAutoSelect
         },availableObjects,out selected);
     }
 
@@ -440,9 +440,9 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
         IEnumerable<CommandLineObjectPickerArgumentValue> pickerArgsIfAny = null)
     {
         var objectConstructor = new ObjectConstructor();
-            
+
         var invoker = new CommandInvoker(BasicActivator);
-            
+
         var constructor = constructorSelector(objectConstructor);
 
         var constructorValues = new List<object>();
@@ -495,7 +495,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     {
         try
         {
-            checkable.Check(new ThrowImmediatelyCheckNotifier() { WriteToConsole = false });
+            checkable.Check(new ThrowImmediatelyCheckNotifier { WriteToConsole = false });
         }
         catch (Exception e)
         {
@@ -509,7 +509,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
         return GetCommandName();
     }
 
-    protected CommentStore CreateCommentStore()
+    protected static CommentStore CreateCommentStore()
     {
         var help = new CommentStore();
         help.ReadComments(Environment.CurrentDirectory);
@@ -523,7 +523,7 @@ public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     public static bool HasCommandNameOrAlias(Type commandType, string name)
     {
         return 
-            commandType.Name.Equals(BasicCommandExecution.ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
+            commandType.Name.Equals(ExecuteCommandPrefix + name,StringComparison.InvariantCultureIgnoreCase) 
             || 
             commandType.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase) 
             || 

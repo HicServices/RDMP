@@ -70,8 +70,8 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
     {
         base.SetDatabaseObject(activator, databaseObject);
 
-        olvLeftColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-        olvRightColumnNames.ImageGetter = (o) => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+        olvLeftColumnNames.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
+        olvRightColumnNames.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
 
         _leftTableInfo = databaseObject;
         tbLeftTableInfo.Text = _leftTableInfo.ToString();
@@ -142,9 +142,9 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
                 throw new Exception("You must specify at least one pair of keys to join on, do this by dragging columns out of the collection into the key boxes");
 
             if(
-                ((pk2.SelectedColumn == null) != (fk2.SelectedColumn == null))
+                pk2.SelectedColumn == null != (fk2.SelectedColumn == null)
                 ||
-                ((pk3.SelectedColumn == null) != (fk3.SelectedColumn == null)))
+                pk3.SelectedColumn == null != (fk3.SelectedColumn == null))
                 throw new Exception("You must have the same number of primary and foregin keys (they must come in pairs)");
 
             if(pks.Any(p => p.TableInfo_ID != _leftTableInfo.ID))
@@ -237,41 +237,33 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
             SetRightTableInfo(tableInfo);
     }
 
-    private TableInfo GetTableInfoOrNullFromDrag(DragEventArgs e)
+    private static TableInfo GetTableInfoOrNullFromDrag(DragEventArgs e)
     {
-        var data = e.Data as OLVDataObject;
-
-        if (data == null)
+        if (e.Data is not OLVDataObject data)
             return null;
 
         if (data.ModelObjects.Count != 1)
             return null;
 
-        var ti = data.ModelObjects[0] as TableInfo;
         var ticmd = data.ModelObjects[0] as TableInfoCombineable;
 
-        if (ti != null)
+        if (data.ModelObjects[0] is TableInfo ti)
             return ti;
 
-        if (ticmd != null)
-            return ticmd.TableInfo;
-
-        return null;
+        return ticmd?.TableInfo;
     }
 
     private void tbCollation_Leave(object sender, EventArgs e)
     {
         if (tbCollation.Text != null && tbCollation.Text.StartsWith("collate", StringComparison.CurrentCultureIgnoreCase))
-            tbCollation.Text = tbCollation.Text.Substring("collate".Length).Trim();
+            tbCollation.Text = tbCollation.Text["collate".Length..].Trim();
     }
 
     private void olv_ItemActivate(object sender, EventArgs e)
     {
         var olv = (ObjectListView)sender;
 
-        var o = olv.SelectedObject as IMapsDirectlyToDatabaseTable;
-            
-        if(o != null)
+        if(olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
     }
 }

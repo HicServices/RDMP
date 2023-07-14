@@ -10,11 +10,11 @@ using System.Text;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
-class CommandLineParser
+internal class CommandLineParser
 {
-    char[] cmd; // source buffer
-    StringBuilder buf; // output buffer
-    int i; // current position within the source buffer
+    private char[] cmd; // source buffer
+    private StringBuilder buf; // output buffer
+    private int i; // current position within the source buffer
 
     public CommandLineParser()
     {
@@ -35,7 +35,8 @@ class CommandLineParser
             var ch = cmd[i];
 
             if (char.IsWhiteSpace(ch)) { throw new InvalidOperationException(); }
-            else if (ch == '\\') { ParseEscapeSequence(); }
+
+            if (ch == '\\') { ParseEscapeSequence(); }
             else if (ch == '"') { ParseQuotedWord(); }
             else { ParseBareWord(); }
 
@@ -85,8 +86,8 @@ class CommandLineParser
         {
             var ch = cmd[i];
             if (char.IsWhiteSpace(ch)) break; // whitespace terminates a bareword
-            else if (ch == '"') break; // lead-in quote starts a quoted word
-            else if (ch == '\\') break; // escape sequence terminates the bareword
+            if (ch == '"') break; // lead-in quote starts a quoted word
+            if (ch == '\\') break; // escape sequence terminates the bareword
 
             buf.Append(ch); // otherwise, keep reading this word                
 
@@ -132,11 +133,11 @@ class CommandLineParser
         //
         if (i < cmd.Length && cmd[i] == '"')
         {
-            var n = (i - p); // find the number of backslashes seen
+            var n = i - p; // find the number of backslashes seen
             var quotient = n >> 1; // n divide 2 ( 5 div 2 = 2 , 6 div 2 = 3 )
             var remainder = n & 1; // n modulo 2 ( 5 mod 2 = 1 , 6 mod 2 = 0 )
 
-            buf.Length -= (quotient + remainder); // remove the unwanted backslashes
+            buf.Length -= quotient + remainder; // remove the unwanted backslashes
 
             if (remainder != 0)
             {

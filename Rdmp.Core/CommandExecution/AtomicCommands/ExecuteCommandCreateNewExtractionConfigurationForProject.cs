@@ -77,7 +77,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
         string name = "") : base(activator)
     {
         _project = project;
-        this._name = name;
+        _name = name;
     }
 
     public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator) : base(activator)
@@ -107,7 +107,7 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
             if (!SelectOne(new DialogArgs
                 {
                     WindowTitle = "Select Project",
-                    TaskDescription = GetTaskDescription(),
+                    TaskDescription = GetTaskDescription()
                 }, GetProjects(CohortIfAny).ToList(), out p))
                 return;
 
@@ -124,8 +124,8 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
                 {
                     WindowTitle = "New Extraction Configuration",
                     TaskDescription = "Enter a name for the new Extraction Configuration",
-                    EntryLabel = "Name",
-                }, 255, $"{p.ProjectNumber} {DateTime.Now.ToString("yyyy-MM-dd")} Extraction".Trim(), out name, false))
+                    EntryLabel = "Name"
+                }, 255, $"{p.ProjectNumber} {DateTime.Now:yyyy-MM-dd} Extraction".Trim(), out name, false))
                 return;
         }
 

@@ -78,7 +78,7 @@ public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IRefe
                AreProbablySameType(ReferencedObjectRepositoryType, o.Repository.GetType());
     }
 
-    private bool AreProbablySameType(string storedTypeName, Type candidate)
+    private static bool AreProbablySameType(string storedTypeName, Type candidate)
     {
         return
             storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||

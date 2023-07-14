@@ -44,7 +44,7 @@ public class JobDateGenerationStrategyFactory
         var factory = new CacheLayoutFactory();
 
         if (_typeToCreate == typeof(SingleScheduleCacheDateTrackingStrategy))
-            return new SingleScheduleCacheDateTrackingStrategy(factory.CreateCacheLayout(loadProgress, loadMetadata), loadProgress,listener);
+            return new SingleScheduleCacheDateTrackingStrategy(CacheLayoutFactory.CreateCacheLayout(loadProgress, loadMetadata), loadProgress,listener);
 
         throw new Exception("Factory has been configured to supply an unknown type");
     }

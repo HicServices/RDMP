@@ -76,10 +76,12 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void CreateNewCredentialsThenGetByUsernamePasswordCombo()
     {
-        var newCredentials = new DataAccessCredentials(CatalogueRepository, "bob");
+        var newCredentials = new DataAccessCredentials(CatalogueRepository, "bob")
+        {
+            Username = "myusername",
+            Password = "mypassword"
+        };
 
-        newCredentials.Username = "myusername";
-        newCredentials.Password = "mypassword";
         newCredentials.SaveToDatabase();
 
         var newCopy = CatalogueRepository.GetAllObjects<DataAccessCredentials>().SingleOrDefault(c=>c.Username == "myusername");
@@ -103,8 +105,10 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void TestThe_Any_EnumValue_CannotRequestAnyCredentials()
     {
-        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
-        tableInfo.Name = "My Exciting Table";
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
+        {
+            Name = "My Exciting Table"
+        };
 
         var creds = new DataAccessCredentials(CatalogueRepository);
         try
@@ -130,8 +134,10 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void TestThe_Any_EnumValue()
     {
-        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
-        tableInfo.Name = "My Exciting Table";
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
+        {
+            Name = "My Exciting Table"
+        };
         tableInfo.SaveToDatabase();
 
         var creds = new DataAccessCredentials(CatalogueRepository);
@@ -142,7 +148,7 @@ public class CredentialsTests : DatabaseTests
                 
             //now create the association as Any
             tableInfo.SetCredentials(creds, DataAccessContext.Any);
-                
+
             //because the credential is liscenced to be used under ANY context, you can make requests under any of the specific contexts and be served the Any result
             var creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
             Assert.NotNull(creds2);
@@ -162,8 +168,10 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void Test_Any_PrioritisingTheMoreAppropriateCredential()
     {
-        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
-        tableInfo.Name = "Tableinfo1";
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
+        {
+            Name = "Tableinfo1"
+        };
         tableInfo.SaveToDatabase();
 
         var creds = new DataAccessCredentials(CatalogueRepository);
@@ -223,8 +231,10 @@ public class CredentialsTests : DatabaseTests
     public void GetCredentialsFromATableInfo()
     {
 
-        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
-        tableInfo.Name = "My Exciting Table";
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
+        {
+            Name = "My Exciting Table"
+        };
 
         var creds = new DataAccessCredentials(CatalogueRepository);
         try
@@ -308,7 +318,7 @@ public class CredentialsTests : DatabaseTests
         var ci = new CatalogueItem(CatalogueRepository, c,"GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
         var t = new TableInfo(CatalogueRepository, "Test");
         var col = new ColumnInfo(CatalogueRepository, "[mydatabase].[dbo].test.col","varchar(10)", t);
-            
+
         var extractionInformation = new ExtractionInformation(CatalogueRepository, ci, col, col.Name);
 
         DataAccessCredentials cred = null;
@@ -317,9 +327,11 @@ public class CredentialsTests : DatabaseTests
             t.Server = "myserver";
             t.Database = "mydatabase";
                 
-            cred = new DataAccessCredentials(CatalogueRepository, "bob");
-            cred.Username = "bob";
-            cred.Password = "pass";
+            cred = new DataAccessCredentials(CatalogueRepository, "bob")
+            {
+                Username = "bob",
+                Password = "pass"
+            };
 
             Assert.AreNotEqual("pass",cred.Password);
             Assert.AreEqual("pass", cred.GetDecryptedPassword());
@@ -340,8 +352,7 @@ public class CredentialsTests : DatabaseTests
         finally 
         {
             t.DeleteInDatabase();
-            if(cred != null)
-                cred.DeleteInDatabase();
+            cred?.DeleteInDatabase();
             c.DeleteInDatabase();//no need to delete ci because of cascades
                 
         }
@@ -351,9 +362,11 @@ public class CredentialsTests : DatabaseTests
     [Test]
     public void Test_BlankPasswords()
     {
-        var creds = new DataAccessCredentials(CatalogueRepository, "blankpwdCreds");
-        creds.Username = "Root";
-        creds.Password = "";
+        var creds = new DataAccessCredentials(CatalogueRepository, "blankpwdCreds")
+        {
+            Username = "Root",
+            Password = ""
+        };
 
         creds.SaveToDatabase();
 

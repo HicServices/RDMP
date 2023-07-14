@@ -41,9 +41,9 @@ public class ExecuteCommandScriptTables : BasicCommandExecution
         FileInfo outFile) : base(activator)
     {
         _tableInfos = tableInfos;
-        this._dbType = dbType;
-        this._dbName = dbName;
-        this._outFile = outFile;
+        _dbType = dbType;
+        _dbName = dbName;
+        _outFile = outFile;
     }
 
     public override string GetCommandHelp()

@@ -37,17 +37,17 @@ using ScintillaNET;
 namespace Rdmp.UI.AggregationUIs.Advanced;
 
 /// <summary>
-/// Allows you to adjust an Aggregate.  This can either be a breakdown of your dataset by columns possibly including a graph (Basic Aggregate), a list of patient identifiers (Identifier 
+/// Allows you to adjust an Aggregate.  This can either be a breakdown of your dataset by columns possibly including a graph (Basic Aggregate), a list of patient identifiers (Identifier
 /// List) or a patient index table (See AggregateConfiguration). The image in the top left tells you what type of AggregateConfiguration it is.
 ///  
-/// <para>Clicking the 'Parameters' button will launch the ParameterCollectionUI dialogue which will let you edit which SQL Parameters @startDate etc are available for use in filters on the 
+/// <para>Clicking the 'Parameters' button will launch the ParameterCollectionUI dialogue which will let you edit which SQL Parameters @startDate etc are available for use in filters on the
 /// AggregateConfiguration</para>
 /// 
 /// <para>If you are editing a Basic Aggregate that does not include any patient identifier columns (IsExtractionIdentifier) then you can tick IsExtractable to make it available for use and
 /// extraction for researchers who use the underlying dataset and receive a data extraction (they will receive the 'master' aggregate run on the entire data repository and a 'personal'
 /// version which is the same query run against their project extraction only) See ExtractionAggregateGraphObjectCollection.</para>
 /// 
-/// <para>You can click in the SQL and Alias columns to rename columns or change their SQL.  You can also click in the 'Join Direction' column to edit the direction (LEFT or RIGHT) of 
+/// <para>You can click in the SQL and Alias columns to rename columns or change their SQL.  You can also click in the 'Join Direction' column to edit the direction (LEFT or RIGHT) of
 /// any supplemental JOINs.</para>
 /// 
 /// <para>If your Catalogue has multiple underlying TableInfos you can pick which ones to include in the query generated in the FROM section (any Columns included in the SELECT section
@@ -66,15 +66,13 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 {
     private IAggregateBuilderOptions _options;
     private AggregateConfiguration _aggregate;
-        
-    private List<ITableInfo> _forcedJoins;
 
-    IQuerySyntaxHelper _querySyntaxHelper;
+    private List<ITableInfo> _forcedJoins;
+    private IQuerySyntaxHelper _querySyntaxHelper;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryHaving;
-        
-    ErrorProvider _errorProviderAxis = new ErrorProvider();
+    private ErrorProvider _errorProviderAxis = new();
 
     //Constructor
     public AggregateEditorUI()
@@ -104,7 +102,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         {
             if(j.JoinType == (ExtractionJoinType) newvalue)
                 return;
-                
+
             j.JoinType = (ExtractionJoinType)newvalue;
             j.SaveToDatabase();
             Publish();
@@ -123,15 +121,13 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     {
         return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
     }
-        
+
     private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
-    { 
+    {
         var ti = rowobject as TableInfo;
-        var patientIndexTable = rowobject as JoinableCohortAggregateConfiguration;
-        var patientIndexTableUse = rowobject as JoinableCohortAggregateConfigurationUse;
 
         var joiner = _aggregate.CatalogueRepository.AggregateForcedJoinManager;
-            
+
         //user is trying to use a joinable something
         if (newvalue == CheckState.Checked)
         {
@@ -143,7 +139,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
             }
 
             // user is trying to join to a Patient Index table
-            if (patientIndexTable != null)
+            if (rowobject is JoinableCohortAggregateConfiguration patientIndexTable)
             {
                 if(_aggregate.Catalogue.IsApiCall())
                 {
@@ -172,7 +168,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
                 _forcedJoins.Remove(ti);
             }
 
-            if(patientIndexTableUse != null)
+            if(rowobject is JoinableCohortAggregateConfigurationUse patientIndexTableUse)
             {
                 var joinable = patientIndexTableUse.JoinableCohortAggregateConfiguration;
 
@@ -188,7 +184,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         return newvalue;
 
     }
-        
+
     private CheckState ForceJoinCheckStateGetter(object rowObject)
     {
         if (_forcedJoins == null)
@@ -227,12 +223,8 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
         foreach (var d in _aggregate.AggregateDimensions)
         {
-            var colInfo = d.ExtractionInformation.ColumnInfo;
-                
-            if (colInfo == null)
-                throw new Exception(
+            var colInfo = d.ExtractionInformation.ColumnInfo ?? throw new Exception(
                     $"Aggregate Configuration {_aggregate} (Catalogue '{_aggregate.Catalogue}') has a Dimension '{d}' which is an orphan (someone deleted the ColumnInfo)");
-
             var toAdd = colInfo.TableInfo.ToString();
 
             if (!uniqueUsedTables.Contains(toAdd))
@@ -258,7 +250,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         //and patient index tables too
         olvJoin.AddObjects(_aggregate.PatientIndexJoinablesUsed);
     }
-        
+
     private void SetNameText()
     {
         if (_aggregate.IsJoinablePatientIndexTable())
@@ -271,17 +263,14 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         //set the name to the tostring not the .Name so that we ignore the cic prefix
         tbName.Text = _aggregate.ToString();
     }
-               
+
     private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)
     {
-        var revertable = e.RowObject as IRevertable;
-        var countColumn = e.RowObject as AggregateCountColumn;
+        e.Column.PutAspectByName(e.RowObject, e.NewValue);
 
-        e.Column.PutAspectByName(e.RowObject,e.NewValue);
-
-        if (countColumn != null)
+        if (e.RowObject is AggregateCountColumn countColumn)
             _aggregate.CountSQL = countColumn.SelectSQL + (countColumn.Alias != null ? $" as {countColumn.Alias}" : "");
-        else if (revertable != null)
+        else if (e.RowObject is IRevertable revertable)
         {
             if (revertable.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
                 revertable.SaveToDatabase();
@@ -289,7 +278,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         else
             throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
     }
-        
+
     #region Having
     private void HavingTextChanged(object sender, EventArgs e)
     {
@@ -338,9 +327,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         if(isRefreshing)
             return;
 
-        var dimension = ddPivotDimension.SelectedItem as AggregateDimension;
-
-        if (dimension != null && _aggregate != null)
+        if (ddPivotDimension.SelectedItem is AggregateDimension dimension && _aggregate != null)
         {
             EnsureCountHasAlias();
             EnsurePivotHasAlias(dimension);
@@ -353,7 +340,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         PublishToSelfOnly();
     }
 
-    private void EnsurePivotHasAlias(AggregateDimension dimension)
+    private static void EnsurePivotHasAlias(AggregateDimension dimension)
     {
         if (string.IsNullOrWhiteSpace(dimension.Alias))
         {
@@ -364,10 +351,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
     private void EnsureCountHasAlias()
     {
-        string col;
-        string alias;
-
-        _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(_aggregate.CountSQL, out col, out alias);
+        _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(_aggregate.CountSQL, out var col, out var alias);
 
         if (string.IsNullOrWhiteSpace(alias))
             _aggregate.CountSQL = $"{col}{_querySyntaxHelper.AliasPrefix} MyCount";
@@ -433,18 +417,18 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         if(isRefreshing)
             return;
 
-        var selectedDimension = ddAxisDimension.SelectedItem as AggregateDimension;
-
-        if(selectedDimension == null)
+        if(ddAxisDimension.SelectedItem is not AggregateDimension selectedDimension)
             return;
-            
+
         //is there already an axis? if so keep the old start/end dates
         var existing = _aggregate.GetAxisIfAny();
-            
+
         //create a new one
-        var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension);
-        axis.AxisIncrement = AxisIncrement.Month;
-                          
+        var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension)
+            {
+                AxisIncrement = AxisIncrement.Month
+            };
+
         //copy over old values of start/end/increment
         if (existing != null && existing.AggregateDimension_ID != selectedDimension.ID)
         {
@@ -462,8 +446,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private void btnClearAxis_Click(object sender, EventArgs e)
     {
         var existing = _aggregate.GetAxisIfAny();
-        if(existing != null)
-            existing.DeleteInDatabase();
+        existing?.DeleteInDatabase();
 
         //also clear the pivot
         btnClearPivotDimension_Click(this,e);
@@ -491,7 +474,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         isRefreshing = true;
             
         //find out what is legal for the aggregate
-        _options = new AggregateBuilderOptionsFactory().Create(_aggregate);
+        _options = AggregateBuilderOptionsFactory.Create(_aggregate);
             
         //set enablednesss based on legality
         cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
@@ -511,7 +494,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         PopulateHavingText();
 
         var axisIfAny = _aggregate.GetAxisIfAny();
-        var _axisDimensionIfAny = axisIfAny != null ? axisIfAny.AggregateDimension : null;
+        var _axisDimensionIfAny = axisIfAny?.AggregateDimension;
         var _pivotIfAny = _aggregate.PivotDimension;
 
         PopulatePivotDropdown(_axisDimensionIfAny, _pivotIfAny);
@@ -556,21 +539,19 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private void tbName_TextChanged(object sender, EventArgs e)
     {
         _aggregate.Name = tbName.Text;
-            
+
         var cic = _aggregate.GetCohortIdentificationConfigurationIfAny();
 
-        if (cic != null)
-            cic.EnsureNamingConvention(_aggregate);
+        cic?.EnsureNamingConvention(_aggregate);
     }
 
     private void olvJoin_ItemActivate(object sender, EventArgs e)
     {
-        var t = olvJoin.SelectedObject as TableInfo;
-        if(t != null)
+        if(olvJoin.SelectedObject is TableInfo t)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(t));
     }
 }
-    
+
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<AggregateEditor_Design, UserControl>))]
 public abstract class AggregateEditor_Design : RDMPSingleDatabaseObjectControl<AggregateConfiguration>
 {

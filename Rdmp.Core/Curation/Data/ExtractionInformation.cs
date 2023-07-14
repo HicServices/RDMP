@@ -137,13 +137,13 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// </summary>
     /// <param name="catalogueItem"></param>
     /// <returns></returns>
-    private int GetMaxOrder(CatalogueItem catalogueItem)
+    private static int GetMaxOrder(CatalogueItem catalogueItem)
     {
         try
         {
             var cata = catalogueItem.Catalogue;
             cata.ClearAllInjections();
-                
+
             var eiMax = cata.GetAllExtractionInformation(ExtractionCategory.Any).MaxBy(ei => ei.Order);
 
             return eiMax == null ? 1 : eiMax.Order + 1;
@@ -256,10 +256,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        if (ColumnInfo == null)
-            return null;
-
-        return ColumnInfo.GetQuerySyntaxHelper();
+        return ColumnInfo?.GetQuerySyntaxHelper();
     }
 
     public override string GetSummary(bool includeName, bool includeID)

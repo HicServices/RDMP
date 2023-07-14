@@ -37,7 +37,7 @@ public class CatalogueIconProvider : ICoreIconProvider
 
     protected readonly EnumImageCollection<RDMPConcept> ImagesCollection;
     protected readonly CatalogueStateBasedIconProvider CatalogueStateBasedIconProvider;
-    private DatabaseTypeIconProvider _databaseTypeIconProvider = new DatabaseTypeIconProvider();
+    private DatabaseTypeIconProvider _databaseTypeIconProvider = new();
 
     public Image<Rgba32> ImageUnknown => ImagesCollection[RDMPConcept.NoIconAvailable];
 
@@ -188,8 +188,8 @@ public class CatalogueIconProvider : ICoreIconProvider
             //if the object is masquerading as something else
             case IMasqueradeAs @as:
             {
-                //get what it's masquerading as
-                var masqueradingAs = @as.MasqueradingAs();
+                    //get what it's masquerading as
+                    var masqueradingAs = @as.MasqueradingAs();
 
                 //provided we don't have a circular reference here!
                 if (masqueradingAs is not IMasqueradeAs)
@@ -205,7 +205,7 @@ public class CatalogueIconProvider : ICoreIconProvider
 
     }
 
-    private bool TryParseTypeNameToRdmpConcept(Type type, out RDMPConcept t)
+    private static bool TryParseTypeNameToRdmpConcept(Type type, out RDMPConcept t)
     {
         // is it a known Type like Project
         if(Enum.TryParse(type.Name, out t))
@@ -229,7 +229,7 @@ public class CatalogueIconProvider : ICoreIconProvider
         return GetImage(o) != ImagesCollection[RDMPConcept.NoIconAvailable];
     }
 
-    public RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)
+    public static RDMPConcept GetConceptForCollection(RDMPCollection rdmpCollection)
     {
         return rdmpCollection switch
         {
@@ -241,7 +241,7 @@ public class CatalogueIconProvider : ICoreIconProvider
             RDMPCollection.Favourites => RDMPConcept.Favourite,
             RDMPCollection.Cohort => RDMPConcept.CohortIdentificationConfiguration,
             RDMPCollection.DataLoad => RDMPConcept.LoadMetadata,
-            _ => throw new ArgumentOutOfRangeException(nameof(rdmpCollection)),
+            _ => throw new ArgumentOutOfRangeException(nameof(rdmpCollection))
         };
     }
 
@@ -270,7 +270,7 @@ public class CatalogueIconProvider : ICoreIconProvider
     /// <returns></returns>
     public Dictionary<string, Image<Rgba32>> GetImageList(bool addFavouritesOverlayKeysToo)
     {
-        Dictionary<string, Image<Rgba32>> imageList = new();
+        var imageList = new Dictionary<string, Image<Rgba32>>();
 
         foreach (RDMPConcept concept in Enum.GetValues(typeof(RDMPConcept)))
         {

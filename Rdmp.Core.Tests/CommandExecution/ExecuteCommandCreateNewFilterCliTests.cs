@@ -16,7 +16,7 @@ namespace Rdmp.Core.Tests.CommandExecution;
 /// <summary>
 /// Tests for <see cref="ExecuteCommandCreateNewFilter">
 /// </summary>
-class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
+internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
 {
     [Test]
     public void TestNewFilterForAggregate()
@@ -28,7 +28,7 @@ class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         Run("CreateNewFilter",$"{nameof(AggregateConfiguration)}:{ac.ID}");
 
         Assert.IsNotNull(ac.RootFilterContainer_ID,"Should now have a container");
-        Assert.AreEqual(1,ac.RootFilterContainer.GetFilters().Count(),"Expected a single new filter");
+        Assert.AreEqual(1, ac.RootFilterContainer.GetFilters().Length, "Expected a single new filter");
     }
     [Test]
     public void TestNewFilterForExtractionConfiguration()
@@ -40,7 +40,7 @@ class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         Run("CreateNewFilter", $"{nameof(SelectedDataSets)}:{sds.ID}");
 
         Assert.IsNotNull(sds.RootFilterContainer_ID, "Should now have a container");
-        Assert.AreEqual(1, sds.RootFilterContainer.GetFilters().Count(), "Expected a single new filter");
+        Assert.AreEqual(1, sds.RootFilterContainer.GetFilters().Length, "Expected a single new filter");
     }
     [Test]
     public void TestNewFilterForCatalogue()

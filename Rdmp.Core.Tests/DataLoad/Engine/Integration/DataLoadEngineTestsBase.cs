@@ -23,9 +23,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 /// <summary>
 /// Base class for tests that want to run data loads contains helper methods for setting up a valid DLE load configuration and running it
 /// </summary>
-class DataLoadEngineTestsBase : DatabaseTests
+internal class DataLoadEngineTestsBase : DatabaseTests
 {
-    protected void AssertHasDataLoadRunId(DataRow row)
+    protected static void AssertHasDataLoadRunId(DataRow row)
     {
         var o = row[SpecialFieldNames.DataLoadRunID];
 
@@ -44,10 +44,12 @@ class DataLoadEngineTestsBase : DatabaseTests
 
     protected void CreateCSVProcessTask(LoadMetadata lmd, ITableInfo ti, string regex)
     {
-        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
-        pt.Path = typeof(AnySeparatorFileAttacher).FullName;
-        pt.ProcessTaskType = ProcessTaskType.Attacher;
-        pt.Name = $"Load {ti.GetRuntimeName()}";
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting)
+        {
+            Path = typeof(AnySeparatorFileAttacher).FullName,
+            ProcessTaskType = ProcessTaskType.Attacher,
+            Name = $"Load {ti.GetRuntimeName()}"
+        };
         pt.SaveToDatabase();
 
         pt.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
@@ -58,7 +60,7 @@ class DataLoadEngineTestsBase : DatabaseTests
         pt.Check(new ThrowImmediatelyCheckNotifier());
     }
 
-    protected LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
+    protected static LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
     {
         var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "MyLoadDir", true);
         lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;

@@ -30,7 +30,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 public class FlatFileAttacherTests : DatabaseTests
 {
     private LoadDirectory LoadDirectory;
-    DirectoryInfo parentDir;
+    private DirectoryInfo parentDir;
     private DiscoveredDatabase _database;
     private DiscoveredTable _table;
 
@@ -43,8 +43,7 @@ public class FlatFileAttacherTests : DatabaseTests
         parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
 
         var toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("Test_CSV_Attachment"));
-        if(toCleanup != null)
-            toCleanup.Delete(true);
+        toCleanup?.Delete(true);
 
         LoadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
             
@@ -54,7 +53,7 @@ public class FlatFileAttacherTests : DatabaseTests
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
-                
+
             var cmdCreateTable = _database.Server.GetCommand(
                 $"CREATE Table {_database.GetRuntimeName()}..Bob([name] [varchar](500),[name2] [varchar](500))",con);
             cmdCreateTable.ExecuteNonQuery();
@@ -70,7 +69,7 @@ public class FlatFileAttacherTests : DatabaseTests
     [TestCase(",",true)]
     public void Test_CSV_Attachment(string separator, bool overrideHeaders)
     {
-            
+
         var filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
 
@@ -171,7 +170,7 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.TableName = "Bob";
         attacher.ExplicitDateTimeFormat = "yyyyddMM";
 
-            
+
         var table = _database.ExpectTable("Bob");
         table.Truncate();
 
@@ -384,7 +383,7 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.FilePattern = "bob*";
         attacher.TableToLoad = ti;
         attacher.IgnoreColumns = "address";
-            
+
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
@@ -448,13 +447,15 @@ public class FlatFileAttacherTests : DatabaseTests
 
 
         Import(tbl,out var ti,out _);
-        var attacher = new AnySeparatorFileAttacher();
-        attacher.Separator = ",";
-        attacher.FilePattern = "bob*";
-        attacher.TableName = tbl.GetRuntimeName();
-        attacher.Culture = new CultureInfo(attacherCulture);
+        var attacher = new AnySeparatorFileAttacher
+        {
+            Separator = ",",
+            FilePattern = "bob*",
+            TableName = tbl.GetRuntimeName(),
+            Culture = new CultureInfo(attacherCulture)
+        };
         attacher.Initialize(LoadDirectory, db);
-            
+
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null),ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
@@ -472,14 +473,16 @@ public class FlatFileAttacherTests : DatabaseTests
     public void Test_TableToLoad_IDNotInLoadMetadata()
     {
         var source = new AnySeparatorFileAttacher();
-                        
+
         var tiInLoad = new TableInfo(CatalogueRepository,"TableInLoad");
         var tiNotInLoad = new TableInfo(CatalogueRepository, "TableNotInLoad");
 
         source.TableToLoad = tiNotInLoad;
 
-        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ ThrowOnWarning = true});
-        job.RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad });
+        var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true})
+            {
+                RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad })
+            };
 
 
         var ex = Assert.Throws<Exception>(()=>source.Attach(job,new GracefulCancellationToken()));

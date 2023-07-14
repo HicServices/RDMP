@@ -94,15 +94,13 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
             reason = "database did not exist";
             return false;
         }
-        else
-        {
-            reason = null;
-            return true;
-        }
+
+        reason = null;
+        return true;
     }
 
     internal DiscoveredDatabase Discover(DataAccessContext context)
     {
-        return DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+        return DataAccessPortal.ExpectDatabase(this, context);
     }
 }

@@ -12,7 +12,7 @@ using Rdmp.Core.Validation.Constraints.Primary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-class AlphaTest : ValidationTests
+internal class AlphaTest : ValidationTests
 {
     private IPrimaryConstraint _alpha;
 
@@ -49,7 +49,7 @@ class AlphaTest : ValidationTests
     [Test]
     public void Validate_Invalid_ExceptionContainsRequiredInfo()
     {
-            
+
         var result = _alpha.Validate("9");
             
         Assert.NotNull(result.SourceConstraint);

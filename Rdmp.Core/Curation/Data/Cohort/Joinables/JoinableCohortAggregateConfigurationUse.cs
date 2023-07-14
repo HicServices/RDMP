@@ -74,9 +74,7 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
     internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        ExtractionJoinType joinType;
-
-        if (ExtractionJoinType.TryParse(r["JoinType"].ToString(), true, out joinType))
+        if (Enum.TryParse(r["JoinType"].ToString(), true, out ExtractionJoinType joinType))
             JoinType = joinType;
 
         JoinableCohortAggregateConfiguration_ID = Convert.ToInt32(r["JoinableCohortAggregateConfiguration_ID"]);
@@ -99,7 +97,7 @@ public class JoinableCohortAggregateConfigurationUse:DatabaseEntity
             throw new NotSupportedException(
                 $"Cannot configure AggregateConfiguration {user} as join user because it does not contain exactly 1 IsExtractionIdentifier dimension");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>()
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"JoinableCohortAggregateConfiguration_ID",joinable.ID},
             {"AggregateConfiguration_ID",user.ID},

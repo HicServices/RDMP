@@ -61,7 +61,7 @@ public class JoinManager : IJoinManager
             case JoinInfoType.PrimaryKey:
                 return _repository.GetAllObjects<JoinInfo>().Where(j => ids.Contains(j.PrimaryKey_ID)).ToArray();
             default:
-                throw new ArgumentOutOfRangeException("type");
+                throw new ArgumentOutOfRangeException(nameof(type));
         }
     }
         

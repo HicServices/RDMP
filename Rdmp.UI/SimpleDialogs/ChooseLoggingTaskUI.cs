@@ -118,7 +118,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
     private void RefreshTasks()
     {
         var liveserver = ddLoggingServer.SelectedItem as ExternalDatabaseServer;
-        var server = DataAccessPortal.GetInstance().ExpectServer(liveserver, DataAccessContext.Logging);
+        var server = DataAccessPortal.ExpectServer(liveserver, DataAccessContext.Logging);
 
         if (liveserver != null)
         {
@@ -223,20 +223,17 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
 
         if (args.ProposedFix != null)
             return MakeChangePopup.ShowYesNoMessageBoxToApplyFix(null, args.Message, args.ProposedFix);
+        //if it is sucessful user doesn't need to be spammed with messages
+        if(args.Result == CheckResult.Success)
+            return true;
+
+        //its a warning or an error possibly with an exception attached
+        if (args.Ex != null)
+            ExceptionViewer.Show(args.Message,args.Ex);
         else
-        {
-            //if it is sucessful user doesn't need to be spammed with messages
-            if(args.Result == CheckResult.Success)
-                return true;
+            MessageBox.Show(args.Message);
 
-            //its a warning or an error possibly with an exception attached
-            if (args.Ex != null)
-                ExceptionViewer.Show(args.Message,args.Ex);
-            else
-                MessageBox.Show(args.Message);
-
-            return false;
-        }
+        return false;
     }
 
     private void cbxDataLoadTasks_Leave(object sender, EventArgs e)

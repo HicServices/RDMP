@@ -32,7 +32,7 @@ public class DataAccessPointCollection
 
     public DataAccessContext DataAccessContext { get;}
 
-    private HashSet<IDataAccessPoint> _points = new HashSet<IDataAccessPoint>();
+    private HashSet<IDataAccessPoint> _points = new();
 
     /// <summary>
     /// Creates a new collection of <see cref="IDataAccessPoint"/> for collecting dependencies e.g.
@@ -109,7 +109,7 @@ public class DataAccessPointCollection
 
             try
             {
-                DataAccessPortal.GetInstance()
+                DataAccessPortal
                     .ExpectDistinctServer(tempList.ToArray(), DataAccessContext, false);
 
                 //now add to the proper collection
@@ -163,7 +163,7 @@ public class DataAccessPointCollection
         //they all have to be in the same server but do they also reside in the same database?
         var allOnSameDatabase = Points.Select(p => p.Database).Distinct().Count() == 1;
 
-        return DataAccessPortal.GetInstance().ExpectDistinctServer(Points.ToArray(),
+        return DataAccessPortal.ExpectDistinctServer(Points.ToArray(),
             DataAccessContext, allOnSameDatabase);
     }
 
@@ -173,8 +173,10 @@ public class DataAccessPointCollection
     /// <returns></returns>
     public DataAccessPointCollection Clone()
     {
-        var col = new DataAccessPointCollection(SingleServer,DataAccessContext);
-        col._points = new HashSet<IDataAccessPoint>(_points);
+        var col = new DataAccessPointCollection(SingleServer,DataAccessContext)
+        {
+            _points = new HashSet<IDataAccessPoint>(_points)
+        };
         return col;
 
     }

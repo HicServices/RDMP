@@ -26,7 +26,7 @@ public enum LookupType
     Description,
 
     /// <summary>
-    /// Used for Fetching only, this value reflects either the PrimaryKey or the ForeignKey (but not the Description).  Used for example to find out 
+    /// Used for Fetching only, this value reflects either the PrimaryKey or the ForeignKey (but not the Description).  Used for example to find out
     /// all the Lookup involvements of a given ColumnInfo.
     /// </summary>
     AnyKey,
@@ -57,7 +57,7 @@ public enum ExtractionJoinType
     /// </summary>
     Inner
 }
-    
+
 /// <summary>
 /// Persistent reference in the Catalogue database that records how to join two TableInfos.  You can create instances of this class via JoinHelper (which is available as
 /// a property on ICatalogueRepository).  JoinInfos are processed by during query building in the following way:
@@ -113,17 +113,17 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     private ColumnInfo _foreignKey;
     private ColumnInfo _primaryKey;
 
-        
-    private List<JoinInfo> _queryTimeComboJoins = new List<JoinInfo>();
+
+    private List<JoinInfo> _queryTimeComboJoins = new();
 
     #region Relationships
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo ForeignKey => _foreignKey ?? (_foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID));
+    public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public ColumnInfo PrimaryKey => _primaryKey ?? (_primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID));
+    public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
     #endregion
 
@@ -144,9 +144,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
 
         Collation = r["Collation"] as string;
 
-        ExtractionJoinType joinType;
-
-        if (ExtractionJoinType.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
+        if (Enum.TryParse(r["ExtractionJoinType"].ToString(), true, out ExtractionJoinType joinType))
             ExtractionJoinType = joinType;
         else
             throw new Exception($"Did not recognise ExtractionJoinType:{r["ExtractionJoinType"]}");
@@ -164,7 +162,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
         if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
             throw new ArgumentException("Joink Key 1 and Join Key 2 are from the same table, this is not cool");
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>()
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"ForeignKey_ID",foreignKey.ID},
             {"PrimaryKey_ID",primaryKey.ID},
@@ -173,13 +171,13 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
         });
 
     }
-        
+
     /// <inheritdoc/>
     public override string ToString()
     {
         return $" {ForeignKey.Name} = {PrimaryKey.Name}";
     }
-        
+
     /// <summary>
     /// Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of
     /// which have to appear on the SQL ON section of the query
@@ -198,7 +196,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
     {
         //Supplemental Joins are not currently supported by JoinInfo, only Lookups
-        return _queryTimeComboJoins.Select(j => new QueryTimeComboJoin()
+        return _queryTimeComboJoins.Select(static j => new QueryTimeComboJoin
         {
             Collation = j.Collation,
             PrimaryKey = j.PrimaryKey,
@@ -209,15 +207,12 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     /// <inheritdoc/>
     public ExtractionJoinType GetInvertedJoinType()
     {
-        switch (ExtractionJoinType)
+        return ExtractionJoinType switch
         {
-            case ExtractionJoinType.Left:
-                return ExtractionJoinType.Right;
-            case ExtractionJoinType.Right:
-                return ExtractionJoinType.Left;
-            default:
-                return ExtractionJoinType;
-        }
+            ExtractionJoinType.Left => ExtractionJoinType.Right,
+            ExtractionJoinType.Right => ExtractionJoinType.Left,
+            _ => ExtractionJoinType
+        };
     }
 
     private class QueryTimeComboJoin :ISupplementalJoin

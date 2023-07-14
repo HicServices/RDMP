@@ -17,7 +17,7 @@ namespace Rdmp.Core.DataFlowPipeline.Requirements;
 
 /// <summary>
 /// Low level description of what an IPipeline must look like to be compatible with a given use case for a IDataFlowPipelineEngine.  This includes whether there must be
-/// a specific base type / interface for source / destination components as well as what the flow T object is (e.g. System.Data.DataTable).  
+/// a specific base type / interface for source / destination components as well as what the flow T object is (e.g. System.Data.DataTable).
 /// 
 /// <para>This class also handles distributing initialization object instances to subscribers (components implementing IPipelineRequirement X).  You can create one of these
 /// with DataFlowPipelineContextFactory but really you should only be doing this if you are building a new IPipelineUseCase.  If you are trying to run an IPipeline that
@@ -42,7 +42,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
 
     /// <inheritdoc/>
     public HashSet<Type> CannotHave { get; private set; }
-        
+
     /// <summary>
     /// Creates a new empty context for determining <see cref="IPipeline"/> compatibility
     /// </summary>
@@ -58,10 +58,9 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     /// <returns></returns>
     public bool IsAllowable(Type t)
     {
-        string whoCares;
-        return IsAllowable(t, out whoCares);
+        return IsAllowable(t, out string whoCares);
     }
-        
+
     /// <inheritdoc/>
     public bool IsAllowable(Type t, out string reason)
     {
@@ -140,9 +139,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     {
         foreach (var component in pipeline.PipelineComponents)
         {
-            Type forbiddenType;
-
-            if (!IsAllowable(component.GetClassAsSystemType(), out forbiddenType))
+            if (!IsAllowable(component.GetClassAsSystemType(), out Type forbiddenType))
             {
                 reason =
                     $"Component {component.Name} implements a forbidden type ({GetFullName(forbiddenType)}) under the pipeline usage context";
@@ -160,7 +157,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
 
     }
 
-    private string MustHave(Type mustHaveType, IPipelineComponent component, string descriptionOfThingBeingChecked)
+    private static string MustHave(Type mustHaveType, IPipelineComponent component, string descriptionOfThingBeingChecked)
     {
         //it must have destination
         if (mustHaveType != null)
@@ -181,7 +178,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
                 }
             }
         else
-            //it cannot have destination 
+            //it cannot have destination
         if (component != null)
             return $"Context does not allow for an explicit (custom) {descriptionOfThingBeingChecked}";
 
@@ -192,8 +189,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     /// <inheritdoc/>
     public bool IsAllowable(IPipeline pipeline)
     {
-        string whocares;
-        return IsAllowable(pipeline, out whocares);
+        return IsAllowable(pipeline, out string whocares);
     }
 
 
@@ -218,13 +214,13 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
         PreInitializeComponentWithAllObjects(listener, component, parameters);
     }
 
-               
+
     private void PreInitializeComponentWithAllObjects(IDataLoadEventListener listener, object component, params object[] parameters)
     {
         //these are all the interfaces like IPipelineRequirement<TableInfo> etc
         var requirements = component.GetType().GetInterfaces().Where(i =>
-            i.IsGenericType && 
-            i.GetGenericTypeDefinition() 
+            i.IsGenericType &&
+            i.GetGenericTypeDefinition()
             == typeof(IPipelineRequirement<>)).ToArray();
 
         Satisfy(requirements, false, listener, component,parameters);
@@ -270,39 +266,40 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             );
     }
 
-    private Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, object component, object value, Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents)
+    private static Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, object component, object value, Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents)
     {
         var compatibleInterfaces = component.GetType()
-            .GetInterfaces().Where(i => 
+            .GetInterfaces().Where(i =>
                 i.IsGenericType && (i.GenericTypeArguments[0] == value.GetType() || i.GenericTypeArguments[0].IsInstanceOfType(value))
             ).ToArray();
 
-        if (compatibleInterfaces.Length == 0)
-            return null;
-
-        if(compatibleInterfaces.Length > 1)
-            throw new OverlappingImplementationsException(
-                $"The following IPipelineRequirement<> interfaces are implemented on pipeline component of type '{component.GetType().Name}' which are intercompatible with the input object of type '{value.GetType().Name}' {string.Join(",", compatibleInterfaces.Select(GetFullName))}");
+        switch (compatibleInterfaces.Length)
+        {
+            case 0:
+                return null;
+            case > 1:
+                throw new OverlappingImplementationsException(
+                    $"The following IPipelineRequirement<> interfaces are implemented on pipeline component of type '{component.GetType().Name}' which are intercompatible with the input object of type '{value.GetType().Name}' {string.Join(",", compatibleInterfaces.Select(GetFullName))}");
+        }
 
         var interfaceToInvokeIfAny = compatibleInterfaces[0];
         if (interfaceToInvokeIfAny != null)
         {
             //We have an interface that matches the input object, let's call it
             var preInit = interfaceToInvokeIfAny.GetMethod("PreInitialize");
-                
-            //but first document the fact that we have foundit
-            if (!initializedComponents.ContainsKey(component))
-                initializedComponents.Add(component, new Dictionary<MethodInfo, object>());
 
-            if (initializedComponents[component].ContainsKey(preInit))
+            //but first document the fact that we have found it
+            if (!initializedComponents.TryGetValue(component,out var dict))
+                initializedComponents.Add(component, dict=new Dictionary<MethodInfo, object>());
+
+            if (dict.TryGetValue(preInit,out var existing))
                 throw new MultipleMatchingImplmentationException(
-                    $"Interface {GetFullName(interfaceToInvokeIfAny)} matches both input objects '{initializedComponents[component][preInit]}' ('{initializedComponents[component][preInit].GetType().Name}') and '{value}' ('{value.GetType().Name}')");
-            else
-                initializedComponents[component].Add(preInit, value);
-                
+                    $"Interface {GetFullName(interfaceToInvokeIfAny)} matches both input objects '{existing}' ('{existing.GetType().Name}') and '{value}' ('{value.GetType().Name}')");
+            initializedComponents[component].Add(preInit, value);
+
             //invoke it
             preInit.Invoke(component, new[] {value, listener});
-                
+
             //return the type of T for IPipelineRequirement<T> interface that was called
             return interfaceToInvokeIfAny.GenericTypeArguments[0];
         }
@@ -313,31 +310,32 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     /// <inheritdoc/>
     public void PreInitializeGeneric(IDataLoadEventListener listener, object component, params object[] initializationObjects)
     {
-        if(component is IDataFlowSource<T>)
-            PreInitialize(listener, (IDataFlowSource<T>)component, initializationObjects);
-        else if (component is IDataFlowComponent<T>)
-            PreInitialize(listener, (IDataFlowComponent<T>) component, initializationObjects);
-        else
-            throw new NotSupportedException(
-                $"It looks like you attempted to pre initialize using PreInitializeGeneric but your object was type '{GetFullName(component.GetType())}' and we expected either a source or a component <T> where <T> is:{GetFullName(typeof(T))}");
+        switch (component)
+        {
+            case IDataFlowSource<T> source:
+                PreInitialize(listener, source, initializationObjects);
+                break;
+            case IDataFlowComponent<T> flowComponent:
+                PreInitialize(listener, flowComponent, initializationObjects);
+                break;
+            default:
+                throw new NotSupportedException(
+                    $"It looks like you attempted to pre initialize using PreInitializeGeneric but your object was type '{GetFullName(component.GetType())}' and we expected either a source or a component <T> where <T> is:{GetFullName(typeof(T))}");
+        }
     }
 
-      
+
     private static string GetFullName(Type t)
     {
         if (!t.IsGenericType)
             return t.Name;
+
         var sb = new StringBuilder();
 
-        sb.Append(t.Name.Substring(0, t.Name.LastIndexOf("`")));
-        sb.Append(t.GetGenericArguments().Aggregate("<",
-
-            delegate(string aggregate, Type type)
-            {
-                return aggregate + (aggregate == "<" ? "" : ",") + GetFullName(type);
-            }
-        ));
-        sb.Append(">");
+        sb.Append(t.Name[..t.Name.LastIndexOf("`", StringComparison.Ordinal)]);
+        sb.Append('<');
+        sb.AppendJoin(',', t.GetGenericArguments().Select(GetFullName));
+        sb.Append('>');
 
         return sb.ToString();
     }

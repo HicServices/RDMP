@@ -36,15 +36,15 @@ public class FTPDownloader : IPluginDataProvider
     protected string _host;
     protected string _username;
     protected string _password;
-        
+
     private bool _useSSL = false;
 
-    protected List<string> _filesRetrieved = new List<string>();
+    protected List<string> _filesRetrieved = new();
     private ILoadDirectory _directory;
 
     [DemandsInitialization("Determines the behaviour of the system when no files are found on the server.  If true the entire data load process immediately stops with exit code LoadNotRequired, if false then the load proceeds as normal (useful if for example if you have multiple Attachers and some files are optional)")]
     public bool SendLoadNotRequiredIfFileNotFound { get; set; }
-        
+
     [DemandsInitialization("The Regex expression to validate files on the FTP server against, only files matching the expression will be downloaded")]
     public Regex FilePattern { get; set; }
 
@@ -75,12 +75,12 @@ public class FTPDownloader : IPluginDataProvider
         return DownloadFilesOnFTP(_directory, job);
     }
 
-    public string GetDescription()
+    public static string GetDescription()
     {
         return "See Description attribute of class";
     }
 
-    public IDataProvider Clone()
+    public static IDataProvider Clone()
     {
         return new FTPDownloader();
     }
@@ -95,7 +95,7 @@ public class FTPDownloader : IPluginDataProvider
     {
         _host = FTPServer.Server;
         _username = FTPServer.Username ?? "anonymous";
-        _password = String.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
+        _password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
 
         if(string.IsNullOrWhiteSpace(_host))
             throw new NullReferenceException(
@@ -108,7 +108,7 @@ public class FTPDownloader : IPluginDataProvider
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, files.Aggregate("Identified the following files on the FTP server:", (s, f) =>
             $"{f},").TrimEnd(',')));
-            
+
         var forLoadingContainedCachedFiles = false;
 
         foreach (var file in files)
@@ -160,7 +160,7 @@ public class FTPDownloader : IPluginDataProvider
         if (destination.ForLoading.GetFiles(file).Any())
             return SkipReason.InForLoading;
 
-         
+
         return SkipReason.DoNotSkip;
     }
 
@@ -170,7 +170,7 @@ public class FTPDownloader : IPluginDataProvider
         return true;//any cert will do! yay
     }
 
-        
+
     protected virtual string[] GetFileList()
     {
         var result = new StringBuilder();
@@ -178,25 +178,17 @@ public class FTPDownloader : IPluginDataProvider
         StreamReader reader = null;
         try
         {
-            FtpWebRequest reqFTP;
-
-            string uri;
-
-
-            if (!string.IsNullOrWhiteSpace(RemoteDirectory))
-                uri = $"ftp://{_host}/{RemoteDirectory}";
-            else
-                uri = $"ftp://{_host}";
+            var uri = !string.IsNullOrWhiteSpace(RemoteDirectory) ? $"ftp://{_host}/{RemoteDirectory}" : $"ftp://{_host}";
 
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-            reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(uri));
+            var reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
             reqFTP.UseBinary = true;
             reqFTP.Credentials = new NetworkCredential(_username, _password);
             reqFTP.Method = WebRequestMethods.Ftp.ListDirectory;
             reqFTP.Timeout = TimeoutInSeconds*1000;
             reqFTP.KeepAlive = KeepAlive;
-                
+
             reqFTP.Proxy = null;
             reqFTP.KeepAlive = false;
             reqFTP.UsePassive = true;
@@ -211,7 +203,7 @@ public class FTPDownloader : IPluginDataProvider
             while (line != null)
             {
                 result.Append(line);
-                result.Append("\n");
+                result.Append('\n');
                 line = reader.ReadLine();
             }
             // to remove the trailing '\n'
@@ -220,11 +212,9 @@ public class FTPDownloader : IPluginDataProvider
         }
         finally
         {
-            if (reader != null)
-                reader.Close();
+            reader?.Close();
 
-            if (response != null)
-                response.Close();
+            response?.Close();
         }
     }
 
@@ -234,11 +224,9 @@ public class FTPDownloader : IPluginDataProvider
         var s = new Stopwatch();
         s.Start();
 
-        string uri;
-        if (!string.IsNullOrWhiteSpace(RemoteDirectory))
-            uri = $"ftp://{_host}/{RemoteDirectory}/{file}";
-        else
-            uri = $"ftp://{_host}/{file}";
+        var uri = !string.IsNullOrWhiteSpace(RemoteDirectory)
+            ? $"ftp://{_host}/{RemoteDirectory}/{file}"
+            : $"ftp://{_host}/{file}";
 
         if (_useSSL)
             uri = $"s{uri}";
@@ -249,9 +237,8 @@ public class FTPDownloader : IPluginDataProvider
             return;
         }
 
-        FtpWebRequest reqFTP;
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-        reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(uri));
+        var reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
         reqFTP.Credentials = new NetworkCredential(_username, _password);
         reqFTP.KeepAlive = false;
@@ -265,11 +252,11 @@ public class FTPDownloader : IPluginDataProvider
         var response = (FtpWebResponse)reqFTP.GetResponse();
         var responseStream = response.GetResponseStream();
         var destinationFileName = Path.Combine(destination.ForLoading.FullName, file);
-            
+
         using (var writeStream = new FileStream(destinationFileName, FileMode.Create))
         {
             var Length = 2048;
-            var buffer = new Byte[Length];
+            var buffer = new byte[Length];
             var bytesRead = responseStream.Read(buffer, 0, Length);
             var totalBytesReadSoFar = bytesRead;
 
@@ -285,7 +272,7 @@ public class FTPDownloader : IPluginDataProvider
             }
             writeStream.Close();
         }
-            
+
         response.Close();
 
         _filesRetrieved.Add(serverUri.ToString());
@@ -301,7 +288,7 @@ public class FTPDownloader : IPluginDataProvider
             {
                 FtpWebRequest reqFTP;
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-                reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri(file));
+                reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(file));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
                 reqFTP.Credentials = new NetworkCredential(_username, _password);
                 reqFTP.KeepAlive = false;
@@ -325,7 +312,7 @@ public class FTPDownloader : IPluginDataProvider
         }
     }
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
         try

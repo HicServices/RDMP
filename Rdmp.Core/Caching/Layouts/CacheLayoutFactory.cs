@@ -22,7 +22,7 @@ namespace Rdmp.Core.Caching.Layouts;
 /// </summary>
 public class CacheLayoutFactory
 {
-    public ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata)
+    public static ICacheLayout CreateCacheLayout(ILoadProgress loadProgress, ILoadMetadata metadata)
     {
         AssertThatThereIsACacheDataProvider(metadata, metadata.ProcessTasks.Where(p=>!p.IsDisabled));
 
@@ -34,7 +34,7 @@ public class CacheLayoutFactory
         return destination.CreateCacheLayout();
     }
 
-    private void AssertThatThereIsACacheDataProvider(ILoadMetadata metadata, IEnumerable<IProcessTask> processTasks)
+    private static void AssertThatThereIsACacheDataProvider(ILoadMetadata metadata, IEnumerable<IProcessTask> processTasks)
     {
         const string whatWeExpected = @"(we expected one that was a MEF class implementing ICachedDataProvider since you are trying to execute a cache based data load)";
 
@@ -48,7 +48,7 @@ public class CacheLayoutFactory
             if (!task.ProcessTaskType.Equals(ProcessTaskType.DataProvider))
                 continue;
 
-                
+
             var type = task.CatalogueRepository.MEF.GetType(task.Path);
 
             if (typeof(ICachedDataProvider).IsAssignableFrom(type))

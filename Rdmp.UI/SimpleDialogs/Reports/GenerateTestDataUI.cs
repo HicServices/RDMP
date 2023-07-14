@@ -21,13 +21,13 @@ using Rdmp.UI.Tutorials;
 namespace Rdmp.UI.SimpleDialogs.Reports;
 
 /// <summary>
-/// Lets you generate interesting test data in which to practice tasks such as importing data, generating cohorts and performing project extractions.  Note that ALL the data 
+/// Lets you generate interesting test data in which to practice tasks such as importing data, generating cohorts and performing project extractions.  Note that ALL the data
 /// generated is completely fictional.  Test data is generated randomly usually around a distribution (e.g. there are more prescriptions for Paracetamol/Aspirin than Morphine) but
-/// complex relationships are not modelled (e.g. there's no concept of someone being diabetic so just because someone is on INSULIN doesn't mean they will have diabetic blood tests 
+/// complex relationships are not modelled (e.g. there's no concept of someone being diabetic so just because someone is on INSULIN doesn't mean they will have diabetic blood tests
 /// in biochemistry).  Likewise don't be surprised if people change address after they have died.
 ///
-/// <para>Identifiers are created from a central random pool and will be unique.  This means if you generate test data and then generate more tomorrow you are likely to only 
-/// have very minimal intersection of patient identifiers.  For this reason it is important not to generate and load Prescribing one day and then generate and load Biochemistry the 
+/// <para>Identifiers are created from a central random pool and will be unique.  This means if you generate test data and then generate more tomorrow you are likely to only
+/// have very minimal intersection of patient identifiers.  For this reason it is important not to generate and load Prescribing one day and then generate and load Biochemistry the
 /// next day (instead you should generate all the data at once and use that as a reusable asset).</para>
 /// 
 /// <para>Make sure to put a PopulationSize that is lower than the number of records you want to create in each dataset so that there are multiple records per person (will make analysis more
@@ -36,7 +36,8 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 public partial class GenerateTestDataUI : RDMPForm
 {
     public HelpWorkflow HelpWorkflow { get; private set; }
-    int? _seed;
+
+    private int? _seed;
 
     public GenerateTestDataUI(IActivateItems activator, ICommandExecution command):base(activator)
     {
@@ -48,9 +49,11 @@ public partial class GenerateTestDataUI : RDMPForm
 
         foreach(var t in dataGeneratorFactory.GetAvailableGenerators())
         {
-            var ui = new DataGeneratorUI();
-            ui.Generator = dataGeneratorFactory.Create(t,new Random());
-            ui.Location = new Point(0,yLoc);
+            var ui = new DataGeneratorUI
+            {
+                Generator = dataGeneratorFactory.Create(t, new Random()),
+                Location = new Point(0, yLoc)
+            };
             yLoc += ui.Height;
             pDatasets.Controls.Add(ui);
         }
@@ -138,13 +141,13 @@ public partial class GenerateTestDataUI : RDMPForm
     }
 
     private bool started = false;
-        
-    private List<DataGeneratorUI> Executing = new List<DataGeneratorUI>();
+
+    private List<DataGeneratorUI> Executing = new();
     private DirectoryInfo _extractDirectory;
 
     private void btnGenerate_Click(object sender, EventArgs e)
     {
-            
+
         var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui=>ui.Generate).ToArray();
             
         if(!uis.Any())
@@ -181,11 +184,11 @@ public partial class GenerateTestDataUI : RDMPForm
                     Executing.Add(ui);
                     ui.BeginGeneration(identifiers, _extractDirectory);
                     var ui1 = ui;
-                    ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};    
+                    ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};
                 }
             }
             else
-            { 
+            {
                 var queue = new Queue<DataGeneratorUI>(uis);
                 Execute(identifiers,queue,queue.Dequeue(),r);
             }
@@ -205,22 +208,22 @@ public partial class GenerateTestDataUI : RDMPForm
         Executing.Add(current);
 
         var dataGeneratorFactory = new DataGeneratorFactory();
-                    
-        //reset the current generator to use the seed provided    
+
+        //reset the current generator to use the seed provided
         current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(),r);
 
 
         current.BeginGeneration(identifiers, _extractDirectory);
 
         //when it is complete
-        current.Completed += () => 
+        current.Completed += () =>
         {
             if(queue.Count != 0)
                 Execute(identifiers,queue,queue.Dequeue(),r);
 
             Executing.Remove(current);
             AnnounceIfComplete();
-        };    
+        };
     }
 
     private void AnnounceIfComplete()
@@ -231,7 +234,7 @@ public partial class GenerateTestDataUI : RDMPForm
             Close();
         }
     }
-        
+
     private void UserExercisesUI_FormClosing(object sender, FormClosingEventArgs e)
     {
         //if it hasn't started let them close
@@ -247,7 +250,7 @@ public partial class GenerateTestDataUI : RDMPForm
             e.Cancel = true;
         }
     }
-        
+
     private void btnBrowse_Click(object sender, EventArgs e)
     {
         var browserDialog = new FolderBrowserDialog();
@@ -268,7 +271,7 @@ public partial class GenerateTestDataUI : RDMPForm
             EnableOrDisableGoButton();
         }
     }
-        
+
 
     private void TbSeed_TextChanged(object sender, EventArgs e)
     {

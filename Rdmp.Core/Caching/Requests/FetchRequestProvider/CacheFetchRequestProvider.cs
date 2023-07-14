@@ -51,7 +51,7 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
         {
             CacheProgress = CacheProgress,
             ChunkPeriod = CacheProgress.ChunkPeriod,
-            PermissionWindow = this.PermissionWindow,
+            PermissionWindow = PermissionWindow,
             Start = startDate
         };
 

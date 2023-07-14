@@ -15,7 +15,7 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 public class HangingConnectionTest:DatabaseTests
 {
-    string testDbName = "HangingConnectionTest";
+    private string testDbName = "HangingConnectionTest";
 
 
     [Test]
@@ -31,7 +31,7 @@ public class HangingConnectionTest:DatabaseTests
         Thread.Sleep(500);
 
         ThrowIfDatabaseLock();
-            
+
         var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName);
 
         ThrowIfDatabaseLock();
@@ -60,7 +60,7 @@ public class HangingConnectionTest:DatabaseTests
         db.Drop();
     }
 
-    void ThrowIfDatabaseLock()
+    private void ThrowIfDatabaseLock()
     {
         var serverCopy = new DiscoveredServer(new SqlConnectionStringBuilder(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder.ConnectionString));
         serverCopy.ChangeDatabase("master");

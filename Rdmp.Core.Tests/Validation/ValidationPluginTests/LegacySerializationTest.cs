@@ -15,9 +15,8 @@ public class LegacySerializationTest:DatabaseTests
     [Test]
     public void TestLegacyDeserialization()
     {
-        var s = LegacyXML;
         Validator.LocatorForXMLDeserialization = RepositoryLocator;
-        var v = Validator.LoadFromXml(s);
+        var v = Validator.LoadFromXml(LegacyXML);
         Assert.IsNotNull(v);
     }
 

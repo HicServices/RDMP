@@ -18,12 +18,12 @@ namespace Rdmp.Core.Curation.Data;
 /// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/ 
+public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/
     where T: class, IHasFolder
 {
     public string Name { get; set; }
-    public List<T> ChildObjects { get; set; } = new();
-    public List<FolderNode<T>> ChildFolders { get; set; } = new();
+    public List<T> ChildObjects { get; set; } = new List<T>();
+    public List<FolderNode<T>> ChildFolders { get; set; } = new List<FolderNode<T>>();
 
     public FolderNode<T> Parent { get; set; }
 
@@ -41,21 +41,14 @@ public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensur
     {
         // build the name by prepending each parent
         // but start with our name
-        StringBuilder sb = new(Name);
+        var sb = new StringBuilder(Name);
 
-        var p = Parent;            
+        var p = Parent;
 
         while(p != null)
         {
-            if(p.Name.Equals(FolderHelper.Root))
-            {
-                sb.Insert(0, p.Name);
-            }
-            else
-            {
-                sb.Insert(0, $"{p.Name}\\");
-            }
-                                
+            sb.Insert(0, p.Name.Equals(FolderHelper.Root) ? p.Name : $"{p.Name}\\");
+
             p = p.Parent;
         }
 

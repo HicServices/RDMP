@@ -40,9 +40,9 @@ using ScintillaNET;
 namespace Rdmp.UI.AggregationUIs;
 
 public delegate void DataTableHandler(object sender, DataTable dt);
-    
+
 /// <summary>
-/// Executes and renders an AggregateConfiguration as a graph.  An AggregateConfiguration is a GROUP BY sql statement.  You can view the statement executed through the 
+/// Executes and renders an AggregateConfiguration as a graph.  An AggregateConfiguration is a GROUP BY sql statement.  You can view the statement executed through the
 /// 'SQL Code' tab.  In the Data tab you can view the raw data returned by the GROUP BY query (And also if applicable you can cache the results for displaying on the website).
 /// 
 /// <para>The Graph will do it's best to render something appropriate to the selected Dimensions, Pivot, Axis etc but there are limits.  If the graph doesn't look the way you want
@@ -58,7 +58,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public const int MAXIMUM_CELLS_BEFORE_WARNING = 1_000_000;
 
     /// <summary>
-    /// Set to true to suppress yes/no dialogues from showing e.g. if there is too much data 
+    /// Set to true to suppress yes/no dialogues from showing e.g. if there is too much data
     /// (see <see cref="MAXIMUM_CELLS_BEFORE_WARNING"/>) to sensibly render.  If true then
     /// the sensible descision is taken e.g. to not try to render.
     /// 
@@ -66,7 +66,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public bool Silent { get;set;}
 
     public Scintilla QueryEditor { get;private set; }
-        
+
     public int Timeout
     {
         get => _timeoutControls.Timeout;
@@ -76,19 +76,15 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public event DataTableHandler GraphTableRetrieved;
 
     private AggregateConfiguration _aggregateConfiguration;
+    private ToolStripMenuItem miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
+    private ToolStripMenuItem miCopyToClipboard = new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
+    private ToolStripMenuItem miClipboardWord = new("Word Format");
+    private ToolStripMenuItem miClipboardCsv = new("Comma Separated Format");
+    private ToolStripMenuItem btnCache = new("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
+    private ToolStripButton btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+    private readonly ToolStripTimeout _timeoutControls = new();
 
-    ToolStripMenuItem miSaveImages = new ToolStripMenuItem("Save Image", FamFamFamIcons.disk.ImageToBitmap());
 
-    ToolStripMenuItem miCopyToClipboard = new ToolStripMenuItem("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
-    ToolStripMenuItem miClipboardWord = new ToolStripMenuItem("Word Format");
-    ToolStripMenuItem miClipboardCsv = new ToolStripMenuItem("Comma Separated Format");
-    ToolStripMenuItem btnCache = new ToolStripMenuItem("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
-
-    ToolStripButton btnResendQuery = new ToolStripButton("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
-
-    readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
-        
-        
     public AggregateGraphUI()
     {
         InitializeComponent();
@@ -96,7 +92,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         llCancel.Visible = false;
 
         #region Query Editor setup
-            
+
         if(VisualStudioDesignMode)
             return;
 
@@ -105,19 +101,19 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         QueryEditor.Text = "/*Graph load has not been attempted yet, wait till the system calls LoadGraphAsync() or LoadGraph()*/";
 
         QueryEditor.ReadOnly = true;
-            
+
         tpCode.Controls.Add(QueryEditor);
         #endregion QueryEditor
 
-        SetToolbarButtonsEnabled(true); 
-            
+        SetToolbarButtonsEnabled(true);
+
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
 
         Timeout = 300;
 
         miCopyToClipboard.DropDownItems.Add(miClipboardWord);
         miCopyToClipboard.DropDownItems.Add(miClipboardCsv);
-            
+
         miClipboardWord.Click += ClipboardClick;
         miClipboardWord.ToolTipText = "Copies data as HTML formatted (for pasting into Word / Excel etc)";
         miClipboardCsv.Click += ClipboardClick;
@@ -127,7 +123,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         miSaveImages.Click += MiSaveImagesClick;
         btnCache.Click += btnCache_Click;
 
-            
+
         btnCache.Enabled = false;
     }
 
@@ -165,13 +161,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public Exception Exception { get; private set; }
     public bool Crashed { get; private set; }
     public bool Done { get; private set; }
-        
+
     private Task _loadTask;
 
     public void LoadGraphAsync()
     {
         //it is already executing
-        if (_loadTask != null && !_loadTask.IsCompleted) 
+        if (_loadTask != null && !_loadTask.IsCompleted)
             return;
 
         if (chart1.IsDisposed || chart1.Disposing)
@@ -211,10 +207,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             : AggregateConfiguration.Description;
     }
 
-    DbCommand _cmd;
-
-    ChartDashStyle[] StyleList = new ChartDashStyle[]
-    {
+    private DbCommand _cmd;
+    private ChartDashStyle[] StyleList = {
         ChartDashStyle.Solid,
         ChartDashStyle.Dash,
         ChartDashStyle.Dot,
@@ -239,8 +233,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     throw new TimeoutException(
                         "Window Handle was not created on AggregateGraph control after 10 seconds of calling LoadGraph!");
             }
-                
-            this.Invoke(new MethodInvoker(() =>
+
+            Invoke(new MethodInvoker(() =>
             {
                 lblLoadStage.Visible = true;
                 lblLoadStage.Text = "Generating Query...";
@@ -257,18 +251,18 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 AggregateConfiguration.Catalogue.GetDistinctLiveDatabaseServer(
                     DataAccessContext.InternalDataProcessing,true);
 
-            this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Connecting To Server..."; }));
+            Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Connecting To Server..."; }));
 
             using (var con = server.GetConnection())
             {
                 con.Open();
-                    
+
                 _cmd = server.GetCommand(builder.SQL, con);
                 _cmd.CommandTimeout = Timeout;
 
                 _dt = new DataTable();
 
-                this.Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
+                Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
 
                 var adapter = server.GetDataAdapter(_cmd);
                 adapter.Fill(_dt);
@@ -285,27 +279,26 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
                 //setup the heatmap if there is a pivot
                 if (_dt.Columns.Count > 2 && AggregateConfiguration.PivotOnDimensionID != null)
-                    this.Invoke(new MethodInvoker(() => heatmapUI.SetDataTable(_dt)));
+                    Invoke(new MethodInvoker(() => heatmapUI.SetDataTable(_dt)));
                 else
-                    this.Invoke(new MethodInvoker(() => heatmapUI.Clear()));
+                    Invoke(new MethodInvoker(() => heatmapUI.Clear()));
 
 
-                if (GraphTableRetrieved != null)
-                    GraphTableRetrieved(this, _dt);
+                GraphTableRetrieved?.Invoke(this, _dt);
 
                 if (_dt.Columns.Count < 2)
                     throw new NotSupportedException("Aggregates must have 2 columns at least");
 
                 //Invoke onto main UI thread so we can setup the chart
-                this.Invoke(new MethodInvoker(() =>
+                Invoke(new MethodInvoker(() =>
                 {
                     PopulateGraphResults(countColumn, axis);
                     Done = true;
                 }));
             }
-             
+
             Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Crashed"; }));
-                
+
             ShowHeatmapTab(heatmapUI.HasDataTable());
         }
         catch (Exception e)
@@ -315,13 +308,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 return;
 
             Crashed = true;
-            Exception = e; 
+            Exception = e;
 
             ragSmiley1.SetVisible(true);
             ragSmiley1.Fatal(e);
-                
+
             AbortLoadGraph();
-                
+
             SetToolbarButtonsEnabled(true);
             Done = true;
 
@@ -331,7 +324,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private void PopulateGraphResults(QueryTimeColumn countColumn, AggregateContinuousDateAxis axis)
     {
         var haveSetSource = false;
-        if(chart1.Legends.Count == 0) 
+        if(chart1.Legends.Count == 0)
             chart1.Legends.Add(new Legend());
 
         chart1.Titles.Clear();
@@ -341,7 +334,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         for (var i = 0; i < _dt.Columns.Count - 1; i++)
         {
             var index = i;
-                
+
             if (!haveSetSource)
             {
                 try
@@ -359,7 +352,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 chart1.DataSource = _dt;
                 haveSetSource = true;
             }
-                
+
             chart1.ChartAreas[0].AxisX.IsMarginVisible = false;
             chart1.ChartAreas[0].AxisY.IsMarginVisible = false;
 
@@ -397,7 +390,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                         chart1.ChartAreas[0].AxisX.Title = "Month";
 
 
-                        //if it is less than or equal to ~3 years at once - with 
+                        //if it is less than or equal to ~3 years at once - with
                         if (_dt.Rows.Count <= 40)
                         {
                             //by month
@@ -448,7 +441,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                         chart1.ChartAreas[0].AxisX.Title = "Quarter";
 
 
-                        //if it is less than or equal to ~3 years at once - with 
+                        //if it is less than or equal to ~3 years at once - with
                         if (_dt.Rows.Count <= 12)
                         {
                             //by quarter
@@ -479,7 +472,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 chart1.ChartAreas[0] = new ChartArea(); //reset it
                 chart1.ChartAreas[0].AxisX.Title = _dt.Columns[0].ColumnName;
             }
-                
+
             //Set the Y axis title
             if (countColumn != null)
                 try
@@ -526,7 +519,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                     chart1.ChartAreas[0].AxisX.Interval = 1;
                     chart1.ChartAreas[0].AxisX.LabelAutoFitMinFontSize = 8;
                 }
-                    
+
             }
 
             //name series based on column 3 or the aggregate name
@@ -547,20 +540,20 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         if(cells > MAXIMUM_CELLS_BEFORE_WARNING)
             if(Silent)
                 throw new Exception($"Aborting data binding because there were {cells} cells in the graph data table");
-            else 
-                abandon = !Activator.YesNo($"Data Table has {String.Format("{0:n0}", cells)} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
+            else
+                abandon = !Activator.YesNo($"Data Table has {$"{cells:n0}"} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
 
         if (!abandon)
         {
             chart1.DataBind();
             chart1.Visible = true;
         }
-            
+
         pbLoading.Visible = false;
         llCancel.Visible = false;
         lblLoadStage.Visible = false;
 
-        //set publish enabledness to the enabledness of 
+        //set publish enabledness to the enabledness of
         btnCache.Enabled =Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
         btnClearFromCache.Enabled = false;
 
@@ -611,7 +604,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     }
 
 
-    private string GetSeriesName(object o)
+    private static string GetSeriesName(object o)
     {
         if (o == null || o == DBNull.Value)
             return "NULL";
@@ -638,8 +631,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             chart1.SaveImage(imgSavePath, ChartImageFormat.Png);
             notifier.OnCheckPerformed(new CheckEventArgs($"Saved chart image to {imgSavePath}", CheckResult.Success));
 
-            if(graphSaveLocations != null)
-                graphSaveLocations.Add(this,imgSavePath);
+            graphSaveLocations?.Add(this,imgSavePath);
         }
         catch (Exception e)
         {
@@ -796,12 +788,14 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         if (heatmapUI.HasDataTable())
             yield return new BitmapWithDescription(heatmapUI.GetImage(800).LegacyToImage(),null,null);
     }
-        
+
     private void MiSaveImagesClick(object sender, EventArgs e)
     {
-        var sfd = new SaveFileDialog();
-        sfd.FileName = "Chart.jpg";
-        sfd.Filter = "Jpeg|*.jpg";
+        var sfd = new SaveFileDialog
+        {
+            FileName = "Chart.jpg",
+            Filter = "Jpeg|*.jpg"
+        };
         if (sfd.ShowDialog() == DialogResult.OK)
         {
             chart1.SaveImage(sfd.FileName, ChartImageFormat.Jpeg);
@@ -814,7 +808,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
                 heatmapUI.SaveImage(heatmapPath, ImageFormat.Jpeg);
             }
-                
+
             UsefulStuff.ShowPathInWindowsExplorer(new FileInfo(sfd.FileName));
         }
     }
@@ -826,7 +820,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             var s = UsefulStuff.DataTableToHtmlDataTable(_dt);
 
             var formatted = UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString(s);
-            
+
             Clipboard.SetText(formatted,TextDataFormat.Html);
         }
 
@@ -856,11 +850,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             var args = new CacheCommitExtractableAggregate(AggregateConfiguration, QueryEditor.Text, (DataTable)dataGridView1.DataSource,Timeout);
             cacheManager.CommitResults(args);
 
-            var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text);
-
-            if(result == null)
-                throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
-
+            var result = cacheManager.GetLatestResultsTable(AggregateConfiguration,AggregateOperation.ExtractableAggregateResults, QueryEditor.Text) ?? throw new NullReferenceException("CommitResults passed but GetLatestResultsTable returned false (when we tried to refetch the table name from the cache)");
             MessageBox.Show($"DataTable successfully submitted to:{result.GetFullyQualifiedName()}");
             btnClearFromCache.Enabled = true;
         }

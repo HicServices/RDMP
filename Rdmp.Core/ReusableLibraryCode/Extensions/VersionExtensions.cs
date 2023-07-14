@@ -33,7 +33,7 @@ public static class VersionExtensions
     {
         if (version == null)
         {
-            throw new ArgumentNullException("version");
+            throw new ArgumentNullException(nameof(version));
         }
         if (otherVersion == null)
         {

@@ -24,13 +24,13 @@ namespace Rdmp.Core.Reports.ExtractionTime;
 
 /// <summary>
 /// Generates a Microsoft Word docx file containing information about a researchers extract including the file generated, the number of rows, distinct patients, the
-/// filters used in the extraction query, any parameters etc.  Optionally includes a validation table which counts the number of rows extracted that passed ValidationXML 
+/// filters used in the extraction query, any parameters etc.  Optionally includes a validation table which counts the number of rows extracted that passed ValidationXML
 /// </summary>
 public class WordDataWriter : DocXHelper
 {
     public ExtractionPipelineUseCase Executer { get; set; }
 
-    public List<Exception> ExceptionsGeneratingWordFile = new List<Exception>();
+    public List<Exception> ExceptionsGeneratingWordFile = new();
 
     public WordDataWriter(ExtractionPipelineUseCase executer)
     {
@@ -39,7 +39,7 @@ public class WordDataWriter : DocXHelper
 
         if (executer.Source.WasCancelled)
             throw new NullReferenceException("Cannot write meta data since ExtractionPipelineHost reports that it was Cancelled");
-            
+
         Executer = executer;
 
         _destination = Executer.Destination;
@@ -48,8 +48,8 @@ public class WordDataWriter : DocXHelper
             throw new NotSupportedException(
                 $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
-        
-    private static object oLockOnWordUsage = new object();
+
+    private static object oLockOnWordUsage = new();
     private IExecuteDatasetExtractionDestination _destination;
 
     /// <summary>
@@ -70,14 +70,10 @@ public class WordDataWriter : DocXHelper
 
                 InsertHeader(document,"File Data");
 
-                int rowCount;
-                if (_destination.GeneratesFiles)
-                    rowCount = 10;
-                else
-                    rowCount = 5;
+                var rowCount = _destination.GeneratesFiles ? 10 : 5;
 
                 var t = InsertTable(document, rowCount, 2);
-                    
+
                 var rownum = 0;
                 if (_destination.GeneratesFiles)
                 {
@@ -95,7 +91,7 @@ public class WordDataWriter : DocXHelper
                 SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
                 SetTableCell(t,rownum,1, request.IsBatchResume ? "unknown (batching was used)" : Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
                 rownum++;
-                    
+
                 SetTableCell(t,rownum,0,"Dataset Line Count");
                 SetTableCell(t,rownum,1, request.CumulativeExtractionResults.RecordsExtracted.ToString("N0"));
                 rownum++;
@@ -103,12 +99,12 @@ public class WordDataWriter : DocXHelper
                 if (_destination.GeneratesFiles)
                 {
                     SetTableCell(t,rownum,0,"MD5");
-                    SetTableCell(t,rownum,1,FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
+                    SetTableCell(t,rownum,1, FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
                     rownum++;
-                    
+
                     var f = new FileInfo(_destination.OutputFile);
                     SetTableCell(t,rownum,0,"File Size");
-                    SetTableCell(t,rownum,1, $"{f.Length}bytes ({(f.Length / 1024)}KB)");
+                    SetTableCell(t,rownum,1, $"{f.Length}bytes ({f.Length / 1024}KB)");
                     rownum++;
                 }
 
@@ -177,7 +173,7 @@ public class WordDataWriter : DocXHelper
         }
     }
 
-    private string FormatHashString(string s)
+    private static string FormatHashString(string s)
     {
         if(string.IsNullOrWhiteSpace(s))
             return null;
@@ -187,14 +183,14 @@ public class WordDataWriter : DocXHelper
         var result  = new StringBuilder();
 
         var sr = new StringReader(s);
-            
+
         var buff = new char[23];
 
         while(sr.Read(buff,0,23) > 0)
         {
             result.Append(buff);
-            result.Append(" ");
-                
+            result.Append(' ');
+
             //skip a character (should be a -, if not something has gone badly wrong)
             var skipped = sr.Read();
             if(!(skipped == '-' || skipped == -1))
@@ -212,8 +208,7 @@ public class WordDataWriter : DocXHelper
 
         if (fc != null)
         {
-            List<IFilter> filtersUsed;
-            filtersUsed = fc.GetAllFiltersIncludingInSubContainersRecursively();
+            var filtersUsed = fc.GetAllFiltersIncludingInSubContainersRecursively();
 
             WriteOutFilters(document,filtersUsed);
 
@@ -225,7 +220,7 @@ public class WordDataWriter : DocXHelper
     {
         InsertHeader(document,"Parameters");
 
-        var linesRequred = filtersUsed.Aggregate(0, (s, f) => s + f.GetAllParameters().Count());
+        var linesRequred = filtersUsed.Aggregate(0, (s, f) => s + f.GetAllParameters().Length);
 
         var globalParameters = Executer.Source.Request.Configuration.GlobalExtractionFilterParameters.ToArray();
         linesRequred += globalParameters.Length;
@@ -240,9 +235,9 @@ public class WordDataWriter : DocXHelper
         foreach (var filter in filtersUsed)
         foreach (var parameter in filter.GetAllParameters())
         {
-            SetTableCell(t,currentLine, 0, parameter.ParameterName);
-            SetTableCell(t,currentLine, 1, parameter.Comment);
-            SetTableCell(t,currentLine, 2, parameter.Value);
+                SetTableCell(t,currentLine, 0, parameter.ParameterName);
+                SetTableCell(t,currentLine, 1, parameter.Comment);
+                SetTableCell(t,currentLine, 2, parameter.Value);
             currentLine++;
         }
 
@@ -255,7 +250,7 @@ public class WordDataWriter : DocXHelper
         }
     }
 
-    private void  WriteOutFilters(XWPFDocument document, List<IFilter> filtersUsed)
+    private static void  WriteOutFilters(XWPFDocument document, List<IFilter> filtersUsed)
     {
         InsertHeader(document,"Filters");
 
@@ -267,7 +262,7 @@ public class WordDataWriter : DocXHelper
 
         for (var i = 0; i < filtersUsed.Count; i++)
         {
-            //i+2 becauset, first row is for headers and indexing in word starts at 1 not 0
+            //i+2 because, first row is for headers and indexing in word starts at 1 not 0
             SetTableCell(t,i + 1, 0, filtersUsed[i].Name);
             SetTableCell(t,i + 1, 1, filtersUsed[i].Description);
             SetTableCell(t,i + 1, 2, filtersUsed[i].WhereSQL);
@@ -278,41 +273,41 @@ public class WordDataWriter : DocXHelper
     {
         var cata = Executer.Source.Request.Catalogue;
         var catalogueMetaData = new WordCatalogueExtractor(cata,document);
-            
+
         var supplementalData = new Dictionary<CatalogueItem, Tuple<string, string>[]>();
 
         foreach (var value in Executer.Source.ExtractTimeTransformationsObserved.Values)
         {
-            var supplementalValuesForThisOne = new List<Tuple<string, string>>();
-             
-            //Jim no longer wants these to appear in metadata
-            /*
-            if (value.FoundAtExtractTime)
-                supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", value.RuntimeName));
-            else
-                supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
-            */
-
-            supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype (SQL):",value.DataTypeInCatalogue));
-                
-
-            if(value.FoundAtExtractTime)
-                if(value.DataTypeObservedInRuntimeBuffer == null)
-                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", "Value was always NULL"));
+            var supplementalValuesForThisOne = new List<Tuple<string, string>>
+            {
+                //Jim no longer wants these to appear in metadata
+                /*
+                if (value.FoundAtExtractTime)
+                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", value.RuntimeName));
                 else
-                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Datatype:", value.DataTypeObservedInRuntimeBuffer.ToString()));
-                
+                    supplementalValuesForThisOne.Add(new Tuple<string, string>("Runtime Name:", "Not found"));
+                */
+
+                new Tuple<string, string>("Datatype (SQL):", value.DataTypeInCatalogue)
+            };
+
+
+            if (value.FoundAtExtractTime)
+                supplementalValuesForThisOne.Add(value.DataTypeObservedInRuntimeBuffer == null
+                    ? new Tuple<string, string>("Datatype:", "Value was always NULL")
+                    : new Tuple<string, string>("Datatype:", value.DataTypeObservedInRuntimeBuffer.ToString()));
+
 
             //add it with supplemental values
             if(value.CatalogueItem != null)
                 supplementalData.Add(value.CatalogueItem ,supplementalValuesForThisOne.ToArray());
-                
+
         }
 
         catalogueMetaData.AddMetaDataForColumns(supplementalData.Keys.ToArray(),supplementalData);
     }
 
-    private void CreateTimespanGraph(ExtractionTimeTimeCoverageAggregator toGraph)
+    private static void CreateTimespanGraph(ExtractionTimeTimeCoverageAggregator toGraph)
     {/*
             Chart wdChart = wrdDoc.InlineShapes.AddChart(Microsoft.Office.Core.XlChartType.xl3DColumn, ref oMissing).Chart;
             ChartData wdChartData = wdChart.ChartData;
@@ -466,9 +461,9 @@ public class WordDataWriter : DocXHelper
         var results = Executer.Source.ExtractionTimeValidator.Results;
 
         var t = InsertTable(document,results.DictionaryOfFailure.Count + 1, 4);
-            
+
         var tableLine = 0;
-            
+
         SetTableCell(t,tableLine, 0, "");
         SetTableCell(t,tableLine, 1, Consequence.Missing.ToString());
         SetTableCell(t,tableLine, 2, Consequence.Wrong.ToString());
@@ -476,14 +471,12 @@ public class WordDataWriter : DocXHelper
 
         tableLine++;
 
-        foreach (var keyValuePair in results.DictionaryOfFailure)
+        foreach (var (colname, value) in results.DictionaryOfFailure)
         {
-            var colname = keyValuePair.Key;
-
             SetTableCell(t,tableLine, 0,colname);
-            SetTableCell(t,tableLine, 1,keyValuePair.Value[Consequence.Missing].ToString());
-            SetTableCell(t,tableLine, 2,keyValuePair.Value[Consequence.Wrong].ToString());
-            SetTableCell(t,tableLine, 3,keyValuePair.Value[Consequence.InvalidatesRow].ToString());
+            SetTableCell(t,tableLine, 1,value[Consequence.Missing].ToString());
+            SetTableCell(t,tableLine, 2,value[Consequence.Wrong].ToString());
+            SetTableCell(t,tableLine, 3,value[Consequence.InvalidatesRow].ToString());
             tableLine++;
         }
     }

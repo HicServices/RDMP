@@ -28,10 +28,12 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
 
 public class AggregateDataBasedTests:DatabaseTests
 {
-    private DataTable GetTestDataTable()
+    private static DataTable GetTestDataTable()
     {
-        var dt = new DataTable();
-        dt.TableName = "AggregateDataBasedTests";
+        var dt = new DataTable
+        {
+            TableName = "AggregateDataBasedTests"
+        };
 
         dt.Columns.Add("EventDate");
         dt.Columns.Add("Category");
@@ -65,7 +67,7 @@ public class AggregateDataBasedTests:DatabaseTests
     private DiscoveredTable UploadTestDataAsTableToServer(DatabaseType type, out ICatalogue catalogue, out ExtractionInformation[] extractionInformations, out ITableInfo tableinfo)
     {
         var listener = new ThrowImmediatelyDataLoadEventListener();
-            
+
         var db = GetCleanedServer(type);
 
         var data = GetTestDataTable();
@@ -82,14 +84,14 @@ public class AggregateDataBasedTests:DatabaseTests
 
         return tbl;
     }
-    private void Destroy(DiscoveredTable tbl, params IDeleteable[] deletablesInOrderOfDeletion)
+    private static void Destroy(DiscoveredTable tbl, params IDeleteable[] deletablesInOrderOfDeletion)
     {
         tbl.Drop();
         foreach (var deleteable in deletablesInOrderOfDeletion)
             deleteable.DeleteInDatabase();
     }
 
-    private DataTable GetResultForBuilder(AggregateBuilder builder, DiscoveredTable tbl)
+    private static DataTable GetResultForBuilder(AggregateBuilder builder, DiscoveredTable tbl)
     {
         var sql = builder.SQL;
 
@@ -103,9 +105,9 @@ public class AggregateDataBasedTests:DatabaseTests
             return toReturn;
         }
     }
-        
 
-    private void AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(AggregateBuilder builder, DatabaseType type)
+
+    private static void AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(AggregateBuilder builder, DatabaseType type)
     {
         var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
         var declaration = syntaxHelper.GetParameterDeclaration("@category", new DatabaseTypeRequest(typeof(string), 1));
@@ -114,7 +116,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         var ORContainer = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.OR);
         var constParam = new ConstantParameter(declaration, "'T'", "T Category Only", syntaxHelper);
-            
+
         //this is deliberately duplication, it tests that the parameter compiles as well as that any dynamic sql doesn't get thrown by quotes
         var filter1 = new SpontaneouslyInventedFilter(repo,ORContainer, "(Category=@category OR Category = 'T')", "Category Is @category",
             "ensures the records belong to the category @category", new ISqlParameter[] { constParam });
@@ -136,9 +138,11 @@ public class AggregateDataBasedTests:DatabaseTests
         var configuration = new AggregateConfiguration(CatalogueRepository, catalogue, "GroupBy_Category");
         axisDimension = new AggregateDimension(CatalogueRepository, dateDimension, configuration);
 
-        var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
-        axis.StartDate = "'2000-01-01'";
-        axis.AxisIncrement = AxisIncrement.Year;
+        var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension)
+        {
+            StartDate = "'2000-01-01'",
+            AxisIncrement = AxisIncrement.Year
+        };
         axis.SaveToDatabase();
         return configuration;
     }
@@ -158,9 +162,11 @@ public class AggregateDataBasedTests:DatabaseTests
         axisDimension = new AggregateDimension(CatalogueRepository, axisCol, configuration);
         pivotDimension = new AggregateDimension(CatalogueRepository, categoryCol, configuration);
 
-        var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension);
-        axis.StartDate = "'2000-01-01'";
-        axis.AxisIncrement = AxisIncrement.Year;
+        var axis = new AggregateContinuousDateAxis(CatalogueRepository, axisDimension)
+        {
+            StartDate = "'2000-01-01'",
+            AxisIncrement = AxisIncrement.Year
+        };
         axis.SaveToDatabase();
         return configuration;
     }
@@ -202,7 +208,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
             var resultTable = GetResultForBuilder(builder, tbl);
@@ -234,11 +240,11 @@ public class AggregateDataBasedTests:DatabaseTests
         configuration.SaveToDatabase();
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
             var resultTable = GetResultForBuilder(builder, tbl);
-                
+
             VerifyRowExist(resultTable, "T", 139);
             VerifyRowExist(resultTable, "F", 60);
             VerifyRowExist(resultTable, "E&, %a' mp;E", 137);
@@ -268,7 +274,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
@@ -294,17 +300,16 @@ public class AggregateDataBasedTests:DatabaseTests
     public void GroupBy_AxisWithSum_Correct(DatabaseType type)
     {
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
-            
+
         //setup the aggregate with axis
-        AggregateDimension dimension;
-        var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out dimension);
+        var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.SaveToDatabase();
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
@@ -336,8 +341,7 @@ public class AggregateDataBasedTests:DatabaseTests
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
         //setup the aggregate with axis
-        AggregateDimension dimension;
-        var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out dimension);
+        var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
 
         configuration.CountSQL = "count(*)";
         configuration.HavingSQL = "count(*)>3"; //matches only years with more than 3 records
@@ -345,7 +349,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
@@ -379,14 +383,13 @@ public class AggregateDataBasedTests:DatabaseTests
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
         //setup the aggregate with axis
-        AggregateDimension dimension;
-        var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out dimension);
+        var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
 
         configuration.CountSQL = "count(NumberInTrouble)";
         configuration.SaveToDatabase();
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(dimension);
 
@@ -416,9 +419,7 @@ public class AggregateDataBasedTests:DatabaseTests
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        AggregateDimension axisDimension;
-        AggregateDimension pivotDimension;
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -426,7 +427,7 @@ public class AggregateDataBasedTests:DatabaseTests
         configuration.SaveToDatabase();
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);
@@ -436,7 +437,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
             Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
-            
+
             Assert.AreEqual("T",resultTable.Columns[1].ColumnName);
             Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
             Assert.AreEqual("F", resultTable.Columns[3].ColumnName);
@@ -468,9 +469,7 @@ public class AggregateDataBasedTests:DatabaseTests
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        AggregateDimension axisDimension;
-        AggregateDimension pivotDimension;
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -478,7 +477,7 @@ public class AggregateDataBasedTests:DatabaseTests
         configuration.SaveToDatabase();
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);
@@ -525,22 +524,22 @@ public class AggregateDataBasedTests:DatabaseTests
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        AggregateDimension axisDimension;
-        AggregateDimension pivotDimension;
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
 
         configuration.SaveToDatabase();
 
-        var topx = new AggregateTopX(CatalogueRepository, configuration, 2);
-        topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
+        var topx = new AggregateTopX(CatalogueRepository, configuration, 2)
+        {
+            OrderByDirection = AggregateTopXOrderByDirection.Descending
+        };
         topx.SaveToDatabase();
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);
@@ -583,23 +582,23 @@ public class AggregateDataBasedTests:DatabaseTests
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        AggregateDimension axisDimension;
-        AggregateDimension pivotDimension;
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
         configuration.SaveToDatabase();
-            
-        var topx = new AggregateTopX(CatalogueRepository, configuration, 2);
-        topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
-        topx.OrderByDimensionIfAny_ID = pivotDimension.ID;
+
+        var topx = new AggregateTopX(CatalogueRepository, configuration, 2)
+        {
+            OrderByDirection = AggregateTopXOrderByDirection.Descending,
+            OrderByDimensionIfAny_ID = pivotDimension.ID
+        };
         topx.OrderByDirection = AggregateTopXOrderByDirection.Ascending;
         topx.SaveToDatabase();
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);
@@ -644,9 +643,7 @@ public class AggregateDataBasedTests:DatabaseTests
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        AggregateDimension axisDimension;
-        AggregateDimension pivotDimension;
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out axisDimension, out pivotDimension);
+        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension, out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.PivotOnDimensionID = pivotDimension.ID; //pivot on the Category
@@ -655,13 +652,15 @@ public class AggregateDataBasedTests:DatabaseTests
 
         configuration.SaveToDatabase();
 
-        var topx = new AggregateTopX(CatalogueRepository, configuration, 1); //Top 1 (highest count columns should be used for pivot)
-        topx.OrderByDirection = AggregateTopXOrderByDirection.Descending;
+        var topx = new AggregateTopX(CatalogueRepository, configuration, 1)
+        {
+            OrderByDirection = AggregateTopXOrderByDirection.Descending
+        }; //Top 1 (highest count columns should be used for pivot)
         topx.SaveToDatabase();
 
         try
         {
-            //get the result of the aggregate 
+            //get the result of the aggregate
             var builder = new AggregateBuilder(null, configuration.CountSQL, configuration);
             builder.AddColumn(axisDimension);
             builder.AddColumn(pivotDimension);

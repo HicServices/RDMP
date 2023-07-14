@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.UI.Tests;
 
-class ChildProviderTests : UITests
+internal class ChildProviderTests : UITests
 {
     [Test]
     public void ChildProviderGiven_TableInfoWith_NullServer()
@@ -31,7 +31,7 @@ class ChildProviderTests : UITests
         Assert.IsNotNull(desc);
 
         //instead we should get a parent node with the name "Null Server"
-        var parent = (TableInfoServerNode) desc.Parents[desc.Parents.Length - 2];
+        var parent = (TableInfoServerNode) desc.Parents[^2];
         Assert.AreEqual(TableInfoServerNode.NullServerNode, parent.ServerName);
     }
 
@@ -48,7 +48,7 @@ class ChildProviderTests : UITests
         Assert.IsNotNull(desc);
 
         //instead we should get a parent node with the name "Null Server"
-        var parent = (TableInfoDatabaseNode)desc.Parents[desc.Parents.Length - 1];
+        var parent = (TableInfoDatabaseNode)desc.Parents[^1];
         Assert.AreEqual(TableInfoDatabaseNode.NullDatabaseNode, parent.DatabaseName);
     }
 
@@ -75,7 +75,7 @@ class ChildProviderTests : UITests
 
             Assert.AreNotSame(val1,val2,$"Prop {prop} was unexpectedly the same between child providers");
         }
-                
+
 
         foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))
         {
@@ -88,11 +88,11 @@ class ChildProviderTests : UITests
 
             Assert.AreNotSame(val1,val2,$"Field {field} was unexpectedly the same between child providers");
         }
-                
+
 
         // Now call UpdateTo to make cp1 look like cp2
         cp1.UpdateTo(cp2);
-            
+
         var badProps = new List<string>();
 
         foreach(var prop in typeof(DataExportChildProvider).GetProperties().Where(p=>!skip.Contains(p.Name)))
@@ -106,9 +106,9 @@ class ChildProviderTests : UITests
             }
 
         Assert.IsEmpty(badProps);
-                        
+
         var badFields = new List<string>();
-            
+
         foreach(var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p=>!skip.Contains(p.Name)))
             try
             {
@@ -118,7 +118,7 @@ class ChildProviderTests : UITests
             {
                 badFields.Add(field.Name);
             }
-            
+
         Assert.IsEmpty(badFields);
 
     }
@@ -264,7 +264,7 @@ class ChildProviderTests : UITests
         // both objects should have identical path
         Assert.IsTrue(p1.SequenceEqual(p2));
     }
-        
+
     /// <summary>
     /// Capitalization changes are not considered different.  This test confirms that
     /// when user has 2 nodes that have DATABASE names with different caps they get grouped

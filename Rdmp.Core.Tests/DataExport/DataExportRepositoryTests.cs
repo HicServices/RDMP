@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport;
 
-class DataExportRepositoryTests:DatabaseTests
+internal class DataExportRepositoryTests:DatabaseTests
 {
     [Test]
     public void TestNoIsExtractionIdentifierFinding()
@@ -28,7 +28,7 @@ class DataExportRepositoryTests:DatabaseTests
 
         //only one selected dataset
         var dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
-        Assert.AreEqual(1,dodgy.Count());
+        Assert.AreEqual(1, dodgy.Length);
         Assert.AreEqual(sds,dodgy[0]);
 
         //make an extarctable column on that dataset
@@ -39,7 +39,7 @@ class DataExportRepositoryTests:DatabaseTests
             
         //still shouldn't be dodgy
         dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
-        Assert.AreEqual(1, dodgy.Count());
+        Assert.AreEqual(1, dodgy.Length);
         Assert.AreEqual(sds, dodgy[0]);
 
         //now make it non dodgy by being IsExtractionIdentifier
@@ -48,7 +48,7 @@ class DataExportRepositoryTests:DatabaseTests
 
         //no longer dodgy because there is an extraction identifier
         dodgy = DataExportRepository.GetSelectedDatasetsWithNoExtractionIdentifiers().ToArray();
-        Assert.AreEqual(0, dodgy.Count());
+        Assert.AreEqual(0, dodgy.Length);
 
     }
 }

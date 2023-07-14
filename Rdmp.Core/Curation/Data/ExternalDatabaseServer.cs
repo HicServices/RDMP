@@ -57,7 +57,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     }
 
     /// <summary>
-    /// The public network share of the Data path where the physical database files are stored if applicable.  Sharing your database directory on the network is a 
+    /// The public network share of the Data path where the physical database files are stored if applicable.  Sharing your database directory on the network is a
     /// terrible idea (don't do it).  You can use this to automate detatching and shipping an MDF to your researchers e.g. MsSqlReleaseSource
     /// </summary>
     public string MappedDataPath
@@ -130,7 +130,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         {
             if (Equals(_selfCertifyingDataAccessPoint.DatabaseType, value))
                 return;
-                
+
             var old = _selfCertifyingDataAccessPoint.DatabaseType;
             _selfCertifyingDataAccessPoint.DatabaseType = value;
             OnPropertyChanged(old, value);
@@ -141,7 +141,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
     public ExternalDatabaseServer()
     {
-        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint()
+        _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint
         {
             DatabaseType = DatabaseType.MicrosoftSQLServer
         };
@@ -149,7 +149,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     /// <summary>
     /// Creates a new persistent server reference in RDMP platform database that allows it to connect to a (usually database) server.
     /// 
-    /// <para>If you are trying to create a database (e.g. a logging database) you should instead use 
+    /// <para>If you are trying to create a database (e.g. a logging database) you should instead use
     /// <see cref="MapsDirectlyToDatabaseTable.Versioning.MasterDatabaseScriptExecutor"/></para>
     /// </summary>
     /// <param name="repository"></param>
@@ -208,13 +208,13 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     {
         if (string.IsNullOrWhiteSpace(Server))
             notifier.OnCheckPerformed(new CheckEventArgs("No Server set", CheckResult.Warning));
-        else   
+        else
         if (string.IsNullOrWhiteSpace(Database))
             notifier.OnCheckPerformed(new CheckEventArgs("No Database set", CheckResult.Warning));
         else
             try
             {
-                DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.InternalDataProcessing).TestConnection();
+                DataAccessPortal.ExpectServer(this, DataAccessContext.InternalDataProcessing).TestConnection();
                 notifier.OnCheckPerformed(new CheckEventArgs("Successfully connected to server", CheckResult.Success));
             }
             catch (Exception exception)
@@ -247,7 +247,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
     /// <summary>
     /// Sets server,database,username and password properties based on the supplied DiscoveredDatabase (which doesn't have to actually exist).  This method also optionally calls
-    /// SaveToDatabase which commits the changes to the Catalogue Repository 
+    /// SaveToDatabase which commits the changes to the Catalogue Repository
     /// </summary>
     /// <param name="discoveredDatabase"></param>
     /// <param name="save">true if you want to call SaveToDatabase after setting the properties</param>
@@ -272,7 +272,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
             
         return patcher.Name == CreatedByAssembly || patcher.LegacyName == CreatedByAssembly;
     }
-        
+
     /// <inheritdoc/>
     public DiscoveredDatabase Discover(DataAccessContext context)
     {
@@ -295,13 +295,13 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         foreach(PermissableDefaults d in Enum.GetValues(typeof(PermissableDefaults)))
         {
             var existingDefault = CatalogueRepository.GetDefaultFor(d);
-            if (this.Equals(existingDefault))
+            if (Equals(existingDefault))
             {
                 CatalogueRepository.ClearDefault(d);
             }
         }
     }
-        
+
     public void SetRepository(ICatalogueRepository repository)
     {
         _selfCertifyingDataAccessPoint.SetRepository(repository);

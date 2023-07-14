@@ -34,8 +34,7 @@ public class EndToEndCacheTest : DatabaseTests
 
     private TestDataPipelineAssembler _testPipeline;
     private LoadDirectory _LoadDirectory;
-
-    const int NumDaysToCache = 5;
+    private const int NumDaysToCache = 5;
 
     [SetUp]
     protected override void SetUp()
@@ -52,8 +51,10 @@ public class EndToEndCacheTest : DatabaseTests
 
         Clear(_LoadDirectory);
 
-        _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest");
-        _cata.LoadMetadata_ID = _lmd.ID;
+        _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest")
+        {
+            LoadMetadata_ID = _lmd.ID
+        };
         _cata.SaveToDatabase();
 
         _lp = new LoadProgress(CatalogueRepository, _lmd);
@@ -78,13 +79,15 @@ public class EndToEndCacheTest : DatabaseTests
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
         RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
-        var cachingHost = new CachingHost(CatalogueRepository);
-            
-        cachingHost.CacheProgress = _cp;
+        var cachingHost = new CachingHost(CatalogueRepository)
+        {
+            CacheProgress = _cp
+        };
+
         cachingHost.Start(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         // should be numDaysToCache days in cache
-        Assert.AreEqual(NumDaysToCache, _LoadDirectory.Cache.GetFiles("*.csv").Count());
+        Assert.AreEqual(NumDaysToCache, _LoadDirectory.Cache.GetFiles("*.csv").Length);
 
         // make sure each file is named as expected
         var cacheFiles = _LoadDirectory.Cache.GetFiles().Select(fi => fi.Name).ToArray();
@@ -100,9 +103,9 @@ public class EndToEndCacheTest : DatabaseTests
     {
         var t = Task.Factory.StartNew(() =>
         {
-            Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Count());
+            Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Length);
 
-            var auto = new CacheRunner(new CacheOptions(){CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run});
+            var auto = new CacheRunner(new CacheOptions {CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run});
             auto.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
         });
 

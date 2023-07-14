@@ -179,7 +179,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         GeneratePreviews();
     }
 
-    DataTable preview;
+    private DataTable preview;
     private ANOTable _anoTable;
 
     private void GeneratePreviews()
@@ -190,7 +190,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             preview.Columns.Add(_columnInfo.GetRuntimeName(LoadStage.PostLoad));
             preview.Columns.Add(ANOTable.ANOPrefix + _columnInfo.GetRuntimeName(LoadStage.PostLoad));
 
-            var server = DataAccessPortal.GetInstance().ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
+            var server = DataAccessPortal.ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
 
             using(var con = server.GetConnection())
             {
@@ -201,7 +201,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
                 var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
                 qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
                 qb.TopX = 10;
-                    
+
                 var rowsRead = false;
 
                 using (var cmd = server.GetCommand(qb.SQL, con))
@@ -302,12 +302,10 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
     private void ddExternalDatabaseServer_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var server = ddExternalDatabaseServer.SelectedItem as ExternalDatabaseServer;
-
-        if(server ==null)
+        if(ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
             return;
 
-        ANOTransformer.ConfirmDependencies(DataAccessPortal.GetInstance().ExpectDatabase(server, DataAccessContext.DataLoad), checksUI1);
+        ANOTransformer.ConfirmDependencies(DataAccessPortal.ExpectDatabase(server, DataAccessContext.DataLoad), checksUI1);
     }
 
     private void ddANOTables_SelectedIndexChanged(object sender, EventArgs e)
@@ -348,7 +346,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         //if it is not pushed, push it now
         if (!ANOTable.IsTablePushed())
         {
-            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type, new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+            ANOTable.PushToANOServerAsNewTable(_columnInfo.Data_type, new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
             ANOTable.SaveToDatabase();
         }
 
@@ -366,7 +364,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
 
             if (worked)
                 if (Activator.YesNo("successfully changed column to ANO, close form?", "Close form?"))
-                    this.ParentForm.Close();
+                    ParentForm.Close();
         }
         catch (Exception exception)
         {

@@ -24,7 +24,7 @@ public class TestAcronymGeneration : DatabaseTests
     {
         var extractor = new DitaCatalogueExtractor(CatalogueRepository, null);
 
-        var suggestion = extractor.GetAcronymSuggestionFromCatalogueName(name);
+        var suggestion = DitaCatalogueExtractor.GetAcronymSuggestionFromCatalogueName(name);
 
         Assert.AreEqual(predictedAcronym,suggestion);
     }

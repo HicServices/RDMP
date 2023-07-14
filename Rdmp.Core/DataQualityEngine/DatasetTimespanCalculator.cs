@@ -35,7 +35,7 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         return $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
     }
 
-    public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation, bool discardOutliers)
+    public static Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation, bool discardOutliers)
     {
         var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(evaluation, "ALL", false);
 
@@ -93,12 +93,12 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         return GetMachineReadableTimespanIfKnownOf(mostRecentEvaluation, discardOutliers);
     }
 
-    private Tuple<DateTime?, DateTime?> Unknown()
+    private static Tuple<DateTime?, DateTime?> Unknown()
     {
         return Tuple.Create<DateTime?, DateTime?>(null, null);
     }
 
-    private int GetDiscardThreshold(DataTable dt)
+    private static int GetDiscardThreshold(DataTable dt)
     {
         var total = 0;
         var counted = 0;

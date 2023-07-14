@@ -22,7 +22,7 @@ namespace Rdmp.UI.Tutorials;
 public class TutorialTracker : IHelpWorkflowProgressProvider
 {
     private readonly IActivateItems _activator;
-        
+
     public List<Tutorial> TutorialsAvailable { get; private set; }
 
     public TutorialTracker(IActivateItems activator)
@@ -34,10 +34,11 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
 
     private void BuildTutorialList()
     {
-        TutorialsAvailable = new List<Tutorial>();
-            
-        TutorialsAvailable.Add(new Tutorial("1. Generate Test Data", new ExecuteCommandGenerateTestDataUI(_activator), new Guid("8255fb4e-94a4-4bbc-9e8d-edec5ecebab0")));
-        TutorialsAvailable.Add(new Tutorial("2. Import a file", new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), new Guid("5d71a169-5c08-4c33-8f88-8ee123222a3b")));
+        TutorialsAvailable = new List<Tutorial>
+        {
+            new Tutorial("1. Generate Test Data", new ExecuteCommandGenerateTestDataUI(_activator), new Guid("8255fb4e-94a4-4bbc-9e8d-edec5ecebab0")),
+            new Tutorial("2. Import a file", new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), new Guid("5d71a169-5c08-4c33-8f88-8ee123222a3b"))
+        };
 
         //var executeExtraction = new Tutorial("4. Execute DataSet Extraction",
         //                                     new ExecuteCommandExecuteExtractionConfiguration(_activator),
@@ -83,23 +84,23 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
             UserSettings.SetTutorialDone(tutorial.Guid, false);
     }
 
-    public void ClearCompleted(Tutorial tutorial)
+    public static void ClearCompleted(Tutorial tutorial)
     {
         UserSettings.SetTutorialDone(tutorial.Guid, false);
         UserSettings.DisableTutorials = false;
     }
 
-    public void DisableAllTutorials()
+    public static void DisableAllTutorials()
     {
         UserSettings.DisableTutorials = true;
     }
 
-    public bool HasSeen(Tutorial tutorial)
+    public static bool HasSeen(Tutorial tutorial)
     {
         return UserSettings.GetTutorialDone(tutorial.Guid);
     }
 
-    public void LaunchTutorial(Tutorial tutorial)
+    public static void LaunchTutorial(Tutorial tutorial)
     {
         tutorial.CommandExecution.Execute();
     }

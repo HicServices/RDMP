@@ -24,8 +24,7 @@ public class DependenciesEvaluation
         "Plugin/Plugin.UI/Plugin.UI.nuspec"
 
     };
-        
-    Dictionary<string, string> Dependencies = new Dictionary<string, string>();
+    private Dictionary<string, string> Dependencies = new();
 
     public void FindProblems(VisualStudioSolutionFile sln)
     {
@@ -100,22 +99,21 @@ public class DependenciesEvaluation
 
             }
 
-            var csprojFileContexnts = File.ReadAllText(csproj.FullName);
+            var csprojFileContents = File.ReadAllText(csproj.FullName);
 
             //look for dodgy reference includes
-            foreach (var dependency in Dependencies)
+            foreach (var (key, versionInNuspec) in Dependencies)
             {
                 //Reference Include="MySql.Data, Version=8.0.12.0
-                var r = new Regex($@"{dependency.Key.Trim('"')}, Version=([0-9.""]*)");
+                var r = new Regex($@"{key.Trim('"')}, Version=([0-9.""]*)");
 
-                foreach (Match match in r.Matches(csprojFileContexnts))
+                foreach (Match match in r.Matches(csprojFileContents))
                 {
                     var versionInCsproj = match.Groups[1].Value;
-                    var versionInNuspec = dependency.Value;
 
                     if (!AreProbablyCompatibleVersions(versionInNuspec, versionInCsproj))
                         problems.Add(
-                            $"csproj file {project.Name} lists dependency of {dependency.Key} with version {versionInCsproj} while in the nuspec it is {versionInNuspec}");
+                            $"csproj file {project.Name} lists dependency of {key} with version {versionInCsproj} while in the nuspec it is {versionInNuspec}");
                 }
             }
         }
@@ -170,7 +168,7 @@ public class DependenciesEvaluation
     /// <param name="availableVersion">The version available</param>
     /// <param name="requiredVersion">The version required, can include 0 elements for wildcards e.g. 11.0.0.0 would be compatible with 11.2.0.0</param>
     /// <returns></returns>
-    private bool AreProbablyCompatibleVersions(string availableVersion, string requiredVersion)
+    private static bool AreProbablyCompatibleVersions(string availableVersion, string requiredVersion)
     {
         var v1 = new Version(availableVersion.Trim('"'));
         var v2 = new Version(requiredVersion.Trim('"'));

@@ -38,27 +38,27 @@ namespace Rdmp.UI.Raceway;
 /// </summary>
 public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 {
-    private ToolStripButton btnAddCatalogue = new ToolStripButton("Add Catalogue"){Name= "btnAddCatalogue" };
-    private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi.ImageToBitmap()) { Name = "btnRemoveAll" };
-    private ToolStripButton btnAddExtractableDatasetPackage = new ToolStripButton("Add Package") { Name = "btnAddExtractableDatasetPackage" };
-    private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Show Period") { Name = "toolStripLabel1" };
-    private ToolStripComboBox ddShowPeriod = new ToolStripComboBox() { Name = "ddShowPeriod", Size = new Size(121, 25) };
-    private ToolStripButton cbIgnoreRowCounts = new ToolStripButton() { Name = "cbIgnoreRowCounts" };
+    private ToolStripButton btnAddCatalogue = new("Add Catalogue"){Name= "btnAddCatalogue" };
+    private ToolStripButton btnRemoveAll = new("Clear",FamFamFamIcons.delete_multi.ImageToBitmap()) { Name = "btnRemoveAll" };
+    private ToolStripButton btnAddExtractableDatasetPackage = new("Add Package") { Name = "btnAddExtractableDatasetPackage" };
+    private ToolStripLabel toolStripLabel1 = new("Show Period") { Name = "toolStripLabel1" };
+    private ToolStripComboBox ddShowPeriod = new() { Name = "ddShowPeriod", Size = new Size(121, 25) };
+    private ToolStripButton cbIgnoreRowCounts = new() { Name = "cbIgnoreRowCounts" };
 
     public DatasetRaceway()
     {
         InitializeComponent();
 
-        this.btnAddCatalogue.Click += btnAddCatalogue_Click;
-        this.btnRemoveAll.Click += btnRemoveAll_Click;
-        this.ddShowPeriod.DropDownClosed += ddShowPeriod_DropDownClosed;
+        btnAddCatalogue.Click += btnAddCatalogue_Click;
+        btnRemoveAll.Click += btnRemoveAll_Click;
+        ddShowPeriod.DropDownClosed += ddShowPeriod_DropDownClosed;
 
-        this.cbIgnoreRowCounts.CheckOnClick = true;
-        this.cbIgnoreRowCounts.CheckedChanged += this.cbIgnoreRowCounts_CheckedChanged;
-        this.btnAddExtractableDatasetPackage.Click += btnAddExtractableDatasetPackage_Click;
-            
+        cbIgnoreRowCounts.CheckOnClick = true;
+        cbIgnoreRowCounts.CheckedChanged += cbIgnoreRowCounts_CheckedChanged;
+        btnAddExtractableDatasetPackage.Click += btnAddExtractableDatasetPackage_Click;
+
         ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
-            
+
         btnRemoveAll.Image = FamFamFamIcons.delete_multi.ImageToBitmap();
         _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ImageToBitmap();
         _respectRowCounts = CatalogueIcons.RowCounts_Respect.ImageToBitmap();
@@ -76,7 +76,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     public void GenerateChart()
     {
         CommonFunctionality.ResetChecks();
-            
+
         var allCatalogues = _collection.GetCatalogues();
 
         var cataloguesToAdd = new Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>>();
@@ -92,11 +92,11 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
             CommonFunctionality.Fatal("Failed to get DQE Repository",e);
             return;
         }
-            
+
         foreach (var cata in allCatalogues.OrderBy(c => c.Name))
         {
             var eval = dqeRepository.GetMostRecentEvaluationFor(cata);
-                
+
             Dictionary<DateTime, ArchivalPeriodicityCount> dictionary = null;
 
             if (eval != null)
@@ -104,14 +104,14 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
             cataloguesToAdd.Add(cata, dictionary);
         }
-            
+
         //every month seen in every dataset ever
         var buckets = GetBuckets(cataloguesToAdd);
 
         racewayRenderArea.AddTracks(_activator,cataloguesToAdd, buckets, _collection.IgnoreRows);
         racewayRenderArea.Refresh();
 
-        this.Invalidate();
+        Invalidate();
     }
 
     private DateTime[] GetBuckets(Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> cataloguesDictionary)
@@ -130,24 +130,19 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
                         buckets.Add(dt);
                 }
 
-        return buckets.OrderBy(d => d).ToArray(); 
+        return buckets.OrderBy(static d => d).ToArray();
     }
 
     private DateTime GetUserPickedStartDate()
     {
-        switch (_collection.ShowPeriod)
+        return _collection.ShowPeriod switch
         {
-            case RacewayShowPeriod.AllTime:
-                return DateTime.MinValue;
-            case RacewayShowPeriod.LastDecade:
-                return DateTime.Now.AddYears(-10);
-            case RacewayShowPeriod.LastYear:
-                return DateTime.Now.AddYears(-1);
-            case RacewayShowPeriod.LastSixMonths:
-                return DateTime.Now.AddMonths(-6);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            RacewayShowPeriod.AllTime => DateTime.MinValue,
+            RacewayShowPeriod.LastDecade => DateTime.Now.AddYears(-10),
+            RacewayShowPeriod.LastYear => DateTime.Now.AddYears(-1),
+            RacewayShowPeriod.LastSixMonths => DateTime.Now.AddMonths(-6),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
 
@@ -158,10 +153,10 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         LastYear,
         LastSixMonths
     }
-        
+
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-            
+
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
@@ -173,7 +168,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
         btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import).ImageToBitmap();
         btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import).ImageToBitmap();
-            
+
         ddShowPeriod.ComboBox.SelectedItem = _collection.ShowPeriod;
         cbIgnoreRowCounts.Checked = _collection.IgnoreRows;
         UpdateIgnoreRowCountCheckBoxIconAndText();
@@ -181,7 +176,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         if(isFirstTime)
         {
             isFirstTime = false;
-            racewayRenderArea.RequestDeletion += (c) =>
+            racewayRenderArea.RequestDeletion += c =>
             {
                 _collection.RemoveCatalogue(c);
                 SaveCollectionChanges();
@@ -230,11 +225,11 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
         CommonFunctionality.ToolStrip.Visible = isEditModeOn;
     }
-        
+
     private void btnAddCatalogue_Click(object sender, EventArgs e)
     {
-        if(_activator.SelectObjects(new DialogArgs { 
-                   TaskDescription = "Choose which new Catalogues should be represented in the diagram.",
+        if(_activator.SelectObjects(new DialogArgs {
+                   TaskDescription = "Choose which new Catalogues should be represented in the diagram."
                },
                _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
                    .Except(_collection.GetCatalogues())
@@ -264,14 +259,12 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void btnAddExtractableDatasetPackage_Click(object sender, EventArgs e)
     {
-        var dataExportChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
-
-        if(dataExportChildProvider == null)
+        if(_activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
             return;
 
         if(Activator.SelectObject(new DialogArgs
            {
-               TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram.",
+               TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
 
            }, dataExportChildProvider.AllPackages,out var packageToAdd))
         {
@@ -282,7 +275,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
                 if(!_collection.GetCatalogues().Contains(cata))
                     AddCatalogue((Catalogue) cata);
             }
-                
+
             SaveCollectionChanges();
             GenerateChart();
         }
@@ -312,7 +305,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void cbIgnoreRowCounts_CheckedChanged(object sender, EventArgs e)
     {
-            
+
         UpdateIgnoreRowCountCheckBoxIconAndText();
         _collection.IgnoreRows = cbIgnoreRowCounts.Checked;
         GenerateChart();

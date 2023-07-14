@@ -13,7 +13,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 
 [Category("Unit")]
-class BoundsValidationIntegerTest : ValidationTests
+internal class BoundsValidationIntegerTest : ValidationTests
 {
 
     [Test]
@@ -29,8 +29,10 @@ class BoundsValidationIntegerTest : ValidationTests
         i.AddSecondaryConstraint(b);
         v.AddItemValidator(i, "number", typeof(int));
 
-        var d = new Dictionary<string, object>();
-        d.Add("number", 119);
+        var d = new Dictionary<string, object>
+        {
+            { "number", 119 }
+        };
 
         Assert.IsNull(v.Validate(d));
     }

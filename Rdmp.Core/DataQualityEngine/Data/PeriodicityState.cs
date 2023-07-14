@@ -54,13 +54,13 @@ public class PeriodicityState
         var toReturn = new Dictionary<DateTime, ArchivalPeriodicityCount>();
 
         var calc = new DatasetTimespanCalculator();
-        var result = calc.GetMachineReadableTimespanIfKnownOf(evaluation, discardOutliers);
+        var result = DatasetTimespanCalculator.GetMachineReadableTimespanIfKnownOf(evaluation, discardOutliers);
 
         var t = evaluation.DQERepository;
 
         using (var con = evaluation.DQERepository.GetConnection())
         {
-            var sql = 
+            var sql =
                 @$"SELECT 
       {t.Wrap("Year")}
       ,{t.Wrap("Month")}
@@ -90,8 +90,7 @@ public class PeriodicityState
                             continue;
                         }
 
-                        if (!toReturn.ContainsKey(date))
-                            toReturn.Add(date,new ArchivalPeriodicityCount());
+                        toReturn.TryAdd(date, new ArchivalPeriodicityCount());
 
                         var toIncrement = toReturn[date];
 
@@ -105,7 +104,7 @@ public class PeriodicityState
 
                         switch ((string)r["RowEvaluation"])
                         {
-                            case "Correct": 
+                            case "Correct":
                                 toIncrement.CountGood += (int) r["CountOfRecords"];
                                 toIncrement.Total += (int)r["CountOfRecords"];
                                 break;
@@ -125,7 +124,7 @@ public class PeriodicityState
 
         return toReturn;
     }
-       
+
     /// <summary>
     /// Returns a table describing the number of records over time optionally only those where the pivot column in the rows
     /// had the value of <paramref name="pivotCategoryValue"/>.  Returns null if no rows were present in the table at the
@@ -139,12 +138,7 @@ public class PeriodicityState
     {
         using (var con = evaluation.DQERepository.GetConnection())
         {
-            var sql = "";
-
-            if (pivot)
-                sql = string.Format(PeriodicityPivotSql, evaluation.ID, pivotCategoryValue);
-            else
-                sql = $@"Select [Evaluation_ID]
+            var sql = pivot ? string.Format(PeriodicityPivotSql, evaluation.ID, pivotCategoryValue) : $@"Select [Evaluation_ID]
       ,CAST([Year] as varchar(4)) + '-' + datename(month,dateadd(month, [Month] - 1, 0)) as YearMonth
       ,[CountOfRecords]
       ,[RowEvaluation] from PeriodicityState where Evaluation_ID={evaluation.ID} AND PivotCategory = '{pivotCategoryValue}'";

@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Rules;
 
-class NotNullRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
+internal class NotNullRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 {
     public NotNullRule(IActivateItems activator, T databaseObject, Func<T, object> getter, Control control,string propertyToCheckName) : base(activator,databaseObject,getter,control, propertyToCheckName)
     {

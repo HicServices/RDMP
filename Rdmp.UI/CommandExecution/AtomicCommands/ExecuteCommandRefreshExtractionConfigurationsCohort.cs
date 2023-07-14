@@ -47,7 +47,7 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
     public override void Execute()
     {
         base.Execute();
-            
+
         //show the ui
         var progressUi = new ProgressUI();
         progressUi.ApplyTheme(Activator.Theme);

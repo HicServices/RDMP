@@ -56,7 +56,7 @@ public class RecentHistoryOfControls
     {
         _controlGuid = controlGuid;
         _recentValues = new List<string>(UserSettings.GetHistoryForControl(controlGuid));
-        _rvContents = new(_recentValues);
+        _rvContents = new HashSet<string>(_recentValues);
     }
 
     public void AddResult( string value,bool save = true)
@@ -82,21 +82,21 @@ public class RecentHistoryOfControls
         UserSettings.SetHistoryForControl(_controlGuid, _recentValues);
     }
 
-    public void SetValueToMostRecentlySavedValue(TextBox c)
+    public static void SetValueToMostRecentlySavedValue(TextBox c)
     {
         if (c.AutoCompleteCustomSource.Count > 0)
             c.Text = c.AutoCompleteCustomSource[^1]; //set the current text to the last used text
     }
-    public void SetValueToMostRecentlySavedValue(ComboBox c)
+    public static void SetValueToMostRecentlySavedValue(ComboBox c)
     {
         if (c.AutoCompleteCustomSource.Count > 0)
             c.Text = c.AutoCompleteCustomSource[^1]; //set the current text to the last used text
     }
 
-    public void AddHistoryAsItemsToComboBox(ComboBox c)
+    public static void AddHistoryAsItemsToComboBox(ComboBox c)
     {
         if (c.AutoCompleteCustomSource.Count <= 0) return;
-        var items=new string[c.AutoCompleteCustomSource.Count];
+        var items =new string[c.AutoCompleteCustomSource.Count];
         c.AutoCompleteCustomSource.CopyTo(items, 0);
         c.Items.AddRange(items.Cast<object>().ToArray());
     }

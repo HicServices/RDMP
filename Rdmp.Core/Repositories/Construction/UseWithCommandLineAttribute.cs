@@ -13,7 +13,7 @@ namespace Rdmp.Core.Repositories.Construction;
 /// Indicates a constructor which should be used when instantiating from the command line with an unknown number of arguments.
 /// Constructors decorated with this attribute must take a <see cref="CommandLineObjectPicker"/>
 /// </summary>
-[System.AttributeUsage(AttributeTargets.Constructor)]
+[AttributeUsage(AttributeTargets.Constructor)]
 public class UseWithCommandLineAttribute : Attribute
 {
     /// <summary>

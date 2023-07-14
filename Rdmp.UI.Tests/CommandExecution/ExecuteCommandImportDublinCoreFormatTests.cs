@@ -12,7 +12,7 @@ using Rdmp.Core.Reports.DublinCore;
 
 namespace Rdmp.UI.Tests.CommandExecution;
 
-class ExecuteCommandImportDublinCoreFormatTests
+internal class ExecuteCommandImportDublinCoreFormatTests
 {
 
     /// <summary>
@@ -21,7 +21,7 @@ class ExecuteCommandImportDublinCoreFormatTests
     [Test]
     public void Test_DublinCore_WriteReadFile_Net461()
     {
-        var def1 = new DublinCoreDefinition()
+        var def1 = new DublinCoreDefinition
         {
             Title =  "ssssshh",
             Alternative =  "O'Rly",

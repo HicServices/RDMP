@@ -13,17 +13,17 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestExecuteCommandDescribe : UnitTests
+internal class TestExecuteCommandDescribe : UnitTests
 {
     [Test]
     public void TestDescribeCatalogue()
     {
         var mock = new Mock<IBasicActivateItems>();
         mock.Setup(m => m.Show(It.IsAny<string>()));
-            
+
         var c = WhenIHaveA<Catalogue>();
         c.Description = "fish";
-            
+
         var describe = new ExecuteCommandDescribe(mock.Object,new []{c});
         Assert.IsFalse(describe.IsImpossible,describe.ReasonCommandImpossible);
 

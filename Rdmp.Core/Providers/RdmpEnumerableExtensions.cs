@@ -27,12 +27,10 @@ public static class RdmpEnumerableExtensions
                 {
                     throw new Exception($"Failed to add {element} ({m.GetType().Name}, ID={m.ID}) to Dictionary.  Repository was {m.Repository}", ex);
                 }
-                else
-                {
-                    throw new Exception($"Failed to add {element} to Dictionary", ex);
-                }
 
-                    
+                throw new Exception($"Failed to add {element} to Dictionary", ex);
+
+
             }
         }
 

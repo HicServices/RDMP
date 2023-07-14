@@ -11,7 +11,7 @@ using Rdmp.Core.DataLoad.Modules.Exceptions;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources;
 
-class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
+internal class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
 {
 
     [TestCase(BadDataHandlingStrategy.DivertRows)]
@@ -29,12 +29,12 @@ class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+        void adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = strategy;
             a.ThrowOnEmptyFiles = true;
             a.IgnoreQuotes = false;
-        };
+        }
 
         switch (strategy)
         {
@@ -55,10 +55,10 @@ class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
 
                 break;
             default:
-                throw new ArgumentOutOfRangeException("strategy");
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
     }
-        
+
     [Test]
     public void BadCSV_UnclosedQuote_IgnoreQuotes()
     {
@@ -70,12 +70,12 @@ class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
             "Frank,Is the greatest,100",
             "Frank,Is the greatest,100");
 
-        Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
+        static void adjust(DelimitedFlatFileDataFlowSource a)
         {
             a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
             a.ThrowOnEmptyFiles = true;
             a.IgnoreQuotes = true;
-        };
+        }
 
         var dt2 = RunGetChunk(file, adjust);
         Assert.AreEqual(5, dt2.Rows.Count);

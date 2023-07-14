@@ -48,7 +48,7 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
 
         var impromptuSql =
             $"{whereString}{extractionIdentifier.SelectSQL} IN (SELECT {_extractableCohort.GetPrivateIdentifier()} FROM {_extractableCohort.ExternalCohortTable.TableName} WHERE {_extractableCohort.WhereSQL()})";
-            
+
         //if there is a group by then we must insert the AND patient in cohort bit before the group by but after any WHERE containers
         var insertionPoint = sql.IndexOf("group by", 0, StringComparison.CurrentCultureIgnoreCase);
 
@@ -57,7 +57,7 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
             return sql + Environment.NewLine + impromptuSql;
             
         //there is a group by
-        return sql.Substring(0, insertionPoint) + Environment.NewLine + impromptuSql + Environment.NewLine + sql.Substring(insertionPoint, sql.Length - insertionPoint);
+        return sql[..insertionPoint] + Environment.NewLine + impromptuSql + Environment.NewLine + sql.Substring(insertionPoint, sql.Length - insertionPoint);
     }
         
     public void PreInitialize(ExtractableCohort value, IDataLoadEventListener listener)

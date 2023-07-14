@@ -13,10 +13,10 @@ namespace Rdmp.UI.ProjectUI;
 
 internal class ExtractCommandStateMonitor
 {
-    Dictionary<IExtractCommand,ExtractCommandState> CommandStates = new Dictionary<IExtractCommand, ExtractCommandState>();
-    private Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>> CommandSubStates = new Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>>();
+    private Dictionary<IExtractCommand,ExtractCommandState> CommandStates = new();
+    private Dictionary<IExtractCommand, Dictionary<object, ExtractCommandState>> CommandSubStates = new();
 
-    private Dictionary<object, ExtractCommandState> GlobalsStates = new Dictionary<object, ExtractCommandState>();
+    private Dictionary<object, ExtractCommandState> GlobalsStates = new();
 
     public bool Contains(IExtractCommand cmd)
     {
@@ -37,8 +37,7 @@ internal class ExtractCommandStateMonitor
 
         foreach (var substate in cmd.DatasetBundle.States.ToArray())
         {
-            if(!toUpdateSubstates.ContainsKey(substate.Key))
-                toUpdateSubstates.Add(substate.Key,substate.Value);
+            toUpdateSubstates.TryAdd(substate.Key, substate.Value);
 
             toUpdateSubstates[substate.Key] = substate.Value;
         }
@@ -57,8 +56,7 @@ internal class ExtractCommandStateMonitor
     {
         foreach (var gkvp in globals.States)
         {
-            if(!GlobalsStates.ContainsKey(gkvp.Key))
-                GlobalsStates.Add(gkvp.Key,gkvp.Value);
+            GlobalsStates.TryAdd(gkvp.Key, gkvp.Value);
 
             GlobalsStates[gkvp.Key] = gkvp.Value;
         }

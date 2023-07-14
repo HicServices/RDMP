@@ -24,9 +24,9 @@ public partial class SQLPreviewWindow : Form
         InitializeComponent();
 
         lblMessage.Text = msg;
-        this.Text = title;
+        Text = title;
 
-        var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
@@ -47,13 +47,13 @@ public partial class SQLPreviewWindow : Form
         YesToAll = sender == btnOkToAll;
 
         DialogResult = DialogResult.OK;
-        this.Close();
+        Close();
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
         DialogResult=DialogResult.Cancel;
-        this.Close();
+        Close();
     }
 
     public static DialogResult Show(string title,string message, string sql)

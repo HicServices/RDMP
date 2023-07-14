@@ -18,7 +18,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Tests.QueryCaching;
 
-class DataAccessPortalCollectionTests
+internal class DataAccessPortalCollectionTests
 {
     [OneTimeSetUp]
     public void LoadImplementation()

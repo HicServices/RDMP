@@ -50,7 +50,7 @@ public class PatcherManager
                 
             try
             {
-                instance = (PluginPatcher)constructor.Construct(patcherType);
+                instance = (PluginPatcher)ObjectConstructor.Construct(patcherType);
 
                 events?.Invoke(this, new PluginPatcherFoundEventArgs(patcherType, instance, PluginPatcherStatus.Healthy));
             }

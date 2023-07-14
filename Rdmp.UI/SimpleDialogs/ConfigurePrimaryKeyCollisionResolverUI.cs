@@ -26,20 +26,20 @@ namespace Rdmp.UI.SimpleDialogs;
 /// twice, a data entry clerk hits the submit button twice in a poorly written piece of clinical software etc.  The RDMP attempts to eliminate/reduce the potential for duplication by
 /// requiring that data loaded through the Data Load Engine (DLE) require that all tables being loaded have a Primary Key which comes from the source data (no autonums!).
 /// 
-/// <para>Because primary keys cannot contain NULL values you are forced to create sensible primary keys (for example a Hospital Admissions dataset might have a primary key 
+/// <para>Because primary keys cannot contain NULL values you are forced to create sensible primary keys (for example a Hospital Admissions dataset might have a primary key
 /// 'PatientIdentifier' and 'AdmissionDateTime').  By putting a primary key on the dataset we ensure that there cannot be duplicate data load replication (loading same record twice)
 ///   and also ensure that there cannot be unlinkable records in the database (records where no 'Patient Identifier' exists or when we don't know what date the admission was on).</para>
 /// 
-/// <para>When primary key collisions occur in a data load it becomes necessary to evaluate the cause (Done by evaluating RAW - see UserManual.md Load Bubbles).  For example we might 
-/// determine that the data provider is sending us 2 records for the same patient on the same day, the records are identical except for a field 'DataAge'.  Rather than adding this 
+/// <para>When primary key collisions occur in a data load it becomes necessary to evaluate the cause (Done by evaluating RAW - see UserManual.md Load Bubbles).  For example we might
+/// determine that the data provider is sending us 2 records for the same patient on the same day, the records are identical except for a field 'DataAge'.  Rather than adding this
 /// to the primary key it would make sense instead to discard the older record on load.</para>
 /// 
 /// <para>This dialog (in combination with PrimaryKeyCollisionResolverMutilation - See UserManual.md) lets you delete records out of RAW such that the remaining data matches the datasets
-///  primary key (obviously this is incredibly dangerous!).  This is done by applying a column order (with a direction for each column).  The dataset is subsetted by primary key with 
+///  primary key (obviously this is incredibly dangerous!).  This is done by applying a column order (with a direction for each column).  The dataset is subsetted by primary key with
 /// each set ordered by the resolution order of the columns and the top record taken.</para>
 /// 
 /// <para>In the above example we would put 'DataAge' as the first column in the resolution order and set it to descending (prefer records with a larger date i.e. newer records).  Direction
-/// is obvious in the case of dates/numbers (ascending = prefer the lowest, descending = prefer the highest) but in the case of strings the length of the string is used with (DBNull 
+/// is obvious in the case of dates/numbers (ascending = prefer the lowest, descending = prefer the highest) but in the case of strings the length of the string is used with (DBNull
 /// being 0 length).</para>
 /// 
 /// <para>Only use PrimaryKeyCollisionResolverMutilation (and this dialog) if you are CERTAIN you have the right primary key for the data/your researchers.</para>
@@ -49,7 +49,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
     private readonly TableInfo _table;
 
     private ScintillaNET.Scintilla QueryEditor;
-        
+
     public ConfigurePrimaryKeyCollisionResolverUI(TableInfo table, IActivateItems activator):base(activator)
     {
         _table = table;
@@ -106,7 +106,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         foreach (var resolver in resolvers.OrderBy(o => o.DuplicateRecordResolutionOrder).ToArray())
         {
-            //if it starts with hic_ 
+            //if it starts with hic_
             if (SpecialFieldNames.IsHicPrefixed(resolver))
             {
                 //do not use it for duplication resolution
@@ -143,10 +143,10 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private void listBox1_MouseDown(object sender, MouseEventArgs e)
     {
-        if (this.lbConflictResolutionColumns.SelectedItem == null) return;
+        if (lbConflictResolutionColumns.SelectedItem == null) return;
 
         if (e.Button == MouseButtons.Left)
-            this.lbConflictResolutionColumns.DoDragDrop(this.lbConflictResolutionColumns.SelectedItem,
+            lbConflictResolutionColumns.DoDragDrop(lbConflictResolutionColumns.SelectedItem,
                 DragDropEffects.Move);
 
     }
@@ -177,9 +177,9 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         var right = new Point(lbConflictResolutionColumns.Width, top);
 
         //draw over the old one in the background colour (incase it has moved) - we don't want to leave trails
-        g.DrawLine(new System.Drawing.Pen(lbConflictResolutionColumns.BackColor, 2), draggingOldLeftPoint,
+        g.DrawLine(new Pen(lbConflictResolutionColumns.BackColor, 2), draggingOldLeftPoint,
             draggingOldRightPoint);
-        g.DrawLine(new System.Drawing.Pen(Color.Black, 2), left, right);
+        g.DrawLine(new Pen(Color.Black, 2), left, right);
 
         draggingOldLeftPoint = left;
         draggingOldRightPoint = right;
@@ -189,11 +189,11 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
     private void listBox1_DragDrop(object sender, DragEventArgs e)
     {
         var point = lbConflictResolutionColumns.PointToClient(new Point(e.X, e.Y));
-        var index = this.lbConflictResolutionColumns.IndexFromPoint(point);
+        var index = lbConflictResolutionColumns.IndexFromPoint(point);
 
         //if they are dragging it way down the bottom of the list
         if (index < 0)
-            index = this.lbConflictResolutionColumns.Items.Count;
+            index = lbConflictResolutionColumns.Items.Count;
 
         //get the thing they are dragging
         var data =
@@ -201,14 +201,11 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             (e.Data.GetData(typeof (ColumnInfo)) ?? e.Data.GetData(typeof (PreLoadDiscardedColumn)));
 
         //find original index because if we are dragging down then we will want to adjust the index so that insert point is correct even after removing the object further up the list
-        var originalIndex = this.lbConflictResolutionColumns.Items.IndexOf(data);
+        var originalIndex = lbConflictResolutionColumns.Items.IndexOf(data);
 
-        this.lbConflictResolutionColumns.Items.Remove(data);
+        lbConflictResolutionColumns.Items.Remove(data);
 
-        if (originalIndex < index)
-            this.lbConflictResolutionColumns.Items.Insert(Math.Max(0, index - 1), data);
-        else
-            this.lbConflictResolutionColumns.Items.Insert(index, data);
+        lbConflictResolutionColumns.Items.Insert(originalIndex < index ? Math.Max(0, index - 1) : index, data);
 
         SaveOrderIntoDatabase();
 
@@ -232,7 +229,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private void btnClose_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 
     private void lbConflictResolutionColumns_MouseUp(object sender, MouseEventArgs e)
@@ -312,12 +309,12 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         {
             //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
             var resolver = new PrimaryKeyCollisionResolver(_table);
-                
+
             if(sender == btnCopyPreview)
-                System.Windows.Forms.Clipboard.SetText(resolver.GeneratePreviewSQL());
+                Clipboard.SetText(resolver.GeneratePreviewSQL());
 
             if(sender == btnCopyDetection)
-                System.Windows.Forms.Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());
+                Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());
 
         }
         catch (Exception exception)
@@ -365,5 +362,5 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     }
 
-        
+
 }

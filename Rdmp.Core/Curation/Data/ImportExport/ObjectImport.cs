@@ -58,7 +58,7 @@ public class ObjectImport : ReferenceOtherObjectDatabaseEntity
     /// <param name="localObject"></param>
     internal ObjectImport(ICatalogueRepository repository, string sharingUID,IMapsDirectlyToDatabaseTable localObject)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>()
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"ReferencedObjectRepositoryType",localObject.Repository.GetType().Name},
             {"ReferencedObjectType",localObject.GetType().Name},

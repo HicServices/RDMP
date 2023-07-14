@@ -21,7 +21,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core;
 
-class Program
+internal class Program
 {
     /// <summary>
     /// True if the user passed the -q switch at startup to suppress any helpful messages we might
@@ -29,16 +29,16 @@ class Program
     /// </summary>
     public static bool Quiet { get; private set; }
 
-    static int Main(string[] args)
+    private static int Main(string[] args)
     {
         try
-        {    
+        {
             var nlog = Path.Combine(AppContext.BaseDirectory ,"NLog.config");
 
             if (File.Exists(nlog))
             {
                 LogManager.ThrowConfigExceptions = false;
-                NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
+                LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
             }
                     
         }
@@ -108,12 +108,11 @@ class Program
                         (ReleaseOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
                         (CohortCreationOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
                         (ExecuteCommandOptions opts) => RdmpCommandLineBootStrapper.RunCmd(opts),
-                        (errs) =>
+                        errs =>
                         {
                             if (HasHelpArguments(args))
                                 return returnCode = 0;
-                            else
-                                return returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
+                            return returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
                         });
 
             logger.Info($"Exiting with code {returnCode}");
@@ -145,8 +144,7 @@ class Program
             
         try
         {
-            var creator = new PlatformDatabaseCreation();
-            creator.CreatePlatformDatabases(opts);
+            PlatformDatabaseCreation.CreatePlatformDatabases(opts);
         }
         catch (Exception e)
         {
@@ -174,15 +172,15 @@ class Program
         var badTimes = false;
 
         start.DatabaseFound += (s,e)=>{
-                
+
             var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
                      
             switch (e.Status)
             {
                 case Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching:
                 {
-                    var mds = new MasterDatabaseScriptExecutor(db);
-                    mds.PatchDatabase(e.Patcher, checker, (p) => true, () => opts.BackupDatabase);
+                        var mds = new MasterDatabaseScriptExecutor(db);
+                    mds.PatchDatabase(e.Patcher, checker, p => true, () => opts.BackupDatabase);
                     break;
                 }
                 case <= Startup.Events.RDMPPlatformDatabaseStatus.Broken:

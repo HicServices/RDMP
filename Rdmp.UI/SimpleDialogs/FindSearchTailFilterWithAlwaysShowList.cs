@@ -36,8 +36,10 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
         {
             var searchThese = allObjects.ToDictionary(o => o, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
 
-            var scorer = new SearchablesMatchScorer();
-            scorer.TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase);
+            var scorer = new SearchablesMatchScorer
+            {
+                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
+            };
             var matches = scorer.ScoreMatches(searchThese, text, cancellationToken,null);
 
             // we were cancelled
@@ -47,7 +49,7 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
                 return;
             }
 
-            _scoringObjects = scorer.ShortList(matches, maxToTake, activator);
+            _scoringObjects = SearchablesMatchScorer.ShortList(matches, maxToTake, activator);
         }
 
     }

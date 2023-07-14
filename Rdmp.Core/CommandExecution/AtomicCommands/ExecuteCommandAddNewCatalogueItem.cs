@@ -48,7 +48,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
             SetImpossible("ColumnInfo(s) are already in Catalogue");
     }
 
-    private HashSet<int> GetColumnInfos(Catalogue catalogue)
+    private static HashSet<int> GetColumnInfos(Catalogue catalogue)
     {
         if (catalogue == null)
             return null;
@@ -72,7 +72,8 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
 
         if (c == null)
         {
-            if (BasicActivator.SelectObject(new DialogArgs() {
+            if (BasicActivator.SelectObject(new DialogArgs
+                {
                     WindowTitle = "Add CatalogueItem",
                     TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
 
@@ -90,8 +91,6 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
         //if we have not got an explicit one to import let the user pick one
         if (_columnInfos.Length == 0)
         {
-            string text;
-
             //get them to pick a column info
             var columnInfo = (ColumnInfo)BasicActivator.SelectOne(new DialogArgs
             {
@@ -105,11 +104,13 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
             }   
                 
             //get them to type a name for it (based on the ColumnInfo if picked)
-            if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out text))
+            if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out var text))
             {
                 var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c,
-                    $"New CatalogueItem {Guid.NewGuid()}");
-                ci.Name = text;
+                    $"New CatalogueItem {Guid.NewGuid()}")
+                {
+                    Name = text
+                };
 
                 //set the associated column if they did pick it
                 if(columnInfo != null)
@@ -158,7 +159,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
         }
     }
 
-    private bool AlreadyInCatalogue(ColumnInfo candidate, HashSet<int> existingColumnInfos)
+    private static bool AlreadyInCatalogue(ColumnInfo candidate, HashSet<int> existingColumnInfos)
     {
         return existingColumnInfos.Contains(candidate.ID);
     }

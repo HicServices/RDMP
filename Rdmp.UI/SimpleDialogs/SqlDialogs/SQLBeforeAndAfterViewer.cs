@@ -29,7 +29,7 @@ public partial class SQLBeforeAndAfterViewer : Form
     {
         InitializeComponent();
 
-        var designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+        var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
@@ -47,26 +47,24 @@ public partial class SQLBeforeAndAfterViewer : Form
 
         splitContainer1.Panel2.Controls.Add(QueryEditorAfter);
 
-            
+
         //compute difference
         var highlighter = new ScintillaLineHighlightingHelper();
-        highlighter.ClearAll(QueryEditorAfter);
-        highlighter.ClearAll(QueryEditorBefore);
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditorAfter);
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditorBefore);
             
-        if (sqlBefore == null)
-            sqlBefore = "";
-        if (sqlAfter == null)
-            sqlAfter = "";
+        sqlBefore ??= "";
+        sqlAfter ??= "";
 
         var diff = new Diff();
 
-        foreach (var item in diff.DiffText(sqlBefore, sqlAfter))
+        foreach (var item in Diff.DiffText(sqlBefore, sqlAfter))
         {
             for (var i = item.StartA; i < item.StartA+item.deletedA; i++)
-                highlighter.HighlightLine(QueryEditorBefore,i,Color.Pink);
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore,i,Color.Pink);
                     
             for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
-                highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
                 
         }
 
@@ -88,19 +86,19 @@ public partial class SQLBeforeAndAfterViewer : Form
         lblBefore.Text = headerTextForBefore;
         lblAfter.Text = headerTextForAfter;
 
-        this.Text = caption;
+        Text = caption;
     }
         
     private void btnYes_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Yes;
-        this.Close();
+        Close();
     }
 
     private void btnNo_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.No;
-        this.Close();
+        Close();
     }
 
 

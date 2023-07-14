@@ -34,14 +34,12 @@ public class ExtractionRunner : ManyRunner
 {
     private ExtractionOptions _options;
     private IBasicActivateItems _activator;
-    ExtractionConfiguration _configuration;
-    IProject _project;
-
-    ExtractGlobalsCommand _globalsCommand;
+    private ExtractionConfiguration _configuration;
+    private IProject _project;
+    private ExtractGlobalsCommand _globalsCommand;
     private Pipeline _pipeline;
     private LogManager _logManager;
-
-    object _oLock = new object();
+    private object _oLock = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
 
     public ExtractionRunner(IBasicActivateItems activator,ExtractionOptions extractionOpts):base(extractionOpts)
@@ -81,12 +79,12 @@ public class ExtractionRunner : ManyRunner
             _globalsCommand = new ExtractGlobalsCommand(RepositoryLocator, _project, _configuration, globals);
             commands.Add(_globalsCommand);
         }
-            
+
         var factory = new ExtractCommandCollectionFactory();
 
         foreach (var sds in GetSelectedDataSets())
         {
-            var extractDatasetCommand = factory.Create(RepositoryLocator, sds);
+            var extractDatasetCommand = ExtractCommandCollectionFactory.Create(RepositoryLocator, sds);
             commands.Add(extractDatasetCommand);
                 
             lock(_oLock)
@@ -100,7 +98,6 @@ public class ExtractionRunner : ManyRunner
     {
         var dataLoadInfo = StartAudit();
 
-        var globalCommand = runnable as ExtractGlobalsCommand;
         var datasetCommand = runnable as ExtractDatasetCommand;
 
         var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, dataLoadInfo);
@@ -109,7 +106,7 @@ public class ExtractionRunner : ManyRunner
                 new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand)):
                 new ForkDataLoadEventListener(logging, listener);
 
-        if(globalCommand != null)
+        if(runnable is ExtractGlobalsCommand globalCommand)
         {
             var useCase = new ExtractionPipelineUseCase(_activator,_project, _globalsCommand, _pipeline, dataLoadInfo) { Token = Token };
             useCase.Execute(fork);
@@ -149,13 +146,10 @@ public class ExtractionRunner : ManyRunner
 
         foreach (var runnable in GetRunnables())
         {
-            var globalsCommand = runnable as ExtractGlobalsCommand;
-            var datasetCommand = runnable as ExtractDatasetCommand;
+            if (runnable is ExtractGlobalsCommand globalsCommand)
+                checkables.Add(new GlobalExtractionChecker(_activator, _configuration, globalsCommand, _pipeline));
 
-            if (globalsCommand != null)
-                checkables.Add(new GlobalExtractionChecker(_activator,_configuration, globalsCommand, _pipeline));
-
-            if (datasetCommand != null)
+            if (runnable is ExtractDatasetCommand datasetCommand)
                 checkables.Add(new SelectedDataSetsChecker(_activator,datasetCommand.SelectedDataSets,  false, _pipeline));
         }
             
@@ -180,7 +174,7 @@ public class ExtractionRunner : ManyRunner
 
     public ToMemoryCheckNotifier GetCheckNotifier(IExtractableDataSet extractableData)
     {
-        return GetSingleCheckerResults<SelectedDataSetsChecker>((sds) => sds.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
+        return GetSingleCheckerResults<SelectedDataSetsChecker>(sds => sds.SelectedDataSet.ExtractableDataSet_ID == extractableData.ID);
     }
 
     public object GetState(IExtractableDataSet extractableData)
@@ -189,10 +183,7 @@ public class ExtractionRunner : ManyRunner
         {
             var sds = GetCheckNotifier(extractableData);
 
-            if (sds == null)
-                return null;
-
-            return sds.GetWorst();
+            return sds?.GetWorst();
         }
 
         if(_options.Command == CommandLineActivity.run)
@@ -216,11 +207,8 @@ public class ExtractionRunner : ManyRunner
         if (_options.Command == CommandLineActivity.check)
         {
             var g = GetSingleCheckerResults<GlobalExtractionChecker>();
-                
-            if (g == null)
-                return null;
 
-            return g.GetWorst();
+            return g?.GetWorst();
         }
 
         if (_options.Command == CommandLineActivity.run && _globalsCommand != null)

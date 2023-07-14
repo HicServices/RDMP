@@ -96,7 +96,7 @@ public class SelectedDataSetsChecker : ICheckable
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     ErrorCodes.ExtractionInformationMissing,
-                    Environment.NewLine + 
+                    Environment.NewLine +
                     string.Join(Environment.NewLine, orphans.Select(o => o.GetRuntimeName()).ToArray()))
             );
         }
@@ -167,7 +167,7 @@ public class SelectedDataSetsChecker : ICheckable
         foreach (var grouping in request.ColumnsToExtract.GroupBy(c=>c.Order).Where(g=>g.Count()>1))
             notifier.OnCheckPerformed(new CheckEventArgs($"There are { grouping.Count() } columns in the extract ({request.DatasetBundle?.DataSet}) that share the same Order '{ grouping.Key }'",CheckResult.Fail));
 
-        // Warn user if stuff is out of sync with the Catalogue version (changes have happened to the master but not propgated to the copy in this extraction)
+        // Warn user if stuff is out of sync with the Catalogue version (changes have happened to the master but not propagated to the copy in this extraction)
         var outOfSync = selectedcols.OfType<ExtractableColumn>().Where(c => c.IsOutOfSync()).ToArray();
         if(outOfSync.Any())
             notifier.OnCheckPerformed(new CheckEventArgs(
@@ -175,8 +175,7 @@ public class SelectedDataSetsChecker : ICheckable
 
         var nonSelectedCore = cata.GetAllExtractionInformation(ExtractionCategory.Core)
             .Union(cata.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
-            .Where(ei => !ei.IsExtractionIdentifier &&
-                         !selectedcols.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == ei.ID))
+            .Where(ei => !ei.IsExtractionIdentifier && selectedcols.OfType<ExtractableColumn>().All(ec => ec.CatalogueExtractionInformation_ID != ei.ID))
             .ToArray();
 
         if (nonSelectedCore.Any())
@@ -198,7 +197,7 @@ public class SelectedDataSetsChecker : ICheckable
             {
                 using (var con = server.BeginNewTransactedConnection())
                 {
-                    //incase user somehow manages to write a filter/transform that nukes data or something
+                    //in case user somehow manages to write a filter/transform that nukes data or something
 
                     DbCommand cmd;
 
@@ -217,7 +216,7 @@ public class SelectedDataSetsChecker : ICheckable
                             CheckResult.Fail, e));
                         return;
                     }
-                    
+
                     try
                     {
                         using (var r = cmd.ExecuteReader())
@@ -234,12 +233,9 @@ public class SelectedDataSetsChecker : ICheckable
                     }
                     catch (Exception e)
                     {
-                        if (server.GetQuerySyntaxHelper().IsTimeout(e))
-                        {
-                            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking,e,timeout));
-                        }
-                        else
-                            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e,ds));
+                        notifier.OnCheckPerformed(server.GetQuerySyntaxHelper().IsTimeout(e)
+                            ? new CheckEventArgs(ErrorCodes.ExtractTimeoutChecking, e, timeout)
+                            : new CheckEventArgs(ErrorCodes.ExtractionFailedToExecuteTop1, e, ds));
                     }
 
                     con.ManagedTransaction.AbandonAndCloseConnection();
@@ -274,12 +270,10 @@ public class SelectedDataSetsChecker : ICheckable
             
         // no problem, changing cohort mid way through extraction is only a problem
         // if we are doing an iterative partial set of extractions
-        if (progress == null)
-            return;
 
         // it's the first batch, thats good - user reset the progress after they changed the cohort
         // so extraction should begin at the start date correctly and cleanup any remnants
-        if(progress.ProgressDate == null)
+        if(progress?.ProgressDate == null)
         {
             return;
         }
@@ -346,7 +340,7 @@ public class SelectedDataSetsChecker : ICheckable
         if (cols.Any(c => c?.ExtractionCategory == category))
         {
             notifier.OnCheckPerformed(new CheckEventArgs(errorCode, configuration, dataset,
-                String.Join(",", cols.Where(c => c?.ExtractionCategory == category)
+                string.Join(",", cols.Where(c => c?.ExtractionCategory == category)
                     .Select(c => c.GetRuntimeName()))));
         }
     }

@@ -19,7 +19,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests;
 
 public class ImportAndTestTests : DatabaseTests
 {
-    private TestableTableValuedFunction _function = new TestableTableValuedFunction();
+    private TestableTableValuedFunction _function = new();
     private DiscoveredDatabase _database;
 
     [SetUp]
@@ -89,7 +89,7 @@ public class ImportAndTestTests : DatabaseTests
             db.Server.GetCommand("drop function MyAwesomeFunction", con).ExecuteNonQuery();
 
             //create it within the scope of the transaction
-            var cmd = db.Server.GetCommand(_function.CreateFunctionSQL.Substring(_function.CreateFunctionSQL.IndexOf("GO") + 3), con);
+            var cmd = db.Server.GetCommand(_function.CreateFunctionSQL[(_function.CreateFunctionSQL.IndexOf("GO") + 3)..], con);
             cmd.ExecuteNonQuery();
 
             Assert.IsTrue(db.DiscoverTableValuedFunctions(con.ManagedTransaction).Any(tbv => tbv.GetRuntimeName().Equals("MyAwesomeFunction")));
@@ -225,12 +225,12 @@ public class ImportAndTestTests : DatabaseTests
     [Test]
     public void TableInfoCheckingWorks()
     {
-        _function.TableInfoCreated.Check(new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+        _function.TableInfoCreated.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
     }
         
     [Test]
     public void CatalogueCheckingWorks()
     {
-        _function.Cata.Check(new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+        _function.Cata.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
     }
 }

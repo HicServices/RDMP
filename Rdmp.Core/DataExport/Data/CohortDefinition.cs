@@ -71,7 +71,7 @@ public class CohortDefinition : ICohortDefinition
                 matchDescription = $"Found a cohort in {LocationOfCohort} with the ID {ID}";
                 return false;
             }
-                        
+
 
         var foundSimilar = false;
 

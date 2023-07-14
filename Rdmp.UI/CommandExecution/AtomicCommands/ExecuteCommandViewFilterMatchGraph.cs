@@ -34,7 +34,7 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution,IAto
             SetImpossible("No Catalogue found for filter");
             return;
         }
-            
+
 
         //compatible graphs are those that are not part of a cic (i.e. they are proper aggregate graphs)
         var compatibleGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();

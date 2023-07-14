@@ -40,7 +40,7 @@ public sealed class UploadFileUseCase:PipelineUseCase
     {
         typeof (FlatFileToLoad),
         typeof (DiscoveredDatabase),
-        typeof (IBasicActivateItems),
+        typeof (IBasicActivateItems)
     })
     {
         GenerateContext();

@@ -55,7 +55,7 @@ public class CustomDateCachingTests : DatabaseTests
             p.Destination==destinationComponent &&
             p.Repository == CatalogueRepository &&
             p.PipelineComponents==Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
-            
+
         var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme",true);
 
         var lmd = Mock.Of<ILoadMetadata>();
@@ -159,7 +159,7 @@ public class TestCacheSource : CacheSource<TestCacheChunk>
 
 public class TestCacheDestination : IPluginDataFlowComponent<ICacheChunk>, IDataFlowDestination<ICacheChunk>, ICacheFileSystemDestination 
 {
-    public TestCacheChunk ProcessPipelineData(TestCacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public static TestCacheChunk ProcessPipelineData(TestCacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         return toProcess;
     }

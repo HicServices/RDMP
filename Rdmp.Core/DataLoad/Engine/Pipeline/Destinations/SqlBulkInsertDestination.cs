@@ -30,7 +30,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
     public const int Timeout = 5000;
 
     private IBulkCopy _copy = null;
-    private Stopwatch _timer = new Stopwatch();
+    private Stopwatch _timer = new();
 
     protected ITableLoadInfo TableLoadInfo;
     private DiscoveredDatabase _dbInfo;
@@ -150,11 +150,9 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         _isDisposed = true;
         try
         {
-            if (TableLoadInfo != null)
-                TableLoadInfo.CloseAndArchive();
+            TableLoadInfo?.CloseAndArchive();
 
-            if (_copy != null)
-                _copy.Dispose();
+            _copy?.Dispose();
 
             if (_recordsWritten == 0)
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -177,6 +175,6 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
 
     public void PreInitialize(ITableLoadInfo value, IDataLoadEventListener listener)
     {
-        this.TableLoadInfo = value;
+        TableLoadInfo = value;
     }
 }

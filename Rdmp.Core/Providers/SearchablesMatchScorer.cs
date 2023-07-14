@@ -23,11 +23,11 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Scores objects as to how relevant they are to a given search string 
+/// Scores objects as to how relevant they are to a given search string
 /// </summary>
 public class SearchablesMatchScorer
 {
-    private static readonly int[] Weights = new int[] { 64, 32, 16, 8, 4, 2, 1 };
+    private static readonly int[] Weights = { 64, 32, 16, 8, 4, 2, 1 };
 
     public HashSet<string> TypeNames { get; set; }
 
@@ -70,7 +70,7 @@ public class SearchablesMatchScorer
     /// When the user types one of these they get a filter on the full Type
     /// </summary>
     public static Dictionary<string, Type> ShortCodes =
-        new Dictionary<string, Type> (StringComparer.CurrentCultureIgnoreCase){
+        new(StringComparer.CurrentCultureIgnoreCase){
 
             {"c",typeof (Catalogue)},
             {"ci",typeof (CatalogueItem)},
@@ -94,7 +94,7 @@ public class SearchablesMatchScorer
     /// Key Type.
     /// </summary>
     public static Dictionary<string, Type[]> AlsoIncludes =
-        new Dictionary<string, Type[]> (StringComparer.CurrentCultureIgnoreCase){
+        new(StringComparer.CurrentCultureIgnoreCase){
 
             {"Pipeline",new Type[]{ typeof(PipelineCompatibleWithUseCaseNode)}}
 
@@ -130,14 +130,14 @@ public class SearchablesMatchScorer
         if(showOnlyTypes != null && TypeNames != null)
             //add the explicit types only if the search text does not contain any explicit type names
             if(string.IsNullOrWhiteSpace(searchText) || !TypeNames.Intersect(searchText.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
-                foreach (var showOnlyType in showOnlyTypes) 
+                foreach (var showOnlyType in showOnlyTypes)
                     searchText = $"{searchText} {showOnlyType.Name}";
 
         //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
         if (!string.IsNullOrWhiteSpace(searchText))
             foreach(var s in searchText.Split(' ').ToArray())
-                if (AlsoIncludes.ContainsKey(s))
-                    foreach(var v in AlsoIncludes[s])
+                if (AlsoIncludes.TryGetValue(s, out var include))
+                    foreach(var v in include)
                         searchText += $" {v.Name}";
 
         //if we have nothing to search for return no results
@@ -145,7 +145,7 @@ public class SearchablesMatchScorer
             return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();
 
         var tokens = (searchText??"").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            
+
         var regexes = new List<Regex>();
             
         //any token that 100% matches a type name is an explicitly typed token
@@ -174,11 +174,11 @@ public class SearchablesMatchScorer
 
     private void SetupRespectUserSettings()
     {
-        _showInternalCatalogues = RespectUserSettings ? UserSettings.ShowInternalCatalogues : true;
-        _showDeprecatedCatalogues = RespectUserSettings ? UserSettings.ShowDeprecatedCatalogues : true;
-        _showColdStorageCatalogues = RespectUserSettings ? UserSettings.ShowColdStorageCatalogues : true;
-        _showProjectSpecificCatalogues = RespectUserSettings ? UserSettings.ShowProjectSpecificCatalogues : true;
-        _showNonExtractableCatalogues = RespectUserSettings ? UserSettings.ShowNonExtractableCatalogues : true;
+        _showInternalCatalogues = !RespectUserSettings || UserSettings.ShowInternalCatalogues;
+        _showDeprecatedCatalogues = !RespectUserSettings || UserSettings.ShowDeprecatedCatalogues;
+        _showColdStorageCatalogues = !RespectUserSettings || UserSettings.ShowColdStorageCatalogues;
+        _showProjectSpecificCatalogues = !RespectUserSettings || UserSettings.ShowProjectSpecificCatalogues;
+        _showNonExtractableCatalogues = !RespectUserSettings || UserSettings.ShowNonExtractableCatalogues;
     }
 
     private int ScoreMatches(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp, List<Regex> regexes, string[] explicitTypeNames, CancellationToken cancellationToken)
@@ -201,8 +201,7 @@ public class SearchablesMatchScorer
 
             if (obj.ID != ID.Value)
                 return 0;
-            else
-                score += 10;
+            score += 10;
         }
 
         if(RespectUserSettings && ScoreZeroBecauseOfUserSettings(kvp))
@@ -251,11 +250,11 @@ public class SearchablesMatchScorer
                 if (i > numberOfParents)
                     break;
 
-                var parent = parents[parents.Length - i];
+                var parent = parents[^i];
 
                 if (parent != null)
                 {
-                    if (!(parent is IContainer))
+                    if (parent is not IContainer)
                     {
                         score += Weights[i] * CountMatchToString(regexes, parent);
                         score += Weights[i] * CountMatchType(regexes, parent);
@@ -274,7 +273,7 @@ public class SearchablesMatchScorer
             return score /10;
             
         //if we are bumping up matches
-        if (score > 0 && BumpMatches.Contains(kvp.Key)) 
+        if (score > 0 && BumpMatches.Contains(kvp.Key))
             score += BumpWeight;
 
         return score;
@@ -290,29 +289,25 @@ public class SearchablesMatchScorer
         return !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues, _showColdStorageCatalogues, _showProjectSpecificCatalogues, _showNonExtractableCatalogues);
     }
 
-    private Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
+    private static Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
     {
-        if (kvp.Key is Catalogue)
-            return (Catalogue) kvp.Key;
+        if (kvp.Key is Catalogue key)
+            return key;
 
-        if (kvp.Value != null)
-            return (Catalogue)kvp.Value.Parents.FirstOrDefault(p => p is Catalogue);
-
-        return null;
+        return (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
-    private int CountMatchType(List<Regex> regexes, object key)
+    private static int CountMatchType(List<Regex> regexes, object key)
     {
         return MatchCount(regexes, key.GetType().Name);
     }
-    private int CountMatchToString(List<Regex> regexes, object key)
+    private static int CountMatchToString(List<Regex> regexes, object key)
     {
-        var s = key as ICustomSearchString;
-        var matchOn = s != null ? s.GetSearchString() : key.ToString();
+        var matchOn = key is ICustomSearchString s ? s.GetSearchString() : key.ToString();
 
         return MatchCount(regexes, matchOn);
     }
-    private int MatchCount(List<Regex> regexes, string str)
+    private static int MatchCount(List<Regex> regexes, string str)
     {
         var matches = 0;
 
@@ -348,10 +343,8 @@ public class SearchablesMatchScorer
     /// <returns>True if the item should be shown to the user based on filters</returns>
     public static bool Filter(object modelObject, DescendancyList descendancy, bool includeInternal, bool includeDeprecated, bool includeColdStorage, bool includeProjectSpecific, bool includeNonExtractable)
     {
-        var cata = modelObject as ICatalogue;
-
-        //doesn't relate to us... 
-        if (cata == null)
+        //doesn't relate to us...
+        if (modelObject is not ICatalogue cata)
         {
             // or are we one of these things that can be tied to a catalogue
             cata = modelObject switch
@@ -369,11 +362,11 @@ public class SearchablesMatchScorer
         var isExtractable = cata.GetExtractabilityStatus(null) != null && cata.GetExtractabilityStatus(null).IsExtractable;
 
         return (isExtractable && !cata.IsColdStorageDataset && !cata.IsDeprecated && !cata.IsInternalDataset && !isProjectSpecific) ||
-               ((includeColdStorage && cata.IsColdStorageDataset) ||
-                (includeDeprecated && cata.IsDeprecated) ||
-                (includeInternal && cata.IsInternalDataset) ||
-                (includeProjectSpecific && isProjectSpecific) ||
-                (includeNonExtractable && !isExtractable));
+               (includeColdStorage && cata.IsColdStorageDataset) ||
+               (includeDeprecated && cata.IsDeprecated) ||
+               (includeInternal && cata.IsInternalDataset) ||
+               (includeProjectSpecific && isProjectSpecific) ||
+               (includeNonExtractable && !isExtractable);
 
     }
 
@@ -385,7 +378,7 @@ public class SearchablesMatchScorer
     /// <param name="take"></param>
     /// <param name="activator"></param>
     /// <returns></returns>
-    public List<IMapsDirectlyToDatabaseTable> ShortList(Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take, IBasicActivateItems activator)
+    public static List<IMapsDirectlyToDatabaseTable> ShortList(Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take, IBasicActivateItems activator)
     {
         var favourites = activator.FavouritesProvider.CurrentFavourites;
 

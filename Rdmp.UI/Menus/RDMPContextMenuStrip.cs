@@ -37,13 +37,13 @@ public class RDMPContextMenuStrip:ContextMenuStrip
     private readonly object _o;
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
     protected IActivateItems _activator;
-        
+
     protected readonly AtomicCommandUIFactory AtomicCommandUIFactory;
 
     protected ToolStripMenuItem ActivateCommandMenuItem;
     private RDMPContextMenuStripArgs _args;
 
-    private Dictionary <string,ToolStripMenuItem> _subMenuDictionary = new Dictionary<string, ToolStripMenuItem>();
+    private Dictionary <string,ToolStripMenuItem> _subMenuDictionary = new();
 
     public const string Checks = "Run Checks";
     public const string Tree = "Tree";
@@ -56,16 +56,16 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         //we will add this ourselves in AddCommonMenuItems
         _args.SkipCommand<ExecuteCommandActivate>();
-            
+
         _activator = _args.ItemActivator;
 
         _activator.Theme.ApplyTo(this);
 
         AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
-            
+
         RepositoryLocator = _activator.RepositoryLocator;
 
-        if (o != null && !(o is RDMPCollection))
+        if (o != null && o is not RDMPCollection)
         {
             var activateCommand = new ExecuteCommandActivate(_activator, args.Masquerader ?? o);
             ActivateCommandMenuItem = Add(activateCommand, Keys.None);
@@ -88,7 +88,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
             foreach(var mi in gotoMenu.DropDownItems.OfType<ToolStripMenuItem>())
             {
                 if(mi.Tag is ExecuteCommandShow cmd)
-                {   
+                {
                     cmd.FetchDestinationObjects();
                     mi.Enabled = !cmd.IsImpossible;
                     mi.ToolTipText = cmd.ReasonCommandImpossible;
@@ -157,7 +157,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
     public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)
     {
-            
+
         AddFactoryMenuItems();
 
         var databaseEntity = _o as DatabaseEntity;
@@ -167,7 +167,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         if(_o is IMapsDirectlyToDatabaseTable m)
         {
             Add(new ExecuteCommandViewCommits(_activator, m));
-        }   
+        }
 
         //ensure all submenus appear in the same place
         foreach (var mi in _subMenuDictionary.Values)
@@ -192,7 +192,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         //Check if we even want to display this
         if (commonFunctionality.CheckColumnProvider != null)
-        { 
+        {
             var inspectionMenuItem = AddMenuIfNotExists(Checks);
             Items.Add(inspectionMenuItem);
             PopulateChecksMenu(commonFunctionality, inspectionMenuItem);
@@ -202,19 +202,19 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         Items.Add(treeMenuItem);
         PopulateTreeMenu(commonFunctionality, treeMenuItem);
 
-        if (databaseEntity != null) 
+        if (databaseEntity != null)
         {
             Add(new ExecuteCommandAddFavourite(_activator,databaseEntity));
             Add(new ExecuteCommandAddToSession(_activator,new IMapsDirectlyToDatabaseTable[]{ databaseEntity },null));
         }
 
         //add refresh and then finally help
-        if (databaseEntity != null) 
+        if (databaseEntity != null)
             Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
 
         Add(new ExecuteCommandShowTooltip(_activator, _args.Model));
         Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
-            
+
         var gotoMenu = Items.OfType<ToolStripMenuItem>().FirstOrDefault(i=>i.Text.Equals(AtomicCommandFactory.GoTo));
 
         if(gotoMenu != null)
@@ -224,20 +224,20 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         foreach (var mi in _subMenuDictionary.Values.Except(Items.OfType<ToolStripMenuItem>()))
             Items.Add(mi);
     }
-                
+
     private void AddFactoryMenuItems()
     {
         var factory = new AtomicCommandFactory(_activator);
 
         var start = DateTime.Now;
         var now = DateTime.Now;
-        Dictionary<IAtomicCommand, TimeSpan> performance = new();
+        var performance = new Dictionary<IAtomicCommand, TimeSpan>();
 
         var forObject = _args.Masquerader ?? _o;
         foreach (var toPresent in factory.CreateCommands(forObject))
         {
             // how long did it take to construct the command?
-            performance.Add(toPresent, DateTime.Now.Subtract(now)); 
+            performance.Add(toPresent, DateTime.Now.Subtract(now));
 
             Add(toPresent);
             now = DateTime.Now;
@@ -251,7 +251,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
                 new CheckEventArgs($"Creating menu for '{forObject}' took {DateTime.Now.Subtract(start).Milliseconds}ms:{Environment.NewLine}{timings}",
                     CheckResult.Success));
         }
-                
+
     }
 
     public void Add(IAtomicCommand toPresent)
@@ -282,25 +282,22 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
     private void PopulateChecksMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem inspectionMenuItem)
     {
-        var databaseEntity = _o as DatabaseEntity;
-
         if (commonFunctionality.CheckColumnProvider != null)
         {
-            if (databaseEntity != null)
+            if (_o is DatabaseEntity databaseEntity)
                 Add(new ExecuteCommandCheckAsync(_activator, databaseEntity, commonFunctionality.CheckColumnProvider.RecordWorst), Keys.None, inspectionMenuItem);
 
             var checkAll = new ToolStripMenuItem("Check All", null, (s, e) => commonFunctionality.CheckColumnProvider.CheckCheckables())
             {
                 /* The Weight of ExecuteCommandCheckAsync to ensure there is no tool strip separator*/
                 Tag = 100.4f,
-                ToolTipText = "Run validation checks for all visible items in the current window"
+                ToolTipText = "Run validation checks for all visible items in the current window",
+                Image = CatalogueIcons.TinyYellow.ImageToBitmap(),
+                Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any()
             };
-
-            checkAll.Image = CatalogueIcons.TinyYellow.ImageToBitmap();
-            checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
             inspectionMenuItem.DropDownItems.Add(checkAll);
         }
-            
+
         // disable menu if checking is not supported in the collection or objects clicked are not checkable
         inspectionMenuItem.Enabled = inspectionMenuItem.HasDropDown && inspectionMenuItem.DropDownItems.OfType<ToolStripMenuItem>().Any(m=>m.Enabled);
     }

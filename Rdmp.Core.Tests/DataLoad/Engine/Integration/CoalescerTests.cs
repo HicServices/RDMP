@@ -80,7 +80,7 @@ public class CoalescerTests:DatabaseTests
         var tbl = db.CreateTable(dt.TableName, dt);
 
         var importer = new TableInfoImporter(CatalogueRepository, tbl);
-        importer.DoImport(out var tableInfo,out var colInfos);
+        importer.DoImport(out var tableInfo, out var colInfos);
 
         //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
         var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));
@@ -94,12 +94,14 @@ public class CoalescerTests:DatabaseTests
             tbl.Rename("AAAA");
             namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
         }
-            
+
         var configuration = new HICDatabaseConfiguration(db.Server,namer);
-            
-        var coalescer = new Coalescer();
-        coalescer.TableRegexPattern = new Regex(".*");
-        coalescer.CreateIndex = true;
+
+        var coalescer = new Coalescer
+        {
+            TableRegexPattern = new Regex(".*"),
+            CreateIndex = true
+        };
         coalescer.Initialize(db,LoadStage.AdjustRaw);
 
 

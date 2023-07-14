@@ -28,8 +28,10 @@ public class ItemValidatorTest
     [SetUp]
     public void SetUp()
     {
-        _v = new ItemValidator();
-        _v.TargetProperty = "chi";
+        _v = new ItemValidator
+        {
+            TargetProperty = "chi"
+        };
     }
 
     [Test]
@@ -46,20 +48,20 @@ public class ItemValidatorTest
     {
         _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
         _v.ExpectedType = typeof(DateTime);
-            
+
         var result = _v.ValidateAll(DateTime.Now, Array.Empty<object>(), Array.Empty<string>());
 
         Assert.IsNotNull(result);
         Assert.IsTrue(result.Message.StartsWith("Incompatible type"));
-        Assert.IsTrue(result.Message.Contains(typeof(DateTime).Name));
-            
+        Assert.IsTrue(result.Message.Contains(nameof(DateTime)));
+
     }
-        
+
     [Test]
     public void ValidateAll_ValidData_Succeeds()
     {
         _v.PrimaryConstraint = new Chi();
-         
+
         Assert.IsNull(_v.ValidateAll(TestConstants._VALID_CHI, Array.Empty<object>(), Array.Empty<string>()));
     }
 
@@ -77,11 +79,11 @@ public class ItemValidatorTest
         _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
 
         var result = _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, Array.Empty<object>(), Array.Empty<string>());
-            
+
         Assert.AreEqual("CHI check digit did not match", result.Message);
-            
+
     }
 
 
-    
+
 }

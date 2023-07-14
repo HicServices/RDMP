@@ -15,7 +15,7 @@ using Rdmp.UI.ProjectUI;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandExecutionProposal<ExtractionConfiguration>
+internal class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandExecutionProposal<ExtractionConfiguration>
 {
     public ProposeExecutionWhenTargetIsExtractionConfiguration(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -50,9 +50,8 @@ class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandExecutionPr
             return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator, sourceExtractableCohortCombineable, targetExtractionConfiguration);
 
         //user is trying to add datasets to a configuration
-        var sourceExtractableDataSetCommand = cmd as ExtractableDataSetCombineable;
 
-        if (sourceExtractableDataSetCommand != null)
+        if (cmd is ExtractableDataSetCombineable sourceExtractableDataSetCommand)
             return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, sourceExtractableDataSetCommand, targetExtractionConfiguration);
 
         return null;

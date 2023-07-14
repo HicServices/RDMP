@@ -15,16 +15,18 @@ using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 namespace Rdmp.Core.Tests.Validation;
 
 [Category("Unit")]
-class ExceptionHandlingTests
+internal class ExceptionHandlingTests
 {
 
     [Test]
     public void Validate_WhenMultipleErrors_ReturnsAllErrors()
     {
         var validator = new Validator();
-            
-        var chi = new ItemValidator();
-        chi.PrimaryConstraint = (PrimaryConstraint) Validator.CreateConstraint("chi",Consequence.Wrong);
+
+        var chi = new ItemValidator
+        {
+            PrimaryConstraint = (PrimaryConstraint) Validator.CreateConstraint("chi",Consequence.Wrong)
+        };
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         chi.AddSecondaryConstraint(prediction);
         validator.AddItemValidator(chi, "chi", typeof(string));
@@ -36,10 +38,12 @@ class ExceptionHandlingTests
         age.AddSecondaryConstraint(ageConstraint);
         validator.AddItemValidator(age, "age", typeof(int));
 
-        var row = new Dictionary<string, object>();
-        row.Add("chi", TestConstants._INVALID_CHI_CHECKSUM);
-        row.Add("age", 31);
-        row.Add("gender", "F");
+        var row = new Dictionary<string, object>
+        {
+            { "chi", TestConstants._INVALID_CHI_CHECKSUM },
+            { "age", 31 },
+            { "gender", "F" }
+        };
 
         var result =  validator.Validate(row);
 

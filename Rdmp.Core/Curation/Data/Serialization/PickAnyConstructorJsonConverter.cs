@@ -70,8 +70,7 @@ public class PickAnyConstructorJsonConverter:JsonConverter
         serializer.Populate(reader,instance);
 
         var callback = instance as IPickAnyConstructorFinishedCallback;
-        if(callback != null)
-            callback.AfterConstruction();
+        callback?.AfterConstruction();
 
         return instance;
     }
@@ -103,6 +102,6 @@ public class PickAnyConstructorJsonConverter:JsonConverter
 
     private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType)
     {
-        return _objectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
+        return ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
     }
 }

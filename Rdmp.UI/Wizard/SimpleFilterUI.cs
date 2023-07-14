@@ -21,7 +21,7 @@ namespace Rdmp.UI.Wizard;
 /// <summary>
 /// Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to view and edit the parameters (if any) of a Filter you have added (or was Mandatory) on a dataset.  For example if
 /// you have a Filter 'Drug Prescribed' on the dataset 'Prescribing' typing "'Paracetamol'" into the parameter will likely restrict the cohort to matching only those patients who have ever
-/// been prescribed Paracetamol.  
+/// been prescribed Paracetamol.
 /// 
 /// <para>If the control is Readonly (disabled / greyed out) then it is probably a Mandatory filter on your dataset and you will not be able to remove it.</para>
 /// 
@@ -31,10 +31,10 @@ public partial class SimpleFilterUI : UserControl
 {
     private readonly IActivateItems _activator;
     private readonly ExtractionFilter _filter;
-        
+
     public event Action RequestDeletion;
 
-    int rowHeight = 30;
+    private int rowHeight = 30;
 
     public IFilter Filter => _filter;
 
@@ -60,7 +60,7 @@ public partial class SimpleFilterUI : UserControl
         }
     }
 
-    List<SimpleParameterUI>  parameterUis = new List<SimpleParameterUI>();
+    private List<SimpleParameterUI>  parameterUis = new();
     private bool _mandatory;
 
     public SimpleFilterUI(IActivateItems activator,ExtractionFilter filter)
@@ -78,11 +78,12 @@ public partial class SimpleFilterUI : UserControl
             
         for (var i = 0; i < parameters.Length; i++)
         {
-            var currentRowPanel = new Panel();
-                
-            currentRowPanel.Bounds = new Rectangle(0, 0, tableLayoutPanel1.Width, rowHeight);
-            currentRowPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            currentRowPanel.Margin = Padding.Empty;
+            var currentRowPanel = new Panel
+            {
+                Bounds = new Rectangle(0, 0, tableLayoutPanel1.Width, rowHeight),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                Margin = Padding.Empty
+            };
 
             var p = new SimpleParameterUI(activator,parameters[i]);
             currentRowPanel.Controls.Add(p);
@@ -101,7 +102,7 @@ public partial class SimpleFilterUI : UserControl
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
         }
 
-        Height = 50 + (parameters.Length*rowHeight);
+        Height = 50 + parameters.Length*rowHeight;
     }
 
     private void SetupKnownGoodValues()
@@ -113,14 +114,16 @@ public partial class SimpleFilterUI : UserControl
             pbKnownValueSets.Visible = true;
             ddKnownGoodValues.Visible = true;
 
-            var l = new List<object>();
-            l.Add("");
+            var l = new List<object>
+            {
+                ""
+            };
             l.AddRange(knownGoodValues);
 
             ddKnownGoodValues.DataSource = l;
             pbKnownValueSets.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet)
                 .ImageToBitmap();
-                
+
             pbKnownValueSets.Left = lblFilterName.Right;
             ddKnownGoodValues.Left = pbKnownValueSets.Right;
 
@@ -136,8 +139,7 @@ public partial class SimpleFilterUI : UserControl
 
     private void btnDelete_Click(object sender, EventArgs e)
     {
-        if(RequestDeletion != null)
-            RequestDeletion();
+        RequestDeletion?.Invoke();
     }
 
     private void lblFilterName_Click(object sender, EventArgs e)

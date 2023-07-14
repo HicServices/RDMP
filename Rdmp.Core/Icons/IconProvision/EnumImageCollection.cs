@@ -16,11 +16,11 @@ namespace Rdmp.Core.Icons.IconProvision;
 
 public class EnumImageCollection<T> where T : struct, Enum, IConvertible
 {
-    readonly Dictionary<T,Image<Rgba32>> _images = new();
+    private readonly Dictionary<T,Image<Rgba32>> _images = new();
 
     private static Image<Rgba32> LoadImage(byte [] ba)
     {
-        return (ba == null) ? null : Image.Load<Rgba32>(ba);
+        return ba == null ? null : Image.Load<Rgba32>(ba);
     }
 
     public EnumImageCollection(ResourceManager resourceManager)

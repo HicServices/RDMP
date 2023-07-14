@@ -12,7 +12,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Helper class for becomming an IEncryptedPasswordHost via SimpleStringValueEncryption.  This class needs an ICatalogueRepository because
-/// SimpleStringValueEncryption is only secure when there is a private RSA encryption key specified in the CatalogueRepository.  This key 
+/// SimpleStringValueEncryption is only secure when there is a private RSA encryption key specified in the CatalogueRepository.  This key
 /// certificate will be a file location.  This allows you to use windows file system based user authentication to securely encrypt strings
 /// within RDMP databases.
 /// 
@@ -68,8 +68,10 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     {
         if(_encryptedString is FakeEncryptedString f)
         {
-            _encryptedString = new EncryptedString(repository);
-            _encryptedString.Value = f.Value;
+            _encryptedString = new EncryptedString(repository)
+            {
+                Value = f.Value
+            };
         }            
     }
 
@@ -79,7 +81,7 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
         get
         {
             if (_encryptedString is FakeEncryptedString)
-                throw new System.Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
+                throw new Exception($"Encryption setup failed, API caller must have forgotten to call {nameof(SetRepository)}");
 
             return _encryptedString.Value;
         }

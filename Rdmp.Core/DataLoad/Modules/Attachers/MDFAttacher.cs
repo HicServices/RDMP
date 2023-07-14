@@ -52,8 +52,8 @@ public class MDFAttacher : Attacher,IPluginAttacher
     {
              
     }
-        
-    MdfFileAttachLocations _locations;
+
+    private MdfFileAttachLocations _locations;
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
@@ -223,8 +223,8 @@ public class MDFAttacher : Attacher,IPluginAttacher
             if (a.LastWriteTimeUtc != b.LastWriteTimeUtc) return false;
             if (a.Length != b.Length) return false;
             if (a.Length < 8192) return false;
-            using var streamA=File.OpenRead(pathA);
-            using var streamB=File.OpenRead(pathB);
+            using var streamA =File.OpenRead(pathA);
+            using var streamB =File.OpenRead(pathB);
             if (streamA.Read(bufferA, 0, 4096) != 4096 || streamB.Read(bufferB, 0, 4096) != 4096) return false;
             if (!bufferA.SequenceEqual(bufferB)) return false;
             streamA.Seek(-4096, SeekOrigin.End);
@@ -301,7 +301,7 @@ public class MDFAttacher : Attacher,IPluginAttacher
         var localSqlServerDataDirectory = !string.IsNullOrWhiteSpace(OverrideMDFFileCopyDestination)
             ? OverrideMDFFileCopyDestination
             : FindDefaultSQLServerDatabaseDirectory(notifier);
-            
+
         var mdfFilename = $"{_dbInfo.GetRuntimeName()}.mdf";
         var ldfFilename = $"{_dbInfo.GetRuntimeName()}_log.ldf";
 

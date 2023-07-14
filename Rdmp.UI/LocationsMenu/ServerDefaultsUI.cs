@@ -29,7 +29,7 @@ namespace Rdmp.UI.LocationsMenu;
 /// </summary>
 public partial class ServerDefaultsUI : RDMPForm
 {
-    IServerDefaults defaults;
+    private IServerDefaults defaults;
         
     public ServerDefaultsUI(IActivateItems activator):base(activator)
     {
@@ -86,7 +86,7 @@ public partial class ServerDefaultsUI : RDMPForm
 
         var currentDefault = defaults.GetDefaultFor(permissableDefault);
         var patcher = permissableDefault.ToTier2DatabaseType();
-            
+
         var toAdd = allServers;
             
         if(patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database 
@@ -127,10 +127,8 @@ public partial class ServerDefaultsUI : RDMPForm
         else
             throw new Exception($"Did not recognise sender:{sender}");
 
-        var selectedItem = ((ComboBox) sender).SelectedItem as ExternalDatabaseServer;
-
         //user selected nothing
-        if(selectedItem == null)
+        if(((ComboBox) sender).SelectedItem is not ExternalDatabaseServer selectedItem)
             return;
 
         defaults.SetDefault(toChange, selectedItem);

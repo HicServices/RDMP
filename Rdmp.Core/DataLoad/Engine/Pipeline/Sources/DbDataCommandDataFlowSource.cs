@@ -24,7 +24,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
     private DbConnection _con;
 
     private readonly string _taskBeingPerformed;
-    private Stopwatch timer = new Stopwatch();
+    private Stopwatch timer = new();
 
     public int BatchSize { get; set; }
 
@@ -75,7 +75,7 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
         try
         {
             var chunk = GetChunkSchema(_reader);
-                
+
             while (_reader.HasRows && _reader.Read())
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -131,25 +131,19 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
         return _reader.Read() ? AddRowToDataTable(GetChunkSchema(_reader), _reader) : null;
     }
 
-    private DataTable GetChunkSchema(DbDataReader reader)
+    private static DataTable GetChunkSchema(DbDataReader reader)
     {
         var toReturn = new DataTable("dt");
-            
+
         //Retrieve column schema into a DataTable.
-        var schemaTable = reader.GetSchemaTable();
-        if (schemaTable == null)
-            throw new InvalidOperationException("Could not retrieve schema information from the DbDataReader");
-            
+        var schemaTable = reader.GetSchemaTable() ?? throw new InvalidOperationException("Could not retrieve schema information from the DbDataReader");
         Debug.Assert(schemaTable.Columns[0].ColumnName.ToLower().Contains("name"));
 
         //For each field in the table...
         foreach (DataRow myField in schemaTable.Rows)
         {
 
-            var t = Type.GetType(myField["DataType"].ToString());
-
-            if(t == null)
-                throw new NotSupportedException($"Type.GetType failed on SQL DataType:{myField["DataType"]}");
+            var t = Type.GetType(myField["DataType"].ToString()) ?? throw new NotSupportedException($"Type.GetType failed on SQL DataType:{myField["DataType"]}");
 
             //let's not mess around with floats, make everything a double please
             if (t == typeof (float))
@@ -203,11 +197,11 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
             using (var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(Sql, con)))
             {
                 var read = da.Fill(0, 100, chunk);
-                                    
+
                 if (read == 0)
                     return null;
             }
-                
+
             return chunk;
         }
     }

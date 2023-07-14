@@ -23,9 +23,9 @@ public class SelectedColumnsTests:DatabaseTests
         var TableInfo = new TableInfo(CatalogueRepository, "Cata");
         var ColumnInfo = new ColumnInfo(CatalogueRepository, "Col","varchar(10)",TableInfo);
         var ExtractionInfo = new ExtractionInformation(CatalogueRepository, cataItem, ColumnInfo, "fish");
-            
+
         var ds = new ExtractableDataSet(DataExportRepository,cata);
-            
+
         var proj = new Project(DataExportRepository, "MyProj");
         var config = new ExtractionConfiguration(DataExportRepository, proj);
             
@@ -40,12 +40,12 @@ public class SelectedColumnsTests:DatabaseTests
 
             var cols = config.GetAllExtractableColumnsFor(ds);
 
-            Assert.AreEqual(1,cols.Count());
+            Assert.AreEqual(1, cols.Length);
             Assert.AreEqual(extractableColumn, cols.Single());
 
             cols = config.GetAllExtractableColumnsFor(ds);
 
-            Assert.AreEqual(1, cols.Count());
+            Assert.AreEqual(1, cols.Length);
             Assert.AreEqual(extractableColumn, cols.Single());
         }
         finally

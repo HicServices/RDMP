@@ -15,7 +15,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 internal class RDMPApplicationSettings : ISettings
 {
     private readonly IsolatedStorageFile store;
-    private readonly object locker = new object();
+    private readonly object locker = new();
 
     public RDMPApplicationSettings()
     {
@@ -54,34 +54,32 @@ internal class RDMPApplicationSettings : ISettings
         }
 
 
-        if ((type == typeof(string)) ||
-            (type == typeof(decimal)) ||
-            (type == typeof(double)) ||
-            (type == typeof(Single)) ||
-            (type == typeof(DateTime)) ||
-            (type == typeof(Guid)) ||
-            (type == typeof(bool)) ||
-            (type == typeof(Int32)) ||
-            (type == typeof(Int64)) ||
-            (type == typeof(byte)))
+        if (type == typeof(string) ||
+            type == typeof(decimal) ||
+            type == typeof(double) ||
+            type == typeof(float) ||
+            type == typeof(DateTime) ||
+            type == typeof(Guid) ||
+            type == typeof(bool) ||
+            type == typeof(int) ||
+            type == typeof(long) ||
+            type == typeof(byte))
         {
             lock (locker)
             {
-                string str;
-
                 if (value is decimal)
                 {
                     return AddOrUpdateValue(key,
                         Convert.ToString(Convert.ToDecimal(value), System.Globalization.CultureInfo.InvariantCulture));
                 }
-                else if (value is DateTime)
+
+                if (value is DateTime)
                 {
                     return AddOrUpdateValue(key,
-                        Convert.ToString(-(Convert.ToDateTime(value)).ToUniversalTime().Ticks,
+                        Convert.ToString(-Convert.ToDateTime(value).ToUniversalTime().Ticks,
                             System.Globalization.CultureInfo.InvariantCulture));
                 }
-                else
-                    str = Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
+                var str = Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
 
                 string oldValue = null;
 
@@ -108,7 +106,7 @@ internal class RDMPApplicationSettings : ISettings
             }
         }
 
-        throw new ArgumentException(string.Format("Value of type {0} is not supported.", type.Name));
+        throw new ArgumentException($"Value of type {type.Name} is not supported.");
     }
 
     /// <summary>
@@ -119,7 +117,7 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue"></param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns></returns>
-    private T GetValueOrDefaultInternal<T>(string key, T defaultValue = default(T), string fileName = null)
+    private T GetValueOrDefaultInternal<T>(string key, T defaultValue = default, string fileName = null)
     {
         object value = null;
         lock (locker)
@@ -170,7 +168,7 @@ internal class RDMPApplicationSettings : ISettings
                     value = Convert.ToDouble(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
-                else if (type == typeof(Single))
+                else if (type == typeof(float))
                 {
                     value = Convert.ToSingle(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
@@ -179,16 +177,10 @@ internal class RDMPApplicationSettings : ISettings
                 {
 
                     var ticks = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
-                    if (ticks >= 0)
-                    {
-                        //Old value, stored before update to UTC values
-                        value = new DateTime(ticks);
-                    }
-                    else
-                    {
+                    //Old value, stored before update to UTC values
+                    value = ticks >= 0 ? new DateTime(ticks) :
                         //New value, UTC
-                        value = new DateTime(-ticks, DateTimeKind.Utc);
-                    }
+                        new DateTime(-ticks, DateTimeKind.Utc);
 
 
                     return (T)value;
@@ -196,8 +188,7 @@ internal class RDMPApplicationSettings : ISettings
 
                 else if (type == typeof(Guid))
                 {
-                    Guid guid;
-                    if (Guid.TryParse(str, out guid))
+                    if (Guid.TryParse(str, out Guid guid))
                         value = guid;
                 }
 
@@ -206,12 +197,12 @@ internal class RDMPApplicationSettings : ISettings
                     value = Convert.ToBoolean(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
-                else if (type == typeof(Int32))
+                else if (type == typeof(int))
                 {
                     value = Convert.ToInt32(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
-                else if (type == typeof(Int64))
+                else if (type == typeof(long))
                 {
                     value = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
@@ -230,7 +221,7 @@ internal class RDMPApplicationSettings : ISettings
             {
                 return defaultValue;
             }
-                
+
         }
 
         return null != value ? (T) value : defaultValue;
@@ -406,7 +397,7 @@ internal class RDMPApplicationSettings : ISettings
     #region AddOrUpdateValue
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -420,7 +411,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -434,7 +425,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -446,7 +437,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -460,7 +451,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -472,7 +463,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -484,7 +475,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -496,7 +487,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -508,7 +499,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Adds or updates the value 
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>

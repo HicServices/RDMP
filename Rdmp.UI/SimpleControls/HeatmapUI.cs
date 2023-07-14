@@ -63,7 +63,7 @@ public partial class HeatmapUI : UserControl
     /// - First column is the axis in direction X (horizontally) containing (in order) the axis label values that will be each pixel in each heat lane
     /// - Each subsequent column (HeatLine1, HeatLine2 etc above) is a horizontal line of the heatmap with each pixel intensity being determined by the value on the corresponding date (in the first column)
         
-    private RainbowColorPicker _rainbow = new RainbowColorPicker(NumberOfColors);
+    private RainbowColorPicker _rainbow = new(NumberOfColors);
     private const double MinPixelHeight = 15.0;
     private const double MaxPixelHeight = 20.0;
 
@@ -72,7 +72,7 @@ public partial class HeatmapUI : UserControl
 
     private double _currentLabelsWidth = 0;
 
-    private object oDataTableLock = new object();
+    private object oDataTableLock = new();
 
     public HeatmapUI()
     {
@@ -125,7 +125,7 @@ public partial class HeatmapUI : UserControl
             for (var y = 1; y < _dataTable.Columns.Count; y++)
             {
 
-                var cellValue = ToDouble(_dataTable.Rows[x][y]);
+                    var cellValue = ToDouble(_dataTable.Rows[x][y]);
 
                 if (cellValue < _minValueInDataTable)
                     _minValueInDataTable = cellValue;
@@ -134,13 +134,13 @@ public partial class HeatmapUI : UserControl
                     _maxValueInDataTable = cellValue;
             }
 
-            Height = (int)Math.Max(Height, ((_dataTable.Columns.Count) * MinPixelHeight));
+            Height = (int)Math.Max(Height, _dataTable.Columns.Count * MinPixelHeight);
         }
             
         Invalidate();
     }
 
-    private double ToDouble(object o)
+    private static double ToDouble(object o)
     {
         return o == DBNull.Value ? 0 : Convert.ToDouble(o);
     }
@@ -159,8 +159,7 @@ public partial class HeatmapUI : UserControl
         Invalidate();
     }
 
-
-    ToolTip tt = new ToolTip();
+    private ToolTip tt = new();
 
     private int toolTipDelayInTicks = 500;
     private Point _lastHoverPoint;
@@ -290,15 +289,15 @@ public partial class HeatmapUI : UserControl
                         e.Graphics.FillRectangle(brush, (float)(x * heatPixelWidth), (float)(y * heatPixelHeight), (float)heatPixelWidth, (float)heatPixelHeight);
                     }
                 }
-                
+
                 var labelStartX = Width - _currentLabelsWidth;
                 
                 
                 //draw the labels
                 for (var i = 1; i < _dataTable.Columns.Count; i++)
                 {
-                    var labelStartY = (i)*heatPixelHeight;
-                    
+                    var labelStartY = i*heatPixelHeight;
+
                     var name = _dataTable.Columns[i].ColumnName;
 
                     e.Graphics.DrawString(name, font, Brushes.Black, new PointF((float)labelStartX, (float)labelStartY));
@@ -308,8 +307,8 @@ public partial class HeatmapUI : UserControl
                 double lastAxisLabelWidth = -500;
 
                 var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : this.GetVisibleArea();
-                    
-                    
+
+
                 var visibleClipBoundsTop = visibleArea.Top;
 
                 //now draw the axis 
@@ -328,7 +327,7 @@ public partial class HeatmapUI : UserControl
                         continue;
 
                     lastAxisStart = axisXStart;
-                    
+
                     var label = _dataTable.Rows[i][0].ToString();
 
                     //draw the axis label text with 1 pixel left and right so that there is space for the axis black line
@@ -337,7 +336,7 @@ public partial class HeatmapUI : UserControl
 
 
                     //draw axis black line
-                    e.Graphics.DrawLine(Pens.Black, new PointF((float) axisXStart, (float)(axisYStart)), new PointF((float) axisXStart, Height));
+                    e.Graphics.DrawLine(Pens.Black, new PointF((float) axisXStart, (float)axisYStart), new PointF((float) axisXStart, Height));
                 }
             }
 
@@ -381,7 +380,7 @@ public partial class HeatmapUI : UserControl
         return Math.Min(MaxPixelHeight, Math.Max(MinPixelHeight, plotAreaHeight / numberOfDimensions));
     }
 
-    private Font GetFontSizeThatWillFitPixelHeight(double heightInPixels, Graphics graphics)
+    private static Font GetFontSizeThatWillFitPixelHeight(double heightInPixels, Graphics graphics)
     {
         Font font;
         var emSize = heightInPixels;
@@ -397,7 +396,7 @@ public partial class HeatmapUI : UserControl
 
 
 
-    public void CalculateLayout()
+    public static void CalculateLayout()
     {
             
     }
@@ -419,7 +418,7 @@ public partial class HeatmapUI : UserControl
         var h = Math.Min(maxHeight,Height);
 
         var isClipped = maxHeight < Height;
-            
+
         var bmp = new Bitmap(Width, h);
 
         _useEntireControlAsVisibleArea = true;
@@ -440,7 +439,7 @@ public partial class HeatmapUI : UserControl
             {
                 //add a note saying to user data has been clipped
                 var clippedRowsComment =
-                    $"{(totalHeatMapLinesAvailable - numberOfHeatLinesVisible)} more rows clipped";
+                    $"{totalHeatMapLinesAvailable - numberOfHeatLinesVisible} more rows clipped";
                 var g = Graphics.FromImage(bmp);
 
                 var fontSize = g.MeasureString(clippedRowsComment, Font);

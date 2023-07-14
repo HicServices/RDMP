@@ -26,9 +26,8 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
 {
     private bool _bInitialized = false;
 
-    private Dictionary<string, ANOTransformer> columnsToAnonymise = new Dictionary<string, ANOTransformer>();
-
-    IdentifierDumper _dumper;
+    private Dictionary<string, ANOTransformer> columnsToAnonymise = new();
+    private IdentifierDumper _dumper;
         
     public TableInfo TableToLoad { get; set; }
 
@@ -53,16 +52,15 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
                         $"ColumnInfo  {columnName} does not start with ANO but is marked as an ANO column (ID={columnInfo.ID})");
 
                 //if the column is ANOGp then look for column Gp in the input columns (DataTable toProcess)
-                columnName = columnName.Substring(ANOTable.ANOPrefix.Length);
+                columnName = columnName[ANOTable.ANOPrefix.Length..];
                 columnsToAnonymise.Add(columnName, new ANOTransformer(columnInfo.ANOTable));
             }
         }
     }
 
     private int recordsProcessedSoFar = 0;
-
-    Stopwatch stopwatch_TimeSpentTransforming = new Stopwatch();
-    Stopwatch stopwatch_TimeSpentDumping = new Stopwatch();
+    private Stopwatch stopwatch_TimeSpentTransforming = new();
+    private Stopwatch stopwatch_TimeSpentDumping = new();
 
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
@@ -91,12 +89,9 @@ public class BasicAnonymisationEngine :IPluginDataFlowComponent<DataTable>,IPipe
            
         //Process ANO Identifier Substitutions
         //for each column with an ANOTrasformer
-        foreach (var kvp in columnsToAnonymise)
+        foreach ((var column, var transformer) in columnsToAnonymise)
         {
             didAno = true;
-
-            var column = kvp.Key;
-            var transformer = kvp.Value;
 
             //add an ANO version
             var ANOColumn = new DataColumn(ANOTable.ANOPrefix + column);

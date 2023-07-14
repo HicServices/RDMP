@@ -30,7 +30,7 @@ public class PlatformDatabaseCreation
     /// Creates new databases on the given server for RDMP platform databases
     /// </summary>
     /// <param name="options"></param>
-    public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
+    public static void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
     {
         DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
 
@@ -55,11 +55,11 @@ public class PlatformDatabaseCreation
             var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo,null),repo);
             var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
                 
-            examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier(){WriteToConsole = true },options);
+            examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier {WriteToConsole = true },options);
         }
     }
 
-    private SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
+    private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
     {
         SqlConnection.ClearAllPools();
 
@@ -73,8 +73,10 @@ public class PlatformDatabaseCreation
             db.Drop();
         }
 
-        var executor = new MasterDatabaseScriptExecutor(db);
-        executor.BinaryCollation = options.BinaryCollation;
+        var executor = new MasterDatabaseScriptExecutor(db)
+        {
+            BinaryCollation = options.BinaryCollation
+        };
         executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
         Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
             

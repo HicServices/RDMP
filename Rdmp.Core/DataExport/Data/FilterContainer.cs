@@ -47,7 +47,7 @@ public class FilterContainer : ConcreteContainer, IContainer
     public override Catalogue GetCatalogueIfAny()
     {
         var sel = GetSelectedDataSetIfAny();
-        return sel != null ? (Catalogue)sel.ExtractableDataSet.Catalogue : null;
+        return (Catalogue)sel?.ExtractableDataSet.Catalogue;
     }
 
     public override bool ShouldBeReadOnly(out string reason)
@@ -71,12 +71,12 @@ public class FilterContainer : ConcreteContainer, IContainer
     {
         return Operation.ToString();
     }
-        
-        
+
+
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
     {
         //clone ourselves
-        var clonedFilterContainer = this.ShallowClone();
+        var clonedFilterContainer = ShallowClone();
             
         //clone our filters
         foreach (var deployedExtractionFilter in GetFilters())
@@ -94,7 +94,7 @@ public class FilterContainer : ConcreteContainer, IContainer
         }
 
         //now clone all subcontainers
-        foreach (FilterContainer toCloneSubcontainer in this.GetSubContainers())
+        foreach (FilterContainer toCloneSubcontainer in GetSubContainers())
         {
             //clone the subcontainer recursively
             var clonedSubcontainer = toCloneSubcontainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
@@ -151,11 +151,9 @@ public class FilterContainer : ConcreteContainer, IContainer
         var parent = (FilterContainer)GetParentContainerIfAny();
 
         //it doesn't
-        if (parent == null)
-            return null; //boo hoo, we are an orphan somehow
 
         //our parent must be the root container maybe? recursive
-        return parent.GetSelectedDataSetsRecursively();
+        return parent?.GetSelectedDataSetsRecursively();
 
     }
 

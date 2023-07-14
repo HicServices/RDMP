@@ -66,7 +66,7 @@ public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveable
             var repo = databaseObject.CatalogueRepository;
 
             _argumentCollection = new ArgumentCollectionUI();
-                
+
             var className = databaseObject.GetClassNameWhoArgumentsAreFor();
 
             if(string.IsNullOrWhiteSpace(className))

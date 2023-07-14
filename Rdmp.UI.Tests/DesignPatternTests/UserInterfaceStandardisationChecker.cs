@@ -33,10 +33,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 public class UserInterfaceStandardisationChecker
 {
     private List<string> _csFilesList;
-    private List<string> problems = new List<string>();
+    private List<string> problems = new();
 
-    private Type[] excusedNodeClasses = new Type[]
-    {
+    private Type[] excusedNodeClasses = {
         //it's a singleton because you can only have one decryption certificate for an RDMP as opposed to other SingletonNode classses that represent collections e.g. AllTableInfos is the only collection of TableInfos but it's a collection
         typeof(DecryptionPrivateKeyNode),
         typeof(ArbitraryFolderNode),
@@ -54,8 +53,7 @@ public class UserInterfaceStandardisationChecker
     /// <summary>
     /// UI classes that are allowed not to end with the suffix UI
     /// </summary>
-    private Type[] excusedUIClasses = new[]
-    {
+    private Type[] excusedUIClasses = {
         typeof (RDMPUserControl),
         typeof (RDMPForm),
         typeof(RDMPSingleDatabaseObjectControl<>),
@@ -124,13 +122,13 @@ public class UserInterfaceStandardisationChecker
 
             foreach (var c in menuClass.GetConstructors())
             {
-                if(c.GetParameters().Count() != 2)
+                if(c.GetParameters().Length != 2)
                     problems.Add(
-                        $"Constructor of class '{menuClass}' which is an RDMPContextMenuStrip contained {c.GetParameters().Count()} constructor arguments.  These menus are driven by reflection (See RDMPCollectionCommonFunctionality.GetMenuWithCompatibleConstructorIfExists )");
+                        $"Constructor of class '{menuClass}' which is an RDMPContextMenuStrip contained {c.GetParameters().Length} constructor arguments.  These menus are driven by reflection (See RDMPCollectionCommonFunctionality.GetMenuWithCompatibleConstructorIfExists )");
             }
 
 
-            var toLookFor = menuClass.Name.Substring(0, menuClass.Name.Length - "Menu".Length);
+            var toLookFor = menuClass.Name[..^"Menu".Length];
             var expectedClassName = GetExpectedClassOrInterface(toLookFor);
 
             if(expectedClassName == null)
@@ -146,7 +144,7 @@ public class UserInterfaceStandardisationChecker
             //public AutomationServerSlotsMenu(IActivateItems activator, AllAutomationServerSlotsNode databaseEntity)
             var expectedConstructorSignature = $"{menuClass.Name}(RDMPContextMenuStripArgs args,{expectedClassName}";
             ConfirmFileHasText(menuClass,expectedConstructorSignature);
-                
+
             var fields = menuClass.GetFields(
                 BindingFlags.NonPublic |
                 BindingFlags.Instance);
@@ -172,7 +170,7 @@ public class UserInterfaceStandardisationChecker
                 continue;
             }
 
-            var toLookFor = proposalClass.Name.Substring("ProposeExecutionWhenTargetIs".Length);
+            var toLookFor = proposalClass.Name["ProposeExecutionWhenTargetIs".Length..];
             var expectedClassName = GetExpectedClassOrInterface(toLookFor);
 
             if (expectedClassName == null)
@@ -182,8 +180,8 @@ public class UserInterfaceStandardisationChecker
             
         //Make sure all user interface classes have the suffix UI
         foreach(var uiType in mef.GetAllTypes().Where(t => 
-                    (typeof(RDMPUserControl).IsAssignableFrom(t)||(typeof(RDMPForm).IsAssignableFrom(t))
-                        && !t.IsAbstract && !t.IsInterface)))
+                    typeof(RDMPUserControl).IsAssignableFrom(t)||typeof(RDMPForm).IsAssignableFrom(t)
+                    && !t.IsAbstract && !t.IsInterface))
         {
                 
             if(!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))

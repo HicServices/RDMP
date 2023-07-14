@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Databases;
 
-class MasterDatabaseScriptExecutorTests : DatabaseTests
+internal class MasterDatabaseScriptExecutorTests : DatabaseTests
 {
     [Test]
     public void TestCreatingSchemaTwice()

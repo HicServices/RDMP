@@ -19,16 +19,16 @@ namespace Rdmp.Core.Tests.Validation;
 [Category("Unit")]
 public class ValidatorTest
 {
-    readonly ChiDomainObject _domainObjectWithValidChi = new ChiDomainObject(TestConstants._VALID_CHI);
-    readonly ChiDomainObject _domainObjectWithInvalidChi = new ChiDomainObject(TestConstants._INVALID_CHI_CHECKSUM);
-    readonly ChiAgeDomainObject _domainObjectWithValidChiAndAge = new ChiAgeDomainObject(TestConstants._VALID_CHI, 33);
+    private readonly ChiDomainObject _domainObjectWithValidChi = new(TestConstants._VALID_CHI);
+    private readonly ChiDomainObject _domainObjectWithInvalidChi = new(TestConstants._INVALID_CHI_CHECKSUM);
+    private readonly ChiAgeDomainObject _domainObjectWithValidChiAndAge = new(TestConstants._VALID_CHI, 33);
 
     [Test]
     public void Validate_InitialisedState_IsValid()
     {
         var validator = new Validator();
 
-        Assert.IsNull(validator.Validate(_domainObjectWithValidChi));    
+        Assert.IsNull(validator.Validate(_domainObjectWithValidChi));
     }
 
     [Test]
@@ -56,7 +56,7 @@ public class ValidatorTest
         //validate the row
         Assert.IsNull(v.Validate(dr));
     }
-        
+
     [Test]
     public void AddItemValidator_DuplicateCalls_ThrowsException()
     {
@@ -82,7 +82,7 @@ public class ValidatorTest
         Assert.AreEqual("Validation failed: Target field [non-existent] not found in domain object.",ex.Message);
     }
 
-        
+
     [Test]
     public void Validate_NonExistentTargetProperty_EmitsMessage()
     {
@@ -95,7 +95,7 @@ public class ValidatorTest
         catch (MissingFieldException exception)
         {
 
-            Assert.True(exception.Message.StartsWith("Validation failed"));                
+            Assert.True(exception.Message.StartsWith("Validation failed"));
         }
     }
 
@@ -120,9 +120,8 @@ public class ValidatorTest
     public void ValidateVerbose_InvalidChi_CountOfWrongIncreases()
     {
         var validator = CreateSimpleChiValidator();
-        Consequence? lastRowConsequence;
         //run once
-        var results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, null, out lastRowConsequence);
+        var results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, null, out Consequence? lastRowConsequence);
 
         Assert.IsNotNull(results);
 
@@ -130,7 +129,7 @@ public class ValidatorTest
 
         //additive --give it same row again, expect the count of wrong ones to go SetUp by 1
         results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, results, out lastRowConsequence);
-            
+
         Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong], 2);
     }
 
@@ -139,11 +138,13 @@ public class ValidatorTest
     public void Test_XML_Generation()
     {
         var v = new Validator();
-        var iv = new ItemValidator();
-        iv.TargetProperty = "Name";
-        iv.ExpectedType = typeof(string);
-        iv.PrimaryConstraint = new Alpha();
-            
+        var iv = new ItemValidator
+        {
+            TargetProperty = "Name",
+            ExpectedType = typeof(string),
+            PrimaryConstraint = new Alpha()
+        };
+
         v.ItemValidators.Add(iv);
 
         var answer = v.SaveToXml(false);
@@ -151,7 +152,7 @@ public class ValidatorTest
         var v2 = Validator.LoadFromXml(answer);
 
         var answer2 = v2.SaveToXml(false);
-            
+
         Assert.AreEqual(answer,answer2);
     }
 
@@ -194,14 +195,18 @@ public class ValidatorTest
 
 
         //this constraint ensures that OldCol2 is between OldCol1 and OldcCol3
-        var boundDate = new BoundDate();
-        boundDate.LowerFieldName = "OldCol1";
-        boundDate.UpperFieldName = "OldCol3";
+        var boundDate = new BoundDate
+        {
+            LowerFieldName = "OldCol1",
+            UpperFieldName = "OldCol3"
+        };
 
         v.ItemValidators[0].SecondaryConstraints.Add(boundDate);
 
-        var dictionary  = new Dictionary<string, string>();
-        dictionary.Add("OldCol2","NewCol2");
+        var dictionary = new Dictionary<string, string>
+        {
+            { "OldCol2", "NewCol2" }
+        };
 
         //before and after rename of col2
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "OldCol2");
@@ -209,10 +214,10 @@ public class ValidatorTest
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "OldCol1");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "OldCol3");
-            
+
         //now rename col 1
         dictionary.Add("OldCol1","NewCol1");
-        v.RenameColumns(dictionary); 
+        v.RenameColumns(dictionary);
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "NewCol1");
         Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "OldCol3");
@@ -229,7 +234,7 @@ public class ValidatorTest
     //
     // A domain object contains a number of items, each of which we may wish to validate.
     // A Validator is responsible for validating a domain object.
-    // Any useful Validator contains at least one ItemValidator. 
+    // Any useful Validator contains at least one ItemValidator.
     // An ItemValidator is created for each item in the domain object you wish to validate.
     // An ItemValidator contains a single PrimaryConstraint (e.g. must be valid CHI) and zero or more secondary constraints.
     private static Validator CreateSimpleChiValidator()
@@ -246,7 +251,7 @@ public class ValidatorTest
         return validator;
     }
 
-    private Validator CreateChiAndAgeValidators()
+    private static Validator CreateChiAndAgeValidators()
     {
         var validator = new Validator();
         var vChi = new ItemValidator { PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong) };

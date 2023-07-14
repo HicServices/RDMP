@@ -25,7 +25,7 @@ public class TestsRequiringACohort : TestsRequiringA
     protected const int projectNumberInTestData = 99;
     protected ExternalCohortTable _externalCohortTable;
     protected IExtractableCohort _extractableCohort;
-        
+
     protected string cohortTableName = "Cohort";
     protected string definitionTableName = "CohortDefinition";
 
@@ -44,9 +44,9 @@ public class TestsRequiringACohort : TestsRequiringA
     /// <summary>
     /// Dictionary of the private and release IDs generated for the cohort, where Keys is a collection of private identifiers and Values are the corresponding release identifiers
     /// </summary>
-    protected readonly Dictionary<string, string> _cohortKeysGenerated = new Dictionary<string, string>();
+    protected readonly Dictionary<string, string> _cohortKeysGenerated = new();
 
-        
+
 
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -83,7 +83,7 @@ public class TestsRequiringACohort : TestsRequiringA
             DeleteTables(_cohortDatabase);
         else
             _cohortDatabase.Create();
-            
+
         var sql = @"
 
 CREATE TABLE [dbo].[Cohort](
@@ -188,19 +188,16 @@ GO
 
         CustomTable = _cohortDatabase.CreateTable("custTable99", dt);
 
-        ColumnInfo[] cols;
-        new TableInfoImporter(CatalogueRepository, CustomTable).DoImport(out CustomTableInfo, out cols);
-            
-        CatalogueItem[] cis;
-        ExtractionInformation[] eis;
-        new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out cis, out eis);
+        new TableInfoImporter(CatalogueRepository, CustomTable).DoImport(out CustomTableInfo, out var cols);
+
+        new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out CatalogueItem[] cis, out var eis);
 
         CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, CustomCatalogue);
             
         foreach (var e in eis)
         {
             e.ExtractionCategory = ExtractionCategory.ProjectSpecific;
-                
+
             if (e.GetRuntimeName().Equals("PrivateID"))
                 e.IsExtractionIdentifier = true;
 
@@ -219,7 +216,7 @@ GO
         }
     }
 
-        
+
     protected void EmptyCohortTables()
     {
 
@@ -250,5 +247,5 @@ GO
                 Assert.AreEqual(1, insertRecord.ExecuteNonQuery());
         }
     }
-        
+
 }

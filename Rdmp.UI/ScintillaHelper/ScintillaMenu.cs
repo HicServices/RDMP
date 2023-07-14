@@ -13,10 +13,10 @@ using ScintillaNET;
 
 namespace Rdmp.UI.ScintillaHelper;
 
-[System.ComponentModel.DesignerCategory("")]
-class ScintillaMenu:ContextMenuStrip
+[DesignerCategory("")]
+internal class ScintillaMenu:ContextMenuStrip
 {
-        
+
     private readonly Scintilla _scintilla;
     private ToolStripMenuItem _miUndo;
     private ToolStripMenuItem _miRedo;
@@ -42,11 +42,11 @@ class ScintillaMenu:ContextMenuStrip
 
     private void InitContextMenu(bool spellCheck)
     {
-        this._miUndo = new ToolStripMenuItem("Undo",null, (s, ea) => _scintilla.Undo());
-        Items.Add(this._miUndo);
-        this._miRedo = new ToolStripMenuItem("Redo", null, (s, ea) => _scintilla.Redo());
+        _miUndo = new ToolStripMenuItem("Undo",null, (s, ea) => _scintilla.Undo());
+        Items.Add(_miUndo);
+        _miRedo = new ToolStripMenuItem("Redo", null, (s, ea) => _scintilla.Redo());
 
-        Items.Add(this._miRedo);
+        Items.Add(_miRedo);
 
         if (spellCheck)
         {
@@ -64,8 +64,11 @@ class ScintillaMenu:ContextMenuStrip
         _miWordwrap = new ToolStripMenuItem("Word Wrap");
         foreach (WrapMode mode in Enum.GetValues(typeof(WrapMode)))
         {
-            var mi = new ToolStripMenuItem(mode.ToString(), null,SetWordWrapMode){Tag = mode};
-            mi.Checked = _scintilla.WrapMode == mode;
+            var mi = new ToolStripMenuItem(mode.ToString(), null, SetWordWrapMode)
+            {
+                Tag = mode,
+                Checked = _scintilla.WrapMode == mode
+            };
             _miWordwrap.DropDownItems.Add(mi);
         }
 
@@ -76,16 +79,16 @@ class ScintillaMenu:ContextMenuStrip
 
         Items.Add(new ToolStripSeparator());
 
-        this._miCut = new ToolStripMenuItem("Cut", null, (s, ea) => _scintilla.Cut());
+        _miCut = new ToolStripMenuItem("Cut", null, (s, ea) => _scintilla.Cut());
         Items.Add(_miCut);
-        this._miCopy = new ToolStripMenuItem("Copy", null, (s, ea) => _scintilla.Copy());
+        _miCopy = new ToolStripMenuItem("Copy", null, (s, ea) => _scintilla.Copy());
         Items.Add(_miCopy);
         Items.Add(new ToolStripMenuItem("Paste", null, (s, ea) => _scintilla.Paste()));
-        this._miDelete = new ToolStripMenuItem("Delete", null, (s, ea) => _scintilla.ReplaceSelection(""));
+        _miDelete = new ToolStripMenuItem("Delete", null, (s, ea) => _scintilla.ReplaceSelection(""));
         Items.Add(_miDelete);
         Items.Add(new ToolStripSeparator());
 
-        this._miSelectAll = new ToolStripMenuItem("Select All", null, (s, ea) => _scintilla.SelectAll());
+        _miSelectAll = new ToolStripMenuItem("Select All", null, (s, ea) => _scintilla.SelectAll());
         Items.Add(_miSelectAll);
     }
 
@@ -141,11 +144,11 @@ class ScintillaMenu:ContextMenuStrip
 
     private void SetWord(string oldWord, string newWord)
     {
-        //make sure the current word matches the old word we are replacing 
+        //make sure the current word matches the old word we are replacing
         //(I guess somehow an async something could have changed the text while the menu was open)
         if(!string.Equals(GetCurrentWord(),oldWord))
             return;
-            
+
         var pos = _scintilla.CurrentPosition;
         var wordStart = _scintilla.WordStartPosition(pos, true);
         var wordEnd = _scintilla.WordEndPosition(pos, true);

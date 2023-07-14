@@ -114,9 +114,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
         if (rbGuessNewAssociatedColumns.Checked)
         {
-            var tableInfo = cbTableInfos.SelectedItem as TableInfo;
-
-            if (tableInfo == null)
+            if (cbTableInfos.SelectedItem is not TableInfo tableInfo)
             {
                 MessageBox.Show("You must select a TableInfo from the dropdown first");
                 return;
@@ -124,7 +122,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
             guessPoolColumnInfo = tableInfo.ColumnInfos.ToArray();
         }
-                
+
 
         var deleteCount = 0;
         var countExtractionInformationsCreated = 0;

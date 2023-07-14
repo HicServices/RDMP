@@ -33,7 +33,7 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
     {
         ApplicationArguments = args;
         _args = args;
-        this._environmentInfo = environmentInfo;
+        _environmentInfo = environmentInfo;
 
     }
 
@@ -65,8 +65,8 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
         try
         {
             _args.GetConnectionStrings(out var c, out var d);
-            this.catalogueConnection = c?.ConnectionString;
-            this.dataExportConnection = d?.ConnectionString;
+            catalogueConnection = c?.ConnectionString;
+            dataExportConnection = d?.ConnectionString;
         }
         catch (Exception ex)
         {
@@ -90,7 +90,7 @@ public class RDMPBootStrapper<T> where T : RDMPForm, new()
                 startup.RepositoryLocator = _args.GetRepositoryLocator();
             }
             else
-            if (!String.IsNullOrWhiteSpace(catalogueConnection) && !String.IsNullOrWhiteSpace(dataExportConnection))
+            if (!string.IsNullOrWhiteSpace(catalogueConnection) && !string.IsNullOrWhiteSpace(dataExportConnection))
             {
                 startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnection, dataExportConnection);
                 startup.RepositoryLocator.CatalogueRepository.TestConnection();

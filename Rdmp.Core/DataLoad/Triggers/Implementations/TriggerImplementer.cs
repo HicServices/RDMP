@@ -24,7 +24,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 public abstract class TriggerImplementer:ITriggerImplementer
 {
     protected readonly bool _createDataLoadRunIdAlso;
-        
+
     protected readonly DiscoveredServer _server;
     protected readonly DiscoveredTable _table;
     protected readonly DiscoveredTable _archiveTable;
@@ -93,13 +93,13 @@ public abstract class TriggerImplementer:ITriggerImplementer
             using(var con = _server.GetConnection())
             {
                 con.Open();
-                
+
                 using(var cmdCreateArchive = _server.GetCommand(sql, con))
                 {
                     cmdCreateArchive.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     cmdCreateArchive.ExecuteNonQuery();
                 }
-                        
+
 
                 _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, UserSettings.ArchiveTriggerTimeout);
                 _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, UserSettings.ArchiveTriggerTimeout);
@@ -114,7 +114,7 @@ public abstract class TriggerImplementer:ITriggerImplementer
         var dateTimeDatatype = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof (DateTime)));
         var nowFunction = syntaxHelper.GetScalarFunctionSql(MandatoryScalarFunctions.GetTodaysDate);
             
-        _table.AddColumn(SpecialFieldNames.ValidFrom, string.Format(" {0} DEFAULT {1}", dateTimeDatatype, nowFunction), true, UserSettings.ArchiveTriggerTimeout);
+        _table.AddColumn(SpecialFieldNames.ValidFrom, $" {dateTimeDatatype} DEFAULT {nowFunction}", true, UserSettings.ArchiveTriggerTimeout);
     }
 
 
@@ -151,12 +151,12 @@ public abstract class TriggerImplementer:ITriggerImplementer
     /// <returns></returns>
     public virtual bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
     {
-        //check server has trigger and it is on 
+        //check server has trigger and it is on
         var isEnabledSimple = GetTriggerStatus();
 
         if (isEnabledSimple == TriggerStatus.Disabled || isEnabledSimple == TriggerStatus.Missing)
             return false;
-            
+
         CheckColumnDefinitionsMatchArchive();
 
         return true;
@@ -186,7 +186,7 @@ public abstract class TriggerImplementer:ITriggerImplementer
                 $"The following column mismatch errors were seen:{Environment.NewLine}{string.Join(Environment.NewLine, errors)}");
     }
 
-    private bool AreCompatibleDatatypes(DiscoveredDataType mainDataType, DiscoveredDataType archiveDataType)
+    private static bool AreCompatibleDatatypes(DiscoveredDataType mainDataType, DiscoveredDataType archiveDataType)
     {
         var t1 = mainDataType.SQLType;
         var t2 = archiveDataType.SQLType;

@@ -217,7 +217,7 @@ public class DelimitedFileSourceTests
 
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("strategy");
+                    throw new ArgumentOutOfRangeException(nameof(strategy));
             }
         }
         finally
@@ -445,7 +445,7 @@ old"",2001-01-05");
 
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("strategy");
+                    throw new ArgumentOutOfRangeException(nameof(strategy));
             }
         }
         finally
@@ -549,7 +549,7 @@ old"",2001-01-05");
 
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("strategy");
+                    throw new ArgumentOutOfRangeException(nameof(strategy));
             }
         }
         finally
@@ -606,7 +606,7 @@ old"",2001-01-05");
         sb.AppendLine("0101010101\t5\t2001-01-05\tomg\t");
         sb.AppendLine("0101010101\t5\t2001-01-05\tomg2\t");
         File.WriteAllText(filename, sb.ToString());
-            
+
         var testFile = new FileInfo(filename);
 
         var source = new DelimitedFlatFileDataFlowSource();
@@ -649,7 +649,7 @@ old"",2001-01-05");
     public void Test_ScientificNotation_StronglyTyped()
     {
         var f = Path.Combine(TestContext.CurrentContext.WorkDirectory,"meee.csv");
-            
+
         var sb = new StringBuilder();
 
         sb.AppendLine("test");
@@ -658,7 +658,7 @@ old"",2001-01-05");
         sb.AppendLine("-4.10235746055587E-05");
 
         //500 lines of random stuff to force 2 batches
-        for (var i=0;i< DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize; i++)
+        for (var i =0;i< DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize; i++)
             sb.AppendLine("5");
 
         //a scientific notation in batch 2
@@ -674,11 +674,11 @@ old"",2001-01-05");
         source.StronglyTypeInput = true;
 
         var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
-        Assert.AreEqual(typeof(Decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
+        Assert.AreEqual(typeof(decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
         Assert.AreEqual(DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize, dt.Rows.Count);
             
         dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-        Assert.AreEqual(typeof(Decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
+        Assert.AreEqual(typeof(decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
         Assert.AreEqual(2, dt.Rows.Count);
             
 

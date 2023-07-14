@@ -17,7 +17,8 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 {
     public ICatalogueRepository CatalogueRepository { get; protected set; }
     public IDataExportRepository DataExportRepository { get; protected set; }
-    readonly Dictionary<string, Type> _cachedTypesByNameDictionary = new Dictionary<string, Type>();
+
+    private readonly Dictionary<string, Type> _cachedTypesByNameDictionary = new();
 
     /// <summary>
     /// Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the Catalogue/Data export databases only.
@@ -36,7 +37,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     {
             
     }
-        
+
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)
     {
         var repository = GetRepository(repositoryTypeName);
@@ -74,15 +75,15 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
 
     }
-        
-    object oLockDictionary = new object();
+
+    private object oLockDictionary = new();
     private Type GetTypeByName(string s, Type expectedBaseClassType)
     {
         Type toReturn;
         lock (oLockDictionary)
         {
-            if (_cachedTypesByNameDictionary.ContainsKey(s))
-                return _cachedTypesByNameDictionary[s];
+            if (_cachedTypesByNameDictionary.TryGetValue(s, out var name))
+                return name;
 
             toReturn = CatalogueRepository.MEF.GetType(s, expectedBaseClassType);
 
@@ -107,8 +108,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             return CatalogueRepository.GetObjectByID<T>(value);
         if(DataExportRepository.SupportsObjectType(typeof(T)))
             return DataExportRepository.GetObjectByID<T>(value);
-        else
-            throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
+        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
     }
 
     /// <inheritdoc/>
@@ -118,8 +118,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             return CatalogueRepository.GetObjectByID(t,value);
         if(DataExportRepository.SupportsObjectType(t))
             return DataExportRepository.GetObjectByID(t,value);
-        else
-            throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
+        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{t}'");
     }
     public virtual IEnumerable<IRepository> GetAllRepositories()
     {

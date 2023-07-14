@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-/// Displays an in-depth technical report about an error that occurred during a task.  The error messages and the location in each class file in the stack is displayed including line 
+/// Displays an in-depth technical report about an error that occurred during a task.  The error messages and the location in each class file in the stack is displayed including line
 /// numbers if a .pdb is available.  The pdb files for all RDMP code is shipped with the RDMP installer.
 /// 
 /// <para>Additionally as part of the build process of RDMP applications the built codebase is zipped into a file called SourceCodeForSelfAwareness.zip clicking one of the hyperlinks in
@@ -24,9 +24,9 @@ namespace Rdmp.UI.SimpleDialogs;
 /// </summary>
 public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 {
-    private static readonly Regex SourceFilePath = new Regex(@" in (.*):line ");
-    private static readonly Regex SourceCodeAvailable = new Regex(@"\.cs:line (\d+)");
-    private static readonly Regex MethodName = new Regex(@"\.([A-Za-z_0-9][^\.]*)\(");
+    private static readonly Regex SourceFilePath = new(@" in (.*):line ");
+    private static readonly Regex SourceCodeAvailable = new(@"\.cs:line (\d+)");
+    private static readonly Regex MethodName = new(@"\.([A-Za-z_0-9][^\.]*)\(");
     private string _s;
 
     private ExceptionViewerStackTraceWithHyperlinks()
@@ -92,20 +92,20 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 
         for (var i = 0; i < lines.Length; i++)
         {
-                
-             
+
+
             //Any other things you want to not be a hyperlink because they give no useful context to the error can be added here and they will not appear as hyperlinks
             var lineIsMessageConstructor = lines[i].Contains("ReusableLibraryCode.Checks.CheckEventArgs..ctor");
 
-            Match lineNumberMatch;
-            Match filenameMatch;
-            MatchStackLine(lines[i],out filenameMatch,out lineNumberMatch);
+            MatchStackLine(lines[i],out var filenameMatch, out var lineNumberMatch);
 
             if (!(lineNumberMatch.Success || filenameMatch.Success) || lineIsMessageConstructor)
             {
-                var l = new Label();
-                l.Text = lines[i];
-                l.AutoSize = true;
+                var l = new Label
+                {
+                    Text = lines[i],
+                    AutoSize = true
+                };
 
                 //it is a message not a stack trace line (stack trace lines start with <whitespace>at X
                 if (!Regex.IsMatch(lines[i],@"^\s*at "))
@@ -149,22 +149,21 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
 
     public static bool IsSourceCodeAvailable(Exception exception)
     {
-        return (
-            exception != null  //exception exists
-            &&
-            !string.IsNullOrWhiteSpace(exception.StackTrace)  //and has a stack trace
-            &&
-            SourceCodeAvailable.IsMatch(exception.StackTrace)); //and stack trace contains line numbers
+        return exception != null  //exception exists
+               &&
+               !string.IsNullOrWhiteSpace(exception.StackTrace)  //and has a stack trace
+               &&
+               SourceCodeAvailable.IsMatch(exception.StackTrace); //and stack trace contains line numbers
     }
 
 
-    private void OpenVisualStudio(string filename, int lineNumber)
+    private static void OpenVisualStudio(string filename, int lineNumber)
     {
         try
         {
             Clipboard.SetText($"{Path.GetFileName(filename)}:{lineNumber}");
 
-            var viewer = new Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog(filename, lineNumber,Color.LawnGreen);
+            var viewer = new ViewSourceCodeDialog(filename, lineNumber,Color.LawnGreen);
             viewer.ShowDialog();
         }
         catch (FileNotFoundException)
@@ -177,15 +176,15 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
         }
             
     }
-        
+
     private void button1_Click(object sender, EventArgs e)
     {
-        this.Close();
+        Close();
     }
 
     private void ExceptionViewerStackTraceWithHyperlinks_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Escape || (e.KeyCode == Keys.W && e.Control))
-            this.Close();
+            Close();
     }
 }

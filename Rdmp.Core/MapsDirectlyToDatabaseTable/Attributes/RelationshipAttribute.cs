@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 
 /// <summary>
-/// Used to indicate when an ID column contains the ID of another RDMP object.  Decorate the foreign key object. This can be involve going 
+/// Used to indicate when an ID column contains the ID of another RDMP object.  Decorate the foreign key object. This can be involve going
 /// between databases or even servers e.g. between DataExport and Catalogue libraries or between Catalogue and plugin databases
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
@@ -25,7 +25,7 @@ public class RelationshipAttribute : Attribute
     /// The decorated property
     /// </summary>
     public string PropertyName { get; set; }
-        
+
     public RelationshipType Type { get; set; }
 
     /// <summary>
@@ -55,21 +55,15 @@ public class RelationshipAttribute : Attribute
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((RelationshipAttribute) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            var hashCode = base.GetHashCode();
-            hashCode = (hashCode*397) ^ (Cref != null ? Cref.GetHashCode() : 0);
-            hashCode = (hashCode*397) ^ (PropertyName != null ? PropertyName.GetHashCode() : 0);
-            return hashCode;
-        }
+        return HashCode.Combine(base.GetHashCode(), Cref, PropertyName);
     }
     #endregion
 }

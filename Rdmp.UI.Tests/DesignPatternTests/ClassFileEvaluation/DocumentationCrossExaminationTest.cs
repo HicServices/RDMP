@@ -14,13 +14,13 @@ using NUnit.Framework;
 
 namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
-class DocumentationCrossExaminationTest
+internal class DocumentationCrossExaminationTest
 {
     private readonly DirectoryInfo _slndir;
-    private static readonly Regex MatchComments = new Regex(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex MatchComments = new(@"///[^;\r\n]*",RegexOptions.Compiled|RegexOptions.CultureInvariant);
 
     private string[] _mdFiles;
-    private static readonly Regex MatchMdReferences = new Regex(@"`(.*)`",RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex MatchMdReferences = new(@"`(.*)`",RegexOptions.Compiled|RegexOptions.CultureInvariant);
 
     private const bool ReWriteMarkdownToReferenceGlossary = true;
 
@@ -268,7 +268,7 @@ class DocumentationCrossExaminationTest
         "MakeAnonymous",
         "ReleaseIdentifierAllocation",
         "SocialSecurityNumber",
-        "BuildInParallel",
+        "BuildInParallel"
     };
     #endregion
     public DocumentationCrossExaminationTest(DirectoryInfo slndir)
@@ -350,7 +350,7 @@ class DocumentationCrossExaminationTest
         }
 
 
-        foreach (var (filename,tokens) in fileCommentTokens)
+        foreach ((var filename, var tokens) in fileCommentTokens)
         {
             problems.AddRange(tokens
                 .Where(token => !codeTokens.Contains(token) && !codeTokens.Contains($"ExecuteCommand{token}"))
@@ -373,7 +373,7 @@ class DocumentationCrossExaminationTest
         Assert.AreEqual(0,problems.Count,"Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
     }
 
-    private void EnsureCodeBlocksCompile(string mdFile, List<string> problems)
+    private static void EnsureCodeBlocksCompile(string mdFile, List<string> problems)
     {
         var codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
 
@@ -386,7 +386,7 @@ class DocumentationCrossExaminationTest
         var rEndCodeBlock = new Regex("```");
 
         var markdownCodeBlocks = new Dictionary<string, string>();
-            
+
         var lines = File.ReadAllLines(mdFile);
 
         for (var i = 0; i < lines.Length; i++)
@@ -436,7 +436,7 @@ class DocumentationCrossExaminationTest
     private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
     {
         const string glossaryRelativePath = "./Documentation/CodeTutorials/Glossary.md";
-            
+
         var rGlossary = new Regex("##([A-z ]*)");
         var rWords = new Regex(@"\[?\w*\]?");
         var rGlossaryLink = new Regex(@"^\[\w*\]:");

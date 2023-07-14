@@ -21,8 +21,8 @@ public class CommandLineHelper
 {
     public static string CreateArgString(string name, object value)
     {
-        if (value is LoadDirectory)
-            value = ((LoadDirectory) value).RootPath.FullName;
+        if (value is LoadDirectory directory)
+            value = directory.RootPath.FullName;
 
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("The argument 'name' parameter is empty");
@@ -43,9 +43,8 @@ public class CommandLineHelper
         if (value is LoadStage)
             return CreateArgString(name, value.ToString());
 
-        if (value is DiscoveredDatabase)
+        if (value is DiscoveredDatabase dbInfo)
         {
-            var dbInfo = value as DiscoveredDatabase;
             return
                 $"{CreateArgString("DatabaseName", dbInfo.GetRuntimeName())} {CreateArgString("DatabaseServer", dbInfo.Server.Name)}";
         }
@@ -62,22 +61,20 @@ public class CommandLineHelper
 
     public static string GetValueString(object value)
     {
-        if (value is string)
-            if (value.ToString().Contains(" "))
+        if (value is string s)
+            if (s.ToString().Contains(' '))
                 return $@"""{value}""";//<- looks like a snake (or a golf club? GM)
             else
-                return value as string;
+                return s;
 
-        if (value is DateTime)
+        if (value is DateTime dt)
         {
-            var dt = (DateTime) value;
             return
                 $"\"{(dt.TimeOfDay.TotalSeconds.Equals(0) ? dt.ToString("yyyy-MM-dd") : dt.ToString("yyyy-MM-dd HH:mm:ss"))}\"";
         }
 
-        if (value is FileInfo)
+        if (value is FileInfo fi)
         {
-            var fi = value as FileInfo;
             return $"\"{fi.FullName}\"";
         }
 

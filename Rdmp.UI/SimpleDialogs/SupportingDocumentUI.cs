@@ -22,7 +22,7 @@ namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
 /// The RDMP allows you at attach both documents and auxiliary tables (SupportingSQLTable) to your datasets (Catalogue).  These artifacts are then available to data analysts who
-/// want to understand the dataset better.  Also if you tick IsExtractable then whenever the Catalogue is extracted the table/document is automatically copied and extracted into 
+/// want to understand the dataset better.  Also if you tick IsExtractable then whenever the Catalogue is extracted the table/document is automatically copied and extracted into
 /// project extraction directory for provision to the researcher.
 /// 
 /// <para>Enter the name, description and file path to the file you want attached to your dataset.  Make sure the path is on a network drive or otherwise available to all system users
@@ -30,14 +30,14 @@ namespace Rdmp.UI.SimpleDialogs;
 /// 
 /// <para>Tick Extractable if you want a copy of the document to be automatically created whenever the dataset is extracted and supplied to a researcher as part of a project extraction.</para>
 /// 
-/// <para>If you tick IsGlobal then the table will be extracted regardless of what dataset is selected in a researchers data request (useful for global documents e.g. terms of use of 
+/// <para>If you tick IsGlobal then the table will be extracted regardless of what dataset is selected in a researchers data request (useful for global documents e.g. terms of use of
 /// data).</para>
 /// 
 /// </summary>
 public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveableUI
 {
     private SupportingDocument _supportingDocument;
-        
+
     public SupportingDocumentUI()
     {
         InitializeComponent();
@@ -82,7 +82,7 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
     {
         SetUriPropertyOn(tbUrl, "URL", _supportingDocument);
     }
-        
+
     private void btnOpen_Click(object sender, EventArgs e)
     {
         if (_supportingDocument == null) return;
@@ -95,8 +95,8 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
             MessageBox.Show($"unable to open file:{ex.Message}");
         }
     }
-        
-    private void SetUriPropertyOn( TextBox tb,string propertyToSet,object toSetOn)
+
+    private static void SetUriPropertyOn( TextBox tb,string propertyToSet,object toSetOn)
     {
         if (toSetOn == null) return;
         try
@@ -115,8 +115,8 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
             tb.ForeColor = Color.Red;
         }
     }
-        
-    void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
+
+    private void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
     {
         if (_supportingDocument != null)
             _supportingDocument.Ticket = ticketingControl1.TicketText;
@@ -124,8 +124,10 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        var ofd = new OpenFileDialog();
-        ofd.CheckFileExists = true;
+        var ofd = new OpenFileDialog
+        {
+            CheckFileExists = true
+        };
         if (ofd.ShowDialog() == DialogResult.OK)
             tbUrl.Text = ofd.FileName;
     }
@@ -135,5 +137,5 @@ public partial class SupportingDocumentUI : SupportingDocumentUI_Design, ISaveab
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SupportingDocumentUI_Design, UserControl>))]
 public abstract class SupportingDocumentUI_Design : RDMPSingleDatabaseObjectControl<SupportingDocument>
 {
-        
+
 }

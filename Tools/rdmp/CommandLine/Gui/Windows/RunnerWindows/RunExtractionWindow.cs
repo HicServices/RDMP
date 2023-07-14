@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
+internal class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
 {
     public RunExtractionWindow(IBasicActivateItems activator, ExtractionConfiguration ec) : base(activator, () => GetRunCommand(ec))
     {
@@ -23,10 +23,10 @@ class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
 
     private static ExtractionOptions GetRunCommand(ExtractionConfiguration ec)
     {
-        return new ExtractionOptions()
+        return new ExtractionOptions
         {
             ExtractionConfiguration = ec.ID.ToString(),
-            ExtractGlobals = true,
+            ExtractGlobals = true
         };
     }
 
@@ -44,13 +44,7 @@ class RunExtractionWindow : RunEngineWindow<ExtractionOptions>
             throw new Exception("No compatible pipelines");
         }
 
-        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true);
-
-        if (pipe == null)
-        {
-            throw new OperationCanceledException();
-        }
-
+        var pipe = BasicActivator.SelectOne("Extraction Pipeline", compatible, null, true) ?? throw new OperationCanceledException();
         opts.Pipeline = pipe.ID.ToString();
     }
 }

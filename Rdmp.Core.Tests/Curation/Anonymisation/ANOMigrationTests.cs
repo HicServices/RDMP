@@ -36,11 +36,10 @@ public class ANOMigrationTests : TestsRequiringANOStore
         BlitzMainDataTables();
             
         DeleteANOEndpoint();
-            
+
         var remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
 
-        if (remnantANO != null)
-            remnantANO.DeleteInDatabase();
+        remnantANO?.DeleteInDatabase();
 
         //cleanup
         foreach (var remnant in CatalogueRepository.GetAllObjects<TableInfo>().Where(t => t.GetRuntimeName().Equals(TableName)))
@@ -88,16 +87,18 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         importer.DoImport(out _tableInfo,out _columnInfos);
 
         //Configure the structure of the ANO transform we want - identifiers should have 3 characters and 2 ints and end with _C
-        _anoConditionTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCondition","C");
-        _anoConditionTable.NumberOfCharactersToUseInAnonymousRepresentation = 3;
-        _anoConditionTable.NumberOfIntegersToUseInAnonymousRepresentation = 2;
+        _anoConditionTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCondition","C")
+            {
+                NumberOfCharactersToUseInAnonymousRepresentation = 3,
+                NumberOfIntegersToUseInAnonymousRepresentation = 2
+            };
         _anoConditionTable.SaveToDatabase();
         _anoConditionTable.PushToANOServerAsNewTable("varchar(4)", new ThrowImmediatelyCheckNotifier());
     }
 
     private void DeleteANOEndpoint()
     {
-        var remnantEndpointANOTable = DataAccessPortal.GetInstance()
+        var remnantEndpointANOTable = DataAccessPortal
             .ExpectDatabase(ANOStore_ExternalDatabaseServer, DataAccessContext.InternalDataProcessing)
             .ExpectTable("ANOCondition");
 
@@ -122,7 +123,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         //The table we created above should have a column called Condition2 in it, we will migrate this data to ANO land
         var condition = _columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1"));
         var converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable);
-        var ex = Assert.Throws<Exception>(()=>converter.ConvertFullColumnInfo((s) => true, new ThrowImmediatelyCheckNotifier())); //say  yes to everything it proposes 
+        var ex = Assert.Throws<Exception>(()=>converter.ConvertFullColumnInfo(s => true, new ThrowImmediatelyCheckNotifier())); //say  yes to everything it proposes 
 
         StringAssert.IsMatch(@"Could not perform transformation because column \[(.*)\]\.\[dbo\]\.\[.*\]\.\[Condition1\] is not droppable",ex.Message);
     }

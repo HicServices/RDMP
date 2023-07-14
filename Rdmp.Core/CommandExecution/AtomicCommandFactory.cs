@@ -49,8 +49,8 @@ namespace Rdmp.Core.CommandExecution;
 /// </summary>
 public class AtomicCommandFactory : CommandFactoryBase
 {
-    IBasicActivateItems _activator;
-    GoToCommandFactory _goto;
+    private IBasicActivateItems _activator;
+    private GoToCommandFactory _goto;
     public const string Add = "Add";
     public const string Batching = "Batching";
     public const string New = "New";
@@ -340,8 +340,8 @@ public class AtomicCommandFactory : CommandFactoryBase
         if(Is(o,out AllExternalServersNode _))
         {
             yield return new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null,PermissableDefaults.None);
-                
-            var assemblyDictionary = new Dictionary<PermissableDefaults, IPatcher>()
+
+            var assemblyDictionary = new Dictionary<PermissableDefaults, IPatcher>
             {
                 {PermissableDefaults.DQE, new DataQualityEnginePatcher() },
                 {PermissableDefaults.WebServiceQueryCachingServer_ID, new QueryCachingPatcher()},
@@ -737,7 +737,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewExtractionConfigurationForProject(_activator)
             {
                 CohortIfAny = cohort,
-                OverrideCommandName = "New Extraction Configuration using Cohort",
+                OverrideCommandName = "New Extraction Configuration using Cohort"
             };
         }
 
@@ -846,14 +846,14 @@ public class AtomicCommandFactory : CommandFactoryBase
         {
             var dep = many.Cast<IMightBeDeprecated>().ToArray();
 
-            if(dep.All((d)=>d.IsDeprecated))
+            if(dep.All(d=>d.IsDeprecated))
             {
                 yield return new ExecuteCommandDeprecate(_activator,dep,false )
                 {
                     SuggestedShortcut = "UnDeprecate" 
                 };
             }
-            else if (dep.All((d)=>!d.IsDeprecated))
+            else if (dep.All(d=>!d.IsDeprecated))
             {
                 yield return new ExecuteCommandDeprecate(_activator, dep, true)
                 {

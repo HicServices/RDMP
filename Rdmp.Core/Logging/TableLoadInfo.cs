@@ -51,7 +51,7 @@ public class TableLoadInfo : ITableLoadInfo
     /// <param name="expectedInserts"></param>
     public TableLoadInfo(DataLoadInfo parent,string suggestedRollbackCommand,string destinationTable, DataSource[] sources, int expectedInserts)
     {
-        this._databaseSettings = parent.DatabaseSettings;
+        _databaseSettings = parent.DatabaseSettings;
 
         _startTime = DateTime.Now;
         Inserts = 0;
@@ -187,13 +187,13 @@ public class TableLoadInfo : ITableLoadInfo
                 try
                 {
                     _databaseSettings.AddParameterWithValueToCommand("@endTime",cmdCloseRecord, DateTime.Now);
-                    _databaseSettings.AddParameterWithValueToCommand("@inserts", cmdCloseRecord, this.Inserts);
-                    _databaseSettings.AddParameterWithValueToCommand("@updates", cmdCloseRecord, this.Updates);
-                    _databaseSettings.AddParameterWithValueToCommand("@deletes", cmdCloseRecord, this.Deletes);
-                    _databaseSettings.AddParameterWithValueToCommand("@errorRows", cmdCloseRecord, this.ErrorRows);
-                    _databaseSettings.AddParameterWithValueToCommand("@duplicates", cmdCloseRecord, this.DiscardedDuplicates);
-                    _databaseSettings.AddParameterWithValueToCommand("@notes", cmdCloseRecord, string.IsNullOrWhiteSpace(this.Notes) ? DBNull.Value : this.Notes);
-                    _databaseSettings.AddParameterWithValueToCommand("@ID", cmdCloseRecord, this.ID);
+                    _databaseSettings.AddParameterWithValueToCommand("@inserts", cmdCloseRecord, Inserts);
+                    _databaseSettings.AddParameterWithValueToCommand("@updates", cmdCloseRecord, Updates);
+                    _databaseSettings.AddParameterWithValueToCommand("@deletes", cmdCloseRecord, Deletes);
+                    _databaseSettings.AddParameterWithValueToCommand("@errorRows", cmdCloseRecord, ErrorRows);
+                    _databaseSettings.AddParameterWithValueToCommand("@duplicates", cmdCloseRecord, DiscardedDuplicates);
+                    _databaseSettings.AddParameterWithValueToCommand("@notes", cmdCloseRecord, string.IsNullOrWhiteSpace(Notes) ? DBNull.Value : Notes);
+                    _databaseSettings.AddParameterWithValueToCommand("@ID", cmdCloseRecord, ID);
 
                     var affectedRows = cmdCloseRecord.ExecuteNonQuery();
 

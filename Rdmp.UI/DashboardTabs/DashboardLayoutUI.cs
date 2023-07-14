@@ -24,7 +24,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.DashboardTabs;
 
 /// <summary>
-/// Allows you to create an arrangement of IDashboardableControls on a Form that is stored in the Catalogue database and viewable by all RDMP users.  Use the task bar at the top of the 
+/// Allows you to create an arrangement of IDashboardableControls on a Form that is stored in the Catalogue database and viewable by all RDMP users.  Use the task bar at the top of the
 /// screen to add new controls.  Then click the spanner to drag and resize them.  Each control may also have some flexibility in how it is configured which is accessible in edit mode.
 /// </summary>
 public partial class DashboardLayoutUI : DashboardLayoutUI_Design
@@ -33,7 +33,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
     private DashboardControlFactory _controlFactory;
     private readonly DashboardEditModeFunctionality _editModeFunctionality;
 
-    public Dictionary<DashboardControl,DashboardableControlHostPanel> ControlDictionary = new Dictionary<DashboardControl, DashboardableControlHostPanel>();
+    public Dictionary<DashboardControl,DashboardableControlHostPanel> ControlDictionary = new();
 
     public DashboardLayoutUI()
     {
@@ -64,7 +64,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
     {
         //remove old controls
         foreach (var kvp in ControlDictionary)
-            this.Controls.Remove(kvp.Value);
+            Controls.Remove(kvp.Value);
 
         //restart audit of controls
         ControlDictionary.Clear();
@@ -74,9 +74,9 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
         cbxAvailableControls.Items.AddRange(_controlFactory.GetAvailableControlTypes());
         cbxAvailableControls.SelectedItem = cbxAvailableControls.Items.Cast<object>().FirstOrDefault();
 
-        DashboardableControlHostPanel instance;
         foreach (var c in _layout.Controls)
         {
+            DashboardableControlHostPanel instance;
             try
             {
                 instance = _controlFactory.Create(c);
@@ -89,7 +89,7 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
                     c.DeleteInDatabase();
                     continue;
                 }
-                    
+
                 c.PersistenceString = "";
                 c.SaveToDatabase();
                 MessageBox.Show("Control state cleared, we will now try to reload it");
@@ -97,8 +97,8 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
             }
 
             ControlDictionary.Add(c,instance);
-            this.Controls.Add(instance);
-                
+            Controls.Add(instance);
+
             //let people know what the edit state is
             _editModeFunctionality.EditMode = btnEditMode.Checked;
         }
@@ -127,14 +127,11 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 
     private void btnAddDashboardControl_Click(object sender, EventArgs e)
     {
-        var type = cbxAvailableControls.SelectedItem as Type;
-
-        if(type == null)
+        if(cbxAvailableControls.SelectedItem is not Type type)
             return;
 
-        DashboardableControlHostPanel control;
-        var db = _controlFactory.Create(_layout, type, out control);
-        this.Controls.Add(control);
+        var db = _controlFactory.Create(_layout, type, out var control);
+        Controls.Add(control);
         ControlDictionary.Add(db,control);
         Controls.Add(control);
         control.BringToFront();
@@ -147,5 +144,5 @@ public partial class DashboardLayoutUI : DashboardLayoutUI_Design
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DashboardLayoutUI_Design, UserControl>))]
 public abstract class DashboardLayoutUI_Design:RDMPSingleDatabaseObjectControl<DashboardLayout>
 {
-        
+
 }

@@ -14,7 +14,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Tests.Validation.Constraints.Secondary;
 
 [Category("Unit")]
-class BoundDateTest
+internal class BoundDateTest
 {
     [Test]
     public void Validate_IsValid_Succeeds()
@@ -64,7 +64,7 @@ class BoundDateTest
 
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
-            
+
         var result = CallValidateOnInvalidData("admission_date", b);
 
         if(result == null)
@@ -87,19 +87,19 @@ class BoundDateTest
 
         var cols = new object[] { DBNull.Value};
 
-        var names= new string[]{"appointmentDate"};
+        var names = new string[]{"appointmentDate"};
 
         b.Validate(null,cols,names);
     }
 
 
-    private ValidationFailure CallValidateOnValidData(string targetProperty, BoundDate b)
+    private static ValidationFailure CallValidateOnValidData(string targetProperty, BoundDate b)
     {
         var d = TestConstants.AdmissionDateOccursAfterDob;
         return CallValidate(targetProperty, b, d);
     }
 
-    private ValidationFailure CallValidateOnInvalidData(string targetProperty, BoundDate b)
+    private static ValidationFailure CallValidateOnInvalidData(string targetProperty, BoundDate b)
     {
         var d = TestConstants.AdmissionDateOccursBeforeDob;
         return CallValidate(targetProperty, b, d);
@@ -114,8 +114,7 @@ class BoundDateTest
         d.Keys.CopyTo(keys, 0);
         d.Values.CopyTo(vals, 0);
 
-        object o;
-        d.TryGetValue(targetProperty, out o);
+        d.TryGetValue(targetProperty, out var o);
 
         return b.Validate(o, vals, keys);
     }

@@ -57,10 +57,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          You must have either $a or $d
          ",Mandatory=true,DefaultValue="$c_$d")]
     public string TableNamingPattern { get; set; }
-        
+
     [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
     public bool DropTableIfLoadFails { get; set; }
-        
+
     [DemandsInitialization(DataTableUploadDestination.AlterTimeout_Description, DefaultValue = 300)]
     public int AlterTimeout { get; set; }
 
@@ -78,8 +78,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
     private bool _tableDidNotExistAtStartOfLoad;
     private bool _isTableAlreadyNamed;
-    DataTable _toProcess;
-        
+    private DataTable _toProcess;
+
     public ExecuteFullExtractionToDatabaseMSSql():base(false)
     {
 
@@ -105,7 +105,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination = PrepareDestination(job, _toProcess);
         OutputFile = _toProcess.TableName;
     }
-                
+
     protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
     {
         // empty batches are allowed when using batch/resume
@@ -123,10 +123,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         LinesWritten += toProcess.Rows.Count;
     }
-        
+
     private DataTableUploadDestination PrepareDestination(IDataLoadEventListener listener, DataTable toProcess)
     {
-        //see if the user has entered an extraction server/database 
+        //see if the user has entered an extraction server/database
         if (TargetDatabaseServer == null)
             throw new Exception("TargetDatabaseServer (the place you want to extract the project data to) property has not been set!");
 
@@ -181,7 +181,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
         _destination = new DataTableUploadDestination();
-            
+
         PrimeDestinationTypesBasedOnCatalogueTypes(listener,toProcess);
 
         _destination.AllowResizingColumnsAtUploadTime = true;
@@ -195,9 +195,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private void PrimeDestinationTypesBasedOnCatalogueTypes(IDataLoadEventListener listener, DataTable toProcess)
     { 
         //if the extraction is of a Catalogue
-        var datasetCommand = _request as IExtractDatasetCommand;
-            
-        if(datasetCommand == null)
+
+        if(_request is not IExtractDatasetCommand datasetCommand)
             return;
 
         //for every extractable column in the Catalogue
@@ -219,7 +218,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Did not copy Types for ExtractionInformation {extractionInformation} (ID={extractionInformation.ID}) because it had no associated ColumnInfo"));
                 continue;
             }
-                    
+
             if(extractionInformation.IsProperTransform())
             {
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Did not copy Types for ExtractionInformation {extractionInformation} (ID={extractionInformation.ID}) because it is a Transform"));
@@ -227,14 +226,14 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             }
 
             var destinationType = GetDestinationDatabaseType(extractionInformation);
-                
-            //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
+
+            //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a
             //transform but it is a good starting point.  We don't want to create a varchar(10) column in the destination if the origin dataset (Catalogue) is a varchar(100)
             //since it will just confuse the user.  Bear in mind these data types can be degraded later by the destination
             var columnName = extractionInformation.Alias ?? catItem.ColumnInfo.GetRuntimeName();
             var addedType = _destination.AddExplicitWriteType(columnName, destinationType);
             addedType.IsPrimaryKey = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
-                
+
             //if user wants to copy collation types and the destination server is the same type as the origin server
             if (CopyCollations && _destinationDatabase.Server.DatabaseType == catItem.ColumnInfo.TableInfo.DatabaseType)
                 addedType.Collation = catItem.ColumnInfo.Collation;
@@ -277,7 +276,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             tblName = SanitizeNameForDatabase(_toProcess.TableName);
 
-            if (!String.IsNullOrWhiteSpace(suffix))
+            if (!string.IsNullOrWhiteSpace(suffix))
                 tblName += $"_{suffix}";
 
             return tblName;
@@ -290,10 +289,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
         tblName = tblName.Replace("$c", _request.Configuration.Name);
 
-        if (_request is ExtractDatasetCommand)
+        if (_request is ExtractDatasetCommand command)
         {
-            tblName = tblName.Replace("$d", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Name);
-            tblName = tblName.Replace("$a", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Acronym);
+            tblName = tblName.Replace("$d", command.DatasetBundle.DataSet.Catalogue.Name);
+            tblName = tblName.Replace("$a", command.DatasetBundle.DataSet.Catalogue.Acronym);
         }
 
         if (_request is ExtractGlobalsCommand)
@@ -303,7 +302,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
         var cachedGetTableNameAnswer = SanitizeNameForDatabase(tblName);
-        if (!String.IsNullOrWhiteSpace(suffix))
+        if (!string.IsNullOrWhiteSpace(suffix))
             cachedGetTableNameAnswer += $"_{suffix}";
 
         return cachedGetTableNameAnswer;
@@ -323,7 +322,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         //otherwise, fetch and cache answer
         var cachedGetTableNameAnswer = syntax.GetSensibleEntityNameFromString(tblName);
 
-        if (String.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
+        if (string.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
             throw new Exception(
                 $"TableNamingPattern '{TableNamingPattern}' resulted in an empty string for request '{_request}'");
 
@@ -342,7 +341,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 if(_destinationDatabase != null)
                 {
                     var tbl = _destinationDatabase.ExpectTable(_toProcess.TableName);
-                        
+
                     if(tbl.Exists())
                     {
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -353,8 +352,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 }
             }
 
-            if(pipelineFailureExceptionIfAny == null 
-               && _request.IsBatchResume 
+            if(pipelineFailureExceptionIfAny == null
+               && _request.IsBatchResume
                && MakeFinalTableDistinctWhenBatchResuming
                && _destinationDatabase != null
                && _toProcess != null)
@@ -380,14 +379,13 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
             if (result != null && _toProcess != null)
-                result.CompleteAudit(this.GetType(), GetDestinationDescription(), TableLoadInfo.Inserts, _request.IsBatchResume, pipelineFailureExceptionIfAny != null);
+                result.CompleteAudit(GetType(), GetDestinationDescription(), TableLoadInfo.Inserts, _request.IsBatchResume, pipelineFailureExceptionIfAny != null);
         }
     }
 
     public override void Abort(IDataLoadEventListener listener)
     {
-        if(_destination != null)
-            _destination.Abort(listener);
+        _destination?.Abort(listener);
     }
     protected override void PreInitializeImpl(IExtractCommand value, IDataLoadEventListener listener)
     {
@@ -413,11 +411,11 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         return $"{TargetDatabaseServer.ID}|{dbName}|{tblName}";
     }
 
-    public DestinationType GetDestinationType()
+    public static DestinationType GetDestinationType()
     {
         return DestinationType.Database;
     }
-        
+
     public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
     {
         return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
@@ -430,7 +428,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
     }
-        
+
     protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory, IExtractionConfiguration configuration,IDataLoadEventListener listener, out int linesWritten,
         out string destinationDescription)
     {
@@ -453,13 +451,13 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     sw.Start();
                     da.Fill(dt);
                 }
-                
+
                 dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
                 linesWritten = dt.Rows.Count;
 
                 var destinationDb = GetDestinationDatabase(listener);
                 var tbl = destinationDb.ExpectTable(dt.TableName);
-                
+
                 if(tbl.Exists())
                     tbl.Drop();
 
@@ -469,7 +467,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
     }
 
-        
+
     protected override void TryExtractLookupTableImpl(BundledLookupTable lookup, DirectoryInfo lookupDir,
         IExtractionConfiguration requestConfiguration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
     {
@@ -502,7 +500,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         var databaseName = GetDatabaseName();
 
-        var discoveredServer = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
+        var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
 
         var db = discoveredServer.ExpectDatabase(databaseName);
         if(!db.Exists())
@@ -538,7 +536,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         if (TargetDatabaseServer == null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Target database server property has not been set (This component does not know where to extract data to!), " +
-                                                         "to fix this you must edit the pipeline and choose an ExternalDatabaseServer to extract to)", 
+                                                         "to fix this you must edit the pipeline and choose an ExternalDatabaseServer to extract to)",
                 CheckResult.Fail));
             return;
         }
@@ -580,9 +578,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         if (TableNamingPattern != null && TableNamingPattern.Contains("$a"))
         {
-            var dsRequest = _request as ExtractDatasetCommand;
-
-            if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+            if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a", CheckResult.Fail));
         }
@@ -591,7 +587,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         try
         {
-            var server = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
+            var server = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
             var database = _destinationDatabase = server.ExpectDatabase(GetDatabaseName());
 
             if (database.Exists())
@@ -623,13 +619,13 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not determine table name", CheckResult.Fail,ex));
                     return;
                 }
-                    
+
                 // if the expected table exists and we are not doing a batch resume
                 if(tables.Any(t=>t.GetRuntimeName().Equals(tableName))  && !_request.IsBatchResume)
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase, tableName,database));
                 }
-                    
+
             }
             else
                 notifier.OnCheckPerformed(new CheckEventArgs($"Confirmed that database {database} is empty of tables", CheckResult.Success));

@@ -61,8 +61,8 @@ public class DashboardObjectUse: ReferenceOtherObjectDatabaseEntity
             {"ReferencedObjectID",objectToSave.ID},
             {"ReferencedObjectType",objectToSave.GetType().Name},
             {"ReferencedObjectRepositoryType",objectToSave.Repository.GetType().Name},
-            {"DashboardControl_ID",parentControl.ID},
-                
+            {"DashboardControl_ID",parentControl.ID}
+
         });
     }
 }

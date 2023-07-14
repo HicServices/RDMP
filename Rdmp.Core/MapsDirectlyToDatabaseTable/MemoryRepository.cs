@@ -28,10 +28,9 @@ public class MemoryRepository : IRepository
     /// <summary>
     /// This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
     /// </summary>
-    protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects = new ();
-
-
-    readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
+    protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects =
+        new();
+    private readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new();
 
     public event EventHandler<SaveEventArgs> Saving;
     public event EventHandler<IMapsDirectlyToDatabaseTableEventArgs> Inserting;
@@ -80,18 +79,12 @@ public class MemoryRepository : IRepository
         var type = underlying ?? prop.PropertyType;
 
         if (type.IsEnum)
-        {
-            if ( strVal != null)
-                prop.SetValue(toCreate, Enum.Parse(type, strVal));   
-            else
-            {
-                prop.SetValue(toCreate, Enum.ToObject(type, val));
-            }
-        }
+            prop.SetValue(toCreate, strVal != null ? Enum.Parse(type, strVal) : Enum.ToObject(type, val));
         else
             prop.SetValue(toCreate, Convert.ChangeType(val, type));
     }
-    void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
+
+    private void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         var changes = (PropertyChangedExtendedEventArgs)e;
         var onObject = (IMapsDirectlyToDatabaseTable)sender;
@@ -114,7 +107,7 @@ public class MemoryRepository : IRepository
     public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
     {
         if (id == 0)
-            return default(T);
+            return default;
 
         try
         {
@@ -222,12 +215,11 @@ public class MemoryRepository : IRepository
     {
         //Mark any cached data as out of date
         var inject = mapsDirectlyToDatabaseTable as IInjectKnown;
-        if (inject != null)
-            inject.ClearAllInjections();
+        inject?.ClearAllInjections();
 
         if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
             return;
-            
+
         var type = mapsDirectlyToDatabaseTable.GetType();
 
         foreach (var e in _propertyChanges[mapsDirectlyToDatabaseTable].ToArray()) //call ToArray to avoid cyclical events on SetValue
@@ -245,7 +237,7 @@ public class MemoryRepository : IRepository
     {
         //if we don't know about it then it was deleted
         if(!Objects.ContainsKey(mapsDirectlyToDatabaseTable))
-            return new RevertableObjectReport(){Evaluation = ChangeDescription.DatabaseCopyWasDeleted};
+            return new RevertableObjectReport {Evaluation = ChangeDescription.DatabaseCopyWasDeleted};
 
         //if it has no changes (since a save)
         if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
@@ -290,8 +282,8 @@ public class MemoryRepository : IRepository
     {
         return GetType().Assembly.GetName().Version;
     }
-        
-        
+
+
     public bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable
     {
         return Objects.Keys.OfType<T>().Any(o => o.ID == allegedParent);
@@ -309,7 +301,7 @@ public class MemoryRepository : IRepository
 
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type objectType, int objectId)
     {
-        return Objects.Keys.SingleOrDefault(o => o.GetType() == objectType && objectId == o.ID) 
+        return Objects.Keys.SingleOrDefault(o => o.GetType() == objectType && objectId == o.ID)
                ?? throw new KeyNotFoundException($"Could not find object of Type '{objectType}' with ID '{objectId}' in {nameof(MemoryRepository)}");
     }
 
@@ -356,7 +348,7 @@ public class MemoryRepository : IRepository
     public Type[] GetCompatibleTypes()
     {
         return
-            this.GetType().Assembly.GetTypes()
+            GetType().Assembly.GetTypes()
                 .Where(
                     t =>
                         typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t)

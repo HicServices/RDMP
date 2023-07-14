@@ -43,14 +43,13 @@ internal class NightmareDatasets : DataGenerator
         _databaseNameRuntime = _db.GetRuntimeName();
     }
 
-    BucketList<Catalogue> Catalogues = new ();
-    BucketList<ExtractableDataSet> ExtractableDatasets = new ();
-    BucketList<Project> Projects = new ();
-    BucketList<TableInfo> Tables = new ();
-    int TablesCount = 0;
-
-    BucketList<ColumnInfo> Columns = new();
-    int ColumnsCount = 0;
+    private BucketList<Catalogue> Catalogues = new();
+    private BucketList<ExtractableDataSet> ExtractableDatasets = new();
+    private BucketList<Project> Projects = new();
+    private BucketList<TableInfo> Tables = new();
+    private int TablesCount = 0;
+    private BucketList<ColumnInfo> Columns = new();
+    private int ColumnsCount = 0;
 
     /// <summary>
     /// <para>Generates a lot of metadata in the RDMP platform databases.  This is for testing
@@ -76,8 +75,10 @@ internal class NightmareDatasets : DataGenerator
         // Based on DLS figures see: https://github.com/HicServices/RDMP/issues/1224
         for (var i = 0; i < 500 * Factor; i++)
         {
-            var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {GetRandomGPCode(r)}");
-            cata.Description = GetRandomSentence(r);
+            var cata = new Catalogue(_repos.CatalogueRepository, $"Catalogue {GetRandomGPCode(r)}")
+ {
+     Description = GetRandomSentence(r)
+ };
             cata.SaveToDatabase();
             Catalogues.Add(1,cata);
 
@@ -96,8 +97,10 @@ internal class NightmareDatasets : DataGenerator
                 // = 60%  of columns are extractable
                 if (r.Next(10) < 6)
                 {
-                    var ei = new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name);
-                    ei.ExtractionCategory = extractionCategories.GetRandom(r);
+                    var ei = new ExtractionInformation(_repos.CatalogueRepository, ci, col, col.Name)
+                        {
+                            ExtractionCategory = extractionCategories.GetRandom(r)
+                        };
 
                     if (first)
                     {
@@ -139,9 +142,11 @@ internal class NightmareDatasets : DataGenerator
         for (var i = 0; i < 200 * Factor; i++)
         {
             // each project
-            var p = new Project(_repos.DataExportRepository, $"Project {i}");
-            p.ProjectNumber = r.Next(50) == 0 ? 5:i;  // it's ok for some projects to have the same number
-            p.ExtractionDirectory = extractionDir;
+            var p = new Project(_repos.DataExportRepository, $"Project {i}")
+            {
+                ProjectNumber = r.Next(50) == 0 ? 5:i, // it's ok for some projects to have the same number
+                ExtractionDirectory = extractionDir
+            };
             p.SaveToDatabase();
             Projects.Add(1, p);
 

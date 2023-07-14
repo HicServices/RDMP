@@ -71,7 +71,7 @@ namespace ResearchDataManagementPlatform.Menus;
 public partial class RDMPTopMenuStripUI : RDMPUserControl
 {
     private WindowManager _windowManager;
-        
+
     private SaveMenuItem _saveToolStripMenuItem;
     private AtomicCommandUIFactory _atomicCommandUIFactory;
 
@@ -105,7 +105,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var exeDir = UsefulStuff.GetExecutableDirectory();
         AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
 
-        // also add yaml files from wherever they got their original yaml file 
+        // also add yaml files from wherever they got their original yaml file
         if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory.FullName))
         {
             AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
@@ -121,7 +121,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             if (!ConnectionStringsYamlFile.TryLoadFrom(yaml, out var connectionStrings))
                 continue;
 
-            var isSameAsCurrent = origYamlFile?.FileLoaded == null ? false : yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
+            var isSameAsCurrent = origYamlFile?.FileLoaded != null && yaml.FullName.Equals(origYamlFile.FileLoaded.FullName);
 
             var launchNew = new ToolStripMenuItem(connectionStrings.Name ?? yaml.Name, null, (s, e) => { LaunchNew(connectionStrings); })
             {
@@ -142,14 +142,14 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         }
     }
 
-    private void SwitchTo(ConnectionStringsYamlFile yaml)
+    private static void SwitchTo(ConnectionStringsYamlFile yaml)
     {
         LaunchNew(yaml);
 
         Application.Exit();
     }
 
-    private void LaunchNew(ConnectionStringsYamlFile yaml)
+    private static void LaunchNew(ConnectionStringsYamlFile yaml)
     {
         var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, Process.GetCurrentProcess().ProcessName);
         if(yaml == null)
@@ -184,7 +184,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         var cmd = new ExecuteCommandViewLogs(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
         cmd.Execute();
     }
-        
+
 
     private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -195,8 +195,10 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void dITAExtractionToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        var f = new Form();
-        f.Text = "DITA Extraction of Catalogue Metadata";
+        var f = new Form
+        {
+            Text = "DITA Extraction of Catalogue Metadata"
+        };
         var d = new DitaExtractorUI();
         d.SetItemActivator(Activator);
         f.Width = d.Width + 10;
@@ -209,7 +211,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     {
         new ExecuteCommandGenerateTestDataUI(Activator).Execute();
     }
-        
+
     private void showPerformanceCounterToolStripMenuItem_Click(object sender, EventArgs e)
     {
         new PerformanceCounterUI().Show();
@@ -344,23 +346,21 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         };
     }
 
-    void WindowFactory_TabChanged(object sender, IDockContent newTab)
+    private void WindowFactory_TabChanged(object sender, IDockContent newTab)
     {
-        closeToolStripMenuItem.Enabled = newTab != null && !(newTab is PersistableToolboxDockContent);
+        closeToolStripMenuItem.Enabled = newTab != null && newTab is not PersistableToolboxDockContent;
         showHelpToolStripMenuItem.Enabled = newTab is RDMPSingleControlTab;
 
-        var singleObjectControlTab = newTab as RDMPSingleControlTab;
-        if (singleObjectControlTab == null)
+        if (newTab is not RDMPSingleControlTab singleObjectControlTab)
         {
             _saveToolStripMenuItem.Saveable = null;
             return;
         }
 
         var saveable = singleObjectControlTab.Control as ISaveableUI;
-        var singleObject = singleObjectControlTab.Control as IRDMPSingleDatabaseObjectControl;
 
         //if user wants to emphasise on tab change and there's an object we can emphasise associated with the control
-        if (singleObject != null && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
+        if (singleObjectControlTab.Control is IRDMPSingleDatabaseObjectControl singleObject && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
         {
             var isCicChild = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(singleObject.DatabaseObject)?.Parents?.Any(p=>p is CohortIdentificationConfiguration);
 
@@ -371,13 +371,13 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
                 Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
                 _windowManager.Navigation.Resume();
             }
-                    
+
         }
                 
 
         _saveToolStripMenuItem.Saveable = saveable;
     }
-        
+
     /// <summary>
     /// Updates the enabled status (greyed out) of the Forward/Back menu items (includes the use of keyobard shortcuts)
     /// </summary>
@@ -386,7 +386,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         navigateBackwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanBack();
         navigateForwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanForward();
     }
-        
+
 
     private void codeGenerationToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -422,7 +422,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         Activator.SelectAnythingThen(new DialogArgs
         {
             WindowTitle = "Open"
-        }, (o) => Activator.WindowArranger.SetupEditAnything(this, o));
+        }, o => Activator.WindowArranger.SetupEditAnything(this, o));
     }
 
     private void findToolStripMenuItem_Click(object sender, EventArgs e)
@@ -434,7 +434,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             IsFind = true,
             TaskDescription = "Enter the name of an object or part of the name or the dataset/project it is in."
 
-        }, (o) => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
+        }, o => Activator.RequestItemEmphasis(this, new EmphasiseRequest(o)));
     }
 
     private void closeToolStripMenuItem_Click(object sender, EventArgs e)

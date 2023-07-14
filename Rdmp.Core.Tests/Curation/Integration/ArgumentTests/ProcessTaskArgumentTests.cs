@@ -29,21 +29,17 @@ public class ProcessTaskArgumentTests:DatabaseTests
         var tableInfoName = $"TableInfoFor_{new StackTrace().GetFrame(0).GetMethod().Name}";
 
         var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
-            
-        if(toCleanup != null)
-            toCleanup.DeleteInDatabase();
+
+        toCleanup?.DeleteInDatabase();
 
         var loadMetadata = new LoadMetadata(CatalogueRepository);
 
         try
-        { 
+        {
             var pt = new ProcessTask(CatalogueRepository, loadMetadata, LoadStage.AdjustStaging);
             var pta = new ProcessTaskArgument(CatalogueRepository, pt);
 
-            if(declareAsInterface)
-                pta.SetType(typeof(ITableInfo));
-            else
-                pta.SetType(typeof (TableInfo));
+            pta.SetType(declareAsInterface ? typeof(ITableInfo) : typeof(TableInfo));
 
             var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
             try
@@ -75,18 +71,16 @@ public class ProcessTaskArgumentTests:DatabaseTests
     {
         var methodName = new StackTrace().GetFrame(0).GetMethod().Name;
         var tableInfoName = $"TableInfoFor_{methodName}";
-        var preLoadDiscardedColumnName = $"PreLoadDiscardedColumnFor_{methodName}"; 
+        var preLoadDiscardedColumnName = $"PreLoadDiscardedColumnFor_{methodName}";
 
         var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
         var toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
             .SingleOrDefault(c => c.RuntimeColumnName.Equals(preLoadDiscardedColumnName));
             
         //must delete pre load discarded first
-        if (toCleanupCol != null)
-            toCleanupCol.DeleteInDatabase();
+        toCleanupCol?.DeleteInDatabase();
 
-        if (toCleanup != null)
-            toCleanup.DeleteInDatabase();
+        toCleanup?.DeleteInDatabase();
 
         var lmd = new LoadMetadata(CatalogueRepository);
 
@@ -132,8 +126,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
-        if (toCleanup != null)
-            toCleanup.DeleteInDatabase();
+        toCleanup?.DeleteInDatabase();
 
         var lmd = new LoadMetadata(CatalogueRepository);
 
@@ -146,7 +139,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
             pta.SetType(typeof(TableInfo));
 
             var tableInfo = new TableInfo(CatalogueRepository, tableInfoName);
-              
+
             //Heres the TableInfo object
             pta.SetValue(tableInfo);
             pta.SaveToDatabase();
@@ -174,8 +167,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
 
-        if (toCleanup != null)
-            toCleanup.DeleteInDatabase();
+        toCleanup?.DeleteInDatabase();
 
         var lmd = new LoadMetadata(CatalogueRepository);
 
@@ -200,7 +192,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
         }
         finally
         {
-                
+
             lmd.DeleteInDatabase();
         }
     }
@@ -239,8 +231,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
                 processTask.DeleteInDatabase();
             }
 
-            if (lmd != null)
-                lmd.DeleteInDatabase();
+            lmd?.DeleteInDatabase();
         }
     }
 
@@ -281,15 +272,15 @@ public class ProcessTaskArgumentTests:DatabaseTests
         //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
         var f = new ArgumentFactory();
         Assert.True(
-            f.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
+            ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
 
         //new pc should have no arguments
         Assert.That(pc.GetAllArguments(), Is.Empty);
 
         //we create them (the root and nested ones!)
         var args = pc.CreateArgumentsForClassIfNotExists<BasicDataReleaseDestination>();
-            
-        //and get all arguments / create arguments for class should have handled that 
+
+        //and get all arguments / create arguments for class should have handled that
         Assert.That(pc.GetAllArguments().Any());
 
         var match = args.Single(a => a.Name == "ReleaseSettings.DeleteFilesOnSuccess");
@@ -299,7 +290,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
         var useCase = ReleaseUseCase.DesignTime();
 
         var factory = new DataFlowPipelineEngineFactory(useCase,RepositoryLocator.CatalogueRepository.MEF);
-        var destInstance = factory.CreateDestinationIfExists(pipe);
+        var destInstance = DataFlowPipelineEngineFactory.CreateDestinationIfExists(pipe);
 
         Assert.AreEqual(true, ((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess);
     }
@@ -376,22 +367,26 @@ public class ProcessTaskArgumentTests:DatabaseTests
 
         try
         {
-            var arg = new PipelineComponentArgument(CatalogueRepository, pc);
-            arg.Name = "MyNames";
+            var arg = new PipelineComponentArgument(CatalogueRepository, pc)
+            {
+                Name = "MyNames"
+            };
             arg.SetType(typeof(Dictionary<TableInfo,string>));
             arg.SaveToDatabase();
-                
+
             Assert.AreEqual(typeof(Dictionary<TableInfo, string>), arg.GetConcreteSystemType());
 
             var ti1 = new TableInfo(CatalogueRepository, "test1");
             var ti2 = new TableInfo(CatalogueRepository, "test2");
 
-            var val = new Dictionary<TableInfo, string>();
-            val.Add(ti1,"Fish");
-            val.Add(ti2,"Fish");
-            
+            var val = new Dictionary<TableInfo, string>
+            {
+                { ti1, "Fish" },
+                { ti2, "Fish" }
+            };
+
             arg.SetValue(val);
-            
+
             arg.SaveToDatabase();
 
             var val2 = (Dictionary<TableInfo, string>) arg.GetValueAsSystemType();

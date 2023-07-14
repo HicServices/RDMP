@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data.Cache;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-class RunCacheWindow : RunEngineWindow<CacheOptions>
+internal class RunCacheWindow : RunEngineWindow<CacheOptions>
 {
     public RunCacheWindow(IBasicActivateItems activator, ICacheProgress cp)
         : base(activator, () => GetCommand(cp))
@@ -19,6 +19,6 @@ class RunCacheWindow : RunEngineWindow<CacheOptions>
 
     private static CacheOptions GetCommand(ICacheProgress cp)
     {
-        return new CacheOptions() { CacheProgress = cp.ID.ToString() };
+        return new CacheOptions { CacheProgress = cp.ID.ToString() };
     }
 }

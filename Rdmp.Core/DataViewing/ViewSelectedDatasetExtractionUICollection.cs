@@ -17,11 +17,11 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
 
-class ViewSelectedDatasetExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     private ExtractDatasetCommand _request;
 
-    ISelectedDataSets SelectedDataset => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();
+    private ISelectedDataSets SelectedDataset => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();
 
     public ViewSelectedDatasetExtractionUICollection()
     {
@@ -35,8 +35,8 @@ class ViewSelectedDatasetExtractionUICollection : PersistableObjectCollection, I
     public string GetSql()
     {
         BuildRequest();
-            
-        //get the SQL from the query builder 
+
+        //get the SQL from the query builder
         return _request.QueryBuilder.SQL;
     }
 

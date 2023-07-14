@@ -26,12 +26,12 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     private readonly TableInfo[] _loadTables;
     private readonly HICDatabaseConfiguration _config;
     private string _description;
-        
+
     public string ErrorDescription { get; private set; }
 
     private Dictionary<DiscoveredDatabase, TableInfo[]> _liveDatabaseDictionary;
 
-    public readonly List<LoadDiagramDatabaseNode> Children = new List<LoadDiagramDatabaseNode>();
+    public readonly List<LoadDiagramDatabaseNode> Children = new();
 
     public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config)
         :base(database.Server.Name,database.Server.DatabaseType, loadTables)
@@ -43,33 +43,26 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
         _config = config;
         var serverName = database.Server.Name;
 
-        switch (bubble)
+        _description = bubble switch
         {
-            case LoadBubble.Raw:
-                _description = $"RAW Server:{serverName}";
-                break;
-            case LoadBubble.Staging:
-                _description = $"STAGING Server:{serverName}";
-                break;
-            case LoadBubble.Live:
-                _description = $"LIVE Server:{serverName}";
-                break;
-            default:
-                throw new ArgumentOutOfRangeException("bubble");
-        }
+            LoadBubble.Raw => $"RAW Server:{serverName}",
+            LoadBubble.Staging => $"STAGING Server:{serverName}",
+            LoadBubble.Live => $"LIVE Server:{serverName}",
+            _ => throw new ArgumentOutOfRangeException(nameof(bubble))
+        };
 
         //Live can have multiple databases (for lookups)
         if (_bubble == LoadBubble.Live)
         {
-            var servers = loadTables.Select(t => t.Server).Distinct().ToArray();
+            var servers = loadTables.Select(static t => t.Server).Distinct().ToArray();
             if (servers.Length > 1)
             {
                 _description = $"Ambiguous LIVE Servers:{string.Join(",", servers)}";
                 ErrorDescription =
-                    $"The TableInfo collection that underly the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
+                    $"The TableInfo collection that underlie the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
             }
 
-            var databases = _loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
+            var databases = _loadTables.Select(static t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
 
             _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 
@@ -94,7 +87,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     {
         return _description;
     }
-        
+
     public void DiscoverState()
     {
         foreach (var db in Children)
@@ -108,36 +101,29 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((LoadDiagramServerNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            var hashCode = base.GetHashCode();
-            hashCode = (hashCode*397) ^ (int) _bubble;
-            hashCode = (hashCode*397) ^ (_database != null ? _database.GetHashCode() : 0);
-            return hashCode;
-        }
+        return HashCode.Combine(base.GetHashCode(), _bubble, _database);
     }
 
     public string WhatIsThis()
     {
-        switch (_bubble)
+        return _bubble switch
         {
-            case LoadBubble.Raw:
-                return "Depicts what server will be used for the RAW database and the tables/columns that are anticipated/found in that server currently";
-            case LoadBubble.Staging:
-                return "Depicts what server will be used for the STAGING database and the tables/columns that are anticipated/found in that server currently";
-            case LoadBubble.Live:
-                return "Depicts the current live server that the load will target (based on which Catalogues are associated with the load)";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            LoadBubble.Raw =>
+                "Depicts what server will be used for the RAW database and the tables/columns that are anticipated/found in that server currently",
+            LoadBubble.Staging =>
+                "Depicts what server will be used for the STAGING database and the tables/columns that are anticipated/found in that server currently",
+            LoadBubble.Live =>
+                "Depicts the current live server that the load will target (based on which Catalogues are associated with the load)",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     #endregion

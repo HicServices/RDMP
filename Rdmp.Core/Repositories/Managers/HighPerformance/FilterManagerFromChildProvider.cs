@@ -18,12 +18,12 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 /// AggregateConfigurations 
 /// 
 /// </summary>
-class FilterManagerFromChildProvider: AggregateFilterManager
+internal class FilterManagerFromChildProvider: AggregateFilterManager
 {
     /// <summary>
     /// Where ID key is the ID of the parent and the Value List is all the subcontainers.  If there is no key there are no subcontainers.
     /// </summary>
-    readonly Dictionary<int, List<AggregateFilterContainer>> _subcontainers = new Dictionary<int, List<AggregateFilterContainer>>();
+    private readonly Dictionary<int, List<AggregateFilterContainer>> _subcontainers = new();
 
     private Dictionary<int, List<AggregateFilter>> _containersToFilters;
 
@@ -34,7 +34,7 @@ class FilterManagerFromChildProvider: AggregateFilterManager
             childProvider.AllAggregateFilters.Where(f=>f.FilterContainer_ID.HasValue)
                 .GroupBy(f=>f.FilterContainer_ID.Value)
                 .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
-            
+
         var server = repository.DiscoveredServer;
         using (var con = repository.GetConnection())
         {
@@ -57,11 +57,11 @@ class FilterManagerFromChildProvider: AggregateFilterManager
     public override IContainer[] GetSubContainers(IContainer container)
     {
         return _subcontainers.TryGetValue(container.ID, out var result) ? result.ToArray() :
-            new AggregateFilterContainer[0];
+            Array.Empty<AggregateFilterContainer>();
     }
 
     public override IFilter[] GetFilters(IContainer container)
     {
-        return _containersToFilters.TryGetValue(container.ID,out var result) ? result.ToArray() : new AggregateFilter[0];
+        return _containersToFilters.TryGetValue(container.ID,out var result) ? result.ToArray() : Array.Empty<AggregateFilter>();
     }
 }

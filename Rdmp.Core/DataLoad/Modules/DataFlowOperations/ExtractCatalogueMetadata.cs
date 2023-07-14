@@ -40,21 +40,17 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
          THIS WILL OVERRIDE THE TableNamingPattern at the destination!
          ", Mandatory = true, DefaultValue = "$d")]
     public string MetadataNamingPattern { get; set; }
-        
+
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         toProcess.TableName = GetTableName();
         toProcess.ExtendedProperties.Add("ProperlyNamed", true);
 
-        var extractDatasetCommand = _request as ExtractDatasetCommand;
-        if (extractDatasetCommand != null)
+        if (_request is ExtractDatasetCommand extractDatasetCommand)
         {
             var catalogue = extractDatasetCommand.Catalogue;
-            
-            var sourceFolder = _request.GetExtractionDirectory();
-            if (sourceFolder == null)
-                throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
 
+            var sourceFolder = _request.GetExtractionDirectory() ?? throw new Exception("Could not find Source Folder. Does the project have an Extraction Directory defined?");
             var outputFolder = sourceFolder.Parent.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
             var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, $"{toProcess.TableName}.sd"));
 
@@ -76,10 +72,10 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
         tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
         tblName = tblName.Replace("$c", _request.Configuration.Name);
 
-        if (_request is ExtractDatasetCommand)
+        if (_request is ExtractDatasetCommand command)
         {
-            tblName = tblName.Replace("$d", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Name);
-            tblName = tblName.Replace("$a", ((ExtractDatasetCommand)_request).DatasetBundle.DataSet.Catalogue.Acronym);
+            tblName = tblName.Replace("$d", command.DatasetBundle.DataSet.Catalogue.Name);
+            tblName = tblName.Replace("$a", command.DatasetBundle.DataSet.Catalogue.Acronym);
         }
 
         if (_request is ExtractGlobalsCommand)
@@ -105,9 +101,7 @@ public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPi
     {
         if (MetadataNamingPattern != null && MetadataNamingPattern.Contains("$a"))
         {
-            var dsRequest = _request as ExtractDatasetCommand;
-
-            if (dsRequest != null && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+            if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but MetadataNamingPattern contains $a", CheckResult.Fail));
         }

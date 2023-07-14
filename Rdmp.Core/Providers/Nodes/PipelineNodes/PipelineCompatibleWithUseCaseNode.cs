@@ -13,7 +13,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 
 /// <summary>
-/// This class is a wrapper for a <see cref="Pipeline"/> that has been found to be compatible with a given <see cref="PipelineUseCase"/> (in terms of the source / 
+/// This class is a wrapper for a <see cref="Pipeline"/> that has been found to be compatible with a given <see cref="PipelineUseCase"/> (in terms of the source /
 /// destination components and flow type etc).
 /// 
 /// <para>It is <see cref="SpontaneousObject"/> only so it appears under Ctrl+F window... not a pattern we want to repeat.</para>
@@ -55,14 +55,14 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
     #region Equality
     protected bool Equals(PipelineCompatibleWithUseCaseNode other)
     {
-        return _useCaseType.Equals(other._useCaseType) && Pipeline.Equals(other.Pipeline);
+        return _useCaseType == other._useCaseType && Pipeline.Equals(other.Pipeline);
     }
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((PipelineCompatibleWithUseCaseNode) obj);
     }
 

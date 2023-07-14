@@ -86,7 +86,7 @@ public sealed class ProcessTaskArgument : Argument
         {
 
             //if the import is into a repository other than the master original repository
-            if(!shareManager.IsExportedObject(this.ProcessTask.LoadMetadata))
+            if(!shareManager.IsExportedObject(ProcessTask.LoadMetadata))
             {
                 //and we are a reference type e.g. to a ColumnInfo or something
                 var t = GetConcreteSystemType();
@@ -120,7 +120,7 @@ public sealed class ProcessTaskArgument : Argument
     public static IArgument[] CreateArgumentsForClassIfNotExists<T>(IProcessTask parent)
     {
         var argFactory = new ArgumentFactory();
-        return argFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(
+        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(
                 
                 //tell it how to create new instances of us related to parent
                 parent,

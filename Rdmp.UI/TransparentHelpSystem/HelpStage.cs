@@ -104,7 +104,7 @@ public class HelpStage
         var textToShow = HelpText;
 
         if (HelpText.Length > 47)
-            textToShow = $"{HelpText.Substring(0, 47)}...";
+            textToShow = $"{HelpText[..47]}...";
 
         return $"Help Stage:{textToShow}";
     }

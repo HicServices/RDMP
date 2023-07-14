@@ -34,7 +34,7 @@ internal delegate void RequestDeletionHandler(object sender);
 /// <para>Other secondary constraints include Regex patterns, standard regexes (See StandardRegexUI), referential integrity constraints etc.</para>
 /// 
 /// <para>Each constraint has a Consequence (Missing, Wrong, Invalidates Row) these are used to classify the state of each row in the Data Quality Engine when running validation.  For example
-/// if you have 2 cells in a row that are both failing validation, one with a consequence of Missing and one with a consequence of Wrong then the entire row is classified as 'Wrong' 
+/// if you have 2 cells in a row that are both failing validation, one with a consequence of Missing and one with a consequence of Wrong then the entire row is classified as 'Wrong'
 /// overall.</para>
 /// </summary>
 public partial class SecondaryConstraintUI : UserControl
@@ -51,11 +51,11 @@ public partial class SecondaryConstraintUI : UserControl
     /// <summary>
     /// A record of the writeable properties in the SecondaryConstraint you threw at it
     /// </summary>
-    PropertyInfo[] _requiredProperties;
+    private PropertyInfo[] _requiredProperties;
 
     internal event RequestDeletionHandler RequestDeletion;
 
-        
+
 
     private bool loadingComplete = false;
     public SecondaryConstraintUI(ICatalogueRepository repository,SecondaryConstraint secondaryConstriant, string[] otherColumns)
@@ -64,7 +64,7 @@ public partial class SecondaryConstraintUI : UserControl
         //the amount of additional space required to accomodate description labels
         var inflation = 0;
         _repository = repository;
-        this.SecondaryConstriant = secondaryConstriant;
+        SecondaryConstriant = secondaryConstriant;
             
         _otherColumns = otherColumns;
 
@@ -77,7 +77,7 @@ public partial class SecondaryConstraintUI : UserControl
         cbxConsequence.SelectedItem = secondaryConstriant.Consequence;
 
         //put the name of the secondary constraint into the header
-        this.lblType.Text = SecondaryConstriant.GetType().Name;
+        lblType.Text = SecondaryConstriant.GetType().Name;
 
         lblConsequence.Left = lblType.Right + 5;
         cbxConsequence.Left = lblConsequence.Right + 5;
@@ -86,38 +86,44 @@ public partial class SecondaryConstraintUI : UserControl
         _requiredProperties = secondaryConstriant.GetType().GetProperties().Where(p =>
             p.CanRead && p.CanWrite && p.GetSetMethod(true).IsPublic
 
-            && p.Name != "Name"//skip this one, it is Writeable in order to support XMLSerialization... 
+            && p.Name != "Name"//skip this one, it is Writeable in order to support XMLSerialization...
             && p.Name != "Consequence"//skip this one because it is dealt with explicitly
             && !p.IsDefined(typeof (HideOnValidationUI), true)
         ).ToArray();
 
         for (var i = 0; i < _requiredProperties.Length;i++ )
         {
-            var currentRowPanel = new Panel();
-            currentRowPanel.Bounds = new Rectangle(0,0,tableLayoutPanel1.Width,rowHeight);
-            currentRowPanel.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            currentRowPanel.Margin = Padding.Empty;
-                
+            var currentRowPanel = new Panel
+            {
+                Bounds = new Rectangle(0, 0, tableLayoutPanel1.Width, rowHeight),
+                Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
+                Margin = Padding.Empty
+            };
+
             tableLayoutPanel1.CellBorderStyle = TableLayoutPanelCellBorderStyle.Inset;
-                
+
             tableLayoutPanel1.Controls.Add(currentRowPanel,0,i+1);
-                
-                
-            var lblName = new Label();
-            lblName.Text = _requiredProperties[i].Name;
-            lblName.AutoSize = true;
-                
+
+
+            var lblName = new Label
+            {
+                Text = _requiredProperties[i].Name,
+                AutoSize = true
+            };
+
             var currentValue = _requiredProperties[i].GetValue(SecondaryConstriant, null);
 
 
             //Hard Typed properties - Bool
             if (_requiredProperties[i].PropertyType == typeof(bool))
             {
-                var boolControl = new CheckBox();
-                boolControl.Text = _requiredProperties[i].Name;
-                boolControl.Tag = i;
-                boolControl.Checked = (bool)currentValue;
-                    
+                var boolControl = new CheckBox
+                {
+                    Text = _requiredProperties[i].Name,
+                    Tag = i,
+                    Checked = (bool)currentValue
+                };
+
                 boolControl.CheckStateChanged += (s, e) => _requiredProperties[(int) boolControl.Tag].SetValue(SecondaryConstriant, boolControl.Checked,null);
                 currentRowPanel.Controls.Add(boolControl);
             }
@@ -131,25 +137,25 @@ public partial class SecondaryConstraintUI : UserControl
                 cbx.DropDownStyle = ComboBoxStyle.DropDownList;
                 cbx.DisplayMember = "Name";
                 cbx.Tag = i;
-                cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, cbx.SelectedItem is Type ? Activator.CreateInstance((Type)cbx.SelectedItem) : null);
+                cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, cbx.SelectedItem is Type type ? Activator.CreateInstance(type) : null);
                 cbx.Width = 200;
 
                 //The dropdown box is a list of Types but we are actually instantiating a value when user selects it (for XML Serialization).  Consequently we must now get the Type for selection purposes
                 if (currentValue != null)
                     cbx.SelectedItem = currentValue.GetType();
-                    
+
                 currentRowPanel.Controls.Add(lblName);
-                    
+
                 cbx.Left = lblName.Right + 5;
                 currentRowPanel.Controls.Add(cbx);
             }
             else
             {
-                
+
                 //it's a value control (basically anything that can be represented by text (i.e. not a boolean))
                 Control valueControl;
-                
-                //if it is expects a column then create a dropdown box 
+
+                //if it is expects a column then create a dropdown box
                 if (_requiredProperties[i].IsDefined(typeof (ExpectsColumnNameAsInput), true))
                 {
                     //for column fields
@@ -160,20 +166,22 @@ public partial class SecondaryConstraintUI : UserControl
                     cbx.Tag = i;
                     cbx.SelectedIndexChanged += (s, e) => _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(cbx.SelectedItem, _requiredProperties[(int)cbx.Tag].PropertyType), null);
                     cbx.Width = 350;
-                        
+
                     valueControl = cbx;
 
                 }
                 else
-                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(_requiredProperties[i].PropertyType))//it is a Catalogue type 
+                if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(_requiredProperties[i].PropertyType))//it is a Catalogue type
                 {
-                    var dd = new ComboBox();
-                    dd.Tag = i;
-                    dd.Width = 350;
-                    dd.AutoCompleteSource = AutoCompleteSource.ListItems;
-                    dd.AutoCompleteMode = AutoCompleteMode.Suggest;
+                    var dd = new ComboBox
+                    {
+                        Tag = i,
+                        Width = 350,
+                        AutoCompleteSource = AutoCompleteSource.ListItems,
+                        AutoCompleteMode = AutoCompleteMode.Suggest
+                    };
                     var entities = _repository.GetAllObjects(_requiredProperties[i].PropertyType).ToArray();
-                        
+
                     if (!entities.Any())
                     {
                         if (_requiredProperties[i].PropertyType == typeof(StandardRegex))
@@ -194,8 +202,7 @@ public partial class SecondaryConstraintUI : UserControl
                     var v = _requiredProperties[i].GetValue(SecondaryConstriant, null) as IRevertable;
 
                     //It has a value, this is a dropdown control right here though so if the revertable state out of date then it means someone else made a change to the database while we were picking columns
-                    if(v != null)
-                        v.RevertToDatabaseState(); 
+                    v?.RevertToDatabaseState();
 
                     valueControl = dd;
 
@@ -203,11 +210,12 @@ public partial class SecondaryConstraintUI : UserControl
                 else //otherwise create a textbox
                 {
                     //for string fields
-                    valueControl = new TextBox();
-
-                    //if they edit this then write it to the SecondaryConstraint... we can't put i in directly because it goes out of scope so instead we stuff it into Tag and then
-                    //get it back at delegate execution time when they change the text.
-                    valueControl.Tag = i;
+                    valueControl = new TextBox
+                    {
+                        //if they edit this then write it to the SecondaryConstraint... we can't put i in directly because it goes out of scope so instead we stuff it into Tag and then
+                        //get it back at delegate execution time when they change the text.
+                        Tag = i
+                    };
                     valueControl.TextChanged += setTextOrParseableProperty;
 
                     if (_requiredProperties[i].IsDefined(typeof (ExpectsLotsOfText), true))
@@ -225,20 +233,21 @@ public partial class SecondaryConstraintUI : UserControl
             }
 
             var desc = _requiredProperties[i].GetCustomAttribute<DescriptionAttribute>();
-                
+
             if (desc != null)
             {
-                var lbl = new Label();
-
-                lbl.AutoSize = true;
-                lbl.Text = desc.Description;
+                var lbl = new Label
+                {
+                    AutoSize = true,
+                    Text = desc.Description
+                };
 
                 lbl.Font = new Font(lbl.Font,FontStyle.Italic);
 
                 //make some space for it
                 inflation += lbl.Height -7;
                 lbl.Top = rowHeight - 7;
-                    
+
                 currentRowPanel.Controls.Add(lbl);
                 currentRowPanel.Height = rowHeight + lbl.Height;
             }
@@ -247,7 +256,7 @@ public partial class SecondaryConstraintUI : UserControl
         //first row
         tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
 
-        Height = (_requiredProperties.Length * rowHeight) + 45 + inflation;
+        Height = _requiredProperties.Length * rowHeight + 45 + inflation;
 
         loadingComplete = true;
 
@@ -265,11 +274,11 @@ public partial class SecondaryConstraintUI : UserControl
             else
             {
                 var underlyingType = _requiredProperties[propertyIdx].PropertyType;
-                _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(senderAsControl.Text, underlyingType), null);        
+                _requiredProperties[propertyIdx].SetValue(SecondaryConstriant, UsefulStuff.ChangeType(senderAsControl.Text, underlyingType), null);
             }
 
-                
-                
+
+
             senderAsControl.ForeColor = Color.Black;
             lblException.Text = "";
         }
@@ -289,7 +298,7 @@ public partial class SecondaryConstraintUI : UserControl
 
                 overflow++;
             }
-                
+
             lblException.Text = msg.Trim(',');
         }
             
@@ -303,7 +312,7 @@ public partial class SecondaryConstraintUI : UserControl
             throw new Exception("User requested to delete but nobody is listening to the RequestDeletion event!");
     }
 
-        
+
     private void cbxConsequence_SelectedIndexChanged(object sender, EventArgs e)
     {
         if (!loadingComplete)

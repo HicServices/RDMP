@@ -76,15 +76,14 @@ public class KVPAttacherTest:DatabaseTests
         var remnantPipeline =
             CatalogueRepository.GetAllObjects<Pipeline>().SingleOrDefault(p=>p.Name.Equals("KVPAttacherTestPipeline"));
 
-        if(remnantPipeline != null)
-            remnantPipeline.DeleteInDatabase();
+        remnantPipeline?.DeleteInDatabase();
 
         //Setup the Pipeline
         var p = new Pipeline(CatalogueRepository, "KVPAttacherTestPipeline");
 
         //With a CSV source
         var flatFileLoad = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileDataFlowSource), 0,"Data Flow Source");
-            
+
         //followed by a Transpose that turns columns to rows (see how the test file grows right with new records instead of down, this is common in KVP input files but not always)
         var transpose = new PipelineComponent(CatalogueRepository, p, typeof (Transposer), 1, "Transposer");
 
@@ -110,21 +109,13 @@ public class KVPAttacherTest:DatabaseTests
             attacher.PipelineForReadingFromFlatFile = p;
             attacher.TableName = "KVPTestTable";
 
-            switch (testCase)
+            attacher.FilePattern = testCase switch
             {
-                case KVPAttacherTestCase.OneFileWithPrimaryKey:
-                    attacher.FilePattern = filepk;
-                    break;
-                case KVPAttacherTestCase.OneFileWithoutPrimaryKey:
-                    attacher.FilePattern = fileNoPk;
-                    break;
-                case KVPAttacherTestCase.TwoFilesWithPrimaryKey:
-                    attacher.FilePattern = "kvpTestFilePK*.*";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("testCase");
-            }
-                
+                KVPAttacherTestCase.OneFileWithPrimaryKey => filepk,
+                KVPAttacherTestCase.OneFileWithoutPrimaryKey => fileNoPk,
+                KVPAttacherTestCase.TwoFilesWithPrimaryKey => "kvpTestFilePK*.*",
+                _ => throw new ArgumentOutOfRangeException(nameof(testCase))
+            };
 
             if (hasPk)
                 attacher.PrimaryKeyColumns = "Person";
@@ -164,8 +155,10 @@ public class KVPAttacherTest:DatabaseTests
     [Test]
     public void KVPAttacherCheckTest_FilePathMissing()
     {
-        var kvp = new KVPAttacher();
-        kvp.TableName = "MyTable";
+        var kvp = new KVPAttacher
+        {
+            TableName = "MyTable"
+        };
 
         var ex = Assert.Throws<Exception>(()=>kvp.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.IsTrue(ex.Message.StartsWith("Argument FilePattern has not been set"));
@@ -179,9 +172,11 @@ public class KVPAttacherTest:DatabaseTests
     [TestCase("TargetDataTableValueColumnName")]
     public void KVPAttacherCheckTest_BasicArgumentMissing(string missingField)
     {
-        var kvp = new KVPAttacher();
-        kvp.TableName = "MyTable";
-        kvp.FilePattern = "*.csv";
+        var kvp = new KVPAttacher
+        {
+            TableName = "MyTable",
+            FilePattern = "*.csv"
+        };
 
         if (missingField != "PrimaryKeyColumns")
             kvp.PrimaryKeyColumns = "dave,bob";
@@ -191,7 +186,7 @@ public class KVPAttacherTest:DatabaseTests
 
         if (missingField != "TargetDataTableValueColumnName")
             kvp.TargetDataTableValueColumnName = "smith";
-            
+
         var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.IsTrue(ex.Message.StartsWith($"Argument {missingField} has not been set"));
     }
@@ -201,12 +196,14 @@ public class KVPAttacherTest:DatabaseTests
     [TestCase(false)]
     public void KVPAttacherCheckTest_Crossover(bool isKeyColumnDuplicate)
     {
-        var kvp = new KVPAttacher();
-        kvp.TableName = "MyTable";
-        kvp.FilePattern = "*.csv";
-        kvp.PrimaryKeyColumns = "dave,bob";
-        kvp.TargetDataTableKeyColumnName =  isKeyColumnDuplicate ?"dave":"Fish";
-        kvp.TargetDataTableValueColumnName = isKeyColumnDuplicate ? "tron" : "dave";
+        var kvp = new KVPAttacher
+        {
+            TableName = "MyTable",
+            FilePattern = "*.csv",
+            PrimaryKeyColumns = "dave,bob",
+            TargetDataTableKeyColumnName = isKeyColumnDuplicate ?"dave":"Fish",
+            TargetDataTableValueColumnName = isKeyColumnDuplicate ? "tron" : "dave"
+        };
 
         var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual("Field 'dave' is both a PrimaryKeyColumn and a TargetDataTable column, this is not allowed.  Your fields Pk1,Pk2,Pketc,Key,Value must all be mutually exclusive", ex.Message);
@@ -215,20 +212,22 @@ public class KVPAttacherTest:DatabaseTests
     [Test]
     public void KVPAttacherCheckTest_CrossoverKeyAndValue()
     {
-        var kvp = new KVPAttacher();
-        kvp.TableName = "MyTable";
-        kvp.FilePattern = "*.csv";
-        kvp.PrimaryKeyColumns = "dave";
-        kvp.TargetDataTableKeyColumnName = "Key";
-        kvp.TargetDataTableValueColumnName = "Key";
+        var kvp = new KVPAttacher
+        {
+            TableName = "MyTable",
+            FilePattern = "*.csv",
+            PrimaryKeyColumns = "dave",
+            TargetDataTableKeyColumnName = "Key",
+            TargetDataTableValueColumnName = "Key"
+        };
 
         var ex = Assert.Throws<Exception>(() => kvp.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.AreEqual("TargetDataTableKeyColumnName cannot be the same as TargetDataTableValueColumnName", ex.Message);
     }
 
-    private void CopyToBin(LoadDirectory projDir, string file)
+    private static void CopyToBin(LoadDirectory projDir, string file)
     {
-            
+
         var testFileLocation = Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources" , file);
         Assert.IsTrue(File.Exists(testFileLocation));
 

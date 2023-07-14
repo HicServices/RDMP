@@ -23,8 +23,7 @@ namespace Rdmp.UI.SimpleDialogs;
 public partial class CommitsUI : CommitsUI_Design
 {
     private List<Commit> _commits;
-
-    RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new ();
+    private RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new();
 
     public const string GeneralAdviceAboutWhatIsShown = "Only includes changes made while 'Commit' system was enabled.  Does not include changes made by processes/commands that do not support Commit system.";
 
@@ -34,8 +33,8 @@ public partial class CommitsUI : CommitsUI_Design
 
         treeListView1.FullRowSelect = true;
         treeListView1.ItemActivate += TreeListView1_ItemActivate;
-        treeListView1.CanExpandGetter = (m) => m is Commit;
-        treeListView1.ChildrenGetter = (m) => m is Commit c ? c.Mementos : null;
+        treeListView1.CanExpandGetter = m => m is Commit;
+        treeListView1.ChildrenGetter = m => m is Commit c ? c.Mementos : null;
     }
 
     /// <summary>
@@ -69,7 +68,7 @@ public partial class CommitsUI : CommitsUI_Design
         // TODO: move this to a helper class
         var commitsInvolvingObject = activator.RepositoryLocator.CatalogueRepository
             .GetAllObjectsWhere<Memento>(nameof(Memento.ReferencedObjectID), o.ID)
-            .Where((m) => m.IsReferenceTo(o))
+            .Where(m => m.IsReferenceTo(o))
             .Select(m=>m.Commit_ID)
             .Distinct()
             .ToList();
@@ -104,7 +103,7 @@ public partial class CommitsUI : CommitsUI_Design
         CommonCollectionFunctionality.SetupColumnTracking(olvDescription, new Guid("a53f80a5-c0a2-40c0-a8ec-1d3a897fcce4"));
     }
 
-    private void TreeListView1_ItemActivate(object sender, System.EventArgs e)
+    private void TreeListView1_ItemActivate(object sender, EventArgs e)
     {
         if(treeListView1.SelectedObject is not Memento m)
             return;

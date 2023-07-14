@@ -35,7 +35,7 @@ public class TriggerTests :DatabaseTests
 
         _table =_database.CreateTable("TriggerTests",new DatabaseColumnRequest[]{ 
             new DatabaseColumnRequest("name",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false },
-            new DatabaseColumnRequest("bubbles",new DatabaseTypeRequest(typeof(int))),
+            new DatabaseColumnRequest("bubbles",new DatabaseTypeRequest(typeof(int)))
         });
 
         _archiveTable = _database.ExpectTable("TriggerTests_Archive");
@@ -53,7 +53,7 @@ public class TriggerTests :DatabaseTests
         var implementer = GetImplementer();
 
         //most likely doesn't exist but may do
-        implementer.DropTrigger(out var _, out var _);
+        implementer.DropTrigger(out _, out _);
 
         Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
     }
@@ -87,7 +87,7 @@ public class TriggerTests :DatabaseTests
         _table =_database.CreateTable("Trol lol My Table Select * from Group by fish",new DatabaseColumnRequest[]{ 
             new DatabaseColumnRequest("My Lovely Column Select * From Lolz",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false,IsPrimaryKey = true},
             new DatabaseColumnRequest("ANormalColumnName",new DatabaseTypeRequest(typeof(int))),
-            new DatabaseColumnRequest("Group By Meeee Colll trollolol",new DatabaseTypeRequest(typeof(int))),
+            new DatabaseColumnRequest("Group By Meeee Colll trollolol",new DatabaseTypeRequest(typeof(int)))
         });
 
         GetImplementer().CreateTrigger(new ThrowImmediatelyCheckNotifier());
@@ -103,7 +103,7 @@ public class TriggerTests :DatabaseTests
 
         _table.AddColumn("fish",new DatabaseTypeRequest(typeof(int)),true,500);
         _archiveTable.AddColumn("fish",new DatabaseTypeRequest(typeof(int)),true,500);
-            
+
         //still not valid because trigger SQL is missing it in the column list
         var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
         Assert.IsNotNull(ex.Message);
@@ -131,7 +131,7 @@ public class TriggerTests :DatabaseTests
         });
 
         var liveOldRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
-        Assert.AreEqual(new DateTime(2001,1,2),((DateTime)liveOldRow[SpecialFieldNames.ValidFrom]));
+        Assert.AreEqual(new DateTime(2001,1,2),(DateTime)liveOldRow[SpecialFieldNames.ValidFrom]);
 
         RunSQL("UPDATE {0} set bubbles =99",_table.GetFullyQualifiedName());
 
@@ -153,14 +153,14 @@ public class TriggerTests :DatabaseTests
             //legacy today it is 99
             Assert.AreEqual(99, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"));
         }
-            
+
         // Live row should now reflect that it is validFrom today
         var liveNewRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==99);
         Assert.AreEqual(DateTime.Now.Date,((DateTime)liveNewRow[SpecialFieldNames.ValidFrom]).Date);
 
         // Archived row should not have had its validFrom field broken
         var archivedRow = _archiveTable.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==3);
-        Assert.AreEqual(new DateTime(2001,1,2),((DateTime)archivedRow[SpecialFieldNames.ValidFrom]));
+        Assert.AreEqual(new DateTime(2001,1,2),(DateTime)archivedRow[SpecialFieldNames.ValidFrom]);
     }
 
     [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
@@ -197,7 +197,7 @@ public class TriggerTests :DatabaseTests
         Assert.AreEqual(1,_table.GetRowCount());
         Assert.AreEqual(4,_archiveTable.GetRowCount());
 
-        Import(_table,out var ti,out var cols);
+        Import(_table,out var ti, out var cols);
         var fetcher = new DiffDatabaseDataFetcher(1,ti,7,100);
             
         fetcher.FetchData(new AcceptAllCheckNotifier());

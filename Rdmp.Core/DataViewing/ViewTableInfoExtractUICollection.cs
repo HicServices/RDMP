@@ -43,12 +43,12 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
     public override string SaveExtraText()
     {
-        return Helper.SaveDictionaryToString(new Dictionary<string, string>() { { "ViewType", ViewType.ToString() } });
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> { { "ViewType", ViewType.ToString() } });
     }
 
     public override void LoadExtraText(string s)
     {
-        var value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
+        var value = PersistStringHelper.GetValueIfExistsFromPersistString("ViewType", s);
         ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
     }
 
@@ -63,9 +63,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
     }
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {
-        var filter = GetFilterIfAny() as ConcreteFilter;
-
-        if (filter != null)
+        if (GetFilterIfAny() is ConcreteFilter filter)
             yield return filter;
     }
 
@@ -113,6 +111,6 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var t = TableInfo;
-        return t != null ? t.GetQuerySyntaxHelper() : null;
+        return t?.GetQuerySyntaxHelper();
     }
 }

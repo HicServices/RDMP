@@ -39,7 +39,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     [DemandsInitialization(WorkSheetName_DemandDescription)]
     public string WorkSheetName { get; set; }
-        
+
     [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
     public bool MakeHeaderNamesSane { get; set; }
 
@@ -47,14 +47,12 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     public string AddFilenameColumnNamed { get; set; }
 
     private FlatFileToLoad _fileToLoad;
-
-    DataTable dataReadFromFile;
+    private DataTable dataReadFromFile;
     private bool haveDispatchedDataTable = false;
-        
+
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        if (dataReadFromFile == null)
-            dataReadFromFile = GetAllData(listener, cancellationToken);
+        dataReadFromFile ??= GetAllData(listener, cancellationToken);
 
         if (haveDispatchedDataTable)
             return null;
@@ -63,7 +61,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             
         return dataReadFromFile;
     }
-        
+
     private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         var sw = new Stopwatch();
@@ -86,21 +84,18 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
             try
             {
-                ISheet worksheet;
-
-                //if the user hasn't picked one, use the first
-                worksheet = string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName);
-
-                if (worksheet == null)
-                    throw new FlatFileLoadException(string.Format("The Excel sheet '{0}' was not found in workbook '{1}'", WorkSheetName, _fileToLoad.File.Name));
-
+                var worksheet =
+                    //if the user hasn't picked one, use the first
+                    (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ?? throw new FlatFileLoadException(
+                        $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
                 toReturn = GetAllData(worksheet, listener);
 
                 //set the table name the file name
                 toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
 
                 if (toReturn.Columns.Count == 0)
-                    throw new FlatFileLoadException(string.Format("The Excel sheet '{0}' in workbook '{1}' is empty", worksheet.SheetName, _fileToLoad.File.Name));
+                    throw new FlatFileLoadException(
+                        $"The Excel sheet '{worksheet.SheetName}' in workbook '{_fileToLoad.File.Name}' is empty");
 
                 //if the user wants a column in the DataTable storing the filename loaded add it
                 if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
@@ -118,7 +113,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             return toReturn;
         }
     }
-        
+
     /// <summary>
     /// Returns all data held in the current <paramref name="worksheet"/>.  The first row of data becomes the headers.  Throws away fully blank columns/rows.
     /// </summary>
@@ -139,7 +134,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             var row = (IRow)rowEnumerator.Current;
 
             //if all the cells in the current row are blank skip it (eliminates top of file whitespace)
-            if (row.Cells.All(c => String.IsNullOrWhiteSpace(c.ToString())))
+            if (row.Cells.All(c => string.IsNullOrWhiteSpace(c.ToString())))
                 continue;
 
             //first row (that has any data in it) - makes headers
@@ -227,7 +222,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                     if (IsDateWithoutTime(format))
                         return cell.DateCellValue.ToString("yyyy-MM-dd");
-                        
+
                     if(IsDateWithTime(format))
                         return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -241,7 +236,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                 return cell.NumericCellValue;
             case CellType.String:
-                    
+
                 var v = cell.StringCellValue;
 
                 //if it is blank or 'null' then leave it null
@@ -262,26 +257,26 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         }
     }
 
-    private bool IsDateWithTime(string formatString)
+    private static bool IsDateWithTime(string formatString)
     {
-        return formatString.Contains("h") && formatString.Contains("y");
+        return formatString.Contains('h') && formatString.Contains('y');
     }
-    private bool IsDateWithoutTime(string formatString)
+    private static bool IsDateWithoutTime(string formatString)
     {
-        return formatString.Contains("y") && !formatString.Contains("h");
-    }
-
-    private bool IsTimeWithoutDate(string formatString)
-    {
-        return !formatString.Contains("y") && formatString.Contains("h");
+        return formatString.Contains('y') && !formatString.Contains('h');
     }
 
-    private bool IsDateFormat(string formatString)
+    private static bool IsTimeWithoutDate(string formatString)
+    {
+        return !formatString.Contains('y') && formatString.Contains('h');
+    }
+
+    private static bool IsDateFormat(string formatString)
     {
         if (string.IsNullOrWhiteSpace(formatString))
             return false;
 
-        return formatString.Contains("/") || formatString.Contains("\\") || formatString.Contains(":");
+        return formatString.Contains('/') || formatString.Contains('\\') || formatString.Contains(':');
     }
 
     /*
@@ -327,14 +322,14 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         return acceptedFileExtensions.Contains(_fileToLoad.File.Extension.ToLower());
     }
 
-    private bool IsNull(object o)
+    private static bool IsNull(object o)
     {
         if (o == null || o == DBNull.Value)
             return true;
 
         return string.IsNullOrWhiteSpace(o.ToString());
     }
-        
+
     public void Check(ICheckNotifier notifier)
     {
         if (_fileToLoad != null)

@@ -89,11 +89,8 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
         {
             if (_count != -1)
                 return _count;
-            else
-            {
-                _count = CountCohortInDatabase();
-                return _count;
-            }
+            _count = CountCohortInDatabase();
+            return _count;
         }
     }
 
@@ -106,11 +103,8 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
         {
             if (_countDistinct != -1)
                 return _countDistinct;
-            else
-            {
-                _countDistinct = GetCountDistinctFromDatabase();
-                return _countDistinct;
-            }
+            _countDistinct = GetCountDistinctFromDatabase();
+            return _countDistinct;
         }
     }
 
@@ -276,8 +270,7 @@ where
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        if (_cachedQuerySyntaxHelper == null)
-            _cachedQuerySyntaxHelper = ExternalCohortTable.GetQuerySyntaxHelper();
+        _cachedQuerySyntaxHelper ??= ExternalCohortTable.GetQuerySyntaxHelper();
 
         return _cachedQuerySyntaxHelper;
     }
@@ -294,7 +287,7 @@ where
         using (var con = cohortTable.Database.Server.GetConnection())
         {
             con.Open();
-            var sql = $"SELECT DISTINCT * FROM {cohortTable.GetFullyQualifiedName()} WHERE {this.WhereSQL()}";
+            var sql = $"SELECT DISTINCT * FROM {cohortTable.GetFullyQualifiedName()} WHERE {WhereSQL()}";
 
             var da = cohortTable.Database.Server.GetDataAdapter(sql, con);
             var dtReturn = new DataTable();
@@ -490,7 +483,7 @@ where
         var haveWarnedAboutTop1AlreadyCount = 10;
 
         var syntax = ExternalCohortTable.GetQuerySyntaxHelper();
-            
+
         var privateIdentifier = syntax.GetRuntimeName(GetPrivateIdentifier());
         var releaseIdentifier = syntax.GetRuntimeName(GetReleaseIdentifier());
 
@@ -500,7 +493,7 @@ where
 
             var map = FetchEntireCohort();
 
-                
+
             var sw = new Stopwatch();
             sw.Start();
             //dictionary of released values (for the cohort) back to private values
@@ -538,7 +531,7 @@ where
         }
         var nullsFound = 0;
         var substitutions = 0;
-            
+
         var sw2 = new Stopwatch();
         sw2.Start();
 
@@ -590,8 +583,7 @@ where
     /// <param name="s"></param>
     public void AppendToAuditLog(string s)
     {
-        if (AuditLog == null)
-            AuditLog = "";
+        AuditLog ??= "";
 
         AuditLog += $"{Environment.NewLine}{DateTime.Now} {Environment.UserName} {s}";
         SaveToDatabase();

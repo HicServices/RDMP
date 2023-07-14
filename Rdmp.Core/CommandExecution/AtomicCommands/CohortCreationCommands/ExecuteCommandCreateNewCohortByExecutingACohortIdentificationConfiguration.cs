@@ -59,16 +59,12 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         return "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
     }
-        
+
     public override void Execute()
     {
         base.Execute();
 
-        var cic = _cic;
-
-        if (cic == null)
-            cic = (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
-
+        var cic = _cic ?? (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query", BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
         if (cic == null)
             return;
 
@@ -83,7 +79,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         }
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
-        var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(cic));
+        var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(cic));
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)
@@ -98,7 +94,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u, CohortIdentificationConfiguration cic)
+    private void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u, CohortIdentificationConfiguration cic)
     {
         //see if we can associate the cic with the project
         var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator).SetTarget((Project)Project).SetTarget(cic);
@@ -117,8 +113,8 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         base.SetTarget(target);
 
-        if (target is CohortIdentificationConfiguration)
-            _cic = (CohortIdentificationConfiguration)target;
+        if (target is CohortIdentificationConfiguration configuration)
+            _cic = configuration;
 
         return this;
     }

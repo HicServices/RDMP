@@ -62,8 +62,10 @@ public class DistincterTests : DatabaseTests
 
         var rowsBefore = tbl.GetRowCount();
 
-        var distincter = new Distincter();
-        distincter.TableRegexPattern = new Regex(".*");
+        var distincter = new Distincter
+        {
+            TableRegexPattern = new Regex(".*")
+        };
         distincter.Initialize(db, LoadStage.AdjustRaw);
 
         var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo })&& p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
@@ -115,8 +117,10 @@ public class DistincterTests : DatabaseTests
 
         var rowsBefore = tbl.GetRowCount();
 
-        var distincter = new Distincter();
-        distincter.TableRegexPattern = new Regex(".*");
+        var distincter = new Distincter
+        {
+            TableRegexPattern = new Regex(".*")
+        };
         distincter.Initialize(db, LoadStage.AdjustRaw);
 
         var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo }) && p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));

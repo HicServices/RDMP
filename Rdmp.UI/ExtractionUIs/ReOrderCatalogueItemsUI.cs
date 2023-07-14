@@ -48,8 +48,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     /// This is a collection of all the items found in the desired order and their offset in the desired order relative to the first one
     /// </summary>
     private List<ExtractionInformation> itemsToReOrderAndOffsetRelativeToFirst;
-
-    List<int> desiredColumnIndexesNotFound;
+    private List<int> desiredColumnIndexesNotFound;
     private int indexOfStartOfReordingInNewOrderListbox;
 
     public ReOrderCatalogueItemsUI()
@@ -73,7 +72,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
         _catalogue = databaseObject;
 
-        olvColumns.ImageGetter += (s) => activator.CoreIconProvider.GetImage(s).ImageToBitmap();
+        olvColumns.ImageGetter += s => activator.CoreIconProvider.GetImage(s).ImageToBitmap();
         olvExtractionInformations.RowHeight = 19;
         ((SimpleDropSink)olvExtractionInformations.DropSink).AcceptableLocations = DropTargetLocation.BetweenItems;
         RefreshUIFromDatabase();
@@ -138,7 +137,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             return;
 
         var startReorderingHere = lbDesiredOrder.Items[0].ToString();
-            
+
         //find the location of the first item in the desired order
         var extractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
             
@@ -262,7 +261,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
         }
     }
 
-    object oDrawLock = new object();
+    private object oDrawLock = new();
         
 
     private void lbDesiredOrder_DrawItem(object sender, DrawItemEventArgs e)
@@ -376,8 +375,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
 
     private void olvExtractionInformations_ItemActivate(object sender, EventArgs e)
     {
-        var o = olvExtractionInformations.SelectedObject as IMapsDirectlyToDatabaseTable;
-        if(o != null)
+        if(olvExtractionInformations.SelectedObject is IMapsDirectlyToDatabaseTable o)
             Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
     }
 }

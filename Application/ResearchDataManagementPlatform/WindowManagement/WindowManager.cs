@@ -37,10 +37,10 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// </summary>
 public class WindowManager
 {
-    readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new Dictionary<RDMPCollection, PersistableToolboxDockContent>();
-    readonly List<RDMPSingleControlTab>  _trackedWindows = new List<RDMPSingleControlTab>();
-    readonly List<DockContent> _trackedAdhocWindows = new List<DockContent>();
-        
+    private readonly Dictionary<RDMPCollection, PersistableToolboxDockContent> _visibleToolboxes = new();
+    private readonly List<RDMPSingleControlTab>  _trackedWindows = new();
+    private readonly List<DockContent> _trackedAdhocWindows = new();
+
     public NavigationTrack<INavigation> Navigation { get; private set; }
     public event TabChangedHandler TabChanged;
 
@@ -52,28 +52,28 @@ public class WindowManager
     /// The location finder for the Catalogue and optionally Data Export databases
     /// </summary>
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
-        
+
     public ActivateItems ActivateItems;
     private readonly WindowFactory _windowFactory;
-        
+
     public event RDMPCollectionCreatedEventHandler CollectionCreated;
 
-    HomeUI _home;
-    DockContent _homeContent;
+    private HomeUI _home;
+    private DockContent _homeContent;
 
     public WindowManager(ITheme theme,RDMPMainForm mainForm, RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
     {
         _windowFactory = new WindowFactory(repositoryLocator,this);
         ActivateItems = new ActivateItems(theme,refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this, globalErrorCheckNotifier);
 
-        GlobalExceptionHandler.Instance.Handler = (e)=>globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message,CheckResult.Fail,e));
+        GlobalExceptionHandler.Instance.Handler = e=>globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message,CheckResult.Fail,e));
 
         _mainDockPanel = mainDockPanel;
             
         MainForm = mainForm;
         RepositoryLocator = repositoryLocator;
 
-        Navigation = new NavigationTrack<INavigation>(c=>c.IsAlive,(c)=>c.Activate(ActivateItems));
+        Navigation = new NavigationTrack<INavigation>(c=>c.IsAlive,c=>c.Activate(ActivateItems));
         mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
         ActivateItems.Emphasise += RecordEmphasis;
     }
@@ -136,18 +136,17 @@ public class WindowManager
                 toReturn = Show(RDMPCollection.Favourites, collection, "Favourites", Image.Load<Rgba32>(CatalogueIcons.Favourite));
                 break;
 
-            default: throw new ArgumentOutOfRangeException("collectionToCreate");
+            default: throw new ArgumentOutOfRangeException(nameof(collectionToCreate));
         }
 
         toReturn.DockState = position;
 
         collection.SetItemActivator(ActivateItems);
 
-        if(CollectionCreated != null)
-            CollectionCreated(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
+        CollectionCreated?.Invoke(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
 
         collection.CommonTreeFunctionality.Tree.SelectionChanged += (s,e)=>
-        {    
+        {
             if(collection.CommonTreeFunctionality.Tree.SelectedObject is IMapsDirectlyToDatabaseTable im)
                 Navigation.Append(new CollectionNavigation(im));
         };
@@ -155,10 +154,10 @@ public class WindowManager
         return toReturn;
     }
 
-        
+
 
     private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, Image<Rgba32> image)
-    {           
+    {
         var content = _windowFactory.Create(ActivateItems,control, label, image, collection);//these are collections so are not tracked with a window tracker.
         content.Closed += (s, e) => content_Closed(collection);
 
@@ -189,30 +188,22 @@ public class WindowManager
     /// <param name="collection"></param>
     public void Pop(RDMPCollection collection)
     {
-        if (_visibleToolboxes.ContainsKey(collection))
-        {
-            switch (_visibleToolboxes[collection].DockState)
-            {
-                case DockState.DockLeftAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockLeft;
-                    break;
-                case DockState.DockRightAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockRight;
-                    break;
-                case DockState.DockTopAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockTop;
-                    break;
-                case DockState.DockBottomAutoHide:
-                    _visibleToolboxes[collection].DockState = DockState.DockBottom;
-                    break;
-            }
+        if (!_visibleToolboxes.TryGetValue(collection, out var dockContent)) return;
 
-            _visibleToolboxes[collection].Activate();
-        }
+        dockContent.DockState = dockContent.DockState switch
+        {
+            DockState.DockLeftAutoHide => DockState.DockLeft,
+            DockState.DockRightAutoHide => DockState.DockRight,
+            DockState.DockTopAutoHide => DockState.DockTop,
+            DockState.DockBottomAutoHide => DockState.DockBottom,
+            _ => _visibleToolboxes[collection].DockState
+        };
+
+        dockContent.Activate();
     }
 
     /// <summary>
-    /// Returns true if the corresponding RDMPCollectionUI is open (even if it is burried under other windows).
+    /// Returns true if the corresponding RDMPCollectionUI is open (even if it is buried under other windows).
     /// </summary>
     /// <param name="collection"></param>
     /// <returns></returns>
@@ -223,13 +214,7 @@ public class WindowManager
 
     public RDMPCollection GetFocusedCollection()
     {
-        foreach (var t in _visibleToolboxes)
-        {
-            if (t.Value.ContainsFocus)
-                return t.Key;
-        }
-
-        return RDMPCollection.None;
+        return _visibleToolboxes.Where(static t => t.Value.ContainsFocus).Select(static t => t.Key).FirstOrDefault();
     }
 
     internal void OnFormClosing(System.Windows.Forms.FormClosingEventArgs e)
@@ -250,7 +235,7 @@ public class WindowManager
 
 
     /// <summary>
-    /// Attempts to ensure that a compatible RDMPCollectionUI is made visible for the supplied object which must be one of the expected root Tree types of 
+    /// Attempts to ensure that a compatible RDMPCollectionUI is made visible for the supplied object which must be one of the expected root Tree types of
     /// an RDMPCollectionUI.  For example Project is the a root object of DataExportCollectionUI.  If a matching collection is already visible or no collection
     /// supports the supplied object as a root object then nothing will happen.  Otherwise the coresponding collection will be shown
     /// </summary>
@@ -296,7 +281,7 @@ public class WindowManager
 
         return RDMPCollection.None;
     }
-        
+
     /// <summary>
     /// Displays the HomeUI tab or brings it to the front if it is already open
     /// </summary>
@@ -304,9 +289,9 @@ public class WindowManager
     {
         if(_home == null)
         {
-            _home = new HomeUI(this.ActivateItems);
-                
-            _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", SixLabors.ImageSharp.Image.Load<Rgba32>(FamFamFamIcons.application_home));
+            _home = new HomeUI(ActivateItems);
+
+            _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", Image.Load<Rgba32>(FamFamFamIcons.application_home));
             _homeContent.Closed += (s, e) => _home = null;
             _homeContent.Show(_mainDockPanel, DockState.Document);
         }
@@ -336,7 +321,7 @@ public class WindowManager
 
 
     /// <summary>
-    /// Closes all Tracked windows 
+    /// Closes all Tracked windows
     /// </summary>
     /// <param name="tab"></param>
     public void CloseAllWindows(RDMPSingleControlTab tab)
@@ -356,7 +341,7 @@ public class WindowManager
         }
     }
 
-    void mainDockPanel_ActiveDocumentChanged(object sender, EventArgs e)
+    private void mainDockPanel_ActiveDocumentChanged(object sender, EventArgs e)
     {
         var newTab = (DockContent) _mainDockPanel.ActiveDocument;
             
@@ -365,10 +350,9 @@ public class WindowManager
             Navigation.Append(new TabNavigation(newTab));
             newTab.ParentForm.Text = $"{newTab.TabText} - RDMP";
         }
-                
 
-        if (TabChanged != null)
-            TabChanged(sender, newTab);
+
+        TabChanged?.Invoke(sender, newTab);
     }
 
 
@@ -426,7 +410,7 @@ public class WindowManager
 
         return _trackedWindows.OfType<PersistableSingleDatabaseObjectDockContent>().Any(t => t.Control.GetType() == windowType && t.DatabaseObject.Equals(databaseObject));
     }
-        
+
     /// <summary>
     /// Closes all Tracked windows except the specified tab
     /// </summary>
@@ -441,9 +425,9 @@ public class WindowManager
             CloseWindowIfInSameScope(adhoc, content);
     }
 
-    private void CloseWindowIfInSameScope(DockContent toClose, DockContent tabInSameScopeOrNull)
+    private static void CloseWindowIfInSameScope(DockContent toClose, DockContent tabInSameScopeOrNull)
     {
-        var parent = tabInSameScopeOrNull == null ? null : tabInSameScopeOrNull.Parent;
+        var parent = tabInSameScopeOrNull?.Parent;
 
         if (toClose != null && (parent == null || toClose.Parent == parent))
             toClose.Close();
@@ -460,8 +444,7 @@ public class WindowManager
         {
             Navigation.Current.Close();
 
-            if (Navigation.Current != null)
-                Navigation.Current.Activate(ActivateItems);
+            Navigation.Current?.Activate(ActivateItems);
         }
         finally
         {

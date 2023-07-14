@@ -16,7 +16,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-class MigrationStrategyTests : DatabaseTests
+internal class MigrationStrategyTests : DatabaseTests
 {
     [Test]
     public void OverwriteMigrationStrategy_NoPrimaryKey()

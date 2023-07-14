@@ -42,8 +42,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
 
     public IDataExportPropertyManager DataExportPropertyManager { get; private set; }
 
-
-    Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
+    private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
 
     public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) : base(null, connectionString)
     {
@@ -79,14 +78,13 @@ public class DataExportRepository : TableRepository, IDataExportRepository
             $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
     }
 
-
-    readonly ObjectConstructor _constructor = new ObjectConstructor();
+    private readonly ObjectConstructor _constructor = new();
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
-        if (Constructors.ContainsKey(t))
-            return Constructors[t](this, reader);
+        if (Constructors.TryGetValue(t, out var constructor))
+            return constructor(this, reader);
 
-        return _constructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
+        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
     }
         
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
@@ -112,7 +110,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 )", "ID").ToArray();
     }
 
-    private readonly Dictionary<Type, IRowVerCache> _caches = new Dictionary<Type, IRowVerCache>();
+    private readonly Dictionary<Type, IRowVerCache> _caches = new();
 
     public override T[] GetAllObjects<T>()
     {
@@ -135,7 +133,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     {
         //we know of no children
         if (!_packageContentsDictionary.Value.ContainsKey(package.ID))
-            return new ExtractableDataSet[0];
+            return Array.Empty<ExtractableDataSet>();
 
         return _packageContentsDictionary.Value[package.ID].Select(i => allDataSets.Single(ds => ds.ID == i)).ToArray();
     }
@@ -178,8 +176,11 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     /// <param name="dataSet"></param>
     public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
-        if (_packageContentsDictionary.Value.ContainsKey(package.ID) && _packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", "dataSet");
+        if (_packageContentsDictionary.Value.TryGetValue(package.ID, out var contents))
+        {
+            if (contents.Contains(dataSet.ID)) throw new ArgumentException($"dataSet {dataSet} is already part of package '{package}'", nameof(dataSet));
+        } else
+            _packageContentsDictionary.Value.Add(package.ID, contents=new List<int>());
 
         using (var con = GetConnection())
         {
@@ -188,10 +189,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
                 con).ExecuteNonQuery();
         }
 
-        if (!_packageContentsDictionary.Value.ContainsKey(package.ID))
-            _packageContentsDictionary.Value.Add(package.ID, new List<int>());
-
-        _packageContentsDictionary.Value[package.ID].Add(dataSet.ID);
+        contents.Add(dataSet.ID);
     }
 
 
@@ -208,7 +206,7 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         if (!_packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
 
         using (var con = GetConnection())
         {

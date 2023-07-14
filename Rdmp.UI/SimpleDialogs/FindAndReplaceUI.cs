@@ -24,7 +24,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-/// Allows you to perform database wide find and replace operations.  This is a useful but very dangerous feature, it is possible to very easily break your Catalogue.  The 
+/// Allows you to perform database wide find and replace operations.  This is a useful but very dangerous feature, it is possible to very easily break your Catalogue.  The
 /// feature is primarily intended for system wide operations such as when you change a network UNC folder location or mapped network drive and you need to change ALL references
 /// to the root path to the new location.
 /// 
@@ -35,15 +35,15 @@ namespace Rdmp.UI.SimpleDialogs;
 /// </summary>
 public partial class FindAndReplaceUI : RDMPUserControl
 {
-    private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new HashSet<IMapsDirectlyToDatabaseTable>();
+    private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new();
 
     private IAttributePropertyFinder _adjustableLocationPropertyFinder;
-    private List<FindAndReplaceNode> _locationNodes = new List<FindAndReplaceNode>(); 
-        
-    private IAttributePropertyFinder _sqlPropertyFinder;
-    private List<FindAndReplaceNode> _sqlNodes = new List<FindAndReplaceNode>();
+    private List<FindAndReplaceNode> _locationNodes = new();
 
-        
+    private IAttributePropertyFinder _sqlPropertyFinder;
+    private List<FindAndReplaceNode> _sqlNodes = new();
+
+
     public FindAndReplaceUI(IActivateItems activator)
     {
         SetItemActivator(activator);
@@ -91,9 +91,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
         foreach (var o in Activator.CoreChildProvider.AllCatalogueItems)
             _allObjects.Add(o);
 
-        var dxmChildProvider = Activator.CoreChildProvider as DataExportChildProvider;
-
-        if (dxmChildProvider != null)
+        if (Activator.CoreChildProvider is DataExportChildProvider dxmChildProvider)
             foreach (var o in dxmChildProvider.GetAllExtractableColumns(Activator.RepositoryLocator.DataExportRepository))
                 _allObjects.Add(o);
 
@@ -101,11 +99,11 @@ public partial class FindAndReplaceUI : RDMPUserControl
             _allObjects.Add(o);
     }
 
-    void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
+    private void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
     {
         if( e == null || e.RowObject == null)
             return;
-            
+
         var node = (FindAndReplaceNode)e.RowObject;
         node.SetValue(e.NewValue);
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)node.Instance));
@@ -118,7 +116,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private object PropertyAspectGetter(object rowobject)
     {
-        var node = ((FindAndReplaceNode) rowobject);
+        var node = (FindAndReplaceNode) rowobject;
 
         return node.PropertyName;
     }
@@ -142,16 +140,13 @@ public partial class FindAndReplaceUI : RDMPUserControl
             olvAllObjects.ClearObjects();
             olvAllObjects.SuspendLayout();
 
-            if (sender == rbLocationsAttribute)
-                olvAllObjects.AddObjects(_locationNodes);
-            else
-                olvAllObjects.AddObjects(_sqlNodes);
+            olvAllObjects.AddObjects(sender == rbLocationsAttribute ? _locationNodes : _sqlNodes);
 
             olvAllObjects.ResumeLayout();
         }
         olvAllObjects.EndUpdate();
     }
-        
+
     private void btnReplaceAll_Click(object sender, EventArgs e)
     {
         if (Activator.YesNo("Are you sure you want to do a system wide find and replace? This operation cannot be undone","Are you sure"))
@@ -166,9 +161,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private void tlvAllObjects_ItemActivate(object sender, EventArgs e)
     {
-        var node = olvAllObjects.SelectedObject as FindAndReplaceNode;
-
-        if (node != null)
+        if (olvAllObjects.SelectedObject is FindAndReplaceNode node)
         {
             var cmd = new ExecuteCommandActivate(Activator, node.Instance);
             if(!cmd.IsImpossible)
@@ -179,9 +172,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
     private TextMatchFilter _textMatchFilter;
     private void btnFind_Click(object sender, EventArgs e)
     {
-        var all = olvAllObjects.ModelFilter as CompositeAllFilter;
-
-        if(all == null)
+        if(olvAllObjects.ModelFilter is not CompositeAllFilter all)
             olvAllObjects.ModelFilter = all = new CompositeAllFilter(new List<IModelFilter>());
             
         if (_textMatchFilter != null && all.Filters.Contains(_textMatchFilter))

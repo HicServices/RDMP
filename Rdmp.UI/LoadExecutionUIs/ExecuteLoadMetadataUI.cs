@@ -38,7 +38,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
     private ILoadProgress[] _allLoadProgresses;
 
 
-    private ToolStripComboBox dd_DebugOptions = new ToolStripComboBox();
+    private ToolStripComboBox dd_DebugOptions = new();
 
 
     private enum DebugOptions
@@ -125,7 +125,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         var lp = GetLoadProgressIfAny();
 
         var debugOpts = (DebugOptions)dd_DebugOptions.SelectedItem;
-            
+
         var options = new DleOptions
         {
             Command = activityRequested,
@@ -134,7 +134,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
             DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
             DoNotArchiveData = debugOpts != DebugOptions.RunNormally,
             StopAfterRAW = debugOpts == DebugOptions.StopAfterRAW,
-            StopAfterSTAGING = debugOpts == DebugOptions.StopAfterRAW || debugOpts == DebugOptions.StopAfterSTAGING,
+            StopAfterSTAGING = debugOpts == DebugOptions.StopAfterRAW || debugOpts == DebugOptions.StopAfterSTAGING
         };
 
         if (lp != null)

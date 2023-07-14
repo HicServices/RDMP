@@ -85,11 +85,13 @@ public class Coalescer : MatchingTablesMutilator
             $"Coalesce on table '{table}' completed ({affectedRows} rows affected)"));
     }
 
-    private string GetCommand(DiscoveredTable table, DiscoveredColumn[] pks, DiscoveredColumn nonPk)
+    private static string GetCommand(DiscoveredTable table, DiscoveredColumn[] pks, DiscoveredColumn nonPk)
     {
-        var sqlLines = new List<CustomLine>();
-        sqlLines.Add(new CustomLine(string.Format("(t1.{0} is null AND t2.{0} is not null)", nonPk.GetRuntimeName()), QueryComponent.WHERE));
-        sqlLines.Add(new CustomLine(string.Format("t1.{0} = COALESCE(t1.{0},t2.{0})", nonPk.GetRuntimeName()),QueryComponent.SET));
+        var sqlLines = new List<CustomLine>
+        {
+            new CustomLine(string.Format("(t1.{0} is null AND t2.{0} is not null)", nonPk.GetRuntimeName()), QueryComponent.WHERE),
+            new CustomLine(string.Format("t1.{0} = COALESCE(t1.{0},t2.{0})", nonPk.GetRuntimeName()), QueryComponent.SET)
+        };
         sqlLines.AddRange(pks.Select(p=>new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()),QueryComponent.JoinInfoJoin)));
 
         var updateHelper = table.Database.Server.GetQuerySyntaxHelper().UpdateHelper;

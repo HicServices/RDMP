@@ -45,10 +45,9 @@ namespace Rdmp.UI.CohortUI;
 /// </summary>
 public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableUI
 {
-    private ExtractableCohort _extractableCohort; 
-        
-    RDMPCollectionCommonFunctionality _commonFunctionality1 = new RDMPCollectionCommonFunctionality();
-    RDMPCollectionCommonFunctionality _commonFunctionality2 = new RDMPCollectionCommonFunctionality();
+    private ExtractableCohort _extractableCohort;
+    private RDMPCollectionCommonFunctionality _commonFunctionality1 = new();
+    private RDMPCollectionCommonFunctionality _commonFunctionality2 = new();
 
     private void GenerateSQLPreview()
     {
@@ -67,7 +66,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
             toShow += Environment.NewLine;
 
             var externalCohortTable = _extractableCohort.ExternalCohortTable;
-                
+
             var sql =
                 $"SELECT * FROM {externalCohortTable.TableName}{Environment.NewLine} WHERE {_extractableCohort.WhereSQL()}";
 
@@ -141,13 +140,12 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         tbVersion.Text = _extractableCohort.ExternalVersion.ToString();
 
         GenerateSQLPreview();
-            
-        var dx = Activator.CoreChildProvider as DataExportChildProvider;
+
 
         if (!_commonFunctionality1.IsSetup)
         {
-            _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage,activator,olvUsedIn,null,
-                new RDMPCollectionCommonFunctionalitySettings()
+            _commonFunctionality1.SetUp(RDMPCollection.None, tlvCohortUsage, activator, olvUsedIn, null,
+                new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddCheckColumn = false,
                     AddFavouriteColumn = false,
@@ -161,7 +159,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         if (!_commonFunctionality2.IsSetup)
         {
             _commonFunctionality2.SetUp(RDMPCollection.None, tlvPreviousVersions, activator, olvOtherVersions, null,
-                new RDMPCollectionCommonFunctionalitySettings()
+                new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddCheckColumn = false,
                     AddFavouriteColumn = false,
@@ -172,7 +170,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
             );
         }
 
-        if(dx != null)
+        if(Activator.CoreChildProvider is DataExportChildProvider dx)
         {
             tlvCohortUsage.ClearObjects();
             tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e=>e.Cohort_ID == _extractableCohort.ID).ToArray());
@@ -191,7 +189,7 @@ public partial class ExtractableCohortUI :ExtractableCohortUI_Design, ISaveableU
         CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(activator, null)
         {
             CohortIfAny = databaseObject,
-            OverrideCommandName = "New Extraction Configuration using Cohort",
+            OverrideCommandName = "New Extraction Configuration using Cohort"
         });
 
         AssociatedCollection = RDMPCollection.SavedCohorts;

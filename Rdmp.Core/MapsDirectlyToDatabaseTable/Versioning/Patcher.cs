@@ -49,10 +49,10 @@ public abstract class Patcher:IPatcher
     /// <param name="description"></param>
     /// <param name="version"></param>
     /// <returns></returns>
-    protected string GetHeader(DatabaseType dbType, string description,Version version) => $"{CommentFor(dbType, Patch.VersionKey + version.ToString())}{Environment.NewLine}{CommentFor(dbType, Patch.DescriptionKey + description)}{Environment.NewLine}";
+    protected static string GetHeader(DatabaseType dbType, string description,Version version) => $"{CommentFor(dbType, Patch.VersionKey + version.ToString())}{Environment.NewLine}{CommentFor(dbType, Patch.DescriptionKey + description)}{Environment.NewLine}";
 
     // some DBMS don't like the -- notation so we need to wrap with C style comments
-    private string CommentFor(DatabaseType dbType, string sql) =>
+    private static string CommentFor(DatabaseType dbType, string sql) =>
         dbType switch
         {
             DatabaseType.MicrosoftSQLServer => sql,
@@ -63,22 +63,20 @@ public abstract class Patcher:IPatcher
     {
         var assembly = GetDbAssembly();
         var subdirectory = ResourceSubdirectory;
-        Regex initialCreationRegex;
 
-        if (string.IsNullOrWhiteSpace(subdirectory))
-            initialCreationRegex = new Regex(@".*\.runAfterCreateDatabase\..*\.sql");
-        else
-            initialCreationRegex = new Regex($@".*\.{Regex.Escape(subdirectory)}\.runAfterCreateDatabase\..*\.sql");
+        var initialCreationRegex = string.IsNullOrWhiteSpace(subdirectory)
+            ? new Regex(@".*\.runAfterCreateDatabase\..*\.sql")
+            : new Regex($@".*\.{Regex.Escape(subdirectory)}\.runAfterCreateDatabase\..*\.sql");
 
         var candidates = assembly.GetManifestResourceNames().Where(r => initialCreationRegex.IsMatch(r)).ToArray();
-            
+
         switch (candidates.Length)
         {
             case 1:
             {
-                var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
+                    var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
 
-                var sql = sr.ReadToEnd();
+                    var sql = sr.ReadToEnd();
 
                 if (!sql.Contains(Patch.VersionKey))
                     sql = GetHeader(db.Server.DatabaseType, InitialScriptName, new Version(1, 0, 0)) + sql;
@@ -109,7 +107,7 @@ public abstract class Patcher:IPatcher
 
         var files = new SortedDictionary<string, Patch>();
 
-        //get all resources out of 
+        //get all resources out of
         foreach (var manifestResourceName in assembly.GetManifestResourceNames())
         {
             var match = upgradePatchesRegexPattern.Match(manifestResourceName);

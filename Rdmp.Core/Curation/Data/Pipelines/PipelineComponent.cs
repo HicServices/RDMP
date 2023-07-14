@@ -135,7 +135,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         if (string.IsNullOrWhiteSpace(Class))
             return Class;
 
-        return Class.Substring(Class.LastIndexOf('.') + 1);
+        return Class[(Class.LastIndexOf('.') + 1)..];
     }
         
     /// <inheritdoc/>
@@ -176,7 +176,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     public IArgument[] CreateArgumentsForClassIfNotExists(Type underlyingComponentType)
     {
         var argFactory = new ArgumentFactory();
-        return argFactory.CreateArgumentsForClassIfNotExistsGeneric(underlyingComponentType,
+        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(underlyingComponentType,
 
                 //tell it how to create new instances of us related to parent
                 this,
@@ -202,8 +202,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
     public override void DeleteInDatabase()
     {
-        var parent = Pipeline as Pipeline;
-        if(parent != null)
+        if(Pipeline is Pipeline parent)
         {
             if(parent.SourcePipelineComponent_ID == ID)
             {

@@ -16,9 +16,8 @@ namespace Rdmp.Core.Tests.Curation.Unit;
 [Category("Unit")]
 public class PreInitializeTests
 {
-
-    DataFlowPipelineContext<DataTable> context = new DataFlowPipelineContext<DataTable>();
-    Fish fish = new Fish();
+    private DataFlowPipelineContext<DataTable> context = new();
+    private Fish fish = new();
 
     [Test]
     public void TestNormal()
@@ -151,7 +150,7 @@ public class PreInitializeTests
     }
     private class Penguin
     {
-        public string GetPenguin()
+        public static string GetPenguin()
         {
             return "Penguin";
         }

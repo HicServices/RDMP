@@ -21,7 +21,7 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
     public void OpportunisticJoinRequired()
     {
         var memory = new MemoryRepository();
-            
+
         //tables and columns
         var head = new TableInfo(CatalogueRepository,"Head");
         var col1 = new ColumnInfo(CatalogueRepository,"TestResultSetNumber","int",head);
@@ -37,8 +37,10 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
 
         //CASE 1 : Only 1 column used so no join needed
         var queryBuilder = new QueryBuilder(null, null);
-        var icol1 = new ColumnInfoToIColumn(memory,col1);
-        icol1.Order = 1;
+        var icol1 = new ColumnInfoToIColumn(memory,col1)
+        {
+            Order = 1
+        };
         queryBuilder.AddColumn(icol1);
 
         var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out var primary,null);
@@ -50,8 +52,10 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
         queryBuilder = new QueryBuilder(null, null);
         queryBuilder.AddColumn(new ColumnInfoToIColumn(memory,col1));
 
-        var icol4 = new ColumnInfoToIColumn(memory,col4);
-        icol4.Order = 2;
+        var icol4 = new ColumnInfoToIColumn(memory,col4)
+        {
+            Order = 2
+        };
         queryBuilder.AddColumn(icol4);
 
         tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
@@ -64,7 +68,7 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
 TestResultSetNumber,
 Code
 FROM 
-[biochemistry]..[Result] Right JOIN Head ON FK = PK"),CollapseWhitespace(queryBuilder.SQL));
+[biochemistry]..[Result] Right JOIN Head ON FK = PK"), CollapseWhitespace(queryBuilder.SQL));
 
         var memoryRepository = new MemoryCatalogueRepository();
 

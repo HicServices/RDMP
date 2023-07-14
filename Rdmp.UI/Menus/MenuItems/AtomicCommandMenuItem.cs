@@ -50,7 +50,7 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
         }
         catch (ImpossibleCommandException ex)
         {
-            ExceptionViewer.Show("Command Impossible", ex.ReasonCommandImpossible);
+            WideMessageBox.Show("Command Impossible", ex.ReasonCommandImpossible);
         }
         catch (Exception ex)
         {

@@ -57,7 +57,7 @@ public class CacheCommitIdentifierList : CacheCommitArguments
     }
 
 
-    private void CreateIndex(DiscoveredTable table, DiscoveredColumn onColumn, string configurationName)
+    private static void CreateIndex(DiscoveredTable table, DiscoveredColumn onColumn, string configurationName)
     {
         try
         {

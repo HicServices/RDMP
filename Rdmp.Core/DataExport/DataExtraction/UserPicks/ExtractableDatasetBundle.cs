@@ -55,22 +55,19 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
             throw new NotSupportedException(
                 $"Cannot drop {toDrop} from Bundle {this}, you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
 
-        var drop = toDrop as SupportingDocument;
-        if (drop != null)
+        if (toDrop is SupportingDocument drop)
         {
             Documents.Remove(drop);
             return;
         }
 
-        var item = toDrop as SupportingSQLTable;
-        if (item != null)
+        if (toDrop is SupportingSQLTable item)
         {
             SupportingSQL.Remove(item);
             return;
         }
 
-        var table = toDrop as BundledLookupTable;
-        if (table != null)
+        if (toDrop is BundledLookupTable table)
         {
             LookupTables.Remove(table);
             return;

@@ -36,10 +36,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
     {
         get
         {
-            if (_postImportCommand == null)
-                return null;
-
-            return _postImportCommand.AggregateCreatedIfAny;
+            return _postImportCommand?.AggregateCreatedIfAny;
         }
     }
         
@@ -122,7 +119,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
             if(!BasicActivator.SelectObjects(new DialogArgs
                {
                    WindowTitle = "Add Catalogue(s) to Container",
-                   TaskDescription = $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column.",
+                   TaskDescription = $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
                },BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
             {
                 // user didn't pick one

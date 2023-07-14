@@ -105,7 +105,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     /// <param name="rootContainerIfAny">Adds the restriction that the extraction SQL should include the WHERE logic in this container</param>
     public SelectedDataSets(IDataExportRepository repository, ExtractionConfiguration configuration, IExtractableDataSet dataSet, FilterContainer rootContainerIfAny)
     {
-        repository.InsertAndHydrate(this,new Dictionary<string, object>()
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"ExtractionConfiguration_ID",configuration.ID},
             {"ExtractableDataSet_ID",dataSet.ID},

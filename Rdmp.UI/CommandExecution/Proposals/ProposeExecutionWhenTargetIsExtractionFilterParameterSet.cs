@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsExtractionFilterParameterSet:RDMPCommandExecutionProposal<ExtractionFilterParameterSet>
+internal class ProposeExecutionWhenTargetIsExtractionFilterParameterSet:RDMPCommandExecutionProposal<ExtractionFilterParameterSet>
 {
     public ProposeExecutionWhenTargetIsExtractionFilterParameterSet(IActivateItems itemActivator) : base(itemActivator)
     {

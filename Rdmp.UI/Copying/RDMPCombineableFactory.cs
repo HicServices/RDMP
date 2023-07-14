@@ -43,18 +43,18 @@ public class RDMPCombineableFactory:ICombineableFactory
         if (o == null || o.ModelObjects == null)
             return null;
 
-        //does the data object already contain a command? 
+        //does the data object already contain a command?
         if (o.ModelObjects.OfType<ICombineToMakeCommand>().Count() == 1)
             return o.ModelObjects.OfType<ICombineToMakeCommand>().Single();//yes
 
         //otherwise is it something that can be turned into a command?
         if (o.ModelObjects.Count == 0)
             return null;
-            
+
         //try to create command from the single data object
         if (o.ModelObjects.Count == 1)
             return Create(o.ModelObjects[0]);
-            
+
         //try to create command from all the data objects as an array
         return Create(o.ModelObjects.Cast<object>().ToArray());
     }
@@ -66,18 +66,14 @@ public class RDMPCombineableFactory:ICombineableFactory
 
     public ICombineToMakeCommand Create(object modelObject)
     {
-        var masquerader = modelObject as IMasqueradeAs;
-
-        if (masquerader != null)
+        if (modelObject is IMasqueradeAs masquerader)
             modelObject = masquerader.MasqueradingAs();
 
         //Extractable column e.g. ExtractionInformation,AggregateDimension etc
-        var icolumn = modelObject as IColumn;
-        if (icolumn != null)
+        if (modelObject is IColumn icolumn)
             return new ColumnCombineable(icolumn);
 
-        var pipeline = modelObject as Pipeline;
-        if (pipeline != null)
+        if (modelObject is Pipeline pipeline)
             return new PipelineCombineable(pipeline);
                        
         if (modelObject is  ExtractionFilterParameterSet efps)
@@ -102,9 +98,8 @@ public class RDMPCombineableFactory:ICombineableFactory
         var columnInfoArray = IsArrayOf<ColumnInfo>(modelObject);
         if(columnInfoArray != null)
             return new ColumnInfoCombineable(columnInfoArray);
-            
-        var tableInfo = modelObject as TableInfo;
-        if (tableInfo != null)
+
+        if (modelObject is TableInfo tableInfo)
             return new TableInfoCombineable(tableInfo);
 
         if(modelObject is LoadMetadata lmd)
@@ -123,27 +118,22 @@ public class RDMPCombineableFactory:ICombineableFactory
                 return new ManyCataloguesCombineable(catalogues);
 
         //filters
-        var filter = modelObject as IFilter;
-        if (filter != null)
+        if (modelObject is IFilter filter)
             return new FilterCombineable(filter);
 
         //containers
-        var container = modelObject as IContainer;
-        if (container != null)
+        if (modelObject is IContainer container)
             return new ContainerCombineable(container);
 
         //aggregates
-        var aggregate = modelObject as AggregateConfiguration;
-        if (aggregate != null)
+        if (modelObject is AggregateConfiguration aggregate)
             return new AggregateConfigurationCombineable(aggregate);
 
         //aggregate containers
-        var aggregateContainer = modelObject as CohortAggregateContainer;
-        if (aggregateContainer != null)
+        if (modelObject is CohortAggregateContainer aggregateContainer)
             return new CohortAggregateContainerCombineable(aggregateContainer);
-            
-        var extractableCohort = modelObject as ExtractableCohort;
-        if (extractableCohort != null)
+
+        if (modelObject is ExtractableCohort extractableCohort)
             return new ExtractableCohortCombineable(extractableCohort);
 
         //extractable data sets
@@ -151,20 +141,16 @@ public class RDMPCombineableFactory:ICombineableFactory
         if (extractableDataSets != null)
             return new ExtractableDataSetCombineable(extractableDataSets);
 
-        var extractableDataSetPackage = modelObject as ExtractableDataSetPackage;
-        if(extractableDataSetPackage != null)
+        if(modelObject is ExtractableDataSetPackage extractableDataSetPackage)
             return new ExtractableDataSetCombineable(extractableDataSetPackage);
 
-        var dataAccessCredentials = modelObject as DataAccessCredentials;
-        if (dataAccessCredentials != null)
+        if (modelObject is DataAccessCredentials dataAccessCredentials)
             return new DataAccessCredentialsCombineable(dataAccessCredentials);
 
-        var processTask = modelObject as ProcessTask;
-        if (processTask != null)
+        if (modelObject is ProcessTask processTask)
             return new ProcessTaskCombineable(processTask);
 
-        var cacheProgress = modelObject as CacheProgress;
-        if (cacheProgress != null)
+        if (modelObject is CacheProgress cacheProgress)
             return new CacheProgressCombineable(cacheProgress);
 
         var cic = modelObject as CohortIdentificationConfiguration;
@@ -178,25 +164,23 @@ public class RDMPCombineableFactory:ICombineableFactory
         return null;
     }
 
-    private T[] IsArrayOf<T>(object modelObject)
+    private static T[] IsArrayOf<T>(object modelObject)
     {
-        if(modelObject is T)
-            return new []{(T)modelObject};
+        if(modelObject is T modelObject1)
+            return new [] { modelObject1 };
 
-        if (!(modelObject is IEnumerable))
+        if (modelObject is not IEnumerable array)
             return null;
-
-        var array = (IEnumerable)modelObject;
 
         var toReturn = new List<T>();
 
         foreach (var o in array)
         {
             //if array contains anything that isn't a T
-            if (!(o is T))
+            if (o is not T o1)
                 return null; //it's not an array of T
-                
-            toReturn.Add((T)o);
+
+            toReturn.Add(o1);
         }
 
         //it's an array of T

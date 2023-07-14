@@ -32,7 +32,7 @@ public class Prediction : SecondaryConstraint
     public Prediction(PredictionRule rule, string targetColumn)
     {
         if(rule == null)
-            throw new ArgumentException("You must specify a PredictionRule to follow","rule");
+            throw new ArgumentException("You must specify a PredictionRule to follow",nameof(rule));
 
         Rule = rule;
         TargetColumn = targetColumn;

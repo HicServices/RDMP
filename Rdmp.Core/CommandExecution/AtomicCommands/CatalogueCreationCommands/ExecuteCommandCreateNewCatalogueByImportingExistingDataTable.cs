@@ -33,10 +33,10 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
     public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IBasicActivateItems activator,
         [DemandsInitialization("An existing table that you want to import a reference to")]
         DiscoveredTable existingTable,
-        [DemandsInitialization(CatalogueCreationCommandExecution.Desc_ProjectSpecificParameter)]
+        [DemandsInitialization(Desc_ProjectSpecificParameter)]
         IProject projectSpecific,
             
-        [DemandsInitialization(CatalogueCreationCommandExecution.Desc_TargetFolder,DefaultValue = "\\")]
+        [DemandsInitialization(Desc_TargetFolder,DefaultValue = "\\")]
         string targetFolder = "\\") : base(activator,projectSpecific, targetFolder)
     {
         _importTable = existingTable;

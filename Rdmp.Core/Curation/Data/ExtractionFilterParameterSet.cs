@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <summary>
 /// Often an ExtractionFilter will have a parameter associated with it (or more than one).  In this case it can be that you want to curate various values and give them
 /// meaningful titles.  For exmaple if you have a filter 'Hospitalised with condition X' which has parameter @ConditionList.  Then you decide that you want to curate
-/// a list 'A101.23,B21.1' as 'People hospitalised with drug dependency'.  This 'known meaningful parameter values set' is called a ExtractionFilterParameterSet.  You 
+/// a list 'A101.23,B21.1' as 'People hospitalised with drug dependency'.  This 'known meaningful parameter values set' is called a ExtractionFilterParameterSet.  You
 /// can provide a name and a description for the concept.  Then you create a value for each parameter in the associated filter.  See ExtractionFilterParameterSetValue for
 /// the value recordings.
 /// </summary>
@@ -35,7 +35,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
         get => _name;
         set => SetField(ref _name , value);
     }
-       
+
     /// <summary>
     /// Human readable description of what the parameter set identifies e.g. 'Diabetes Drugs' and any supporting information about how it works, quirks etc
     /// </summary>
@@ -92,9 +92,9 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
     /// <param name="name"></param>
     public ExtractionFilterParameterSet(ICatalogueRepository repository, ExtractionFilter filter, string name = null)
     {
-        name = name ?? $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
+        name ??= $"New ExtractionFilterParameterSet {Guid.NewGuid()}";
 
-        repository.InsertAndHydrate(this,new Dictionary<string, object>()
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"Name",name},
             {"ExtractionFilter_ID",filter.ID}
@@ -145,7 +145,7 @@ public class ExtractionFilterParameterSet:DatabaseEntity, ICollectSqlParameters,
 
     public override void DeleteInDatabase()
     {
-        foreach(var v in this.Values)
+        foreach(var v in Values)
         {
             v.DeleteInDatabase();
         }

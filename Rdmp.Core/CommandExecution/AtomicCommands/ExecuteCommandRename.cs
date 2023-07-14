@@ -82,12 +82,8 @@ public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
     {
         //handle Aggregates that are part of cohort identification
         var aggregate = _nameable as AggregateConfiguration;
-        if (aggregate != null)
-        {
-            var cic = aggregate.GetCohortIdentificationConfigurationIfAny();
+        var cic = aggregate?.GetCohortIdentificationConfigurationIfAny();
 
-            if (cic != null)
-                cic.EnsureNamingConvention(aggregate);
-        }
+        cic?.EnsureNamingConvention(aggregate);
     }
 }

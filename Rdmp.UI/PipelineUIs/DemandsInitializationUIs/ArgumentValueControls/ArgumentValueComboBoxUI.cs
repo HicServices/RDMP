@@ -70,10 +70,10 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
 
             cbxValue.DropDown += (s, e) => { LateLoad(objectsForComboBox); };
         }
-            
+
     }
 
-    bool haveLateLoaded = false;
+    private bool haveLateLoaded = false;
     private void LateLoad(object[] objectsForComboBox)
     {
         if(haveLateLoaded)
@@ -113,29 +113,23 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
             cbxValue.Items.Add(_args.InitialValue);
         }
 
-        if (currentValue != null)
-            if (types != null)
-                cbxValue.Text = ((Type) currentValue).Name;
-            else
-                cbxValue.Text = currentValue.ToString();
+        if (currentValue != null) cbxValue.Text = types != null ? ((Type) currentValue).Name : currentValue.ToString();
 
         _bLoading = false;
     }
-        
-    private void cbxValue_TextChanged(object sender, System.EventArgs e)
+
+    private void cbxValue_TextChanged(object sender, EventArgs e)
     {
         if (_bLoading)
             return;
-            
+
         //user chose to clear selection from a combo box
         if (cbxValue.Text == ClearSelection)
             _args.Setter(null);
-        else 
+        else
         if (cbxValue.SelectedItem != null)
-            if (types != null)
-                _args.Setter(types.Single(t => t.Name.Equals(cbxValue.SelectedItem)));
-            else
-                _args.Setter(cbxValue.SelectedItem);
+            _args.Setter(
+                types != null ? types.Single(t => t.Name.Equals(cbxValue.SelectedItem)) : cbxValue.SelectedItem);
     }
 
     private void btnPick_Click(object sender, EventArgs e)
@@ -143,14 +137,14 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
         if (_activator.SelectObject(new DialogArgs
             {
                 TaskDescription = $"Choose a new value for '{_args.Required.Name}'",
-                AllowSelectingNull = true,
+                AllowSelectingNull = true
             }, _objectsForComboBox,out var selected))
         {
 
             if (selected == null)
             {
                 cbxValue.Text = ClearSelection;
-            }   
+            }
             else
             {
                 if (!cbxValue.Items.Contains(selected))
@@ -160,6 +154,6 @@ public partial class ArgumentValueComboBoxUI : UserControl, IArgumentValueUI
 
                 cbxValue.SelectedItem = selected;
             }
-        }        
+        }
     }
 }

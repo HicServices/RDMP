@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-class RunDleWindow : RunEngineWindow<DleOptions>
+internal class RunDleWindow : RunEngineWindow<DleOptions>
 {
     private readonly LoadMetadata lmd;
 
@@ -24,10 +24,10 @@ class RunDleWindow : RunEngineWindow<DleOptions>
 
     private static DleOptions GetCommand(LoadMetadata lmd)
     {
-        return new DleOptions()
+        return new DleOptions
         {
             LoadMetadata = lmd.ID.ToString(),
-            Iterative = false,
+            Iterative = false
         };
     }
 

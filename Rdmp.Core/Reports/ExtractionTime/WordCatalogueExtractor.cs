@@ -23,8 +23,7 @@ public class WordCatalogueExtractor: DocXHelper
     private ICatalogue Catalogue { get; set; }
 
     //This is an alternative for [DoNotExtractProperty] that only applies to this class where [DoNotExtractProperty] applies to all users of Catalogue e.g. DITAExtractor
-    private static string[] PropertyIgnorelist = new string[]
-    {
+    private static string[] PropertyIgnorelist = {
         "Statistical_cons", "Research_relevance", "Topic", "Agg_method", "Limitations", "Comments", "Periodicity",
         "Acronym",
         "Detail_Page_URL",
@@ -104,36 +103,36 @@ public class WordCatalogueExtractor: DocXHelper
             //allocate extra space for supplementalData
             if(supplementalData != null)
                 requiredRowsCount += supplementalData[catalogueItem].Length;
-                
+
             //create a new table
             var t = InsertTable(_document, requiredRowsCount, 2);
                 
-            if(supplementalData!=null && supplementalData.ContainsKey(catalogueItem))
-                GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem,supplementalData[catalogueItem]);
+            if(supplementalData!=null && supplementalData.TryGetValue(catalogueItem, out var value))
+                GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem,value);
             else
                 GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem, null);
         }
     }
 
-    private int CountWriteableProperties(object o)
+    private static int CountWriteableProperties(object o)
     {
         var propertyInfo =
             o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            
+
         var count = 0;
         //generate a row for each property
         foreach (var property in propertyInfo )
         {
             //Check whether property can be written to
             if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||property.PropertyType.Equals(typeof (System.String)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||property.PropertyType.Equals(typeof (string)))
                     count++;
 
         }
         return count;
     }
 
-    private void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o, Tuple<string,string>[] supplementalData )
+    private static void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o, Tuple<string,string>[] supplementalData )
     {
         var propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -145,7 +144,7 @@ public class WordCatalogueExtractor: DocXHelper
                 
             //Check whether property can be written to
             if (property.CanRead && Attribute.IsDefined(property, typeof(DoNotExtractProperty)) == false && !PropertyIgnorelist.Contains(property.Name))
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(System.String)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(string)))
                 {
                     SetTableCell(table, currentRow, 0, property.Name);
 

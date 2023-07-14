@@ -64,7 +64,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     /// <param name="destination"></param>
     /// <param name="listener"></param>
     /// <param name="pipelineSource"></param>
-    public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source, 
+    public DataFlowPipelineEngine(DataFlowPipelineContext<T> context,IDataFlowSource<T> source,
         IDataFlowDestination<T> destination, IDataLoadEventListener listener,
         IPipeline pipelineSource = null)
     {
@@ -74,10 +74,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         _listener = listener;
         ComponentObjects = new List<object>();
 
-        if (pipelineSource != null)
-            _name = pipelineSource.Name;
-        else
-            _name = "Undefined pipeline";
+        _name = pipelineSource != null ? pipelineSource.Name : "Undefined pipeline";
     }
 
     /// <inheritdoc/>
@@ -131,7 +128,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         finally
         {
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Preparing to Dispose of DataFlowPipelineEngine components"));
-                
+
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Trace, $"About to Dispose {Source}"));
             try
             {
@@ -241,8 +238,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     {
         try
         {
-            var checkableSource = Source as ICheckable;
-            if (checkableSource != null)
+            if (Source is ICheckable checkableSource)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"About to start checking Source component {checkableSource}",
@@ -257,9 +253,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
 
             foreach (var component in Components)
             {
-                var checkable = component as ICheckable;
-
-                if (checkable != null)
+                if (component is ICheckable checkable)
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs($"About to start checking component {component}", CheckResult.Success));
                     checkable.Check(notifier);
@@ -271,8 +265,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                             CheckResult.Warning));
             }
 
-            var checkableDestination = Destination as ICheckable;
-            if (checkableDestination != null)
+            if (Destination is ICheckable checkableDestination)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"About to start checking Destination component {checkableDestination}",

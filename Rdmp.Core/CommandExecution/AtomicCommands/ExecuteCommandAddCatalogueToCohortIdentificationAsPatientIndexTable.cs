@@ -44,13 +44,12 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
 
         if (_catalogue == null)
         {
-            Catalogue cata;
-            if(!SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out cata))
+            if (!SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out Catalogue cata))
                 return;
-                
+
             _catalogue = new CatalogueCombineable(cata);
         }
-            
+
         var aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator,_configuration);
 
         var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(BasicActivator, aggregateCommand, _configuration);

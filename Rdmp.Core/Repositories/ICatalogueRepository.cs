@@ -62,7 +62,7 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     CommentStore CommentStore { get; set; }
 
     string GetEncryptionKeyPath();
-        
+
     /// <summary>
     /// Manages information about what set containers / subcontainers exist under a <see cref="CohortIdentificationConfiguration"/>
     /// </summary>
@@ -112,8 +112,6 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     /// <returns></returns>
     TicketingSystemConfiguration GetTicketingSystem();
 
-    DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null);
-
     T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity;
 
 
@@ -125,7 +123,7 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     void SetEncryptionKeyPath(string fullName);
 
     /// <summary>
-    /// Returns all Catalogues which have any CatalogueItems which are associated with any of the ColumnInfos of this TableInfo.  If this is a lookup table then expect to get back 
+    /// Returns all Catalogues which have any CatalogueItems which are associated with any of the ColumnInfos of this TableInfo.  If this is a lookup table then expect to get back
     /// a whole bunch of catalogues.
     /// </summary>
     /// <returns></returns>
@@ -141,7 +139,7 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
 
     /// <summary>
     /// Returns all <see cref="ExtendedProperty"/> that are declared on
-    /// <paramref name="obj"/> where the property Name is 
+    /// <paramref name="obj"/> where the property Name is
     /// </summary>
     /// <param name="propertyName"></param>
     /// <param name="obj"></param>

@@ -29,8 +29,8 @@ using ScintillaNET;
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 
 /// <summary>
-/// One major problem with research data curation/provision is that data analysts who routinely work with datasets build up an in-depth knowledge of the data and how to identify 
-/// interesting subsets (e.g. 'How to identify all lab test codes for Creatinine').  This can involve complicated SQL which can end up buried in undocumented extraction scripts 
+/// One major problem with research data curation/provision is that data analysts who routinely work with datasets build up an in-depth knowledge of the data and how to identify
+/// interesting subsets (e.g. 'How to identify all lab test codes for Creatinine').  This can involve complicated SQL which can end up buried in undocumented extraction scripts
 /// or kept in the head of the data analyst and lost if he ever leaves the organisation.
 /// 
 /// <para>RDMP Filters are an attempt to reduce this risk by centralising SQL 'WHERE' logic into clearly defined and documented reusable blocks (called Filters).  These named filters can
@@ -65,7 +65,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         UseCommitSystem = true;
     }
 
-    void QueryEditor_TextChanged(object sender, EventArgs e)
+    private void QueryEditor_TextChanged(object sender, EventArgs e)
     {
         if (_loading)
             return;
@@ -77,7 +77,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
     {
 
         var factory = new FilterUIOptionsFactory();
-        var options = factory.Create(_extractionFilter);
+        var options = FilterUIOptionsFactory.Create(_extractionFilter);
         GlobalFilterParameters = options.GetGlobalParametersInFilterScope();
 
         if (QueryEditor != null)
@@ -152,7 +152,7 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         }
     }
 
-        
+
     public override void SetDatabaseObject(IActivateItems activator, ConcreteFilter databaseObject)
     {
         _loading = true;
@@ -160,11 +160,10 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
         Catalogue = databaseObject.GetCatalogue();
         _extractionFilter = databaseObject;
 
-        ParameterCollectionUIOptionsFactory factory = null;
         ParameterCollectionUIOptions options = null;
         try
         {
-            factory = new ParameterCollectionUIOptionsFactory();
+            var factory = new ParameterCollectionUIOptionsFactory();
             options = factory.Create(databaseObject,activator.CoreChildProvider);
         }
         catch (Exception e)
@@ -215,14 +214,14 @@ public partial class ExtractionFilterUI :ExtractionFilterUI_Design, ILifetimeSub
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        if(!(e.Object is IFilter))
+        if(e.Object is not IFilter filter)
             return;
 
-        if (e.Object.Equals(_extractionFilter))
-            if (!e.Object.Exists()) //its deleted
-                this.ParentForm.Close();
+        if (filter.Equals(_extractionFilter))
+            if (!filter.Exists()) //its deleted
+                ParentForm.Close();
             else
-                _extractionFilter = (IFilter)e.Object;
+                _extractionFilter = filter;
     }
 }
 

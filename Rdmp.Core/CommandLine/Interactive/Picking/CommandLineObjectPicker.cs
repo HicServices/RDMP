@@ -25,7 +25,7 @@ public class CommandLineObjectPicker
 
     public int Length => Arguments.Count;
 
-    private readonly HashSet<PickObjectBase> _pickers = new HashSet<PickObjectBase>();
+    private readonly HashSet<PickObjectBase> _pickers = new();
 
     /// <summary>
     /// Constructs a picker with all possible formats and immediately parse the provided <paramref name="args"/>

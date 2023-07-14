@@ -43,8 +43,8 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// <summary>
     /// Cached results of <see cref="GetQuerySyntaxHelper"/>
     /// </summary>
-    private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper>();
-                
+    private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new();
+
     #region Database Properties
     private string _name;
     private DatabaseType _databaseType;
@@ -111,7 +111,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         get => _validationXml;
         set => SetField(ref _validationXml, value);
     }
-                
+
     /// <inheritdoc/>
     public bool IsPrimaryExtractionTable
     {
@@ -146,10 +146,10 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     }
 
     #endregion
-        
+
     private Lazy<ColumnInfo[]> _knownColumnInfos;
     private Lazy<bool> _knownIsLookup;
-    private Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>> _knownCredentials = new Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>>();
+    private Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>> _knownCredentials = new();
 
 
     #region Relationships
@@ -176,7 +176,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     }
 
     /// <summary>
-    /// Defines a new table reference in the platform database <paramref name="repository"/>.  
+    /// Defines a new table reference in the platform database <paramref name="repository"/>.
     /// <para>Usually you should use <see cref="TableInfoImporter"/> instead</para>
     /// </summary>
     /// <param name="repository"></param>
@@ -188,7 +188,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"Name", name},
-            {"IdentifierDumpServer_ID",dumpServer == null ? (object) DBNull.Value:dumpServer.ID}
+            {"IdentifierDumpServer_ID",dumpServer?.ID ?? (object) DBNull.Value}
         });
 
         ClearAllInjections();
@@ -204,18 +204,13 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         _state = r["State"].ToString();
         Schema = r["Schema"].ToString();
         _validationXml = r["ValidationXml"].ToString();
-            
-        IsTableValuedFunction = r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
-            
-        if(r["IsPrimaryExtractionTable"] == DBNull.Value)
-            IsPrimaryExtractionTable = false;
-        else 
-            IsPrimaryExtractionTable = Convert.ToBoolean(r["IsPrimaryExtractionTable"]);
 
-        if (r["IdentifierDumpServer_ID"] == DBNull.Value)
-            IdentifierDumpServer_ID = null;
-        else
-            IdentifierDumpServer_ID = (int)r["IdentifierDumpServer_ID"];
+        IsTableValuedFunction = r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
+
+        IsPrimaryExtractionTable = r["IsPrimaryExtractionTable"] != DBNull.Value && Convert.ToBoolean(r["IsPrimaryExtractionTable"]);
+
+        IdentifierDumpServer_ID =
+            r["IdentifierDumpServer_ID"] == DBNull.Value ? null : (int)r["IdentifierDumpServer_ID"];
 
         IsView = r["IsView"] != DBNull.Value && Convert.ToBoolean(r["IsView"]);
 
@@ -243,10 +238,10 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     {
         if (obj is TableInfo)
         {
-            return -(obj.ToString().CompareTo(this.ToString())); //sort alphabetically (reverse)
+            return -obj.ToString().CompareTo(ToString()); //sort alphabetically (reverse)
         }
 
-        throw new Exception($"Cannot compare {this.GetType().Name} to {obj.GetType().Name}");
+        throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
 
 
@@ -261,7 +256,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     {
         return GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
     }
-                
+
     /// <inheritdoc cref="ITableInfo.GetDatabaseRuntimeName()"/>
     public string GetDatabaseRuntimeName()
     {
@@ -273,9 +268,8 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     public string GetDatabaseRuntimeName(LoadStage loadStage,INameDatabasesAndTablesDuringLoads namer = null)
     {
         var baseName = GetDatabaseRuntimeName();
-            
-        if(namer == null)
-            namer = new FixedStagingDatabaseNamer(baseName);
+
+        namer ??= new FixedStagingDatabaseNamer(baseName);
 
         return namer.GetDatabaseName(baseName, loadStage.ToLoadBubble());
     }
@@ -284,8 +278,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     public string GetRuntimeName(LoadBubble bubble, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
     {
         // If no naming scheme is specified, the default 'FixedStaging...' prepends the database name and appends '_STAGING'
-        if (tableNamingScheme == null)
-            tableNamingScheme = new FixedStagingDatabaseNamer(Database);
+        tableNamingScheme ??= new FixedStagingDatabaseNamer(Database);
 
         var baseName = GetQuerySyntaxHelper().GetRuntimeName(Name);
 
@@ -297,7 +290,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     {
         return GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
     }
-        
+
     /// <inheritdoc/>
     public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
     {
@@ -308,7 +301,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     }
 
     /// <summary>
-    /// Declares that the given <paramref name="credentials"/> should be used to access the data table referenced by this 
+    /// Declares that the given <paramref name="credentials"/> should be used to access the data table referenced by this
     /// <see cref="TableInfo"/> under the given <see cref="DataAccessContext"/> (loading data etc).
     /// </summary>
     /// <param name="credentials">Credentials to use (username / encrypted password)</param>
@@ -317,11 +310,11 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context, bool allowOverwriting = false)
     {
         var existingCredentials = CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
-            
+
         //if user told us to set credentials to null complain
         if(credentials == null)
             throw new Exception("Credentials was null, to remove a credential use TableInfoToCredentialsLinker.BreakLinkBetween instead");
-            
+
         //if there are existing credentials already
         if (existingCredentials != null)
         {
@@ -388,7 +381,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// <returns></returns>
     public bool IsLookupTable(ICoreChildProvider childProvider)
     {
-        // we are a lookup if 
+        // we are a lookup if
         var lookupDescriptionColumnInfoIds = new HashSet<int>(childProvider.AllLookups.Select(l => l.Description_ID));
         return ColumnInfos.Any(c => lookupDescriptionColumnInfoIds.Contains(c.ID));
     }
@@ -426,7 +419,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
             if(loadStage <= LoadStage.AdjustStaging && c.IsAutoIncrement) //auto increment columns do not get created in RAW/STAGING
                 continue;
             else
-            if(loadStage == LoadStage.AdjustStaging && 
+            if(loadStage == LoadStage.AdjustStaging &&
                //these two do not appear in staging
                (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID)  || c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
               )
@@ -459,7 +452,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
             if (context == DataAccessContext.Any)
                 continue;
 
-            //avoid access to 
+            //avoid access to
             var context1 = context;
             _knownCredentials.Add(context1,
                 new Lazy<IDataAccessCredentials>(() =>
@@ -476,11 +469,11 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// <inheritdoc/>
     public DiscoveredTable Discover(DataAccessContext context)
     {
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+        var db = DataAccessPortal.ExpectDatabase(this, context);
 
         if (IsTableValuedFunction)
             return db.ExpectTableValuedFunction(GetRuntimeName(), Schema);
-            
+
         return db.ExpectTable(GetRuntimeName(),Schema, IsView?TableType.View : TableType.Table);
     }
 
@@ -516,7 +509,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
             reason = $"Table {tbl.GetFullyQualifiedName()} did not exist";
             return false;
         }
-                
+
         reason = null;
         return true;
     }

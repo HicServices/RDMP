@@ -106,7 +106,7 @@ public class Evaluation : DatabaseEntity
         Catalogue = c;
 
         dqeRepository.InsertAndHydrate(this,
-            new Dictionary<string, object>()
+            new Dictionary<string, object>
             {
                 {"CatalogueID",c.ID},
                 {"DateOfEvaluation" , DateTime.Now}

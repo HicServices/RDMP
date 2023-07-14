@@ -15,7 +15,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 
 public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
 {
-    private TestableTableValuedFunction _function = new TestableTableValuedFunction();
+    private TestableTableValuedFunction _function = new();
         
     public void CreateFunction()
     {
@@ -28,14 +28,18 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
         CreateFunction();
 
         //In this example we have 2 configurations which both target the same table valued function but which must have different parameter values
-        var config1 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_1");
-        config1.CountSQL = null;
+        var config1 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_1")
+            {
+                CountSQL = null
+            };
         config1.SaveToDatabase();
 
-        var config2 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_2");
-        config2.CountSQL = null;
+        var config2 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_2")
+            {
+                CountSQL = null
+            };
         config2.SaveToDatabase();
-            
+
         var cic = new CohortIdentificationConfiguration(CatalogueRepository,"CohortGenerationDifferingTableValuedParametersTest");
             
         cic.EnsureNamingConvention(config1);
@@ -52,7 +56,7 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
             new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config2);
 
             Assert.IsNull(cic.RootCohortAggregateContainer_ID);
-                
+
             //create a root container for it
             var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
 
@@ -92,16 +96,20 @@ SET @name='fish';
 	FROM 
 	[" + TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 )
-",cic.ID)), 
+",cic.ID)),
                 CollapseWhitespace(builder.SQL));
 
             //now override JUST @name
-            var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);");
-            param1.Value = "'lobster'";
+            var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);")
+ {
+     Value = "'lobster'"
+ };
             param1.SaveToDatabase();
-                
-            var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);");
-            param2.Value = "'monkey'";
+
+            var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);")
+ {
+     Value = "'monkey'"
+ };
             param2.SaveToDatabase();
 
             var builder2 = new CohortQueryBuilder(cic,null);

@@ -21,8 +21,8 @@ public class SuggestComboBox : ComboBox
 {
     #region fields and properties
 
-    private readonly ListBox _suggLb = new ListBox { Visible = false, TabStop = false };
-    private readonly BindingList<string> _suggBindingList = new BindingList<string>();
+    private readonly ListBox _suggLb = new() { Visible = false, TabStop = false };
+    private readonly BindingList<string> _suggBindingList = new();
     private Expression<Func<ObjectCollection, IEnumerable<string>>> _propertySelector;
     private Func<ObjectCollection, IEnumerable<string>> _propertySelectorCompiled;
     private Expression<Func<string, string, bool>> _filterRule;
@@ -116,7 +116,8 @@ public class SuggestComboBox : ComboBox
     }
 
     private bool _changingVisibility = false;
-    void _suggLb_VisibleChanged(object sender, EventArgs e)
+
+    private void _suggLb_VisibleChanged(object sender, EventArgs e)
     {
         //don't fire event if its already being fired (needed because Controls.Remove will make visible false)
         if(_changingVisibility)
@@ -291,7 +292,7 @@ public class SuggestComboBox : ComboBox
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        if ((e.KeyData == Keys.Enter) || (e.KeyData == Keys.Escape))
+        if (e.KeyData == Keys.Enter || e.KeyData == Keys.Escape)
         {
             e.SuppressKeyPress = true;
             return;
@@ -299,7 +300,7 @@ public class SuggestComboBox : ComboBox
         base.OnKeyDown(e);
     }
 
-    private static readonly Keys[] KeysToHandle = new[] { Keys.Down, Keys.Up, Keys.Enter, Keys.Escape };
+    private static readonly Keys[] KeysToHandle = { Keys.Down, Keys.Up, Keys.Enter, Keys.Escape };
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
         // the keysstrokes of our interest should not be processed be base class:

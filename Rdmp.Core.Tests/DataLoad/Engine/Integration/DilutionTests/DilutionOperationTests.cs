@@ -31,18 +31,20 @@ public class DilutionOperationTests:DatabaseTests
     [TestCase(null, null)]
     public void TestRoundDateToMiddleOfQuarter(string input, string expectedDilute)
     {
-            
-            
+
+
         var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging,null) == "DateRoundingTests");
         var col = Mock.Of<IPreLoadDiscardedColumn>(c=>
             c.TableInfo == tbl &&
             c.GetRuntimeName() == "TestField");
 
-        var o = new RoundDateToMiddleOfQuarter();
-        o.ColumnToDilute = col;
+        var o = new RoundDateToMiddleOfQuarter
+        {
+            ColumnToDilute = col
+        };
         var sql = o.GetMutilationSql(null);
 
-        var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+        var server = GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server;
         using (var con = server.BeginNewTransactedConnection())
         {
             try
@@ -91,11 +93,13 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
         var tbl = Mock.Of<ITableInfo>(t=>t.GetRuntimeName(LoadStage.AdjustStaging,null) == "ExcludeRight3OfPostcodes");
         var col = Mock.Of<IPreLoadDiscardedColumn>(c=>c.TableInfo == tbl && c.GetRuntimeName() == "TestField");
 
-        var o = new ExcludeRight3OfUKPostcodes();
-        o.ColumnToDilute = col;
+        var o = new ExcludeRight3OfUKPostcodes
+        {
+            ColumnToDilute = col
+        };
         var sql = o.GetMutilationSql(null);
 
-        var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+        var server = GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server;
         using (var con = server.BeginNewTransactedConnection())
         {
             try
@@ -136,11 +140,13 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
             c.TableInfo == tbl && 
             c.GetRuntimeName() =="TestField");
 
-        var o = new CrushToBitFlag();
-        o.ColumnToDilute = col;
+        var o = new CrushToBitFlag
+        {
+            ColumnToDilute = col
+        };
         var sql = o.GetMutilationSql(null);
 
-        var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+        var server = GetCleanedServer(DatabaseType.MicrosoftSQLServer).Server;
         using (var con = server.BeginNewTransactedConnection())
         {
             try
@@ -167,27 +173,30 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
     public void Dilution_WithNamer_Test()
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            
+
         var dt = new DataTable();
         dt.Columns.Add("Bob");
         dt.Rows.Add(new[] {"Fish"});
 
         var tbl = db.CreateTable("DilutionNamerTest", dt);
-        Import(tbl,out var ti,out var cols);
+        Import(tbl,out var ti, out var cols);
 
         tbl.Rename("AAAA");
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
 
-        var discarded = new PreLoadDiscardedColumn(CatalogueRepository, ti, "Bob");
-        discarded.SqlDataType = "varchar(10)";
-        discarded.Destination = DiscardedColumnDestination.Dilute;
+        var discarded = new PreLoadDiscardedColumn(CatalogueRepository, ti, "Bob")
+        {
+            SqlDataType = "varchar(10)",
+            Destination = DiscardedColumnDestination.Dilute
+        };
         discarded.SaveToDatabase();
 
 
-        var dilution = new Dilution();
-
-        dilution.ColumnToDilute = discarded;
-        dilution.Operation = typeof (CrushToBitFlag);
+        var dilution = new Dilution
+        {
+            ColumnToDilute = discarded,
+            Operation = typeof (CrushToBitFlag)
+        };
 
         dilution.Initialize(db,LoadStage.AdjustStaging);
         dilution.Check(new ThrowImmediatelyCheckNotifier());

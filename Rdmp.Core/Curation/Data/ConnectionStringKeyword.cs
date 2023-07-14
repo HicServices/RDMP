@@ -74,11 +74,11 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     /// <param name="value"></param>
     public ConnectionStringKeyword(ICatalogueRepository repository,DatabaseType databaseType, string keyword, string value)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>()
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"DatabaseType",databaseType.ToString()},
             {"Name",keyword},
-            {"Value",value},
+            {"Value",value}
         });
 
         if (ID == 0 || Repository != repository)

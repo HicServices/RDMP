@@ -18,7 +18,7 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Sharing.Dependency.Gathering;
 
 /// <summary>
-/// The described Object is only tenously related to the original object and you shouldn't worry too much if during refactoring you don't find any references. 
+/// The described Object is only tenously related to the original object and you shouldn't worry too much if during refactoring you don't find any references.
 /// An example of this would be all Filters in a Catalogue where a single ColumnInfo is being renamed.  Any filter in the catalogue could contain a reference to
 /// the ColumnInfo but most won't.
 ///
@@ -27,7 +27,7 @@ namespace Rdmp.Core.Sharing.Dependency.Gathering;
 /// </summary>
 public class GatheredObject : IHasDependencies, IMasqueradeAs
 {
-    public IMapsDirectlyToDatabaseTable Object { get; set; } 
+    public IMapsDirectlyToDatabaseTable Object { get; set; }
     public List<GatheredObject> Children { get; private set; }
 
     public GatheredObject(IMapsDirectlyToDatabaseTable o)
@@ -38,12 +38,12 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
 
     /// <summary>
     /// True if the gathered object is a data export object (e.g. it is an ExtractableColumn or DeployedExtractionFilter) and it is part of a frozen (released)
-    /// ExtractionConfiguration 
+    /// ExtractionConfiguration
     /// </summary>
     public bool IsReleased { get; set; }
-        
+
     /// <summary>
-    /// Creates a sharing export (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and then serializes it as a <see cref="ShareDefinition"/>.  
+    /// Creates a sharing export (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and then serializes it as a <see cref="ShareDefinition"/>.
     /// This includes mapping any [<see cref="RelationshipAttribute"/>] properties on the <see cref="GatheredObject.Object"/> to the relevant Share Guid (which must
     /// exist in branchParents).
     /// 
@@ -69,7 +69,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
             //if it's the ID column skip it
             if(property.Name == "ID")
                 continue;
-                
+
             //skip [NoMapping] columns
             if(noMappingFinder.GetAttribute(property) != null)
                 continue;
@@ -107,7 +107,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     }
 
     /// <summary>
-    /// Creates sharing exports (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and all <see cref="GatheredObject.Children"/> and 
+    /// Creates sharing exports (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and all <see cref="GatheredObject.Children"/> and
     /// then serializes them as <see cref="ShareDefinition"/>
     /// </summary>
     /// <param name="shareManager"></param>
@@ -120,10 +120,12 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     private List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager, List<ShareDefinition> branchParents)
     {
         var me = ToShareDefinition(shareManager, branchParents);
-            
+
         var toReturn = new List<ShareDefinition>();
-        var parents = new List<ShareDefinition>(branchParents);
-        parents.Add(me);
+        var parents = new List<ShareDefinition>(branchParents)
+        {
+            me
+        };
         toReturn.Add(me);
 
         foreach (var child in Children)
@@ -140,15 +142,15 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((GatheredObject) obj);
     }
 
     public override int GetHashCode()
     {
-        return (Object != null ? Object.GetHashCode() : 0);
+        return Object != null ? Object.GetHashCode() : 0;
     }
 
     public object MasqueradingAs()

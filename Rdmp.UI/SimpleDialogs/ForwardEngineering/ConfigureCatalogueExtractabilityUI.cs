@@ -44,17 +44,17 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering;
 /// If you choose to you can make these CatalogueItems extractable by creating ExtractionInformation too or you may choose to do this by hand later on (in CatalogueItemUI).  It is likely that
 /// you don't want to release every column in the dataset to researchers so make sure to review the extractability of the columns created. </para>
 /// 
-/// <para>You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This column must be the same (logically/datatype) across all your datasets i.e. 
+/// <para>You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This column must be the same (logically/datatype) across all your datasets i.e.
 /// you can use either CHI number or NHS Number but you can't mix and match (but you could have fields with different names e.g. PatCHI, PatientCHI, MotherCHI, FatherChiNo etc).</para>
 /// 
-/// <para>The final alternative is to add the imported Columns to another already existing Catalogue.  Only use this option if you know it is possible to join the new table with the other 
+/// <para>The final alternative is to add the imported Columns to another already existing Catalogue.  Only use this option if you know it is possible to join the new table with the other
 /// table(s) that underlie the selected Catalogue (e.g. if you are importing a Results table which joins to a Header table in the dataset Biochemistry on primary/foreign key LabNumber).
 /// If you choose this option you must configure the JoinInfo logic (See JoinConfiguration)</para>
 /// </summary>
 public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 {
     private object[] _extractionCategories;
-        
+
     private string NotExtractable = "Not Extractable";
     private ICatalogue _catalogue;
     private ITableInfo _tableInfo;
@@ -75,14 +75,13 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     public string TargetFolder { get; set; }
 
     private BinderWithErrorProviderFactory _binder;
-        
-    ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
-        
+    private ObjectSaverButton objectSaverButton1 = new();
+
     /// <summary>
     /// True if we are making programatic changes to values and shouldn't respond to control events (e.g. dropdown changes)
     /// </summary>
     private bool isLoading;
-    const string None = "<<None>>";
+    private const string None = "<<None>>";
 
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfo tableInfo,string initialDescription, IProject projectSpecificIfAny):this(activator)
     {
@@ -92,8 +91,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, IProject projectSpecificIfAny):this(activator)
     {
-        ColumnInfo[] cols;
-        importer.DoImport(out _tableInfo, out cols);
+        importer.DoImport(out _tableInfo, out ColumnInfo[] cols);
 
         _importedNewTable = true;
 
@@ -112,10 +110,9 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         CommonFunctionality.SetItemActivator(activator);
         var cols = _tableInfo.ColumnInfos;
-            
+
         var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols);
-        ExtractionInformation[] eis;
-        forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _catalogueItems, out eis);
+        forwardEngineer.ExecuteForwardEngineering(out _catalogue, out _catalogueItems, out var eis);
 
         tbDescription.Text = $"{initialDescription} ({Environment.UserName} - {DateTime.Now})";
         tbTableName.Text = _tableInfo.Name;
@@ -162,7 +159,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         olvColumnInfoName.ImageGetter = ImageGetter;
         olvColumnExtractability.RebuildColumns();
-            
+
         if (Activator.RepositoryLocator.DataExportRepository == null)
             gbProjectSpecific.Enabled = false;
         else
@@ -188,7 +185,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-            
+
         if (!string.IsNullOrWhiteSpace(TargetFolder))
         {
             _catalogue.Folder = TargetFolder;
@@ -258,13 +255,13 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         Debug.Assert(n.ExtractionInformation != null, "n.ExtractionInformation != null");
         n.ExtractionInformation.HashOnDataRelease = (bool)newvalue;
-            
+
         // if we are turning on hashing then ensure the column has an alias
         if((bool)newvalue)
         {
             n.ExtractionInformation.Alias = n.ExtractionInformation.GetRuntimeName();
         }
-            
+
         n.ExtractionInformation.SaveToDatabase();
     }
 
@@ -281,7 +278,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     private void MakeExtractable(object o, bool shouldBeExtractable, ExtractionCategory? category = null)
     {
         var n = (ColPair)o;
-            
+
         //if it has extraction information
         if(n.ExtractionInformation != null)
         {
@@ -297,12 +294,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 }
                 return;
             }
-            else
-            {
-                //make it not extractable by deleting the extraction information
-                n.ExtractionInformation.DeleteInDatabase();
-                n.ExtractionInformation = null;
-            }
+
+            //make it not extractable by deleting the extraction information
+            n.ExtractionInformation.DeleteInDatabase();
+            n.ExtractionInformation = null;
         }
         else
         {
@@ -310,20 +305,17 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
             if(!shouldBeExtractable) //it's already not extractable job done
                 return;
-            else
+            //make it extractable
+            var newExtractionInformation = new ExtractionInformation((ICatalogueRepository) n.ColumnInfo.Repository, n.CatalogueItem, n.ColumnInfo,n.ColumnInfo.Name);
+
+            if (category.HasValue)
             {
-                //make it extractable
-                var newExtractionInformation = new ExtractionInformation((ICatalogueRepository) n.ColumnInfo.Repository, n.CatalogueItem, n.ColumnInfo,n.ColumnInfo.Name);
-
-                if (category.HasValue)
-                {
-                    newExtractionInformation.ExtractionCategory = category.Value;
-                    newExtractionInformation.Order = olvColumnExtractability.IndexOf(n);
-                    newExtractionInformation.SaveToDatabase();
-                }
-
-                n.ExtractionInformation = newExtractionInformation;
+                newExtractionInformation.ExtractionCategory = category.Value;
+                newExtractionInformation.Order = olvColumnExtractability.IndexOf(n);
+                newExtractionInformation.SaveToDatabase();
             }
+
+            n.ExtractionInformation = newExtractionInformation;
         }
 
         olvColumnExtractability.RefreshObject(n);
@@ -355,7 +347,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 Bounds = cellEditEventArgs.CellBounds
             };
-                
+
             cbx.Items.AddRange(_extractionCategories);
             cbx.SelectedItem = n.ExtractionInformation != null ? (object) n.ExtractionInformation.ExtractionCategory : NotExtractable;
             cellEditEventArgs.Control = cbx;
@@ -381,8 +373,10 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         olvColumnExtractability.UseFiltering = true;
 
-        var textFilter = new TextMatchFilter(olvColumnExtractability, tbFilter.Text);
-        textFilter.Columns = new[] {olvColumnInfoName};
+        var textFilter = new TextMatchFilter(olvColumnExtractability, tbFilter.Text)
+        {
+            Columns = new[] {olvColumnInfoName}
+        };
         olvColumnExtractability.ModelFilter = textFilter;
     }
 
@@ -390,7 +384,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var filteredObjects = olvColumnExtractability.FilteredObjects.Cast<ColPair>().ToArray();
         var toChangeTo = ddCategoriseMany.SelectedItem;
-            
+
         if (MessageBox.Show($"Set {filteredObjects.Length} to '{toChangeTo}'?",
                 "Confirm Overwrite?", MessageBoxButtons.OKCancel) == DialogResult.OK)
         {
@@ -411,16 +405,14 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
 
-        IAtomicCommandWithTarget cmd;
-        if(_projectSpecific != null)
-        {
-            cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator,_catalogue,_projectSpecific);
-            
-            if (!cmd.IsImpossible)
-                cmd.Execute();
-            else
-                MessageBox.Show($"Could not make Catalogue ProjectSpecific:{cmd.ReasonCommandImpossible}");
-        }
+        if (_projectSpecific == null) return;
+
+        IAtomicCommandWithTarget cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator,_catalogue,_projectSpecific);
+
+        if (cmd.IsImpossible)
+            MessageBox.Show($"Could not make Catalogue ProjectSpecific:{cmd.ReasonCommandImpossible}");
+        else
+            cmd.Execute();
     }
 
     private void btnAddToExisting_Click(object sender, EventArgs e)
@@ -432,7 +424,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             MessageBox.Show("You must set at least one column to extractable before you can add them to another Catalogue");
             return;
         }
-            
+
         if(Activator.SelectObject(new DialogArgs
            {
                TaskDescription = "You are about to add the newly imported table columns to an existing Catalogue.  This will mean that your Catalogue draws data from 2+ tables.  You will need to also create a join between the underlying columns for this to work properly."
@@ -454,7 +446,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             ci.Catalogue_ID = addToInstead.ID;
             ci.SaveToDatabase();
         }
-            
+
         _choicesFinalised = true;
         _catalogue.DeleteInDatabase();
 
@@ -541,7 +533,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
         _choicesFinalised = true;
         DialogResult = DialogResult.OK;
-            
+
         if (CatalogueCreatedIfAny != null)
             objectSaverButton1.CheckForUnsavedChangesAnOfferToSave();
 
@@ -622,12 +614,12 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         helpIcon1.SetHelpText("Configure Extractability", "Click for tutorial", _workflow);
     }
 
-    class ColPair
+    private class ColPair
     {
         public CatalogueItem CatalogueItem;
         public ColumnInfo ColumnInfo;
         public ExtractionInformation ExtractionInformation;
-            
+
         public ColPair(CatalogueItem ci, ColumnInfo col, ExtractionInformation ei)
         {
             CatalogueItem = ci;
@@ -672,7 +664,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
                 SelectProject(selected);
             }
         }
-            
+
     }
 
     private void ddIsExtractionIdentifier_SelectedIndexChanged(object sender, EventArgs e)
@@ -682,7 +674,6 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
             return;
         }
 
-        var n = ddIsExtractionIdentifier.SelectedItem as ColPair;
 
         //turn off all IsExtractionIdentifierness
         foreach (var node in ddIsExtractionIdentifier.Items.OfType<ColPair>())
@@ -695,7 +686,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         }
 
         //we cleared them all, now did they want one selected (i.e. they selected anythign except <<None>>)
-        if (n != null)
+        if (ddIsExtractionIdentifier.SelectedItem is ColPair n)
         {
             if(n.ExtractionInformation == null)
                 MakeExtractable(n, true, ExtractionCategory.Core);

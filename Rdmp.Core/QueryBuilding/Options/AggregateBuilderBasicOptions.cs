@@ -13,7 +13,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.QueryBuilding.Options;
 
 /// <summary>
-/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running in 'graph mode' 
+/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running in 'graph mode'
 /// </summary>
 public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
 {
@@ -54,14 +54,14 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
             case AggregateEditorSection.Extractable:
                 return CanMakeExtractable(aggregate);
             case AggregateEditorSection.TOPX:
-                //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries 
+                //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries
                 return aggregate.PivotOnDimensionID != null || aggregate.GetAxisIfAny() == null;
             case AggregateEditorSection.PIVOT:
                 return aggregate.GetAxisIfAny() != null || aggregate.AggregateDimensions.Length==2;//can only pivot if there is an axis or exactly 2 dimensions (+ count)
             case AggregateEditorSection.AXIS:
                 return true;
             default:
-                throw new ArgumentOutOfRangeException("section");
+                throw new ArgumentOutOfRangeException(nameof(section));
         }
     }
 
@@ -69,7 +69,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
     public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
     {
         var availableTables = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .Select(e => e.ColumnInfo != null? e.ColumnInfo.TableInfo:null)
+            .Select(e => e.ColumnInfo?.TableInfo)
             .Where( t=> t != null)
             .Distinct();
 
@@ -81,7 +81,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         return availableTables.Except(implicitJoins).Cast<IMapsDirectlyToDatabaseTable>().ToArray();
     }
 
-    private bool CanMakeExtractable(AggregateConfiguration aggregate)
+    private static bool CanMakeExtractable(AggregateConfiguration aggregate)
     {
         //if it has any extraction identifiers then it cannot be extractable!
         if (aggregate.AggregateDimensions.Any(d => d.IsExtractionIdentifier))

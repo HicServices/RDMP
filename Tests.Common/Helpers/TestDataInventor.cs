@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using Rdmp.Core.Caching.Pipeline.Sources;
 using Rdmp.Core.Caching.Requests;
 using Rdmp.Core.Curation.Data;
@@ -22,7 +23,7 @@ namespace Tests.Common.Helpers;
 /// </summary>
 public class TestDataInventor : CacheSource<TestDataWriterChunk>
 {
-    Random r = new Random();
+    private Random r = new();
         
     /// <summary>
     /// The path in which to create random files
@@ -38,7 +39,7 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
             return null;
 
         var currentDay = Request.Start;
-            
+
         var toReturn = new List<FileInfo>();
 
         while(currentDay <= Request.End)
@@ -54,13 +55,10 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
     {
         var filename = Path.Combine(WorkingFolder, $"{currentDay:yyyyMMdd}.csv");
 
-        var contents = $"MyRand,DateOfRandom{Environment.NewLine}";
+        var contents = new StringBuilder($"MyRand,DateOfRandom{Environment.NewLine}");
         for (var i = 0; i < 100; i++)
-#pragma warning disable SCS0005 // Weak random generator - This is not a secure context as it is simply a test helper.
-            contents += $"{r.Next(10000)},{currentDay:yyyy-MM-dd}{Environment.NewLine}";
-#pragma warning restore SCS0005 // Weak random generator
-
-        File.WriteAllText(filename, contents);
+            contents.AppendLine($"{r.Next(10000)},{currentDay:yyyy-MM-dd}");
+        File.WriteAllText(filename, contents.ToString());
         return new FileInfo(filename);
     }
 

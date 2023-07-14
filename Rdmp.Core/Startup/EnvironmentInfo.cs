@@ -17,7 +17,7 @@ public enum PluginFolders
 {
     None = 0,
     Main = 1,
-    Windows = 4,
+    Windows = 4
 }
 
 /// <summary>
@@ -83,7 +83,7 @@ public class EnvironmentInfo
         if (_pluginsToLoad.HasFlag(PluginFolders.Windows))
         {
             // see if current plugin has winforms stuff
-            var winDir=root.GetDirectories(WindowsSubDir, new EnumerationOptions
+            var winDir =root.GetDirectories(WindowsSubDir, new EnumerationOptions
             {
                 MatchCasing = MatchCasing.PlatformDefault,
                 AttributesToSkip = 0

@@ -29,14 +29,14 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public AttacherRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
         : base(task, args)
     {
-        //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name 
+        //All attachers must be marked as mounting stages, and therefore we can pull out the RAW Server and Name
         var mountingStageArgs = args.StageSpecificArguments ;
         if (mountingStageArgs.LoadStage != LoadStage.Mounting)
             throw new Exception("AttacherRuntimeTask can only be called as a Mounting stage process");
-            
+
         if (string.IsNullOrWhiteSpace(task.Path))
             throw new ArgumentException(
-                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {typeof(IAttacher).Name}");
+                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IAttacher)}");
 
         Attacher = mef.CreateA<IAttacher>(ProcessTask.Path);
         SetPropertiesForClass(RuntimeArguments, Attacher);
@@ -71,11 +71,11 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
             var afterServer = RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name;
             var afterDatabase = RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetCurrentDatabase().GetRuntimeName();
             var afterDatabaseType = RuntimeArguments.StageSpecificArguments.DbInfo.Server.DatabaseType;
-                
+
             if(!(beforeServer.Equals(afterServer) && beforeDatabase.Equals(afterDatabase) && beforeDatabaseType == afterDatabaseType))
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                     $"Attacher {Attacher.GetType().Name} modified the ConnectionString during attaching"));
-                
+
         }
     }
 
@@ -89,7 +89,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         var className = ProcessTask.Path;
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            
+
         foreach (var assembly in assemblies)
         {
             var type = assembly.GetTypes().FirstOrDefault(t => t.FullName == className);

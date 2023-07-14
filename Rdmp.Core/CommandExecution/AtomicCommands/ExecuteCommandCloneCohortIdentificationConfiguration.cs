@@ -49,11 +49,11 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is CohortIdentificationConfiguration)
-            _cic = (CohortIdentificationConfiguration)target;
+        if (target is CohortIdentificationConfiguration configuration)
+            _cic = configuration;
 
-        if (target is Project)
-            _project = (Project)target;
+        if (target is Project project)
+            _project = project;
 
         return this;
     }
@@ -62,8 +62,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
     {
         base.Execute();
 
-        if (_cic == null)
-            _cic = SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _cic ??= SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
         if(_cic == null)
             return;
@@ -73,7 +72,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
                                                    "filters, parameters and set operations. Are you sure this is what you want?",
                 "Confirm Cloning"))
         {
-                
+
             CloneCreatedIfAny = _cic.CreateClone(new ThrowImmediatelyCheckNotifier());
 
             if (_project != null) // clone the association

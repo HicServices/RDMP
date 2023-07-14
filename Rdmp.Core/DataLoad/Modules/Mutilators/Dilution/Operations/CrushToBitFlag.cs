@@ -25,8 +25,8 @@ public class CrushToBitFlag : DilutionOperation
     public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
     {
             
-        return 
-            String.Format(
+        return
+            string.Format(
                 @"
   ALTER TABLE {0} Add {1}_bit bit 
   GO

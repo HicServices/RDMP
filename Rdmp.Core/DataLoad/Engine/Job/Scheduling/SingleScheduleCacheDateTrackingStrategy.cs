@@ -21,13 +21,13 @@ namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 /// </summary>
 public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrategy
 {
-    private readonly Queue<DateTime> _availableDates = new Queue<DateTime>();
+    private readonly Queue<DateTime> _availableDates = new();
     private readonly DateTime _lastDateForLoading;
 
     public SingleScheduleCacheDateTrackingStrategy(ICacheLayout cacheLayout, ILoadProgress loadProgress,IDataLoadEventListener listener)
     {
         // no null check needed as the contract ensures that both DataLoadProgress and OriginDate can't simultaneously be null
-        var lastAssignedLoadDate = loadProgress.DataLoadProgress == null ? loadProgress.OriginDate.Value : loadProgress.DataLoadProgress.Value;
+        var lastAssignedLoadDate = loadProgress.DataLoadProgress ?? loadProgress.OriginDate.Value;
 
         // This is all the dates in the cache, but we want to start from _lastAssignedLoadDate
         // todo: must be efficient, revisit
@@ -46,13 +46,11 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
     /// <param name="loadProgress"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException">Caching has not been configured correctly or the caching process has not begun</exception>
-    public DateTime CalculateLastLoadDate(ILoadProgress loadProgress)
+    public static DateTime CalculateLastLoadDate(ILoadProgress loadProgress)
     {
         // Compute the last cache date from the CacheFillProgress date
         // CacheFillProgress is the date up to which caching has been performed, and is therefore the date from which caching will next begin.
-        var cacheProgress = loadProgress.CacheProgress;
-        if (cacheProgress == null)
-            throw new InvalidOperationException(
+        var cacheProgress = loadProgress.CacheProgress ?? throw new InvalidOperationException(
                 $"Could not retrieve the CacheProgress from LoadProgress {loadProgress.ID} (ensure caching is configured on this load before using this strategy)");
         if (cacheProgress.CacheFillProgress == null)
             throw new InvalidOperationException(
@@ -104,7 +102,7 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
                 // Get the beginning of the day prior to nextDateToBeCached
                 return nextDateToBeCached.AddDays(-1).Date;
             default:
-                throw new ArgumentOutOfRangeException("cacheFileGranularity", cacheFileGranularity, "CacheFileGranularity must either be Hour or Day.");
+                throw new ArgumentOutOfRangeException(nameof(cacheFileGranularity), cacheFileGranularity, "CacheFileGranularity must either be Hour or Day.");
         }
     }
 

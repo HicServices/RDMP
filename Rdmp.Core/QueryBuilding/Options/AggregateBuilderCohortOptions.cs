@@ -16,7 +16,7 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding.Options;
 
 /// <summary>
-/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running as a 'cohort set' 
+/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running as a 'cohort set'
 /// </summary>
 public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
 {
@@ -45,7 +45,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
     {
         //get the existing dimensions
         var alreadyExisting = aggregate.AggregateDimensions.ToArray();
-            
+
         //get novel ExtractionInformations from the catalogue for which there are not already any Dimensions
         var candidates = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => alreadyExisting.All(d => d.ExtractionInformation_ID != e.ID)).ToArray();
 
@@ -73,7 +73,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
             //change the SelectSQL to the table alias of the joinable used (see CohortQueryBuilder.AddJoinablesToBuilder)
             foreach (var dimension in hackedDimensions)
                 dimension.SelectSQL = $"{tableAlias}.{dimension.GetRuntimeName()}";
-                
+
             toReturn.AddRange(hackedDimensions);
         }
 
@@ -94,7 +94,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
             case AggregateEditorSection.AXIS:
                 return false;
             default:
-                throw new ArgumentOutOfRangeException("section");
+                throw new ArgumentOutOfRangeException(nameof(section));
         }
     }
 
@@ -102,7 +102,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
     public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
     {
         var existingForcedJoinTables = aggregate.ForcedJoins;
-            
+
         var existingDimensions = aggregate.AggregateDimensions;
         var existingTablesAlreadyReferenced = existingDimensions.Select(d => d.ColumnInfo.TableInfo).Distinct();
 
@@ -118,11 +118,7 @@ public class AggregateBuilderCohortOptions: IAggregateBuilderOptions
             return toReturn.ToArray();
 
         //it's not a patient index table itself so it can reference other patient index tables in the configuration
-        var config = aggregate.GetCohortIdentificationConfigurationIfAny();
-
-        //If this returns null then it means someone deleted it out of the configuration while you were editing it?
-        if(config == null)
-            throw new NotSupportedException(
+        var config = aggregate.GetCohortIdentificationConfigurationIfAny() ?? throw new NotSupportedException(
                 $"Aggregate {aggregate} did not return its CohortIdentificationConfiguration correctly, did someone delete the configuration or Orphan this AggregateConfiguration while you weren't looking?");
 
         //find those that are already referenced

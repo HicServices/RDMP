@@ -33,7 +33,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
 
     public List<ArchivalDataSource> DataSources => _knownDataSource.Value;
 
-    readonly Lazy<List<ArchivalDataSource>> _knownDataSource;
+    private readonly Lazy<List<ArchivalDataSource>> _knownDataSource;
 
     public ArchivalTableLoadInfo(ArchivalDataLoadInfo parent, DbDataReader r,DiscoveredDatabase loggingDatabase)
     {
@@ -74,7 +74,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
 
         return toReturn;
     }
-    private int? ToNullableInt(object i)
+    private static int? ToNullableInt(object i)
     {
         if (i == null || i == DBNull.Value)
             return null;
@@ -90,14 +90,13 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
 
     public int CompareTo(object obj)
     {
-        var other = obj as ArchivalTableLoadInfo;
-        if (other != null)
+        if (obj is ArchivalTableLoadInfo other)
             if (Start == other.Start)
                 return 0;
             else
                 return Start > other.Start ? 1 : -1;
 
-        return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
     public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {

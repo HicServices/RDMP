@@ -51,32 +51,24 @@ public class ExtractionConfigurationTest : DatabaseTests
         }
         finally 
         {
-            if (extractionInformation != null)
-                extractionInformation.DeleteInDatabase();
+            extractionInformation?.DeleteInDatabase();
 
-            if (column != null)
-                column.DeleteInDatabase();
+            column?.DeleteInDatabase();
 
-            if (table != null)
-                table.DeleteInDatabase();
-                
-            if (cataItem != null)
-                cataItem.DeleteInDatabase();
+            table?.DeleteInDatabase();
 
-            if (configuration != null)
-                configuration.DeleteInDatabase();
+            cataItem?.DeleteInDatabase();
 
-            if (project != null)
-                project.DeleteInDatabase();
+            configuration?.DeleteInDatabase();
 
-            if (dataSet != null)
-                dataSet.DeleteInDatabase();
+            project?.DeleteInDatabase();
 
-            if (cata != null)
-                cata.DeleteInDatabase();
+            dataSet?.DeleteInDatabase();
+
+            cata?.DeleteInDatabase();
 
 
-                
+
         }
     }
 }

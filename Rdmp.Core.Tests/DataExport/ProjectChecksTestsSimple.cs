@@ -39,8 +39,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Project_NoDirectory()
     {
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfig(out config);
+        var p = GetProjectWithConfig(out var config);
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
         Assert.AreEqual("Project does not have an ExtractionDirectory", ex.Message);
             
@@ -52,8 +51,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [TestCase(@"Z:\WizardOfOz")]
     public void Project_NonExistentDirectory(string dir)
     {
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfig(out config);
+        var p = GetProjectWithConfig(out var config);
            
         p.ExtractionDirectory = dir;
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
@@ -64,8 +62,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Project_DodgyCharactersInExtractionDirectoryName()
     {
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfig(out config);
+        var p = GetProjectWithConfig(out var config);
         p.ExtractionDirectory = @"C:\|||";
 
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
@@ -75,9 +72,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void ConfigurationFrozen_Remnants()
     {
-        DirectoryInfo dir;
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfigDirectory(out config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out var dir);
 
         //create remnant directory (empty)
         var remnantDir = dir.CreateSubdirectory($"Extr_{config.ID}20011225");
@@ -113,9 +108,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void ConfigurationFrozen_RemnantsWithFiles()
     {
-        DirectoryInfo dir;
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfigDirectory(out config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out var dir);
 
         //create remnant directory (empty)
         var remnantDir = dir.CreateSubdirectory($"Extr_{config.ID}20011225");
@@ -123,9 +116,9 @@ public class ProjectChecksTestsSimple:DatabaseTests
         //with empty subdirectories
         var lookupDir = remnantDir.CreateSubdirectory("DMPTestCatalogue").CreateSubdirectory("Lookups");
 
-        //this time put a file in 
+        //this time put a file in
         File.AppendAllLines(Path.Combine(lookupDir.FullName,"Text.txt"),new string[]{"Amagad"});
-            
+
         config.IsReleased = true;//make environment think config is released
         config.SaveToDatabase();
         try
@@ -146,9 +139,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Configuration_NoDatasets()
     {
-        DirectoryInfo dir;
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfigDirectory(out config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out DirectoryInfo dir);
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
         StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",ex.Message);
 
@@ -158,9 +149,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     [Test]
     public void Configuration_NoProjectNumber()
     {
-        DirectoryInfo dir;
-        ExtractionConfiguration config;
-        var p = GetProjectWithConfigDirectory(out config, out dir);
+        var p = GetProjectWithConfigDirectory(out var config, out DirectoryInfo dir);
         p.ProjectNumber = null;
         var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p, config));
         StringAssert.Contains("Project does not have a Project Number, this is a number which is meaningful to you (as opposed to ID which is the ",ex.Message);
@@ -170,7 +159,7 @@ public class ProjectChecksTestsSimple:DatabaseTests
     {
         try
         {
-            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(notifier??new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),p).Check(notifier??new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
         }
         finally
         {
@@ -181,8 +170,10 @@ public class ProjectChecksTestsSimple:DatabaseTests
 
     private Project GetProjectWithConfig(out ExtractionConfiguration config)
     {
-        var p = new Project(DataExportRepository, "Fish");
-        p.ProjectNumber = -5000;
+        var p = new Project(DataExportRepository, "Fish")
+        {
+            ProjectNumber = -5000
+        };
         config = new ExtractionConfiguration(DataExportRepository,p);
         return p;
     }

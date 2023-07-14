@@ -30,7 +30,7 @@ using YamlDotNet.Serialization;
 namespace Rdmp.UI.LocationsMenu;
 
 /// <summary>
-/// All metadata in RDMP is stored in one of two main databases.  The Catalogue database records all the technical, descriptive, governance, data load, filtering logic etc about 
+/// All metadata in RDMP is stored in one of two main databases.  The Catalogue database records all the technical, descriptive, governance, data load, filtering logic etc about
 /// your datasets (including where they are stored etc).  The Data Export Manager database stores all the extraction configurations you have created for releasing to researchers.
 /// 
 /// <para>This window lets you tell the software where your Catalogue / Data Export Manager databases are or create new ones.  These connection strings are recorded in each users settings file.
@@ -50,10 +50,9 @@ public partial class ChoosePlatformDatabasesUI : Form
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
     public bool ChangesMade = false;
-
-    int _seed = 500;
-    int _peopleCount = ExampleDatasetsCreation.NumberOfPeople;
-    int _rowCount = ExampleDatasetsCreation.NumberOfRowsPerDataset;
+    private int _seed = 500;
+    private int _peopleCount = ExampleDatasetsCreation.NumberOfPeople;
+    private int _rowCount = ExampleDatasetsCreation.NumberOfRowsPerDataset;
 
     public ChoosePlatformDatabasesUI(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
@@ -81,7 +80,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
 
         //only enable connection string setting if it is a user settings repo
-        tbDataExportManagerConnectionString.Enabled = 
+        tbDataExportManagerConnectionString.Enabled =
             tbCatalogueConnectionString.Enabled =
                 btnBrowseForCatalogue.Enabled =
                     btnBrowseForDataExport.Enabled =
@@ -102,7 +101,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         {
             case State.PickNewOrExisting:
                 pChooseOption.Dock = DockStyle.Top;
-                    
+
                 pResults.Visible = false;
                 gbCreateNew.Visible = false;
                 gbUseExisting.Visible = false;
@@ -114,8 +113,8 @@ public partial class ChoosePlatformDatabasesUI : Form
 
                 pResults.Dock = DockStyle.Fill;
                 gbCreateNew.Dock = DockStyle.Top;
-                    
-                    
+
+
                 pResults.Visible = true;
                 pChooseOption.Visible = false;
                 gbUseExisting.Visible = false;
@@ -123,12 +122,12 @@ public partial class ChoosePlatformDatabasesUI : Form
                 gbCreateNew.Visible = true;
                 pResults.BringToFront();
 
-                    
+
                 break;
             case State.ConnectToExisting:
                 pResults.Dock = DockStyle.Fill;
                 gbUseExisting.Dock = DockStyle.Top;
-                    
+
                 pChooseOption.Visible = false;
                 gbCreateNew.Visible = false;
 
@@ -137,7 +136,7 @@ public partial class ChoosePlatformDatabasesUI : Form
                 pResults.BringToFront();
                 break;
             default:
-                throw new ArgumentOutOfRangeException("newState");
+                throw new ArgumentOutOfRangeException(nameof(newState));
         }
     }
 
@@ -175,7 +174,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             btnSaveAndClose_Click(null,null);
 
         if(e.KeyCode == Keys.Escape)
-            this.Close();
+            Close();
 
     }
     private void tbCatalogueConnectionString_KeyUp(object sender, KeyEventArgs e)
@@ -200,7 +199,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             }
         }
     }
-        
+
     private void btnSaveAndClose_Click(object sender, EventArgs e)
     {
         //if save is successful
@@ -281,9 +280,8 @@ public partial class ChoosePlatformDatabasesUI : Form
             {
                 try
                 {
-                    var creator = new PlatformDatabaseCreation();
-                    creator.CreatePlatformDatabases(opts);
-                    if (!opts.SkipPipelines) 
+                    PlatformDatabaseCreation.CreatePlatformDatabases(opts);
+                    if (!opts.SkipPipelines)
                         PostFixPipelines(opts);
                 }
                 catch (Exception ex)
@@ -318,10 +316,10 @@ public partial class ChoosePlatformDatabasesUI : Form
 
             var cata = opts.GetBuilder(PlatformDatabaseCreation.DefaultCatalogueDatabaseName);
             var export = opts.GetBuilder(PlatformDatabaseCreation.DefaultDataExportDatabaseName);
-                
+
             UserSettings.CatalogueConnectionString = cata.ConnectionString;
             UserSettings.DataExportConnectionString = export.ConnectionString;
-                
+
             if(!failed)
                 RestartApplication();
 
@@ -336,7 +334,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
     }
 
-    private void PostFixPipelines(PlatformDatabaseCreationOptions opts)
+    private static void PostFixPipelines(PlatformDatabaseCreationOptions opts)
     {
         var repo = new PlatformDatabaseCreationRepositoryFinder(opts);
         var bulkInsertCsvPipe = repo.CatalogueRepository
@@ -351,7 +349,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
     }
 
-    private void RestartApplication()
+    private static void RestartApplication()
     {
         MessageBox.Show("Connection Strings Changed, the application will now restart");
         ApplicationRestarter.Restart();
@@ -404,7 +402,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             else if(sender == tbPeopleCount)
                 _peopleCount = result;
             else if(sender == tbRowCount)
-                _rowCount = result;                
+                _rowCount = result;
 
             tb.ForeColor = Color.Black;
         }
@@ -418,19 +416,21 @@ public partial class ChoosePlatformDatabasesUI : Form
     {
         try
         {
-            var toSerialize = new ConnectionStringsYamlFile()
+            var toSerialize = new ConnectionStringsYamlFile
             {
                 CatalogueConnectionString = tbCatalogueConnectionString.Text,
-                DataExportConnectionString = tbDataExportManagerConnectionString.Text,
+                DataExportConnectionString = tbDataExportManagerConnectionString.Text
             };
 
             var serializer = new Serializer();
             var yaml = serializer.Serialize(toSerialize);
 
-            var sfd = new SaveFileDialog();
-            sfd.Filter = "Yaml|*.yaml";
-            sfd.Title = "Save yaml";
-            sfd.InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName;
+            var sfd = new SaveFileDialog
+            {
+                Filter = "Yaml|*.yaml",
+                Title = "Save yaml",
+                InitialDirectory = UsefulStuff.GetExecutableDirectory().FullName
+            };
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {

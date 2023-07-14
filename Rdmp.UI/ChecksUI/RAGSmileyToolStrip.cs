@@ -21,7 +21,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     private readonly Control _host;
     private CheckResult _worst;
     private Exception _exception;
-    YesNoYesToAllDialog dialog;
+    private YesNoYesToAllDialog dialog;
 
     public RAGSmileyToolStrip(Control host)
     {
@@ -33,8 +33,10 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
         Text = "Checks";
         Image = _green;
 
-        timer = new Timer();
-        timer.Interval = 500;
+        timer = new Timer
+        {
+            Interval = 500
+        };
         timer.Tick += T_Tick;
         timer.Start();
     }
@@ -92,9 +94,9 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     private Bitmap _yellow = Images.TinyYellow.ImageToBitmap();
     private Bitmap _red = Images.TinyRed.ImageToBitmap();
 
-    private ToMemoryCheckNotifier memoryCheckNotifier = new ToMemoryCheckNotifier();
+    private ToMemoryCheckNotifier memoryCheckNotifier = new();
     private Task _checkTask;
-    private object oTaskLock = new object();
+    private object oTaskLock = new();
     private Timer timer;
 
     protected override void OnClick(EventArgs e)
@@ -143,7 +145,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
         if (dialog != null)
         {
             if(!string.IsNullOrWhiteSpace(args.ProposedFix))
-                if (dialog.ShowDialog(string.Format("Problem:{0}\r\n\r\nFix:{1}",args.Message,args.ProposedFix), "Apply Fix?") == DialogResult.Yes)
+                if (dialog.ShowDialog($"Problem:{args.Message}\r\n\r\nFix:{args.ProposedFix}", "Apply Fix?") == DialogResult.Yes)
                 {
                     ElevateState(CheckResult.Warning);
                     memoryCheckNotifier.OnCheckPerformed(new CheckEventArgs("Fix will be applied",CheckResult.Warning));
@@ -201,7 +203,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
             //if there is already a Task and it has not completed
             if (_checkTask != null && !_checkTask.IsCompleted)
                 return;
-                
+
             dialog = new YesNoYesToAllDialog();
 
             //else start a new Task

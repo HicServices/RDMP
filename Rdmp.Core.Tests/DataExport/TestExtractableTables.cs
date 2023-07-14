@@ -43,8 +43,7 @@ public class TestExtractableTables : TestsRequiringACohort
         }
         finally
         {
-            if (eds != null)
-                eds.DeleteInDatabase();
+            eds?.DeleteInDatabase();
 
             cata.DeleteInDatabase();
         }
@@ -77,7 +76,7 @@ public class TestExtractableTables : TestsRequiringACohort
     public void CreateExtractionConfiguration()
     {
         var parent = new Project(DataExportRepository, "unit_test_CreateExtractionConfiguration");
-            
+
         var table = new ExtractionConfiguration(DataExportRepository, parent);
 
         try

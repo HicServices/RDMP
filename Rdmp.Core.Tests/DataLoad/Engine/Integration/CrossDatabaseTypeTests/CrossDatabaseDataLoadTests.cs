@@ -49,7 +49,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests;
     ALTER ROLE [db_datawriter] ADD MEMBER [minion]
 */
 
-class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
+internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
 {
     public enum TestCase
     {
@@ -86,7 +86,7 @@ class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         var defaults = CatalogueRepository;
         var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
         var logManager = new LogManager(logServer);
-            
+
         var db = GetCleanedServer(databaseType);
 
         var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
@@ -120,7 +120,7 @@ class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
                     new DatabaseColumnRequest("ID",new DatabaseTypeRequest(typeof(int)),false){IsPrimaryKey = false,IsAutoIncrement = true}, 
                     nameCol, 
                     new DatabaseColumnRequest("DateOfBirth",new DatabaseTypeRequest(typeof(DateTime)),false){IsPrimaryKey = true}, 
-                    new DatabaseColumnRequest("FavouriteColour",new DatabaseTypeRequest(typeof(string))), 
+                    new DatabaseColumnRequest("FavouriteColour",new DatabaseTypeRequest(typeof(string)))
                 });
                 
                 using (var blk = tbl.BeginBulkInsert())
@@ -144,7 +144,7 @@ class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         }
 
         Assert.AreEqual(2, tbl.GetRowCount());
-            
+
         //define a new load configuration
         var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
 
@@ -152,10 +152,10 @@ class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
         {
             lmd.IgnoreTrigger = true;
             lmd.SaveToDatabase();
-        }   
+        }
 
         var ti = Import(tbl, lmd,logManager);
-            
+
         var projectDirectory = SetupLoadDirectory(lmd);
 
         CreateCSVProcessTask(lmd,ti,"*.csv");
@@ -167,7 +167,7 @@ class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
 Frank,2001-01-01,Neon
 MrMurder,2001-01-01,Yella");
 
-            
+
         //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
@@ -192,7 +192,7 @@ MrMurder,2001-01-01,Yella");
         if (testCase == TestCase.WithDiffColumnIgnoreRegex)
             dbConfig.UpdateButDoNotDiff = new Regex("^FavouriteColour"); //do not diff FavouriteColour
 
-            
+
         var loadFactory = new HICDataLoadFactory(
             lmd,
             dbConfig,
@@ -204,7 +204,7 @@ MrMurder,2001-01-01,Yella");
         try
         {
             var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
-            
+
             var exitCode = exe.Run(
                 new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener(),dbConfig),
                 new GracefulCancellationToken());
@@ -300,7 +300,7 @@ MrMurder,2001-01-01,Yella");
         dtParent.PrimaryKey = new[] {dtParent.Columns[0]};
 
         dtParent.Rows.Add("1", "Dave", "3.5");
-            
+
         var dtChild = new DataTable();
         dtChild.Columns.Add("Parent_ID");
         dtChild.Columns.Add("ChildNumber");
@@ -329,15 +329,16 @@ MrMurder,2001-01-01,Yella");
             null,
             dtChild,
             false,
-            new Dictionary<DatabaseColumnRequest, DiscoveredColumn>()
+            new Dictionary<DatabaseColumnRequest, DiscoveredColumn>
             {
                 {fkParentID, pkParentID}
             },
-            true);
-
-        args.ExplicitColumnDefinitions = new[]
+            true)
         {
-            fkParentID
+            ExplicitColumnDefinitions = new[]
+            {
+                fkParentID
+            }
         };
 
         var childTbl = db.CreateTable(args);
@@ -347,7 +348,7 @@ MrMurder,2001-01-01,Yella");
 
         //create a new load
         var lmd = new LoadMetadata(CatalogueRepository, "MyLoading2");
-            
+
         var childTableInfo = Import(childTbl, lmd, logManager);
         var parentTableInfo = Import(parentTbl,lmd,logManager);
 
@@ -368,8 +369,8 @@ MrMurder,2001-01-01,Yella");
             @"Parent_ID,ChildNumber,Name,DateOfBirth,Age,Height
 1,1,UpdC1,2001-01-01,20,3.5
 2,1,NewC1,2000-01-01,19,null");
-            
-            
+
+
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
         var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
         checker.Check(new AcceptAllCheckNotifier());
@@ -433,23 +434,19 @@ MrMurder,2001-01-01,Yella");
 
 }
 
-class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
+internal class CustomINameDatabasesAndTablesDuringLoads:INameDatabasesAndTablesDuringLoads
 {
     public string GetDatabaseName(string rootDatabaseName, LoadBubble convention)
     {
         //RAW is AA, Staging is BB
-        switch (convention)
+        return convention switch
         {
-            case LoadBubble.Raw:
-                return "AA_RAW";
-            case LoadBubble.Staging:
-                return "BB_STAGING";
-            case LoadBubble.Live:
-            case LoadBubble.Archive:
-                return rootDatabaseName;
-            default:
-                throw new ArgumentOutOfRangeException("convention");
-        }
+            LoadBubble.Raw => "AA_RAW",
+            LoadBubble.Staging => "BB_STAGING",
+            LoadBubble.Live => rootDatabaseName,
+            LoadBubble.Archive => rootDatabaseName,
+            _ => throw new ArgumentOutOfRangeException(nameof(convention))
+        };
     }
 
     public string GetName(string tableName, LoadBubble convention)

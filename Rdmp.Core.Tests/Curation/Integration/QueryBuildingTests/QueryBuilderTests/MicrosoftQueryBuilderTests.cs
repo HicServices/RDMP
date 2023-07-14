@@ -12,13 +12,15 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTests;
 
-class MicrosoftQueryBuilderTests:DatabaseTests
+internal class MicrosoftQueryBuilderTests:DatabaseTests
 {
     [Test]
     public void TestQueryBuilder_MicrosoftSQLServer_Top35()
     {
-        var t = new TableInfo(CatalogueRepository, "[db]..[tbl]");
-        t.DatabaseType = DatabaseType.MicrosoftSQLServer;
+        var t = new TableInfo(CatalogueRepository, "[db]..[tbl]")
+        {
+            DatabaseType = DatabaseType.MicrosoftSQLServer
+        };
         t.SaveToDatabase();
 
         var col = new ColumnInfo(CatalogueRepository, "[db]..[tbl].[col]", "varchar(10)", t);
@@ -28,8 +30,10 @@ class MicrosoftQueryBuilderTests:DatabaseTests
         var catalogueItem = new CatalogueItem(CatalogueRepository, cata, "col");
         var extractionInfo = new ExtractionInformation(CatalogueRepository, catalogueItem, col, col.Name);
 
-        var qb = new QueryBuilder(null, null);
-        qb.TopX = 35;
+        var qb = new QueryBuilder(null, null)
+        {
+            TopX = 35
+        };
         qb.AddColumn(extractionInfo);
         Assert.AreEqual(
             CollapseWhitespace(
@@ -50,7 +54,7 @@ TOP 50
 [db]..[tbl].[col]
 FROM 
 [db]..[tbl]")
-            ,CollapseWhitespace(qb.SQL));
+            , CollapseWhitespace(qb.SQL));
 
     }
 }

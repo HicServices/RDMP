@@ -11,7 +11,7 @@ using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
-class PickType : PickObjectBase
+internal class PickType : PickObjectBase
 {
     public PickType(IBasicActivateItems activator) : base(activator, new Regex(".*"))
     {

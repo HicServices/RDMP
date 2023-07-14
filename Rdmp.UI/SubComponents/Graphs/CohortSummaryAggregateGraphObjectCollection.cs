@@ -46,10 +46,10 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
     {
         if(!cohort.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Parameter cohort was AggregateConfiguration '{cohort}' which is not a Cohort Aggregate (not allowed)","cohort");
+                $"Parameter cohort was AggregateConfiguration '{cohort}' which is not a Cohort Aggregate (not allowed)",nameof(cohort));
         if (graph.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", "graph");
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", nameof(graph));
 
         DatabaseObjects.Add(cohort);
         DatabaseObjects.Add(graph);
@@ -65,7 +65,7 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
     {
         if (graph.IsCohortIdentificationAggregate)
             throw new ArgumentException(
-                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", "graph");
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)", nameof(graph));
 
         DatabaseObjects.Add(container);
         DatabaseObjects.Add(graph);
@@ -84,9 +84,7 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
 
     public override void LoadExtraText(string s)
     {
-        CohortSummaryAdjustment a;
-            
-        if(!CohortSummaryAdjustment.TryParse(s, out a))
+        if(!Enum.TryParse(s, out CohortSummaryAdjustment a))
             throw new Exception($"Could not parse '{s}' into a valid CohortSummaryAdjustment");
 
         Adjustment = a;
@@ -96,10 +94,8 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
     {
         shouldClose = false;
 
-        var matchingObject = DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) as IRevertable;
-
         //matched object in our collection
-        if(matchingObject != null)
+        if(DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) is IRevertable matchingObject)
             if (matchingObject.Exists()) 
                 matchingObject.RevertToDatabaseState();
             else

@@ -39,7 +39,7 @@ public class ArchiveFilesTests : DatabaseTests
         File.WriteAllText(Path.Combine(hiddenDir.FullName, "hidden.txt"), "I should not appear in the archive");
 
         var archiveComponent = new ArchiveFiles(new HICLoadConfigurationFlags());
-            
+
         var dataLoadInfo = Mock.Of<IDataLoadInfo>(info => info.ID==1);
 
         var LoadDirectory = Mock.Of<ILoadDirectory>(d => d.ForArchiving==forArchiving && d.ForLoading==forLoading);
@@ -74,12 +74,12 @@ public class ArchiveFilesTests : DatabaseTests
     {
         var directoryHelper = new TestDirectoryHelper(GetType());
         directoryHelper.SetUp();
-            
+
         var testDir = directoryHelper.Directory.CreateSubdirectory("CreateArchiveWithNoFiles_ShouldThrow");
-            
+
         var archiveFiles = new ArchiveFiles(new HICLoadConfigurationFlags());
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "dataset");
-            
+
         var job = Mock.Of<IDataLoadJob>(j => j.DataLoadInfo==Mock.Of<IDataLoadInfo>());
         job.LoadDirectory = loadDirectory;
 

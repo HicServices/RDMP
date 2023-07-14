@@ -18,12 +18,12 @@ namespace Rdmp.Core.Repositories.Managers;
 /// 
 /// <para>Values are stored in the ConfigurationProperties table in the Data Export Database.</para>
 /// </summary>
-class DataExportPropertyManager : IDataExportPropertyManager
+internal class DataExportPropertyManager : IDataExportPropertyManager
 {
     private readonly bool _allowCaching;
     private readonly DataExportRepository _repository;
     private bool _cacheOutOfDate = true;
-    private readonly ConcurrentDictionary<string,string> _cacheDictionary = new ();
+    private readonly ConcurrentDictionary<string,string> _cacheDictionary = new();
 
     /// <summary>
     /// Creates a new instance ready to read values out of the <paramref name="repository"/> database
@@ -49,8 +49,8 @@ class DataExportPropertyManager : IDataExportPropertyManager
         if (!_allowCaching || _cacheOutOfDate)
             RefreshCache();
 
-        if (_cacheDictionary.ContainsKey(property))
-            return _cacheDictionary[property];
+        if (_cacheDictionary.TryGetValue(property, out var value))
+            return value;
 
         return null;
     }

@@ -15,15 +15,15 @@ using Rdmp.Core.Validation;
 namespace Rdmp.UI.Validation;
 
 /// <summary>
-/// Allows you to recover from a mismatch in columns in a Catalogue when validation rules were originally written for it and the state it is in now.  You will automatically see this 
+/// Allows you to recover from a mismatch in columns in a Catalogue when validation rules were originally written for it and the state it is in now.  You will automatically see this
 /// form when editting the Validation rules on a Catalogue that has had CatalogueItems that previously had validation removed/renamed.  The Form prompts you to drag and drop matching columns
 /// to indicate whether any new columns are symantically the same as the old ones that had disapeared (e.g. where a column has changed names).  Also allows you to delete the orphans (validation
 /// rules for columns that are no longer there/extractable).
 /// </summary>
 public partial class ResolveMissingTargetPropertiesUI : Form
 {
-    string[] AvailableColumns { get; set; }
-        
+    private string[] AvailableColumns { get; set; }
+
     public ResolveMissingTargetPropertiesUI( Validator validator, ExtractionInformation[] availableColumns)
     {
         if (validator == null && availableColumns == null)
@@ -94,29 +94,23 @@ public partial class ResolveMissingTargetPropertiesUI : Form
         _dragTarget = null;
     }
 
-      
+
     private void lbMissingReferences_MouseMove(object sender, MouseEventArgs e)
     {
-        if(_dragTarget != null && Control.MouseButtons == MouseButtons.Left)
+        if(_dragTarget != null && MouseButtons == MouseButtons.Left)
             DoDragDrop(_dragTarget, DragDropEffects.Link);
     }
 
     private void lbAvailableColumns_DragEnter(object sender, DragEventArgs e)
     {
-        if (e.Data.GetDataPresent(typeof(ItemValidator)))
-            e.Effect = DragDropEffects.Link;
-        else
-            e.Effect = DragDropEffects.None;
+        e.Effect = e.Data.GetDataPresent(typeof(ItemValidator)) ? DragDropEffects.Link : DragDropEffects.None;
     }
 
     private void lbAvailableColumns_DragDrop(object sender, DragEventArgs e)
     {
-        var missingReference = e.Data.GetData(typeof (ItemValidator)) as ItemValidator;
-            
-            
-        var indexFromPoint = lbAvailableColumns.IndexFromPoint(lbAvailableColumns.PointToClient(new Point(e.X,e.Y)));
+        var indexFromPoint = lbAvailableColumns.IndexFromPoint(lbAvailableColumns.PointToClient(new Point(e.X, e.Y)));
 
-        if (indexFromPoint != ListBox.NoMatches && missingReference != null)
+        if (indexFromPoint != ListBox.NoMatches && e.Data.GetData(typeof (ItemValidator)) is ItemValidator missingReference)
         {
             var oldName = missingReference.TargetProperty;
             var newName = (string) lbAvailableColumns.Items[indexFromPoint];
@@ -135,7 +129,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     }
 
-    private void ResolveMissingReferenceAs(ItemValidator missingReference, string newTarget)
+    private static void ResolveMissingReferenceAs(ItemValidator missingReference, string newTarget)
     {
         missingReference.TargetProperty = newTarget;
             
@@ -151,14 +145,14 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        this.DialogResult = DialogResult.Cancel;
-        this.AdjustedValidator = null;
-        this.Close();
+        DialogResult = DialogResult.Cancel;
+        AdjustedValidator = null;
+        Close();
     }
 
     private void btnOk_Click(object sender, EventArgs e)
     {
-        this.DialogResult = DialogResult.OK;
-        this.Close();
+        DialogResult = DialogResult.OK;
+        Close();
     }
 }

@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Describes a relationship between 3 ColumnInfos in which 2 are from a lookup table (e.g. z_drugName), these are a primary
-/// key (e.g. DrugCode) and a description (e.g. HumanReadableDrugName).  And a third ColumnInfo from a different table (e.g. 
+/// key (e.g. DrugCode) and a description (e.g. HumanReadableDrugName).  And a third ColumnInfo from a different table (e.g.
 /// Prescribing) which is a foreign key (e.g. DrugPrescribed).
 /// 
 /// <para>The QueryBuilder uses this information to work out how to join together various tables in a query.  Note that it is possible
@@ -28,8 +28,8 @@ namespace Rdmp.Core.Curation.Data;
 /// (referential integrity) between their lookup tables and main datasets due to dirty data / missing lookup values.  These are all
 /// concepts which the RDMP is familiar with and built to handle.</para>
 /// 
-/// <para>Note also that you can have one or more LookupCompositeJoinInfo for when you need to join particularly ugly lookups (e.g. if you 
-/// have the same DrugCode meaning different things based on the prescribing board - you need to join on both drugName and 
+/// <para>Note also that you can have one or more LookupCompositeJoinInfo for when you need to join particularly ugly lookups (e.g. if you
+/// have the same DrugCode meaning different things based on the prescribing board - you need to join on both drugName and
 /// prescriberHealthboard).</para>
 /// </summary>
 public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
@@ -90,46 +90,43 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
     #endregion
-        
+
     #region Relationships
     /// <summary>
-    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version 
+    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
     public ColumnInfo Description
     {
         get
         {
-            if (_description == null)
-                _description = Repository.GetObjectByID<ColumnInfo>(Description_ID);
+            _description ??= Repository.GetObjectByID<ColumnInfo>(Description_ID);
             return _description;
         }
     }
 
     /// <summary>
-    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version 
+    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
     public ColumnInfo ForeignKey
     {
         get
         {
-            if (_foreignKey == null)
-                _foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
+            _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
             return _foreignKey;
         }
     }
 
     /// <summary>
-    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version 
+    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
     /// </summary>
     [NoMappingToDatabase]
     public ColumnInfo PrimaryKey
     {
         get
         {
-            if (_primaryKey == null)
-                _primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
+            _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
             return _primaryKey;
         }
     }
@@ -182,9 +179,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         PrimaryKey_ID = int.Parse(r["PrimaryKey_ID"].ToString());
         Collation = r["Collation"] as string;
 
-        ExtractionJoinType joinType;
-
-        if (ExtractionJoinType.TryParse(r["ExtractionJoinType"].ToString(), true, out joinType))
+        if (Enum.TryParse(r["ExtractionJoinType"].ToString(), true, out ExtractionJoinType joinType))
             ExtractionJoinType = joinType;
         else
             throw new Exception($"Did not recognise ExtractionJoinType:{r["ExtractionJoinType"]}");
@@ -203,7 +198,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     private string _cachedToString = null;
     private string ToStringCached()
     {
-        return _cachedToString ?? (_cachedToString = $" {ForeignKey.Name} = {PrimaryKey.Name}");
+        return _cachedToString ??= $" {ForeignKey.Name} = {PrimaryKey.Name}";
     }
 
     /// <summary>
@@ -223,7 +218,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         if(!foreignKeyTable.Repository.Equals(primaryKeyTable.Repository))
             throw new NotSupportedException("TableInfos come from different repositories!");
 
-        var repo = ((CatalogueRepository) foreignKeyTable.Repository);
+        var repo = (CatalogueRepository) foreignKeyTable.Repository;
         using (var con = repo.GetConnection())
         {
 
@@ -244,11 +239,11 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
                     while (r.Read())
                         toReturn.Add(new Lookup(repo, r));
             }
-                
+
             return toReturn.ToArray();
         }
     }
-     
+
     /// <summary>
     /// Checks that the Lookup configuration is legal (e.g. not a table linking against itself etc).
     /// </summary>
@@ -258,13 +253,13 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             
         if (ForeignKey.TableInfo_ID == PrimaryKey.TableInfo_ID)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Foreign Key and Primary Key are from the same table for Lookup {this.ID}",CheckResult.Fail));
+                $"Foreign Key and Primary Key are from the same table for Lookup {ID}",CheckResult.Fail));
 
         if (Description.TableInfo_ID != PrimaryKey.TableInfo_ID)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {this.ID}", CheckResult.Fail));
+                $"Description Key and Primary Key are from different tables (Not allowed) in Lookup {ID}", CheckResult.Fail));
     }
-        
+
     /// <inheritdoc/>
     public override void SaveToDatabase()
     {

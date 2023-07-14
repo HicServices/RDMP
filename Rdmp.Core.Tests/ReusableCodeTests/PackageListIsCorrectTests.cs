@@ -23,11 +23,14 @@ public class PackageListIsCorrectTests
     private static readonly EnumerationOptions EnumerationOptions = new() { RecurseSubdirectories = true,MatchCasing = MatchCasing.CaseInsensitive,IgnoreInaccessible = true};
 
     //<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-    private static readonly Regex RPackageRef = new(@"<PackageReference\s+Include=""(.*)""\s+Version=""([^""]*)""", RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex RPackageRef =
+        new(@"<PackageReference\s+Include=""(.*)""\s+Version=""([^""]*)""",
+            RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     // | Org.SomePackage |
     //
-    private static readonly Regex RMarkdownEntry = new(@"^\|\s*\[?([^ |\]]+)(\]\([^)]+\))?\s*\|", RegexOptions.IgnoreCase|RegexOptions.Compiled|RegexOptions.CultureInvariant);
+    private static readonly Regex RMarkdownEntry = new(@"^\|\s*\[?([^ |\]]+)(\]\([^)]+\))?\s*\|",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
 
     /// <summary>
@@ -37,7 +40,7 @@ public class PackageListIsCorrectTests
     [TestCase]
     public void TestPackagesDocumentCorrect(string rootPath=null)
     {
-        var root= FindRoot(rootPath);
+        var root = FindRoot(rootPath);
         var undocumented = new StringBuilder();
 
         // Extract the named packages from PACKAGES.md

@@ -27,7 +27,7 @@ public partial class DataFlowComponentVisualisation : UserControl
 {
     public object Value { get; set; }
     private readonly PipelineComponentRole _role;
-        
+
     private ICheckable _checkable;
     private MandatoryPropertyChecker _mandatoryChecker;
 
@@ -89,14 +89,14 @@ public partial class DataFlowComponentVisualisation : UserControl
                 prongRight2.Visible = false;
                 break;
             default:
-                throw new ArgumentOutOfRangeException("role");
+                throw new ArgumentOutOfRangeException(nameof(role));
         }
 
             
-        this.Width = lblText.PreferredWidth + 80;
+        Width = lblText.PreferredWidth + 80;
     }
 
-    ToolTip _toolTip = new ToolTip();
+    private ToolTip _toolTip = new();
 
     private void GenerateToolTipBasedOnProperties(object value)
     {
@@ -125,19 +125,16 @@ public partial class DataFlowComponentVisualisation : UserControl
     }
 
     protected bool _isEmpty ;
-    Pen _emptyPen = new Pen(new SolidBrush(Color.Black));
-    protected Pen _fullPen = new Pen(new SolidBrush(Color.Black));
-        
+    private Pen _emptyPen = new(new SolidBrush(Color.Black));
+    protected Pen _fullPen = new(new SolidBrush(Color.Black));
 
-        
+
+
     protected override void OnPaintBackground(PaintEventArgs e)
     {
         base.OnPaintBackground(e);
-            
-        if (_isEmpty)
-            e.Graphics.DrawRectangle(_emptyPen, pComponent.Bounds);
-        else
-            e.Graphics.DrawRectangle(_fullPen, pComponent.Bounds);
+
+        e.Graphics.DrawRectangle(_isEmpty ? _emptyPen : _fullPen, pComponent.Bounds);
     }
 
     private void DataFlowComponentVisualisation_DragEnter(object sender, DragEventArgs e)
@@ -162,8 +159,7 @@ public partial class DataFlowComponentVisualisation : UserControl
     {
         try
         {
-            if (_checkable != null)
-                _checkable.Check(ragSmiley1);
+            _checkable?.Check(ragSmiley1);
         }
         catch (Exception e)
         {
@@ -175,8 +171,7 @@ public partial class DataFlowComponentVisualisation : UserControl
     {
         try
         {
-            if (_mandatoryChecker != null)
-                _mandatoryChecker.Check(ragSmiley1);
+            _mandatoryChecker?.Check(ragSmiley1);
         }
         catch (Exception e)
         {

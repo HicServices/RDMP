@@ -78,7 +78,7 @@ public class WebFileDownloader : IPluginDataProvider
             Timeout = TimeSpan.FromSeconds(5)
         };
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36");
-        using var response= httpClient.GetAsync(url).Result;
+        using var response = httpClient.GetAsync(url).Result;
         if (response.IsSuccessStatusCode)
             return response.Content.ReadAsStreamAsync().Result;
         if (!useCredentials && response.Headers.WwwAuthenticate.Any(h => h.Scheme.Equals("basic", StringComparison.OrdinalIgnoreCase) && h.Parameter?.Equals("realm=\"Websense\"",StringComparison.OrdinalIgnoreCase)==true))
@@ -90,12 +90,12 @@ public class WebFileDownloader : IPluginDataProvider
 
     public string GetDescription()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public IDataProvider Clone()
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     public bool Validate(ILoadDirectory _)

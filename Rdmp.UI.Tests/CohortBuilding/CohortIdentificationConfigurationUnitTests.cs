@@ -14,7 +14,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.UI.Tests.CohortBuilding;
 
-class CohortIdentificationConfigurationUnitTests:UITests
+internal class CohortIdentificationConfigurationUnitTests:UITests
 {
     private void GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic)
     {
@@ -41,14 +41,14 @@ class CohortIdentificationConfigurationUnitTests:UITests
         DeleteOldAggregates();
 
         GetObjects(out var cata, out var cic);
-            
+
         //we should be able to add it
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
         AssertCommandIsPossible(cmd);
 
         cmd.Execute();
 
-        var ac1 = (AggregateConfiguration)(cic.RootCohortAggregateContainer.GetOrderedContents().First());
+        var ac1 = (AggregateConfiguration)cic.RootCohortAggregateContainer.GetOrderedContents().First();
         Assert.AreEqual(0,ac1.Order);
 
         //add another one
@@ -72,12 +72,12 @@ class CohortIdentificationConfigurationUnitTests:UITests
     public void Test_AggregateConfigurationOrder_MovingAggregatesBetweenContainers()
     {
         GetObjects(out var cata, out var cic);
-            
+
         //we should be able to add it to root container
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
         cmd.Execute();
 
-            
+
         //create a subcontainer
         var subcontainer = new CohortAggregateContainer(Repository, SetOperation.INTERSECT);
         cic.RootCohortAggregateContainer.AddChild(subcontainer);

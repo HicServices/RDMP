@@ -25,7 +25,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
 {
     private int _rowsProcessed = 0;
     private string _taskDescription;
-    Stopwatch timer = new Stopwatch();
+    private Stopwatch timer = new();
 
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
     {
@@ -45,11 +45,11 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                     if(o == DBNull.Value || o == null)
                         continue;
 
-                    if(!(o is string))
+                    if(o is not string s)
                         throw new ArgumentException(
                             $"Despite being marked as a string column, object found in column {toClean} was of type {o.GetType()}");
 
-                    val = o as string;
+                    val = s;
                 }
                 catch (ArgumentException e)
                 {
@@ -81,7 +81,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
         return toProcess;
     }
 
-    List<string> columnsToClean = new List<string>();
+    private List<string> columnsToClean = new();
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
@@ -110,7 +110,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
                 $"Skipping CleanString on table {target.GetRuntimeName()} because there are no String columns in the table"));
     }
 
-        
+
     public void Check(ICheckNotifier notifier)
     {
             

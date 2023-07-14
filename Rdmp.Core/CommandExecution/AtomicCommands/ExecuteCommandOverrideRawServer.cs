@@ -42,7 +42,7 @@ public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicComman
                 return;
         }
 
-        _loadMetadata.OverrideRAWServer_ID = _server == null ? null : (int?)_server.ID;
+        _loadMetadata.OverrideRAWServer_ID = _server?.ID;
         _loadMetadata.SaveToDatabase();
 
         Publish(_loadMetadata);
@@ -55,9 +55,7 @@ public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicComman
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        var candidate = target as ExternalDatabaseServer;
-
-        if (candidate != null && _available.Contains(candidate))
+        if (target is ExternalDatabaseServer candidate && _available.Contains(candidate))
             _server = candidate;
 
         return this;

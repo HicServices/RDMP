@@ -42,7 +42,7 @@ public class TableInfoCloneOperation
         _hicDatabaseConfiguration = hicDatabaseConfiguration;
         _tableInfo = tableInfo;
         _copyToBubble = copyToBubble;
-        this._listener = listener;
+        _listener = listener;
         DropIdentityColumns = true;
     }
 
@@ -52,7 +52,7 @@ public class TableInfoCloneOperation
         if(_operationSucceeded)
             throw new Exception("Operation already executed once");
 
-        var liveDb = DataAccessPortal.GetInstance().ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
+        var liveDb = DataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
         var destTableName = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
 
 
@@ -74,7 +74,7 @@ public class TableInfoCloneOperation
     }
 
         
-    public void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
+    public static void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo,tableName))
             throw new Exception("This method nukes a table in a database! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");
@@ -83,7 +83,7 @@ public class TableInfoCloneOperation
     }
 
         
-    private bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
+    private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
     {
         return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase) 
             ||
@@ -97,7 +97,7 @@ public class TableInfoCloneOperation
 
         //new table will start with the same name as the as the old scripted one
         var newTable = destDatabaseInfo.ExpectTable(destTableName);
-            
+
         var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/,newTable); 
             
         _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"Creating table with SQL:{sql}"));

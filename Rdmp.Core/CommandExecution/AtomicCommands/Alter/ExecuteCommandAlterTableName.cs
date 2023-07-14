@@ -23,9 +23,9 @@ public class ExecuteCommandAlterTableName : AlterTableCommandExecution
             
         _refactorer = new SelectSQLRefactorer();
 
-        if (!_refactorer.IsRefactorable(TableInfo))
+        if (!SelectSQLRefactorer.IsRefactorable(TableInfo))
         {
-            SetImpossible($"Cannot rename table because {_refactorer.GetReasonNotRefactorable(TableInfo)}");
+            SetImpossible($"Cannot rename table because {SelectSQLRefactorer.GetReasonNotRefactorable(TableInfo)}");
             return;
         }
     }
@@ -40,7 +40,7 @@ public class ExecuteCommandAlterTableName : AlterTableCommandExecution
             Table.Rename(newName);
 
             var newNameFullyQualified = Table.Database.ExpectTable(newName, TableInfo.Schema).GetFullyQualifiedName();
-            _refactorer.RefactorTableName(TableInfo, newNameFullyQualified);
+            SelectSQLRefactorer.RefactorTableName(TableInfo, newNameFullyQualified);
         }
 
         Publish(TableInfo);

@@ -17,7 +17,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Reports;
 
-class MetadataReportTests:UnitTests
+internal class MetadataReportTests:UnitTests
 {
     [Test]
     public void Test_MetadataReport_Basic()
@@ -30,7 +30,7 @@ class MetadataReportTests:UnitTests
         var bmp = new Image<Rgba32>(200, 200);
         bmp.Mutate(x=>x.Fill(Color.Black,new RectangleF(10.0f,10.0f,50.0f,50.0f)));
             
-        reporter.RequestCatalogueImages += (s) => { return new BitmapWithDescription[] {new BitmapWithDescription(bmp,"MyPicture","Something interesting about it"),  }; };
+        reporter.RequestCatalogueImages += s => { return new BitmapWithDescription[] {new BitmapWithDescription(bmp,"MyPicture","Something interesting about it") }; };
 
         var file = reporter.GenerateWordFile(new ThrowImmediatelyDataLoadEventListener(), false);
             

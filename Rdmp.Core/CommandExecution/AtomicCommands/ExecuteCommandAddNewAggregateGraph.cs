@@ -23,7 +23,7 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution,IAtomicC
     public ExecuteCommandAddNewAggregateGraph(IBasicActivateItems activator, Catalogue catalogue, string name = null) : base(activator)
     {
         _catalogue = catalogue;
-        this._name = name;
+        _name = name;
         if (_catalogue != null && _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).All(ei=>ei.ColumnInfo == null))
             SetImpossible("Catalogue has no extractable columns");
     }
@@ -42,7 +42,7 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution,IAtomicC
 
         if (c == null)
         {
-            if (BasicActivator.SelectObject(new DialogArgs()
+            if (BasicActivator.SelectObject(new DialogArgs
                 {
                     WindowTitle = "Add Aggregate Graph",
                     TaskDescription = "Select which Catalogue you want to add the graph to."

@@ -15,7 +15,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.Data;
 
-class ExternalCohortTableTests:UnitTests
+internal class ExternalCohortTableTests:UnitTests
 {
     /// <summary>
     /// Demonstrates the minimum properties required to create a <see cref="ExternalCohortTable"/>.  See <see cref="CreateNewCohortDatabaseWizard"/>
@@ -25,14 +25,16 @@ class ExternalCohortTableTests:UnitTests
     public void Create_ExternalCohortTable_Manually()
     {
         var repository = new MemoryDataExportRepository();
-        var table = new ExternalCohortTable(repository, "My Cohort Database", DatabaseType.MicrosoftSQLServer);
-        table.Database = "mydb";
-        table.PrivateIdentifierField = "chi";
-        table.ReleaseIdentifierField = "release";
-        table.DefinitionTableForeignKeyField = "c_id";
-        table.TableName = "Cohorts";
-        table.DefinitionTableName = "InventoryTable";
-        table.Server = "superfastdatabaseserver\\sqlexpress";
+        var table = new ExternalCohortTable(repository, "My Cohort Database", DatabaseType.MicrosoftSQLServer)
+            {
+                Database = "mydb",
+                PrivateIdentifierField = "chi",
+                ReleaseIdentifierField = "release",
+                DefinitionTableForeignKeyField = "c_id",
+                TableName = "Cohorts",
+                DefinitionTableName = "InventoryTable",
+                Server = "superfastdatabaseserver\\sqlexpress"
+            };
         table.SaveToDatabase();
 
         var ex = Assert.Throws<Exception>(()=>table.Check(new ThrowImmediatelyCheckNotifier()));

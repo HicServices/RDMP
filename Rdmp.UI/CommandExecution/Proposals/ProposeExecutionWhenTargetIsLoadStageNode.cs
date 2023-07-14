@@ -14,7 +14,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionProposal<LoadStageNode>
+internal class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionProposal<LoadStageNode>
 {
     public ProposeExecutionWhenTargetIsLoadStageNode(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -32,13 +32,10 @@ class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionProposal<Loa
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadStageNode targetStage, InsertOption insertOption = InsertOption.Default)
     {
-        var sourceProcessTaskCommand = cmd as ProcessTaskCombineable;
-        var sourceFileTaskCommand = cmd as FileCollectionCombineable;
-            
-        if (sourceProcessTaskCommand != null)
+        if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
             return new ExecuteCommandChangeLoadStage(ItemActivator, sourceProcessTaskCommand, targetStage);
 
-        if (sourceFileTaskCommand != null && sourceFileTaskCommand.Files.Length == 1)
+        if (cmd is FileCollectionCombineable sourceFileTaskCommand && sourceFileTaskCommand.Files.Length == 1)
         {
 
             var f = sourceFileTaskCommand.Files.Single();

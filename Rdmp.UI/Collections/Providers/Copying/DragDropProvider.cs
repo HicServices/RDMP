@@ -46,12 +46,11 @@ public class DragDropProvider:SimpleDragSource
         _treeView.ModelDropped += ModelDropped;
     }
 
-    void DragDropProvider_CanDrop(object sender, OlvDropEventArgs e)
+    private void DragDropProvider_CanDrop(object sender, OlvDropEventArgs e)
     {
-        var dropTargetModel = e.DropTargetItem != null ? e.DropTargetItem.RowObject :null;
-        var dataObject = e.DataObject as DataObject;
+        var dropTargetModel = e.DropTargetItem?.RowObject;
 
-        if(dataObject == null)
+        if(e.DataObject is not DataObject dataObject)
             return;
 
         if(dataObject is OLVDataObject)
@@ -94,7 +93,7 @@ public class DragDropProvider:SimpleDragSource
             if(dataObject is OLVDataObject)
                 return;  //should be handled by ModelDropped
 
-            //is it a non model drop (in which case ModelDropped won't be called) e.g. it could be a file drop 
+            //is it a non model drop (in which case ModelDropped won't be called) e.g. it could be a file drop
             var execution = GetExecutionCommandIfAnyForNonModelObjects(dataObject, e.DropTargetItem.RowObject);
 
             if(execution != null && !execution.IsImpossible)
@@ -167,7 +166,7 @@ public class DragDropProvider:SimpleDragSource
         {
             //get the drag operation data object olv does
             var toReturn = (OLVDataObject)base.StartDrag(olv, button, item);
-                
+
             //can we process it into a command?
             var command = _commandFactory.Create(toReturn);
 
@@ -183,9 +182,9 @@ public class DragDropProvider:SimpleDragSource
         return base.StartDrag(olv, button, item);
     }
 
-   
 
-    private void DisplayFeedback(ICommandExecution execution, OlvDropEventArgs e)
+
+    private static void DisplayFeedback(ICommandExecution execution, OlvDropEventArgs e)
     {
         //no command is even remotely possible
         if (execution == null)
@@ -209,9 +208,9 @@ public class DragDropProvider:SimpleDragSource
         e.Handled = true;
         e.Effect = DragDropEffects.Move;
     }
-        
 
-    private InsertOption GetDropLocation(ModelDropEventArgs e)
+
+    private static InsertOption GetDropLocation(ModelDropEventArgs e)
     {
         if (e.DropTargetLocation == DropTargetLocation.AboveItem)
             return InsertOption.InsertAbove;

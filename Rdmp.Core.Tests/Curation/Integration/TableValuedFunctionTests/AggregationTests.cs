@@ -93,8 +93,10 @@ count(*)>1", queryBuilder.SQL);
 
         try
         {
-            var param = new AnyTableSqlParameter(CatalogueRepository, agg, "DECLARE @name AS varchar(50);");
-            param.Value = "'lobster'";
+            var param = new AnyTableSqlParameter(CatalogueRepository, agg, "DECLARE @name AS varchar(50);")
+ {
+     Value = "'lobster'"
+ };
             param.SaveToDatabase();
 
             var aggregateForcedJoin = new AggregateForcedJoin(CatalogueTableRepository);

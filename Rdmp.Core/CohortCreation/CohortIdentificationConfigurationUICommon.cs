@@ -31,7 +31,7 @@ public class CohortIdentificationConfigurationUICommon
 
     public ExternalDatabaseServer QueryCachingServer;
     private CohortAggregateContainer _root;
-    CancellationTokenSource _cancelGlobalOperations;
+    private CancellationTokenSource _cancelGlobalOperations;
     private ISqlParameter[] _globals;
     public CohortCompilerRunner Runner;
 
@@ -97,7 +97,7 @@ public class CohortIdentificationConfigurationUICommon
 
         return null;
     }
-    public object Catalogue_AspectGetter(object rowobject)
+    public static object Catalogue_AspectGetter(object rowobject)
     {
         return
             rowobject is AggregateConfiguration ac ? ac.Catalogue.Name : null;
@@ -138,7 +138,7 @@ public class CohortIdentificationConfigurationUICommon
     {
         return Runner != null && Runner.ExecutionPhase != CohortCompilerRunner.Phase.None && Runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
     }
-    private Operation GetNextOperation(CompilationState currentState)
+    private static Operation GetNextOperation(CompilationState currentState)
     {
         return currentState switch
         {
@@ -148,7 +148,7 @@ public class CohortIdentificationConfigurationUICommon
             CompilationState.Executing => Operation.Cancel,
             CompilationState.Finished => Operation.Execute,
             CompilationState.Crashed => Operation.Execute,
-            _ => throw new ArgumentOutOfRangeException("currentState")
+            _ => throw new ArgumentOutOfRangeException(nameof(currentState))
         };
     }
 
@@ -194,7 +194,7 @@ public class CohortIdentificationConfigurationUICommon
             case Operation.None:
                 break;
             default:
-                throw new ArgumentOutOfRangeException("operation");
+                throw new ArgumentOutOfRangeException(nameof(operation));
         }
     }
 
@@ -226,8 +226,7 @@ public class CohortIdentificationConfigurationUICommon
     public void CancelAll()
     {
         //don't start any more global operations if your midway through
-        if (_cancelGlobalOperations != null)
-            _cancelGlobalOperations.Cancel();
+        _cancelGlobalOperations?.Cancel();
 
         Compiler.CancelAllTasks(true);
         RecreateAllTasks();
@@ -265,8 +264,7 @@ public class CohortIdentificationConfigurationUICommon
             if (task == null)
                 return;
 
-            var c = task as CacheableTask;
-            if (c != null)
+            if (task is CacheableTask c)
                 ClearCacheFor(new ICacheableTask[] { c });
 
             Compiler.CancelTask(task, true);
@@ -344,10 +342,8 @@ public class CohortIdentificationConfigurationUICommon
                 
                 return true;
             }
-            else
-            {
-                Compiler.CancelAllTasks(true);
-            }
+
+            Compiler.CancelAllTasks(true);
         }
 
         return false;
@@ -361,12 +357,9 @@ public class CohortIdentificationConfigurationUICommon
     /// <param name="o"></param>
     public void ExecuteOrCancel(object o)
     {
-        var aggregate = o as AggregateConfiguration;
-        var container = o as CohortAggregateContainer;
-
         Task.Run(() =>
         {
-            if (aggregate != null)
+            if (o is AggregateConfiguration aggregate)
             {
                 var joinable = aggregate.JoinableCohortAggregateConfiguration;
 
@@ -375,7 +368,7 @@ public class CohortIdentificationConfigurationUICommon
                 else
                     OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
             }
-            if (container != null)
+            if (o is CohortAggregateContainer container)
             {
                 OrderActivity(GetNextOperation(GetState(container)), container);
             }

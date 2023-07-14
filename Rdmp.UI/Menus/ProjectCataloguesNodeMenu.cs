@@ -10,7 +10,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus;
 
-class ProjectCataloguesNodeMenu : RDMPContextMenuStrip
+internal class ProjectCataloguesNodeMenu : RDMPContextMenuStrip
 {
     public ProjectCataloguesNodeMenu(RDMPContextMenuStripArgs args, ProjectCataloguesNode node) : base(args, node)
     {

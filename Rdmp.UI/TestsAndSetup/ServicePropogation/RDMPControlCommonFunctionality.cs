@@ -29,16 +29,16 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 public class RDMPControlCommonFunctionality
 {
     /// <summary>
-    /// This is the strip of buttons and labels for all controls commonly used for interacting with the content of the tab.  The 
+    /// This is the strip of buttons and labels for all controls commonly used for interacting with the content of the tab.  The
     /// bar should start with <see cref="_menuDropDown"/>.
     /// </summary>
     public ToolStrip ToolStrip { get; private set; }
-        
+
     /// <summary>
     /// Occurs before checking the <see cref="ICheckable"/> (see  <see cref="StartChecking"/>
     /// </summary>
     public event EventHandler BeforeChecking;
-        
+
     /// <summary>
     /// Occurs when a call to <see cref="Fatal"/> is made.  This will result in the form showing an error
     /// icon (but not closing itself).
@@ -58,28 +58,31 @@ public class RDMPControlCommonFunctionality
     private readonly ToolStripMenuItem _menuDropDown;
 
     private AtomicCommandUIFactory atomicCommandUIFactory;
-        
+
     private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
-    private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+    private readonly ToolStripButton _runChecksToolStripButton = new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
     private ICheckable _checkable;
     private IActivateItems _activator;
 
-    private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new Dictionary<string, ToolStripDropDownButton>();
-    private Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new Dictionary<string, ToolStripMenuItem>();
+    private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new();
+    private Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new();
 
 
     public RDMPControlCommonFunctionality(IRDMPControl hostControl)
     {
         _hostControl = hostControl;
-        ToolStrip = new ToolStrip();
-            
-        ToolStrip.Location = new Point(0, 0);
-        ToolStrip.TabIndex = 1;
+        ToolStrip = new ToolStrip
+        {
+            Location = new Point(0, 0),
+            TabIndex = 1
+        };
 
         //Add the three lines dropdown for seldom used options (See AddToMenu). This starts disabled.
-        _menuDropDown = new ToolStripMenuItem();
-        _menuDropDown.Image = CatalogueIcons.Menu.ImageToBitmap();
-        _menuDropDown.Visible = false;
+        _menuDropDown = new ToolStripMenuItem
+        {
+            Image = CatalogueIcons.Menu.ImageToBitmap(),
+            Visible = false
+        };
         ToolStrip.Items.Add(_menuDropDown);
                         
         _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
@@ -175,7 +178,7 @@ public class RDMPControlCommonFunctionality
 
     /// <summary>
     /// Adds check buttons to the tool strip and sets up <see cref="StartChecking"/> to target the return value of <paramref name="checkableFunc"/>.  If the method throws the
-    /// Exception will be exposed in the checking system. 
+    /// Exception will be exposed in the checking system.
     /// 
     /// <para>Only use this method if there is a reasonable chance the <paramref name="checkableFunc"/> will crash otherwise use the normal overload</para>
     /// </summary>
@@ -220,7 +223,7 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    /// Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks becomming 
+    /// Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks becomming
     /// visible if it was not visible before.
     /// </summary>
     /// <param name="s"></param>
@@ -229,8 +232,7 @@ public class RDMPControlCommonFunctionality
     {
         var args = new CheckEventArgs(s, CheckResult.Fail, exception);
 
-        if (OnFatal != null)
-            OnFatal(this, args);
+        OnFatal?.Invoke(this, args);
 
         _ragSmileyToolStrip.OnCheckPerformed(args);
     }
@@ -238,7 +240,7 @@ public class RDMPControlCommonFunctionality
     /// <summary>
     /// All keywords added via <see cref="AddHelp"/>
     /// </summary>
-    private readonly HashSet<Control> _helpAdded = new HashSet<Control>();
+    private readonly HashSet<Control> _helpAdded = new();
 
     /// <summary>
     /// Adds a <see cref="HelpIcon"/> to the task bar at the top of the control
@@ -269,7 +271,7 @@ public class RDMPControlCommonFunctionality
         if (c.Parent == null)
             throw new NotSupportedException("Control is not in a container.  HelpIcon cannot be added to top level controls");
 
-        title = title ?? propertyName;
+        title ??= propertyName;
         var body = _activator.CommentStore.GetDocumentationIfExists(propertyName, false, true);
 
         if (body == null)
@@ -383,7 +385,7 @@ public class RDMPControlCommonFunctionality
             if (!_addToMenuSubmenus.ContainsKey(underMenu))
             {
                 _addToMenuSubmenus.Add(underMenu, new ToolStripMenuItem(underMenu));
-                    
+
                 // If it's the GoTo menu then when the user expands the menu we have to fetch the objects
                 // and update the IsImpossible status etc.
                 if (underMenu == AtomicCommandFactory.GoTo)
@@ -429,8 +431,7 @@ public class RDMPControlCommonFunctionality
 
         ((Control)_hostControl).Controls.Add(ToolStrip);
 
-        if(ToolStripAddedToHost != null)
-            ToolStripAddedToHost(this,new EventArgs());
+        ToolStripAddedToHost?.Invoke(this,EventArgs.Empty);
     }
 
     /// <summary>
@@ -448,7 +449,7 @@ public class RDMPControlCommonFunctionality
     /// </summary>
     /// <param name="tb"></param>
     /// <param name="action"></param>
-    public void DoActionAndRedIfThrows(TextBox tb, Action action)
+    public static void DoActionAndRedIfThrows(TextBox tb, Action action)
     {
         tb.ForeColor = Color.Black;
         try
@@ -461,7 +462,7 @@ public class RDMPControlCommonFunctionality
         }
     }
 
-    Dictionary<Scintilla,Color> _oldColours = new Dictionary<Scintilla, Color>();
+    private Dictionary<Scintilla,Color> _oldColours = new();
     /// <summary>
     /// Sets the text color in the <paramref name="queryEditor"/> to red (or back to normal if <paramref name="red"/> is false).
     /// </summary>
@@ -469,8 +470,7 @@ public class RDMPControlCommonFunctionality
     /// <param name="red"></param>
     public void ScintillaGoRed(Scintilla queryEditor, bool red)
     {
-        if(!_oldColours.ContainsKey(queryEditor))
-            _oldColours.Add(queryEditor, queryEditor.Styles[1].ForeColor);
+        _oldColours.TryAdd(queryEditor, queryEditor.Styles[1].ForeColor);
 
         if (red)
         {

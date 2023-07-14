@@ -38,9 +38,8 @@ public class CustomFloatWindow:FloatWindow
         FormBorderStyle = FormBorderStyle.Sizable;
 
         var saveToolStripMenuItem = new SaveMenuItem();
-        var singleObjectControlTab = this.DockPanel.ActiveDocument as RDMPSingleControlTab;
 
-        if (singleObjectControlTab == null)
+        if (DockPanel.ActiveDocument is not RDMPSingleControlTab singleObjectControlTab)
         {
             saveToolStripMenuItem.Saveable = null;
             return;

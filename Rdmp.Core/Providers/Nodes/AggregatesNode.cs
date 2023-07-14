@@ -37,14 +37,14 @@ public class AggregatesNode:Node
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((AggregatesNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return Catalogue.GetHashCode() * this.GetType().GetHashCode();
+        return Catalogue.GetHashCode() * GetType().GetHashCode();
     }
 }

@@ -48,14 +48,11 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
     }
     private void UpdateViabilityForTarget(IDisableable target)
     {
-        var container = target as CohortAggregateContainer;
-
         //don't let them disable the root container
-        if (container != null && container.IsRootContainer() && !container.IsDisabled)
+        if (target is CohortAggregateContainer container && container.IsRootContainer() && !container.IsDisabled)
             SetImpossible("You cannot disable the root container of a cic");
 
-        var aggregateConfiguration = target as AggregateConfiguration;
-        if (aggregateConfiguration != null)
+        if (target is AggregateConfiguration aggregateConfiguration)
             if (!aggregateConfiguration.IsCohortIdentificationAggregate)
                 SetImpossible("Only cohort identification aggregates can be disabled");
             else

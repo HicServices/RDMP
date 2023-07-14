@@ -27,8 +27,7 @@ public class PersistableToolboxDockContent:DockContent
     public const string Prefix = "Toolbox";
 
     public readonly RDMPCollection CollectionType;
-
-    PersistStringHelper persistStringHelper = new PersistStringHelper();
+    private PersistStringHelper persistStringHelper = new();
 
     public PersistableToolboxDockContent(RDMPCollection collectionType)
     {
@@ -37,13 +36,15 @@ public class PersistableToolboxDockContent:DockContent
     protected override string GetPersistString()
     {
 
-            
 
-        var args = new Dictionary<string, string>();
-        args.Add("Toolbox", CollectionType.ToString());
 
-         
-        return Prefix + PersistStringHelper.Separator + persistStringHelper.SaveDictionaryToString(args);
+        var args = new Dictionary<string, string>
+        {
+            { "Toolbox", CollectionType.ToString() }
+        };
+
+
+        return Prefix + PersistStringHelper.Separator + PersistStringHelper.SaveDictionaryToString(args);
     }
     public RDMPCollectionUI GetCollection()
     {
@@ -53,15 +54,14 @@ public class PersistableToolboxDockContent:DockContent
     public static RDMPCollection? GetToolboxFromPersistString(string persistString)
     {
         var helper = new PersistStringHelper();
-        var s = persistString.Substring(PersistableToolboxDockContent.Prefix.Length + 1);
+        var s = persistString[(Prefix.Length + 1)..];
 
-        var args = helper.LoadDictionaryFromString(s);
+        var args = PersistStringHelper.LoadDictionaryFromString(s);
 
-        RDMPCollection collection;
 
-        if (args.ContainsKey("Toolbox"))
+        if (args.TryGetValue("Toolbox", out var arg))
         {
-            Enum.TryParse(args["Toolbox"], true, out collection);
+            Enum.TryParse(arg, true, out RDMPCollection collection);
             return collection;
         }
 

@@ -27,7 +27,7 @@ public class FilterImporterTests : UnitTests
         var master = Mock.Of<IFilter>(x => 
             x.GetQuerySyntaxHelper() == MicrosoftQuerySyntaxHelper.Instance && 
             x.Name == "Space Odyssey");
-            
+
         //The factory will return this value
         var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
 
@@ -80,7 +80,7 @@ public class FilterImporterTests : UnitTests
         var master = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         master.Name = "Space Odyssey";
         master.WhereSQL = "@hall = 'active'";
-            
+
         var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         var constructedParameter = Mock.Of<ISqlParameter>();
 
@@ -115,8 +115,8 @@ public class FilterImporterTests : UnitTests
 
         Mock.Get(master).Setup(m=> m.GetAllParameters()).Returns(new[] {masterParameter});
         //We expect that the filter we are cloning will be asked what its parameters are once (and we tell them the param above)
-            
-            
+
+
         //The return values for our Mock factory
         var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         var constructedParameter = Mock.Of<ISqlParameter>();
@@ -159,11 +159,11 @@ public class FilterImporterTests : UnitTests
             x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance&&
             x.GetAllParameters()==new[] { existingParameter });
         existing.Name = "Space Odyssey";
-            
+
         //The return value for our Mock factory
         var constructed = Mock.Of<IFilter>(x => x.GetQuerySyntaxHelper()==MicrosoftQuerySyntaxHelper.Instance);
         var constructedParameter = Mock.Of<ISqlParameter>();
-            
+
         //The mocked factory
         var factory = new Mock<IFilterFactory>();
         factory.Setup(m => m.CreateNewFilter("Copy of Space Odyssey")).Returns(constructed);
@@ -196,7 +196,7 @@ public class FilterImporterTests : UnitTests
 
         //We expect that the filter we are cloning will be asked what its parameters are once (and we tell them the param above)
         Mock.Get(master).Setup(m => m.GetAllParameters()).Returns(new[] { masterParameter });
-            
+
         //An existing parameter that is in the scope that is being imported into
         var existingParameter = Mock.Of<ISqlParameter>(x => x.ParameterName=="@hall");
 

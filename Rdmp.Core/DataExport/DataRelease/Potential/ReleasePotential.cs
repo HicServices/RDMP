@@ -22,7 +22,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.DataRelease.Potential;
 
 /// <summary>
-/// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release. 
+/// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release.
 /// Extraction Destinations will return an implementation of this class which will run checks on the releasaility of the extracted datasets
 /// based on the extraction method used.
 /// </summary>
@@ -132,26 +132,24 @@ public abstract class ReleasePotential:ICheckable
 
     private Releaseability MakeSupplementalAssesment(ISupplementalExtractionResults supplementalExtractionResults)
     {
-        var extractedObject = _repositoryLocator.GetArbitraryDatabaseObject(
-            supplementalExtractionResults.ReferencedObjectRepositoryType,
-            supplementalExtractionResults.ReferencedObjectType,
-            supplementalExtractionResults.ReferencedObjectID) as INamed;
-
-        if (extractedObject == null)
+        if (_repositoryLocator.GetArbitraryDatabaseObject(
+                supplementalExtractionResults.ReferencedObjectRepositoryType,
+                supplementalExtractionResults.ReferencedObjectType,
+                supplementalExtractionResults.ReferencedObjectID) is not INamed extractedObject)
             return Releaseability.Undefined;
 
-        if (extractedObject is SupportingSQLTable)
+        if (extractedObject is SupportingSQLTable table)
         {
-            if ((extractedObject as SupportingSQLTable).SQL != supplementalExtractionResults.SQLExecuted)
+            if (table.SQL != supplementalExtractionResults.SQLExecuted)
                 return Releaseability.ExtractionSQLDesynchronisation;
         }
 
         var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
 
         if (finalAssessment == Releaseability.Undefined)
-            return (extractedObject.Name != supplementalExtractionResults.ExtractedName
+            return extractedObject.Name != supplementalExtractionResults.ExtractedName
                 ? Releaseability.ExtractionSQLDesynchronisation
-                : Releaseability.Releaseable);
+                : Releaseability.Releaseable;
 
         return finalAssessment;
     }
@@ -204,7 +202,7 @@ public abstract class ReleasePotential:ICheckable
 
         return resultLive.SQL;
     }
-        
+
     private bool SqlOutOfSyncWithDataExportManagerConfiguration(IExtractionResults extractionResults)
     {
         if (extractionResults.SQLExecuted == null)
@@ -221,7 +219,7 @@ public abstract class ReleasePotential:ICheckable
         //if the SQL today is different to the SQL that was run when the user last extracted the data then there is a desync in the SQL (someone has changed something in the catalogue/data export manager configuration since the data was extracted)
         return !SqlCurrentConfiguration.Equals(extractionResults.SQLExecuted);
     }
-        
+
     public override string ToString()
     {
         if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
@@ -255,7 +253,7 @@ public abstract class ReleasePotential:ICheckable
         var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
         if (existingReleaseLog != null)
         {
-            if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Dataset {0} has probably already been released as per {1}!",
+            if (notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Dataset {0} has probably already been released as per {1}!",
                         DataSet, existingReleaseLog),
                     CheckResult.Warning,
                     null,
@@ -299,19 +297,12 @@ public abstract class ReleasePotential:ICheckable
 
         foreach (var kvp in Assessments)
         {
-            CheckResult checkResult;
-            switch (kvp.Value)
+            var checkResult = kvp.Value switch
             {
-                case Releaseability.ColumnDifferencesVsCatalogue:
-                    checkResult = CheckResult.Warning;
-                    break;
-                case Releaseability.Releaseable:
-                    checkResult = CheckResult.Success;
-                    break;
-                default:
-                    checkResult = CheckResult.Fail;
-                    break;
-            }
+                Releaseability.ColumnDifferencesVsCatalogue => CheckResult.Warning,
+                Releaseability.Releaseable => CheckResult.Success,
+                _ => CheckResult.Fail
+            };
 
             notifier.OnCheckPerformed(new CheckEventArgs($"{kvp.Key} is {kvp.Value}", checkResult));
         }

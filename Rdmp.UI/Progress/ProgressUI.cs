@@ -22,19 +22,19 @@ namespace Rdmp.UI.Progress;
 
 /// <summary>
 /// There are two main event systems in play in the RDMP.  There is Checking and Progress.  Checking activities are tasks that should be supervised and can block asking the user
-/// whether or not a proposed fix to a problem should be applied (See ChecksUI).  Progress activities are messages only and can also include numerical update messages indicating 
+/// whether or not a proposed fix to a problem should be applied (See ChecksUI).  Progress activities are messages only and can also include numerical update messages indicating
 /// that progress is made towards a fixed number e.g. you could get 1000 messages over the course of an hour reporting how close towards a goal of 1,000,000 records a given task is.
 /// 
 /// <para>This control handles progress messages.  For Checks event system see ChecksUI.</para>
 /// 
-/// <para>ProgressUI handles progress messages of numerical progress (in either records or kilobytes) by updating the datagrid.  Messages appear in the Notifications area and 
-/// function very similarly to ChecksUI (you can double click them to view the message/copy it / view stack traces etc).  Because classes can be quite enthusiastic about notifying 
+/// <para>ProgressUI handles progress messages of numerical progress (in either records or kilobytes) by updating the datagrid.  Messages appear in the Notifications area and
+/// function very similarly to ChecksUI (you can double click them to view the message/copy it / view stack traces etc).  Because classes can be quite enthusiastic about notifying
 /// progress this control buffers all messages it receives and only updates the user interface once every 3s (this improves performance).  All date/times come from the buffered messages
 /// so there is no impact from the 3s refresh rate on those. </para>
 /// </summary>
 public partial class ProgressUI : UserControl, IDataLoadEventListener
 {
-    DataTable progress = new DataTable();
+    private DataTable progress = new();
 
     /// <summary>
     /// Sender for all global errors that should never be filtered out of the <see cref="ProgressUI"/>
@@ -113,35 +113,25 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private Bitmap ImageGetter(object rowObject)
     {
-        var o = rowObject as ProgressUIEntry;
+        if (rowObject is not ProgressUIEntry o) return null;
 
-        if(o != null)
-            switch (o.ProgressEventType)
-            {
-                // TODO: draw a couple of new icons if required
-                case ProgressEventType.Debug:
-                    return _information;
-                case ProgressEventType.Trace:
-                    return _information;
-                case ProgressEventType.Information:
-                    return _information;
-                case ProgressEventType.Warning:
-                    return o.Exception == null ? _warning : _warningEx;
-                case ProgressEventType.Error:
-                    return o.Exception == null ? _fail : _failEx;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-        return null;
+        return o.ProgressEventType switch
+        {
+            // TODO: draw a couple of new icons if required
+            ProgressEventType.Debug => _information,
+            ProgressEventType.Trace => _information,
+            ProgressEventType.Information => _information,
+            ProgressEventType.Warning => o.Exception == null ? _warning : _warningEx,
+            ProgressEventType.Error => o.Exception == null ? _fail : _failEx,
+            _ => throw new ArgumentOutOfRangeException(nameof(rowObject))
+        };
     }
 
-    void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+    private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
     {
-        if(e.ColumnIndex == _processingTimeColIndex)
-            if (e.Value != null && e.Value != DBNull.Value)
-                e.Value =
-                    $"{((TimeSpan)e.Value).Hours:00}:{((TimeSpan)e.Value).Minutes:00}:{((TimeSpan)e.Value).Seconds:00}";
+        if(e.ColumnIndex == _processingTimeColIndex && e.Value != null && e.Value != DBNull.Value)
+            e.Value =
+                $"{((TimeSpan)e.Value).Hours:00}:{((TimeSpan)e.Value).Minutes:00}:{((TimeSpan)e.Value).Seconds:00}";
     }
 
 
@@ -149,43 +139,40 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
         olvProgressEvents.ClearObjects();
         progress.Rows.Clear();
-            
+
         progressBar1.Style = ProgressBarStyle.Continuous;
         progressBar1.Value = 0;
 
         lblCrashed.Visible = false;
         lblSuccess.Visible = false;
     }
-        
-    Dictionary<object, HashSet<string>> JobsreceivedFromSender = new Dictionary<object, HashSet<string>>();
 
-    object oProgressQueLock = new object();
-    Dictionary<string, QueuedProgressMessage> ProgressQueue = new Dictionary<string, QueuedProgressMessage>();
-
-
-    object oNotifyQueLock = new object();
-    List<ProgressUIEntry> NotificationQueue = new List<ProgressUIEntry>();
+    private readonly Dictionary<object, HashSet<string>> _jobsReceivedFromSender = new();
+    private readonly object _oProgressQueueLock = new();
+    private readonly Dictionary<string, QueuedProgressMessage> _progressQueue = new();
+    private readonly object _oNotifyQueLock = new();
+    private readonly List<ProgressUIEntry> _notificationQueue = new();
 
     public void Progress(object sender,ProgressEventArgs args)
     {
-        lock (oProgressQueLock)
+        lock (_oProgressQueueLock)
         {
-            //we have received an update to this message 
-            if (ProgressQueue.ContainsKey(args.TaskDescription))
+            //we have received an update to this message
+            if (_progressQueue.TryGetValue(args.TaskDescription,out var message))
             {
-                ProgressQueue[args.TaskDescription].DateTime = DateTime.Now;
-                ProgressQueue[args.TaskDescription].ProgressEventArgs = args;
-                ProgressQueue[args.TaskDescription].Sender = sender;
+                message.DateTime = DateTime.Now;
+                message.ProgressEventArgs = args;
+                message.Sender = sender;
             }
             else
-                ProgressQueue.Add(args.TaskDescription,new QueuedProgressMessage(DateTime.Now, args, sender));
+                _progressQueue.Add(args.TaskDescription,new QueuedProgressMessage(DateTime.Now, args, sender));
         }
     }
     private void Notify(object sender, NotifyEventArgs notifyEventArgs)
     {
-        lock (oNotifyQueLock)
+        lock (_oNotifyQueLock)
         {
-            NotificationQueue.Add(new ProgressUIEntry(sender,DateTime.Now, notifyEventArgs));
+            _notificationQueue.Add(new ProgressUIEntry(sender,DateTime.Now, notifyEventArgs));
         }
     }
 
@@ -215,30 +202,24 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         }
     }
 
-    void ProcessAndClearQueuedProgressMessages(object sender, EventArgs e)
+    private void ProcessAndClearQueuedProgressMessages(object sender, EventArgs e)
     {
-        lock (oProgressQueLock)
+        lock (_oProgressQueueLock)
         {
-            while(ProgressQueue.Any())
+            while(_progressQueue.Any())
             {
-                var message = ProgressQueue.First();
+                var message = _progressQueue.First();
                 var args = message.Value.ProgressEventArgs;
-                    
-                var label = "";
-                switch (args.Progress.UnitOfMeasurement)
+
+                var label = args.Progress.UnitOfMeasurement switch
                 {
-                    case ProgressType.Records:
-                        label = "records";
-                        break;
-                    case ProgressType.Kilobytes:
-                        label = "KB";
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException("type");
-                }
+                    ProgressType.Records => "records",
+                    ProgressType.Kilobytes => "KB",
+                    _ => throw new ArgumentOutOfRangeException("type")
+                };
 
                 var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription, args.Progress.Value, label);
-                        
+
                 if(!handledByFlood)
                     if (!progress.Rows.Contains(args.TaskDescription))
                     {
@@ -250,18 +231,18 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                         progress.Rows.Find(args.TaskDescription)["Processing Time"] = args.TimeSpentProcessingSoFar;
                     }
 
-                ProgressQueue.Remove(message.Key);
+                _progressQueue.Remove(message.Key);
 
                 AutoReizeColumns();
             }
         }
 
-        lock (oNotifyQueLock)
+        lock (_oNotifyQueLock)
         {
-            if (NotificationQueue.Any())
+            if (_notificationQueue.Any())
             {
-                olvProgressEvents.AddObjects(NotificationQueue);
-                NotificationQueue.Clear();
+                olvProgressEvents.AddObjects(_notificationQueue);
+                _notificationQueue.Clear();
 
                 AutoReizeColumns();
             }
@@ -276,23 +257,23 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
             olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            olvMessage.Width = olvMessage.Width + 15; //add room for icon
+            olvMessage.Width += 15; //add room for icon
         }
     }
 
     private bool HandleFloodOfMessagesFromJob(object sender, string job,int progressAmount,string label)
     {
-            
+
         //ensure we have a records of the sender
-        if (!JobsreceivedFromSender.ContainsKey(sender))
-            JobsreceivedFromSender.Add(sender, new HashSet<string>());
+        if (!_jobsReceivedFromSender.ContainsKey(sender))
+            _jobsReceivedFromSender.Add(sender, new HashSet<string>());
 
         //new job we have not seen before
-        if (!JobsreceivedFromSender[sender].Contains(job))
-            JobsreceivedFromSender[sender].Add(job); //add it - even if sender has a bad rep for sending lots of jobs
+        if (!_jobsReceivedFromSender[sender].Contains(job))
+            _jobsReceivedFromSender[sender].Add(job); //add it - even if sender has a bad rep for sending lots of jobs
 
         //see if sender has been sending loads of unique job messages
-        if (JobsreceivedFromSender[sender].Count > MaxNumberOfJobsAcceptableFromSenderBeforeThrottlingKicksIn) //it has told us about more than 5 jobs so far
+        if (_jobsReceivedFromSender[sender].Count > MaxNumberOfJobsAcceptableFromSenderBeforeThrottlingKicksIn) //it has told us about more than 5 jobs so far
         {
             MergeAllJobsForSenderIntoSingleRowAndCumulateResult(sender, job, progressAmount, label);
             return true;
@@ -305,12 +286,12 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     {
         var startAtProgressAmount = 0;
 
-        foreach (var jobsAlreadySeen in JobsreceivedFromSender[sender])
+        foreach (var jobsAlreadySeen in _jobsReceivedFromSender[sender])
             if (progress.Rows.Contains(jobsAlreadySeen))
             {
                 startAtProgressAmount += Convert.ToInt32(progress.Rows.Find(jobsAlreadySeen)["Count"]);
-                progress.Rows.Remove(progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table 
-                    
+                progress.Rows.Remove(progress.Rows.Find(jobsAlreadySeen)); //discard the flood of messages that might be in data table
+
             }
 
         var i = 1;
@@ -318,9 +299,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             for (; i < 500; i++)
             {
-                var startsWith = JobsreceivedFromSender[sender].First().Substring(0, i);
+                var startsWith = _jobsReceivedFromSender[sender].First()[..i];
 
-                if (!JobsreceivedFromSender[sender].All(job => job.Substring(0,i).StartsWith(startsWith)))
+                if (!_jobsReceivedFromSender[sender].All(job => job[..i].StartsWith(startsWith)))
                     break;
             }
         }
@@ -329,14 +310,10 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
             i = 1;//one of them is a dodgy length or empty length or otherwise they are sending us some dodgy messages
         }
 
-        string floodJob;
-            
-        //no shared prefix
-        if(i ==1)
-            floodJob = $"{sender} FloodOfMessages";
-        else
-            floodJob = $"{JobsreceivedFromSender[sender].First().Substring(0, i - 1)}... FloodOfMessages";
-            
+        var floodJob =
+            //no shared prefix
+            i ==1 ? $"{sender} FloodOfMessages" : $"{_jobsReceivedFromSender[sender].First()[..(i - 1)]}... FloodOfMessages";
+
         //add a new row (or edit existing) for the flood of messages from sender
         if (progress.Rows.Contains(floodJob))
         {
@@ -348,14 +325,12 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             progress.Rows.Add(new object[] { floodJob, startAtProgressAmount + progressAmountToAdd, label });
         }
-           
+
     }
 
-    void olvProgressEvents_ItemActivate(object sender, EventArgs e)
+    private void olvProgressEvents_ItemActivate(object sender, EventArgs e)
     {
-        var model = olvProgressEvents.SelectedObject as ProgressUIEntry;
-
-        if (model != null)
+        if (olvProgressEvents.SelectedObject is ProgressUIEntry model)
         {
             if (model.Exception != null)
                 ExceptionViewer.Show(model.Message, model.Exception, false);
@@ -403,7 +378,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         SetFilterFromTextBox();
     }
 
-        
+
 
     private void ddGroupBy_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -422,8 +397,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         tbTextFilter.Text = filter;
 
         //clear the renderers filter so that we don't see yellow text highlighting all over the Sender column etc.
-        var renderer = olvProgressEvents.DefaultRenderer as HighlightTextRenderer;
-        if (renderer != null)
+        if (olvProgressEvents.DefaultRenderer is HighlightTextRenderer renderer)
             renderer.Filter = null;
     }
 
@@ -451,9 +425,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     /// <returns></returns>
     public NotifyEventArgs GetWorst()
     {
-            
-        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(NotificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
-            
+
+        var worstEntry = (olvProgressEvents.Objects ?? Array.Empty<object>()).OfType<ProgressUIEntry>().Union(_notificationQueue).OrderByDescending(e=>e.ProgressEventType).FirstOrDefault();
+
         if(worstEntry == null)
             return null;
 
@@ -472,5 +446,5 @@ internal class QueuedProgressMessage
     public DateTime DateTime { get; set; }
     public ProgressEventArgs ProgressEventArgs { get; set; }
     public object Sender { get; set; }
-        
+
 }

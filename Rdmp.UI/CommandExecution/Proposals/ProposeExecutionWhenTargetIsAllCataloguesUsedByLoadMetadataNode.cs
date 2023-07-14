@@ -13,7 +13,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<AllCataloguesUsedByLoadMetadataNode>
+internal class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<AllCataloguesUsedByLoadMetadataNode>
 {
     public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -31,15 +31,12 @@ class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPComm
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
     {
-        var cata = cmd as CatalogueCombineable;
-        var manyCata = cmd as ManyCataloguesCombineable;
-
         ICommandExecution cmdExecution = null;
 
-        if (cata != null)
+        if (cmd is CatalogueCombineable cata)
             cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,target.LoadMetadata).SetTarget(new[]{cata.Catalogue});
 
-        if(manyCata != null)
+        if(cmd is ManyCataloguesCombineable manyCata)
             cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator, target.LoadMetadata).SetTarget(manyCata.Catalogues);
 
 

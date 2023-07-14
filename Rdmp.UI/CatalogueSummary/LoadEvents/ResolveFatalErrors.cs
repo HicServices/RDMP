@@ -64,7 +64,7 @@ public partial class ResolveFatalErrors : RDMPForm
         foreach (var error in _toResolve)
             error.Explanation = Explanation.Text;
 
-        this.Close();
+        Close();
     }
 
         

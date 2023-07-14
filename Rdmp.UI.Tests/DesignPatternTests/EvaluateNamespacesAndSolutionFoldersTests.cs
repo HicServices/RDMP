@@ -93,10 +93,10 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         propertyChecker.FindPropertyMisuse(_csFilesFound);
 
         var explicitDatabaseNamesChecker = new ExplicitDatabaseNameChecker();
-        explicitDatabaseNamesChecker.FindProblems(_csFilesFound);
-            
+        ExplicitDatabaseNameChecker.FindProblems(_csFilesFound);
+
         var noMappingToDatabaseComments = new AutoCommentsEvaluator();
-        noMappingToDatabaseComments.FindProblems(CatalogueRepository.MEF, _csFilesFound);
+        AutoCommentsEvaluator.FindProblems(CatalogueRepository.MEF, _csFilesFound);
 
         var copyrightHeaderEvaluator = new CopyrightHeaderEvaluator();
         CopyrightHeaderEvaluator.FindProblems(_csFilesFound);
@@ -192,7 +192,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         }
     }
 
-    readonly List<string> _errors = new List<string>();
+    private readonly List<string> _errors = new();
     private void Error(string s)
     {
         Console.WriteLine(s);
@@ -246,7 +246,7 @@ public class CopyrightHeaderEvaluator
 
 public class AutoCommentsEvaluator
 {
-    public void FindProblems(MEF mef, List<string> csFilesFound)
+    public static void FindProblems(MEF mef, List<string> csFilesFound)
     {
         var suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
@@ -265,7 +265,7 @@ public class AutoCommentsEvaluator
 
             for (var i = 0; i < text.Length; i++)
             {
-                    
+
                 //////////////////////////////////No Mapping Properties////////////////////////////////////////////////////
                 if (text[i].Trim().Equals("[NoMappingToDatabase]"))
                 {
@@ -281,7 +281,7 @@ public class AutoCommentsEvaluator
                         var m = Regex.Match(next, @"(.*)public\b(.*)\s+(.*)\b");
                         if (m.Success)
                         {
-                                
+
                             var whitespace = m.Groups[1].Value;
                             var type = m.Groups[2].Value;
                             var member = m.Groups[3].Value;
@@ -292,8 +292,7 @@ public class AutoCommentsEvaluator
                             if (t.GetProperty($"{member}_ID") != null)
                             {
                                 changes = true;
-                                sbSuggestedText.AppendLine(whitespace + string.Format("/// <inheritdoc cref=\"{0}\"/>",
-                                    $"{member}_ID"));
+                                sbSuggestedText.AppendLine(whitespace + $"/// <inheritdoc cref=\"{$"{member}_ID"}\"/>");
                             }
                             else
                             {
@@ -337,9 +336,9 @@ public class AutoCommentsEvaluator
                     if (!text[i + 1].Contains("<para>") && text[i + 1].Contains("///"))
                     {
                         changes = true;
-                            
+
                         //add current line
-                        sbSuggestedText.AppendLine(text[i]); 
+                        sbSuggestedText.AppendLine(text[i]);
 
                         //add the para tag
                         var nextLine = text[i + 1].Insert(text[i+1].IndexOf("///")+4,"<para>");
@@ -364,14 +363,13 @@ public class AutoCommentsEvaluator
             File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
     }
 
-    private string GetUniqueTypeName(string typename)
+    private static string GetUniqueTypeName(string typename)
     {
-        switch (typename)
+        return typename switch
         {
-            case "ColumnInfo": return "Rdmp.Core.Curation.Data.ColumnInfo";
-            case "IFilter": return "Rdmp.Core.Curation.Data.IFilter";
-        }
-
-        return typename;
+            "ColumnInfo" => "Rdmp.Core.Curation.Data.ColumnInfo",
+            "IFilter" => "Rdmp.Core.Curation.Data.IFilter",
+            _ => typename
+        };
     }
 }

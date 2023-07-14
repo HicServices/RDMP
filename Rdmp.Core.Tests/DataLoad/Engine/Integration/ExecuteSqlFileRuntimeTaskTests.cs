@@ -27,7 +27,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
+internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 {
     [TestCase(DatabaseType.MySql)]
     [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -40,7 +40,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         var db = GetCleanedServer(dbType);
 
         var tbl = db.CreateTable("Fish",dt);
-            
+
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bob.sql"));
 
         File.WriteAllText(f.FullName,@"UPDATE Fish Set Lawl = 1");
@@ -74,7 +74,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var tbl = db.CreateTable("Fish", dt);
 
-        Import(tbl,out var ti,out var cols);
+        Import(tbl,out var ti, out var cols);
 
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
             
@@ -91,11 +91,11 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         task.Check(new ThrowImmediatelyCheckNotifier());
         var configuration = new HICDatabaseConfiguration(db.Server);
 
-        var job = Mock.Of<IDataLoadJob>(x => 
+        var job = Mock.Of<IDataLoadJob>(x =>
             x.RegularTablesToLoad == new List<ITableInfo> {ti} &&
             x.LookupTablesToLoad == new List<ITableInfo>() &&
             x.Configuration == configuration);
-                                  
+
         var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(()=>task.Run(job, new GracefulCancellationToken()));
         StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.Message);
 
@@ -114,17 +114,14 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var tbl = db.CreateTable("Fish", dt);
 
-        Import(tbl,out var ti,out var cols);
+        Import(tbl,out var ti, out var cols);
 
         var sql = @"UPDATE {T:0} Set {C:0} = 1";
-            
-        IRuntimeTask task;
-        IProcessTask pt;
-            
+
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
 #pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
-        var sqlArg = new IArgument[]{Mock.Of<IArgument>(x => 
+        var sqlArg = new IArgument[]{Mock.Of<IArgument>(x =>
             x.Name == "Sql" &&
             x.Value == sql &&
             x.GetValueAsSystemType() == sql) };
@@ -132,22 +129,23 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 
-        pt = Mock.Of<IProcessTask>(x => 
+        var pt = Mock.Of<IProcessTask>(x =>
             x.Path == typeof(ExecuteSqlMutilation).FullName &&
             x.GetAllArguments() == sqlArg
         );
 
-        task = new MutilateDataTablesRuntimeTask(pt,args,CatalogueRepository.MEF);
-                        
+        IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt,args,CatalogueRepository.MEF);
+
         task.Check(new ThrowImmediatelyCheckNotifier());
         var configuration = new HICDatabaseConfiguration(db.Server);
 
-        var job = new ThrowImmediatelyDataLoadJob();
-            
-        job.RegularTablesToLoad = new List<ITableInfo> {ti};
-        job.LookupTablesToLoad = new List<ITableInfo>();
-        job.Configuration = configuration;
-                                  
+        var job = new ThrowImmediatelyDataLoadJob
+        {
+            RegularTablesToLoad = new List<ITableInfo> {ti},
+            LookupTablesToLoad = new List<ITableInfo>(),
+            Configuration = configuration
+        };
+
         var ex = Assert.Throws<Exception>(()=>task.Run(job, new GracefulCancellationToken()));
 
         StringAssert.Contains("Mutilate failed",ex.Message);
@@ -171,7 +169,7 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         var tableName = "AAAAAAA";
 
         Import(tbl, out var ti, out var cols);
-            
+
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
 
         File.WriteAllText(f.FullName, $@"UPDATE {{T:{ti.ID}}} Set {{C:{cols[0].ID}}} = 1");
@@ -189,12 +187,12 @@ class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         task.Check(new ThrowImmediatelyCheckNotifier());
 
-            
-        //create a namer that tells the user 
+
+        //create a namer that tells the user
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);
         var configuration = new HICDatabaseConfiguration(db.Server,namer);
 
-        var job = Mock.Of<IDataLoadJob>(x => 
+        var job = Mock.Of<IDataLoadJob>(x =>
             x.RegularTablesToLoad == new List<ITableInfo> { ti }&&
             x.LookupTablesToLoad == new List<ITableInfo>() &&
             x.Configuration == configuration);

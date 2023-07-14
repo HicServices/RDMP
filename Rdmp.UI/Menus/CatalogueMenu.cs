@@ -17,9 +17,9 @@ using Rdmp.UI.Menus.MenuItems;
 namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
-class CatalogueMenu:RDMPContextMenuStrip
+internal class CatalogueMenu:RDMPContextMenuStrip
 {
-    const string CatalogueItems = "Catalogue Items";
+    private const string CatalogueItems = "Catalogue Items";
 
     public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
     {
@@ -31,17 +31,17 @@ class CatalogueMenu:RDMPContextMenuStrip
 
         Add(new ExecuteCommandImportCatalogueDescriptionsFromShare(_activator, catalogue)
         {
-            Weight = -95.09f,
+            Weight = -95.09f
         },Keys.None,AtomicCommandFactory.Metadata);
             
             
         Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue)
         {
-            Weight = -90.10f,
+            Weight = -90.10f
         }, Keys.None,AtomicCommandFactory.Metadata);
         Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue)
         {
-            Weight = -90.09f,
+            Weight = -90.09f
         }, Keys.None, AtomicCommandFactory.Metadata);
 
         Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, catalogue,null) {
@@ -59,30 +59,29 @@ class CatalogueMenu:RDMPContextMenuStrip
         }
 
         ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
-        Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue) { SuggestedCategory = CatalogueItems , Weight = -99.049f, });
-        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue,()=> Clipboard.GetText()) { SuggestedCategory = CatalogueItems, Weight = -99.047f, });
-        Add(new ExecuteCommandReOrderColumns(_activator, catalogue) { SuggestedCategory = CatalogueItems, Weight = -99.046f, });
-        Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true, });
-        Add(new ExecuteCommandChangeExtractionCategory(_activator,catalogue.GetAllExtractionInformation(ExtractionCategory.Any)) { SuggestedCategory = CatalogueItems, Weight = -99.044f, });
-        Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator,catalogue, null/*pick at runtime*/) { SuggestedCategory = CatalogueItems, Weight = -99.043f, });
+        Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue) { SuggestedCategory = CatalogueItems , Weight = -99.049f });
+        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue,()=> Clipboard.GetText()) { SuggestedCategory = CatalogueItems, Weight = -99.047f });
+        Add(new ExecuteCommandReOrderColumns(_activator, catalogue) { SuggestedCategory = CatalogueItems, Weight = -99.046f });
+        Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue,null) { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true });
+        Add(new ExecuteCommandChangeExtractionCategory(_activator,catalogue.GetAllExtractionInformation(ExtractionCategory.Any)) { SuggestedCategory = CatalogueItems, Weight = -99.044f });
+        Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator,catalogue, null/*pick at runtime*/) { SuggestedCategory = CatalogueItems, Weight = -99.043f });
 
         if (catalogue.LoadMetadata_ID != null)
         {
             var dir = catalogue.LoadMetadata.LocationOfFlatFiles;
+            if (dir == null) return;
+
             DirectoryInfo dirReal;
-            if (dir != null)
+            try
             {
-                try
-                {
-                    dirReal = new DirectoryInfo(dir);
-                }
-                catch (Exception)
-                {
-                    // if the directory name is bad or corrupt
-                    return;
-                }
-                Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory"});
+                dirReal = new DirectoryInfo(dir);
             }
+            catch (Exception)
+            {
+                // if the directory name is bad or corrupt
+                return;
+            }
+            Add(new ExecuteCommandOpenInExplorer(_activator, dirReal) { OverrideCommandName = "Open Load Directory"});
         }
     }
 }

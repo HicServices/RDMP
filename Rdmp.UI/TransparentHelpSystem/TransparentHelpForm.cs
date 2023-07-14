@@ -12,7 +12,7 @@ using System.Windows.Forms;
 namespace Rdmp.UI.TransparentHelpSystem;
 
 /// <summary>
-/// Transparent windows Form which allows a pseudo greyout to occur over all controls in a window except for the location you want the users attention focused.  This includes the 
+/// Transparent windows Form which allows a pseudo greyout to occur over all controls in a window except for the location you want the users attention focused.  This includes the
 /// addition of a temporary HelpBox which describes what the user is expected to do (See HelpBox).
 /// </summary>
 [TechnicalUI]
@@ -23,19 +23,18 @@ public class TransparentHelpForm:Form
     private Control _highlight;
 
     [DllImport("user32.dll", SetLastError = true)]
-    static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     [DllImport("dwmapi.dll", PreserveSig = false)]
     public static extern bool DwmIsCompositionEnabled();
 
-    const UInt32 SW_SHOWNOACTIVATE = 4;
-    private const UInt32 WM_NCHITTEST = 0x0084;
+    private const uint SW_SHOWNOACTIVATE = 4;
+    private const uint WM_NCHITTEST = 0x0084;
     private const int HTTRANSPARENT = -1;
-
-    Timer timer = new Timer();
+    private Timer timer = new();
     private Color _transparencyColor;
     private SolidBrush _highlightBrush;
-        
+
     public TransparentHelpForm(Control host)
     {
         _host = host;
@@ -68,8 +67,8 @@ public class TransparentHelpForm:Form
         DoubleBuffered = true;
 
         //if the host is a Form and it closes we should close too
-        if (host is Form)
-            ((Form) host).FormClosed +=(s,e)=> Close();
+        if (host is Form form)
+            form.FormClosed +=(s,e)=> Close();
     }
     private void UpdateLocation()
     {
@@ -100,7 +99,7 @@ public class TransparentHelpForm:Form
 
         Invalidate(true);
     }
-        
+
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
@@ -123,7 +122,7 @@ public class TransparentHelpForm:Form
             e.Graphics.FillRectangle(_highlightBrush, clientLocation.X, clientLocation.Y, _currentHelpBox.Width, _currentHelpBox.Height);
         }
     }
-        
+
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         timer.Stop();
@@ -138,7 +137,7 @@ public class TransparentHelpForm:Form
     public void ShowWithoutActivate()
     {
         // Show the window without activating it (i.e. do not take focus)
-        ShowWindow(this.Handle, (short)SW_SHOWNOACTIVATE);
+        ShowWindow(Handle, (short)SW_SHOWNOACTIVATE);
     }
 
     protected override void WndProc(ref Message m)
@@ -171,7 +170,7 @@ public class TransparentHelpForm:Form
         var screenCoordinates = _highlight.PointToScreen(new Point(0, 0));
         var highlightTopLeft = _host.PointToClient(screenCoordinates);
 
-        var highlightBottomLeft = new Point(highlightTopLeft.X, highlightTopLeft.Y + _highlight.ClientRectangle.Height);
+        var highlightBottomLeft = highlightTopLeft with { Y = highlightTopLeft.Y + _highlight.ClientRectangle.Height };
 
 
         //First let's try to place it like this
@@ -204,7 +203,7 @@ public class TransparentHelpForm:Form
         {
             if(_currentHelpBox.Width < availableSpaceHorizontally)
                 return highlightBottomLeft;
-                
+
             //not enough space horizontally so try to move MSG to left till there is enough space
             /**************HOST CONTROL BOUNDS***********
             * 
@@ -213,15 +212,16 @@ public class TransparentHelpForm:Form
             *  MSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSGMSG_MSG_MSG
             *    
             *********************************************/
-            return new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width), highlightBottomLeft.Y);
+            return highlightBottomLeft with { X = Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width) };
         }
-        else if (currentHelpBox.Height < availableSpaceAboveHighlight)
+
+        if (currentHelpBox.Height < availableSpaceAboveHighlight)
         {
             //No space below so go above it
 
-                
+
             if (_currentHelpBox.Width < availableSpaceHorizontally)
-                return new Point(highlightTopLeft.X, highlightTopLeft.Y - currentHelpBox.Height);
+                return highlightTopLeft with { Y = highlightTopLeft.Y - currentHelpBox.Height };
 
             //consider moving X back because message box is so wide (See diagram above)
             return new Point(Math.Max(0, _host.ClientRectangle.Width - currentHelpBox.Width), highlightTopLeft.Y - currentHelpBox.Height);
@@ -240,7 +240,7 @@ public class TransparentHelpForm:Form
         //there is space to the right or left so put it in whichever is greater
         if (spaceToRight > spaceToLeft)
             return highlightTopRight;
-            
+
         return new Point(highlightTopLeft.X - _currentHelpBox.Width,0);
 
 

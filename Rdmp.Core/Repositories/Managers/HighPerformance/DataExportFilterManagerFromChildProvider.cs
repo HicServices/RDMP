@@ -17,9 +17,9 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 /// Provides a memory based efficient (in terms of the number of database queries sent) way of finding all containers and subcontainers and filters in the entire DataExportManager
 /// database at once rather than using the methods on IContainer and IFilter which send individual database queries for relevant subcontainers etc.
 /// </summary>
-class DataExportFilterManagerFromChildProvider : DataExportFilterManager
+internal class DataExportFilterManagerFromChildProvider : DataExportFilterManager
 {
-    readonly Dictionary<int, List<FilterContainer>> _subcontainers = new Dictionary<int, List<FilterContainer>>();
+    private readonly Dictionary<int, List<FilterContainer>> _subcontainers = new();
         
     private Dictionary<int, List<DeployedExtractionFilter>> _containersToFilters;
 
@@ -32,7 +32,7 @@ class DataExportFilterManagerFromChildProvider : DataExportFilterManager
     public DataExportFilterManagerFromChildProvider(DataExportRepository repository, DataExportChildProvider childProvider): base(repository)
     {
         _containersToFilters = childProvider.AllDeployedExtractionFilters.Where(f=>f.FilterContainer_ID.HasValue).GroupBy(f=>f.FilterContainer_ID.Value).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
-            
+
         var server = repository.DiscoveredServer;
         using (var con = repository.GetConnection())
         {

@@ -18,14 +18,14 @@ namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
 /// Builds complex cohort identification queries by combining subqueries with SQL set operations (UNION / INTERSECT / EXCEPT).  Cohort identification
-/// sub queries fundamentally take the form of 'Select distinct patientId from TableX'.  All the complexity comes in the form of IFilters (WHERE Sql), 
+/// sub queries fundamentally take the form of 'Select distinct patientId from TableX'.  All the complexity comes in the form of IFilters (WHERE Sql),
 /// parameters, using cached query results, patient index tables etc.
 /// 
 /// <para>User cohort identification queries are all create under a CohortIdentificationConfiguration which will have a single root CohortAggregateContainer.  A
 /// final count for the number of patients in the cohort can be determined by running the root CohortAggregateContainer.  The user will often want to run each
 /// sub query independently however to get counts for each dataset involved.  Sub queries are defined in AggregateConfigurations.</para>
 /// 
-/// <para>In order to build complex multi table queries across multiple datasets with complex where/parameter/join logic with decent performance RDMP supports 
+/// <para>In order to build complex multi table queries across multiple datasets with complex where/parameter/join logic with decent performance RDMP supports
 /// caching.  Caching involves executing each sub query (AggregateConfiguration) and storing the resulting patient identifier list in an indexed table on
 /// the caching server (See CachedAggregateConfigurationResultsManager).  These cached queries are versioned by the SQL used to generate them (to avoid stale
 /// result lists).  Where available CohortQueryBuilder will use the cached result list instead of running the full query since it runs drastically faster.</para>
@@ -36,7 +36,7 @@ public class CohortQueryBuilder
 {
     private ICoreChildProvider _childProvider;
     private readonly ISqlParameter[] _globals;
-    object oSQLLock = new object();
+    private object oSQLLock = new();
     private string _sql;
 
     public string SQL
@@ -51,12 +51,12 @@ public class CohortQueryBuilder
             }
         }
     }
-        
+
     public int TopX { get; set; }
 
     private CohortAggregateContainer container;
     private AggregateConfiguration configuration;
-        
+
     public ExternalDatabaseServer CacheServer
     {
         get => _cacheServer;
@@ -67,9 +67,9 @@ public class CohortQueryBuilder
         }
     }
 
-    public ParameterManager ParameterManager = new ParameterManager();
+    public ParameterManager ParameterManager = new();
 
-        
+
     private CohortQueryBuilderHelper helper;
     public CohortQueryBuilderResult Results { get; private set; }
 
@@ -78,7 +78,7 @@ public class CohortQueryBuilder
     private CohortQueryBuilder(IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider)
     {
         _childProvider = childProvider;
-        globals = globals ?? new ISqlParameter[] {};
+        globals ??= Array.Empty<ISqlParameter>();
         _globals = globals.ToArray();
         TopX = -1;
             
@@ -123,8 +123,7 @@ public class CohortQueryBuilder
     }
     private void SetChildProviderIfNull()
     {
-        if (_childProvider == null)
-            _childProvider = new CatalogueChildProvider(
+        _childProvider ??= new CatalogueChildProvider(
                 configuration?.CatalogueRepository ?? container.CatalogueRepository, null, null,null);
     }
 
@@ -135,30 +134,25 @@ public class CohortQueryBuilder
     {
         if(configuration == null)
             throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
-            
+
         //Show the user all the fields (*) unless there is a HAVING or it is a Patient Index Table.
-        var selectList = 
+        var selectList =
             string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable() ? "*" : null;
 
         RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX),CancellationToken.None);
 
         Results.BuildFor(configuration,ParameterManager);
-            
-        var sampleSQL = Results.Sql;
 
-        var parameterSql = "";
+        var sampleSQL = Results.Sql;
 
         //get resolved parameters for the select * query
         var finalParams = ParameterManager.GetFinalResolvedParametersList().ToArray();
 
-        if(finalParams.Any())
-        {
-            parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
+        if (!finalParams.Any()) return sampleSQL;
 
-            return parameterSql + Environment.NewLine + sampleSQL;
-        }
-            
-        return sampleSQL;
+        var parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
+        return $"{parameterSql}{Environment.NewLine}{sampleSQL}";
+
     }
 
     public void RegenerateSQL()
@@ -180,7 +174,7 @@ public class CohortQueryBuilder
             Results.BuildFor(configuration,ParameterManager);//user constructed us without a container, he only cares about 1 aggregate
 
         _sql = Results.Sql;
-  
+
         //Still finalise the ParameterManager even if we are not writing out the parameters so that it is in the Finalized state
         var finalParameters = ParameterManager.GetFinalResolvedParametersList();
 
@@ -215,13 +209,13 @@ public class CohortQueryBuilder
             SQLOutOfDate = true;
         }
     }
-        
+
     public bool SQLOutOfDate { get; set; }
 
     private IOrderable _stopContainerWhenYouReach;
     private bool _doNotWriteOutParameters;
     private ExternalDatabaseServer _cacheServer;
-        
+
 
     public IOrderable StopContainerWhenYouReach
     {

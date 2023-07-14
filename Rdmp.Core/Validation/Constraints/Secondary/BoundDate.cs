@@ -20,28 +20,28 @@ public class BoundDate : Bound
     public DateTime? Lower { get; set; }
     [Description("Optional, Requires the value being validated to be BEFORE this date")]
     public DateTime? Upper { get; set; }
-        
+
     public BoundDate()
     {
         Inclusive = true;
     }
-        
+
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
         if(value == null)
             return null;
 
-        if (value is string)
+        if (value is string s)
         {
-            value = SafeConvertToDate(value as string);
-            
+            value = SafeConvertToDate(s);
+
             if (!((DateTime?)value).HasValue)
                 return null;
         }
 
         var d = (DateTime)value;
 
-        if (value != null && !IsWithinRange(d)) 
+        if (value != null && !IsWithinRange(d))
             return new ValidationFailure(CreateViolationReportUsingDates(d),this);
             
         if (value != null && !IsWithinRange(d,otherColumns, otherColumnNames))
@@ -54,23 +54,19 @@ public class BoundDate : Bound
     {
         if (Inclusive)
         {
-            if(Lower != null)
-                if (d < Lower)
-                    return false;
+            if (d < Lower)
+                return false;
 
-            if(Upper != null)
-                if (d > Upper)
-                    return false;
+            if (d > Upper)
+                return false;
         }
         else
         {
-            if (Lower != null)
-                if (d <= Lower)
-                    return false;
+            if (d <= Lower)
+                return false;
 
-            if (Upper != null)
-                if (d >= Upper)
-                    return false;
+            if (d >= Upper)
+                return false;
         }
 
         return true;
@@ -101,7 +97,7 @@ public class BoundDate : Bound
         return true;
     }
 
-    private DateTime? SafeConvertToDate(object lookupFieldNamed)
+    private static DateTime? SafeConvertToDate(object lookupFieldNamed)
     {
         if (lookupFieldNamed == null)
             return null;
@@ -109,26 +105,25 @@ public class BoundDate : Bound
         if (lookupFieldNamed == DBNull.Value)
             return null;
 
-        if (lookupFieldNamed is DateTime)
-            return (DateTime)lookupFieldNamed;
+        if (lookupFieldNamed is DateTime time)
+            return time;
 
-        if (lookupFieldNamed is string)
+        if (lookupFieldNamed is string named)
         {
-            if (string.IsNullOrWhiteSpace(lookupFieldNamed as string))
-                return null; 
-            else
-                try
-                {
-                    lookupFieldNamed = DateTime.Parse(lookupFieldNamed as string);
-                }
-                catch (InvalidCastException )
-                {
-                    return null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
-                }
-                catch (FormatException )
-                {
-                    return null;
-                }
+            if (string.IsNullOrWhiteSpace(named))
+                return null;
+            try
+            {
+                lookupFieldNamed = DateTime.Parse(named);
+            }
+            catch (InvalidCastException )
+            {
+                return null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
+            }
+            catch (FormatException )
+            {
+                return null;
+            }
 
             return (DateTime)lookupFieldNamed;
         }
@@ -152,13 +147,13 @@ public class BoundDate : Bound
 
     private string CreateViolationReportUsingFieldNames(DateTime d)
     {
-        if (!String.IsNullOrWhiteSpace(LowerFieldName) && !String.IsNullOrWhiteSpace(UpperFieldName)) 
+        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName))
             return BetweenMessage(d, LowerFieldName, UpperFieldName);
 
-        if (!String.IsNullOrWhiteSpace(LowerFieldName))
+        if (!string.IsNullOrWhiteSpace(LowerFieldName))
             return GreaterThanMessage(d, LowerFieldName);
 
-        if (!String.IsNullOrWhiteSpace(UpperFieldName))
+        if (!string.IsNullOrWhiteSpace(UpperFieldName))
             return LessThanMessage(d, UpperFieldName);
 
         throw new InvalidOperationException("Illegal state.");
@@ -170,23 +165,23 @@ public class BoundDate : Bound
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
     }
 
-    private string GreaterThanMessage(DateTime d, string s)
+    private static string GreaterThanMessage(DateTime d, string s)
     {
         return
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date greater than {Wrap(s)}.";
     }
 
-    private string LessThanMessage(DateTime d, string s)
+    private static string LessThanMessage(DateTime d, string s)
     {
         return
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";
     }
 
-    private string Wrap(string s)
+    private static string Wrap(string s)
     {
         return $"[{s}]";
     }
-        
+
     public override string GetHumanReadableDescriptionOfValidation()
     {
         var result = "Checks that a date is within a given set of bounds.  This field is currently configured to be ";

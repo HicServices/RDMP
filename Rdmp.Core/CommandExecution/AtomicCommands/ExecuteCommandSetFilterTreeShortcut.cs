@@ -14,13 +14,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Creates a reference in one <see cref="AggregateConfiguration"/> pointing to another informing it to use the WHERE filter logic of the other.  This allows you to maintain a single master copy of a given configuration and reference it from several places without creating duplicates.
 /// </summary>
-class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
+internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
 {
-    AggregateConfiguration _setOn { get; }
+    private AggregateConfiguration _setOn { get; }
 
-    bool _promptChoice;
+    private bool _promptChoice;
 
-    AggregateConfiguration _pointTo { get; }
+    private AggregateConfiguration _pointTo { get; }
 
     /// <summary>
     /// Constructor for interactive mode (ask what they want to set it to when the command is run)

@@ -50,13 +50,13 @@ public class ShareDefinition
     /// The values of all foreign key properties on the <see cref="DatabaseEntity"/> (e.g. <see cref="CatalogueItem.Catalogue_ID"/>).  This is the SharingGuid of the referenced object.
     /// An object cannot be shared unless it is also shared with all such dependencies.
     /// </summary>
-    public Dictionary<RelationshipAttribute, Guid> RelationshipProperties = new Dictionary<RelationshipAttribute, Guid>();
+    public Dictionary<RelationshipAttribute, Guid> RelationshipProperties = new();
 
     /// <inheritdoc cref="ShareDefinition"/>
     public ShareDefinition(Guid sharingGuid, int id, Type type, Dictionary<string, object> properties, Dictionary<RelationshipAttribute, Guid> relationshipProperties)
     {
         if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
-            throw new ArgumentException("Type must be IMapsDirectlyToDatabaseTable", "type");
+            throw new ArgumentException("Type must be IMapsDirectlyToDatabaseTable", nameof(type));
             
         SharingGuid = sharingGuid;
         ID = id;

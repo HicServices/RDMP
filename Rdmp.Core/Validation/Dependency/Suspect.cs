@@ -18,8 +18,8 @@ public class Suspect
 {
     public string Pattern { get;private set; }
     public Type Type { get; private set; }
-    public List<PropertyInfo> SuspectProperties = new List<PropertyInfo>();
-    public List<FieldInfo> SuspectFields = new List<FieldInfo>();
+    public List<PropertyInfo> SuspectProperties = new();
+    public List<FieldInfo> SuspectFields = new();
 
     public Suspect(string pattern, Type type, List<PropertyInfo> suspectProperties, List<FieldInfo> suspectFields)
     {

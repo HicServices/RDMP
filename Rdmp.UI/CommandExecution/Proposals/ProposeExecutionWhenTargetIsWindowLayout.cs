@@ -10,7 +10,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsWindowLayout : RDMPCommandExecutionProposal<WindowLayout>
+internal class ProposeExecutionWhenTargetIsWindowLayout : RDMPCommandExecutionProposal<WindowLayout>
 {
     public ProposeExecutionWhenTargetIsWindowLayout(IActivateItems itemActivator)
         : base(itemActivator)

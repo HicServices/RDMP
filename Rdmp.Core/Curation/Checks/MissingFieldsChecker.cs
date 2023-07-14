@@ -25,7 +25,7 @@ public class MissingFieldsChecker : ICheckable
 
     public MissingFieldsChecker(TableRepository repository)
     {
-        this._repository = repository;
+        _repository = repository;
     }
         
     public void Check(ICheckNotifier notifier)
@@ -36,14 +36,14 @@ public class MissingFieldsChecker : ICheckable
             notifier.OnCheckPerformed(new CheckEventArgs("Could not reach server",CheckResult.Fail));
             return;
         }
-                
+
         var db = server.GetCurrentDatabase();
         if(!db.Exists())
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"Could not find database {db}",CheckResult.Fail));
             return;
         }
-                
+
         var tables = db.DiscoverTables(false);
 
         foreach (var type in _repository.GetCompatibleTypes())
@@ -56,7 +56,7 @@ public class MissingFieldsChecker : ICheckable
     /// <param name="notifier"></param>
     /// <param name="type"></param>
     /// <param name="tables"></param>
-    private void CheckEntities(ICheckNotifier notifier, Type type, DiscoveredTable[] tables)
+    private static void CheckEntities(ICheckNotifier notifier, Type type, DiscoveredTable[] tables)
     {
         if(type.IsInterface)
             return;
@@ -85,8 +85,8 @@ public class MissingFieldsChecker : ICheckable
         }
             
         notifier.OnCheckPerformed(new CheckEventArgs($"Found Table {type.Name}", CheckResult.Success, null));
-            
-            
+
+
         //get columns from underlying database table
         var columns = table.DiscoverColumns();
 
@@ -115,7 +115,7 @@ public class MissingFieldsChecker : ICheckable
         foreach (var missingDatabaseField in missingDatabaseFields)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Missing field in database table {table} when compared to class definition {type.FullName} property was called {missingDatabaseField.Name} and was of type {missingDatabaseField.PropertyType}{((typeof(Enum).IsAssignableFrom(missingDatabaseField.PropertyType) ? "(An Enum)" : ""))}"
+                $"Missing field in database table {table} when compared to class definition {type.FullName} property was called {missingDatabaseField.Name} and was of type {missingDatabaseField.PropertyType}{(typeof(Enum).IsAssignableFrom(missingDatabaseField.PropertyType) ? "(An Enum)" : "")}"
                 , CheckResult.Warning,
                 null));
             problems = true;

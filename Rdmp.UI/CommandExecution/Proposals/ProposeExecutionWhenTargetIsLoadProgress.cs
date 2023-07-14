@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsLoadProgress:RDMPCommandExecutionProposal<LoadProgress>
+internal class ProposeExecutionWhenTargetIsLoadProgress:RDMPCommandExecutionProposal<LoadProgress>
 {
     public ProposeExecutionWhenTargetIsLoadProgress(IActivateItems itemActivator) : base(itemActivator)
     {

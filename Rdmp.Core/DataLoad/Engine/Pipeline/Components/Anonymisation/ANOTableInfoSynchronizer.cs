@@ -30,7 +30,7 @@ public class ANOTableInfoSynchronizer
         dumper.Check(notifier);
 
         CheckForDuplicateANOVsRegularNames();
-            
+
         var columnInfosWithANOTransforms = _tableToSync.ColumnInfos.Where(c => c.ANOTable_ID != null).ToArray();
 
         if (!columnInfosWithANOTransforms.Any())

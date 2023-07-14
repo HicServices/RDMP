@@ -42,18 +42,16 @@ public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicComman
                 ses = sessions[0];
             else
             {
-                if(BasicActivator.SelectObject(new DialogArgs 
+                if(BasicActivator.SelectObject(new DialogArgs
                    {
                        TaskDescription = "Choose which session to add the objects to"
                    }, sessions,out var selected))
                 {
                     ses = selected;
-                }                       
+                }
             }
         }
 
-        if (ses == null)
-            return;
-        ses.Add(_toAdd);
+        ses?.Add(_toAdd);
     }
 }

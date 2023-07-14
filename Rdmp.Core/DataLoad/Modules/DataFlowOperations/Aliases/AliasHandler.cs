@@ -45,8 +45,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
     {
         var newRows = new List<object[]>();
 
-        if(_aliasDictionary == null)
-            _aliasDictionary = GenerateAliasTable(TimeoutForAssemblingAliasTable);
+        _aliasDictionary ??= GenerateAliasTable(TimeoutForAssemblingAliasTable);
 
         var idx = toProcess.Columns.IndexOf(AliasColumnInInputDataTables);
 
@@ -57,10 +56,10 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
         var elements = toProcess.Columns.Count;
 
         var matchesFound = 0;
-            
+
         foreach (DataRow r in toProcess.Rows)
         {
-            if(_aliasDictionary.ContainsKey(r[AliasColumnInInputDataTables]))
+            if(_aliasDictionary.TryGetValue(r[AliasColumnInInputDataTables],out var aliases))
             {
                 matchesFound++;
                 switch (ResolutionStrategy)
@@ -70,9 +69,9 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                             $"Found Alias in input data and ResolutionStrategy is {ResolutionStrategy}, aliased value was {r[AliasColumnInInputDataTables]}");
 
                     case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
-                            
+
                         //Get all aliases for the input value
-                        foreach (var alias in _aliasDictionary[r[AliasColumnInInputDataTables]])
+                        foreach (var alias in aliases)
                         {
                             //Create a copy of the input row
                             var newRow = new object[elements];
@@ -84,7 +83,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                             //Add it to our new rows collection
                             newRows.Add(newRow);
                         }
-                            
+
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -98,7 +97,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
         else
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"No Aliases found for identifiers in column {AliasColumnInInputDataTables}"));
-            
+
         foreach (var newRow in newRows)
             toProcess.Rows.Add(newRow);
 
@@ -107,13 +106,12 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        if (_aliasDictionary != null)
-            _aliasDictionary.Clear();//Free up memory
+        _aliasDictionary?.Clear();//Free up memory
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-            
+
     }
 
     public void Check(ICheckNotifier notifier)
@@ -129,7 +127,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
             var isTimeout = e.Message.ToLower().Contains("timeout");
             notifier.OnCheckPerformed(new CheckEventArgs($"Failed to generate alias table after {timeout}s",isTimeout ? CheckResult.Warning : CheckResult.Fail, e));
         }
-            
+
     }
 
     private Dictionary<object, List<object>> _aliasDictionary;
@@ -137,10 +135,10 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
     private Dictionary<object, List<object>> GenerateAliasTable(int timeoutInSeconds)
     {
         const string expectation = "(expected the query to return 2 columns, the first one being the input column the second being known aliases)";
-            
+
         var toReturn = new Dictionary<object, List<object>>();
 
-        var server = DataAccessPortal.GetInstance().ExpectServer(ServerToExecuteQueryOn, DataAccessContext);
+        var server = DataAccessPortal.ExpectServer(ServerToExecuteQueryOn, DataAccessContext);
 
         using (var con = server.GetConnection())
         {
@@ -189,7 +187,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
 
                         var input = r[0];
                         var alias = r[1];
-                            
+
                         if(input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
                             throw new AliasTableFetchException("Alias table contained nulls");
 

@@ -75,18 +75,17 @@ public partial class PerformanceCounterResultsUI : UserControl
         return treeNode.Children.Values.Any(c=>!c.IsInDatabaseAccessAssembly);
     }
 
-    List<StackFramesTree> Roots;
-
-    bool collapseToMethod = false;
+    private List<StackFramesTree> Roots;
+    private bool collapseToMethod = false;
     private ComprehensiveQueryPerformanceCounter _performanceCounter;
         
     private int _worstOffenderCount;
 
     public static Color GetHeat(double fraction)
     {
-        var r = Light.R + ((Heavy.R - Light.R) * fraction);
-        var g = Light.G + ((Heavy.G - Light.G) * fraction);
-        var b = Light.B + ((Heavy.B - Light.B) * fraction);
+        var r = Light.R + (Heavy.R - Light.R) * fraction;
+        var g = Light.G + (Heavy.G - Light.G) * fraction;
+        var b = Light.B + (Heavy.B - Light.B) * fraction;
 
         return Color.FromArgb((int)r, (int)g, (int)b);
     }
@@ -116,7 +115,7 @@ public partial class PerformanceCounterResultsUI : UserControl
                 
             if(collapseToMethod)
             {
-                    
+
                 var uniqueMethodLines = new List<string>();
 
                 var lastMethodName = StackFramesTree.GetMethodName(lines[0]);
@@ -177,13 +176,11 @@ public partial class PerformanceCounterResultsUI : UserControl
 
     private void tlvLocations_ItemActivate(object sender, EventArgs e)
     {
-        var model = tlvLocations.SelectedObject as StackFramesTree;
-
-        if (model != null)
+        if (tlvLocations.SelectedObject is StackFramesTree model)
         {
             if(model.HasSourceCode)
             {
-                var dialog = new Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
+                var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
                 dialog.Show();
             }
         }

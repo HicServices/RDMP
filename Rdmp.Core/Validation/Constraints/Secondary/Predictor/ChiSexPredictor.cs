@@ -22,24 +22,20 @@ public class ChiSexPredictor : PredictionRule
 
         char sex;
 
-        var s = oGender as string;
-
-        if (s != null)
+        if (oGender is string s)
             sex = s.ToCharArray()[0];
         else
-        if (oGender is char)
-            sex = (char)oGender;
+        if (oGender is char gender)
+            sex = gender;
         else
             throw new ArgumentException($"Gender must be a string or char, gender value is a {oGender.GetType()}");
 
-        var sChi = oChi as string;
-
-        if (sChi == null)
+        if (oChi is not string sChi)
             throw new ArgumentException($"Chi was not a string (or null) object.  It was of Type {oChi.GetType()}");
 
         if (sChi.Length == 10)
         {
-            var sexDigit = (int)Char.GetNumericValue(sChi, 8);
+            var sexDigit = (int)char.GetNumericValue(sChi, 8);
 
             var isvalid = true;
 

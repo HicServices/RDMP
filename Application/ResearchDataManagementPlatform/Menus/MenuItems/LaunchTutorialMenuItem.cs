@@ -31,7 +31,7 @@ public class LaunchTutorialMenuItem : ToolStripMenuItem
         UpdateText();
     }
 
-    void parent_DropDownOpening(object sender, EventArgs e)
+    private void parent_DropDownOpening(object sender, EventArgs e)
     {
         UpdateText();
     }
@@ -40,15 +40,15 @@ public class LaunchTutorialMenuItem : ToolStripMenuItem
     {
         Text = _tutorial.Name;
 
-        if (_tracker.HasSeen(_tutorial))
+        if (TutorialTracker.HasSeen(_tutorial))
             Text += " (Seen)";
     }
 
     protected override void OnClick(EventArgs e)
     {
         base.OnClick(e);
-            
-        _tracker.ClearCompleted(_tutorial);
-        _tracker.LaunchTutorial(_tutorial);
+
+        TutorialTracker.ClearCompleted(_tutorial);
+        TutorialTracker.LaunchTutorial(_tutorial);
     }
 }

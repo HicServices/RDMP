@@ -20,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
-class CatalogueLoadChecks:ICheckable
+internal class CatalogueLoadChecks:ICheckable
 {
     private readonly ILoadMetadata _loadMetadata;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
@@ -70,7 +70,7 @@ class CatalogueLoadChecks:ICheckable
             tablesFound.AddRange(tableInfos.Where(tableInfo => !tablesFound.Contains(tableInfo)));
         }
 
-            
+
         //check regular tables
         foreach (TableInfo regularTable in tablesFound)
         {
@@ -85,24 +85,22 @@ class CatalogueLoadChecks:ICheckable
 
 
     #region These methods check TableInfos (Lookup including lookups)
-  
+
     private void CheckTableInfo(TableInfo tableInfo, ICheckNotifier notifier)
     {
         //get all columns
-        ColumnInfo[] columnInfos;
-        ColumnInfo[] columnInfosWhichArePrimaryKeys;
 
         //check whether the live database and staging databases have appropriate columns and triggers etc on them
         var staging = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-        var live = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
+        var live = DataAccessPortal.ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
 
         var liveTable = live.ExpectTable(tableInfo.GetRuntimeName(LoadBubble.Live,_databaseConfiguration.DatabaseNamer),tableInfo.Schema);
         var liveCols = liveTable.DiscoverColumns();
 
         CheckTableInfoSynchronization(tableInfo,notifier);
 
-        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out columnInfos, out columnInfosWhichArePrimaryKeys,notifier);
-            
+        CheckTableHasColumnInfosAndPrimaryKeys(live, tableInfo, out ColumnInfo[] columnInfos, out ColumnInfo[] columnInfosWhichArePrimaryKeys,notifier);
+
         //check for trying to ignore primary keys
         foreach (var col in tableInfo.ColumnInfos)
         {
@@ -115,13 +113,12 @@ class CatalogueLoadChecks:ICheckable
             if(!_loadMetadata.IgnoreTrigger)
             {
                 //if trigger is created as part of this check then it is likely to have resulted in changes to the underlying table (e.g. added hic_validFrom field) in which case we should resynch the TableInfo to pickup these new columns
-                bool runSynchronizationAgain;
-                CheckTriggerIntact(liveTable,notifier,out runSynchronizationAgain);
+                CheckTriggerIntact(liveTable,notifier,out var runSynchronizationAgain);
 
                 if(runSynchronizationAgain)
                     CheckTableInfoSynchronization(tableInfo, notifier);
             }
-                
+
             if (!_databaseConfiguration.RequiresStagingTableCreation)
             {
                 //Important:
@@ -149,7 +146,7 @@ class CatalogueLoadChecks:ICheckable
         }
     }
 
-    private void CheckTableInfoSynchronization(TableInfo tableInfo, ICheckNotifier notifier)
+    private static void CheckTableInfoSynchronization(TableInfo tableInfo, ICheckNotifier notifier)
     {
         //live is the current data load's (possilby overridden server/database)
         var tableInfoSynchronizer = new TableInfoSynchronizer(tableInfo);
@@ -169,10 +166,9 @@ class CatalogueLoadChecks:ICheckable
 
             if (launchSyncFixer)
             {
-                bool userFixed;
-
-                //if silent running accept all changes
-                userFixed = tableInfoSynchronizer.Synchronize(notifier);
+                var userFixed =
+                    //if silent running accept all changes
+                    tableInfoSynchronizer.Synchronize(notifier);
 
                 if(!userFixed)
                     notifier.OnCheckPerformed(new CheckEventArgs(
@@ -181,7 +177,7 @@ class CatalogueLoadChecks:ICheckable
         }
     }
 
-    private void CheckTableHasColumnInfosAndPrimaryKeys(DiscoveredDatabase live, TableInfo tableInfo, out ColumnInfo[] columnInfos, out ColumnInfo[] columnInfosWhichArePrimaryKeys, ICheckNotifier notifier)
+    private static void CheckTableHasColumnInfosAndPrimaryKeys(DiscoveredDatabase live, TableInfo tableInfo, out ColumnInfo[] columnInfos, out ColumnInfo[] columnInfosWhichArePrimaryKeys, ICheckNotifier notifier)
     {
         columnInfos = tableInfo.ColumnInfos.ToArray();
         columnInfosWhichArePrimaryKeys = columnInfos.Where(col => col.IsPrimaryKey).ToArray();
@@ -224,7 +220,7 @@ class CatalogueLoadChecks:ICheckable
 
     }
 
-    private void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier, out bool runSynchronizationAgain)
+    private static void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier, out bool runSynchronizationAgain)
     {
         var checker = new TriggerChecks(table);
         checker.Check(notifier);
@@ -233,7 +229,7 @@ class CatalogueLoadChecks:ICheckable
     }
 
 
-    private void ConfirmStagingAndLiveHaveSameColumns(string tableName, DiscoveredColumn[] stagingCols, DiscoveredColumn[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
+    private static void ConfirmStagingAndLiveHaveSameColumns(string tableName, DiscoveredColumn[] stagingCols, DiscoveredColumn[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
     {
         //in LIVE but not STAGING
         foreach (var missingColumn in liveCols.Select(c=>c.GetRuntimeName()).Except(stagingCols.Select(c=>c.GetRuntimeName())))
@@ -282,20 +278,21 @@ class CatalogueLoadChecks:ICheckable
     {
         try
         {
-            new MigrationColumnSet(stagingTable,liveTable,new StagingToLiveMigrationFieldProcessor(){
+            new MigrationColumnSet(stagingTable,liveTable,new StagingToLiveMigrationFieldProcessor
+            {
                 NoBackupTrigger = _loadMetadata.IgnoreTrigger
             });
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"TableInfo {liveTable} passed {typeof(MigrationColumnSet).Name} check ", CheckResult.Success, null));
+                $"TableInfo {liveTable} passed {nameof(MigrationColumnSet)} check ", CheckResult.Success, null));
         }
         catch (Exception e)
         {
 
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"{typeof(MigrationColumnSet).Name} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}", CheckResult.Fail, e));
+                $"{nameof(MigrationColumnSet)} reports a problem with the configuration of columns on STAGING/LIVE or in the ColumnInfos for TableInfo {liveTable}", CheckResult.Fail, e));
         }
-            
-        //live columns 
+
+        //live columns
         foreach (var col in liveCols)
             if (!SpecialFieldNames.IsHicPrefixed(col) && col.IsAutoIncrement)    //must start hic_ if they are identities
                 notifier.OnCheckPerformed(new CheckEventArgs(
@@ -315,7 +312,7 @@ class CatalogueLoadChecks:ICheckable
         ConfirmNullability(liveTable.DiscoverColumn(SpecialFieldNames.ValidFrom), true, notifier);
     }
 
-    private void ConfirmNullability(DiscoveredColumn column, bool expectedNullability, ICheckNotifier notifier)
+    private static void ConfirmNullability(DiscoveredColumn column, bool expectedNullability, ICheckNotifier notifier)
     {
         var nullability = column.AllowNulls;
         notifier.OnCheckPerformed(new CheckEventArgs(

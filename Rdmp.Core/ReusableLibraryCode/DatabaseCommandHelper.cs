@@ -30,12 +30,12 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public class DatabaseCommandHelper
 {
-    private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new Dictionary<DatabaseType, IImplementation>()
+    private static readonly Dictionary<DatabaseType, IImplementation> _dbConHelpersByType = new()
     {
         {DatabaseType.MySql,new MySqlImplementation()},
         {DatabaseType.Oracle,new OracleImplementation()},
         {DatabaseType.MicrosoftSQLServer,new MicrosoftSQLImplementation()},
-        {DatabaseType.PostgreSql,new PostgreSqlImplementation()},
+        {DatabaseType.PostgreSql,new PostgreSqlImplementation()}
     };
 
     public static ComprehensiveQueryPerformanceCounter PerformanceCounter = null;
@@ -81,9 +81,8 @@ public class DatabaseCommandHelper
     public static DbCommand GetCommand(string s, DbConnection con, DbTransaction transaction = null)
     {
         var cmd = For(con).GetCommand(s, con, transaction);
-            
-        if(PerformanceCounter != null)
-            PerformanceCounter.AddAudit(cmd,Environment.StackTrace.ToString());
+
+        PerformanceCounter?.AddAudit(cmd,Environment.StackTrace.ToString());
 
         cmd.CommandTimeout = GlobalTimeout;
         return cmd;

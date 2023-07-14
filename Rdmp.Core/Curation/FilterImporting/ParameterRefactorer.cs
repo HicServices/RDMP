@@ -42,9 +42,7 @@ public class ParameterRefactorer : IParameterRefactorer
 
         var owner = parameter.GetOwnerIfAny();
 
-        var filter = owner as IFilter;
-
-        if (filter == null || filter is SpontaneousObject)
+        if (owner is not IFilter filter || filter is SpontaneousObject)
             return false;
 
         //There is no WHERE SQL anyway

@@ -73,7 +73,7 @@ public class ColumnInfoANOPlan:ICheckable
                     Dilution = null;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("value");
+                    throw new ArgumentOutOfRangeException(nameof(value));
             }
         }
     }
@@ -141,9 +141,8 @@ public class ColumnInfoANOPlan:ICheckable
             //The ColumnInfo is extractable
             if (extractionInformation != null)
             {
-                if (toReturn == null)
-                    toReturn = extractionInformation.ExtractionCategory;
-                    
+                toReturn ??= extractionInformation.ExtractionCategory;
+
                 //there are multiple, if the new one is more restrictive then use the more restrictive category instead
                 toReturn = extractionInformation.ExtractionCategory > toReturn ? extractionInformation.ExtractionCategory : toReturn;
             }
@@ -161,8 +160,8 @@ public class ColumnInfoANOPlan:ICheckable
         //and if the same named ColumnInfo(s) have a shared ANOTable (e.g. ANOCHI)
         var agreedAnoTableID = matchingOnName.Where(c => c.ANOTable_ID != null).Select(c => c.ANOTable_ID).Distinct().ToArray();
 
-        //if there is a single recommended anotable id amongst all columns with matching name featuring ano tables 
-        if (agreedAnoTableID.Count() == 1)
+        //if there is a single recommended anotable id amongst all columns with matching name featuring ano tables
+        if (agreedAnoTableID.Length == 1)
         {
             ANOTable = ColumnInfo.Repository.GetObjectByID<ANOTable>(agreedAnoTableID.Single().Value);
             Plan = Plan.ANO;
@@ -235,36 +234,26 @@ public class ColumnInfoANOPlan:ICheckable
 
         //if we have picked a destination
         ITypeTranslater destinationTypeTranslater;
-        if (_planManager.TargetDatabase != null)
-            destinationTypeTranslater = _planManager.TargetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater;//ensure we handle type translation between the two platforms
-        else
-            destinationTypeTranslater = sourceTypeTranslater;//otherwise (we haven't picked a destination yet)
+        destinationTypeTranslater = _planManager.TargetDatabase != null ? _planManager.TargetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater : //ensure we handle type translation between the two platforms
+            sourceTypeTranslater; //otherwise (we haven't picked a destination yet)
 
-        switch (Plan)
+        return Plan switch
         {
-            case Plan.Drop:
-                return null;
-            case Plan.ANO:
-                if (ANOTable == null)
-                    return "Unknown";
-
-                return sourceTypeTranslater.TranslateSQLDBType(ANOTable.GetRuntimeDataType(LoadStage.PostLoad), destinationTypeTranslater);
-            case Plan.Dilute:
-                if (Dilution == null)
-                    return "Unknown";
-
-                return destinationTypeTranslater.GetSQLDBTypeForCSharpType(Dilution.ExpectedDestinationType);
-
-            case Plan.PassThroughUnchanged:
-
+            Plan.Drop => null,
+            Plan.ANO => ANOTable == null
+                ? "Unknown"
+                : sourceTypeTranslater.TranslateSQLDBType(ANOTable.GetRuntimeDataType(LoadStage.PostLoad),
+                    destinationTypeTranslater),
+            Plan.Dilute => Dilution == null
+                ? "Unknown"
+                : destinationTypeTranslater.GetSQLDBTypeForCSharpType(Dilution.ExpectedDestinationType),
+            Plan.PassThroughUnchanged =>
                 //if they have an identity column then we substitute it for int in the destination
-                if (ColumnInfo.IsAutoIncrement)
-                    return destinationTypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(int)));
-
-                return sourceTypeTranslater.TranslateSQLDBType(ColumnInfo.Data_type, destinationTypeTranslater);
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+                ColumnInfo.IsAutoIncrement
+                    ? destinationTypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(int)))
+                    : sourceTypeTranslater.TranslateSQLDBType(ColumnInfo.Data_type, destinationTypeTranslater),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }
 

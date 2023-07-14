@@ -56,7 +56,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
         return BasicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().
             Where(t=>
                 // must not be interface or abstract
-                (!(t.IsInterface || t.IsAbstract)) &&
+                !(t.IsInterface || t.IsAbstract) &&
                 (
                     // must implement one of these interfaces
                     typeof(IAttacher).IsAssignableFrom(t) ||
@@ -78,10 +78,12 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
                 return;
         }
 
-        var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueRepository,_loadMetadata, _loadStage);
-        newTask.Path = _type.FullName;
-        newTask.ProcessTaskType = _processTaskType;
-        newTask.Name = _type.Name;
+        var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueRepository,_loadMetadata, _loadStage)
+            {
+                Path = _type.FullName,
+                ProcessTaskType = _processTaskType,
+                Name = _type.Name
+            };
         newTask.SaveToDatabase();
 
         newTask.CreateArgumentsForClassIfNotExists(_type);

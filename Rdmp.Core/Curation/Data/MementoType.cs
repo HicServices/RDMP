@@ -14,5 +14,5 @@ public enum MementoType
 {
     Add,
     Modify,
-    Delete,
+    Delete
 }

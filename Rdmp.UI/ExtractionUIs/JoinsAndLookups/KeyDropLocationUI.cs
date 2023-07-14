@@ -27,17 +27,12 @@ public partial class KeyDropLocationUI : UserControl
         set
         {
             _keyType = value;
-            switch (KeyType)
+            label.Text = KeyType switch
             {
-                case JoinKeyType.PrimaryKey:
-                    label.Text = "(Primary Key)";
-                    break;
-                case JoinKeyType.ForeignKey:
-                    label.Text = "(Foreign Key)";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                JoinKeyType.PrimaryKey => "(Primary Key)",
+                JoinKeyType.ForeignKey => "(Foreign Key)",
+                _ => throw new ArgumentOutOfRangeException(nameof(value))
+            };
         }
     }
 
@@ -77,23 +72,18 @@ public partial class KeyDropLocationUI : UserControl
         tbPk1.Text = SelectedColumn.ToString();
         btnClear.Enabled = true;
 
-        if (SelectedColumnChanged != null)
-            SelectedColumnChanged();
+        SelectedColumnChanged?.Invoke();
     }
 
-    private ColumnInfo GetColumnInfoOrNullFromDrag(DragEventArgs e)
+    private static ColumnInfo GetColumnInfoOrNullFromDrag(DragEventArgs e)
     {
-        var data = e.Data as OLVDataObject;
-
-        if (data == null)
+        if (e.Data is not OLVDataObject data)
             return null;
 
         if (data.ModelObjects.Count != 1)
             return null;
 
-        var ei = data.ModelObjects[0] as ExtractionInformation;
-
-        if (ei != null)
+        if (data.ModelObjects[0] is ExtractionInformation ei)
             return ei.ColumnInfo;
 
         return data.ModelObjects[0] as ColumnInfo;
@@ -110,8 +100,7 @@ public partial class KeyDropLocationUI : UserControl
         SelectedColumn = null;
         btnClear.Enabled = false;
 
-        if (SelectedColumnChanged != null)
-            SelectedColumnChanged();
+        SelectedColumnChanged?.Invoke();
     }
 }
 public enum JoinKeyType

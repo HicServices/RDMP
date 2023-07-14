@@ -28,14 +28,13 @@ public partial class UserSettingsFileUI : Form
 {
     private bool _bLoaded;
     private IActivateItems _activator;
-
-    const string WarnOnTimeoutOnExtractionChecks = "Extraction checks timeout";
+    private const string WarnOnTimeoutOnExtractionChecks = "Extraction checks timeout";
 
     /// <summary>
     /// The maximum number of characters to allow per line in a tooltip before
     /// wrapping to next line
     /// </summary>
-    const int MaxTooltipWidth = 100;
+    private const int MaxTooltipWidth = 100;
 
     public UserSettingsFileUI(IActivateItems activator)
     {
@@ -147,7 +146,7 @@ public partial class UserSettingsFileUI : Form
         };
     }
 
-    Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
+    private Dictionary<CheckBox, PropertyInfo> checkboxDictionary = new();
 
     private void RegisterCheckbox(CheckBox cb, string propertyName)
     {
@@ -199,10 +198,8 @@ public partial class UserSettingsFileUI : Form
     {
         if(!_bLoaded)
             return;
-            
-        var t = ddTheme.SelectedItem as string;
-            
-        if(t != null)
+
+        if(ddTheme.SelectedItem is string t)
             UserSettings.Theme = t;
     }
 

@@ -11,7 +11,7 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsSupportingSQLTable : RDMPCommandExecutionProposal<SupportingSQLTable>
+internal class ProposeExecutionWhenTargetIsSupportingSQLTable : RDMPCommandExecutionProposal<SupportingSQLTable>
 {
     public ProposeExecutionWhenTargetIsSupportingSQLTable(IActivateItems itemActivator)
         : base(itemActivator)

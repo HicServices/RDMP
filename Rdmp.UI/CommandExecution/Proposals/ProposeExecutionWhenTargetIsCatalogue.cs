@@ -14,7 +14,7 @@ using Rdmp.UI.MainFormUITabs;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-class ProposeExecutionWhenTargetIsCatalogue:RDMPCommandExecutionProposal<Catalogue>
+internal class ProposeExecutionWhenTargetIsCatalogue:RDMPCommandExecutionProposal<Catalogue>
 {
     public ProposeExecutionWhenTargetIsCatalogue(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -32,9 +32,7 @@ class ProposeExecutionWhenTargetIsCatalogue:RDMPCommandExecutionProposal<Catalog
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Catalogue targetCatalogue, InsertOption insertOption = InsertOption.Default)
     {
-        var sourceFileCollection = cmd as FileCollectionCombineable;
-
-        if(sourceFileCollection != null)
+        if(cmd is FileCollectionCombineable sourceFileCollection)
             if (sourceFileCollection.IsShareDefinition)
                 return new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,targetCatalogue);
             else

@@ -58,7 +58,7 @@ public class ReleaseIdentifierSubstitution :SpontaneousObject, IColumn
                 $"Column {extractionIdentifierToSubFor} is not marked IsExtractionIdentifier so cannot be substituted for a ReleaseIdentifier");
             
         OriginalDatasetColumn = extractionIdentifierToSubFor;
-        this._querySyntaxHelper = querySyntaxHelper;
+        _querySyntaxHelper = querySyntaxHelper;
         if (OriginalDatasetColumn.ColumnInfo == null)
             throw new Exception(
                 $"The column {OriginalDatasetColumn.GetRuntimeName()} references a ColumnInfo that has been deleted");

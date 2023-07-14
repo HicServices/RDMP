@@ -19,10 +19,10 @@ namespace Rdmp.Core.QueryBuilding.SyntaxChecking;
 public abstract class SyntaxChecker : ICheckable
 {
     private static readonly Regex BracketedNumber =
-        new Regex(@"\([0-9]*\)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        new(@"\([0-9]*\)", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     private static readonly Regex QuotedString =
-        new Regex("'[^']*'", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        new("'[^']*'", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     /// <summary>
     /// Checks to see if there is a closing bracket for every opening bracket (or any other characters that come in open/close pairs.  Throws SyntaxErrorException if there
@@ -53,7 +53,7 @@ public abstract class SyntaxChecker : ICheckable
     /// Checks to ensure char based parameters contains a value, are not longer than the expected length and contain either single quotes or an @ symbol before performing bracket parity checks
     /// </summary>
     /// <param name="parameter"></param>
-    public void CheckSyntax(ISqlParameter parameter)
+    public static void CheckSyntax(ISqlParameter parameter)
     {
 
         if (string.IsNullOrWhiteSpace(parameter.Value))
@@ -77,7 +77,7 @@ public abstract class SyntaxChecker : ICheckable
             }
         }
 
-        if (isCharBased && !(parameter.Value.Contains("'") || parameter.Value.Contains("@")))
+        if (isCharBased && !(parameter.Value.Contains('\'') || parameter.Value.Contains('@')))
             throw new SyntaxErrorException(
                 $"Parameter {parameter.ParameterName} looks like it is character based but its value does not contain any single quotes (or at least a reference to another variable)");
 

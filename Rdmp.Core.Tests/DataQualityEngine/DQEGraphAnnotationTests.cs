@@ -26,7 +26,7 @@ public class DQEGraphAnnotationTests:DatabaseTests
 
             var dqeRepo = new DQERepository(CatalogueRepository);
             var evaluation = new Evaluation(dqeRepo, c);
-            
+
             var annotation = new DQEGraphAnnotation(dqeRepo,1, 2, 3, 4, "Fishesfly", evaluation,DQEGraphType.TimePeriodicityGraph,"ALL");
                 
             Assert.AreEqual(annotation.StartX,1);

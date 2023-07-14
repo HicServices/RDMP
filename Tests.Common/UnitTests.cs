@@ -50,20 +50,20 @@ namespace Tests.Common;
 [Category("Unit")]
 public class UnitTests
 {
-    protected MemoryDataExportRepository Repository = new MemoryDataExportRepository();
+    protected MemoryDataExportRepository Repository = new();
     protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-        
+
     //These types do not have to be supported by the method WhenIHaveA
-    protected HashSet<string> SkipTheseTypes = new HashSet<string>(new string[]
+    protected HashSet<string> SkipTheseTypes = new(new string[]
     {
         "TestColumn",
         "ExtractableCohort",
         "DQEGraphAnnotation",
         "Evaluation",
-        "WindowLayout",
+        "WindowLayout"
     });
-        
-        
+
+
     public UnitTests()
     {
         RepositoryLocator = new RepositoryProvider(Repository);
@@ -101,8 +101,8 @@ public class UnitTests
     }
 
     /// <summary>
-    /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
-    /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
+    /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a
+    /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.
     /// </summary>
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
@@ -115,8 +115,8 @@ public class UnitTests
 
 
     /// <summary>
-    /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
-    /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
+    /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a
+    /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.
     /// </summary>
     /// <typeparam name="T">Type of object you want to create</typeparam>
     /// <returns></returns>
@@ -164,9 +164,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(AggregateConfiguration))
         {
-            ExtractionInformation dateEi;
-            ExtractionInformation otherEi;
-            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository,out dateEi, out otherEi);
+            return (T)(object)WhenIHaveA<AggregateConfiguration>(repository, out ExtractionInformation dateEi, out ExtractionInformation otherEi);
         }
 
         if (typeof(T) == typeof(ExternalDatabaseServer))
@@ -176,8 +174,7 @@ public class UnitTests
 
         if (typeof(T) == typeof(ANOTable))
         {
-            ExternalDatabaseServer server;
-            return (T)(object)WhenIHaveA<ANOTable>(repository, out server);
+            return (T)(object)WhenIHaveA<ANOTable>(repository, out ExternalDatabaseServer server);
         }
 
         if (typeof(T) == typeof(LoadMetadata))
@@ -256,14 +253,12 @@ public class UnitTests
 
         if (typeof (T) == typeof(ObjectExport))
         {
-            ShareManager sm;
-            return (T)(object)WhenIHaveA<ObjectExport>(repository, out sm);
+            return (T)(object)WhenIHaveA<ObjectExport>(repository, out ShareManager sm);
         }
             
         if (typeof (T) == typeof(ObjectImport))
         {
-            ShareManager sm;
-            var export = WhenIHaveA<ObjectExport>(repository, out sm);
+            var export = WhenIHaveA<ObjectExport>(repository, out var sm);
             return (T)(object)sm.GetImportAs(export.SharingUID, WhenIHaveA<Catalogue>(repository));
         }
             
@@ -304,10 +299,8 @@ public class UnitTests
             
         if (typeof (T) == typeof(AggregateContinuousDateAxis))
         {
-            ExtractionInformation dateEi;
-            ExtractionInformation otherEi;
-            var config = WhenIHaveA<AggregateConfiguration>(repository, out dateEi,out otherEi);
-                
+            var config = WhenIHaveA<AggregateConfiguration>(repository, out var dateEi, out ExtractionInformation otherEi);
+
             //remove the other Ei
             config.AggregateDimensions[0].DeleteInDatabase();
             //add the date one
@@ -382,20 +375,14 @@ public class UnitTests
 
         if (typeof (T) == typeof(JoinInfo))
         {
-            ColumnInfo col1;
-            ColumnInfo col2;
-            ColumnInfo col3;
-            WhenIHaveTwoTables(repository, out col1,out col2,out col3);
-                
+            WhenIHaveTwoTables(repository, out var col1, out var col2, out ColumnInfo col3);
+
             return (T)(object)new JoinInfo(repository,col1,col2,ExtractionJoinType.Left, null);
         }
         if (typeof (T) == typeof(Lookup))
         {
-            ColumnInfo col1;
-            ColumnInfo col2;
-            ColumnInfo col3;
-            WhenIHaveTwoTables(repository, out col1,out col2,out col3);
-                
+            WhenIHaveTwoTables(repository, out var col1, out var col2, out var col3);
+
             return (T)(object)new Lookup(repository,col3,col1,col2,ExtractionJoinType.Left, null);
         }
         if (typeof (T) == typeof(LookupCompositeJoinInfo))
@@ -404,7 +391,7 @@ public class UnitTests
 
             var otherJoinFk = new ColumnInfo(repository,"otherJoinKeyForeign","int",lookup.ForeignKey.TableInfo);
             var otherJoinPk = new ColumnInfo(repository,"otherJoinKeyPrimary","int",lookup.PrimaryKey.TableInfo);
-                
+
             return (T)(object)new LookupCompositeJoinInfo(repository,lookup,otherJoinFk,otherJoinPk);
         }
         if (typeof (T) == typeof(Pipeline))
@@ -484,7 +471,7 @@ public class UnitTests
         {
             var file = Path.Combine(TestContext.CurrentContext.TestDirectory,"myDataset.csv");
             File.WriteAllText(file,"omg rows");
-                
+
             var sds = WhenIHaveA<SelectedDataSets>(repository);
             new CumulativeExtractionResults(repository,sds.ExtractionConfiguration,sds.ExtractableDataSet,"SELECT * FROM ANYWHERE");
             var potential = new FlatFileReleasePotential(new RepositoryProvider(repository), sds);
@@ -495,7 +482,7 @@ public class UnitTests
                 false,
                 new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 new FileInfo(file));
-                        
+
         }
 
         if (typeof (T) == typeof(ExtractableDataSetPackage))
@@ -605,9 +592,7 @@ public class UnitTests
 
     private static void WhenIHaveTwoTables(MemoryDataExportRepository repository,out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
     {
-        TableInfo ti1;
-        TableInfo ti2;
-        WhenIHaveTwoTables(repository, out ti1, out ti2, out col1, out col2, out col3);
+        WhenIHaveTwoTables(repository, out TableInfo ti1, out TableInfo ti2, out col1, out col2, out col3);
     }
 
     private static void WhenIHaveTwoTables(MemoryDataExportRepository repository,out TableInfo ti1, out TableInfo ti2, out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
@@ -675,7 +660,7 @@ public class UnitTests
         s.SaveToDatabase();
         return s;
     }
-        
+
     protected MEF MEF;
 
     /// <summary>
@@ -693,8 +678,8 @@ public class UnitTests
     }
 
     //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
-    private static readonly string[] IgnorePropertiesWhenDiffing = new[] {"ID","Repository","CatalogueRepository","SoftwareVersion"};
-    public static Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new Dictionary<PropertyInfo, HashSet<object>>();
+    private static readonly string[] IgnorePropertiesWhenDiffing = {"ID","Repository","CatalogueRepository","SoftwareVersion"};
+    public static Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new();
 
     /// <summary>
     /// Asserts that the two objects are basically the same except for IDs/Repositories.  This includes checking all public properties
@@ -742,24 +727,24 @@ public class UnitTests
                 Assert.Fail("{0} Property {1} could not be read from Database:\r\n{2}", dbObj.GetType().Name, property.Name, e);
             }
 
-            if(memValue is IMapsDirectlyToDatabaseTable)
+            if(memValue is IMapsDirectlyToDatabaseTable table)
             {
-                AssertAreEqual((IMapsDirectlyToDatabaseTable)memValue, (IMapsDirectlyToDatabaseTable)dbValue,false);
+                AssertAreEqual(table, (IMapsDirectlyToDatabaseTable)dbValue,false);
                 return;
             }
-            if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable>)
+            if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable> value)
             {
-                AssertAreEqual((IEnumerable<IMapsDirectlyToDatabaseTable>)memValue, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue,false);
+                AssertAreEqual(value, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue,false);
                 return;
             }
 
-            if (memValue is DateTime && dbValue is DateTime)
-                if (!AreAboutTheSameTime((DateTime) memValue, (DateTime) dbValue))
-                    Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, memValue, dbValue);
+            if (memValue is DateTime time && dbValue is DateTime dateTime)
+                if (!AreAboutTheSameTime(time, dateTime))
+                    Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, time, dateTime);
                 else
                     return;
 
-            //treat empty strings as the same as 
+            //treat empty strings as the same as
             memValue = memValue as string == string.Empty ? null : memValue;
             dbValue = dbValue as string == string.Empty ? null : dbValue;
 
@@ -772,17 +757,17 @@ public class UnitTests
         var memObjectsArr = memObjects.OrderBy(o => o.ID).ToArray();
         var dbObjectsArr = dbObjects.OrderBy(o => o.ID).ToArray();
 
-        Assert.AreEqual(memObjectsArr.Count(), dbObjectsArr.Count());
+        Assert.AreEqual(memObjectsArr.Length, dbObjectsArr.Length);
 
-        for (var i = 0; i < memObjectsArr.Count(); i++)
-            UnitTests.AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
+        for (var i = 0; i < memObjectsArr.Length; i++)
+            AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
     }
 
     /// <summary>
     /// The number of seconds that have to differ between two DateTime objects in method <see cref="AreAboutTheSameTime"/> before
     /// they are considered not the same time
     /// </summary>
-    const double TimeThresholdInSeconds = 60;
+    private const double TimeThresholdInSeconds = 60;
 
     private static bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue)
     {

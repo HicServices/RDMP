@@ -16,7 +16,7 @@ using Rdmp.Core.Validation.Constraints;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// Applies Catalogue.ValidationXML to rows extracted during a Data Extraction Pipeline (See ExecuteDatasetExtractionSource).  Because the columns which 
+/// Applies Catalogue.ValidationXML to rows extracted during a Data Extraction Pipeline (See ExecuteDatasetExtractionSource).  Because the columns which
 /// are extracted can be a subset of the columns in the Catalogue and can include transforms the validation rules have to be adjusted (some are not applied).
 /// 
 /// <para>A count of the number of rows failing validation is stored in VerboseValidationResults (divided by column) and is available for writing to the word
@@ -28,9 +28,9 @@ public class ExtractionTimeValidator
 {
     private readonly ICatalogue _catalogue;
     private readonly List<IColumn> _columnsToExtract;
-        
+
     private bool _initialized = false;
-  
+
     public Validator Validator { get; set; }
     public VerboseValidationResults Results { get; set; }
 
@@ -53,13 +53,12 @@ public class ExtractionTimeValidator
     {
         if (!_initialized)
             Initialize(dt);
-        Consequence? consequenceOnLastRowProcessed;
 
         foreach (DataRow r in dt.Rows)
         {
             //additive validation results, Results is a class that wraps DictionaryOfFailure which is an array of columns and each element is another array of consequences (with a row count for each consequence)
             //think of it like a 2D array with X columns and Y consquences and a number in each box which is how many values in that column failed validation with that consequence
-            Results = Validator.ValidateVerboseAdditive(r, Results, out consequenceOnLastRowProcessed);
+            Results = Validator.ValidateVerboseAdditive(r, Results, out Consequence? consequenceOnLastRowProcessed);
 
 
             if (validationColumnToPopulateIfAny != null)

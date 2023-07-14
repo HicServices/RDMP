@@ -40,8 +40,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     {
         base.Execute();
 
-        if (_aggregateConfiguration == null)
-            _aggregateConfiguration = SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _aggregateConfiguration ??= SelectOne<AggregateConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
         if (_aggregateConfiguration == null)
             return;
@@ -59,16 +58,13 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
                     return;
             }
 
-            if (_cohort != null)
+            var externalData = _cohort?.GetExternalData();
+            if (externalData != null)
             {
-                var externalData = _cohort.GetExternalData();
-                if (externalData != null)
-                {
-                    var projNumber = externalData.ExternalProjectNumber;
-                    var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ProjectNumber == projNumber).ToArray();
-                    if (projs.Length == 1)
-                        ProjectSpecific = projs[0];
-                }
+                var projNumber = externalData.ExternalProjectNumber;
+                var projs = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>().Where(p => p.ProjectNumber == projNumber).ToArray();
+                if (projs.Length == 1)
+                    ProjectSpecific = projs[0];
             }
         }
 
@@ -90,7 +86,7 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
         runner.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
+    private void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
     {
         if (!_table.Exists())
             throw new Exception($"Pipeline execute succesfully but the expected table '{_table}' did not exist");
@@ -112,12 +108,10 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     {
         base.SetTarget(target);
 
-        var configuration = target as AggregateConfiguration;
-        if (configuration != null)
+        if (target is AggregateConfiguration configuration)
             _aggregateConfiguration = configuration;
 
-        var cohort = target as ExtractableCohort;
-        if (cohort != null)
+        if (target is ExtractableCohort cohort)
             _cohort = cohort;
 
         return this;

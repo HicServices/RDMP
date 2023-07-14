@@ -109,8 +109,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <summary>
     /// Fields expected to be part of any table referenced by the <see cref="DefinitionTableName"/> property
     /// </summary>
-    public static readonly string[] CohortDefinitionTable_RequiredFields = new[]
-    {
+    public static readonly string[] CohortDefinitionTable_RequiredFields = {
         "id",
         // joins to CohortToDefinitionTableJoinColumn and is used as ID in all ExtractableCohort entities throughout DataExportManager
         "projectNumber",
@@ -223,7 +222,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         return Discover(DiscoverCohortTable(), DefinitionTableForeignKeyField);
     }
 
-    private DiscoveredColumn Discover(DiscoveredTable tbl, string column)
+    private static DiscoveredColumn Discover(DiscoveredTable tbl, string column)
     {
         return tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
     }
@@ -250,7 +249,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public bool IDExistsInCohortTable(int originID)
     {
-        var server = DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport);
+        var server = DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport);
             
         using (var con = server.GetConnection())
         {
@@ -298,7 +297,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
 
                 var cols = foundCohortDefinitionTable.DiscoverColumns();
                     
-                foreach (var requiredField in ExternalCohortTable.CohortDefinitionTable_RequiredFields)
+                foreach (var requiredField in CohortDefinitionTable_RequiredFields)
                     ComplainIfColumnMissing(DefinitionTableName, cols, requiredField, notifier);
             }
             else
@@ -316,7 +315,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         try
         {
-            DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport).TestConnection();
+            DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport).TestConnection();
               
             notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success, null));
         }
@@ -329,11 +328,11 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
     {
-        newCohortDefinition.ID = DiscoverDefinitionTable().Insert(new Dictionary<string, object>()
+        newCohortDefinition.ID = DiscoverDefinitionTable().Insert(new Dictionary<string, object>
         {
             {"projectNumber",newCohortDefinition.ProjectNumber},
             {"version",newCohortDefinition.Version},
-            {"description",newCohortDefinition.Description},
+            {"description",newCohortDefinition.Description}
         },connection.ManagedTransaction);
     }
     #endregion

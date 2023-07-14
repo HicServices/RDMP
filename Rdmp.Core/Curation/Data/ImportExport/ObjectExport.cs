@@ -54,13 +54,13 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
     /// <param name="guid"></param>
     internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>()
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             {"ReferencedObjectID",objectForSharing.ID},
             {"ReferencedObjectType",objectForSharing.GetType().Name},
             {"ReferencedObjectRepositoryType",objectForSharing.Repository.GetType().Name},
-            {"SharingUID",guid.ToString()},
-            
+            {"SharingUID",guid.ToString()}
+
         });
 
         if (ID == 0 || Repository != repository)

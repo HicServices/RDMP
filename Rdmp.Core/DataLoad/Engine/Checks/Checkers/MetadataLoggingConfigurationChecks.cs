@@ -14,7 +14,7 @@ using LogManager = Rdmp.Core.Logging.LogManager;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
-class MetadataLoggingConfigurationChecks : ICheckable
+internal class MetadataLoggingConfigurationChecks : ICheckable
 {
     private readonly ILoadMetadata _loadMetadata;
 
@@ -63,7 +63,7 @@ class MetadataLoggingConfigurationChecks : ICheckable
             else
                 return;
         }
-                
+
         #region Fix missing LoggingDataTask
         var missingTasks = catalogues.Where(c=>string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
         var potentialTasks = catalogues.Except(missingTasks).Select(c=>c.LoggingDataTask).Distinct().ToArray();
@@ -105,7 +105,7 @@ class MetadataLoggingConfigurationChecks : ICheckable
             }
             else
             {
-                    
+
                 var defaults = _loadMetadata.CatalogueRepository;
                 var defaultLoggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 

@@ -42,10 +42,10 @@ public class CustomDateCaching
             ChunkPeriod = _cacheProgress.ChunkPeriod
         };
 
-        var requestProvider = (startDate == endDate)
+        var requestProvider = startDate == endDate
             ? (ICacheFetchRequestProvider) new SingleDayCacheFetchRequestProvider(initialFetchRequest)
             : new MultiDayCacheFetchRequestProvider(initialFetchRequest, endDate);
-            
+
         var factory = new CachingPipelineUseCase(_cacheProgress, ignorePermissionWindow, requestProvider);
 
         var engine = factory.GetEngine(listener);

@@ -41,7 +41,7 @@ namespace Rdmp.UI.ProjectUI.Datasets;
 /// <para>On the left you can see all the available columns and transforms in the selected dataset (see ExtractionConfigurationUI for selecting datasets).  You can add these by selecting them
 /// and pressing the '>' button.  On the right the QueryBuilder will show you what columns are currently included in the researchers extract. </para>
 /// 
-/// <para>Depending on which columns you have selected the QueryBuilder may be unable to generate a query (for example if you do not add the IsExtractionIdentifier column - See 
+/// <para>Depending on which columns you have selected the QueryBuilder may be unable to generate a query (for example if you do not add the IsExtractionIdentifier column - See
 /// ExtractionInformationUI).</para>
 /// </summary>
 public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSubscriber
@@ -49,7 +49,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
     public SelectedDataSets SelectedDataSet { get; private set; }
     private IExtractableDataSet _dataSet;
     private ExtractionConfiguration _config;
-        
+
     //constructor
     public ConfigureDatasetUI()
     {
@@ -105,14 +105,12 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             
         RDMPCollectionCommonFunctionality.SetupColumnTracking(olvSelected, olvIssues, new Guid("741f0cff-1d2e-46a7-a5da-9ce13e0960cf"));
 
-        this.cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
+        cbShowProjectSpecific.CheckedChanged += CbShowProjectSpecific_CheckedChanged;
     }
 
-    void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
+    private void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
     {
-        var ec = e.Model as ExtractableColumn;
-
-        if (ec != null && ec.IsOutOfSync())
+        if (e.Model is ExtractableColumn ec && ec.IsOutOfSync())
         {
             var ms = new ContextMenuStrip();
             ms.Items.Add(
@@ -125,7 +123,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         }
     }
 
-    void olvSelected_FormatCell(object sender, FormatCellEventArgs e)
+    private void olvSelected_FormatCell(object sender, FormatCellEventArgs e)
     {
         if(e.Column == olvIssues)
             if((string) e.CellValue == "None")
@@ -136,9 +134,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
     private object Issues_AspectGetter(object rowObject)
     {
-        var ec = rowObject as ExtractableColumn;
-
-        if (ec != null && ec.IsOutOfSync())
+        if (rowObject is ExtractableColumn ec && ec.IsOutOfSync())
             return "Different";
 
         return "None";
@@ -149,10 +145,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         var c = (ExtractableColumn) rowObject;
         var ei = c.CatalogueExtractionInformation;
 
-        if (ei == null)
-            return null;
-
-        return ei.CatalogueItem.Catalogue.Name;
+        return ei?.CatalogueItem.Catalogue.Name;
     }
 
     private object SelectedCategory_AspectGetter(object rowObject)
@@ -216,8 +209,8 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         }
 
         //on the left
-            
-        HashSet<ExtractionInformation> toAdd = new ();
+
+        var toAdd = new HashSet<ExtractionInformation>();
 
         //add all the extractable columns from the current Catalogue
         foreach (var e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
@@ -236,7 +229,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         foreach (var ei in toAdd)
         {
             var ci = Activator.CoreChildProvider.AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
-                
+
             ei.InjectKnown(ci);
             if (ci.ColumnInfo_ID != null)
                 ei.InjectKnown(ci.ColumnInfo);
@@ -263,19 +256,18 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
                 var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
                 var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
 
-                if (eiDict.ContainsKey(ec.CatalogueExtractionInformation_ID.Value))
+                if (eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei))
                 {
-                    var ei = eiDict[ec.CatalogueExtractionInformation_ID.Value];
                     ec.InjectKnown(ei);
                     ec.InjectKnown(ei.ColumnInfo);
 
-                    if(ciDict.ContainsKey(ei.CatalogueItem_ID))
+                    if(ciDict.TryGetValue(ei.CatalogueItem_ID, out var value))
                     {
-                        ec.InjectKnown(ciDict[ei.CatalogueItem_ID]);
+                        ec.InjectKnown(value);
                     }
                 }
 
-                        
+
             }
         }
 
@@ -311,7 +303,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         //compare regular columns on their ID in the catalogue
         return selectedColumns.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == info.ID);
     }
-                      
+
 
     private void btnInclude_Click(object sender, EventArgs e)
     {
@@ -385,10 +377,8 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             {
                 //make sure it is up to date with database
 
-                var r = c as IRevertable;
-
                 //if the column is out of date
-                if (r != null && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                if (c is IRevertable r && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
                     r.RevertToDatabaseState();//get a fresh copy
 
                 //add to the config
@@ -446,7 +436,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             cmd.Execute();
     }
 
-        
+
     private void OlvSelected_ItemActivate(object sender, EventArgs e)
     {
         var ei = (olvSelected.SelectedObject as ExtractableColumn)?.CatalogueExtractionInformation;
@@ -454,13 +444,13 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         if(ei != null)
         {
             var cmd = new ExecuteCommandShow(Activator,ei,1);
-                
+
             if(!cmd.IsImpossible)
                 cmd.Execute();
         }
     }
 
-    private void olvSelected_ModelCanDrop(object sender, BrightIdeasSoftware.ModelDropEventArgs e)
+    private void olvSelected_ModelCanDrop(object sender, ModelDropEventArgs e)
     {
         e.Effect = DragDropEffects.None;
             
@@ -509,8 +499,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
     private void HandleReorder(ExtractableColumn sourceColumn, IOrderable targetOrderable, DropTargetLocation location)
     {
-        if (targetOrderable == null)
-            targetOrderable = olvSelected.Objects.Cast<IOrderable>().OrderByDescending(o => o.Order).FirstOrDefault();
+        targetOrderable ??= olvSelected.Objects.Cast<IOrderable>().MaxBy(o => o.Order);
 
         if (targetOrderable == null)
             return;
@@ -562,9 +551,9 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
         olvAvailable.SelectObjects(
             olvAvailable.Objects.OfType<ExtractionInformation>()
-                .Where(ei =>      
+                .Where(ei =>
                     //select core columns
-                    ei.ExtractionCategory == ExtractionCategory.Core 
+                    ei.ExtractionCategory == ExtractionCategory.Core
                     // or ProjectSpecific ones if it is the main dataset
                     || (extractionIsFor == ei.CatalogueItem.Catalogue_ID && ei.ExtractionCategory == ExtractionCategory.ProjectSpecific)
                 ).ToArray());
@@ -610,7 +599,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             }
             else
             {
-                return CheckState.Checked; 
+                return CheckState.Checked;
             }
 
         throw new Exception("Expected to have handled all situations!");
@@ -660,7 +649,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
                     nodes.Add(node);
             }
         }
-                
+
 
         //identify the existing force joins
         var existingForceJoins = new HashSet<SelectedDataSetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(SelectedDataSet));
@@ -695,14 +684,14 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
         return olvSelected.Objects.OfType<ExtractableColumn>()
             .Where(ec => ec.CatalogueExtractionInformation_ID != null)
-            .Select(ec => eis.ContainsKey(ec.CatalogueExtractionInformation_ID.Value) ? eis[ec.CatalogueExtractionInformation_ID.Value] : null)
+            .Select(ec => eis.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei1) ? ei1 : null)
             .Where(ei => ei != null)
             .Select(ei => ei.ColumnInfo.TableInfo)
             .Distinct()
             .Where(t => !t.IsLookupTable(Activator.CoreChildProvider));
     }
 
-    void olvJoin_ButtonClick(object sender, CellClickEventArgs e)
+    private void olvJoin_ButtonClick(object sender, CellClickEventArgs e)
     {
         var node = (AvailableForceJoinNode) e.Model;
         if(e.Column == olvJoinColumn)
@@ -710,7 +699,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             //if it has Join Infos
             if (node.JoinInfos.Any())
             {
-                //Find all the joins columns 
+                //Find all the joins columns
                 var cols = node.JoinInfos.Select(j => j.PrimaryKey).ToArray();
 
                 ColumnInfo toEmphasise = null;
@@ -720,7 +709,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
                     toEmphasise = cols[0]; //emphasise it to the user
                 else
                 {
-                    if(Activator.SelectObject(new DialogArgs 
+                    if(Activator.SelectObject(new DialogArgs
                        {
                            TaskDescription = "There are multiple columns involved in the join, which do you want to navigate to?"
                        },cols,out var selected))
@@ -755,7 +744,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
                 {
                     otherTable = selected;
                 }
-                        
+
             }
 
             if(otherTable != null)
@@ -810,14 +799,13 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
             return;
 
         //if an ExtractionInformation is being refreshed
-        var ei = e.Object as ExtractionInformation;
-        if (ei != null)
+        if (e.Object is ExtractionInformation ei)
         {
             //We should clear any old cached values for this ExtractionInformation amongst selected column
             foreach (var c in olvSelected.Objects.OfType<ExtractableColumn>().ToArray())
                 if(c.CatalogueExtractionInformation_ID == ei.ID)
                 {
-                    c.InjectKnown(ei); 
+                    c.InjectKnown(ei);
                     olvSelected.RefreshObject(c);
                 }
         }
@@ -825,7 +813,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         UpdateJoins();
     }
 
-    private void CbShowProjectSpecific_CheckedChanged(object sender, System.EventArgs e)
+    private void CbShowProjectSpecific_CheckedChanged(object sender, EventArgs e)
     {
         UserSettings.ShowProjectSpecificColumns = cbShowProjectSpecific.Checked;
         SetupUserInterface();            
@@ -836,5 +824,5 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ConfigureDatasetUI_Design, UserControl>))]
 public abstract class ConfigureDatasetUI_Design : RDMPSingleDatabaseObjectControl<SelectedDataSets>
 {
-        
+
 }

@@ -50,7 +50,7 @@ public class ImportFileTests:DatabaseTests
 
             source.PreInitialize(new FlatFileToLoad(new FileInfo(file)), new ThrowImmediatelyDataLoadEventListener());//this is the file we want to load
             source.Check(new ThrowImmediatelyCheckNotifier());
-                
+
             var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
             var database = server.ExpectDatabase(databaseName);
 
@@ -60,7 +60,7 @@ public class ImportFileTests:DatabaseTests
             server.ChangeDatabase(databaseName);
 
             var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-                
+
             var tbl = database.CreateTable(dt.TableName, dt);
             var tableName = tbl.GetRuntimeName();
 
@@ -122,7 +122,7 @@ public class ImportFileTests:DatabaseTests
 
     }
 
-    private string GetColumnType(DiscoveredDatabase database, string tableName, string colName)
+    private static string GetColumnType(DiscoveredDatabase database, string tableName, string colName)
     {
         return
             database.ExpectTable(tableName).DiscoverColumn(colName).DataType.SQLType;

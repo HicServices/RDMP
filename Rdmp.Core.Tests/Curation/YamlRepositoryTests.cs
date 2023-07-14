@@ -84,7 +84,7 @@ internal class YamlRepositoryTests
 
         var repo1 = new YamlRepository(dir);
         repo1.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern,"yarg");
-            
+
         // A fresh repo loaded from the same directory should have persisted object relationships
         var repo2 = new YamlRepository(dir);
         Assert.AreEqual("yarg", repo2.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern));
@@ -244,14 +244,14 @@ internal class YamlRepositoryTests
         var t = UnitTests.WhenIHaveA<TableInfo>(repo1);
 
         Assert.IsEmpty(creds.GetAllTableInfosThatUseThis().SelectMany(v=>v.Value));
-        Assert.IsNull(t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
-        repo1.TableInfoCredentialsManager.CreateLinkBetween(creds,t, Core.ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad);
+        repo1.TableInfoCredentialsManager.CreateLinkBetween(creds,t, ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad);
 
         Assert.AreEqual(t,creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
-        Assert.AreEqual(creds,t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.AreEqual(creds,t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
 
         // A fresh repo loaded from the same directory should have persisted object relationships
@@ -259,8 +259,8 @@ internal class YamlRepositoryTests
         t = repo2.GetObjectByID<TableInfo>(t.ID);
 
         Assert.AreEqual(t, creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
-        Assert.AreEqual(creds, t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(Rdmp.Core.ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.AreEqual(creds, t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
 
     }
@@ -327,8 +327,10 @@ internal class YamlRepositoryTests
         var dir = new DirectoryInfo(GetUniqueDirectoryName());
         var repo = new YamlRepository(dir);
 
-        var c = new Catalogue(repo, "yar");
-        c.Name = "ffff";
+        var c = new Catalogue(repo, "yar")
+        {
+            Name = "ffff"
+        };
         c.SaveToDatabase();
 
         // creating a new repo should load the same object back
@@ -337,12 +339,12 @@ internal class YamlRepositoryTests
         Assert.AreEqual("ffff", repo2.AllObjects.OfType<Catalogue>().Single().Name);
     }
 
-    private string GetUniqueDirectoryName()
+    private static string GetUniqueDirectoryName()
     {
         return Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid().ToString().Replace("-", ""));
     }
 
-    private DirectoryInfo GetUniqueDirectory()
+    private static DirectoryInfo GetUniqueDirectory()
     {
         return new DirectoryInfo(GetUniqueDirectoryName());
     }

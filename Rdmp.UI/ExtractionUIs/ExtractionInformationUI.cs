@@ -63,8 +63,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
 
     private bool isFirstTimeSetupCalled = true;
     private IQuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
-
-    RAGSmileyToolStrip ragSmiley1;
+    private RAGSmileyToolStrip ragSmiley1;
     private bool _isLoading;
 
     public ExtractionInformationUI()//For use with SetDatabaseObject
@@ -112,11 +111,8 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
 
         try
         {
-            string sql;
-            string alias;
-                
             //ensure it's all on one line
-            _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(QueryEditor.Text, out sql, out alias);
+            _querySyntaxHelper.SplitLineIntoSelectSQLAndAlias(QueryEditor.Text, out var sql, out var alias);
 
             ExtractionInformation.SelectSQL = sql;
             ExtractionInformation.Alias = alias;
@@ -219,7 +215,7 @@ public partial class ExtractionInformationUI : ExtractionInformationUI_Design, I
             autoComplete.RegisterForEvents(QueryEditor);
             isFirstTimeSetupCalled = false;
         }
-            
+
         var colInfo = ExtractionInformation.ColumnInfo;
 
         //deal with empty values in database (shouldn't be any but could be)

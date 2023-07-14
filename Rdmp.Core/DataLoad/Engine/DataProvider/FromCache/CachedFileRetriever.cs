@@ -24,7 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 
 /// <summary>
-/// Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be done (e.g. data is cached but not yet loaded).  
+/// Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be done (e.g. data is cached but not yet loaded).
 /// Cached data is unzipped to the forLoading directory.  The Dispose method (which should be called after the entire DataLoad has completed successfully) will clear
 /// out the cached file(s) that were loaded and update the schedule to indicate the successful loading of data
 /// </summary>
@@ -38,23 +38,19 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     public abstract void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
     public abstract ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken);
-        
+
     #region Events
     public event CacheFileNotFoundHandler CacheFileNotFound;
     protected virtual void OnCacheFileNotFound(string message, Exception ex)
     {
         var handler = CacheFileNotFound;
-        if (handler != null) handler(this, message, ex);
+        handler?.Invoke(this, message, ex);
     }
     #endregion
 
     protected  ICacheLayout CreateCacheLayout(ScheduledDataLoadJob job)
     {
-        var cacheProgress = job.LoadProgress.CacheProgress;
-
-        if(cacheProgress == null)
-            throw new NullReferenceException("cacheProgress cannot be null");
-
+        var cacheProgress = job.LoadProgress.CacheProgress ?? throw new NullReferenceException("cacheProgress cannot be null");
         return CreateCacheLayout(cacheProgress, job);
     }
 
@@ -67,9 +63,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     protected static ScheduledDataLoadJob ConvertToScheduledJob(IDataLoadJob dataLoadJob)
     {
-        var scheduledJob = dataLoadJob as ScheduledDataLoadJob;
-
-        if (scheduledJob == null)
+        if (dataLoadJob is not ScheduledDataLoadJob scheduledJob)
             throw new Exception("CachedFileRetriever can only be used in conjunction with a ScheduledDataLoadJob");
 
         return scheduledJob;
@@ -84,7 +78,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         foreach (var date in job.DatesToRetrieve)
         {
             var fileInfo = cacheLayout.GetArchiveFileInfoForDate(date,job);
-                
+
             if (fileInfo == null)
                 OnCacheFileNotFound(
                     $"Could not find cached file for date '{date}' for CacheLayout.ArchiveType {cacheLayout.ArchiveType} in cache at {job.LoadDirectory.Cache.FullName}", null);
@@ -101,7 +95,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     private Dictionary<DateTime, FileInfo> _workload;
 
-    private string[] GetPathsRelativeToDirectory(FileInfo[] absoluteFilePaths, DirectoryInfo directory)
+    private static string[] GetPathsRelativeToDirectory(FileInfo[] absoluteFilePaths, DirectoryInfo directory)
     {
         var relativeFilePaths = new List<string>();
         foreach (var path in absoluteFilePaths)
@@ -141,7 +135,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "ForLoading already has files, skipping extraction"));
             return;
         }
-            
+
         var layout = CreateCacheLayout((ScheduledDataLoadJob)dataLoadJob);
 
         //extract all the jobs into the forLoading directory
@@ -172,25 +166,22 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         }
     }
 
-    private string GetPathRelativeToCacheRoot(DirectoryInfo cacheRoot, FileInfo fileInCache)
+    private static string GetPathRelativeToCacheRoot(DirectoryInfo cacheRoot, FileInfo fileInCache)
     {
         return fileInCache.Directory.FullName.Replace(cacheRoot.FullName, "").TrimStart(Path.DirectorySeparatorChar);
     }
 
-    private IArchivedFileExtractor CreateExtractor(CacheArchiveType cacheArchiveType)
+    private static IArchivedFileExtractor CreateExtractor(CacheArchiveType cacheArchiveType)
     {
-        switch (cacheArchiveType)
+        return cacheArchiveType switch
         {
-            case CacheArchiveType.None:
-                throw new Exception("At this stage a cache archive type must be specified");
-            case CacheArchiveType.Zip:
-                return new ZipExtractor();
-            default:
-                throw new ArgumentOutOfRangeException("cacheArchiveType");
-        }
+            CacheArchiveType.None => throw new Exception("At this stage a cache archive type must be specified"),
+            CacheArchiveType.Zip => new ZipExtractor(),
+            _ => throw new ArgumentOutOfRangeException(nameof(cacheArchiveType))
+        };
     }
 
-    public bool Validate(ILoadDirectory destination)
+    public static bool Validate(ILoadDirectory destination)
     {
         if (destination.Cache == null)
             throw new NullReferenceException(
@@ -202,7 +193,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         return true;
     }
 
-        
+
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
@@ -254,7 +245,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
                 notifier.OnCheckPerformed(new CheckEventArgs("Cache Directory was null!", CheckResult.Fail));
                 return;
             }
-                
+
             notifier.OnCheckPerformed(new CheckEventArgs($"Cache Directory Is:{d.FullName}",CheckResult.Success));
         }
         catch (Exception ex)

@@ -43,8 +43,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         }
         finally
         {
-            if(joinable != null)
-                joinable.DeleteInDatabase();
+            joinable?.DeleteInDatabase();
         }
     }
 
@@ -52,7 +51,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
     public void CreateJoinable_IsAlreadyInAContainer()
     {
         cohortIdentificationConfiguration.RootCohortAggregateContainer.AddChild(aggregate1,1);
-            
+
         var ex = Assert.Throws<NotSupportedException>(() => new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1));
         Assert.AreEqual("Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it is already in a CohortAggregateContainer", ex.Message);
         cohortIdentificationConfiguration.RootCohortAggregateContainer.RemoveChild(aggregate1);
@@ -100,10 +99,9 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
             Assert.IsTrue(joinable.Users.Length == 1);
             Assert.AreEqual(aggregate2,joinable.Users[0].AggregateConfiguration);
         }
-        finally 
+        finally
         {
-            if (joinable != null) 
-                joinable.DeleteInDatabase();
+            joinable?.DeleteInDatabase();
         }
     }
 
@@ -350,10 +348,12 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
 
         //add the first aggregate to the configuration
         rootcontainer.AddChild(aggregate1,1);
-            
-        var globalParameter = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,"DECLARE @fish varchar(50)");
-        globalParameter.Comment = "Comments for the crazies";
-        globalParameter.Value = "'fishes'";
+
+        var globalParameter = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,"DECLARE @fish varchar(50)")
+            {
+                Comment = "Comments for the crazies",
+                Value = "'fishes'"
+            };
         globalParameter.SaveToDatabase();
 
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
@@ -429,7 +429,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
         //make aggregate 2 have an additional column (dtCreated)
         var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
         aggregate2.AddDimension(anotherCol);
-            
+
         //create a caching server
         var scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
         scripter.CreateAndPatchDatabase(new QueryCachingPatcher(), new AcceptAllCheckNotifier());
@@ -439,7 +439,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
             
         try
         {
-                
+
             var builderForCaching = new CohortQueryBuilder(aggregate2, null,null);
 
             var cacheDt = new DataTable();
@@ -455,10 +455,11 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
 
             try
             {
-                var builder = new CohortQueryBuilder(aggregate1, null,null);
-
-                //make the builder use the query cache we just set SetUp
-                builder.CacheServer = queryCachingDatabaseServer;
+                var builder = new CohortQueryBuilder(aggregate1, null,null)
+                {
+                    //make the builder use the query cache we just set SetUp
+                    CacheServer = queryCachingDatabaseServer
+                };
 
                 Console.WriteLine(builder.SQL);
 
@@ -494,7 +495,7 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
                             aggregate2.ID, //{1}
                             cohortIdentificationConfiguration.ID,//{2}
                             queryCachingDatabaseName) //{3}
-                    ),CollapseWhitespace(builder.SQL));
+                    ), CollapseWhitespace(builder.SQL));
 
             }
             finally

@@ -31,13 +31,13 @@ public class ValidationDeserializationMemoryTest
             if(i%500==0)
             {
                 GC.Collect();
-                Console.WriteLine($"Commited Bytes:{Process.GetCurrentProcess().WorkingSet64}");
+                Console.WriteLine($"Committed Bytes:{Process.GetCurrentProcess().WorkingSet64}");
             }
         }
 
         var bytesAtEnd = Process.GetCurrentProcess().WorkingSet64;
 
-        Assert.Less(bytesAtEnd,bytesAtStart * 2 , "Should not be using double the working memory as many bytes by the end, at start we were using " + bytesAtStart + " at end we were using " + bytesAtEnd + " (Increase of " +((float)bytesAtEnd/bytesAtStart) + " times)");
+        Assert.Less(bytesAtEnd,bytesAtStart * 2 , "Should not be using double the working memory as many bytes by the end, at start we were using " + bytesAtStart + " at end we were using " + bytesAtEnd + " (Increase of " +(float)bytesAtEnd/bytesAtStart + " times)");
 
     }
 

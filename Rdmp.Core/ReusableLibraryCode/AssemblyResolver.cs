@@ -19,7 +19,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 /// </summary>
 public static class AssemblyResolver
 {
-    private static Dictionary<string,Assembly> assemblyResolveAttempts = new Dictionary<string, Assembly>(); 
+    private static Dictionary<string,Assembly> assemblyResolveAttempts = new(); 
 
     public static void SetupAssemblyResolver(params DirectoryInfo[] dirs)
     {
@@ -29,8 +29,8 @@ public static class AssemblyResolver
             var parts = assemblyInfo.Split(',');
             var name = parts[0];
 
-            if (assemblyResolveAttempts.ContainsKey(assemblyInfo))
-                return assemblyResolveAttempts[assemblyInfo];
+            if (assemblyResolveAttempts.TryGetValue(assemblyInfo, out var expression))
+                return expression;
 
             //start out assuming we cannot load it
             assemblyResolveAttempts.Add(assemblyInfo,null);
@@ -41,8 +41,8 @@ public static class AssemblyResolver
                 if(dll != null)
                     return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
             }
-                
-            var assembly = System.AppContext.BaseDirectory;
+
+            var assembly = AppContext.BaseDirectory;
             if (string.IsNullOrWhiteSpace(assembly))
                 return null;
 

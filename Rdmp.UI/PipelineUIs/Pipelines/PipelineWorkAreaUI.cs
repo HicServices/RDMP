@@ -24,7 +24,7 @@ using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 namespace Rdmp.UI.PipelineUIs.Pipelines;
 
 /// <summary>
-/// Main component control of ConfigurePipelineUI (See ConfigurePipelineUI for details).  Shows you all compatible components on the left including any plugin components.  Components in 
+/// Main component control of ConfigurePipelineUI (See ConfigurePipelineUI for details).  Shows you all compatible components on the left including any plugin components.  Components in
 /// red are not compatible with the current context for example a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is
 /// not available.
 /// </summary>
@@ -52,15 +52,19 @@ public partial class PipelineWorkAreaUI : UserControl
         olvComponents.AlwaysGroupByColumn = olvRole;
         olvComponents.FullRowSelect = true;
 
-        _pipelineDiagram = new PipelineDiagramUI(_activator);
-        _pipelineDiagram.AllowSelection = true;
-        _pipelineDiagram.AllowReOrdering = true;
+        _pipelineDiagram = new PipelineDiagramUI(_activator)
+        {
+            AllowSelection = true,
+            AllowReOrdering = true
+        };
         _pipelineDiagram.SelectedComponentChanged += _pipelineDiagram_SelectedComponentChanged;
         _pipelineDiagram.Dock = DockStyle.Fill;
         diagramPanel.Controls.Add(_pipelineDiagram);
 
-        _arumentsCollection1 = new ArgumentCollectionUI();
-        _arumentsCollection1.Dock = DockStyle.Fill;
+        _arumentsCollection1 = new ArgumentCollectionUI
+        {
+            Dock = DockStyle.Fill
+        };
         gbArguments.Controls.Add(_arumentsCollection1);
 
         olvComponents.RowFormatter+= RowFormatter;
@@ -70,7 +74,7 @@ public partial class PipelineWorkAreaUI : UserControl
         {
             //middle and destination components
             var allComponentTypes = _catalogueRepository.MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
-                
+
             //source components (list of all types with MEF exports of )
             var allSourceTypes = _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
@@ -104,7 +108,7 @@ public partial class PipelineWorkAreaUI : UserControl
         olvComponents.AddObjects(_allComponents.Where(a => a.IsCompatible() || cbShowIncompatible.Checked).ToArray());
     }
 
-    void _pipelineDiagram_SelectedComponentChanged(object sender, IPipelineComponent selected)
+    private void _pipelineDiagram_SelectedComponentChanged(object sender, IPipelineComponent selected)
     {
         gbArguments.Enabled = true;
 
@@ -127,11 +131,11 @@ public partial class PipelineWorkAreaUI : UserControl
         _pipelineDiagram.SetTo(pipeline,useCase);
     }
 
-        
+
     private void olvComponents_CellRightClick(object sender, CellRightClickEventArgs e)
     {
         var model = (AdvertisedPipelineComponentTypeUnderContext)e.Model;
-            
+
         var RightClickMenu = new ContextMenuStrip();
             
         if (model != null)

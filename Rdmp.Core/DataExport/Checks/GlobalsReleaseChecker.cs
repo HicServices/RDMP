@@ -62,9 +62,9 @@ public class GlobalsReleaseChecker : ICheckable
 
         if (globalResult == null)
             return new NoGlobalReleasePotential(_repositoryLocator, null, _globalToCheck);
-            
+
         //it's been extracted!, who extracted it?
-        var destinationThatExtractedIt = (IExecuteDatasetExtractionDestination)new ObjectConstructor().Construct(globalResult.GetDestinationType());
+        var destinationThatExtractedIt = (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(globalResult.GetDestinationType());
 
         //destination tell us how releasable it is
         return destinationThatExtractedIt.GetGlobalReleasabilityEvaluator(_repositoryLocator, globalResult, _globalToCheck);
@@ -88,17 +88,17 @@ public class GlobalsReleaseChecker : ICheckable
 
             if (unexpectedDirectories.Any())
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Unexpected directories found in extraction directory ({String.Join(",", unexpectedDirectories.Select(d => d.FullName))}. Pollution of extract directory is not permitted.", CheckResult.Fail));
+                    $"Unexpected directories found in extraction directory ({string.Join(",", unexpectedDirectories.Select(d => d.FullName))}. Pollution of extract directory is not permitted.", CheckResult.Fail));
 
             var unexpectedFiles = folder.EnumerateFiles("*.*", SearchOption.AllDirectories).Where(f => allExtracted.All(ae => ae.DestinationDescription != f.FullName)).ToList();
 
             if (unexpectedFiles.Any())
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Unexpected files found in extract directory ({String.Join(",", unexpectedFiles.Select(d => d.FullName))}). Pollution of extract directory is not permitted.", CheckResult.Fail));
+                    $"Unexpected files found in extract directory ({string.Join(",", unexpectedFiles.Select(d => d.FullName))}). Pollution of extract directory is not permitted.", CheckResult.Fail));
         }
     }
 
-    private bool IsValidPath(string path)
+    private static bool IsValidPath(string path)
     {
         try
         {

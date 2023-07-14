@@ -30,7 +30,7 @@ public class DitaCatalogueExtractor : ICheckable
 {
     //use http://sourceforge.net/projects/dita-ot/files/DITA-OT%20Stable%20Release/DITA%20Open%20Toolkit%201.8/DITA-OT1.8.M2_full_easy_install_bin.zip/download
     //to convert .dita files into html
-        
+
     private readonly ICatalogueRepository _repository;
     private readonly DirectoryInfo _folderToCreateIn;
 
@@ -88,7 +88,7 @@ public class DitaCatalogueExtractor : ICheckable
                 throw new Exception(
                     $"Dita Extraction requires that each catalogue have a unique Acronym, the catalogue {c.Name} is missing an Acronym");
 
-            if (c.Name.Contains("\\") || c.Name.Contains("/"))
+            if (c.Name.Contains('\\') || c.Name.Contains('/'))
                 throw new Exception("Dita Extractor does not support catalogues with backslashes or forward slashs in their name");
 
             //catalogue main file
@@ -102,11 +102,11 @@ public class DitaCatalogueExtractor : ICheckable
             foreach (var ci in cataItems)
             {
                 xml += $"<topicref href=\"{GetFileNameForCatalogueItem(c, ci)}\"/>{Environment.NewLine}";
-                CreateCatalogueItemFile(c,ci);        
+                CreateCatalogueItemFile(c,ci);
             }
             xml += $"</topicref>{Environment.NewLine}";
 
-            //completed - mostly for end of loop tbh 
+            //completed - mostly for end of loop tbh
             listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(cataloguesCompleted, ProgressType.Records, catas.Count), sw.Elapsed));
         }
 
@@ -118,21 +118,21 @@ public class DitaCatalogueExtractor : ICheckable
 
     }
 
-      
 
-    private string GetFileNameForCatalogueItem(Catalogue c,CatalogueItem ci)
+
+    private static string GetFileNameForCatalogueItem(Catalogue c,CatalogueItem ci)
     {
         var parentName = FixName(c.Acronym);
         var childName = FixName(ci.Name);
         return $"{parentName}_{childName}.dita";
     }
 
-    private string GetFileNameForCatalogue(Catalogue catalogue)
+    private static string GetFileNameForCatalogue(Catalogue catalogue)
     {
         return $"{FixName(catalogue.Name)}.dita";
     }
 
-    private string FixName(string name)
+    private static string FixName(string name)
     {
         foreach (var invalidCharacter in Path.GetInvalidFileNameChars())
             name = name.Replace(invalidCharacter, '_');
@@ -152,7 +152,7 @@ public class DitaCatalogueExtractor : ICheckable
         if(File.Exists(saveLocation))
             throw new Exception(
                 $"Attempted to create Catalogue named {saveLocation} but it already existed (possibly you have two Catalogues with the same name");
-            
+
         var xml = "";
 
         xml += @"<?xml version=""1.0"" encoding=""UTF-8""?>
@@ -213,7 +213,7 @@ public class DitaCatalogueExtractor : ICheckable
         File.WriteAllText(saveLocation, xml);
     }
 
-    private string GenerateObjectPropertiesAsRowUsingReflection(object o)
+    private static string GenerateObjectPropertiesAsRowUsingReflection(object o)
     {
         var toReturnXml = "";
 
@@ -227,10 +227,10 @@ public class DitaCatalogueExtractor : ICheckable
                 continue;
             if (property.GetCustomAttributes(typeof(NoMappingToDatabase)).Any())
                 continue;
-                
+
             //Check whether property can be written to
             if (property.CanRead)
-                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(System.String)))
+                if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(string)))
                 {
                     toReturnXml += $"<strow>{Environment.NewLine}";
                     toReturnXml += $"<stentry>{GetHtmlEncodedHeader(property.Name)}</stentry>{Environment.NewLine}";
@@ -246,9 +246,9 @@ public class DitaCatalogueExtractor : ICheckable
         return toReturnXml;
     }
 
-    private string GetHtmlEncodedHeader(object header)
+    private static string GetHtmlEncodedHeader(object header)
     {
-        header = header ?? "";
+        header ??= "";
 
         header = header.ToString().Replace("_", " ");
         header = Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(header.ToString());
@@ -256,9 +256,9 @@ public class DitaCatalogueExtractor : ICheckable
         return HttpUtility.HtmlEncode(header);
     }
 
-    private string GetHtmlEncodedValue(object value)
+    private static string GetHtmlEncodedValue(object value)
     {
-        value = value ?? "";
+        value ??= "";
         return HttpUtility.HtmlEncode(value);
     }
 
@@ -293,7 +293,7 @@ public class DitaCatalogueExtractor : ICheckable
         File.WriteAllText(Path.Combine(_folderToCreateIn.FullName, filename), xml);
     }
 
-        
+
     /// <summary>
     /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronymns etc
     /// </summary>
@@ -308,7 +308,7 @@ public class DitaCatalogueExtractor : ICheckable
             var suggestion = GetAcronymSuggestionFromCatalogueName(c.Name);
             var useSuggestion = notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue {c.Name} has no Acronym", CheckResult.Fail, null,
                 $"Assign it a suggested acronym: '{suggestion}'?"));
-                
+
             if(useSuggestion)
             {
                 c.Acronym = suggestion;
@@ -317,7 +317,7 @@ public class DitaCatalogueExtractor : ICheckable
         }
 
         //acronym collisions
-        for(var i=0;i<catas.Length;i++)
+        for(var i =0;i<catas.Length;i++)
         {
             var acronym = catas[i].Acronym;
 
@@ -329,7 +329,7 @@ public class DitaCatalogueExtractor : ICheckable
                             "Duplication in acronym between Catalogues {0} and {1}, duplicate acronym value is {2}",
                             catas[i], catas[j], acronym), CheckResult.Fail, null));
             }
-                
+
         }
     }
 
@@ -338,7 +338,7 @@ public class DitaCatalogueExtractor : ICheckable
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public string GetAcronymSuggestionFromCatalogueName(string name)
+    public static string GetAcronymSuggestionFromCatalogueName(string name)
     {
         //concatenate all the capitals (and digits)
         var capsConcat = name.Where(c => char.IsUpper(c) || char.IsDigit(c)).Aggregate("", (s, n) => s + n);
@@ -359,9 +359,9 @@ public class DitaCatalogueExtractor : ICheckable
             if (words[0].Length < 10)
                 return words[0];        //if the only word is less than 10 long it can be used as acronym anyway (will be the same as catalogue name)
             else
-                return words[0].Substring(0, 5); //there's only one word so just suggest using the first 5 letters... suboptimal but hey whatever
+                return words[0][..5]; //there's only one word so just suggest using the first 5 letters... suboptimal but hey whatever
 
         //return the first letter from every word and also add in all numbers that appear after the first letter in the word
-        return words.Aggregate("", (s, n) => s + n.Substring(0, 1) + n.Skip(1).Where(char.IsDigit));
+        return words.Aggregate("", (s, n) => s + n[..1] + n.Skip(1).Where(char.IsDigit));
     }
 }

@@ -45,7 +45,7 @@ FROM
 	TOP 1000
 	*
 	FROM 
-	[" + _scratchDatabaseName + @"].[dbo].[BulkData]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(builder.GetDatasetSampleSQL()));
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]",cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.GetDatasetSampleSQL()));
     }
 
 
@@ -177,7 +177,7 @@ FROM
 	)
 
 )",cohortIdentificationConfiguration.ID))
-                , 
+                ,
                 CollapseWhitespace(builder.SQL));
         }
         finally
@@ -202,7 +202,7 @@ FROM
         //container 1 contains both other aggregates
         container1.AddChild(aggregate2, 1);
         container1.AddChild(aggregate3, 2);
-            
+
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         try
@@ -240,7 +240,7 @@ FROM
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )",cohortIdentificationConfiguration.ID))
-                ,CollapseWhitespace(builder.SQL));
+                , CollapseWhitespace(builder.SQL));
         }
         finally
         {
@@ -255,10 +255,12 @@ FROM
     {
         //setup a filter (all filters must be in a container so the container is a default AND container)
         var AND = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND);
-        var filter = new AggregateFilter(CatalogueRepository,"hithere",AND);
+        var filter = new AggregateFilter(CatalogueRepository,"hithere",AND)
+        {
+            //give the filter an implicit parameter requiring bit of SQL
+            WhereSQL = "1=@abracadabra"
+        };
 
-        //give the filter an implicit parameter requiring bit of SQL
-        filter.WhereSQL = "1=@abracadabra";
         filter.SaveToDatabase();
 
         //Make aggregate1 use the filter we just setup (required to happen before parameter creator gets hit because otherwise it won't know the IFilter DatabaseType because IFilter is an orphan at the moment)
@@ -280,7 +282,7 @@ FROM
         //set the order so that 2 comes before 1
         rootcontainer.AddChild(aggregate2, 1);
         rootcontainer.AddChild(aggregate1, 5);
-            
+
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         try
@@ -314,7 +316,7 @@ SET @abracadabra=1;
 	)
 )
 ",cohortIdentificationConfiguration.ID))
-                ,CollapseWhitespace(builder.SQL));
+                , CollapseWhitespace(builder.SQL));
 
 
             var builder2 = new CohortQueryBuilder(aggregate1, null,null);
@@ -334,7 +336,7 @@ WHERE
 (
 /*hithere*/
 1=@abracadabra
-)",cohortIdentificationConfiguration.ID)), 
+)",cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder2.SQL));
 
 
@@ -379,10 +381,12 @@ SET @abracadabra=1;
         rootcontainer.AddChild(aggregate1,1);
         rootcontainer.AddChild(aggregate2,2);
         rootcontainer.AddChild(aggregate3,3);
-            
-        var builder = new CohortQueryBuilder(rootcontainer, null,null);
-            
-        builder.StopContainerWhenYouReach = aggregate2;
+
+        var builder = new CohortQueryBuilder(rootcontainer, null,null)
+        {
+            StopContainerWhenYouReach = aggregate2
+        };
+
         try
         {
             Assert.AreEqual(
@@ -411,8 +415,10 @@ SET @abracadabra=1;
                 CollapseWhitespace(builder.SQL));
 
 
-            var builder2 = new CohortQueryBuilder(rootcontainer, null,null);
-            builder2.StopContainerWhenYouReach = null;
+            var builder2 = new CohortQueryBuilder(rootcontainer, null,null)
+            {
+                StopContainerWhenYouReach = null
+            };
             Assert.AreEqual(
                 CollapseWhitespace(
                     string.Format(
@@ -469,10 +475,10 @@ SET @abracadabra=1;
         new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
 
         rootcontainer.AddChild(aggregate4,5);
-        var builder = new CohortQueryBuilder(rootcontainer, null,null);
-
-        //Looks like:
-        /*
+        var builder = new CohortQueryBuilder(rootcontainer, null,null)
+        {
+            //Looks like:
+            /*
          * 
         EXCEPT
         Aggregate 1
@@ -481,7 +487,9 @@ SET @abracadabra=1;
            Aggregate3
         Aggregate 4
         */
-        builder.StopContainerWhenYouReach = container1;
+            StopContainerWhenYouReach = container1
+        };
+
         try
         {
             Assert.AreEqual(
@@ -593,7 +601,7 @@ SET @abracadabra=1;
 
 )
 ",cohortIdentificationConfiguration.ID))
-                ,CollapseWhitespace(builder.SQL));
+                , CollapseWhitespace(builder.SQL));
 
         }
         finally
@@ -621,7 +629,7 @@ SET @abracadabra=1;
 
         //create all the setup again but in the memory repository
         SetupTestData(repo);
-            
+
         //setup a filter (all filters must be in a container so the container is a default AND container)
         var AND1 = new AggregateFilterContainer(repo,FilterContainerOperation.AND);
         var filter1_1 = new AggregateFilter(repo,"filter1_1",AND1);
@@ -651,7 +659,7 @@ SET @abracadabra=1;
             filter.SaveToDatabase();     
             //get it to create the parameters for us
             new ParameterCreator(new AggregateFilterFactory(repo), null, null).CreateAll(filter, null);
-                
+
             //get the parameter it just created, set its value and save it
             var param = (AggregateFilterParameter) filter.GetAllParameters().Single();
             param.Value = "'Boom!'";
@@ -663,7 +671,7 @@ SET @abracadabra=1;
 
             param.SaveToDatabase();
         }
-            
+
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
         Console.WriteLine( builder.SQL);
 
@@ -868,7 +876,7 @@ SET @bob_2='Boom!';
 
             param.SaveToDatabase();
         }
-            
+
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         Console.WriteLine(builder.SQL);

@@ -38,7 +38,7 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
         checkAndExecuteUI1.ExecutionFinished += checkAndExecuteUI1_ExecutionFinished;
     }
 
-    void checkAndExecuteUI1_ExecutionFinished(object sender, ExecutionEventArgs e)
+    private void checkAndExecuteUI1_ExecutionFinished(object sender, ExecutionEventArgs e)
     {
         //refresh
         SetDatabaseObject(Activator,_catalogue);
@@ -46,7 +46,7 @@ public partial class DQEExecutionControlUI : DQEExecutionControl_Design
 
     private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
     {
-        return new DqeOptions() { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
+        return new DqeOptions { Catalogue = _catalogue.ID.ToString(), Command = commandLineActivity };
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)

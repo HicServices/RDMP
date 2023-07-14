@@ -20,12 +20,11 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 /// </summary>
 public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
 {
-    Stopwatch sw = new Stopwatch();
+    private Stopwatch sw = new();
     private int totalRecordsProcessed = 0;
     private int totalDuplicatesFound = 0;
+    private readonly Dictionary<int, List<DataRow>> _uniqueHashesSeen = new();
 
-    Dictionary<int, List<DataRow>> unqiueHashesSeen = new Dictionary<int, List<DataRow>>();
-        
     /// <summary>
     /// Turns off notify messages about number of duplicates found/replaced
     /// </summary>
@@ -34,7 +33,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         sw.Start();
-            
+
         var toReturn = toProcess.Clone();
 
         //now sort rows
@@ -43,26 +42,26 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
             totalRecordsProcessed++;
             var hashOfItems = GetHashCode(row.ItemArray);
 
-            if (unqiueHashesSeen.ContainsKey(hashOfItems))
+            if (_uniqueHashesSeen.TryGetValue(hashOfItems,out var collisions))
             {
-                //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just incase.
-                if (unqiueHashesSeen[hashOfItems].Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
+                //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just in case.
+                if (collisions.Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
                 {
                     totalDuplicatesFound++;
                     continue; //it's a duplicate
                 }
 
-                unqiueHashesSeen[hashOfItems].Add(row);
+                collisions.Add(row);
             }
             else
             {
-                //its not a duplicate hashcode so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
-                unqiueHashesSeen.Add(hashOfItems, new List<DataRow>(new[] { row }));
+                //it's not a duplicate hashcode so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
+                _uniqueHashesSeen.Add(hashOfItems, new List<DataRow>(new[] { row }));
             }
 
             toReturn.Rows.Add(row.ItemArray);
         }
-            
+
         sw.Stop();
 
         if(!NoLogging)
@@ -72,19 +71,19 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
         }
         return toReturn;
     }
-        
+
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
-            
+
     }
 
     public void Check(ICheckNotifier notifier)
     {
-            
+
     }
 
     /// <summary>
@@ -92,12 +91,12 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
     /// for an array is unique even if the contents are the same.
     /// </summary>
     /// <remarks>
-    /// See Jon Skeet (C# MVP) response in the StackOverflow thread 
+    /// See Jon Skeet (C# MVP) response in the StackOverflow thread
     /// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
     /// </remarks>
     /// <param name="array">The array to generate a hash code for.</param>
     /// <returns>The hash code for the values in the array.</returns>
-    public int GetHashCode(object[] array)
+    public static int GetHashCode(object[] array)
     {
         // if non-null array then go into unchecked block to avoid overflow
         if (array != null)
@@ -109,7 +108,7 @@ public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
                 // get hash code for all items in array
                 foreach (var item in array)
                 {
-                    hash = hash * 23 + ((item != null) ? item.GetHashCode() : 0);
+                    hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
                 }
 
                 return hash;

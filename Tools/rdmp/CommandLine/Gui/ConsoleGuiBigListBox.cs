@@ -29,7 +29,7 @@ internal class ConsoleGuiBigListBox<T>
     private bool _addNull;
 
     public T Selected { get; private set; }
-        
+
     /// <summary>
     /// Determines what is rendered in the list visually
     /// </summary>
@@ -38,10 +38,10 @@ internal class ConsoleGuiBigListBox<T>
     /// <summary>
     /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
     /// </summary>
-    ConcurrentBag<CancellationTokenSource> _cancelFiltering = new ConcurrentBag<CancellationTokenSource>();
-    Task _currentFilterTask;
-    object _taskCancellationLock = new object();
-        
+    private ConcurrentBag<CancellationTokenSource> _cancelFiltering = new();
+    private Task _currentFilterTask;
+    private object _taskCancellationLock = new();
+
     private ListView _listView;
     private bool _changes;
     private TextField _mainInput;
@@ -76,8 +76,7 @@ internal class ConsoleGuiBigListBox<T>
     public ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, IList<T> collection,
         Func<T, string> displayMember, bool addNull):this(prompt,okText,addSearch,displayMember)
     {
-        if(collection == null)
-            throw new ArgumentNullException("collection");
+        ArgumentNullException.ThrowIfNull(collection);
 
         _publicCollection = collection;
         _addNull = addNull;
@@ -114,7 +113,7 @@ internal class ConsoleGuiBigListBox<T>
     }
 
     /// <summary>
-    /// Runs the dialog as modal blocking and returns true if a selection was made. 
+    /// Runs the dialog as modal blocking and returns true if a selection was made.
     /// </summary>
     /// <returns>True if selection was made (see <see cref="Selected"/>) or false if user cancelled the dialog</returns>
     public bool ShowDialog()
@@ -141,7 +140,7 @@ internal class ConsoleGuiBigListBox<T>
         };
 
         _listView.KeyPress += _listView_KeyPress;
-        _listView.SetSource( (_collection = BuildList(this.GetInitialSource())).ToList());
+        _listView.SetSource( (_collection = BuildList(GetInitialSource())).ToList());
         win.Add(_listView);
 
         var btnOk = new Button(_okText,true)
@@ -173,15 +172,15 @@ internal class ConsoleGuiBigListBox<T>
             var searchLabel = new Label("Search:")
             {
                 X = 0,
-                Y = Pos.Bottom(_listView),
+                Y = Pos.Bottom(_listView)
             };
 
             win.Add(searchLabel);
-            
+
             _mainInput = new TextField ("") {
                 X = Pos.Right(searchLabel),
                 Y = Pos.Bottom(_listView),
-                Width = 30,
+                Width = 30
             };
 
             btnOk.X = 38;
@@ -189,12 +188,12 @@ internal class ConsoleGuiBigListBox<T>
 
             win.Add(_mainInput);
             _mainInput.SetFocus();
-                
-            _mainInput.TextChanged += (s) =>
+
+            _mainInput.TextChanged += s =>
             {
                 // Don't update the UI while user is hammering away on the keyboard
                 _lastKeypress = DateTime.Now;
-                RestartFiltering(); 
+                RestartFiltering();
             };
         }
         else
@@ -235,7 +234,7 @@ internal class ConsoleGuiBigListBox<T>
     {
     }
 
-    bool Timer (MainLoop caller)
+    private bool Timer (MainLoop caller)
     {
         if(_changes && DateTime.Now.Subtract(_lastKeypress) > TimeSpan.FromSeconds(1))
         {
@@ -246,7 +245,7 @@ internal class ConsoleGuiBigListBox<T>
 
                 if(oldSelected < _collection.Count)
                     _listView.SelectedItem = oldSelected ;
-                    
+
                 _changes = false;
                 return true;
             }
@@ -261,7 +260,7 @@ internal class ConsoleGuiBigListBox<T>
 
     protected void RestartFiltering(string searchTerm)
     {
-            
+
         var cts = new CancellationTokenSource();
 
         lock(_taskCancellationLock)
@@ -269,7 +268,7 @@ internal class ConsoleGuiBigListBox<T>
             //cancel any previous searches
             foreach(var c in _cancelFiltering)
                 c.Cancel();
-            
+
             _cancelFiltering.Clear();
 
             _cancelFiltering.Add(cts);
@@ -284,7 +283,7 @@ internal class ConsoleGuiBigListBox<T>
                 _collection = result;
                 _changes = true;
             }
-                    
+
         });       
     }
 
@@ -293,7 +292,7 @@ internal class ConsoleGuiBigListBox<T>
         var toReturn = listOfT.Select(o=>new ListViewObject<T>(o,AspectGetter)).ToList();
 
         if(_addNull)
-            toReturn.Add(new ListViewObject<T>((T)(object)null,(o)=>"Null"));
+            toReturn.Add(new ListViewObject<T>((T)(object)null,o=>"Null"));
 
         return toReturn;
     }

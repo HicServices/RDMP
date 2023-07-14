@@ -23,16 +23,16 @@ public class SingleControlForm:Form
 
         Controls.Add(control);
         control.Anchor = AnchorStyles.Top | AnchorStyles.Left| AnchorStyles.Right | AnchorStyles.Bottom;
-            
-        var consult = control as IConsultableBeforeClosing;
-            
-        if (consult != null)
+
+        if (control is IConsultableBeforeClosing consult)
             FormClosing += consult.ConsultAboutClosing;
 
         if(showOkButton)
         {
-            var okButton = new Button();
-            okButton.Text = "Ok";
+            var okButton = new Button
+            {
+                Text = "Ok"
+            };
             okButton.Click += (s, e) =>
             {
                 DialogResult = DialogResult.OK;
@@ -41,12 +41,12 @@ public class SingleControlForm:Form
 
             var btnHeight = okButton.PreferredSize.Height;
             var btnWidth = okButton.PreferredSize.Width;
-                
-            this.Height += btnHeight;
+
+            Height += btnHeight;
             control.Height -= btnHeight;
-            okButton.Location = new Point((ClientSize.Width / 2) - (btnWidth / 2), ClientSize.Height - btnHeight);
+            okButton.Location = new Point(ClientSize.Width / 2 - btnWidth / 2, ClientSize.Height - btnHeight);
             okButton.Anchor = AnchorStyles.Bottom;
-                
+
             Controls.Add(okButton);
             okButton.BringToFront();
         }

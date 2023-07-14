@@ -75,9 +75,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         
     private IBulkCopy _bulkcopy;
     private int _affectedRows = 0;
-        
-    Stopwatch swTimeSpentWriting = new Stopwatch();
-    Stopwatch swMeasuringStrings = new Stopwatch();
+    private Stopwatch swTimeSpentWriting = new();
+    private Stopwatch swMeasuringStrings = new();
 
     private DiscoveredServer _loggingDatabaseSettings;
 
@@ -92,11 +91,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public List<DatabaseColumnRequest> ExplicitTypes { get; set; }
 
     private bool _firstTime = true;
-    private HashSet<string> _primaryKey = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+    private HashSet<string> _primaryKey = new(StringComparer.CurrentCultureIgnoreCase);
     private DiscoveredTable _discoveredTable;
 
     //All column values sent to server so far
-    Dictionary<string, Guesser> _dataTypeDictionary;
+    private Dictionary<string, Guesser> _dataTypeDictionary;
 
     /// <summary>
     /// Optional function called when a name is needed for the table being uploaded (this overrides
@@ -120,7 +119,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         if (Adjuster != null)
         {
             var constructor = new ObjectConstructor();
-            adjuster = (IDatabaseColumnRequestAdjuster) constructor.Construct(Adjuster);
+            adjuster = (IDatabaseColumnRequestAdjuster)ObjectConstructor.Construct(Adjuster);
         }
 
         //work out the table name for the table we are going to create
@@ -225,7 +224,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         return null;
     }
 
-    private void RemoveInvalidCharactersInSchema(DataTable toProcess)
+    private static void RemoveInvalidCharactersInSchema(DataTable toProcess)
     {
         var invalidSymbols = new[] { '.'} ;
 
@@ -271,7 +270,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
     }
 
-    private void EnsureTableHasDataInIt(DataTable toProcess)
+    private static void EnsureTableHasDataInIt(DataTable toProcess)
     {
         if(toProcess.Columns.Count == 0)
             throw new Exception($"DataTable '{toProcess}' had no Columns!");
@@ -286,7 +285,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
         var tbl = _database.ExpectTable(TargetTableName);
         var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
-            
+
         //Get the current estimates from the datatype computer
         var oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess),StringComparer.CurrentCultureIgnoreCase);
 
@@ -357,7 +356,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     /// <returns>True if the proposed alter is a bad idea and shouldn't be attempted</returns>
     protected virtual bool AbandonAlter(string oldSqlType, string newSqlType, out string reason)
     {
-        var basicallyDecimalAlready = new List<string>(){ "real","double","float","single"};
+        var basicallyDecimalAlready = new List<string> { "real","double","float","single"};
 
         var first = basicallyDecimalAlready.FirstOrDefault(c=>oldSqlType.Contains(c,StringComparison.InvariantCultureIgnoreCase));
 
@@ -389,15 +388,13 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back sucessfully"));
 
-                    if (_bulkcopy != null)
-                        _bulkcopy.Dispose();
+                    _bulkcopy?.Dispose();
                 }
                 else
                 {
                     _managedConnection.ManagedTransaction.CommitAndCloseConnection();
 
-                    if (_bulkcopy != null)
-                        _bulkcopy.Dispose();
+                    _bulkcopy?.Dispose();
 
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Transaction committed sucessfully"));
                 }
@@ -436,8 +433,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private void EndAuditIfExists()
     {
         //user is auditing
-        if (_loggingDatabaseListener != null)
-            _loggingDatabaseListener.FinalizeTableLoadInfos();
+        _loggingDatabaseListener?.FinalizeTableLoadInfos();
     }
 
     public void Check(ICheckNotifier notifier)
@@ -459,7 +455,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     {
         if (LoggingServer != null && _dataLoadInfo == null)
         {
-            _loggingDatabaseSettings = DataAccessPortal.GetInstance().ExpectServer(LoggingServer, DataAccessContext.Logging);
+            _loggingDatabaseSettings = DataAccessPortal.ExpectServer(LoggingServer, DataAccessContext.Logging);
             var logManager = new LogManager(_loggingDatabaseSettings);
             logManager.CreateNewLoggingTaskIfNotExists("Internal");
 
@@ -494,17 +490,15 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             ExplicitTypes.Add(columnRequest);
             return columnRequest;
         }
-        else
-        {
-            columnRequest = new DatabaseColumnRequest(columnName, explicitType, !columnFlags.IsPrimaryKey && !columnFlags.IsAutoIncrement)
-            {
-                IsPrimaryKey = columnFlags.IsPrimaryKey,
-                IsAutoIncrement = columnFlags.IsAutoIncrement,
-                Collation = columnFlags.Collation
-            };
 
-            ExplicitTypes.Add(columnRequest);
-            return columnRequest;
-        }
+        columnRequest = new DatabaseColumnRequest(columnName, explicitType, !columnFlags.IsPrimaryKey && !columnFlags.IsAutoIncrement)
+        {
+            IsPrimaryKey = columnFlags.IsPrimaryKey,
+            IsAutoIncrement = columnFlags.IsAutoIncrement,
+            Collation = columnFlags.Collation
+        };
+
+        ExplicitTypes.Add(columnRequest);
+        return columnRequest;
     }
 }

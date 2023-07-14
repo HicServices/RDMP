@@ -15,7 +15,7 @@ using TypeGuesser;
 
 namespace Rdmp.UI.Tests.CommandExecution.Alter;
 
-class ExecuteCommandAlterColumnTypeTests:DatabaseTests
+internal class ExecuteCommandAlterColumnTypeTests:DatabaseTests
 {
     [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
     [UITimeout(10000)]
@@ -29,7 +29,7 @@ class ExecuteCommandAlterColumnTypeTests:DatabaseTests
 
         var ui = new UITests();
         var activator = new TestActivateItems(ui, new MemoryDataExportRepository());
-                       
+
         var myCol = tbl.DiscoverColumn("myCol");
             
         //should have started out as 10

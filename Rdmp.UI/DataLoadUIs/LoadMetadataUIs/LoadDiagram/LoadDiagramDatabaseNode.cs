@@ -28,13 +28,13 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
     public readonly DiscoveredDatabase Database;
     private readonly TableInfo[] _loadTables;
     private readonly HICDatabaseConfiguration _config;
-        
+
     public LoadDiagramState State { get; set; }
 
     public string DatabaseName { get; private set; }
 
-    public List<LoadDiagramTableNode> _anticipatedChildren = new List<LoadDiagramTableNode>();
-    public List<UnplannedTable> _unplannedChildren = new List<UnplannedTable>();
+    public List<LoadDiagramTableNode> _anticipatedChildren = new();
+    public List<UnplannedTable> _unplannedChildren = new();
 
 
     public LoadDiagramDatabaseNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config)
@@ -48,7 +48,7 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
 
         _anticipatedChildren.AddRange(_loadTables.Select(t => new LoadDiagramTableNode(this, t, _bubble, _config)));
     }
-        
+
     public IEnumerable<object> GetChildren()
     {
         return _anticipatedChildren.Cast<object>().Union(_unplannedChildren);
@@ -77,7 +77,7 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
             return;
         }
 
-        //database does exist 
+        //database does exist
         State = LoadDiagramState.Found;
 
         //so check the children (tables) for state
@@ -96,7 +96,7 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
                 _unplannedChildren.Add(new UnplannedTable(discoveredTable));
             }
     }
-        
+
     #region equality
     protected bool Equals(LoadDiagramDatabaseNode other)
     {
@@ -105,9 +105,9 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((LoadDiagramDatabaseNode) obj);
     }
 
@@ -121,17 +121,16 @@ public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
 
     public string WhatIsThis()
     {
-        switch (_bubble)
+        return _bubble switch
         {
-            case LoadBubble.Raw:
-                return "Depicts what database will be used for the RAW database and the tables/columns that are anticipated/found in that server currently";
-            case LoadBubble.Staging:
-                return "Depicts what database will be used for the STAGING database and the tables/columns that are anticipated/found in that server currently";
-            case LoadBubble.Live:
-                return "Depicts the current live database(s) that the load will target (based on which Catalogues are associated with the load)";
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            LoadBubble.Raw =>
+                "Depicts what database will be used for the RAW database and the tables/columns that are anticipated/found in that server currently",
+            LoadBubble.Staging =>
+                "Depicts what database will be used for the STAGING database and the tables/columns that are anticipated/found in that server currently",
+            LoadBubble.Live =>
+                "Depicts the current live database(s) that the load will target (based on which Catalogues are associated with the load)",
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
     #endregion

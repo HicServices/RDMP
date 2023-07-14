@@ -18,7 +18,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.DatabaseManagement.EntityNaming;
 
-class HICDatabaseConfigurationTests: UnitTests
+internal class HICDatabaseConfigurationTests: UnitTests
 {
 
     /// <summary>
@@ -44,7 +44,7 @@ class HICDatabaseConfigurationTests: UnitTests
         var job = Mock.Of<IDataLoadJob>(m=>
             m.RegularTablesToLoad == new List<ITableInfo>(new []{ti}) &&
             m.LookupTablesToLoad == new List<ITableInfo>(new []{lookup}));
-            
+
         var result = conf.ExpectTables(job, LoadBubble.Raw, testLookup).ToArray();
 
         Assert.AreEqual(testLookup ? 2 : 1,result.Length);

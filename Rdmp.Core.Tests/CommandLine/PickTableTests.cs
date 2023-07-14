@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandLine;
 
-class PickTableTests : UnitTests
+internal class PickTableTests : UnitTests
 {
 
     [Test]

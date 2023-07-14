@@ -17,7 +17,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
-class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiringAnExtractionConfiguration
+internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiringAnExtractionConfiguration
 {
     [TestCase(true)]
     [TestCase(false)]
@@ -34,7 +34,7 @@ class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiringAnExtract
         lm.CreateNewLoggingTaskIfNotExists("ExtractionDestination_FloatRounding");
 
         var dli = lm.CreateDataLoadInfo("ExtractionDestination_FloatRounding", nameof(ExecuteDatasetExtractionFlatFileDestinationTests), "test", "", true);
-            
+
         if(_request.QueryBuilder == null)
         {
             _request.GenerateQueryBuilder();
@@ -51,14 +51,10 @@ class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiringAnExtract
         Assert.IsNotNull(dest.OutputFile);
         FileAssert.Exists(dest.OutputFile);
 
-        if (lotsOfDecimalPlaces)
-        {
-            Assert.AreEqual($"Floats{Environment.NewLine}3.1415926536{Environment.NewLine}", File.ReadAllText(dest.OutputFile));
-        }
-        else
-        {
-            Assert.AreEqual($"Floats{Environment.NewLine}3.14{Environment.NewLine}", File.ReadAllText(dest.OutputFile));
-        }
+        Assert.AreEqual(
+            lotsOfDecimalPlaces
+                ? $"Floats{Environment.NewLine}3.1415926536{Environment.NewLine}"
+                : $"Floats{Environment.NewLine}3.14{Environment.NewLine}", File.ReadAllText(dest.OutputFile));
 
         dt.Dispose();
     }

@@ -46,11 +46,11 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
 
     #region IDataExportPropertyManager
 
-    protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new Dictionary<DataExportProperty, string>();
+    protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new();
         
     public virtual string GetValue(DataExportProperty property)
     {
-        return PropertiesDictionary.ContainsKey(property) ? PropertiesDictionary[property] : null;
+        return PropertiesDictionary.TryGetValue(property, out var value) ? value : null;
     }
 
     public virtual void SetValue(DataExportProperty property, string value)
@@ -66,7 +66,8 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
 
     #region IExtractableDataSetPackageManager
 
-    protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } = new ();
+    protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } =
+        new Dictionary<IExtractableDataSetPackage, HashSet<IExtractableDataSet>>();
 
     public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
     {
@@ -90,7 +91,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
             PackageDictionary.Add(package, new HashSet<IExtractableDataSet>());
 
         if (!PackageDictionary[package].Contains(dataSet))
-            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", "dataSet");
+            throw new ArgumentException($"dataSet {dataSet} is not part of package {package} so cannot be removed", nameof(dataSet));
 
         PackageDictionary[package].Remove(dataSet);
     }
@@ -103,7 +104,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
     public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset)
     {
         return GetAllObjects<CumulativeExtractionResults>().Where(e=>
-            (e.ExtractionConfiguration_ID == configuration.ID) && (e.ExtractableDataSet_ID == dataset.ID));
+            e.ExtractionConfiguration_ID == configuration.ID && e.ExtractableDataSet_ID == dataset.ID);
     }
 
     public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)

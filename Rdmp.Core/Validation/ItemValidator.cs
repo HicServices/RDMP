@@ -111,12 +111,12 @@ public class ItemValidator
 
     public void As(string constraintType)
     {
-        this.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType,Consequence.Wrong);
+        PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType,Consequence.Wrong);
     }
 
     public ItemValidator OfType(Type type)
     {
-        this.ExpectedType = type;
+        ExpectedType = type;
         return this;
     }
 
@@ -127,7 +127,7 @@ public class ItemValidator
         b.LowerFieldName = comparatorFieldName;
         b.Upper = DateTime.MaxValue;
 
-        this.AddSecondaryConstraint(b);
+        AddSecondaryConstraint(b);
     }
         
     public void OccursBefore(string comparatorFieldName)
@@ -136,7 +136,7 @@ public class ItemValidator
         b.Lower = DateTime.MinValue;
         b.UpperFieldName = comparatorFieldName;
 
-        this.AddSecondaryConstraint(b);
+        AddSecondaryConstraint(b);
     }
 
     public ItemValidator IsLessThan(string comparatorFieldName)
@@ -144,7 +144,7 @@ public class ItemValidator
         var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
         b.UpperFieldName = comparatorFieldName;
         b.Lower = double.MinValue;
-        this.AddSecondaryConstraint(b);
+        AddSecondaryConstraint(b);
 
         return this;
     }
@@ -154,7 +154,7 @@ public class ItemValidator
         var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
         b.LowerFieldName = comparatorFieldName;
         b.Upper = double.MaxValue;
-        this.AddSecondaryConstraint(b);
+        AddSecondaryConstraint(b);
 
         return this;
     }
@@ -163,7 +163,7 @@ public class ItemValidator
     {
         var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
         b.Lower = lower;
-        this.AddSecondaryConstraint(b);
+        AddSecondaryConstraint(b);
 
         return b;
     }
@@ -184,8 +184,7 @@ public class ItemValidator
     /// <returns>a String</returns>
     public string SaveToXml(bool indent = true)
     {
-        if(_serializer == null)
-            _serializer = new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes());
+        _serializer ??= new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes());
 
         var sb = new StringBuilder();
 

@@ -34,7 +34,7 @@ public class ExecuteCommandSimilarTests : CommandCliTests
     {
         var c1 = WhenIHaveA<ColumnInfo>();
         var c2 = WhenIHaveA<ColumnInfo>();
-            
+
         var activator = new ThrowImmediatelyActivator(RepositoryLocator);
         var cmd = new ExecuteCommandSimilar(activator, c1, true);
 

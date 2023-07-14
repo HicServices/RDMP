@@ -34,7 +34,7 @@ public enum CacheArchiveType
     /// Cached files are in a directory uncompressed
     /// </summary>
     None = 0,
-        
+
     /// <summary>
     /// Cached files are contained in a zip file
     /// </summary>
@@ -103,7 +103,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Optional.  Indicates that when running the Data Load Engine, the specific <see cref="ExternalDatabaseServer"/> should be used for the RAW server (instead of 
+    /// Optional.  Indicates that when running the Data Load Engine, the specific <see cref="ExternalDatabaseServer"/> should be used for the RAW server (instead of
     /// the system default - see <see cref="ServerDefaults"/>).
     /// </summary>
     public int? OverrideRAWServer_ID
@@ -111,8 +111,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         get => _overrideRawServerID;
         set => SetField(ref _overrideRawServerID, value);
     }
-        
-        
+
+
     /// <iheritdoc/>
     public bool IgnoreTrigger
     {
@@ -167,9 +167,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <param name="name"></param>
     public LoadMetadata(ICatalogueRepository repository, string name = null)
     {
-        if (name == null)
-            name = $"NewLoadMetadata{Guid.NewGuid()}";
-        repository.InsertAndHydrate(this,new Dictionary<string, object>()
+        name ??= $"NewLoadMetadata{Guid.NewGuid()}";
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"Name",name},
             { "IgnoreTrigger",false/*todo could be system global default here*/},
@@ -207,7 +206,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
         base.DeleteInDatabase();
     }
-        
+
     /// <inheritdoc/>
     public override string ToString()
     {
@@ -228,20 +227,19 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         var loggingServer = loggingServers.FirstOrDefault();
 
         //get distinct connection
-        var toReturn = DataAccessPortal.GetInstance().ExpectDistinctServer(loggingServers, DataAccessContext.Logging, true);
+        var toReturn = DataAccessPortal.ExpectDistinctServer(loggingServers, DataAccessContext.Logging, true);
 
         serverChosen = (IExternalDatabaseServer)loggingServer;
         return toReturn;
     }
-                
+
     /// <summary>
     /// The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer"/>)
     /// </summary>
     /// <returns></returns>
     public DiscoveredServer GetDistinctLoggingDatabase()
     {
-        IExternalDatabaseServer whoCares;
-        return GetDistinctLoggingDatabase(out whoCares);
+        return GetDistinctLoggingDatabase(out IExternalDatabaseServer whoCares);
     }
 
     private IDataAccessPoint[] GetLoggingServers()
@@ -264,18 +262,18 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         var catalogueMetadatas = GetAllCatalogues().ToArray();
 
         if(!catalogueMetadatas.Any())
-            throw new Exception($"There are no Catalogues associated with load metadata (ID={this.ID})");
+            throw new Exception($"There are no Catalogues associated with load metadata (ID={ID})");
 
-        var cataloguesWithoutLoggingTasks = catalogueMetadatas.Where(c => String.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
+        var cataloguesWithoutLoggingTasks = catalogueMetadatas.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
 
         if(cataloguesWithoutLoggingTasks.Any())
             throw new Exception(
                 $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
-            
+
         var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
-        if(distinctLoggingTasks.Count()>= 2)
+        if(distinctLoggingTasks.Length >= 2)
             throw new Exception(
-                $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={this.ID})");
+                $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={ID})");
 
         return distinctLoggingTasks[0];
     }
@@ -296,18 +294,16 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
         return toReturn;
     }
-        
+
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {
         var normalTables = new HashSet<ITableInfo>();
         var lookupTables = new HashSet<ITableInfo>();
 
-        foreach (var catalogue in this.GetAllCatalogues())
+        foreach (var catalogue in GetAllCatalogues())
         {
-            List<ITableInfo> normal;
-            List<ITableInfo> lookup;
-            catalogue.GetTableInfos(out normal, out lookup);
+            catalogue.GetTableInfos(out var normal, out var lookup);
 
             foreach (var n in normal)
                 normalTables.Add(n);
@@ -316,10 +312,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
 
         if (normalTables.Any())
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad,true);
+            return DataAccessPortal.ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad,true);
             
         if(lookupTables.Any())
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true);
+            return DataAccessPortal.ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true);
             
         throw new Exception(
             $"LoadMetadata {this} has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");

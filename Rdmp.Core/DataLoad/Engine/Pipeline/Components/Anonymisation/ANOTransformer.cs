@@ -20,13 +20,13 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
 /// <summary>
 /// Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For example storing all LabNumbers stored in
-/// DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber and putting in the appropriate 
+/// DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber and putting in the appropriate
 /// replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored proceedure SubstitutionStoredprocedure.
 /// </summary>
 public class ANOTransformer
 {
     private readonly ANOTable _anoTable;
-        
+
     private readonly IDataLoadEventListener _listener;
 
     //the following stored procedures have to exist in the target database;
@@ -39,7 +39,7 @@ public class ANOTransformer
     {
         _externalDatabaseServer = anoTable.Server;
 
-        _server = DataAccessPortal.GetInstance().ExpectServer(_externalDatabaseServer, DataAccessContext.DataLoad);
+        _server = DataAccessPortal.ExpectServer(_externalDatabaseServer, DataAccessContext.DataLoad);
             
         _anoTable = anoTable;
         _listener = listener;
@@ -85,22 +85,18 @@ public class ANOTransformer
             //don't bother substituting nulls (because they won't have a sub!)
             if (valueToReplace == DBNull.Value)
                 continue;
-                
+
             //its not null so look up the mapped value
-            var substitutionRow = substitutionTable.Rows.Find(valueToReplace);
-
-            if (substitutionRow == null)
-                throw new Exception(
+            var substitutionRow = substitutionTable.Rows.Find(valueToReplace) ?? throw new Exception(
                     $"Substitution table returned by {SubstitutionStoredprocedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
-
             var substitutionValue = substitutionRow[1];//substitution value
-                
+
             //overwrite the value with the substitution
             destColumn.Table.Rows[i][destColumn.ColumnName] = substitutionValue;
         }
     }
 
-    private DataTable ColumnToDataTable(DataColumn column,bool discardNulls)
+    private static DataTable ColumnToDataTable(DataColumn column,bool discardNulls)
     {
         var table = new DataTable();
 
@@ -125,13 +121,13 @@ public class ANOTransformer
         using(var con = (SqlConnection)_server.GetConnection())
         {
             con.InfoMessage+=_con_InfoMessage;
-                
+
             if (table.Rows.Count == 0)
                 return table;
             try
             {
                 SqlTransaction transaction = null;
-                
+
                 if (previewOnly)
                 {
                     var mustPush = !_anoTable.IsTablePushed();
@@ -141,11 +137,11 @@ public class ANOTransformer
 
                     if (mustPush)
                     {
-                        var cSharpType = 
+                        var cSharpType =
                             new DatabaseTypeRequest(table.Columns[0].DataType,
                                 _anoTable.NumberOfIntegersToUseInAnonymousRepresentation
                                 + _anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
-                        
+
                         //we want to use this syntax
                         var syntaxHelper = _server.Helper.GetQuerySyntaxHelper();
 
@@ -158,11 +154,13 @@ public class ANOTransformer
                 }
 
                 var substituteForANOIdentifiersProc = SubstitutionStoredprocedure;
-                
-                var cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, con);
-                cmdSubstituteIdentifiers.CommandType = CommandType.StoredProcedure;
-                cmdSubstituteIdentifiers.CommandTimeout = 500;
-                cmdSubstituteIdentifiers.Transaction = transaction;
+
+                var cmdSubstituteIdentifiers = new SqlCommand(substituteForANOIdentifiersProc, con)
+                {
+                    CommandType = CommandType.StoredProcedure,
+                    CommandTimeout = 500,
+                    Transaction = transaction
+                };
 
                 cmdSubstituteIdentifiers.Parameters.Add("@batch", SqlDbType.Structured);
                 cmdSubstituteIdentifiers.Parameters.Add("@tableName", SqlDbType.VarChar, 500);
@@ -181,12 +179,12 @@ public class ANOTransformer
 
                 var da = new SqlDataAdapter(cmdSubstituteIdentifiers);
                 var dtToReturn = new DataTable();
-                
+
                 da.Fill(dtToReturn);
 
                 if (previewOnly)
                     transaction.Rollback();
-                
+
 
                 return dtToReturn;
             }
@@ -198,8 +196,9 @@ public class ANOTransformer
     }
 
     //for some reason this method seems to get sent the same message twice every time
-    string lastMessage;
-    void _con_InfoMessage(object sender, SqlInfoMessageEventArgs e)
+    private string lastMessage;
+
+    private void _con_InfoMessage(object sender, SqlInfoMessageEventArgs e)
     {
         if(string.IsNullOrWhiteSpace(e.Message))
             return;
@@ -214,13 +213,13 @@ public class ANOTransformer
         else
             Console.WriteLine(e.Message);
     }
-        
+
     public string GetDestinationColumnExpectedDataType()
     {
         return _anoTable.GetRuntimeDataType(LoadStage.PostLoad);
     }
 
-        
+
     public static void ConfirmDependencies(DiscoveredDatabase database,ICheckNotifier notifier)
     {
         try
@@ -232,7 +231,7 @@ public class ANOTransformer
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Failed to find {SubstitutionStoredprocedure} on {database}", CheckResult.Fail, null));
-        }   
+        }
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(

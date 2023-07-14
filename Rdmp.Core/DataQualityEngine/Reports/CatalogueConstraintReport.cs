@@ -43,12 +43,12 @@ public class CatalogueConstraintReport : DataQualityReport
 
     public static int MaximumPivotValues = 5000;
 
-    private Dictionary<string,DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new Dictionary<string, DQEStateOverDataLoadRunId>();
-    private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new Dictionary<string, PeriodicityCubesOverTime>();
+    private Dictionary<string,DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
+    private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
 
     private IExternalDatabaseServer _loggingServer;
-    string _loggingTask;
-    LogManager _logManager;
+    private string _loggingTask;
+    private LogManager _logManager;
 
     /// <summary>
     /// Set this property to use an explicit DQE results store database instead of the
@@ -492,9 +492,11 @@ public class CatalogueConstraintReport : DataQualityReport
                     if (itemValidator.SecondaryConstraints.All(constraint => constraint.GetType() != typeof(Prediction)))
                     {
                         //Add an item validator onto the fk column that targets the description column with a nullness prediction
-                        var newRule = new Prediction(new ValuePredictsOtherValueNullness(), foreignKeyFieldName);
-                        newRule.Consequence = Consequence.Missing;
-                        
+                        var newRule = new Prediction(new ValuePredictsOtherValueNullness(), foreignKeyFieldName)
+                            {
+                                Consequence = Consequence.Missing
+                            };
+
                         //add one that says 'if I am null my fk should also be null'
                         itemValidator.SecondaryConstraints.Add(newRule);
                         
@@ -520,11 +522,10 @@ public class CatalogueConstraintReport : DataQualityReport
         states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder);
 
         //ask the validator to validate! 
-        Consequence? worstConsequence;
         _validator.ValidateVerboseAdditive(
             r,//validate the data reader
             states.ColumnValidationFailuresByDataLoadRunID[dataLoadRunIDOfCurrentRecord],//additively adjust the validation failures dictionary
-            out worstConsequence);//and tell us what the worst consequence in the row was 
+            out var worstConsequence);//and tell us what the worst consequence in the row was 
 
 
         //increment the time periodicity hypercube!

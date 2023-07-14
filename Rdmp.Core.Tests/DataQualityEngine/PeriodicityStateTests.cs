@@ -12,7 +12,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataQualityEngine;
 
-class PeriodicityStateTests : DatabaseTests
+internal class PeriodicityStateTests : DatabaseTests
 {
     [TestCase(true)]
     [TestCase(false)]

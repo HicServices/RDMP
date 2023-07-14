@@ -35,7 +35,7 @@ public class ANOStoreFunctionalityTests:TestsRequiringFullAnonymisationSuite
     [Test]
     public void CanAccessANODatabase_ViaExternalServerPointer()
     {
-        using (var connection = DataAccessPortal.GetInstance().ExpectServer(ANOStore_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection())
+        using (var connection = DataAccessPortal.ExpectServer(ANOStore_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection())
         {
             connection.Open();
 
@@ -69,7 +69,7 @@ public class ANOStoreFunctionalityTests:TestsRequiringFullAnonymisationSuite
     [Test]
     public void CanAccessIdentifierDumpDatabase_ViaExternalServerPointer()
     {
-        using(var connection = DataAccessPortal.GetInstance().ExpectServer(IdentifierDump_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection())
+        using(var connection = DataAccessPortal.ExpectServer(IdentifierDump_ExternalDatabaseServer, DataAccessContext.DataLoad).GetConnection())
         {
             connection.Open();
 

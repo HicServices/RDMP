@@ -16,28 +16,20 @@ public static class PermissableDefaultsExtensions
     /// Translates the given <see cref="PermissableDefaults"/> (a default that can be set) to the <see cref="IPatcher"/> which
     /// handles the creation/patching of database schema (identifies what type of database it is).
     /// </summary>
-    /// <param name="permissableDefault"></param>
+    /// <param name="permissibleDefault"></param>
     /// <returns></returns>
-    public static IPatcher ToTier2DatabaseType(this PermissableDefaults permissableDefault)
+    public static IPatcher ToTier2DatabaseType(this PermissableDefaults permissibleDefault)
     {
-        switch (permissableDefault)
+        return permissibleDefault switch
         {
-            case PermissableDefaults.LiveLoggingServer_ID:
-                return new LoggingDatabasePatcher();
-            case PermissableDefaults.IdentifierDumpServer_ID:
-                return new IdentifierDumpDatabasePatcher();
-            case PermissableDefaults.DQE:
-                return new DataQualityEnginePatcher();
-            case PermissableDefaults.WebServiceQueryCachingServer_ID:
-                return new QueryCachingPatcher();
-            case PermissableDefaults.CohortIdentificationQueryCachingServer_ID:
-                return new QueryCachingPatcher();
-            case PermissableDefaults.RAWDataLoadServer:
-                return null;
-            case PermissableDefaults.ANOStore:
-                return new ANOStorePatcher();
-            default:
-                throw new ArgumentOutOfRangeException("permissableDefault");
-        }
+            PermissableDefaults.LiveLoggingServer_ID => new LoggingDatabasePatcher(),
+            PermissableDefaults.IdentifierDumpServer_ID => new IdentifierDumpDatabasePatcher(),
+            PermissableDefaults.DQE => new DataQualityEnginePatcher(),
+            PermissableDefaults.WebServiceQueryCachingServer_ID => new QueryCachingPatcher(),
+            PermissableDefaults.CohortIdentificationQueryCachingServer_ID => new QueryCachingPatcher(),
+            PermissableDefaults.RAWDataLoadServer => null,
+            PermissableDefaults.ANOStore => new ANOStorePatcher(),
+            _ => throw new ArgumentOutOfRangeException(nameof(permissibleDefault))
+        };
     }
 }

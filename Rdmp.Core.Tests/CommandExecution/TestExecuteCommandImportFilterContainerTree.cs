@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
-class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
+internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
 {
     [Test]
     public void TestImportTree_FromCohortIdentificationConfiguration_ToSelectedDatasets()
@@ -37,10 +37,12 @@ class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
             
         //there should be no root container
         Assert.IsNull(sds.RootFilterContainer);
-            
+
         //run the command
-        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
-        mgr.DisallowInput = true;
+        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
+        {
+            DisallowInput = true
+        };
         var cmd = new ExecuteCommandImportFilterContainerTree(mgr,sds,ac);
             
         Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
@@ -77,10 +79,12 @@ class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
             
         //there should be no root container
         Assert.IsNull(ac.RootFilterContainer);
-            
+
         //run the command
-        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
-        mgr.DisallowInput = true;
+        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
+        {
+            DisallowInput = true
+        };
         var cmd = new ExecuteCommandImportFilterContainerTree(mgr,ac,sds);
             
         Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
@@ -124,10 +128,12 @@ class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
 
         //there should be no root container
         Assert.IsNull(sds.RootFilterContainer);
-            
+
         //run the command
-        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
-        mgr.DisallowInput = true;
+        var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
+        {
+            DisallowInput = true
+        };
         var cmd = new ExecuteCommandImportFilterContainerTree(mgr,sds,ac);
             
         Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);

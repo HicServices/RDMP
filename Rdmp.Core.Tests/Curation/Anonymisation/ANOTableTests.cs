@@ -22,7 +22,7 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation;
 
 public class ANOTableTests:TestsRequiringANOStore
 {
-    Regex _anochiPattern = new Regex(@"\d{10}_A");
+    private Regex _anochiPattern = new(@"\d{10}_A");
 
     #region Create New ANOTables
     [Test]
@@ -32,7 +32,7 @@ public class ANOTableTests:TestsRequiringANOStore
     [TestCase("bit")]
     public void CreateAnANOTable_PushAs(string datatypeForPush)
     {
-            
+
         var anoTable = GetANOTable();
         Assert.AreEqual("ANOMyTable", anoTable.TableName);
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation =20;
@@ -204,7 +204,7 @@ public class ANOTableTests:TestsRequiringANOStore
     [Test]
     public void SubstituteANOIdentifiers_PreviewWithoutPush()
     {
-            
+
         var anoTable = GetANOTable();
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
@@ -213,7 +213,7 @@ public class ANOTableTests:TestsRequiringANOStore
 
         //should not exist yet
         Assert.False(ANOtable.Exists());
-            
+
         var dt = new DataTable();
         dt.Columns.Add("CHI");
         dt.Columns.Add("ANOCHI");
@@ -240,7 +240,7 @@ public class ANOTableTests:TestsRequiringANOStore
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
         anoTable.PushToANOServerAsNewTable("varchar(10)", new ThrowImmediatelyCheckNotifier());
 
-            
+
         var sw = new Stopwatch();
         sw.Start();
 
@@ -268,7 +268,7 @@ public class ANOTableTests:TestsRequiringANOStore
             dt.Rows.Add(valAsString, DBNull.Value);//duplicates    
         }
         Console.WriteLine($"Time to allocate in C# memory:{sw.Elapsed}");
-        Console.WriteLine($"Allocated {dt.Rows.Count} identifiers ({uniqueSourceSet.Count()} unique ones)");
+        Console.WriteLine($"Allocated {dt.Rows.Count} identifiers ({uniqueSourceSet.Count} unique ones)");
 
         sw.Reset();
         sw.Start();
@@ -283,7 +283,7 @@ public class ANOTableTests:TestsRequiringANOStore
 
         foreach (DataRow row in dt.Rows)
         {
-            var ANOid= row["ANOCHI"].ToString();
+            var ANOid = row["ANOCHI"].ToString();
             if (!uniqueSet.Contains(ANOid))
                 uniqueSet.Add(ANOid);
 
@@ -330,8 +330,7 @@ public class ANOTableTests:TestsRequiringANOStore
 
         var toCleanup = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals(name));
 
-        if (toCleanup != null)
-            toCleanup.DeleteInDatabase();
+        toCleanup?.DeleteInDatabase();
 
         return new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, name, "A");
     }

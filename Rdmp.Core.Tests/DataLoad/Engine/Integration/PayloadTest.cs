@@ -26,7 +26,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class PayloadTest:DatabaseTests
 {
-    public static object payload = new object();
+    public static object payload = new();
     public static bool Success = false;
 
     [Test]
@@ -36,8 +36,10 @@ public class PayloadTest:DatabaseTests
         b.SetupTestData();
         b.ImportAsCatalogue();
 
-        var lmd = new LoadMetadata(CatalogueRepository, "Loading");
-        lmd.LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true).RootPath.FullName;
+        var lmd = new LoadMetadata(CatalogueRepository, "Loading")
+        {
+            LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true).RootPath.FullName
+        };
         lmd.SaveToDatabase();
 
         CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
@@ -49,9 +51,11 @@ public class PayloadTest:DatabaseTests
         var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         lm.CreateNewLoggingTaskIfNotExists("TestPayloadInjection");
 
-        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);
-        pt.Path = typeof (TestPayloadAttacher).FullName;
-        pt.ProcessTaskType = ProcessTaskType.Attacher;
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting)
+        {
+            Path = typeof (TestPayloadAttacher).FullName,
+            ProcessTaskType = ProcessTaskType.Attacher
+        };
         pt.SaveToDatabase();
 
         var config = new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server);
@@ -62,7 +66,7 @@ public class PayloadTest:DatabaseTests
 
         proceedure.Run(new GracefulCancellationToken(), payload);
 
-        Assert.IsTrue(PayloadTest.Success, "Expected IAttacher to detect Payload and set this property to true");
+        Assert.IsTrue(Success, "Expected IAttacher to detect Payload and set this property to true");
     }
 
 
@@ -75,7 +79,7 @@ public class PayloadTest:DatabaseTests
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, $"Found Payload:{job.Payload}"));
-            PayloadTest.Success = ReferenceEquals(payload, job.Payload);
+            Success = ReferenceEquals(payload, job.Payload);
 
             return ExitCodeType.OperationNotRequired;
         }

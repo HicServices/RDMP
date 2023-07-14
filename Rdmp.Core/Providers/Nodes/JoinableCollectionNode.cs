@@ -12,7 +12,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6 
+/// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6
 /// months of a prescription for drug X).  See <see cref="JoinableCohortAggregateConfiguration"/>.
 /// </summary>
 public class JoinableCollectionNode:Node,IOrderable
@@ -26,14 +26,14 @@ public class JoinableCollectionNode:Node,IOrderable
         Joinables = joinables;
     }
 
-    public string GetCatalogueName()
+    public static string GetCatalogueName()
     {
         return "";
     }
 
-    public IMapsDirectlyToDatabaseTable Child => null;
+    public static IMapsDirectlyToDatabaseTable Child => null;
 
-    public IDataAccessPoint[] GetDataAccessPoints()
+    public static IDataAccessPoint[] GetDataAccessPoints()
     {
         return null;
     }
@@ -43,31 +43,31 @@ public class JoinableCollectionNode:Node,IOrderable
         return "Patient Index Table(s)";
     }
 
-    public string FinalRowCount()
+    public static string FinalRowCount()
     {
         return "";
     }
     public int? CumulativeRowCount { set; get; }
-        
 
-    public string GetStateDescription()
+
+    public static string GetStateDescription()
     {
         return "";
     }
 
-    public string Order()
+    public static string Order()
     {
         return "";
     }
-        
+
     public string ElapsedTime = "";
 
-    public string GetCachedQueryUseCount()
+    public static string GetCachedQueryUseCount()
     {
         return "";
     }
 
-    public string DescribePurpose()
+    public static string DescribePurpose()
     {
 
         return @"Drop Aggregates (datasets) here to create patient index tables (Tables with interesting
@@ -83,9 +83,9 @@ criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date pe
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((JoinableCollectionNode) obj);
     }
 

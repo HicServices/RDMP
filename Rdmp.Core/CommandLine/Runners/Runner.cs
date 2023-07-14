@@ -34,11 +34,11 @@ public abstract class Runner: IRunner
     /// <param name="arg"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException">Thrown if it is not possible to parse <paramref name="arg"/> into an existing object</exception>
-    protected T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
+    protected static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T : IMapsDirectlyToDatabaseTable
     {
         if(string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
         {
-            return default(T);
+            return default;
         }
 
         if (int.TryParse(arg, out var id))
@@ -46,7 +46,7 @@ public abstract class Runner: IRunner
             var repo = locator.GetAllRepositories().FirstOrDefault(r => r.SupportsObjectType(typeof(T)));
             return repo.GetObjectByID<T>(id);
         }
-                
+
         var picker = new CommandLineObjectPicker(new[] { arg }, new ThrowImmediatelyActivator(locator));
         if (!picker[0].HasValueOfType(typeof(T)))
             throw new ArgumentException($"Could not translate '{arg}' into a valid object of Type '{typeof(T).Name}'.  The referenced object may not exist or has been renamed.");
@@ -54,7 +54,7 @@ public abstract class Runner: IRunner
         return (T)picker[0].GetValueForParameterOfType(typeof(T));
     }
 
-    protected IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T: IMapsDirectlyToDatabaseTable
+    protected static IEnumerable<T> GetObjectsFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg) where T: IMapsDirectlyToDatabaseTable
     {
         if (string.IsNullOrWhiteSpace(arg) || arg.Trim().Equals("0"))
         {

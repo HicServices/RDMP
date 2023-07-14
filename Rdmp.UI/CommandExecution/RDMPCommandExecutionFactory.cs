@@ -24,9 +24,9 @@ namespace Rdmp.UI.CommandExecution;
 public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 {
     private readonly IActivateItems _activator;
-    private Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>>();
-    private object oLockCachedAnswers = new object();
-    private List<ICommandExecutionProposal> _proposers = new List<ICommandExecutionProposal>();
+    private Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new();
+    private object oLockCachedAnswers = new();
+    private List<ICommandExecutionProposal> _proposers = new();
 
     public RDMPCommandExecutionFactory(IActivateItems activator)
     {
@@ -37,7 +37,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
             try
             {
                 var constructor = new ObjectConstructor();
-                _proposers.Add((ICommandExecutionProposal)constructor.Construct(proposerType,activator));
+                _proposers.Add((ICommandExecutionProposal)ObjectConstructor.Construct(proposerType,activator));
 
             }
             catch (Exception ex)
@@ -56,17 +56,17 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
             var proposition = new CachedDropTarget(targetModel, insertOption);
 
             //typically user might start a drag and then drag it all over the place so cache answers to avoid hammering database/loading donuts
-            if (_cachedAnswers.ContainsKey(cmd))
+            if (_cachedAnswers.TryGetValue(cmd,out var cacheLine))
             {
                 //if we already have a cached execution for the command and the target
-                if (_cachedAnswers[cmd].ContainsKey(proposition))
-                    return _cachedAnswers[cmd][proposition];//return from cache
+                if (cacheLine.TryGetValue(proposition,out var hit))
+                    return hit;//return from cache
             }
             else
-                _cachedAnswers.Add(cmd, new Dictionary<CachedDropTarget, ICommandExecution>()); //novel command
+                _cachedAnswers.Add(cmd, cacheLine=new Dictionary<CachedDropTarget, ICommandExecution>()); //novel command
 
             var result  = CreateNoCache(cmd, targetModel, insertOption);
-            _cachedAnswers[cmd].Add(new CachedDropTarget(targetModel,insertOption), result);
+            cacheLine.Add(new CachedDropTarget(targetModel,insertOption), result);
 
             return result;
         }
@@ -77,7 +77,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
         ///////////////Catalogue or ambiguous Drop Targets ////////////////////////
         if (targetModel is IFolderNode folder)
             return CreateWhenTargetIsFolder(cmd, folder);
-            
+
         /////////////Table Info Drop Targets///////////////////////////////////
         if (targetModel is TableInfo targetTableInfo)
             return CreateWhenTargetIsATableInfo(cmd, targetTableInfo);
@@ -91,7 +91,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 
         if (targetModel is ProcessTask targetProcessTask)
             return CreateWhenTargetIsProcessTask(cmd, targetProcessTask, insertOption);
-            
+
         /////////////Table Info Collection Drop Targets////////////////////
 
         if (targetModel is PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
@@ -119,7 +119,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {
         return _proposers.Any(p => p.CanActivate(target));
     }
-        
+
     private ICommandExecution CreateWhenTargetIsProcessTask(ICombineToMakeCommand cmd, ProcessTask targetProcessTask, InsertOption insertOption)
     {
         if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
@@ -131,20 +131,19 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 
     private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, IFolderNode targetFolder)
     {
-        var sourceManyCatalogues = cmd as ManyCataloguesCombineable;
-        var file = cmd as FileCollectionCombineable;
-
         if (cmd is IHasFolderCombineable sourceFolderable)
             return new ExecuteCommandPutIntoFolder(_activator, sourceFolderable, targetFolder.FullName);
-            
-        if (sourceManyCatalogues != null)
+
+        if (cmd is ManyCataloguesCombineable sourceManyCatalogues)
             return new ExecuteCommandPutIntoFolder(_activator, sourceManyCatalogues, targetFolder.FullName);
 
-        if(file != null)
+        if(cmd is FileCollectionCombineable file)
             if(file.Files.Length == 1)
             {
-                var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator,file.Files[0]);
-                toReturn.TargetFolder = targetFolder.FullName;
+                var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator,file.Files[0])
+                    {
+                        TargetFolder = targetFolder.FullName
+                    };
                 return toReturn;
             }
 

@@ -20,7 +20,7 @@ public class BoundDouble :  Bound
 
     [Description("Optional, Requires the value being validated to be LOWER than this number")]
     public double? Upper { get; set; }
-        
+
     public BoundDouble()
     {
         Inclusive = true;
@@ -33,7 +33,7 @@ public class BoundDouble :  Bound
             return null;
 
         //nulls are also fine if we are passed blanks
-        if (value is string && string.IsNullOrWhiteSpace(value as string))
+        if (value is string s && string.IsNullOrWhiteSpace(s))
             return null;
 
         double v;
@@ -46,7 +46,7 @@ public class BoundDouble :  Bound
         {
             return new ValidationFailure("Invalid format for double ",this);
         }
-          
+
 
         if (Lower.HasValue || Upper.HasValue)
             if (value != null && !IsWithinRange(v))
@@ -55,7 +55,7 @@ public class BoundDouble :  Bound
         if (value != null && !IsWithinRange(v, otherColumns, otherColumnNames))
             return new ValidationFailure(CreateViolationReportUsingFieldNames(v), this);
 
-//            if (v < Lower || v > Upper) 
+//            if (v < Lower || v > Upper)
 //                throw new ValidationException("Value [" + v + "] out of range. Expected a value between " + Lower + " and " + Upper + ".");
 
         return null;
@@ -127,13 +127,13 @@ public class BoundDouble :  Bound
 
     private string CreateViolationReportUsingFieldNames(double d)
     {
-        if (!String.IsNullOrWhiteSpace(LowerFieldName) && !String.IsNullOrWhiteSpace(UpperFieldName))
+        if (!string.IsNullOrWhiteSpace(LowerFieldName) && !string.IsNullOrWhiteSpace(UpperFieldName))
             return BetweenMessage(d, LowerFieldName, UpperFieldName);
 
-        if (!String.IsNullOrWhiteSpace(LowerFieldName))
+        if (!string.IsNullOrWhiteSpace(LowerFieldName))
             return GreaterThanMessage(d, LowerFieldName);
 
-        if (!String.IsNullOrWhiteSpace(UpperFieldName))
+        if (!string.IsNullOrWhiteSpace(UpperFieldName))
             return LessThanMessage(d, UpperFieldName);
 
         throw new InvalidOperationException("Illegal state.");
@@ -145,21 +145,21 @@ public class BoundDouble :  Bound
             $"Value {Wrap(d.ToString())} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
     }
 
-    private string GreaterThanMessage(double d, string s)
+    private static string GreaterThanMessage(double d, string s)
     {
         return $"Value {Wrap(d.ToString())} out of range. Expected a value greater than {Wrap(s)}.";
     }
 
-    private string LessThanMessage(double d, string s)
+    private static string LessThanMessage(double d, string s)
     {
         return $"Value {Wrap(d.ToString())} out of range. Expected a value less than {Wrap(s)}.";
     }
 
-    private string Wrap(string s)
+    private static string Wrap(string s)
     {
         return $"[{s}]";
     }
-        
+
     public BoundDouble And(int upper)
     {
         Upper = upper;

@@ -33,7 +33,7 @@ public class UpdateProgressIfLoadsuccessful : IUpdateLoadProgress
         DateToSetProgressTo = Job.DatesToRetrieve.Max();
     }
 
-    virtual public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+    public virtual void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
         if (exitCode != ExitCodeType.Success)
             return;

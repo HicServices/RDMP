@@ -102,7 +102,7 @@ public class CreateNewCohortDatabaseWizard
                 new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){AllowNulls =  false,Default=MandatoryScalarFunctions.GetTodaysDate}
             });
 
-                
+
             var idColumn = definitionTable.DiscoverColumn("id");
             var foreignKey = new DatabaseColumnRequest(_definitionTableForeignKeyField,new DatabaseTypeRequest(typeof (int)), false) {IsPrimaryKey = true};
 
@@ -128,9 +128,9 @@ public class CreateNewCohortDatabaseWizard
                 }
                 ,
                 //foreign key between id and cohortDefinition_id
-                new Dictionary<DatabaseColumnRequest, DiscoveredColumn>() { { foreignKey, idColumn } }, true); ;
+                new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { foreignKey, idColumn } }, true);
 
-                
+
             notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
             var pointer = new ExternalCohortTable(_dataExportRepository, "TestExternalCohort", _targetDatabase.Server.DatabaseType)
             {

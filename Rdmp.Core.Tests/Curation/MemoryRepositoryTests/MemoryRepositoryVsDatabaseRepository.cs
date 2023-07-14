@@ -19,7 +19,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests;
 
-class MemoryRepositoryVsDatabaseRepository:DatabaseTests
+internal class MemoryRepositoryVsDatabaseRepository:DatabaseTests
 {
     [Test]
     public void TestMemoryVsDatabaseRepository_CatalogueConstructor()
@@ -90,12 +90,12 @@ class MemoryRepositoryVsDatabaseRepository:DatabaseTests
         var tbl = db.CreateTable("OmgTables",dt);
 
         var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
-            
+
         var importer1 = new TableInfoImporter(memoryRepository, tbl, DataAccessContext.Any);
 
-        importer1.DoImport(out var memTableInfo,out var memColumnInfos);
+        importer1.DoImport(out var memTableInfo, out var memColumnInfos);
         var forwardEngineer1 = new ForwardEngineerCatalogue(memTableInfo, memColumnInfos);
-        forwardEngineer1.ExecuteForwardEngineering(out var memCatalogue,out var memCatalogueItems,out var memExtractionInformations);
+        forwardEngineer1.ExecuteForwardEngineering(out var memCatalogue, out var memCatalogueItems, out var memExtractionInformations);
 
 
         var importerdb = new TableInfoImporter(CatalogueRepository, tbl, DataAccessContext.Any);

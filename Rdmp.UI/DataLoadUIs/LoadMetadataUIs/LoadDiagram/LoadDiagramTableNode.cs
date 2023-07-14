@@ -34,8 +34,8 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
 
     public readonly DiscoveredTable Table;
 
-    private List<LoadDiagramColumnNode> _anticipatedChildren = new List<LoadDiagramColumnNode>();
-    private List<DiscoveredColumn>  _unplannedChildren = new List<DiscoveredColumn>();
+    private List<LoadDiagramColumnNode> _anticipatedChildren = new();
+    private List<DiscoveredColumn>  _unplannedChildren = new();
 
     public LoadDiagramTableNode(LoadDiagramDatabaseNode databaseNode,TableInfo tableInfo, LoadBubble bubble, HICDatabaseConfiguration config)
     {
@@ -78,7 +78,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
     {
         return TableName;
     }
-        
+
     public ICombineToMakeCommand GetCombineable()
     {
         return new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
@@ -95,7 +95,7 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
         //we don't exist either!
         if (!Table.Exists())
         {
-            State = LoadDiagramState.NotFound;    
+            State = LoadDiagramState.NotFound;
             return;
         }
 
@@ -136,21 +136,15 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
 
     public override bool Equals(object obj)
     {
-        if (ReferenceEquals(null, obj)) return false;
+        if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != this.GetType()) return false;
+        if (obj.GetType() != GetType()) return false;
         return Equals((LoadDiagramTableNode) obj);
     }
 
     public override int GetHashCode()
     {
-        unchecked
-        {
-            var hashCode = (_databaseNode != null ? _databaseNode.GetHashCode() : 0);
-            hashCode = (hashCode*397) ^ (int) Bubble;
-            hashCode = (hashCode*397) ^ (TableName != null ? TableName.GetHashCode() : 0);
-            return hashCode;
-        }
+        return HashCode.Combine(_databaseNode, Bubble, TableName);
     }
 
     public string WhatIsThis()
@@ -160,15 +154,14 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
             case LoadDiagramState.Different:
             case LoadDiagramState.Anticipated:
             case LoadDiagramState.Found:
-                switch (Bubble)
+                return Bubble switch
                 {
-                    case LoadBubble.Raw:
-                        return
-                            "A Table that will be created in the RAW bubble when the load is run, this table will not have any constraints (not nulls, referential integrity ect)";
-                    case LoadBubble.Staging:
-                        return "A Table that will be created in the STAGING bubble when the load is run, this table will have normal constraints that match LIVE";
-                }
-                return "A Table that is involved in the load (based on the Catalogues associated with the load)";
+                    LoadBubble.Raw =>
+                        "A Table that will be created in the RAW bubble when the load is run, this table will not have any constraints (not nulls, referential integrity ect)",
+                    LoadBubble.Staging =>
+                        "A Table that will be created in the STAGING bubble when the load is run, this table will have normal constraints that match LIVE",
+                    _ => "A Table that is involved in the load (based on the Catalogues associated with the load)"
+                };
             case LoadDiagramState.NotFound:
                 return "A Table that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
             case LoadDiagramState.New:

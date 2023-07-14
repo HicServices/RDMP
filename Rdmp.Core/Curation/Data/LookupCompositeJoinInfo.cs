@@ -112,7 +112,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     private string _cachedToString = null;
     private string ToStringCached()
     {
-        return _cachedToString ?? (_cachedToString = $"{ForeignKey.Name} = {PrimaryKey.Name}");
+        return _cachedToString ??= $"{ForeignKey.Name} = {PrimaryKey.Name}";
     }
 
     /// <inheritdoc/>

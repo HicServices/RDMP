@@ -115,7 +115,7 @@ public class ArgumentValueUIFactory
         //if it is an interface e.g. IExternalDatabaseServer look for ExternalDatabaseServer
         if (argumentType.IsInterface)
         {
-            var implmenetationType = args.CatalogueRepository.MEF.GetType(args.Type.Name.Substring(1));
+            var implmenetationType = args.CatalogueRepository.MEF.GetType(args.Type.Name[1..]);
             if (implmenetationType != null)
                 argumentType = implmenetationType;
         }
@@ -135,7 +135,7 @@ public class ArgumentValueUIFactory
         return new ArgumentValueComboBoxUI(_activator,array);
     }
 
-    private IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
+    private static IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
         if(parent is ProcessTask pt)
             return pt.GetTableInfos();
@@ -147,7 +147,7 @@ public class ArgumentValueUIFactory
     }
 
         
-    private IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
+    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
     {
         if(parent is ProcessTask || parent is LoadMetadata)
             return GetTableInfosInScope(repository,parent).SelectMany(ti => ti.ColumnInfos);
@@ -155,7 +155,7 @@ public class ArgumentValueUIFactory
         return repository.GetAllObjects<ColumnInfo>();
     }
         
-    private IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
+    private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
         if(parent is ProcessTask || parent is LoadMetadata)
             return GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns);
@@ -169,7 +169,7 @@ public class ArgumentValueUIFactory
     /// </summary>
     /// <param name="argsType"></param>
     /// <returns></returns>
-    public bool CanHandleInvalidStringData(Type argsType)
+    public static bool CanHandleInvalidStringData(Type argsType)
     {
         return argsType.IsValueType && !typeof(bool).IsAssignableFrom(argsType)&& !typeof(Enum).IsAssignableFrom(argsType);
     }

@@ -152,16 +152,18 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
 
         //the ExternalCohortTable should pass tests
         ect.Check(new ThrowImmediatelyCheckNotifier());
-            
+
         //now try putting someone in it
         //the project it will go under
-        var project = new Project(DataExportRepository, "MyProject");
-        project.ProjectNumber = 10;
+        var project = new Project(DataExportRepository, "MyProject")
+        {
+            ProjectNumber = 10
+        };
         project.SaveToDatabase();
 
         //the request to put it under there
         var request = new CohortCreationRequest(project, new CohortDefinition(null, "My cohort", 1, 10, ect), DataExportRepository,"Blah");
-            
+
         //the actual cohort data
         var dt = new DataTable();
         dt.Columns.Add(_extractionInfo2.GetRuntimeName());

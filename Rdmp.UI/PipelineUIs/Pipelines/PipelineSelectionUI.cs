@@ -22,16 +22,15 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private readonly IActivateItems _activator;
     private IPipelineUseCase _useCase;
     private readonly ICatalogueRepository _repository;
-        
+
     private IPipeline _pipeline;
     public event Action PipelineDeleted = delegate { };
-        
+
     public event EventHandler PipelineChanged;
-    IPipeline _previousSelection = null;
 
-    ToolTip tt = new ToolTip();
-
-    const string ShowAll = "Show All/Incompatible Pipelines";
+    private IPipeline _previousSelection = null;
+    private ToolTip tt = new();
+    private const string ShowAll = "Show All/Incompatible Pipelines";
     public bool showAll = false;
     public IPipeline Pipeline
     {
@@ -56,13 +55,10 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     /// </summary>
     private void RefreshPipelineList()
     {
-
-        var before = ddPipelines.SelectedItem as Pipeline;
-
         ddPipelines.Items.Clear();
-            
+
         var context = _useCase.GetContext();
-            
+
         //add pipelines sorted alphabetically
         var allPipelines = _repository.GetAllObjects<Pipeline>().OrderBy(p=>p.Name).ToArray();
 
@@ -75,7 +71,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             ddPipelines.Items.AddRange(allPipelines.Where(o => !_useCase.IsAllowable(o)).ToArray());
 
         //reselect if it is still there
-        if (before != null)
+        if (ddPipelines.SelectedItem is Pipeline before)
         {
             var toReselect = ddPipelines.Items.OfType<Pipeline>().SingleOrDefault(p => p.ID == before.ID);
 
@@ -92,14 +88,14 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             ? (object) ddPipelines.Items.OfType<Pipeline>().Single()
             : "<<None>>";
     }
-        
+
     public PipelineSelectionUI(IActivateItems activator,IPipelineUseCase useCase, ICatalogueRepository repository)
     {
         _activator = activator;
         _useCase = useCase;
         _repository = repository;
         InitializeComponent();
-            
+
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) //don't connect to database in design mode
             return;
 
@@ -113,10 +109,10 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     }
 
-    void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
+    private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
     {
         e.DrawBackground();
-            
+
         var italic = new Font(ddPipelines.Font, FontStyle.Italic);
 
         if (e.Index == -1)
@@ -138,7 +134,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             if(showAll)
             {
                 render = $"\u2713 {render}";
-            }   
+            }
 
             TextRenderer.DrawText(e.Graphics, render, italic , new Rectangle(new Point(e.Bounds.Left, e.Bounds.Top + 1), e.Bounds.Size), Color.CornflowerBlue, TextFormatFlags.Left);
         }
@@ -168,21 +164,18 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         Pipeline = ddPipelines.SelectedItem as Pipeline;
 
-        if (Pipeline == null)
-            tbDescription.Text = "";
-        else
-            tbDescription.Text = Pipeline.Description;
-            
+        tbDescription.Text = Pipeline == null ? "" : Pipeline.Description;
+
         btnEditPipeline.Enabled = Pipeline != null;
         btnDeletePipeline.Enabled = Pipeline != null;
         btnClonePipeline.Enabled = Pipeline != null;
 
         if(!Equals(_previousSelection,Pipeline))
         {
-            PipelineChanged?.Invoke(this,new EventArgs());
+            PipelineChanged?.Invoke(this,EventArgs.Empty);
             _previousSelection = Pipeline;
         }
-                
+
     }
 
     private void btnEditPipeline_Click(object sender, EventArgs e)
@@ -212,7 +205,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         ddPipelines.SelectedItem = Pipeline;
 
         // user may have edited it so raise the changed event
-        PipelineChanged?.Invoke(this, new EventArgs());
+        PipelineChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void btnDeletePipeline_Click(object sender, EventArgs e)
@@ -228,36 +221,34 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
     private void btnClonePipeline_Click(object sender, EventArgs e)
     {
-        var p = ddPipelines.SelectedItem as Pipeline;
-
-        if (p != null)
+        if (ddPipelines.SelectedItem is Pipeline p)
         {
             var clone = p.Clone();
             RefreshPipelineList();
-                
+
             //select the clone
             ddPipelines.SelectedItem = clone;
         }
     }
 
-        
+
     /// <summary>
     /// Turns the control into a single line ui control
     /// </summary>
     [UsedImplicitly]
     public void CollapseToSingleLineMode()
     {
-        this.Height = 28;
+        Height = 28;
 
-        this.Controls.Remove(gbPrompt);
+        Controls.Remove(gbPrompt);
 
-        this.Controls.Add(ddPipelines);
+        Controls.Add(ddPipelines);
         ddPipelines.Location = new Point(0, 3);
         ddPipelines.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 
         foreach (var button in new Control[] { btnEditPipeline, btnCreateNewPipeline, btnClonePipeline, btnDeletePipeline })
         {
-            this.Controls.Add(button);
+            Controls.Add(button);
             button.Location = new Point(2, 2);
             button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         }

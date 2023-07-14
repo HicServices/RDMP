@@ -22,18 +22,17 @@ namespace Rdmp.Core.CommandLine.Gui;
 
 public partial class ConsoleGuiCohortIdentificationConfigurationUI {
     private readonly IBasicActivateItems _activator;
-    CohortIdentificationConfigurationUICommon Common = new ();
+    private CohortIdentificationConfigurationUICommon Common = new();
     private bool _isDisposed;
-
-    List<object> RowObjects = new();
-    bool _contextMenuShowing = false;
+    private List<object> RowObjects = new();
+    private bool _contextMenuShowing = false;
 
     public ConsoleGuiCohortIdentificationConfigurationUI(IBasicActivateItems activator, CohortIdentificationConfiguration cic) {
         InitializeComponent();
             
         Modal = true;
 
-        this._activator = activator;
+        _activator = activator;
         Common.Activator = activator;
             
         Common.Compiler.CoreChildProvider = activator.CoreChildProvider;
@@ -41,7 +40,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         Common.Configuration = cic;
         Common.Compiler.CohortIdentificationConfiguration = cic;
 
-        cbCumulativeTotals.Toggled += (e) =>
+        cbCumulativeTotals.Toggled += e =>
         {
             Common.SetShowCumulativeTotals(cbCumulativeTotals.Checked);
         };
@@ -54,7 +53,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
 
         tableview1.CellActivated += Tableview1_CellActivated;
         tableview1.KeyPress += Tableview1_KeyPress;
-        tbTimeout.TextChanged += (s) =>
+        tbTimeout.TextChanged += s =>
         {
             if (int.TryParse(tbTimeout.Text.ToString(), out var t))
             {
@@ -248,7 +247,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         r["CumulativeTotal"] = Common.CumulativeTotal_AspectGetter(o);
         r["Working"] = Common.Working_AspectGetter(o);
         r["Time"] = Common.Time_AspectGetter(o);
-        r["Catalogue"] = Common.Catalogue_AspectGetter(o);
+        r["Catalogue"] = CohortIdentificationConfigurationUICommon.Catalogue_AspectGetter(o);
         r["ID"] = o is IMapsDirectlyToDatabaseTable m ? m.ID : DBNull.Value;
 
         var children = childProvider.GetChildren(o).ToList();

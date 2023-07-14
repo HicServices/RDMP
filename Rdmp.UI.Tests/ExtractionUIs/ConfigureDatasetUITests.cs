@@ -10,7 +10,7 @@ using Rdmp.UI.ProjectUI.Datasets;
 
 namespace Rdmp.UI.Tests.ExtractionUIs;
 
-class ConfigureDatasetUITests : UITests
+internal class ConfigureDatasetUITests : UITests
 {
     [Test,UITimeout(50000)]
     public void Test_RemoveAllColumns_Only1Publish()

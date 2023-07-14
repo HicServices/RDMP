@@ -41,12 +41,12 @@ internal class ConsoleGuiContextMenuFactory
             .Where(c => !string.IsNullOrWhiteSpace(c))
             .Distinct();
 
-        Dictionary<string, List<MenuItem>> miCategories = new();
+        var miCategories = new Dictionary<string, List<MenuItem>>();
 
         foreach (var category in categories)
             miCategories.Add(category, new List<MenuItem>());
 
-        List<MenuItem> items = new();
+        var items = new List<MenuItem>();
 
         // Build commands into menu items
         foreach (var cmd in commands.OrderBy(c => c.Weight))
@@ -78,15 +78,17 @@ internal class ConsoleGuiContextMenuFactory
 
         var withSpacers = AddSpacers(items, order);
 
-        var menu = new ContextMenu();
-        menu.MenuItems = new MenuBarItem(withSpacers);
+        var menu = new ContextMenu
+        {
+            MenuItems = new MenuBarItem(withSpacers)
+        };
 
         return menu;
     }
 
-    private  MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)
+    private static MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)
     {
-        // sort it                
+        // sort it
         items.OrderBy(m => order[m]).ToList();
 
         // add spacers when the Weight differs by more than 1 whole number
@@ -121,7 +123,7 @@ internal class ConsoleGuiContextMenuFactory
         }
     }
 
-    private  IEnumerable<IAtomicCommand> GetCommands(IBasicActivateItems activator, object[] many, object single)
+    private static IEnumerable<IAtomicCommand> GetCommands(IBasicActivateItems activator, object[] many, object single)
     {
         var factory = new AtomicCommandFactory(activator);
 
@@ -136,13 +138,13 @@ internal class ConsoleGuiContextMenuFactory
         {
             return new IAtomicCommand[] {
                 new ExecuteCommandCreateNewCatalogueByImportingFile(activator),
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator),
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator)
             };
         }
         if (ReferenceEquals(o, ConsoleMainWindow.Loads))
         {
             return new IAtomicCommand[] {
-                new ExecuteCommandCreateNewLoadMetadata(activator),
+                new ExecuteCommandCreateNewLoadMetadata(activator)
             };
         }
         if (ReferenceEquals(o, ConsoleMainWindow.Projects))
@@ -168,7 +170,7 @@ internal class ConsoleGuiContextMenuFactory
                 .OrderBy(c => c.Weight);
     }
 
-    private  IEnumerable<IAtomicCommand> GetExtraCommands(IBasicActivateItems activator, object o)
+    private static IEnumerable<IAtomicCommand> GetExtraCommands(IBasicActivateItems activator, object o)
     {
         if (CommandFactoryBase.Is(o, out LoadMetadata lmd))
         {

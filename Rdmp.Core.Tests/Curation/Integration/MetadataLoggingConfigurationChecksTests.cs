@@ -52,7 +52,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
 
         AssertFailWithFix("Some catalogues have NULL LoggingDataTasks","Set task to OMG YEAGH",toMem);   
     }
-        
+
     [Test]
     public void Test_MissingLoggingServer()
     {
@@ -80,7 +80,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-            
+
         var eds = WhenIHaveA<ExternalDatabaseServer>();
         eds.Name = "My Logging Server";
         eds.SaveToDatabase();
@@ -103,9 +103,9 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
 
         AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID",$"Set LiveLoggingServer_ID to 'My Logging Server' (the default)",toMem);   
     }
-    private void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)
+    private static void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)
     {
-        var msg = toMem.Messages.Where(m => m.Result == CheckResult.Fail).First();
+        var msg = toMem.Messages.First(m => m.Result == CheckResult.Fail);
 
         Assert.AreEqual(expectedMessage,msg.Message,"Expected error message was wrong");
         Assert.AreEqual(expectedFix,msg.ProposedFix,"Expected proposed fix was wrong");
