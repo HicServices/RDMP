@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery;
-using Plugin.Settings.Abstractions;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.ReusableLibraryCode.Settings;
@@ -20,16 +19,9 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 /// </summary>
 public static class UserSettings
 {
-    private static Lazy<ISettings> implementation = new(() => CreateSettings(), System.Threading.LazyThreadSafetyMode.PublicationOnly);
+    private static readonly Lazy<RDMPApplicationSettings> Implementation = new(static ()=>new RDMPApplicationSettings(),System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
 
-    private static ISettings AppSettings
-    {
-        get
-        {
-            var ret = implementation.Value ?? throw new NotImplementedException("Isolated Storage does not work in this environment...");
-            return ret;
-        }
-    }
+    private static RDMPApplicationSettings AppSettings => Implementation.Value ?? throw new NotImplementedException("Isolated Storage does not work in this environment...");
 
     /// <summary>
     /// Show a Yes/No confirmation dialog box when closing RDMP
@@ -588,10 +580,4 @@ public static class UserSettings
             AppSettings.AddOrUpdateValue($"SplitterDistance_{controlGuid:N}", splitterDistance);
         }
     }
-
-    private static ISettings CreateSettings()
-    {
-        return new RDMPApplicationSettings();
-    }
-
 }
