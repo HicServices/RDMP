@@ -111,8 +111,8 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
         Repository = repository;
         var name = extractedObject.GetType().FullName;
 
-        if (extractedObject is INamed)
-            name = (extractedObject as INamed).Name;
+        if (extractedObject is INamed named)
+            name = named.Name;
 
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -141,8 +141,8 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
 
         var name = extractedObject.GetType().FullName;
 
-        if (extractedObject is INamed)
-            name = (extractedObject as INamed).Name;
+        if (extractedObject is INamed named)
+            name = named.Name;
 
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {

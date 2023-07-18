@@ -84,7 +84,7 @@ internal class YamlRepositoryTests
 
         var repo1 = new YamlRepository(dir);
         repo1.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern,"yarg");
-            
+
         // A fresh repo loaded from the same directory should have persisted object relationships
         var repo2 = new YamlRepository(dir);
         Assert.AreEqual("yarg", repo2.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern));
@@ -339,12 +339,12 @@ internal class YamlRepositoryTests
         Assert.AreEqual("ffff", repo2.AllObjects.OfType<Catalogue>().Single().Name);
     }
 
-    private string GetUniqueDirectoryName()
+    private static string GetUniqueDirectoryName()
     {
         return Path.Combine(TestContext.CurrentContext.WorkDirectory, Guid.NewGuid().ToString().Replace("-", ""));
     }
 
-    private DirectoryInfo GetUniqueDirectory()
+    private static DirectoryInfo GetUniqueDirectory()
     {
         return new DirectoryInfo(GetUniqueDirectoryName());
     }

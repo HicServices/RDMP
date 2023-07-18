@@ -288,10 +288,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
         tblName = tblName.Replace("$c", _request.Configuration.Name);
 
-        if (_request is ExtractDatasetCommand extractDatasetCommand)
+        if (_request is ExtractDatasetCommand command)
         {
-            tblName = tblName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
-            tblName = tblName.Replace("$a", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Acronym);
+            tblName = tblName.Replace("$d", command.DatasetBundle.DataSet.Catalogue.Name);
+            tblName = tblName.Replace("$a", command.DatasetBundle.DataSet.Catalogue.Acronym);
         }
 
         if (_request is ExtractGlobalsCommand)
@@ -408,7 +408,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         return $"{TargetDatabaseServer.ID}|{dbName}|{tblName}";
     }
 
-    public DestinationType GetDestinationType()
+    public static DestinationType GetDestinationType()
     {
         return DestinationType.Database;
     }
@@ -443,18 +443,18 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             var sw = new Stopwatch();
 
-            sw.Start();
-            da.Fill(dt);
-        }
-                
-        dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
-        linesWritten = dt.Rows.Count;
+                    sw.Start();
+                    da.Fill(dt);
+                }
 
-        var destinationDb = GetDestinationDatabase(listener);
-        var tbl = destinationDb.ExpectTable(dt.TableName);
-                
-        if(tbl.Exists())
-            tbl.Drop();
+                dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
+                linesWritten = dt.Rows.Count;
+
+                var destinationDb = GetDestinationDatabase(listener);
+                var tbl = destinationDb.ExpectTable(dt.TableName);
+
+                if(tbl.Exists())
+                    tbl.Drop();
 
         destinationDb.CreateTable(dt.TableName,dt);
         destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
@@ -493,7 +493,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         var databaseName = GetDatabaseName();
 
-        var discoveredServer = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
+        var discoveredServer = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
 
         var db = discoveredServer.ExpectDatabase(databaseName);
         if(!db.Exists())
@@ -580,7 +580,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         try
         {
-            var server = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
+            var server = DataAccessPortal.ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
             var database = _destinationDatabase = server.ExpectDatabase(GetDatabaseName());
 
             if (database.Exists())

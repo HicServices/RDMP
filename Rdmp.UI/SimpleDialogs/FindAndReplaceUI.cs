@@ -102,7 +102,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
     {
         if( e?.RowObject == null)
             return;
-            
+
         var node = (FindAndReplaceNode)e.RowObject;
         node.SetValue(e.NewValue);
         Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)node.Instance));
@@ -136,10 +136,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
             olvAllObjects.ClearObjects();
             olvAllObjects.SuspendLayout();
 
-            if (sender == rbLocationsAttribute)
-                olvAllObjects.AddObjects(_locationNodes);
-            else
-                olvAllObjects.AddObjects(_sqlNodes);
+            olvAllObjects.AddObjects(sender == rbLocationsAttribute ? _locationNodes : _sqlNodes);
 
             olvAllObjects.ResumeLayout();
         }

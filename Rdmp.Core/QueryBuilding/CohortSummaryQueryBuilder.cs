@@ -45,7 +45,7 @@ public class CohortSummaryQueryBuilder
             
         if(summary.Equals(cohort))
             throw new ArgumentException("Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers");
-            
+
         ThrowIfNotValidGraph(summary);
 
         try
@@ -163,7 +163,7 @@ public class CohortSummaryQueryBuilder
                 throw new Exception(
                     $"Catalogue behind {_summary} must have exactly 1 IsExtractionIdentifier column but it had {extractionIdentifierColumn.Length}");
 
-            helper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null,_globals));
+            CohortQueryBuilderHelper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null,_globals));
         }
 
         //if the cohort has no WHERE SQL
@@ -266,7 +266,7 @@ public class CohortSummaryQueryBuilder
                 $"Expected cohort {cohort} to have exactly 1 column which would be an IsExtractionIdentifier");
     }
 
-    private void ThrowIfNotValidGraph(AggregateConfiguration summary)
+    private static void ThrowIfNotValidGraph(AggregateConfiguration summary)
     {
         if (summary == null)
             throw new ArgumentException("summary was null in CohortSummaryQueryBuilder constructor", nameof(summary));

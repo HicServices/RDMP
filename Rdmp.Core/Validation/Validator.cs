@@ -56,7 +56,7 @@ public class Validator
     public Validator()
     {
         ItemValidators = new List<ItemValidator>();
-            
+
     }
 
     /// <summary>
@@ -114,8 +114,8 @@ public class Validator
 
             return false;
         }
-            
-            
+
+
         return ItemValidators.Remove(toRemove);
     }
 
@@ -149,7 +149,7 @@ public class Validator
 
         if (result != null)
             worstConsequence = currentResults.ProcessException(result);
-            
+
         return currentResults;
     }
 
@@ -196,7 +196,7 @@ public class Validator
     public string SaveToXml(bool indent = true)
     {
         var sb = new StringBuilder();
-            
+
         InitializeSerializer();
 
         using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = indent }))
@@ -256,14 +256,14 @@ public class Validator
     public static string[] GetPrimaryConstraintNames()
     {
         var primaryConstraintTypes = FindSubClassesOf<PrimaryConstraint>();
-            
+
         return primaryConstraintTypes.Select(t => t.Name.ToLower()).ToArray();
     }
 
     public static string[] GetSecondaryConstraintNames()
     {
         var secondaryConstraintTypes = FindSubClassesOf<SecondaryConstraint>().Where(t => t.IsAbstract == false);
-            
+
         return secondaryConstraintTypes.Select(t => t.Name.ToLower()).ToArray();
     }
 
@@ -290,7 +290,7 @@ public class Validator
     {
         var i = new ItemValidator();
         AddItemValidator(i, fieldToValidate, type);
-            
+
         return i;
     }
 
@@ -365,10 +365,8 @@ public class Validator
 
         var o = _domainObject;
 
-        if (o is DbDataReader)
+        if (o is DbDataReader reader)
         {
-            var reader = (DbDataReader)o;
-
             names = new string[reader.FieldCount];
             values = new object[reader.FieldCount];
 
@@ -383,10 +381,8 @@ public class Validator
             }
         }
 
-        if (o is DataRow)
+        if (o is DataRow row)
         {
-            var row = (DataRow) o;
-
             names = new string[row.Table.Columns.Count];
             values = new object[row.Table.Columns.Count];
 
@@ -458,10 +454,10 @@ public class Validator
         return eList.Count > 0 ? new ValidationFailure("There are validation errors.", eList) : null;
     }
 
-    private Dictionary<string, object> DomainObjectPropertiesToDictionary(object o)
+    private static Dictionary<string, object> DomainObjectPropertiesToDictionary(object o)
     {
         var toReturn = new Dictionary<string, object>();
-            
+
         foreach(var prop in o.GetType().GetProperties())
             toReturn.Add(prop.Name, prop.GetValue(o));
 

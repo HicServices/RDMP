@@ -78,7 +78,7 @@ public class ExtractTableVerbatim
         _server = server;
     }
 
-    private string GetDefaultDateTimeFormat()
+    private static string GetDefaultDateTimeFormat()
     {
         return "yyyy-MM-dd hh:mm:ss";
     }
@@ -214,7 +214,7 @@ public class ExtractTableVerbatim
     public static void ExtractDataToFile(IViewSQLAndResultsCollection collection, FileInfo toFile, DataAccessContext context = DataAccessContext.InternalDataProcessing)
     {
         var point = collection.GetDataAccessPoint();
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(point,context);
+        var db = DataAccessPortal.ExpectDatabase(point,context);
 
         if(!toFile.Directory.Exists)
         {

@@ -56,7 +56,7 @@ public class CohortQueryBuilderResult
     public CacheUsage CacheUsageDecision { get; private set; }
 
     private List<CohortQueryBuilderDependency> _dependencies = new();
-    private bool _alreadyBuilt;
+    private bool _alreadyBuilt = false;
 
     public IReadOnlyCollection<CohortQueryBuilderDependency> Dependencies => _dependencies;
 
@@ -226,7 +226,7 @@ public class CohortQueryBuilderResult
         Dictionary<CohortQueryBuilderDependency, string> sqlDictionary, int tabs)
     {
         var sql = "";
-            
+
         //Things we need to output
         var toWriteOut = container.GetOrderedContents().Where(IsEnabled).ToArray();
 
@@ -372,7 +372,7 @@ public class CohortQueryBuilderResult
             {
                 throw new Exception($"No PluginCohortCompilers claimed to support '{cohortSet}' in their ShouldRun method");
             }
-        }    
+        }
 
         var join = ChildProvider.AllJoinUses.Where(j => j.AggregateConfiguration_ID == cohortSet.ID).ToArray();
 
@@ -483,8 +483,8 @@ public class CohortQueryBuilderResult
             
         _alreadyBuilt = true;
     }
-
-    public string TabIn(string str, int numberOfTabs)
+        
+    public static string TabIn(string str, int numberOfTabs)
     {
         if (string.IsNullOrWhiteSpace(str))
             return str;

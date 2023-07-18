@@ -71,7 +71,7 @@ public class CheckColumnProvider
                     checkResultsDictionary.Add(checkable, notifier.GetWorst());
             }
         });
-            
+
         EnsureChecksColumnVisible();
         checkingTask.ContinueWith(
             //now load images to UI
@@ -120,8 +120,8 @@ public class CheckColumnProvider
 
         lock (ocheckResultsDictionaryLock)
         {
-            if (checkResultsDictionary.TryGetValue(checkable, out var image))
-                return _iconProvider.GetImage(image).ImageToBitmap();
+            if (checkResultsDictionary.TryGetValue(checkable, out var value))
+                return _iconProvider.GetImage(value).ImageToBitmap();
 
         }
         //not been checked yet

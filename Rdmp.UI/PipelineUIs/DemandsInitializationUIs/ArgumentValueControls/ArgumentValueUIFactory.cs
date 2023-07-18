@@ -135,7 +135,7 @@ public class ArgumentValueUIFactory
         return new ArgumentValueComboBoxUI(_activator,array);
     }
 
-    private IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
+    private static IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
         if(parent is ProcessTask pt)
             return pt.GetTableInfos();
@@ -143,15 +143,15 @@ public class ArgumentValueUIFactory
         return parent is LoadMetadata lmd ? lmd.GetDistinctTableInfoList(true) : (IEnumerable<TableInfo>)repository.GetAllObjects<TableInfo>();
     }
 
-
-    private IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
+        
+    private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
     {
         return parent is ProcessTask || parent is LoadMetadata
             ? GetTableInfosInScope(repository,parent).SelectMany(ti => ti.ColumnInfos)
             : repository.GetAllObjects<ColumnInfo>();
     }
-
-    private IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
+        
+    private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
         return parent is ProcessTask || parent is LoadMetadata
             ? GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns)
@@ -164,7 +164,7 @@ public class ArgumentValueUIFactory
     /// </summary>
     /// <param name="argsType"></param>
     /// <returns></returns>
-    public bool CanHandleInvalidStringData(Type argsType)
+    public static bool CanHandleInvalidStringData(Type argsType)
     {
         return argsType.IsValueType && !typeof(bool).IsAssignableFrom(argsType)&& !typeof(Enum).IsAssignableFrom(argsType);
     }

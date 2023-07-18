@@ -65,9 +65,9 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
             var obj = _auditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
             return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;
         }
-                
 
-        return null;   
+
+        return null;
     }
 
     private void BeforeSorting(object sender, BeforeSortingEventArgs e)
@@ -154,7 +154,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
     private void lbCohortDatabaseTable_SelectedIndexChanged(object sender, EventArgs e)
     {
-            
+
     }
 
     public event SelectedCohortChangedHandler SelectedCohortChanged;
@@ -218,7 +218,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         }
 
         var matchingNode = lbCohortDatabaseTable.Objects.Cast<ExtractableCohortDescription>().SingleOrDefault(c => c.Cohort.ID == toSelect.ID);
-            
+
         lbCohortDatabaseTable.SelectedObject = matchingNode;
     }
 

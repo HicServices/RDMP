@@ -39,7 +39,7 @@ public class ExecuteCommandMoveCohortAggregateContainerIntoSubContainer : BasicC
     public override void Execute()
     {
         base.Execute();
-            
+
         var cic = _sourceCohortAggregateContainer.AggregateContainer.GetCohortIdentificationConfiguration();
         var srcContainer = _sourceCohortAggregateContainer.AggregateContainer;
         srcContainer.MakeIntoAnOrphan();

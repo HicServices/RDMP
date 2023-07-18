@@ -56,7 +56,7 @@ public partial class ArgumentCollectionUI : UserControl
         _parent = parent;
         _argumentsAreFor = argumentsAreForUnderlyingType;
         _activator = activator;
-            
+
         var typeLoadable = !(_argumentsAreFor == null);
 
         lblTypeUnloadable.Visible = !typeLoadable;
@@ -73,7 +73,7 @@ public partial class ArgumentCollectionUI : UserControl
             lblClassName.Text = UsefulStuff.PascalCaseStringToHumanReadable(_argumentsAreFor.Name);
 
         helpIcon1.Left = lblClassName.Right;
-            
+
         if (_argumentsAreFor != null)
         {
             var summary = catalogueRepository.CommentStore.GetTypeDocumentationIfExists(argumentsAreForUnderlyingType);
@@ -91,7 +91,7 @@ public partial class ArgumentCollectionUI : UserControl
     private void RefreshArgumentList()
     {
         var argumentFactory = new ArgumentFactory();
-        DemandDictionary = argumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
+        DemandDictionary = ArgumentFactory.GetDemandDictionary(_parent, _argumentsAreFor);
 
         lblNoArguments.Visible = !DemandDictionary.Any();
         pArguments.Visible = DemandDictionary.Any();
@@ -103,7 +103,7 @@ public partial class ArgumentCollectionUI : UserControl
         pArguments.SuspendLayout();
 
         float maxArgNameWidth = 0;
-            
+
         if(DemandDictionary.Any())
         {
             var g = CreateGraphics();
@@ -121,7 +121,7 @@ public partial class ArgumentCollectionUI : UserControl
     }
 
 
-    private Label GetLabelHeader(string caption)
+    private static Label GetLabelHeader(string caption)
     {
         var label = new Label
         {
@@ -170,17 +170,13 @@ public partial class ArgumentCollectionUI : UserControl
         }
         catch (Exception e)
         {
-
             //add the text value value and report the error
-            if(_valueUisFactory.CanHandleInvalidStringData(args.Type))
-                args.InitialValue = argument.Value;
-            else
-                args.InitialValue = null;
+            args.InitialValue = ArgumentValueUIFactory.CanHandleInvalidStringData(args.Type) ? argument.Value : null;
 
             ragSmiley.Fatal(e);
         }
 
-            
+
         args.Required = required;
         args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
         args.Setter = v =>
@@ -239,7 +235,7 @@ public partial class ArgumentCollectionUI : UserControl
         p.BringToFront();
     }
 
-    private string GetSystemTypeName(Type type)
+    private static string GetSystemTypeName(Type type)
     {
         return typeof(Enum).IsAssignableFrom(type) ? "Enum" : type?.Name;
     }

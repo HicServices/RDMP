@@ -81,7 +81,7 @@ public partial class TimePeriodicityChart : RDMPUserControl,IDataQualityReportin
 
 
         if (dt.Rows.Count != 0)
-            _chartLookAndFeelSetter.PopulateYearMonthChart(chart1, dt, "Data Quality");
+            ChartLookAndFeelSetter.PopulateYearMonthChart(chart1, dt, "Data Quality");
             
         chart1.DataBind();
         chart1.Visible = true;

@@ -16,7 +16,7 @@ internal class CommentStoreTests
     public void Test_CommentStoreXmlDoc_Basic()
     {
         var store = new CommentStore();
-            
+
         var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
@@ -37,7 +37,7 @@ internal class CommentStoreTests
     public void Test_CommentStoreXmlDoc_OnePara()
     {
         var store = new CommentStore();
-            
+
         var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
@@ -60,7 +60,7 @@ internal class CommentStoreTests
     public void Test_CommentStoreXmlDoc_TwoPara()
     {
         var store = new CommentStore();
-            
+
         var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
@@ -88,7 +88,7 @@ this is next para"
     public void Test_CommentStoreXmlDoc_EmptyElements()
     {
         var store = new CommentStore();
-            
+
         var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
@@ -128,7 +128,7 @@ this is next para"
     public void Test_CommentStoreXmlDoc_TwoParaBothFormatted()
     {
         var store = new CommentStore();
-            
+
         var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
@@ -158,7 +158,7 @@ this is next para"
     public void Test_CommentStoreXmlDoc_WithCrefAndTwoPara()
     {
         var store = new CommentStore();
-            
+
         var doc = new XmlDocument();
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">

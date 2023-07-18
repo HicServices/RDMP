@@ -64,12 +64,12 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         base.Execute();
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
-        var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(col));
+        var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(col));
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)
             return;
-            
+
         var m = new MemoryCatalogueRepository();
         var fakeCatalogue = new Catalogue(m, tbl.GetFullyQualifiedName());
         var fakeCatalogueItem = new CatalogueItem(m, fakeCatalogue, col.GetRuntimeName());

@@ -56,6 +56,9 @@ public class ExecuteCommandDescribe:BasicCommandExecution
                 .FirstOrDefault(t=>HasCommandNameOrAlias(t,picker[0].RawValue));
 
 
+                .FirstOrDefault(t=>HasCommandNameOrAlias(t,picker[0].RawValue));
+                
+                    
             if(_nonDatabaseObjectToDescribe == null)
                 SetImpossible("Did not recognise parameter as a valid command");
         }
@@ -175,7 +178,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         PopulateBasicCommandInfo(sb,commandType);
 
         var dynamicCtorAttribute = commandCtor?.GetCustomAttribute<UseWithCommandLineAttribute>();
-            
+
         //it is a basic command, one that expects a fixed number of proper objects
         var sbParameters = new StringBuilder();
         sbParameters.AppendLine();
@@ -250,7 +253,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
     }
 
-    private bool ShowSyntax(string title, StringBuilder sbSyntaxes, ParameterInfo[] parameters, Func<ParameterInfo, bool> selector, params PickObjectBase[] pickers)
+    private static bool ShowSyntax(string title, StringBuilder sbSyntaxes, ParameterInfo[] parameters, Func<ParameterInfo, bool> selector, params PickObjectBase[] pickers)
     {
         if(parameters.Any(selector))
         {
@@ -314,7 +317,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
         return $"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}";
     }
-
+        
     private static string Wrap(string longString, int width, int indent)
     {
         var words = longString.Split(' ');
@@ -357,7 +360,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
         {
             sb.AppendLine($"Aliases:{string.Join(',', aliases.Select(a => a.Name).ToArray())}");
         }
-                
+
         var helpText = help.GetTypeDocumentationIfExists(commandType);
 
         if(helpText != null)

@@ -65,7 +65,7 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
     {
         if(_keyword == null)
             return;
-            
+
         var type = (DatabaseType)ddDatabaseType.SelectedValue;
         pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type).ImageToBitmap();
     }

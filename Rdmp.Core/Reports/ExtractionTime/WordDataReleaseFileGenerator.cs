@@ -53,10 +53,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         FileInfo f;
 
-        if (string.IsNullOrWhiteSpace(saveAsFilename))
-            f = GetUniqueFilenameInWorkArea("ReleaseDocument");
-        else
-            f = new FileInfo(saveAsFilename);
+        f = string.IsNullOrWhiteSpace(saveAsFilename) ? GetUniqueFilenameInWorkArea("ReleaseDocument") : new FileInfo(saveAsFilename);
 
         // Create an instance of Word  and make it visible.=
         using var document = GetNewDocFile(f);
@@ -98,7 +95,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             requiredRows++;
         if (hasTicket)
             requiredRows++;
-            
+
         var table = InsertTable(document, requiredRows, 2);
 
         if(hasTicket)
@@ -142,7 +139,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     private void CreateCohortDetailsTable(XWPFDocument document)
     {
         var table = InsertTable(document, 2, 4);
-            
+
         var tableLine = 0;
 
         SetTableCell(table,tableLine, 0, "Version");
@@ -150,7 +147,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         SetTableCell(table,tableLine, 2, "Date Extracted");
         SetTableCell(table,tableLine, 3, "Unique Individuals");
         tableLine++;
-            
+
         SetTableCell(table,tableLine, 0, Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
         SetTableCell(table,tableLine, 1, $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})");//description fetched from remote table
 
@@ -162,7 +159,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     private void CreateFileSummary(XWPFDocument document)
     {
         var table = InsertTable(document, ExtractionResults.Length + 1, 5);
-            
+
         var tableLine = 0;
 
         SetTableCell(table,tableLine, 0, "Data Requirement");
@@ -183,7 +180,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             SetTableCell(table,tableLine, 4,result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
             tableLine++;
         }
-           
+
     }
 
     private string GetFileName(ICumulativeExtractionResults result)

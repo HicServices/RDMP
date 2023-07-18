@@ -303,7 +303,7 @@ e.g. /$i/$a")]
     {
         if(string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern) || request is not IExtractDatasetCommand cmd)
             return request.GetExtractionDirectory();
-            
+
         var cata = cmd.SelectedDataSets.ExtractableDataSet.Catalogue;
 
         if (ExtractionSubdirectoryPattern.Contains("$a") && string.IsNullOrWhiteSpace(cata.Acronym))
@@ -348,9 +348,9 @@ e.g. /$i/$a")]
             tableLoadInfo.CloseAndArchive();
 
             //audit in cumulative extraction results (determines release-ability of artifacts).
-            if (_request is ExtractDatasetCommand)
+            if (_request is ExtractDatasetCommand command)
             {
-                var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(
                     $"SELECT * FROM {lookup.TableInfo.Name}", lookup.TableInfo);
                 supplementalResult.CompleteAudit(GetType(), destinationDescription, linesWritten,false,false);
@@ -384,9 +384,9 @@ e.g. /$i/$a")]
         try
         {
             var outputPath = fetcher.ExtractToDirectory(directory);
-            if (_request is ExtractDatasetCommand)
+            if (_request is ExtractDatasetCommand command)
             {
-                var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
                 supplementalResult.CompleteAudit(GetType(), outputPath, 0,false , false);
             }
@@ -426,7 +426,7 @@ e.g. /$i/$a")]
             var target = Path.Combine(directory.FullName, $"{sql.Name}.csv");
             var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", target, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
 
-            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten,out var description);
+            TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out var sqlLinesWritten, out var description);
 
             sw.Stop();
 
@@ -434,9 +434,9 @@ e.g. /$i/$a")]
             tableLoadInfo.Inserts = sqlLinesWritten;
             tableLoadInfo.CloseAndArchive();
 
-            if (_request is ExtractDatasetCommand)
+            if (_request is ExtractDatasetCommand command)
             {
-                var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
+                var result = command.CumulativeExtractionResults;
                 var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
                 supplementalResult.CompleteAudit(GetType(),description , sqlLinesWritten, false,false);
             }

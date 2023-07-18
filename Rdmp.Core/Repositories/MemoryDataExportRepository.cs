@@ -47,7 +47,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
     #region IDataExportPropertyManager
 
     protected Dictionary<DataExportProperty,string>  PropertiesDictionary = new();
-
+        
     public virtual string GetValue(DataExportProperty property)
     {
         return PropertiesDictionary.TryGetValue(property, out var value) ? value : null;
@@ -63,7 +63,8 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository,IDataExportR
 
     #region IExtractableDataSetPackageManager
 
-    protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } = new ();
+    protected Dictionary<IExtractableDataSetPackage,HashSet<IExtractableDataSet>> PackageDictionary { get; set; } =
+        new Dictionary<IExtractableDataSetPackage, HashSet<IExtractableDataSet>>();
 
     public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
     {

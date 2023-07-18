@@ -50,7 +50,7 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
         //Live can have multiple databases (for lookups)
         if (_bubble == LoadBubble.Live)
         {
-            var servers = loadTables.Select(t => t.Server).Distinct().ToArray();
+            var servers = loadTables.Select(static t => t.Server).Distinct().ToArray();
             if (servers.Length > 1)
             {
                 _description = $"Ambiguous LIVE Servers:{string.Join(",", servers)}";
@@ -99,7 +99,8 @@ public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((LoadDiagramServerNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LoadDiagramServerNode) obj);
     }
 
     public override int GetHashCode()

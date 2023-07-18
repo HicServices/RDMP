@@ -40,7 +40,7 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
         var db = GetCleanedServer(dbType);
 
         var tbl = db.CreateTable("Fish",dt);
-            
+
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bob.sql"));
 
         File.WriteAllText(f.FullName,@"UPDATE Fish Set Lawl = 1");
@@ -74,7 +74,7 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var tbl = db.CreateTable("Fish", dt);
 
-        Import(tbl,out var ti,out var cols);
+        Import(tbl,out var ti, out var cols);
 
         var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
             
@@ -95,7 +95,7 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
             x.RegularTablesToLoad == new List<ITableInfo> {ti} &&
             x.LookupTablesToLoad == new List<ITableInfo>() &&
             x.Configuration == configuration);
-                                  
+
         var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(()=>task.Run(job, new GracefulCancellationToken()));
         StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.Message);
 
@@ -114,7 +114,7 @@ internal class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
 
         var tbl = db.CreateTable("Fish", dt);
 
-        Import(tbl,out var ti,out var cols);
+        Import(tbl,out var ti, out var cols);
 
         var sql = @"UPDATE {T:0} Set {C:0} = 1";
 

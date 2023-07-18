@@ -99,7 +99,7 @@ public class AllKeywordsDescribedTest :DatabaseTests
             
     }
 
-    private IEnumerable<string> GetForeignKeys(DiscoveredServer server)
+    private static IEnumerable<string> GetForeignKeys(DiscoveredServer server)
     {
         using var con = server.GetConnection();
         con.Open();
@@ -109,7 +109,7 @@ public class AllKeywordsDescribedTest :DatabaseTests
             yield return (string)r["name"];
     }
 
-    private IEnumerable<string> GetIndexes(DiscoveredServer server)
+    private static IEnumerable<string> GetIndexes(DiscoveredServer server)
     {
         using var con = server.GetConnection();
         con.Open();

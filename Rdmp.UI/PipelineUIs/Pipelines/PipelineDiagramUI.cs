@@ -38,7 +38,7 @@ public partial class PipelineDiagramUI : UserControl
     public bool AllowReOrdering { get; set; }
 
     private RAGSmiley pipelineSmiley = new();
-
+        
     public IPipelineComponent SelectedComponent;
     public event PipelineComponentSelectedHandler SelectedComponentChanged;
 
@@ -226,7 +226,7 @@ public partial class PipelineDiagramUI : UserControl
     private void AddPipelineComponent(IPipelineComponent toRealize, PipelineComponentRole role)
     {
         //create the pipeline realization (might fail
-        var value = _pipelineFactory.TryCreateComponent(toRealize, out var exConstruction);
+        var value = DataFlowPipelineEngineFactory.TryCreateComponent(toRealize, out var exConstruction);
 
         if (role != PipelineComponentRole.Source)
             AddDividerIfReorderingAvailable();
@@ -276,7 +276,6 @@ public partial class PipelineDiagramUI : UserControl
         divider.DragDrop += divider_DragDrop;
         flpPipelineDiagram.Controls.Add(divider);
     }
-
 
     private void component_Selected(object sender, IPipelineComponent selected)
     {
@@ -355,7 +354,7 @@ public partial class PipelineDiagramUI : UserControl
         //if its something else entirely
         if (!arg.Data.GetDataPresent(typeof(PipelineComponentVisualisation)))
             return DragDropEffects.None;
-            
+
         //they are dragging something already on the control (make sure it isn't a source/destination)
         var vis = (PipelineComponentVisualisation)arg.Data.GetData(typeof(PipelineComponentVisualisation));
 
@@ -479,7 +478,7 @@ public partial class PipelineDiagramUI : UserControl
         return toReturn;
     }
 
-    private AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
+    private static AdvertisedPipelineComponentTypeUnderContext GetAdvertisedObjectFromDragOperation(DragEventArgs e)
     {
         return e.Data is OLVDataObject dataObject && dataObject.ModelObjects.Count == 1 &&
             dataObject.ModelObjects[0] is AdvertisedPipelineComponentTypeUnderContext context

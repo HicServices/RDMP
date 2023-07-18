@@ -41,6 +41,8 @@ public partial class RDMPMainForm : RDMPForm
     private readonly ITheme _theme;
     private IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
+    private IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
+
     /// <summary>
     /// True while the main form is loading (e.g. from a persistence file)
     /// </summary>
@@ -260,16 +262,16 @@ public partial class RDMPMainForm : RDMPForm
     {
         try
         {
-            var toolbox = _persistenceFactory.ShouldCreateCollection(persiststring);
+            var toolbox = PersistenceDecisionFactory.ShouldCreateCollection(persiststring);
             if (toolbox.HasValue)
             {
                 var toolboxInstance = _windowManager.Create(toolbox.Value);
                 return toolboxInstance;
             }
 
-            var instruction = _persistenceFactory.ShouldCreateBasicControl(persiststring,RepositoryLocator) ??
-                              _persistenceFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
-                              _persistenceFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
+            var instruction = PersistenceDecisionFactory.ShouldCreateBasicControl(persiststring,RepositoryLocator) ??
+                              PersistenceDecisionFactory.ShouldCreateSingleObjectControl(persiststring,RepositoryLocator) ??
+                              PersistenceDecisionFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
 
             if (instruction != null)
                 return _windowManager.ActivateItems.Activate(instruction,_windowManager.ActivateItems);

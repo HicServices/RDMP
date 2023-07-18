@@ -63,13 +63,13 @@ public class HICDataLoadFactory
         var factory = new RuntimeTaskPackager(processTasks.Where(p => !p.IsDisabled), loadArgsDictionary.LoadArgs, _cataloguesToLoad, _repository);
 
         var getFiles = new LoadFiles(factory.GetRuntimeTasksForStage(LoadStage.GetFiles));
-            
+
         var mounting = new PopulateRAW(factory.GetRuntimeTasksForStage(LoadStage.Mounting), _databaseConfiguration);
-            
+
         var adjustRaw = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustRaw, "Adjust RAW");
 
         var migrateToStaging = new MigrateRAWToStaging(_databaseConfiguration, _loadConfigurationFlags);
-            
+
         var adjustStaging = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustStaging, "Adjust Staging");
 
         var migrateStagingToLive = new MigrateStagingToLive(_databaseConfiguration,_loadConfigurationFlags);
@@ -77,7 +77,7 @@ public class HICDataLoadFactory
         var postLoad = factory.CreateCompositeDataLoadComponentFor(LoadStage.PostLoad, "Post Load");
 
         var archiveFiles = new ArchiveFiles(_loadConfigurationFlags);
-                    
+
         var loadStagingDatabase = new CompositeDataLoadComponent(new List<IDataLoadComponent>
         {
             mounting,
@@ -92,7 +92,7 @@ public class HICDataLoadFactory
             migrateStagingToLive,
             postLoad
         });
-            
+
         var components = new List<IDataLoadComponent>
         {
             getFiles,

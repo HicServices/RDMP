@@ -74,7 +74,7 @@ public class PluginClassTests:UnitTests
         var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
             $"Blah2.{PackPluginRunner.PluginPackageSuffix}"));
         File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
-            
+
         var fi3 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
             $"Blah3.{PackPluginRunner.PluginPackageSuffix}"));
         File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
@@ -82,11 +82,11 @@ public class PluginClassTests:UnitTests
         var p = new Core.Curation.Data.Plugin(Repository, fi,new Version(1,1,1),new Version(1,1,1,1));
         var lma = new LoadModuleAssembly(Repository, fi2, p);
         var lma2 = new LoadModuleAssembly(Repository, fi3, p);
-            
+
         //gather dependencies of the plugin (plugin[0] + lma[1])
         var g = new Gatherer(RepositoryLocator);
         var sm = new ShareManager(RepositoryLocator);
-        var list = g.GatherDependencies(p).ToShareDefinitionWithChildren(sm);
+        var list = Gatherer.GatherDependencies(p).ToShareDefinitionWithChildren(sm);
 
         //Delete export definitions
         foreach (var e in Repository.GetAllObjects<ObjectExport>())

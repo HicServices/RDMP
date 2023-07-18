@@ -104,7 +104,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             var countdown = Math.Max(5000,Timeout*1000);
             while(rootContainerTask.State == CompilationState.Executing && countdown>0)
             {
-                Task.Delay(100).Wait();
+                Thread.Sleep(100);
                 countdown -=100;
             }
         }
@@ -228,7 +228,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Could not build extraction SQL for {_cohortIdentificationConfiguration}", CheckResult.Fail,e));
         }
-            
+
     }
 
 

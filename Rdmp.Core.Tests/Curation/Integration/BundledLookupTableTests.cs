@@ -20,7 +20,7 @@ public class BundledLookupTableTests : UnitTests
     {
         var l = WhenIHaveA<Lookup>();
         var t =l.PrimaryKey.TableInfo;
-            
+
         var bundle = new BundledLookupTable(t);
         Assert.AreEqual("select * from [MyDb]..[ChildTable]", bundle.GetDataTableFetchSql());
     }

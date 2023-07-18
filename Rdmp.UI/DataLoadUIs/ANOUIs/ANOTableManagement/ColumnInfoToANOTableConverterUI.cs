@@ -190,18 +190,18 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
             preview.Columns.Add(_columnInfo.GetRuntimeName(LoadStage.PostLoad));
             preview.Columns.Add(ANOTable.ANOPrefix + _columnInfo.GetRuntimeName(LoadStage.PostLoad));
 
-            var server = DataAccessPortal.GetInstance().ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
+            var server = DataAccessPortal.ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
 
             using var con = server.GetConnection();
             con.Open();
 
             lblPreviewDataIsFictional.Visible = false;
 
-            var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
-            qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
-            qb.TopX = 10;
+                var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
+                qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
+                qb.TopX = 10;
 
-            var rowsRead = false;
+                var rowsRead = false;
 
             using (var cmd = server.GetCommand(qb.SQL, con))
             {
@@ -302,7 +302,7 @@ public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConve
         if(ddExternalDatabaseServer.SelectedItem is not ExternalDatabaseServer server)
             return;
 
-        ANOTransformer.ConfirmDependencies(DataAccessPortal.GetInstance().ExpectDatabase(server, DataAccessContext.DataLoad), checksUI1);
+        ANOTransformer.ConfirmDependencies(DataAccessPortal.ExpectDatabase(server, DataAccessContext.DataLoad), checksUI1);
     }
 
     private void ddANOTables_SelectedIndexChanged(object sender, EventArgs e)

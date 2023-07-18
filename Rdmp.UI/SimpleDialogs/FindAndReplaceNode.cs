@@ -51,7 +51,7 @@ internal class FindAndReplaceNode:IMasqueradeAs
 
     public void FindAndReplace(string find, string replace, bool ignoreCase)
     {
-        var current=_currentValue.ToString();
+        var current =_currentValue.ToString();
         if(current?.Contains(find,ignoreCase?StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture)==true)
             SetValue(current.Replace(find, replace,ignoreCase ? StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture));
     }
@@ -65,7 +65,8 @@ internal class FindAndReplaceNode:IMasqueradeAs
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((FindAndReplaceNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((FindAndReplaceNode) obj);
     }
 
     public override int GetHashCode()

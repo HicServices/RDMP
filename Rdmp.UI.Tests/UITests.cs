@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -113,7 +114,7 @@ public class UITests : UnitTests
     /// </summary>
     /// <param name="cmd"></param>
     /// <param name="expectedReason">The reason it should be impossible - uses StringAssert.Contains</param>
-    protected void AssertCommandIsImpossible(IAtomicCommand cmd, string expectedReason)
+    protected static void AssertCommandIsImpossible(IAtomicCommand cmd, string expectedReason)
     {
         Assert.IsTrue(cmd.IsImpossible);
         StringAssert.Contains(expectedReason, cmd.ReasonCommandImpossible);
@@ -122,7 +123,7 @@ public class UITests : UnitTests
     /// Asserts that the given command is not marked IsImpossible
     /// </summary>
     /// <param name="cmd"></param>
-    protected void AssertCommandIsPossible(IAtomicCommand cmd)
+    protected static void AssertCommandIsPossible(IAtomicCommand cmd)
     {
         //if it isn't marked impossible
         if(!cmd.IsImpossible)
@@ -248,7 +249,7 @@ public class UITests : UnitTests
         }
     }
 
-    private void AssertFailedCheck(ToMemoryCheckNotifier checkResults,string expectedContainsText)
+    private static void AssertFailedCheck(ToMemoryCheckNotifier checkResults,string expectedContainsText)
     {
         //there must have been something checked that failed with the provided message
         Assert.IsTrue(checkResults.Messages.Any(m =>
@@ -260,55 +261,35 @@ public class UITests : UnitTests
     private List<string> GetAllErrorProviderErrorsShown()
     {
         var controls = GetControl<Control>().ToArray();
-        var errorProviders =
-            //get all controls with ErrorProvider fields
-            controls.SelectMany(GetErrorProviders)
-                //and any we registered through the BinderWithErrorProviderFactory
-                .Union(ItemActivator.Results.RegisteredRules.Select(r => r.ErrorProvider))
-                .Distinct()
-                .ToList();
-
-        //get the error messages that have been shown from any of these
-
-        return errorProviders.SelectMany(GetErrors).ToList();
+        var providers = controls.SelectMany(GetErrorProviders)
+            .Union(ItemActivator.Results.RegisteredRules.Select(static r => r.ErrorProvider)).Distinct();
+        var errors=providers.Where(static ep=>ep.HasErrors)
+            .SelectMany(ep => controls.Select(ep.GetError)).Where(static s=>!string.IsNullOrWhiteSpace(s));
+        return errors.ToList();
     }
 
-
-    private static FieldInfo _items;
-    private static IEnumerable<string> GetErrors(ErrorProvider ep)
+    private static readonly ConcurrentDictionary<Type, FieldInfo[]>  ErrorProviderFieldCache =new();
+    private static IEnumerable<ErrorProvider> GetErrorProviders(Control arg)
     {
-        if (!ep.HasErrors) yield break;
-        _items ??= typeof(ErrorProvider).GetField("_items", BindingFlags.NonPublic|BindingFlags.Instance) ?? throw new Exception("ErrorProvider _items field missing?!");
-        var itemsV = _items.GetValue(ep) ?? throw new Exception("EP had missing _items");
-        var itemsValues = _items.FieldType.GetProperty("Values") ?? throw new Exception("No _items.Values");
-        var values = (ICollection)itemsValues.GetValue(itemsV) ?? throw new Exception("No Values");
-        foreach (var iv in values)
-        {
-            var s=iv.GetType().GetField("_error", BindingFlags.NonPublic|BindingFlags.Instance)?.GetValue(iv) as string;
-            if (!string.IsNullOrWhiteSpace(s))
-                yield return s;
-        }
-    }
-
-    private List<ErrorProvider> GetErrorProviders(Control arg)
-    {
-        var errorProviderFields = arg.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType == typeof(ErrorProvider));
-
-        return errorProviderFields.Select(f => f.GetValue(arg)).Where(instance => instance != null).Cast<ErrorProvider>().ToList();
+        var t = arg.GetType();
+        var errorProviderFields = ErrorProviderFieldCache.GetOrAdd(t, static t => t
+            .GetFields(BindingFlags.Instance | BindingFlags.NonPublic)
+            .Where(static f => f.FieldType == typeof(ErrorProvider)).ToArray());
+        return errorProviderFields.Select(f => f.GetValue(arg)).Where(static instance => instance != null).Cast<ErrorProvider>();
     }
 
     /// <summary>
-    /// Returns all controls of type T that are in the currently shown user interface (<see cref="LastUserInterfaceLaunched")
+    /// Returns all controls of type T that are in the currently shown user interface (<see cref="LastUserInterfaceLaunched"/>)
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     protected List<T> GetControl<T>() where T:Control
     {
-        return GetControl<T>(LastUserInterfaceLaunched, new List<T>());
+        return GetControl(LastUserInterfaceLaunched, new List<T>());
     }
 
-    private List<T> GetControl<T>(Control c, List<T> list) where T:Control
+    private static List<T> GetControl<T>(Control c, List<T> list) where T:Control
     {
         if(c is T control)
             list.Add(control);
@@ -409,7 +390,7 @@ public class UITests : UnitTests
         }
     }
 
-    private string ShowCode(Type t, Type uiType)
+    private static string ShowCode(Type t, Type uiType)
     {
         var sb = new StringBuilder();
 

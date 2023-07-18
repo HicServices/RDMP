@@ -256,7 +256,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         if (_selectedFile.Extension.StartsWith(".xls"))
         {
             _context.MustHaveSource = typeof(ExcelDataFlowSource);
-        }   
+        }
 
         var compatiblePipelines = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().Where(_context.IsAllowable).ToArray();
 
@@ -286,7 +286,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             return;
         try
         {
-            var source = factory.CreateSourceIfExists(p);
+            var source = DataFlowPipelineEngineFactory.CreateSourceIfExists(p);
             ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile),new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
             ((ICheckable) source).Check(ragSmileyFile);
         }
@@ -325,7 +325,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             return;
         }
 
-        var source = (IDataFlowSource<DataTable>)GetFactory().CreateSourceIfExists(p);
+        var source = (IDataFlowSource<DataTable>)DataFlowPipelineEngineFactory.CreateSourceIfExists(p);
 
         ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile), new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
             
@@ -418,7 +418,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         }
     }
 
-    private void ConfirmTableDeletion(DiscoveredTable expectTable)
+    private static void ConfirmTableDeletion(DiscoveredTable expectTable)
     {
         if (expectTable.Exists())
         {

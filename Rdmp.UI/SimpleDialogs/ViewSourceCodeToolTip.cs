@@ -104,7 +104,7 @@ internal class ViewSourceCodeToolTip : ToolTip
         }
     }
 
-    private string[] ReadAllLinesCached(string filename)
+    private static string[] ReadAllLinesCached(string filename)
     {
         if(!SourceFileCache.ContainsKey(filename))
         {

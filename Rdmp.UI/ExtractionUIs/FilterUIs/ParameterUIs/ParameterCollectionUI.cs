@@ -57,7 +57,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         olvParameterName.GroupKeyGetter += GroupKeyGetter;
         olvParameters.AboutToCreateGroups +=olvParameters_AboutToCreateGroups;
         olvParameters.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
-            
+
         olvParameterName.ImageGetter += ImageGetter;
         olvParameterName.AspectGetter += ParameterName_AspectGetter;
 
@@ -117,7 +117,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             currentGroup.Header = $"{currentGroup.Header} (current)";
 
         e.Groups = e.Groups.OrderBy(g => g.SortValue).ToList();
-            
+
     }
 
     public void Clear()
@@ -130,7 +130,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         miAddNewParameter.Enabled = Options.CanNewParameters();
 
         olvParameters.ClearObjects();
-            
+
         //add all parameters from all levels
         foreach (ParameterLevel level in Enum.GetValues(typeof (ParameterLevel)))
         {
@@ -161,7 +161,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     {
         if(olvParameters.Objects == null)//there are no parameters
             return;
-            
+
         var parameters = olvParameters.Objects.Cast<ISqlParameter>().ToArray();
         var toDisable = parameters.Where(Options.ShouldBeDisabled);
 
@@ -217,7 +217,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     public void SetUp(ParameterCollectionUIOptions options,IActivateItems activator)
     {
         Options = options;
-            
+
         SetItemActivator(activator);
 
         hiParameters.SetHelpText("Use Case",options.UseCase);
@@ -245,6 +245,9 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void olvParameters_KeyDown(object sender, KeyEventArgs e)
     {
+        // If the key isn't Delete, don't go building a list of things we'd delete then throwing it away!
+        if (e.KeyCode != Keys.Delete) return;
+
         var deletables = olvParameters.SelectedObjects.OfType<IDeleteable>().ToArray();
 
         if (!deletables.Any() || e.KeyCode != Keys.Delete || !Activator.YesNo(
@@ -293,37 +296,32 @@ public partial class ParameterCollectionUI : RDMPUserControl
             return;
         }
 
-        if (e.RowObject is IRevertable revertible)
-        {
-            var changes = revertible.HasLocalChanges();
-
-            if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                revertible.SaveToDatabase();
-
-            //if the name has changed handle renaming
-            if(oldParameterName != null)
-                if (Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
-                {
-                    var owner = parameter.GetOwnerIfAny();
-
-                    if((owner ?? (object)parameter) is DatabaseEntity toRefresh)
-                        Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(toRefresh));
-                }
-
-
-            //anything that was a problem before
-            var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;
-            DisableRelevantObjects();
-            parameterEditorScintillaControl1.RegenerateSQL();
-            UpdateTabVisibility();
-
-            //might not be a problem any more so refresh the icons on them (and everything else)
-            olvParameters.RefreshObjects(problemsBefore.ToList());
-
-        }
-        else
+        if (e.RowObject is not IRevertable revertable)
             throw new NotSupportedException("Why is user editing something that isn't IRevertable?");
-         
+
+        var changes = revertable.HasLocalChanges();
+
+        if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+            revertable.SaveToDatabase();
+
+        //if the name has changed handle renaming
+        if (oldParameterName != null && Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
+        {
+            var owner = parameter.GetOwnerIfAny();
+
+            if ((owner ?? (object)parameter) is DatabaseEntity toRefresh)
+                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(toRefresh));
+        }
+
+
+        //anything that was a problem before
+        var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;
+        DisableRelevantObjects();
+        parameterEditorScintillaControl1.RegenerateSQL();
+        UpdateTabVisibility();
+
+        //might not be a problem any more so refresh the icons on them (and everything else)
+        olvParameters.RefreshObjects(problemsBefore.ToList());
     }
 
     private object GroupKeyGetter(object rowObject)
@@ -395,7 +393,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         return null;
     }
 
-    private object OwnerAspectGetter(object rowobject)
+    private static object OwnerAspectGetter(object rowobject)
     {
         var parameter = (ISqlParameter) rowobject;
         var owner = parameter.GetOwnerIfAny();
@@ -429,7 +427,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         newParameter.Value = param.Value;
         newParameter.Comment = param.Comment;
         newParameter.SaveToDatabase();
-            
+
         Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
         RefreshParametersFromDatabase();
     }

@@ -12,7 +12,7 @@ namespace Rdmp.UI.Menus;
 
 [System.ComponentModel.DesignerCategory("")]
 internal class ExternalCohortTableMenu : RDMPContextMenuStrip
-{
+{        
     public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable): base(args, externalCohortTable)
     {
         if (args.Masquerader is CohortSourceUsedByProjectNode projectOnlyNode)

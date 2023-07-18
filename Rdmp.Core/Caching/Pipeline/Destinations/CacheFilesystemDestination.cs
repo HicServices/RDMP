@@ -57,11 +57,11 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
 
     public abstract void Abort(IDataLoadEventListener listener);
 
-    public void Stop()
+    public static void Stop()
     {
     }
 
-    public void Abort()
+    public static void Abort()
     {
     }
 
@@ -93,9 +93,10 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
 
         // Check CacheLayout creation
         var cacheLayout = CreateCacheLayout();
-        if (cacheLayout == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("The CacheLayout object in CacheFilesystemDestination is not being constructed correctly", CheckResult.Fail));
-        else
-            notifier.OnCheckPerformed(new CheckEventArgs("CacheLayout object in CacheFilesystemDestination is OK", CheckResult.Success));
+        notifier.OnCheckPerformed(cacheLayout == null
+            ? new CheckEventArgs(
+                "The CacheLayout object in CacheFilesystemDestination is not being constructed correctly",
+                CheckResult.Fail)
+            : new CheckEventArgs("CacheLayout object in CacheFilesystemDestination is OK", CheckResult.Success));
     }
 }

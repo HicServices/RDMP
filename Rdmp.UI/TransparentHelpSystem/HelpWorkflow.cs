@@ -78,10 +78,10 @@ public class HelpWorkflow
         }
 
         CurrentStage = stage;
-            
+
         var helpBox = _help.ShowStage(this,CurrentStage);
         helpBox.OptionTaken += () => ShowStage(CurrentStage.OptionDestination);
-            
+
         var t = stage.Await(_cancellationTokenSource.Token);
         t.ContinueWith(r =>
         {

@@ -71,7 +71,7 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
         }
         else
         {
-            var opts = new AggregateBuilderOptionsFactory().Create(aggregate);
+            var opts = AggregateBuilderOptionsFactory.Create(aggregate);
             AggregateDimension match = null;
 
             if (askAtRuntime)

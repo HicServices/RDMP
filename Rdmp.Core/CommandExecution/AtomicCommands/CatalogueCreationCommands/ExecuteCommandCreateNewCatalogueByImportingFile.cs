@@ -135,8 +135,10 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         var engine = args.PipelineEngine;
 
         //todo figure out what it created
-        var dest = engine.DestinationObject as DataTableUploadDestination ?? throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
-        if (string.IsNullOrWhiteSpace(dest.TargetTableName))
+        if(engine.DestinationObject is not DataTableUploadDestination dest)
+            throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
+                        
+        if(string.IsNullOrWhiteSpace(dest.TargetTableName))
             throw new Exception($"Destination of engine failed to populate {dest.TargetTableName}");
 
         var tbl = db.ExpectTable(dest.TargetTableName);

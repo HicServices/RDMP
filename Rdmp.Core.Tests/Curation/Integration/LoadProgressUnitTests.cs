@@ -66,7 +66,7 @@ public class LoadProgressUnitTests : UnitTests
         var strat = stratFactory.Create(lp,ThrowImmediatelyDataLoadEventListener.Quiet);
             
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"LoadProgress_JobFactory_NoDates",true);
-            
+
         var lmd = lp.LoadMetadata;
         lmd.LocationOfFlatFiles = dir.RootPath.FullName;
             
@@ -77,7 +77,7 @@ public class LoadProgressUnitTests : UnitTests
         }
             
         lmd.SaveToDatabase();
-            
+
         var jobFactory = new SingleScheduledJobFactory(lp,strat,999,lp.LoadMetadata,null);
         var job = jobFactory.Create(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, null);
 

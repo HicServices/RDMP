@@ -36,7 +36,7 @@ public class IconOverlayProvider
         //make sure the input image is added to the cache if it is novel
         if (_cache.TryGetValue(key, out var hit))
             return hit;
-            
+
         var clone = GetOverlayNoCache(forImage, overlayKind);
         _cache.TryAdd(key,clone);
 

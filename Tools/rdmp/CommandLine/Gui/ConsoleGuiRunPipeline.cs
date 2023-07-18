@@ -35,7 +35,6 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
 
     private GracefulCancellationTokenSource cancellation;
     private int? exitCode;
-
     private HashSet<IDataLoadEventListener> additionals = new();
     private PipelineRunner runner;
     private PipelineEngineEventArgs successArgs;

@@ -226,7 +226,7 @@ public class ExcelTests
 
         source.PreInitialize(new FlatFileToLoad(_fileLocations[FreakyTestFile]), ThrowImmediatelyDataLoadEventListener.Quiet);
         var dt = source.GetChunk(messages, new GracefulCancellationToken());
-            
+
         var args = messages.EventsReceivedBySender[source];
 
         Console.Write(messages.ToString());
@@ -261,7 +261,7 @@ public class ExcelTests
     {
         var source = new ExcelDataFlowSource();
 
-            
+
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources","BlankBook.xlsx"));
         Assert.IsTrue(fi.Exists);
 
@@ -312,7 +312,7 @@ public class ExcelTests
         var file = prefixWithWorkbookName ?  loc.Directory.GetFiles("Book1_Sheet1.csv").Single(): loc.Directory.GetFiles("Sheet1.csv").Single();
 
         Assert.IsTrue(file.Exists);
-            
+
         var contents = File.ReadAllText(file.FullName);
 
         Assert.AreEqual(

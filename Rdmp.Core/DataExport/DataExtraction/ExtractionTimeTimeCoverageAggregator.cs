@@ -124,8 +124,8 @@ public partial class ExtractionTimeTimeCoverageAggregator
 
                 key = DateTime.ParseExact(valueAsString, "dd/MM/yyyy", null);
             }
-            else if (value is DateTime dateTime)
-                key = dateTime;
+            else if (value is DateTime time)
+                key = time;
             else
                 key = Convert.ToDateTime(value);
         }

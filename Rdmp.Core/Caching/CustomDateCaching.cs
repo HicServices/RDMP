@@ -45,7 +45,7 @@ public class CustomDateCaching
         var requestProvider = startDate == endDate
             ? (ICacheFetchRequestProvider) new SingleDayCacheFetchRequestProvider(initialFetchRequest)
             : new MultiDayCacheFetchRequestProvider(initialFetchRequest, endDate);
-            
+
         var factory = new CachingPipelineUseCase(_cacheProgress, ignorePermissionWindow, requestProvider);
 
         var engine = factory.GetEngine(listener);

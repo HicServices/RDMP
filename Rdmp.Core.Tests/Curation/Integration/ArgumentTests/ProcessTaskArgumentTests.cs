@@ -71,7 +71,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
     {
         var methodName = new StackTrace().GetFrame(0).GetMethod().Name;
         var tableInfoName = $"TableInfoFor_{methodName}";
-        var preLoadDiscardedColumnName = $"PreLoadDiscardedColumnFor_{methodName}"; 
+        var preLoadDiscardedColumnName = $"PreLoadDiscardedColumnFor_{methodName}";
 
         var toCleanup = CatalogueRepository.GetAllObjects<TableInfo>().SingleOrDefault(t => t.Name.Equals(tableInfoName));
         var toCleanupCol = CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>()
@@ -272,7 +272,7 @@ public class ProcessTaskArgumentTests:DatabaseTests
         //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
         var f = new ArgumentFactory();
         Assert.True(
-            f.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
+            ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination)).Any(r => r.ParentPropertyInfo != null));
 
         //new pc should have no arguments
         Assert.That(pc.GetAllArguments(), Is.Empty);

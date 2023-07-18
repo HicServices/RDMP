@@ -45,15 +45,14 @@ public class ImportFilesDataProvider : IPluginDataProvider
         if (string.IsNullOrWhiteSpace(FilePattern))
             notifier.OnCheckPerformed(new CheckEventArgs("No FilePattern has been specified, this should be a pattern that matches files in the remote folder you want to copy files out of e.g. *.*", CheckResult.Fail));
 
-        if (new DirectoryInfo(DirectoryPath).Exists)
-            notifier.OnCheckPerformed(new CheckEventArgs($"Path {DirectoryPath} was found", CheckResult.Success));
-        else
-            notifier.OnCheckPerformed(new CheckEventArgs($"Path {DirectoryPath} was not found",CheckResult.Fail));
+        notifier.OnCheckPerformed(new DirectoryInfo(DirectoryPath).Exists
+            ? new CheckEventArgs($"Path {DirectoryPath} was found", CheckResult.Success)
+            : new CheckEventArgs($"Path {DirectoryPath} was not found", CheckResult.Fail));
     }
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-            
+
     }
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)

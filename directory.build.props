@@ -1,5 +1,6 @@
 <Project>
-   <PropertyGroup>
-   <Version>8.1.0-rc4</Version>
-   </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>11.0</LangVersion>
+    <Version>8.1.0-rc4</Version>
+  </PropertyGroup>
 </Project>

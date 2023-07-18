@@ -107,9 +107,9 @@ public class GovernanceTests:DatabaseTests
         var gov = GetGov();
         gov.Name = "NeverExpires";
 
-        //valid to start with
-        var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex?.Message);
+        //valid to start with 
+        var ex = Assert.Throws<Exception>(()=>gov.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true}));
+        Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex.Message);
 
     }
 
@@ -145,14 +145,13 @@ public class GovernanceTests:DatabaseTests
     public void GovernsSameCatalogueTwice()
     {
         var c = new Catalogue(CatalogueRepository, "GovernedCatalogue");
-            
+
         var gov = GetGov();
         Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);//should be no governanced catalogues for this governancer yet
 
         gov.CreateGovernanceRelationshipTo(c);
         gov.CreateGovernanceRelationshipTo(c);            
     }
-
 
     private List<GovernancePeriod> toCleanup = new();
     private GovernancePeriod GetGov(ICatalogueRepository repo = null)

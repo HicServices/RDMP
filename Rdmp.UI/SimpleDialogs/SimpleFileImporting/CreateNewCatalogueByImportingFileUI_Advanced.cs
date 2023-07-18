@@ -91,10 +91,9 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
 
                 var cata = CatalogueCreatedIfAny = ui.CatalogueCreatedIfAny;
 
-                if (cata != null)
-                    MessageBox.Show($"Catalogue {cata.Name} successfully created");
-                else
-                    MessageBox.Show("User cancelled Catalogue creation, data has been loaded and TableInfo/ColumnInfos exist in Data Catalogue but there will be no Catalogue");
+                MessageBox.Show(cata != null
+                    ? $"Catalogue {cata.Name} successfully created"
+                    : "User cancelled Catalogue creation, data has been loaded and TableInfo/ColumnInfos exist in Data Catalogue but there will be no Catalogue");
 
                 ParentForm.Close();
             }

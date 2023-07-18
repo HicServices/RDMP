@@ -183,7 +183,7 @@ public class JoinHelper
     [Pure]
     private static string AppendSupplementalJoins(string sql, IJoin join, int aliasNumber = -1)
     {
-            
+
         var supplementalJoins = join.GetSupplementalJoins();
 
         if (supplementalJoins != null)

@@ -47,7 +47,7 @@ public partial class ViewSourceCodeDialog : Form
 
         if(filename == null)
             return;
-            
+
         var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
@@ -78,7 +78,7 @@ public partial class ViewSourceCodeDialog : Form
                 if (lineNumber != -1)
                 {
                     QueryEditor.FirstVisibleLine = Math.Max(0, lineNumber - 10);
-                    new ScintillaLineHighlightingHelper().HighlightLine(QueryEditor, lineNumber - 1, highlightColor);
+                    ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, lineNumber - 1, highlightColor);
                 }
             }
             else

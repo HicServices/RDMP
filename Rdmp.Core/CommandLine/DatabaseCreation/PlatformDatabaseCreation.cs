@@ -30,7 +30,7 @@ public class PlatformDatabaseCreation
     /// Creates new databases on the given server for RDMP platform databases
     /// </summary>
     /// <param name="options"></param>
-    public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
+    public static void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
     {
         DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
 
@@ -59,7 +59,7 @@ public class PlatformDatabaseCreation
         }
     }
 
-    private SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
+    private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
     {
         SqlConnection.ClearAllPools();
 

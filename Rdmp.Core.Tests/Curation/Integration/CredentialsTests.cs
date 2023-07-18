@@ -318,7 +318,7 @@ public class CredentialsTests : DatabaseTests
         var ci = new CatalogueItem(CatalogueRepository, c,"GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
         var t = new TableInfo(CatalogueRepository, "Test");
         var col = new ColumnInfo(CatalogueRepository, "[mydatabase].[dbo].test.col","varchar(10)", t);
-            
+
         var extractionInformation = new ExtractionInformation(CatalogueRepository, ci, col, col.Name);
 
         DataAccessCredentials cred = null;
@@ -326,7 +326,7 @@ public class CredentialsTests : DatabaseTests
         {
             t.Server = "myserver";
             t.Database = "mydatabase";
-
+                
             cred = new DataAccessCredentials(CatalogueRepository, "bob")
             {
                 Username = "bob",

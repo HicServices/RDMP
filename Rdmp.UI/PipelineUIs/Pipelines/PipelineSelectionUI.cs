@@ -27,12 +27,11 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     public event Action PipelineDeleted = delegate { };
 
     public event EventHandler PipelineChanged;
-    private IPipeline _previousSelection;
 
+    private IPipeline _previousSelection = null;
     private ToolTip tt = new();
-
     private const string ShowAll = "Show All/Incompatible Pipelines";
-    public bool showAll;
+    public bool showAll = false;
     public IPipeline Pipeline
     {
         get => _pipeline;
@@ -57,6 +56,8 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private void RefreshPipelineList()
     {
         ddPipelines.Items.Clear();
+
+        var context = _useCase.GetContext();
 
         //add pipelines sorted alphabetically
         var allPipelines = _repository.GetAllObjects<Pipeline>().OrderBy(p=>p.Name).ToArray();
@@ -94,7 +95,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         _useCase = useCase;
         _repository = repository;
         InitializeComponent();
-            
+
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) //don't connect to database in design mode
             return;
 
@@ -111,7 +112,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     private void cmb_Type_DrawItem(object sender, DrawItemEventArgs e)
     {
         e.DrawBackground();
-            
+
         var italic = new Font(ddPipelines.Font, FontStyle.Italic);
 
         if (e.Index == -1)
@@ -163,11 +164,8 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
 
         Pipeline = ddPipelines.SelectedItem as Pipeline;
 
-        if (Pipeline == null)
-            tbDescription.Text = "";
-        else
-            tbDescription.Text = Pipeline.Description;
-            
+        tbDescription.Text = Pipeline == null ? "" : Pipeline.Description;
+
         btnEditPipeline.Enabled = Pipeline != null;
         btnDeletePipeline.Enabled = Pipeline != null;
         btnClonePipeline.Enabled = Pipeline != null;
@@ -177,7 +175,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             PipelineChanged?.Invoke(this,EventArgs.Empty);
             _previousSelection = Pipeline;
         }
-                
+
     }
 
     private void btnEditPipeline_Click(object sender, EventArgs e)

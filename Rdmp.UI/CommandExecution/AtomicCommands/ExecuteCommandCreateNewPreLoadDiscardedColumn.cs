@@ -72,6 +72,8 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn:BasicUICommandExecuti
             else
                 return;
 
+            var dataType = textDialog.ResultText;
+
             var created = Create(name, dataType);
             Publish();
             Emphasise(created);

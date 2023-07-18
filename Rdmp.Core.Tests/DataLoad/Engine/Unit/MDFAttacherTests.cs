@@ -153,7 +153,7 @@ public class MDFAttacherTests : DatabaseTests
 
         var mdf1 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile1.mdf");
         var mdf2 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile2.mdf");
-            
+
         var ldf1 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile1_log.ldf");
         var ldf2 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile2_log.ldf");
         try
@@ -268,7 +268,7 @@ public class MDFAttacherTests : DatabaseTests
                 
         }
 
-        public string GetDescription()
+        public static string GetDescription()
         {
             return "Test class that does nothing";
         }
@@ -302,18 +302,22 @@ public class MDFAttacherTests : DatabaseTests
         _ = (IAttacher)constructorInfo.Invoke(Array.Empty<object>());
 
 
+        //call the blank constructor and return the reuslts
+        var bob = (IAttacher) constructorInfo.Invoke(new Type[] {});
+
+        
     }
     [Test]
     public void TestFactory()
     {
         var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         var testDir = workingDir.CreateSubdirectory("MDFAttacherTests_TestFactory");
-        var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestFactory", true);
-
-        try
-        {
 
             var attacher = MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
+        try
+        {
+                
+            var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
             Assert.IsNotNull(attacher);

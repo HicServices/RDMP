@@ -31,12 +31,12 @@ internal class StackFramesTree
     public StackFramesTree(string[] stackFrameAndSubframes,QueryPerformed performed, bool isInDatabaseAccessAssemblyYet)
     {
         QueryCount = 0;
-            
+
         PopulateSourceCode(stackFrameAndSubframes[0]);
 
         CurrentFrame = stackFrameAndSubframes[0];
         AddSubframes(stackFrameAndSubframes,performed);
-            
+
         IsInDatabaseAccessAssembly = isInDatabaseAccessAssemblyYet || CurrentFrame.Contains("DatabaseCommandHelper");
     }
 
@@ -53,10 +53,12 @@ internal class StackFramesTree
 
     public static bool FindSourceCode(string frame)
     {
+
         return ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out _);
     }
     public static string GetMethodName(string frame)
     {
+
         ExceptionViewerStackTraceWithHyperlinks.MatchStackLine(frame, out _, out _, out var method);
 
         return method;
@@ -72,13 +74,13 @@ internal class StackFramesTree
     {
         if(!lines[0].Equals(CurrentFrame))
             throw new Exception("Current frame did not match expected lines[0]");
-            
+
         QueryCount += query.TimesSeen;
 
         //we are the last line
         if(lines.Length == 1)
             return;
-            
+
         //we know about the child
         if (Children.TryGetValue(lines[1],out var child))
             child.AddSubframes(lines.Skip(1).ToArray(), query);//tell child to audit the relevant subframes

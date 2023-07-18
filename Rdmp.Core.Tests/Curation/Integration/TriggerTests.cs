@@ -103,7 +103,7 @@ public class TriggerTests :DatabaseTests
 
         _table.AddColumn("fish",new DatabaseTypeRequest(typeof(int)),true,500);
         _archiveTable.AddColumn("fish",new DatabaseTypeRequest(typeof(int)),true,500);
-            
+
         //still not valid because trigger SQL is missing it in the column list
         var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
         Assert.IsNotNull(ex.Message);
@@ -153,7 +153,7 @@ public class TriggerTests :DatabaseTests
             //legacy today it is 99
             Assert.AreEqual(99, ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"));
         }
-            
+
         // Live row should now reflect that it is validFrom today
         var liveNewRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r=>r["bubbles"] as int? ==99);
         Assert.AreEqual(DateTime.Now.Date,((DateTime)liveNewRow[SpecialFieldNames.ValidFrom]).Date);
@@ -197,7 +197,7 @@ public class TriggerTests :DatabaseTests
         Assert.AreEqual(1,_table.GetRowCount());
         Assert.AreEqual(4,_archiveTable.GetRowCount());
 
-        Import(_table,out var ti,out var cols);
+        Import(_table,out var ti, out var cols);
         var fetcher = new DiffDatabaseDataFetcher(1,ti,7,100);
             
         fetcher.FetchData(new AcceptAllCheckNotifier());

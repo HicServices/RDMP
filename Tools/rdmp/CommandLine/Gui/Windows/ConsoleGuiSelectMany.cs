@@ -88,7 +88,7 @@ public class ConsoleGuiSelectMany : Window
         var matchingFilter = _original.Except(ticked)
             .Where(o => string.IsNullOrWhiteSpace(search) || o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
             .ToArray();
-            
+
         // make a list of all marked followed by unmarked but matching filter
         var all = ticked.ToList();
         all.AddRange(matchingFilter);
@@ -98,7 +98,7 @@ public class ConsoleGuiSelectMany : Window
         lv.SetSource(all);
 
         // since we changed the source we need to remark the originally ticked ones
-        for(var i=0;i<ticked.Length;i++)
+        for(var i =0;i<ticked.Length;i++)
         {
             lv.Source.SetMark(i, true);
         }

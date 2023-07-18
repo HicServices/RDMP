@@ -83,7 +83,7 @@ public class KVPAttacherTest:DatabaseTests
 
         //With a CSV source
         var flatFileLoad = new PipelineComponent(CatalogueRepository, p, typeof (DelimitedFlatFileDataFlowSource), 0,"Data Flow Source");
-            
+
         //followed by a Transpose that turns columns to rows (see how the test file grows right with new records instead of down, this is common in KVP input files but not always)
         var transpose = new PipelineComponent(CatalogueRepository, p, typeof (Transposer), 1, "Transposer");
 
@@ -225,9 +225,9 @@ public class KVPAttacherTest:DatabaseTests
         Assert.AreEqual("TargetDataTableKeyColumnName cannot be the same as TargetDataTableValueColumnName", ex.Message);
     }
 
-    private void CopyToBin(LoadDirectory projDir, string file)
+    private static void CopyToBin(LoadDirectory projDir, string file)
     {
-            
+
         var testFileLocation = Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources" , file);
         Assert.IsTrue(File.Exists(testFileLocation));
 

@@ -57,7 +57,7 @@ public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
     {
         if(_lastSelected ==  null)
             return;
-            
+
         var category = dqePivotCategorySelector1.SelectedPivotCategory;
 
         timePeriodicityChart1.SelectEvaluation(_lastSelected, category ?? "ALL");

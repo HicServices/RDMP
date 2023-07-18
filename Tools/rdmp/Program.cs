@@ -144,8 +144,7 @@ internal class Program
             
         try
         {
-            var creator = new PlatformDatabaseCreation();
-            creator.CreatePlatformDatabases(opts);
+            PlatformDatabaseCreation.CreatePlatformDatabases(opts);
         }
         catch (Exception e)
         {

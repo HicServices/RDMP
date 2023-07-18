@@ -12,14 +12,12 @@ namespace Rdmp.Core.Logging.Listeners.Extensions;
 
 public static class CheckEventArgsExtensions
 {
-    public static LogLevel ToLogLevel(this CheckEventArgs args)
-    {
-        return args.Result switch
+    public static LogLevel ToLogLevel(this CheckEventArgs args) =>
+        args.Result switch
         {
             CheckResult.Success => LogLevel.Info,
             CheckResult.Warning => LogLevel.Warn,
             CheckResult.Fail => LogLevel.Error,
             _ => throw new ArgumentOutOfRangeException()
         };
-    }
 }

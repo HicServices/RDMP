@@ -197,8 +197,10 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// </summary>
     protected object WriteLock = new();
 
-    public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
-    public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
+    public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } =
+        new AllOrphanAggregateConfigurationsNode();
+    public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } =
+        new AllTemplateAggregateConfigurationsNode();
     public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
 
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
@@ -1280,6 +1282,9 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(CohortAggregateContainer container, DescendancyList descendancy)
     {
+        //all our children (containers and aggregates)
+
+
         //get subcontainers
         var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
 
@@ -1467,7 +1472,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     }
 
-    private DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute, DescendancyList newRoute)
+    private static DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute, DescendancyList newRoute)
     {
         //if the new route is the best best
         if (newRoute.NewBestRoute && !oldRoute.NewBestRoute)
@@ -1621,9 +1626,9 @@ public class CatalogueChildProvider : ICoreChildProvider
                             {
                                 //get the descendancy of the parent
                                 var parentDescendancy = GetDescendancyListIfAnyFor(o);
-
-                                var newDescendancy = parentDescendancy == null ? new DescendancyList(o) : //if the parent is a root level object start a new descendncy list from it
+                                var newDescendancy = parentDescendancy == null ? new DescendancyList(new[] {o}) : //if the parent is a root level object start a new descendancy list from it
                                     parentDescendancy.Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+                                    newDescendancy = parentDescendancy.Add(o);//otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
 
                                 //record that
                                 foreach (var pluginChild in pluginChildren)
@@ -1685,8 +1690,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public virtual void UpdateTo(ICoreChildProvider other)
     {
-        if(other == null)
-            throw new ArgumentNullException(nameof(other));
+        ArgumentNullException.ThrowIfNull(other);
 
         if(other is not CatalogueChildProvider otherCat)
             throw new NotSupportedException(

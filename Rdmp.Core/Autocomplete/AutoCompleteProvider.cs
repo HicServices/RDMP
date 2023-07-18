@@ -26,7 +26,7 @@ namespace Rdmp.Core.Autocomplete;
 /// </summary>
 public partial class AutoCompleteProvider : IAutoCompleteProvider
 {
-    public HashSet<string> Items { get; set; }  = new ();
+    public HashSet<string> Items { get; set; }  = new HashSet<string>();
 
     /// <summary>
     /// Array of images that items can be depicted with.  Use <see cref="ItemsWithImages"/> to index into
@@ -62,7 +62,7 @@ public partial class AutoCompleteProvider : IAutoCompleteProvider
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    public IEnumerable<string> GetBits(string arg)
+    public static IEnumerable<string> GetBits(string arg)
     {
         return Words().Matches(arg).Select(m => m.Value);
     }

@@ -22,7 +22,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
 {
-    private List<NotifyEventArgs> _crashAtEnd = new ();
+    private List<NotifyEventArgs> _crashAtEnd = new();
     /// <inheritdoc/>
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 

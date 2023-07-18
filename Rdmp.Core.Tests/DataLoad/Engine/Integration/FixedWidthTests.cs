@@ -20,7 +20,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class FixedWidthTests :DatabaseTests
 {
-    private FixedWidthFormatFile CreateFormatFile()
+    private static FixedWidthFormatFile CreateFormatFile()
     {
         var fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"FixedWidthFormat.csv"));
 
@@ -159,11 +159,11 @@ public class FixedWidthTests :DatabaseTests
 
 
         //create the file we will be trying to load
-        if(testCase == FixedWidthTestCase.InsufficientLengthOfCharactersInFileToLoad)
-            File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "file.txt"), @"12345
-12");
-        else
-            File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName , "file.txt"),@"12345
+        File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "file.txt"),
+            testCase == FixedWidthTestCase.InsufficientLengthOfCharactersInFileToLoad
+                ? @"12345
+12"
+                : @"12345
 67890");
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 

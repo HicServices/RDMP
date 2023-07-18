@@ -77,9 +77,9 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        if (target is SelectedDataSets)
+        if (target is SelectedDataSets sets)
         {
-            _selectedDataSet = target as SelectedDataSets;
+            _selectedDataSet = sets;
 
             if (_selectedDataSet != null)
                 //must have datasets and have a cohort configured
@@ -87,8 +87,8 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
                     SetImpossible("No cohort has been selected for ExtractionConfiguration");
         }
 
-        if (target is ExtractionConfiguration)
-            _extractionConfiguration = target as ExtractionConfiguration;
+        if (target is ExtractionConfiguration configuration)
+            _extractionConfiguration = configuration;
 
         return this;
     }

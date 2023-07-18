@@ -39,7 +39,6 @@ internal class ConsoleGuiBigListBox<T>
     /// Ongoing filtering of a large collection should be cancelled when the user changes the filter even if it is not completed yet
     /// </summary>
     private ConcurrentBag<CancellationTokenSource> _cancelFiltering = new();
-
     private Task _currentFilterTask;
     private object _taskCancellationLock = new();
 
@@ -77,7 +76,9 @@ internal class ConsoleGuiBigListBox<T>
     public ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, IList<T> collection,
         Func<T, string> displayMember, bool addNull):this(prompt,okText,addSearch,displayMember)
     {
-        _publicCollection = collection ?? throw new ArgumentNullException(nameof(collection));
+        ArgumentNullException.ThrowIfNull(collection);
+
+        _publicCollection = collection;
         _addNull = addNull;
     }
 
@@ -256,7 +257,7 @@ internal class ConsoleGuiBigListBox<T>
 
     protected void RestartFiltering(string searchTerm)
     {
-            
+
         var cts = new CancellationTokenSource();
 
         lock(_taskCancellationLock)

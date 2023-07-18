@@ -54,7 +54,7 @@ TOP 50
 [db]..[tbl].[col]
 FROM 
 [db]..[tbl]")
-            ,CollapseWhitespace(qb.SQL));
+            , CollapseWhitespace(qb.SQL));
 
     }
 }

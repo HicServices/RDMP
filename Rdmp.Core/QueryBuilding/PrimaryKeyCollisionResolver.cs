@@ -197,7 +197,7 @@ WHERE DuplicateCount > 1";
         return basicSQL;
     }
 
-    private ValueType GetDataType(string dataType)
+    private static ValueType GetDataType(string dataType)
     {
         if (
             dataType.StartsWith("decimal") ||
@@ -245,7 +245,7 @@ WHERE DuplicateCount > 1";
     /// <param name="datatype">The Sql Server column datatype for the column you are substituting</param>
     /// <param name="min">true to substitute null values for the minimum value of the <paramref name="datatype"/>, false to substitute for the maximum</param>
     /// <returns></returns>
-    public string GetNullSubstituteForComparisonsWithDataType(string datatype, bool min)
+    public static string GetNullSubstituteForComparisonsWithDataType(string datatype, bool min)
     {
         //technically these can go lower (real and float) but how realistic is that espcially when SqlServer plays fast and loose with very small numbers in floats...
         if (datatype.Equals("bigint") || datatype.Equals("real") || datatype.StartsWith("float"))

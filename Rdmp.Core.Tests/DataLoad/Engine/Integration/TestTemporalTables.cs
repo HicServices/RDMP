@@ -61,7 +61,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
         var defaults = CatalogueRepository;
         var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
         var logManager = new LogManager(logServer);
-            
+
         var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
         if(raw.Exists())
             raw.Drop();
@@ -72,9 +72,9 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             IgnoreTrigger = true
         };
         lmd.SaveToDatabase();
-              
+
         var ti = Import(tbl, lmd,logManager);
-            
+
         var projectDirectory = SetupLoadDirectory(lmd);
 
         CreateCSVProcessTask(lmd,ti,"*.csv");
@@ -86,7 +86,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
 1,Frank,Boss,Department of F'Tang, 22 Innsmouth Way, 55000.5
 2,Herbert,Super Boss,Department of F'Tang, 22 Innsmouth Way, 155000.5");
 
-            
+
         //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
@@ -113,7 +113,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
             col.IgnoreInLoads = true;
             col.SaveToDatabase();
         }
-            
+
         var dbConfig = new HICDatabaseConfiguration(lmd,null);
 
         var loadFactory = new HICDataLoadFactory(

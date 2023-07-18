@@ -41,7 +41,7 @@ public class CatalogueProblemProvider : ProblemProvider
     public override void RefreshProblems(ICoreChildProvider childProvider)
     {
         _childProvider = childProvider;
-            
+
         //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
         var orphans = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null);
             
@@ -86,7 +86,7 @@ public class CatalogueProblemProvider : ProblemProvider
         };
     }
 
-    public string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
+    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
     {
         return !allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any() ? "Load has no Catalogues therefore loads no tables" : null;
     }
@@ -135,7 +135,7 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
+    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
     {
         return decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
     }
@@ -151,12 +151,12 @@ public class CatalogueProblemProvider : ProblemProvider
             : null;
     }
 
-    public string DescribeProblem(IFilter filter)
+    public static string DescribeProblem(IFilter filter)
     {
         return string.IsNullOrWhiteSpace(filter.WhereSQL) ? "Filter is blank" : null;
     }
 
-    public string DescribeProblem(Catalogue catalogue)
+    public static string DescribeProblem(Catalogue catalogue)
     {
         return !Catalogue.IsAcceptableName(catalogue.Name, out var reason) ? $"Invalid Name:{reason}" : null;
     }
@@ -226,7 +226,7 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    private string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
+    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
     {
         return LoadDirectoryNode.IsEmpty ? "No Project Directory has been specified for the load" : null;
     }

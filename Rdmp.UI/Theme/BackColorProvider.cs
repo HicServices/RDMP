@@ -13,7 +13,7 @@ namespace Rdmp.UI.Theme;
 /// <summary>
 /// Determines which colour to use for the background on controls relating to this collection concept
 /// </summary>
-public class BackColorProvider
+public static class BackColorProvider
 {
     public const int IndicatorBarSuggestedHeight = 4;
 

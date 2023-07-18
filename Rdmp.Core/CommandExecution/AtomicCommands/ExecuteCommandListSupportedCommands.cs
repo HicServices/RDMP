@@ -36,7 +36,7 @@ internal class ExecuteCommandListSupportedCommands:BasicCommandExecution
     {
         var commandCaller = new CommandInvoker(BasicActivator);
 
-            
+
         var commands = commandCaller.GetSupportedCommands().ToArray();
         var names = commands.Select(c=>GetCommandName(c.Name)).ToArray();
         string[] descriptions;
@@ -58,7 +58,7 @@ internal class ExecuteCommandListSupportedCommands:BasicCommandExecution
         {
             var tokens = _pattern.Split('*',StringSplitOptions.RemoveEmptyEntries);
 
-            for(var i=0;i<commands.Length;i++)
+            for(var i =0;i<commands.Length;i++)
             {
                 if(tokens.All(t=>names[i].Contains(t,StringComparison.InvariantCultureIgnoreCase)))
                 {
@@ -81,7 +81,7 @@ internal class ExecuteCommandListSupportedCommands:BasicCommandExecution
         var showAll = onlyShowIndexes.Count == 0;
         var outputCommandDictionary = new Dictionary<string,string>();
 
-        for(var i=0;i<commands.Length;i++)
+        for(var i =0;i<commands.Length;i++)
         {
             if(showAll || onlyShowIndexes.Contains(i))
             {

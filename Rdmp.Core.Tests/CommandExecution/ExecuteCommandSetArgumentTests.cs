@@ -40,7 +40,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
     public void TestSetArgument_NoArgumentFound()
     {
         var pt = WhenIHaveA<ProcessTask>();
-            
+
 
         var picker = new CommandLineObjectPicker(new []{$"ProcessTask:{pt.ID}","fff","yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator().Object,picker);

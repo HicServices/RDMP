@@ -205,10 +205,10 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                 ExtractCommand.ElevateState(ExtractCommandState.Crashed);
                 _dataLoadInfo.LogFatalError("Execute extraction pipeline", ExceptionHelper.ExceptionToListOfInnerMessages(e, true));
 
-                if (ExtractCommand is ExtractDatasetCommand)
+                if (ExtractCommand is ExtractDatasetCommand command)
                 {
                     //audit to extraction results
-                    var result = (ExtractCommand as ExtractDatasetCommand).CumulativeExtractionResults;
+                    var result = command.CumulativeExtractionResults;
                     result.Exception = ExceptionHelper.ExceptionToListOfInnerMessages(e, true);
                     result.SaveToDatabase();
                 }
@@ -235,10 +235,10 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                 Destination.TableLoadInfo.DataLoadInfoParent.LogFatalError(GetType().Name, "User Cancelled Extraction");
                 ExtractCommand.ElevateState(ExtractCommandState.UserAborted);
 
-                if (ExtractCommand is ExtractDatasetCommand)
+                if (ExtractCommand is ExtractDatasetCommand command)
                 {
                     //audit to extraction results
-                    var result = (ExtractCommand as ExtractDatasetCommand).CumulativeExtractionResults;
+                    var result = command.CumulativeExtractionResults;
                     result.Exception = "User Cancelled Extraction";
                     result.SaveToDatabase();
                 }

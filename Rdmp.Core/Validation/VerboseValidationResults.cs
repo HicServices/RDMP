@@ -112,7 +112,7 @@ public class VerboseValidationResults
         }
     }
 
-    private void ConfirmIntegrityOfValidationException(ValidationFailure v)
+    private static void ConfirmIntegrityOfValidationException(ValidationFailure v)
     {
         if (v.GetExceptionList() == null)
             throw new NullReferenceException(

@@ -293,7 +293,7 @@ public partial class StartupUI : Form, ICheckNotifier
             Invoke(new MethodInvoker(() => OnCheckPerformed(args)));
             return false;
         }
-            
+
         //if the message starts with a percentage translate it into the progress bars movement
         var progressHackMessage = Percentage();
         var match = progressHackMessage.Match(args.Message);

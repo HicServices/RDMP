@@ -141,13 +141,13 @@ public class ParameterManager
     public IEnumerable<ISqlParameter> GetFinalResolvedParametersList()
     {
         State = ParameterManagerLifecycleState.Finalized;
-            
+
         var toReturn = new List<ParameterFoundAtLevel>();
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
         foreach (var sqlParameter in kvp.Value)
-            AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter,kvp.Key), toReturn);
-                
+                AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter,kvp.Key), toReturn);
+
 
         //There can be empty parameters during resolution but only if it finds an overriding one further up the hierarchy
         var emptyParameter = toReturn.FirstOrDefault(t => string.IsNullOrWhiteSpace(t.Parameter.Value));
@@ -156,7 +156,7 @@ public class ParameterManager
             var exceptionMessage = $"No Value defined for Parameter {emptyParameter.Parameter.ParameterName}";
             var asConcreteObject = emptyParameter.Parameter as IMapsDirectlyToDatabaseTable ?? throw new QueryBuildingException(exceptionMessage);
 
-            //problem was from a user one from their Catalogue Database, tell them the ProblemObject aswell
+            //problem was from a user one from their Catalogue Database, tell them the ProblemObject as well
             throw new QueryBuildingException(exceptionMessage,new[]{asConcreteObject});
 
         }
@@ -176,7 +176,7 @@ public class ParameterManager
         _memoryRepository.Clear();
     }
 
-    private void AddParameterToCollection(ParameterFoundAtLevel toAdd,List<ParameterFoundAtLevel> existingParameters)
+    private static void AddParameterToCollection(ParameterFoundAtLevel toAdd,List<ParameterFoundAtLevel> existingParameters)
     {
         //see if parameter if we already have one with the same name
         var duplicate = existingParameters.FirstOrDefault(p => p.Parameter.ParameterName.Equals(toAdd.Parameter.ParameterName,StringComparison.InvariantCultureIgnoreCase));
@@ -210,7 +210,7 @@ public class ParameterManager
             existingParameters.Add(toAdd); //its not a duplicate so add it to the list of RequiredParameters
     }
 
-    private void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1, ParameterFoundAtLevel parameter2)
+    private static void ThrowExceptionForParameterPair(string exceptionMessage, ParameterFoundAtLevel parameter1, ParameterFoundAtLevel parameter2)
     {
         var concreteObjects = new List<IMapsDirectlyToDatabaseTable>();
 
@@ -344,7 +344,7 @@ public class ParameterManager
     private static bool AreIdentical(ISqlParameter first, ISqlParameter other)
     {
         var sameSql = AreDeclaredTheSame(first, other);
-            
+
         var value1 = first.Value ?? "";
         var value2 = other.Value??"";
 

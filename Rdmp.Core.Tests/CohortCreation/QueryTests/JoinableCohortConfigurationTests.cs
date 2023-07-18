@@ -51,7 +51,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
     public void CreateJoinable_IsAlreadyInAContainer()
     {
         cohortIdentificationConfiguration.RootCohortAggregateContainer.AddChild(aggregate1,1);
-            
+
         var ex = Assert.Throws<NotSupportedException>(() => new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1));
         Assert.AreEqual("Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it is already in a CohortAggregateContainer", ex.Message);
         cohortIdentificationConfiguration.RootCohortAggregateContainer.RemoveChild(aggregate1);
@@ -348,7 +348,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
 
         //add the first aggregate to the configuration
         rootcontainer.AddChild(aggregate1,1);
-            
+
         var globalParameter = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,"DECLARE @fish varchar(50)")
             {
                 Comment = "Comments for the crazies",
@@ -429,7 +429,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[db
         //make aggregate 2 have an additional column (dtCreated)
         var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
         aggregate2.AddDimension(anotherCol);
-            
+
         //create a caching server
         var scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
         scripter.CreateAndPatchDatabase(new QueryCachingPatcher(), new AcceptAllCheckNotifier());
@@ -495,7 +495,7 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
                             aggregate2.ID, //{1}
                             cohortIdentificationConfiguration.ID,//{2}
                             queryCachingDatabaseName) //{3}
-                    ),CollapseWhitespace(builder.SQL));
+                    ), CollapseWhitespace(builder.SQL));
 
             }
             finally

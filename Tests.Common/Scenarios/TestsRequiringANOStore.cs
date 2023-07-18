@@ -86,7 +86,7 @@ public class TestsRequiringANOStore:TestsRequiringA
     protected void TruncateANOTable(ANOTable anoTable)
     {
         Console.WriteLine($"Truncating table {anoTable.TableName} on server {ANOStore_ExternalDatabaseServer}");
-            
+
         var server = ANOStore_Database.Server;
         using var con = server.GetConnection();
         con.Open();

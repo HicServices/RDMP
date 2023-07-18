@@ -107,7 +107,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// <param name="component"></param>
     /// <param name="ex"></param>
     /// <returns></returns>
-    public object TryCreateComponent(IPipelineComponent component, out Exception ex)
+    public static object TryCreateComponent(IPipelineComponent component, out Exception ex)
     {
         ex = null;
         try
@@ -121,7 +121,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         }
     }
 
-    private object CreateComponent(IPipelineComponent toBuild)
+    private static object CreateComponent(IPipelineComponent toBuild)
     {
         var type = toBuild.GetClassAsSystemType() ?? throw new Exception($"Could not find Type '{toBuild.Class}'");
         var toReturn = ObjectConstructor.Construct(type);
@@ -164,7 +164,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// <param name="propertyInfo">The specific property you are trying to populate on toBuild</param>
     /// <param name="arguments">IArguments of toBuild (the values to populate toReturn with)</param>
     /// <param name="nestedProperty">If you are populating a sub property of the class then pass the instance of the sub property as toBuild and pass the nesting property as nestedProperty</param>
-    private void SetPropertyIfDemanded(IPipelineComponent toBuild,object toReturn, PropertyInfo propertyInfo, IArgument[] arguments, PropertyInfo nestedProperty = null)
+    private static void SetPropertyIfDemanded(IPipelineComponent toBuild,object toReturn, PropertyInfo propertyInfo, IArgument[] arguments, PropertyInfo nestedProperty = null)
     {
         //see if any demand initialization
         var initialization =
@@ -220,7 +220,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// </summary>
     /// <param name="pipeline"></param>
     /// <returns></returns>
-    public object CreateSourceIfExists(IPipeline pipeline)
+    public static object CreateSourceIfExists(IPipeline pipeline)
     {
         var source = pipeline.Source;
 
@@ -232,7 +232,7 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     /// Retrieves and creates an instance of the class described in the blueprint <see cref="IPipeline.Destination"/> if there is one.  Pipelines do not have
     /// to have a destination if the use case requires a fixed destination instance generated at runtime
     /// </summary>
-    public object CreateDestinationIfExists(IPipeline pipeline)
+    public static object CreateDestinationIfExists(IPipeline pipeline)
     {
         var destination = pipeline.Destination;
 

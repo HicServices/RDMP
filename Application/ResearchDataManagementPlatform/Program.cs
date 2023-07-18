@@ -38,7 +38,7 @@ internal static partial class Program
                 Console.WriteLine("Couldn't redirect console. Never mind");
             }
 
-        Startup.PreStartup();
+            Startup.PreStartup();
 
         UsefulStuff.GetParser()
             .ParseArguments<ResearchDataManagementPlatformOptions>(args)

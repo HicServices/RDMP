@@ -119,7 +119,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         tcMasterTicket.SetItemActivator(activator);
     }
 
-    private DataTable LoadDatagridFor(Project value)
+    private static DataTable LoadDatagridFor(Project value)
     {
         var configurations = value?.ExtractionConfigurations;
 

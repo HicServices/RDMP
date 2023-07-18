@@ -81,7 +81,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
         SubmitIdentifierList("chi", set, ac, cache);
     }
 
-    private int GetNumberToGenerate(AggregateConfiguration ac)
+    private static int GetNumberToGenerate(AggregateConfiguration ac)
     {
         // You can persist configuration info about how to query the API any way
         // you want.  Here we just use the Description field

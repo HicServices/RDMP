@@ -134,7 +134,7 @@ public class FixedWidthFormatFile
 
     private void EnsureHeaderIntact(string header)
     {
-            
+
         //From	To	Field	Size	DateFormat
         var expected = string.Join(",",typeof(FixedWidthColumn).GetFields().Select(f=>f.Name));
 

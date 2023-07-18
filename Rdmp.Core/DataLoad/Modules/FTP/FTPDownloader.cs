@@ -75,12 +75,12 @@ public class FTPDownloader : IPluginDataProvider
         return DownloadFilesOnFTP(_directory, job);
     }
 
-    public string GetDescription()
+    public static string GetDescription()
     {
         return "See Description attribute of class";
     }
 
-    public IDataProvider Clone()
+    public static IDataProvider Clone()
     {
         return new FTPDownloader();
     }
@@ -108,7 +108,7 @@ public class FTPDownloader : IPluginDataProvider
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, files.Aggregate("Identified the following files on the FTP server:", (s, f) =>
             $"{f},").TrimEnd(',')));
-            
+
         var forLoadingContainedCachedFiles = false;
 
         foreach (var file in files)
@@ -174,15 +174,7 @@ public class FTPDownloader : IPluginDataProvider
         StreamReader reader = null;
         try
         {
-            FtpWebRequest reqFTP;
-
-            string uri;
-
-
-            if (!string.IsNullOrWhiteSpace(RemoteDirectory))
-                uri = $"ftp://{_host}/{RemoteDirectory}";
-            else
-                uri = $"ftp://{_host}";
+            var uri = !string.IsNullOrWhiteSpace(RemoteDirectory) ? $"ftp://{_host}/{RemoteDirectory}" : $"ftp://{_host}";
 
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
             reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
@@ -228,11 +220,9 @@ public class FTPDownloader : IPluginDataProvider
         var s = new Stopwatch();
         s.Start();
 
-        string uri;
-        if (!string.IsNullOrWhiteSpace(RemoteDirectory))
-            uri = $"ftp://{_host}/{RemoteDirectory}/{file}";
-        else
-            uri = $"ftp://{_host}/{file}";
+        var uri = !string.IsNullOrWhiteSpace(RemoteDirectory)
+            ? $"ftp://{_host}/{RemoteDirectory}/{file}"
+            : $"ftp://{_host}/{file}";
 
         if (_useSSL)
             uri = $"s{uri}";
@@ -243,7 +233,6 @@ public class FTPDownloader : IPluginDataProvider
             return;
         }
 
-        FtpWebRequest reqFTP;
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
         reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete

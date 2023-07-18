@@ -153,7 +153,7 @@ public class MsSqlReleaseSource : FixedReleaseSource<ReleaseAudit>
             throw new Exception(
                 $"The selected Server ({externalServer.Name}) must have a Data Path in order to be used as an extraction destination.");
 
-        var server = DataAccessPortal.GetInstance().ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
+        var server = DataAccessPortal.ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
         _database = server.ExpectDatabase(dbName);
 
         if (!_database.Exists())

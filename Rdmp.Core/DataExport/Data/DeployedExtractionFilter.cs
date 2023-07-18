@@ -179,7 +179,7 @@ public class DeployedExtractionFilter : ConcreteFilter
     {
         if (FilterContainer_ID == null)
             return null;
-            
+
         var container = Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value);
         return container.GetSelectedDataSetsRecursively();
     }

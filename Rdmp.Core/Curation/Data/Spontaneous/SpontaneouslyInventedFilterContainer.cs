@@ -42,10 +42,10 @@ public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContaine
 
         if (filtersIfAny != null)
             foreach (var filter in filtersIfAny)
-                if(filter is SpontaneouslyInventedFilter)
-                    AddChild(filter);
-                else
-                    AddChild(new SpontaneouslyInventedFilter(repo,this,filter.WhereSQL,filter.Name,filter.Description,filter.GetAllParameters())); 
+                AddChild(filter is SpontaneouslyInventedFilter
+                    ? filter
+                    : new SpontaneouslyInventedFilter(repo, this, filter.WhereSQL, filter.Name, filter.Description,
+                        filter.GetAllParameters()));
 
         Operation = operation;
     }

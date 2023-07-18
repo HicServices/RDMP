@@ -50,7 +50,7 @@ public class KVPAttacher :FlatFileAttacher, IDemandToUseAPipeline, IDataFlowDest
     {
         if(BatchesReadyForProcessing.Any())
             throw new NotSupportedException("There are still batches awaiting dispatch to RAW, we cannot open a new file at this time");
-            
+
         var flatFileToLoad = new FlatFileToLoad(fileToLoad);
 
         //stamp out the pipeline into an instance

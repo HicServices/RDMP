@@ -32,7 +32,7 @@ public class CohortQueryBuilderHelper
     /// <param name="aggregate"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public CohortQueryBuilderDependencySql GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
+    public static CohortQueryBuilderDependencySql GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
     {
         var isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
 
@@ -124,7 +124,7 @@ public class CohortQueryBuilderHelper
         return toReturn;
     }
 
-    public void AddJoinToBuilder(AggregateConfiguration user,IColumn usersExtractionIdentifier,AggregateBuilder builder, QueryBuilderArgs args)
+    public static void AddJoinToBuilder(AggregateConfiguration user,IColumn usersExtractionIdentifier,AggregateBuilder builder, QueryBuilderArgs args)
     {
         var joinableTableAlias = args.JoinIfAny.GetJoinTableAlias();
         var joinDirection = args.JoinIfAny.GetJoinDirectionSQL();
@@ -155,8 +155,8 @@ public class CohortQueryBuilderHelper
         builder.AddCustomLine(
             $" {joinDirection} Join ({Environment.NewLine}{TabIn(args.JoinSql.Sql, 1)}{Environment.NewLine}){joinableTableAlias}{Environment.NewLine}on {usersExtractionIdentifier.SelectSQL} = {joinableTableAlias}.{joinOn.GetRuntimeName()}",QueryComponent.JoinInfoJoin);
     }
-
-    public string TabIn(string str, int numberOfTabs)
+        
+    public static string TabIn(string str, int numberOfTabs)
     {
         if (string.IsNullOrWhiteSpace(str))
             return str;

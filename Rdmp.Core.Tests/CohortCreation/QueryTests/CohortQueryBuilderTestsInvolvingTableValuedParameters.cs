@@ -39,7 +39,7 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
                 CountSQL = null
             };
         config2.SaveToDatabase();
-            
+
         var cic = new CohortIdentificationConfiguration(CatalogueRepository,"CohortGenerationDifferingTableValuedParametersTest");
             
         cic.EnsureNamingConvention(config1);

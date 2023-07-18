@@ -37,7 +37,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
             
         //there should be no root container
         Assert.IsNull(sds.RootFilterContainer);
-            
+
         //run the command
         var mgr = new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet)
         {
@@ -79,7 +79,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
             
         //there should be no root container
         Assert.IsNull(ac.RootFilterContainer);
-            
+
         //run the command
         var mgr = new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet)
         {
@@ -128,7 +128,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
 
         //there should be no root container
         Assert.IsNull(sds.RootFilterContainer);
-            
+
         //run the command
         var mgr = new ConsoleInputManager(RepositoryLocator,ThrowImmediatelyCheckNotifier.Quiet)
         {

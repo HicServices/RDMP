@@ -313,16 +313,15 @@ This will not help you avoid bad data as the full file structure must still be r
 
             return toReturn;
         }
-            
+
         throw new NotSupportedException("Cannot generate preview because _headers has already been set which likely means it is already loading / didn't cleanup properly after last preview attempt?");
     }
 
     public void Check(ICheckNotifier notifier)
     {
-        if (Separator == null)
-            notifier.OnCheckPerformed(new CheckEventArgs($"Separator argument has not been set on {GetType().Name}", CheckResult.Fail));
-        else
-            notifier.OnCheckPerformed(new CheckEventArgs($"Separator on {GetType().Name} is {Separator}", CheckResult.Success));
+        notifier.OnCheckPerformed(Separator == null
+            ? new CheckEventArgs($"Separator argument has not been set on {GetType().Name}", CheckResult.Fail)
+            : new CheckEventArgs($"Separator on {GetType().Name} is {Separator}", CheckResult.Success));
 
         if (!StronglyTypeInput)
             notifier.OnCheckPerformed(
@@ -344,7 +343,7 @@ This will not help you avoid bad data as the full file structure must still be r
 
         if (_fileToLoad != null)
             CheckExpectedFileExtensions(notifier,_fileToLoad.File.Extension);
-            
+
     }
 
     private void CheckExpectedFileExtensions(ICheckNotifier notifier, string extension)
@@ -365,7 +364,7 @@ This will not help you avoid bad data as the full file structure must still be r
             ExpectFileExtension(notifier, ".tsv", extension);
     }
 
-    private void ExpectFileExtension(ICheckNotifier notifier, string expectedExtension, string actualExtension)
+    private static void ExpectFileExtension(ICheckNotifier notifier, string expectedExtension, string actualExtension)
     {
         if (expectedExtension.Equals(actualExtension))
             notifier.OnCheckPerformed(new CheckEventArgs($"File extension matched expectations ({expectedExtension})",CheckResult.Success));
@@ -396,7 +395,7 @@ This will not help you avoid bad data as the full file structure must still be r
             ReadingExceptionOccurred = EventHandlers.ReadingExceptionOccurred
         });
 
-        Headers.GetHeadersFromFile(_reader); 
+        Headers.GetHeadersFromFile(_reader);
     }
 
 
@@ -424,7 +423,7 @@ This will not help you avoid bad data as the full file structure must still be r
 
         if (Headers == null)
             throw new Exception("headers was null, how did that happen?");
-            
+
         _lineNumberBatch = 0;
 
         //read from the peek first if there is anything otherwise read from the reader
@@ -465,7 +464,7 @@ This will not help you avoid bad data as the full file structure must still be r
     {
         //we have been given a new file we no longer know the headers.
         Headers = null;
-            
+
         _fileToLoad = value;
         _listener = listener;
     }

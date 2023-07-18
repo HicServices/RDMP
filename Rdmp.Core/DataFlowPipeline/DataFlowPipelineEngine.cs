@@ -74,10 +74,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         _listener = listener;
         ComponentObjects = new List<object>();
 
-        if (pipelineSource != null)
-            _name = pipelineSource.Name;
-        else
-            _name = "Undefined pipeline";
+        _name = pipelineSource != null ? pipelineSource.Name : "Undefined pipeline";
     }
 
     /// <inheritdoc/>

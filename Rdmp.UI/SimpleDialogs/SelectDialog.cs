@@ -259,7 +259,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (args.InitialSearchTextGuid != null)
         {
             recentHistoryOfSearches = new RecentHistoryOfControls(tbFilter, args.InitialSearchTextGuid.Value);
-            recentHistoryOfSearches.SetValueToMostRecentlySavedValue(tbFilter);
+            RecentHistoryOfControls.SetValueToMostRecentlySavedValue(tbFilter);
         }
 
         if (IsDatabaseObjects())
@@ -297,7 +297,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         var type = mapsDirectlyToDatabaseTables.First().GetType();
 
-        // types differ (use All to jump out ASAP if theres a billion objects)
+        // types differ (use Any to jump out ASAP if there are a billion objects)
         if (mapsDirectlyToDatabaseTables.Any(m => m.GetType() != type))
             return;
 
@@ -378,8 +378,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         if (focusedCollection != RDMPCollection.None && StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
             startingFilters = filter;
-
-        var backColorProvider = new BackColorProvider();
 
         // if there are at least 2 Types of object let them filter
         if(_types.Length > 1)
@@ -465,7 +463,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             MultiSelected.Add((T)rowobject);
         else
             MultiSelected.Remove((T)rowobject);
-            
+
         StateChanged();
     }
 
@@ -479,7 +477,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         base.OnFormClosed(e);
-            
+
         _isClosed = true;
         recentHistoryOfSearches?.AddResult(tbFilter.Text);
 
@@ -514,7 +512,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         {
             scorer.ID = requireId;
         }
-                
+
         if (AlwaysFilterOn != null)
         {
             showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
@@ -530,7 +528,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         lock (oMatches)
         {
-            _tempMatches = scorer.ShortList(scores, MaxMatches, _activator);
+            _tempMatches = SearchablesMatchScorer.ShortList(scores, MaxMatches, _activator);
         }
     }
 
@@ -632,7 +630,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         tbFilter_TextChanged(null, null);
     }
 
-    private bool IsDatabaseObjects()
+    private static bool IsDatabaseObjects()
     {
         return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(typeof(T));
     }
@@ -690,7 +688,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
-            
+
     }
 
     public void AddObjects(ICollection modelObjects)
@@ -731,7 +729,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
                     _objectsToDisplay = string.IsNullOrWhiteSpace(searchText) ?
                         _allObjects.ToList() :
-                        _allObjects.Where(o=>IsSimpleTextMatch(o, searchText)).ToList();
+                        _allObjects.Where(o=> IsSimpleTextMatch(o, searchText)).ToList();
                 }
 
                 stateChanged = false;
@@ -741,7 +739,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         }
     }
 
-    private bool IsSimpleTextMatch(T arg, string searchText)
+    private static bool IsSimpleTextMatch(T arg, string searchText)
     {
         var terms = searchText.Split(' ',StringSplitOptions.RemoveEmptyEntries);
         return terms.All(t=>arg.ToString().Contains(t,StringComparison.CurrentCultureIgnoreCase));
@@ -754,7 +752,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     public void InsertObjects(int index, ICollection modelObjects)
     {
-            
+
     }
 
     public void PrepareCache(int first, int last)
@@ -781,7 +779,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     public void UpdateObject(int index, object modelObject)
     {
-            
+
     }
     private void AddUserSettingCheckbox(Func<bool> getter, Action<bool> setter, string name, string toolTip)
     {

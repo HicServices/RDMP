@@ -227,7 +227,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         var loggingServer = loggingServers.FirstOrDefault();
 
         //get distinct connection
-        var toReturn = DataAccessPortal.GetInstance().ExpectDistinctServer(loggingServers, DataAccessContext.Logging, true);
+        var toReturn = DataAccessPortal.ExpectDistinctServer(loggingServers, DataAccessContext.Logging, true);
 
         serverChosen = (IExternalDatabaseServer)loggingServer;
         return toReturn;
@@ -268,7 +268,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         if(cataloguesWithoutLoggingTasks.Any())
             throw new Exception(
                 $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
-            
+
         var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
         return distinctLoggingTasks.Length>= 2
             ? throw new Exception(

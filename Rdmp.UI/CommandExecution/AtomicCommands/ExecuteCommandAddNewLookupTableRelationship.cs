@@ -45,7 +45,7 @@ public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecuti
     public override void Execute()
     {
         base.Execute();
-        
+
         var cata = _catalogueIfKnown;
         if (cata == null)
         {

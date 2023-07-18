@@ -31,8 +31,8 @@ public class DilutionOperationTests:DatabaseTests
     [TestCase(null, null)]
     public void TestRoundDateToMiddleOfQuarter(string input, string expectedDilute)
     {
-            
-            
+
+
         var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging,null) == "DateRoundingTests");
         var col = Mock.Of<IPreLoadDiscardedColumn>(c=>
             c.TableInfo == tbl &&
@@ -166,13 +166,13 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
     public void Dilution_WithNamer_Test()
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-            
+
         var dt = new DataTable();
         dt.Columns.Add("Bob");
         dt.Rows.Add(new[] {"Fish"});
 
         var tbl = db.CreateTable("DilutionNamerTest", dt);
-        Import(tbl,out var ti,out var cols);
+        Import(tbl,out var ti, out var cols);
 
         tbl.Rename("AAAA");
         var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");

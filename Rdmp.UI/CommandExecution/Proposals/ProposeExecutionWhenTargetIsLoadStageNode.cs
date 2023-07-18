@@ -32,12 +32,10 @@ internal class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionPro
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadStageNode targetStage, InsertOption insertOption = InsertOption.Default)
     {
-        var sourceFileTaskCommand = cmd as FileCollectionCombineable;
-            
         if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
             return new ExecuteCommandChangeLoadStage(ItemActivator, sourceProcessTaskCommand, targetStage);
 
-        if (sourceFileTaskCommand?.Files.Length == 1)
+        if (cmd is FileCollectionCombineable sourceFileTaskCommand && sourceFileTaskCommand.Files.Length == 1)
         {
             var f = sourceFileTaskCommand.Files.Single();
             switch (f.Extension)

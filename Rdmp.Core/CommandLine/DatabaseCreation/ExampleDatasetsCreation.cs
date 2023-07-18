@@ -93,7 +93,7 @@ public partial class ExampleDatasetsCreation
         var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","dtCreated","hb_extract"));
         var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","PrescribedDate","Name")); //<- this is slooo!
         var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","AdmissionDate"));
-            
+
         //Create but do not import the CarotidArteryScan dataset so that users can test out referencing a brand new table
         Create<CarotidArteryScan>(db,people,r,notifier, options.NumberOfRowsPerDataset, "RECORD_NUMBER");
 
@@ -190,11 +190,11 @@ public partial class ExampleDatasetsCreation
 
         //A cohort creation query
         var f = CreateFilter(vConditions,"Lung Cancer Condition","Condition","Condition like 'C349'","ICD-10-CM Diagnosis Code C34.9 Malignant neoplasm of unspecified part of bronchus or lung");
-            
+
         var cic = CreateCohortIdentificationConfiguration((ExtractionFilter)f);
-            
+
         var cohort = CommitCohortToNewProject(cic,externalCohortTable,cohortCreationPipeline,"Lung Cancer Project","P1 Lung Cancer Patients",123,out var project);
-            
+
         var cohortTable = cohort.ExternalCohortTable.DiscoverCohortTable();
         using (var con = cohortTable.Database.Server.GetConnection())
         {
@@ -204,7 +204,7 @@ public partial class ExampleDatasetsCreation
                       $"DELETE TOP (10) PERCENT from {cohortTable.GetFullyQualifiedName()}", con);
             cmd.ExecuteNonQuery();
         }
-            
+
         var ec1 = CreateExtractionConfiguration(project,cohort,"First Extraction (2016 - project 123)",true,notifier,biochem,prescribing,demography);
         var ec2 = CreateExtractionConfiguration(project,cohort,"Project 123 - 2017 Refresh",true,notifier,biochem,prescribing,demography,admissions);
         var ec3 = CreateExtractionConfiguration(project,cohort,"Project 123 - 2018 Refresh",true,notifier,biochem,prescribing,demography,admissions);
@@ -273,13 +273,13 @@ public partial class ExampleDatasetsCreation
             }
     }
 
-    private void ForExtractionInformations(ICatalogue catalogue, Action<ExtractionInformation> action,params string[] extractionInformations)
+    private static void ForExtractionInformations(ICatalogue catalogue, Action<ExtractionInformation> action,params string[] extractionInformations)
     {
-        foreach(var e in extractionInformations.Select(s=>GetExtractionInformation(catalogue,s)))
+        foreach(var e in extractionInformations.Select(s=> GetExtractionInformation(catalogue,s)))
             action(e);
     }
 
-    private void SetParameter(IFilter filter, string paramterToSet, string dataType, string value)
+    private static void SetParameter(IFilter filter, string paramterToSet, string dataType, string value)
     {
         var p = filter.GetAllParameters().Single(fp=>fp.ParameterName == paramterToSet);
         p.ParameterSQL = $"DECLARE {paramterToSet} AS {dataType}";
@@ -356,7 +356,7 @@ public partial class ExampleDatasetsCreation
         //create a cohort
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
 
-        var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository, auditLogBuilder.GetDescription(cic))
+        var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository, ExtractableCohortAuditLogBuilder.GetDescription(cic))
             {
                 CohortIdentificationConfiguration = cic
             };
@@ -394,7 +394,7 @@ public partial class ExampleDatasetsCreation
         ac.Name = $"People with {inclusionFilter1.Name}";
         ac.RootFilterContainer_ID = whereContainer.ID;
         cic.EnsureNamingConvention(ac); //this will put cicx at the front and cause implicit SaveToDatabase
-            
+
         var filterImporter = new FilterImporter(new AggregateFilterFactory(_repos.CatalogueRepository),null);
         var cloneFilter = filterImporter.ImportFilter(whereContainer, inclusionFilter1, null);
             
@@ -414,7 +414,7 @@ public partial class ExampleDatasetsCreation
         }
         else
             container = (AggregateFilterContainer)graph.RootFilterContainer;
-            
+
         var filter = new AggregateFilter(_repos.CatalogueRepository,name,container)
         {
             WhereSQL = whereSql
@@ -424,7 +424,7 @@ public partial class ExampleDatasetsCreation
         return filter;
     }
 
-    private void CreateAdmissionsViews(DiscoveredDatabase db)
+    private static void CreateAdmissionsViews(DiscoveredDatabase db)
     {
         using var con = db.Server.GetConnection();
         con.Open();
@@ -444,7 +444,7 @@ UNPIVOT
 ) AS up;",con))
             cmd.ExecuteNonQuery();
 
-                
+
 
         using(var cmd = db.Server.GetCommand(
                   @"create view vOperations as
@@ -459,12 +459,19 @@ UNPIVOT
 (
   Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
 ) AS up;",con))
+                cmd.ExecuteNonQuery();
+
+
+        }
+            
+
+
             cmd.ExecuteNonQuery();
     }
 
     private IFilter CreateFilter(ICatalogue cata, string name,string parentExtractionInformation, string whereSql,string desc)
     {
-        var filter = new ExtractionFilter(_repos.CatalogueRepository,name,GetExtractionInformation(cata,parentExtractionInformation))
+        var filter = new ExtractionFilter(_repos.CatalogueRepository,name, GetExtractionInformation(cata,parentExtractionInformation))
             {
                 WhereSQL = whereSql,
                 Description = desc
@@ -516,7 +523,7 @@ UNPIVOT
         return ac;
     }
 
-    private ExtractionInformation GetExtractionInformation(ICatalogue cata, string name)
+    private static ExtractionInformation GetExtractionInformation(ICatalogue cata, string name)
     {
         try
         {
@@ -528,13 +535,13 @@ UNPIVOT
         }
     }
 
-    private DiscoveredTable Create<T>(DiscoveredDatabase db,PersonCollection people, Random r, ICheckNotifier notifier,int numberOfRecords, params string[] primaryKey) where T:IDataGenerator
+    private static DiscoveredTable Create<T>(DiscoveredDatabase db,PersonCollection people, Random r, ICheckNotifier notifier,int numberOfRecords, params string[] primaryKey) where T:IDataGenerator
     {
         var dataset = typeof(T).Name;
         notifier.OnCheckPerformed(new CheckEventArgs($"Generating {numberOfRecords} records for {dataset}",CheckResult.Success));
-            
+
         var factory = new DataGeneratorFactory();
-            
+
         //half a million biochemistry results
         var biochem = factory.Create(typeof(T),r);
         var dt = biochem.GetDataTable(people,numberOfRecords);
@@ -547,7 +554,7 @@ UNPIVOT
 
 
         notifier.OnCheckPerformed(new CheckEventArgs($"Uploading {dataset}",CheckResult.Success));
-        var tbl = db.CreateTable(dataset,dt,GetExplicitColumnDefinitions<T>());
+        var tbl = db.CreateTable(dataset,dt, GetExplicitColumnDefinitions<T>());
 
         if(primaryKey.Length != 0)
         {
@@ -559,7 +566,7 @@ UNPIVOT
         return tbl;            
     }
 
-    private DatabaseColumnRequest[] GetExplicitColumnDefinitions<T>() where T : IDataGenerator
+    private static DatabaseColumnRequest[] GetExplicitColumnDefinitions<T>() where T : IDataGenerator
     {
 
         return typeof(T) == typeof(HospitalAdmissions)
@@ -592,7 +599,7 @@ UNPIVOT
     {
         var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos);
         forwardEngineer.ExecuteForwardEngineering(out var cata, out _,out var eis);
-            
+
         //get descriptions of the columns from BadMedicine
         var desc = new Descriptions();
         cata.Description = Trim(desc.Get(cata.Name));
@@ -609,7 +616,7 @@ UNPIVOT
                     ci.SaveToDatabase();
                 }
             }
-        }           
+        }
 
         var chi = eis.SingleOrDefault(e=>e.GetRuntimeName().Equals("chi",StringComparison.CurrentCultureIgnoreCase));
         if(chi != null)
@@ -622,7 +629,7 @@ UNPIVOT
         return cata;
     }
 
-    private string Trim(string s)
+    private static string Trim(string s)
     {
         if(string.IsNullOrWhiteSpace(s))
             return null;

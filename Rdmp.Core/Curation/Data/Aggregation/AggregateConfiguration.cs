@@ -364,7 +364,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             {"Name", name},
             {"Catalogue_ID", catalogue.ID}
         });
-            
+
         ClearAllInjections();
     }
 
@@ -426,7 +426,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     public void ClearAllInjections()
     {
         _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
-        _knownAggregateDimensions = new Lazy<AggregateDimension[]>(()=>Repository.GetAllObjectsWithParent<AggregateDimension>(this).ToArray()); 
+        _knownAggregateDimensions = new Lazy<AggregateDimension[]>(()=>Repository.GetAllObjectsWithParent<AggregateDimension>(this).ToArray());
         _knownCatalogue = new Lazy<Catalogue>(()=>Repository.GetObjectByID<Catalogue>(Catalogue_ID));
     }
 
@@ -499,20 +499,18 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
 
         var allForcedJoins = ForcedJoins.ToArray();
 
-        AggregateBuilder builder;
         var limitationSQLIfAny = topX == null ? null : $"TOP {topX.Value}";
 
-        if (allForcedJoins.Any())
-            builder = new AggregateBuilder(limitationSQLIfAny, CountSQL, this, allForcedJoins);
-        else
-            builder = new AggregateBuilder(limitationSQLIfAny, CountSQL, this);
+        var builder = allForcedJoins.Any()
+            ? new AggregateBuilder(limitationSQLIfAny, CountSQL, this, allForcedJoins)
+            : new AggregateBuilder(limitationSQLIfAny, CountSQL, this);
 
         builder.AddColumnRange(AggregateDimensions.ToArray());
         builder.RootFilterContainer = RootFilterContainer;
 
         if (PivotOnDimensionID != null)
             builder.SetPivotToDimensionID(PivotDimension);
-            
+
         return builder;
     }
 
@@ -661,7 +659,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     {
         var cataRepo = CatalogueRepository;
         var clone = ShallowClone();
-            
+
         if(clone.PivotOnDimensionID != null)
             throw new NotImplementedException("Cannot clone due to PIVOT");
 
@@ -682,7 +680,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         //now clone its AggregateForcedJoins
         foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(this))
             cataRepo.AggregateForcedJoinManager.CreateLinkBetween(clone, t);
-            
+
         if (RootFilterContainer_ID != null)
         {
             var clonedContainerSet = RootFilterContainer.DeepCloneEntireTreeRecursivelyIncludingFilters();
@@ -698,7 +696,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
             };
             cloneP.SaveToDatabase();
         }
-            
+
 
         clone.SaveToDatabase();
 

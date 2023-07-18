@@ -129,7 +129,7 @@ the best ever", dt.Rows[0]["Description"]);
             "0101010101,5,2001-01-05",
             "0101010101,5,2001-01-05",
             "0101010101,5,2001-01-05");
-            
+
         var dt = RunGetChunk(file);
         Assert.IsNotNull(dt);
         Assert.AreEqual(4, dt.Rows.Count);

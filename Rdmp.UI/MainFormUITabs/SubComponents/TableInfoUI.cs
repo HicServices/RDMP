@@ -87,7 +87,6 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
         _tableInfo.SaveToDatabase();
     }
 
-
     private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
     {
         //do not mess with the table name if it is a table valued function
@@ -115,9 +114,7 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
     }
     private void DoRefactoring(string toReplace, string toReplaceWith)
     {
-        var refactorer = new SelectSQLRefactorer();
-            
-        var updatesMade = refactorer.RefactorTableName(_tableInfo,toReplace,toReplaceWith);
+        var updatesMade = SelectSQLRefactorer.RefactorTableName(_tableInfo,toReplace,toReplaceWith);
 
         MessageBox.Show($"Made {updatesMade} replacements in ExtractionInformation/ColumnInfos.");
     }
@@ -144,7 +141,7 @@ public partial class TableInfoUI : TableInfoUI_Design, ISaveableUI
 
     private void btnParameters_Click(object sender, EventArgs e)
     {
-        ParameterCollectionUI.ShowAsDialog(Activator,new ParameterCollectionUIOptionsFactory().Create(_tableInfo));
+        ParameterCollectionUI.ShowAsDialog(Activator,ParameterCollectionUIOptionsFactory.Create(_tableInfo));
     }
 
     private void btnSynchronize_Click(object sender, EventArgs e)

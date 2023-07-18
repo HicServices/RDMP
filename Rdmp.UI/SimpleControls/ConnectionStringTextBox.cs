@@ -22,7 +22,7 @@ public class ConnectionStringTextBox : TextBox
 {
     private DatabaseType _databaseType;
     private List<string> supportedKeywords = new();
-    private bool suppressAutocomplete;
+    private bool suppressAutocomplete = false;
 
     public DatabaseType DatabaseType
     {

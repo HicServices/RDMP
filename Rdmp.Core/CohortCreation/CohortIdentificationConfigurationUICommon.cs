@@ -91,7 +91,7 @@ public class CohortIdentificationConfigurationUICommon
 
         return key is { State: CompilationState.Finished } ? key.FinalRowCount.ToString("N0") : (object)null;
     }
-    public object Catalogue_AspectGetter(object rowobject)
+    public static object Catalogue_AspectGetter(object rowobject)
     {
         return
             rowobject is AggregateConfiguration ac ? ac.Catalogue.Name : null;
@@ -126,7 +126,7 @@ public class CohortIdentificationConfigurationUICommon
     {
         return Runner != null && Runner.ExecutionPhase != CohortCompilerRunner.Phase.None && Runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
     }
-    private Operation GetNextOperation(CompilationState currentState)
+    private static Operation GetNextOperation(CompilationState currentState)
     {
         return currentState switch
         {

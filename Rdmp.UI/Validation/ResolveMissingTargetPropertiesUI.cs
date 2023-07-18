@@ -103,10 +103,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     private void lbAvailableColumns_DragEnter(object sender, DragEventArgs e)
     {
-        if (e.Data.GetDataPresent(typeof(ItemValidator)))
-            e.Effect = DragDropEffects.Link;
-        else
-            e.Effect = DragDropEffects.None;
+        e.Effect = e.Data.GetDataPresent(typeof(ItemValidator)) ? DragDropEffects.Link : DragDropEffects.None;
     }
 
     private void lbAvailableColumns_DragDrop(object sender, DragEventArgs e)
@@ -132,7 +129,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
     }
 
-    private void ResolveMissingReferenceAs(ItemValidator missingReference, string newTarget)
+    private static void ResolveMissingReferenceAs(ItemValidator missingReference, string newTarget)
     {
         missingReference.TargetProperty = newTarget;
             

@@ -111,7 +111,7 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
 
     private static DiscoveredServer GetLiveServer(ScheduledDataLoadJob job)
     {
-        return DataAccessPortal.GetInstance().ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad, false);
+        return DataAccessPortal.ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad, false);
     }
 
     private DateTime GetMaxDate(DiscoveredServer server, IDataLoadEventListener listener)

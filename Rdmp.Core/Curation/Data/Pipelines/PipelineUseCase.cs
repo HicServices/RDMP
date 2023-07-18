@@ -61,7 +61,7 @@ public abstract class PipelineUseCase : IPipelineUseCase
     /// <para>If this is true then GetInitializationObjects should return Type[] instead of the actually selected objects for the task</para>
     /// </summary>
     public bool IsDesignTime { get; private set; }
-
+        
     protected HashSet<object> InitializationObjects = new();
     private IDataFlowPipelineContext _context;
 

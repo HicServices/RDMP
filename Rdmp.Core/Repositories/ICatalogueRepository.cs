@@ -106,8 +106,6 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     /// <returns></returns>
     TicketingSystemConfiguration GetTicketingSystem();
 
-    DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null);
-
     T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity;
 
 

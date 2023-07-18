@@ -51,7 +51,7 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
         arguments.Single(a=>a.Name.Equals("FlatFileType")).SaveToDatabase();
             
         AdjustPipelineComponentDelegate?.Invoke(component);
-            
+
         var component2 = new PipelineComponent(CatalogueRepository, pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
         var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();
         arguments2.Single(a=>a.Name.Equals("AllowEmptyExtractions")).SetValue(false);

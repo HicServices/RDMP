@@ -16,11 +16,11 @@ public static class PermissableDefaultsExtensions
     /// Translates the given <see cref="PermissableDefaults"/> (a default that can be set) to the <see cref="IPatcher"/> which
     /// handles the creation/patching of database schema (identifies what type of database it is).
     /// </summary>
-    /// <param name="permissableDefault"></param>
+    /// <param name="permissibleDefault"></param>
     /// <returns></returns>
-    public static IPatcher ToTier2DatabaseType(this PermissableDefaults permissableDefault)
+    public static IPatcher ToTier2DatabaseType(this PermissableDefaults permissibleDefault)
     {
-        return permissableDefault switch
+        return permissibleDefault switch
         {
             PermissableDefaults.LiveLoggingServer_ID => new LoggingDatabasePatcher(),
             PermissableDefaults.IdentifierDumpServer_ID => new IdentifierDumpDatabasePatcher(),
@@ -29,7 +29,7 @@ public static class PermissableDefaultsExtensions
             PermissableDefaults.CohortIdentificationQueryCachingServer_ID => new QueryCachingPatcher(),
             PermissableDefaults.RAWDataLoadServer => null,
             PermissableDefaults.ANOStore => new ANOStorePatcher(),
-            _ => throw new ArgumentOutOfRangeException(nameof(permissableDefault))
+            _ => throw new ArgumentOutOfRangeException(nameof(permissibleDefault))
         };
     }
 }

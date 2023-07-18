@@ -138,15 +138,10 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
     {
         _treeView.ClearObjects();
 
-        if (string.IsNullOrWhiteSpace(_tbcontains.Text?.ToString()))
-        {
-            _treeView.AddObjects(_archivalDataLoadInfos);
-        }
-        else
-        {
-            _treeView.AddObjects(_archivalDataLoadInfos.Where(a => a.Description?.Contains(_tbcontains.Text.ToString()) ?? false));
-        }
-            
+        _treeView.AddObjects(string.IsNullOrWhiteSpace(_tbcontains.Text?.ToString())
+            ? _archivalDataLoadInfos
+            : _archivalDataLoadInfos.Where(a => a.Description?.Contains(_tbcontains.Text.ToString()) ?? false));
+
         _treeView.RebuildTree();
         _treeView.SetNeedsDisplay();
     }

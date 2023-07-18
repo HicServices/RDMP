@@ -48,10 +48,7 @@ public class StandardRegexConstraint : SecondaryConstraint
         {
             _standardRegexID = value;
 
-            if (value == 0)
-                CatalogueStandardRegex = null;
-            else
-                CatalogueStandardRegex = _repository.GetObjectByID<StandardRegex>(value);
+            CatalogueStandardRegex = value == 0 ? null : _repository.GetObjectByID<StandardRegex>(value);
         }
     }
 
@@ -80,7 +77,7 @@ public class StandardRegexConstraint : SecondaryConstraint
 
     public override void RenameColumn(string originalName, string newName)
     {
-            
+
     }
 
     public override string GetHumanReadableDescriptionOfValidation()
@@ -94,7 +91,7 @@ public class StandardRegexConstraint : SecondaryConstraint
     {
         if (value == null || value == DBNull.Value)
             return null;
-            
+
         if(string.IsNullOrWhiteSpace(value.ToString()))
             return null;
 

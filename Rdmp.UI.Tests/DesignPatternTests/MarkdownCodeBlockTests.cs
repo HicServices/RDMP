@@ -37,7 +37,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 internal class MarkdownCodeBlockTests
 {
     #region df7d2bb4cd6145719f933f6f15218b1a
-
     private class FrozenExtractionConfigurationsNode
     {
         public Project Project { get; set; }
@@ -179,7 +178,6 @@ internal class MarkdownCodeBlockTests
         private class _f243e95a6dc94b3486f44b8f0bb0ed7d
         {
             #region f243e95a6dc94b3486f44b8f0bb0ed7d
-
             private class AllServersNodeMenu : RDMPContextMenuStrip
             {
                 public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
@@ -193,8 +191,7 @@ internal class MarkdownCodeBlockTests
         private class _cae13dde1de14f5cac984330a222c311
         {
             #region cae13dde1de14f5cac984330a222c311
-
-            public class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+            private class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
             {
                 public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
                 {

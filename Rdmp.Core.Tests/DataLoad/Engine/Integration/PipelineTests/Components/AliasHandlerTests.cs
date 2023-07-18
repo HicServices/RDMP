@@ -82,7 +82,7 @@ public class AliasHandlerTests  : DatabaseTests
 
     [Test]
     public void ThrowBecause_NameAndAliasSameValue()
-    {            
+    {
         var s = _database.Server;
         using (var con = s.GetConnection())
         {
@@ -187,7 +187,7 @@ public class AliasHandlerTests  : DatabaseTests
 
         dt.Rows.Add(new object[] { 99, "pepey", 100 });//has a three name alias
         dt.Rows.Add(new object[] { 199, "frank", 200 });
-        dt.Rows.Add(new object[] { 299, "anderson", 300 }); 
+        dt.Rows.Add(new object[] { 299, "anderson", 300 });
 
         var result = _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 

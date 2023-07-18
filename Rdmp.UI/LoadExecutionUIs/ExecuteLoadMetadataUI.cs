@@ -125,7 +125,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
         var lp = GetLoadProgressIfAny();
 
         var debugOpts = (DebugOptions)dd_DebugOptions.SelectedItem;
-            
+
         var options = new DleOptions
         {
             Command = activityRequested,

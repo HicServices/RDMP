@@ -58,7 +58,7 @@ public class SimpleExampleTests : DatabaseTests
         SetupLowPrivilegeUserRightsFor(tableInfo,TestLowPrivilegePermissions.Reader);
 
         //request access to the database using DataLoad context
-        var newDatabase = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
+        var newDatabase = DataAccessPortal.ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
 
         //get new reference to the table
         var newTbl = newDatabase.ExpectTable(tableInfo.GetRuntimeName());

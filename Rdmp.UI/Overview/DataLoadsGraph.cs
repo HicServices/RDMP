@@ -258,7 +258,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-            
+
     }
 
     public string GetTabName()
@@ -287,7 +287,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
 
     public void NotifyEditModeChange(bool isEditModeOn)
     {
-            
+
     }
 
     public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)

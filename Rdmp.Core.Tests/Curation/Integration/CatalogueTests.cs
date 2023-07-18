@@ -404,7 +404,7 @@ public class CatalogueTests : UnitTests
     {
         var t = new TableInfo(Repository, "MyTable");
         var c = new ColumnInfo(Repository,"MyCol","varchar(10)",t);
-            
+
         var cata = new Catalogue(Repository,"MyCata");
         var ci = new CatalogueItem(Repository,cata,"MyCataItem");
 
@@ -435,7 +435,7 @@ public class CatalogueTests : UnitTests
         var t = new TableInfo(Repository, "MyTable");
         var c1 = new ColumnInfo(Repository, "MyCol1", "varchar(10)", t);
         var c2 = new ColumnInfo(Repository, "MyCol2", "varchar(10)", t);
-            
+
         var cata1 = new Catalogue(Repository, "cata1");
         var ci1_1 = new CatalogueItem(Repository, cata1, "MyCataItem1_1");
         var ci1_2 = new CatalogueItem(Repository, cata1, "MyCataItem1_2");

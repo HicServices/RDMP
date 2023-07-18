@@ -66,15 +66,12 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 {
     private ToolStripMenuItem cbIncludeCumulative = new("Calculate Cumulative Totals") { CheckOnClick = true };
     private ToolTip tt = new();
-
     private readonly ToolStripTimeout _timeoutControls = new() { Timeout = 3000 };
     private RDMPCollectionCommonFunctionality _commonFunctionality;
-
     private Timer timer = new();
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
-
-    private CohortIdentificationConfigurationUICommon Common = new ();
+    private CohortIdentificationConfigurationUICommon Common = new();
 
     public CohortIdentificationConfigurationUI()
     {
@@ -87,27 +84,22 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         tlvCic.RowHeight = 19;
         olvExecute.AspectGetter += Common.ExecuteAspectGetter;
         tlvCic.ButtonClick += tlvCic_ButtonClick;
-        olvOrder.AspectGetter += o=> o switch
-        {
-            JoinableCollectionNode => null,
-            ISqlParameter => null,
-            _ => (o as IOrderable)?.Order
-        };
+        olvOrder.AspectGetter += static o=> o is IOrderable orderable ? orderable.Order : null;
         olvOrder.IsEditable = false;
         tlvCic.ItemActivate += TlvCic_ItemActivate;
         AssociatedCollection = RDMPCollection.Cohort;
 
-            
+
         timer.Tick += refreshColumnValues;
         timer.Interval = 2000;
         timer.Start();
-            
+
         olvCount.AspectGetter = Common.Count_AspectGetter;
         olvCached.AspectGetter = Common.Cached_AspectGetter;
         olvCumulativeTotal.AspectGetter = Common.CumulativeTotal_AspectGetter;
         olvTime.AspectGetter = Common.Time_AspectGetter;
         olvWorking.AspectGetter = Common.Working_AspectGetter;
-        olvCatalogue.AspectGetter = Common.Catalogue_AspectGetter;
+        olvCatalogue.AspectGetter = Catalogue_AspectGetter;
 
         cbIncludeCumulative.CheckedChanged += (s, e) =>
         {
@@ -139,7 +131,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         Common.Activator = Activator;
         var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
-            
+
         //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
         if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
         {
@@ -209,7 +201,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(databaseObject),
             "Commit Cohort",
             activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort,OverlayKind.Add));
-            
+
         foreach (var c in _timeoutControls.GetControls())
             CommonFunctionality.Add(c);
 
@@ -238,7 +230,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private void TlvCic_ItemActivate(object sender, EventArgs e)
     {
-            
+
         var o = tlvCic.SelectedObject;
         if (o != null)
         {
@@ -249,7 +241,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
                 return;
             }
         }
-                
+
         _commonFunctionality.CommonItemActivation(sender, e);
     }
 
@@ -274,7 +266,6 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         e.Cancel = Common.ConsultAboutClosing();
     }
-
 
     private void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
     {
@@ -392,7 +383,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
         return menuItem;
     }
-    private void ViewCrashMessage(ICompileable compileable)
+    private static void ViewCrashMessage(ICompileable compileable)
     {
         ExceptionViewer.Show(compileable.CrashMessage);
     }

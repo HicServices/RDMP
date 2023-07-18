@@ -518,7 +518,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(ICatalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers, bool importMandatoryFilters = true)
     {
         var cataRepo = (ICatalogueRepository) Repository;
-            
+
         var configuration = new AggregateConfiguration(cataRepo,catalogue, $"People in {catalogue}");
         EnsureNamingConvention(configuration);
 
@@ -573,7 +573,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <param name="underlyingExtractionInformation"></param>
     /// <param name="resolveMultipleExtractionIdentifiers"></param>
     /// <returns></returns>
-    private IColumn GetExtractionIdentifierFrom(AggregateConfiguration toClone, out ExtractionInformation underlyingExtractionInformation, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
+    private static IColumn GetExtractionIdentifierFrom(AggregateConfiguration toClone, out ExtractionInformation underlyingExtractionInformation, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
     {
         //make sure it can be cloned before starting
 
@@ -611,7 +611,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         return extractionIdentifier;
     }
 
-    private IColumn GetExtractionIdentifierFrom(ICatalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
+    private static IColumn GetExtractionIdentifierFrom(ICatalogue catalogue, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
     {
         //the aggregate they are cloning does not have an extraction identifier but the dataset might still have one
         var catalogueCandidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => e.IsExtractionIdentifier).ToArray();

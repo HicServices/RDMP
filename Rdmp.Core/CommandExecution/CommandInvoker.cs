@@ -69,7 +69,7 @@ public class CommandInvoker
 
         AddDelegate(typeof(string), false,SelectText);
 
-        AddDelegate(typeof(Type), false,p =>
+        AddDelegate(typeof(Type), false,p => 
             _basicActivator.SelectType(
                 new DialogArgs
                 {
@@ -123,7 +123,7 @@ public class CommandInvoker
                 return null;
 
             var typedArray = Array.CreateInstance(p.Type.GetElementType(),result.Length);
-            for(var i=0;i<typedArray.Length;i++)
+            for(var i =0;i<typedArray.Length;i++)
                 typedArray.SetValue(result[i],i);
 
             return typedArray;
@@ -190,7 +190,7 @@ public class CommandInvoker
         return (IPipeline)_basicActivator.SelectOne(GetPromptFor(arg), _basicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().ToArray());
     }
 
-    private string GetPromptFor(RequiredArgument p)
+    private static string GetPromptFor(RequiredArgument p)
     {
         return $"Value needed for {p.Name} ({p.Type.Name})";
     }
@@ -344,7 +344,8 @@ public class CommandInvoker
         return GetDelegate(new RequiredArgument(p)) != null ? "":$"No delegate for {p.ParameterType}";
     }
 
-    private readonly ConcurrentDictionary<RequiredArgument, CommandInvokerDelegate> _delegateCache = new();
+    private readonly ConcurrentDictionary<RequiredArgument, CommandInvokerDelegate> _delegateCache =
+        new();
     public CommandInvokerDelegate GetDelegate(RequiredArgument argument)
     {
         return _delegateCache.GetOrAdd(argument, GetDelegateCacheMiss);

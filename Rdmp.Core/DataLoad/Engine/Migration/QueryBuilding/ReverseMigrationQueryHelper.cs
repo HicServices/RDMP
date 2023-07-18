@@ -21,7 +21,7 @@ public class ReverseMigrationQueryHelper : MigrationQueryHelper
 
     public override string BuildUpdateClauseForRow(string sourceAlias, string destAlias)
     {
-        return string.Join(", ", ColumnsToMigrate.FieldsToUpdate.Select(col =>
+        return string.Join(", ", ColumnsToMigrate.FieldsToUpdate.Select(col => 
             string.Format(destAlias + ".[" + col + "] = " + sourceAlias + ".[" + col + "]",col.GetRuntimeName())));
     }
 

@@ -207,7 +207,7 @@ end
         var tblvf = _database.ExpectTableValuedFunction("GetTopXRandom");
 
         var importer = new TableValuedFunctionImporter(CatalogueRepository, tblvf);
-        importer.DoImport(out var tbl,out var cols);
+        importer.DoImport(out var tbl, out var cols);
 
         var engineer = new ForwardEngineerCatalogue(tbl, cols);
         engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
@@ -238,10 +238,10 @@ end
             _database.GetRuntimeName(), "NonTVFTable",
             DatabaseType.MicrosoftSQLServer,_database.Server.ExplicitUsernameIfAny,_database.Server.ExplicitPasswordIfAny);
 
-        importer.DoImport(out var tbl,out var cols);
+        importer.DoImport(out var tbl, out var cols);
 
         var engineer = new ForwardEngineerCatalogue(tbl, cols);
-        engineer.ExecuteForwardEngineering(out var cata,out var cis, out var eis);
+        engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
             
         _nonTvfExtractionIdentifier  = eis.Single();
         _nonTvfExtractionIdentifier.IsExtractionIdentifier = true;
@@ -267,7 +267,7 @@ end
 
     private void TestWithParameterValueThatRowsAreReturned()
     {
-        var  p = _tvfTableInfo.GetAllParameters().Single();
+        var p = _tvfTableInfo.GetAllParameters().Single();
         p.Value = "5";
         p.SaveToDatabase();
 
@@ -308,7 +308,7 @@ end
         p.SaveToDatabase();
 
         var qb = _aggregate.GetQueryBuilder();
-            
+
         //Query should be something like :
         /*
          * DECLARE @numberOfRecords AS int;
@@ -329,8 +329,8 @@ end
          * */
 
         var sql = qb.SQL;
-            
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
+
+        var db = DataAccessPortal.ExpectDatabase(_tvfTableInfo, DataAccessContext.InternalDataProcessing);
         using (var con = db.Server.GetConnection())
         {
             con.Open();
@@ -429,7 +429,7 @@ end
                 Value = "1"
             };
         globalP.SaveToDatabase();
-            
+
         var extractionCommand = new ExtractDatasetCommand(config, new ExtractableDatasetBundle(tvfExtractable));
 
         var source = new ExecuteDatasetExtractionSource();

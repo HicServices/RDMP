@@ -68,12 +68,10 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private AggregateConfiguration _aggregate;
 
     private List<ITableInfo> _forcedJoins;
-
     private IQuerySyntaxHelper _querySyntaxHelper;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public Scintilla QueryHaving;
-
     private ErrorProvider _errorProviderAxis = new();
 
     //Constructor
@@ -122,7 +120,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     }
 
     private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
-    { 
+    {
         var ti = rowobject as TableInfo;
 
         var joiner = _aggregate.CatalogueRepository.AggregateForcedJoinManager;
@@ -341,7 +339,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         PublishToSelfOnly();
     }
 
-    private void EnsurePivotHasAlias(AggregateDimension dimension)
+    private static void EnsurePivotHasAlias(AggregateDimension dimension)
     {
         if (string.IsNullOrWhiteSpace(dimension.Alias))
         {
@@ -420,10 +418,10 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
         if(ddAxisDimension.SelectedItem is not AggregateDimension selectedDimension)
             return;
-            
+
         //is there already an axis? if so keep the old start/end dates
         var existing = _aggregate.GetAxisIfAny();
-            
+
         //create a new one
         var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension)
             {
@@ -475,7 +473,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         isRefreshing = true;
             
         //find out what is legal for the aggregate
-        _options = new AggregateBuilderOptionsFactory().Create(_aggregate);
+        _options = AggregateBuilderOptionsFactory.Create(_aggregate);
             
         //set enablednesss based on legality
         cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
@@ -540,7 +538,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private void tbName_TextChanged(object sender, EventArgs e)
     {
         _aggregate.Name = tbName.Text;
-            
+
         var cic = _aggregate.GetCohortIdentificationConfigurationIfAny();
 
         cic?.EnsureNamingConvention(_aggregate);

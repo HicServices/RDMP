@@ -44,10 +44,9 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
             if (primaryKeys.Any())
             {
                 string newSql;
-                if (primaryKeys.Length > 1) // no need to do anything if there is only one.
-                    newSql = $"CONCAT({string.Join(",'_',", primaryKeys.Select(apk => apk.ToString()))})";
-                else
-                    newSql = primaryKeys.Single().Name;
+                newSql = primaryKeys.Length > 1
+                    ? $"CONCAT({string.Join(",'_',", primaryKeys.Select(apk => apk.ToString()))})"
+                    : primaryKeys.Single().Name; // no need to do anything if there is only one.
 
                 var syntaxHelper = Request.Catalogue.GetQuerySyntaxHelper();
 
@@ -124,13 +123,11 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
     {
         foreach (var column in Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions))
         {
-            var ec = column as ExtractableColumn;
-
-            if(column is ReleaseIdentifierSubstitution ri)
+            if (column is ReleaseIdentifierSubstitution ri)
                 if (ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey)
                     yield return ri;
 
-            if (ec is { IsPrimaryKey: true })
+            if (column is ExtractableColumn ec && ec.IsPrimaryKey)
                 yield return ec;
         }
     }

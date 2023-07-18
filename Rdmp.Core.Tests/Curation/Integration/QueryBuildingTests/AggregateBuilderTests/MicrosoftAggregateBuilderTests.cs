@@ -30,7 +30,7 @@ T1
 group by 
 Col1
 order by 
-Col1"),CollapseWhitespace(builder.SQL));
+Col1"), CollapseWhitespace(builder.SQL));
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ T1
 group by 
 Col1
 order by 
-Col1"),CollapseWhitespace(builder.SQL));
+Col1"), CollapseWhitespace(builder.SQL));
     }
 
     [Test]
@@ -73,7 +73,7 @@ Col1,
 Col2
 order by 
 Col1,
-Col2")),CollapseWhitespace(builder.SQL));
+Col2")), CollapseWhitespace(builder.SQL));
     }
 
     [Test]
@@ -139,7 +139,7 @@ group by
 Col1,
 Col2
 order by 
-{countColField} {(asc ? "asc" : "desc")}"),CollapseWhitespace(builder.SQL));
+{countColField} {(asc ? "asc" : "desc")}"), CollapseWhitespace(builder.SQL));
 
         _configuration.CountSQL = beforeCountSQL;
         topX.DeleteInDatabase();
@@ -158,7 +158,7 @@ order by
                 : AggregateTopXOrderByDirection.Descending
         };
         topX.SaveToDatabase();
-            
+
         var builder = _configuration.GetQueryBuilder();
 
         Assert.AreEqual(CollapseWhitespace($@"/*MyConfig*/

@@ -107,7 +107,7 @@ public partial class ImportSQLTableUI : RDMPForm
         {
             // logic to add credentials
             // parent.SetCredentials();
-            Importer.DoImport(out var ti,out var cols);
+            Importer.DoImport(out var ti, out var cols);
 
             if(ti is DatabaseEntity de)
                 Activator.Publish(de);
@@ -125,7 +125,7 @@ public partial class ImportSQLTableUI : RDMPForm
             {
                 if(ti.IsTableValuedFunction && ti.GetAllParameters().Any())
                 {
-                    var options = new ParameterCollectionUIOptionsFactory().Create(ti);
+                    var options = ParameterCollectionUIOptionsFactory.Create(ti);
                     ParameterCollectionUI.ShowAsDialog(Activator,options,true);
                 }
                 MessageBox.Show($"Successfully imported table '{ti}'");

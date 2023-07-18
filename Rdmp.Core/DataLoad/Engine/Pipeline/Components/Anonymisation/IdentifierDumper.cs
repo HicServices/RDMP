@@ -57,7 +57,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             {
                 //the place to store identifiers (at least those that are StoreInIdentifiersDump)
                 _externalDatabaseServer = tableInfo.IdentifierDumpServer;
-                _dumpDatabase = DataAccessPortal.GetInstance().ExpectDatabase(_externalDatabaseServer, DataAccessContext.DataLoad);
+                _dumpDatabase = DataAccessPortal.ExpectDatabase(_externalDatabaseServer, DataAccessContext.DataLoad);
             }
 
         ColumnsToRouteToSomewhereElse = new List<PreLoadDiscardedColumn>(columnsToDump);
@@ -239,7 +239,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"There are {duplicate.Count()} PreLoadDiscardedColumns called '{duplicate.Key}' for TableInfo '{TableInfo}'", CheckResult.Fail));
-                
+
         //columns that exist in live but are supposedly dropped during load
         var liveColumns = TableInfo.ColumnInfos.ToArray();
 
@@ -272,7 +272,7 @@ public class IdentifierDumper :IHasRuntimeName, IDisposeAfterDataLoad,ICheckable
                 $"No columns require dumping from TableInfo {TableInfo} so checking is not needed", CheckResult.Success, null));
             return;
         }
-            
+
         var tables = _dumpDatabase.DiscoverTables(false);
 
         var stagingTableFound = tables.Any(t => t.GetRuntimeName().Equals(GetStagingRuntimeName()));

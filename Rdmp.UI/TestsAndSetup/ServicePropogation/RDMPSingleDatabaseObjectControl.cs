@@ -75,7 +75,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
         if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
         {
-            var colorProvider = new BackColorProvider();
             _colorIndicator = new Control
             {
                 Dock = DockStyle.Top,
@@ -88,16 +87,16 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         }
 
         _readonlyIndicator ??= new Label
-        {
-            Dock = DockStyle.Top,
-            Location = new Point(0, 0),
-            Size = new Size(150, 20),
-            TabIndex = 0,
-            TextAlign = ContentAlignment.MiddleLeft,
-            BackColor = SystemColors.HotTrack,
-            Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0),
-            ForeColor = Color.Moccasin
-        };
+            {
+                Dock = DockStyle.Top,
+                Location = new Point(0, 0),
+                Size = new Size(150, 20),
+                TabIndex = 0,
+                TextAlign = ContentAlignment.MiddleLeft,
+                BackColor = SystemColors.HotTrack,
+                Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0),
+                ForeColor = Color.Moccasin
+            };
 
         if (databaseObject is IMightBeReadOnly ro)
         {
@@ -118,7 +117,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         _binder ??= new BinderWithErrorProviderFactory(activator);
 
         SetBindings(_binder, databaseObject);
-            
+
         if(this is ISaveableUI)
         {
             if(UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
@@ -130,8 +129,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
             ObjectSaverButton1.SetupFor(this, databaseObject, activator);
         }
-                
-            
+
+
         var gotoFactory = new GoToCommandFactory(activator);
         foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
         {
@@ -159,7 +158,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 return false;
             }
         }
-            
+
         // before starting a new commit cleanup old one
         CurrentCommit?.Dispose();
 
@@ -185,7 +184,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)
     {
-            
+
     }
 
     /// <summary>
@@ -205,7 +204,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         {
             box.SelectionChangeCommitted += (s,e)=>box.DataBindings["SelectedItem"].WriteValue();
         }
-            
+
         _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
     }
 

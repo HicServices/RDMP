@@ -63,7 +63,7 @@ False - Delete the larger value")]
             ? string.Format("({0} <> {1} AND {0} < {1})", t1DotColumn, t2DotColumn)
             : string.Format("({0} <> {1} AND {1} < {0})", t1DotColumn, t2DotColumn);
 
-             
+
 
         var sql = string.Format(@"DELETE t1 FROM {0} t1
   JOIN {0} t2
@@ -102,7 +102,7 @@ False - Delete the larger value")]
     public ExitCodeType Mutilate(IDataLoadJob job)
     {
         var tbl = _database.ExpectTable(ColumnToResolveOn.TableInfo.GetRuntimeName(_loadStage,job.Configuration.DatabaseNamer));
-        var  pks = ColumnToResolveOn.TableInfo.ColumnInfos.Where(ci => ci.IsPrimaryKey).ToArray();
+        var pks = ColumnToResolveOn.TableInfo.ColumnInfos.Where(ci => ci.IsPrimaryKey).ToArray();
             
         DeleteRows(tbl,pks,job);
 

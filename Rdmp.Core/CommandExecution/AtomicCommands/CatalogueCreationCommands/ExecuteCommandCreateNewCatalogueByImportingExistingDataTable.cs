@@ -35,7 +35,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
         DiscoveredTable existingTable,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
         IProject projectSpecific,
-
+            
         [DemandsInitialization(Desc_TargetFolder,DefaultValue = "\\")]
         string targetFolder = "\\") : base(activator,projectSpecific, targetFolder)
     {

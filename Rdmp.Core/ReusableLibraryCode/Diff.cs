@@ -194,7 +194,7 @@ public class Diff {
     /// <param name="TextA">A-version of the text (usualy the old one)</param>
     /// <param name="TextB">B-version of the text (usualy the new one)</param>
     /// <returns>Returns a array of Items that describe the differences.</returns>
-    public Item [] DiffText(string TextA, string TextB) {
+    public static Item [] DiffText(string TextA, string TextB) {
         return DiffText(TextA, TextB, false, false, false);
     } // DiffText
 
@@ -259,15 +259,13 @@ public class Diff {
     /// <returns>a array of integers.</returns>
     private static int[] DiffCodes(string aText, Hashtable h, bool trimSpace, bool ignoreSpace, bool ignoreCase) {
         // get all codes of the text
-        string []Lines;
-        int []Codes;
         var lastUsedCode = h.Count;
 
         // strip off all cr, only use lf as line separator.
         aText = aText.Replace("\r", "");
-        Lines = aText.Split('\n');
+        var Lines = aText.Split('\n');
 
-        Codes = new int[Lines.Length];
+        var Codes = new int[Lines.Length];
 
         for (var i = 0; i < Lines.Length; ++i) {
             var s = Lines[i];
@@ -318,13 +316,13 @@ public class Diff {
 
         // vector for the (u,v) to (N,M) search
         var UpVector = new int[2 * MAX + 2];
-      
+
         // The vectors in the publication accepts negative indexes. the vectors implemented here are 0-based
         // and are access using a specific offset: UpOffset UpVector and DownOffset for DownVektor
         var DownOffset = MAX - DownK;
         var UpOffset = MAX - UpK;
-	
-        var  MaxD = (UpperA - LowerA + UpperB - LowerB) / 2 + 1;
+
+        var MaxD = (UpperA - LowerA + UpperB - LowerB) / 2 + 1;
 		
         // Debug.Write(2, "SMS", String.Format("Search the box: A[{0}-{1}] to B[{2}-{3}]", LowerA, UpperA, LowerB, UpperB));
 
@@ -463,10 +461,9 @@ public class Diff {
         var a = new ArrayList();
 
         int StartA, StartB;
-        int LineA, LineB;
 
-        LineA = 0;
-        LineB = 0;
+        var LineA = 0;
+        var LineB = 0;
         while (LineA < DataA.Length || LineB < DataB.Length) {
             if (LineA < DataA.Length && ! DataA.modified[LineA]
                                      && LineB < DataB.Length && ! DataB.modified[LineB]) {

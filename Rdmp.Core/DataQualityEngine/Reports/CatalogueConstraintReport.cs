@@ -492,7 +492,7 @@ public class CatalogueConstraintReport : DataQualityReport
                     if (itemValidator.SecondaryConstraints.All(constraint => constraint.GetType() != typeof(Prediction)))
                     {
                         //Add an item validator onto the fk column that targets the description column with a nullness prediction
-                        var newRule = new Prediction(new ValuePredictsOtherValueNullity(), foreignKeyFieldName)
+                        var newRule = new Prediction(new ValuePredictsOtherValueNullness(), foreignKeyFieldName)
                             {
                                 Consequence = Consequence.Missing
                             };
@@ -521,11 +521,11 @@ public class CatalogueConstraintReport : DataQualityReport
         //make sure all the results dictionaries
         states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder);
 
-        //ask the validator to validate!
+        //ask the validator to validate! 
         _validator.ValidateVerboseAdditive(
             r,//validate the data reader
             states.ColumnValidationFailuresByDataLoadRunID[dataLoadRunIDOfCurrentRecord],//additively adjust the validation failures dictionary
-            out var worstConsequence);//and tell us what the worst consequence in the row was
+            out var worstConsequence);//and tell us what the worst consequence in the row was 
 
 
         //increment the time periodicity hypercube!

@@ -158,10 +158,10 @@ public class RDMPCombineableFactory:ICombineableFactory
         return modelObject is ICombineableSource commandSource ? commandSource.GetCombineable() : null;
     }
 
-    private T[] IsArrayOf<T>(object modelObject)
+    private static T[] IsArrayOf<T>(object modelObject)
     {
-        if(modelObject is T t)
-            return new [] { t };
+        if(modelObject is T modelObject1)
+            return new [] { modelObject1 };
 
         if (modelObject is not IEnumerable array)
             return null;

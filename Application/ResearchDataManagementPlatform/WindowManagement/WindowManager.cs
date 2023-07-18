@@ -157,7 +157,7 @@ public class WindowManager
 
 
     private PersistableToolboxDockContent Show(RDMPCollection collection,RDMPCollectionUI control, string label, Image<Rgba32> image)
-    {           
+    {
         var content = _windowFactory.Create(ActivateItems,control, label, image, collection);//these are collections so are not tracked with a window tracker.
         content.Closed += (s, e) => content_Closed(collection);
 
@@ -188,8 +188,9 @@ public class WindowManager
     /// <param name="collection"></param>
     public void Pop(RDMPCollection collection)
     {
-        if (!_visibleToolboxes.TryGetValue(collection, out var content)) return;
-        content.DockState = content.DockState switch
+        if (!_visibleToolboxes.TryGetValue(collection, out var dockContent)) return;
+
+        dockContent.DockState = dockContent.DockState switch
         {
             DockState.DockLeftAutoHide => DockState.DockLeft,
             DockState.DockRightAutoHide => DockState.DockRight,
@@ -198,11 +199,11 @@ public class WindowManager
             _ => _visibleToolboxes[collection].DockState
         };
 
-        content.Activate();
+        dockContent.Activate();
     }
 
     /// <summary>
-    /// Returns true if the corresponding RDMPCollectionUI is open (even if it is burried under other windows).
+    /// Returns true if the corresponding RDMPCollectionUI is open (even if it is buried under other windows).
     /// </summary>
     /// <param name="collection"></param>
     /// <returns></returns>
@@ -213,13 +214,7 @@ public class WindowManager
 
     public RDMPCollection GetFocusedCollection()
     {
-        foreach (var t in _visibleToolboxes)
-        {
-            if (t.Value.ContainsFocus)
-                return t.Key;
-        }
-
-        return RDMPCollection.None;
+        return _visibleToolboxes.Where(static t => t.Value.ContainsFocus).Select(static t => t.Key).FirstOrDefault();
     }
 
     internal void OnFormClosing(System.Windows.Forms.FormClosingEventArgs e)
@@ -426,7 +421,7 @@ public class WindowManager
             CloseWindowIfInSameScope(adhoc, content);
     }
 
-    private void CloseWindowIfInSameScope(DockContent toClose, DockContent tabInSameScopeOrNull)
+    private static void CloseWindowIfInSameScope(DockContent toClose, DockContent tabInSameScopeOrNull)
     {
         var parent = tabInSameScopeOrNull?.Parent;
 

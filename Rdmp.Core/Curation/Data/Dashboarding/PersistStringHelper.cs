@@ -54,7 +54,7 @@ public static class PersistStringHelper
     public static string SaveDictionaryToString(Dictionary<string, string> dict)
     {
         var el = new XElement("root",
-            dict.Select(kv => new XElement(kv.Key, kv.Value)));
+            dict.Select(static kv => new XElement(kv.Key, kv.Value)));
 
         return el.ToString();
     }
@@ -109,6 +109,8 @@ public static class PersistStringHelper
 
         return sb.ToString();
     }
+
+    private static readonly Regex CollectionPattern = new($"{Regex.Escape(CollectionStartDelimiter.ToString())}(.*){Regex.Escape(CollectionEndDelimiter.ToString())}",RegexOptions.CultureInvariant);
 
     /// <summary>
     /// Returns the object list section of any <paramref name="persistenceString"/>. This string must take the format [RepoType:ObjectType:ID,RepoType:ObjectType:ID]

@@ -73,7 +73,7 @@ public class WebFileDownloader : IPluginDataProvider
             Timeout = TimeSpan.FromSeconds(60)
         };
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36");
-        using var response= httpClient.GetAsync(url).Result;
+        using var response = httpClient.GetAsync(url).Result;
         if (response.IsSuccessStatusCode)
         {
             response.Content.ReadAsStreamAsync().Result.CopyTo(output);

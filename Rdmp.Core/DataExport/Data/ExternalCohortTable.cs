@@ -220,7 +220,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         return Discover(DiscoverCohortTable(), DefinitionTableForeignKeyField);
     }
 
-    private DiscoveredColumn Discover(DiscoveredTable tbl, string column)
+    private static DiscoveredColumn Discover(DiscoveredTable tbl, string column)
     {
         return tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
     }
@@ -291,7 +291,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
                     $"Found table {DefinitionTableName} in database {Database}", CheckResult.Success, null));
 
                 var cols = foundCohortDefinitionTable.DiscoverColumns();
-
+                    
                 foreach (var requiredField in CohortDefinitionTable_RequiredFields)
                     ComplainIfColumnMissing(DefinitionTableName, cols, requiredField, notifier);
             }
@@ -310,8 +310,8 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         try
         {
-            DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport).TestConnection();
-
+            DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport).TestConnection();
+              
             notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success, null));
         }
         catch (Exception e)

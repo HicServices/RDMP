@@ -40,7 +40,7 @@ public class BackupDatabaseMutilation:IMutilateDataTables
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-            
+
     }
 
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
@@ -52,7 +52,7 @@ public class BackupDatabaseMutilation:IMutilateDataTables
 
     public ExitCodeType Mutilate(IDataLoadJob job)
     {
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(DatabaseToBackup, DataAccessContext.DataLoad);
+        var db = DataAccessPortal.ExpectDatabase(DatabaseToBackup, DataAccessContext.DataLoad);
         db.CreateBackup("DataLoadEngineBackup");
         return ExitCodeType.Success;
     }

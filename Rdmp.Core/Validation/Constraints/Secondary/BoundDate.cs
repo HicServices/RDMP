@@ -54,7 +54,24 @@ public class BoundDate : Bound
 
     private bool IsWithinRange(DateTime d)
     {
-        return Inclusive ? !(d<Lower) && !(d>Upper) : !(d<=Lower) && !(d>=Upper);
+        if (Inclusive)
+        {
+            if (d < Lower)
+                return false;
+
+            if (d > Upper)
+                return false;
+        }
+        else
+        {
+            if (d <= Lower)
+                return false;
+
+            if (d >= Upper)
+                return false;
+        }
+
+        return true;
     }
 
     private bool IsWithinRange(DateTime d, object[] otherColumns, string[] otherColumnNames)
@@ -82,21 +99,38 @@ public class BoundDate : Bound
         return true;
     }
 
-    private DateTime? SafeConvertToDate(object lookupFieldNamed)
+    private static DateTime? SafeConvertToDate(object lookupFieldNamed)
     {
         if (lookupFieldNamed == null)
             return null;
 
-        return lookupFieldNamed == DBNull.Value
-            ? null
-            : lookupFieldNamed switch
+        if (lookupFieldNamed == DBNull.Value)
+            return null;
+
+        if (lookupFieldNamed is DateTime time)
+            return time;
+
+        if (lookupFieldNamed is string named)
         {
-            DateTime dateTime => dateTime,
-            string named when string.IsNullOrWhiteSpace(named) => null,
-            string named => DateTime.TryParse(named, out var result) ? result : null,
-            _ => throw new ArgumentException(
-                $"Did not know how to deal with object of type {lookupFieldNamed.GetType().Name}")
-        };
+            if (string.IsNullOrWhiteSpace(named))
+                return null;
+            try
+            {
+                lookupFieldNamed = DateTime.Parse(named);
+            }
+            catch (InvalidCastException )
+            {
+                return null; //it's not our responsibility to look for malformed dates in this constraint (leave that to primary constraint date)
+            }
+            catch (FormatException )
+            {
+                return null;
+            }
+
+            return (DateTime)lookupFieldNamed;
+        }
+
+        throw new ArgumentException($"Did not know how to deal with object of type {lookupFieldNamed.GetType().Name}");
     }
 
     private string CreateViolationReportUsingDates(DateTime d)
@@ -129,13 +163,13 @@ public class BoundDate : Bound
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
     }
 
-    private string GreaterThanMessage(DateTime d, string s)
+    private static string GreaterThanMessage(DateTime d, string s)
     {
         return
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date greater than {Wrap(s)}.";
     }
 
-    private string LessThanMessage(DateTime d, string s)
+    private static string LessThanMessage(DateTime d, string s)
     {
         return
             $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";

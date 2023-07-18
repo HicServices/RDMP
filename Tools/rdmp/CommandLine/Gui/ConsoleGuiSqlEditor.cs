@@ -156,7 +156,7 @@ internal partial class ConsoleGuiSqlEditor : Window
 
         var auto = new AutoCompleteProvider(collection.GetQuerySyntaxHelper());
         collection.AdjustAutocomplete(auto);
-        var bits = auto.Items.SelectMany(auto.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
+        var bits = auto.Items.SelectMany(AutoCompleteProvider.GetBits).OrderBy(a => a).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct().ToList();
         textView.Autocomplete.AllSuggestions = bits;
         textView.Autocomplete.MaxWidth = 40;
     }
@@ -315,7 +315,7 @@ internal partial class ConsoleGuiSqlEditor : Window
                 return;
             }
 
-            var db = DataAccessPortal.GetInstance().ExpectDatabase(_collection.GetDataAccessPoint(),DataAccessContext.InternalDataProcessing);
+            var db = DataAccessPortal.ExpectDatabase(_collection.GetDataAccessPoint(),DataAccessContext.InternalDataProcessing);
 
             using var con = db.Server.GetConnection();
             con.Open();
@@ -363,16 +363,17 @@ internal partial class ConsoleGuiSqlEditor : Window
     private partial class SqlTextView : TextView
     {
 
-        private readonly HashSet<string> _keywords = new(new[]
-        {
-            "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE", "COALESCE",
-            "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT", "COMPLETION",
-            "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT", "CONSTRAINT_CATALOG",
-            "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS", "COPY", "CPU",
-            "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete", "truncate", "as",
-            "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit", "null", "is", "drop",
-            "database", "table", "having", "in", "join", "on", "union", "exists"
-        }, StringComparer.CurrentCultureIgnoreCase);
+        private readonly HashSet<string> _keywords = new(
+            new[]
+            {
+                "select", "distinct", "top", "from", "create", "CIPHER", "CLASS_ORIGIN", "CLIENT", "CLOSE",
+                "COALESCE", "CODE", "COLUMNS", "COLUMN_FORMAT", "COLUMN_NAME", "COMMENT", "COMMIT", "COMPACT",
+                "COMPLETION", "COMPRESSED", "COMPRESSION", "CONCURRENT", "CONNECT", "CONNECTION", "CONSISTENT",
+                "CONSTRAINT_CATALOG", "CONSTRAINT_SCHEMA", "CONSTRAINT_NAME", "CONTAINS", "CONTEXT", "CONTRIBUTORS",
+                "COPY", "CPU", "CURSOR_NAME", "primary", "key", "insert", "alter", "add", "update", "set", "delete",
+                "truncate", "as", "order", "by", "asc", "desc", "between", "where", "and", "or", "not", "limit",
+                "null", "is", "drop", "database", "table", "having", "in", "join", "on", "union", "exists"
+            }, StringComparer.CurrentCultureIgnoreCase);
         private readonly Attribute _blue;
         private readonly Attribute _white;
 
@@ -415,7 +416,7 @@ internal partial class ConsoleGuiSqlEditor : Window
             return !string.IsNullOrWhiteSpace(word) && _keywords.Contains(word);
         }
 
-        private string IdxToWord(IEnumerable<Rune> line, int idx)
+        private static string IdxToWord(IEnumerable<Rune> line, int idx)
         {
             var words = WordBoundaries().Split(string.Join("", line));
 

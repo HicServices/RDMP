@@ -24,7 +24,7 @@ namespace Tests.Common.Helpers;
 public class TestDataInventor : CacheSource<TestDataWriterChunk>
 {
     private Random r = new();
-
+        
     /// <summary>
     /// The path in which to create random files
     /// </summary>
@@ -39,7 +39,7 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
             return null;
 
         var currentDay = Request.Start;
-            
+
         var toReturn = new List<FileInfo>();
 
         while(currentDay <= Request.End)

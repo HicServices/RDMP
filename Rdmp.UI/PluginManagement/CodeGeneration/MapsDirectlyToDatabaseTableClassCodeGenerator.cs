@@ -102,13 +102,17 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
     }
 
-    private string GetCSharpTypeFor(DiscoveredColumn col,out string setCode)
+    private static string GetCSharpTypeFor(DiscoveredColumn col,out string setCode)
     {
         var r = $"r[\"{col.GetRuntimeName()}\"]";
 
         if (col.DataType.GetLengthIfString() != -1)
         {
             setCode = col.AllowNulls ? $"{r} as string;" : $"{r}.ToString();";
+
+            else
+                setCode = $"{r}.ToString();";
+
             return "string";
         }
 

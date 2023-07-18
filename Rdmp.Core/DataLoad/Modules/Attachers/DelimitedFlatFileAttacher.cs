@@ -97,15 +97,21 @@ public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
     public string AddFilenameColumnNamed { get; set; }
 
     [DemandsInitialization(Culture_DemandDescription)]
-    public override CultureInfo Culture { get => Source.Culture; set => Source.Culture = value; }
+    public override CultureInfo Culture { get => _source.Culture; set => _source.Culture = value; }
 
     [DemandsInitialization(ExplicitDateTimeFormat_DemandDescription)]
-    public override string ExplicitDateTimeFormat {get => Source.ExplicitDateTimeFormat; set => Source.ExplicitDateTimeFormat = value; }
+    public override string ExplicitDateTimeFormat {get => _source.ExplicitDateTimeFormat; set => _source.ExplicitDateTimeFormat = value; }
 
 
     protected DelimitedFlatFileAttacher(char separator)
     {
-        Source = new DelimitedFlatFileDataFlowSource
+        SetupSource(separator);
+
+    }
+
+    private void SetupSource(char separator)
+    {
+        _source = new DelimitedFlatFileDataFlowSource
         {
             Separator = separator.ToString(),
             StronglyTypeInput = false,

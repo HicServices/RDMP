@@ -36,7 +36,7 @@ public class ANOMigrationTests : TestsRequiringANOStore
         BlitzMainDataTables();
             
         DeleteANOEndpoint();
-            
+
         var remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
 
         remnantANO?.DeleteInDatabase();
@@ -98,7 +98,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
 
     private void DeleteANOEndpoint()
     {
-        var remnantEndpointANOTable = DataAccessPortal.GetInstance()
+        var remnantEndpointANOTable = DataAccessPortal
             .ExpectDatabase(ANOStore_ExternalDatabaseServer, DataAccessContext.InternalDataProcessing)
             .ExpectTable("ANOCondition");
 

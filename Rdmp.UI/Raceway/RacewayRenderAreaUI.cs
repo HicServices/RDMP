@@ -37,7 +37,6 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 {
     private DateTime[] _buckets;
     private Pen _verticalLinesPen = new(Color.FromArgb(150, Color.White));
-
     private Timer _mouseHeldDownTimer = new();
     private ScrollActionUnderway _currentScrollAction = ScrollActionUnderway.None;
 
@@ -76,13 +75,12 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
     private bool _allowScrollDown;
     private RectangleF _rectScrollDown;
-    private int _scrollDownIndexOffset;
+    private int _scrollDownIndexOffset = 0;
 
     private bool _allowScrollUp;
     private RectangleF _rectScrollUp;
     private DateTime _currentScrollActionBegan;
     private Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> _periodicityDictionary;
-
     private const float MinimumRowHeight = 20;
 
     public void AddTracks(IActivateItems activator, Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> periodicityDictionary, DateTime[] buckets, bool ignoreRows)
@@ -340,10 +338,10 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
                         var good = 0;
                         var total = 0;
 
-                        if (dictionary.TryGetValue(_buckets[i],out var counter))
+                        if (dictionary.TryGetValue(_buckets[i],out var apcCount))
                         {
-                            good = counter.CountGood;
-                            total = counter.Total;
+                            good = apcCount.CountGood;
+                            total = apcCount.Total;
 
                             var ratioGood = (float)good / total;
 
@@ -491,7 +489,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
     private float DrawErrorText(string text, bool underLine, PaintEventArgs e, float startDrawingLaneAtY, float eachRaceLaneHasThisMuchYSpace, double middleLineOfCatalogueLabelY)
     {
-            
+
         var redGradientBrush = new LinearGradientBrush(
             new Point(0, (int) startDrawingLaneAtY),
             new Point((int) Width, (int) eachRaceLaneHasThisMuchYSpace)

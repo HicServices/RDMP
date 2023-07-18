@@ -42,16 +42,15 @@ public class MigrateRAWTableToStaging : DataLoadComponent
         _databaseConfiguration = databaseConfiguration;
     }
 
-
     private DataFlowPipelineEngine<DataTable> _pipeline;
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         if(_pipeline != null)
             throw new Exception("Pipeline already executed once");
-            
+
         var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
         var context = contextFactory.Create(PipelineUsage.LoadsSingleTableInfo | PipelineUsage.FixedDestination | PipelineUsage.LogsToTableLoadInfo);
-            
+
         //where we are coming from (source)
         var sourceConvention = LoadBubble.Raw;
         var sourceDatabase = _databaseConfiguration.DeployInfo[sourceConvention];
@@ -71,7 +70,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
                     new NotifyEventArgs(ProgressEventType.Error,
                         $"Table {sourceTableName} did not exist in RAW database {sourceDatabase} when it came time to migrate RAW to STAGING (and the table is not a lookup)"));
 
-            
+
         // where we are going to (destination)
         // ignore any columns that are marked for discard
         var destinationConvention = LoadBubble.Staging;
@@ -93,10 +92,10 @@ public class MigrateRAWTableToStaging : DataLoadComponent
             $"Select distinct * from {syntax.EnsureWrapped(sourceTableName)}",
             $"Fetch data from {syntax.EnsureWrapped(sourceTableName)}",
             sourceDatabase.Server.Builder, 50000);
-            
+
         //ignore those that are pre load discarded columns (unless they are dilution in which case they get passed through in a decrepid state instead of dumped entirely - these fields will still bein ANODump in pristene state btw)
         var columnNamesToIgnoreForBulkInsert = _tableInfo.PreLoadDiscardedColumns.Where(c => c.Destination != DiscardedColumnDestination.Dilute).Select(column => column.RuntimeColumnName).ToList();
-            
+
         //pass pre load discard
         var destination = new SqlBulkInsertDestination(destinationDatabase, destinationTableName, columnNamesToIgnoreForBulkInsert);
             

@@ -624,8 +624,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
         ExtractableColumn addMe;
 
-        if (column is ExtractionInformation extractionInformation)
-            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, extractionInformation, -1, query);
+        if (column is ExtractionInformation information)
+            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, information, -1, query);
         else
             addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1, query); // its custom column of some kind, not tied to a catalogue entry
 
@@ -660,8 +660,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 //no, there is no default or user does not want to use it.
                 throw new Exception("There is no default logging server configured and there was a problem asking Catalogues for a logging server instead.  Configure a default logging server via ManageExternalServersUI", e);
         }
-            
-        var server = DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging);
+
+        var server = DataAccessPortal.ExpectServer(loggingServer, DataAccessContext.Logging);
 
         LogManager lm;
 

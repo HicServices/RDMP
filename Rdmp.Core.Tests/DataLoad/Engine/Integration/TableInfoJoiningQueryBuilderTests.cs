@@ -21,7 +21,7 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
     public void OpportunisticJoinRequired()
     {
         var memory = new MemoryRepository();
-            
+
         //tables and columns
         var head = new TableInfo(CatalogueRepository,"Head");
         var col1 = new ColumnInfo(CatalogueRepository,"TestResultSetNumber","int",head);
@@ -68,7 +68,7 @@ public class TableInfoJoiningQueryBuilderTests:DatabaseTests
 TestResultSetNumber,
 Code
 FROM 
-[biochemistry]..[Result] Right JOIN Head ON FK = PK"),CollapseWhitespace(queryBuilder.SQL));
+[biochemistry]..[Result] Right JOIN Head ON FK = PK"), CollapseWhitespace(queryBuilder.SQL));
 
         var memoryRepository = new MemoryCatalogueRepository();
 

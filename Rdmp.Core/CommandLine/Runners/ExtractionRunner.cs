@@ -36,11 +36,9 @@ public class ExtractionRunner : ManyRunner
     private IBasicActivateItems _activator;
     private ExtractionConfiguration _configuration;
     private IProject _project;
-
     private ExtractGlobalsCommand _globalsCommand;
     private Pipeline _pipeline;
     private LogManager _logManager;
-
     private object _oLock = new();
     public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get;private set; }
 
@@ -86,7 +84,7 @@ public class ExtractionRunner : ManyRunner
 
         foreach (var sds in GetSelectedDataSets())
         {
-            var extractDatasetCommand = factory.Create(RepositoryLocator, sds);
+            var extractDatasetCommand = ExtractCommandCollectionFactory.Create(RepositoryLocator, sds);
             commands.Add(extractDatasetCommand);
 
             lock(_oLock)

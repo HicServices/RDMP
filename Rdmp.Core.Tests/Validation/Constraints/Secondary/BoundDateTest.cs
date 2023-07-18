@@ -64,7 +64,7 @@ internal class BoundDateTest
 
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
-            
+
         var result = CallValidateOnInvalidData("admission_date", b);
 
         if(result == null)
@@ -87,19 +87,19 @@ internal class BoundDateTest
 
         var cols = new object[] { DBNull.Value};
 
-        var names= new string[]{"appointmentDate"};
+        var names = new string[]{"appointmentDate"};
 
         b.Validate(null,cols,names);
     }
 
 
-    private ValidationFailure CallValidateOnValidData(string targetProperty, BoundDate b)
+    private static ValidationFailure CallValidateOnValidData(string targetProperty, BoundDate b)
     {
         var d = TestConstants.AdmissionDateOccursAfterDob;
         return CallValidate(targetProperty, b, d);
     }
 
-    private ValidationFailure CallValidateOnInvalidData(string targetProperty, BoundDate b)
+    private static ValidationFailure CallValidateOnInvalidData(string targetProperty, BoundDate b)
     {
         var d = TestConstants.AdmissionDateOccursBeforeDob;
         return CallValidate(targetProperty, b, d);

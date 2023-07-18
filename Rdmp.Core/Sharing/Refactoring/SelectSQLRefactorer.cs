@@ -29,7 +29,7 @@ public class SelectSQLRefactorer
     /// <param name="column"></param>
     /// <param name="tableName"></param>
     /// <param name="newFullySpecifiedTableName"></param>
-    public void RefactorTableName(IColumn column,IHasFullyQualifiedNameToo tableName,string newFullySpecifiedTableName)
+    public static void RefactorTableName(IColumn column,IHasFullyQualifiedNameToo tableName,string newFullySpecifiedTableName)
     {
         var ci = column.ColumnInfo ?? throw new RefactoringException($"Cannot refactor '{column}' because its ColumnInfo was null");
         var fullyQualifiedName = tableName.GetFullyQualifiedName();
@@ -53,7 +53,7 @@ public class SelectSQLRefactorer
     /// <param name="column"></param>
     /// <param name="tableName"></param>
     /// <param name="newFullySpecifiedTableName"></param>
-    public void RefactorTableName(ColumnInfo column, IHasFullyQualifiedNameToo tableName, string newFullySpecifiedTableName)
+    public static void RefactorTableName(ColumnInfo column, IHasFullyQualifiedNameToo tableName, string newFullySpecifiedTableName)
     {
         var fullyQualifiedName = tableName.GetFullyQualifiedName();
 
@@ -69,7 +69,7 @@ public class SelectSQLRefactorer
         column.SaveToDatabase();
     }
 
-    protected void Save(object o)
+    protected static void Save(object o)
     {
         if (o is ISaveable s)
             s.SaveToDatabase();
@@ -83,7 +83,7 @@ public class SelectSQLRefactorer
     /// <param name="columnName"></param>
     /// <param name="newFullySpecifiedColumnName"></param>
     /// <param name="strict">Determines behaviour when column SelectSQL does not contain a reference to columnName.  True will throw a RefactoringException, false will return without making any changes</param>
-    public void RefactorColumnName(IColumn column, IHasFullyQualifiedNameToo columnName, string newFullySpecifiedColumnName,bool strict = true)
+    public static void RefactorColumnName(IColumn column, IHasFullyQualifiedNameToo columnName, string newFullySpecifiedColumnName,bool strict = true)
     {
         var fullyQualifiedName = columnName.GetFullyQualifiedName();
 
@@ -109,7 +109,7 @@ public class SelectSQLRefactorer
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public bool IsRefactorable(IColumn column)
+    public static bool IsRefactorable(IColumn column)
     {
         return GetReasonNotRefactorable(column) == null;
     }
@@ -120,7 +120,7 @@ public class SelectSQLRefactorer
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public string GetReasonNotRefactorable(IColumn column)
+    public static string GetReasonNotRefactorable(IColumn column)
     {
         var ci = column.ColumnInfo;
 
@@ -130,7 +130,7 @@ public class SelectSQLRefactorer
         if (!column.SelectSQL.Contains(ci.Name))
             return
                 $"IColumn '{column}' did not contain the fully specified column name of its underlying ColumnInfo ('{ci.Name}') during refactoring";
-            
+
         var fullyQualifiedName = ci.TableInfo.GetFullyQualifiedName();
 
         return !column.SelectSQL.Contains(fullyQualifiedName)
@@ -144,7 +144,7 @@ public class SelectSQLRefactorer
     /// </summary>
     /// <param name="tableInfo"></param>
     /// <returns></returns>
-    public bool IsRefactorable(ITableInfo tableInfo)
+    public static bool IsRefactorable(ITableInfo tableInfo)
     {
         return GetReasonNotRefactorable(tableInfo) == null;
     }
@@ -155,7 +155,7 @@ public class SelectSQLRefactorer
     /// </summary>
     /// <param name="table"></param>
     /// <returns></returns>
-    public string GetReasonNotRefactorable(ITableInfo table)
+    public static string GetReasonNotRefactorable(ITableInfo table)
     {
         if(string.IsNullOrWhiteSpace(table.Name))
             return "Table has no Name property, this should be the fully qualified database table name";
@@ -184,13 +184,13 @@ public class SelectSQLRefactorer
     /// <param name="tableInfo"></param>
     /// <param name="newFullyQualifiedTableName"></param>
     /// <returns>Total number of changes made in columns and table name</returns>
-    public int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName)
+    public static int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName)
     {
         return RefactorTableName(tableInfo, tableInfo.GetFullyQualifiedName(), newFullyQualifiedTableName);
     }
 
     /// <inheritdoc cref="RefactorTableName(ITableInfo, string)"/>
-    public int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+    public static int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
         if(!IsRefactorable(tableInfo))
             throw new RefactoringException(
@@ -221,7 +221,7 @@ public class SelectSQLRefactorer
     /// <param name="oldFullyQualifiedTableName"></param>
     /// <param name="newFullyQualifiedTableName"></param>
     /// <returns>Total number of changes made including <paramref name="columnInfo"/> and any <see cref="ExtractionInformation"/> declared on it</returns>
-    public int RefactorTableName(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+    public static int RefactorTableName(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
         var updatesMade = 0;
             
@@ -247,10 +247,10 @@ public class SelectSQLRefactorer
         return updatesMade;
     }
 
-    private int RefactorTableNameImpl(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+    private static int RefactorTableNameImpl(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
     {
         var updatesMade = 0;
-                        
+
         var extractionInformations = columnInfo.ExtractionInformations.ToArray();
 
         foreach (var extractionInformation in extractionInformations)

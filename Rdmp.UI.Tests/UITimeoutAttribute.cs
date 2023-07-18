@@ -46,7 +46,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
             _timeout = timeout;
         }
 
-        [LibraryImport("user32.dll")]
+        [LibraryImport("user32.dll", EntryPoint = "SendMessageW")]
         private static partial IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
@@ -86,8 +86,8 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
             {
                 while (thread.IsAlive && (_timeout > 0  || Debugger.IsAttached))
                 {
-                    Task.Delay(100).Wait();
-                    _timeout -= 100;
+                    if (!thread.Join(_timeout) && !Debugger.IsAttached)
+                        _timeout = 0;
                 }
 
                 var closeAttempts = 10;
@@ -114,7 +114,7 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
                             //with a no button
                             SendMessage(handle, WM_COMMAND, IDNO, IntPtr.Zero); //click NO!
                         else
-                            SendMessage(handle, WM_CLOSE, 0, IntPtr.Zero); //click NO!
+                            SendMessage(handle, WM_CLOSE, 0, IntPtr.Zero); //click close
                     }
 
                     throw new Exception("UI test did not complete after timeout");

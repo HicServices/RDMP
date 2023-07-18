@@ -32,8 +32,9 @@ public partial class DataTableViewerUI : UserControl
 
         try
         {
-            using var con = DataAccessPortal.GetInstance().ExpectServer(source, DataAccessContext.DataExport).GetConnection();
-            con.Open();
+            using (var con = DataAccessPortal.ExpectServer(source, DataAccessContext.DataExport).GetConnection())
+            {
+                con.Open();
 
             using var cmd = DatabaseCommandHelper.GetCommand(sql, con);
             using var da = DatabaseCommandHelper.GetDataAdapter(cmd);

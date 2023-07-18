@@ -16,15 +16,14 @@ namespace Rdmp.UI.SimpleDialogs;
 [TechnicalUI]
 public  class YesNoYesToAllDialog : WideMessageBox
 {
-    private bool YesToAllClicked;
-    private bool NoToAllClicked;
+    private bool YesToAllClicked = false;
+    private bool NoToAllClicked = false;
     private object lockShowDialog = new();
-
     private FlowLayoutPanel p = new();
-    private Button btnYes = new() {Text ="Yes"};
-    private Button btnYesToAll = new() {Text = "Yes To All"};
-    private Button btnNo = new() {Text="No"};
-    private Button btnNoToAll = new() {Text = "No To All"};
+    private Button btnYes = new() { Text ="Yes"};
+    private Button btnYesToAll = new() { Text = "Yes To All"};
+    private Button btnNo = new() { Text="No"};
+    private Button btnNoToAll = new() { Text = "No To All"};
 
     /// <summary>
     /// The number of pixels to allow outside of the text width when auto sizing buttons

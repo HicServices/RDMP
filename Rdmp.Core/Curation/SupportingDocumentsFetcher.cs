@@ -37,7 +37,7 @@ public class SupportingDocumentsFetcher
         return _document != null ? ExtractToDirectory(directory, _document) : throw new Exception("SupportingDocument was not specified!");
     }
 
-    private string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
+    private static string ExtractToDirectory(DirectoryInfo directory, SupportingDocument supportingDocument)
     {
         if(!supportingDocument.IsReleasable())
             throw new Exception(

@@ -20,13 +20,13 @@ public class SelectSQLRefactorerTests:UnitTests
     {
         var columnInfo = WhenIHaveA<ColumnInfo>();
         columnInfo.Name = "[database]..[table].[column]";
-            
+
         var tableInfo = columnInfo.TableInfo;
         tableInfo.Database = "database";
         tableInfo.Name = "[database]..[table]";
 
         var refactorer = new SelectSQLRefactorer();
-        refactorer.RefactorTableName(columnInfo,tableInfo,"[database]..[table2]");
+        SelectSQLRefactorer.RefactorTableName(columnInfo,tableInfo,"[database]..[table2]");
 
         Assert.AreEqual("[database]..[table2].[column]", columnInfo.Name);
     }
@@ -38,18 +38,17 @@ public class SelectSQLRefactorerTests:UnitTests
         ei.SelectSQL = "UPPER([database]..[table].[column])";
         ei.Alias = "MyCatalogueItem";
         ei.SaveToDatabase();
-            
+
         var ci = ei.ColumnInfo;
         ci.Name = "[database]..[table].[column]";
         ci.SaveToDatabase();
-            
+
         var tableInfo = ei.ColumnInfo.TableInfo;
         tableInfo.Database = "database";
         tableInfo.Name = "[database]..[table]";
         tableInfo.SaveToDatabase();
 
-        var refactorer = new SelectSQLRefactorer();
-        refactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]");
+        SelectSQLRefactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]");
 
         Assert.AreEqual("UPPER([database]..[table2].[column])", ei.SelectSQL);
     }
@@ -75,15 +74,15 @@ public class SelectSQLRefactorerTests:UnitTests
         tableInfo.Database = "database";
         tableInfo.Name = "[database]..[table]";
         tableInfo.SaveToDatabase();
-            
+
         var refactorer = new SelectSQLRefactorer();
             
-        Assert.AreEqual(expectedToBeRefactorable,refactorer.IsRefactorable(ei));
+        Assert.AreEqual(expectedToBeRefactorable, SelectSQLRefactorer.IsRefactorable(ei));
 
         if (expectedToBeRefactorable)
-            refactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]");
+            SelectSQLRefactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]");
         else
-            Assert.Throws<RefactoringException>(() => refactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]"));
+            Assert.Throws<RefactoringException>(() => SelectSQLRefactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]"));
     }
 
     [TestCase("[Fish]..[MyTbl]","[Fish]..[MyTbl2]")]
@@ -96,11 +95,11 @@ public class SelectSQLRefactorerTests:UnitTests
 
         foreach(IDeleteable d in ti.ColumnInfos)
             d.DeleteInDatabase();
-            
-        var refactorer = new SelectSQLRefactorer();
-        Assert.IsTrue(refactorer.IsRefactorable(ti));
 
-        Assert.AreEqual(1,refactorer.RefactorTableName(ti,newName));
+        var refactorer = new SelectSQLRefactorer();
+        Assert.IsTrue(SelectSQLRefactorer.IsRefactorable(ti));
+
+        Assert.AreEqual(1,SelectSQLRefactorer.RefactorTableName(ti,newName));
         Assert.AreEqual(newName,ti.Name);
     }
 
@@ -114,11 +113,11 @@ public class SelectSQLRefactorerTests:UnitTests
 
         foreach(IDeleteable d in ti.ColumnInfos)
             d.DeleteInDatabase();
-            
-        var refactorer = new SelectSQLRefactorer();
-        Assert.IsFalse(refactorer.IsRefactorable(ti));
 
-        var ex = Assert.Throws<RefactoringException>(()=>refactorer.RefactorTableName(ti,newName));
+        var refactorer = new SelectSQLRefactorer();
+        Assert.IsFalse(SelectSQLRefactorer.IsRefactorable(ti));
+
+        var ex = Assert.Throws<RefactoringException>(()=>SelectSQLRefactorer.RefactorTableName(ti,newName));
         StringAssert.Contains(expectedReason,ex.Message);
     }
 
@@ -151,7 +150,7 @@ public class SelectSQLRefactorerTests:UnitTests
         var oldName = findTableName;
         var newName = oldName.Replace("MyTbl","MyNewTbl");
 
-        Assert.AreEqual(1,refactorer.RefactorTableName(col,oldName,newName));
+        Assert.AreEqual(1, SelectSQLRefactorer.RefactorTableName(col,oldName,newName));
 
         Assert.AreEqual($"{newName}.[A]",col.Name);
     }

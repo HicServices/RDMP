@@ -203,7 +203,10 @@ public class ValidatorTest
 
         v.ItemValidators[0].SecondaryConstraints.Add(boundDate);
 
-        var dictionary  = new Dictionary<string, string> { { "OldCol2", "NewCol2" } };
+        var dictionary = new Dictionary<string, string>
+        {
+            { "OldCol2", "NewCol2" }
+        };
 
         //before and after rename of col2
         Assert.AreEqual(v.ItemValidators[0].TargetProperty, "OldCol2");
@@ -248,7 +251,7 @@ public class ValidatorTest
         return validator;
     }
 
-    private Validator CreateChiAndAgeValidators()
+    private static Validator CreateChiAndAgeValidators()
     {
         var validator = new Validator();
         var vChi = new ItemValidator { PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong) };

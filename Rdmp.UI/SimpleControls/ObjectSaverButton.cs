@@ -64,7 +64,7 @@ public partial class ObjectSaverButton
     {
         control.CommonFunctionality.Add(btnSave);
         control.CommonFunctionality.Add(btnUndoRedo);
-            
+
         var f = (control as Form ?? ((Control)control).FindForm()) ?? throw new NotSupportedException("Cannot call SetupFor before the control has been added to its parent form");
         _parent = control;
 
@@ -91,7 +91,6 @@ public partial class ObjectSaverButton
         //the first time it is set up it could still be out of date!
         CheckForOutOfDateObjectAndOfferToFix();
     }
-
 
     private void ParentForm_Enter(object sender, EventArgs e)
     {

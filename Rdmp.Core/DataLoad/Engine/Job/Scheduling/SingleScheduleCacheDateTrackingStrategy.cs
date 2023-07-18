@@ -46,7 +46,7 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
     /// <param name="loadProgress"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException">Caching has not been configured correctly or the caching process has not begun</exception>
-    public DateTime CalculateLastLoadDate(ILoadProgress loadProgress)
+    public static DateTime CalculateLastLoadDate(ILoadProgress loadProgress)
     {
         // Compute the last cache date from the CacheFillProgress date
         // CacheFillProgress is the date up to which caching has been performed, and is therefore the date from which caching will next begin.

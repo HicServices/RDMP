@@ -206,10 +206,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         lbConflictResolutionColumns.Items.Remove(data);
 
-        if (originalIndex < index)
-            lbConflictResolutionColumns.Items.Insert(Math.Max(0, index - 1), data);
-        else
-            lbConflictResolutionColumns.Items.Insert(index, data);
+        lbConflictResolutionColumns.Items.Insert(originalIndex < index ? Math.Max(0, index - 1) : index, data);
 
         SaveOrderIntoDatabase();
 

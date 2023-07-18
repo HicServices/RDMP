@@ -56,12 +56,12 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
         }
 
         var objByToString = MatchOrThrow(arg, idx);
-            
+
         var objectType = objByToString.Groups[1].Value;
         var objectToString = objByToString.Groups[2].Value;
 
         var dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
-            
+
         var objs = objectToString.Split(',').SelectMany(str=>GetObjectByToString(dbObjectType,str)).Distinct();
         return new CommandLineObjectPickerArgumentValue(arg,idx,objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
     }

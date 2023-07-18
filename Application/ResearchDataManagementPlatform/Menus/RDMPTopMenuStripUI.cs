@@ -142,14 +142,14 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         }
     }
 
-    private void SwitchTo(ConnectionStringsYamlFile yaml)
+    private static void SwitchTo(ConnectionStringsYamlFile yaml)
     {
         LaunchNew(yaml);
 
         Application.Exit();
     }
 
-    private void LaunchNew(ConnectionStringsYamlFile yaml)
+    private static void LaunchNew(ConnectionStringsYamlFile yaml)
     {
         var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, Process.GetCurrentProcess().ProcessName);
         if(yaml == null)

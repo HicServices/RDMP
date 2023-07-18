@@ -13,7 +13,7 @@ using Rdmp.UI.SimpleDialogs.SqlDialogs;
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
-/// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
+/// Allows you to specify the value of an IArgument (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
 /// 
 /// <para>This Control is for setting Properties that are of Type string but expect SQL code.  Clicking the button will launch an SQL editor with syntax highlighting.</para>
 /// </summary>
@@ -27,7 +27,7 @@ public partial class ArgumentValueSqlUI : UserControl, IArgumentValueUI
     /// </summary>
     /// <param name="sqlText"></param>
     /// <returns></returns>
-    private string FormatSqlForTextbox(object sqlText)
+    private static string FormatSqlForTextbox(object sqlText)
     {
         var sqlTextboxPretty = sqlText == null ? "" : sqlText.ToString();
         sqlTextboxPretty = new Regex(@"\s+").Replace(sqlTextboxPretty, " ");

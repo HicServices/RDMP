@@ -31,7 +31,7 @@ public partial class KeyDropLocationUI : UserControl
             {
                 JoinKeyType.PrimaryKey => "(Primary Key)",
                 JoinKeyType.ForeignKey => "(Foreign Key)",
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(value))
             };
         }
     }
@@ -74,7 +74,7 @@ public partial class KeyDropLocationUI : UserControl
         SelectedColumnChanged?.Invoke();
     }
 
-    private ColumnInfo GetColumnInfoOrNullFromDrag(DragEventArgs e)
+    private static ColumnInfo GetColumnInfoOrNullFromDrag(DragEventArgs e)
     {
         if (e.Data is not OLVDataObject data)
             return null;

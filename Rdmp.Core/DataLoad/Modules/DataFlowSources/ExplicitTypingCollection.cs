@@ -26,7 +26,7 @@ public class ExplicitTypingCollection:ICustomUIDrivenClass
     /// A dictionary of names (e.g. column names) which must have specific C# data types
     /// </summary>
     public Dictionary<string, Type> ExplicitTypesCSharp = new();
-
+        
     /// <inheritdoc/>
     public void RestoreStateFrom(string value)
     { 

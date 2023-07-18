@@ -15,8 +15,6 @@ internal class IHasSummaryTests : UnitTests
     [Test]
     public void AllObjects_SupportSummary()
     {
-        var objectCount = 0;
-
         foreach (var obj in WhenIHaveAll())
         {
             try
@@ -30,7 +28,5 @@ internal class IHasSummaryTests : UnitTests
                 throw new Exception($"GetSummary is broken for {obj.GetType().Name}", ex);
             }
         }
-
-        Console.WriteLine($"Checked GetSummary for {objectCount} objects");
     }
 }

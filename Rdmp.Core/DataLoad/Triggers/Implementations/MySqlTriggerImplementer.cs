@@ -69,14 +69,14 @@ internal class MySqlTriggerImplementer:TriggerImplementer
     {
         // MySql changed how they do default date fields between 5.5 and 5.6
         //https://dba.stackexchange.com/a/132954
- 
-        if (UseOldDateTimeDefaultMethod(table))
-            table.AddColumn(SpecialFieldNames.ValidFrom,"TIMESTAMP DEFAULT CURRENT_TIMESTAMP",true, UserSettings.ArchiveTriggerTimeout);
-        else
-            table.AddColumn(SpecialFieldNames.ValidFrom,"DATETIME DEFAULT CURRENT_TIMESTAMP",true, UserSettings.ArchiveTriggerTimeout);
+
+        table.AddColumn(SpecialFieldNames.ValidFrom,
+            UseOldDateTimeDefaultMethod(table)
+                ? "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+                : "DATETIME DEFAULT CURRENT_TIMESTAMP", true, UserSettings.ArchiveTriggerTimeout);
     }
 
-    public bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
+    public static bool UseOldDateTimeDefaultMethod(DiscoveredTable table)
     {
         using var con = table.Database.Server.GetConnection();
         con.Open();
@@ -87,7 +87,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
     {
         if (string.IsNullOrWhiteSpace(version))
             return false;
-            
+
         var match = Regex.Match(version,@"(\d+)\.(\d+)");
 
         //If the version string doesn't start with numbers we have bigger problems than creating a default constraint
@@ -147,7 +147,7 @@ internal class MySqlTriggerImplementer:TriggerImplementer
         var sqlNow = CreateTriggerBody();
 
         AssertTriggerBodiesAreEqual(sqlThen,sqlNow);
-            
+
         return true;
     }
 

@@ -148,8 +148,8 @@ public class FlatFileToDataTablePusher
 
                 try
                 {
-                    if (hackedValue is string s && typeDeciderFactory.Dictionary.TryGetValue(dt.Columns[_headers[i]].DataType,out var typer))
-                        hackedValue = typer.Parse(s);
+                    if (hackedValue is string s && typeDeciderFactory.Dictionary.TryGetValue(dt.Columns[_headers[i]].DataType,out var decider))
+                        hackedValue = decider.Parse(s);
 
                     rowValues.Add(_headers[i], hackedValue);
                 }
@@ -190,7 +190,7 @@ public class FlatFileToDataTablePusher
 
         //Create a composite row
         var newCells = new List<string>(lineToPush.Cells);
-            
+
         //track what we are Reading incase it doesn't work
         var allPeekedLines = new List<FlatFileLine>();
 
@@ -298,8 +298,8 @@ public class FlatFileToDataTablePusher
             foreach (DataRow row in workingTable.Rows)
                 dtCloned.Rows.Add(row.ItemArray.Select((v,idx)=>
 
-                    deciders.TryGetValue(idx,out var typer) && v is string s?
-                        typer.Parse(s) :
+                    deciders.TryGetValue(idx,out var decider) && v is string s?
+                        decider.Parse(s) :
                         v).ToArray());
 
             return dtCloned;
@@ -321,7 +321,7 @@ public class FlatFileToDataTablePusher
             eventHandlers.BadDataFound(line);
     }
 
-    private void AllBad(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)
+    private static void AllBad(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)
     {
         //the current line is bad
         eventHandlers.BadDataFound(lineToPush);

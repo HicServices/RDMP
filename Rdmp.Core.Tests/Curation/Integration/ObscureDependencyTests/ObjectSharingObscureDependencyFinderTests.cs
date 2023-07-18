@@ -30,7 +30,7 @@ public class ObjectSharingObscureDependencyFinderTests: DatabaseTests
     {
         var c = new Catalogue(CatalogueRepository,"Catapault");
         var ci = new CatalogueItem(CatalogueRepository, c, "string");
-            
+
         var c2 = new Catalogue(CatalogueRepository,"Catapault (Import)");
         var ci2 = new CatalogueItem(CatalogueRepository, c2, "string (Import)");
 

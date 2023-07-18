@@ -139,7 +139,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
 
         var colors = GetColors(dt.Columns.Count - 1);
 
-        for (var i=1;i<dt.Columns.Count;i++)
+        for (var i =1;i<dt.Columns.Count;i++)
         {
 
             var series = new PathAnnotation { LineColor = colors[i - 1],BeforeSeries = true };
@@ -259,7 +259,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         graphView.ScrollOffset = new PointF(0, barSeries.Bars.Count - boundsHeight + 4);
     }
 
-    private List<Attribute> GetColors(int numberNeeded)
+    private static List<Attribute> GetColors(int numberNeeded)
     {
         var colors = new Attribute[15];
 
@@ -299,7 +299,7 @@ internal class ConsoleGuiViewGraph : ConsoleGuiSqlEditor
         // Configure legend
         var legend = GetLegend(dt,boundsWidth,boundsHeight);
 
-        for(var i=1;i < dt.Columns.Count; i++)
+        for(var i =1;i < dt.Columns.Count; i++)
         {
             legend.AddEntry(new GraphCellToRender(mediumStiple, colors[i-1]), dt.Columns[i].ColumnName);
         }

@@ -17,7 +17,7 @@ namespace Rdmp.Core.Curation.FilterImporting;
 /// </summary>
 public class FilterUIOptionsFactory
 {
-    public FilterUIOptions Create(IFilter filter)
+    public static FilterUIOptions Create(IFilter filter)
     {
         return filter switch
         {

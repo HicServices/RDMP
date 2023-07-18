@@ -28,7 +28,8 @@ internal class CachedDropTarget
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((CachedDropTarget) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((CachedDropTarget) obj);
     }
 
     public override int GetHashCode()

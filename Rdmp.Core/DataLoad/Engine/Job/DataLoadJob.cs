@@ -64,7 +64,7 @@ public class DataLoadJob : IDataLoadJob
         Description = description;
 
         var catalogues = LoadMetadata.GetAllCatalogues().ToList();
-            
+
         if (LoadMetadata != null)
             _loggingTask = GetLoggingTask(catalogues);
 
@@ -152,7 +152,7 @@ public class DataLoadJob : IDataLoadJob
 
         foreach (TableInfo lookupTableInfo in LookupTablesToLoad)
             cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, lookupTableInfo, stage);
-            
+
         PushForDisposal(cloner);
     }
 

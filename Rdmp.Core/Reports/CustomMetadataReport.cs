@@ -130,7 +130,7 @@ public partial class CustomMetadataReport
             
     }
 
-    private ITableInfo GetTable(Catalogue c)
+    private static ITableInfo GetTable(Catalogue c)
     {
         return c.GetTableInfosIdeallyJustFromMainTables().MinBy(t => t.IsPrimaryExtractionTable);
     }
@@ -250,7 +250,7 @@ public partial class CustomMetadataReport
     {
         if(catalogues == null || !catalogues.Any())
             return;
-            
+
         var templateBody = File.ReadAllLines(template.FullName);
 
         var outname = DoReplacements(new []{fileNaming},catalogues.First(),null,ElementIteration.NotIterating).Trim();
@@ -274,7 +274,7 @@ public partial class CustomMetadataReport
                         }
                         else
                         {
-                            for (var i=0;i<catalogues.Length;i++)
+                            for (var i =0;i<catalogues.Length;i++)
                             {
                                 var element =
                                     i == catalogues.Length - 1 ? ElementIteration.LastElement : ElementIteration.RegularElement;
@@ -315,7 +315,7 @@ public partial class CustomMetadataReport
         }   
     }
 
-    private IEnumerable<CatalogueSection> SplitCatalogueLoops(string[] templateBody)
+    private static IEnumerable<CatalogueSection> SplitCatalogueLoops(string[] templateBody)
     {
         if(templateBody.Length == 0)
             yield break;
@@ -323,7 +323,7 @@ public partial class CustomMetadataReport
         CatalogueSection currentSection = null;
         var depth = 0;
 
-        for(var i=0;i< templateBody.Length ;i++)
+        for(var i =0;i< templateBody.Length ;i++)
         {
             var str = templateBody[i];
 
@@ -381,7 +381,7 @@ public partial class CustomMetadataReport
                 // it's just a regular line of text
 
                 //if it's the first line of a new block we get a plaintext block
-                currentSection ??= new CatalogueSection(true, i);
+                currentSection ??= new CatalogueSection(true,i);
 
                 currentSection.Body.Add(str);
             }
@@ -495,7 +495,7 @@ public partial class CustomMetadataReport
         if(!blockTerminated)
             throw new CustomMetadataReportException($"Expected {EndLoop} to match $foreach which started on line {index+1+sectionOffset}",index+1+sectionOffset);
 
-        for(var j=0;j< catalogueItems.Length; j++)
+        for(var j =0;j< catalogueItems.Length; j++)
         {
             sbResult.AppendLine(DoReplacements(block.ToString(), catalogueItems[j],
                 j < catalogueItems.Length -1 ?
@@ -549,7 +549,7 @@ public partial class CustomMetadataReport
         return template.TrimEnd();
     }
 
-    private void ThrowIfContainsIterationElements(string template)
+    private static void ThrowIfContainsIterationElements(string template)
     {
         if(template.Contains(Comma))
         {

@@ -157,7 +157,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
 
     }
 
-    private string MustHave(Type mustHaveType, IPipelineComponent component, string descriptionOfThingBeingChecked)
+    private static string MustHave(Type mustHaveType, IPipelineComponent component, string descriptionOfThingBeingChecked)
     {
         //it must have destination
         if (mustHaveType != null)
@@ -266,19 +266,21 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             );
     }
 
-    private Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, object component, object value, Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents)
+    private static Type PreInitializeComponentWithSingleObject(IDataLoadEventListener listener, object component, object value, Dictionary<object, Dictionary<MethodInfo, object>> initializedComponents)
     {
         var compatibleInterfaces = component.GetType()
             .GetInterfaces().Where(i =>
                 i.IsGenericType && (i.GenericTypeArguments[0] == value.GetType() || i.GenericTypeArguments[0].IsInstanceOfType(value))
             ).ToArray();
 
-        if (compatibleInterfaces.Length == 0)
-            return null;
-
-        if(compatibleInterfaces.Length > 1)
-            throw new OverlappingImplementationsException(
-                $"The following IPipelineRequirement<> interfaces are implemented on pipeline component of type '{component.GetType().Name}' which are intercompatible with the input object of type '{value.GetType().Name}' {string.Join(",", compatibleInterfaces.Select(GetFullName))}");
+        switch (compatibleInterfaces.Length)
+        {
+            case 0:
+                return null;
+            case > 1:
+                throw new OverlappingImplementationsException(
+                    $"The following IPipelineRequirement<> interfaces are implemented on pipeline component of type '{component.GetType().Name}' which are intercompatible with the input object of type '{value.GetType().Name}' {string.Join(",", compatibleInterfaces.Select(GetFullName))}");
+        }
 
         var interfaceToInvokeIfAny = compatibleInterfaces[0];
         if (interfaceToInvokeIfAny != null)
@@ -287,12 +289,13 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
             var preInit = interfaceToInvokeIfAny.GetMethod("PreInitialize");
 
             //but first document the fact that we have found it
-            if (!initializedComponents.ContainsKey(component))
-                initializedComponents.Add(component, new Dictionary<MethodInfo, object>());
+            if (!initializedComponents.TryGetValue(component,out var dict))
+                initializedComponents.Add(component, dict=new Dictionary<MethodInfo, object>());
 
-            if (!initializedComponents[component].TryAdd(preInit, value))
+            if (dict.TryGetValue(preInit,out var existing))
                 throw new MultipleMatchingImplmentationException(
-                    $"Interface {GetFullName(interfaceToInvokeIfAny)} matches both input objects '{initializedComponents[component][preInit]}' ('{initializedComponents[component][preInit].GetType().Name}') and '{value}' ('{value.GetType().Name}')");
+                    $"Interface {GetFullName(interfaceToInvokeIfAny)} matches both input objects '{existing}' ('{existing.GetType().Name}') and '{value}' ('{value.GetType().Name}')");
+            initializedComponents[component].Add(preInit, value);
 
             //invoke it
             preInit.Invoke(component, new[] {value, listener});
@@ -326,6 +329,7 @@ public class DataFlowPipelineContext<T>: IDataFlowPipelineContext
     {
         if (!t.IsGenericType)
             return t.Name;
+
         var sb = new StringBuilder();
 
         sb.Append(t.Name[..t.Name.LastIndexOf("`", StringComparison.Ordinal)]);

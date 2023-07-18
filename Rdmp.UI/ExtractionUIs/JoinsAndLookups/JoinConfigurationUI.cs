@@ -237,7 +237,7 @@ public partial class JoinConfigurationUI : JoinConfiguration_Design
             SetRightTableInfo(tableInfo);
     }
 
-    private TableInfo GetTableInfoOrNullFromDrag(DragEventArgs e)
+    private static TableInfo GetTableInfoOrNullFromDrag(DragEventArgs e)
     {
         return e.Data is not OLVDataObject data || data.ModelObjects.Count != 1
             ? null

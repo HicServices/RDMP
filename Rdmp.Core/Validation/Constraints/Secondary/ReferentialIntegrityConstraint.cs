@@ -40,7 +40,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         set
         {
             _otherColumnInfoID = value;
-                
+
             if(value >0)
                 OtherColumnInfo = _repository.GetObjectByID<ColumnInfo>(value);
         }
@@ -82,7 +82,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 
     public override void RenameColumn(string originalName, string newName)
     {
-            
+
     }
 
     public override string GetHumanReadableDescriptionOfValidation()
@@ -117,7 +117,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             return null;
 
         var contained = _uniqueValues.Contains(value.ToString());
-            
+
         //it is in the hashset
         if (contained)
             if(!InvertLogic)//the logic is not inverted (expected behaviour)
@@ -126,13 +126,13 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
                 //the logic is inverted!
                 return new ValidationFailure(
                     $"Value '{value}' was found in row and also in the column {OtherColumnInfo} (InvertLogic was set to true meaning that OtherColumnInfo is an exclusion list)", this);
-            
+
         //it was not contained in the hashset
 
         //if invert logic then hash set is an exclusion list so this is expected behaviour
         if (InvertLogic)
             return null;
-            
+
         //it is not contained and we have not inverted the logic so this is a validation failure, the value was not found in the referential integrity column OtherColumnInfo
         return
             new ValidationFailure(
@@ -167,12 +167,12 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
             }
             catch (Exception e)
             {
-                if (e.HResult == -2) // timeout
-                    checker.OnCheckPerformed(
-                        new CheckEventArgs($"Timeout when trying to access lookup table: {tableInfo}", CheckResult.Warning, e));
-                else
-                    checker.OnCheckPerformed(
-                        new CheckEventArgs($"Failed to query validation lookup table: {tableInfo}", CheckResult.Fail, e));
+                checker.OnCheckPerformed(
+                    e.HResult == -2 // timeout
+                        ? new CheckEventArgs($"Timeout when trying to access lookup table: {tableInfo}",
+                            CheckResult.Warning, e)
+                        : new CheckEventArgs($"Failed to query validation lookup table: {tableInfo}", CheckResult.Fail,
+                            e));
 
                 return;
             }
@@ -185,14 +185,10 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         }
 
         // Now attempt to validate the item just retrieved from the lookup table. By definition it should be valid.
-        ValidationFailure failure;
-
-        // If it is an exclusion list then pass a guid which shouldn't match any of the items in the lookup column
-        // Call to Validate may cause performance issues as it loads the entire column contents which for, e.g. CHI, can take a long time
-        if (InvertLogic)
-            failure = Validate(Guid.NewGuid().ToString(), null, null);
-        else
-            failure = Validate(itemToValidate, null, null);
+        var failure =
+            // If it is an exclusion list then pass a guid which shouldn't match any of the items in the lookup column
+            // Call to Validate may cause performance issues as it loads the entire column contents which for, e.g. CHI, can take a long time
+            Validate(InvertLogic ? Guid.NewGuid().ToString() : itemToValidate, null, null);
 
         checker.OnCheckPerformed(failure == null
             ? new CheckEventArgs("Test Read Code validation successful", CheckResult.Success)
@@ -241,9 +237,9 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         }
     }
 
-    private DbConnection GetConnectionToOtherTable(IDataAccessPoint tableInfo)
+    private static DbConnection GetConnectionToOtherTable(IDataAccessPoint tableInfo)
     {
-        return DataAccessPortal.GetInstance()
+        return DataAccessPortal
             .ExpectServer(tableInfo, DataAccessContext.InternalDataProcessing)
             .GetConnection();
     }

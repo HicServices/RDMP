@@ -18,7 +18,7 @@ public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAt
 
     public ExecuteCommandExportInDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
     {
-        _definition = _translater.GenerateFrom(catalogue);
+        _definition = DublinCoreTranslater.GenerateFrom(catalogue);
         UseTripleDotSuffix = true;
     }
 

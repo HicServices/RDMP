@@ -76,7 +76,7 @@ public class TestExtractableTables : TestsRequiringACohort
     public void CreateExtractionConfiguration()
     {
         var parent = new Project(DataExportRepository, "unit_test_CreateExtractionConfiguration");
-            
+
         var table = new ExtractionConfiguration(DataExportRepository, parent);
 
         try

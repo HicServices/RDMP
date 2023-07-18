@@ -102,7 +102,7 @@ public class CSVOutputFormat : FileOutputFormat
             return dateTime.ToString(dateFormat);
         }
 
-        if(roundFloatsTo.HasValue)
+        if (roundFloatsTo.HasValue)
         {
             separatorsStrippedOut = 0;
             switch(o)

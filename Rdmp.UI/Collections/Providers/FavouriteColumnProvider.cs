@@ -53,10 +53,10 @@ public class FavouriteColumnProvider
         _olvFavourite.AspectToStringConverter = st => "";
 
         _tlv.CellClick += OnCellClick;
-            
+
         _tlv.AllColumns.Add(_olvFavourite);
         _tlv.RebuildColumns();
-            
+
         return _olvFavourite;
     }
 

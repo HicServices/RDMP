@@ -40,7 +40,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
     public RemoteTableAttacher(): base(true)
     {
-            
+
     }
 
     [DemandsInitialization("The server to connect to (this replaces all other settings e.g. RemoteServer, RemoteDatabaseName etc")]
@@ -103,8 +103,8 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
             return;
 
         const string patternForValidTableNames = "^[0-9A-Za-z_ ]+$";
-            
-            
+
+
         if (string.IsNullOrWhiteSpace(RemoteTableName))
             throw new Exception("RemoteTableName is null, you need to give ProcessTaskArgument a value of a table on the remote server");
 
@@ -262,7 +262,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-            
+
     }
 
     protected void CheckTablesExist(ICheckNotifier notifier)
@@ -326,12 +326,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
         var syntax = _remoteDatabase.Server.GetQuerySyntaxHelper();
 
-        string sql;
-
-        if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
-            sql = RemoteSelectSQL;
-        else
-            sql = $"Select * from {syntax.EnsureWrapped(RemoteTableName)}";
+        var sql = !string.IsNullOrWhiteSpace(RemoteSelectSQL) ? RemoteSelectSQL : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}";
 
         var scheduleMismatch = false;
 
@@ -380,16 +375,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
             };
         }
 
-        string rawTableName;
-
-        if(RAWTableToLoad != null)
-        {
-            rawTableName = RAWTableToLoad.GetRuntimeName(LoadStage.AdjustRaw, job.Configuration.DatabaseNamer);
-        }
-        else
-        {
-            rawTableName = RAWTableName;
-        }
+        var rawTableName = RAWTableToLoad != null ? RAWTableToLoad.GetRuntimeName(LoadStage.AdjustRaw, job.Configuration.DatabaseNamer) : RAWTableName;
 
         var destination = new SqlBulkInsertDestination(_dbInfo, rawTableName, Enumerable.Empty<string>());
 
@@ -436,13 +422,13 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
     private string GetScheduleParameterDeclarations(IDataLoadJob job, out bool scheduleMismatch)
     {
-
-        var jobAsScheduledJob = job as ScheduledDataLoadJob ?? throw new NotSupportedException(
+        if(job is not ScheduledDataLoadJob jobAsScheduledJob)
+            throw new NotSupportedException(
                 $"Job must be of type {nameof(ScheduledDataLoadJob)} because you have specified a LoadProgress");
 
         //if the currently scheduled job is not our Schedule then it is a mismatch and we should skip it
         scheduleMismatch = !jobAsScheduledJob.LoadProgress.Equals(Progress);
-            
+
         var min = jobAsScheduledJob.DatesToRetrieve.Min();
         var max = jobAsScheduledJob.DatesToRetrieve.Max();
 
@@ -468,7 +454,7 @@ public class RemoteTableAttacher: Attacher, IPluginAttacher
 
         var declareStartDateParameter = syntaxHelper.GetParameterDeclaration(StartDateParameter, new DatabaseTypeRequest(typeof (DateTime)));
         var declareEndDateParameter = syntaxHelper.GetParameterDeclaration(EndDateParameter,new DatabaseTypeRequest(typeof (DateTime)));
-            
+
         var startSql = declareStartDateParameter + Environment.NewLine;
         startSql += $"SET {StartDateParameter} = '{min:yyyy-MM-dd HH:mm:ss}';{Environment.NewLine}";
 

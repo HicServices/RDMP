@@ -43,7 +43,8 @@ public class LinkedCohortNode : Node,IMasqueradeAs, IDeletableWithCustomMessage
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((LinkedCohortNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LinkedCohortNode) obj);
     }
 
     public override int GetHashCode()

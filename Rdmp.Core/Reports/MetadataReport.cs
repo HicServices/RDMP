@@ -36,7 +36,6 @@ public class MetadataReport:DocXHelper
 {
     private readonly ICatalogueRepository _repository;
     private readonly MetadataReportArgs _args;
-
     private HashSet<TableInfo> LookupsEncounteredToAppearInAppendix = new();
 
     public float PageWidthInPixels { get; private set; }
@@ -179,7 +178,7 @@ public class MetadataReport:DocXHelper
     {
         InsertSectionPageBreak(document);
         InsertHeader(document,"Appendix 1 - Lookup Tables");
-            
+
         //foreach lookup
         foreach (var lookupTable in LookupsEncounteredToAppearInAppendix)
         {
@@ -248,7 +247,7 @@ public class MetadataReport:DocXHelper
     }
 
 
-    private DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
+    private static DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
     {
         //get the contents of the lookup
         using var con = DataAccessPortal.GetInstance().ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection();
@@ -262,7 +261,7 @@ public class MetadataReport:DocXHelper
         return dt;
     }
 
-    private void AddImages(XWPFDocument document, BitmapWithDescription[] onRequestCatalogueImages)
+    private static void AddImages(XWPFDocument document, BitmapWithDescription[] onRequestCatalogueImages)
     {
         foreach (var image in onRequestCatalogueImages)
         {
@@ -328,7 +327,7 @@ public class MetadataReport:DocXHelper
 
         AutoFit(table);
     }
-    private void CreateNonExtractableColumnsTable(XWPFDocument document, Catalogue c)
+    private static void CreateNonExtractableColumnsTable(XWPFDocument document, Catalogue c)
     {
         var nonExtractableCatalogueItems = c.CatalogueItems.Where(ci => ci.ExtractionInformation == null).ToList();
 

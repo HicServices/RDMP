@@ -17,24 +17,24 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 /// </summary>
 public class ExtractCommandCollectionFactory
 {
-    public ExtractCommandCollection Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration)
+    public static ExtractCommandCollection Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ExtractionConfiguration configuration)
     {
         var cohort = configuration.Cohort;
         var datasets = configuration.GetAllExtractableDataSets();
-            
+
         var datasetBundles = datasets.Select(ds => CreateDatasetCommand(repositoryLocator, ds, configuration));
 
         return new ExtractCommandCollection(datasetBundles);
     }
 
-    private ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractableDataSet dataset, IExtractionConfiguration configuration)
+    private static ExtractDatasetCommand CreateDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractableDataSet dataset, IExtractionConfiguration configuration)
     {
         var catalogue = dataset.Catalogue;
 
         //get all extractable locals AND extractable globals first time then just extractable locals
         var docs = catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals);
         var sqls = catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals);
-            
+
         //Now find all the lookups and include them into the bundle
         catalogue.GetTableInfos(out _, out var lookupsFound);
 
@@ -48,7 +48,7 @@ public class ExtractCommandCollectionFactory
         return new ExtractDatasetCommand(configuration, bundle);
     }
 
-    public ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets)
+    public static ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets)
     {
         return CreateDatasetCommand(repositoryLocator, selectedDataSets.ExtractableDataSet,selectedDataSets.ExtractionConfiguration);
     }

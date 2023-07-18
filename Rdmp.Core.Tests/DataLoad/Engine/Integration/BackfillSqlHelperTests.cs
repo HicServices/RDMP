@@ -144,14 +144,14 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         return ti;
     }
 
-    public void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions)
+    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions)
     {
         using var conn = db.Server.GetConnection();
         conn.Open();
         CreateTableWithColumnDefinitions(db,tableName, columnDefinitions, conn);
     }
 
-    public void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions, DbConnection conn)
+    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName, string columnDefinitions, DbConnection conn)
     {
         var sql = $"CREATE TABLE {tableName} ({columnDefinitions})";
         db.Server.GetCommand(sql, conn).ExecuteNonQuery();

@@ -64,7 +64,7 @@ public partial class RichTextBoxEx : RichTextBox
     private const uint CFE_LINK		= 0x0020;
     private const uint CFE_AUTOCOLOR	= 0x40000000;
     private const uint CFE_SUBSCRIPT	= 0x00010000;		/* Superscript and subscript are */
-    private const uint CFE_SUPERSCRIPT= 0x00020000;		/*  mutually exclusive			 */
+    private const uint CFE_SUPERSCRIPT = 0x00020000;		/*  mutually exclusive			 */
 
     private const int CFM_SMALLCAPS		= 0x0040;			/* (*)	*/
     private const int CFM_ALLCAPS		= 0x0080;			/* Displayed by 3.0	*/
@@ -99,7 +99,7 @@ public partial class RichTextBoxEx : RichTextBox
     private const uint CFM_OFFSET		= 0x10000000;
     private const uint CFM_CHARSET	= 0x08000000;
     private const uint CFM_SUBSCRIPT	= CFE_SUBSCRIPT | CFE_SUPERSCRIPT;
-    private const uint CFM_SUPERSCRIPT= CFM_SUBSCRIPT;
+    private const uint CFM_SUPERSCRIPT = CFM_SUBSCRIPT;
 
     private const byte CFU_UNDERLINENONE		= 0x00000000;
     private const byte CFU_UNDERLINE			= 0x00000001;
@@ -252,10 +252,7 @@ public partial class RichTextBoxEx : RichTextBox
         // dwMask holds the information which properties are consistent throughout the selection:
         if ((cf.dwMask & mask) == mask)
         {
-            if ((cf.dwEffects & effect) == effect)
-                state = 1;
-            else
-                state = 0;
+            state = (cf.dwEffects & effect) == effect ? 1 : 0;
         }
         else
         {

@@ -39,7 +39,7 @@ internal class HousekeepingTests : DatabaseTests
         var dbInfo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(databaseName);
 
         var factory = new TriggerImplementerFactory(dbInfo.Server.DatabaseType);
-            
+
         var triggerImplementer = factory.Create(table);
         var isEnabled = triggerImplementer.GetTriggerStatus();
         Assert.AreEqual(TriggerStatus.Enabled, isEnabled);

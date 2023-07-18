@@ -46,7 +46,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     private CatalogueItem[] _allCatalogueItems;
 
     public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new();
-
+        
     [JsonIgnore]
     public List<IDilutionOperation>  DilutionOperations { get; private set; }
 
@@ -162,13 +162,13 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         if (Plans.Any(p=>p.Value.Plan == Plan.Dilute))
             if (GetIdentifierDumpServer() == null)
                 notifier.OnCheckPerformed(new CheckEventArgs("No default Identifier Dump server has been configured", CheckResult.Fail));
-            
+
         var refactorer = new SelectSQLRefactorer();
 
         foreach (var e in _allExtractionInformations)
-            if (!refactorer.IsRefactorable(e))
+            if (!SelectSQLRefactorer.IsRefactorable(e))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"ExtractionInformation '{e}' is a not refactorable due to reason:{refactorer.GetReasonNotRefactorable(e)}", CheckResult.Fail));
+                    $"ExtractionInformation '{e}' is a not refactorable due to reason:{SelectSQLRefactorer.GetReasonNotRefactorable(e)}", CheckResult.Fail));
             
         notifier.OnCheckPerformed(new CheckEventArgs($"Preparing to evaluate {toMigrateTables.Length}' tables ({string.Join(",",toMigrateTables.Select(t=>t.GetFullyQualifiedName()))})", CheckResult.Success));
 

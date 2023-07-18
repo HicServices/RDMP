@@ -50,10 +50,9 @@ public class ExtractionDirectory : IExtractionDirectory
 
         var subdirectoryName = GetExtractionDirectoryPrefix(configuration);
 
-        if (!Directory.Exists(Path.Combine(root.FullName, subdirectoryName)))
-            ExtractionDirectoryInfo = root.CreateSubdirectory(subdirectoryName);
-        else
-            ExtractionDirectoryInfo = new DirectoryInfo(Path.Combine(root.FullName, subdirectoryName));
+        ExtractionDirectoryInfo = Directory.Exists(Path.Combine(root.FullName, subdirectoryName))
+            ? new DirectoryInfo(Path.Combine(root.FullName, subdirectoryName))
+            : root.CreateSubdirectory(subdirectoryName);
     }
 
     public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)

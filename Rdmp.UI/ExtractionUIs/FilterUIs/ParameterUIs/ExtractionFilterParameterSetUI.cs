@@ -44,7 +44,7 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
         tbDescription.Text = ExtractionFilterParameterSet.Description;
 
         var factory = new ParameterCollectionUIOptionsFactory();
-        var options = factory.Create(ExtractionFilterParameterSet);
+        var options = ParameterCollectionUIOptionsFactory.Create(ExtractionFilterParameterSet);
         parameterCollectionUI1.SetUp(options,Activator);
     }
 

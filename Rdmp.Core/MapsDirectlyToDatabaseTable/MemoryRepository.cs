@@ -28,9 +28,8 @@ public class MemoryRepository : IRepository
     /// <summary>
     /// This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
     /// </summary>
-    protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects = new ();
-
-
+    protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable,byte> Objects =
+        new();
     private readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new();
 
     public event EventHandler<SaveEventArgs> Saving;
@@ -80,14 +79,7 @@ public class MemoryRepository : IRepository
         var type = underlying ?? prop.PropertyType;
 
         if (type.IsEnum)
-        {
-            if ( strVal != null)
-                prop.SetValue(toCreate, Enum.Parse(type, strVal));
-            else
-            {
-                prop.SetValue(toCreate, Enum.ToObject(type, val));
-            }
-        }
+            prop.SetValue(toCreate, strVal != null ? Enum.Parse(type, strVal) : Enum.ToObject(type, val));
         else
             prop.SetValue(toCreate, Convert.ChangeType(val, type));
     }
@@ -228,7 +220,7 @@ public class MemoryRepository : IRepository
 
         if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
             return;
-            
+
         var type = mapsDirectlyToDatabaseTable.GetType();
 
         foreach (var e in _propertyChanges[mapsDirectlyToDatabaseTable].ToArray()) //call ToArray to avoid cyclical events on SetValue

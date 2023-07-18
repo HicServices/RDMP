@@ -138,7 +138,7 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         base.Execute();
 
         var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
-        var request = GetCohortCreationRequest(auditLogBuilder.GetDescription(_extractionIdentifierColumn));
+        var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(_extractionIdentifierColumn));
 
         //user choose to cancel the cohort creation request dialogue
         if (request == null)

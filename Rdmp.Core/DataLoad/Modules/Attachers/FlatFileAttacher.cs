@@ -76,7 +76,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
         if (!table.Exists())
             throw new FlatFileLoadException(_dbInfo.DiscoverTables(false).Any()? $"RAW database did not have a table called:{TableName}" : "Raw database had 0 tables we could load");
 
-            
+
         //load the flat file
         var filePattern = FilePattern ?? "*";
 
@@ -229,7 +229,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken);
 
 
-    private void DropEmptyColumns(DataTable dt)
+    private static void DropEmptyColumns(DataTable dt)
     {
         var emptyColumnsSyntheticNames = new Regex("^Column[0-9]+$");
 

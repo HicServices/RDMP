@@ -47,7 +47,7 @@ ConnectionString (Required)";
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
     {
         var m = MatchOrThrow(arg, idx);
-            
+
         var tableName = m.Groups[1].Value;
         var schema = Trim("Schema:",m.Groups[2].Value);
 

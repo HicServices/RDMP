@@ -76,7 +76,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
         ///////////////Catalogue or ambiguous Drop Targets ////////////////////////
         if (targetModel is IFolderNode folder)
             return CreateWhenTargetIsFolder(cmd, folder);
-            
+
         /////////////Table Info Drop Targets///////////////////////////////////
         if (targetModel is TableInfo targetTableInfo)
             return CreateWhenTargetIsATableInfo(cmd, targetTableInfo);
@@ -90,7 +90,7 @@ public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 
         if (targetModel is ProcessTask targetProcessTask)
             return CreateWhenTargetIsProcessTask(cmd, targetProcessTask, insertOption);
-            
+
         /////////////Table Info Collection Drop Targets////////////////////
 
         if (targetModel is PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)

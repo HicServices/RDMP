@@ -48,7 +48,7 @@ public class CachingHostTests : UnitTests
                         
         cp.CacheFillProgress = DateTime.Now.AddDays(-1);
         cp.PermissionWindow_ID = 1;
-                                  
+
 
         var permissionWindow = new PermissionWindow(Repository)
         {

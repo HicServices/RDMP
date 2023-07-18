@@ -26,14 +26,14 @@ public class JoinableCollectionNode:Node,IOrderable
         Joinables = joinables;
     }
 
-    public string GetCatalogueName()
+    public static string GetCatalogueName()
     {
         return "";
     }
 
-    public IMapsDirectlyToDatabaseTable Child => null;
+    public static IMapsDirectlyToDatabaseTable Child => null;
 
-    public IDataAccessPoint[] GetDataAccessPoints()
+    public static IDataAccessPoint[] GetDataAccessPoints()
     {
         return null;
     }
@@ -43,31 +43,31 @@ public class JoinableCollectionNode:Node,IOrderable
         return "Patient Index Table(s)";
     }
 
-    public string FinalRowCount()
+    public static string FinalRowCount()
     {
         return "";
     }
     public int? CumulativeRowCount { set; get; }
 
 
-    public string GetStateDescription()
+    public static string GetStateDescription()
     {
         return "";
     }
 
-    public string Order()
+    public static string Order()
     {
         return "";
     }
 
     public string ElapsedTime = "";
 
-    public string GetCachedQueryUseCount()
+    public static string GetCachedQueryUseCount()
     {
         return "";
     }
 
-    public string DescribePurpose()
+    public static string DescribePurpose()
     {
 
         return @"Drop Aggregates (datasets) here to create patient index tables (Tables with interesting
@@ -85,7 +85,8 @@ criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date pe
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((JoinableCollectionNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((JoinableCollectionNode) obj);
     }
 
     public override int GetHashCode()

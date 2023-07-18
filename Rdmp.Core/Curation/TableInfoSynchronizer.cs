@@ -40,7 +40,7 @@ public class TableInfoSynchronizer
         _tableToSync = tableToSync;
         _repository = _tableToSync.CatalogueRepository;
 
-        _toSyncTo = DataAccessPortal.GetInstance().ExpectServer(tableToSync, DataAccessContext.InternalDataProcessing);
+        _toSyncTo = DataAccessPortal.ExpectServer(tableToSync, DataAccessContext.InternalDataProcessing);
     }
     /// <summary>
     /// 
@@ -208,8 +208,8 @@ public class TableInfoSynchronizer
                     var c = new ForwardEngineerCatalogue(_tableToSync, added.ToArray());
 
                     //In the Catalogue
-                    c.ExecuteForwardEngineering(relatedCatalogues[0],out var cata,out var cis, out var eis);
-
+                    c.ExecuteForwardEngineering(relatedCatalogues[0],out var cata, out var cis, out var eis);
+                        
                     //make them extractable only as internal since it is likely they could contain sensitive data if user is just used to hammering Ok on all dialogues
                     foreach (var e in eis)
                     {
@@ -259,7 +259,7 @@ public class TableInfoSynchronizer
 
     }
 
-    private bool SynchronizeField(DiscoveredColumn[] liveColumns,ColumnInfo[] columnsInCatalogue, ICheckNotifier notifier,string property)
+    private static bool SynchronizeField(DiscoveredColumn[] liveColumns,ColumnInfo[] columnsInCatalogue, ICheckNotifier notifier,string property)
     {
         var IsSynched = true;
 

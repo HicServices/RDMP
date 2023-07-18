@@ -17,8 +17,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandSetContainerOperation : BasicCommandExecution
 {
-    private CohortAggregateContainer _container;
-    private SetOperation _operation;
+    private readonly CohortAggregateContainer _container;
+    private readonly SetOperation _operation;
 
     public ExecuteCommandSetContainerOperation(IBasicActivateItems activator, CohortAggregateContainer container, SetOperation operation) : base(activator)
     {

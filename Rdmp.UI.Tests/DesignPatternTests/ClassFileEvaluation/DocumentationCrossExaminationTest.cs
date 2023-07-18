@@ -351,7 +351,7 @@ internal class DocumentationCrossExaminationTest
         }
 
 
-        foreach (var (filename,tokens) in fileCommentTokens)
+        foreach ((var filename, var tokens) in fileCommentTokens)
         {
             problems.AddRange(tokens
                 .Where(token => !codeTokens.Contains(token) && !codeTokens.Contains($"ExecuteCommand{token}"))
@@ -374,7 +374,7 @@ internal class DocumentationCrossExaminationTest
         Assert.AreEqual(0,problems.Count,"Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
     }
 
-    private void EnsureCodeBlocksCompile(string mdFile, List<string> problems)
+    private static void EnsureCodeBlocksCompile(string mdFile, List<string> problems)
     {
         var codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
 

@@ -158,7 +158,7 @@ sex=@sex
 group by 
 ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 order by 
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(aggregateSql));
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]",cohortIdentificationConfiguration.ID)), CollapseWhitespace(aggregateSql));
 
 //the expected differences are
 //1. should not have the count

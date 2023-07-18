@@ -89,10 +89,10 @@ public class GovernanceReport:DocXHelper
 
             writer.NextRecord();
 
-            // next section header
-            writer.WriteField("Active Governance");
+                // next section header
+                writer.WriteField("Active Governance");
 
-            OutputGovernanceList(govs, writer, false);
+                OutputGovernanceList(govs,writer, false);
 
             writer.NextRecord();
             // next section header
@@ -100,11 +100,11 @@ public class GovernanceReport:DocXHelper
 
             OutputGovernanceList(govs, writer, true);
         }
-                
+
         ShowFile(f);
     }
 
-    private string ShortenDescription(string description)
+    private static string ShortenDescription(string description)
     {
         if (string.IsNullOrWhiteSpace(description))
             return description;
@@ -121,7 +121,7 @@ public class GovernanceReport:DocXHelper
     /// <param name="govs"></param>
     /// <param name="writer"></param>
     /// <param name="expired"></param>
-    private void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer, bool expired)
+    private static void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer, bool expired)
     {
         //headers for this section
         writer.WriteField("Governance");

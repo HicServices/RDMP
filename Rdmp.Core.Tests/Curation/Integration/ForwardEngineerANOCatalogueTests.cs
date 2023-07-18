@@ -149,7 +149,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 10), false)
         });
 
-        var cata = Import(tbl,out var ti,out var cols);
+        var cata = Import(tbl,out var ti, out var cols);
 
         var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, cata)
         {
@@ -217,16 +217,16 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var tblToNeck = dbTo.CreateTable("Necks", cols);
 
         var i1 = new TableInfoImporter(CatalogueRepository, tblFromHeads);
-        i1.DoImport(out var fromHeadsTableInfo,out var fromHeadsColumnInfo);
+        i1.DoImport(out var fromHeadsTableInfo, out var fromHeadsColumnInfo);
 
         var i2 = new TableInfoImporter(CatalogueRepository, tblFromNeck);
-        i2.DoImport(out var fromNeckTableInfo,out var fromNeckColumnInfo);
+        i2.DoImport(out var fromNeckTableInfo, out var fromNeckColumnInfo);
             
         //Table already exists but does the in Catalogue reference exist?
         if(tableInfoAlreadyExistsForSkippedTable)
         {
             var i3 = new TableInfoImporter(CatalogueRepository, tblToNeck);
-            i3.DoImport(out var toNecksTableInfo,out var toNecksColumnInfo);
+            i3.DoImport(out var toNecksTableInfo, out var toNecksColumnInfo);
         }
 
         //Create a JoinInfo so the query builder knows how to connect the tables
@@ -236,7 +236,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         );
 
         var cataEngineer = new ForwardEngineerCatalogue(fromHeadsTableInfo, fromHeadsColumnInfo);
-        cataEngineer.ExecuteForwardEngineering(out var cata,out var cataItems,out var extractionInformations);
+        cataEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var extractionInformations);
 
         var cataEngineer2 = new ForwardEngineerCatalogue(fromNeckTableInfo, fromNeckColumnInfo);
         cataEngineer2.ExecuteForwardEngineering(cata);
@@ -254,7 +254,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
          
         //////////////////The actual test!/////////////////
         var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,cata);
-            
+
         //ano the table SkullColor
         var scPlan = planManager.GetPlanForColumnInfo(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")));
         scPlan.ANOTable = anoTable;
@@ -332,12 +332,12 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         //import a reference to the table
         var importer = new TableInfoImporter(CatalogueRepository,lookupTbl);
-        importer.DoImport(out var lookupTableInfo,out var lookupColumnInfos);
+        importer.DoImport(out var lookupTableInfo, out var lookupColumnInfos);
 
         //Create a Lookup reference
         var ciSex = bulk.catalogue.CatalogueItems.Single(c => c.Name == "sex");
         var ciHb = bulk.catalogue.CatalogueItems.Single(c => c.Name == "hb_extract");
-            
+
         var eiChi = bulk.extractionInformations.Single(ei => ei.GetRuntimeName() == "chi");
         eiChi.IsExtractionIdentifier = true;
         eiChi.SaveToDatabase();
@@ -369,10 +369,10 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         var eiDataLoadRunId = bulk.extractionInformations.Single(ei => ei.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID));
         eiDataLoadRunId.DeleteInDatabase();
-            
+
 
         var lookup = new Lookup(CatalogueRepository, lookupColumnInfos[2], ciSex.ColumnInfo, lookupColumnInfos[0],ExtractionJoinType.Left, null);
-            
+
         //now let's make it worse, let's assume the sex code changes per healthboard therefore the join to the lookup requires both fields sex and hb_extract
         var compositeLookup = new LookupCompositeJoinInfo(CatalogueRepository, lookup, ciHb.ColumnInfo, lookupColumnInfos[1]);
 
@@ -385,7 +385,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             toBumpDown.Order++;
             toBumpDown.SaveToDatabase();
         }
-            
+
         var ciDescription = new CatalogueItem(CatalogueRepository, bulk.catalogue, "Sex_Desc");
         var eiDescription = new ExtractionInformation(CatalogueRepository, ciDescription, lookupColumnInfos[2],lookupColumnInfos[2].Name)
             {
@@ -409,7 +409,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
 
         //the query builder should have identified the lookup
         Assert.AreEqual(lookup,qb.GetDistinctRequiredLookups().Single());
-            
+
         //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
         var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,bulk.catalogue)
  {
@@ -491,7 +491,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
     private void CreateMigrationRules(ForwardEngineerANOCataloguePlanManager planManager, BulkTestsData bulk)
     {
         var chi = bulk.GetColumnInfo("chi");
-            
+
         var anoChi = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOCHI", "C")
             {
                 NumberOfIntegersToUseInAnonymousRepresentation = 9,

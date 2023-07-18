@@ -107,7 +107,7 @@ public class SessionCollectionUI : RDMPUserControl, IObjectCollectionControl, IC
     /// <param name="toAdd"></param>
     public void Add(params IMapsDirectlyToDatabaseTable[] toAdd)
     {
-        for(var i=0;i< toAdd.Length;i++)
+        for(var i =0;i< toAdd.Length;i++)
         {
             toAdd[i] = toAdd[i] switch
             {

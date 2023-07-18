@@ -39,8 +39,8 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
         _releaseMap ??= GetReleaseMap();
 
         //if we have a historical release Id use it
-        if (_releaseMap.TryGetValue(privateIdentifier, out var identifier))
-            return identifier;
+        if (_releaseMap.ContainsKey(privateIdentifier))
+            return _releaseMap[privateIdentifier];
             
         //otherwise allocate a new guid and let's record it just for prosperity
         var toReturn = Guid.NewGuid().ToString();

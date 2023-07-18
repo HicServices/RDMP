@@ -94,7 +94,7 @@ internal class CatalogueIconProviderTests: UITests
     }
 
 
-    private bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Rgba32> img)
+    private static bool IsBlackAndWhite(SixLabors.ImageSharp.Image<Rgba32> img)
     {
         var foundColoured = false;
         img.ProcessPixelRows(pixels =>

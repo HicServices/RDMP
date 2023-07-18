@@ -47,9 +47,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     public string AddFilenameColumnNamed { get; set; }
 
     private FlatFileToLoad _fileToLoad;
-
     private DataTable dataReadFromFile;
-    private bool haveDispatchedDataTable;
+    private bool haveDispatchedDataTable = false;
 
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
@@ -78,20 +77,20 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
         DataTable toReturn=null;
 
-        try
-        {
-            var worksheet =
-                //if the user hasn't picked one, use the first
-                (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ?? throw new FlatFileLoadException(
-                    $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
-            toReturn = GetAllData(worksheet, listener);
+            try
+            {
+                var worksheet =
+                    //if the user hasn't picked one, use the first
+                    (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ?? throw new FlatFileLoadException(
+                        $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
+                toReturn = GetAllData(worksheet, listener);
 
             //set the table name the file name
             toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
 
-            if (toReturn.Columns.Count == 0)
-                throw new FlatFileLoadException(
-                    $"The Excel sheet '{worksheet.SheetName}' in workbook '{_fileToLoad.File.Name}' is empty");
+                if (toReturn.Columns.Count == 0)
+                    throw new FlatFileLoadException(
+                        $"The Excel sheet '{worksheet.SheetName}' in workbook '{_fileToLoad.File.Name}' is empty");
 
             //if the user wants a column in the DataTable storing the filename loaded add it
             if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
@@ -252,21 +251,21 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         }
     }
 
-    private bool IsDateWithTime(string formatString)
+    private static bool IsDateWithTime(string formatString)
     {
         return formatString.Contains('h') && formatString.Contains('y');
     }
-    private bool IsDateWithoutTime(string formatString)
+    private static bool IsDateWithoutTime(string formatString)
     {
         return formatString.Contains('y') && !formatString.Contains('h');
     }
 
-    private bool IsTimeWithoutDate(string formatString)
+    private static bool IsTimeWithoutDate(string formatString)
     {
         return !formatString.Contains('y') && formatString.Contains('h');
     }
 
-    private bool IsDateFormat(string formatString)
+    private static bool IsDateFormat(string formatString)
     {
         return !string.IsNullOrWhiteSpace(formatString) && (formatString.Contains('/') || formatString.Contains('\\') || formatString.Contains(':'));
     }
@@ -314,7 +313,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         return acceptedFileExtensions.Contains(_fileToLoad.File.Extension.ToLower());
     }
 
-    private bool IsNull(object o)
+    private static bool IsNull(object o)
     {
         return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
     }

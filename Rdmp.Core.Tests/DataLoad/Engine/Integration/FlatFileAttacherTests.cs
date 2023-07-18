@@ -170,7 +170,7 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.TableName = "Bob";
         attacher.ExplicitDateTimeFormat = "yyyyddMM";
 
-            
+
         var table = _database.ExpectTable("Bob");
         table.Truncate();
 
@@ -474,7 +474,7 @@ public class FlatFileAttacherTests : DatabaseTests
     public void Test_TableToLoad_IDNotInLoadMetadata()
     {
         var source = new AnySeparatorFileAttacher();
-                        
+
         var tiInLoad = new TableInfo(CatalogueRepository,"TableInLoad");
         var tiNotInLoad = new TableInfo(CatalogueRepository, "TableNotInLoad");
 

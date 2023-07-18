@@ -218,7 +218,7 @@ public partial class DatabaseTests
             _discoveredPostgresServer = new DiscoveredServer(TestDatabaseSettings.PostgreSql, DatabaseType.PostgreSql);
     }
 
-    private void DealWithMissingTestDatabases(PlatformDatabaseCreationOptions opts, TableRepository cataRepo)
+    private static void DealWithMissingTestDatabases(PlatformDatabaseCreationOptions opts, TableRepository cataRepo)
     {
         var mainDb = cataRepo.DiscoveredServer.ExpectDatabase("master");
 
@@ -244,14 +244,13 @@ public partial class DatabaseTests
             // then create them
             TestContext.Out.WriteLine($"Creating TEST databases on {mainDb.Server} using prefix {opts.Prefix}");
 
-            var creator = new PlatformDatabaseCreation();
-            creator.CreatePlatformDatabases(opts);
+            PlatformDatabaseCreation.CreatePlatformDatabases(opts);
         }
 
         HaveTriedCreatingTestDatabases = true;
     }
 
-    private IDataExportRepository GetFreshYamlRepository()
+    private static IDataExportRepository GetFreshYamlRepository()
     {
         var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Repo"));
             
@@ -427,7 +426,7 @@ public partial class DatabaseTests
         DeleteAll<LoadMetadata>(y);
     }
 
-    private void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable
+    private static void DeleteAll<T>(YamlRepository y) where T : IMapsDirectlyToDatabaseTable
     {
         foreach (var o in y.GetAllObjects<T>())
         {
@@ -767,7 +766,7 @@ delete from {1}..Project
         return (trans,server.GetCurrentDatabase());
     }
 
-    protected void DeleteTables(DiscoveredDatabase database)
+    protected static void DeleteTables(DiscoveredDatabase database)
     {
         var syntax = database.Server.GetQuerySyntaxHelper();
 
@@ -839,7 +838,7 @@ delete from {1}..Project
         return Import(tbl, out tableInfoCreated, out columnInfosCreated, out _, out _);
     }
 
-    protected void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
+    protected static void VerifyRowExist(DataTable resultTable, params object[] rowObjects)
     {
         if (resultTable.Columns.Count != rowObjects.Length)
             Assert.Fail(
@@ -899,7 +898,7 @@ delete from {1}..Project
     }
     protected void SetupLowPrivilegeUserRightsFor(ITableInfo ti, TestLowPrivilegePermissions permissions)
     {
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
+        var db = DataAccessPortal.ExpectDatabase(ti, DataAccessContext.InternalDataProcessing);
         SetupLowPrivilegeUserRightsFor(db, permissions, ti);
     }
 
@@ -934,7 +933,7 @@ delete from {1}..Project
     }
 
 
-    private string GrantAccessSql(string username, DatabaseType type, TestLowPrivilegePermissions permissions)
+    private static string GrantAccessSql(string username, DatabaseType type, TestLowPrivilegePermissions permissions)
     {
         switch (type)
         {

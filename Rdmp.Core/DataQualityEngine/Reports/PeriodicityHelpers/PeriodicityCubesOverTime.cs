@@ -24,7 +24,6 @@ public class PeriodicityCubesOverTime
 {
     private readonly string _pivotCategory;
     private List<PeriodicityCube> allCubes = new();
-
     private Dictionary<int,Dictionary<int,PeriodicityCube>>  hyperCube = new();
 
     public PeriodicityCubesOverTime(string pivotCategory)
@@ -32,7 +31,7 @@ public class PeriodicityCubesOverTime
         _pivotCategory = pivotCategory;
     }
 
-    public void PeriodicityCube()
+    public static void PeriodicityCube()
     {
             
     }
@@ -45,9 +44,11 @@ public class PeriodicityCubesOverTime
         if(!hyperCube.ContainsKey(year))
         {
             //create month dictionary
-            var perMonth = new Dictionary<int, PeriodicityCube> {
+            var perMonth = new Dictionary<int, PeriodicityCube>
+            {
                 //add month user wants to month dictionary
-                { month, newCube = new PeriodicityCube(year, month) } };
+                { month, newCube = new PeriodicityCube(year, month) }
+            };
 
             //add month dictionary to year dictionary
             hyperCube.Add(year,perMonth);

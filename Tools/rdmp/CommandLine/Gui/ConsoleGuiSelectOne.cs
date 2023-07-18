@@ -31,16 +31,9 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
         true,null)
     {
         _activator = activator;
-            
-        if(available != null)
-        {
-            _masterCollection = available.ToDictionary(k=>k,v=>activator.CoreChildProvider.GetDescendancyListIfAnyFor(v));
-        }
-        else
-        {
-            _masterCollection = _activator.CoreChildProvider.GetAllSearchables();
-        }
-            
+
+        _masterCollection = available != null ? available.ToDictionary(k=>k,v=>activator.CoreChildProvider.GetDescendancyListIfAnyFor(v)) : _activator.CoreChildProvider.GetAllSearchables();
+
         _publicCollection = _masterCollection.Select(v=>v.Key).ToList();
         SetAspectGet(_activator.CoreChildProvider);
     }
@@ -59,9 +52,8 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
 
         _scorer = new SearchablesMatchScorer
         {
-            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(), StringComparer.CurrentCultureIgnoreCase)
+            TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),StringComparer.CurrentCultureIgnoreCase)
         };
-
     }
 
     protected override void AddMoreButtonsAfter(Window win, Button btnCancel)
@@ -71,7 +63,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
             Y = Pos.Top(btnCancel)
         };
         win.Add(lbl);
-            
+
         txtId = new TextField
         {
             X = Pos.Right(lbl),
@@ -89,7 +81,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
     {
         if(token.IsCancellationRequested)
             return new List<IMapsDirectlyToDatabaseTable>();
-             
+
         if(int.TryParse(txtId.Text.ToString(), out var searchForID))
             _scorer.ID = searchForID;
         else

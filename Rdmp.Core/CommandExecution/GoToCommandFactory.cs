@@ -302,7 +302,7 @@ public class GoToCommandFactory : CommandFactoryBase
         }
     }
 
-    private bool SupportsReplacement(object o)
+    private static bool SupportsReplacement(object o)
     {
         return o switch
         {

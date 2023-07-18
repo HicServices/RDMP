@@ -36,6 +36,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports;
 public partial class GenerateTestDataUI : RDMPForm
 {
     public HelpWorkflow HelpWorkflow { get; private set; }
+
     private int? _seed;
 
     public GenerateTestDataUI(IActivateItems activator, ICommandExecution command):base(activator)
@@ -139,14 +140,14 @@ public partial class GenerateTestDataUI : RDMPForm
 
     }
 
-    private bool started;
+    private bool started = false;
 
     private List<DataGeneratorUI> Executing = new();
     private DirectoryInfo _extractDirectory;
 
     private void btnGenerate_Click(object sender, EventArgs e)
     {
-            
+
         var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui=>ui.Generate).ToArray();
             
         if(!uis.Any())

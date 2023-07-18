@@ -23,7 +23,7 @@ internal class CommandLineHelperTests
     {
         var date = new DateTime(2004, 1, 1);
         Assert.AreEqual("\"2004-01-01\"", CommandLineHelper.GetValueString(date));
-            
+
 
         var fi = new FileInfo(TestContext.CurrentContext.TestDirectory);
         Assert.AreEqual($@"""{TestContext.CurrentContext.TestDirectory}""", CommandLineHelper.GetValueString(fi));

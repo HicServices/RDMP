@@ -45,7 +45,7 @@ public partial class GovernanceDocumentUI : GovernanceDocumentUI_Design, ISaveab
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        OpenFileDialog ofd = new()
+        var ofd = new OpenFileDialog
         {
             CheckFileExists = true
         };

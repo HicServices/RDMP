@@ -30,7 +30,7 @@ public class BasicParameterUseTests:DatabaseTests
     {
         //Pick the destination server
         var tableName = TestDatabaseNames.GetConsistentName("tbl");
-            
+
         //make sure there's a database ready to receive the data
         var db = GetCleanedServer(dbType);
         db.Create(true);

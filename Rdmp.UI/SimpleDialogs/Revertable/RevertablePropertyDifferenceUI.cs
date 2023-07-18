@@ -67,17 +67,17 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         var diff = new Diff();
 
         var highlighter = new ScintillaLineHighlightingHelper();
-            
-        highlighter.ClearAll(QueryEditorAfter);
-        highlighter.ClearAll(QueryEditorBefore);
 
-        foreach (var item in diff.DiffText(textBefore, textAfter))
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditorAfter);
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditorBefore);
+
+        foreach (var item in Diff.DiffText(textBefore, textAfter))
         {
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
-                highlighter.HighlightLine(QueryEditorBefore,i, Color.Pink);
-
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore,i, Color.Pink);
+                    
             for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
-                highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
         }
             
     }

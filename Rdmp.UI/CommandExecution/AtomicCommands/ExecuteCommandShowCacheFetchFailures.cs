@@ -37,7 +37,7 @@ public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAto
         base.Execute();
 
         // for now just show a modal dialog with a data grid view of all the failure rows
-            
+
         var dt = new DataTable();
         dt.Columns.Add("FetchRequestStart");
         dt.Columns.Add("FetchRequestEnd");

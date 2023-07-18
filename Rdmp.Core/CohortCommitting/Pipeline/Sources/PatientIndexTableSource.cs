@@ -48,7 +48,7 @@ public class PatientIndexTableSource : AggregateConfigurationTableSource, IPipel
 
         var impromptuSql =
             $"{whereString}{extractionIdentifier.SelectSQL} IN (SELECT {_extractableCohort.GetPrivateIdentifier()} FROM {_extractableCohort.ExternalCohortTable.TableName} WHERE {_extractableCohort.WhereSQL()})";
-            
+
         //if there is a group by then we must insert the AND patient in cohort bit before the group by but after any WHERE containers
         var insertionPoint = sql.IndexOf("group by", 0, StringComparison.CurrentCultureIgnoreCase);
 

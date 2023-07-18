@@ -36,7 +36,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     public void Create_QueryCache(DatabaseType dbType,Type patcherType)
     {
         var db = GetCleanedServer(dbType);
-            
+
         var patcher = (Patcher)Activator.CreateInstance(patcherType);
 
         var mds = new MasterDatabaseScriptExecutor(db);
@@ -84,11 +84,11 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var root = cic.RootCohortAggregateContainer;
         root.AddChild(ac1,0);
-            
+
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
         runner.Run(new CancellationToken());
-            
+
         AssertNoErrors(compiler);
             
         Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
@@ -141,13 +141,13 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var root = cic.RootCohortAggregateContainer;
         root.AddChild(ac1,0);
         root.AddChild(ac2,1);
-            
+
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
         runner.Run(new CancellationToken());
-            
+
         AssertNoErrors(compiler);
-            
+
         //each container on its own ran with the normal SQL
         AssertNoErrors(compiler,ac1,"@date_of_max='2001-01-01'");
         AssertNoErrors(compiler,ac2,"@date_of_max='2005-01-01'");
@@ -216,7 +216,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var root = cic.RootCohortAggregateContainer;
         root.AddChild(ac,0);
-            
+
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
         runner.Run(new CancellationToken());
@@ -290,7 +290,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         root.SaveToDatabase();
         root.AddChild(ac1,0);
         root.AddChild(ac2,1);
-            
+
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
 
@@ -443,7 +443,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
          *                                  | Hospital Admissions|
          *
          */
-             
+
         var server1 = GetCleanedServer(DatabaseType.MySql);
         var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
@@ -497,7 +497,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
          *                                  | Hospital Admissions|
          *
          */
-             
+
         var server1 = GetCleanedServer(DatabaseType.MySql);
         var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var server3 = GetCleanedServer(DatabaseType.Oracle);
@@ -523,7 +523,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var runner = new CohortCompilerRunner(compiler, 50000);
             
         runner.Run(new CancellationToken());
-            
+
         var hospitalAdmissionsTask = compiler.Tasks.Keys.OfType<AggregationTask>().Single(t => t.Aggregate.Equals(hospitalAdmissions));
 
         Assert.AreEqual(CompilationState.Crashed,hospitalAdmissionsTask.State);
@@ -674,7 +674,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var syntax = db.Server.GetQuerySyntaxHelper();
 
         var ac = SetupAggregateConfiguration(db,people,r,cic);
-            
+
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         var filter = new AggregateFilter(CatalogueRepository, "Hospitalised after an NA", and)
         {
@@ -707,7 +707,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
         ac.RootFilterContainer_ID = container.ID;
         ac.SaveToDatabase();
-            
+
         //create a filter
         var filter = new AggregateFilter(CatalogueRepository,filterName,container);
 
@@ -779,7 +779,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// Shows the state of the <paramref name="compiler"/> and asserts that all the jobs are finished
     /// </summary>
     /// <param name="compiler"></param>
-    private void AssertNoErrors(CohortCompiler compiler)
+    private static void AssertNoErrors(CohortCompiler compiler)
     {
         Assert.IsNotEmpty(compiler.Tasks);
 
@@ -787,17 +787,17 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
 
         var i = 0;
-        foreach (var kvp in compiler.Tasks)
-            TestContext.WriteLine($"{i++} - {kvp.Key} | {kvp.Key.GetType()} | {kvp.Key.State} | {kvp.Key?.CrashMessage} | {kvp.Key?.FinalRowCount} | {kvp.Key?.GetCachedQueryUseCount()}");
+        foreach (var kvp in compiler.Tasks.Keys)
+            TestContext.WriteLine($"{i++} - {kvp.ToString()} | {kvp.GetType()} | {kvp.State} | {kvp.CrashMessage} | {kvp.FinalRowCount} | {kvp.GetCachedQueryUseCount()}");
             
-        Assert.IsTrue(compiler.Tasks.All(t => t.Key.State == CompilationState.Finished), "Expected all tasks to finish without error");
+        Assert.IsTrue(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished), "Expected all tasks to finish without error");
     }
 
     /// <summary>
     /// Asserts that the given <paramref name="task"/> (when run on its own) crashed with the given
     /// <see cref="expectedErrorMessageToContain"/>
     /// </summary>
-    private void AssertCrashed(CohortCompiler compiler, AggregateConfiguration task, string expectedErrorMessageToContain)
+    private static void AssertCrashed(CohortCompiler compiler, AggregateConfiguration task, string expectedErrorMessageToContain)
     {
         var acResult = compiler.Tasks.Single(t => t.Key is AggregationTask a && a.Aggregate.Equals(task));
         Assert.AreEqual(CompilationState.Crashed,acResult.Key.State);
@@ -811,7 +811,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// <param name="compiler"></param>
     /// <param name="task"></param>
     /// <param name="expectedSqlBits">regex patterns you expect to be in the sql executed</param>
-    private void AssertNoErrors(CohortCompiler compiler, AggregateConfiguration task,
+    private static void AssertNoErrors(CohortCompiler compiler, AggregateConfiguration task,
         params string[] expectedSqlBits)
     {
         var acResult = compiler.Tasks.Single(t => t.Key is AggregationTask a && a.Aggregate.Equals(task));
@@ -832,7 +832,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// <param name="compiler"></param>
     /// <param name="task"></param>
     /// <param name="expectedSqlBits">regex patterns you expect to be in the sql executed</param>
-    private void AssertNoErrors(CohortCompiler compiler, CohortAggregateContainer task,
+    private static void AssertNoErrors(CohortCompiler compiler, CohortAggregateContainer task,
         params string[] expectedSqlBits)
     {
         var acResult = compiler.Tasks.Single(t => t.Key is AggregationContainerTask a && a.Container.Equals(task));
@@ -849,7 +849,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     /// <param name="compiler"></param>
     /// <param name="container"></param>
     /// <param name="expectedCacheUsageCount">The amount you expect to be used of the cache e.g. "2/2" </param>
-    private void AssertCacheUsed(CohortCompiler compiler, CohortAggregateContainer container, string expectedCacheUsageCount)
+    private static void AssertCacheUsed(CohortCompiler compiler, CohortAggregateContainer container, string expectedCacheUsageCount)
     {
         //cache should have been used
         var containerResult = compiler.Tasks.Single(t => t.Key is AggregationContainerTask c && c.Container.Equals(container));

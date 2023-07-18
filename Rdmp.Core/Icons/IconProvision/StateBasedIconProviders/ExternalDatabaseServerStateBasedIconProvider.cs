@@ -60,8 +60,8 @@ public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIco
         var toReturn = _default;
 
         //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)
-        if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.TryGetValue(server.CreatedByAssembly, out var icon))
-            toReturn = icon;
+        if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.TryGetValue(server.CreatedByAssembly, out var value))
+            toReturn = value;
                 
         //add the database type overlay
         toReturn = _overlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));

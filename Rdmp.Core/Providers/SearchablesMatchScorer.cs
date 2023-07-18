@@ -146,7 +146,7 @@ public class SearchablesMatchScorer
             return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();
 
         var tokens = (searchText??"").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            
+
         var regexes = new List<Regex>();
             
         //any token that 100% matches a type name is an explicitly typed token
@@ -284,22 +284,22 @@ public class SearchablesMatchScorer
         return !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues, _showColdStorageCatalogues, _showProjectSpecificCatalogues, _showNonExtractableCatalogues);
     }
 
-    private Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
+    private static Catalogue GetCatalogueIfAnyInDescendancy(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
     {
         return kvp.Key is Catalogue catalogue ? catalogue : (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
-    private int CountMatchType(List<Regex> regexes, object key)
+    private static int CountMatchType(List<Regex> regexes, object key)
     {
         return MatchCount(regexes, key.GetType().Name);
     }
-    private int CountMatchToString(List<Regex> regexes, object key)
+    private static int CountMatchToString(List<Regex> regexes, object key)
     {
         var matchOn = key is ICustomSearchString s ? s.GetSearchString() : key.ToString();
 
         return MatchCount(regexes, matchOn);
     }
-    private int MatchCount(List<Regex> regexes, string str)
+    private static int MatchCount(List<Regex> regexes, string str)
     {
         var matches = 0;
 
@@ -370,7 +370,7 @@ public class SearchablesMatchScorer
     /// <param name="take"></param>
     /// <param name="activator"></param>
     /// <returns></returns>
-    public List<IMapsDirectlyToDatabaseTable> ShortList(Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take, IBasicActivateItems activator)
+    public static List<IMapsDirectlyToDatabaseTable> ShortList(Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> scores, int take, IBasicActivateItems activator)
     {
         var favourites = activator.FavouritesProvider.CurrentFavourites;
 

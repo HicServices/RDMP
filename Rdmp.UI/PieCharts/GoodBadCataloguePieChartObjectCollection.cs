@@ -55,7 +55,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
             returnValue &= IncludeNonExtractableCatalogues;
 
         if(status.IsProjectSpecific)
-            returnValue &= IncludeProjectSpecificCatalogues;           
+            returnValue &= IncludeProjectSpecificCatalogues;
 
         if(c.IsColdStorageDataset)
             returnValue &= IncludeColdStorageCatalogues;
@@ -66,7 +66,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
         if(c.IsInternalDataset)
             returnValue &= IncludeInternalCatalogueItems;
 
-                       
+
         return returnValue;
     }
 
@@ -78,8 +78,6 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     /// <returns></returns>
     public bool Include(CatalogueItem ci)
     {
-        var returnValue = true;
-
         var ei = ci.ExtractionInformation;
 
         return ei == null

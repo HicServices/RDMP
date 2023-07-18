@@ -46,7 +46,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         _allowDeleteMany = deleteMany;
         if (_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
             SetImpossible("Cannot delete root containers");
-            
+
         var reason = "";
 
         if (_deletables.Any(d => d is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out reason)))
@@ -65,10 +65,10 @@ public class ExecuteCommandDelete : BasicCommandExecution
     private string GetDeleteVerbIfAny()
     {
         // if all objects are IDeletableWithCustomMessage
-        if (OverrideCommandName != null || _deletables.Count <= 0 ||
-            !_deletables.All(d => d is IDeletableWithCustomMessage)) return null;
-        // Get the verbs (e.g. Remove, Disassociate etc)
-        var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(d => d.GetDeleteVerb()).Distinct().ToArray();
+        if (OverrideCommandName == null && _deletables.Count > 0 && _deletables.All(static d => d is IDeletableWithCustomMessage))
+        {
+            // Get the verbs (e.g. Remove, Disassociate etc)
+            var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(static d => d.GetDeleteVerb()).Distinct().ToArray();
 
         // if they agree on one specific verb
         return verbs.Length == 1 ? verbs[0] : // use that
@@ -92,7 +92,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
         }
     }
 
-    private bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
+    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
     {
         return
             deleteable is CatalogueItem ||

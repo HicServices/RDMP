@@ -43,7 +43,7 @@ public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExe
     public override void Execute()
     {
         base.Execute();
-            
+
         var creds = _credentials ?? (DataAccessCredentials)BasicActivator.SelectOne("Select Credentials",_available);
 
         if(creds == null)

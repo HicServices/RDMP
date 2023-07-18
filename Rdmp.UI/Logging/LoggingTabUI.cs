@@ -41,7 +41,7 @@ public class LoggingTabUI : LoggingTab_Design
     private ToolStripTextBox tbContentFilter = new();
     private ToolStripLabel label1 = new("Filter:");
     private ToolStripLabel label2 = new("Top:");
-    private ToolStripTextBox tbTop = new() {Text = "10000" };
+    private ToolStripTextBox tbTop = new() { Text = "10000" };
     private ToolStripButton cbPreferNewer = new("Newest"){CheckOnClick =true,Checked = true};
 
     private Label lblCurrentFilter;
@@ -55,7 +55,6 @@ public class LoggingTabUI : LoggingTab_Design
     private string _freeTextFilter;
     private Panel pFilter;
     private LogManager LogManager;
-
     private NavigationTrack<LogViewerFilter> _navigationTrack;
     private Panel panel1;
     private ToolStripButton _back;
@@ -161,7 +160,7 @@ public class LoggingTabUI : LoggingTab_Design
         }
     }
 
-    private void AddFreeTextSearchColumn(DataTable dt)
+    private static void AddFreeTextSearchColumn(DataTable dt)
     {
         var dcRowString = dt.Columns.Add("_RowString", typeof(string));
         foreach (DataRow dataRow in dt.Rows)
@@ -222,7 +221,7 @@ public class LoggingTabUI : LoggingTab_Design
         // lblCurrentFilter
         // 
         lblCurrentFilter.Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Left
-                                                                  | AnchorStyles.Right);
+                                                                           | AnchorStyles.Right);
         lblCurrentFilter.BackColor = Color.Goldenrod;
         lblCurrentFilter.ForeColor = SystemColors.ControlLightLight;
         lblCurrentFilter.Location = new Point(3, 3);

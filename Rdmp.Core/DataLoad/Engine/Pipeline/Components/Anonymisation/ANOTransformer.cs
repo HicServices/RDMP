@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 /// <summary>
 /// Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For example storing all LabNumbers stored in
 /// DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber and putting in the appropriate
-/// replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored proceedure SubstitutionStoredProcedure.
+/// replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored proceedure SubstitutionStoredprocedure.
 /// </summary>
 public class ANOTransformer
 {
@@ -39,7 +39,7 @@ public class ANOTransformer
     {
         _externalDatabaseServer = anoTable.Server;
 
-        _server = DataAccessPortal.GetInstance().ExpectServer(_externalDatabaseServer, DataAccessContext.DataLoad);
+        _server = DataAccessPortal.ExpectServer(_externalDatabaseServer, DataAccessContext.DataLoad);
             
         _anoTable = anoTable;
         _listener = listener;
@@ -86,9 +86,9 @@ public class ANOTransformer
             if (valueToReplace == DBNull.Value)
                 continue;
 
-            //its not null so look up the mapped value
+            //it's not null so look up the mapped value
             var substitutionRow = substitutionTable.Rows.Find(valueToReplace) ?? throw new Exception(
-                    $"Substitution table returned by {SubstitutionStoredProcedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
+                    $"Substitution table returned by {SubstitutionStoredprocedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
             var substitutionValue = substitutionRow[1];//substitution value
 
             //overwrite the value with the substitution

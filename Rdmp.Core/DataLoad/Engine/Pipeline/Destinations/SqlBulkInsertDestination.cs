@@ -29,7 +29,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
 
     public const int Timeout = 5000;
 
-    private IBulkCopy _copy;
+    private IBulkCopy _copy = null;
     private Stopwatch _timer = new();
 
     protected ITableLoadInfo TableLoadInfo;

@@ -28,9 +28,8 @@ public class ReleaseFolderSettings:ICheckable
 
     public void Check(ICheckNotifier notifier)
     {
-        if (CustomReleaseFolder != null)
-            notifier.OnCheckPerformed(new CheckEventArgs($"Custom Release folder is:{CustomReleaseFolder}", CheckResult.Success));
-        else
-            notifier.OnCheckPerformed(new CheckEventArgs("Release folder will be the project extraction folder", CheckResult.Success));
+        notifier.OnCheckPerformed(CustomReleaseFolder != null
+            ? new CheckEventArgs($"Custom Release folder is:{CustomReleaseFolder}", CheckResult.Success)
+            : new CheckEventArgs("Release folder will be the project extraction folder", CheckResult.Success));
     }
 }

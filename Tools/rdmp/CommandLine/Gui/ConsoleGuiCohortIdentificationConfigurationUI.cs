@@ -22,11 +22,10 @@ namespace Rdmp.Core.CommandLine.Gui;
 
 public partial class ConsoleGuiCohortIdentificationConfigurationUI {
     private readonly IBasicActivateItems _activator;
-    private CohortIdentificationConfigurationUICommon Common = new ();
+    private CohortIdentificationConfigurationUICommon Common = new();
     private bool _isDisposed;
-
     private List<object> RowObjects = new();
-    private bool _contextMenuShowing;
+    private bool _contextMenuShowing = false;
 
     public ConsoleGuiCohortIdentificationConfigurationUI(IBasicActivateItems activator, CohortIdentificationConfiguration cic) {
         InitializeComponent();
@@ -245,7 +244,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         r["CumulativeTotal"] = Common.CumulativeTotal_AspectGetter(o);
         r["Working"] = Common.Working_AspectGetter(o);
         r["Time"] = Common.Time_AspectGetter(o);
-        r["Catalogue"] = Common.Catalogue_AspectGetter(o);
+        r["Catalogue"] = CohortIdentificationConfigurationUICommon.Catalogue_AspectGetter(o);
         r["ID"] = o is IMapsDirectlyToDatabaseTable m ? m.ID : DBNull.Value;
 
         var children = childProvider.GetChildren(o).ToList();

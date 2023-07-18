@@ -145,10 +145,10 @@ public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
         return _reader.Read() ? AddRowToDataTable(GetChunkSchema(_reader), _reader) : null;
     }
 
-    private DataTable GetChunkSchema(DbDataReader reader)
+    private static DataTable GetChunkSchema(DbDataReader reader)
     {
         var toReturn = new DataTable("dt");
-            
+
         //Retrieve column schema into a DataTable.
         var schemaTable = reader.GetSchemaTable() ?? throw new InvalidOperationException("Could not retrieve schema information from the DbDataReader");
         Debug.Assert(schemaTable.Columns[0].ColumnName.ToLower().Contains("name"));

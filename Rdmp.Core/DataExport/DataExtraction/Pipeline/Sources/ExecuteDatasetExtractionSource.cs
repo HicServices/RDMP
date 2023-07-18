@@ -42,8 +42,7 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
 
     private readonly List<string> _extractionIdentifiersidx = new();
 
-    private bool _cancel;
-
+    private bool _cancel = false;
     private ICatalogue _catalogue;
 
     protected const string ValidationColumnName = "RowValidationResult";
@@ -324,7 +323,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     /// <param name="listener"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    private DataTable MakeDistinct(DataTable chunk, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+    private static DataTable MakeDistinct(DataTable chunk, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
         var removeDuplicates = new RemoveDuplicates {NoLogging=true};
         return removeDuplicates.ProcessPipelineData(chunk, listener, cancellationToken);
@@ -522,20 +521,21 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         var da = server.GetDataAdapter(Request.QueryBuilder.SQL, con);
 
-        //get up to 1000 records
-        da.Fill(0, 1000, toReturn);
+            //get up to 1000 records
+            da.Fill(0, 1000, toReturn);
 
-        con.Close();
+            con.Close();
+        }
 
         return toReturn;
     }
 
     public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
     {
-        if (value is ExtractDatasetCommand)
-            Initialize(value as ExtractDatasetCommand);
-        if (value is ExtractGlobalsCommand)
-            Initialize(value as ExtractGlobalsCommand);
+        if (value is ExtractDatasetCommand datasetCommand)
+            Initialize(datasetCommand);
+        if (value is ExtractGlobalsCommand command)
+            Initialize(command);
     }
 
     public virtual void Check(ICheckNotifier notifier)

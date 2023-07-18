@@ -115,7 +115,7 @@ public class SuggestComboBox : ComboBox
         return keywords.All(k => arg.ToLower().Contains(k.ToLower()));
     }
 
-    private bool _changingVisibility;
+    private bool _changingVisibility = false;
 
     private void _suggLb_VisibleChanged(object sender, EventArgs e)
     {
@@ -292,7 +292,7 @@ public class SuggestComboBox : ComboBox
 
     protected override void OnKeyDown(KeyEventArgs e)
     {
-        if (e.KeyData is Keys.Enter or Keys.Escape)
+        if (e.KeyData == Keys.Enter || e.KeyData == Keys.Escape)
         {
             e.SuppressKeyPress = true;
             return;

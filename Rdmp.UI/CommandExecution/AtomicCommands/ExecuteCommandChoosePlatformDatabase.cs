@@ -47,7 +47,7 @@ public class ExecuteCommandChoosePlatformDatabase : BasicCommandExecution,IAtomi
     public override void Execute()
     {
         base.Execute();
-            
+
         var dialog = new ChoosePlatformDatabasesUI(_repositoryLocator);
         dialog.ShowDialog();
     }

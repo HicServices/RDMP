@@ -38,7 +38,8 @@ public class ProjectCohortIdentificationConfigurationAssociationsNode:Node,IOrde
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() != GetType() ? false : Equals((ProjectCohortIdentificationConfigurationAssociationsNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((ProjectCohortIdentificationConfigurationAssociationsNode) obj);
     }
 
     public override int GetHashCode()

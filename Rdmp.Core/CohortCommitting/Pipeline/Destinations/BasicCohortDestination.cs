@@ -42,6 +42,9 @@ public class BasicCohortDestination : IPluginCohortDestination
     [DemandsInitialization(@"Determines behaviour when you are creating a new version of an existing cohort.  If true then any ExtractionConfiguration that are not frozen are moved to the new version of the cohort", DefaultValue = false)]
     public bool MigrateUsages { get; set; }
 
+    private IAllocateReleaseIdentifiers _allocator = null;
+    private readonly Dictionary<object, object> _cohortDictionary = new();
+
     private IAllocateReleaseIdentifiers _allocator;
 
     private readonly Dictionary<object, object> _cohortDictionary = new();
@@ -124,8 +127,8 @@ public class BasicCohortDestination : IPluginCohortDestination
         return null;
     }
 
-
-    private bool IsNull(object o)
+        
+    private static bool IsNull(object o)
     {
         return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
     }
@@ -224,7 +227,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     public virtual void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
     {
         Request = value;
-            
+
         var target = Request.NewCohortDefinition.LocationOfCohort;
 
         var syntax = target.GetQuerySyntaxHelper();

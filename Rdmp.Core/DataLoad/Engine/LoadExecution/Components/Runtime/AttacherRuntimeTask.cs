@@ -89,7 +89,7 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
         var className = ProcessTask.Path;
         var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            
+
         foreach (var assembly in assemblies)
         {
             var type = assembly.GetTypes().FirstOrDefault(t => t.FullName == className);

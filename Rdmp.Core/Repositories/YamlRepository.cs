@@ -216,7 +216,7 @@ public class YamlRepository : MemoryDataExportRepository
     public override void SaveToDatabase(IMapsDirectlyToDatabaseTable o)
     {
         base.SaveToDatabase(o);
-        
+
         SetRepositoryOnObject(o);
 
         var yaml = _serializer.Serialize(o);
@@ -632,7 +632,7 @@ public class YamlRepository : MemoryDataExportRepository
     }
 
     private void LoadWhereSubContainers()
-    {        
+    {
         foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new Dictionary<FilterContainer, HashSet<FilterContainer>>())
         {
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));

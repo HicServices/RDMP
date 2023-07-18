@@ -31,7 +31,7 @@ public class SFTPDownloader:FTPDownloader
     {
         if (file.Contains('/') || file.Contains('\\'))
             throw new Exception("Was not expecting a relative path here");
-            
+
         var s = new Stopwatch();
         s.Start();
             

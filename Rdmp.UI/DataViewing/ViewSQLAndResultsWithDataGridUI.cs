@@ -49,10 +49,8 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     private string _originalSql;
     private DiscoveredServer _server;
     private AutoCompleteProviderWin _autoComplete;
-
     private ToolStripButton btnExecuteSql = new("Run");
     private ToolStripButton btnResetSql = new("Restore Original SQL");
-
     private readonly ToolStripTimeout _timeoutControls = new();
     private ToolStripLabel _serverHeader;
     private DatabaseTypeIconProvider _databaseTypeIconProvider;
@@ -173,7 +171,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
     {
         try
         {
-            _server = DataAccessPortal.GetInstance()
+            _server = DataAccessPortal
                 .ExpectServer(_collection.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing);
 
             var sql = _collection.GetSql();
@@ -256,9 +254,9 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
                 _cmd = server.GetCommand(sql, con);
                 _cmd.CommandTimeout = _timeoutControls.Timeout;
 
-                var a = server.GetDataAdapter(_cmd);
+                    var a = server.GetDataAdapter(_cmd);
 
-                var dt = new DataTable();
+                    var dt = new DataTable();
 
                 a.Fill(dt);
 
@@ -283,7 +281,7 @@ public partial class ViewSQLAndResultsWithDataGridUI : RDMPUserControl, IObjectC
         });
     }
 
-    private void MorphBinaryColumns(DataTable table)
+    private static void MorphBinaryColumns(DataTable table)
     {
         var targetNames = table.Columns.Cast<DataColumn>()
             .Where(col => col.DataType.Equals(typeof(byte[])))

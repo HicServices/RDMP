@@ -54,7 +54,7 @@ public class PermissionWindowTests:DatabaseTests
 
         if (dtNow is { Hour: 23, Minute: >= 40 } or { Hour: 0, Minute: <= 5 })
             Assert.Inconclusive("This test cannot run at midnight since it is afraid of the dark");
-            
+
         var fiveMinutes = new TimeSpan(0, 5, 0);
 
         var utcTime = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
@@ -72,7 +72,7 @@ public class PermissionWindowTests:DatabaseTests
 
         if ((dtNow.Hour == 23 && dtNow.Minute >= 50) || (dtNow.Hour == 0 && dtNow.Minute <= 3))
             Assert.Inconclusive("This test cannot run at midnight since it is afraid of the dark");
-            
+
         var oneMinute = new TimeSpan(0, 1, 0);
         var utcTime = new TimeSpan(dtNow.Hour, dtNow.Minute, dtNow.Second);
         var period1 = new PermissionWindowPeriod((int)DateTime.Now.DayOfWeek, utcTime.Add(oneMinute), utcTime.Add(oneMinute));

@@ -113,19 +113,19 @@ public class DitaCatalogueExtractor : ICheckable
 
 
 
-    private string GetFileNameForCatalogueItem(Catalogue c,CatalogueItem ci)
+    private static string GetFileNameForCatalogueItem(Catalogue c,CatalogueItem ci)
     {
         var parentName = FixName(c.Acronym);
         var childName = FixName(ci.Name);
         return $"{parentName}_{childName}.dita";
     }
 
-    private string GetFileNameForCatalogue(Catalogue catalogue)
+    private static string GetFileNameForCatalogue(Catalogue catalogue)
     {
         return $"{FixName(catalogue.Name)}.dita";
     }
 
-    private string FixName(string name)
+    private static string FixName(string name)
     {
         name = Path.GetInvalidFileNameChars().Aggregate(name, (current, invalidCharacter) => current.Replace(invalidCharacter, '_'));
 
@@ -182,7 +182,7 @@ public class DitaCatalogueExtractor : ICheckable
         File.WriteAllText(saveLocation, xml);
     }
 
-    private string GenerateObjectPropertiesAsRowUsingReflection(object o)
+    private static string GenerateObjectPropertiesAsRowUsingReflection(object o)
     {
         var toReturnXml = new StringBuilder();
 
@@ -210,7 +210,7 @@ public class DitaCatalogueExtractor : ICheckable
         return toReturnXml.ToString();
     }
 
-    private string GetHtmlEncodedHeader(object header)
+    private static string GetHtmlEncodedHeader(object header)
     {
         header ??= "";
 
@@ -220,7 +220,7 @@ public class DitaCatalogueExtractor : ICheckable
         return HttpUtility.HtmlEncode(header);
     }
 
-    private string GetHtmlEncodedValue(object value)
+    private static string GetHtmlEncodedValue(object value)
     {
         value ??= "";
         return HttpUtility.HtmlEncode(value);
@@ -281,7 +281,7 @@ public class DitaCatalogueExtractor : ICheckable
         }
 
         //acronym collisions
-        for(var i=0;i<catas.Length;i++)
+        for(var i =0;i<catas.Length;i++)
         {
             var acronym = catas[i].Acronym;
 
@@ -300,7 +300,7 @@ public class DitaCatalogueExtractor : ICheckable
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>
-    public string GetAcronymSuggestionFromCatalogueName(string name)
+    public static string GetAcronymSuggestionFromCatalogueName(string name)
     {
         //concatenate all the capitals (and digits)
         var capsConcat = name.Where(c => char.IsUpper(c) || char.IsDigit(c)).Aggregate("", (s, n) => s + n);

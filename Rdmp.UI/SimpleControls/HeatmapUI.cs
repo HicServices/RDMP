@@ -62,7 +62,7 @@ public partial class HeatmapUI : UserControl
     ///Table is interpreted in the following way:
     /// - First column is the axis in direction X (horizontally) containing (in order) the axis label values that will be each pixel in each heat lane
     /// - Each subsequent column (HeatLine1, HeatLine2 etc above) is a horizontal line of the heatmap with each pixel intensity being determined by the value on the corresponding date (in the first column)
-
+        
     private RainbowColorPicker _rainbow = new(NumberOfColors);
     private const double MinPixelHeight = 15.0;
     private const double MaxPixelHeight = 20.0;
@@ -125,7 +125,7 @@ public partial class HeatmapUI : UserControl
             for (var y = 1; y < _dataTable.Columns.Count; y++)
             {
 
-                var cellValue = ToDouble(_dataTable.Rows[x][y]);
+                    var cellValue = ToDouble(_dataTable.Rows[x][y]);
 
                 if (cellValue < _minValueInDataTable)
                     _minValueInDataTable = cellValue;
@@ -140,7 +140,7 @@ public partial class HeatmapUI : UserControl
         Invalidate();
     }
 
-    private double ToDouble(object o)
+    private static double ToDouble(object o)
     {
         return o == DBNull.Value ? 0 : Convert.ToDouble(o);
     }
@@ -158,7 +158,6 @@ public partial class HeatmapUI : UserControl
         base.OnResize(e);
         Invalidate();
     }
-
 
     private ToolTip tt = new();
 
@@ -379,7 +378,7 @@ public partial class HeatmapUI : UserControl
         return Math.Min(MaxPixelHeight, Math.Max(MinPixelHeight, plotAreaHeight / numberOfDimensions));
     }
 
-    private Font GetFontSizeThatWillFitPixelHeight(double heightInPixels, Graphics graphics)
+    private static Font GetFontSizeThatWillFitPixelHeight(double heightInPixels, Graphics graphics)
     {
         Font font;
         var emSize = heightInPixels;
@@ -395,7 +394,7 @@ public partial class HeatmapUI : UserControl
 
 
 
-    public void CalculateLayout()
+    public static void CalculateLayout()
     {
             
     }
@@ -417,7 +416,7 @@ public partial class HeatmapUI : UserControl
         var h = Math.Min(maxHeight,Height);
 
         var isClipped = maxHeight < Height;
-            
+
         var bmp = new Bitmap(Width, h);
 
         _useEntireControlAsVisibleArea = true;

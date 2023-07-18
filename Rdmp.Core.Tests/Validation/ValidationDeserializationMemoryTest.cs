@@ -31,7 +31,7 @@ public class ValidationDeserializationMemoryTest
             if(i%500==0)
             {
                 GC.Collect();
-                Console.WriteLine($"Commited Bytes:{Process.GetCurrentProcess().WorkingSet64}");
+                Console.WriteLine($"Committed Bytes:{Process.GetCurrentProcess().WorkingSet64}");
             }
         }
 

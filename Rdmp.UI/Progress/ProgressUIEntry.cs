@@ -19,7 +19,7 @@ public class ProgressUIEntry
 {
     public string Sender { get; private set; }
     public string Message { get; private set; }
-    public ProgressEventType ProgressEventType { get; private set; }
+    public ProgressEventType ProgressEventType { get; }
     public DateTime EventDate { get; private set; }
 
     public NotifyEventArgs Args { get;private set; }
@@ -35,9 +35,9 @@ public class ProgressUIEntry
         Args = args;
     }
 
-    private string FormatSender(object sender)
+    private static string FormatSender(object sender)
     {
-        return sender == null ? "Unknown" : sender as string ?? sender.GetType().Name;
+        return sender as string ?? sender?.GetType().Name ?? "Unknown";
     }
 
     public WideMessageBoxTheme GetTheme()

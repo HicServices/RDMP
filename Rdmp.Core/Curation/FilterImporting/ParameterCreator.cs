@@ -157,7 +157,7 @@ public class ParameterCreator
     /// <param name="whereSql">the SQL filter WHERE section you want to determine the parameter names in, does.  Should not nclude WHERE (only the boolean logic bit)</param>
     /// <param name="globals">optional parameter, an enumerable of parameters that already exist in a superscope (i.e. global parametetrs)</param>
     /// <returns>parameter names that are required by the SQL but are not already declared in the globals</returns>
-    private HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql, IEnumerable<ISqlParameter> globals)
+    private static HashSet<string> GetRequiredParamaterNamesForQuery(string whereSql, IEnumerable<ISqlParameter> globals)
     {
         var toReturn = QuerySyntaxHelper.GetAllParameterNamesFromQuery(whereSql);
 

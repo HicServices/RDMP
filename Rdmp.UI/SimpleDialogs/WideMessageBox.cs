@@ -153,7 +153,7 @@ public partial class WideMessageBox : Form
 
     public static void Show(IHasSummary summary,bool isModalDialog = true)
     {
-        summary.GetSummary(out var title,out var body, out var stackTrace,out var level);
+        summary.GetSummary(out var title, out var body, out var stackTrace, out var level);
         Show(title,body,stackTrace,isModalDialog,null,GetTheme(level));
     }
     public static void Show(string title, DataGridViewRow row, bool isModalDialog = true, WideMessageBoxTheme theme = WideMessageBoxTheme.Help)
@@ -305,7 +305,7 @@ public partial class WideMessageBox : Form
     /// <param name="keywordNotToAdd"></param>
     /// <param name="word"></param>
     /// <returns></returns>
-    private string GetDocumentationKeyword(string keywordNotToAdd, string word)
+    private static string GetDocumentationKeyword(string keywordNotToAdd, string word)
     {
         if(string.IsNullOrWhiteSpace(word))
             return null;
@@ -411,7 +411,7 @@ public partial class WideMessageBox : Form
         }
     }
 
-    private Size GetPreferredSizeOfTextControl(Control c)
+    private static Size GetPreferredSizeOfTextControl(Control c)
     {
         var graphics = c.CreateGraphics();
         var measureString = graphics.MeasureString(c.Text, c.Font);

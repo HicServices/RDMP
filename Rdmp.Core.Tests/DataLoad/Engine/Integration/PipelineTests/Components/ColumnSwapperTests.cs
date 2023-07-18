@@ -43,7 +43,7 @@ internal class ColumnSwapperTests:DatabaseTests
 
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             
-        Import(db.CreateTable("Map", dt),out var map,out var mapCols);
+        Import(db.CreateTable("Map", dt),out var map, out var mapCols);
 
         var swapper = new ColumnSwapper
         {
@@ -555,7 +555,7 @@ internal class ColumnSwapperTests:DatabaseTests
         Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
     }
 
-    private IExtractDatasetCommand GetMockExtractDatasetCommand()
+    private static IExtractDatasetCommand GetMockExtractDatasetCommand()
     {
         var mockPj = Mock.Of<IProject>(p =>
             p.Name == "My Project" &&

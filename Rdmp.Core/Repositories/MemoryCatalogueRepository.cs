@@ -34,7 +34,7 @@ namespace Rdmp.Core.Repositories;
 /// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in
 /// dictionaries and arrays in memory instead of the database.
 /// </summary>
-public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
+public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
 {
     public IAggregateForcedJoinManager AggregateForcedJoinManager => this;
     public IGovernanceManager GovernanceManager => this;
@@ -70,7 +70,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     /// </summary>
     public string EncryptionKeyPath { get; protected set; }
 
-    protected virtual Dictionary<PermissableDefaults, IExternalDatabaseServer> Defaults { get; set; } = new ();
+    protected virtual Dictionary<PermissableDefaults, IExternalDatabaseServer> Defaults { get; set; } =
+        new Dictionary<PermissableDefaults, IExternalDatabaseServer>();
 
     public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
     {
@@ -138,11 +139,6 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
     }
 
-    public DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
-    {
-        throw new NotImplementedException();
-    }
-
     public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity
     {
         return Objects.Keys.OfType<T>().Where(r => r.IsReferenceTo(o)).ToArray();
@@ -200,7 +196,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     /// <summary>
     /// records which credentials can be used to access the table under which contexts
     /// </summary>
-    protected Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> CredentialsDictionary { get; set; } = new ();
+    protected Dictionary<ITableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> CredentialsDictionary { get; set; } =
+        new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
 
     public virtual void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
     {
@@ -270,7 +267,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
         foreach (var kvp in CredentialsDictionary)
         foreach (var forNode in kvp.Value)
             toreturn[forNode.Key].Add(kvp.Key);
-            
+
         return toreturn;
     }
 
@@ -282,7 +279,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #endregion
 
     #region IAggregateForcedJoin
-    protected Dictionary<AggregateConfiguration,HashSet<ITableInfo>> ForcedJoins { get; set; } = new ();
+    protected Dictionary<AggregateConfiguration,HashSet<ITableInfo>> ForcedJoins { get; set; } =
+        new Dictionary<AggregateConfiguration, HashSet<ITableInfo>>();
 
     public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
     {
@@ -313,7 +311,8 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     #endregion
 
     #region ICohortContainerLinker
-    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents = new ();
+    protected Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> CohortContainerContents =
+        new();
 
     public CohortAggregateContainer GetParent(AggregateConfiguration child)
     {
@@ -380,9 +379,9 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     {
         var parent = GetParent(child);
 
-        if (parent != null && CohortContainerContents.TryGetValue(parent, out var cohortContainerContent))
+        if (parent != null && CohortContainerContents.TryGetValue(parent, out var content))
         {
-            var record = cohortContainerContent.SingleOrDefault(o => o.Orderable.Equals(child));
+            var record = content.SingleOrDefault(o => o.Orderable.Equals(child));
             if (record != null)
                 record.Order = newOrder;
         }
@@ -437,7 +436,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     {
         if (!WhereSubContainers.ContainsKey(parent))
             WhereSubContainers.Add(parent, new HashSet<IContainer>());
-            
+
         WhereSubContainers[parent].Add(child);
     }
 

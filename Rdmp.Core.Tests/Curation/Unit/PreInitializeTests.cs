@@ -150,7 +150,7 @@ public class PreInitializeTests
     }
     private class Penguin
     {
-        public string GetPenguin()
+        public static string GetPenguin()
         {
             return "Penguin";
         }

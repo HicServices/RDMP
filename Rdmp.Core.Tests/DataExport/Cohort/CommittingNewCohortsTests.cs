@@ -96,7 +96,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
             
         source.Separator = ",";
         source.StronglyTypeInput = true;
-            
+
         var pipeline = new DataFlowPipelineEngine<DataTable>((DataFlowPipelineContext<DataTable>) request.GetContext(),source,destination,listener);
         pipeline.Initialize(new FlatFileToLoad(new FileInfo(_filename)),request);
         pipeline.ExecutePipeline(new GracefulCancellationToken());
@@ -124,7 +124,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         var definition998 = new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable);
         // with this one (v2)
         var definition999 = new CohortDefinition(null, "CommittingNewCohorts", 2, 999, _externalCohortTable);
-            
+
         // Create a basic cohort first
         var request1 = new CohortCreationRequest(proj, definition998, DataExportRepository, "fish");
         request1.Check(ThrowImmediatelyCheckNotifier.Quiet);

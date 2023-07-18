@@ -45,7 +45,7 @@ FROM
 	TOP 1000
 	*
 	FROM 
-	[" + _scratchDatabaseName + @"].[dbo].[BulkData]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(builder.GetDatasetSampleSQL()));
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]",cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.GetDatasetSampleSQL()));
     }
 
 
@@ -240,7 +240,7 @@ FROM
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )",cohortIdentificationConfiguration.ID))
-                ,CollapseWhitespace(builder.SQL));
+                , CollapseWhitespace(builder.SQL));
         }
         finally
         {
@@ -282,7 +282,7 @@ FROM
         //set the order so that 2 comes before 1
         rootcontainer.AddChild(aggregate2, 1);
         rootcontainer.AddChild(aggregate1, 5);
-            
+
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         try
@@ -316,7 +316,7 @@ SET @abracadabra=1;
 	)
 )
 ",cohortIdentificationConfiguration.ID))
-                ,CollapseWhitespace(builder.SQL));
+                , CollapseWhitespace(builder.SQL));
 
 
             var builder2 = new CohortQueryBuilder(aggregate1, null,null);
@@ -601,7 +601,7 @@ SET @abracadabra=1;
 
 )
 ",cohortIdentificationConfiguration.ID))
-                ,CollapseWhitespace(builder.SQL));
+                , CollapseWhitespace(builder.SQL));
 
         }
         finally
@@ -629,7 +629,7 @@ SET @abracadabra=1;
 
         //create all the setup again but in the memory repository
         SetupTestData(repo);
-            
+
         //setup a filter (all filters must be in a container so the container is a default AND container)
         var AND1 = new AggregateFilterContainer(repo,FilterContainerOperation.AND);
         var filter1_1 = new AggregateFilter(repo,"filter1_1",AND1);
@@ -671,7 +671,7 @@ SET @abracadabra=1;
 
             param.SaveToDatabase();
         }
-            
+
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
         Console.WriteLine( builder.SQL);
 
@@ -876,7 +876,7 @@ SET @bob_2='Boom!';
 
             param.SaveToDatabase();
         }
-            
+
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         Console.WriteLine(builder.SQL);

@@ -70,7 +70,6 @@ public partial class PerformanceCounterResultsUI : UserControl
     }
 
     private List<StackFramesTree> Roots;
-
     private bool collapseToMethod = false;
     private ComprehensiveQueryPerformanceCounter _performanceCounter;
 

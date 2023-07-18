@@ -53,9 +53,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private LoadMetadata _loadMetadata;
     private DragDropProvider _dragDropProvider;
     private LoadDiagramServerNode _raw;
-
     private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
-
     private readonly ToolStripButton _btnFetchData = new("Fetch State",CatalogueIcons.DatabaseRefresh.ImageToBitmap())
     {
         DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
@@ -109,10 +107,9 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void tlvLoadedTables_FormatCell(object sender, FormatCellEventArgs e)
     {
-        if (e.Column == olvDataType)
+        if (e.Column == olvDataType && e.Model is LoadDiagramColumnNode { State: LoadDiagramState.Different })
         {
-            if (e.Model is LoadDiagramColumnNode { State: LoadDiagramState.Different } colNode)
-                e.SubItem.ForeColor = Color.Red;
+            e.SubItem.ForeColor = Color.Red;
         }
 
         if (e.Column == olvState && e.CellValue is LoadDiagramState loadDiagramState)
@@ -274,8 +271,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                 AddCheckColumn = false
             });
 
-        _dragDropProvider ??= new DragDropProvider(new RDMPCombineableFactory(), new RDMPCommandExecutionFactory(Activator),
-            tlvLoadedTables);
+        _dragDropProvider ??= new DragDropProvider(new RDMPCombineableFactory(), new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
             
         _loadMetadata = databaseObject;
         RefreshUIFromDatabase();

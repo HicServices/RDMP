@@ -23,7 +23,6 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
 {
     private ITableInfo tableInfoCreated;
     private ColumnInfo[] columnInfosCreated;
-
     private BulkTestsData _bulkData;
 
     [OneTimeSetUp]
@@ -258,7 +257,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         tableInfoCreated.IdentifierDumpServer_ID = IdentifierDump_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
 
-        var existingTable = DataAccessPortal.GetInstance()
+        var existingTable = DataAccessPortal
             .ExpectDatabase(IdentifierDump_ExternalDatabaseServer, DataAccessContext.InternalDataProcessing)
             .ExpectTable("ID_BulkData");
 
@@ -298,7 +297,7 @@ public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSui
         //give it the WRONG server
         tableInfoCreated.IdentifierDumpServer_ID = ANOStore_ExternalDatabaseServer.ID;
         tableInfoCreated.SaveToDatabase();
-            
+
         var dumper = new IdentifierDumper(tableInfoCreated);
         try
         {

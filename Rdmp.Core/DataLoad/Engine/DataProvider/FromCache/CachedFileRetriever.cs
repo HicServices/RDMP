@@ -92,7 +92,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
 
     private Dictionary<DateTime, FileInfo> _workload;
 
-    private string[] GetPathsRelativeToDirectory(FileInfo[] absoluteFilePaths, DirectoryInfo directory)
+    private static string[] GetPathsRelativeToDirectory(FileInfo[] absoluteFilePaths, DirectoryInfo directory)
     {
         var relativeFilePaths = new List<string>();
         foreach (var path in absoluteFilePaths)
@@ -132,7 +132,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "ForLoading already has files, skipping extraction"));
             return;
         }
-            
+
         var layout = CreateCacheLayout((ScheduledDataLoadJob)dataLoadJob);
 
         //extract all the jobs into the forLoading directory
@@ -163,12 +163,12 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         }
     }
 
-    private string GetPathRelativeToCacheRoot(DirectoryInfo cacheRoot, FileInfo fileInCache)
+    private static string GetPathRelativeToCacheRoot(DirectoryInfo cacheRoot, FileInfo fileInCache)
     {
         return fileInCache.Directory.FullName.Replace(cacheRoot.FullName, "").TrimStart(Path.DirectorySeparatorChar);
     }
 
-    private IArchivedFileExtractor CreateExtractor(CacheArchiveType cacheArchiveType)
+    private static IArchivedFileExtractor CreateExtractor(CacheArchiveType cacheArchiveType)
     {
         return cacheArchiveType switch
         {
@@ -178,7 +178,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         };
     }
 
-    public bool Validate(ILoadDirectory destination)
+    public static bool Validate(ILoadDirectory destination)
     {
         if (destination.Cache == null)
             throw new NullReferenceException(

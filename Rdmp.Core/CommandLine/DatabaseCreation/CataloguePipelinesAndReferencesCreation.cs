@@ -135,7 +135,7 @@ public class CataloguePipelinesAndReferencesCreation
         CreatePipeline("CREATE TABLE:From Aggregate Query", null, typeof(DataTableUploadDestination));
     }
 
-    private void SetComponentProperties(IPipelineComponent component, string propertyName, object value)
+    private static void SetComponentProperties(IPipelineComponent component, string propertyName, object value)
     {
         var d = (PipelineComponentArgument)component.GetAllArguments().Single(a => a.Name.Equals(propertyName));
         d.SetValue(value);

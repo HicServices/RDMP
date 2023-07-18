@@ -199,9 +199,9 @@ public class FlatFileColumnCollection
                 unamedColumns.Add(dt.Columns.Add(h));
             else
                 //override type
-            if (_explicitlyTypedColumns?.ExplicitTypesCSharp.TryGetValue(h,out var forceType)==true)
+            if (_explicitlyTypedColumns?.ExplicitTypesCSharp.TryGetValue(h,out var t) == true)
             {
-                var c = dt.Columns.Add(h, forceType);
+                var c = dt.Columns.Add(h, t);
 
                 //if the user wants a string don't let downstream components pick a different Type (by assuming it is is untyped)
                 if(c.DataType == typeof(string))
@@ -210,7 +210,7 @@ public class FlatFileColumnCollection
             else
                 dt.Columns.Add(h);
         }
-            
+
         UnamedColumns = new ReadOnlyCollection<DataColumn>(unamedColumns);
 
         return duplicateHeaders.Any()
@@ -236,7 +236,7 @@ public class FlatFileColumnCollection
         var ASCIIArt = new StringBuilder();
 
         var headersNotFound = new List<string>();
-           
+
         for (var index = 0; index < _headers.Length; index++)
         {
             ASCIIArt.Append($"[{index}]");
@@ -301,7 +301,7 @@ public class FlatFileColumnCollection
                 if(_headers[0].Contains(commonSeparator))
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                         $"Your separator does not appear in the headers line of your file ({_toLoad.File.Name}) but the separator '{commonSeparator}' does... did you mean to set the Separator to '{commonSeparator}'? The headers line is:\"{_headers[0]}\""));
-            
+
         listener.OnNotify(this, new NotifyEventArgs(
             headersNotFound.Any()?ProgressEventType.Error : ProgressEventType.Information, //information or warning if there are unrecognised field names
             $"I will now tell you about how the columns in your file do or do not match the columns in your database, Matching flat file columns (or forced replacement headers) against database headers resulted in:{Environment.NewLine}{ASCIIArt}")); //tell them about what columns match what
@@ -344,7 +344,7 @@ public class FlatFileColumnCollection
 
         if(string.IsNullOrWhiteSpace(_forceHeaders))
             throw new Exception("There are no force headers! how did we get here");
-            
+
         if(!_forceHeadersReplacesFirstLineInFile)
             throw new Exception("Headers do not replace the first line in the file, how did we get here!");
 
@@ -366,7 +366,7 @@ public class FlatFileColumnCollection
         if (row.ColumnCount != _headers.Length)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "The number of ForceHeader replacement headers specified does not match the number of headers in the file (being replaced)"));
 
-        StringBuilder discarded = new();
+        var discarded = new StringBuilder();
         for (var i = 0; i < row.ColumnCount; i++)
         {
             if (i > 0)

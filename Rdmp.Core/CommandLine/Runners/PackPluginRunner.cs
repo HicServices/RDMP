@@ -29,6 +29,7 @@ public class PackPluginRunner : IRunner
     private readonly PackOptions _packOpts;
     public const string PluginPackageSuffix = ".nupkg";
     public const string PluginPackageManifest = ".nuspec";
+    private Regex versionSuffix = new("-.*$");
 
     private static readonly Regex VersionSuffix = new("-.*$");
 
@@ -88,7 +89,7 @@ public class PackPluginRunner : IRunner
         return 0;
     }
 
-    private void UploadFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
+    private static void UploadFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
     {
 
         // delete EXACT old versions of the Plugin

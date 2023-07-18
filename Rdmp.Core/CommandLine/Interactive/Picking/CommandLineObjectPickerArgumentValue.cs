@@ -119,7 +119,7 @@ public class CommandLineObjectPickerArgumentValue
 
         if (typeof(DiscoveredTable) == paramType)
             return Table;
-            
+
         var element = paramType.GetElementType();
 
         // If paramType is nullable e.g. 'int?' then this is the underlying time i.e. 'int' otherwise null
@@ -165,7 +165,7 @@ public class CommandLineObjectPickerArgumentValue
 
         if (typeof(ICollectSqlParameters) == paramType)
             return GetOneDatabaseEntity<ICollectSqlParameters>();
-            
+
 
         // is it a basic Type (value type or Enum)?
         var basicType = nullableType ?? paramType;

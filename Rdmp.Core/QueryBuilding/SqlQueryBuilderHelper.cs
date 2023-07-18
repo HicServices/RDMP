@@ -356,10 +356,10 @@ public class SqlQueryBuilderHelper
 
         if(qb.TablesUsedInQuery.Count == 0)
             throw new QueryBuildingException("There are no tables involved in the query: We were asked to compute the FROM SQL but qb.TablesUsedInQuery was of length 0");
-            
+
         //IDs of tables we already have in our FROM section
         var tablesAddedSoFar = new HashSet<int>();
-            
+
         //sometimes we find joins between tables that turn out not to be needed e.g. if there are multiple
         //routes through the system e.g. Test_FourTables_MultipleRoutes
         var unneededJoins = new HashSet<JoinInfo>();
@@ -659,7 +659,7 @@ public class SqlQueryBuilderHelper
     {
         if (!tablesUsedInQuery.Any())
             throw new QueryBuildingException("Could not pick an IQuerySyntaxHelper because the there were no TableInfos used in the query");
-            
+
 
         var databaseTypes = tablesUsedInQuery.Select(t => t.DatabaseType).Distinct().ToArray();
         return databaseTypes.Length > 1

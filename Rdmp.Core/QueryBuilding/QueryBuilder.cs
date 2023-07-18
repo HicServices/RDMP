@@ -221,7 +221,7 @@ public class QueryBuilder : ISqlQueryBuilder
                     TablesUsedInQuery.Add(force);
 
         PrimaryExtractionTable = primary;
-
+            
         SqlQueryBuilderHelper.FindLookups(this);
 
         JoinsUsedInQuery = SqlQueryBuilderHelper.FindRequiredJoins(this);

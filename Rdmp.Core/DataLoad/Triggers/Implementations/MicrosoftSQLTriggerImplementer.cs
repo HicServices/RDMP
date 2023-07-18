@@ -102,15 +102,15 @@ public class MicrosoftSQLTriggerImplementer:TriggerImplementer
 
         var trigger = GetCreateTriggerSQL();
                 
-        using (var cmdAddTrigger = _server.GetCommand(trigger, con))
-        {
-            cmdAddTrigger.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-            cmdAddTrigger.ExecuteNonQuery();
-        }
-                    
-                    
-        //Add key so that we can more easily do comparisons on primary key between main table and archive
-        var idxCompositeKeyBody = "";
+            using (var cmdAddTrigger = _server.GetCommand(trigger, con))
+            {
+                cmdAddTrigger.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+                cmdAddTrigger.ExecuteNonQuery();
+            }
+
+
+            //Add key so that we can more easily do comparisons on primary key between main table and archive
+            var idxCompositeKeyBody = "";
 
         foreach (var key in _primaryKeys)
             idxCompositeKeyBody += $"[{key.GetRuntimeName()}] ASC,";
@@ -169,7 +169,7 @@ public class MicrosoftSQLTriggerImplementer:TriggerImplementer
 
         if(!columnNames.Contains(SpecialFieldNames.ValidFrom,StringComparer.CurrentCultureIgnoreCase))
             columnNames.Add(SpecialFieldNames.ValidFrom);
-            
+
         var colList = string.Join(",",columnNames.Select(c=> $"[{c}]") );
         var dDotColList = string.Join(",", columnNames.Select(c => $"d.[{c}]"));
 
@@ -345,7 +345,7 @@ END
 
         if (!baseResult)
             return false;
-            
+
         //now check the definition of it! - make sure it relates to primary keys etc
         var updateTriggerName = GetTriggerName();
         var query =

@@ -62,10 +62,9 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
 
             var wasSynchedsuccessfully = syncher.Synchronize(listener);
 
-            if (wasSynchedsuccessfully)
-                BasicActivator.Show("Synchronization complete, TableInfo is Synchronized with the live database");
-            else
-                BasicActivator.Show("Synchronization failed");
+            BasicActivator.Show(wasSynchedsuccessfully
+                ? "Synchronization complete, TableInfo is Synchronized with the live database"
+                : "Synchronization failed");
         }
         catch (Exception exception)
         {

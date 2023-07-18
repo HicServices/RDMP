@@ -119,9 +119,12 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     private List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager, List<ShareDefinition> branchParents)
     {
         var me = ToShareDefinition(shareManager, branchParents);
-            
+
         var toReturn = new List<ShareDefinition>();
-        var parents = new List<ShareDefinition>(branchParents) { me };
+        var parents = new List<ShareDefinition>(branchParents)
+        {
+            me
+        };
         toReturn.Add(me);
 
         foreach (var child in Children)
@@ -140,7 +143,8 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((GatheredObject) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((GatheredObject) obj);
     }
 
     public override int GetHashCode()

@@ -125,7 +125,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
         {
             toProcess.Columns.Add(toColumnName);
         }
-            
+
 
         var idxFrom = toProcess.Columns.IndexOf(fromColumnName);
         var idxTo = toProcess.Columns.IndexOf(toColumnName);
@@ -261,7 +261,7 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
         var fromColumnName = MappingFromColumn.GetRuntimeName();
         var toColumnName = MappingToColumn.GetRuntimeName();
-            
+
         // The number of null key values found in the mapping table (these are ignored)
         var nulls = 0;
 

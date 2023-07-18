@@ -70,7 +70,7 @@ internal class CatalogueLoadChecks:ICheckable
             tablesFound.AddRange(tableInfos.Where(tableInfo => !tablesFound.Contains(tableInfo)));
         }
 
-            
+
         //check regular tables
         foreach (TableInfo regularTable in tablesFound)
         {
@@ -92,7 +92,7 @@ internal class CatalogueLoadChecks:ICheckable
 
         //check whether the live database and staging databases have appropriate columns and triggers etc on them
         var staging = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
-        var live = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
+        var live = DataAccessPortal.ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
 
         var liveTable = live.ExpectTable(tableInfo.GetRuntimeName(LoadBubble.Live,_databaseConfiguration.DatabaseNamer),tableInfo.Schema);
         var liveCols = liveTable.DiscoverColumns();
@@ -146,7 +146,7 @@ internal class CatalogueLoadChecks:ICheckable
         }
     }
 
-    private void CheckTableInfoSynchronization(TableInfo tableInfo, ICheckNotifier notifier)
+    private static void CheckTableInfoSynchronization(TableInfo tableInfo, ICheckNotifier notifier)
     {
         //live is the current data load's (possibly overridden server/database)
         var tableInfoSynchronizer = new TableInfoSynchronizer(tableInfo);
@@ -177,7 +177,7 @@ internal class CatalogueLoadChecks:ICheckable
         }
     }
 
-    private void CheckTableHasColumnInfosAndPrimaryKeys(DiscoveredDatabase live, TableInfo tableInfo, out ColumnInfo[] columnInfos, out ColumnInfo[] columnInfosWhichArePrimaryKeys, ICheckNotifier notifier)
+    private static void CheckTableHasColumnInfosAndPrimaryKeys(DiscoveredDatabase live, TableInfo tableInfo, out ColumnInfo[] columnInfos, out ColumnInfo[] columnInfosWhichArePrimaryKeys, ICheckNotifier notifier)
     {
         columnInfos = tableInfo.ColumnInfos.ToArray();
         columnInfosWhichArePrimaryKeys = columnInfos.Where(col => col.IsPrimaryKey).ToArray();
@@ -220,7 +220,7 @@ internal class CatalogueLoadChecks:ICheckable
 
     }
 
-    private void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier, out bool runSynchronizationAgain)
+    private static void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier, out bool runSynchronizationAgain)
     {
         var checker = new TriggerChecks(table);
         checker.Check(notifier);
@@ -229,7 +229,7 @@ internal class CatalogueLoadChecks:ICheckable
     }
 
 
-    private void ConfirmStagingAndLiveHaveSameColumns(string tableName, DiscoveredColumn[] stagingCols, DiscoveredColumn[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
+    private static void ConfirmStagingAndLiveHaveSameColumns(string tableName, DiscoveredColumn[] stagingCols, DiscoveredColumn[] liveCols, bool requireSameNumberAndOrder, ICheckNotifier notifier)
     {
         //in LIVE but not STAGING
         foreach (var missingColumn in liveCols.Select(c=>c.GetRuntimeName()).Except(stagingCols.Select(c=>c.GetRuntimeName())))
@@ -312,7 +312,7 @@ internal class CatalogueLoadChecks:ICheckable
         ConfirmNullability(liveTable.DiscoverColumn(SpecialFieldNames.ValidFrom), true, notifier);
     }
 
-    private void ConfirmNullability(DiscoveredColumn column, bool expectedNullability, ICheckNotifier notifier)
+    private static void ConfirmNullability(DiscoveredColumn column, bool expectedNullability, ICheckNotifier notifier)
     {
         var nullability = column.AllowNulls;
         notifier.OnCheckPerformed(new CheckEventArgs(

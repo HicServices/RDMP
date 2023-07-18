@@ -56,7 +56,7 @@ public class WindowArranger : IArrangeWindows
         _windowManager.MainForm.LoadFromXml(target);
     }
 
-    private bool AreBasicallyTheSameLayout(string oldXml, string newXml)
+    private static bool AreBasicallyTheSameLayout(string oldXml, string newXml)
     {
         var patStripActive = @"Active.*=[""\-\d]*";
         oldXml = Regex.Replace(oldXml, patStripActive, "");

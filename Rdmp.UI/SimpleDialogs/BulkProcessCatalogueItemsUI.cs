@@ -122,7 +122,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
 
             guessPoolColumnInfo = tableInfo.ColumnInfos.ToArray();
         }
-                
+
 
         var deleteCount = 0;
         var countExtractionInformationsCreated = 0;

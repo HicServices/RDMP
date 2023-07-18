@@ -62,8 +62,8 @@ public partial class AllImportantClassesDocumented
 
                 var mNamespace = NamespaceRegex().Match(beforeDeclaration);
 
-                if (!mNamespace.Success)
-                    Assert.Fail($"No namespace found in class file {f}"); //no namespace in class!
+                if(!mNamespace.Success)
+                    Assert.Fail($"No namespace found in class file {f}");//no namespace in class!
 
                 var nameSpace = mNamespace.Groups[1].Value;
 
@@ -128,8 +128,7 @@ public partial class AllImportantClassesDocumented
                 }
                 else
                 {
-                    var lines = match.Groups[1].Value
-                        .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
+                    var lines = match.Groups[1].Value.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
                     commentLineCount += lines;
                     commentedCount++;
                 }

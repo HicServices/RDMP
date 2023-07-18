@@ -196,7 +196,7 @@ public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
     {
         //Supplemental Joins are not currently supported by JoinInfo, only Lookups
-        return _queryTimeComboJoins.Select(j => new QueryTimeComboJoin
+        return _queryTimeComboJoins.Select(static j => new QueryTimeComboJoin
         {
             Collation = j.Collation,
             PrimaryKey = j.PrimaryKey,

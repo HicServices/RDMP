@@ -41,7 +41,7 @@ public class DQEGraphAnnotation : DatabaseEntity
     public DQEGraphAnnotation(DQERepository repository, double startX, double startY, double endX, double endY, string text, Evaluation evaluation, DQEGraphType annotationIsForGraphType, string pivotCategory)
     {
         Repository = repository;
-            
+
         var username = Environment.UserName;
 
         Repository.InsertAndHydrate(this, new Dictionary<string, object>

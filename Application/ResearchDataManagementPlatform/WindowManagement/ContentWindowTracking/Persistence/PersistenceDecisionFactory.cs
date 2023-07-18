@@ -41,7 +41,7 @@ public class PersistenceDecisionFactory
     /// <param name="persistString"></param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public DeserializeInstruction ShouldCreateBasicControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static DeserializeInstruction ShouldCreateBasicControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         if (!persistString.StartsWith(RDMPSingleControlTab.BasicPrefix))
             return null;
@@ -58,14 +58,14 @@ public class PersistenceDecisionFactory
         return new DeserializeInstruction(controlType);
     }
 
-    public RDMPCollection? ShouldCreateCollection(string persistString)
+    public static RDMPCollection? ShouldCreateCollection(string persistString)
     {
         return !persistString.StartsWith(PersistableToolboxDockContent.Prefix)
             ? null
             : PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
     }
 
-    public DeserializeInstruction ShouldCreateSingleObjectControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static DeserializeInstruction ShouldCreateSingleObjectControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         if (!persistString.StartsWith(PersistableSingleDatabaseObjectDockContent.Prefix))
             return null;
@@ -76,7 +76,7 @@ public class PersistenceDecisionFactory
         if (tokens.Length != 5)
             throw new PersistenceException(
                 $"Unexpected number of tokens ({tokens.Length}) for Persistence of Type {PersistableSingleDatabaseObjectDockContent.Prefix}");
-            
+
         var controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
         var o = repositoryLocator.GetArbitraryDatabaseObject(tokens[2], tokens[3], int.Parse(tokens[4]));
             
@@ -84,7 +84,7 @@ public class PersistenceDecisionFactory
 
     }
 
-    public DeserializeInstruction ShouldCreateObjectCollection(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static DeserializeInstruction ShouldCreateObjectCollection(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         if (!persistString.StartsWith(PersistableObjectCollectionDockContent.Prefix))
             return null;
@@ -94,7 +94,7 @@ public class PersistenceDecisionFactory
 
         //Looks something like this  RDMPObjectCollection:MyCoolControlUI:MyControlUIsBundleOfObjects:[CatalogueRepository:AggregateConfiguration:105,CatalogueRepository:AggregateConfiguration:102,CatalogueRepository:AggregateConfiguration:101]###EXTRA_TEXT###I've got a lovely bunch of coconuts
         var tokens = persistString.Split(PersistStringHelper.Separator);
-            
+
         var uiType = GetTypeByName(tokens[1],typeof(Control),repositoryLocator);
         var collectionType = GetTypeByName(tokens[2], typeof (IPersistableObjectCollection), repositoryLocator);
 
@@ -114,7 +114,7 @@ public class PersistenceDecisionFactory
         return new DeserializeInstruction(uiType,collectionInstance);
     }
 
-    private Type GetTypeByName(string s, Type expectedBaseClassType,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    private static Type GetTypeByName(string s, Type expectedBaseClassType,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var toReturn = MEF.GetType(s) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
         if (expectedBaseClassType?.IsAssignableFrom(toReturn) == false)

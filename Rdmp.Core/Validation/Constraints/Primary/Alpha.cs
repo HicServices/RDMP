@@ -20,7 +20,7 @@ public class Alpha : PrimaryConstraint
     {
         if (value == null)
             return null;
-            
+
         var text = (string)value;
         var match = Regex.Match(text, RegExp);
 

@@ -97,7 +97,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         }
     }
 
-    private void AssertLookupsEtcExist(DiscoveredDatabase dbToExtractTo)
+    private static void AssertLookupsEtcExist(DiscoveredDatabase dbToExtractTo)
     {
         Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_Biochem").Exists());
         Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_Globals_Hosp").Exists());
@@ -116,7 +116,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
             Extractable = true
         };
         doc.SaveToDatabase();
-                
+
         //an extractable global file (comes out regardless of datasets)
         var filename2 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob2.txt");
 
@@ -139,8 +139,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         sql.SQL = $"SELECT * FROM {tbl.GetFullyQualifiedName()}";
         sql.Extractable = true;
         sql.SaveToDatabase();
-            
-            
+
+
         //an supplemental (global) table in the database (not linked against cohort)
         var tbl2 = CreateDataset<HospitalAdmissions>(Database,500, 1000, new Random(50));
 
@@ -193,7 +193,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
 
         //create a pipeline
         _pipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
-            
+
         //set the destination pipeline
         var component = new PipelineComponent(CatalogueRepository, _pipeline, typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>().ToList();
@@ -209,7 +209,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiring
         argumentTblNamePattern.SetValue("$c_$d");
         argumentTblNamePattern.SaveToDatabase();
         AdjustPipelineComponentDelegate?.Invoke(component);
-            
+
         var component2 = new PipelineComponent(CatalogueRepository, _pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
         var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();
         arguments2.Single(a=>a.Name.Equals("AllowEmptyExtractions")).SetValue(false);

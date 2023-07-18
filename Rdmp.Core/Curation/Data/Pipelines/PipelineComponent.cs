@@ -173,7 +173,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     public IArgument[] CreateArgumentsForClassIfNotExists(Type underlyingComponentType)
     {
         var argFactory = new ArgumentFactory();
-        return argFactory.CreateArgumentsForClassIfNotExistsGeneric(underlyingComponentType,
+        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(underlyingComponentType,
 
                 //tell it how to create new instances of us related to parent
                 this,

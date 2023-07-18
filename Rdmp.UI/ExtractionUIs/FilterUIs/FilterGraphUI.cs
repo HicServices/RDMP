@@ -33,7 +33,7 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
     protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration)
     {
         var basicQueryBuilder =  base.GetQueryBuilder(aggregateConfiguration);
-            
+
         var rootContainer = basicQueryBuilder.RootFilterContainer;
 
         //stick our IFilter into the root container (actually create a new root container with our filter in it and move the old root if any into it)

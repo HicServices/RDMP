@@ -39,7 +39,7 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
     {
         base.SetDatabaseObject(activator, databaseObject);
         _permissionWindow = databaseObject;
-            
+
         var periods = _permissionWindow.PermissionWindowPeriods;
         var periodsByDay = new Dictionary<int, List<PermissionWindowPeriod>>();
         foreach (var period in periods)
@@ -66,17 +66,17 @@ public partial class PermissionWindowUI : PermissionWindowUI_Design, ISaveableUI
         Bind(tbID,"Text","ID",w=>w.ID);
     }
 
-    private void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
+    private static void PopulatePeriodTextBoxForDay(TextBox textBox, int dayNum, Dictionary<int, List<PermissionWindowPeriod>> periodsByDay)
     {
         if (periodsByDay.TryGetValue(dayNum, out var value)) PopulateTextBox(textBox, value);
     }
 
-    private void PopulateTextBox(TextBox textBox, IEnumerable<PermissionWindowPeriod> periods)
+    private static void PopulateTextBox(TextBox textBox, IEnumerable<PermissionWindowPeriod> periods)
     {
         textBox.Text = string.Join(",", periods.Select(period => period.ToString()));
     }
 
-    private List<PermissionWindowPeriod> CreatePeriodListFromTextBox(int dayOfWeek, TextBox textBox)
+    private static List<PermissionWindowPeriod> CreatePeriodListFromTextBox(int dayOfWeek, TextBox textBox)
     {
         var listString = textBox.Text;
         var periodList = new List<PermissionWindowPeriod>();

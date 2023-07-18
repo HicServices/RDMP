@@ -127,7 +127,7 @@ LANGUAGE 'plpgsql';";
         return true;
     }
 
-    private void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
+    private static void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
     {
         if(!sqlNow.Equals(sqlThen))
             throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql",sqlNow,sqlThen);

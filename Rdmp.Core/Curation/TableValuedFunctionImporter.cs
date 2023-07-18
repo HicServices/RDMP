@@ -76,7 +76,7 @@ public class TableValuedFunctionImporter : ITableInfoImporter
     public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
     {
         var syntax = _tableValuedFunction.Database.Server.GetQuerySyntaxHelper();
-            
+
         var wrappedSchema = string.IsNullOrWhiteSpace(_schema) ? "" : syntax.EnsureWrapped(_schema);
 
         var finalName =

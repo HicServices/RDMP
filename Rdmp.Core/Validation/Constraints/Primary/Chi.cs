@@ -13,7 +13,7 @@ namespace Rdmp.Core.Validation.Constraints.Primary;
 /// Field must contain a chi number, this is a 10 digit number in which the first 6 digits are the patients date of birth and the last 2 digits are
 /// a gender digit and a checksum.  Validation will fail if the checksum is invalid or the value does not match the pattern.
 /// </summary>
-public class Chi : PrimaryConstraint
+public partial class Chi : PrimaryConstraint
 {
     public override ValidationFailure Validate(object value)
     {
@@ -84,7 +84,7 @@ public class Chi : PrimaryConstraint
         lsCHI = sCHI.Length; // Must be 10!!
 
         sum = 0;
-        c = (int)'0';
+        c = '0';
         for (var i = 0; i < lsCHI - 1; i++)
             sum += ((int)sCHI.Substring(i, 1)[0] - c) * (lsCHI - i);
         sum %= 11;
@@ -92,7 +92,7 @@ public class Chi : PrimaryConstraint
         c = 11 - sum;
         if (c == 11) c = 0;
 
-        return ((char)(c + (int)'0')).ToString();
+        return ((char)(c + '0')).ToString();
 
     }
 
@@ -101,14 +101,14 @@ public class Chi : PrimaryConstraint
     /// </summary>
     /// <param name="chi"></param>
     /// <returns>1 for male and 0 for female</returns>
-    public int GetSex(string chi)
+    public static int GetSex(string chi)
     {
         if (!IsValidChiNumber(chi, out _))
             throw new ArgumentException("Invalid CHI");
 
         var sexChar = chi[8];
 
-        return (int)(sexChar % 2);
+        return sexChar % 2;
     }
 
     /// <summary>
@@ -132,11 +132,14 @@ public class Chi : PrimaryConstraint
 
     private static bool isWellFormedChi(string strChi)
     {
-        if (strChi == null || strChi.Length != 10)
+        if (strChi is not { Length: 10 })
             return false;
 
-        var r = new Regex("^[0-9]{10}$");
-        return r.IsMatch(strChi);
+        var r = TenDigits();
+        if (!r.IsMatch(strChi))
+            return false;
+
+        return true;
     }
 
     private static int ComputeChecksum(string chi)
@@ -163,4 +166,6 @@ public class Chi : PrimaryConstraint
         return sum;
     }
 
+    [GeneratedRegex("^[0-9]{10}$")]
+    private static partial Regex TenDigits();
 }

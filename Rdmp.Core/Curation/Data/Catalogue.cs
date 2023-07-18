@@ -896,45 +896,49 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
             try
             {
-                var server = DataAccessPortal.GetInstance().ExpectDistinctServer(tables, accessContext, false);
+                var server = DataAccessPortal.ExpectDistinctServer(tables, accessContext, false);
 
-                using var con = server.GetConnection();
-                con.Open();
-
-                string sql;
-                try
+                using (var con = server.GetConnection())
                 {
-                    var qb = new QueryBuilder(null, null)
+                    con.Open();
+
+                    string sql;
+                    try
                     {
-                        TopX = 1
-                    };
-                    qb.AddColumnRange(extractionInformations);
+                        var qb = new QueryBuilder(null, null)
+                        {
+                            TopX = 1
+                        };
+                        qb.AddColumnRange(extractionInformations);
 
-                    sql = qb.SQL;
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}", CheckResult.Success));
-                }
-                catch (Exception e)
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs($"Could not generate extraction SQL for Catalogue {this}",
-                            CheckResult.Fail, e));
-                    return;
-                }
-
-                using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
-                {
-                    cmd.CommandTimeout = 10;
-                    using var r = cmd.ExecuteReader();
-                    if (r.Read())
+                        sql = qb.SQL;
                         notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"successfully read a row of data from the extraction SQL of Catalogue {this}",CheckResult.Success));
-                    else
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
-                }
+                            $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}", CheckResult.Success));
+                    }
+                    catch (Exception e)
+                    {
+                        notifier.OnCheckPerformed(
+                            new CheckEventArgs($"Could not generate extraction SQL for Catalogue {this}",
+                                CheckResult.Fail, e));
+                        return;
+                    }
 
-                con.Close();
+                    using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
+                    {
+                        cmd.CommandTimeout = 10;
+                        using (var r = cmd.ExecuteReader())
+                        {
+                            if (r.Read())
+                                notifier.OnCheckPerformed(new CheckEventArgs(
+                                    $"successfully read a row of data from the extraction SQL of Catalogue {this}",CheckResult.Success));
+                            else
+                                notifier.OnCheckPerformed(new CheckEventArgs(
+                                    $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));
+                        }
+                    }
+
+                    con.Close();
+                }
             }
             catch (Exception e)
             {
@@ -1012,13 +1016,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         distinctAccessPoint = tables.FirstOrDefault();
 
-        return DataAccessPortal.GetInstance().ExpectDistinctServer(tables, context, setInitialDatabase);
+        return DataAccessPortal.ExpectDistinctServer(tables, context, setInitialDatabase);
     }
 
     /// <inheritdoc/>
     public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
     {
-        return DataAccessPortal.GetInstance().ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
+        return DataAccessPortal.ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
     }
 
     /// <inheritdoc/>
@@ -1072,7 +1076,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         if(LiveLoggingServer_ID == null)
             throw new Exception($"No live logging server set for Catalogue {Name}");
 
-        var server = DataAccessPortal.GetInstance().ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
+        var server = DataAccessPortal.ExpectServer(LiveLoggingServer, DataAccessContext.Logging);
 
         return new LogManager(server);
     }
@@ -1131,7 +1135,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             FetchOptions.ExtractableGlobalsAndLocals => $"WHERE (Catalogue_ID={ID} OR IsGlobal=1) AND Extractable=1",
             FetchOptions.ExtractableGlobals => "WHERE IsGlobal=1 AND Extractable=1",
             FetchOptions.AllLocals =>
-                $"WHERE Catalogue_ID={ID}  AND IsGlobal=0" //globals still retain their Catalogue_ID incase the configurer removes the global attribute in which case they revert to belonging to that Catalogue as a local
+                $"WHERE Catalogue_ID={ID}  AND IsGlobal=0" //globals still retain their Catalogue_ID in case the configurer removes the global attribute in which case they revert to belonging to that Catalogue as a local
             ,
             FetchOptions.ExtractableLocals => $"WHERE Catalogue_ID={ID} AND Extractable=1 AND IsGlobal=0",
             FetchOptions.AllGlobalsAndAllLocals => $"WHERE Catalogue_ID={ID} OR IsGlobal=1",

@@ -49,7 +49,7 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
 
             _catalogue = new CatalogueCombineable(cata);
         }
-            
+
         var aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator,_configuration);
 
         var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(BasicActivator, aggregateCommand, _configuration);

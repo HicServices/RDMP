@@ -46,7 +46,7 @@ public partial class ColumnStatesChart : UserControl, IDataQualityReportingChart
 
         var row = 0;
 
-        foreach (var property in evaluation.ColumnStates.Select(c=>c.TargetProperty).Distinct())
+        foreach (var property in evaluation.ColumnStates.Select(static c=>c.TargetProperty).Distinct())
         {
             var bar = new ConsequenceBar
             {

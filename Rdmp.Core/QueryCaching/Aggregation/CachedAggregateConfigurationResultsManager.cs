@@ -49,8 +49,8 @@ public partial class CachedAggregateConfigurationResultsManager
 
     public CachedAggregateConfigurationResultsManager(IExternalDatabaseServer server)
     {
-        _server = DataAccessPortal.GetInstance().ExpectServer(server, DataAccessContext.InternalDataProcessing);
-        _database = DataAccessPortal.GetInstance().ExpectDatabase(server, DataAccessContext.InternalDataProcessing);
+        _server = DataAccessPortal.ExpectServer(server, DataAccessContext.InternalDataProcessing);
+        _database = DataAccessPortal.ExpectDatabase(server, DataAccessContext.InternalDataProcessing);
     }
 
     public const string CachingPrefix = "/*Cached:";

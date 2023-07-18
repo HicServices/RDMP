@@ -204,18 +204,13 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
         _state = r["State"].ToString();
         Schema = r["Schema"].ToString();
         _validationXml = r["ValidationXml"].ToString();
-            
-        IsTableValuedFunction = r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
-            
-        if(r["IsPrimaryExtractionTable"] == DBNull.Value)
-            IsPrimaryExtractionTable = false;
-        else
-            IsPrimaryExtractionTable = Convert.ToBoolean(r["IsPrimaryExtractionTable"]);
 
-        if (r["IdentifierDumpServer_ID"] == DBNull.Value)
-            IdentifierDumpServer_ID = null;
-        else
-            IdentifierDumpServer_ID = (int)r["IdentifierDumpServer_ID"];
+        IsTableValuedFunction = r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
+
+        IsPrimaryExtractionTable = r["IsPrimaryExtractionTable"] != DBNull.Value && Convert.ToBoolean(r["IsPrimaryExtractionTable"]);
+
+        IdentifierDumpServer_ID =
+            r["IdentifierDumpServer_ID"] == DBNull.Value ? null : (int)r["IdentifierDumpServer_ID"];
 
         IsView = r["IsView"] != DBNull.Value && Convert.ToBoolean(r["IsView"]);
 
@@ -272,7 +267,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     public string GetDatabaseRuntimeName(LoadStage loadStage,INameDatabasesAndTablesDuringLoads namer = null)
     {
         var baseName = GetDatabaseRuntimeName();
-            
+
         namer ??= new FixedStagingDatabaseNamer(baseName);
 
         return namer.GetDatabaseName(baseName, loadStage.ToLoadBubble());
@@ -313,11 +308,11 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context, bool allowOverwriting = false)
     {
         var existingCredentials = CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
-            
+
         //if user told us to set credentials to null complain
         if(credentials == null)
             throw new Exception("Credentials was null, to remove a credential use TableInfoToCredentialsLinker.BreakLinkBetween instead");
-            
+
         //if there are existing credentials already
         if (existingCredentials != null)
         {
@@ -472,7 +467,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
     /// <inheritdoc/>
     public DiscoveredTable Discover(DataAccessContext context)
     {
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+        var db = DataAccessPortal.ExpectDatabase(this, context);
 
         return IsTableValuedFunction
             ? db.ExpectTableValuedFunction(GetRuntimeName(), Schema)
@@ -511,7 +506,7 @@ public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNam
             reason = $"Table {tbl.GetFullyQualifiedName()} did not exist";
             return false;
         }
-                
+
         reason = null;
         return true;
     }

@@ -77,7 +77,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         return availableTables.Except(implicitJoins).Cast<IMapsDirectlyToDatabaseTable>().ToArray();
     }
 
-    private bool CanMakeExtractable(AggregateConfiguration aggregate)
+    private static bool CanMakeExtractable(AggregateConfiguration aggregate)
     {
         //if it has any extraction identifiers then it cannot be extractable!
         if (aggregate.AggregateDimensions.Any(d => d.IsExtractionIdentifier))

@@ -138,7 +138,8 @@ public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState,
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((LoadDiagramTableNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LoadDiagramTableNode) obj);
     }
 
     public override int GetHashCode()

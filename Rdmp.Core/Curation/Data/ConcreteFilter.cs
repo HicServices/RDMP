@@ -30,13 +30,13 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
     /// <inheritdoc/>
     protected ConcreteFilter(IRepository repository,DbDataReader r) : base(repository, r)
     {
-            
+
     }
 
     /// <inheritdoc/>
     protected ConcreteFilter():base()
     {
-            
+
     }
 
     #region Database Properties
@@ -150,10 +150,7 @@ public abstract class ConcreteFilter :  DatabaseEntity,IFilter, ICheckable
             return _cachedDatabaseTypeAnswer.Value;
 
         var col = GetColumnInfoIfExists();
-        if (col != null)
-            _cachedDatabaseTypeAnswer = col.TableInfo.DatabaseType;
-        else
-            _cachedDatabaseTypeAnswer = GetCatalogue().GetDistinctLiveDatabaseServerType();
+        _cachedDatabaseTypeAnswer = col != null ? col.TableInfo.DatabaseType : GetCatalogue().GetDistinctLiveDatabaseServerType();
 
         return _cachedDatabaseTypeAnswer ?? throw new AmbiguousDatabaseTypeException($"Unable to determine DatabaseType for Filter '{this}'");
     }

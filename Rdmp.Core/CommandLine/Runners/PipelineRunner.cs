@@ -43,11 +43,11 @@ public class PipelineRunner : IPipelineRunner
 
         // User might have some additional listeners registered
         listener = new ForkDataLoadEventListener(AdditionalListeners.Union(new []{ toMemory, listener}).ToArray());
-           
+
         // build the engine and run it
         var engine = UseCase.GetEngine(Pipeline,listener);            
         engine.ExecutePipeline(token ?? new GracefulCancellationToken());
-            
+
         // return code of -1 if it went badly otherwise 0
         var exitCode = toMemory.GetWorst() >= ProgressEventType.Error ? -1:0;
 

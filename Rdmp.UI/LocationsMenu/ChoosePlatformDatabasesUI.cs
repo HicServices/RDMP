@@ -49,8 +49,7 @@ public partial class ChoosePlatformDatabasesUI : Form
 {
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
-    public bool ChangesMade;
-
+    public bool ChangesMade = false;
     private int _seed = 500;
     private int _peopleCount = ExampleDatasetsCreation.NumberOfPeople;
     private int _rowCount = ExampleDatasetsCreation.NumberOfRowsPerDataset;
@@ -281,8 +280,7 @@ public partial class ChoosePlatformDatabasesUI : Form
             {
                 try
                 {
-                    var creator = new PlatformDatabaseCreation();
-                    creator.CreatePlatformDatabases(opts);
+                    PlatformDatabaseCreation.CreatePlatformDatabases(opts);
                     if (!opts.SkipPipelines)
                         PostFixPipelines(opts);
                 }
@@ -336,7 +334,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
     }
 
-    private void PostFixPipelines(PlatformDatabaseCreationOptions opts)
+    private static void PostFixPipelines(PlatformDatabaseCreationOptions opts)
     {
         var repo = new PlatformDatabaseCreationRepositoryFinder(opts);
         var bulkInsertCsvPipe = repo.CatalogueRepository
@@ -351,7 +349,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         }
     }
 
-    private void RestartApplication()
+    private static void RestartApplication()
     {
         MessageBox.Show("Connection Strings Changed, the application will now restart");
         ApplicationRestarter.Restart();

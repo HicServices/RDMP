@@ -50,7 +50,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         base.Execute();
 
         var eds = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
-            
+
         var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
 
         if(alreadyInConfiguration != null)

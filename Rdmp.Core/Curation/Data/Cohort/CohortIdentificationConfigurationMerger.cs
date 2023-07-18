@@ -35,7 +35,7 @@ public class CohortIdentificationConfigurationMerger
     public CohortIdentificationConfiguration Merge(CohortIdentificationConfiguration[] cics, SetOperation operation)
     {
         if(cics.Length <= 1)
-            throw new ArgumentException("You must select at least 2 cics to merge",nameof(cics));            
+            throw new ArgumentException("You must select at least 2 cics to merge",nameof(cics));
 
         //clone them
         var cicClones = new CohortIdentificationConfiguration[cics.Length];
@@ -142,7 +142,7 @@ public class CohortIdentificationConfigurationMerger
 
 
 
-    private void EnsureNamingConvention(CohortIdentificationConfiguration cic, AggregateConfiguration ac)
+    private static void EnsureNamingConvention(CohortIdentificationConfiguration cic, AggregateConfiguration ac)
     {
         //clear any old cic_x prefixes
         ac.Name = Regex.Replace(ac.Name, $@"^({CohortIdentificationConfiguration.CICPrefix }\d+_?)+","");

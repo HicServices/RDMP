@@ -19,7 +19,7 @@ internal class FatalErrorLoggingTest : DatabaseTests
     [TestCase]
     public void CreateNewDataLoadTask()
     {
-            
+
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
             
         lm.CreateNewLoggingTaskIfNotExists("Fish");
@@ -42,7 +42,7 @@ internal class FatalErrorLoggingTest : DatabaseTests
            
         var ds = new DataSource[]{ new("nothing",DateTime.Now)};
 
-            
+
 
         var t = new TableLoadInfo(d, "Unit test only", "Unit test only", ds, 5);
         t.Inserts += 3; //simulate that it crashed after 3

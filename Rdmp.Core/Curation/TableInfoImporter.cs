@@ -132,7 +132,7 @@ public class TableInfoImporter:ITableInfoImporter
         var discoveredColumns = _server.ExpectDatabase(_importDatabaseName)
             .ExpectTable(_importTableName,_importFromSchema, _importTableType)
             .DiscoverColumns();
-            
+
         var parent = new TableInfo(_repository, tableName)
         {
             DatabaseType = _type,

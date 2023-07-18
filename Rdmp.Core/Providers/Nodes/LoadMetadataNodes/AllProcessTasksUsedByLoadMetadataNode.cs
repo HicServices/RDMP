@@ -32,7 +32,8 @@ public class AllProcessTasksUsedByLoadMetadataNode : Node,IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((AllProcessTasksUsedByLoadMetadataNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((AllProcessTasksUsedByLoadMetadataNode) obj);
     }
 
     public override int GetHashCode()

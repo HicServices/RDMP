@@ -28,7 +28,7 @@ public class ExtractionInformationUnitTests : UnitTests
         }
                 
         Assert.AreEqual(explicitOrder ?? 1,ei.Order);
-            
+
         // Newly created ones should have the right Order to not collide
         var cata = ei.CatalogueItem.Catalogue;
         var cataItem = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
@@ -42,19 +42,19 @@ public class ExtractionInformationUnitTests : UnitTests
     {
         //When we have an ExtractionInformation
         var ei1 = WhenIHaveA<ExtractionInformation>();
-            
+
         // Newly created ones should have the right Order to not collide
         var cata = ei1.CatalogueItem.Catalogue;
         var cataItem2 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
         var ei2 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem2, ei1.ColumnInfo, "fff");
 
         Assert.AreEqual(2,ei2.Order);
-            
+
         var cataItem3 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
         var ei3 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem3, ei1.ColumnInfo, "fff");
 
         Assert.AreEqual(3,ei3.Order);
-            
+
         var cataItem4 = new CatalogueItem(RepositoryLocator.CatalogueRepository, cata, "ci");
         var ei4 = new ExtractionInformation(RepositoryLocator.CatalogueRepository, cataItem4, ei1.ColumnInfo, "fff");
 

@@ -76,7 +76,7 @@ public class TestsRequiringADle:TestsRequiringA
         TestCatalogue.SaveToDatabase();
 
         CreateFlatFileAttacher(TestLoadMetadata,"*.csv",TestCatalogue.GetTableInfoList(false).Single(),",");
-            
+
         //Get DleRunner to run pre load checks (includes trigger creation etc)
         var runner = new DleRunner(new DleOptions { LoadMetadata = TestLoadMetadata.ID.ToString(),Command = CommandLineActivity.check});
         runner.Run(RepositoryLocator,ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(), new GracefulCancellationToken());

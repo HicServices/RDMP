@@ -77,7 +77,7 @@ public class DublinCoreDefinition
         var xsiAttr = new XAttribute(XNamespace.Xmlns + "xsi", xsi);
         var dcAttr = new XAttribute(XNamespace.Xmlns + "dc", dc);
         var dctermsAttr = new XAttribute(XNamespace.Xmlns + "dcterms",dcterms);
-            
+
         var doc = new XDocument(new XElement("metadata",xsiAttr,dcAttr,dctermsAttr));
         doc.Root.Add(new XElement(dc + "title", Title));
         doc.Root.Add(new XElement(dcterms + "alternative", Alternative));
@@ -119,19 +119,19 @@ public class DublinCoreDefinition
         Format = GetElement(descendants, "format",false);
     }
 
-    private DateTime? GetElementDateTime(XElement[] descendants, string tagLocalName, bool mandatory)
+    private static DateTime? GetElementDateTime(XElement[] descendants, string tagLocalName, bool mandatory)
     {
         var stringValue = GetElement(descendants, tagLocalName, mandatory);
         return string.IsNullOrWhiteSpace(stringValue) ? null : DateTime.Parse(stringValue);
     }
 
-    private Uri GetElementUri(XElement[] descendants, string tagLocalName, bool mandatory)
+    private static Uri GetElementUri(XElement[] descendants, string tagLocalName, bool mandatory)
     {
         var stringValue = GetElement(descendants, tagLocalName, mandatory);
         return string.IsNullOrWhiteSpace(stringValue) ? null : new Uri(stringValue);
     }
 
-    private string GetElement(XElement[] descendants, string tagLocalName, bool mandatory)
+    private static string GetElement(XElement[] descendants, string tagLocalName, bool mandatory)
     {
         var match = descendants.FirstOrDefault(e => e.Name.LocalName.Equals(tagLocalName,StringComparison.CurrentCultureIgnoreCase));
 

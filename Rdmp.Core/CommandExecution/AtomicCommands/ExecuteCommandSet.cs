@@ -96,7 +96,7 @@ public class ExecuteCommandSet:BasicCommandExecution
         }
     }
 
-    private PropertyInfo GetProperty(IMapsDirectlyToDatabaseTable setOn, string property)
+    private static PropertyInfo GetProperty(IMapsDirectlyToDatabaseTable setOn, string property)
     {
         var props = setOn.GetType().GetProperties();
             

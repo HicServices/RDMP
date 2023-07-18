@@ -21,7 +21,7 @@ internal class MdfFileAttachLocations
         ArgumentNullException.ThrowIfNull(databaseDirectoryFromPerspectiveOfDatabaseServer);
 
         var copyToDirectory = copyToDirectoryOrNullIfDatabaseIsLocalhost ?? databaseDirectoryFromPerspectiveOfDatabaseServer;
-            
+
         var filesThatWeCouldLoad = originDirectory.GetFiles("*.mdf").ToArray();
 
         switch (filesThatWeCouldLoad.Length)

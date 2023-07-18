@@ -64,10 +64,9 @@ public class AggregateBuilder : ISqlQueryBuilder
 
 
     private AggregateCountColumn _countColumn;
-
-    private QueryTimeColumn _pivotDimension;
-    private AggregateContinuousDateAxis _axis;
-    private AggregateDimension _axisAppliesToDimension;
+    private QueryTimeColumn _pivotDimension = null;
+    private AggregateContinuousDateAxis _axis = null;
+    private AggregateDimension _axisAppliesToDimension = null;
     private bool _isCohortIdentificationAggregate;
 
     /// <summary>
@@ -329,9 +328,9 @@ public class AggregateBuilder : ISqlQueryBuilder
             try
             {
                 _pivotDimension = SelectColumns.Single(
-                    qtc => qtc.IColumn is AggregateDimension aggregateDimension
+                    qtc => qtc.IColumn is AggregateDimension dimension
                            &&
-                           aggregateDimension.ID == _pivotID);
+                           dimension.ID == _pivotID);
             }
             catch (Exception e)
             {
@@ -568,7 +567,7 @@ public class AggregateBuilder : ISqlQueryBuilder
         return GetGroupOrOrderByCustomLineBasedOn(select, alias);
     }
 
-    private string GetGroupOrOrderByCustomLineBasedOn(string select, string alias)
+    private static string GetGroupOrOrderByCustomLineBasedOn(string select, string alias)
     {
         if (UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs)
         {

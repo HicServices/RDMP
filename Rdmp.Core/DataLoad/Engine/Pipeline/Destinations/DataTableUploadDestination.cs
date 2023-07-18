@@ -73,8 +73,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public bool CreatedTable { get; private set; }
 
     private IBulkCopy _bulkcopy;
-    private int _affectedRows;
-
+    private int _affectedRows = 0;
     private Stopwatch swTimeSpentWriting = new();
     private Stopwatch swMeasuringStrings = new();
 
@@ -223,7 +222,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         return null;
     }
 
-    private void RemoveInvalidCharactersInSchema(DataTable toProcess)
+    private static void RemoveInvalidCharactersInSchema(DataTable toProcess)
     {
         var invalidSymbols = new[] { '.'} ;
 
@@ -269,7 +268,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
     }
 
-    private void EnsureTableHasDataInIt(DataTable toProcess)
+    private static void EnsureTableHasDataInIt(DataTable toProcess)
     {
         if(toProcess.Columns.Count == 0)
             throw new Exception($"DataTable '{toProcess}' had no Columns!");
@@ -454,7 +453,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     {
         if (LoggingServer != null && _dataLoadInfo == null)
         {
-            _loggingDatabaseSettings = DataAccessPortal.GetInstance().ExpectServer(LoggingServer, DataAccessContext.Logging);
+            _loggingDatabaseSettings = DataAccessPortal.ExpectServer(LoggingServer, DataAccessContext.Logging);
             var logManager = new LogManager(_loggingDatabaseSettings);
             logManager.CreateNewLoggingTaskIfNotExists("Internal");
 

@@ -25,12 +25,12 @@ internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTest
     public void TestPreserveHistoricalReleaseIdentifiers(DatabaseType databaseType)
     {
         var db = GetCleanedServer(databaseType);
-            
+
         var privateIdentifierDataType = db.Server.GetQuerySyntaxHelper().TypeTranslater.GetSQLDBTypeForCSharpType(new DatabaseTypeRequest(typeof(string),10));
 
         var wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository,DataExportRepository,false);
         var ect = wizard.CreateDatabase(new PrivateIdentifierPrototype("chi", privateIdentifierDataType),new AcceptAllCheckNotifier());
-            
+
         var defTable = ect.DiscoverDefinitionTable();
         var cohortTable = ect.DiscoverCohortTable();
 

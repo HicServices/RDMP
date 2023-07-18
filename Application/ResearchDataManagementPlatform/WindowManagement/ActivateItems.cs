@@ -123,11 +123,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         RefreshBus = refreshBus;
 
         RefreshBus.ChildProvider = CoreChildProvider;
-            
+
         HistoryProvider = new HistoryProvider(repositoryLocator);
-            
+
         WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
-            
+
         CommandFactory = new RDMPCombineableFactory();
         CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
 
@@ -139,7 +139,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         RefreshProblemProviders();
 
         RefreshBus.Subscribe(this);
-            
+
         // We can run subprocesses
         IsAbleToLaunchSubprocesses = true;
     }
@@ -367,7 +367,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
             return existing;
         }
-                
+
 
         var uiInstance = new T();
         Activate(uiInstance, collection);
@@ -470,7 +470,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
     }
 
-    private void SetTabText(DockContent floatable, INamedTab tab)
+    private static void SetTabText(DockContent floatable, INamedTab tab)
     {
         var tabText = tab.GetTabName();
         var tabToolTipText = tab.GetTabToolTip();
@@ -865,7 +865,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         var ui = new CohortCreationRequestUI(this,externalCohortTable,project);
-                
+
         if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
             ui.CohortDescription = $"{cohortInitialDescription} ({Environment.UserName} - {DateTime.Now})";
 
@@ -885,7 +885,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             TargetFolder = folder
         };
         ui.ShowDialog();
-            
+
         return ui.CatalogueCreatedIfAny;
     }
     public override ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
@@ -1004,7 +1004,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     }
 
     public override void ShowData(System.Data.DataTable table)
-    { 
+    {
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
         {

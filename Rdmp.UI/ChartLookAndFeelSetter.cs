@@ -26,7 +26,7 @@ public class ChartLookAndFeelSetter
     /// <param name="chart"></param>
     /// <param name="dt"></param>
     /// <param name="yAxisTitle"></param>
-    public void PopulateYearMonthChart(Chart chart, DataTable dt, string yAxisTitle)
+    public static void PopulateYearMonthChart(Chart chart, DataTable dt, string yAxisTitle)
     {
         if(dt.Columns[0].ColumnName != "YearMonth")
             throw new ArgumentException("Expected a graph with a first column YearMonth containing values expressed as YYYY-MM");
@@ -114,7 +114,7 @@ public class ChartLookAndFeelSetter
     /// </summary>
     /// <param name="yearMonth"></param>
     /// <returns></returns>
-    private int GetOffset(string yearMonth)
+    private static int GetOffset(string yearMonth)
     {
         var matchMonthName = Regex.Match(yearMonth, @"\d+-([A-Za-z]+)");
 

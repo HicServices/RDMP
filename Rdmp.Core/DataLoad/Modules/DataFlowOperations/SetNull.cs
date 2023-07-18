@@ -33,7 +33,7 @@ internal class SetNull : IPluginDataFlowComponent<DataTable>
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         _sw.Start();
-            
+
         var regex = NullCellsWhereValuesMatch ?? new Regex(NullCellsWhereValuesMatchStandard.Regex);
 
         foreach (DataRow row in toProcess.Rows)

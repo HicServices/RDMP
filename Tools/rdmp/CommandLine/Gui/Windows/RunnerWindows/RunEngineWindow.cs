@@ -221,14 +221,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
             var str = consoleOutput[item];
 
-            if (str.Length > width)
-            {
-                str = str[..width];
-            }
-            else
-            {
-                str = str.PadRight(width,' ');
-            }
+            str = str.Length > width ? str[..width] : str.PadRight(width,' ');
 
             _results.Move(col, line);
 
@@ -246,7 +239,7 @@ internal class RunEngineWindow<T> : Window, IListDataSource where T : RDMPComman
 
             driver.SetAttribute(selected ? scheme.Focus : scheme.Normal);
             driver.AddStr(str);
-        }                
+        }
     }
 
     public bool IsMarked(int item)

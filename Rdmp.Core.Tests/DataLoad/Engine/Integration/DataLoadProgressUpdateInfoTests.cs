@@ -30,7 +30,7 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
             c=> c.LoggingDataTask == "NothingTask" &&
                 c.GetTableInfoList(false) == Array.Empty<TableInfo>() &&
                 c.GetLookupTableInfoList() == Array.Empty<TableInfo>());
-            
+
         var lmd = Mock.Of<ILoadMetadata>(m => m.GetAllCatalogues() == new[] { cata });
 
         _job = new ScheduledDataLoadJob(null,"fish", Mock.Of<ILogManager>(), lmd, null, new ThrowImmediatelyDataLoadJob(),null);
@@ -136,7 +136,7 @@ public class DataLoadProgressUpdateInfoTests :DatabaseTests
         {
             new DateTime(2001, 1, 6),
             new DateTime(2001, 1, 7),
-            new DateTime(2001,1,8)
+            new DateTime(2001, 1, 8)
         };
 
         var updateInfo = new DataLoadProgressUpdateInfo

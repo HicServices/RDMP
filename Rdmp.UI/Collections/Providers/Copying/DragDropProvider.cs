@@ -184,7 +184,7 @@ public class DragDropProvider:SimpleDragSource
 
 
 
-    private void DisplayFeedback(ICommandExecution execution, OlvDropEventArgs e)
+    private static void DisplayFeedback(ICommandExecution execution, OlvDropEventArgs e)
     {
         //no command is even remotely possible
         if (execution == null)
@@ -210,7 +210,7 @@ public class DragDropProvider:SimpleDragSource
     }
 
 
-    private InsertOption GetDropLocation(ModelDropEventArgs e)
+    private static InsertOption GetDropLocation(ModelDropEventArgs e)
     {
         if (e.DropTargetLocation == DropTargetLocation.AboveItem)
             return InsertOption.InsertAbove;

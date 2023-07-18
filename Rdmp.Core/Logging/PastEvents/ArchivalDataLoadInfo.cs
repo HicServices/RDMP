@@ -69,7 +69,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     private readonly Lazy<List<ArchivalTableLoadInfo>> _knownTableInfos;
     private readonly Lazy<List<ArchivalFatalError>> _knownErrors;
     private readonly Lazy<List<ArchivalProgressLog>> _knownProgress;
-
+        
     public string Description { get; set; }
 
     /// <summary>

@@ -31,7 +31,7 @@ public class LookupTest : DatabaseTests
 
         var tiHeader = new TableInfo(CatalogueRepository,"Head");
         var tiHeader_Code = new ColumnInfo(CatalogueRepository,"code","",tiHeader);
-                       
+
         var tiLookup = new TableInfo(CatalogueRepository,"z_HeadLookup");
         var tiLookup_Code = new ColumnInfo(CatalogueRepository,"code","",tiLookup);
         var tiLookup_Desc = new ColumnInfo(CatalogueRepository,"desc","",tiLookup);
@@ -402,7 +402,7 @@ public class LookupTest : DatabaseTests
                 cmd.Execute();
 
                 //sql should not have changed because we didn't create an new ExtractionInformation virtual column
-                Assert.AreEqual(sqlBefore,GetSql(mainCata));
+                Assert.AreEqual(sqlBefore, GetSql(mainCata));
                 break;
             case LookupTestCase.SingleKeySingleDescription:
                 cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk,null, true);
@@ -430,7 +430,7 @@ public class LookupTest : DatabaseTests
         lookuptbl.Drop();
     }
 
-    private string GetSql(ICatalogue mainCata)
+    private static string GetSql(ICatalogue mainCata)
     {
         mainCata.ClearAllInjections();
 

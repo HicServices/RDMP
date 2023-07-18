@@ -60,10 +60,9 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         {
             case ExecuteExtractionToFlatFileType.CSV:
                 OutputFile = Path.Combine(DirectoryPopulated.FullName, $"{GetFilename()}.csv");
-                if (request.Configuration != null)
-                    _output = new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat);
-                else
-                    _output = new CSVOutputFormat(OutputFile, ",", DateFormat);
+                _output = request.Configuration != null
+                    ? new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat)
+                    : new CSVOutputFormat(OutputFile, ",", DateFormat);
 
                 _output.RoundFloatsTo = RoundFloatsTo;
                 break;
@@ -252,7 +251,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
                 rootDir.Create();
             }
         }
-            
+
         base.Check(notifier);
     }
 }

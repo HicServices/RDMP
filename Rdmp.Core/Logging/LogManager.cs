@@ -51,7 +51,7 @@ public class LogManager : ILogManager
         Server = server;
     }
 
-    public LogManager(IDataAccessPoint loggingServer) : this(DataAccessPortal.GetInstance().ExpectServer(loggingServer, DataAccessContext.Logging))
+    public LogManager(IDataAccessPoint loggingServer) : this(DataAccessPortal.ExpectServer(loggingServer, DataAccessContext.Logging))
     {
         DataAccessPointIfAny = loggingServer;
     }
@@ -194,7 +194,7 @@ public class LogManager : ILogManager
                 yield return new ArchivalDataLoadInfo(r, db);
     }
 
-    private int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
+    private static int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
     {
         using var cmd = server.GetCommand("SELECT ID FROM DataLoadTask WHERE name = @name", con);
         var p = cmd.CreateParameter();

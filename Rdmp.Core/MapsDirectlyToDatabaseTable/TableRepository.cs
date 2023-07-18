@@ -51,7 +51,6 @@ public abstract class TableRepository : ITableRepository
     protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new();
 
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
-
     private Lazy<DiscoveredTable[]> _tables;
 
     //If you are calling this constructor then make sure to set the connection strings in your derived class constructor
@@ -161,7 +160,7 @@ public abstract class TableRepository : ITableRepository
         }
     }
 
-    protected void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
+    protected static void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         foreach (DbParameter p in cmd.Parameters)
         {
@@ -178,7 +177,7 @@ public abstract class TableRepository : ITableRepository
         cmd.Parameters["@ID"].Value = oTableWrapperObject.ID;
     }
 
-    private void SetParameterToValue(DbParameter p, object propValue)
+    private static void SetParameterToValue(DbParameter p, object propValue)
     {
         p.Value = propValue switch
         {
@@ -560,7 +559,7 @@ public abstract class TableRepository : ITableRepository
             return Enumerable.Empty<T>();
 
 
-        var toReturn =  GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})").ToList();
+            var toReturn =  GetAllObjects<T>($"WHERE ID in ({string.Join(",", idsToReturn)})").ToList();
 
         //this bit of hackery is if you're a crazy person who hates transparency and wants something like ColumnInfo.Missing to appear in the return list instead of an empty return list
         if(dbNullSubstition != null)
@@ -625,13 +624,13 @@ public abstract class TableRepository : ITableRepository
         return cmd.ExecuteNonQuery();
     }
 
-    public DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
+    public static DbCommand PrepareCommand(string sql, Dictionary<string, object> parameters, DbConnection con, DbTransaction transaction = null)
     {
         var cmd = DatabaseCommandHelper.GetCommand(sql, con, transaction);
         return parameters == null ? cmd : PrepareCommand(cmd, parameters);
     }
 
-    public DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
+    public static DbCommand PrepareCommand(DbCommand cmd, Dictionary<string, object> parameters)
     {
         foreach (var kvp in parameters)
         {

@@ -22,7 +22,7 @@ public class DublinCoreTranslater
     /// <typeparam name="T"></typeparam>
     /// <param name="toFill"></param>
     /// <param name="fillWith"></param>
-    public void Fill<T>(T toFill,DublinCoreDefinition fillWith)
+    public static void Fill<T>(T toFill,DublinCoreDefinition fillWith)
     {
         if (toFill is Catalogue c)
         {
@@ -51,7 +51,7 @@ public class DublinCoreTranslater
     /// <typeparam name="T"></typeparam>
     /// <param name="generateFrom"></param>
     /// <returns></returns>
-    public DublinCoreDefinition GenerateFrom<T>(T generateFrom)
+    public static DublinCoreDefinition GenerateFrom<T>(T generateFrom)
     {
         var toReturn = new DublinCoreDefinition();
 

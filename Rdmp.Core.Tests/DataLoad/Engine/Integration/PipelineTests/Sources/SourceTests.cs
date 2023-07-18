@@ -147,7 +147,7 @@ public class SourceTests:DatabaseTests
     {
         var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
         var context = contextFactory.Create(PipelineUsage.FixedDestination);
-            
+
         var suspiciousComponent = new TestObject_Suspicious();
         var ex = Assert.Throws<MultipleMatchingImplmentationException>(() => context.PreInitialize(new ThrowImmediatelyDataLoadJob(), suspiciousComponent, 5, "fish"));
 

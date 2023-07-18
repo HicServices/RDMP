@@ -53,7 +53,7 @@ NamePattern: must be a value that could appear for the given Property.  Comparis
         }
 
         var objByToString = MatchOrThrow(arg, idx);
-            
+
         var objectType = objByToString.Groups[1].Value;
         var propertyName = objByToString.Groups[2].Value;
         var objectToString = objByToString.Groups[3].Value;

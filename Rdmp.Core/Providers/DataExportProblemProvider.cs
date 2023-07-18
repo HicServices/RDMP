@@ -85,11 +85,11 @@ public class DataExportProblemProvider:ProblemProvider
     }
 
 
-    private string DescribeProblem(ExtractionDirectoryNode edn)
+    private static string DescribeProblem(ExtractionDirectoryNode edn)
     {
         return edn.GetDirectoryInfoIfAny() == null ? "No Extraction Directory has been specified" : null;
     }
-    private string DescribeProblem(Project project)
+    private static string DescribeProblem(Project project)
     {
         if (project.ProjectNumber == null)
             return "Project has no ProjectNumber";

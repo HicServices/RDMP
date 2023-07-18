@@ -169,7 +169,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         var d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
 
         Pipeline pipeline = null;
-            
+
         //because extractable columns is likely to include chi column, it will be removed from the collection (for a substitution identifier)
         var before = _extractableColumns.ToArray();
 
@@ -213,7 +213,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
         arguments.Single(a => a.Name.Equals("FlatFileType")).SaveToDatabase();
 
         AdjustPipelineComponentDelegate?.Invoke(component);
-            
+
         var component2 = new PipelineComponent(repository, pipeline, typeof(ExecuteDatasetExtractionSource), -1, "Source");
         var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteDatasetExtractionSource>().ToArray();
 

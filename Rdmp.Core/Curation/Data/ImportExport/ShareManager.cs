@@ -40,7 +40,7 @@ public class ShareManager
     /// Delegate method for populating environment specific properties e.g. <see cref="ICatalogue.LiveLoggingServer_ID"/> when importing
     /// <see cref="ShareDefinition"/> since this ID will be different from the origin.
     /// </summary>
-    public LocalReferenceGetterDelegate LocalReferenceGetter;
+    internal LocalReferenceGetterDelegate LocalReferenceGetter;
 
     /// <summary>
     /// Creates a new manager for importing and exporting objects from the given platform databases
@@ -50,7 +50,7 @@ public class ShareManager
     public ShareManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, LocalReferenceGetterDelegate localReferenceGetter = null)
     {
         RepositoryLocator = repositoryLocator;
-        _catalogueRepository = RepositoryLocator.CatalogueRepository;
+        _catalogueRepository = repositoryLocator.CatalogueRepository;
         LocalReferenceGetter = localReferenceGetter ?? DefaultLocalReferenceGetter;
     }
 
@@ -72,7 +72,7 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Gets a serializated representation of the object, this is a reference to the object by ID / SharingUID (if it has one) not a list of all its property values.
+    /// Gets a serialized representation of the object, this is a reference to the object by ID / SharingUID (if it has one) not a list of all its property values.
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -105,10 +105,10 @@ public class ShareManager
             return null;
 
         var elements = persistenceString.Split(new []{PersistenceSeparator},StringSplitOptions.None);
-            
+
         if(elements.Length < 4)
             throw new Exception($"Malformed persistenceString:{persistenceString}");
-            
+
         //elements[0];//type name of the class we are fetching
         //elements[1]; //ID of the class
         //elements[2]; // Repository Type name
@@ -392,7 +392,7 @@ public class ShareManager
     /// </summary>
     /// <param name="o"></param>
     /// <param name="shareDefinition"></param>
-    public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
+    public static void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
     {
         if (shareDefinition.Type != o.GetType())
             throw new Exception($"Share Definition is not for a {o.GetType()}");
@@ -450,11 +450,11 @@ public class ShareManager
 
         //for finding properties decorated with [Relationship]
         var finder = new AttributePropertyFinder<RelationshipAttribute>(toCreate);
-            
+
         //If we have already got a local copy of this shared object?
         //either as an import or as an export
         var actual = (T)GetExistingImportObject(shareDefinition.SharingGuid) ?? (T)GetExistingExportObject(shareDefinition.SharingGuid);
-            
+
         //we already have a copy imported of the shared object
         if (actual != null)
         {
@@ -464,10 +464,8 @@ public class ShareManager
             foreach (var prop in TableRepository.GetPropertyInfos(typeof(T)))
             {
                 //don't update any ID columns or any with relationships on UPDATE
-                if (propertiesDictionary.TryGetValue(prop.Name,out var value) && finder.GetAttribute(prop) == null)
-                {
+                if (propertiesDictionary.TryGetValue(prop.Name, out var value) && finder.GetAttribute(prop) == null)
                     SetValue(prop, value, toCreate);
-                }
                 else
                     prop.SetValue(toCreate, prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
 

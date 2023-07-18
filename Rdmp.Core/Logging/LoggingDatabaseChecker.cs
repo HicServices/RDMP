@@ -29,7 +29,7 @@ public class LoggingDatabaseChecker : ICheckable
     }
 
     public LoggingDatabaseChecker(IDataAccessPoint target)
-        : this(DataAccessPortal.GetInstance().ExpectServer(target, DataAccessContext.Logging))
+        : this(DataAccessPortal.ExpectServer(target, DataAccessContext.Logging))
     {
     }
 
@@ -161,8 +161,9 @@ public class LoggingDatabaseChecker : ICheckable
             actual.Add(Convert.ToInt32(reader["ID"]), reader[valueColumnName].ToString().Trim());
 
         //now reconcile what is in the database with what we expect
+
         ExpectedLookupsValuesArePresent(expected, actual, out var missing, out var collisions, out var misnomers);
-            
+
         if(!missing.Any() && !collisions.Any() && !misnomers.Any())
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"{tableName} contains the correct lookup values", CheckResult.Success, null));
@@ -200,11 +201,11 @@ public class LoggingDatabaseChecker : ICheckable
             _server.GetCommand($"SET IDENTITY_INSERT {tableName} OFF ", con).ExecuteNonQuery();
             t.Commit();
         }
-            
+
     }
 
 
-    private void ExpectedLookupsValuesArePresent(Dictionary<int, string> expected, Dictionary<int, string> actual, out Dictionary<int, string> missing, out Dictionary<int, string> collisions, out List<string> misnomers)
+    private static void ExpectedLookupsValuesArePresent(Dictionary<int, string> expected, Dictionary<int, string> actual, out Dictionary<int, string> missing, out Dictionary<int, string> collisions, out List<string> misnomers)
     {
 
         collisions = new Dictionary<int, string>();

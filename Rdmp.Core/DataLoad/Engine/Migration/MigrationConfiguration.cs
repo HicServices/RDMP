@@ -49,7 +49,7 @@ public class MigrationConfiguration
 
             var fromTable = _fromDatabaseInfo.ExpectTable(fromTableName); //Staging doesn't have schema e.g. even if live schema is not dbo STAGING will be
 
-            var toTable = DataAccessPortal.GetInstance()
+            var toTable = DataAccessPortal
                 .ExpectDatabase(tableInfo, DataAccessContext.DataLoad)
                 .ExpectTable(toTableName,tableInfo.Schema);
 
@@ -62,7 +62,7 @@ public class MigrationConfiguration
 
             columnSet.Add(new MigrationColumnSet(fromTable,toTable, migrationFieldProcessor));
         }
-            
+
         var sorter = new RelationshipTopologicalSort(columnSet.Select(c => c.DestinationTable));
         columnSet = columnSet.OrderBy(s => ((ReadOnlyCollection<DiscoveredTable>)sorter.Order).IndexOf(s.DestinationTable)).ToList();
 

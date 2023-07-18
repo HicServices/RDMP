@@ -76,7 +76,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
         pk1.KeyType = JoinKeyType.PrimaryKey;
         pk1.SelectedColumnChanged +=pk1_SelectedColumnChanged;
-            
+
         pk2.KeyType = JoinKeyType.PrimaryKey;
         pk2.SelectedColumnChanged += UpdateValidityAssesment;
 
@@ -85,7 +85,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
         fk1.KeyType = JoinKeyType.ForeignKey;
         fk1.SelectedColumnChanged += fk1_SelectedColumnChanged;
-            
+
         fk2.KeyType = JoinKeyType.ForeignKey;
         fk2.SelectedColumnChanged += UpdateValidityAssesment;
 
@@ -120,19 +120,19 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         olvLookupNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
         olvExtractionInformationsNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
         olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-            
+
         //add the currently configured extraction informations in the order they appear in the dataset
         var allExtractionInformationFromCatalogue = new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         allExtractionInformationFromCatalogue.Sort();
-            
+
         olvExtractionInformations.ClearObjects();
         olvExtractionInformations.AddObjects(allExtractionInformationFromCatalogue.ToArray());
-            
+
         btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import).ImageToBitmap();
         toolTip.SetToolTip(btnImportNewTableInfo, "Import new...");
 
         btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help.ImageToBitmap();
-            
+
         pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
         tbCatalogue.Text = databaseObject.ToString();
 
@@ -149,7 +149,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
                 $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");
             return;
         }
-            
+
         if(setComboBox)
             cbxLookup.SelectedItem = t;
 
@@ -214,7 +214,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
 
         var lineHeight = e.Graphics.MeasureString(lines[0], Font).Height;
-            
+
         for (var i = 0; i < lines.Length; i++)
             e.Graphics.DrawString(lines[i], Font, Brushes.Black,new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight*i));
 
@@ -251,7 +251,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         var arrowPen = new Pen(Color.DarkGray,2);
 
         var capPath = new GraphicsPath();
-            
+
         // Create the outline for our custom end cap.
         capPath.AddLine(new Point(0, 0), new Point(2, -2));
         capPath.AddLine(new Point(2, -2), new Point(0, 0));
@@ -259,8 +259,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         capPath.AddLine(new Point(-2, -2),new Point(0, 0));
 
         arrowPen.CustomEndCap = new CustomLineCap(null, capPath);
-    
-            
+
+
         switch (_currentStage)
         {
             case LookupCreationStage.ChooseLookupTable:
@@ -308,7 +308,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             mid1,
             mid2,
             end);
-            
+
         if (debugPoints)
         {
             g.FillEllipse(Brushes.Red, start.X -2, start.Y -2, 5, 5);
@@ -433,9 +433,12 @@ Only define secondary columns if you really need them! if any of the key fields 
                         $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
                         "Create Extractable Column?");
 
-                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(f1,p1) };
+                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>>
+                {
+                    Tuple.Create(f1, p1)
+                };
 
-                if(p2 != null)
+                if (p2 != null)
                     keyPairs.Add(Tuple.Create(f2,p2));
 
                 if(p3 != null)

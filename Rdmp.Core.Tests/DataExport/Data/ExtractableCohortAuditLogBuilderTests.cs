@@ -20,9 +20,9 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
     public void AuditLogReFetch_FileInfo()
     {
         var builder = new ExtractableCohortAuditLogBuilder();
-            
+
         var fi = new FileInfo("durdur.txt");
-        var desc = builder.GetDescription(fi);
+        var desc = ExtractableCohortAuditLogBuilder.GetDescription(fi);
 
         var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
         var fi2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
@@ -39,7 +39,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var builder = new ExtractableCohortAuditLogBuilder();
 
         var cic = WhenIHaveA<CohortIdentificationConfiguration>();
-        var desc = builder.GetDescription(cic);
+        var desc = ExtractableCohortAuditLogBuilder.GetDescription(cic);
 
         var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
         var cic2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
@@ -55,7 +55,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var builder = new ExtractableCohortAuditLogBuilder();
 
         var ei = WhenIHaveA<ExtractionInformation>();
-        var desc = builder.GetDescription(ei);
+        var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
 
         var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
         var ei2 = builder.GetObjectIfAny(moqCohort, RepositoryLocator);
@@ -86,7 +86,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var builder = new ExtractableCohortAuditLogBuilder();
 
         var ei = WhenIHaveA<ExtractionInformation>();
-        var desc = builder.GetDescription(ei);
+        var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
 
         var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
             

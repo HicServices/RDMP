@@ -206,8 +206,8 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
         }
 
         //on the left
-            
-        HashSet<ExtractionInformation> toAdd = new ();
+
+        var toAdd = new HashSet<ExtractionInformation>();
 
         //add all the extractable columns from the current Catalogue
         foreach (var e in cata.GetAllExtractionInformation(ExtractionCategory.Any))
@@ -627,7 +627,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
                 nodes.Add(node);
             }
         }
-                
+
 
         //identify the existing force joins
         var existingForceJoins = new HashSet<SelectedDataSetsForcedJoin>(SelectedDataSet.Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(SelectedDataSet));
@@ -662,7 +662,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design,ILifetimeSub
 
         return olvSelected.Objects.OfType<ExtractableColumn>()
             .Where(ec => ec.CatalogueExtractionInformation_ID != null)
-            .Select(ec => eis.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var extractionInfo) ? extractionInfo : null)
+            .Select(ec => eis.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei1) ? ei1 : null)
             .Where(ei => ei != null)
             .Select(ei => ei.ColumnInfo.TableInfo)
             .Distinct()

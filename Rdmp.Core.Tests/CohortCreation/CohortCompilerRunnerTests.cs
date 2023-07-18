@@ -52,7 +52,7 @@ public class CohortCompilerRunnerTests:DatabaseTests
         var e = new MasterDatabaseScriptExecutor(db);
         var p = new QueryCachingPatcher();
         e.CreateAndPatchDatabase(p,new AcceptAllCheckNotifier());
-            
+
         var serverReference = new ExternalDatabaseServer(CatalogueRepository, "Cache", p);
         serverReference.SetProperties(db);
 

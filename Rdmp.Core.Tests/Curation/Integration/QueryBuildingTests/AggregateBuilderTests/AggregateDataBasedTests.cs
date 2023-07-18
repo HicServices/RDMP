@@ -28,7 +28,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
 
 public class AggregateDataBasedTests:DatabaseTests
 {
-    private DataTable GetTestDataTable()
+    private static DataTable GetTestDataTable()
     {
         var dt = new DataTable
         {
@@ -84,14 +84,14 @@ public class AggregateDataBasedTests:DatabaseTests
 
         return tbl;
     }
-    private void Destroy(DiscoveredTable tbl, params IDeleteable[] deletablesInOrderOfDeletion)
+    private static void Destroy(DiscoveredTable tbl, params IDeleteable[] deletablesInOrderOfDeletion)
     {
         tbl.Drop();
         foreach (var deleteable in deletablesInOrderOfDeletion)
             deleteable.DeleteInDatabase();
     }
 
-    private DataTable GetResultForBuilder(AggregateBuilder builder, DiscoveredTable tbl)
+    private static DataTable GetResultForBuilder(AggregateBuilder builder, DiscoveredTable tbl)
     {
         var sql = builder.SQL;
 
@@ -105,7 +105,7 @@ public class AggregateDataBasedTests:DatabaseTests
     }
 
 
-    private void AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(AggregateBuilder builder, DatabaseType type)
+    private static void AddWHEREToBuilder_CategoryIsTOrNumberGreaterThan42(AggregateBuilder builder, DatabaseType type)
     {
         var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
         var declaration = syntaxHelper.GetParameterDeclaration("@category", new DatabaseTypeRequest(typeof(string), 1));
@@ -114,7 +114,7 @@ public class AggregateDataBasedTests:DatabaseTests
 
         var ORContainer = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.OR);
         var constParam = new ConstantParameter(declaration, "'T'", "T Category Only", syntaxHelper);
-            
+
         //this is deliberately duplication, it tests that the parameter compiles as well as that any dynamic sql doesn't get thrown by quotes
         var filter1 = new SpontaneouslyInventedFilter(repo,ORContainer, "(Category=@category OR Category = 'T')", "Category Is @category",
             "ensures the records belong to the category @category", new ISqlParameter[] { constParam });
@@ -298,7 +298,7 @@ public class AggregateDataBasedTests:DatabaseTests
     public void GroupBy_AxisWithSum_Correct(DatabaseType type)
     {
         var tbl = UploadTestDataAsTableToServer(type, out var catalogue, out var extractionInformations, out var tableInfo);
-            
+
         //setup the aggregate with axis
         var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
 

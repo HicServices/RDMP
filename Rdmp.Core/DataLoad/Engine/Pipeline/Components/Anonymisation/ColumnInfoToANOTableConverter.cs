@@ -77,9 +77,9 @@ public class ColumnInfoToANOTableConverter
         if (!IsOldColumnDroppable(con, notifier))
             return false;
 
-        EnsureNoTriggerOnTable(tbl);
-                
-        AddNewANOColumnInfo(shouldApplySql, con, notifier);
+            EnsureNoTriggerOnTable(tbl);
+
+            AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
         MigrateExistingData(shouldApplySql,con, notifier,tbl);
 
@@ -94,7 +94,7 @@ public class ColumnInfoToANOTableConverter
     private void EnsureNoTriggerOnTable(DiscoveredTable tbl)
     {
         var triggerFactory = new TriggerImplementerFactory(tbl.Database.Server.DatabaseType);
-            
+
         var triggerImplementer = triggerFactory.Create(tbl);
 
         if (triggerImplementer.GetTriggerStatus() != TriggerStatus.Missing)

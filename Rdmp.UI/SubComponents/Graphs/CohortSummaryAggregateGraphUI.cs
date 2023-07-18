@@ -101,10 +101,10 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     protected override object[] GetRibbonObjects()
     {
-        return new object[]{GetAdjustmentDescription(_collection.Adjustment)};
+        return new object[]{ GetAdjustmentDescription(_collection.Adjustment)};
     }
 
-    private string GetAdjustmentDescription(CohortSummaryAdjustment adjustment)
+    private static string GetAdjustmentDescription(CohortSummaryAdjustment adjustment)
     {
         return adjustment switch
         {
@@ -116,12 +116,9 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
 
     protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration summary)
     {
-        CohortSummaryQueryBuilder builder;
-
-        if (_collection.CohortIfAny != null)
-            builder = new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny,Activator.CoreChildProvider);
-        else
-            builder = new CohortSummaryQueryBuilder(summary, _collection.CohortContainerIfAny);
+        var builder = _collection.CohortIfAny != null
+            ? new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny, Activator.CoreChildProvider)
+            : new CohortSummaryQueryBuilder(summary, _collection.CohortContainerIfAny);
 
         return builder.GetAdjustedAggregateBuilder(_collection.Adjustment,_collection.SingleFilterOnly);
     }

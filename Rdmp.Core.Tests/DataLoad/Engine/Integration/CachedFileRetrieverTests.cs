@@ -174,7 +174,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             c.GetLookupTableInfoList()==Array.Empty<TableInfo>() &&
             c.LoggingDataTask == "TestLogging"
         );
-            
+
         var logManager = Mock.Of<ILogManager>();
         var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues()==new[] { catalogue });
 

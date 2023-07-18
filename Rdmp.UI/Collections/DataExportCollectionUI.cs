@@ -156,7 +156,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
         CommonFunctionality.Add(new ExecuteCommandCreateNewExtractionConfigurationForProject(Activator),"Extraction Configuration",null,NewMenu);
         CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
-            
+
         var mi = new ToolStripMenuItem("Project Specific Catalogue",Activator.CoreIconProvider.GetImage(RDMPConcept.ProjectCatalogue,OverlayKind.Add).ImageToBitmap());
 
         var factory = new AtomicCommandUIFactory(Activator);

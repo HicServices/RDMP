@@ -27,7 +27,7 @@ public static class LoadStageExtensions
             LoadStage.AdjustRaw => LoadBubble.Raw,
             LoadStage.AdjustStaging => LoadBubble.Staging,
             LoadStage.PostLoad => LoadBubble.Live,
-            _ => throw new ArgumentOutOfRangeException($"Unknown value for LoadStage: {loadStage}")
+            _ => throw new ArgumentOutOfRangeException(nameof(loadStage),$"Unknown value for LoadStage: {loadStage}")
         };
     }
 }

@@ -143,12 +143,12 @@ public class BoundDouble :  Bound
             $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
     }
 
-    private string GreaterThanMessage(double d, string s)
+    private static string GreaterThanMessage(double d, string s)
     {
         return $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value greater than {Wrap(s)}.";
     }
 
-    private string LessThanMessage(double d, string s)
+    private static string LessThanMessage(double d, string s)
     {
         return $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value less than {Wrap(s)}.";
     }

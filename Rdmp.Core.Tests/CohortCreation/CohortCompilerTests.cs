@@ -117,7 +117,7 @@ public class CohortCompilerTests:CohortIdentificationTests
             };
         aggregate4.SaveToDatabase();
         new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
-            
+
         var aggregate5 =
             new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate5")
             {

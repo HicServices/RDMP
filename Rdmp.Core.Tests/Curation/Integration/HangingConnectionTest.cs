@@ -31,7 +31,7 @@ public class HangingConnectionTest:DatabaseTests
         Thread.Sleep(500);
 
         ThrowIfDatabaseLock();
-            
+
         var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testDbName);
 
         ThrowIfDatabaseLock();

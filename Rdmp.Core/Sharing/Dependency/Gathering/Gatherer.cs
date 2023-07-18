@@ -23,7 +23,6 @@ namespace Rdmp.Core.Sharing.Dependency.Gathering;
 public class Gatherer
 {
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-
     private readonly Dictionary<Type, Func<IMapsDirectlyToDatabaseTable, GatheredObject>> _functions = new();
 
     public Gatherer(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
@@ -65,7 +64,7 @@ public class Gatherer
         return _functions[o.GetType()](o);
     }
 
-    public GatheredObject GatherDependencies(ANOTable anoTable)
+    public static GatheredObject GatherDependencies(ANOTable anoTable)
     {
         var root = new GatheredObject(anoTable.Server);
         root.Children.Add(new GatheredObject(anoTable));
@@ -73,7 +72,7 @@ public class Gatherer
         return root;
     }
 
-    public GatheredObject GatherDependencies(Curation.Data.Plugin plugin)
+    public static GatheredObject GatherDependencies(Curation.Data.Plugin plugin)
     {
         var root = new GatheredObject(plugin);
 
@@ -108,7 +107,7 @@ public class Gatherer
         return root;
     }
 
-    public GatheredObject GatherDependencies(Catalogue catalogue)
+    public static GatheredObject GatherDependencies(Catalogue catalogue)
     {
         var root = new GatheredObject(catalogue);
 
@@ -117,8 +116,8 @@ public class Gatherer
             
         return root;
     }
-
-    public GatheredObject GatherDependencies(IFilter filter)
+        
+    public static GatheredObject GatherDependencies(IFilter filter)
     {
         var root = new GatheredObject(filter);
             

@@ -68,7 +68,7 @@ public class RDMPFormInitializationTests
         ComplainIfAccessesRepositoryLocatorInConstructor(readToEnd, className);
     }
 
-    private void ComplainIfAccessesRepositoryLocatorInConstructor(string readToEnd, string className)
+    private static void ComplainIfAccessesRepositoryLocatorInConstructor(string readToEnd, string className)
     {
         //find constructor
         var constructorRegex = GetConstructorRegex(className);

@@ -69,7 +69,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     private ToolStripControlHost _pipelinePanel;
 
     private ToolStripLabel lblMaxConcurrent = new("Concurrent:");
-    private ToolStripTextBox tbMaxConcurrent = new() {Text="3"};
+    private ToolStripTextBox tbMaxConcurrent = new() { Text="3"};
 
     public ExecuteExtractionUI()
     {

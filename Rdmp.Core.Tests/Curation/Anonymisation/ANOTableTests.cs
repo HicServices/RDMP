@@ -204,7 +204,7 @@ public class ANOTableTests:TestsRequiringANOStore
     [Test]
     public void SubstituteANOIdentifiers_PreviewWithoutPush()
     {
-            
+
         var anoTable = GetANOTable();
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
@@ -240,7 +240,7 @@ public class ANOTableTests:TestsRequiringANOStore
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 10;
         anoTable.PushToANOServerAsNewTable("varchar(10)", ThrowImmediatelyCheckNotifier.Quiet);
 
-            
+
         var sw = new Stopwatch();
         sw.Start();
 

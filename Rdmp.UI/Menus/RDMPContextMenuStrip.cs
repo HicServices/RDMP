@@ -56,13 +56,13 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         //we will add this ourselves in AddCommonMenuItems
         _args.SkipCommand<ExecuteCommandActivate>();
-            
+
         _activator = _args.ItemActivator;
 
         _activator.Theme.ApplyTo(this);
 
         AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
-            
+
         RepositoryLocator = _activator.RepositoryLocator;
 
         if (o is not null and not RDMPCollection)
@@ -157,7 +157,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
     public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)
     {
-            
+
         AddFactoryMenuItems();
 
         var databaseEntity = _o as DatabaseEntity;
@@ -167,7 +167,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
         if(_o is IMapsDirectlyToDatabaseTable m)
         {
             Add(new ExecuteCommandViewCommits(_activator, m));
-        }   
+        }
 
         //ensure all submenus appear in the same place
         foreach (var mi in _subMenuDictionary.Values)
@@ -214,7 +214,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         Add(new ExecuteCommandShowTooltip(_activator, _args.Model));
         Add(new ExecuteCommandShowKeywordHelp(_activator, _args));
-            
+
         var gotoMenu = Items.OfType<ToolStripMenuItem>().FirstOrDefault(i=>i.Text.Equals(AtomicCommandFactory.GoTo));
 
         if(gotoMenu != null)
@@ -231,7 +231,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
 
         var start = DateTime.Now;
         var now = DateTime.Now;
-        Dictionary<IAtomicCommand, TimeSpan> performance = new();
+        var performance = new Dictionary<IAtomicCommand, TimeSpan>();
 
         var forObject = _args.Masquerader ?? _o;
         foreach (var toPresent in factory.CreateCommands(forObject))
@@ -251,7 +251,7 @@ public class RDMPContextMenuStrip:ContextMenuStrip
                 new CheckEventArgs($"Creating menu for '{forObject}' took {DateTime.Now.Subtract(start).Milliseconds}ms:{Environment.NewLine}{timings}",
                     CheckResult.Success));
         }
-                
+
     }
 
     public void Add(IAtomicCommand toPresent)

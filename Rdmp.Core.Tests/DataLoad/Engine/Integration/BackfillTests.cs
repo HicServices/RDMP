@@ -1067,7 +1067,7 @@ internal class IdentityTableNamingScheme : INameDatabasesAndTablesDuringLoads
         return tableName;
     }
 
-    public bool IsNamedCorrectly(string tableName, LoadBubble convention)
+    public static bool IsNamedCorrectly(string tableName, LoadBubble convention)
     {
         return true;
     }

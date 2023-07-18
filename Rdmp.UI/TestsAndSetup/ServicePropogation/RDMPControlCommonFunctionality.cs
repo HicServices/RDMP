@@ -449,7 +449,7 @@ public class RDMPControlCommonFunctionality
     /// </summary>
     /// <param name="tb"></param>
     /// <param name="action"></param>
-    public void DoActionAndRedIfThrows(TextBox tb, Action action)
+    public static void DoActionAndRedIfThrows(TextBox tb, Action action)
     {
         tb.ForeColor = Color.Black;
         try

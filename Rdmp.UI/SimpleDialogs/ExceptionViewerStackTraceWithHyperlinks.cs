@@ -97,7 +97,7 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
             //Any other things you want to not be a hyperlink because they give no useful context to the error can be added here and they will not appear as hyperlinks
             var lineIsMessageConstructor = lines[i].Contains("ReusableLibraryCode.Checks.CheckEventArgs..ctor");
 
-            MatchStackLine(lines[i],out var filenameMatch,out var lineNumberMatch);
+            MatchStackLine(lines[i],out var filenameMatch, out var lineNumberMatch);
 
             if (!(lineNumberMatch.Success || filenameMatch.Success) || lineIsMessageConstructor)
             {
@@ -157,7 +157,7 @@ public partial class ExceptionViewerStackTraceWithHyperlinks : Form
     }
 
 
-    private void OpenVisualStudio(string filename, int lineNumber)
+    private static void OpenVisualStudio(string filename, int lineNumber)
     {
         try
         {

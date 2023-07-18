@@ -73,7 +73,7 @@ internal class ConsoleMainWindow
         _treeView.RebuildTree();
     }
 
-    private void Quit()
+    private static void Quit()
     {
         Application.RequestStop ();
     }
@@ -147,7 +147,7 @@ internal class ConsoleMainWindow
         _treeView.KeyPress += treeView_KeyPress;
         _treeView.SelectionChanged += _treeView_SelectionChanged;
         _treeView.AspectGetter = AspectGetter;
-            
+
         var statusBar = new StatusBar (new StatusItem [] {
             new(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
             new(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
@@ -418,7 +418,7 @@ internal class ConsoleMainWindow
         }
     }
 
-    private IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
+    private static IMapsDirectlyToDatabaseTable GetObjectIfAnyBehind(object o)
     {
         return o is IMasqueradeAs masquerade
             ? masquerade.MasqueradingAs() as IMapsDirectlyToDatabaseTable
@@ -434,7 +434,7 @@ internal class ConsoleMainWindow
 
     private IEnumerable<object> ChildGetterUnordered(object model)
     {
-            
+
         var dx = _activator.CoreChildProvider as DataExportChildProvider;
 
         try
@@ -519,7 +519,7 @@ internal class ConsoleMainWindow
         var commandInvoker = new CommandInvoker(_activator);
         commandInvoker.CommandImpossible += (o, e) => { _activator.Show(
             $"Command Impossible because:{e.Command.ReasonCommandImpossible}");};
-            
+
         var commands = commandInvoker.GetSupportedCommands();
 
         var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),t=>BasicCommandExecution.GetCommandName(t.Name),false);

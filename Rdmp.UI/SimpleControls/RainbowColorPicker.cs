@@ -45,7 +45,7 @@ public class RainbowColorPicker
         Colors = interpolateColors(baseColors, numberOfColors);
     }
 
-    private List<Color> interpolateColors(List<Color> stopColors, int count)
+    private static List<Color> interpolateColors(List<Color> stopColors, int count)
     {
         var gradient = new SortedDictionary<float, Color>();
         for (var i = 0; i < stopColors.Count; i++)

@@ -48,7 +48,6 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     /// This is a collection of all the items found in the desired order and their offset in the desired order relative to the first one
     /// </summary>
     private List<ExtractionInformation> itemsToReOrderAndOffsetRelativeToFirst;
-
     private List<int> desiredColumnIndexesNotFound;
     private int indexOfStartOfReordingInNewOrderListbox;
 
@@ -138,7 +137,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
             return;
 
         var startReorderingHere = lbDesiredOrder.Items[0].ToString();
-            
+
         //find the location of the first item in the desired order
         var extractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
             
@@ -263,7 +262,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     }
 
     private object oDrawLock = new();
-
+        
 
     private void lbDesiredOrder_DrawItem(object sender, DrawItemEventArgs e)
     {

@@ -29,16 +29,16 @@ ConnectionString (Required)";
     public override IEnumerable<string> Examples => new[]
     {
         "DatabaseType:MicrosoftSQLServer:Server=myServerAddress;Database=myDataBase;Trusted_Connection=True;",
-             
+
         //see https://stackoverflow.com/questions/4950897/odp-net-integrated-security-invalid-connection-string-argument
         "DatabaseType:Oracle:Name:Bob:Data Source=MyOracleDB;User Id=/;"
-            
+
     };
 
     public PickDatabase() : base(null,
         PickDbRegex())
     {
-            
+
     }
 
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)

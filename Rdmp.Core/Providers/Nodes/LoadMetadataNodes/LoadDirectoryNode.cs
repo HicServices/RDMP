@@ -41,7 +41,8 @@ public class LoadDirectoryNode: Node,IDirectoryInfoNode, IOrderable
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        return obj.GetType() == GetType() && Equals((LoadDirectoryNode) obj);
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LoadDirectoryNode) obj);
     }
 
     public override int GetHashCode()

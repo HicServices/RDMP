@@ -60,7 +60,7 @@ public partial class ScintillaTextEditorFactory
         {
             throw new Exception("Could not load Scintilla.  Check that the latest Visual C++ 2015 Redistributable is installed",ex);
         }
-            
+
         toReturn.Dock = DockStyle.Fill;
         toReturn.HScrollBar = true;
         toReturn.VScrollBar = true;
@@ -92,7 +92,7 @@ public partial class ScintillaTextEditorFactory
             case SyntaxLanguage.LogFile:
                 SetLexerEnumHighlighting(toReturn, "none");
                 break;
-        }      
+        }
 
         if (commandFactory != null)
         {
@@ -152,21 +152,21 @@ public partial class ScintillaTextEditorFactory
         scintilla.IndicatorCurrent = 8;
         scintilla.IndicatorClearRange(0, scintilla.TextLength);
 
-        foreach (Match m in Words().Matches(scintilla.Text))
+        foreach (Match m in WordRegex().Matches(scintilla.Text))
             if (!hunspell.Check(m.Value))
             {
                 scintilla.IndicatorFillRange(m.Index, m.Length);
-            }            
+            }
     }
 
-    private void OnDragEnter(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
+    private static void OnDragEnter(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
     {
         var command = commandFactory.Create(dragEventArgs);
 
         if(command != null)
             dragEventArgs.Effect = DragDropEffects.Copy;
     }
-    private void OnDragDrop(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
+    private static void OnDragDrop(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
     {
         //point they are dragged over
         var editor = (Scintilla) sender;
@@ -195,7 +195,7 @@ public partial class ScintillaTextEditorFactory
         editor.InsertText(pos,command.GetSqlString());
     }
 
-    private void SetSQLHighlighting(Scintilla scintilla, IQuerySyntaxHelper syntaxHelper)
+    private static void SetSQLHighlighting(Scintilla scintilla, IQuerySyntaxHelper syntaxHelper)
     {
         // Reset the styles
         scintilla.StyleResetDefault();
@@ -224,7 +224,7 @@ public partial class ScintillaTextEditorFactory
         scintilla.Styles[Style.Sql.Character].ForeColor = Color.Red;
         scintilla.Styles[Style.Sql.Operator].ForeColor = Color.Black;
 
-            
+
         // Set keyword lists
         // Word = 0
         scintilla.SetKeywords(0, @"add alter as authorization backup begin bigint binary bit break browse bulk by cascade case catch char check checkpoint close clustered column commit compute constraint containstable continue create current current_date cursor cursor database date datetime datetime2 datetimeoffset dbcc deallocate decimal declare default delete deny desc disk distinct distributed double drop dump else end errlvl escape except exec execute exit external fetch file fillfactor float for foreign freetext freetexttable from full function goto grant group having hierarchyid holdlock identity identity_insert identitycol if image index insert int intersect into key kill lineno load merge money national nchar nocheck nocount nolock nonclustered ntext numeric nvarchar of off offsets on open opendatasource openquery openrowset openxml option order over percent plan precision primary print proc procedure public raiserror read readtext real reconfigure references replication restore restrict return revert revoke rollback rowcount rowguidcol rule save schema securityaudit select set setuser shutdown smalldatetime smallint smallmoney sql_variant statistics table table tablesample text textsize then time timestamp tinyint to top tran transaction trigger truncate try union unique uniqueidentifier update updatetext use user values varbinary varchar varying view waitfor when where while with writetext xml go ");
@@ -234,7 +234,7 @@ public partial class ScintillaTextEditorFactory
 
         if (syntaxHelper != null)
             word2 += $" {string.Join(' ', syntaxHelper.GetSQLFunctionsDictionary().Keys)}";
-            
+
         // Word2 = 1
         scintilla.SetKeywords(1, word2);
         // User1 = 4
@@ -270,7 +270,7 @@ public partial class ScintillaTextEditorFactory
         scintilla.StyleNeeded += (s,e)=>scintilla_StyleNeeded(scintilla,e);
     }
 
-    private void SetLexerEnumHighlighting(Scintilla scintilla, string lexer)
+    private static void SetLexerEnumHighlighting(Scintilla scintilla, string lexer)
     {
         scintilla.StyleResetDefault();
 
@@ -288,5 +288,5 @@ public partial class ScintillaTextEditorFactory
     }
 
     [GeneratedRegex("\\b\\w*\\b")]
-    private static partial Regex Words();
+    private static partial Regex WordRegex();
 }

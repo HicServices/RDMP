@@ -18,6 +18,7 @@ public static class EnumExtensions
     /// Returns a culture specific string for the <see cref="Enum"/>
     /// </summary>
     /// <param name="e"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
     /// <returns></returns>
     public static string S(this Enum e)
     {

@@ -88,7 +88,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
     {
         if (m?.ShouldBeReadOnly(out var reason)==true)
         {
-            SetImpossible($"{(m is IContainer ? "Container" : $"'{m}'")} is readonly because:{reason}");
+            SetImpossible($"{(m is IContainer ? "Container" : '\'' + m.ToString() + '\'')} is readonly beacause:{reason}");
         }
     }
     public BasicCommandExecution()
@@ -502,7 +502,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
         return GetCommandName();
     }
 
-    protected CommentStore CreateCommentStore()
+    protected static CommentStore CreateCommentStore()
     {
         var help = new CommentStore();
         help.ReadComments(Environment.CurrentDirectory);

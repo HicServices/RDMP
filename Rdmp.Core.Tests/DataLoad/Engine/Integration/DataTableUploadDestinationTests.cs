@@ -86,7 +86,7 @@ public class DataTableUploadDestinationTests:DatabaseTests
                 "age varchar(50),"
             };
 
-            if(createIdentity)
+            if (createIdentity)
                 leftToCreate.Add("id int IDENTITY(1,1),");
 
             var invalid = false;
@@ -580,16 +580,16 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         AssertIsStringWithLength(table.DiscoverColumn("StringNotNull"), 500);
 
 
-        Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
+            Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
 
-        //do the same with the one that allows nulls
-        Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
-        table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
-        table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
-        table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
+            //do the same with the one that allows nulls
+            Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
+            table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
+            table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
+            table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
 
-        AssertIsStringWithLength(table.DiscoverColumn("StringAllowNull"), 105);
-        Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
+            AssertIsStringWithLength(table.DiscoverColumn("StringAllowNull"), 105);
+            Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
 
         //we should have correct understanding prior to resize
         AssertIsStringWithLength(table.DiscoverColumn("StringPk"),50);
@@ -607,7 +607,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         con.Close();
     }
 
-    private void AssertIsStringWithLength(DiscoveredColumn col, int expectedLength)
+    private static void AssertIsStringWithLength(DiscoveredColumn col, int expectedLength)
     {
         switch (col.Table.Database.Server.DatabaseType)
         {

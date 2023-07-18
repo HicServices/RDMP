@@ -87,12 +87,12 @@ public class ExcelConversionTest
 
         fi.CopyTo(targetFile, true);
 
-        var ex = Assert.Throws<Exception>(()=>TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
+        var ex = Assert.Throws<Exception>(()=> TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
 
         Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
     }
-
-    private void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
+        
+    private static void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
     {
         var f = new FileInfo(targetFile);
 

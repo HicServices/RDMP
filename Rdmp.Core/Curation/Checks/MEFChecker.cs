@@ -78,14 +78,14 @@ public class MEFChecker : ICheckable
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             "It is possible that the class you are looking for is in the BadAssemblies list",
                             CheckResult.Fail, null));
-                    foreach (var (assembly, exception) in badAssemblies)
+                    foreach ((var assembly, var exception) in badAssemblies)
                         notifier.OnCheckPerformed(new CheckEventArgs($"Bad Assembly {assembly}", CheckResult.Warning,
                             exception));
                     break;
                 }
                 case 1:
                 {
-                    var acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
+                        var acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Could not find MEF class called {_classToFind} but did find one called {substitute[0].FullName}",
                         CheckResult.Fail, null,
                         $"Change reference to {_classToFind} to point to MEF assembly type {substitute[0].FullName}"));

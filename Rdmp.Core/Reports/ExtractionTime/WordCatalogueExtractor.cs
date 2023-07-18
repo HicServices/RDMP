@@ -106,15 +106,15 @@ public class WordCatalogueExtractor: DocXHelper
 
             //create a new table
             var t = InsertTable(_document, requiredRowsCount, 2);
-
-            if(supplementalData!=null && supplementalData.TryGetValue(catalogueItem, out var data))
-                GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem,data);
+                
+            if(supplementalData!=null && supplementalData.TryGetValue(catalogueItem, out var value))
+                GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem,value);
             else
                 GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem, null);
         }
     }
 
-    private int CountWriteableProperties(object o)
+    private static int CountWriteableProperties(object o)
     {
         var propertyInfo =
             o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -128,7 +128,7 @@ public class WordCatalogueExtractor: DocXHelper
                 property.PropertyType == typeof(string));
     }
 
-    private void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o, Tuple<string,string>[] supplementalData )
+    private static void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o, Tuple<string,string>[] supplementalData )
     {
         var propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 

@@ -59,11 +59,9 @@ public class ExceptionViewer : WideMessageBox
         if(exception.InnerException != null)
             longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception.InnerException );
 
-        ExceptionViewer ev;
-        if (longMessage == "")
-            ev = new ExceptionViewer(exception.GetType().Name,exception.Message, exception);
-        else
-            ev = new ExceptionViewer(exception.Message,longMessage, exception);
+        var ev = longMessage == ""
+            ? new ExceptionViewer(exception.GetType().Name, exception.Message, exception)
+            : new ExceptionViewer(exception.Message, longMessage, exception);
 
         if (isModalDialog)
             ev.ShowDialog();

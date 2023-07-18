@@ -132,11 +132,8 @@ public partial class DataFlowComponentVisualisation : UserControl
     protected override void OnPaintBackground(PaintEventArgs e)
     {
         base.OnPaintBackground(e);
-            
-        if (_isEmpty)
-            e.Graphics.DrawRectangle(_emptyPen, pComponent.Bounds);
-        else
-            e.Graphics.DrawRectangle(_fullPen, pComponent.Bounds);
+
+        e.Graphics.DrawRectangle(_isEmpty ? _emptyPen : _fullPen, pComponent.Bounds);
     }
 
     private void DataFlowComponentVisualisation_DragEnter(object sender, DragEventArgs e)

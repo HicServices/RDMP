@@ -111,7 +111,7 @@ public class ExecutableRuntimeTask : RuntimeTask
         return string.Join(" ", args);
     }
 
-    private ExitCodeType ParseExitCode(int value)
+    private static ExitCodeType ParseExitCode(int value)
     {
         var success = Enum.TryParse(value.ToString(), out ExitCodeType exitCode);
         return !success ? throw new ArgumentException($"Could not parse exit code from value: {value}") : exitCode;
@@ -151,7 +151,7 @@ public class ExecutableRuntimeTask : RuntimeTask
                     CheckResult.Fail));
             return;
         }
-            
+
         var parser = new CommandLineParser();
 
         //see if we can find what their executable is
@@ -187,7 +187,7 @@ public class ExecutableRuntimeTask : RuntimeTask
         return string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
     }
 
-    public XmlSchema GetSchema()
+    public static XmlSchema GetSchema()
     {
         return null;
     }

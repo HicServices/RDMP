@@ -139,7 +139,7 @@ public class MasterDatabaseScriptExecutor
             con.Open();
             UsefulStuff.ExecuteBatchNonQuery(kvp.Value.GetScriptBody(), con,null, DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds);
         }
-            
+
         var now = DateTime.Now;
 
         Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
@@ -159,7 +159,7 @@ public class MasterDatabaseScriptExecutor
             
     }
 
-    private string CalculateHash(string input)
+    public static string CalculateHash(string input)
     {
         // step 1, calculate SHA512 hash from input
 
@@ -168,14 +168,8 @@ public class MasterDatabaseScriptExecutor
 
         var hash = SHA512.HashData(inputBytes);
 
-
         // step 2, convert byte array to hex string
-
-        var sb = new StringBuilder();
-        sb.Append(hash.Select(x => x.ToString("X2")));
-
-        return sb.ToString();
-
+        return string.Join("", hash.Select(static octet => octet.ToString("X2")));
     }
 
 
@@ -270,7 +264,7 @@ public class MasterDatabaseScriptExecutor
         }
     }
 
-    private bool SupportsBackup(DiscoveredDatabase database)
+    private static bool SupportsBackup(DiscoveredDatabase database)
     {
         // Only MS SQL Server has a backup implementation in FAnsi currently
         return database.Server.DatabaseType switch
@@ -340,7 +334,7 @@ public class MasterDatabaseScriptExecutor
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Patch evaluation failed", CheckResult.Fail, exception));
             stop = true;
-        }            
+        }
 
         //if any of the patches we are trying to apply are earlier than the latest in the database
         var missedOpportunities = toApply.Values.Where(p => p.DatabaseVersionNumber < patchesInDatabase.Max(p2 => p2.DatabaseVersionNumber));
@@ -376,7 +370,7 @@ public class MasterDatabaseScriptExecutor
 
 
     public Patch[] GetPatchesRun()
-    { 
+    {
         var toReturn = new List<Patch>();
 
         var scriptsRun = Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName);

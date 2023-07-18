@@ -214,7 +214,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
         else
             try
             {
-                DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.InternalDataProcessing).TestConnection();
+                DataAccessPortal.ExpectServer(this, DataAccessContext.InternalDataProcessing).TestConnection();
                 notifier.OnCheckPerformed(new CheckEventArgs("Successfully connected to server", CheckResult.Success));
             }
             catch (Exception exception)

@@ -163,7 +163,7 @@ public class CreateNewCohortDatabaseWizardTests:DatabaseTests
 
         //the request to put it under there
         var request = new CohortCreationRequest(project, new CohortDefinition(null, "My cohort", 1, 10, ect), DataExportRepository,"Blah");
-            
+
         //the actual cohort data
         var dt = new DataTable();
         dt.Columns.Add(_extractionInfo2.GetRuntimeName());

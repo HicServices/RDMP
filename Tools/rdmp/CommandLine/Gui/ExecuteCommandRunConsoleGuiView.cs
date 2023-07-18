@@ -27,7 +27,7 @@ internal class ExecuteCommandRunConsoleGuiView : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-            
+
         var window = windowConstructor();
 
         Application.Run(window, ConsoleMainWindow.ExceptionPopup);

@@ -69,7 +69,7 @@ public partial class ArgumentValueCustomUIDrivenClassUI : UserControl, IArgument
             btnLaunchCustomUI.Enabled = false;
         }
     }
-
+        
     private void btnLaunchCustomUI_Click(object sender, EventArgs e)
     {
         try

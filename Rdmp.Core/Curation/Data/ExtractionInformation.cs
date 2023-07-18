@@ -137,7 +137,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// </summary>
     /// <param name="catalogueItem"></param>
     /// <returns></returns>
-    private int GetMaxOrder(CatalogueItem catalogueItem)
+    private static int GetMaxOrder(CatalogueItem catalogueItem)
     {
         try
         {

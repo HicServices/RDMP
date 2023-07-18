@@ -139,12 +139,12 @@ public class CohortCompiler
         var toReturn = new List<ICompileable>();
         var globals = CohortIdentificationConfiguration.GetAllParameters();
         CohortIdentificationConfiguration.CreateRootContainerIfNotExists();
-            
+
         foreach (var joinable in CohortIdentificationConfiguration.GetAllJoinables())
             toReturn.Add(AddTask(joinable, globals));
 
         toReturn.AddRange( AddTasksRecursively(globals,CohortIdentificationConfiguration.RootCohortAggregateContainer,addSubcontainerTasks));
-            
+
         return toReturn;
     }
 
@@ -183,7 +183,7 @@ public class CohortCompiler
                 toReturn.Add(Task.Run(()=> AddTask(container, globals)));
             }
         }
-                
+
 
         foreach (var c in container.GetOrderedContents())
         {
@@ -454,12 +454,12 @@ public class CohortCompiler
     /// <param name="cacheableTask">Where the datatype was read from e.g. Oracle</param>
     /// <param name="queryCachingServer">Where the datatype is going to be stored e.g. Sql Server</param>
     /// <returns></returns>
-    private string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
+    private static string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
     {
         var accessPoints = cacheableTask.GetDataAccessPoints();
 
-        var server = DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.DataExport, false);
-            
+        var server = DataAccessPortal.ExpectDistinctServer(accessPoints, DataAccessContext.DataExport, false);
+
         var sourceSyntax = server.GetQuerySyntaxHelper();
         var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
 
@@ -528,24 +528,22 @@ public class CohortCompiler
 
     public int GetAliveThreadCount()
     {
-        return Threads.Count(t => t.IsAlive);
+        return Threads.Count(static t => t.IsAlive);
     }
 
     public string GetCachedQueryUseCount(ICompileable task)
     {
-        if (!Tasks.ContainsKey(task) || Tasks[task] == null)
+        if (!Tasks.TryGetValue(task,out var execution) || execution == null)
             return "Unknown";
 
-        var execution = Tasks[task];
         return $"{execution.SubqueriesCached}/{execution.SubQueries}";
     }
 
     public bool AreaAllQueriesCached(ICompileable task )
     {
-        if (!Tasks.ContainsKey(task) || Tasks[task] == null)
+        if (!Tasks.TryGetValue(task,out var execution) || execution == null)
             return false;
 
-        var execution = Tasks[task];
         return execution.SubqueriesCached == execution.SubQueries && execution.SubQueries >=1;
     }
 }

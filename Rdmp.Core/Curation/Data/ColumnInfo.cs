@@ -432,7 +432,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public DiscoveredColumn Discover(DataAccessContext context)
     {
         var ti = TableInfo;
-        var db = DataAccessPortal.GetInstance().ExpectDatabase(ti, context);
+        var db = DataAccessPortal.ExpectDatabase(ti, context);
         return db.ExpectTable(ti.GetRuntimeName()).DiscoverColumn(GetRuntimeName());
     }
 

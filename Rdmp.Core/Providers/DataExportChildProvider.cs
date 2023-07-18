@@ -108,7 +108,7 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         CohortSources = GetAllObjects<ExternalCohortTable>(dataExportRepository);
         ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
-            
+
         //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
         var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
         foreach (var ds in ExtractableDataSets)
@@ -175,11 +175,10 @@ public class DataExportChildProvider : CatalogueChildProvider
 
         //inject extractability into Catalogues
         foreach (var catalogue in AllCatalogues)
-            if (cataToEds.TryGetValue(catalogue.ID, out var result))
-                catalogue.InjectKnown(result.GetCatalogueExtractabilityStatus());
-            else
-                catalogue.InjectKnown(new CatalogueExtractabilityStatus(false,false));
-            
+            catalogue.InjectKnown(cataToEds.TryGetValue(catalogue.ID, out var result)
+                ? result.GetCatalogueExtractabilityStatus()
+                : new CatalogueExtractabilityStatus(false, false));
+
         ReportProgress("Catalogue extractability injection");
 
         try
@@ -290,7 +289,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         children.Add(extractionConfigurationsNode);
 
         AddChildren(extractionConfigurationsNode,descendancy.Add(extractionConfigurationsNode));
-            
+
         var folder = new ExtractionDirectoryNode(project);
         children.Add(folder);
         AddToDictionaries(children,descendancy);
@@ -442,8 +441,10 @@ public class DataExportChildProvider : CatalogueChildProvider
     {
         var children = new HashSet<object>();
 
-        if (_extractionProgressesBySelectedDataSetID.TryGetValue(selectedDataSets.ID, out var progress))
-            children.Add(progress);
+        if (_extractionProgressesBySelectedDataSetID.TryGetValue(selectedDataSets.ID, out var value))
+        {
+            children.Add(value);
+        }
 
         if (selectedDataSets.RootFilterContainer_ID != null)
         {
@@ -523,7 +524,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             
         try
         {
-            server = DataAccessPortal.GetInstance().ExpectDatabase(source, DataAccessContext.DataExport).Server;
+            server = DataAccessPortal.ExpectDatabase(source, DataAccessContext.DataExport).Server;
         }
         catch (Exception exception)
         {
@@ -557,14 +558,14 @@ public class DataExportChildProvider : CatalogueChildProvider
                         //load external data from the result set
                         var externalData = new ExternalCohortDefinitionData(r, source.Name);
 
-                        //tell the cohort about the data
-                        c.InjectKnown(externalData);
+                                    //tell the cohort about the data
+                                    c.InjectKnown(externalData);
 
-                        lock (_oProjectNumberToCohortsDictionary)
-                        {
-                            //for performance also keep a dictionary of project number => compatible cohorts
-                            if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
-                                ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
+                                    lock (_oProjectNumberToCohortsDictionary)
+                                    {
+                                        //for performance also keep a dictionary of project number => compatible cohorts
+                                        if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
+                                            ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
 
                             ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
                         }
