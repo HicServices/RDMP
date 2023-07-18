@@ -20,6 +20,6 @@ internal class AutoComplete
     public string[] GetSuggestions(string text, int _)
     {
         //they haven't typed anything yet
-        return string.IsNullOrWhiteSpace(text) ? autocompletes : autocompletes.Where(a=>a.StartsWith(text)).ToArray();
+        return string.IsNullOrWhiteSpace(text) ? autocompletes : autocompletes.Where(a=>a.StartsWith(text,StringComparison.CurrentCulture)).ToArray();
     }
 }
