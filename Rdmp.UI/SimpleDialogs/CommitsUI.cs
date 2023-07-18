@@ -12,7 +12,6 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
@@ -22,7 +21,6 @@ namespace Rdmp.UI.SimpleDialogs;
 
 public partial class CommitsUI : CommitsUI_Design
 {
-    private List<Commit> _commits;
     private RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new();
 
     private RDMPCollectionCommonFunctionality CommonCollectionFunctionality = new ();
@@ -35,8 +33,8 @@ public partial class CommitsUI : CommitsUI_Design
 
         treeListView1.FullRowSelect = true;
         treeListView1.ItemActivate += TreeListView1_ItemActivate;
-        treeListView1.CanExpandGetter = m => m is Commit;
-        treeListView1.ChildrenGetter = m => m is Commit c ? c.Mementos : null;
+        treeListView1.CanExpandGetter = static m => m is Commit;
+        treeListView1.ChildrenGetter = static m => m is Commit c ? c.Mementos : null;
     }
 
     /// <summary>
@@ -50,18 +48,17 @@ public partial class CommitsUI : CommitsUI_Design
 
         SetupCommonCollectionFunctionality();
 
-        _commits = activator.RepositoryLocator.CatalogueRepository
+        var commits = activator.RepositoryLocator.CatalogueRepository
             .GetAllObjects<Commit>()
             .ToList();
 
-        treeListView1.AddObjects(_commits);
+        treeListView1.AddObjects(commits);
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
             TaskDescription = $"Showing all commits. {GeneralAdviceAboutWhatIsShown}"
         });
     }
-
-    public CommitsUI(IActivateItems activator, IMapsDirectlyToDatabaseTable o) : this()
+    public CommitsUI(IActivateItems activator, IMapsDirectlyToDatabaseTable o):this()
     {
         SetItemActivator(activator);
 
@@ -75,11 +72,11 @@ public partial class CommitsUI : CommitsUI_Design
             .Distinct()
             .ToList();
 
-        _commits = activator.RepositoryLocator.CatalogueRepository
+        var commits = activator.RepositoryLocator.CatalogueRepository
             .GetAllObjectsInIDList<Commit>(commitsInvolvingObject)
             .ToList();
 
-        treeListView1.AddObjects(_commits);
+        treeListView1.AddObjects(commits);
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
             TaskDescription = $"Showing all commits that involved changes to '{o}'. {GeneralAdviceAboutWhatIsShown}"

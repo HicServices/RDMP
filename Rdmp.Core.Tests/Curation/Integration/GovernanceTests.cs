@@ -82,9 +82,7 @@ public class GovernanceTests : DatabaseTests
         if (CatalogueRepository is TableRepository)
         {
             var ex = Assert.Throws<SqlException>(gov2.SaveToDatabase);
-            StringAssert.StartsWith(
-                "Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)",
-                ex.Message);
+            StringAssert.StartsWith("Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)", ex?.Message);
         }
     }
 
@@ -98,8 +96,8 @@ public class GovernanceTests : DatabaseTests
         gov.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
         gov.EndDate = DateTime.MinValue;
-        var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.Quiet));//no longer valid - notice there is no SaveToDatabase because we can shouldnt be going back to db anyway
-        Assert.AreEqual("GovernancePeriod TestExpiryBeforeStarting expires before it begins!", ex.Message);
+        var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.Quiet));//no longer valid - notice there is no SaveToDatabase because we can shouldn't be going back to db anyway
+        Assert.AreEqual("GovernancePeriod TestExpiryBeforeStarting expires before it begins!", ex?.Message);
     }
 
     [Test]
@@ -108,7 +106,7 @@ public class GovernanceTests : DatabaseTests
         var gov = GetGov();
         gov.Name = "NeverExpires";
 
-        //valid to start with
+        //valid to start with 
         var ex = Assert.Throws<Exception>(()=>gov.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
         Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires",ex?.Message);
 

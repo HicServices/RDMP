@@ -105,7 +105,7 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
         dim.DeleteInDatabase();
 
 
-        using var con = DataAccessPortal.GetInstance().ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection();
+        using var con = DataAccessPortal.ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection();
         var table = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.ExtractableAggregateResults);
     
         con.Open();

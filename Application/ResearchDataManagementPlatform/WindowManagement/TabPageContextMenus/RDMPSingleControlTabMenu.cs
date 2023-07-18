@@ -23,11 +23,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus;
 [System.ComponentModel.DesignerCategory("")]
 public class RDMPSingleControlTabMenu : ContextMenuStrip
 {
-    private readonly RDMPSingleControlTab _tab;
-
     public RDMPSingleControlTabMenu(IActivateItems activator, RDMPSingleControlTab tab, WindowManager windowManager)
     {
-        _tab = tab;
+        var tab1 = tab;
         Items.Add("Close Tab", null, (s, e) => tab.Close());
         Items.Add("Close All Tabs", null, (s, e) => windowManager.CloseAllWindows(tab));
         Items.Add("Close All But This", null, (s, e) => windowManager.CloseAllButThis(tab));
@@ -51,10 +49,9 @@ public class RDMPSingleControlTabMenu : ContextMenuStrip
             RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(gotoMenu);
         }
 
-        Items.Add("Refresh", FamFamFamIcons.arrow_refresh.ImageToBitmap(),
-            (s, e) => _tab.HandleUserRequestingTabRefresh(activator));
+        Items.Add("Refresh", FamFamFamIcons.arrow_refresh.ImageToBitmap(), (s, e) => tab1.HandleUserRequestingTabRefresh(activator));
 
-        var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(), (s, e) => _tab.ShowHelp(activator))
+        var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(), (s, e) => tab1.ShowHelp(activator))
         {
             ShortcutKeys = Keys.F1
         };

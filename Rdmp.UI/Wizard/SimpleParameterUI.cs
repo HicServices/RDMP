@@ -19,17 +19,15 @@ namespace Rdmp.UI.Wizard;
 /// </summary>
 public partial class SimpleParameterUI : UserControl
 {
-    private readonly IActivateItems _activator;
     private readonly ISqlParameter _parameter;
 
     public SimpleParameterUI(IActivateItems activator, ISqlParameter parameter)
     {
-        _activator = activator;
         _parameter = parameter;
         InitializeComponent();
 
         lblParameterName.Text = parameter.ParameterName.TrimStart('@');
-        pbParameter.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap();
+        pbParameter.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap();
 
         tbValue.Text = parameter.Value;
 

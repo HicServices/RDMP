@@ -311,10 +311,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
 
         if (normalTables.Any())
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad,true);
+            return DataAccessPortal.ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad,true);
 
         return lookupTables.Any()
-            ? DataAccessPortal.GetInstance().ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true)
+            ? DataAccessPortal.ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad,true)
             :
         throw new Exception(
             $"LoadMetadata {this} has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");

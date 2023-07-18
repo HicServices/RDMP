@@ -11,7 +11,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 /// <summary>
 /// Used to indicate when a string or Uri property is 'find and replaceable' through the FindAndReplaceUI
 /// </summary>
-[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Property)]
 public class AdjustableLocationAttribute : Attribute
 {
 }

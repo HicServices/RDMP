@@ -179,7 +179,7 @@ public class FTPDownloader : IPluginDataProvider
                 : $"ftp://{_host}";
 
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-            reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
+            var reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
             reqFTP.UseBinary = true;
             reqFTP.Credentials = new NetworkCredential(_username, _password);
@@ -233,7 +233,7 @@ public class FTPDownloader : IPluginDataProvider
         if (serverUri.Scheme != Uri.UriSchemeFtp) return;
 
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-        reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
+        var reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(uri));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
         reqFTP.Credentials = new NetworkCredential(_username, _password);
         reqFTP.KeepAlive = false;
@@ -250,24 +250,7 @@ public class FTPDownloader : IPluginDataProvider
 
         using (var writeStream = new FileStream(destinationFileName, FileMode.Create))
         {
-            var Length = 2048;
-            var buffer = new byte[Length];
-            var bytesRead = responseStream.Read(buffer, 0, Length);
-            var totalBytesReadSoFar = bytesRead;
-
-            while (bytesRead > 0)
-            {
-                writeStream.Write(buffer, 0, bytesRead);
-                bytesRead = responseStream.Read(buffer, 0, Length);
-
-
-                //notify whoever is listening of how far along the process we are
-                totalBytesReadSoFar += bytesRead;
-                job.OnProgress(this,
-                    new ProgressEventArgs(destinationFileName,
-                        new ProgressMeasurement(totalBytesReadSoFar / 1024, ProgressType.Kilobytes), s.Elapsed));
-            }
-
+            responseStream.CopyTo(writeStream);
             writeStream.Close();
         }
 
@@ -282,9 +265,8 @@ public class FTPDownloader : IPluginDataProvider
         if (exitCode == ExitCodeType.Success && DeleteFilesOffFTPServerAfterSuccesfulDataLoad)
             foreach (var file in _filesRetrieved)
             {
-                FtpWebRequest reqFTP;
 #pragma warning disable SYSLIB0014 // Type or member is obsolete
-                reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(file));
+                var reqFTP = (FtpWebRequest)WebRequest.Create(new Uri(file));
 #pragma warning restore SYSLIB0014 // Type or member is obsolete
                 reqFTP.Credentials = new NetworkCredential(_username, _password);
                 reqFTP.KeepAlive = false;

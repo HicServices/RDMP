@@ -28,14 +28,12 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
 public class CachedFileRetrieverTests : DatabaseTests
 {
-    private ILoadProgress _lpMock;
-    private ICacheProgress _cpMock;
+    private readonly ILoadProgress _lpMock;
 
     public CachedFileRetrieverTests()
     {
-        _cpMock = Substitute.For<ICacheProgress>();
-        _lpMock = Substitute.For<ILoadProgress>();
-        _lpMock.CacheProgress.Returns(_cpMock);
+        var cpMock = Mock.Of<ICacheProgress>();
+        _lpMock = Mock.Of<ILoadProgress>(l=>l.CacheProgress == cpMock);
     }
 
     [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]

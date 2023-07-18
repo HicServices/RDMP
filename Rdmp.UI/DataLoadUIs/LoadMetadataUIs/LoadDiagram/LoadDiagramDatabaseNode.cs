@@ -26,8 +26,6 @@ public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
 {
     private readonly LoadBubble _bubble;
     public readonly DiscoveredDatabase Database;
-    private readonly TableInfo[] _loadTables;
-    private readonly HICDatabaseConfiguration _config;
 
     public LoadDiagramState State { get; set; }
 
@@ -42,12 +40,10 @@ public class LoadDiagramDatabaseNode : Node, IHasLoadDiagramState, IKnowWhatIAm
     {
         _bubble = bubble;
         Database = database;
-        _loadTables = loadTables;
-        _config = config;
 
         DatabaseName = Database.GetRuntimeName();
 
-        _anticipatedChildren.AddRange(_loadTables.Select(t => new LoadDiagramTableNode(this, t, _bubble, _config)));
+        _anticipatedChildren.AddRange(loadTables.Select(t => new LoadDiagramTableNode(this, t, _bubble, config)));
     }
 
     public IEnumerable<object> GetChildren()

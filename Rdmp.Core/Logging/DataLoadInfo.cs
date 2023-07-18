@@ -7,16 +7,18 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Xml.Serialization;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.Core.Logging;
 
 /// <summary>
 /// Root object for an ongoing logged activity e.g. 'Loading Biochemistry'.  Includes the package name (exe or class name that is primarily responsible
 /// for the activity), start time, description etc.  You must call CloseAndMarkComplete once your activity is completed (whether it has failed or succeeded).
-///
+/// 
 /// <para>You should maintain a reference to DataLoadInfo in order to create logs of Progress / Errors / and table load audits
 /// (TableLoadInfo) (create these via the LogManager).  The ID property can be used if you want to reference this audit record e.g. when loading a live table
 /// you can store the ID of the load batch it appeared in. </para>
@@ -82,7 +84,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
         Description = description;
         StartTime = DateTime.Now;
         SuggestedRollbackCommand = suggestedRollbackCommand;
-            
+
         ID = -1;
         IsTest = isTest;
 
@@ -160,7 +162,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
         //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
         var parentTaskID = int.Parse(result.ToString());
-                                
+
         cmd = DatabaseSettings.GetCommand(
             @"INSERT INTO DataLoadRun (description,startTime,dataLoadTaskID,isTest,packageName,userAccount,suggestedRollbackCommand) VALUES (@description,@startTime,@dataLoadTaskID,@isTest,@packageName,@userAccount,@suggestedRollbackCommand);
 SELECT @@IDENTITY;", con);
@@ -221,7 +223,7 @@ SELECT @@IDENTITY;", con);
             }
 
             //once a record has been committed to the database it is redundant and no further attempts to read/change it should be made by anyone
-            foreach (var t in TableLoads.Values.Where(t => !t.IsClosed))
+            foreach (var t in TableLoads.Values.Where(static t => !t.IsClosed))
             {
                 t.CloseAndArchive();
             }
@@ -248,7 +250,7 @@ SELECT @@IDENTITY;", con);
         DataSource[] sources, int expectedInserts) => new TableLoadInfo(this, suggestedRollbackCommand,
         destinationTable, sources, expectedInserts);
 
-    public static DataLoadInfo Empty= new();
+    public static readonly DataLoadInfo Empty= new();
 
     private DataLoadInfo()
     {
@@ -279,10 +281,10 @@ SELECT @@IDENTITY;", con);
         using var con = DatabaseSettings.GetConnection();
         con.Open();
 
-        //look up the fatal error ID (get hte name of the Enum so that we can refactor if necessary without breaking the code looking for a constant string)
+        //look up the fatal error ID (get the name of the Enum so that we can refactor if necessary without breaking the code looking for a constant string)
         var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
-                
+
         var cmdLookupStatusID = DatabaseSettings.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
         DatabaseSettings.AddParameterWithValueToCommand("@status",cmdLookupStatusID, initialErrorStatus);
 
@@ -303,7 +305,6 @@ SELECT @@IDENTITY;", con);
             CloseAndMarkComplete();
     }
 
-    [XmlType("DataLoadInfo.ProgressEventType")]
     public enum ProgressEventType
     {
         OnInformation,
@@ -313,20 +314,42 @@ SELECT @@IDENTITY;", con);
         OnWarning
     }
 
-    public void LogProgress(ProgressEventType pevent, string Source, string Description)
+    private static int logCounter = 0;
+    private static long logTime = 0;
+    public void LogProgress(ProgressEventType pevent, string source, string description)
     {
-        using var con = DatabaseSettings.GetConnection();
-        using var cmdRecordProgress = DatabaseSettings.GetCommand("INSERT INTO ProgressLog " +
-                                                         "(dataLoadRunID,eventType,source,description,time) " +
-                                                         "VALUES (@dataLoadRunID,@eventType,@source,@description,@time);", con);
-        con.Open();
+        var sw = Stopwatch.StartNew();
+        logCounter++;
+        try
+        {
+            using var con = DatabaseSettings.GetConnection();
+            using var cmdRecordProgress = DatabaseSettings.GetCommand("INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);", con);
+            cmdRecordProgress.CommandTimeout = 120;
+            con.Open();
 
-        DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID",cmdRecordProgress, ID);
-        DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, pevent.ToString());
-        DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordProgress, Source);
-        DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordProgress, Description);
-        DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordProgress, DateTime.Now);
+            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID",cmdRecordProgress, ID);
+            DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, pevent.ToString());
+            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordProgress, source);
+            DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordProgress, description);
+            DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordProgress, DateTime.Now);
 
-        cmdRecordProgress.ExecuteNonQuery();
+            cmdRecordProgress.ExecuteNonQuery();
+            if (sw.ElapsedMilliseconds <= 1000) return;
+
+            using var cmdRecordSlowWarning = DatabaseSettings.GetCommand("INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);", con);
+            cmdRecordSlowWarning.CommandTimeout = 120;
+
+            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID",cmdRecordSlowWarning, ID);
+            DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordSlowWarning, ProgressEventType.OnWarning.ToString());
+            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordSlowWarning, "RDMP");
+            DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordSlowWarning, $"Warning: slow log entry detected ({sw.ElapsedMilliseconds}ms; total {logTime+sw.ElapsedMilliseconds} so far for {logCounter} inserts)");
+            DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordSlowWarning, DateTime.Now);
+
+            cmdRecordSlowWarning.ExecuteNonQuery();
+        }
+        finally
+        {
+            logTime += sw.ElapsedMilliseconds;
+        }
     }
 }

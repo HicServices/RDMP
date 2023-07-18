@@ -59,7 +59,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// <summary>
     /// Set to true to suppress yes/no dialogues from showing e.g. if there is too much data
     /// (see <see cref="MAXIMUM_CELLS_BEFORE_WARNING"/>) to sensibly render.  If true then
-    /// the sensible descision is taken e.g. to not try to render.
+    /// the sensible decision is taken e.g. to not try to render.
     /// 
     /// </summary>
     public bool Silent { get; set; }
@@ -77,12 +77,12 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public event DataTableHandler GraphTableRetrieved;
 
     private AggregateConfiguration _aggregateConfiguration;
-    private ToolStripMenuItem miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
-    private ToolStripMenuItem miCopyToClipboard = new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
-    private ToolStripMenuItem miClipboardWord = new("Word Format");
-    private ToolStripMenuItem miClipboardCsv = new("Comma Separated Format");
-    private ToolStripMenuItem btnCache = new("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
-    private ToolStripButton btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+    private readonly ToolStripMenuItem _miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
+    private readonly ToolStripMenuItem _miCopyToClipboard = new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
+    private readonly ToolStripMenuItem _miClipboardWord = new("Word Format");
+    private readonly ToolStripMenuItem _miClipboardCsv = new("Comma Separated Format");
+    private readonly ToolStripMenuItem _btnCache = new("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
+    private readonly ToolStripButton _btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
     private readonly ToolStripTimeout _timeoutControls = new();
 
     private ToolStripMenuItem miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
@@ -125,20 +125,20 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
         Timeout = 300;
 
-        miCopyToClipboard.DropDownItems.Add(miClipboardWord);
-        miCopyToClipboard.DropDownItems.Add(miClipboardCsv);
+        _miCopyToClipboard.DropDownItems.Add(_miClipboardWord);
+        _miCopyToClipboard.DropDownItems.Add(_miClipboardCsv);
 
-        miClipboardWord.Click += ClipboardClick;
-        miClipboardWord.ToolTipText = "Copies data as HTML formatted (for pasting into Word / Excel etc)";
-        miClipboardCsv.Click += ClipboardClick;
-        miClipboardCsv.ToolTipText = "Copies data as CSV formatted";
+        _miClipboardWord.Click += ClipboardClick;
+        _miClipboardWord.ToolTipText = "Copies data as HTML formatted (for pasting into Word / Excel etc)";
+        _miClipboardCsv.Click += ClipboardClick;
+        _miClipboardCsv.ToolTipText = "Copies data as CSV formatted";
 
-        btnResendQuery.Click += btnResendQuery_Click;
-        miSaveImages.Click += MiSaveImagesClick;
-        btnCache.Click += btnCache_Click;
+        _btnResendQuery.Click += btnResendQuery_Click;
+        _miSaveImages.Click += MiSaveImagesClick;
+        _btnCache.Click += btnCache_Click;
 
 
-        btnCache.Enabled = false;
+        _btnCache.Enabled = false;
     }
 
     private void SetToolbarButtonsEnabled(bool enabled)
@@ -149,10 +149,10 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             return;
         }
 
-        miSaveImages.Enabled = enabled && _dt is { Rows.Count: > 0 };
-        miClipboardCsv.Enabled = enabled && _dt is { Rows.Count: > 0 };
-        miClipboardWord.Enabled = enabled && _dt is { Rows.Count: > 0 };
-        btnResendQuery.Enabled = enabled;
+        _miSaveImages.Enabled = enabled && _dt is { Rows.Count: > 0 };
+        _miClipboardCsv.Enabled = enabled && _dt is { Rows.Count: > 0 };
+        _miClipboardWord.Enabled = enabled && _dt is { Rows.Count: > 0 };
+        _btnResendQuery.Enabled = enabled;
     }
 
     public AggregateConfiguration AggregateConfiguration => _aggregateConfiguration;
@@ -205,7 +205,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         pbLoading.Visible = true;
         llCancel.Visible = true;
 
-        btnCache.Enabled = false;
+        _btnCache.Enabled = false;
 
         label1.ForeColor = Color.Black;
         label1.Text = GetDescription();
@@ -220,8 +220,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             : AggregateConfiguration.Description;
 
     private DbCommand _cmd;
-
-    private ChartDashStyle[] StyleList = {
+    private readonly ChartDashStyle[] _styleList = {
         ChartDashStyle.Solid,
         ChartDashStyle.Dash,
         ChartDashStyle.Dot,
@@ -513,7 +512,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 chart1.Series[index].ChartType = SeriesChartType.Line;
 
                 //alternate in rotating style the various lines on the graph
-                chart1.Series[index].BorderDashStyle = StyleList[index % StyleList.Length];
+                chart1.Series[index].BorderDashStyle = _styleList[index%_styleList.Length];
                 chart1.Series[index].BorderWidth = 2;
             }
             else
@@ -566,11 +565,12 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         lblLoadStage.Visible = false;
 
         //set publish enabledness to the enabledness of
-        btnCache.Enabled =Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
+        _btnCache.Enabled =Activator.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
         btnClearFromCache.Enabled = false;
 
         //Make publish button enabledness be dependant on cache
-        if (btnCache.Enabled)
+        if (_btnCache.Enabled)
+        {
             //let them clear if there is a query caching server and the manager has cached results already
             btnClearFromCache.Enabled =
                 GetCacheManager()
@@ -702,7 +702,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     /// Normally you don't need to worry about double subscriptions but this graph gets recycled during MetadataReport generation with different aggregates one
     /// after the other which violates the 1 subscription per control rule (see base.SetDatabaseObject)
     /// </summary>
-    private bool menuInitialized;
+    private bool _menuInitialized;
 
     private bool _ribbonInitialized;
 
@@ -717,20 +717,20 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     protected void BuildMenu(IActivateItems activator)
     {
-        if (!menuInitialized)
+        if (!_menuInitialized)
         {
-            menuInitialized = true;
+            _menuInitialized = true;
 
             if (DatabaseObject != null)
                 CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, DatabaseObject));
 
             CommonFunctionality.AddToMenu(new ToolStripSeparator());
 
-            CommonFunctionality.AddToMenu(miSaveImages);
-            CommonFunctionality.AddToMenu(miCopyToClipboard);
-            CommonFunctionality.AddToMenu(btnCache);
+            CommonFunctionality.AddToMenu(_miSaveImages);
+            CommonFunctionality.AddToMenu(_miCopyToClipboard);
+            CommonFunctionality.AddToMenu(_btnCache);
 
-            CommonFunctionality.Add(btnResendQuery);
+            CommonFunctionality.Add(_btnResendQuery);
 
             foreach (var c in _timeoutControls.GetControls())
                 CommonFunctionality.Add(c);
@@ -794,31 +794,30 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private void MiSaveImagesClick(object sender, EventArgs e)
     {
-        var sfd = new SaveFileDialog
+        using var sfd = new SaveFileDialog
         {
             FileName = "Chart.jpg",
             Filter = "Jpeg|*.jpg"
         };
-        if (sfd.ShowDialog() == DialogResult.OK)
+        if (sfd.ShowDialog() != DialogResult.OK) return;
+
+        chart1.SaveImage(sfd.FileName, ChartImageFormat.Jpeg);
+
+        if (heatmapUI.HasDataTable())
         {
-            chart1.SaveImage(sfd.FileName, ChartImageFormat.Jpeg);
+            var directory = Path.GetDirectoryName(sfd.FileName);
+            var filename = $"{Path.GetFileNameWithoutExtension(sfd.FileName)}_HeatMap.jpg";
+            var heatmapPath = Path.Combine(directory, filename);
 
-            if (heatmapUI.HasDataTable())
-            {
-                var directory = Path.GetDirectoryName(sfd.FileName);
-                var filename = $"{Path.GetFileNameWithoutExtension(sfd.FileName)}_HeatMap.jpg";
-                var heatmapPath = Path.Combine(directory, filename);
-
-                heatmapUI.SaveImage(heatmapPath, ImageFormat.Jpeg);
-            }
-
-            UsefulStuff.ShowPathInWindowsExplorer(new FileInfo(sfd.FileName));
+            heatmapUI.SaveImage(heatmapPath, ImageFormat.Jpeg);
         }
+
+        UsefulStuff.ShowPathInWindowsExplorer(new FileInfo(sfd.FileName));
     }
 
     private void ClipboardClick(object sender, EventArgs e)
     {
-        if (sender == miClipboardWord)
+        if(sender == _miClipboardWord)
         {
             var s = UsefulStuff.DataTableToHtmlDataTable(_dt);
 
@@ -827,7 +826,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             Clipboard.SetText(formatted,TextDataFormat.Html);
         }
 
-        if (sender == miClipboardCsv)
+        if (sender == _miClipboardCsv)
         {
             var s = UsefulStuff.DataTableToCsv(_dt);
             Clipboard.SetText(s);

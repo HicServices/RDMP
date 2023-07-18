@@ -311,6 +311,10 @@ public class MDFAttacherTests : DatabaseTests
         _ = (IAttacher)constructorInfo.Invoke(Array.Empty<object>());
 
 
+        //call the blank constructor and return the results
+        var bob = (IAttacher) constructorInfo.Invoke(new Type[] {});
+
+        
     }
 
     [Test]
@@ -320,10 +324,9 @@ public class MDFAttacherTests : DatabaseTests
         var testDir = workingDir.CreateSubdirectory("MDFAttacherTests_TestFactory");
         var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestFactory", true);
 
+        var attacher = MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
         try
         {
-
-            var attacher = MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
             Assert.IsNotNull(attacher);

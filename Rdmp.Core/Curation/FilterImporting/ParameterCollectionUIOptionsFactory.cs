@@ -123,7 +123,7 @@ public class ParameterCollectionUIOptionsFactory
             ExtractionFilterParameterSet extractionFilterParameterSet => Create(extractionFilterParameterSet),
             AggregateConfiguration aggregateConfiguration => Create(aggregateConfiguration, coreChildProvider),
             IFilter filter => Create(filter,
-                new FilterUIOptionsFactory().Create(filter).GetGlobalParametersInFilterScope()),
+                FilterUIOptionsFactory.Create(filter).GetGlobalParametersInFilterScope()),
             CohortIdentificationConfiguration cohortIdentificationConfiguration => Create(
                 cohortIdentificationConfiguration, coreChildProvider),
             ExtractionConfiguration extractionConfiguration => Create(extractionConfiguration),

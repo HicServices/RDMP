@@ -36,7 +36,7 @@ public class CohortDescriptionDataTableAsyncFetch
     {
         Task = new Task(() =>
         {
-            var server = DataAccessPortal.GetInstance().ExpectDatabase(Source, DataAccessContext.DataExport).Server;
+            var server = DataAccessPortal.ExpectDatabase(Source, DataAccessContext.DataExport).Server;
             using var con = server.GetConnection();
             con.Open();
             using var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con);

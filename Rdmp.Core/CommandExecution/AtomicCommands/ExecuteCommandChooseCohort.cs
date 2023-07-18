@@ -19,9 +19,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
-    private DataExportChildProvider _childProvider;
-    private List<ExtractableCohort> _compatibleCohorts = new();
-    private ExtractableCohort _pick;
+    private readonly List<ExtractableCohort> _compatibleCohorts = new();
+    private readonly ExtractableCohort _pick;
 
     public ExecuteCommandChooseCohort(IBasicActivateItems activator,
         [DemandsInitialization("The configuration to change the cohort on")]
@@ -46,16 +45,16 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
             return;
         }
 
-        _childProvider = BasicActivator.CoreChildProvider as DataExportChildProvider;
+        var childProvider = BasicActivator.CoreChildProvider as DataExportChildProvider;
 
-        if (_childProvider == null)
+        if (childProvider == null)
         {
             SetImpossible("Activator.CoreChildProvider is not an DataExportChildProvider");
             return;
         }
 
         //find cohorts that match the project number
-        if (_childProvider.ProjectNumberToCohortsDictionary.TryGetValue(project.ProjectNumber.Value, out var value))
+        if (childProvider.ProjectNumberToCohortsDictionary.TryGetValue(project.ProjectNumber.Value, out var value))
             _compatibleCohorts = value.Where(c=>!c.IsDeprecated).ToList();
 
         //if there's only one compatible cohort and that one is already selected

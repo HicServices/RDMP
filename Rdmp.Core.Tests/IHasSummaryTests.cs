@@ -20,7 +20,6 @@ internal class IHasSummaryTests : UnitTests
             {
                 var text = obj.GetSummary(true, true);
                 Assert.IsNotNull(text);
-                objectCount++;
             }
             catch (Exception ex)
             {

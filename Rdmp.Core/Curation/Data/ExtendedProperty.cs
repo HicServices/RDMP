@@ -110,14 +110,10 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     public ExtendedProperty(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable setOn, string name,
         object value)
     {
-        if (repository == null)
-            throw new ArgumentNullException(nameof(repository));
-        if (value == null)
-            throw new ArgumentNullException(nameof(value));
-        if (setOn == null)
-            throw new ArgumentNullException(nameof(setOn));
-        if (name == null)
-            throw new ArgumentNullException(nameof(name));
+        ArgumentNullException.ThrowIfNull(repository);
+        ArgumentNullException.ThrowIfNull(value);
+        ArgumentNullException.ThrowIfNull(setOn);
+        ArgumentNullException.ThrowIfNull(name);
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {

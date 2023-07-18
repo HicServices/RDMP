@@ -362,35 +362,33 @@ public class Validator
 
         var o = _domainObject;
 
-        if (o is DbDataReader reader)
+        switch (o)
         {
-            names = new string[reader.FieldCount];
-            values = new object[reader.FieldCount];
-
-            for (var i = 0; i < reader.FieldCount; i++)
+            case DbDataReader reader:
             {
-                names[i] = reader.GetName(i);
+                names = new string[reader.FieldCount];
+                values = new object[reader.FieldCount];
 
-                if (reader[i] == DBNull.Value)
-                    values[i] = null;
-                else
-                    values[i] = reader[i].ToString();
+                for (var i = 0; i < reader.FieldCount; i++)
+                {
+                    names[i] = reader.GetName(i);
+                    values[i] = reader[i] == DBNull.Value ? null : reader[i].ToString();
+                }
+
+                break;
             }
-        }
-
-        if (o is DataRow row)
-        {
-            names = new string[row.Table.Columns.Count];
-            values = new object[row.Table.Columns.Count];
-
-            for (var i = 0; i < row.Table.Columns.Count; i++)
+            case DataRow row:
             {
-                names[i] = row.Table.Columns[i].ColumnName;
+                names = new string[row.Table.Columns.Count];
+                values = new object[row.Table.Columns.Count];
 
-                if (row[i] == DBNull.Value)
-                    values[i] = null;
-                else
-                    values[i] = row[i].ToString();
+                for (var i = 0; i < row.Table.Columns.Count; i++)
+                {
+                    names[i] = row.Table.Columns[i].ColumnName;
+                    values[i] = row[i] == DBNull.Value ? null : row[i].ToString();
+                }
+
+                break;
             }
         }
 
@@ -427,12 +425,12 @@ public class Validator
                     {
                         var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
 
-                        if (propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out value))
-                            result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
-                                propertiesDictionary.Keys.ToArray());
-                        else
+                        if (!propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out value))
                             throw new MissingFieldException(
                                 $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+
+                        result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
+                            propertiesDictionary.Keys.ToArray());
                         break;
                     }
                 }

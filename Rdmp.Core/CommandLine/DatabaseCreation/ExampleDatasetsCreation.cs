@@ -457,35 +457,39 @@ public partial class ExampleDatasetsCreation
         con.Open();
         using(var cmd = db.Server.GetCommand(
 
-                  @"create view vConditions as
+                  """
+                  create view vConditions as
 
-SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Condition,Field
-FROM
-(
-  SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainCondition,OtherCondition1,OtherCondition2,OtherCondition3
-  FROM HospitalAdmissions
-) AS cp
-UNPIVOT 
-(
-  Condition FOR Field IN (MainCondition,OtherCondition1,OtherCondition2,OtherCondition3)
-) AS up;",con))
+                  SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Condition,Field
+                  FROM
+                  (
+                    SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainCondition,OtherCondition1,OtherCondition2,OtherCondition3
+                    FROM HospitalAdmissions
+                  ) AS cp
+                  UNPIVOT
+                  (
+                    Condition FOR Field IN (MainCondition,OtherCondition1,OtherCondition2,OtherCondition3)
+                  ) AS up;
+                  """,con))
             cmd.ExecuteNonQuery();
 
 
         using(var cmd = db.Server.GetCommand(
-                  @"create view vOperations as
+                  """
+                  create view vOperations as
 
-SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Operation,Field
-FROM
-(
-  SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainOperation,OtherOperation1,OtherOperation2,OtherOperation3
-  FROM HospitalAdmissions
-) AS cp
-UNPIVOT 
-(
-  Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
-) AS up;",con))
-            cmd.ExecuteNonQuery();
+                  SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,Operation,Field
+                  FROM
+                  (
+                    SELECT chi,DateOfBirth,AdmissionDate,DischargeDate,MainOperation,OtherOperation1,OtherOperation2,OtherOperation3
+                    FROM HospitalAdmissions
+                  ) AS cp
+                  UNPIVOT
+                  (
+                    Operation FOR Field IN (MainOperation,OtherOperation1,OtherOperation2,OtherOperation3)
+                  ) AS up;
+                  """,con))
+                cmd.ExecuteNonQuery();
     }
 
     private IFilter CreateFilter(ICatalogue cata, string name, string parentExtractionInformation, string whereSql,

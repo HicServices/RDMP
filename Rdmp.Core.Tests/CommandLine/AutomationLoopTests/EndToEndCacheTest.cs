@@ -35,8 +35,6 @@ public class EndToEndCacheTest : DatabaseTests
     private TestDataPipelineAssembler _testPipeline;
     private LoadDirectory _LoadDirectory;
 
-    private const int NumDaysToCache = 5;
-
     [SetUp]
     protected override void SetUp()
     {

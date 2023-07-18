@@ -543,7 +543,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             return new DataTable();
 
         var toReturn = new DataTable();
-        var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false);
+        toReturn.BeginLoadData();
+        var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport,false);
 
         using var con = server.GetConnection();
         con.Open();
@@ -554,6 +555,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         da.Fill(0, 1000, toReturn);
 
         con.Close();
+        toReturn.EndLoadData();
 
         return toReturn;
     }

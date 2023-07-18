@@ -21,7 +21,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 /// <summary>
 /// Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For example storing all LabNumbers stored in
 /// DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber and putting in the appropriate
-/// replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored proceedure SubstitutionStoredProcedure.
+/// replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored procedure SubstitutionStoredProcedure.
 /// </summary>
 public class ANOTransformer
 {
@@ -54,8 +54,7 @@ public class ANOTransformer
                 $"Expected destination column {destColumn.ColumnName} to be {ANOTable.ANOPrefix}{srcColumn.ColumnName}");
 
         if (tableOfIdentifiersRequiringSubstitution.Columns.Count != 1)
-            throw new Exception(
-                "Expected only a single columns to be dispatched to SubstituteIdentifiersForANOEquivalents");
+            throw new Exception("Expected only a single columns to be dispatched to SubstituteIdentifiersForANOEquivalents");
 
         //if there is no data to transform, don't bother
         if (table.Rows.Count == 0 || tableOfIdentifiersRequiringSubstitution.Rows.Count == 0)
@@ -68,8 +67,7 @@ public class ANOTransformer
         substitutionTable.PrimaryKey = new[] { substitutionTable.Columns[0] };
 
         if (substitutionTable.Columns.Count != 2)
-            throw new Exception(
-                "Expected only a two columns to be returned by SubstituteIdentifiersForANOEquivalents, the original primary key and the substitution identifier");
+            throw new Exception("Expected only a two columns to be returned by SubstituteIdentifiersForANOEquivalents, the original primary key and the substitution identifier");
 
         if (substitutionTable.Columns[0].ColumnName.StartsWith(ANOTable.ANOPrefix))
             throw new Exception(
@@ -98,7 +96,7 @@ public class ANOTransformer
         }
     }
 
-    private static DataTable ColumnToDataTable(DataColumn column,bool discardNulls)
+    private static DataTable ColumnToDataTable(DataColumn column, bool discardNulls)
     {
         var table = new DataTable();
         table.BeginLoadData();
@@ -123,8 +121,8 @@ public class ANOTransformer
     private DataTable GetSubstitutionsForANOEquivalents(DataTable table, bool previewOnly)
     {
         using var con = (SqlConnection)_server.GetConnection();
-        con.InfoMessage+=_con_InfoMessage;
-                
+        con.InfoMessage += _con_InfoMessage;
+
         if (table.Rows.Count == 0)
             return table;
         try
@@ -167,7 +165,7 @@ public class ANOTransformer
             cmdSubstituteIdentifiers.Parameters.Add("@tableName", SqlDbType.VarChar, 500);
             cmdSubstituteIdentifiers.Parameters.Add("@numberOfIntegersToUseInAnonymousRepresentation", SqlDbType.Int);
             cmdSubstituteIdentifiers.Parameters.Add("@numberOfCharactersToUseInAnonymousRepresentation", SqlDbType.Int);
-            cmdSubstituteIdentifiers.Parameters.Add("@suffix", SqlDbType.VarChar,10);
+            cmdSubstituteIdentifiers.Parameters.Add("@suffix", SqlDbType.VarChar, 10);
 
             //table valued parameter
             cmdSubstituteIdentifiers.Parameters["@batch"].TypeName = "dbo.Batch";
@@ -223,7 +221,7 @@ public class ANOTransformer
     }
 
 
-    public static void ConfirmDependencies(DiscoveredDatabase database,ICheckNotifier notifier)
+    public static void ConfirmDependencies(DiscoveredDatabase database, ICheckNotifier notifier)
     {
         try
         {

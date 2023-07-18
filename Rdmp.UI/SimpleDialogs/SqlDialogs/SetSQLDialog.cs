@@ -20,7 +20,6 @@ namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 public partial class SetSQLDialog : Form
 {
     public Scintilla QueryEditor;
-    private bool _designMode;
 
     public string Result => QueryEditor.Text;
 
@@ -28,9 +27,9 @@ public partial class SetSQLDialog : Form
     {
         InitializeComponent();
             
-        _designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+        var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
-        if (_designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create(commandFactory);

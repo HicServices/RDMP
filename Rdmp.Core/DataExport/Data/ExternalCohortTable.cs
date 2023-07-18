@@ -242,7 +242,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     /// <inheritdoc/>
     public bool IDExistsInCohortTable(int originID)
     {
-        var server = DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport);
+        var server = DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport);
 
         using var con = server.GetConnection();
         con.Open();

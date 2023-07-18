@@ -24,7 +24,6 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation;
 internal class NightmareDatasets : DataGenerator
 {
     private IRDMPPlatformRepositoryServiceLocator _repos;
-    private DiscoveredDatabase _db;
     private string _serverName;
     private string _databaseNameWrapped;
     private string _databaseNameRuntime;
@@ -38,10 +37,10 @@ internal class NightmareDatasets : DataGenerator
     public NightmareDatasets(IRDMPPlatformRepositoryServiceLocator repos, DiscoveredDatabase db) : base(new Random(123))
     {
         _repos = repos;
-        _db = db;
-        _serverName = _db.Server.Name;
-        _databaseNameWrapped = _db.GetWrappedName();
-        _databaseNameRuntime = _db.GetRuntimeName();
+        var db1 = db;
+        _serverName = db1.Server.Name;
+        _databaseNameWrapped = db1.GetWrappedName();
+        _databaseNameRuntime = db1.GetRuntimeName();
     }
 
     private BucketList<Catalogue> Catalogues = new ();

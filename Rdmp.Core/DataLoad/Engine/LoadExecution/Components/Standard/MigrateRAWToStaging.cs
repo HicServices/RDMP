@@ -23,17 +23,15 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 public class MigrateRAWToStaging : DataLoadComponent
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
-    private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
 
     private readonly Stack<IDisposeAfterDataLoad> _toDispose = new();
 
     public MigrateRAWToStaging(HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
-        _loadConfigurationFlags = loadConfigurationFlags;
 
         Description = "Migrate RAW to Staging";
-        SkipComponent = !_loadConfigurationFlags.DoLoadToStaging;
+        SkipComponent = !loadConfigurationFlags.DoLoadToStaging;
     }
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)

@@ -13,7 +13,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Progress;
 /// </summary>
 public class ForkDataLoadEventListener : IDataLoadEventListener
 {
-    private IDataLoadEventListener[] _listeners;
+    private readonly IDataLoadEventListener[] _listeners;
 
     public ForkDataLoadEventListener(params IDataLoadEventListener[] listeners)
     {
