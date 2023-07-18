@@ -25,7 +25,7 @@ namespace Rdmp.Core.Logging;
 /// 
 /// <para>You can both create new logging records and fetch old ones.  New logging objects are generally maintained for future use e.g. when you want to record
 /// that a new table is being loaded during a given load (DataLoadInfo) you must pass the load log object (DataLoadInfo).  Live logging objects generally
-/// must be closed to indicate that they are completed (succesfully or otherwise), if you do not close a logging object then the EndTime will be left
+/// must be closed to indicate that they are completed (successfully or otherwise), if you do not close a logging object then the EndTime will be left
 /// blank and it will be unclear if a process blue screened or if it all went fine (other than the ongoing accumulation of log events, errors etc).</para>
 /// 
 /// <para>Fetching old records is done based on ID, Task Name etc and is also handled by this class. The objects returned will be ArchivalDataLoadInfo objects
@@ -87,9 +87,9 @@ public class LogManager : ILogManager
 
         if (topX.HasValue)
             prefix = $"TOP {topX.Value}";
-            
+
         return GetAsTable(
-            $"SELECT {prefix} * FROM {filter.LoggingTable} {where} ORDER BY ID {(sortDesc ? "Desc" : "Asc")}");
+            $"SELECT {prefix} * FROM {filter.LoggingTable}  WITH (NOLOCK) {where} ORDER BY ID {(sortDesc ? "Desc" : "Asc")}");
     }
 
     private DataTable GetAsTable(string sql)
@@ -103,7 +103,7 @@ public class LogManager : ILogManager
         using var da = Server.GetDataAdapter(cmd);
         da.Fill(dt);
         dt.EndLoadData();
-                
+
         return dt;
     }
 
