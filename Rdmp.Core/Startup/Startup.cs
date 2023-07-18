@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.Loader;
 using FAnsi.Discovery;
@@ -236,8 +237,10 @@ public class Startup
     /// <param name="notifier"></param>
     private static void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
-        foreach (var (name, body) in catalogueRepository.PluginManager.GetCompatiblePlugins()
-                     .SelectMany(static p => p.LoadModuleAssemblies).SelectMany(static a => a.GetContents()))
+        /*foreach (var (name, body) in catalogueRepository.PluginManager.GetCompatiblePlugins()
+                     .SelectMany(static p => p.LoadModuleAssemblies).SelectMany(static a => a.GetContents()))*/
+        // Ignore tiny nupkg files from  old 'unit test'
+        foreach(var (name,body) in  Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory,"*.nupkg").Where(path=>new FileInfo(path).Length>100).Select(File.OpenRead).SelectMany(LoadModuleAssembly.GetContents))
         {
             try
             {
