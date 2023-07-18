@@ -128,6 +128,8 @@ public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     internal static IEnumerable<ValueTuple<string,MemoryStream>> GetContents(Stream pluginStream)
     {
         var isWin = Environment.OSVersion.Platform == PlatformID.Win32NT;
+        if (!pluginStream.CanSeek)
+            throw new ArgumentException("Seek needed", nameof(pluginStream));
         using var zip = new ZipFile(pluginStream);
         foreach (var e in zip.Cast<ZipEntry>()
                      .Where(static e => e.IsFile && e.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
