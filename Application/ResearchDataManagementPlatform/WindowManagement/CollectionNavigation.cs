@@ -7,6 +7,7 @@
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
 using System.Collections.Generic;
+using Equ;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace ResearchDataManagementPlatform.WindowManagement;
@@ -14,15 +15,16 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// <summary>
 /// Records the fact that the user visited a specific object in a tree collection
 /// </summary>
-public class CollectionNavigation : INavigation
+public sealed class CollectionNavigation: PropertywiseEquatable<CollectionNavigation>, INavigation
 {
     public IMapsDirectlyToDatabaseTable Object { get; }
 
+    [MemberwiseEqualityIgnore]
     public bool IsAlive => Object is not IMightNotExist o || o.Exists();
 
-    public CollectionNavigation(IMapsDirectlyToDatabaseTable Object)
+    public CollectionNavigation(IMapsDirectlyToDatabaseTable @object)
     {
-        this.Object = Object;
+        Object = @object;
     }
 
     public void Activate(ActivateItems activateItems)
@@ -32,19 +34,10 @@ public class CollectionNavigation : INavigation
 
     public void Close()
     {
+
     }
-
-    public override string ToString() => Object.ToString();
-
-    public override bool Equals(object obj) =>
-        obj is CollectionNavigation other &&
-        Object.Equals(other.Object);
-
-    public override int GetHashCode()
+    public override string ToString()
     {
-        unchecked
-        {
-            return 162302186 + EqualityComparer<IMapsDirectlyToDatabaseTable>.Default.GetHashCode(Object);
-        }
+        return Object.ToString();
     }
 }

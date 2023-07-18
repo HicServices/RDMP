@@ -8,11 +8,10 @@ using System;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
-using Plugin.Settings.Abstractions;
 
 namespace Rdmp.Core.ReusableLibraryCode.Settings;
 
-internal class RDMPApplicationSettings : ISettings
+internal sealed class RDMPApplicationSettings
 {
     private readonly IsolatedStorageFile store;
     private readonly object locker = new();
@@ -30,14 +29,13 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    /// Add or Upate
+    /// Add or Update
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="value"></param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns></returns>
-    private bool AddOrUpdateValueInternal<T>(string key, T value, string fileName = null)
+    private bool AddOrUpdateValueInternal<T>(string key, T value)
     {
         if (value == null)
         {
@@ -49,57 +47,58 @@ internal class RDMPApplicationSettings : ISettings
         var type = value.GetType();
 
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-            type = type.GenericTypeArguments.FirstOrDefault();
-
-
-        if (type == typeof(string) ||
-            type == typeof(decimal) ||
-            type == typeof(double) ||
-            type == typeof(float) ||
-            type == typeof(DateTime) ||
-            type == typeof(Guid) ||
-            type == typeof(bool) ||
-            type == typeof(int) ||
-            type == typeof(long) ||
-            type == typeof(byte))
         {
-            lock (locker)
+            type = type.GenericTypeArguments.FirstOrDefault() ?? throw new ArgumentException($"Unable to retrieve type of Nullable {value}");
+        }
+
+
+        if (type != typeof(string) &&
+            type != typeof(decimal) &&
+            type != typeof(double) &&
+            type != typeof(float) &&
+            type != typeof(DateTime) &&
+            type != typeof(Guid) &&
+            type != typeof(bool) &&
+            type != typeof(int) &&
+            type != typeof(long) &&
+            type != typeof(byte)) throw new ArgumentException($"Value of type {type.Name} is not supported.");
+
+        lock (locker)
+        {
+            string str;
+
+            switch (value)
             {
-                string str;
-
-                switch (value)
-                {
-                    case decimal:
-                        return AddOrUpdateValue(key,
-                            Convert.ToString(Convert.ToDecimal(value), System.Globalization.CultureInfo.InvariantCulture));
-                    case DateTime:
-                        return AddOrUpdateValue(key,
-                            Convert.ToString(-Convert.ToDateTime(value).ToUniversalTime().Ticks,
-                                System.Globalization.CultureInfo.InvariantCulture));
-                    default:
-                        str = Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
-                        break;
-                }
-
-                string oldValue = null;
-
-                if (store.FileExists(key))
-                {
-                    using var stream = store.OpenFile(key, FileMode.Open);
-                    using var sr = new StreamReader(stream);
-                    oldValue = sr.ReadToEnd();
-                }
-
-                using (var stream = store.OpenFile(key, FileMode.Create, FileAccess.Write))
-                {
-                    using var sw = new StreamWriter(stream);
-                    sw.Write(str);
-                }
-
-                return oldValue != str;
+                case decimal:
+                    return AddOrUpdateValue(key,
+                        Convert.ToString(Convert.ToDecimal(value), System.Globalization.CultureInfo.InvariantCulture));
+                case DateTime:
+                    return AddOrUpdateValue(key,
+                        Convert.ToString(-Convert.ToDateTime(value).ToUniversalTime().Ticks,
+                            System.Globalization.CultureInfo.InvariantCulture));
+                default:
+                    str = Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
+                    break;
             }
 
-        throw new ArgumentException($"Value of type {type.Name} is not supported.");
+            string oldValue = null;
+
+            if (store.FileExists(key))
+            {
+                using var stream = store.OpenFile(key, FileMode.Open);
+                using var sr = new StreamReader(stream);
+                oldValue = sr.ReadToEnd();
+            }
+
+            using (var stream = store.OpenFile(key, FileMode.Create, FileAccess.Write))
+            {
+                using var sw = new StreamWriter(stream);
+                sw.Write(str);
+            }
+
+            return oldValue != str;
+        }
+
     }
 
     /// <summary>
@@ -108,9 +107,8 @@ internal class RDMPApplicationSettings : ISettings
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
     /// <param name="defaultValue"></param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns></returns>
-    private T GetValueOrDefaultInternal<T>(string key, T defaultValue = default, string fileName = null)
+    private T GetValueOrDefaultInternal<T>(string key, T defaultValue = default)
     {
         object value = null;
         lock (locker)
@@ -147,7 +145,8 @@ internal class RDMPApplicationSettings : ISettings
 
                     value = Convert.ToDecimal(savedDecimal, System.Globalization.CultureInfo.InvariantCulture);
 
-                    return null != value ? (T)value : defaultValue;
+                    return (T)value;
+
                 }
 
                 else if (type == typeof(double))
@@ -219,8 +218,7 @@ internal class RDMPApplicationSettings : ISettings
     /// Remove key
     /// </summary>
     /// <param name="key">Key to remove</param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
-    public void Remove(string key, string fileName = null)
+    public void Remove(string key)
     {
         if (store.FileExists(key))
             store.DeleteFile(key);
@@ -229,8 +227,7 @@ internal class RDMPApplicationSettings : ISettings
     /// <summary>
     /// Clear all keys from settings
     /// </summary>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
-    public void Clear(string fileName = null)
+    public void Clear()
     {
         try
         {
@@ -246,9 +243,11 @@ internal class RDMPApplicationSettings : ISettings
     /// Checks to see if the key has been added.
     /// </summary>
     /// <param name="key">Key to check</param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True if contains key, else false</returns>
-    public bool Contains(string key, string fileName = null) => store.FileExists(key);
+    public bool Contains(string key)
+    {
+        return store.FileExists(key);
+    }
 
     #region GetValueOrDefault
 
@@ -259,8 +258,11 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue">default value if not set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>Value or default</returns>
-    public decimal GetValueOrDefault(string key, decimal defaultValue, string fileName = null) =>
-        GetValueOrDefaultInternal(key, defaultValue, fileName);
+    public decimal GetValueOrDefault(string key, decimal defaultValue, string fileName = null)
+    {
+        return
+            GetValueOrDefaultInternal(key, defaultValue);
+    }
 
     /// <summary>
     /// Gets the current value or the default that you specify.
@@ -269,8 +271,11 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue">default value if not set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>Value or default</returns>
-    public bool GetValueOrDefault(string key, bool defaultValue, string fileName = null) =>
-        GetValueOrDefaultInternal(key, defaultValue, fileName);
+    public bool GetValueOrDefault(string key, bool defaultValue, string fileName = null)
+    {
+        return
+            GetValueOrDefaultInternal(key, defaultValue);
+    }
 
     /// <summary>
     /// Gets the current value or the default that you specify.
@@ -279,8 +284,11 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue">default value if not set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>Value or default</returns>
-    public long GetValueOrDefault(string key, long defaultValue, string fileName = null) =>
-        GetValueOrDefaultInternal(key, defaultValue, fileName);
+    public long GetValueOrDefault(string key, long defaultValue, string fileName = null)
+    {
+        return
+            GetValueOrDefaultInternal(key, defaultValue);
+    }
 
     /// <summary>
     /// Gets the current value or the default that you specify.
@@ -289,8 +297,12 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue">default value if not set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>Value or default</returns>
-    public string GetValueOrDefault(string key, string defaultValue, string fileName = null) =>
-        GetValueOrDefaultInternal(key, defaultValue, fileName);
+    public string GetValueOrDefault(string key, string defaultValue, string fileName = null)
+    {
+        return
+            GetValueOrDefaultInternal(key, defaultValue);
+
+    }
 
     /// <summary>
     /// Gets the current value or the default that you specify.
@@ -299,8 +311,12 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue">default value if not set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>Value or default</returns>
-    public int GetValueOrDefault(string key, int defaultValue, string fileName = null) =>
-        GetValueOrDefaultInternal(key, defaultValue, fileName);
+    public int GetValueOrDefault(string key, int defaultValue, string fileName = null)
+    {
+        return
+            GetValueOrDefaultInternal(key, defaultValue);
+
+    }
 
     /// <summary>
     /// Gets the current value or the default that you specify.
@@ -309,8 +325,12 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue">default value if not set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>Value or default</returns>
-    public float GetValueOrDefault(string key, float defaultValue, string fileName = null) =>
-        GetValueOrDefaultInternal(key, defaultValue, fileName);
+    public float GetValueOrDefault(string key, float defaultValue, string fileName = null)
+    {
+        return
+            GetValueOrDefaultInternal(key, defaultValue);
+
+    }
 
     /// <summary>
     /// Gets the current value or the default that you specify.
@@ -319,8 +339,12 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue">default value if not set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>Value or default</returns>
-    public DateTime GetValueOrDefault(string key, DateTime defaultValue, string fileName = null) =>
-        GetValueOrDefaultInternal(key, defaultValue, fileName);
+    public DateTime GetValueOrDefault(string key, DateTime defaultValue, string fileName = null)
+    {
+        return
+            GetValueOrDefaultInternal(key, defaultValue);
+
+    }
 
     /// <summary>
     /// Gets the current value or the default that you specify.
@@ -329,8 +353,12 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue">default value if not set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>Value or default</returns>
-    public Guid GetValueOrDefault(string key, Guid defaultValue, string fileName = null) =>
-        GetValueOrDefaultInternal(key, defaultValue, fileName);
+    public Guid GetValueOrDefault(string key, Guid defaultValue, string fileName = null)
+    {
+        return
+            GetValueOrDefaultInternal(key, defaultValue);
+
+    }
 
     /// <summary>
     /// Gets the current value or the default that you specify.
@@ -339,8 +367,11 @@ internal class RDMPApplicationSettings : ISettings
     /// <param name="defaultValue">default value if not set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>Value or default</returns>
-    public double GetValueOrDefault(string key, double defaultValue, string fileName = null) =>
-        GetValueOrDefaultInternal(key, defaultValue, fileName);
+    public double GetValueOrDefault(string key, double defaultValue, string fileName = null)
+    {
+        return
+            GetValueOrDefaultInternal(key, defaultValue);
+    }
 
     #endregion
 
@@ -349,92 +380,112 @@ internal class RDMPApplicationSettings : ISettings
     /// <summary>
     /// Adds or updates the value
     /// </summary>
-    /// <param name="key">Key for settting</param>
+    /// <param name="key">Key for setting</param>
     /// <param name="value">Value to set</param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True of was added or updated and you need to save it.</returns>
-    public bool AddOrUpdateValue(string key, decimal value, string fileName = null) =>
-        AddOrUpdateValueInternal(key, value, fileName);
+    public bool AddOrUpdateValue(string key, decimal value)
+    {
+        return
+            AddOrUpdateValueInternal(key, value);
+
+    }
 
     /// <summary>
     /// Adds or updates the value
     /// </summary>
-    /// <param name="key">Key for settting</param>
+    /// <param name="key">Key for setting</param>
     /// <param name="value">Value to set</param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True of was added or updated and you need to save it.</returns>
-    public bool AddOrUpdateValue(string key, bool value, string fileName = null) =>
-        AddOrUpdateValueInternal(key, value, fileName);
+    public bool AddOrUpdateValue(string key, bool value)
+    {
+        return
+            AddOrUpdateValueInternal(key, value);
+
+    }
 
     /// <summary>
     /// Adds or updates the value
     /// </summary>
-    /// <param name="key">Key for settting</param>
+    /// <param name="key">Key for setting</param>
     /// <param name="value">Value to set</param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True of was added or updated and you need to save it.</returns>
-    public bool AddOrUpdateValue(string key, long value, string fileName = null) =>
-        AddOrUpdateValueInternal(key, value, fileName);
+    public bool AddOrUpdateValue(string key, long value)
+    {
+        return AddOrUpdateValueInternal(key, value);
+    }
 
     /// <summary>
     /// Adds or updates the value
     /// </summary>
-    /// <param name="key">Key for settting</param>
+    /// <param name="key">Key for setting</param>
     /// <param name="value">Value to set</param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True of was added or updated and you need to save it.</returns>
-    public bool AddOrUpdateValue(string key, string value, string fileName = null) =>
-        AddOrUpdateValueInternal(key, value, fileName);
+    public bool AddOrUpdateValue(string key, string value)
+    {
+        return
+            AddOrUpdateValueInternal(key, value);
+
+    }
 
     /// <summary>
     /// Adds or updates the value
     /// </summary>
-    /// <param name="key">Key for settting</param>
+    /// <param name="key">Key for setting</param>
     /// <param name="value">Value to set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True of was added or updated and you need to save it.</returns>
-    public bool AddOrUpdateValue(string key, int value, string fileName = null) =>
-        AddOrUpdateValueInternal(key, value, fileName);
+    public bool AddOrUpdateValue(string key, int value, string fileName = null)
+    {
+        return AddOrUpdateValueInternal(key, value);
+    }
 
     /// <summary>
     /// Adds or updates the value
     /// </summary>
-    /// <param name="key">Key for settting</param>
+    /// <param name="key">Key for setting</param>
     /// <param name="value">Value to set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True of was added or updated and you need to save it.</returns>
-    public bool AddOrUpdateValue(string key, float value, string fileName = null) =>
-        AddOrUpdateValueInternal(key, value, fileName);
+    public bool AddOrUpdateValue(string key, float value, string fileName = null)
+    {
+        return AddOrUpdateValueInternal(key, value);
+    }
 
     /// <summary>
     /// Adds or updates the value
     /// </summary>
-    /// <param name="key">Key for settting</param>
+    /// <param name="key">Key for setting</param>
     /// <param name="value">Value to set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True of was added or updated and you need to save it.</returns>
-    public bool AddOrUpdateValue(string key, DateTime value, string fileName = null) =>
-        AddOrUpdateValueInternal(key, value, fileName);
+    public bool AddOrUpdateValue(string key, DateTime value, string fileName = null)
+    {
+        return AddOrUpdateValueInternal(key, value);
+    }
 
     /// <summary>
     /// Adds or updates the value
     /// </summary>
-    /// <param name="key">Key for settting</param>
+    /// <param name="key">Key for setting</param>
     /// <param name="value">Value to set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True of was added or updated and you need to save it.</returns>
-    public bool AddOrUpdateValue(string key, Guid value, string fileName = null) =>
-        AddOrUpdateValueInternal(key, value, fileName);
+    public bool AddOrUpdateValue(string key, Guid value, string fileName = null)
+    {
+        return AddOrUpdateValueInternal(key, value);
+    }
 
     /// <summary>
     /// Adds or updates the value
     /// </summary>
-    /// <param name="key">Key for settting</param>
+    /// <param name="key">Key for setting</param>
     /// <param name="value">Value to set</param>
     /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
     /// <returns>True of was added or updated and you need to save it.</returns>
-    public bool AddOrUpdateValue(string key, double value, string fileName = null) =>
-        AddOrUpdateValueInternal(key, value, fileName);
+    public bool AddOrUpdateValue(string key, double value, string fileName = null)
+    {
+        return AddOrUpdateValueInternal(key, value);
+    }
 
     #endregion
 

@@ -9,6 +9,7 @@
 
 | Package | Source Code | License | Purpose | Additional Risk Assessment |
 | ------- | ------------| ------- | ------- | -------------------------- |
+| Equ | [GitHub](https://github.com/thedmi/Equ) | [MIT](https://opensource.org/licenses/MIT) | Simplifies object equality implementation | |
 | MongoDB.Driver | [GitHub](https://github.com/mongodb/mongo-csharp-driver) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0) | Database driver for MongoDB | |
 | Microsoft.SourceLink.GitHub | [GitHub](https://github.com/dotnet/sourcelink) | [MIT](https://opensource.org/licenses/MIT) | Enable source linkage from nupkg | Official MS project |
 | Microsoft.XmlSerializer.Generator | [Microsoft](https://learn.microsoft.com/en-us/dotnet/core/additional-tools/xml-serializer-generator) | [MIT](https://opensource.org/licenses/MIT) | XML handling improvements |
@@ -18,7 +19,6 @@
 | WeCantSpell.Hunspell | [GitHub](https://github.com/aarondandy/WeCantSpell.Hunspell/) | [GPL-2 and others](https://github.com/aarondandy/WeCantSpell.Hunspell/blob/main/license.txt) | |
 | [DockPanelSuite.ThemeVS2015](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
 | [FAM FAM FAM Icons](https://web.archive.org/web/20070824000227/http://www.famfamfam.com/lab/icons/silk/) | N\A | [CC 2.5](https://creativecommons.org/licenses/by/2.5/) | Icons for user interfaces |
-| Xam.Plugins.Settings | [GitHub](https://github.com/jamesmontemagno/SettingsPlugin)| [MIT](https://opensource.org/licenses/MIT)| Read/Write user settings for main client application |
 | CommandLineParser | [GitHub](https://github.com/commandlineparser/commandline) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
 | CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
