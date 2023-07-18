@@ -13,7 +13,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 /// Used to indicate when an ID column contains the ID of another RDMP object.  Decorate the foreign key object. This can be involve going
 /// between databases or even servers e.g. between DataExport and Catalogue libraries or between Catalogue and plugin databases
 /// </summary>
-[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Property)]
 public class RelationshipAttribute : Attribute
 {
     /// <summary>

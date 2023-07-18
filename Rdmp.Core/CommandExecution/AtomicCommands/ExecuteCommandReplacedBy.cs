@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
@@ -21,8 +20,6 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
     public IMapsDirectlyToDatabaseTable Deprecated { get; }
     public IMapsDirectlyToDatabaseTable Replacement { get; }
 
-    private Type _type;
-
 
     /// <summary>
     /// True to prompt user to pick and replacement at execute time
@@ -37,18 +34,17 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
         IMapsDirectlyToDatabaseTable replacement)
         : base(activator)
     {
-            
         Deprecated = deprecated;
         Replacement = replacement;
 
-        _type = deprecated.GetType();
+        var type = deprecated.GetType();
 
         if(deprecated is IMightBeDeprecated { IsDeprecated: false })
         {
             SetImpossible($"{deprecated} is not marked IsDeprecated so no replacement can be specified");
         }
 
-        if(replacement != null && replacement.GetType() != _type)
+        if(replacement != null && replacement.GetType() != type)
         {
             SetImpossible($"'{replacement}' cannot replace '{deprecated}' because it is a different object Type");
         }

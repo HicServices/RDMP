@@ -31,7 +31,7 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
 
         if(toMerge is not { Length: > 1 })
         {
-            BasicActivator.Show($"You must select at least 2 configurations to merge");
+            BasicActivator.Show("You must select at least 2 configurations to merge");
             return;
         }
 
@@ -39,6 +39,7 @@ public class ExecuteCommandMergeCohortIdentificationConfigurations : BasicComman
         var result = merger.Merge(toMerge,SetOperation.UNION);
 
         if (result == null) return;
+
         BasicActivator.Show($"Successfully created '{result}'");
         Publish(result);
         Emphasise(result);

@@ -97,24 +97,16 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
     private object olvDescription_AspectGetter(object rowObject)
     {
-        if (rowObject is ArchivalDataLoadInfo adi)
-            return adi.ToString();
-
-        if (rowObject is LoadEventsTreeView_Category cat)
-            return cat.ToString();
-
-        if (rowObject is ArchivalFatalError fe)
-            return fe.ToShortString();
-
-        if (rowObject is ArchivalTableLoadInfo ti)
-            return
-                $"{ti.TargetTable}(I={WithCommas(ti.Inserts)} U={WithCommas(ti.Updates)} D={WithCommas(ti.Deletes)})";
-
-        if (rowObject is ArchivalProgressLog pr)
-            return pr.Description;
-
-        throw new NotSupportedException();
-        throw new NotSupportedException();
+        return rowObject switch
+        {
+            ArchivalDataLoadInfo adi => adi.ToString(),
+            LoadEventsTreeView_Category cat => cat.ToString(),
+            ArchivalFatalError fe => fe.ToShortString(),
+            ArchivalTableLoadInfo ti =>
+                $"{ti.TargetTable}(I={WithCommas(ti.Inserts)} U={WithCommas(ti.Updates)} D={WithCommas(ti.Deletes)})",
+            ArchivalProgressLog pr => pr.Description,
+            _ => throw new NotSupportedException()
+        };
     }
 
     private static string WithCommas(int? i)
@@ -122,64 +114,54 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         return !i.HasValue ? @"N\A" : i.Value.ToString("N0");
     }
 
-    private object olvDate_AspectGetter(object rowObject)
+    private static object olvDate_AspectGetter(object rowObject)
     {
-        if(rowObject is ArchivalDataLoadInfo adi)
-            return adi.StartTime;
-
-        if (rowObject is LoadEventsTreeView_Category cat)
-            return null;
-
-        if (rowObject is ArchivalFatalError fe)
-            return fe.Date;
-
-        if (rowObject is ArchivalTableLoadInfo ti)
-            return ti.Start;
-        if (rowObject is ArchivalProgressLog pr)
-            return pr.Date;
-            
-        throw new NotSupportedException();
-        throw new NotSupportedException();
+        return rowObject switch
+        {
+            ArchivalDataLoadInfo adi => adi.StartTime,
+            LoadEventsTreeView_Category cat => null,
+            ArchivalFatalError fe => fe.Date,
+            ArchivalTableLoadInfo ti => ti.Start,
+            ArchivalProgressLog pr => pr.Date,
+            _ => throw new NotSupportedException()
+        };
     }
 
-    private void treeView1_FormatRow(object sender, FormatRowEventArgs e)
+    private static void treeView1_FormatRow(object sender, FormatRowEventArgs e)
     {
-        //if it is a data load info thing
-        if (e.Model is ArchivalDataLoadInfo dli)
-            if (dli.HasErrors)
-                e.Item.ForeColor = Color.DarkOrange;
-            else if (dli.EndTime == null) //did not end
-                e.Item.ForeColor = Color.Purple;
-            else
-                e.Item.ForeColor = Color.Green; //was fine
+        // Only apply if it is a data load info thing
+        if (e.Model is not ArchivalDataLoadInfo dli) return;
+
+        if (dli.HasErrors)
+            e.Item.ForeColor = Color.DarkOrange;
+        else if (dli.EndTime == null) //did not end
+            e.Item.ForeColor = Color.Purple;
+        else
+            e.Item.ForeColor = Color.Green; //was fine
     }
 
-    private IEnumerable ChildrenGetter(object model)
+    private static IEnumerable ChildrenGetter(object model)
     {
+        if (model is not ArchivalDataLoadInfo dli)
+            return model is LoadEventsTreeView_Category category ? category.Children : Enumerable.Empty<object>();
+
         var children = new List<object>();
 
-        if (model is ArchivalDataLoadInfo dli)
-        {
+        if(dli.Errors.Any())
+            children.Add(new LoadEventsTreeView_Category("Errors", dli.Errors.OrderByDescending(static d=>d.Date).ToArray(), LoggingTables.FatalError, dli.ID));
 
-            if(dli.Errors.Any())
-                children.Add(new LoadEventsTreeView_Category("Errors", dli.Errors.OrderByDescending(d=>d.Date).ToArray(), LoggingTables.FatalError, dli.ID));
+        if(dli.Progress.Any())
+            children.Add(new LoadEventsTreeView_Category("Progress Messages", dli.Progress.OrderByDescending(static d => d.Date).ToArray(),LoggingTables.ProgressLog, dli.ID));
 
-            if(dli.Progress.Any())
-                children.Add(new LoadEventsTreeView_Category("Progress Messages", dli.Progress.OrderByDescending(d => d.Date).ToArray(),LoggingTables.ProgressLog, dli.ID));
+        if(dli.TableLoadInfos.Any())
+            children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.OrderByDescending(static d => d.Start).ToArray(),LoggingTables.TableLoadRun, dli.ID));
 
-            if(dli.TableLoadInfos.Any())
-                children.Add(new LoadEventsTreeView_Category("Tables Loaded", dli.TableLoadInfos.OrderByDescending(d => d.Start).ToArray(),LoggingTables.TableLoadRun, dli.ID));
-        }
-        if (model is LoadEventsTreeView_Category category)
-            return category.Children;
-
-        return children;
         return children;
     }
 
     private class LoadEventsTreeView_Category
     {
-        public object[] Children { get; set; }
+        public object[] Children { get; }
 
         private readonly string _name;
 
@@ -196,20 +178,14 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
 
         public override string ToString()
         {
-            return string.Format(_name + " ({0})",Children.Length);
+            return $"{_name} ({Children.Length})";
         }
     }
 
-    private bool CanExpandGetter(object model)
+    private static bool CanExpandGetter(object model)
     {
-        if (model is ArchivalDataLoadInfo)
-            return true;
-            
-        if (model is LoadEventsTreeView_Category)
-            return true;
-
-        //it is a child of a thing in a category
-        return false;
+        return model is ArchivalDataLoadInfo or LoadEventsTreeView_Category;
+        //it is a child of a thing in a category, so a leaf
     }
 
     private void _populateLoadHistory_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -311,7 +287,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     {
         treeView1.ModelFilter = new TextMatchFilter(treeView1, filter,StringComparison.CurrentCultureIgnoreCase);
         treeView1.UseFiltering = !string.IsNullOrWhiteSpace(filter);
-            
+
     }
 
     private void treeView1_ColumnRightClick(object sender, CellRightClickEventArgs e)
@@ -355,7 +331,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
                 treeView1.RefreshObjects(toResolve);
             });
         }
-            
+
         if (RightClickMenu.Items.Count > 0)
             e.MenuStrip = RightClickMenu;
     }
@@ -368,10 +344,10 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
     private void treeView1_ItemActivate(object sender, EventArgs e)
     {
         var o = treeView1.SelectedObject;
-            
+
         if (o == null)
             return;
-            
+
         if(o is ArchivalDataLoadInfo dli)
             new ExecuteCommandViewLogs(Activator,new LogViewerFilter(LoggingTables.DataLoadRun){Run = dli.ID}).Execute();
         else
@@ -380,7 +356,7 @@ public partial class LoadEventsTreeView : RDMPUserControl,IObjectCollectionContr
         else
         if(o is IHasSummary s)
             WideMessageBox.Show(s);
-            
+
     }
 
     private void treeView1_KeyUp(object sender, KeyEventArgs e)

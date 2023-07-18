@@ -302,7 +302,7 @@ public class MDFAttacherTests : DatabaseTests
         _ = (IAttacher)constructorInfo.Invoke(Array.Empty<object>());
 
 
-        //call the blank constructor and return the reuslts
+        //call the blank constructor and return the results
         var bob = (IAttacher) constructorInfo.Invoke(new Type[] {});
 
         
@@ -312,12 +312,11 @@ public class MDFAttacherTests : DatabaseTests
     {
         var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         var testDir = workingDir.CreateSubdirectory("MDFAttacherTests_TestFactory");
+        var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestFactory", true);
 
-            var attacher = MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
+        var attacher = MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
         try
         {
-                
-            var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
             Assert.IsNotNull(attacher);

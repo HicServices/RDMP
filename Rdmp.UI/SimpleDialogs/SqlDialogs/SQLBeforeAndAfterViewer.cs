@@ -10,7 +10,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ScintillaHelper;
-using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 
@@ -21,10 +20,6 @@ namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 /// </summary>
 public partial class SQLBeforeAndAfterViewer : Form
 {
-    private Scintilla QueryEditorBefore;
-    private Scintilla QueryEditorAfter;
-
-
     public SQLBeforeAndAfterViewer(string sqlBefore, string sqlAfter, string headerTextForBefore, string headerTextForAfter, string caption, MessageBoxButtons buttons, SyntaxLanguage language = SyntaxLanguage.SQL)
     {
         InitializeComponent();
@@ -34,24 +29,24 @@ public partial class SQLBeforeAndAfterViewer : Form
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
-        QueryEditorBefore = new ScintillaTextEditorFactory().Create();
-        QueryEditorBefore.Text = sqlBefore;
-        QueryEditorBefore.ReadOnly = true;
+        var queryEditorBefore = new ScintillaTextEditorFactory().Create();
+        queryEditorBefore.Text = sqlBefore;
+        queryEditorBefore.ReadOnly = true;
 
-        splitContainer1.Panel1.Controls.Add(QueryEditorBefore);
+        splitContainer1.Panel1.Controls.Add(queryEditorBefore);
 
 
-        QueryEditorAfter = new ScintillaTextEditorFactory().Create();
-        QueryEditorAfter.Text = sqlAfter;
-        QueryEditorAfter.ReadOnly = true;
+        var queryEditorAfter = new ScintillaTextEditorFactory().Create();
+        queryEditorAfter.Text = sqlAfter;
+        queryEditorAfter.ReadOnly = true;
 
-        splitContainer1.Panel2.Controls.Add(QueryEditorAfter);
+        splitContainer1.Panel2.Controls.Add(queryEditorAfter);
 
 
         //compute difference
         var highlighter = new ScintillaLineHighlightingHelper();
-        ScintillaLineHighlightingHelper.ClearAll(QueryEditorAfter);
-        ScintillaLineHighlightingHelper.ClearAll(QueryEditorBefore);
+        ScintillaLineHighlightingHelper.ClearAll(queryEditorAfter);
+        ScintillaLineHighlightingHelper.ClearAll(queryEditorBefore);
             
         sqlBefore ??= "";
         sqlAfter ??= "";
@@ -61,10 +56,10 @@ public partial class SQLBeforeAndAfterViewer : Form
         foreach (var item in Diff.DiffText(sqlBefore, sqlAfter))
         {
             for (var i = item.StartA; i < item.StartA+item.deletedA; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore,i,Color.Pink);
+                ScintillaLineHighlightingHelper.HighlightLine(queryEditorBefore,i,Color.Pink);
                     
             for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
-                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
+                ScintillaLineHighlightingHelper.HighlightLine(queryEditorAfter, i, Color.LawnGreen);
                 
         }
 

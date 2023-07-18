@@ -64,16 +64,16 @@ public class ExecuteCommandDelete : BasicCommandExecution
 
     private string GetDeleteVerbIfAny()
     {
-        // if all objects are IDeletableWithCustomMessage
-        if (OverrideCommandName == null && _deletables.Count > 0 && _deletables.All(static d => d is IDeletableWithCustomMessage))
-        {
-            // Get the verbs (e.g. Remove, Disassociate etc)
-            var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(static d => d.GetDeleteVerb()).Distinct().ToArray();
+        // Null unless all objects are IDeletableWithCustomMessage
+        if (OverrideCommandName != null || _deletables.Count <= 0 ||
+            !_deletables.All(static d => d is IDeletableWithCustomMessage)) return null;
+
+        // Get the verbs (e.g. Remove, Disassociate etc)
+        var verbs = _deletables.Cast<IDeletableWithCustomMessage>().Select(static d => d.GetDeleteVerb()).Distinct()
+            .ToArray();
 
         // if they agree on one specific verb
-        return verbs.Length == 1 ? verbs[0] : // use that
-            // couldn't agree on a verb or not all are IDeletableWithCustomMessage
-            null;
+        return verbs.Length == 1 ? verbs[0] : null;
     }
 
     public override void Execute()

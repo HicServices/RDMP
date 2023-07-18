@@ -66,7 +66,6 @@ public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     public Func<IActivateItems,IAtomicCommand[]> WhitespaceRightClickMenuCommandsGetter { get; set; }
 
-    public IDColumnProvider IDColumnProvider { get; set; }
     public OLVColumn IDColumn { get; set; }
     public CheckColumnProvider CheckColumnProvider { get; set; }
     public OLVColumn CheckColumn { get; set; }

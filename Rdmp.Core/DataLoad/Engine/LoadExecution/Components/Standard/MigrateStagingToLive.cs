@@ -21,15 +21,13 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 public class MigrateStagingToLive : DataLoadComponent
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
-    private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
 
     public MigrateStagingToLive(HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
-        _loadConfigurationFlags = loadConfigurationFlags;
-            
+
         Description = "Migrate Staging to Live";
-        SkipComponent = !_loadConfigurationFlags.DoMigrateFromStagingToLive;
+        SkipComponent = !loadConfigurationFlags.DoMigrateFromStagingToLive;
     }
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)

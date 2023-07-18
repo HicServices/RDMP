@@ -514,6 +514,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             return new DataTable();
 
         var toReturn = new DataTable();
+        toReturn.BeginLoadData();
         var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport,false);
 
         using var con = server.GetConnection();
@@ -521,11 +522,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         var da = server.GetDataAdapter(Request.QueryBuilder.SQL, con);
 
-            //get up to 1000 records
-            da.Fill(0, 1000, toReturn);
+        //get up to 1000 records
+        da.Fill(0, 1000, toReturn);
 
-            con.Close();
-        }
+        con.Close();
+        toReturn.EndLoadData();
 
         return toReturn;
     }

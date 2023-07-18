@@ -30,7 +30,6 @@ public partial class TransparentHelpForm:Form
     private const uint WM_NCHITTEST = 0x0084;
     private const int HTTRANSPARENT = -1;
     private Timer timer = new();
-    private Color _transparencyColor;
     private SolidBrush _highlightBrush;
 
     public TransparentHelpForm(Control host)
@@ -44,12 +43,12 @@ public partial class TransparentHelpForm:Form
         ShowInTaskbar = false;
         TopMost = true;
 
-        _transparencyColor = Color.Magenta;
+        var transparencyColor = Color.Magenta;
         Opacity = 0.5f;
 
-        _highlightBrush = new SolidBrush(_transparencyColor);
-        BackColor = _transparencyColor;
-        TransparencyKey = _transparencyColor;
+        _highlightBrush = new SolidBrush(transparencyColor);
+        BackColor = transparencyColor;
+        TransparencyKey = transparencyColor;
 
         timer.Interval = 100;
         timer.Tick +=(s,e)=> UpdateLocation();

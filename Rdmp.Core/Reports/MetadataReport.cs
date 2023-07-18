@@ -250,7 +250,7 @@ public class MetadataReport:DocXHelper
     private static DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
     {
         //get the contents of the lookup
-        using var con = DataAccessPortal.GetInstance().ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection();
+        using var con = DataAccessPortal.ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection();
         con.Open();
 
         using var cmd = DatabaseCommandHelper.GetCommand($"Select * from {lookupTable.Name}", con);

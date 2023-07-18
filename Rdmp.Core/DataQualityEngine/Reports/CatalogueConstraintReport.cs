@@ -469,7 +469,7 @@ public class CatalogueConstraintReport : DataQualityReport
     private void SetupAdditionalValidationRules(ICheckNotifier notifier)
     {
         //for each description
-        foreach (var descQtc in _queryBuilder.SelectColumns.Where(qtc => qtc.IsLookupDescription))
+        foreach (var descQtc in _queryBuilder.SelectColumns.Where(static qtc => qtc.IsLookupDescription))
         {
             try
             {
@@ -489,10 +489,10 @@ public class CatalogueConstraintReport : DataQualityReport
                     }
 
                     //if it doesn't already have a prediction
-                    if (itemValidator.SecondaryConstraints.All(constraint => constraint.GetType() != typeof(Prediction)))
+                    if (itemValidator.SecondaryConstraints.All(static constraint => constraint.GetType() != typeof(Prediction)))
                     {
-                        //Add an item validator onto the fk column that targets the description column with a nullness prediction
-                        var newRule = new Prediction(new ValuePredictsOtherValueNullness(), foreignKeyFieldName)
+                        //Add an item validator onto the fk column that targets the description column with a nullity prediction
+                        var newRule = new Prediction(new ValuePredictsOtherValueNullity(), foreignKeyFieldName)
                             {
                                 Consequence = Consequence.Missing
                             };
@@ -502,7 +502,7 @@ public class CatalogueConstraintReport : DataQualityReport
 
                         notifier.OnCheckPerformed(
                             new CheckEventArgs(
-                                $"Dynamically added value->value Nullnes constraint with consequence Missing onto columns {foreignKeyFieldName} and {descriptionFieldName} because they have a configured Lookup relationship in the Catalogue", CheckResult.Success));
+                                $"Dynamically added value->value Nullity constraint with consequence Missing onto columns {foreignKeyFieldName} and {descriptionFieldName} because they have a configured Lookup relationship in the Catalogue", CheckResult.Success));
                     }
 
                 }

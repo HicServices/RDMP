@@ -290,7 +290,7 @@ public partial class AutoCommentsEvaluator
                             if (t.GetProperty($"{member}_ID") != null)
                             {
                                 changes = true;
-                                sbSuggestedText.AppendLine(whitespace + $"/// <inheritdoc cref=\"{$"{member}_ID"}\"/>");
+                                sbSuggestedText.AppendLine(whitespace + $"/// <inheritdoc cref=\"{member}_ID\"/>");
                             }
                             else
                             {

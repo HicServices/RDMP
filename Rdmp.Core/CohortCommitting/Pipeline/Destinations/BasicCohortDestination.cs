@@ -45,10 +45,6 @@ public class BasicCohortDestination : IPluginCohortDestination
     private IAllocateReleaseIdentifiers _allocator = null;
     private readonly Dictionary<object, object> _cohortDictionary = new();
 
-    private IAllocateReleaseIdentifiers _allocator;
-
-    private readonly Dictionary<object, object> _cohortDictionary = new();
-
     /// <summary>
     /// Extracts private identifiers from table <paramref name="toProcess"/> and allocates release identifiers.  Cohort is only finalised and comitted into the database
     /// in the <see cref="Dispose"/> method (to prevent incomplete cohorts existing in the database).

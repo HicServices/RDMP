@@ -21,25 +21,23 @@ namespace Rdmp.UI.SimpleDialogs.Revertable;
 /// </summary>
 public partial class RevertablePropertyDifferenceUI : RDMPUserControl
 {
-    private readonly RevertablePropertyDifference _difference;
-
     public RevertablePropertyDifferenceUI(RevertablePropertyDifference difference)
     {
-        _difference = difference;
+        var difference1 = difference;
         InitializeComponent();
             
         if (VisualStudioDesignMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
             
         //For documentation/control previewing
-        _difference ??= new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
+        difference1 ??= new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
 
         CreateScintillaComponents(
-            _difference.DatabaseValue != null ? _difference.DatabaseValue.ToString() : "<Null>",
-            _difference.LocalValue != null ? _difference.LocalValue.ToString() : "<Null>");
+            difference1.DatabaseValue != null ? difference1.DatabaseValue.ToString() : "<Null>",
+            difference1.LocalValue != null ? difference1.LocalValue.ToString() : "<Null>");
 
-        lblDbProperty.Text = $"{_difference.Property.Name} in Database";
-        lblMemoryProperty.Text = $"{_difference.Property.Name} in Memory";
+        lblDbProperty.Text = $"{difference1.Property.Name} in Database";
+        lblMemoryProperty.Text = $"{difference1.Property.Name} in Memory";
     }
 
     private Scintilla QueryEditorBefore;

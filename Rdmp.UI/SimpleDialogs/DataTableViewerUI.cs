@@ -32,14 +32,15 @@ public partial class DataTableViewerUI : UserControl
 
         try
         {
-            using (var con = DataAccessPortal.ExpectServer(source, DataAccessContext.DataExport).GetConnection())
-            {
-                con.Open();
+            using var con = DataAccessPortal.ExpectServer(source, DataAccessContext.DataExport).GetConnection();
+            con.Open();
 
             using var cmd = DatabaseCommandHelper.GetCommand(sql, con);
             using var da = DatabaseCommandHelper.GetDataAdapter(cmd);
             var dt = new DataTable();
+            dt.BeginLoadData();
             da.Fill(dt);
+            dt.EndLoadData();
             dataGridView1.DataSource = dt;
         }
         catch (Exception e)

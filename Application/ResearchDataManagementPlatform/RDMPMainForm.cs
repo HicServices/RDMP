@@ -41,8 +41,6 @@ public partial class RDMPMainForm : RDMPForm
     private readonly ITheme _theme;
     private IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
-    private IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
-
     /// <summary>
     /// True while the main form is loading (e.g. from a persistence file)
     /// </summary>

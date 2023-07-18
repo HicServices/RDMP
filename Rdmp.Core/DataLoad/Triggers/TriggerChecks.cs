@@ -129,21 +129,17 @@ public class TriggerChecks : ICheckable
             $"Trigger error encountered when checking integrity of table {_table}",
             CheckResult.Warning, e, $"Drop and then Re-Create Trigger on table {_table}"));
 
-        if (shouldCreate)
-        {
-            microsoftSQLTrigger.DropTrigger(out var problemsDroppingTrigger, out var thingsThatWorkedDroppingTrigger);
-            string thingsThatWorkedDroppingTrigger;
+        if (!shouldCreate) return;
 
-            microsoftSQLTrigger.DropTrigger(out problemsDroppingTrigger,out thingsThatWorkedDroppingTrigger);
+        microsoftSQLTrigger.DropTrigger(out var problemsDroppingTrigger, out var thingsThatWorkedDroppingTrigger);
 
-            if (!string.IsNullOrWhiteSpace(thingsThatWorkedDroppingTrigger))
-                notifier.OnCheckPerformed(new CheckEventArgs(thingsThatWorkedDroppingTrigger, CheckResult.Success, null));
+        if (!string.IsNullOrWhiteSpace(thingsThatWorkedDroppingTrigger))
+            notifier.OnCheckPerformed(new CheckEventArgs(thingsThatWorkedDroppingTrigger, CheckResult.Success, null));
 
-            if (!string.IsNullOrWhiteSpace(problemsDroppingTrigger))
-                notifier.OnCheckPerformed(new CheckEventArgs(problemsDroppingTrigger, CheckResult.Warning, null));
+        if (!string.IsNullOrWhiteSpace(problemsDroppingTrigger))
+            notifier.OnCheckPerformed(new CheckEventArgs(problemsDroppingTrigger, CheckResult.Warning, null));
 
-            microsoftSQLTrigger.CreateTrigger(notifier);
-            TriggerCreated = true;
-        }
+        microsoftSQLTrigger.CreateTrigger(notifier);
+        TriggerCreated = true;
     }
 }

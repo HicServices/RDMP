@@ -37,8 +37,6 @@ public class EndToEndCacheTest : DatabaseTests
     private LoadDirectory _LoadDirectory;
     private const int NumDaysToCache = 5;
 
-    private const int NumDaysToCache = 5;
-
     [SetUp]
     protected override void SetUp()
     {

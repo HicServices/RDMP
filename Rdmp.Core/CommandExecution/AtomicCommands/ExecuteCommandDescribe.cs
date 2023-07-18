@@ -56,9 +56,6 @@ public class ExecuteCommandDescribe:BasicCommandExecution
                 .FirstOrDefault(t=>HasCommandNameOrAlias(t,picker[0].RawValue));
 
 
-                .FirstOrDefault(t=>HasCommandNameOrAlias(t,picker[0].RawValue));
-                
-                    
             if(_nonDatabaseObjectToDescribe == null)
                 SetImpossible("Did not recognise parameter as a valid command");
         }

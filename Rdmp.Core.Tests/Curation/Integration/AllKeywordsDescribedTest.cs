@@ -43,9 +43,9 @@ public class AllKeywordsDescribedTest :DatabaseTests
                 docs = CatalogueRepository.CommentStore[type.Name] ??
                        CatalogueRepository.CommentStore[$"I{type.Name}"]
             })
-            .Where(@t => string.IsNullOrWhiteSpace(@t.docs))
-            .Select(@t =>
-                $"Type {@t.type.Name} does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)").ToList();
+            .Where(t => string.IsNullOrWhiteSpace(t.docs))
+            .Select(t =>
+                $"Type {t.type.Name} does not have an entry in the help dictionary (maybe the class doesn't have documentation? - try adding /// <summary> style comments to the class)").ToList();
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
 

@@ -25,14 +25,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
 {
     private CohortIdentificationConfiguration _cic;
-    private readonly CohortIdentificationConfiguration[] _allConfigurations;
 
     public ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
         this(activator, null, externalCohortTable, null, null, null)
     {
-        _allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+        var allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 
-        if (!_allConfigurations.Any())
+        if (!allConfigurations.Any())
             SetImpossible("You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
 
         UseTripleDotSuffix = true;

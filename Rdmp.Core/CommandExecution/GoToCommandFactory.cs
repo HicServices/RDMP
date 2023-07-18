@@ -304,11 +304,7 @@ public class GoToCommandFactory : CommandFactoryBase
 
     private static bool SupportsReplacement(object o)
     {
-        return o switch
-        {
-            DashboardLayout _=> false,
-            _ => true
-        };
+        return o is not DashboardLayout;
     }
 
     private IEnumerable<IMapsDirectlyToDatabaseTable> GetReplacementIfAny(IMapsDirectlyToDatabaseTable mt)

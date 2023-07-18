@@ -21,12 +21,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUICommandExecution, IAtomicCommand
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
-    private Project _project;
 
     public ExecuteCommandRefreshExtractionConfigurationsCohort(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
-        _project = (Project)_extractionConfiguration.Project;
+        var project = (Project)_extractionConfiguration.Project;
             
         if(extractionConfiguration.Cohort_ID == null)
             SetImpossible("No Cohort Set");
@@ -34,8 +33,8 @@ public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUIComman
         if (extractionConfiguration.CohortRefreshPipeline_ID == null)
             SetImpossible("No Refresh Pipeline Set");
 
-        if(!_project.ProjectNumber.HasValue)
-            SetImpossible($"Project '{_project}' does not have a Project Number");
+        if(!project.ProjectNumber.HasValue)
+            SetImpossible($"Project '{project}' does not have a Project Number");
     }
 
     public override string GetCommandHelp()
