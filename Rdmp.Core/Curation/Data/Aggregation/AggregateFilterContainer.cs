@@ -99,7 +99,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     {
         //clone ourselves
         var clone = ShallowClone();
-            
+
         //clone our filters
         foreach (AggregateFilter filterToClone in GetFilters())
         {

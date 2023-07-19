@@ -55,7 +55,7 @@ Once you have finished your project, please inform HIC who will make arrangement
     private void btnCancelChanges_Click(object sender, EventArgs e)
     {
         _allowClose = true;
-        DialogResult = DialogResult.Cancel; 
+        DialogResult = DialogResult.Cancel;
         Close();
     }
 

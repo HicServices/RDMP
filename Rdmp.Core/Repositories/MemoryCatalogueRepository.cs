@@ -255,7 +255,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
     {
         var toreturn = Enum.GetValues(typeof(DataAccessContext)).Cast<DataAccessContext>().ToDictionary(context => context, _ => new List<ITableInfo>());
-            
+
         //add the keys
 
         foreach (var kvp in CredentialsDictionary)

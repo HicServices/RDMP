@@ -90,7 +90,7 @@ public class DashboardLayout : DatabaseEntity,INamed
         {
             {"Username",Environment.UserName},
             {"Name",name}
-        });   
+        });
     }
 
     /// <inheritdoc/>

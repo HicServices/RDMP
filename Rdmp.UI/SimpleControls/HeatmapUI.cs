@@ -136,7 +136,7 @@ public partial class HeatmapUI : UserControl
 
             Height = (int)Math.Max(Height, _dataTable.Columns.Count * MinPixelHeight);
         }
-            
+
         Invalidate();
     }
 
@@ -170,7 +170,7 @@ public partial class HeatmapUI : UserControl
     private void hoverToolTipTimer_Tick(object sender, EventArgs e)
     {
         var pos = PointToClient(Cursor.Position);
-            
+
         //if we moved
         if(!_lastHoverPoint.Equals(pos))
         {
@@ -195,11 +195,11 @@ public partial class HeatmapUI : UserControl
         //there wasn't anything to display anyway
         if(value == null)
             return;
-            
+
         if(Visible)
             //show the tool tip
             tt.Show(value.ToString(), this, new Point(pos.X+20,pos.Y - 10));//allow room for cusor to not overdraw the tool tip
-            
+
     }
 
     private object GetValueFromClientPosition(Point pos)
@@ -236,7 +236,7 @@ public partial class HeatmapUI : UserControl
     protected override void OnPaint(PaintEventArgs e)
     {
         base.OnPaint(e);
-            
+
         if(_dataTable == null)
             return;
         if (_crashedPainting)
@@ -396,12 +396,12 @@ public partial class HeatmapUI : UserControl
 
     public static void CalculateLayout()
     {
-            
+
     }
 
     public void Clear()
     {
-            
+
         lock(oDataTableLock)
             _dataTable = null;
     }

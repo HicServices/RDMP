@@ -52,7 +52,7 @@ public partial class CreateNewCatalogueByImportingFileUI_Advanced : UserControl
         _projectSpecific = projectSpecific;
 
         InitializeComponent();
-            
+
         configureAndExecutePipeline1 = new ConfigureAndExecutePipelineUI(
             ExecuteCommandCreateNewCatalogueByImportingFile.GetCreateCatalogueFromFileDialogArgs()
             ,new UploadFileUseCase(file,database,activator),activator);

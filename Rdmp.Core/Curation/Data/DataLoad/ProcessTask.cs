@@ -135,7 +135,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, IChe
     public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage)
     {
         var order = repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
-            
+
         repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
             {"LoadMetadata_ID", parent.ID},

@@ -83,7 +83,7 @@ public partial class ExtractableCohortAuditLogBuilder
     public static object GetObjectIfAny(IExtractableCohort cohort, Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var audit = cohort.AuditLog;
-            
+
         // no audit means no object
         if(string.IsNullOrWhiteSpace(audit))
         {

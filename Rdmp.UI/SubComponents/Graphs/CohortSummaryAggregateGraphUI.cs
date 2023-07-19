@@ -52,14 +52,14 @@ public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionCo
         else
             //now reload the graph because the change was to a relevant object
             LoadGraphAsync();
-            
+
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
     {
         _collection = (CohortSummaryAggregateGraphObjectCollection) collection;
         SetItemActivator(activator);
-            
+
         BuildMenu(activator);
 
         SetAggregate(activator,_collection.Graph);

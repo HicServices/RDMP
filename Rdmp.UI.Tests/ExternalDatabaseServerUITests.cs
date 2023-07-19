@@ -15,8 +15,6 @@ internal class ExternalDatabaseServerUITests : UITests
     [Test, UITimeout(50000)]
     public void Test_ExternalDatabaseServerUITests_NormalState()
     {
-        SetupMEF();
-
         var server = WhenIHaveA<ExternalDatabaseServer>();
         var ui = AndLaunch<ExternalDatabaseServerUI>(server);
 

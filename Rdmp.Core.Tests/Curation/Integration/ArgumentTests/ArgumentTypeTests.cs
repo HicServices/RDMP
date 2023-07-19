@@ -16,13 +16,6 @@ namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
 
 public class ArgumentTypeTests:UnitTests
 {
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-        SetupMEF();
-    }
-
     private object[] _expectedAnswers = {
         5,
         new CultureInfo("en-us"),
@@ -34,7 +27,7 @@ public class ArgumentTypeTests:UnitTests
     public void Test_Type_WithStringValue(Type t, string val, int expectedAnswerIdx)
     {
         var arg = WhenIHaveA<ProcessTaskArgument>();
-            
+
         arg.SetType(t);
         arg.Value = val;
 

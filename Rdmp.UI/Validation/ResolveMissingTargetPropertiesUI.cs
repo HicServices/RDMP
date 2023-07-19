@@ -33,7 +33,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
 
         AdjustedValidator = validator;
         InitializeComponent();
-            
+
         lbAvailableColumns.Items.AddRange(GetUnReferencedColumns(validator,AvailableColumns).ToArray());
         lbMissingReferences.Items.AddRange(GetMissingReferences(validator,availableColumns).ToArray());
     }
@@ -56,13 +56,13 @@ public partial class ResolveMissingTargetPropertiesUI : Form
         {
             DeleteSelectedReferences();
         }
-           
+
     }
 
     private void DeleteSelectedReferences()
     {
         var itemValidators = lbMissingReferences.SelectedItems.Cast<ItemValidator>().ToArray();
-            
+
         if (itemValidators.Length > 0)
         {
             foreach (var iv in itemValidators)
@@ -132,7 +132,7 @@ public partial class ResolveMissingTargetPropertiesUI : Form
     private static void ResolveMissingReferenceAs(ItemValidator missingReference, string newTarget)
     {
         missingReference.TargetProperty = newTarget;
-            
+
     }
 
     #endregion

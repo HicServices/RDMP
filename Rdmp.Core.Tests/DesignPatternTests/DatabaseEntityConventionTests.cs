@@ -24,14 +24,12 @@ public class DatabaseEntityConventionTests:UnitTests
     [Test]
     public void AllDatabaseEntitiesHaveTypedIRepository()
     {
-        SetupMEF();
-
         var problems = MEF.GetAllTypes()
-            .Where(t => typeof(DatabaseEntity).IsAssignableFrom(t))
-            .SelectMany(type => type.GetConstructors(), (type, constructorInfo) => new { type, constructorInfo })
+            .Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t))
+            .SelectMany(static type => type.GetConstructors(), static (type, constructorInfo) => new { type, constructorInfo })
             .Select(t1 => new { t1, parameters = t1.constructorInfo.GetParameters() })
-            .Where(t1 => t1.parameters.Any(p => p.ParameterType == typeof(IRepository)))
-            .Select(t1 =>
+            .Where(static t1 => t1.parameters.Any(p => p.ParameterType == typeof(IRepository)))
+            .Select(static t1 =>
                 $"Constructor found on Type {t1.t1.type} that takes {nameof(IRepository)}, it should take either {nameof(IDataExportRepository)} or {nameof(ICatalogueRepository)}").ToList();
 
         foreach (var problem in problems)

@@ -48,7 +48,7 @@ public partial class StandardRegexUI : StandardRegexUI_Design, ISaveableUI
     protected override void SetBindings(BinderWithErrorProviderFactory rules, StandardRegex databaseObject)
     {
         base.SetBindings(rules, databaseObject);
-            
+
         Bind(tbID,"Text","ID",r=>r.ID);
         Bind(tbConceptName,"Text","ConceptName", r=>r.ConceptName);
         Bind(tbRegex,"Text","Regex", r=>r.Regex);

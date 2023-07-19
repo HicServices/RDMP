@@ -35,8 +35,6 @@ internal class RdmpScriptTests : UnitTests
                 Commands = new[] {command}
             }
         });
-            
-        SetupMEF();
 
         var exitCode = runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
 
@@ -67,8 +65,6 @@ internal class RdmpScriptTests : UnitTests
                 }
             }
         });
-            
-        SetupMEF();
 
         var exitCode = runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
 
@@ -77,7 +73,7 @@ internal class RdmpScriptTests : UnitTests
         var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Single().CatalogueItems.Single();
 
         Assert.AreEqual(expectedCataItemName,ci.Name);
-            
+
     }
 
     [Test]

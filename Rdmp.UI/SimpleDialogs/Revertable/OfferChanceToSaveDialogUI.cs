@@ -37,7 +37,7 @@ public partial class OfferChanceToSaveDialogUI : Form
 
         lblFirstPrompt.Text =
             $"Would you like to save changes to {revertable.GetType().Name} '{revertable}' (ID={revertable.ID})";
-            
+
         tableLayoutPanel1.RowCount = differences.Differences.Count;
         for (var index = 0; index < differences.Differences.Count; index++)
         {
@@ -87,7 +87,7 @@ public partial class OfferChanceToSaveDialogUI : Form
     {
         var dialog = new ExceptionViewerStackTraceWithHyperlinks(Environment.StackTrace);
         dialog.Show();
-            
+
     }
 
 }

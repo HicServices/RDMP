@@ -47,10 +47,10 @@ public class HelpWorkflow
     {
         if (RootStage == null)
             throw new Exception("No RootStage exists for Help, you will need to create one");
-            
+
         if(!force && !ProgressProvider.ShouldShowUserWorkflow(this))
             return;
-            
+
         _cancellationTokenSource = new CancellationTokenSource();
 
         _help = new TransparentHelpForm(HostControl);
@@ -61,7 +61,7 @@ public class HelpWorkflow
             _helpClosed = true;
             _cancellationTokenSource.Cancel();
         };
-            
+
         ShowStage(RootStage);
     }
 
@@ -115,7 +115,7 @@ public class HelpWorkflow
             ShowStage(CurrentStage.Next);
             return true;
         }
-            
+
         _help.Close();
         return false;
     }

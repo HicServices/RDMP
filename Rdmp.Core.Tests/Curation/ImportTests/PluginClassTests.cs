@@ -20,14 +20,6 @@ namespace Rdmp.Core.Tests.Curation.ImportTests;
 
 public class PluginClassTests:UnitTests
 {
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
-
     [SetUp]
     protected override void SetUp()
     {
@@ -52,7 +44,7 @@ public class PluginClassTests:UnitTests
         lma1.Plugin.RdmpVersion = new Version(version); //the version of Rdmp.Core targetted
         lma1.Plugin.PluginVersion = new Version(1, 1, 1, 1); //the version of the plugin
         lma1.Plugin.SaveToDatabase();
-                       
+
         lma2.Plugin.Name = "MyPlugin";
         lma2.Plugin.RdmpVersion = new Version(version);//the version of Rdmp.Core targetted (same as above)
         lma2.Plugin.PluginVersion =  new Version(1, 1, 1, 2);//the version of the plugin (higher)
@@ -107,7 +99,7 @@ public class PluginClassTests:UnitTests
 
         //now delete lma2 only
         lma2.DeleteInDatabase();
-            
+
         Assert.AreEqual(2, Repository.GetAllObjects<ObjectImport>().Length);
 
         //import them

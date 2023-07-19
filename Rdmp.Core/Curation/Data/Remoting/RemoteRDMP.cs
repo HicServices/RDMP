@@ -143,7 +143,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
             baseUri.Query = "isarray=true";
 
         baseUri.Path += $"/api/{typeof(T).Name}";
-            
+
         return baseUri.ToString();
     }
 

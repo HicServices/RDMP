@@ -64,7 +64,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
             ddLoggingServer.SelectedItem = liveserver ?? throw new Exception(
                     $"Catalogue '{_catalogue}' lists its Live Logging Server as '{_catalogue.LiveLoggingServer}' did not appear in combo box, possibly it is not marked as a '{expectedDatabaseTypeString}' server? Try editing it in Locations=>Manage External Servers");
         }
-            
+
         try
         {
             //load data tasks (new architecture)
@@ -102,7 +102,7 @@ public partial class ChooseLoggingTaskUI : RDMPUserControl, ICheckNotifier
 
         if(Activator == null)
             return;
-            
+
         RefreshUIFromDatabase();
     }
 

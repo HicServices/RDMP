@@ -78,7 +78,7 @@ public class Gatherer
 
         foreach (var lma in plugin.LoadModuleAssemblies)
             root.Children.Add(new GatheredObject(lma));
-            
+
         return root;
     }
 
@@ -113,17 +113,17 @@ public class Gatherer
 
         foreach (var cis in catalogue.CatalogueItems)
             root.Children.Add(new GatheredObject(cis));
-            
+
         return root;
     }
 
     public static GatheredObject GatherDependencies(IFilter filter)
     {
         var root = new GatheredObject(filter);
-            
+
         foreach (var param in filter.GetAllParameters())
             root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable) param));
-            
+
         return root;
     }
 
@@ -141,7 +141,7 @@ public class Gatherer
         var propertyFinder = new AttributePropertyFinder<SqlAttribute>(allObjects);
 
         var root = new GatheredObject(c);
-            
+
         foreach (var o in allObjects)
         {
             //don't add a reference to the thing we are gathering dependencies on!
@@ -156,7 +156,7 @@ public class Gatherer
                     root.Children.Add(new GatheredObject(o));
             }
         }
-            
+
         return root;
     }
 

@@ -89,10 +89,10 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
 
         var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
-            
+
         // delete the source
         ei.DeleteInDatabase();
-            
+
         // should now return null
         Assert.IsNull(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator));
     }

@@ -65,11 +65,11 @@ public partial class SecondaryConstraintUI : UserControl
         var inflation = 0;
         _repository = repository;
         SecondaryConstriant = secondaryConstriant;
-            
+
         _otherColumns = otherColumns;
 
         InitializeComponent();
-            
+
         if (repository == null)
             return;
 
@@ -81,7 +81,7 @@ public partial class SecondaryConstraintUI : UserControl
 
         lblConsequence.Left = lblType.Right + 5;
         cbxConsequence.Left = lblConsequence.Right + 5;
-            
+
         //work out what properties can be set on this constraint and create the relevant controls using reflection
         _requiredProperties = secondaryConstriant.GetType().GetProperties().Where(p =>
             p.CanRead && p.CanWrite && p.GetSetMethod(true).IsPublic
@@ -305,7 +305,7 @@ public partial class SecondaryConstraintUI : UserControl
 
             lblException.Text = msg.Trim(',');
         }
-            
+
     }
 
     private void btnDelete_Click(object sender, EventArgs e)

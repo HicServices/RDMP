@@ -57,7 +57,7 @@ internal class ScintillaMenu:ContextMenuStrip
             };
 
             Items.Add(_miCheckSpelling);
-        }         
+        }
 
         Items.Add(new ToolStripSeparator());
 

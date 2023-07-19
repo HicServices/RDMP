@@ -30,7 +30,7 @@ public partial class HelpBox : UserControl
             text = "Some useful text which will help guide the user to perform an activity";
             optionIfAny = "Some alternate option button the user can click";
         }
-            
+
         lblHelp.Text = text;
 
         btnOption1.Text = optionIfAny;
@@ -46,7 +46,7 @@ public partial class HelpBox : UserControl
         {
             OptionTaken?.Invoke();
         };
-            
+
         Size = GetSizeOfHelpBoxFor(text,!string.IsNullOrWhiteSpace(optionIfAny));
     }
 

@@ -196,7 +196,7 @@ FETCH NEXT {batchSize} ROWS ONLY", conn.Connection, conn.Transaction);
                 toReturnIds.Add(Convert.ToInt32(reader["ID"]));
         }
 
-        return Repository.GetAllObjectsInIDList<CacheFetchFailure>(toReturnIds); 
+        return Repository.GetAllObjectsInIDList<CacheFetchFailure>(toReturnIds);
     }
 
     ///<inheritdoc/>

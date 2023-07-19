@@ -88,7 +88,7 @@ public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INam
         : base(repository, r)
     {
         _encryptedPasswordHost = new EncryptedPasswordHost(repository);
-            
+
         Name = (string)r["Name"];
         Username = r["Username"].ToString();
         Password = r["Password"].ToString();

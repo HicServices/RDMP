@@ -138,7 +138,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
         Ticket = r["Ticket"] as string;
         EndDate = ObjectToNullableDateTime(r["EndDate"]);
         Description = r["Description"] as string;
-            
+
         _manager = CatalogueRepository.GovernanceManager;
     }
 
@@ -161,7 +161,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable,INamed
             notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expires before it begins!", CheckResult.Fail));
         else
             notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date", CheckResult.Success));
-            
+
         foreach (var doc in GovernanceDocuments)
             doc.Check(notifier);
     }

@@ -61,9 +61,9 @@ public partial class WideMessageBox : Form
     public WideMessageBox(WideMessageBoxArgs args)
     {
         InitializeComponent();
-            
+
         Setup(args);
-            
+
         //can only write to clipboard in STA threads
         btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
@@ -188,7 +188,7 @@ public partial class WideMessageBox : Form
             wmb.ShowDialog();
         else
             wmb.Show();
-            
+
     }
 
     public static void Show(string title, string message, WideMessageBoxTheme theme)
@@ -260,14 +260,14 @@ public partial class WideMessageBox : Form
     private void NavigateTo(string keyword)
     {
         _navigationStack.Push(Args);
-            
+
         Setup(new WideMessageBoxArgs(keyword,CommentStore[keyword],null,keyword,WideMessageBoxTheme.Help){FormatAsParagraphs = true});
     }
 
     private void SetMessage(string message, string keywordNotToAdd = null)
     {
         if(string.IsNullOrWhiteSpace(message))
-            message = "";            
+            message = "";
 
         if(message.Length > MAX_LENGTH_BODY)
             message = message[..MAX_LENGTH_BODY];

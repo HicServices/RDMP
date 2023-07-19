@@ -18,9 +18,6 @@ public class LoadDiagramUITests : UITests
     public void Test_LoadDiagramUITests_NormalState()
     {
         var lmd = WhenIHaveA<LoadMetadata>();
-
-        SetupMEF();
-
         _ = AndLaunch<LoadDiagramUI>(lmd);
 
         //it isn't impossible to show us
@@ -37,8 +34,6 @@ public class LoadDiagramUITests : UITests
 
         //delete the Catalogue so the load is an orphan
         lmd.GetAllCatalogues().Single().DeleteInDatabase();
-
-        SetupMEF();
 
         _ = AndLaunch<LoadDiagramUI>(lmd);
 

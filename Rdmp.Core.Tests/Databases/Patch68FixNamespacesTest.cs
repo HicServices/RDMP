@@ -39,8 +39,6 @@ internal class Patch68FixNamespacesTest:UnitTests
             substitutions.Add(match.Groups[1].Value,match.Groups[2].Value);
         }
 
-        SetupMEF();
-
         foreach (var oldClass in ExpectedClasses)
         {
             var newClass = substitutions.Aggregate(oldClass, (current, kvp) => current.Replace(kvp.Key, kvp.Value));

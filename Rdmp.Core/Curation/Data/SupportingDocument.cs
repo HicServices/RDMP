@@ -148,7 +148,7 @@ public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     {
         if (!Extractable)
             return false;
-            
+
         //if it has no url or the url is blank or the url is to something that isn't a file
         if (URL == null || string.IsNullOrWhiteSpace(URL.AbsoluteUri) || !URL.IsFile)
             return false;

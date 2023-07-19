@@ -101,7 +101,7 @@ public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
         {
             {"Name", name ?? $"NewPipeline {Guid.NewGuid()}" }
         });
-            
+
         ClearAllInjections();
     }
 

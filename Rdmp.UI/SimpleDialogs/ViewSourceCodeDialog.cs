@@ -42,7 +42,7 @@ public partial class ViewSourceCodeDialog : Form
     public ViewSourceCodeDialog(string filename, int lineNumber, Color highlightColor)
     {
         var toFind = Path.GetFileName(filename);
-            
+
         InitializeComponent();
 
         if(filename == null)

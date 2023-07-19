@@ -28,7 +28,7 @@ public partial class RunUI : RDMPForm
     public RunUI(IActivateItems activator):base(activator)
     {
         InitializeComponent();
-            
+
         _commandsDictionary = new Dictionary<string, Type>(StringComparer.CurrentCultureIgnoreCase);
 
         _commandCaller = new CommandInvoker(activator);
@@ -36,7 +36,7 @@ public partial class RunUI : RDMPForm
         _commandCaller.CommandCompleted += (s, e) => Close();
 
         var commands = _commandCaller.GetSupportedCommands();
-            
+
         foreach (var c in commands)
         {
             var name = BasicCommandExecution.GetCommandName(c.Name);

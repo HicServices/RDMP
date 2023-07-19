@@ -25,7 +25,7 @@ public partial class TaskDescriptionLabel : UserControl
     {
         var task = args.TaskDescription;
         var entryLabel = args.EntryLabel;
-            
+
 
         tbTaskDescription.Visible = pnlTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
         tbTaskDescription.Text = task;

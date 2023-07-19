@@ -40,14 +40,14 @@ public partial class StartupUI : Form, ICheckNotifier
     public StartupUI(Startup startup)
     {
         _startup = startup;
-            
+
         InitializeComponent();
-            
+
         if(_startup == null)
             return;
 
         Text = $"RDMP - v{GetVersion()}";
-            
+
         _startup.DatabaseFound += StartupDatabaseFound;
         _startup.PluginPatcherFound += StartupPluginPatcherFound;
 
@@ -96,7 +96,7 @@ public partial class StartupUI : Form, ICheckNotifier
             Invoke(new MethodInvoker(() => StartupPluginPatcherFound(sender, eventArgs)));
             return;
         }
-                        
+
         pbLoadProgress.Value = 800;//80% done
     }
 
@@ -110,10 +110,10 @@ public partial class StartupUI : Form, ICheckNotifier
             Invoke(new MethodInvoker(StartupComplete));
             return;
         }
-            
+
         if (_startup is { RepositoryLocator.CatalogueRepository: not null })
             WideMessageBox.CommentStore = _startup.RepositoryLocator.CatalogueRepository.CommentStore;
-            
+
         //when things go badly leave the form
         if(ragSmiley1.IsFatal() || CouldNotReachTier1Database)
             return;
@@ -131,7 +131,7 @@ public partial class StartupUI : Form, ICheckNotifier
     private void TimerTick(object sender, EventArgs e)
     {
         var t = (Timer) sender;
-            
+
         if(escapePressed)
         {
             t.Stop();
@@ -155,7 +155,7 @@ public partial class StartupUI : Form, ICheckNotifier
             return;
 
         StartOrRestart(false);
-            
+
     }
 
     private void StartOrRestart(bool forceClearRepositorySettings)
@@ -180,7 +180,7 @@ public partial class StartupUI : Form, ICheckNotifier
         escapePressed = false;
         countDownToClose = 5;
         lastStatus = RDMPPlatformDatabaseStatus.Healthy;
-            
+
         //10% progress because we connected to user settings
         pbLoadProgress.Value = 100;
 
@@ -303,7 +303,7 @@ public partial class StartupUI : Form, ICheckNotifier
             var percent = float.Parse(match.Groups[1].Value);
             pbLoadProgress.Value = (int) (500 + percent*2.5);//500-750
         }
-             
+
         switch (args.Result)
         {
             case CheckResult.Success:
@@ -315,7 +315,7 @@ public partial class StartupUI : Form, ICheckNotifier
                 args.Result = CheckResult.Warning;
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(args.Result));
+                throw new ArgumentOutOfRangeException(nameof(args),$"Invalid result {args.Result}");
         }
         lblProgress.Text = args.Message;
 
@@ -343,7 +343,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         _choosePlatformsUI = new ChoosePlatformDatabasesUI(_startup.RepositoryLocator);
         _choosePlatformsUI.ShowDialog();
-            
+
     }
 
     private void pbDisconnected_Click(object sender, EventArgs e)

@@ -95,7 +95,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
             {"Pipeline_ID", parent.ID},
             {"Class", componentType.ToString()},
             {"Order", order}
-        });   
+        });
     }
 
     internal PipelineComponent(ICatalogueRepository repository, DbDataReader r)
@@ -143,7 +143,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         var type = GetClassAsSystemType();
 
         var clone = new PipelineComponent(cataRepo, intoTargetPipeline,type ?? typeof(object) , Order);
-    
+
         // the Type for the PipelineComponent could not be resolved
         // Maybe the user created this pipe with a Plugin and then uninstalled
         // the plugin.  So tell the API its an Object then update the Class
@@ -159,7 +159,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
         clone.Name = Name;
         clone.SaveToDatabase();
-            
+
         return clone;
     }
 

@@ -127,7 +127,7 @@ internal class ViewSourceCodeToolTip : ToolTip
 
             SourceFileCache.Add(filename,fileContents);
         }
-            
+
         return SourceFileCache[filename];
     }
 }

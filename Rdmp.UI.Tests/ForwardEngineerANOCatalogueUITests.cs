@@ -16,8 +16,6 @@ internal class ForwardEngineerANOCatalogueUITests : UITests
     [Test,UITimeout(50000)]
     public void Test_ForwardEngineerANOCatalogueUI_NormalState()
     {
-        SetupMEF();
-
         var eiChi = WhenIHaveA<ExtractionInformation>();
         var cata = eiChi.CatalogueItem.Catalogue;
 
@@ -29,8 +27,6 @@ internal class ForwardEngineerANOCatalogueUITests : UITests
     [Test, UITimeout(50000)]
     public void Test_ForwardEngineerANOCatalogueUI_NoColumns()
     {
-        SetupMEF();
-
         var cata = WhenIHaveA<Catalogue>();
 
         //shouldn't be possible to launch the UI

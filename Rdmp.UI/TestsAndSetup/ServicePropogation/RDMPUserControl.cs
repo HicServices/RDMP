@@ -47,7 +47,7 @@ public abstract class RDMPUserControl : UserControl, IRDMPControl
     /// </summary>
     protected virtual void OnBeforeChecking()
     {
-            
+
     }
 
     /// <summary>

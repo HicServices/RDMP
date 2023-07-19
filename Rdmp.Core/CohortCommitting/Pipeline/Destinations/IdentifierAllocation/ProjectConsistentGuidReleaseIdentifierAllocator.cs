@@ -39,9 +39,9 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
         _releaseMap ??= GetReleaseMap();
 
         //if we have a historical release Id use it
-        if (_releaseMap.ContainsKey(privateIdentifier))
-            return _releaseMap[privateIdentifier];
-            
+        if (_releaseMap.TryGetValue(privateIdentifier, out var identifier))
+            return identifier;
+
         //otherwise allocate a new guid and let's record it just for prosperity
         var toReturn = Guid.NewGuid().ToString();
         _releaseMap.Add(privateIdentifier,toReturn);
@@ -102,7 +102,7 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
                 throw new ProjectNumberException("No Project was specified and NewCohortDefinition had no explicit project number");
             }
         }
-            
+
         _request = request;
         _projectNumber = request.Project?.ProjectNumber.Value ?? request.NewCohortDefinition?.ProjectNumber ?? 0;
     }

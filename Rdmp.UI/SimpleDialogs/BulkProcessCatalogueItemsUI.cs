@@ -52,7 +52,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         InitializeComponent();
 
         olvName.ImageGetter += ImageGetter;
-            
+
         ddExtractionCategory.DataSource = Enum.GetValues(typeof (ExtractionCategory));
     }
 
@@ -61,7 +61,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         base.SetDatabaseObject(activator, databaseObject);
 
         _catalogue = databaseObject;
-            
+
         RefreshUIFromDatabase();
     }
 
@@ -222,7 +222,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
         }
 
         var message = "";
-            
+
         if (deleteCount != 0)
             message += $"Performed {deleteCount} delete operations{Environment.NewLine}";
 
@@ -290,7 +290,7 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
             }
             orFilters.Add(filter);
         }
-                
+
 
         filters.Add(new TextMatchFilter(olvCatalogueItems, tbFilter.Text,StringComparison.CurrentCultureIgnoreCase));
 

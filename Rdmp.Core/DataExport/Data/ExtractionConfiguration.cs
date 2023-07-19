@@ -103,7 +103,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             reason = "ExtractionConfiguration does not have an selected datasets";
             return false;
         }
-                
+
         reason = null;
         return true;
     }

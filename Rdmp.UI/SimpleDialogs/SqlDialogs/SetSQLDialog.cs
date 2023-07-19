@@ -26,7 +26,7 @@ public partial class SetSQLDialog : Form
     public SetSQLDialog(string originalSQL, ICombineableFactory commandFactory)
     {
         InitializeComponent();
-            
+
         var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
@@ -34,9 +34,9 @@ public partial class SetSQLDialog : Form
 
         QueryEditor = new ScintillaTextEditorFactory().Create(commandFactory);
         QueryEditor.Text = originalSQL;
-            
+
         panel1.Controls.Add(QueryEditor);
-        
+
     }
 
     private void button1_Click(object sender, EventArgs e)

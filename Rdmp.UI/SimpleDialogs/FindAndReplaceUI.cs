@@ -57,7 +57,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
         olvObject.ImageGetter += ImageGetter;
         olvProperty.AspectGetter += PropertyAspectGetter;
         olvValue.AspectGetter += ValueAspectGetter;
-            
+
         olvAllObjects.AlwaysGroupByColumn = olvProperty;
 
         //allow editing
@@ -168,7 +168,7 @@ public partial class FindAndReplaceUI : RDMPUserControl
     {
         if(olvAllObjects.ModelFilter is not CompositeAllFilter all)
             olvAllObjects.ModelFilter = all = new CompositeAllFilter(new List<IModelFilter>());
-            
+
         if (_textMatchFilter != null && all.Filters.Contains(_textMatchFilter))
             all.Filters.Remove(_textMatchFilter);
 

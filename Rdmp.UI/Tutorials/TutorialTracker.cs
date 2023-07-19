@@ -28,7 +28,7 @@ public class TutorialTracker : IHelpWorkflowProgressProvider
     public TutorialTracker(IActivateItems activator)
     {
         _activator = activator;
-            
+
         BuildTutorialList();
     }
 

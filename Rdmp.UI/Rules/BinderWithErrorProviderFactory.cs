@@ -36,7 +36,7 @@ public class BinderWithErrorProviderFactory
 
         if (property.GetCustomAttributes(typeof (UniqueAttribute), true).Any())
             new UniqueRule<T>(_activator, databaseObject, getter, c, dataMember);
-            
+
         if (property.GetCustomAttributes(typeof(NotNullAttribute), true).Any())
             new NotNullRule<T>(_activator, databaseObject, getter, c, dataMember);
 

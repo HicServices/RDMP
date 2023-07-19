@@ -60,7 +60,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         serverDatabaseTableSelector1.SelectionChanged += serverDatabaseTableSelector1_SelectionChanged;
         serverDatabaseTableSelector1.SetItemActivator(activator);
         SetupState(State.SelectFile);
-            
+
         if (command.File != null)
             SelectFile(command.File);
 
@@ -96,7 +96,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         pickPipeline.SetOption(">>", execute);
         execute.SetOption("|<<", pickFile);
         //stage4.SetOption("next...", stage2);
-            
+
         HelpWorkflow.RootStage = pickFile;
     }
 
@@ -328,7 +328,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
         var source = (IDataFlowSource<DataTable>)DataFlowPipelineEngineFactory.CreateSourceIfExists(p);
 
         ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile), new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
-            
+
         Cursor.Current = Cursors.WaitCursor;
         var preview = source.TryGetPreview();
         Cursor.Current = Cursors.Default;
@@ -357,7 +357,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             MessageBox.Show("No Pipeline Selected");
             return;
         }
-            
+
         if(string.IsNullOrWhiteSpace(tbTableName.Text))
         {
             MessageBox.Show("Enter Catalogue name");

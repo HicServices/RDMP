@@ -61,7 +61,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
         var relationshipFinder = new AttributePropertyFinder<RelationshipAttribute>(Object);
         var noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(Object);
 
-            
+
         //for each property in the Object class
         foreach (var property in Object.GetType().GetProperties())
         {

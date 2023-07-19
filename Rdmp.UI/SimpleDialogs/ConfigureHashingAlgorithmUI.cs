@@ -35,7 +35,7 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
     public ConfigureHashingAlgorithmUI(IActivateItems activator):base(activator)
     {
         InitializeComponent();
-            
+
         if(VisualStudioDesignMode)
             return;
 

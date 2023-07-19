@@ -22,11 +22,11 @@ public partial class ServerDatabaseTableSelectorDialog : Form
     {
         //start at cancel so if they hit the X nothing is selected
         DialogResult = DialogResult.Cancel;
-            
+
         InitializeComponent();
 
         lblTaskDescription.Text = taskDescription;
-            
+
         if(!includeTable)
             serverDatabaseTableSelector1.HideTableComponents();
 

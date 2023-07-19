@@ -118,7 +118,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
             {"Order", order},
             {"SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? DBNull.Value : (object)selectSQL}
         });
-            
+
         ClearAllInjections();
     }
 
@@ -139,7 +139,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         HashOnDataRelease = (bool)r["HashOnDataRelease"];
         IsExtractionIdentifier = (bool)r["IsExtractionIdentifier"];
         IsPrimaryKey = (bool) r["IsPrimaryKey"];
-            
+
         ClearAllInjections();
     }
 
@@ -222,7 +222,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         //it's not based on a Catalogue column
         if (!CatalogueExtractionInformation_ID.HasValue)
             return null;
-            
+
         try
         {
             return ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);

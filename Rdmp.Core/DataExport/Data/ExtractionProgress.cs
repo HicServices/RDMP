@@ -120,7 +120,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"Could not determine datatype of ColumnInfo {col} ('{col?.Data_type}')", CheckResult.Fail, ex));
         }
-            
+
     }
 
     /// <inheritdoc/>
@@ -223,7 +223,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
         // sleep for however many minutes we are up to
         var mins  = waitTimes[totalFailureCount];
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Waiting {mins} mins before retry"));
-                
+
         // wait for the minutes but cancel if abort is hit
         Task.Delay((int)TimeSpan.FromMinutes(mins).TotalMilliseconds,token.AbortToken).Wait();
 

@@ -25,10 +25,10 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
     {
         var difference1 = difference;
         InitializeComponent();
-            
+
         if (VisualStudioDesignMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
-            
+
         //For documentation/control previewing
         difference1 ??= new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
 
@@ -57,7 +57,7 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
         QueryEditorAfter.ReadOnly = true;
 
         splitContainer1.Panel2.Controls.Add(QueryEditorAfter);
-            
+
         //compute difference
         textBefore ??= "";
         textAfter ??= "";
@@ -77,7 +77,7 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
             for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
                 ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
         }
-            
+
     }
 
 }

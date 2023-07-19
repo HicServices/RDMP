@@ -41,7 +41,7 @@ public partial class ObjectSaverButton
     {
         btnSave.Click += btnSave_Click;
         btnUndoRedo.Click += btnUndoRedo_Click;
-            
+
         _undoImage = FamFamFamIcons.Undo.ImageToBitmap();
         _redoImage = FamFamFamIcons.Redo.ImageToBitmap();
 
@@ -79,15 +79,15 @@ public partial class ObjectSaverButton
             _o = o;
             _o.PropertyChanged += PropertyChanged;
         }
-            
+
         //already set up before
         if (_activator != null)
             return;
-            
+
         _activator = activator;
 
         f.Enter += ParentForm_Enter;
-            
+
         //the first time it is set up it could still be out of date!
         CheckForOutOfDateObjectAndOfferToFix();
     }
@@ -112,7 +112,7 @@ public partial class ObjectSaverButton
         }
 
         _parent.SetUnSavedChanges(b);
-            
+
         btnSave.Enabled = b;
         btnUndoRedo.Enabled = b;
 
@@ -124,7 +124,7 @@ public partial class ObjectSaverButton
     {
         if(_o == null)
             throw new Exception("Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
-            
+
         if(BeforeSave != null)
             if (!BeforeSave(_o))
                 return;
@@ -188,7 +188,7 @@ public partial class ObjectSaverButton
     private void SetReadyToRedo(RevertableObjectReport changes)
     {
         //record the changes prior to the revert
-        _undoneChanges = changes; 
+        _undoneChanges = changes;
 
         _undo = false;
         btnUndoRedo.Image = _redoImage;
@@ -238,7 +238,7 @@ public partial class ObjectSaverButton
         // If there is no object or it does not exist don't try to save it
         if (_o == null || !_o.Exists())
             return;
-            
+
         if (_isEnabled)
             if (_activator.YesNo($"Save Changes To '{_o}'?", "Save Changes"))
                 Save();

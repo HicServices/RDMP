@@ -85,7 +85,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
 
     public SelectedDataSets()
     {
-        ClearAllInjections(); 
+        ClearAllInjections();
     }
 
     internal SelectedDataSets(IDataExportRepository repository, DbDataReader r)
@@ -111,7 +111,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
             {"ExtractableDataSet_ID",dataSet.ID},
             {"RootFilterContainer_ID",rootContainerIfAny != null?(object) rootContainerIfAny.ID:DBNull.Value}
         });
-            
+
         ClearAllInjections();
         InjectKnown(dataSet);
     }
@@ -214,7 +214,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
 
         ExtractionProgressIfAny?.DeleteInDatabase();
         base.DeleteInDatabase();
-            
+
         foreach(var col in cols)
         {
             if(col.Exists())

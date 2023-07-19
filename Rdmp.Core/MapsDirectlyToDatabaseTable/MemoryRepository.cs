@@ -40,7 +40,7 @@ public class MemoryRepository : IRepository
     {
         NextObjectId++;
         toCreate.ID = NextObjectId;
-            
+
         foreach (var kvp in constructorParameters)
         {
             var val = kvp.Value;
@@ -57,7 +57,7 @@ public class MemoryRepository : IRepository
         }
 
         toCreate.Repository = this;
-            
+
         Objects.TryAdd(toCreate,0);
 
         toCreate.PropertyChanged += toCreate_PropertyChanged;
@@ -193,7 +193,7 @@ public class MemoryRepository : IRepository
     public virtual void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         CascadeDeletes(oTableWrapperObject);
-        
+
         Objects.TryRemove(oTableWrapperObject, out _);
 
         //forget about property changes (since it's been deleted)
@@ -209,7 +209,7 @@ public class MemoryRepository : IRepository
     /// <param name="oTableWrapperObject"></param>
     protected virtual void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-            
+
     }
 
     public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
@@ -231,7 +231,7 @@ public class MemoryRepository : IRepository
 
         //forget about all changes now
         _propertyChanges.TryRemove(mapsDirectlyToDatabaseTable, out _);
-            
+
     }
 
     public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
@@ -333,7 +333,7 @@ public class MemoryRepository : IRepository
 
     public void TestConnection()
     {
-            
+
     }
 
     public virtual void Clear()

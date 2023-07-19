@@ -142,7 +142,7 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
         Destination = (DiscardedColumnDestination) r["Destination"];
         RuntimeColumnName = r["RuntimeColumnName"] as string;
         SqlDataType = r["SqlDataType"] as string;
-            
+
         if (r["DuplicateRecordResolutionOrder"] != DBNull.Value)
             DuplicateRecordResolutionOrder = int.Parse(r["DuplicateRecordResolutionOrder"].ToString());
         else

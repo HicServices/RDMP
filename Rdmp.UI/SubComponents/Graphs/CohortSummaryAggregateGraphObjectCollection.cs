@@ -101,6 +101,6 @@ public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollec
             else
                 shouldClose = true;//object doesn't exist anymore so close control
 
-            
+
     }
 }

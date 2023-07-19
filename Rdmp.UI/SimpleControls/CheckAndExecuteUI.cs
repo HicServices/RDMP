@@ -89,7 +89,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
             new(btnExecute, "This button will execute the required operation in the RDMP UI.\r\n" +
                             "Results will be shown below.")
         };
-            
+
         return stages;
     }
 
@@ -114,7 +114,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         CurrentRunner = runner;
 
         btnRunChecks.Enabled = false;
-            
+
         //reset the visualisations
         ragChecks.Reset();
         checksUI1.Clear();
@@ -181,7 +181,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
         loadProgressUI1.ShowRunning(true);
 
         var exitCode = 0;
-            
+
         _runningTask =
             //run the data load in a Thread
             Task.Factory.StartNew(() => { exitCode = Run(runner); });
@@ -256,7 +256,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
             checksUI1.Visible = false;
             loadProgressUI1.Visible = true;
         }
-            
+
         //checks have passed is there a load underway already?
         if (_runningTask == null || _runningTask.IsCompleted)
         {

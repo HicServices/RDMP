@@ -84,7 +84,7 @@ public class RDMPControlCommonFunctionality
             Visible = false
         };
         ToolStrip.Items.Add(_menuDropDown);
-                        
+
         _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
         ToolStrip.Items.Add(_ragSmileyToolStrip);
 
@@ -326,7 +326,7 @@ public class RDMPControlCommonFunctionality
 
         _menuDropDown.DropDownItems.Clear();
         _menuDropDown.Visible = false;
-            
+
         _addToMenuSubmenus.Clear();
 
         ToolStrip.Items.Add(_menuDropDown);
@@ -397,7 +397,7 @@ public class RDMPControlCommonFunctionality
         }
         else
             _menuDropDown.DropDownItems.Add(menuItem);
-    
+
         _menuDropDown.Visible = true;
     }
 
@@ -497,7 +497,7 @@ public class RDMPControlCommonFunctionality
 Technical Detail:
 Type:{exception.GetType()}
 Stack Trace:{exception.StackTrace}";
-            
+
         queryEditor.ReadOnly = true;
 
         //go red after you have set the text

@@ -40,7 +40,7 @@ public partial class TypeTextOrCancelDialog : Form
             EntryLabel = prompt
         },maxCharacters,startingTextForInputBox,allowBlankText,multiLine)
     {
-            
+
     }
 
     public TypeTextOrCancelDialog(DialogArgs args, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false, bool multiLine = false)
@@ -51,7 +51,7 @@ public partial class TypeTextOrCancelDialog : Form
         InitializeComponent();
 
         var header = args.WindowTitle;
-           
+
 
         if (header is { Length: > WideMessageBox.MAX_LENGTH_TITLE })
             header = header[..WideMessageBox.MAX_LENGTH_TITLE];
@@ -93,7 +93,7 @@ public partial class TypeTextOrCancelDialog : Form
             ActiveControl = textBox1;
         }
 
-        SetEnabledness();          
+        SetEnabledness();
     }
 
     private void _scintilla_KeyDown(object sender, KeyEventArgs e)

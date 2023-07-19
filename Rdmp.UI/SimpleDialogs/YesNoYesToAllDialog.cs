@@ -32,12 +32,12 @@ public  class YesNoYesToAllDialog : WideMessageBox
 
     public YesNoYesToAllDialog():this(new WideMessageBoxArgs("YesNo","Unknown",Environment.StackTrace,null,WideMessageBoxTheme.Help))
     {
-            
+
     }
 
     private YesNoYesToAllDialog(WideMessageBoxArgs wideMessageBoxArgs) : base(wideMessageBoxArgs)
     {
-            
+
         AddButton(btnYes);
         AddButton(btnYesToAll);
         AddButton(btnNo);
@@ -80,7 +80,7 @@ public  class YesNoYesToAllDialog : WideMessageBox
         Args.Title = caption;
         Args.Message = message;
         Setup(Args);
-            
+
         lock (lockShowDialog)
             return ShowDialog();
     }

@@ -154,7 +154,7 @@ public partial class ServerDatabaseTableSelector : UserControl
             cbxTable.Items.AddRange(_listTablesAsyncResult.Where(static t => t is not DiscoveredTableValuedFunction).ToArray());
             cbxTableValueFunctions.Items.AddRange(_listTablesAsyncResult.Where(static t => t is DiscoveredTableValuedFunction).ToArray());
         }
-                
+
 
         SetLoading(false);
 
@@ -263,7 +263,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         set
         {
             _allowTableValuedFunctionSelection = value;
-                
+
             lblOr.Visible = value;
             lblTableValuedFunction.Visible = value;
             cbxTableValueFunctions.Visible = value;
@@ -482,7 +482,7 @@ public partial class ServerDatabaseTableSelector : UserControl
             }
 
         }
-            
+
     }
 
     private void btnRefreshDatabases_Click(object sender, EventArgs e)

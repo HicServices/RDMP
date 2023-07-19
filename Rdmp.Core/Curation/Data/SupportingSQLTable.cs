@@ -167,7 +167,7 @@ public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
         if(r["ExternalDatabaseServer_ID"] == null || r["ExternalDatabaseServer_ID"] == DBNull.Value)
             ExternalDatabaseServer_ID = null;
         else
-            ExternalDatabaseServer_ID = Convert.ToInt32(r["ExternalDatabaseServer_ID"]); 
+            ExternalDatabaseServer_ID = Convert.ToInt32(r["ExternalDatabaseServer_ID"]);
 
         Ticket = r["Ticket"] as string;
     }

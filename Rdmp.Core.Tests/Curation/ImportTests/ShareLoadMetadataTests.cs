@@ -88,8 +88,6 @@ public class ShareLoadMetadataTests : UnitTests
         //create an object
         var lmd1 = WhenIHaveA<LoadMetadata>();
 
-        SetupMEF();
-
         var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting)
         {
             ProcessTaskType = ProcessTaskType.Attacher,
@@ -135,8 +133,6 @@ public class ShareLoadMetadataTests : UnitTests
         //create an object
         var lmd1 = WhenIHaveA<LoadMetadata>();
 
-        //setup Reflection / MEF
-        SetupMEF();
         var f = new RuntimeTaskFactory(Repository);
         var stg = Mock.Of<IStageArgs>(x =>
             x.LoadStage==LoadStage.Mounting &&

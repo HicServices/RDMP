@@ -101,8 +101,8 @@ public partial class MetadataReportUI : RDMPForm
             return (BitmapWithDescription[])Invoke(new RequestCatalogueImagesHandler(report_RequestCatalogueImages), catalogue);
 
         var toReturn = new List<BitmapWithDescription>();
-                
-            
+
+
         aggregateGraph1.Width = (int) _report.PageWidthInPixels;
         aggregateGraph1.Visible = true;
 
@@ -211,7 +211,7 @@ public partial class MetadataReportUI : RDMPForm
         {
             SetCatalogueSelection(selected);
         }
-                
+
     }
 
     private bool bLoading;
@@ -270,6 +270,6 @@ public partial class MetadataReportUI : RDMPForm
                     .AllCatalogues
                     .Where(c => c.Folder.Equals(selected))
                     .ToArray());
-        }   
+        }
     }
 }
