@@ -65,9 +65,10 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
 
         _pick = cohort;
 
-        if (_pick != null && !_compatibleCohorts.Contains(_pick))
-            SetImpossible(
-                $"Specified cohort {_pick} was not compatible with Project.  Check the cohorts ProjectNumber matches");
+        if(_pick != null && !_compatibleCohorts.Contains(_pick))
+        {
+            SetImpossible($"Specified cohort {_pick} was not compatible with Project.  Check the cohorts ProjectNumber matches");
+        }
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
@@ -96,5 +97,6 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
             _extractionConfiguration.SaveToDatabase();
             Publish(_extractionConfiguration);
         }
+
     }
 }

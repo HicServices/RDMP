@@ -245,7 +245,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
                 _progressQueue.Remove(message.Key);
 
-                AutoReizeColumns();
+                AutoResizeColumns();
             }
         }
 
@@ -256,21 +256,19 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 olvProgressEvents.AddObjects(_notificationQueue);
                 _notificationQueue.Clear();
 
-                AutoReizeColumns();
+                AutoResizeColumns();
             }
         }
 
         olvProgressEvents.Sort();
     }
 
-    private void AutoReizeColumns()
+    private void AutoResizeColumns()
     {
-        if (UserSettings.AutoResizeColumns)
-        {
-            olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
-            olvMessage.Width += 15; //add room for icon
-        }
+        if (!UserSettings.AutoResizeColumns) return;
+        olvSender.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+        olvMessage.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
+        olvMessage.Width += 15; //add room for icon
     }
 
     private bool HandleFloodOfMessagesFromJob(object sender, string job, int progressAmount, string label)

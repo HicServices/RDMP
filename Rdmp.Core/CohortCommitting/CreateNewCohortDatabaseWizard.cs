@@ -83,6 +83,7 @@ public class CreateNewCohortDatabaseWizard
         var tt = _targetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater;
 
 
+
         if (tt.GetLengthIfString(privateIdentifierPrototype.DataType) == int.MaxValue)
             throw new Exception(
                 "Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table");

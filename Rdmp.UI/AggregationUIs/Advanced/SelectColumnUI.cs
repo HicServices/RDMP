@@ -69,9 +69,9 @@ public partial class SelectColumnUI : RDMPUserControl
         _includedColumns = new List<IColumn>();
 
         olvEditInPopup.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
-        olvEditInPopup.AspectGetter = rowObject => _includedColumns.Contains(rowObject) ? "Edit..." : null;
+        olvEditInPopup.AspectGetter = rowObject => _includedColumns.Contains(rowObject)?"Edit...":null;
 
-        olvIncluded.AspectGetter = rowObject => _includedColumns.Contains(rowObject) ? "Included" : "Not Included";
+        olvIncluded.AspectGetter = rowObject => _includedColumns.Contains(rowObject)? "Included": "Not Included";
         olvSelectColumns.AlwaysGroupByColumn = olvIncluded;
         olvSelectColumns.RowFormatter += RowFormatter;
 
@@ -184,6 +184,7 @@ public partial class SelectColumnUI : RDMPUserControl
 
     private Bitmap ImageGetter(object rowObject)
     {
+
         if (_availableColumns.Contains(rowObject))
             return _add;
 
