@@ -64,7 +64,7 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
             SetImpossible($"There are no cohorts currently configured with ProjectNumber {project.ProjectNumber.Value}");
 
         _pick = cohort;
-            
+
         if(_pick != null && !_compatibleCohorts.Contains(_pick))
         {
             SetImpossible($"Specified cohort {_pick} was not compatible with Project.  Check the cohorts ProjectNumber matches");
@@ -99,6 +99,6 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
             _extractionConfiguration.SaveToDatabase();
             Publish(_extractionConfiguration);
         }
-        
+
     }
 }

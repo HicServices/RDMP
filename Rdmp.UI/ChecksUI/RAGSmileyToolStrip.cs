@@ -113,7 +113,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     }
 
     public void Warning(Exception ex)
-    {            
+    {
         if (IsFatal())
             return;
 
@@ -129,7 +129,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     }
 
     public void Reset()
-    {            
+    {
         //reset the checks too so as not to leave old check results kicking about
         memoryCheckNotifier = new ToMemoryCheckNotifier();
         _worst = CheckResult.Success;
@@ -137,10 +137,10 @@ public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     }
 
     public bool OnCheckPerformed(CheckEventArgs args)
-    {            
+    {
         //record in memory
         memoryCheckNotifier.OnCheckPerformed(args);
-            
+
 
         if (dialog != null)
         {

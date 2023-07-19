@@ -70,14 +70,14 @@ public class CreateNewCohortDatabaseWizard
             else
                 toReturn.Add(new PrivateIdentifierPrototype(extractionInformation));
         }
-                
+
         return toReturn.ToArray();
     }
 
     public ExternalCohortTable CreateDatabase(PrivateIdentifierPrototype privateIdentifierPrototype, ICheckNotifier notifier)
     {
         var tt = _targetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater;
-            
+
 
         if(tt.GetLengthIfString(privateIdentifierPrototype.DataType) == int.MaxValue)
         {
@@ -90,7 +90,7 @@ public class CreateNewCohortDatabaseWizard
                 $"Did not find database {_targetDatabase} on server so creating it",CheckResult.Success));
             _targetDatabase.Create();
         }
-            
+
         try
         {
             var definitionTable = _targetDatabase.CreateTable("CohortDefinition", new[]

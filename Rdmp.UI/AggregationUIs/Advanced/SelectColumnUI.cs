@@ -62,15 +62,15 @@ public partial class SelectColumnUI : RDMPUserControl
     public SelectColumnUI()
     {
         InitializeComponent();
-            
+
         olvSelectColumns.ButtonClick += ButtonClick;
-            
+
         _availableColumns = new List<IColumn>();
         _includedColumns = new List<IColumn>();
 
         olvEditInPopup.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
         olvEditInPopup.AspectGetter = rowObject => _includedColumns.Contains(rowObject)?"Edit...":null;
-            
+
         olvIncluded.AspectGetter = rowObject => _includedColumns.Contains(rowObject)? "Included": "Not Included";
         olvSelectColumns.AlwaysGroupByColumn = olvIncluded;
         olvSelectColumns.RowFormatter += RowFormatter;
@@ -80,7 +80,7 @@ public partial class SelectColumnUI : RDMPUserControl
 
         olvAddRemove.ImageGetter += ImageGetter;
         olvSelectColumns.CellClick += olvSelectColumns_CellClick;
-            
+
         _add = FamFamFamIcons.add.ImageToBitmap();
         _delete = FamFamFamIcons.delete.ImageToBitmap();
 
@@ -185,7 +185,7 @@ public partial class SelectColumnUI : RDMPUserControl
 
     private Bitmap ImageGetter(object rowObject)
     {
-            
+
         if (_availableColumns.Contains(rowObject))
             return _add;
 
@@ -293,7 +293,7 @@ public partial class SelectColumnUI : RDMPUserControl
         _options = options;
         _countColumnRequirement = _options.GetCountColumnRequirement(aggregate);
         _aggregate = aggregate;
-            
+
         _availableColumns.Clear();
         _includedColumns.Clear();
         olvSelectColumns.ClearObjects();
