@@ -106,7 +106,7 @@ public class WordCatalogueExtractor: DocXHelper
 
             //create a new table
             var t = InsertTable(_document, requiredRowsCount, 2);
-                
+
             if(supplementalData!=null && supplementalData.TryGetValue(catalogueItem, out var value))
                 GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem,value);
             else

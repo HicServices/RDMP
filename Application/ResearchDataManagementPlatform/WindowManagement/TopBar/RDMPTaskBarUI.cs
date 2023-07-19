@@ -50,7 +50,7 @@ public partial class RDMPTaskBarUI : UserControl
 
         btnLoad.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
         btnLoad.BackgroundImage = BackColorProvider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
-            
+
         btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
         btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
 
@@ -68,9 +68,9 @@ public partial class RDMPTaskBarUI : UserControl
         _manager.Navigation.Changed += (s,e)=> UpdateForwardBackEnabled();
 
         btnDataExport.Enabled = manager.RepositoryLocator.DataExportRepository != null;
-            
+
         ReCreateDropDowns();
-            
+
         SetupToolTipText();
 
         _manager.ActivateItems.Theme.ApplyTo(toolStrip1);
@@ -81,7 +81,7 @@ public partial class RDMPTaskBarUI : UserControl
             cbCommits.Enabled = false;
             cbCommits.Text = "Repository does not support commits";
         }
-            
+
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ public partial class RDMPTaskBarUI : UserControl
 
         if (cbx.ComboBox == null)
             throw new Exception("Expected combo box!");
-            
+
         cbx.ComboBox.Items.Clear();
 
         var objects = _manager.RepositoryLocator.CatalogueRepository.GetAllObjects<T>();

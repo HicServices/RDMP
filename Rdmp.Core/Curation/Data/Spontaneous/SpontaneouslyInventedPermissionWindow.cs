@@ -38,7 +38,7 @@ public class SpontaneouslyInventedPermissionWindow:SpontaneousObject,IPermission
         Name = "Spontaneous Permission Window";
     }
 
-        
+
     public static void RefreshLockPropertiesFromDatabase()
     {
             

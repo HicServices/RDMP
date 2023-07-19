@@ -199,7 +199,7 @@ public class SuspiciousRelationshipPropertyUse
         Assert.AreEqual(0, _fails.Count);
     }
 
-    private void AnalyseRelationshipPropertyUsages()
+    private static void AnalyseRelationshipPropertyUsages()
     {
         foreach (var t in MEF.GetAllTypes())
         {

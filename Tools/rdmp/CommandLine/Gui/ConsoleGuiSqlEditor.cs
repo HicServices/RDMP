@@ -125,7 +125,7 @@ internal partial class ConsoleGuiSqlEditor : Window
             Width = 5
         };
         tbTimeout.TextChanged += TbTimeout_TextChanged;
-            
+
         Add(tbTimeout);
 
         var btnSave = new Button("Save"){
@@ -151,7 +151,7 @@ internal partial class ConsoleGuiSqlEditor : Window
         btnClose.Clicked += ()=>{
             Application.RequestStop();
         };
-                
+
         Add(btnClose);
 
         var auto = new AutoCompleteProvider(collection.GetQuerySyntaxHelper());
@@ -238,7 +238,7 @@ internal partial class ConsoleGuiSqlEditor : Window
         {
             MessageBox.ErrorQuery("Save Failed",ex.Message,"Ok");
         }
-            
+
     }
 
     private void TbTimeout_TextChanged(NStack.ustring value)
@@ -349,7 +349,7 @@ internal partial class ConsoleGuiSqlEditor : Window
 
     protected virtual void OnQueryCompleted(DataTable dt)
     {
-            
+
     }
 
     private class SqlAutocomplete : TextViewAutocomplete
@@ -391,7 +391,7 @@ internal partial class ConsoleGuiSqlEditor : Window
 
             _blue = Driver.MakeAttribute(Color.Cyan, Color.Black);
             _white = Driver.MakeAttribute(Color.White, Color.Black);
-                
+
         }
 
         // The next two are renamed in 1.8.2 of Terminal.Gui.  But we could upgrade because of this issue:

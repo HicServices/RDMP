@@ -32,7 +32,7 @@ internal partial class PickType : PickObjectBase
         return new CommandLineObjectPickerArgumentValue(arg,idx,GetType(arg));
     }
 
-    private Type GetType(string arg)
+    private static Type GetType(string arg)
     {
         if(string.IsNullOrWhiteSpace(arg))
             return null;

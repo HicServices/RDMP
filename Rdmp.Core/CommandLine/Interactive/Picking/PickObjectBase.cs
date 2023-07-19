@@ -50,7 +50,7 @@ public abstract class PickObjectBase
         Activator = activator;
     }
 
-    protected Type ParseDatabaseEntityType(string objectType, string arg, int idx)
+    protected static Type ParseDatabaseEntityType(string objectType, string arg, int idx)
     {
         var t = (GetTypeFromShortCodeIfAny(objectType) ?? Repositories.MEF.GetType(objectType)) ?? throw new CommandLineObjectPickerParseException("Could not recognize Type name",idx,arg);
         return !typeof(DatabaseEntity).IsAssignableFrom(t)
@@ -65,7 +65,7 @@ public abstract class PickObjectBase
     /// <param name="possibleTypeName"></param>
     /// <param name="t"></param>
     /// <returns></returns>
-    protected bool IsDatabaseObjectType(string possibleTypeName, out Type t)
+    protected static bool IsDatabaseObjectType(string possibleTypeName, out Type t)
     {
         try
         {

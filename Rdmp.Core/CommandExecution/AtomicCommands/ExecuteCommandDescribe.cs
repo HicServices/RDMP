@@ -314,7 +314,7 @@ public class ExecuteCommandDescribe:BasicCommandExecution
 
         return $"{req.Name}\t{req.Type.Name}\t{req.DemandIfAny?.Description}";
     }
-        
+
     private static string Wrap(string longString, int width, int indent)
     {
         var words = longString.Split(' ');

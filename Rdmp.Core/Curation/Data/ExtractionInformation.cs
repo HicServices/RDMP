@@ -120,7 +120,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
             {"ExtractionCategory", ExtractionCategory.Core.ToString()},
             {"CatalogueItem_ID",catalogueItem.ID}
         });
-            
+
         catalogueItem.ClearAllInjections();
 
         if (catalogueItem.ColumnInfo_ID == null)
@@ -225,7 +225,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         var dependencies = new List<IHasDependencies>();
-            
+
         dependencies.AddRange(ExtractionFilters);
         dependencies.Add(CatalogueItem);
 

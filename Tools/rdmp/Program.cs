@@ -46,7 +46,7 @@ internal class Program
         {
             Console.WriteLine($"Could not load NLog.config:{ex.Message}");
         }
-            
+
         if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
         {
             Quiet = true;
@@ -141,7 +141,7 @@ internal class Program
         var prefix = opts.Prefix;
 
         Console.WriteLine($"About to create on server '{serverName}' databases with prefix '{prefix}'");
-            
+
         try
         {
             PlatformDatabaseCreation.CreatePlatformDatabases(opts);

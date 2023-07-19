@@ -60,7 +60,7 @@ internal class ConsoleGuiBigListBox<T>
         _okText = okText;
         _addSearch = addSearch;
         _prompt = prompt;
-            
+
         AspectGetter = displayMember ?? (arg => arg?.ToString() ?? string.Empty);
     }
 
@@ -199,7 +199,7 @@ internal class ConsoleGuiBigListBox<T>
             btnCancel.X = Pos.Center() + 5;
         }
 
-            
+
         win.Add(btnOk);
         win.Add(btnCancel);
 
@@ -246,8 +246,8 @@ internal class ConsoleGuiBigListBox<T>
                 _changes = false;
                 return true;
             }
-        }           
-            
+        }
+
         return true;
     }
     protected void RestartFiltering()
@@ -281,7 +281,7 @@ internal class ConsoleGuiBigListBox<T>
                 _changes = true;
             }
 
-        }, cts.Token);       
+        }, cts.Token);
     }
 
     private IList<ListViewObject<T>> BuildList(IList<T> listOfT)

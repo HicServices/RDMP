@@ -73,7 +73,7 @@ public class TableInfoCloneOperation
         RemoveTableFromDatabase(tableToRemove, _hicDatabaseConfiguration.DeployInfo[_copyToBubble]);
     }
 
-        
+
     public static void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
     {
         if (!IsNukable(dbInfo,tableName))
@@ -82,7 +82,7 @@ public class TableInfoCloneOperation
         dbInfo.ExpectTable(tableName).Drop();
     }
 
-        
+
     private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
     {
         return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)

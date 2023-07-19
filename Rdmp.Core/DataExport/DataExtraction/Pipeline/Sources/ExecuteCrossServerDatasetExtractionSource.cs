@@ -49,7 +49,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
 
         return base.GetChunk(listener, cancellationToken);
     }
-        
+
     private List<DiscoveredTable> tablesToCleanup = new();
 
     public static Semaphore OneCrossServerExtractionAtATime = new(1, 1);

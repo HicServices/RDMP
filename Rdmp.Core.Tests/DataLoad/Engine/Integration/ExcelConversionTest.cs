@@ -91,7 +91,7 @@ public class ExcelConversionTest
 
         Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
     }
-        
+
     private static void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
     {
         var f = new FileInfo(targetFile);

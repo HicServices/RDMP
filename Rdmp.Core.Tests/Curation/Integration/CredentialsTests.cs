@@ -326,7 +326,7 @@ public class CredentialsTests : DatabaseTests
         {
             t.Server = "myserver";
             t.Database = "mydatabase";
-                
+
             cred = new DataAccessCredentials(CatalogueRepository, "bob")
             {
                 Username = "bob",

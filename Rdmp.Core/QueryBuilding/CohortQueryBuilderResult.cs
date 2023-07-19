@@ -483,7 +483,7 @@ public class CohortQueryBuilderResult
             
         _alreadyBuilt = true;
     }
-        
+
     public static string TabIn(string str, int numberOfTabs)
     {
         if (string.IsNullOrWhiteSpace(str))

@@ -62,7 +62,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     {
         if (rowObject is ExtractableCohortDescription ecd)
         {
-            var obj = _auditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
+            var obj = ExtractableCohortAuditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
             return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;
         }
 

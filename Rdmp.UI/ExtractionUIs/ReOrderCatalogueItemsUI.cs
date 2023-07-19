@@ -262,7 +262,7 @@ public partial class ReOrderCatalogueItemsUI : ReOrderCatalogueItems_Design
     }
 
     private object oDrawLock = new();
-        
+
 
     private void lbDesiredOrder_DrawItem(object sender, DrawItemEventArgs e)
     {

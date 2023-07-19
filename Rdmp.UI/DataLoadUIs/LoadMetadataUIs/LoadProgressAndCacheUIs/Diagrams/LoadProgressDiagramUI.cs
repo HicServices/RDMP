@@ -139,7 +139,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         {
             //Catalogue periodicity chart
             ChartLookAndFeelSetter.PopulateYearMonthChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData, "Count of records");
-            
+
             //Annotations
             _annotations = new LoadProgressAnnotation(_loadProgress, _report.CataloguesPeriodictiyData,
                 cataloguesRowCountChart);

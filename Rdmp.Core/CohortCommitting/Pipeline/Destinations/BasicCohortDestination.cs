@@ -123,7 +123,7 @@ public class BasicCohortDestination : IPluginCohortDestination
         return null;
     }
 
-        
+
     private static bool IsNull(object o)
     {
         return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());

@@ -33,7 +33,7 @@ public static class ErrorCodes
         "ExtractionConfiguration '{0}' dataset '{1}' contains Internal columns: {2}", CheckResult.Warning);
     public static readonly ErrorCode ExtractionContainsDeprecated = new("R007",
         "ExtractionConfiguration '{0}' dataset '{1}' contains Deprecated columns: {2}", CheckResult.Fail);
-        
+
     public static readonly ErrorCode CouldNotLoadDll =
         new("R008", "Encountered Bad Assembly loading {0} into memory", CheckResult.Success);
     public static readonly ErrorCode CouldOnlyHalfLoadDll =
@@ -43,7 +43,7 @@ public static class ErrorCodes
     public static readonly ErrorCode CouldNotReachCohort = new("R011",
         "Could not reach cohort '{0}' (it may be slow responding or inaccessible due to user permissions)",
         CheckResult.Warning);
-        
+
     public static readonly ErrorCode ExtractionFailedToExecuteTop1 =
         new("R012", "Failed to execute Top 1 on dataset '{0}'", CheckResult.Warning);
     public static readonly ErrorCode TextColumnsInExtraction = new("R013",
@@ -63,7 +63,7 @@ public static class ErrorCodes
     public static readonly ErrorCode CohortSwappedMidExtraction = new("R0017",
         "ExtractionProgress '{0}' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate? The SQL we expected to find was '{1}'",
         CheckResult.Fail);
-        
+
     static ErrorCodes()
     {
         var fields = typeof(ErrorCodes).GetFields(BindingFlags.Public | BindingFlags.Static).Where(p => p.FieldType == typeof(ErrorCode));

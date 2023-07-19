@@ -47,7 +47,7 @@ public class FromToDatabaseTests:DatabaseTests
     {
         To = GetCleanedServer(dbType);
         From = To.Server.ExpectDatabase(To.GetRuntimeName() + _suffix);
-            
+
         // ensure the test staging and live databases are empty
         if(!From.Exists())
             From.Create();

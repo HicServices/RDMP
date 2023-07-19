@@ -69,7 +69,7 @@ public class WindowManager
         GlobalExceptionHandler.Instance.Handler = e=>globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message,CheckResult.Fail,e));
 
         _mainDockPanel = mainDockPanel;
-            
+
         MainForm = mainForm;
         RepositoryLocator = repositoryLocator;
 
@@ -163,7 +163,7 @@ public class WindowManager
 
         _visibleToolboxes.Add(collection, content);
         content.Show(_mainDockPanel, DockState.DockLeft);
-            
+
         return content;
     }
 
@@ -341,7 +341,7 @@ public class WindowManager
     private void mainDockPanel_ActiveDocumentChanged(object sender, EventArgs e)
     {
         var newTab = (DockContent) _mainDockPanel.ActiveDocument;
-            
+
         if(newTab != null && newTab.ParentForm != null)
         {
             Navigation.Append(new TabNavigation(newTab));
@@ -363,7 +363,7 @@ public class WindowManager
         if(window is PersistableSingleDatabaseObjectDockContent singleObjectUI)
             if(AlreadyActive(singleObjectUI.Control.GetType(),singleObjectUI.DatabaseObject))
                 throw new ArgumentOutOfRangeException($"Cannot create another window for object {singleObjectUI.DatabaseObject} of type {singleObjectUI.Control.GetType()} because there is already a window active for that object/window type");
-            
+
         _trackedWindows.Add(window);
 
         window.FormClosed += (s,e)=>Remove(window);

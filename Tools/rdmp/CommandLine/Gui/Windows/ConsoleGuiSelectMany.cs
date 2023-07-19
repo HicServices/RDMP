@@ -74,7 +74,7 @@ public class ConsoleGuiSelectMany : Window
         Add(_tbSearch);
 
         Title = prompt;
-            
+
         _activator = activator;
     }
 

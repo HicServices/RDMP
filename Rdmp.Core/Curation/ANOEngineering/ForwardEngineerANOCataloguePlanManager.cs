@@ -46,7 +46,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     private CatalogueItem[] _allCatalogueItems;
 
     public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new();
-        
+
     [JsonIgnore]
     public List<IDilutionOperation>  DilutionOperations { get; private set; }
 

@@ -121,7 +121,7 @@ public sealed class ProcessTaskArgument : Argument
     {
         var argFactory = new ArgumentFactory();
         return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric<T>(
-                
+
                 //tell it how to create new instances of us related to parent
                 parent,
 

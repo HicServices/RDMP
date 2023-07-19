@@ -99,7 +99,7 @@ internal class ConsoleMainWindow
             })
         });
         top.Add (menu);
-                
+
         _win = new Window
         {
             X = 0,
@@ -138,7 +138,7 @@ internal class ConsoleMainWindow
                 Other});
 
         _win.Add(_treeView);
-        top.Add(_win); 
+        top.Add(_win);
 
         Application.RootMouseEvent = OnRootMouseEvent;
 
@@ -203,7 +203,7 @@ internal class ConsoleMainWindow
         {
             _activator.ShowException("Failed to build query",ex);
         }
-            
+
     }
     private void SetColorScheme(MenuItem sender)
     {
@@ -295,7 +295,7 @@ internal class ConsoleMainWindow
             //and refresh the selected tree node
             _treeView.RefreshObject(_treeView.SelectedObject,true);
         }
-                
+
     }
 
     private void Find()
@@ -362,10 +362,10 @@ internal class ConsoleMainWindow
     {
         var factory = new ConsoleGuiContextMenuFactory(_activator);
         var menu = factory.Create(_treeView.GetAllSelectedObjects().ToArray(), _treeView.SelectedObject);
-           
+
         if (menu == null)
             return;
-            
+
         menu.Position = DateTime.Now.Subtract(_lastMouseMove).TotalSeconds<1 ? _lastMousePos: new Point(10, 5);
         menu.Show();
     }
@@ -538,7 +538,7 @@ internal class ConsoleMainWindow
         var commandInvoker = new CommandInvoker(_activator);
         commandInvoker.CommandImpossible += (o, e) => { _activator.Show(
             $"Command Impossible because:{e.Command.ReasonCommandImpossible}");};
-            
+
         try
         {
             commandInvoker.ExecuteCommand(typeof(ExecuteCommandNewObject),null);

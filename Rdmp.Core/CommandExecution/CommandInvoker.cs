@@ -69,7 +69,7 @@ public class CommandInvoker
 
         AddDelegate(typeof(string), false,SelectText);
 
-        AddDelegate(typeof(Type), false,p => 
+        AddDelegate(typeof(Type), false,p =>
             _basicActivator.SelectType(
                 new DialogArgs
                 {

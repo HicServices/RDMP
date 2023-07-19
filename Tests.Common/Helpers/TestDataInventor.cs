@@ -24,7 +24,7 @@ namespace Tests.Common.Helpers;
 public class TestDataInventor : CacheSource<TestDataWriterChunk>
 {
     private Random r = new();
-        
+
     /// <summary>
     /// The path in which to create random files
     /// </summary>
@@ -64,12 +64,12 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-            
+
     }
 
     public override void Abort(IDataLoadEventListener listener)
     {
-            
+
     }
 
     public override TestDataWriterChunk TryGetPreview()

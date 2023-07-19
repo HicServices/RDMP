@@ -330,7 +330,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             }
             while (otherConfigurations.Any(c => c.Name.Equals(aggregate.Name)));//until there are no more copies
         }
-            
+
         aggregate.SaveToDatabase();
     }
 
@@ -388,7 +388,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 notifier.OnCheckPerformed(new CheckEventArgs("Cloning failed, See Exception for details, the Super Transaction was rolled back successfully though", CheckResult.Fail,e));
             }
         }
-            
+
         return null;
     }
 
@@ -650,7 +650,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 .SelectMany(a=>a.AggregateDimensions //get all the Dimensions (should really be 1 per aggregate which is the IsExtractionIdentifier column but who are we to check)
                     .Select(d=>d.ColumnInfo.TableInfo)) //get the TableInfo of the underlying Column for the dimension
                 .Distinct() //return distinct array of them
-                .ToArray(); 
+                .ToArray();
     }
 
     /// <summary>
@@ -687,9 +687,9 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         var dependencies = new List<IHasDependencies>();
-            
+
         dependencies.AddRange(GetAllParameters().Cast<AnyTableSqlParameter>());
-            
+
         if(RootCohortAggregateContainer_ID != null)
             dependencies.AddRange(RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively());
 

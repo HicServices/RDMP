@@ -45,7 +45,7 @@ public partial class ViewExtractionSqlUI : ViewExtractionSql_Design
     private ToolStripButton rbSpecialApproval = new("Special Approval");
     private ToolStripButton rbInternal = new("Internal");
     private ToolStripButton btnRun = new("Run",CatalogueIcons.ExecuteArrow.ImageToBitmap());
-        
+
     private Scintilla QueryPreview;
     public ViewExtractionSqlUI()
     {

@@ -29,12 +29,12 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
 
     public ConsoleGuiCohortIdentificationConfigurationUI(IBasicActivateItems activator, CohortIdentificationConfiguration cic) {
         InitializeComponent();
-            
+
         Modal = true;
 
         _activator = activator;
         Common.Activator = activator;
-            
+
         Common.Compiler.CoreChildProvider = activator.CoreChildProvider;
 
         Common.Configuration = cic;
@@ -141,7 +141,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI {
         {
             lblState.Text = UsefulStuff.PascalCaseStringToHumanReadable(Common.Runner.ExecutionPhase.ToString());
         });
-            
+
         Common.RecreateAllTasks(false);
     }
 

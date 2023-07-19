@@ -71,7 +71,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
             $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
     }
 
-    private Type GetTypeByName(string s, Type expectedBaseClassType)
+    private static Type GetTypeByName(string s, Type expectedBaseClassType)
     {
         return MEF.GetType(s, expectedBaseClassType) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
     }

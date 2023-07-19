@@ -55,7 +55,7 @@ public class TestsRequiringACohort : TestsRequiringA
         base.OneTimeSetUp();
 
         using var con=CreateCohortDatabase();
-            
+
         EmptyCohortTables(con);
         SetupCohortDefinitionAndCustomTable(con);
 
@@ -84,7 +84,7 @@ public class TestsRequiringACohort : TestsRequiringA
             DeleteTables(_cohortDatabase);
         else
             _cohortDatabase.Create();
-            
+
         const string sql = @"
 
 CREATE TABLE [dbo].[Cohort](
@@ -196,7 +196,7 @@ GO
         new ForwardEngineerCatalogue(CustomTableInfo, cols).ExecuteForwardEngineering(out CustomCatalogue, out _, out var eis);
 
         CustomExtractableDataSet = new ExtractableDataSet(DataExportRepository, CustomCatalogue);
-            
+
         foreach (var e in eis)
         {
             e.ExtractionCategory = ExtractionCategory.ProjectSpecific;

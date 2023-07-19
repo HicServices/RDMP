@@ -178,7 +178,7 @@ public partial class DatabaseTests
             Assert.IsTrue(tblRepo.DiscoveredServer.Exists(),
                 "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that server name and prefix in TestDatabases.txt match those you provide e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
         }
-        
+
         RunBlitzDatabases(RepositoryLocator);
 
         var defaults = CatalogueRepository;
@@ -253,7 +253,7 @@ public partial class DatabaseTests
     private static IDataExportRepository GetFreshYamlRepository()
     {
         var dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Repo"));
-            
+
         // clear out any test remnants
         if (dir.Exists)
             dir.Delete(true);
@@ -290,7 +290,7 @@ public partial class DatabaseTests
 
         //now make it the default DQE
         defaults.SetDefault(defaultToSet, externalServerPointer);
-            
+
         return builder;
     }
 
@@ -703,7 +703,7 @@ delete from {1}..Project
 
         //if user specified the standard name or no name
         var isStandardDb = dbnName == null || dbnName == standardName;
-            
+
         //use the standard name if they haven't specified one
         dbnName ??= standardName;
 
@@ -803,7 +803,7 @@ delete from {1}..Project
             {
                 throw new Exception( $"Failed to drop table '{t.GetFullyQualifiedName()} during cleanup",ex);
             }
-            
+
         foreach (var t in database.DiscoverTableValuedFunctions())
             try
             {
@@ -929,7 +929,7 @@ delete from {1}..Project
             var credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
             credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
         }
-            
+
     }
 
 

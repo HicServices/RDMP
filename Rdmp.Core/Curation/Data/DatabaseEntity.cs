@@ -254,7 +254,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
 
         var noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(to);
         var relationsFinder = new AttributePropertyFinder<RelationshipAttribute>(to);
-            
+
         foreach (var p in GetType().GetProperties())
         {
             if (p.Name.Equals("ID"))

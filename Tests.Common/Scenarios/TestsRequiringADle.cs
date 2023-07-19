@@ -45,7 +45,7 @@ public class TestsRequiringADle:TestsRequiringA
     protected override void SetUp()
     {
         base.SetUp();
-            
+
         Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
         var rootFolder = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);

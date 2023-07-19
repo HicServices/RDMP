@@ -221,7 +221,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         //Look at assignments to Sender, the invocation list can change the Sender!
         var args = new EmphasiseEventArgs(request);
         OnEmphasise(this,args);
-            
+
         //might be different than sender that was passed in
         if(args.Sender is DockContent content)
             content.Activate();
@@ -800,7 +800,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         for(var i = 0;i<ms.Count;i++)
             toReturn.SetValue(ms[i],i);
-                
+
         return toReturn.Cast<IMapsDirectlyToDatabaseTable>().ToArray();
 
     }

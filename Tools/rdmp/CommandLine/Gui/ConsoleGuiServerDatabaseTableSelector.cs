@@ -67,7 +67,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         btnUseExisting.ColorScheme = ColorScheme;
 
         cbxDatabaseType.SetSource(Enum.GetValues<DatabaseType>());
-            
+
         cbxDatabaseType.AddKeyBinding(Key.CursorDown, Command.Expand);
 
         AddNoWordMeansShowAllAutocomplete(tbServer);
@@ -79,7 +79,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector {
         tbServer.Autocomplete.AllSuggestions = UserSettings.GetHistoryForControl(new Guid("01ccc304-0686-4145-86a5-cc0468d40027"))
             .Where(e=>!string.IsNullOrWhiteSpace(e))
             .ToList();
-            
+
         cbxDatabaseType.SelectedItem = cbxDatabaseType.Source.ToList().IndexOf(DatabaseType.MicrosoftSQLServer);
         btnCreateDatabase.Clicked += CreateDatabase;
 

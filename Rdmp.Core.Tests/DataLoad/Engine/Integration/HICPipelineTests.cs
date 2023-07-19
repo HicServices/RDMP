@@ -136,7 +136,7 @@ public class HICPipelineTests : DatabaseTests
                 new("AddFilenameColumnNamed", null, typeof (string))
 
             };
-                
+
 
             foreach (var tuple in processTaskArgs)
             {
@@ -162,7 +162,7 @@ public class HICPipelineTests : DatabaseTests
             _server = server;
 
             var databaseToLoadName = "HICPipelineTests";
-                
+
             // Create the databases
             server.ExpectDatabase(databaseToLoadName).Create(true);
             server.ChangeDatabase(databaseToLoadName);
@@ -192,7 +192,7 @@ public class HICPipelineTests : DatabaseTests
         {
             if (DatabaseToLoad == null)
                 return;
-                
+
             if (DatabaseToLoad.Exists())
                 DatabaseToLoad.Drop();
 
@@ -300,7 +300,7 @@ public class TestCacheFileRetriever : CachedFileRetriever
 {
     public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-            
+
     }
 
     public override ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken)

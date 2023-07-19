@@ -80,7 +80,7 @@ public partial class ExtractableCohortAuditLogBuilder
     /// <param name="cohort"></param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public object GetObjectIfAny(IExtractableCohort cohort, Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static object GetObjectIfAny(IExtractableCohort cohort, Repositories.IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         var audit = cohort.AuditLog;
             
@@ -133,7 +133,7 @@ public partial class ExtractableCohortAuditLogBuilder
         return null;
     }
 
-    private T GetObjectFromLog<T>(string audit, IRepository repository) where T: class, IMapsDirectlyToDatabaseTable
+    private static T GetObjectFromLog<T>(string audit, IRepository repository) where T: class, IMapsDirectlyToDatabaseTable
     {
         var m = RegexGetID.Match(audit);
 

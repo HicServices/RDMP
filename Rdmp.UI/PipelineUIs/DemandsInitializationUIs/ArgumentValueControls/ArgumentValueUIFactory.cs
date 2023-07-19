@@ -143,14 +143,14 @@ public class ArgumentValueUIFactory
         return parent is LoadMetadata lmd ? lmd.GetDistinctTableInfoList(true) : (IEnumerable<TableInfo>)repository.GetAllObjects<TableInfo>();
     }
 
-        
+
     private static IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
     {
         return parent is ProcessTask || parent is LoadMetadata
             ? GetTableInfosInScope(repository,parent).SelectMany(ti => ti.ColumnInfos)
             : repository.GetAllObjects<ColumnInfo>();
     }
-        
+
     private static IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
     {
         return parent is ProcessTask || parent is LoadMetadata

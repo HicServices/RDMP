@@ -6,9 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
-using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -60,10 +58,6 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
                 catFinder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(new RepositoryProvider(dataExportRepository));
         }
     }
-
-    public string ConnectionString => null;
-    public DbConnectionStringBuilder ConnectionStringBuilder => null;
-    public DiscoveredServer DiscoveredServer => null;
 
     /// <summary>
     /// Path to RSA private key encryption certificate for decrypting encrypted credentials.
