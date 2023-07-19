@@ -10,7 +10,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
@@ -88,12 +87,12 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commit results",cic);
 
-        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s, u) => OnImportCompletedSuccessfully(s, u, cic);
+        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s,u)=>OnImportCompletedSuccessfully(cic);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    private void OnImportCompletedSuccessfully(object sender, PipelineEngineEventArgs u, CohortIdentificationConfiguration cic)
+    private void OnImportCompletedSuccessfully(CohortIdentificationConfiguration cic)
     {
         //see if we can associate the cic with the project
         var cmd = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(BasicActivator)

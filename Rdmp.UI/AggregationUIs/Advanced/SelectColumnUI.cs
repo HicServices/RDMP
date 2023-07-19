@@ -47,13 +47,13 @@ public partial class SelectColumnUI : RDMPUserControl
     private IAggregateBuilderOptions _options;
     private AggregateConfiguration _aggregate;
 
-    private List<IColumn> _availableColumns;
-    private List<IColumn> _includedColumns;
+    private readonly List<IColumn> _availableColumns;
+    private readonly List<IColumn> _includedColumns;
 
     internal IReadOnlyCollection<IColumn> AvailableColumns => new ReadOnlyCollection<IColumn>(_availableColumns);
     internal IReadOnlyCollection<IColumn> IncludedColumns => new ReadOnlyCollection<IColumn>(_includedColumns);
 
-    public QuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
+    private readonly QuerySyntaxHelper _querySyntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
     private readonly Bitmap _add;
     private readonly Bitmap _delete;

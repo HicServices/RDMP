@@ -50,8 +50,8 @@ public class WordDataWriter : DocXHelper
                 $"{GetType().FullName} only supports destinations which are {typeof(ExecuteDatasetExtractionFlatFileDestination).FullName}");
     }
 
-    private static object oLockOnWordUsage = new();
-    private IExecuteDatasetExtractionDestination _destination;
+    private static readonly object OLockOnWordUsage = new();
+    private readonly IExecuteDatasetExtractionDestination _destination;
 
     /// <summary>
     /// Generates a new meta data word file in the extraction directory and populates it with information about the extraction.
@@ -60,7 +60,7 @@ public class WordDataWriter : DocXHelper
     /// <returns></returns>
     public void GenerateWordFile()
     {
-        lock (oLockOnWordUsage)
+        lock (OLockOnWordUsage)
         {
             using var document = GetNewDocFile(new FileInfo(Path.Combine(_destination.DirectoryPopulated.FullName,
                 $"{_destination.GetFilename()}.docx")));

@@ -45,9 +45,7 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
             return;
         }
 
-        var childProvider = BasicActivator.CoreChildProvider as DataExportChildProvider;
-
-        if (childProvider == null)
+        if (BasicActivator.CoreChildProvider is not DataExportChildProvider childProvider)
         {
             SetImpossible("Activator.CoreChildProvider is not an DataExportChildProvider");
             return;

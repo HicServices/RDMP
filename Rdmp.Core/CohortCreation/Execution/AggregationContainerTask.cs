@@ -20,7 +20,7 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// </summary>
 public class AggregationContainerTask : Compileable, IOrderable
 {
-    private CohortAggregateContainer[] _parentContainers;
+    private readonly CohortAggregateContainer[] _parentContainers;
     public CohortAggregateContainer Container { get; set; }
 
     public CohortAggregateContainer[] SubContainers { get; set; }

@@ -31,13 +31,13 @@ namespace Rdmp.Core.CohortCommitting;
 /// </summary>
 public class CreateNewCohortDatabaseWizard
 {
-    public bool AllowNullReleaseIdentifiers { get; set; }
+    private bool AllowNullReleaseIdentifiers { get; }
     private readonly ICatalogueRepository _catalogueRepository;
     private readonly IDataExportRepository _dataExportRepository;
     private readonly DiscoveredDatabase _targetDatabase;
 
-    private string _releaseIdentifierFieldName = "ReleaseId";
-    private string _definitionTableForeignKeyField = "cohortDefinition_id";
+    private const string ReleaseIdentifierFieldName = "ReleaseId";
+    private const string DefinitionTableForeignKeyField = "cohortDefinition_id";
 
 
 
@@ -107,9 +107,7 @@ public class CreateNewCohortDatabaseWizard
 
 
             var idColumn = definitionTable.DiscoverColumn("id");
-            var foreignKey =
-                new DatabaseColumnRequest(_definitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
-                    { IsPrimaryKey = true };
+            var foreignKey = new DatabaseColumnRequest(DefinitionTableForeignKeyField,new DatabaseTypeRequest(typeof (int)), false) {IsPrimaryKey = true};
 
             // Look up the collations of all the private identifier columns
             var collations = privateIdentifierPrototype.MatchingExtractionInformations
@@ -129,8 +127,7 @@ public class CreateNewCohortDatabaseWizard
                         // when creating the private column so that the DBMS can link them no bother
                         Collation = collations.Length == 1 ? collations[0] : null
                     },
-                    new DatabaseColumnRequest(_releaseIdentifierFieldName, new DatabaseTypeRequest(typeof(string), 300))
-                        { AllowNulls = AllowNullReleaseIdentifiers },
+                    new DatabaseColumnRequest(ReleaseIdentifierFieldName,new DatabaseTypeRequest(typeof(string),300)){AllowNulls = AllowNullReleaseIdentifiers},
                     foreignKey
                 }
                 ,
@@ -150,8 +147,8 @@ public class CreateNewCohortDatabaseWizard
                 Name = _targetDatabase.GetRuntimeName(),
                 TableName = cohortTable.GetRuntimeName(),
                 PrivateIdentifierField = privateIdentifierPrototype.RuntimeName,
-                ReleaseIdentifierField = _releaseIdentifierFieldName,
-                DefinitionTableForeignKeyField = _definitionTableForeignKeyField,
+                ReleaseIdentifierField = ReleaseIdentifierFieldName,
+                DefinitionTableForeignKeyField = DefinitionTableForeignKeyField,
                 DefinitionTableName = definitionTable.GetRuntimeName()
             };
 
