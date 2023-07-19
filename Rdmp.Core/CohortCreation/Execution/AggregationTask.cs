@@ -25,9 +25,9 @@ public class AggregationTask:CacheableTask
 {
     public AggregateConfiguration Aggregate { get; private set; }
 
-    private string _catalogueName;
-    private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-    private List<CohortAggregateContainer> _allParentContainers;
+    private readonly string _catalogueName;
+    private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private readonly List<CohortAggregateContainer> _allParentContainers;
 
     public AggregationTask(AggregateConfiguration aggregate, CohortCompiler compiler): base(compiler)
     {

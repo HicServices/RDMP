@@ -25,10 +25,10 @@ namespace Rdmp.UI.SimpleDialogs;
 [TechnicalUI]
 public partial class ViewSourceCodeDialog : Form
 {
-    private Scintilla QueryEditor;
+    private readonly Scintilla _queryEditor;
 
-    private static HashSet<FileInfo> SupplementalSourceZipFiles = new();
-    private static object oSupplementalSourceZipFilesLock = new();
+    private static readonly HashSet<FileInfo> SupplementalSourceZipFiles = new();
+    private static readonly object oSupplementalSourceZipFilesLock = new();
     private const string MainSourceCodeRepo = "SourceCodeForSelfAwareness.zip";
 
     public static void AddSupplementalSourceZipFile(FileInfo f)
@@ -53,9 +53,9 @@ public partial class ViewSourceCodeDialog : Form
         if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
-        QueryEditor = new ScintillaTextEditorFactory().Create(null, SyntaxLanguage.CSharp);
+        _queryEditor = new ScintillaTextEditorFactory().Create(null, SyntaxLanguage.CSharp);
 
-        panel1.Controls.Add(QueryEditor);
+        panel1.Controls.Add(_queryEditor);
 
         LoadSourceCode(toFind,lineNumber,highlightColor);
 
@@ -73,12 +73,12 @@ public partial class ViewSourceCodeDialog : Form
             //entry was found
             if (readToEnd != null)
             {
-                QueryEditor.Text = readToEnd;
+                _queryEditor.Text = readToEnd;
 
                 if (lineNumber != -1)
                 {
-                    QueryEditor.FirstVisibleLine = Math.Max(0, lineNumber - 10);
-                    ScintillaLineHighlightingHelper.HighlightLine(QueryEditor, lineNumber - 1, highlightColor);
+                    _queryEditor.FirstVisibleLine = Math.Max(0, lineNumber - 10);
+                    ScintillaLineHighlightingHelper.HighlightLine(_queryEditor, lineNumber - 1, highlightColor);
                 }
             }
             else

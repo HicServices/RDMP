@@ -36,7 +36,7 @@ public class MetadataReport:DocXHelper
 {
     private readonly ICatalogueRepository _repository;
     private readonly MetadataReportArgs _args;
-    private HashSet<TableInfo> LookupsEncounteredToAppearInAppendix = new();
+    private readonly HashSet<TableInfo> _lookupsEncounteredToAppearInAppendix = new();
 
     public float PageWidthInPixels { get; private set; }
 
@@ -149,7 +149,7 @@ public class MetadataReport:DocXHelper
                     listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
                 }
 
-                if (LookupsEncounteredToAppearInAppendix.Any())
+                if (_lookupsEncounteredToAppearInAppendix.Any())
                     CreateLookupAppendix(document, listener);
 
                 if(showFile)
@@ -180,7 +180,7 @@ public class MetadataReport:DocXHelper
         InsertHeader(document,"Appendix 1 - Lookup Tables");
 
         //foreach lookup
-        foreach (var lookupTable in LookupsEncounteredToAppearInAppendix)
+        foreach (var lookupTable in _lookupsEncounteredToAppearInAppendix)
         {
             DataTable dt = null;
 
@@ -313,7 +313,7 @@ public class MetadataReport:DocXHelper
 
                 var lookupTable = _repository.GetObjectByID<TableInfo>(pkTableId);
 
-                LookupsEncounteredToAppearInAppendix.Add(lookupTable);
+                _lookupsEncounteredToAppearInAppendix.Add(lookupTable);
 
                 description += $"References Lookup Table {lookupTable.GetRuntimeName()}";
 

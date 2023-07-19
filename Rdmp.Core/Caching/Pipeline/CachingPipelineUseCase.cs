@@ -31,8 +31,8 @@ public sealed class CachingPipelineUseCase:PipelineUseCase
 {
     private readonly ICacheProgress _cacheProgress;
     private readonly ICacheFetchRequestProvider _providerIfAny;
-    private IPipeline _pipeline;
-    private IPermissionWindow _permissionWindow;
+    private readonly IPipeline _pipeline;
+    private readonly IPermissionWindow _permissionWindow;
 
     /// <summary>
     /// Class for helping you to construct a caching pipeline engine instance with the correct context and initialization objects

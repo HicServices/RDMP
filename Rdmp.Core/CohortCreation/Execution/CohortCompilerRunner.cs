@@ -29,8 +29,8 @@ public class CohortCompilerRunner
 
     public event EventHandler PhaseChanged;
 
-    private CohortIdentificationConfiguration _cic;
-    private ExternalDatabaseServer _queryCachingServer;
+    private readonly CohortIdentificationConfiguration _cic;
+    private readonly ExternalDatabaseServer _queryCachingServer;
 
     /// <summary>
     /// The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
