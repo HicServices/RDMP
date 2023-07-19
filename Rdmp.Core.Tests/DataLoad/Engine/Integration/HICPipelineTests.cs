@@ -305,6 +305,7 @@ public class TestCacheFileRetriever : CachedFileRetriever
 {
     public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
+
     }
 
     public override ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken)

@@ -94,7 +94,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
         explicitDatabaseNamesChecker.FindProblems(_csFilesFound);
 
         var noMappingToDatabaseComments = new AutoCommentsEvaluator();
-        noMappingToDatabaseComments.FindProblems(_csFilesFound);
+        AutoCommentsEvaluator.FindProblems(_csFilesFound);
 
         CopyrightHeaderEvaluator.FindProblems(_csFilesFound);
 
@@ -252,7 +252,7 @@ public class CopyrightHeaderEvaluator
 
 public partial class AutoCommentsEvaluator
 {
-    public void FindProblems(List<string> csFilesFound)
+    public static void FindProblems(List<string> csFilesFound)
     {
         var suggestedNewFileContents = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 

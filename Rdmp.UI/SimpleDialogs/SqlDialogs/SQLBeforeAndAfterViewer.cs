@@ -57,10 +57,10 @@ public partial class SQLBeforeAndAfterViewer : Form
         {
             for (var i = item.StartA; i < item.StartA+item.deletedA; i++)
                 ScintillaLineHighlightingHelper.HighlightLine(queryEditorBefore,i,Color.Pink);
-                    
+
             for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
                 ScintillaLineHighlightingHelper.HighlightLine(queryEditorAfter, i, Color.LawnGreen);
-                
+
         }
 
         switch (buttons)

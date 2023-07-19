@@ -236,6 +236,7 @@ internal class ConsoleGuiBigListBox<T>
                 _changes = false;
                 return true;
             }
+        }
 
         return true;
     }
@@ -270,7 +271,7 @@ internal class ConsoleGuiBigListBox<T>
                 _changes = true;
             }
 
-        }, cts.Token);       
+        }, cts.Token);
     }
 
     private IList<ListViewObject<T>> BuildList(IList<T> listOfT)

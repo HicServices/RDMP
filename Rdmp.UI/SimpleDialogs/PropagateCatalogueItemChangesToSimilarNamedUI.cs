@@ -217,7 +217,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
         {
 
             for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
-                highlighter.HighlightLine(previewOldValue,i,Color.Pink);
+                ScintillaLineHighlightingHelper.HighlightLine(previewOldValue,i,Color.Pink);
 
             //if it is single line change
             for (var i = item.StartB; i < item.StartB + item.insertedB; i++)

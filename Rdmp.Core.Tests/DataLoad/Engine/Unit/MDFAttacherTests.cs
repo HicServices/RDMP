@@ -312,7 +312,7 @@ public class MDFAttacherTests : DatabaseTests
 
 
         //call the blank constructor and return the results
-        var bob = (IAttacher) constructorInfo.Invoke(new Type[] {});
+        var bob = (IAttacher) constructorInfo.Invoke(Array.Empty<Type>());
 
         
     }

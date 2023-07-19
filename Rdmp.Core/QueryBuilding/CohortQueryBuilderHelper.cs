@@ -163,7 +163,7 @@ public class CohortQueryBuilderHelper
             QueryComponent.JoinInfoJoin);
     }
 
-    public string TabIn(string str, int numberOfTabs)
+    public static string TabIn(string str, int numberOfTabs)
     {
         if (string.IsNullOrWhiteSpace(str))
             return str;

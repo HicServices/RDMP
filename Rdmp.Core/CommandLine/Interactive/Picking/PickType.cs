@@ -26,7 +26,7 @@ internal partial class PickType : PickObjectBase
 
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx) => new(arg, idx, GetType(arg));
 
-    private Type GetType(string arg)
+    private static Type GetType(string arg)
     {
         if (string.IsNullOrWhiteSpace(arg))
             return null;

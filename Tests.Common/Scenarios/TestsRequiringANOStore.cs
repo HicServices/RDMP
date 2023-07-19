@@ -41,7 +41,7 @@ public class TestsRequiringANOStore : TestsRequiringA
             ANOStore_Database.Drop();
 
         var scriptCreate = new MasterDatabaseScriptExecutor(ANOStore_Database);
-            
+
         scriptCreate.CreateAndPatchDatabase(new ANOStorePatcher(), ThrowImmediatelyCheckNotifier.Quiet);
     }
 

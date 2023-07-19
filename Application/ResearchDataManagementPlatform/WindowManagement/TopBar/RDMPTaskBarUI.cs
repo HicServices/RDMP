@@ -50,7 +50,7 @@ public partial class RDMPTaskBarUI : UserControl
 
         btnLoad.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
         btnLoad.BackgroundImage = BackColorProvider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
-            
+
         btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
         btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
 
@@ -81,6 +81,7 @@ public partial class RDMPTaskBarUI : UserControl
             cbCommits.Enabled = false;
             cbCommits.Text = "Repository does not support commits";
         }
+
     }
 
     /// <summary>

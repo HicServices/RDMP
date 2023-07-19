@@ -179,7 +179,7 @@ public partial class DatabaseTests
             Assert.IsTrue(tblRepo.DiscoveredServer.Exists(),
                 "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that server name and prefix in TestDatabases.txt match those you provide e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
         }
-        
+
         RunBlitzDatabases(RepositoryLocator);
 
         var defaults = CatalogueRepository;
@@ -929,6 +929,7 @@ delete from {1}..Project
             var credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
             credentialsFactory.Create(ti, username, password, DataAccessContext.Any);
         }
+
     }
 
 

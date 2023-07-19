@@ -47,11 +47,10 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
             SetImpossible(
                 $"Type '{_type}' was not a compatible one e.g. IAttacher, IDataProvider or IMutilateDataTables");
     }
-
-    private Type[] GetProcessTaskTypes()
+    private static Type[] GetProcessTaskTypes()
     {
         return Repositories.MEF.GetAllTypes().
-            Where(t=>
+            Where(static t=>
                 // must not be interface or abstract
                 !(t.IsInterface || t.IsAbstract) &&
                 (

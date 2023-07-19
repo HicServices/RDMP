@@ -84,10 +84,6 @@ public static class ErrorCodes
         "ExtractionProgress '{0}' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate? The SQL we expected to find was '{1}'",
         CheckResult.Fail);
 
-    public static readonly ErrorCode AttemptToReleaseUnfinishedExtractionProgress = new("R015", "Dataset {0} should not be released because its ExtractionProgress has a progress date of {1} but an end date of {2}", CheckResult.Fail);
-    public static readonly ErrorCode NoSqlAuditedForExtractionProgress = new("R0016", "ExtractionProgress '{0}' is 'in progress' (ProgressDate is not null) but there is no audit of previously extracted SQL (needed for checking cohort changes)",CheckResult.Fail);
-    public static readonly ErrorCode CohortSwappedMidExtraction = new("R0017", "ExtractionProgress '{0}' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate? The SQL we expected to find was '{1}'",CheckResult.Fail);
-
     static ErrorCodes()
     {
         var fields = typeof(ErrorCodes).GetFields(BindingFlags.Public | BindingFlags.Static)

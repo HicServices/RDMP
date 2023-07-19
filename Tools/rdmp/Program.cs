@@ -47,8 +47,7 @@ internal class Program
             Console.WriteLine($"Could not load NLog.config:{ex.Message}");
         }
 
-        if (args.Any(a => a.Equals("-q")) ||
-            args.Any(a => a.Equals("--quiet", StringComparison.CurrentCultureIgnoreCase)))
+        if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
         {
             Quiet = true;
 

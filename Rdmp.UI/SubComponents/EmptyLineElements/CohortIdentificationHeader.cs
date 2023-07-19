@@ -29,7 +29,12 @@ internal class CohortIdentificationHeader
         return "";
     }
 
-    public string GetCachedQueryUseCount()
+    public static string Order()
+    {
+        return "";
+    }
+
+    public static string GetCachedQueryUseCount()
     {
         return "";
     }

@@ -316,7 +316,9 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 //add Copy 1 then Copy 2 etc
                 copy++;
                 aggregate.Name = $"{origName} (Copy {copy})";
-            } while (otherConfigurations.Any(c => c.Name.Equals(aggregate.Name))); //until there are no more copies
+            }
+            while (otherConfigurations.Any(c => c.Name.Equals(aggregate.Name)));//until there are no more copies
+        }
 
         aggregate.SaveToDatabase();
     }
@@ -698,7 +700,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
         dependencies.AddRange(GetAllParameters().Cast<AnyTableSqlParameter>());
 
-        if (RootCohortAggregateContainer_ID != null)
+        if(RootCohortAggregateContainer_ID != null)
             dependencies.AddRange(RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively());
 
         return dependencies.ToArray();

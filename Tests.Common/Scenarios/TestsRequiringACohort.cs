@@ -56,7 +56,7 @@ public class TestsRequiringACohort : TestsRequiringA
         base.OneTimeSetUp();
 
         using var con=CreateCohortDatabase();
-            
+
         EmptyCohortTables(con);
         SetupCohortDefinitionAndCustomTable(con);
 
@@ -85,7 +85,7 @@ public class TestsRequiringACohort : TestsRequiringA
             DeleteTables(_cohortDatabase);
         else
             _cohortDatabase.Create();
-            
+
         const string sql = @"
 
 CREATE TABLE [dbo].[Cohort](

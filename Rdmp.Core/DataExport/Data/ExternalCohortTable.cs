@@ -311,7 +311,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         try
         {
-            DataAccessPortal.GetInstance().ExpectServer(this, DataAccessContext.DataExport).TestConnection();
+            DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport).TestConnection();
 
             notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success, null));
         }

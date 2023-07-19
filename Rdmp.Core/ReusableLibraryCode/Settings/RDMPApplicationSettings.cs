@@ -488,10 +488,4 @@ internal sealed class RDMPApplicationSettings
     }
 
     #endregion
-
-    /// <summary>
-    /// Attempts to open the app settings page.
-    /// </summary>
-    /// <returns>true if success, else false and not supported</returns>
-    public bool OpenAppSettings() => false;
 }

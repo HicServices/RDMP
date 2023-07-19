@@ -113,7 +113,7 @@ public class Gatherer
         return root;
     }
 
-    public GatheredObject GatherDependencies(IFilter filter)
+    public static GatheredObject GatherDependencies(IFilter filter)
     {
         var root = new GatheredObject(filter);
 

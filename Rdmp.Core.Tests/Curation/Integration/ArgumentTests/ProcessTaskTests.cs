@@ -107,7 +107,7 @@ public class ProcessTaskTests : DatabaseTests
 
             //////////////////////////////////////////////////////////////////CHECK CLONAGE OF ARGUMENTS ////////////////////////////////////////////////////////////
 
-            var clonearg= clone.ProcessTaskArguments.SingleOrDefault();
+            var clonearg = clone.ProcessTaskArguments.SingleOrDefault();
             Assert.NotNull(clonearg);
 
             Assert.AreNotEqual(clonearg.ID,arg.ID);

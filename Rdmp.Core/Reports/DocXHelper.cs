@@ -212,14 +212,14 @@ public class DocXHelper
         return new XWPFDocumentFile(fileInfo,new FileStream(fileInfo.FullName,FileMode.Create));
     }
 
-    protected void InsertSectionPageBreak(XWPFDocument document)
+    protected static void InsertSectionPageBreak(XWPFDocument document)
     {
         var pageBreak = document.CreateParagraph();
         var pageBreakRun = pageBreak.CreateRun();
         pageBreakRun.AddBreak(BreakType.PAGE);
     }
 
-    protected void SetLandscape(XWPFDocumentFile document)
+    protected static void SetLandscape(XWPFDocumentFile document)
     {
         document.Document.body.sectPr ??= new CT_SectPr();
         document.Document.body.sectPr.pgSz ??= new CT_PageSz();
@@ -238,7 +238,7 @@ public class DocXHelper
         //document.InsertTableOfContents("Contents", new TableOfContentsSwitches());
     }
 
-    protected void AutoFit(XWPFTable table)
+    protected static void AutoFit(XWPFTable table)
     {
         //tables auto fit already with NPOI
         //table.AutoFit = AutoFit.Contents;
