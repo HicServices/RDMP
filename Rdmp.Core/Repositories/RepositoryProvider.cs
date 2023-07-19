@@ -33,6 +33,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 
     protected RepositoryProvider()
     {
+
     }
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)

@@ -199,8 +199,10 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
         ExtractionProgressIfAny?.DeleteInDatabase();
         base.DeleteInDatabase();
 
-        foreach (var col in cols)
-            if (col.Exists())
+        foreach(var col in cols)
+        {
+            if(col.Exists())
+            {
                 col.DeleteInDatabase();
     }
 }

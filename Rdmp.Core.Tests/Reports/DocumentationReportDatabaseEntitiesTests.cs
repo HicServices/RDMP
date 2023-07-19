@@ -27,8 +27,6 @@ internal class DocumentationReportDatabaseEntitiesTests:UnitTests
         var store = new CommentStore();
         store.ReadComments(TestContext.CurrentContext.TestDirectory);
 
-        SetupMEF();
-
         var reporter = new DocumentationReportDatabaseEntities();
 
         Image img = new Image<Rgba32>(19, 19);

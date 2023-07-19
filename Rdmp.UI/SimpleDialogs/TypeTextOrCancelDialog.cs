@@ -41,6 +41,7 @@ public partial class TypeTextOrCancelDialog : Form
             EntryLabel = prompt
         },maxCharacters,startingTextForInputBox,allowBlankText,multiLine)
     {
+
     }
 
     public TypeTextOrCancelDialog(DialogArgs args, int maxCharacters, string startingTextForInputBox = null,

@@ -48,7 +48,7 @@ public class HelpWorkflow
         if (RootStage == null)
             throw new Exception("No RootStage exists for Help, you will need to create one");
 
-        if (!force && !ProgressProvider.ShouldShowUserWorkflow(this))
+        if(!force && !ProgressProvider.ShouldShowUserWorkflow(this))
             return;
 
         _cancellationTokenSource = new CancellationTokenSource();

@@ -125,8 +125,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
             return existing;
 
         if (existing != null)
-            throw new Exception(
-                $"AggregateConfiguration '{user}' already uses '{existing.JoinableCohortAggregateConfiguration}'. Only one patient index table join is permitted.");
+            throw new Exception($"AggregateConfiguration '{user}' already uses '{existing.JoinableCohortAggregateConfiguration}'. Only one patient index table join is permitted.");
 
         user.ClearAllInjections();
 

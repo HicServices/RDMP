@@ -20,14 +20,6 @@ namespace Rdmp.Core.Tests.Curation.ImportTests;
 
 public class PluginClassTests : UnitTests
 {
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
-
     [SetUp]
     protected override void SetUp()
     {
@@ -107,7 +99,7 @@ public class PluginClassTests : UnitTests
 
         //now delete lma2 only
         lma2.DeleteInDatabase();
-            
+
         Assert.AreEqual(2, Repository.GetAllObjects<ObjectImport>().Length);
 
         //import them

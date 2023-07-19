@@ -145,7 +145,7 @@ public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<Catal
         Alias = r["Alias"] as string;
         HashOnDataRelease = (bool)r["HashOnDataRelease"];
         IsExtractionIdentifier = (bool)r["IsExtractionIdentifier"];
-        IsPrimaryKey = (bool)r["IsPrimaryKey"];
+        IsPrimaryKey = (bool) r["IsPrimaryKey"];
 
         ClearAllInjections();
     }

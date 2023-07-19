@@ -105,7 +105,7 @@ public partial class MetadataReportUI : RDMPForm
         var toReturn = new List<BitmapWithDescription>();
 
 
-        aggregateGraph1.Width = (int)_report.PageWidthInPixels;
+        aggregateGraph1.Width = (int) _report.PageWidthInPixels;
         aggregateGraph1.Visible = true;
 
 
@@ -211,6 +211,8 @@ public partial class MetadataReportUI : RDMPForm
                 TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
             }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(), out var selected))
             SetCatalogueSelection(selected);
+        }
+
     }
 
     private bool bLoading;
@@ -269,5 +271,6 @@ public partial class MetadataReportUI : RDMPForm
                     .AllCatalogues
                     .Where(c => c.Folder.Equals(selected))
                     .ToArray());
+        }
     }
 }

@@ -65,8 +65,6 @@ public class ObjectConstructorTests : UnitTests
     [Test]
     public void GetRepositoryConstructor_AllDatabaseEntities_OneWinningConstructor()
     {
-        SetupMEF();
-
         var countCompatible = 0;
 
         var badTypes = new Dictionary<Type,Exception>();

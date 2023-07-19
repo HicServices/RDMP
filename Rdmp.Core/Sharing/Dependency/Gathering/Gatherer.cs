@@ -118,7 +118,7 @@ public class Gatherer
         var root = new GatheredObject(filter);
 
         foreach (var param in filter.GetAllParameters())
-            root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable)param));
+            root.Children.Add(new GatheredObject((IMapsDirectlyToDatabaseTable) param));
 
         return root;
     }

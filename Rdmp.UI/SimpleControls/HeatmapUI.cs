@@ -193,10 +193,10 @@ public partial class HeatmapUI : UserControl
         if (value == null)
             return;
 
-        if (Visible)
+        if(Visible)
             //show the tool tip
-            tt.Show(value.ToString(), this,
-                new Point(pos.X + 20, pos.Y - 10)); //allow room for cusor to not overdraw the tool tip
+            tt.Show(value.ToString(), this, new Point(pos.X+20,pos.Y - 10));//allow room for cusor to not overdraw the tool tip
+
     }
 
     private object GetValueFromClientPosition(Point pos)
@@ -235,7 +235,7 @@ public partial class HeatmapUI : UserControl
     {
         base.OnPaint(e);
 
-        if (_dataTable == null)
+        if(_dataTable == null)
             return;
         if (_crashedPainting)
             return;
@@ -408,12 +408,13 @@ public partial class HeatmapUI : UserControl
 
     public static void CalculateLayout()
     {
+
     }
 
     public void Clear()
     {
-        lock (oDataTableLock)
-        {
+
+        lock(oDataTableLock)
             _dataTable = null;
         }
     }

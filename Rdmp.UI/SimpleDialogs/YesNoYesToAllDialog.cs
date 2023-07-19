@@ -34,10 +34,12 @@ public class YesNoYesToAllDialog : WideMessageBox
     public YesNoYesToAllDialog() : this(new WideMessageBoxArgs("YesNo", "Unknown", Environment.StackTrace, null,
         WideMessageBoxTheme.Help))
     {
+
     }
 
     private YesNoYesToAllDialog(WideMessageBoxArgs wideMessageBoxArgs) : base(wideMessageBoxArgs)
     {
+
         AddButton(btnYes);
         AddButton(btnYesToAll);
         AddButton(btnNo);

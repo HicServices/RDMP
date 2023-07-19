@@ -474,6 +474,7 @@ public partial class ServerDatabaseTableSelector : UserControl
             }
 
         }
+
     }
 
     private void btnRefreshDatabases_Click(object sender, EventArgs e)

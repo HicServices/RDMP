@@ -99,6 +99,8 @@ public class CohortSummaryAggregateGraphObjectCollection : PersistableObjectColl
             if (matchingObject.Exists())
                 matchingObject.RevertToDatabaseState();
             else
-                shouldClose = true; //object doesn't exist anymore so close control
+                shouldClose = true;//object doesn't exist anymore so close control
+
+
     }
 }

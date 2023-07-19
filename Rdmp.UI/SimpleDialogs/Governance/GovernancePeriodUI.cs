@@ -181,7 +181,7 @@ public partial class GovernancePeriodUI : GovernancePeriodUI_Design, ISaveableUI
             MessageBox.Show("You do not have any other GovernancePeriods in your Catalogue");
             return;
         }
-            
+
         if(Activator.SelectObject(new DialogArgs
            {
                TaskDescription = "Select another GovernancePeriod.  All Catalogues currently associated with that period will be added to this period (they will still be covered by their previous period(s) too)"

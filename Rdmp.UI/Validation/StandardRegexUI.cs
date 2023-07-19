@@ -50,10 +50,10 @@ public partial class StandardRegexUI : StandardRegexUI_Design, ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID, "Text", "ID", r => r.ID);
-        Bind(tbConceptName, "Text", "ConceptName", r => r.ConceptName);
-        Bind(tbRegex, "Text", "Regex", r => r.Regex);
-        Bind(tbDescription, "Text", "Description", r => r.Description);
+        Bind(tbID,"Text","ID",r=>r.ID);
+        Bind(tbConceptName,"Text","ConceptName", r=>r.ConceptName);
+        Bind(tbRegex,"Text","Regex", r=>r.Regex);
+        Bind(tbDescription,"Text","Description", r => r.Description);
     }
 
     private void btnTest_Click(object sender, EventArgs e)

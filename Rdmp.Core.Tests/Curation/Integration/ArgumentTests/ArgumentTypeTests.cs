@@ -16,13 +16,6 @@ namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
 
 public class ArgumentTypeTests : UnitTests
 {
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-        SetupMEF();
-    }
-
     private object[] _expectedAnswers = {
         5,
         new CultureInfo("en-us"),

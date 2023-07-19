@@ -409,7 +409,6 @@ public class RDMPControlCommonFunctionality
         else
         {
             _menuDropDown.DropDownItems.Add(menuItem);
-        }
 
         _menuDropDown.Visible = true;
     }

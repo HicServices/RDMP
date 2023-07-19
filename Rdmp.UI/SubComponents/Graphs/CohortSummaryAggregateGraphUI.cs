@@ -52,6 +52,7 @@ public class CohortSummaryAggregateGraphUI : AggregateGraphUI, IObjectCollection
         else
             //now reload the graph because the change was to a relevant object
             LoadGraphAsync();
+
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)

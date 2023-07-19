@@ -15,19 +15,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests;
 
 public class ComponentCompatibilityTests : UnitTests
 {
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
-
     [Test]
     public void GetComponentsCompatibleWithBulkInsertContext()
     {
-        var array = MEF.GetTypes<IDataFlowComponent<DataTable>>().ToArray();
-
-        Assert.Greater(array.Length,0);
+        Assert.True(MEF.GetTypes<IDataFlowComponent<DataTable>>().Any());
     }
 }

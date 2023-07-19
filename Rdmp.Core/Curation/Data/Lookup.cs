@@ -217,7 +217,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             while (r.Read())
                 toReturn.Add(new Lookup(repo, r));
         }
-                
+
         return toReturn.ToArray();
     }
 
@@ -227,6 +227,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
+
         if (ForeignKey.TableInfo_ID == PrimaryKey.TableInfo_ID)
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Foreign Key and Primary Key are from the same table for Lookup {ID}",CheckResult.Fail));

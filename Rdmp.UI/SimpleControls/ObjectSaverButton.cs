@@ -41,7 +41,7 @@ public partial class ObjectSaverButton
     {
         btnSave.Click += btnSave_Click;
         btnUndoRedo.Click += btnUndoRedo_Click;
-            
+
         _undoImage = FamFamFamIcons.Undo.ImageToBitmap();
         _redoImage = FamFamFamIcons.Redo.ImageToBitmap();
 
@@ -123,11 +123,10 @@ public partial class ObjectSaverButton
 
     public void Save()
     {
-        if (_o == null)
-            throw new Exception(
-                "Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
+        if(_o == null)
+            throw new Exception("Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
 
-        if (BeforeSave != null)
+        if(BeforeSave != null)
             if (!BeforeSave(_o))
                 return;
 

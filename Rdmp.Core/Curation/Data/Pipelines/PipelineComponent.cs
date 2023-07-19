@@ -90,10 +90,10 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "Name", name ?? $"Run {componentType.Name}" },
-            { "Pipeline_ID", parent.ID },
-            { "Class", componentType.ToString() },
-            { "Order", order }
+            {"Name", name ?? $"Run {componentType.Name}" },
+            {"Pipeline_ID", parent.ID},
+            {"Class", componentType.ToString()},
+            {"Order", order}
         });
     }
 
@@ -141,7 +141,7 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
         var type = GetClassAsSystemType();
 
-        var clone = new PipelineComponent(cataRepo, intoTargetPipeline, type ?? typeof(object), Order);
+        var clone = new PipelineComponent(cataRepo, intoTargetPipeline,type ?? typeof(object) , Order);
 
         // the Type for the PipelineComponent could not be resolved
         // Maybe the user created this pipe with a Plugin and then uninstalled

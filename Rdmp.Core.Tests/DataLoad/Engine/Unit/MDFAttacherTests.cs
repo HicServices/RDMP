@@ -279,6 +279,7 @@ public class MDFAttacherTests : DatabaseTests
 
         public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
+
         }
 
         public static string GetDescription() => "Test class that does nothing";
@@ -287,6 +288,14 @@ public class MDFAttacherTests : DatabaseTests
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
         {
+            return "Test class that does nothing";
+        }
+
+
+
+        public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+        {
+
         }
     }
 
@@ -314,7 +323,7 @@ public class MDFAttacherTests : DatabaseTests
         //call the blank constructor and return the results
         var bob = (IAttacher) constructorInfo.Invoke(Array.Empty<Type>());
 
-        
+
     }
 
     [Test]

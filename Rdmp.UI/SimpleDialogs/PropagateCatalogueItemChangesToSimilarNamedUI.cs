@@ -230,6 +230,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     {
         DialogResult = DialogResult.Yes;
 
+
         foreach (CatalogueItem ci in olvCatalogues.CheckedObjects)
         {
             foreach (PropertyInfo p in olvProperties.CheckedObjects)
@@ -253,7 +254,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     {
         DialogResult = DialogResult.Cancel;
         Close();
-            
+
     }
 
     private void olv_ItemActivate(object sender, EventArgs e)

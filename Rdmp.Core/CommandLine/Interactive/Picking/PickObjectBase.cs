@@ -112,8 +112,7 @@ public abstract class PickObjectBase
     {
         //build regex for the pattern which must be a complete match with anything (.*) matching the users wildcard
         if (!patternDictionary.ContainsKey(pattern))
-            patternDictionary.Add(pattern,
-                new Regex($"^{Regex.Escape(pattern).Replace(@"\*", ".*")}$", RegexOptions.IgnoreCase));
+            patternDictionary.Add(pattern, new Regex($"^{Regex.Escape(pattern).Replace(@"\*", ".*")}$",RegexOptions.IgnoreCase));
 
         return patternDictionary[pattern].IsMatch(o.ToString());
     }

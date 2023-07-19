@@ -89,8 +89,8 @@ public class DashboardLayout : DatabaseEntity, INamed
 
         Repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
-            { "Username", Environment.UserName },
-            { "Name", name }
+            {"Username",Environment.UserName},
+            {"Name",name}
         });
     }
 

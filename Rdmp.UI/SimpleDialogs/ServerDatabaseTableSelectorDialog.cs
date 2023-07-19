@@ -28,7 +28,7 @@ public partial class ServerDatabaseTableSelectorDialog : Form
 
         lblTaskDescription.Text = taskDescription;
 
-        if (!includeTable)
+        if(!includeTable)
             serverDatabaseTableSelector1.HideTableComponents();
 
         serverDatabaseTableSelector1.TableShouldBeNovel = tableShouldBeNovel;

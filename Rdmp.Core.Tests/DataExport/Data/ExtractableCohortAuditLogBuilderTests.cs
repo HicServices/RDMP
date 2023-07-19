@@ -89,8 +89,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var ei = WhenIHaveA<ExtractionInformation>();
         var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
 
-        var moqCohort = Substitute.For<IExtractableCohort>();
-        moqCohort.AuditLog.Returns(desc);
+        var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
 
         // delete the source
         ei.DeleteInDatabase();

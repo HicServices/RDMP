@@ -47,7 +47,7 @@ public partial class SQLBeforeAndAfterViewer : Form
         var highlighter = new ScintillaLineHighlightingHelper();
         ScintillaLineHighlightingHelper.ClearAll(queryEditorAfter);
         ScintillaLineHighlightingHelper.ClearAll(queryEditorBefore);
-            
+
         sqlBefore ??= "";
         sqlAfter ??= "";
 

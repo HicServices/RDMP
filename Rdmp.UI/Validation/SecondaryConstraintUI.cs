@@ -65,7 +65,7 @@ public partial class SecondaryConstraintUI : UserControl
         var inflation = 0;
         _repository = repository;
         SecondaryConstriant = secondaryConstriant;
-            
+
         _otherColumns = otherColumns;
 
         InitializeComponent();
@@ -309,6 +309,7 @@ public partial class SecondaryConstraintUI : UserControl
 
             lblException.Text = msg.Trim(',');
         }
+
     }
 
     private void btnDelete_Click(object sender, EventArgs e)

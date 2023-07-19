@@ -307,6 +307,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
         }
+
     }
 
     protected override void OnShown(EventArgs e)
@@ -349,7 +350,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 return descendancy != null
                     ? Backslashes().Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\").Trim('\\')
                     : null;
-        }   
+        }
 
         return null;
     }
@@ -507,9 +508,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         {
             showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
         }
-                
+
         var scores = scorer.ScoreMatches(_searchables, text, showOnlyTypes, cancellationToken);
-            
+
         if (scores == null)
         {
             stateChanged = true;

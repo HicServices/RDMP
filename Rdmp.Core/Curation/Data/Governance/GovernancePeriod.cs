@@ -161,8 +161,10 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
             notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expires before it begins!",
                 CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date",
-                CheckResult.Success));
+        if (EndDate <= StartDate)
+            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expires before it begins!", CheckResult.Fail));
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date", CheckResult.Success));
 
         foreach (var doc in GovernanceDocuments)
             doc.Check(notifier);

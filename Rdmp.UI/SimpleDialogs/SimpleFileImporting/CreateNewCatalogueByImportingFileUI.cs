@@ -327,8 +327,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
         var source = (IDataFlowSource<DataTable>)DataFlowPipelineEngineFactory.CreateSourceIfExists(p);
 
-        ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile),
-            new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
+        ((IPipelineRequirement<FlatFileToLoad>)source).PreInitialize(new FlatFileToLoad(_selectedFile), new FromCheckNotifierToDataLoadEventListener(ragSmileyFile));
 
         Cursor.Current = Cursors.WaitCursor;
         var preview = source.TryGetPreview();
@@ -357,7 +356,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(tbTableName.Text))
+        if(string.IsNullOrWhiteSpace(tbTableName.Text))
         {
             MessageBox.Show("Enter Catalogue name");
             return;

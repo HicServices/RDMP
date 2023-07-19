@@ -18,14 +18,6 @@ namespace Rdmp.Core.Tests.CommandLine;
 
 internal class CommandLineObjectPickerTests : UnitTests
 {
-    [OneTimeSetUp]
-    protected override void OneTimeSetUp()
-    {
-        base.OneTimeSetUp();
-
-        SetupMEF();
-    }
-
     [SetUp]
     protected override void SetUp()
     {
@@ -41,7 +33,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         const string str = "Shiver me timbers";
         var picker = new CommandLineObjectPicker(new []{str}, GetActivator());
 
-        Assert.AreEqual(str, picker[0].RawValue);
+        Assert.AreEqual(str,picker[0].RawValue);
         Assert.IsNull(picker[0].DatabaseEntities);
         Assert.IsNull(picker[0].Database);
         Assert.IsNull(picker[0].Table);
@@ -56,6 +48,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         var picker = new CommandLineObjectPicker(new[] { $"Catalogue:{cata.ID}" }, GetActivator());
 
         Assert.AreEqual(cata, picker[0].DatabaseEntities.Single());
+
 
 
         //specifying the same ID twice shouldn't return duplicate objects
@@ -76,13 +69,15 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         Assert.AreEqual(1, picker.Length);
 
+        Assert.AreEqual(1,picker.Length);
+
         Assert.IsNull(picker[0].Database);
         Assert.IsNull(picker[0].DatabaseEntities);
         Assert.IsFalse(picker[0].ExplicitNull);
         Assert.AreEqual(val, picker[0].RawValue);
         Assert.IsNull(picker[0].Type);
 
-        Assert.AreEqual(val, picker[0].GetValueForParameterOfType(typeof(string)));
+        Assert.AreEqual(val,picker[0].GetValueForParameterOfType(typeof(string)));
         Assert.IsTrue(picker.HasArgumentOfType(0, typeof(string)));
     }
 
@@ -185,7 +180,7 @@ internal class CommandLineObjectPickerTests : UnitTests
     [Test]
     public void PickTypeName()
     {
-        var picker = new CommandLineObjectPicker(new[] { "Name" }, GetActivator());
+        var picker = new CommandLineObjectPicker(new []{"Name"}, GetActivator());
 
         Assert.IsNull(picker[0].Type);
         Assert.AreEqual("Name", picker[0].RawValue);

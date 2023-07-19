@@ -147,7 +147,9 @@ public partial class GenerateTestDataUI : RDMPForm
     {
         var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui => ui.Generate).ToArray();
 
-        if (!uis.Any())
+        var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui=>ui.Generate).ToArray();
+
+        if(!uis.Any())
         {
             MessageBox.Show("At least one dataset must be selected");
             return;

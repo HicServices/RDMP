@@ -29,6 +29,7 @@ public partial class DatabaseTypeUI : UserControl
 
             ddDatabaseType.SelectedItem = value;
             pbDatabaseProvider.Image = _databaseIconProvider.GetImage(value).ImageToBitmap();
+
         }
     }
 

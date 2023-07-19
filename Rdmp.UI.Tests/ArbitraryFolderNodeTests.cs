@@ -21,8 +21,6 @@ internal class ArbitraryFolderNodeTests:UITests
     [UITimeout(50000)]
     public void Test_ArbitraryFolderNode_CommandGetter_Throwing()
     {
-        SetupMEF();
-
         var tlv = new TreeListView();
         var common = new RDMPCollectionCommonFunctionality();
         common.SetUp(RDMPCollection.None, tlv, ItemActivator, null, null);

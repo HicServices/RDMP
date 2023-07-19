@@ -204,9 +204,9 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                 new CheckEventArgs(
                     "You must choose a suffix for your ANO identifiers so that they can be distinguished from regular identifiers",
                     CheckResult.Fail));
-        else if (Suffix.StartsWith("_"))
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                "Suffix will automatically include an underscore, there is no need to add it", CheckResult.Fail));
+        else
+        if (Suffix.StartsWith("_"))
+            notifier.OnCheckPerformed(new CheckEventArgs("Suffix will automatically include an underscore, there is no need to add it",CheckResult.Fail));
 
         if (NumberOfIntegersToUseInAnonymousRepresentation < 0)
             notifier.OnCheckPerformed(
@@ -214,14 +214,10 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                     CheckResult.Fail));
 
         if (NumberOfCharactersToUseInAnonymousRepresentation < 0)
-            notifier.OnCheckPerformed(
-                new CheckEventArgs("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative",
-                    CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative", CheckResult.Fail));
 
         if (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation == 0)
-            notifier.OnCheckPerformed(
-                new CheckEventArgs("Anonymous representations must have at least 1 integer or character",
-                    CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("Anonymous representations must have at least 1 integer or character", CheckResult.Fail));
 
         try
         {

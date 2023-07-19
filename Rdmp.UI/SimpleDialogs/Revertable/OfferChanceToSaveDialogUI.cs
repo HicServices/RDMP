@@ -87,5 +87,6 @@ public partial class OfferChanceToSaveDialogUI : Form
     {
         var dialog = new ExceptionViewerStackTraceWithHyperlinks(Environment.StackTrace);
         dialog.Show();
+
     }
 }

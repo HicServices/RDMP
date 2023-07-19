@@ -199,6 +199,7 @@ public partial class WideMessageBox : Form
             wmb.ShowDialog();
         else
             wmb.Show();
+
     }
 
     public static void Show(string title, string message, WideMessageBoxTheme theme)
@@ -271,13 +272,12 @@ public partial class WideMessageBox : Form
     {
         _navigationStack.Push(Args);
 
-        Setup(new WideMessageBoxArgs(keyword, CommentStore[keyword], null, keyword, WideMessageBoxTheme.Help)
-            { FormatAsParagraphs = true });
+        Setup(new WideMessageBoxArgs(keyword,CommentStore[keyword],null,keyword,WideMessageBoxTheme.Help){FormatAsParagraphs = true});
     }
 
     private void SetMessage(string message, string keywordNotToAdd = null)
     {
-        if (string.IsNullOrWhiteSpace(message))
+        if(string.IsNullOrWhiteSpace(message))
             message = "";
 
         if(message.Length > MAX_LENGTH_BODY)

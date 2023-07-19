@@ -78,7 +78,7 @@ public partial class RevertablePropertyDifferenceUI : RDMPUserControl
             for (var i = item.StartB; i < item.StartB+item.insertedB; i++)
                 highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
         }
-            
+
     }
 
             for (var i = item.StartB; i < item.StartB + item.insertedB; i++)

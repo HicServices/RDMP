@@ -36,7 +36,7 @@ public partial class ConfigureHashingAlgorithmUI : RDMPForm
     {
         InitializeComponent();
 
-        if (VisualStudioDesignMode)
+        if(VisualStudioDesignMode)
             return;
 
         QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());

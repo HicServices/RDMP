@@ -672,15 +672,6 @@ public class UnitTests
         return s;
     }
 
-    /// <summary>
-    /// Call if your test needs to access classes via MEF.  Loads all dlls in the test directory.
-    /// 
-    /// <para>This must be called before you 'launch' your ui</para>
-    /// </summary>
-    protected void SetupMEF()
-    {
-    }
-
     //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
     private static readonly string[] IgnorePropertiesWhenDiffing = {"ID","Repository","CatalogueRepository","SoftwareVersion"};
     public static Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new();
