@@ -103,7 +103,7 @@ public class CohortIdentificationConfigurationUICommon
         if (IsExecutingGlobalOperations())
             return null;
 
-        if (rowObject is AggregateConfiguration || rowObject is CohortAggregateContainer)
+        if (rowObject is AggregateConfiguration or CohortAggregateContainer)
         {
             var plannedOp = GetNextOperation(GetState((IMapsDirectlyToDatabaseTable)rowObject));
 

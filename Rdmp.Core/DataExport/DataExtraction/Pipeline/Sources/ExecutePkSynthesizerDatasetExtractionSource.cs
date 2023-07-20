@@ -123,17 +123,22 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
     {
         foreach (var column in Request.ColumnsToExtract.Union(Request.ReleaseIdentifierSubstitutions))
         {
-            if (column is ReleaseIdentifierSubstitution ri)
-                if (ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey)
+            switch (column)
+            {
+                case ReleaseIdentifierSubstitution ri when (ri.IsPrimaryKey || ri.OriginalDatasetColumn.IsPrimaryKey):
                     yield return ri;
 
-            if (column is ExtractableColumn ec && ec.IsPrimaryKey)
-                yield return ec;
+                    break;
+                case ExtractableColumn { IsPrimaryKey: true } ec:
+                    yield return ec;
+
+                    break;
+            }
         }
     }
 
     private IEnumerable<ColumnInfo> GetColumnInfoPrimaryKeys()
     {
-        return GetProperTables().SelectMany(t=>t.ColumnInfos).Where(column => column.IsPrimaryKey);
+        return GetProperTables().SelectMany(static t=>t.ColumnInfos).Where(static column => column.IsPrimaryKey);
     }
 }

@@ -40,7 +40,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
     public TableInfoCollectionUI()
     {
         InitializeComponent();
-            
+
         tlvTableInfos.KeyUp += olvTableInfos_KeyUp;
 
         tlvTableInfos.ItemActivate += tlvTableInfos_ItemActivate;
@@ -62,7 +62,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
     private void tlvTableInfos_ItemActivate(object sender, EventArgs e)
     {
         var o = tlvTableInfos.SelectedObject;
-            
+
         if (o is DecryptionPrivateKeyNode)
         {
             var c = new PasswordEncryptionKeyLocationUI();
@@ -97,7 +97,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             olvColumn1,
             olvColumn1
         );
-            
+
         if(_isFirstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvDataType, new Guid("c743eab7-1c07-41dd-bb10-68b25a437056"));
@@ -105,14 +105,14 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             CommonTreeFunctionality.SetupColumnTracking(olvColumn1, new Guid("3743e6dd-4166-4f71-b42f-c80ccda1446d"));
             _isFirstTime = false;
         }
-            
+
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=> new IAtomicCommand[]
         {
             new ExecuteCommandImportTableInfo(a,null,false),
             new ExecuteCommandBulkImportTableInfos(a)
         };
-            
+
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
 
@@ -135,8 +135,8 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
     {
         if(e.Object is DataAccessCredentials)
             tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
-            
-        if(e.Object is Catalogue || e.Object is TableInfo)
+
+        if(e.Object is Catalogue or TableInfo)
             tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
 
         if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)

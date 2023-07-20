@@ -54,17 +54,14 @@ public partial class OfferChanceToSaveDialogUI : Form
     }
 
     /// <summary>
-    /// Shows a yes no to saving and describes differences in an IMapsDirectlyToDatabaseTable object which suports IRevertable
+    /// Shows a yes no to saving and describes differences in an IMapsDirectlyToDatabaseTable object which supports IRevertable
     /// </summary>
     /// <param name="revertable"></param>
     public static DialogResult? ShowIfRequired(IRevertable revertable)
     {
-        if (revertable == null)
-            return null;
+        var differences = revertable?.HasLocalChanges();
 
-        var differences = revertable.HasLocalChanges();
-
-        return differences.Evaluation == ChangeDescription.DatabaseCopyDifferent
+        return differences?.Evaluation == ChangeDescription.DatabaseCopyDifferent
             ? new OfferChanceToSaveDialogUI(revertable,differences).ShowDialog()
             : null;
     }

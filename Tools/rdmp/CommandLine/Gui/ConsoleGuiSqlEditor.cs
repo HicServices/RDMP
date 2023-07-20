@@ -268,7 +268,7 @@ internal partial class ConsoleGuiSqlEditor : Window
     private void RunOrCancel()
     {
         // if task is still running we should cancel
-        if(_runSqlTask  != null && !_runSqlTask.IsCompleted)
+        if(_runSqlTask is { IsCompleted: false })
         {
             // Cancel the sql command and let that naturally end the task
             _runSqlCmd?.Cancel();

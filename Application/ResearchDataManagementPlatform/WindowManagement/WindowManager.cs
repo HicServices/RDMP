@@ -342,7 +342,7 @@ public class WindowManager
     {
         var newTab = (DockContent) _mainDockPanel.ActiveDocument;
 
-        if(newTab != null && newTab.ParentForm != null)
+        if(newTab?.ParentForm != null)
         {
             Navigation.Append(new TabNavigation(newTab));
             newTab.ParentForm.Text = $"{newTab.TabText} - RDMP";

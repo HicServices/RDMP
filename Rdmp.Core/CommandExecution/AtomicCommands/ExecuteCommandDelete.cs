@@ -95,8 +95,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
     private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
     {
         return
-            deleteable is CatalogueItem ||
-            deleteable is ExtractionInformation;
+            deleteable is CatalogueItem or ExtractionInformation;
     }
 
     private string GetDescription()

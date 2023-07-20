@@ -80,7 +80,7 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
             var attribute = relationshipFinder.GetAttribute(property);
 
             //if it's a relationship to a shared object
-            if (attribute != null && (attribute.Type == RelationshipType.SharedObject || attribute.Type == RelationshipType.OptionalSharedObject))
+            if (attribute is { Type: RelationshipType.SharedObject or RelationshipType.OptionalSharedObject })
             {
                 var idOfParent = property.GetValue(Object);
                 var typeOfParent = attribute.Cref;

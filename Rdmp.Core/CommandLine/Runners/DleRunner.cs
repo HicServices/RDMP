@@ -93,7 +93,7 @@ public class DleRunner:Runner
                 var exitCode = dataLoadProcess.Run(token);
 
                 //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
-                return exitCode == ExitCodeType.Success || exitCode == ExitCodeType.OperationNotRequired? 0: (int)exitCode;
+                return exitCode is ExitCodeType.Success or ExitCodeType.OperationNotRequired? 0: (int)exitCode;
             case CommandLineActivity.check:
 
                 checkable.Check(checkNotifier);

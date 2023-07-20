@@ -90,7 +90,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         runner.Run(new CancellationToken());
 
         AssertNoErrors(compiler);
-            
+
         Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
     }
 
@@ -239,8 +239,8 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
             AssertNoErrors(compiler);
         }
-                
-            
+
+
     }
 
 
@@ -299,11 +299,11 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         AssertNoErrors(compiler);
 
 
-        Assert.AreEqual(compiler.Tasks.Single(t=> t.Value!=null && t.Value.IsResultsForRootContainer).Key.FinalRowCount,0);
+        Assert.AreEqual(compiler.Tasks.Single(static t=> t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount,0);
         Assert.Greater(compiler.Tasks.Single(t=>t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount, 0); //both ac should have the same total
         Assert.Greater(compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount, 0); // that is not 0
-            
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected EXCEPT container to use the cache");
+
+        Assert.IsTrue(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected EXCEPT container to use the cache");
     }
 
     /// <summary>
@@ -348,7 +348,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
 
         var joinable = SetupPatientIndexTable(db,people,r,cic);
-            
+
         cic.CreateRootContainerIfNotExists();
         cic.QueryCachingServer_ID = cache?.ID;
         cic.SaveToDatabase();
@@ -415,11 +415,11 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
-            
+
         runner.Run(new CancellationToken());
 
         AssertNoErrors(compiler);
-            
+
         Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
     }
 
@@ -466,11 +466,11 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
-            
+
         runner.Run(new CancellationToken());
 
         AssertNoErrors(compiler);
-            
+
         Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
     }
 
@@ -521,7 +521,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
 
         var compiler = new CohortCompiler(cic);
         var runner = new CohortCompilerRunner(compiler, 50000);
-            
+
         runner.Run(new CancellationToken());
 
         var hospitalAdmissionsTask = compiler.Tasks.Keys.OfType<AggregationTask>().Single(t => t.Aggregate.Equals(hospitalAdmissions));
@@ -635,7 +635,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         ac.AddDimension(code);
         ac.AddDimension(date);
         ac.CountSQL = null;
-            
+
         cic.EnsureNamingConvention(ac);
 
         var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
@@ -789,7 +789,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
         var i = 0;
         foreach (var kvp in compiler.Tasks.Keys)
             TestContext.WriteLine($"{i++} - {kvp.ToString()} | {kvp.GetType()} | {kvp.State} | {kvp.CrashMessage} | {kvp.FinalRowCount} | {kvp.GetCachedQueryUseCount()}");
-            
+
         Assert.IsTrue(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished), "Expected all tasks to finish without error");
     }
 
@@ -853,7 +853,7 @@ internal class QueryCachingCrossServerTests: TestsRequiringA
     {
         //cache should have been used
         var containerResult = compiler.Tasks.Single(t => t.Key is AggregationContainerTask c && c.Container.Equals(container));
-            
+
         Assert.AreEqual(CompilationState.Finished,containerResult.Key.State);
         Assert.AreEqual(expectedCacheUsageCount,containerResult.Key.GetCachedQueryUseCount());
     }
