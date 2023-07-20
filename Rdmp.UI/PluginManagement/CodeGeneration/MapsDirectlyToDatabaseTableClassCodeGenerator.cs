@@ -30,7 +30,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
         if (!columns.Any(c => c.GetRuntimeName().Equals("ID")))
             throw new CodeGenerationException("Table must have an ID autonum column to become an IMapsDirectlyToDatabaseTable class");
-            
+
         var classStart = new StringBuilder();
 
         classStart.Append($"public class {_table.GetRuntimeName()}: DatabaseEntity");
@@ -67,7 +67,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
             $"\tpublic {_table.GetRuntimeName()}(IRepository repository, DbDataReader r): base(repository, r)");
         constructors.AppendLine("\t{");
 
-        foreach (var col in columns.Where(c => c.GetRuntimeName() != "ID"))
+        foreach (var col in columns.Where(c=>c.GetRuntimeName() != "ID"))
         {
             var type = GetCSharpTypeFor(col,out var setCode);
             var propertyName = col.GetRuntimeName();

@@ -180,7 +180,7 @@ public partial class PerformanceCounterResultsUI : UserControl
             var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
             dialog.Show();
         }
-            
+
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)

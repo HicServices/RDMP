@@ -112,6 +112,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
                 "CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
 
 
+
         _pipelineOptionsSet = true;
 
         _pipelineSelectionUI = new PipelineSelectionUI(Activator, _useCase, repository)

@@ -17,11 +17,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 public abstract class AutomationCommandExecution : BasicCommandExecution
 {
     protected readonly Func<RDMPCommandLineOptions> CommandGetter;
-    public readonly string AutomationServiceExecutable = EnvironmentInfo.IsLinux ? "rdmp" : "rdmp.exe";
+    public static readonly string AutomationServiceExecutable = Environment.OSVersion.Platform == PlatformID.Win32NT ? "rdmp.exe" : "rdmp";
 
-    private TableRepository _cataTableRepo;
-    private TableRepository _dataExportTableRepo;
-    private YamlRepository _yamlRepository;
+    private readonly TableRepository _cataTableRepo;
+    private readonly TableRepository _dataExportTableRepo;
+    private readonly YamlRepository _yamlRepository;
 
 
     protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) :

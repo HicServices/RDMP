@@ -23,8 +23,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandViewLogs : BasicCommandExecution, IAtomicCommand
 {
     public ILoggedActivityRootObject RootObject { get; }
-    protected readonly LogViewerFilter _filter;
-    protected ExternalDatabaseServer[] _loggingServers;
+    private readonly LogViewerFilter _filter;
+    private readonly ExternalDatabaseServer[] _loggingServers;
 
     [UseWithCommandLine(
         ParameterHelpList = "<root> <table?> <id?>",
@@ -58,13 +58,11 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
 
         var table = LoggingTables.None;
 
-        if (picker.Length >= 1)
-            if (Enum.TryParse(picker[0].RawValue, out table))
-                _filter = new LogViewerFilter(table);
+        // Optional second argument: table to filter for
+        if(picker.Length >= 1 && Enum.TryParse(picker[1].RawValue, out table)) _filter = new LogViewerFilter(table);
 
-        if (picker.Length >= 2)
-            if (int.TryParse(picker[0].RawValue, out var id))
-                _filter = new LogViewerFilter(table, id);
+        // Optional third argument: foreign key ID to filter on
+        if(picker.Length >= 2 && int.TryParse(picker[2].RawValue, out var id)) _filter = new LogViewerFilter(table, id);
     }
 
     [UseWithObjectConstructor]
@@ -103,7 +101,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         base.Execute();
 
 
-        if (RootObject != null)
+        if(RootObject != null)
         {
             BasicActivator.ShowLogs(RootObject);
         }

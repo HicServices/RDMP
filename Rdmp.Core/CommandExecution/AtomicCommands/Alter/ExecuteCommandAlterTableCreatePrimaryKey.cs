@@ -20,7 +20,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 /// </summary>
 public class ExecuteCommandAlterTableCreatePrimaryKey : AlterTableCommandExecution
 {
-    private ColumnInfo[] _columnInfos;
+    private readonly ColumnInfo[] _columnInfos;
 
     [UseWithCommandLine(ParameterHelpList = "<TableInfo> <ColumnInfo1> <ColumnInfo2> etc",
         ParameterHelpBreakdown = @"TableInfo    The table you want to create a primary key on e.g. TableInfo:*Biochem*
@@ -44,11 +44,8 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
         if (IsImpossible)
             return;
 
-        if (Table.DiscoverColumns().Any(c => c.IsPrimaryKey))
-        {
+        if(Table.DiscoverColumns().Any(static c=>c.IsPrimaryKey))
             SetImpossible("Table already has a primary key, try synchronizing the TableInfo");
-            return;
-        }
     }
 
     public override void Execute()
@@ -64,18 +61,16 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
 
         if (cols == null || cols.Length == 0)
             return;
-            
+
         using var cts = new CancellationTokenSource();
 
         var task = Task.Run(() =>
             Table.CreatePrimaryKey(cols.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()), cts.Token);
-                
+
         Wait("Creating Primary Key...",task, cts);
 
-        Wait("Creating Primary Key...", task, cts);
-
-        if (task.IsFaulted)
-            ShowException("Create Primary Key Failed", task.Exception);
+        if(task.IsFaulted)
+            ShowException("Create Primary Key Failed",task.Exception);
 
         Synchronize();
 

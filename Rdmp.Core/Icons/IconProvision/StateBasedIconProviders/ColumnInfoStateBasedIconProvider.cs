@@ -12,26 +12,18 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class ColumnInfoStateBasedIconProvider : IObjectStateBasedIconProvider
+public sealed class ColumnInfoStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
-    private readonly Image<Rgba32> _columnInfo;
-    private readonly Image<Rgba32> _columnInfoWithANO;
-
-    public ColumnInfoStateBasedIconProvider(IconOverlayProvider overlayProvider)
-    {
-        _overlayProvider = overlayProvider;
-        _columnInfo = Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
-        _columnInfoWithANO = Image.Load<Rgba32>(CatalogueIcons.ANOColumnInfo);
-    }
+    private static readonly Image<Rgba32> ColumnInfo = Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
+    private static readonly Image<Rgba32> ColumnInfoWithANO = Image.Load<Rgba32>(CatalogueIcons.ANOColumnInfo);
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         if (o is not ColumnInfo columnInfo)
             return null;
 
-        var basicIcon = columnInfo.ANOTable_ID != null ? _columnInfoWithANO : _columnInfo;
+        var basicIcon = columnInfo.ANOTable_ID != null ? ColumnInfoWithANO : ColumnInfo;
 
-        return columnInfo.IsPrimaryKey ? _overlayProvider.GetOverlay(basicIcon, OverlayKind.Key) : basicIcon;
+        return columnInfo.IsPrimaryKey ? IconOverlayProvider.GetOverlay(basicIcon, OverlayKind.Key) : basicIcon;
     }
 }

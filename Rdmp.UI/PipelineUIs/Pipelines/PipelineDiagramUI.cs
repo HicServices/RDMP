@@ -130,7 +130,7 @@ public partial class PipelineDiagramUI : UserControl
 
         var factory = new AtomicCommandUIFactory(_activator);
 
-        foreach (var o in _useCase.GetInitializationObjects().Reverse())
+        foreach(var o in _useCase.GetInitializationObjects().Reverse())
         {
             var b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
             pInitializationObjects.Controls.Add(b);

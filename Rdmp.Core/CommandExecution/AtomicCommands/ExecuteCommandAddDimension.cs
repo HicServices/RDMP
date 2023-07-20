@@ -16,19 +16,19 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Adds a new <see cref="AggregateDimension"/> to a <see cref="AggregateConfiguration"/> based on one of the associated <see cref="Catalogue"/> <see cref="ExtractionInformation"/>
 /// </summary>
-public class ExecuteCommandAddDimension : BasicCommandExecution
+public sealed class ExecuteCommandAddDimension : BasicCommandExecution
 {
-    private readonly AggregateConfiguration aggregate;
-    private readonly string column;
-    private readonly bool askAtRuntime;
-    private float DEFAULT_WEIGHT = 2.4f;
+    private readonly AggregateConfiguration _aggregate;
+    private readonly string _column;
+    private readonly bool _askAtRuntime;
+    private const float DefaultWeight = 2.4f;
 
     public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(
         basicActivator)
     {
-        Weight = DEFAULT_WEIGHT;
-        this.aggregate = aggregate;
-        askAtRuntime = true;
+        Weight = DefaultWeight;
+        _aggregate = aggregate;
+        _askAtRuntime = true;
         ValidateCanAdd(aggregate);
     }
 
@@ -36,9 +36,9 @@ public class ExecuteCommandAddDimension : BasicCommandExecution
     public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate,
         string column) : base(basicActivator)
     {
-        Weight = DEFAULT_WEIGHT;
-        this.aggregate = aggregate;
-        this.column = column;
+        Weight = DefaultWeight;
+        _aggregate = aggregate;
+        _column = column;
 
         if (!string.IsNullOrWhiteSpace(column))
         {
@@ -50,13 +50,10 @@ public class ExecuteCommandAddDimension : BasicCommandExecution
                 return;
             }
         }
-        else
+        else if (aggregate.PivotOnDimensionID == null)
         {
-            if (aggregate.PivotOnDimensionID == null)
-            {
-                SetImpossible($"AggregateConfiguration {aggregate} does not have a pivot to clear");
-                return;
-            }
+            SetImpossible($"AggregateConfiguration {aggregate} does not have a pivot to clear");
+            return;
         }
 
         ValidateCanAdd(aggregate);
@@ -76,16 +73,17 @@ public class ExecuteCommandAddDimension : BasicCommandExecution
     {
         base.Execute();
 
-        var opts = AggregateBuilderOptionsFactory.Create(aggregate);
+        var opts = AggregateBuilderOptionsFactory.Create(_aggregate);
         ExtractionInformation match = null;
 
-        var possible = opts.GetAvailableSELECTColumns(aggregate).OfType<ExtractionInformation>().ToArray();
+        var possible = opts.GetAvailableSELECTColumns(_aggregate).OfType<ExtractionInformation>().ToArray();
 
-        if (askAtRuntime)
+        if (_askAtRuntime)
         {
             if (!possible.Any())
-                throw new Exception(
-                    $"There are no ExtractionInformation that can be added as new dimensions to {aggregate}");
+            {
+                throw new Exception($"There are no ExtractionInformation that can be added as new dimensions to {_aggregate}");
+            }
 
             match = (ExtractionInformation)BasicActivator.SelectOne("Choose dimension to add", possible);
 
@@ -93,15 +91,16 @@ public class ExecuteCommandAddDimension : BasicCommandExecution
         }
         else
         {
-            match = possible.FirstOrDefault(a => string.Equals(column, a.ToString()));
+            match = possible.FirstOrDefault(a => string.Equals(_column, a.ToString()));
             if (match == null)
-                throw new Exception(
-                    $"Could not find ExtractionInformation {column} in as an addable column to {aggregate}");
+            {
+                throw new Exception($"Could not find ExtractionInformation {_column} in as an addable column to {_aggregate}");
+            }
         }
 
-        var dim = new AggregateDimension(BasicActivator.RepositoryLocator.CatalogueRepository, match, aggregate);
+        var dim = new AggregateDimension(BasicActivator.RepositoryLocator.CatalogueRepository, match, _aggregate);
         dim.SaveToDatabase();
 
-        Publish(aggregate);
+        Publish(_aggregate);
     }
 }

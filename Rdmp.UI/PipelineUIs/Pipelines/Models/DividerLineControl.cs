@@ -42,6 +42,7 @@ public partial class DividerLineControl : UserControl
 
     private void DividerLineControl_DragOver(object sender, DragEventArgs e)
     {
+
     }
 
     private void DividerLineControl_DragLeave(object sender, EventArgs e)

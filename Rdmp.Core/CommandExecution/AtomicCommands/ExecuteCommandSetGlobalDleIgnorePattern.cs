@@ -10,7 +10,7 @@ using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
+public sealed class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
 {
     private readonly string _pattern;
     private readonly bool _explicitPatternProvided;
@@ -29,6 +29,7 @@ public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
     /// <param name="activator"></param>
     public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator) : base(activator)
     {
+
     }
 
     public override void Execute()
@@ -49,7 +50,7 @@ public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
             existing.SaveToDatabase();
         }
 
-        if (_explicitPatternProvided)
+        if(_explicitPatternProvided)
         {
             existing.Regex = _pattern;
             existing.SaveToDatabase();

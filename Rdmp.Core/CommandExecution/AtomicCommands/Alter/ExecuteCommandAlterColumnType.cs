@@ -15,8 +15,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 /// </summary>
 public class ExecuteCommandAlterColumnType : BasicCommandExecution
 {
-    private ColumnInfo columnInfo;
-    private string _datatype;
+    private readonly ColumnInfo columnInfo;
+    private readonly string _datatype;
 
     public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo, string datatype = null) :
         base(activator)
@@ -24,7 +24,8 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         this.columnInfo = columnInfo;
         _datatype = datatype;
 
-        if (columnInfo.TableInfo.IsView) SetImpossible("Column is part of a view so cannot be altered");
+        if (columnInfo.TableInfo.IsView)
+            SetImpossible("Column is part of a view so cannot be altered");
         if (columnInfo.TableInfo.IsTableValuedFunction)
             SetImpossible("Column is part of a table valued function so cannot be altered");
     }
@@ -38,11 +39,11 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         var oldSqlType = fansiType.SQLType;
         var newSqlType = _datatype;
 
-        if (newSqlType == null)
-            if (!TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
-                return;
+        if(newSqlType == null && !TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
+            return;
 
-        if (string.IsNullOrWhiteSpace(newSqlType)) return;
+        if (string.IsNullOrWhiteSpace(newSqlType))
+            return;
 
         try
         {
@@ -79,7 +80,7 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
                 //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
                 return;
             }
-
+        }
 
         Publish(columnInfo.TableInfo);
     }

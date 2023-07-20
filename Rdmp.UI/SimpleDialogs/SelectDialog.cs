@@ -323,8 +323,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.Column == olvHierarchy) e.SubItem.ForeColor = Color.Gray;
     }
 
-    private IconOverlayProvider provider = new();
-
     private Bitmap GetHierarchyImage(object rowObject)
     {
         if (rowObject is not IMapsDirectlyToDatabaseTable m)
@@ -333,9 +331,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         lock (oMatches)
         {
             if (_searchables?.TryGetValue(m, out var searchable) != true) return null;
-            var parent = searchable?.GetMostDescriptiveParent();
 
-            return parent == null ? null : provider.GetGrayscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
+            var parent = searchable?.GetMostDescriptiveParent();
+            return parent == null ? null : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
         }
     }
 

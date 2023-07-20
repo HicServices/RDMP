@@ -13,10 +13,10 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution,IAtomicCommand
 {
     private readonly GovernancePeriod _period;
-    private FileInfo _file;
+    private readonly FileInfo _file;
 
     public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period) :
         base(activator)
@@ -24,10 +24,8 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAt
         _period = period;
     }
 
-    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period, FileInfo file)
-        : base(activator)
+    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period,FileInfo file): this(activator,period)
     {
-        _period = period;
         _file = file;
     }
 
@@ -40,22 +38,18 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAt
 
         if (p == null)
         {
-            if (BasicActivator.SelectObject(new DialogArgs
-                {
-                    WindowTitle = "Add Governance Document",
-                    TaskDescription = "Select which GovernancePeriod you want to attach the document to."
-
-                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(), out var selected))
-            {
-                p = selected;
-            else
+            if (!BasicActivator.SelectObject(new DialogArgs
+                    {
+                        WindowTitle = "Add Governance Document",
+                        TaskDescription = "Select which GovernancePeriod you want to attach the document to."
+                    }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(),
+                    out p))
                 // user cancelled selecting a Catalogue
                 return;
         }
 
         f ??= BasicActivator.SelectFile("Document to add");
-
-        if (f == null)
+        if(f == null)
             return;
 
         var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueRepository, p, f);
@@ -64,6 +58,5 @@ public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAt
         Activate(doc);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.GovernanceDocument, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.GovernanceDocument, OverlayKind.Add);
 }

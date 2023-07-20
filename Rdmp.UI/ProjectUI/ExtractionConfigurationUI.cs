@@ -104,8 +104,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
         SetupPipelineSelectionExtraction();
         SetupPipelineSelectionCohortRefresh();
 
-        pbCic.Image = activator.CoreIconProvider
-            .GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link).ImageToBitmap();
+        pbCic.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Link).ImageToBitmap();
 
         tbCreated.Text = _extractionConfiguration.dtCreated.ToString();
         tcRelease.TicketText = _extractionConfiguration.ReleaseTicket;

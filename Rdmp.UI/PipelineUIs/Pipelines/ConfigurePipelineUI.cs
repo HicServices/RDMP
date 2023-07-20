@@ -32,7 +32,7 @@ public partial class ConfigurePipelineUI : Form
         _useCase = useCase;
         InitializeComponent();
 
-        _workArea = new PipelineWorkAreaUI(activator, pipeline, useCase, repository) { Dock = DockStyle.Fill };
+        _workArea = new PipelineWorkAreaUI(activator,pipeline, useCase,repository) {Dock = DockStyle.Fill};
         panelWorkArea.Controls.Add(_workArea);
 
         tbName.Text = pipeline.Name;

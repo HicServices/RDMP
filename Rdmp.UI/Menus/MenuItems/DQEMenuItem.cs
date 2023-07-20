@@ -49,5 +49,7 @@ internal class DQEMenuItem:RDMPToolStripMenuItem
             else
                 new ExecuteCommandRunDQEOnCatalogue(_activator, _catalogue).Execute();
         }
+
+
     }
 }

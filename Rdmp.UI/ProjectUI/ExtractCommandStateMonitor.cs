@@ -67,6 +67,6 @@ internal class ExtractCommandStateMonitor
             if (GlobalsStates[key] != value)
                 yield return key;
         }
-            
+
     }
 }

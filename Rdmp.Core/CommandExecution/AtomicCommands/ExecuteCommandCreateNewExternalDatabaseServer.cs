@@ -23,10 +23,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecution, IAtomicCommand
 {
     private readonly PermissableDefaults _defaultToSet;
-    private ExternalDatabaseServerStateBasedIconProvider _databaseIconProvider;
-    private IconOverlayProvider _overlayProvider;
-    private IPatcher _patcher;
-    private DiscoveredDatabase _database;
+    private readonly ExternalDatabaseServerStateBasedIconProvider _databaseIconProvider;
+    private readonly IPatcher _patcher;
+    private readonly DiscoveredDatabase _database;
 
     public ExternalDatabaseServer ServerCreatedIfAny { get; private set; }
 
@@ -44,8 +43,7 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
         _patcher = patcher;
         _defaultToSet = defaultToSet;
 
-        _overlayProvider = new IconOverlayProvider();
-        _databaseIconProvider = new ExternalDatabaseServerStateBasedIconProvider(_overlayProvider);
+        _databaseIconProvider = new ExternalDatabaseServerStateBasedIconProvider();
 
         //do we already have a default server for this?
         var existingDefault = BasicActivator.ServerDefaults.GetDefaultFor(_defaultToSet);
@@ -65,31 +63,23 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
 
     public override string GetCommandHelp()
     {
-        switch (_defaultToSet)
+        return _defaultToSet switch
         {
-            case PermissableDefaults.LiveLoggingServer_ID:
-                return
-                    "Creates a database for auditing all flows of data (data load, extraction etc) including tables for errors, progress tables/record count loaded etc";
-            case PermissableDefaults.IdentifierDumpServer_ID:
-                return
-                    "Creates a database for storing the values of intercepted columns that are discarded during data load because they contain identifiable data";
-            case PermissableDefaults.DQE:
-                return
-                    "Creates a database for storing the results of data quality engine runs on your datasets over time.";
-            case PermissableDefaults.WebServiceQueryCachingServer_ID:
-                break;
-            case PermissableDefaults.RAWDataLoadServer:
-                return
-                    "Defines which database server should be used for the RAW data in the RAW=>STAGING=>LIVE model of the data load engine";
-            case PermissableDefaults.ANOStore:
-                return
-                    "Creates a new anonymisation database which contains mappings of identifiable values to anonymous representations";
-            case PermissableDefaults.CohortIdentificationQueryCachingServer_ID:
-                return
-                    "Creates a new Query Cache database which contains the indexed results of executed subqueries in a CohortIdentificationConfiguration";
-        }
-
-        return "Defines a new server that can be accessed by RDMP";
+            PermissableDefaults.LiveLoggingServer_ID =>
+                "Creates a database for auditing all flows of data (data load, extraction etc) including tables for errors, progress tables/record count loaded etc",
+            PermissableDefaults.IdentifierDumpServer_ID =>
+                "Creates a database for storing the values of intercepted columns that are discarded during data load because they contain identifiable data",
+            PermissableDefaults.DQE =>
+                "Creates a database for storing the results of data quality engine runs on your datasets over time.",
+            PermissableDefaults.WebServiceQueryCachingServer_ID => "Defines a new server that can be accessed by RDMP",
+            PermissableDefaults.RAWDataLoadServer =>
+                "Defines which database server should be used for the RAW data in the RAW=>STAGING=>LIVE model of the data load engine",
+            PermissableDefaults.ANOStore =>
+                "Creates a new anonymisation database which contains mappings of identifiable values to anonymous representations",
+            PermissableDefaults.CohortIdentificationQueryCachingServer_ID =>
+                "Creates a new Query Cache database which contains the indexed results of executed subqueries in a CohortIdentificationConfiguration",
+            _ => "Defines a new server that can be accessed by RDMP"
+        };
     }
 
     public override void Execute()
@@ -119,7 +109,9 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
         if (_patcher == null) return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
+
         var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
-        return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
+        return IconOverlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
+
     }
 }

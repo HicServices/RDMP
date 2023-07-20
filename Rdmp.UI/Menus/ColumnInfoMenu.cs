@@ -15,7 +15,7 @@ internal sealed class ColumnInfoMenu : RDMPContextMenuStrip
 {
     public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo) : base(args, columnInfo)
     {
-        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, columnInfo.TableInfo));
+        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null,columnInfo.TableInfo));
 
         Items.Add(new ToolStripSeparator());
 

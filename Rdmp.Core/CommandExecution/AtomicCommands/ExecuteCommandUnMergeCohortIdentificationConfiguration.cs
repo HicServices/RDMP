@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicCommandExecution
+public sealed class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicCommandExecution
 {
     private readonly CohortAggregateContainer _target;
 
@@ -21,14 +21,11 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
         CohortIdentificationConfiguration cic) :
         this(activator, cic?.RootCohortAggregateContainer)
     {
-        Weight = 0.3f;
     }
 
-    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,
-        CohortAggregateContainer container) : base(activator)
+    public ExecuteCommandUnMergeCohortIdentificationConfiguration(IBasicActivateItems activator,CohortAggregateContainer container): base(activator)
     {
         _target = container;
-
         Weight = 0.3f;
 
         if (_target == null)
@@ -36,7 +33,7 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
             SetImpossible("No root container");
             return;
         }
-            
+
         if(!_target.IsRootContainer())
         {
             SetImpossible("Only root containers can be unmerged");
@@ -68,7 +65,7 @@ public class ExecuteCommandUnMergeCohortIdentificationConfiguration : BasicComma
                 (CatalogueRepository)BasicActivator.RepositoryLocator.CatalogueRepository);
         var results = merger.UnMerge(_target);
 
-        if (results != null && results.Any())
+        if(results?.Any() == true)
         {
             BasicActivator.Show(
                 $"Created {results.Length} new configurations:{Environment.NewLine} {string.Join(Environment.NewLine, results.Select(r => r.Name))}");

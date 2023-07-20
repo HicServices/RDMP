@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// Change which column is used to perform linkage against a cohort.  This command supports both changing the global setting on a <see cref="Catalogue"/>
 /// or changing it only for a specific <see cref="ExtractionConfiguration"/>
 /// </summary>
-public class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSettingBase, IAtomicCommand
+public sealed class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSettingBase, IAtomicCommand
 {
     /// <summary>
     /// Change which column is the linkage identifier in a <see cref="Catalogue"/> either at a global level or for a specific <paramref name="inConfiguration"/>
@@ -42,19 +42,17 @@ public class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSett
     {
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Key);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExtractableCohort,OverlayKind.Key);
 
-    public override string GetCommandHelp() =>
-        "Change which column(s) contain the patient id / linkage column e.g. CHI";
+    public override string GetCommandHelp() => "Change which column(s) contain the patient id / linkage column e.g. CHI";
 
     protected override bool IsValidSelection(ConcreteColumn[] selected)
     {
-        if (selected == null)
-            return true;
-
-        // if multiple selected warn user
-        return selected.Length <= 1 || YesNo("Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?", "Multiple IsExtractionIdentifier columns?");
+        return selected is not { Length: > 1 } // if multiple selected warn user
+               ||
+               YesNo(
+                   "Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?",
+                   "Multiple IsExtractionIdentifier columns?");
     }
 
     protected override bool Getter(ConcreteColumn c) => c.IsExtractionIdentifier;

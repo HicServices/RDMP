@@ -15,10 +15,10 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandChangeExtractability : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandChangeExtractability:BasicCommandExecution
 {
     private readonly Catalogue _catalogue;
-    private bool _markExtractable;
+    private readonly bool _markExtractable;
 
     public ExecuteCommandChangeExtractability(IBasicActivateItems activator, Catalogue catalogue,
         bool? explicitExtractability = null) : base(activator)
@@ -53,8 +53,7 @@ public class ExecuteCommandChangeExtractability : BasicCommandExecution, IAtomic
             : @"Enable dataset linkage\extraction in Project extracts.  This requires that at least one column be marked IsExtractionIdentifier";
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractableDataSet, _markExtractable ? OverlayKind.Add : OverlayKind.Delete);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ExtractableDataSet, _markExtractable?OverlayKind.Add: OverlayKind.Delete);
 
     public override void Execute()
     {
@@ -62,35 +61,24 @@ public class ExecuteCommandChangeExtractability : BasicCommandExecution, IAtomic
 
         if (_markExtractable)
         {
-            if (!_catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository)
-                    .IsExtractable)
-            {
-                new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
-            }
+            if (_catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository).IsExtractable)
+                Show($"{_catalogue} is already extractable");
             else
             {
-                Show($"{_catalogue} is already extractable");
-                return;
+                new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
+                Publish(_catalogue);
             }
-
-            Publish(_catalogue);
         }
         else
         {
-            var extractabilityRecord =
-                ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.SingleOrDefault(ds =>
-                    ds.Catalogue_ID == _catalogue.ID);
-            if (extractabilityRecord != null)
-            {
-                extractabilityRecord.DeleteInDatabase();
-            }
+            var extractabilityRecord = ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.SingleOrDefault(ds => ds.Catalogue_ID == _catalogue.ID);
+            if (extractabilityRecord == null)
+                Show($"{_catalogue} is already non-extractable");
             else
             {
-                Show($"{_catalogue} is already non-extractable");
-                return;
+                extractabilityRecord.DeleteInDatabase();
+                Publish(_catalogue);
             }
-
-            Publish(_catalogue);
         }
     }
 }

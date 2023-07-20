@@ -28,8 +28,8 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
 
         args.SkipCommand<ExecuteCommandCreateNewClassBasedProcessTask>();
 
-        AddMenu<IDataProvider>("Add Cached Data Provider", t => typeof(ICachedDataProvider).IsAssignableFrom(t));
-        AddMenu<IDataProvider>("Add Data Provider", t => !typeof(ICachedDataProvider).IsAssignableFrom(t));
+        AddMenu<IDataProvider>("Add Cached Data Provider",t=>typeof(ICachedDataProvider).IsAssignableFrom(t));
+        AddMenu<IDataProvider>("Add Data Provider", t=> !typeof(ICachedDataProvider).IsAssignableFrom(t));
 
         AddMenu<IAttacher>("Add Attacher");
         AddMenu<IMutilateDataTables>("Add Mutilator");
