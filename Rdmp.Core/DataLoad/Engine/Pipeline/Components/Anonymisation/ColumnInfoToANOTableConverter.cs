@@ -44,14 +44,14 @@ public class ColumnInfoToANOTableConverter
         var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
 
         var rowcount = tbl.GetRowCount();
-            
+
         if(rowcount>0)
             throw new NotSupportedException(
                 $"Table {_tableInfo} contains {rowcount} rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
 
         using var con = tbl.Database.Server.GetConnection();
         con.Open();
-                
+
         if (!IsOldColumnDroppable(con, notifier))
             return false;
 
@@ -77,9 +77,9 @@ public class ColumnInfoToANOTableConverter
         if (!IsOldColumnDroppable(con, notifier))
             return false;
 
-            EnsureNoTriggerOnTable(tbl);
+        EnsureNoTriggerOnTable(tbl);
 
-            AddNewANOColumnInfo(shouldApplySql, con, notifier);
+        AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
         MigrateExistingData(shouldApplySql,con, notifier,tbl);
 
@@ -106,7 +106,7 @@ public class ColumnInfoToANOTableConverter
     {
         var from = _colToNuke.GetRuntimeName(LoadStage.PostLoad);
         var to = _newANOColumnInfo.GetRuntimeName(LoadStage.PostLoad);
-            
+
 
         //create an empty table for the anonymised data
         using (var cmdCreateTempMap = DatabaseCommandHelper.GetCommand(

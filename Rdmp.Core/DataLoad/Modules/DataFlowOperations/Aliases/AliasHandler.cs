@@ -182,11 +182,11 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
                 haveCheckedColumns = true;
             }
 
-                        var input = r[0];
-                        var alias = r[1];
+            var input = r[0];
+            var alias = r[1];
 
-                        if(input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
-                            throw new AliasTableFetchException("Alias table contained nulls");
+            if(input == null || input == DBNull.Value || alias == null || alias == DBNull.Value)
+                throw new AliasTableFetchException("Alias table contained nulls");
 
             if(input.Equals(alias))
                 throw new AliasTableFetchException("Alias table SQL should only return aliases not exact matches e.g. in the case of a simple alias X is Y, do not return 4 rows {X=X AND Y=Y AND Y=X AND X=Y}, only return 2 rows {X=Y and Y=X}");

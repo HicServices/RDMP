@@ -112,7 +112,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             return;
         }
-            
+
         if(_request.IsBatchResume)
         {
             _destination.AllowLoadingPopulatedTables = true;
@@ -192,7 +192,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     }
 
     private void PrimeDestinationTypesBasedOnCatalogueTypes(IDataLoadEventListener listener, DataTable toProcess)
-    { 
+    {
         //if the extraction is of a Catalogue
 
         if(_request is not IExtractDatasetCommand datasetCommand)
@@ -264,7 +264,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             var intermediate = fromSyntax.TypeTranslater.GetDataTypeRequestForSQLDBType(col.ColumnInfo.Data_type);
             return toSyntax.TypeTranslater.GetSQLDBTypeForCSharpType(intermediate);
         }
-            
+
         return col.ColumnInfo.Data_type;
     }
 
@@ -283,7 +283,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         tblName = TableNamingPattern;
         var project = _request.Configuration.Project;
-            
+
         tblName = tblName.Replace("$p", project.Name);
         tblName = tblName.Replace("$n", project.ProjectNumber.ToString());
         tblName = tblName.Replace("$c", _request.Configuration.Name);
@@ -387,7 +387,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     }
     protected override void PreInitializeImpl(IExtractCommand value, IDataLoadEventListener listener)
     {
-            
+
     }
 
 
@@ -441,20 +441,20 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         using(var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con))
         using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
         {
-            var sw = new Stopwatch();
+            var sw = Stopwatch.StartNew();
+            dt.BeginLoadData();
+            da.Fill(dt);
+            dt.EndLoadData();
+        }
 
-                    sw.Start();
-                    da.Fill(dt);
-                }
+        dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
+        linesWritten = dt.Rows.Count;
 
-                dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
-                linesWritten = dt.Rows.Count;
+        var destinationDb = GetDestinationDatabase(listener);
+        var tbl = destinationDb.ExpectTable(dt.TableName);
 
-                var destinationDb = GetDestinationDatabase(listener);
-                var tbl = destinationDb.ExpectTable(dt.TableName);
-
-                if(tbl.Exists())
-                    tbl.Drop();
+        if(tbl.Exists())
+            tbl.Drop();
 
         destinationDb.CreateTable(dt.TableName,dt);
         destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
@@ -465,7 +465,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         IExtractionConfiguration requestConfiguration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
     {
         using var dt = lookup.GetDataTable();
-                
+
         dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(lookup.TableInfo.Name));
 
         //describe the destination for the abstract base
@@ -474,7 +474,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         var destinationDb = GetDestinationDatabase(listener);
         var existing = destinationDb.ExpectTable(dt.TableName);
-                
+
         if(existing.Exists())
         {
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
@@ -575,7 +575,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a", CheckResult.Fail));
         }
-            
+
         base.Check(notifier);
 
         try

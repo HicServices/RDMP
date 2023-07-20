@@ -250,10 +250,7 @@ public class CatalogueIconProvider : ICoreIconProvider
     /// <returns></returns>
     public static bool ConceptIs(Type t, object concept)
     {
-        if (t.IsInstanceOfType(concept))
-            return true;
-
-        return concept is Type type && t.IsAssignableFrom(type);
+        return t.IsInstanceOfType(concept) || (concept is Type type && t.IsAssignableFrom(type));
     }
 
 
@@ -278,7 +275,7 @@ public class CatalogueIconProvider : ICoreIconProvider
         return imageList;
     }
 
-    private Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind)
+    private static Image<Rgba32> GetActualImage(Image<Rgba32> img, OverlayKind kind)
     {
         return kind == OverlayKind.None ? img : IconOverlayProvider.GetOverlay(img, kind);
     }
