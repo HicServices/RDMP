@@ -44,13 +44,13 @@ public class ColumnInfoToANOTableConverter
 
         var rowcount = tbl.GetRowCount();
 
-        if (rowcount > 0)
+        if(rowcount>0)
             throw new NotSupportedException(
                 $"Table {_tableInfo} contains {rowcount} rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
 
         using var con = tbl.Database.Server.GetConnection();
         con.Open();
-                
+
         if (!IsOldColumnDroppable(con, notifier))
             return false;
 
@@ -78,7 +78,7 @@ public class ColumnInfoToANOTableConverter
             return false;
 
         EnsureNoTriggerOnTable(tbl);
-                
+
         AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
         MigrateExistingData(shouldApplySql,con, notifier,tbl);

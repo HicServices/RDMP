@@ -120,9 +120,15 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
     {
         // empty batches are allowed when using batch/resume
-        if (toProcess.Rows.Count == 0 && _request.IsBatchResume) return;
+        if(toProcess.Rows.Count == 0 && _request.IsBatchResume)
+        {
+            return;
+        }
 
-        if (_request.IsBatchResume) _destination.AllowLoadingPopulatedTables = true;
+        if(_request.IsBatchResume)
+        {
+            _destination.AllowLoadingPopulatedTables = true;
+        }
 
         _destination.ProcessPipelineData(toProcess, job, cancellationToken);
 
@@ -406,6 +412,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
     protected override void PreInitializeImpl(IExtractCommand value, IDataLoadEventListener listener)
     {
+
     }
 
 
@@ -456,18 +463,18 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         using(var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con))
         using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
         {
-            var sw = new Stopwatch();
-
-            sw.Start();
+            var sw = Stopwatch.StartNew();
+            dt.BeginLoadData();
             da.Fill(dt);
+            dt.EndLoadData();
         }
-                
+
         dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
         linesWritten = dt.Rows.Count;
 
         var destinationDb = GetDestinationDatabase(listener);
         var tbl = destinationDb.ExpectTable(dt.TableName);
-                
+
         if(tbl.Exists())
             tbl.Drop();
 
@@ -482,8 +489,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         using var dt = lookup.GetDataTable();
 
-        dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper()
-            .GetSensibleEntityNameFromString(lookup.TableInfo.Name));
+        dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(lookup.TableInfo.Name));
 
         //describe the destination for the abstract base
         destinationDescription = $"{TargetDatabaseServer.ID}|{GetDatabaseName()}|{dt.TableName}";
@@ -492,7 +498,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         var destinationDb = GetDestinationDatabase(listener);
         var existing = destinationDb.ExpectTable(dt.TableName);
 
-        if (existing.Exists())
+        if(existing.Exists())
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                 $"Dropping existing Lookup table '{existing.GetFullyQualifiedName()}'"));
@@ -602,8 +608,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         {
             if (_request is ExtractDatasetCommand dsRequest && string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a",
-                    CheckResult.Fail));
+                    $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but TableNamingPattern contains $a", CheckResult.Fail));
+        }
 
         base.Check(notifier);
 
