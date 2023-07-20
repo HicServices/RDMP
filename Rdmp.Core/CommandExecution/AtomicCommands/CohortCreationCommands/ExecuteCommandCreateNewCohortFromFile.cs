@@ -22,7 +22,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecution
 {
-    private FileInfo _file;
+    private readonly FileInfo _file;
 
     public ExecuteCommandCreateNewCohortFromFile(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) :
         base(activator, externalCohortTable, null, null, null)

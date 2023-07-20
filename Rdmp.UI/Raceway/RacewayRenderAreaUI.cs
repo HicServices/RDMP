@@ -51,7 +51,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
         _mouseHeldDownTimer.Interval = 100;
         _mouseHeldDownTimer.Tick += _mouseHeldDownTimer_Tick;
         _mouseHeldDownTimer.Start();
-            
+
     }
 
     public event Action<Catalogue> RequestDeletion;
@@ -250,7 +250,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
     {
         var indexesVisibleOnScreen = Height / MinimumRowHeight;
         var indexes = _periodicityDictionary.Count + 1;
-            
+
         return (int) Math.Max(0,indexes - indexesVisibleOnScreen);
     }
 
@@ -269,7 +269,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
         var heightReservedForAxis = e.Graphics.MeasureString("TEST",Font).Height + 2;
 
         var mousePosition = PointToClient(new Point(MousePosition.X, MousePosition.Y));
-            
+
         rectNoDQE.Clear();
         rectDeleteButtons.Clear();
 
@@ -278,8 +278,8 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
         _allowScrollUp = _scrollDownIndexOffset > 0;
 
-            
-            
+
+
         //draw the tracks
         lock (oPeriodicityDictionaryLock)
         {
@@ -498,7 +498,7 @@ public partial class RacewayRenderAreaUI : UserControl,INotifyMeOfEditState
 
         e.Graphics.FillRectangle(redGradientBrush, 0, startDrawingLaneAtY, Width, eachRaceLaneHasThisMuchYSpace);
 
-            
+
         e.Graphics.DrawString(text, underLine?new Font(Font, FontStyle.Underline):Font, Brushes.White,
             new Point(0, (int) middleLineOfCatalogueLabelY));
 

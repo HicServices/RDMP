@@ -14,20 +14,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 /// </summary>
 public class ExecuteCommandAlterTableName : AlterTableCommandExecution
 {
-    private SelectSQLRefactorer _refactorer;
-
     public ExecuteCommandAlterTableName(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator,tableInfo)
     {
         if(IsImpossible)
             return;
-            
-        _refactorer = new SelectSQLRefactorer();
 
         if (!SelectSQLRefactorer.IsRefactorable(TableInfo))
-        {
             SetImpossible($"Cannot rename table because {SelectSQLRefactorer.GetReasonNotRefactorable(TableInfo)}");
-            return;
-        }
     }
 
     public override void Execute()

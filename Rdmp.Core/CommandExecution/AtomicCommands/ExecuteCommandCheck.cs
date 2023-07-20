@@ -15,10 +15,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Checks a given <see cref="ICheckable"/> object reporting integrity to an <see cref="ICheckNotifier"/>
 /// </summary>
-public class ExecuteCommandCheck : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandCheck : BasicCommandExecution
 {
     private readonly ICheckable _checkable;
-    private ICheckNotifier _notifier;
+    private readonly ICheckNotifier _notifier;
 
     public ExecuteCommandCheck(IBasicActivateItems activator, ICheckable checkable, ICheckNotifier notifier) : base(activator)
     {
@@ -29,13 +29,8 @@ public class ExecuteCommandCheck : BasicCommandExecution, IAtomicCommand
     public override void Execute()
     {
         base.Execute();
-
         _checkable.Check(_notifier);
     }
 
-
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
 }

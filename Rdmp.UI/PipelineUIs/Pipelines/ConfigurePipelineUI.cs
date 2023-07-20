@@ -31,7 +31,7 @@ public partial class ConfigurePipelineUI : Form
         _pipeline = pipeline;
         _useCase = useCase;
         InitializeComponent();
-            
+
         _workArea = new PipelineWorkAreaUI(activator,pipeline, useCase,repository) {Dock = DockStyle.Fill};
         panelWorkArea.Controls.Add(_workArea);
 
@@ -39,7 +39,7 @@ public partial class ConfigurePipelineUI : Form
         tbDescription.Text = pipeline.Description;
 
         RefreshUIFromDatabase();
-         
+
         KeyPreview = true;
     }
 

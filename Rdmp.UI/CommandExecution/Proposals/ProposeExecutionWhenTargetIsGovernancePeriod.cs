@@ -19,10 +19,7 @@ internal class ProposeExecutionWhenTargetIsGovernancePeriod:RDMPCommandExecution
     {
     }
 
-    public override bool CanActivate(GovernancePeriod target)
-    {
-        return true;
-    }
+    public override bool CanActivate(GovernancePeriod target) => true;
 
     public override void Activate(GovernancePeriod target)
     {

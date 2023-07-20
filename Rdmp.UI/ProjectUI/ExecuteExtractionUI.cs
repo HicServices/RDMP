@@ -79,7 +79,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         checkAndExecuteUI1.CommandGetter = CommandGetter;
         checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
         checkAndExecuteUI1.GroupBySender();
-            
+
         olvState.ImageGetter = State_ImageGetter;
         olvState.AspectGetter = State_AspectGetter;
 
@@ -87,7 +87,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         tlvDatasets.CanExpandGetter = CanExpandGetter;
         tlvDatasets.HierarchicalCheckboxes = true;
         tlvDatasets.ItemActivate += TlvDatasets_ItemActivate;
-            
+
         checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
 
         tlvDatasets.CellClick += tlvDatasets_CellClick;
@@ -98,7 +98,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
                 new ExecuteCommandAddDatasetsToConfiguration(Activator,_extractionConfiguration),
                 new ExecuteCommandAddPackageToConfiguration(Activator,_extractionConfiguration)
             };
-            
+
         RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvName, new Guid("57c60bc1-9935-49b2-bb32-58e4c20ad666"));
         RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvState, new Guid("22642c7d-342b-4a6c-b2c4-7ca581877cb2"));
     }
@@ -132,7 +132,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
                                               "\r\n" +
                                               "Click on the red icon to disable this help.");
         var stage2 = new HelpStage(_pipelinePanel.Control, "Select the pipeline to run for extracting the data.\r\n");
-            
+
         root.SetOption(">>", stage2);
         stage2.SetOption(">>", checkAndExecuteUI1.HelpStages.First());
         for (var i = 0; i < checkAndExecuteUI1.HelpStages.Count - 1; i++)

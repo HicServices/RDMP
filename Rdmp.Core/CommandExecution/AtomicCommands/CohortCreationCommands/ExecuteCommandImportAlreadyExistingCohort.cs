@@ -18,13 +18,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, IAtomicCommand
 {
     private readonly ExternalCohortTable _externalCohortTable;
-    private readonly IProject specificProject;
-    private int? _explicitOriginIDToImport;
+    private readonly IProject _specificProject;
+    private readonly int? _explicitOriginIDToImport;
 
     public ExecuteCommandImportAlreadyExistingCohort(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, IProject specificProject):base(activator)
     {
         _externalCohortTable = externalCohortTable;
-        this.specificProject = specificProject;
+        _specificProject = specificProject;
 
         if(specificProject is { ProjectNumber: null })
         {
@@ -44,7 +44,6 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         base.Execute();
 
         var ect = _externalCohortTable;
-
         if (ect == null)
         {
             var available = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>();
@@ -54,15 +53,11 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
             }
         }
 
-
         var newId = _explicitOriginIDToImport ?? GetWhichCohortToImport(ect);
+        if (!newId.HasValue) return;
 
-            
-        if(newId.HasValue)
-        {
-            new ExtractableCohort(BasicActivator.RepositoryLocator.DataExportRepository, ect, newId.Value);
-            Publish(ect);
-        }
+        _=new ExtractableCohort(BasicActivator.RepositoryLocator.DataExportRepository, ect, newId.Value);
+        Publish(ect);
     }
 
     private int? GetWhichCohortToImport(ExternalCohortTable ect)
@@ -84,13 +79,13 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         }
 
         // we only care about ones associated to this project
-        if (specificProject != null)
+        if (_specificProject != null)
         {
-            available = available.Where(a => a.ProjectNumber == specificProject.ProjectNumber).ToArray();
+            available = available.Where(a => a.ProjectNumber == _specificProject.ProjectNumber).ToArray();
 
             if(!available.Any())
             {
-                BasicActivator.Show($"There are no new cohorts to import for ProjectNumber {specificProject.ProjectNumber}");
+                BasicActivator.Show($"There are no new cohorts to import for ProjectNumber {_specificProject.ProjectNumber}");
                 return null;
             }
         }
@@ -99,8 +94,5 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         return BasicActivator.SelectObject("Import Cohort",available, out var cd) ? cd.ID : null;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import);
 }

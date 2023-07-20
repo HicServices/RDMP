@@ -18,12 +18,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 
 public class ExecuteCommandRunDetached : AutomationCommandExecution, IAtomicCommand
 {
-    private string _rdmpBinaryPath;
+    private readonly string _rdmpBinaryPath;
 
     public ExecuteCommandRunDetached(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
         : base(activator, commandGetter)
     {
-        _rdmpBinaryPath = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "cli", AutomationServiceExecutable);
+        _rdmpBinaryPath = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, AutomationServiceExecutable);
 
         if (!File.Exists(_rdmpBinaryPath))
             SetImpossible($"{_rdmpBinaryPath} did not exist");

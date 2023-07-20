@@ -74,7 +74,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         mi_SetDescription.Click += mi_SetDescription_Click;
-            
+
         tcMasterTicket.Title = "Master Ticket";
         tcMasterTicket.TicketTextChanged += tcMasterTicket_TicketTextChanged;
 
@@ -93,7 +93,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID, "Text", "ID", p => p.ID); 
+        Bind(tbID, "Text", "ID", p => p.ID);
         Bind(tbName, "Text", "Name", p => p.Name);
     }
 
@@ -298,7 +298,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
             tbExtractionDirectory.ForeColor = Color.Red;
         }
-            
+
     }
 
     private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -325,7 +325,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
     private void tbProjectNumber_TextChanged(object sender, EventArgs e)
     {
-            
+
         if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
         {
             _project.ProjectNumber = null;
@@ -342,7 +342,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         {
             tbProjectNumber.ForeColor = Color.Red;
         }
-            
+
     }
 
     private void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)

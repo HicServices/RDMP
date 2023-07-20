@@ -25,7 +25,7 @@ internal class TableInfoMenu : RDMPContextMenuStrip
 
         Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");
         Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo),Keys.None,"New");
-                                    
+
         Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution.ImageToBitmap(), delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
 
         Items.Add(new ToolStripSeparator());

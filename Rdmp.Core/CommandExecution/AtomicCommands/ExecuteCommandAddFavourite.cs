@@ -12,9 +12,9 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddFavourite : BasicCommandExecution
+public sealed class ExecuteCommandAddFavourite : BasicCommandExecution
 {
-    private DatabaseEntity _databaseEntity;
+    private readonly DatabaseEntity _databaseEntity;
 
     public ExecuteCommandAddFavourite(IBasicActivateItems activator) : base(activator)
     {
@@ -24,8 +24,6 @@ public class ExecuteCommandAddFavourite : BasicCommandExecution
     public ExecuteCommandAddFavourite(IBasicActivateItems activator, DatabaseEntity databaseEntity) : this(activator)
     {
         _databaseEntity = databaseEntity;
-
-        Weight = 100.1f;
     }
 
     public override string GetCommandName()

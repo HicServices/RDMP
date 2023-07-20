@@ -10,7 +10,6 @@ using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
-using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution;
 
@@ -18,123 +17,81 @@ namespace Rdmp.Core.CohortCreation.Execution;
 /// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the
 /// identifiers themselves (once complete), cancellation token etc.
 /// </summary>
-public class CohortIdentificationTaskExecution: IDisposable
+public sealed class CohortIdentificationTaskExecution: IDisposable
 {
-    private readonly IDataAccessPoint _cacheServerIfAny;
-    public int SubQueries { get; private set; }
-    public int SubqueriesCached { get; private set; }
-
-    public bool IsResultsForRootContainer { get; set; }
+    internal readonly int SubQueries;
+    public readonly int SubqueriesCached;
+    internal readonly bool IsResultsForRootContainer;
+    private readonly CancellationTokenSource _cancellationTokenSource;
+    private readonly DiscoveredServer _target;
+    private readonly string _cumulativeSQL;
 
     public DataTable Identifiers { get; private set; }
-    public DataTable CumulativeIdentifiers { get; private set; }
+    internal DataTable CumulativeIdentifiers { get; private set; }
 
-    public bool IsExecuting { get; private set; }
-
-    public string CumulativeSQL { get; set; }
+    internal bool IsExecuting { get; private set; }
 
     /// <summary>
     /// Although this is called CountSQL it is actually a select distinct identifiers!
     /// </summary>
     public string CountSQL { get; set; }
 
-    private CancellationTokenSource _cancellationTokenSource;
-    private readonly DiscoveredServer _target;
-    private DbCommand _cmdCount;
-    private DbDataReader _rIds;
-    private DbDataReader _rCumulative;
-    private DbCommand _cmdCountCumulative;
-
-    public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DiscoveredServer target)
+    internal CohortIdentificationTaskExecution(string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DiscoveredServer target)
     {
-        _cacheServerIfAny = cacheServerIfAny;
         SubQueries = subQueries;
         SubqueriesCached = subqueriesCached;
         CountSQL = countSQL;
-        CumulativeSQL = cumulativeSQL;
+        _cumulativeSQL = cumulativeSQL;
         _cancellationTokenSource = cancellationTokenSource;
         _target = target;
         IsResultsForRootContainer = isResultsForRootContainer;
     }
 
-    public void Cancel()
+    internal void Cancel()
     {
         _cancellationTokenSource.Cancel();
-        if (_cmdCount != null && _cmdCount.Connection.State == ConnectionState.Open)
-        {
-            _cmdCount.Cancel();
-        }
-
-        if (_rIds is { IsClosed: false })
-        {
-            try
-            {
-                _rIds.Close();
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-
-        if (_rCumulative is { IsClosed: false })
-        {
-            try
-            {
-                _rCumulative.Close();
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-            
     }
 
 
-    public void GetCohortAsync(int commandTimeout)
+    internal void GetCohortAsync(int commandTimeout)
     {
         if(Identifiers != null)
             throw new Exception("GetCohortAsync has already been called for this object");
 
         Identifiers = new DataTable();
-            
+
         IsExecuting = true;
 
-        var server = _target;
-            
-        server.EnableAsync();
+        _target.EnableAsync();
 
-        using var con = server.GetConnection();
+        using var con = _target.GetConnection();
         con.Open();
-        _cmdCount = server.GetCommand(CountSQL, con);
-        _cmdCount.CommandTimeout = commandTimeout;
+        using var cmdCount = _target.GetCommand(CountSQL, con);
+        cmdCount.CommandTimeout = commandTimeout;
 
-        var identifiersReader = _cmdCount.ExecuteReaderAsync(_cancellationTokenSource.Token);
+        var identifiersReader = cmdCount.ExecuteReaderAsync(_cancellationTokenSource.Token);
 
         identifiersReader.Wait(_cancellationTokenSource.Token);
-        _rIds = identifiersReader.Result;
-        Identifiers.Load(_rIds);
-        _rIds.Close();
-        _rIds.Dispose();
-
-        Task<DbDataReader> cumulativeIdentifiersRead = null;
+        using var rIds = identifiersReader.Result;
+        Identifiers.BeginLoadData();
+        Identifiers.Load(rIds);
+        Identifiers.EndLoadData();
+        rIds.Close();
+        rIds.Dispose();
 
         //if there is cumulative SQL happening
-        if (!string.IsNullOrWhiteSpace(CumulativeSQL))
+        if (!string.IsNullOrWhiteSpace(_cumulativeSQL))
         {
             CumulativeIdentifiers = new DataTable();
 
-            _cmdCountCumulative = server.GetCommand(CumulativeSQL, con);
-            _cmdCountCumulative.CommandTimeout = commandTimeout;
-            cumulativeIdentifiersRead = _cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
-        }
-
-        if (cumulativeIdentifiersRead != null)
-        {
+            using var cmdCountCumulative = _target.GetCommand(_cumulativeSQL, con);
+            cmdCountCumulative.CommandTimeout = commandTimeout;
+            var cumulativeIdentifiersRead = cmdCountCumulative.ExecuteReaderAsync(_cancellationTokenSource.Token);
             cumulativeIdentifiersRead.Wait(_cancellationTokenSource.Token);
-            _rCumulative = cumulativeIdentifiersRead.Result;
-            CumulativeIdentifiers.Load(_rCumulative);
-            _rCumulative.Close();
-            _rCumulative.Dispose();
+            using var rCumulative = cumulativeIdentifiersRead.Result;
+            CumulativeIdentifiers.Load(rCumulative);
+            rCumulative.Close();
+            rCumulative.Dispose();
         }
 
         IsExecuting = false;
@@ -142,12 +99,7 @@ public class CohortIdentificationTaskExecution: IDisposable
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
         Identifiers?.Dispose();
         CumulativeIdentifiers?.Dispose();
-        _rIds?.Dispose();
-        _rCumulative?.Dispose();
-        _cmdCount?.Dispose();
-        _cmdCountCumulative?.Dispose();
     }
 }

@@ -27,7 +27,7 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
         _loadStageNode = loadStageNode;
 
         args.SkipCommand<ExecuteCommandCreateNewClassBasedProcessTask>();
-            
+
         AddMenu<IDataProvider>("Add Cached Data Provider",t=>typeof(ICachedDataProvider).IsAssignableFrom(t));
         AddMenu<IDataProvider>("Add Data Provider", t=> !typeof(ICachedDataProvider).IsAssignableFrom(t));
 

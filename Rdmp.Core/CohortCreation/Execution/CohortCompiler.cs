@@ -333,7 +333,7 @@ public class CohortCompiler
         var isResultsForRootContainer = container != null && container.ID == CohortIdentificationConfiguration.RootCohortAggregateContainer_ID;
 
 
-        var taskExecution = new CohortIdentificationTaskExecution(cacheServer, newsql, cumulativeSql, source,
+        var taskExecution = new CohortIdentificationTaskExecution(newsql, cumulativeSql, source,
             queryBuilder?.Results?.CountOfSubQueries ?? -1,
             queryBuilder?.Results?.CountOfCachedSubQueries ??-1,
             isResultsForRootContainer,

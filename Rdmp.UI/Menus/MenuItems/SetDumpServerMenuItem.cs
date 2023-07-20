@@ -24,7 +24,7 @@ namespace Rdmp.UI.Menus.MenuItems;
 internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
 {
     private readonly ITableInfo _tableInfo;
-    private ExternalDatabaseServer[] _availableServers;
+    private readonly ExternalDatabaseServer[] _availableServers;
 
     public SetDumpServerMenuItem(IActivateItems activator, ITableInfo tableInfo): base(activator,"Add Dump Server")
     {
@@ -35,19 +35,18 @@ internal class SetDumpServerMenuItem : RDMPToolStripMenuItem
         Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add).ImageToBitmap();
 
         var img = SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
-        var overlay = new IconOverlayProvider();
 
         var cataRepo = activator.RepositoryLocator.CatalogueRepository;
 
         _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 
-        var miUseExisting = new ToolStripMenuItem("Use Existing...", overlay.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
+        var miUseExisting = new ToolStripMenuItem("Use Existing...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Link).ImageToBitmap(), UseExisting)
         {
             Enabled = _availableServers.Any()
         };
 
         DropDownItems.Add(miUseExisting);
-        DropDownItems.Add("Create New...", overlay.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(), CreateNewIdentifierDumpServer);
+        DropDownItems.Add("Create New...", IconOverlayProvider.GetOverlayNoCache(img, OverlayKind.Add).ImageToBitmap(), CreateNewIdentifierDumpServer);
 
     }
 

@@ -30,7 +30,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
         if (!columns.Any(c => c.GetRuntimeName().Equals("ID")))
             throw new CodeGenerationException("Table must have an ID autonum column to become an IMapsDirectlyToDatabaseTable class");
-            
+
         var classStart = new StringBuilder();
 
         classStart.Append($"public class {_table.GetRuntimeName()}: DatabaseEntity");
@@ -66,7 +66,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
         constructors.AppendLine(
             $"\tpublic {_table.GetRuntimeName()}(IRepository repository, DbDataReader r): base(repository, r)");
         constructors.AppendLine("\t{");
-            
+
         foreach (var col in columns.Where(c=>c.GetRuntimeName() != "ID"))
         {
             var type = GetCSharpTypeFor(col,out var setCode);
@@ -89,7 +89,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
 
         databaseFields.AppendLine("\t#endregion");
         databaseFields.AppendLine();
-            
+
         constructors.AppendLine("\t}");
 
         if (isINamed)
@@ -135,7 +135,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
                 setCode = $"Convert.ToInt32({r});";
                 return "int";
             }
-            
+
         if (col.DataType.SQLType.Contains("bit"))
             if (col.AllowNulls)
             {
@@ -147,7 +147,7 @@ public class MapsDirectlyToDatabaseTableClassCodeGenerator
                 setCode = $"Convert.ToBoolean({r});";
                 return "bool";
             }
-            
+
 
         setCode = "TODO Unrecognised Type";
         return "TODO  Unrecognised Type";

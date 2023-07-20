@@ -25,18 +25,8 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
     protected ExternalCohortTable ExternalCohortTable;
     protected IProject Project;
-    protected IPipeline Pipeline;
-    private string _explicitCohortName;
-
-    /// <summary>
-    /// Initialises base class with no targetting parameters, these will be prompted from the user at execution time assuming <see cref="IBasicActivateItems.IsInteractive"/>
-    /// </summary>
-    /// <param name="activator"></param>
-    protected CohortCreationCommandExecution(IBasicActivateItems activator)
-        : this(activator, null, null, null, null)
-    {
-
-    }
+    protected readonly IPipeline Pipeline;
+    private readonly string _explicitCohortName;
 
     /// <summary>
     /// Initialises common targetting parameters (where to store resulting identifiers etc)
@@ -46,7 +36,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     /// <param name="cohortName"></param>
     /// <param name="project"></param>
     /// <param name="pipeline"></param>
-    protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable, string cohortName, Project project, IPipeline pipeline) : base(activator)
+    protected CohortCreationCommandExecution(IBasicActivateItems activator, ExternalCohortTable externalCohortTable = null, string cohortName = null, Project project = null, IPipeline pipeline = null) : base(activator)
     {
         //May be null
         _explicitCohortName = cohortName;
@@ -77,7 +67,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             {
                 return null;//user didn't select one and cancelled dialog
             }
-                    
+
 
         //and document the request
 
@@ -117,7 +107,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         // If the user has used this description before then we can just bump the version by 1
         if (existing.Any())
         {
-            version = existing.Max(v => v.Version) + 1;
+            version = existing.Max(static v => v.Version) + 1;
         }
 
         return new CohortCreationRequest(Project, new CohortDefinition(null, name, version, Project.ProjectNumber.Value, ect), BasicActivator.RepositoryLocator.DataExportRepository, auditLogDescription);
@@ -148,35 +138,32 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             TaskDescription = $"Select a Pipeline compatible with creating a Cohort from an '{cohortIsBeingCreatedFrom.GetType().Name}'.  If the pipeline completes successfully a new Saved Cohort will be created and the cohort identifiers stored in '{request?.NewCohortDefinition?.LocationOfCohort?.Name ?? "Unknown"}'."
         },request, Pipeline);
 
-        pipelineRunner.PipelineExecutionFinishedsuccessfully += (_, _) => OnCohortCreatedSuccessfully(pipelineRunner, request);
+        pipelineRunner.PipelineExecutionFinishedsuccessfully += (_, _) => OnCohortCreatedSuccessfully(request);
 
-        //add in the logging server
+        //add in the logging server, if any
         var loggingServer = catalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        if (loggingServer == null) return pipelineRunner;
 
-        if (loggingServer != null)
-        {
-            var logManager = new LogManager(loggingServer);
-            logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
+        var logManager = new LogManager(loggingServer);
+        logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
-            //create a db listener
-            var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, description);
+        //create a db listener
+        var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager, ExtractableCohort.CohortLoggingTask, description);
 
-            //make all messages go to both the db and the UI
-            pipelineRunner.SetAdditionalProgressListener(toDbListener);
+        //make all messages go to both the db and the UI
+        pipelineRunner.SetAdditionalProgressListener(toDbListener);
 
-            //after executing the pipeline finalise the db listener table info records
-            pipelineRunner.PipelineExecutionFinishedsuccessfully += (s, e) => toDbListener.FinalizeTableLoadInfos();
-        }
+        //after executing the pipeline finalise the db listener table info records
+        pipelineRunner.PipelineExecutionFinishedsuccessfully += (s, e) => toDbListener.FinalizeTableLoadInfos();
 
         return pipelineRunner;
     }
 
-    private void OnCohortCreatedSuccessfully(IPipelineRunner runner, ICohortCreationRequest request)
+    private void OnCohortCreatedSuccessfully(ICohortCreationRequest request)
     {
-        if (request.CohortCreatedIfAny != null)
-        {
-            Publish(request.CohortCreatedIfAny);
-            Emphasise(request.CohortCreatedIfAny);
-        }
+        if (request.CohortCreatedIfAny == null) return;
+
+        Publish(request.CohortCreatedIfAny);
+        Emphasise(request.CohortCreatedIfAny);
     }
 }

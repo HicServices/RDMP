@@ -24,7 +24,7 @@ internal class CatalogueMenu:RDMPContextMenuStrip
     public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue):base(args,catalogue)
     {
         var isApiCall = catalogue.IsApiCall();
-            
+
         Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue) {
             Weight = -99.059f
         },Keys.None,AtomicCommandFactory.Metadata);
@@ -33,8 +33,8 @@ internal class CatalogueMenu:RDMPContextMenuStrip
         {
             Weight = -95.09f
         },Keys.None,AtomicCommandFactory.Metadata);
-            
-            
+
+
         Add(new ExecuteCommandExportInDublinCoreFormat(_activator, catalogue)
         {
             Weight = -90.10f

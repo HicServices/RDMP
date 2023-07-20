@@ -15,8 +15,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 /// </summary>
 public class ExecuteCommandAlterColumnType : BasicCommandExecution
 {
-    private ColumnInfo columnInfo;
-    private string _datatype;
+    private readonly ColumnInfo columnInfo;
+    private readonly string _datatype;
 
     public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo, string datatype = null) : base(activator)
     {
@@ -24,13 +24,9 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         _datatype = datatype;
 
         if (columnInfo.TableInfo.IsView)
-        {
             SetImpossible("Column is part of a view so cannot be altered");
-        }
         if (columnInfo.TableInfo.IsTableValuedFunction)
-        {
             SetImpossible("Column is part of a table valued function so cannot be altered");
-        }
     }
 
     public override void Execute()
@@ -42,18 +38,11 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         var oldSqlType = fansiType.SQLType;
         var newSqlType = _datatype;
 
-        if(newSqlType == null)
-        {
-            if (!TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
-            {
-                return;
-            }
-        }
+        if(newSqlType == null && !TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
+            return;
 
         if (string.IsNullOrWhiteSpace(newSqlType))
-        {
             return;
-        }
 
         try
         {
@@ -94,7 +83,6 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
                 return;
             }
         }
-            
 
         Publish(columnInfo.TableInfo);
     }

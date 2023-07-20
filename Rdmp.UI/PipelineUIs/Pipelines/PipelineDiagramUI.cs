@@ -124,13 +124,13 @@ public partial class PipelineDiagramUI : UserControl
 
         //clear the diagram
         flpPipelineDiagram.Controls.Clear();
-            
+
         pipelineSmiley.Reset();
-            
+
         pInitializationObjects.Controls.Clear();
 
         var factory = new AtomicCommandUIFactory(_activator);
-            
+
         foreach(var o in _useCase.GetInitializationObjects().Reverse())
         {
             var b = factory.CreateButton(new ExecuteCommandDescribe(_activator, o));
@@ -261,7 +261,7 @@ public partial class PipelineDiagramUI : UserControl
             component.AllowSelection = true;
             component.ComponentSelected += component_Selected;
         }
-                
+
 
         //PipelineComponents can never be locked because they are user setup things
         component.IsLocked = false;
@@ -283,10 +283,10 @@ public partial class PipelineDiagramUI : UserControl
             return;
 
         SelectedComponent = selected;
-            
+
         //update the Del menu item
         _deleteSelectedMenuItem.Enabled = SelectedComponent != null;
-            
+
         //clear old selections
         foreach (var componentVisualisation in flpPipelineDiagram.Controls.OfType<PipelineComponentVisualisation>())
             componentVisualisation.IsSelected = false;
@@ -327,7 +327,7 @@ public partial class PipelineDiagramUI : UserControl
     private DragDropEffects component_shouldAllowDrop(DragEventArgs arg,DataFlowComponentVisualisation sender)
     {
         var obj = GetAdvertisedObjectFromDragOperation(arg);
-            
+
         //if they are dragging a new component
         if(obj != null)
             //of the correct role and the source/destination is empty
@@ -350,7 +350,7 @@ public partial class PipelineDiagramUI : UserControl
         //if they are dropping a new component
         if (GetAdvertisedObjectFromDragOperation(arg) != null)
             return DragDropEffects.Copy;
-            
+
         //if its something else entirely
         if (!arg.Data.GetDataPresent(typeof(PipelineComponentVisualisation)))
             return DragDropEffects.None;
@@ -417,11 +417,11 @@ public partial class PipelineDiagramUI : UserControl
             Order = GetOrderMakingSpaceIfNessesary(null, divider)
         };
 
-           
+
         newcomp.CreateArgumentsForClassIfNotExists(underlyingComponentType);
-          
+
         newcomp.SaveToDatabase();
-            
+
         if (advert.GetRole() == PipelineComponentRole.Source)
         {
             _pipeline.SourcePipelineComponent_ID = newcomp.ID;
@@ -432,7 +432,7 @@ public partial class PipelineDiagramUI : UserControl
         {
             _pipeline.DestinationPipelineComponent_ID = newcomp.ID;
             _pipeline.SaveToDatabase();
-        } 
+        }
 
         RefreshUIFromDatabase();
 

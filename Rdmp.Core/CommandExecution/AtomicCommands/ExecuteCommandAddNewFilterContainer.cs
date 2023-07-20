@@ -16,16 +16,17 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
+public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
 {
-    private IRootFilterContainerHost _host;
-    private IContainer _container;
-    public const string FiltersCannotBeAddedToApiCalls = "Filters cannot be added to API calls";
-    private const float DEFAULT_WEIGHT = 1.1f;
+    private readonly IRootFilterContainerHost _host;
+    private readonly IContainer _container;
+    internal const string FiltersCannotBeAddedToApiCalls = "Filters cannot be added to API calls";
+    private const float DefaultWeight = 1.1f;
 
     public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IRootFilterContainerHost host):base(activator)
     {
-        Weight = DEFAULT_WEIGHT;
+        Weight = DefaultWeight;
+        _host = host;
 
         if(host.RootFilterContainer_ID != null)
             SetImpossible("There is already a root filter container on this object");
@@ -40,31 +41,24 @@ public class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
         }
 
         SetImpossibleIfReadonly(host);
-
-        _host = host;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        Weight = DEFAULT_WEIGHT;
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.FilterContainer,OverlayKind.Add);
 
-        return iconProvider.GetImage(RDMPConcept.FilterContainer,OverlayKind.Add);
-    }
     public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container):base(activator)
     {
-        Weight = DEFAULT_WEIGHT;
-
         _container = container;
 
         SetImpossibleIfReadonly(container);
     }
+ 
     public override void Execute()
     {
         base.Execute();
-            
+
         var factory = (_container?.GetFilterFactory() ?? _host?.GetFilterFactory()) ?? throw new Exception("Unable to determine FilterFactory, is host and container null?");
         var newContainer = factory.CreateNewContainer();
-            
+
         if(_host != null)
         {
             _host.RootFilterContainer_ID = newContainer .ID;
@@ -77,7 +71,7 @@ public class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
 
             _container.AddChild(newContainer);
         }
-            
+
 
         Publish(_host ?? (IMapsDirectlyToDatabaseTable)newContainer);
         Emphasise(newContainer);

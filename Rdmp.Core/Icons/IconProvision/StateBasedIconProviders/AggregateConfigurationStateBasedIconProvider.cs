@@ -13,42 +13,33 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
+public sealed class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
-    private readonly Image<Rgba32> _cohortAggregates;
-    private readonly Image<Rgba32> _aggregates;
-    private readonly Image<Rgba32> _patientIndexTable;
-
-    public AggregateConfigurationStateBasedIconProvider(IconOverlayProvider overlayProvider)
-    {
-        _overlayProvider = overlayProvider;
-        _cohortAggregates = Image.Load<Rgba32>(CatalogueIcons.CohortAggregate);
-        _aggregates = Image.Load<Rgba32>(CatalogueIcons.AggregateGraph);
-        _patientIndexTable = Image.Load<Rgba32>(CatalogueIcons.PatientIndexTable);
-    }
+    private static readonly Image<Rgba32> CohortAggregates = Image.Load<Rgba32>(CatalogueIcons.CohortAggregate);
+    private static readonly Image<Rgba32> Aggregates = Image.Load<Rgba32>(CatalogueIcons.AggregateGraph);
+    private static readonly Image<Rgba32> PatientIndexTable = Image.Load<Rgba32>(CatalogueIcons.PatientIndexTable);
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         if (o is Type && o.Equals(typeof (AggregateConfiguration)))
-            return _aggregates;
+            return Aggregates;
 
         if (o is not AggregateConfiguration ac)
             return null;
 
-        var img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
+        var img = ac.IsCohortIdentificationAggregate ? CohortAggregates : Aggregates;
 
         if (ac.IsJoinablePatientIndexTable())
-            img = _patientIndexTable;
+            img = PatientIndexTable;
 
         if (ac.IsExtractable)
-            img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Extractable);
 
         if (ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
-            img =_overlayProvider.GetOverlay(img, OverlayKind.Shortcut);
+            img =IconOverlayProvider.GetOverlay(img, OverlayKind.Shortcut);
 
         if (ac.Catalogue.IsApiCall())
-            img = _overlayProvider.GetOverlay(img, OverlayKind.Cloud);
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Cloud);
 
         return img;
     }

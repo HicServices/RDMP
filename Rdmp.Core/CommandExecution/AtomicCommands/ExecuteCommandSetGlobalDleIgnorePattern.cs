@@ -10,7 +10,7 @@ using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
+public sealed class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
 {
     private readonly string _pattern;
     private readonly bool _explicitPatternProvided;
@@ -29,7 +29,7 @@ public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
     /// <param name="activator"></param>
     public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator):base(activator)
     {
-             
+
     }
 
     public override void Execute()
@@ -45,11 +45,10 @@ public class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecution
                 ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
                 Description = "Regex that will be applied as an ignore when running the data load engine",
                 Regex = "^ignore_.*"
-
             };
             existing.SaveToDatabase();
         }
-                
+
         if(_explicitPatternProvided)
         {
             existing.Regex = _pattern;

@@ -45,7 +45,7 @@ public partial class PerformanceCounterResultsUI : UserControl
     private void RowFormatter(OLVListItem olvItem)
     {
         var o = (StackFramesTree)olvItem.RowObject;
-            
+
         //bold the endpoints - where there are no children or they are all in database assemblies
         if (!o.Children.Any() ||o.Children.Values.All(c => c.IsInDatabaseAccessAssembly))
             olvItem.Font = new Font(olvItem.Font,FontStyle.Bold);
@@ -146,7 +146,7 @@ public partial class PerformanceCounterResultsUI : UserControl
             else
                 currentRoot.AddSubframes(lines, query);
         }
-            
+
         //if there is one root node
         if(Roots.Count == 1)
         {
@@ -162,7 +162,7 @@ public partial class PerformanceCounterResultsUI : UserControl
                 Roots = new List<StackFramesTree>(new []{firstBranch});
         }
 
-            
+
         tlvLocations.ClearObjects();
         tlvLocations.AddObjects(Roots);
         tlvLocations.ExpandAll();
@@ -175,7 +175,7 @@ public partial class PerformanceCounterResultsUI : UserControl
             var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
             dialog.Show();
         }
-            
+
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)

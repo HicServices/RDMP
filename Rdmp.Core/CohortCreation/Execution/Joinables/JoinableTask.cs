@@ -26,55 +26,41 @@ namespace Rdmp.Core.CohortCreation.Execution.Joinables;
 /// </summary>
 public class JoinableTask:CacheableTask
 {
-    private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-    private AggregateConfiguration _aggregate;
-    private string _catalogueName;
+    private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private readonly AggregateConfiguration _aggregate;
+    private readonly string _catalogueName;
 
-    public JoinableCohortAggregateConfiguration Joinable { get; private set; }
+    public JoinableCohortAggregateConfiguration Joinable { get; }
 
 
     public JoinableTask(JoinableCohortAggregateConfiguration joinable, CohortCompiler compiler) : base(compiler)
     {
-            
+
         Joinable = joinable;
         _aggregate = Joinable.AggregateConfiguration;
         _cohortIdentificationConfiguration =_aggregate.GetCohortIdentificationConfigurationIfAny();
-            
+
         _catalogueName = Joinable.AggregateConfiguration.Catalogue.Name;
         RefreshIsUsedState();
     }
 
-    public override string GetCatalogueName()
-    {
-        return _catalogueName;
-    }
+    public override string GetCatalogueName() => _catalogueName;
 
     public override IMapsDirectlyToDatabaseTable Child => Joinable;
 
-    public override IDataAccessPoint[] GetDataAccessPoints()
-    {
-        return Joinable.AggregateConfiguration.Catalogue.GetTableInfoList(false);
-    }
+    public override IDataAccessPoint[] GetDataAccessPoints() =>
+        Joinable.AggregateConfiguration.Catalogue.GetTableInfoList(false);
 
-    public override bool IsEnabled()
-    {
-        return !_aggregate.IsDisabled;
-    }
+    public override bool IsEnabled() => !_aggregate.IsDisabled;
 
     public override string ToString()
     {
-
         var name = _aggregate.Name;
-
         var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
-
-        return name.StartsWith(expectedTrimStart) ? name[expectedTrimStart.Length..] : name;
+        return name.StartsWith(expectedTrimStart, StringComparison.Ordinal) ? name[expectedTrimStart.Length..] : name;
     }
 
-    public override AggregateConfiguration GetAggregateConfiguration()
-    {
-        return Joinable.AggregateConfiguration;
-    }
+    public override AggregateConfiguration GetAggregateConfiguration() => Joinable.AggregateConfiguration;
 
     public override CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes)
     {
@@ -86,7 +72,8 @@ public class JoinableTask:CacheableTask
         manager.DeleteCacheEntryIfAny(Joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery);
     }
 
-    public override int Order { get => Joinable.ID;
+    public override int Order {
+        get => Joinable.ID;
         set => throw new NotSupportedException();
     }
 
@@ -97,9 +84,5 @@ public class JoinableTask:CacheableTask
         IsUnused = !Joinable.Users.Any();
     }
 
-    public string GetUnusedWarningText()
-    {
-        return
-            $"Patient Index Table '{ToString()}' is not used by any of your sets (above).";
-    }
+    public string GetUnusedWarningText() => $"Patient Index Table '{ToString()}' is not used by any of your sets (above).";
 }

@@ -16,7 +16,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// </summary>
 public class ExecuteCommandAddMissingParameters : BasicCommandExecution
 {
-    private ExtractionFilterParameterSet[] _sets;
+    private readonly ExtractionFilterParameterSet[] _sets;
 
     public ExecuteCommandAddMissingParameters(IBasicActivateItems activator, ExtractionFilterParameterSet set) : this(activator, new[] { set })
     {
@@ -29,7 +29,7 @@ public class ExecuteCommandAddMissingParameters : BasicCommandExecution
         _sets = sets;
 
         // if nobody is missing any entries
-        if (!_sets.Any(s => s.GetMissingEntries().Any()))
+        if (!_sets.Any(static s => s.GetMissingEntries().Any()))
         {
             SetImpossible("There are no missing parameters");
         }

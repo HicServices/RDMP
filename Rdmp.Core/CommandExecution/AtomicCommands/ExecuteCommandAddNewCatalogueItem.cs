@@ -20,9 +20,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCommand
 {
-    private Catalogue _catalogue;
-    private ColumnInfo[] _columnInfos;
-    private HashSet<int> _existingColumnInfos;
+    private readonly Catalogue _catalogue;
+    private readonly ColumnInfo[] _columnInfos;
+    private readonly HashSet<int> _existingColumnInfos;
 
     /// <summary>
     /// The category to assign for newly created <see cref="ExtractionInformation"/>.
@@ -32,33 +32,27 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
 
     public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,ColumnInfoCombineable colInfo) : this(activator,catalogue,colInfo.ColumnInfos)
     {
-            
     }
 
     [UseWithObjectConstructor]
     public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,params ColumnInfo[] columnInfos) : base(activator)
     {
         _catalogue = catalogue;
-
         _existingColumnInfos = GetColumnInfos(_catalogue);
-
         _columnInfos = columnInfos;
 
         if(_existingColumnInfos != null && _columnInfos.Length > 0 && _columnInfos.All(c => AlreadyInCatalogue(c,_existingColumnInfos)))
             SetImpossible("ColumnInfo(s) are already in Catalogue");
     }
 
-    private static HashSet<int> GetColumnInfos(Catalogue catalogue)
+    private static HashSet<int> GetColumnInfos(ICatalogue catalogue)
     {
         return catalogue == null
             ? null
-            : new HashSet<int>(catalogue.CatalogueItems.Select(ci => ci.ColumnInfo_ID).Where(col => col.HasValue).Select(v => v.Value).Distinct().ToArray());
+            : new HashSet<int>(catalogue.CatalogueItems.Select(static ci => ci.ColumnInfo_ID).Where(static col => col.HasValue).Select(static v => v.Value).Distinct());
     }
 
-    public override string GetCommandHelp()
-    {
-        return "Creates a new virtual column in the dataset, this is the first stage to making a new column extractable or defining a new extraction transform";
-    }
+    public override string GetCommandHelp() => "Creates a new virtual column in the dataset, this is the first stage to making a new column extractable or defining a new extraction transform";
 
     public override void Execute()
     {
@@ -71,21 +65,16 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
 
         if (c == null)
         {
-            if (BasicActivator.SelectObject(new DialogArgs
+            if (!BasicActivator.SelectObject(new DialogArgs
                 {
                     WindowTitle = "Add CatalogueItem",
                     TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
-
                 }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
-            {
-                c = selected;
-                existingColumnInfos = GetColumnInfos(c);
-            }
-            else
-            {
                 // user cancelled selecting a Catalogue
                 return;
-            }
+
+            c = selected;
+            existingColumnInfos = GetColumnInfos(c);
         }
         //if we have not got an explicit one to import let the user pick one
         if (_columnInfos.Length == 0)
@@ -98,31 +87,26 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
             },BasicActivator.CoreChildProvider.AllColumnInfos);
 
             if (columnInfo == null)
-            {
                 return;
-            }
 
             //get them to type a name for it (based on the ColumnInfo if picked)
-            if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out var text))
+            if (!TypeText("Name", "Type a name for the new CatalogueItem", 500, columnInfo?.GetRuntimeName(),
+                    out var text)) return;
+
+            var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c,
+                $"New CatalogueItem {Guid.NewGuid()}")
             {
-                var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c,
-                    $"New CatalogueItem {Guid.NewGuid()}")
-                {
-                    Name = text
-                };
+                Name = text
+            };
 
-                //set the associated column if they did pick it
-                if(columnInfo != null)
-                {
-                    ci.SetColumnInfo(columnInfo);
-                    CreateExtractionInformation(repo,ci,columnInfo);
-                }
+            //set the associated column if they did pick it
+            ci.SetColumnInfo(columnInfo);
+            CreateExtractionInformation(repo,ci,columnInfo);
 
-                ci.SaveToDatabase();
+            ci.SaveToDatabase();
 
-                Publish(c);
-                Emphasise(ci,int.MaxValue);
-            }
+            Publish(c);
+            Emphasise(ci,int.MaxValue);
         }
         else
         {
@@ -146,25 +130,16 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCo
     private void CreateExtractionInformation(ICatalogueRepository repo, CatalogueItem ci, ColumnInfo columnInfo)
     {
         // also make extractable
-        if (Category != null)
-        {
-            var ei = new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+        if (Category == null) return;
 
-            if (ei.ExtractionCategory != Category)
-            {
-                ei.ExtractionCategory = Category.Value;
-                ei.SaveToDatabase();
-            }
-        }
+        var ei = new ExtractionInformation(repo, ci, columnInfo, columnInfo.GetFullyQualifiedName());
+        if (ei.ExtractionCategory == Category) return;
+
+        ei.ExtractionCategory = Category.Value;
+        ei.SaveToDatabase();
     }
 
-    private static bool AlreadyInCatalogue(ColumnInfo candidate, HashSet<int> existingColumnInfos)
-    {
-        return existingColumnInfos.Contains(candidate.ID);
-    }
+    private static bool AlreadyInCatalogue(ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos) => existingColumnInfos.Contains(candidate.ID);
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
-    }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
 }

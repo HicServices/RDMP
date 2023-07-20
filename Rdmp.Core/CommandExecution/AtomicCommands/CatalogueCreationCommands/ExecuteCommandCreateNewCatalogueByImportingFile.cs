@@ -29,12 +29,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 /// </summary>
 public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreationCommandExecution
 {
-    private DiscoveredDatabase _targetDatabase;
+    private readonly DiscoveredDatabase _targetDatabase;
     private IPipeline _pipeline;
 
     public FileInfo File { get; private set; }
-
-    private string _extractionIdentifier;
 
 
     private void CheckFile()
@@ -64,7 +62,6 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         Project projectSpecific) : base(activator,projectSpecific,null)
     {
         File = file;
-        _extractionIdentifier = extractionIdentifier;
         _targetDatabase = targetDatabase;
         _pipeline = pipeline;
         UseTripleDotSuffix = true;
@@ -108,7 +105,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
             return;
 
         File ??= BasicActivator.SelectFile("File to upload");
-            
+
         if(File == null)
             return;
 
@@ -137,7 +134,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         //todo figure out what it created
         if(engine.DestinationObject is not DataTableUploadDestination dest)
             throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
-                        
+
         if(string.IsNullOrWhiteSpace(dest.TargetTableName))
             throw new Exception($"Destination of engine failed to populate {dest.TargetTableName}");
 
@@ -150,7 +147,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         importer.DoImport(out var ti,out _);
 
         var cata = BasicActivator.CreateAndConfigureCatalogue(ti,null,$"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}",ProjectSpecific,TargetFolder);
-            
+
         if(cata != null)
         {
             Publish(cata);
@@ -166,13 +163,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
     }
 
 
-    public override string GetCommandHelp()
-    {
-        return GlobalStrings.CreateNewCatalogueByImportingFileHelp;
-    }
+    public override string GetCommandHelp() => GlobalStrings.CreateNewCatalogueByImportingFileHelp;
 
-    public override string GetCommandName()
-    {
-        return OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingFile;
-    }
+    public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingFile;
 }

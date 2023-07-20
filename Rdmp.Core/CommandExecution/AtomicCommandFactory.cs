@@ -49,8 +49,8 @@ namespace Rdmp.Core.CommandExecution;
 /// </summary>
 public class AtomicCommandFactory : CommandFactoryBase
 {
-    private IBasicActivateItems _activator;
-    private GoToCommandFactory _goto;
+    private readonly IBasicActivateItems _activator;
+    private readonly GoToCommandFactory _goto;
     public const string Add = "Add";
     public const string Batching = "Batching";
     public const string New = "New";

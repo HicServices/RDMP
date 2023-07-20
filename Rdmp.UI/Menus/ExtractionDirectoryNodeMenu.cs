@@ -16,7 +16,7 @@ internal class ExtractionDirectoryNodeMenu : RDMPContextMenuStrip
     public ExtractionDirectoryNodeMenu(RDMPContextMenuStripArgs args, ExtractionDirectoryNode folder): base(args, folder)
     {
         ReBrandActivateAs("Open In Explorer",RDMPConcept.CatalogueFolder);
-            
+
         Add(new ExecuteCommandSetProjectExtractionDirectory(_activator, folder.Project));
     }
 }

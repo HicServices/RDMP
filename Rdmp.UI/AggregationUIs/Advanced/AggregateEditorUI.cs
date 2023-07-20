@@ -71,8 +71,8 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private IQuerySyntaxHelper _querySyntaxHelper;
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-    public Scintilla QueryHaving;
-    private ErrorProvider _errorProviderAxis = new();
+    private Scintilla _queryHaving;
+    private readonly ErrorProvider _errorProviderAxis = new();
 
     //Constructor
     public AggregateEditorUI()
@@ -82,10 +82,10 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         //Stop mouse wheel scroll from scrolling the combobox when it's closed to avoid the value being changed without user noticing.
         RDMPControlCommonFunctionality.DisableMouseWheel(ddAxisDimension);
         RDMPControlCommonFunctionality.DisableMouseWheel(ddPivotDimension);
-            
+
         if(VisualStudioDesignMode)
             return;
-            
+
         olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
         olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
         olvJoinTableName.ImageGetter += ImageGetter;
@@ -96,22 +96,20 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         olvJoin.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
     }
 
-    private void JoinDirectionPutter(object rowobject, object newvalue)
+    private void JoinDirectionPutter(object rowObject, object newValue)
     {
-        if (rowobject is JoinableCohortAggregateConfigurationUse j)
-        {
-            if(j.JoinType == (ExtractionJoinType) newvalue)
-                return;
+        if (rowObject is not JoinableCohortAggregateConfigurationUse j) return;
+        if(j.JoinType == (ExtractionJoinType) newValue)
+            return;
 
-            j.JoinType = (ExtractionJoinType)newvalue;
-            j.SaveToDatabase();
-            Publish();
-        }
+        j.JoinType = (ExtractionJoinType)newValue;
+        j.SaveToDatabase();
+        Publish();
     }
 
-    private object JoinDirectionGetter(object rowobject)
+    private static object JoinDirectionGetter(object rowObject)
     {
-        return rowobject is JoinableCohortAggregateConfigurationUse j ? j.JoinType : (object)null;
+        return rowObject is JoinableCohortAggregateConfigurationUse j ? j.JoinType : null;
     }
 
     private Bitmap ImageGetter(object rowObject)
@@ -119,14 +117,14 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         return Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
     }
 
-    private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
+    private CheckState ForceJoinCheckStatePutter(object rowObject, CheckState newValue)
     {
-        var ti = rowobject as TableInfo;
+        var ti = rowObject as TableInfo;
 
         var joiner = _aggregate.CatalogueRepository.AggregateForcedJoinManager;
 
         //user is trying to use a joinable something
-        if (newvalue == CheckState.Checked)
+        if (newValue == CheckState.Checked)
         {
             //user is trying to turn on usage of a TableInfo
             if(ti != null)
@@ -136,7 +134,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
             }
 
             // user is trying to join to a Patient Index table
-            if (rowobject is JoinableCohortAggregateConfiguration patientIndexTable)
+            if (rowObject is JoinableCohortAggregateConfiguration patientIndexTable)
             {
                 if(_aggregate.Catalogue.IsApiCall())
                 {
@@ -165,7 +163,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
                 _forcedJoins.Remove(ti);
             }
 
-            if(rowobject is JoinableCohortAggregateConfigurationUse patientIndexTableUse)
+            if(rowObject is JoinableCohortAggregateConfigurationUse patientIndexTableUse)
             {
                 var joinable = patientIndexTableUse.JoinableCohortAggregateConfiguration;
 
@@ -178,7 +176,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         SetDatabaseObject(Activator, _aggregate);
         Publish();
 
-        return newvalue;
+        return newValue;
 
     }
 
@@ -187,21 +185,21 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         if (_forcedJoins == null)
             return CheckState.Indeterminate;
 
-        if (rowObject is TableInfo)
-            return _forcedJoins.Contains(rowObject)?CheckState.Checked : CheckState.Unchecked;
-
-        if (rowObject is JoinableCohortAggregateConfiguration)
-            return CheckState.Unchecked;
-
-        return rowObject is JoinableCohortAggregateConfigurationUse ? CheckState.Checked : CheckState.Indeterminate;
+        return rowObject switch
+        {
+            TableInfo => _forcedJoins.Contains(rowObject) ? CheckState.Checked : CheckState.Unchecked,
+            JoinableCohortAggregateConfiguration => CheckState.Unchecked,
+            JoinableCohortAggregateConfigurationUse => CheckState.Checked,
+            _ => CheckState.Indeterminate
+        };
     }
 
     protected override void SetBindings(BinderWithErrorProviderFactory rules, AggregateConfiguration databaseObject)
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbDescription,"Text","Description",a=>a.Description);
-        Bind(cbExtractable,"Checked","IsExtractable",a=>a.IsExtractable);
+        Bind(tbDescription,"Text","Description", static a=>a.Description);
+        Bind(cbExtractable,"Checked","IsExtractable", static a=>a.IsExtractable);
     }
 
     private void PopulateTopX()
@@ -212,26 +210,19 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     private void DetermineFromTables()
     {
         //implicit use
-        var uniqueUsedTables = new List<string>();
-
-        foreach (var d in _aggregate.AggregateDimensions)
-        {
-            var colInfo = d.ExtractionInformation.ColumnInfo ?? throw new Exception(
-                    $"Aggregate Configuration {_aggregate} (Catalogue '{_aggregate.Catalogue}') has a Dimension '{d}' which is an orphan (someone deleted the ColumnInfo)");
-            var toAdd = colInfo.TableInfo.ToString();
-
-            if (!uniqueUsedTables.Contains(toAdd))
-                uniqueUsedTables.Add(toAdd);
-        }
+        var uniqueUsedTables = _aggregate.AggregateDimensions.Select(d =>
+                d.ExtractionInformation.ColumnInfo ?? throw new Exception(
+                    $"Aggregate Configuration {_aggregate} (Catalogue '{_aggregate.Catalogue}') has a Dimension '{d}' which is an orphan (someone deleted the ColumnInfo)"))
+            .Select(static colInfo => colInfo.TableInfo.ToString()).Distinct().ToList();
 
         lblFromTable.Text = string.Join(",", uniqueUsedTables);
 
         //explicit use
         olvJoin.ClearObjects();
-            
+
         //explicit forced joins
         _forcedJoins = _aggregate.ForcedJoins.ToList();
-            
+
         olvJoin.AddObjects(_forcedJoins);
 
         //available joinables
@@ -239,7 +230,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
         if(joinables != null)
             olvJoin.AddObjects(joinables);
-            
+
         //and patient index tables too
         olvJoin.AddObjects(_aggregate.PatientIndexJoinablesUsed);
     }
@@ -281,25 +272,25 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     #region Having
     private void HavingTextChanged(object sender, EventArgs e)
     {
-        _aggregate.HavingSQL = QueryHaving.Text;
+        _aggregate.HavingSQL = _queryHaving.Text;
     }
 
     private void PopulateHavingText()
     {
-        if(QueryHaving == null)
+        if(_queryHaving == null)
         {
             var querySyntaxHelper = _aggregate.GetQuerySyntaxHelper();
 
-            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, querySyntaxHelper);
-            QueryHaving.TextChanged += HavingTextChanged;
-            gbHaving.Controls.Add(QueryHaving);
+            _queryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory(), SyntaxLanguage.SQL, querySyntaxHelper);
+            _queryHaving.TextChanged += HavingTextChanged;
+            gbHaving.Controls.Add(_queryHaving);
 
             var autoComplete = new AutoCompleteProviderWin(querySyntaxHelper);
-            autoComplete.RegisterForEvents(QueryHaving);
+            autoComplete.RegisterForEvents(_queryHaving);
             autoComplete.Add(_aggregate);
         }
 
-        QueryHaving.Text = _aggregate.HavingSQL;
+        _queryHaving.Text = _aggregate.HavingSQL;
     }
 
     #endregion
@@ -317,13 +308,13 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
         //don't let them pivot on a date, that's just a bad idea
         ddPivotDimension.Items.AddRange(dimensions.Where(d=>!d.IsDate()).ToArray());
-            
+
         if(pivotIfAny != null)
             ddPivotDimension.SelectedItem = pivotIfAny;
     }
     private void ddPivotDimension_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(isRefreshing)
+        if(_isRefreshing)
             return;
 
         if (ddPivotDimension.SelectedItem is AggregateDimension dimension && _aggregate != null)
@@ -341,11 +332,10 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
     private static void EnsurePivotHasAlias(AggregateDimension dimension)
     {
-        if (string.IsNullOrWhiteSpace(dimension.Alias))
-        {
-            dimension.Alias =  dimension.GetRuntimeName();
-            dimension.SaveToDatabase();
-        }
+        if (!string.IsNullOrWhiteSpace(dimension.Alias)) return;
+
+        dimension.Alias =  dimension.GetRuntimeName();
+        dimension.SaveToDatabase();
     }
 
     private void EnsureCountHasAlias()
@@ -358,29 +348,26 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
     private void btnClearPivotDimension_Click(object sender, EventArgs e)
     {
-        if (_aggregate != null)
-        {
-            _aggregate.PivotOnDimensionID = null;
-            ddPivotDimension.SelectedItem = null;
+        if (_aggregate == null) return;
 
-            if(sender == btnClearPivotDimension)
-            {
-                _aggregate.SaveToDatabase();
-                Publish();
-            }
-        }
+        _aggregate.PivotOnDimensionID = null;
+        ddPivotDimension.SelectedItem = null;
 
+        if (sender != btnClearPivotDimension) return;
+
+        _aggregate.SaveToDatabase();
+        Publish();
     }
     #endregion
 
     private void PopulateAxis(AggregateDimension axisIfAny, AggregateDimension pivotIfAny)
     {
         var allDimensions = _aggregate.AggregateDimensions.ToArray();
-            
+
         //if there's a pivot then don't advertise that as an axis
         if (pivotIfAny != null && !pivotIfAny.Equals(axisIfAny))
             allDimensions = allDimensions.Except(new[] {pivotIfAny}).ToArray();
-            
+
         ddAxisDimension.Items.Clear();
         ddAxisDimension.Items.AddRange(allDimensions.Where(d=>d.IsDate()).ToArray());
 
@@ -413,7 +400,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
 
     private void ddAxisDimension_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if(isRefreshing)
+        if(_isRefreshing)
             return;
 
         if(ddAxisDimension.SelectedItem is not AggregateDimension selectedDimension)
@@ -436,7 +423,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
             axis.AxisIncrement = existing.AxisIncrement;
             existing.DeleteInDatabase();
         }
-            
+
         axis.SaveToDatabase();
         PublishToSelfOnly();
     }
@@ -453,7 +440,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         _errorProviderAxis.Clear();
         PublishToSelfOnly();
     }
-    private bool isRefreshing;
+    private bool _isRefreshing;
 
     public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
     {
@@ -470,11 +457,11 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
             activator.KillForm(ParentForm,e);
             return;
         }
-        isRefreshing = true;
-            
+        _isRefreshing = true;
+
         //find out what is legal for the aggregate
         _options = AggregateBuilderOptionsFactory.Create(_aggregate);
-            
+
         //set enablednesss based on legality
         cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
         cbExtractable.Checked = _aggregate.IsExtractable;
@@ -493,15 +480,15 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         PopulateHavingText();
 
         var axisIfAny = _aggregate.GetAxisIfAny();
-        var _axisDimensionIfAny = axisIfAny?.AggregateDimension;
-        var _pivotIfAny = _aggregate.PivotDimension;
+        var axisDimensionIfAny = axisIfAny?.AggregateDimension;
+        var pivotIfAny = _aggregate.PivotDimension;
 
-        PopulatePivotDropdown(_axisDimensionIfAny, _pivotIfAny);
+        PopulatePivotDropdown(axisDimensionIfAny, pivotIfAny);
 
-        PopulateAxis(_axisDimensionIfAny, _pivotIfAny);
+        PopulateAxis(axisDimensionIfAny, pivotIfAny);
 
         PopulateTopX();
-            
+
         if (databaseObject.IsCohortIdentificationAggregate)
         {
             var cic = databaseObject.GetCohortIdentificationConfigurationIfAny();
@@ -521,11 +508,11 @@ public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
         GetObjectSaverButton()?.Enable(false);
 
         tbName.Enabled = !ReadOnly;
-        QueryHaving.ReadOnly = ReadOnly;
+        _queryHaving.ReadOnly = ReadOnly;
         olvJoin.Enabled = !ReadOnly;
         selectColumnUI1.Enabled = !ReadOnly;
-            
-        isRefreshing = false;
+
+        _isRefreshing = false;
     }
 
     public override void SetItemActivator(IActivateItems activator)

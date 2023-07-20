@@ -109,7 +109,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         if (_pipelineOptionsSet)
             throw new Exception("CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
 
-            
+
         _pipelineOptionsSet = true;
 
         _pipelineSelectionUI = new PipelineSelectionUI(Activator, _useCase, repository)
@@ -118,11 +118,11 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
         };
         _pipelineSelectionUI.PipelineChanged += _pipelineSelectionUI_PipelineChanged;
         _pipelineSelectionUI.PipelineDeleted += () => pipelineDiagram1.Clear();
-            
+
         _pipelineSelectionUI.CollapseToSingleLineMode();
 
         pPipelineSelection.Controls.Add(_pipelineSelectionUI);
-            
+
         //setup factory
         PipelineFactory = new DataFlowPipelineEngineFactory(_useCase);
 
@@ -251,7 +251,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
     private void btnPreviewSource_Click(object sender, EventArgs e)
     {
         var pipeline = CreateAndInitializePipeline();
-            
+
         if (pipeline != null)
             try
             {

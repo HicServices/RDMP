@@ -34,7 +34,7 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
         Text = command.GetCommandName();
         Tag = command;
         Image = command.GetImage(activator.CoreIconProvider)?.ImageToBitmap();
-            
+
         //disable if impossible command
         Enabled = !command.IsImpossible;
 

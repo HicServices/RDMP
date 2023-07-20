@@ -50,7 +50,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
         btnSingleCatalogue.Click += btnSingleCatalogue_Click;
         btnShowLabels.CheckStateChanged += btnShowLabels_CheckStateChanged;
         btnRefresh.Click += btnRefresh_Click;
-            
+
         //put edit mode on for the designer
         NotifyEditModeChange(false);
     }
@@ -159,7 +159,7 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-            
+
     }
 
     private bool _bLoading;

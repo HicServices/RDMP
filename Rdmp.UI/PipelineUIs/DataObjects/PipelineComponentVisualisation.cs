@@ -72,7 +72,7 @@ internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
             return;
 
         lblText.Text = component.GetClassNameLastPart();
-            
+
         if (valueOrNullIfBroken == null)
             ragSmiley1.OnCheckPerformed(new CheckEventArgs("Could not construct object", CheckResult.Fail));
 

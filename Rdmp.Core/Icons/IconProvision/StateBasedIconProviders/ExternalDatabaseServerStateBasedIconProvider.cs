@@ -16,19 +16,17 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
-public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
+public sealed class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly IconOverlayProvider _overlayProvider;
     private readonly Image<Rgba32> _default;
 
     private readonly Dictionary<string,Image<Rgba32>> _assemblyToIconDictionary = new();
-    private DatabaseTypeIconProvider _typeSpecificIconsProvider;
+    private readonly DatabaseTypeIconProvider _typeSpecificIconsProvider;
 
-    public ExternalDatabaseServerStateBasedIconProvider(IconOverlayProvider overlayProvider)
+    public ExternalDatabaseServerStateBasedIconProvider()
     {
-        _overlayProvider = overlayProvider;
         _default = Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer);
-            
+
         _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_DQE));
         _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_ANO));
         _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_IdentifierDump));
@@ -62,12 +60,12 @@ public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIco
         //if it is a .Database assembly managed database then use the appropriate icon instead (ANO, LOG, IDD etc)
         if (!string.IsNullOrWhiteSpace(server.CreatedByAssembly) && _assemblyToIconDictionary.TryGetValue(server.CreatedByAssembly, out var value))
             toReturn = value;
-                
+
         //add the database type overlay
-        toReturn = _overlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
+        toReturn = IconOverlayProvider.GetOverlay(toReturn, _typeSpecificIconsProvider.GetOverlay(server.DatabaseType));
 
         if (dumpServerUsage != null)
-            toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Link);
+            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Link);
 
         return toReturn;
     }

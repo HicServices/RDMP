@@ -30,7 +30,7 @@ internal class SelectedDataSetsMenu : RDMPContextMenuStrip
 
         /////////////////// Extraction Graphs //////////////////////////////
         var cata = selectedDataSet.ExtractableDataSet.Catalogue;
-            
+
         // If the Catalogue has been deleted, don't build Catalogue specific menu items
         if(cata == null)
             return;
@@ -47,7 +47,7 @@ internal class SelectedDataSetsMenu : RDMPContextMenuStrip
             });
         }
         ////////////////////////////////////////////////////////////////////
-            
+
 
         Add(new ExecuteCommandOpenExtractionDirectory(_activator, selectedDataSet));
     }

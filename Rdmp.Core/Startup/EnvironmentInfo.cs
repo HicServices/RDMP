@@ -14,9 +14,6 @@ namespace Rdmp.Core.Startup;
 /// </summary>
 public static class EnvironmentInfo
 {
-    public const string MainSubDir = "main";
-    public const string WindowsSubDir = "windows";
-
     /// <summary>
     /// For our purposes 'Linux' = anything that isn't Windows
     /// </summary>

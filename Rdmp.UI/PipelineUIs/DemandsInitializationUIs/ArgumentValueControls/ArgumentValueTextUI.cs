@@ -61,7 +61,7 @@ public partial class ArgumentValueTextUI : UserControl, IArgumentValueUI
             tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
             tbText.AutoCompleteSource = AutoCompleteSource.FileSystem;
         }
-            
+
         if (_isPassword)
         {
             tbText.UseSystemPasswordChar = true;

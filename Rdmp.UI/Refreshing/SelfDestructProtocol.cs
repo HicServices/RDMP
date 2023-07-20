@@ -48,7 +48,7 @@ internal class SelfDestructProtocol<T> : IRefreshBusSubscriber where T : Databas
 
             return;
         }
-            
+
         if (o != null && o.ID == OriginalObject.ID && o.GetType() == OriginalObject.GetType())//object was refreshed, probably an update to some fields in it
             User.SetDatabaseObject(_activator, o); //give it the new object
     }

@@ -50,7 +50,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
     public ExtractionConfigurationUI()
     {
         InitializeComponent();
-            
+
         tcRequest.Title = "Request Ticket";
         tcRequest.TicketTextChanged += tcRequest_TicketTextChanged;
 
@@ -100,9 +100,9 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
 
         SetupPipelineSelectionExtraction();
         SetupPipelineSelectionCohortRefresh();
-            
+
         pbCic.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration,OverlayKind.Link).ImageToBitmap();
-            
+
         tbCreated.Text = _extractionConfiguration.dtCreated.ToString();
         tcRelease.TicketText = _extractionConfiguration.ReleaseTicket;
         tcRequest.TicketText = _extractionConfiguration.RequestTicket;

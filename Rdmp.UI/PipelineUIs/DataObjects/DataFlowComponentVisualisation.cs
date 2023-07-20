@@ -91,7 +91,7 @@ public partial class DataFlowComponentVisualisation : UserControl
                 throw new ArgumentOutOfRangeException(nameof(role));
         }
 
-            
+
         Width = lblText.PreferredWidth + 80;
     }
 

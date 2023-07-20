@@ -27,7 +27,7 @@ internal class AllCohortsNodeMenu:RDMPContextMenuStrip
         Add(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(_activator));
 
         Items.Add("Create blank cohort database (Not recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem).ImageToBitmap(), (s, e) => AddBlankExternalCohortTable());
-            
+
     }
 
     private void AddBlankExternalCohortTable()
