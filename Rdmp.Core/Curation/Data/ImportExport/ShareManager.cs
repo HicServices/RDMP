@@ -62,7 +62,7 @@ public class ShareManager
         var defaults = RepositoryLocator.CatalogueRepository;
 
 
-        if (property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
+        if(property.Name is "LiveLoggingServer_ID" or "TestLoggingServer_ID")
         {
             var server = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 

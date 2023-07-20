@@ -70,7 +70,7 @@ internal class ProposeExecutionWhenTargetIsCohortAggregateContainer : RDMPComman
             }
             //source is another container (UNION / INTERSECT / EXCEPT)
             //can never drag the root container elsewhere
-            case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand when sourceCohortAggregateContainerCommand.ParentContainerIfAny == null:
+            case CohortAggregateContainerCombineable { ParentContainerIfAny: null }:
                 return null;
             //they are trying to drag it onto its current parent
             case CohortAggregateContainerCombineable sourceCohortAggregateContainerCommand when sourceCohortAggregateContainerCommand.ParentContainerIfAny.Equals(targetCohortAggregateContainer):

@@ -71,7 +71,7 @@ public class PermissionWindowTests : DatabaseTests
     {
         var dtNow = DateTime.UtcNow;
 
-        if ((dtNow.Hour == 23 && dtNow.Minute >= 50) || (dtNow.Hour == 0 && dtNow.Minute <= 3))
+        if (dtNow is { Hour: 23, Minute: >= 50 } or { Hour: 0, Minute: <= 3 })
             Assert.Inconclusive("This test cannot run at midnight since it is afraid of the dark");
 
         var oneMinute = new TimeSpan(0, 1, 0);

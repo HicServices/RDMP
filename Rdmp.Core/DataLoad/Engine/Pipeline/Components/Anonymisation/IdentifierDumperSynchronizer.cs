@@ -111,7 +111,7 @@ internal class IdentifierDumperSynchronizer
                 continue;
 
             //these are also expected don't warn user about them
-            if (columnNameInDump == SpecialFieldNames.ValidFrom || columnNameInDump == SpecialFieldNames.DataLoadRunID)
+            if (columnNameInDump is SpecialFieldNames.ValidFrom or SpecialFieldNames.DataLoadRunID)
                 continue;
 
             notifier.OnCheckPerformed(
@@ -120,7 +120,7 @@ internal class IdentifierDumperSynchronizer
         }
 
         //for each column that we are supposed to dump, make sure it is actually in the dump table
-        foreach (var column in _parent.ColumnsToRouteToSomewhereElse.Where(c => c.GoesIntoIdentifierDump()))
+        foreach (var column in _parent.ColumnsToRouteToSomewhereElse.Where(static c => c.GoesIntoIdentifierDump()))
         {
             var colInIdentifierDumpDatabase = columnsInTheIdentifiersDumpTable.SingleOrDefault(c => c.GetRuntimeName().Equals(column.RuntimeColumnName));
 
