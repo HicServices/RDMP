@@ -46,7 +46,7 @@ public static partial class UsefulStuff
 
     public static bool IsBadName(string name)
     {
-        return name != null && name.Any(c => Path.GetInvalidFileNameChars().Contains(c));
+        return name?.Any(Path.GetInvalidFileNameChars().Contains) == true;
     }
 
     public static void OpenUrl(string url)
@@ -206,9 +206,7 @@ public static partial class UsefulStuff
 
     public static DirectoryInfo GetExecutableDirectory()
     {
-        return !string.IsNullOrWhiteSpace(AppDomain.CurrentDomain.BaseDirectory)
-            ? new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
-            : new DirectoryInfo(typeof(UsefulStuff).Assembly.Location);
+        return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory ?? throw new Exception("BaseDirectory was null?!"));
     }
 
     public static string HashFile(string filename, int retryCount = 6)
