@@ -586,7 +586,7 @@ public static partial class UsefulStuff
                 :
                 //Convert.ChangeType doesn't handle dates, so let's deal with that
                 DateTime.Parse(s)
-            : value == null || value is string sval && string.IsNullOrWhiteSpace(sval)
+            : value == null || (value is string sval && string.IsNullOrWhiteSpace(sval))
                 ? null
                 : Convert.ChangeType(value, t);
     }

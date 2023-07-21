@@ -116,7 +116,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         }
 
         _allCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues;
-            
+
         if (isFirstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvColumn1, new Guid("1d912137-22ab-4536-b40b-bd984e27dc7a"));
@@ -158,7 +158,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
         if(bLoading)
             return;
-            
+
         tlvCatalogues.UseFiltering = true;
         tlvCatalogues.ModelFilter = new CatalogueCollectionFilter(Activator.CoreChildProvider);
     }
@@ -240,7 +240,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
     {
         //user wants this object emphasised
         var c = args.Request.ObjectToEmphasise as Catalogue;
-            
+
         if (c == null)
         {
             var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(args.Request.ObjectToEmphasise);
@@ -248,7 +248,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             if (descendancy != null)
                 c = descendancy.Parents.OfType<Catalogue>().SingleOrDefault();
         }
-            
+
         if (c != null)
         {
             catalogueCollectionFilterUI1.EnsureVisible(c);

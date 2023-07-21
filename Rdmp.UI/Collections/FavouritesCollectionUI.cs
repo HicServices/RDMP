@@ -43,7 +43,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
                 new ExecuteCommandClearFavourites(a)
             };
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
-            
+
         RefreshFavourites();
 
         if(_firstTime)
@@ -62,7 +62,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     private void RefreshFavourites()
     {
         var actualRootFavourites = FindRootObjects(Activator,IncludeObject);
-            
+
         //no change in root favouratism
         if (favourites.SequenceEqual(actualRootFavourites))
             return;

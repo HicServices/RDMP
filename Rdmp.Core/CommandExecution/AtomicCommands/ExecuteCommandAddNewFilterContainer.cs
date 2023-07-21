@@ -51,7 +51,7 @@ public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
 
         SetImpossibleIfReadonly(container);
     }
- 
+
     public override void Execute()
     {
         base.Execute();

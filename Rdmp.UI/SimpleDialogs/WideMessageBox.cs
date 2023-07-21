@@ -364,10 +364,10 @@ public partial class WideMessageBox : Form
     private void richTextBox1_KeyDown(object sender, KeyEventArgs e)
     {
         if (
-            richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == 0 && e.KeyData == Keys.Up ||
-            richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == richTextBox1.GetLineFromCharIndex(richTextBox1.TextLength) && e.KeyData == Keys.Down ||
-            richTextBox1.SelectionStart == richTextBox1.TextLength && e.KeyData == Keys.Right ||
-            richTextBox1.SelectionStart == 0 && e.KeyData == Keys.Left
+            (richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == 0 && e.KeyData == Keys.Up) ||
+            (richTextBox1.GetLineFromCharIndex(richTextBox1.SelectionStart) == richTextBox1.GetLineFromCharIndex(richTextBox1.TextLength) && e.KeyData == Keys.Down) ||
+            (richTextBox1.SelectionStart == richTextBox1.TextLength && e.KeyData == Keys.Right) ||
+            (richTextBox1.SelectionStart == 0 && e.KeyData == Keys.Left)
         ) e.Handled = true;
 
         if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape || (e.KeyData == Keys.W && e.Control))

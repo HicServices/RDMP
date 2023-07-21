@@ -56,7 +56,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolder);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.TemplateAggregateConfigurationsNode);
-        
+
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[]{
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(a),
             new ExecuteCommandMergeCohortIdentificationConfigurations(a,null)};
@@ -64,7 +64,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
         var factory = new AtomicCommandUIFactory(activator);
-            
+
         CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)),"New...");
         CommonFunctionality.Add(factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator,null){OverrideCommandName = "By Merging Existing..."}),"New...");
 

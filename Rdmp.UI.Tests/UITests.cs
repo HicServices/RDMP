@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -33,7 +32,7 @@ public class UITests : UnitTests
     private TestActivateItems _itemActivator;
     private ToMemoryCheckNotifier _checkResults;
 
-    public Control LastUserInterfaceLaunched { get; set; }
+    protected Control LastUserInterfaceLaunched { get; set; }
 
     protected TestActivateItems ItemActivator => _itemActivator?? InitializeItemActivator();
 
@@ -163,7 +162,7 @@ public class UITests : UnitTests
     /// at the given <paramref name="expectedErrorLevel"/>
     /// </summary>
     /// <param name="expectedErrorLevel"></param>
-    protected void AssertNoErrors(ExpectedErrorType expectedErrorLevel)
+    protected void AssertNoErrors(ExpectedErrorType expectedErrorLevel = ExpectedErrorType.Any)
     {
         switch (expectedErrorLevel)
         {
@@ -199,15 +198,6 @@ public class UITests : UnitTests
             default:
                 throw new ArgumentOutOfRangeException(nameof(expectedErrorLevel));
         }
-    }
-
-    /// <summary>
-    /// Checks the recorded errors up to this point in the test and fails the test if there are errors.  This is the same
-    /// as passing <see cref="ExpectedErrorType.Any"/> to the overload
-    /// </summary>
-    protected void AssertNoErrors()
-    {
-        AssertNoErrors(ExpectedErrorType.Any);
     }
 
     /// <summary>
@@ -254,8 +244,8 @@ public class UITests : UnitTests
         //there must have been something checked that failed with the provided message
         Assert.IsTrue(checkResults.Messages.Any(m =>
             m.Message.Contains(expectedContainsText) ||
-            m.Ex != null && m.Ex.Message.Contains(expectedContainsText)
-                         && m.Result == CheckResult.Fail));
+            (m.Ex != null && m.Ex.Message.Contains(expectedContainsText)
+                          && m.Result == CheckResult.Fail)));
     }
 
     private List<string> GetAllErrorProviderErrorsShown()

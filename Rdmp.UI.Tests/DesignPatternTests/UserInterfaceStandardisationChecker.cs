@@ -30,7 +30,7 @@ using ResearchDataManagementPlatform;
 
 namespace Rdmp.UI.Tests.DesignPatternTests;
 
-public class UserInterfaceStandardisationChecker
+public partial class UserInterfaceStandardisationChecker
 {
     private List<string> _csFilesList;
     private List<string> problems = new();
@@ -179,22 +179,16 @@ public class UserInterfaceStandardisationChecker
         }
 
         //Make sure all user interface classes have the suffix UI
-        foreach(var uiType in MEF.GetAllTypes().Where(t =>
-                    typeof(RDMPUserControl).IsAssignableFrom(t)||typeof(RDMPForm).IsAssignableFrom(t)
-                    && !t.IsAbstract && !t.IsInterface))
+        foreach (var uiType in MEF.GetAllTypes()
+                     .Where(static t => typeof(RDMPUserControl).IsAssignableFrom(t) ||
+                                        typeof(RDMPForm).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface)
+                     .Where(static uiType =>
+                         !uiType.Name.EndsWith("UI", StringComparison.Ordinal) &&
+                         !uiType.Name.EndsWith("_Design", StringComparison.Ordinal))
+                     .Where(uiType => !excusedUIClasses.Contains(uiType))
+                     .Where(static uiType => !ScreenN().IsMatch(uiType.Name) || !uiType.IsNotPublic))
         {
-
-            if(!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))
-            {
-                if (excusedUIClasses.Contains(uiType))
-                    continue;
-
-                //also allow Screen1, Screen2 etc
-                if(Regex.IsMatch(uiType.Name,@"Screen\d") && uiType.IsNotPublic)
-                    continue;
-
-                problems.Add($"Class {uiType.Name} does not end with UI");
-            }
+            problems.Add($"Class {uiType.Name} does not end with UI");
         }
 
 
@@ -223,10 +217,10 @@ public class UserInterfaceStandardisationChecker
         //probably not our class
         if(file == null)
             return;
+
         var hasText = File.ReadAllText(file)
             .Replace(" ", "")
-            .ToLowerInvariant()
-            .Contains(expectedString.Replace(" ", "").ToLowerInvariant());
+            .Contains(expectedString.Replace(" ", ""),StringComparison.OrdinalIgnoreCase);
 
         if (mustHaveText)
         {
@@ -240,4 +234,7 @@ public class UserInterfaceStandardisationChecker
         }
 
     }
+
+    [GeneratedRegex("Screen\\d",RegexOptions.CultureInvariant)]
+    private static partial Regex ScreenN();
 }

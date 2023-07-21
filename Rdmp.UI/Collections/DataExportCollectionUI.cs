@@ -88,7 +88,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         );
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => GetWhitespaceRightClickMenu();
-            
+
         CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(FolderNode<Project>)};
 
         var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
@@ -98,7 +98,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
             tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
             tlvDataExport.AddObject(dataExportChildProvider.ProjectRootFolder);
         }
-            
+
         if (_isFirstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("00a384ce-08fa-43fd-9cf3-7ddbbf5cec1c"));

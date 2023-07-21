@@ -71,7 +71,7 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     {
         base.SetItemActivator(activator);
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
-            
+
         CommonTreeFunctionality.SetUp(
             RDMPCollection.DataLoad,
             tlvLoadMetadata,
@@ -80,7 +80,7 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             olvName);
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
-            
+
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.AllPermissionWindowsNode);
         tlvLoadMetadata.AddObject(Activator.CoreChildProvider.LoadMetadataRootFolder);
 
