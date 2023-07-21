@@ -99,13 +99,10 @@ private class FrozenExtractionConfigurationsNode
 	{
 		if (obj is null) return false;
 		if (ReferenceEquals(this, obj)) return true;
-		return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode) obj);
+		return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode)obj);
 	}
 
-	public override int GetHashCode()
-	{
-		return Project?.GetHashCode() ?? 0;
-	}
+	public override int GetHashCode() => Project?.GetHashCode() ?? 0;
 }
 ```
 
