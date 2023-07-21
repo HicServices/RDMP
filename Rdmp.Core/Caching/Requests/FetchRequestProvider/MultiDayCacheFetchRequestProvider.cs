@@ -10,12 +10,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Requests.FetchRequestProvider;
 
 /// <summary>
-///     Generates ICacheFetchRequest incrementally until the given end date.  You must provide an initial request.
+/// Generates ICacheFetchRequest incrementally until the given end date.  You must provide an initial request. 
 /// </summary>
 public class MultiDayCacheFetchRequestProvider : ICacheFetchRequestProvider
 {
-    private readonly DateTime _endDateInclusive;
     private readonly ICacheFetchRequest _initialRequest;
+    private readonly DateTime _endDateInclusive;
+    public ICacheFetchRequest Current { get; private set; }
 
     public MultiDayCacheFetchRequestProvider(ICacheFetchRequest initialRequest, DateTime endDateInclusive)
     {
@@ -23,8 +24,6 @@ public class MultiDayCacheFetchRequestProvider : ICacheFetchRequestProvider
         _initialRequest = initialRequest;
         _endDateInclusive = endDateInclusive;
     }
-
-    public ICacheFetchRequest Current { get; private set; }
 
     public ICacheFetchRequest GetNext(IDataLoadEventListener listener)
     {
@@ -36,7 +35,7 @@ public class MultiDayCacheFetchRequestProvider : ICacheFetchRequestProvider
         else
         {
             Current = Current.GetNext();
-
+                
             // We have provided requests for the whole time period
             if (Current.Start > _endDateInclusive)
                 return null;

@@ -18,22 +18,20 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Tests.Common.Helpers;
 
 /// <summary>
-///     Implementation of <see cref="CacheSource{T}" /> which creates csv files with random data in them.  This class can
-///     be used if you need
-///     to test running a caching pipeline
+/// Implementation of <see cref="CacheSource{T}"/> which creates csv files with random data in them.  This class can be used if you need
+/// to test running a caching pipeline
 /// </summary>
 public class TestDataInventor : CacheSource<TestDataWriterChunk>
 {
-    private readonly Random r = new();
-
+    private Random r = new();
+        
     /// <summary>
-    ///     The path in which to create random files
+    /// The path in which to create random files
     /// </summary>
-    [DemandsInitialization("Directory to create files into", Mandatory = true)]
+    [DemandsInitialization("Directory to create files into",Mandatory=true)]
     public string WorkingFolder { get; set; }
 
-    public override TestDataWriterChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    public override TestDataWriterChunk DoGetChunk(ICacheFetchRequest request,IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         // don't load anything for today onwards
         var today = DateTime.Now.Subtract(DateTime.Now.TimeOfDay);
@@ -44,13 +42,13 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
 
         var toReturn = new List<FileInfo>();
 
-        while (currentDay <= Request.End)
+        while(currentDay <= Request.End)
         {
             toReturn.Add(GetFileForDay(currentDay));
             currentDay = currentDay.AddDays(1);
         }
 
-        return new TestDataWriterChunk(Request, toReturn.ToArray());
+        return new TestDataWriterChunk(Request,toReturn.ToArray());
     }
 
     private FileInfo GetFileForDay(DateTime currentDay)
@@ -66,18 +64,19 @@ public class TestDataInventor : CacheSource<TestDataWriterChunk>
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
+            
     }
 
     public override void Abort(IDataLoadEventListener listener)
     {
+            
     }
 
     public override TestDataWriterChunk TryGetPreview()
     {
         var dt = DateTime.Now.AddYears(-200);
 
-        return new TestDataWriterChunk(new CacheFetchRequest(null, dt) { ChunkPeriod = new TimeSpan(1, 0, 0) },
-            new[] { GetFileForDay(dt) });
+        return new TestDataWriterChunk(new CacheFetchRequest(null, dt){ChunkPeriod = new TimeSpan(1,0,0)}, new []{GetFileForDay(dt)});
     }
 
     public override void Check(ICheckNotifier notifier)

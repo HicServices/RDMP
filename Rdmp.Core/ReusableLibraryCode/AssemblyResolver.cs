@@ -14,12 +14,12 @@ using System.Runtime.Loader;
 namespace Rdmp.Core.ReusableLibraryCode;
 
 /// <summary>
-///     Create a resolver for when assemblies cannot be properly loaded through the usual mechanism
-///     and the bindingredirect is not available.
+/// Create a resolver for when assemblies cannot be properly loaded through the usual mechanism
+/// and the bindingredirect is not available.
 /// </summary>
 public static class AssemblyResolver
 {
-    private static readonly Dictionary<string, Assembly> assemblyResolveAttempts = new();
+    private static Dictionary<string,Assembly> assemblyResolveAttempts = new(); 
 
     public static void SetupAssemblyResolver(params DirectoryInfo[] dirs)
     {
@@ -33,12 +33,12 @@ public static class AssemblyResolver
                 return expression;
 
             //start out assuming we cannot load it
-            assemblyResolveAttempts.Add(assemblyInfo, null);
-
-            foreach (var dir in dirs)
+            assemblyResolveAttempts.Add(assemblyInfo,null);
+                
+            foreach(var dir in dirs)
             {
                 var dll = dir.EnumerateFiles($"{name}.dll").SingleOrDefault();
-                if (dll != null)
+                if(dll != null)
                     return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
             }
 
@@ -53,15 +53,15 @@ public static class AssemblyResolver
 
             return assemblyResolveAttempts[assemblyInfo] = Assembly.LoadFile(file.FullName); //cache and return answer
         };
-    }
-
+    } 
+ 
     public static Assembly LoadFile(FileInfo f)
     {
         try
         {
             return F1(f);
-        }
-        catch (FileLoadException)
+
+        }catch(FileLoadException)
         {
             //AssemblyLoadContext.Default.LoadFromAssemblyPath causes this Exception at runtime only
             return F2(f);
@@ -77,4 +77,5 @@ public static class AssemblyResolver
     {
         return AssemblyLoadContext.Default.LoadFromAssemblyPath(f.FullName);
     }
+
 }

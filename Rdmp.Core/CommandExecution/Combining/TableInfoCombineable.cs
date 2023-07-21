@@ -9,12 +9,17 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="TableInfo" />
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="TableInfo"/>
 /// </summary>
 public class TableInfoCombineable : ICombineToMakeCommand
 {
     /// <summary>
-    ///     Creates a new instance populating <see cref="TableInfo" />
+    /// The table being selected for combining
+    /// </summary>
+    public TableInfo TableInfo { get; private set; }
+
+    /// <summary>
+    /// Creates a new instance populating <see cref="TableInfo"/>
     /// </summary>
     /// <param name="tableInfo"></param>
     public TableInfoCombineable(TableInfo tableInfo)
@@ -22,12 +27,7 @@ public class TableInfoCombineable : ICombineToMakeCommand
         TableInfo = tableInfo;
     }
 
-    /// <summary>
-    ///     The table being selected for combining
-    /// </summary>
-    public TableInfo TableInfo { get; }
-
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public string GetSqlString()
     {
         return TableInfo.Name;

@@ -13,19 +13,19 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 namespace Rdmp.UI.Raceway;
 
 /// <summary>
-///     Input/Persistence collection for <see cref="DatasetRaceway" />
+/// Input/Persistence collection for <see cref="DatasetRaceway"/>
 /// </summary>
 public class DatasetRacewayObjectCollection : PersistableObjectCollection
 {
+    public DatasetRaceway.RacewayShowPeriod ShowPeriod { get; set; }
+    public bool IgnoreRows { get; set; }
+
     public DatasetRacewayObjectCollection()
     {
         //default
         ShowPeriod = DatasetRaceway.RacewayShowPeriod.AllTime;
         IgnoreRows = false;
     }
-
-    public DatasetRaceway.RacewayShowPeriod ShowPeriod { get; set; }
-    public bool IgnoreRows { get; set; }
 
     public Catalogue[] GetCatalogues()
     {
@@ -36,8 +36,8 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
     {
         return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
         {
-            { "ShowPeriod", ShowPeriod.ToString() },
-            { "IgnoreRows", IgnoreRows.ToString() }
+            {"ShowPeriod", ShowPeriod.ToString()},
+            {"IgnoreRows", IgnoreRows.ToString()}
         });
     }
 
@@ -49,15 +49,13 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
         if (dict == null || !dict.Any())
             return;
 
-        ShowPeriod =
-            (DatasetRaceway.RacewayShowPeriod)Enum.Parse(typeof(DatasetRaceway.RacewayShowPeriod), dict["ShowPeriod"],
-                true);
+        ShowPeriod = (DatasetRaceway.RacewayShowPeriod)Enum.Parse(typeof(DatasetRaceway.RacewayShowPeriod), dict["ShowPeriod"], true);
         IgnoreRows = Convert.ToBoolean(dict["IgnoreRows"]);
     }
 
     public void AddCatalogue(Catalogue catalogue)
     {
-        if (catalogue == null)
+        if(catalogue == null)
             throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Add(catalogue);
@@ -65,7 +63,7 @@ public class DatasetRacewayObjectCollection : PersistableObjectCollection
 
     public void RemoveCatalogue(Catalogue catalogue)
     {
-        if (catalogue == null)
+        if(catalogue == null)
             throw new ArgumentException("Catalogue must not be null", nameof(catalogue));
 
         DatabaseObjects.Remove(catalogue);

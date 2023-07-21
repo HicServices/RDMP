@@ -14,21 +14,20 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
 /// <summary>
-///     Identifies a TableInfo that acts as a Lookup for a given dataset which is being extracted.  Lookup tables can be
-///     extracted along with the extracted data
-///     set (See ExtractableDatasetBundle).
+/// Identifies a TableInfo that acts as a Lookup for a given dataset which is being extracted.  Lookup tables can be extracted along with the extracted data
+/// set (See ExtractableDatasetBundle).
 /// </summary>
 public class BundledLookupTable : IBundledLookupTable
 {
+    public ITableInfo TableInfo { get; set; }
+
     public BundledLookupTable(ITableInfo tableInfo)
     {
-        if (!tableInfo.IsLookupTable())
+        if(!tableInfo.IsLookupTable())
             throw new Exception($"TableInfo {tableInfo} is not a lookup table");
 
         TableInfo = tableInfo;
     }
-
-    public ITableInfo TableInfo { get; set; }
 
     public override string ToString()
     {
@@ -36,7 +35,7 @@ public class BundledLookupTable : IBundledLookupTable
     }
 
     /// <summary>
-    ///     Reads lookup data from the <see cref="TableInfo" /> using <see cref="DataAccessContext.DataExport" />
+    /// Reads lookup data from the <see cref="TableInfo"/> using <see cref="DataAccessContext.DataExport"/>
     /// </summary>
     /// <returns></returns>
     public DataTable GetDataTable()
@@ -50,12 +49,11 @@ public class BundledLookupTable : IBundledLookupTable
         {
             con.Open();
             using (var da = server.GetDataAdapter(
-                       server.GetCommand(GetDataTableFetchSql(), con)))
+                       server.GetCommand(GetDataTableFetchSql(),con)))
             {
                 da.Fill(dt);
             }
         }
-
         return dt;
     }
 
@@ -70,7 +68,7 @@ public class BundledLookupTable : IBundledLookupTable
 
             // Extract core columns only (and definetly not extraction identifiers)
             var eis = cata.GetAllExtractionInformation(ExtractionCategory.Core)
-                .Where(e => !e.IsExtractionIdentifier)
+                .Where(e=>!e.IsExtractionIdentifier)
                 .ToArray();
 
             if (eis.Length > 0)
@@ -80,17 +78,16 @@ public class BundledLookupTable : IBundledLookupTable
                 return qb.SQL;
             }
 
-            throw new QueryBuildingException(
-                $"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
+            throw new QueryBuildingException($"Lookup table '{TableInfo}' has a Catalogue defined '{cata}' but it has no Core extractable columns");
         }
 
         return $"select * from {TableInfo.GetFullyQualifiedName()}";
     }
 
     /// <summary>
-    ///     We only want Catalogues where all <see cref="CatalogueItem" />
-    ///     are us (i.e. we don't want to pick up Catalogues where we are
-    ///     Description column slotted in amongst the other columns).
+    /// We only want Catalogues where all <see cref="CatalogueItem"/>
+    /// are us (i.e. we don't want to pick up Catalogues where we are
+    /// Description column slotted in amongst the other columns).
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>

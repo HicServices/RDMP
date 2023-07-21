@@ -10,21 +10,23 @@ using System.Linq;
 namespace Rdmp.Core.ReusableLibraryCode;
 
 /// <summary>
-///     Provides extension methods for all objects
+/// Provides extension methods for all objects
 /// </summary>
 public static class ObjectExtensions
 {
     /// <summary>
-    ///     Returns a beautiful representation of the given object.  For example splitting array elements into
-    ///     a comma seperated list.  Falls back on calling <paramref name="o" /> normal ToString if no specific logic
-    ///     is defined for its Type.
+    /// Returns a beautiful representation of the given object.  For example splitting array elements into
+    /// a comma seperated list.  Falls back on calling <paramref name="o"/> normal ToString if no specific logic
+    /// is defined for its Type.
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
     public static string ToBeautifulString(this object o)
     {
         if (o is Array a)
+        {
             return string.Join(", ", a.Cast<object>().Select(v => v == null ? "" : v.ToString()).ToArray());
+        }
 
         return o.ToString();
     }

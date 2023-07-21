@@ -13,31 +13,16 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-///     Location on disk in which linked project extracts are generated for a given <see cref="Project" /> (assuming you
-///     are extracting to disk
-///     e.g. with an <see cref="ExecuteDatasetExtractionFlatFileDestination" />).
+/// Location on disk in which linked project extracts are generated for a given <see cref="Project"/> (assuming you are extracting to disk
+/// e.g. with an <see cref="ExecuteDatasetExtractionFlatFileDestination"/>).
 /// </summary>
-public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
+public class ExtractionDirectoryNode : Node,IDirectoryInfoNode, IOrderable
 {
+    public Project Project { get; private set; }
+
     public ExtractionDirectoryNode(Project project)
     {
         Project = project;
-    }
-
-    public Project Project { get; }
-
-    public DirectoryInfo GetDirectoryInfoIfAny()
-    {
-        if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-            return null;
-
-        return new DirectoryInfo(Project.ExtractionDirectory);
-    }
-
-    public int Order
-    {
-        get => 4;
-        set { }
     }
 
     public override string ToString()
@@ -58,11 +43,22 @@ public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ExtractionDirectoryNode)obj);
+        return Equals((ExtractionDirectoryNode) obj);
     }
 
     public override int GetHashCode()
     {
         return Project != null ? Project.GetHashCode() : 0;
     }
+
+    public DirectoryInfo GetDirectoryInfoIfAny()
+    {
+        if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
+            return null;
+
+        return new DirectoryInfo(Project.ExtractionDirectory);
+    }
+
+    public int Order{ get => 4;
+        set { }}
 }

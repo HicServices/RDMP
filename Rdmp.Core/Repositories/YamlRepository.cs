@@ -23,13 +23,19 @@ using YamlDotNet.Serialization;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-///     Implementation of <see cref="IRepository" /> which creates objects on the file system instead of a database.
+/// Implementation of <see cref="IRepository"/> which creates objects on the file system instead of a database.
 /// </summary>
 public class YamlRepository : MemoryDataExportRepository
 {
-    private readonly ISerializer _serializer;
+    private ISerializer _serializer;
 
-    private readonly object lockFs = new();
+    /// <summary>
+    /// All objects that are known about by this repository
+    /// </summary>
+    public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
+    public DirectoryInfo Directory { get; }
+
+    private object lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {
@@ -53,17 +59,12 @@ public class YamlRepository : MemoryDataExportRepository
     }
 
     /// <summary>
-    ///     All objects that are known about by this repository
-    /// </summary>
-    public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
-
-    public DirectoryInfo Directory { get; }
-
-    /// <summary>
+    /// 
     /// </summary>
     /// <returns></returns>
     public static ISerializer CreateSerializer(IEnumerable<Type> supportedTypes)
     {
+
         var builder = new SerializerBuilder();
         builder.WithTypeConverter(new VersionYamlTypeConverter());
 
@@ -72,8 +73,12 @@ public class YamlRepository : MemoryDataExportRepository
             var respect = TableRepository.GetPropertyInfos(type);
 
             foreach (var prop in type.GetProperties())
+            {
                 if (!respect.Contains(prop))
+                {
                     builder = builder.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute());
+                }
+            }
         }
 
         return builder.Build();
@@ -98,20 +103,21 @@ public class YamlRepository : MemoryDataExportRepository
                 continue;
             }
 
-            lock (lockFs)
+            lock(lockFs)
             {
                 foreach (var yaml in typeDir.EnumerateFiles("*.yaml"))
+                {
                     try
                     {
-                        var obj = (IMapsDirectlyToDatabaseTable)deserializer.Deserialize(
-                            File.ReadAllText(yaml.FullName), t);
+                        var obj = (IMapsDirectlyToDatabaseTable)deserializer.Deserialize(File.ReadAllText(yaml.FullName), t);
                         SetRepositoryOnObject(obj);
                         Objects.TryAdd(obj, 0);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception($"Error loading object in file {yaml.FullName}", ex);
+                        throw new Exception($"Error loading object in file {yaml.FullName}",ex);
                     }
+                }
             }
         }
 
@@ -121,12 +127,11 @@ public class YamlRepository : MemoryDataExportRepository
 
         LoadCredentialsDictionary();
 
-        PackageDictionary = Load<IExtractableDataSetPackage, IExtractableDataSet>(nameof(PackageDictionary)) ??
-                            PackageDictionary;
+        PackageDictionary = Load<IExtractableDataSetPackage,IExtractableDataSet>(nameof(PackageDictionary)) ?? PackageDictionary;
 
         GovernanceCoverage = Load<GovernancePeriod, ICatalogue>(nameof(GovernanceCoverage)) ?? GovernanceCoverage;
 
-        ForcedJoins = Load<AggregateConfiguration, ITableInfo>(nameof(ForcedJoins)) ?? ForcedJoins;
+        ForcedJoins = Load<AggregateConfiguration,ITableInfo>(nameof(ForcedJoins)) ?? ForcedJoins;
 
         LoadCohortContainerContents();
 
@@ -136,7 +141,7 @@ public class YamlRepository : MemoryDataExportRepository
     private int ObjectDependencyOrder(Type arg)
     {
         // Load Plugin objects before dependent children
-        if (arg == typeof(Curation.Data.Plugin))
+        if (arg == typeof(Rdmp.Core.Curation.Data.Plugin))
             return 1;
 
         if (arg == typeof(LoadModuleAssembly))
@@ -147,8 +152,8 @@ public class YamlRepository : MemoryDataExportRepository
 
 
     /// <summary>
-    ///     Sets <see cref="IMapsDirectlyToDatabaseTable.Repository" /> on <paramref name="obj" />.
-    ///     Override to also set other destination repo specific fields
+    /// Sets <see cref="IMapsDirectlyToDatabaseTable.Repository"/> on <paramref name="obj"/>.
+    /// Override to also set other destination repo specific fields
     /// </summary>
     /// <param name="obj"></param>
     protected virtual void SetRepositoryOnObject(IMapsDirectlyToDatabaseTable obj)
@@ -173,11 +178,11 @@ public class YamlRepository : MemoryDataExportRepository
                 container.SetManager(this);
                 break;
             case LoadModuleAssembly lma:
-                lock (lockFs)
+                lock(lockFs)
                 {
                     var file = GetNupkgPath(lma);
 
-                    if (File.Exists(file))
+                    if(File.Exists(file))
                         lma.Bin = File.ReadAllBytes(file);
                     break;
                 }
@@ -189,7 +194,7 @@ public class YamlRepository : MemoryDataExportRepository
         base.InsertAndHydrate(toCreate, constructorParameters);
 
         // put it on disk
-        lock (lockFs)
+        lock(lockFs)
         {
             SaveToDatabase(toCreate);
         }
@@ -201,7 +206,7 @@ public class YamlRepository : MemoryDataExportRepository
         var path = Path.GetDirectoryName(GetPath(lma));
 
         //somedir/LoadModuleAssembly/MyPlugin1.0.0.nupkg
-        return Path.Combine(path, GetObjectByID<Curation.Data.Plugin>(lma.Plugin_ID).Name);
+        return Path.Combine(path,  GetObjectByID<Rdmp.Core.Curation.Data.Plugin>(lma.Plugin_ID).Name);
     }
 
     public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
@@ -212,7 +217,10 @@ public class YamlRepository : MemoryDataExportRepository
             File.Delete(GetPath(oTableWrapperObject));
 
             // if deleting a LoadModuleAssembly also delete its binary content file (the plugin dlls in nupkg)
-            if (oTableWrapperObject is LoadModuleAssembly lma) File.Delete(GetNupkgPath(lma));
+            if (oTableWrapperObject is LoadModuleAssembly lma)
+            {
+                File.Delete(GetNupkgPath(lma));
+            }
         }
     }
 
@@ -231,13 +239,15 @@ public class YamlRepository : MemoryDataExportRepository
             // Do not write plugin binary content into yaml that results in
             // a massive blob of binary yaml (not useful and slow to load)
             if (o is LoadModuleAssembly lma)
+            {
                 // write the nupkg as a binary file instead to the same folder
                 File.WriteAllBytes(GetNupkgPath(lma), lma.Bin);
+            }
         }
     }
 
     /// <summary>
-    ///     Returns the path on disk in which the yaml file for <paramref name="o" /> is stored
+    /// Returns the path on disk in which the yaml file for <paramref name="o"/> is stored
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -250,31 +260,126 @@ public class YamlRepository : MemoryDataExportRepository
     {
         base.DeleteEncryptionKeyPath();
 
-        if (File.Exists(GetEncryptionKeyPathFile()))
+        if(File.Exists(GetEncryptionKeyPathFile()))
             File.Delete(GetEncryptionKeyPathFile());
     }
-
     public override void SetEncryptionKeyPath(string fullName)
     {
         base.SetEncryptionKeyPath(fullName);
 
         // if setting it to null
-        if (string.IsNullOrWhiteSpace(fullName))
-        {
+        if (string.IsNullOrWhiteSpace(fullName)) {
+
             // delete the file on disk
             if (File.Exists(GetEncryptionKeyPathFile()))
                 File.Delete(GetEncryptionKeyPathFile());
         }
         else
-        {
             File.WriteAllText(GetEncryptionKeyPathFile(), fullName);
-        }
     }
-
     private string GetEncryptionKeyPathFile()
     {
         return Path.Combine(Directory.FullName, "EncryptionKeyPath");
     }
+
+    #region Server Defaults Persistence
+    private string GetDefaultsFile()
+    {
+        return Path.Combine(Directory.FullName, "Defaults.yaml");
+    }
+
+    public override void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+    {
+        base.SetDefault(toChange, externalDatabaseServer);
+
+        SaveDefaults();
+    }
+
+    private void SaveDefaults()
+    {
+        var serializer = new Serializer();
+
+        // save the default and the ID
+        File.WriteAllText(GetDefaultsFile(),serializer.Serialize(Defaults.ToDictionary(k=>k.Key,v=>v.Value?.ID ?? 0)));
+    }
+
+    public void LoadDefaults()
+    {
+        var deserializer = new Deserializer();
+
+        var defaultsFile = GetDefaultsFile();
+
+        if(File.Exists(defaultsFile))
+        {
+            var yaml = File.ReadAllText(defaultsFile);
+            var objectIds = deserializer.Deserialize<Dictionary<PermissableDefaults, int>>(yaml);
+
+            // file exists but is empty
+            if (objectIds == null)
+                return;
+
+            Defaults = objectIds.ToDictionary(
+                k=>k.Key,
+                v=>v.Value == 0 ? null : (IExternalDatabaseServer)GetObjectByIDIfExists<ExternalDatabaseServer>(v.Value));
+        }
+    }
+
+    /// <summary>
+    /// Returns the object referenced or null if it has been deleted on the sly (e.g. by user deleting .yaml files on disk)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    private T GetObjectByIDIfExists<T>(int id) where T:DatabaseEntity
+    {
+        try
+        {
+            return GetObjectByID<T>(id);
+        }
+        catch (KeyNotFoundException)
+        {
+            return null;
+        }
+    }
+    #endregion
+
+    #region DataExportProperties Persistence
+    private string GetDataExportPropertiesFile()
+    {
+        return Path.Combine(Directory.FullName, "DataExportProperties.yaml");
+    }
+    public void LoadDataExportProperties()
+    {
+        var deserializer = new Deserializer();
+
+        var defaultsFile = GetDataExportPropertiesFile();
+
+        if (File.Exists(defaultsFile))
+        {
+            var yaml = File.ReadAllText(defaultsFile);
+            var props = deserializer.Deserialize<Dictionary<DataExportProperty, string>>(yaml);
+
+            if(props != null)
+                PropertiesDictionary = props;
+        }
+    }
+    private void SaveDataExportProperties()
+    {
+        var serializer = new Serializer();
+
+        // save the default and the ID
+        File.WriteAllText(GetDataExportPropertiesFile(), serializer.Serialize(PropertiesDictionary));
+    }
+    public override string GetValue(DataExportProperty property)
+    {
+        return base.GetValue(property);
+    }
+    public override void SetValue(DataExportProperty property, string value)
+    {
+        base.SetValue(property, value);
+        SaveDataExportProperties();
+    }
+    #endregion
 
     public override void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
@@ -285,14 +390,14 @@ public class YamlRepository : MemoryDataExportRepository
     public override void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         base.RemoveDataSetFromPackage(package, dataSet);
-        Save(PackageDictionary, nameof(PackageDictionary));
+        Save(PackageDictionary,nameof(PackageDictionary));
     }
 
 
     public override void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {
         base.Link(governancePeriod, catalogue);
-        Save(GovernanceCoverage, nameof(GovernanceCoverage));
+        Save(GovernanceCoverage,nameof(GovernanceCoverage));
     }
 
     public override void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
@@ -313,228 +418,11 @@ public class YamlRepository : MemoryDataExportRepository
         Save(ForcedJoins, nameof(ForcedJoins));
     }
 
-    public override void MakeIntoAnOrphan(IContainer container)
-    {
-        base.MakeIntoAnOrphan(container);
-        SaveWhereSubContainers();
-    }
-
-    public override void AddSubContainer(IContainer parent, IContainer child)
-    {
-        base.AddSubContainer(parent, child);
-        SaveWhereSubContainers();
-    }
-
-    private void SaveWhereSubContainers()
-    {
-        Save(WhereSubContainers.Where(kvp => kvp.Key is FilterContainer)
-            .ToDictionary(
-                k => k.Key,
-                v => v.Value), "ExtractionFilters");
-
-        Save(WhereSubContainers.Where(kvp => kvp.Key is AggregateFilterContainer)
-            .ToDictionary(
-                k => k.Key,
-                v => v.Value), "AggregateFilters");
-    }
-
-    public override string ToString()
-    {
-        return $"{{YamlRepository {Directory.FullName}}}";
-    }
-
-    private void LoadWhereSubContainers()
-    {
-        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ??
-                          new Dictionary<FilterContainer, HashSet<FilterContainer>>())
-            WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
-        foreach (var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ??
-                          new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
-            WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
-    }
-
-    private Dictionary<T, HashSet<T2>> Load<T, T2>(string filenameWithoutSuffix)
-        where T : IMapsDirectlyToDatabaseTable
-        where T2 : IMapsDirectlyToDatabaseTable
-    {
-        var deserializer = new Deserializer();
-
-        var file = Path.Combine(Directory.FullName, $"{filenameWithoutSuffix}.yaml");
-
-        if (File.Exists(file))
-        {
-            var yaml = File.ReadAllText(file);
-
-            var dictionary = new Dictionary<T, HashSet<T2>>();
-
-            var dict = deserializer.Deserialize<Dictionary<int, List<int>>>(yaml);
-
-            //file exists but is empty
-            if (dict == null)
-                return null;
-
-            foreach (var ids in dict)
-                try
-                {
-                    var key = GetObjectByID<T>(ids.Key);
-
-                    var set = new HashSet<T2>();
-
-                    foreach (var val in ids.Value)
-                        try
-                        {
-                            set.Add(GetObjectByID<T2>(val));
-                        }
-                        catch (KeyNotFoundException)
-                        {
-                            // skip missing objects (they will disapear next save anyway)
-                        }
-
-                    dictionary.Add(key, set);
-                }
-                catch (KeyNotFoundException)
-                {
-                    // skip missing container objects (they will disapear next save anyway)
-                }
-
-            return dictionary;
-        }
-
-        return new Dictionary<T, HashSet<T2>>();
-    }
-
-    private void Save<T, T2>(Dictionary<T, HashSet<T2>> collection, string filenameWithoutSuffix)
-        where T : IMapsDirectlyToDatabaseTable
-        where T2 : IMapsDirectlyToDatabaseTable
-    {
-        var file = Path.Combine(Directory.FullName, $"{filenameWithoutSuffix}.yaml");
-        var serializer = new Serializer();
-
-        // save the default and the ID
-        File.WriteAllText(file, serializer.Serialize(
-            collection.ToDictionary(
-                k => k.Key.ID,
-                v => v.Value.Select(c => c.ID).ToList()
-            )));
-    }
-
-    #region Server Defaults Persistence
-
-    private string GetDefaultsFile()
-    {
-        return Path.Combine(Directory.FullName, "Defaults.yaml");
-    }
-
-    public override void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
-    {
-        base.SetDefault(toChange, externalDatabaseServer);
-
-        SaveDefaults();
-    }
-
-    private void SaveDefaults()
-    {
-        var serializer = new Serializer();
-
-        // save the default and the ID
-        File.WriteAllText(GetDefaultsFile(),
-            serializer.Serialize(Defaults.ToDictionary(k => k.Key, v => v.Value?.ID ?? 0)));
-    }
-
-    public void LoadDefaults()
-    {
-        var deserializer = new Deserializer();
-
-        var defaultsFile = GetDefaultsFile();
-
-        if (File.Exists(defaultsFile))
-        {
-            var yaml = File.ReadAllText(defaultsFile);
-            var objectIds = deserializer.Deserialize<Dictionary<PermissableDefaults, int>>(yaml);
-
-            // file exists but is empty
-            if (objectIds == null)
-                return;
-
-            Defaults = objectIds.ToDictionary(
-                k => k.Key,
-                v => v.Value == 0
-                    ? null
-                    : (IExternalDatabaseServer)GetObjectByIDIfExists<ExternalDatabaseServer>(v.Value));
-        }
-    }
-
-    /// <summary>
-    ///     Returns the object referenced or null if it has been deleted on the sly (e.g. by user deleting .yaml files on disk)
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    private T GetObjectByIDIfExists<T>(int id) where T : DatabaseEntity
-    {
-        try
-        {
-            return GetObjectByID<T>(id);
-        }
-        catch (KeyNotFoundException)
-        {
-            return null;
-        }
-    }
-
-    #endregion
-
-    #region DataExportProperties Persistence
-
-    private string GetDataExportPropertiesFile()
-    {
-        return Path.Combine(Directory.FullName, "DataExportProperties.yaml");
-    }
-
-    public void LoadDataExportProperties()
-    {
-        var deserializer = new Deserializer();
-
-        var defaultsFile = GetDataExportPropertiesFile();
-
-        if (File.Exists(defaultsFile))
-        {
-            var yaml = File.ReadAllText(defaultsFile);
-            var props = deserializer.Deserialize<Dictionary<DataExportProperty, string>>(yaml);
-
-            if (props != null)
-                PropertiesDictionary = props;
-        }
-    }
-
-    private void SaveDataExportProperties()
-    {
-        var serializer = new Serializer();
-
-        // save the default and the ID
-        File.WriteAllText(GetDataExportPropertiesFile(), serializer.Serialize(PropertiesDictionary));
-    }
-
-    public override string GetValue(DataExportProperty property)
-    {
-        return base.GetValue(property);
-    }
-
-    public override void SetValue(DataExportProperty property, string value)
-    {
-        base.SetValue(property, value);
-        SaveDataExportProperties();
-    }
-
-    #endregion
-
     #region Persist CredentialsDictionary
-
     private string GetCredentialsDictionaryFile()
     {
         return Path.Combine(Directory.FullName, "CredentialsDictionary.yaml");
     }
-
     public void LoadCredentialsDictionary()
     {
         var deserializer = new Deserializer();
@@ -553,7 +441,7 @@ public class YamlRepository : MemoryDataExportRepository
 
             CredentialsDictionary = new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
 
-            foreach (var tableToCredentialUsage in ids)
+            foreach(var tableToCredentialUsage in ids)
             {
                 var table = GetObjectByIDIfExists<TableInfo>(tableToCredentialUsage.Key);
 
@@ -562,7 +450,7 @@ public class YamlRepository : MemoryDataExportRepository
                     continue;
 
                 var valDictionary = new Dictionary<DataAccessContext, DataAccessCredentials>();
-                foreach (var (usage, value) in tableToCredentialUsage.Value)
+                foreach(var (usage, value) in tableToCredentialUsage.Value)
                 {
                     var credential = GetObjectByIDIfExists<DataAccessCredentials>(value);
 
@@ -572,9 +460,10 @@ public class YamlRepository : MemoryDataExportRepository
 
                 CredentialsDictionary.Add(table, valDictionary);
             }
+
+
         }
     }
-
     private void SaveCredentialsDictionary()
     {
         var serializer = new Serializer();
@@ -594,21 +483,16 @@ public class YamlRepository : MemoryDataExportRepository
 
         SaveCredentialsDictionary();
     }
-
-    public override void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
-        DataAccessContext context)
+    public override void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
     {
         base.BreakLinkBetween(credentials, tableInfo, context);
         SaveCredentialsDictionary();
     }
-
-    public override void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
-        DataAccessContext context)
+    public override void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
     {
         base.CreateLinkBetween(credentials, tableInfo, context);
         SaveCredentialsDictionary();
     }
-
     #endregion
 
 
@@ -620,8 +504,7 @@ public class YamlRepository : MemoryDataExportRepository
         var file = Path.Combine(dir, $"{toSave.ID}.yaml");
 
         var serializer = new Serializer();
-        var yaml = serializer.Serialize(CohortContainerContents[toSave]
-            .Select(c => new PersistCohortContainerContent(c)).ToList());
+        var yaml = serializer.Serialize(CohortContainerContents[toSave].Select(c => new PersistCohortContainerContent(c)).ToList());
         File.WriteAllText(file, yaml);
     }
 
@@ -664,9 +547,10 @@ public class YamlRepository : MemoryDataExportRepository
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error reading file {f.FullName}", ex);
+                throw new Exception($"Error reading file {f.FullName}",ex);
             }
         }
+
     }
 
     public override void Add(CohortAggregateContainer parent, AggregateConfiguration child, int order)
@@ -701,10 +585,14 @@ public class YamlRepository : MemoryDataExportRepository
 
     private class PersistCohortContainerContent
     {
+        public string Type { get; set; }
+        public int ID { get; set; }
+        public int Order { get; set; }
+
         public PersistCohortContainerContent()
         {
-        }
 
+        }
         public PersistCohortContainerContent(CohortContainerContent c)
         {
             Type = c.Orderable.GetType().Name;
@@ -712,22 +600,135 @@ public class YamlRepository : MemoryDataExportRepository
             Order = c.Order;
         }
 
-        public string Type { get; }
-        public int ID { get; }
-        public int Order { get; }
-
 
         public CohortContainerContent GetContent(YamlRepository repository)
         {
             if (Type.Equals(nameof(AggregateConfiguration)))
+            {
                 return new CohortContainerContent(repository.GetObjectByID<AggregateConfiguration>(ID), Order);
+            }
 
             if (Type.Equals(nameof(CohortAggregateContainer)))
+            {
                 return new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order);
+            }
 
             throw new Exception($"Unexpected IOrderable Type name '{Type}'");
         }
     }
 
     #endregion
+
+    public override void MakeIntoAnOrphan(IContainer container)
+    {
+        base.MakeIntoAnOrphan(container);
+        SaveWhereSubContainers();
+    }
+    public override void AddSubContainer(IContainer parent, IContainer child)
+    {
+        base.AddSubContainer(parent, child);
+        SaveWhereSubContainers();
+    }
+
+    private void SaveWhereSubContainers()
+    {
+        Save(WhereSubContainers.Where(kvp => kvp.Key is FilterContainer)
+            .ToDictionary(
+            k => k.Key,
+            v => v.Value), "ExtractionFilters");
+
+        Save(WhereSubContainers.Where(kvp => kvp.Key is AggregateFilterContainer)
+            .ToDictionary(
+            k => k.Key,
+            v => v.Value), "AggregateFilters");
+    }
+
+    public override string ToString()
+    {
+        return $"{{YamlRepository {Directory.FullName}}}";
+    }
+
+    private void LoadWhereSubContainers()
+    {
+        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new Dictionary<FilterContainer, HashSet<FilterContainer>>())
+        {
+            WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
+        }
+        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
+        {
+            WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
+        }
+    }
+
+    private Dictionary<T, HashSet<T2>> Load<T, T2>(string filenameWithoutSuffix)
+        where T : IMapsDirectlyToDatabaseTable
+        where T2 : IMapsDirectlyToDatabaseTable
+    {
+        var deserializer = new Deserializer();
+
+        var file = Path.Combine(Directory.FullName, $"{filenameWithoutSuffix}.yaml");
+
+        if (File.Exists(file))
+        {
+            var yaml = File.ReadAllText(file);
+
+            var dictionary = new Dictionary<T, HashSet<T2>>();
+
+            var dict = deserializer.Deserialize<Dictionary<int, List<int>>>(yaml);
+
+            //file exists but is empty
+            if (dict == null)
+                return null;
+
+            foreach (var ids in dict)
+            {
+                try
+                {
+                    var key = GetObjectByID<T>(ids.Key);
+
+                    var set = new HashSet<T2>();
+
+                    foreach(var val in ids.Value)
+                    {
+                        try
+                        {
+                            set.Add(GetObjectByID<T2>(val));
+                        }
+                        catch (KeyNotFoundException)
+                        {
+                            // skip missing objects (they will disapear next save anyway)
+                            continue;
+                        }
+                    }
+
+                    dictionary.Add(key, set);
+                }
+                catch (KeyNotFoundException)
+                {
+                    // skip missing container objects (they will disapear next save anyway)
+                    continue;
+                }
+            }
+
+            return dictionary;
+        }
+
+        return new Dictionary<T, HashSet<T2>>();
+    }
+    private void Save<T, T2>(Dictionary<T, HashSet<T2>> collection, string filenameWithoutSuffix)
+        where T : IMapsDirectlyToDatabaseTable
+        where T2 : IMapsDirectlyToDatabaseTable
+    {
+        var file = Path.Combine(Directory.FullName, $"{filenameWithoutSuffix}.yaml");
+        var serializer = new Serializer();
+
+        // save the default and the ID
+        File.WriteAllText(file, serializer.Serialize(
+            collection.ToDictionary(
+                k => k.Key.ID,
+                v => v.Value.Select(c => c.ID).ToList()
+                )));
+
+    }
+
 }

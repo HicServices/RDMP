@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
@@ -16,17 +15,18 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Menus;
 
-[DesignerCategory("")]
+[System.ComponentModel.DesignerCategory("")]
 internal class TableInfoMenu : RDMPContextMenuStrip
 {
+
     public TableInfoMenu(RDMPContextMenuStripArgs args, TableInfo tableInfo)
         : base(args, tableInfo)
     {
-        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo), Keys.None, "New");
-        Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo), Keys.None, "New");
 
-        Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution.ImageToBitmap(),
-            delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
+        Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");
+        Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo),Keys.None,"New");
+                                    
+        Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution.ImageToBitmap(), delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
 
         Items.Add(new ToolStripSeparator());
         Items.Add(new SetDumpServerMenuItem(_activator, tableInfo));
@@ -34,20 +34,20 @@ internal class TableInfoMenu : RDMPContextMenuStrip
         Items.Add(new ToolStripSeparator());
 
         if (tableInfo != null && tableInfo.IsTableValuedFunction)
-            Items.Add("Configure Parameters...",
-                _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap(),
-                delegate { ConfigureTableInfoParameters(tableInfo); });
+            Items.Add("Configure Parameters...", _activator.CoreIconProvider.GetImage(RDMPConcept.ParametersNode).ImageToBitmap(), delegate { ConfigureTableInfoParameters(tableInfo); });
     }
 
     private void ConfigurePrimaryKeyCollisionResolution_Click(TableInfo tableInfo)
     {
-        var dialog = new ConfigurePrimaryKeyCollisionResolverUI(tableInfo, _activator);
+        var dialog = new ConfigurePrimaryKeyCollisionResolverUI(tableInfo,_activator);
         dialog.ShowDialog(this);
     }
 
 
+        
     private void ConfigureTableInfoParameters(TableInfo tableInfo)
     {
-        ParameterCollectionUI.ShowAsDialog(_activator, ParameterCollectionUIOptionsFactory.Create(tableInfo));
+        ParameterCollectionUI.ShowAsDialog(_activator,ParameterCollectionUIOptionsFactory.Create(tableInfo));
     }
+
 }

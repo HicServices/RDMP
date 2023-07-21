@@ -27,76 +27,28 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources;
 
 /// <summary>
-///     Pipeline component for reading from Microsoft Excel files.  Reads only from a single worksheet (by default the
-///     first one in the workbook).  Data read
-///     is returned as a DataTable all read at once in one big batch.  This component requires Microsoft Office to be
-///     installed since it uses Interop.
+/// Pipeline component for reading from Microsoft Excel files.  Reads only from a single worksheet (by default the first one in the workbook).  Data read
+/// is returned as a DataTable all read at once in one big batch.  This component requires Microsoft Office to be installed since it uses Interop.
 /// </summary>
 public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<FlatFileToLoad>
 {
     public const string WorkSheetName_DemandDescription =
         "Name of the worksheet to load data from (single sheet name only).  If this is empty then the first sheet in the spreadsheet will be loaded instead";
 
-    public const string AddFilenameColumnNamed_DemandDescription =
-        "Optional - Set to the name of a column in your RAW database (e.g. Filename).  If set this named column will be populated with the path to the file being read (e.g. c:\\myproj\\Data\\ForLoading\\MyFile.csv)";
-
-    private FlatFileToLoad _fileToLoad;
-
-    /*
-
-    private string IntToExcelColumnLetter(int colNumberStartingAtOne)
-    {
-        int dividend = colNumberStartingAtOne;
-        string columnName = String.Empty;
-        int modulo;
-
-        while (dividend > 0)
-        {
-            modulo = (dividend - 1) % 26;
-            columnName = Convert.ToChar(65 + modulo) + columnName;
-            dividend = (int)((dividend - modulo) / 26);
-        }
-
-        return columnName;
-    }
-
-    private object MakeTimeRelatedDecision(double value, Range cells, string type, dynamic cell,int row, int col)
-    {
-        if (type.Contains("/") || type.Contains("\\") || type.Contains(":"))
-        {
-            if (cell != null)
-                return cell.Text;
-
-            return cells[row, col].Text;
-        }
-
-        //timeRelatedDescisions
-        return value;
-    }
-    */
-    private readonly string[] acceptedFileExtensions =
-    {
-        ".xlsx",
-        ".xls"
-    };
-
-    private DataTable dataReadFromFile;
-    private bool haveDispatchedDataTable;
+    public const string AddFilenameColumnNamed_DemandDescription = "Optional - Set to the name of a column in your RAW database (e.g. Filename).  If set this named column will be populated with the path to the file being read (e.g. c:\\myproj\\Data\\ForLoading\\MyFile.csv)";
 
     [DemandsInitialization(WorkSheetName_DemandDescription)]
     public string WorkSheetName { get; set; }
 
-    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,
-        DemandType.Unspecified, true)]
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MakeHeaderNamesSane_DemandDescription,DemandType.Unspecified,true)]
     public bool MakeHeaderNamesSane { get; set; }
 
     [DemandsInitialization(AddFilenameColumnNamed_DemandDescription)]
     public string AddFilenameColumnNamed { get; set; }
 
-    public void PreInitialize(FlatFileToLoad value, IDataLoadEventListener listener)
-    {
-        _fileToLoad = value;
-    }
+    private FlatFileToLoad _fileToLoad;
+    private DataTable dataReadFromFile;
+    private bool haveDispatchedDataTable = false;
 
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
@@ -106,67 +58,15 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             return null;
 
         haveDispatchedDataTable = true;
-
+            
         return dataReadFromFile;
-    }
-
-    public void Check(ICheckNotifier notifier)
-    {
-        if (_fileToLoad != null)
-            if (!IsAcceptableFileExtension())
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        $"File extension {_fileToLoad.File} has an invalid extension:{_fileToLoad.File.Extension} (this class only accepts:{string.Join(",", acceptedFileExtensions)})",
-                        CheckResult.Fail));
-            else
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs($"File extension of file {_fileToLoad.File.Name} is acceptable",
-                        CheckResult.Success));
-        else
-            notifier.OnCheckPerformed(
-                new CheckEventArgs(
-                    "FlatFileToLoad (Pipeline Requirement) was not met (we weren't initialized with a file)",
-                    CheckResult.Warning));
-    }
-
-    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-    {
-    }
-
-    public void Abort(IDataLoadEventListener listener)
-    {
-    }
-
-    public DataTable TryGetPreview()
-    {
-        var timeoutToken = new CancellationTokenSource();
-        timeoutToken.CancelAfter(10000);
-
-        var token = new GracefulCancellationToken(timeoutToken.Token, timeoutToken.Token);
-
-        DataTable dt;
-        try
-        {
-            dt = GetAllData(new ThrowImmediatelyDataLoadEventListener(), token);
-        }
-        catch (Exception e)
-        {
-            if (timeoutToken.IsCancellationRequested)
-                throw new Exception(
-                    "Failed to generate preview in 10 seconds or less, giving up trying to load a preview (this doesn't mean that the source is broken, more likely you just have a big file or something)",
-                    e);
-
-            throw;
-        }
-
-        return dt;
     }
 
     private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         var sw = new Stopwatch();
         sw.Start();
-        if (_fileToLoad == null)
+        if(_fileToLoad == null)
             throw new Exception("_fileToLoad has not been set yet, possibly component has not been Initialized yet");
 
         if (!IsAcceptableFileExtension())
@@ -186,14 +86,12 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             {
                 var worksheet =
                     //if the user hasn't picked one, use the first
-                    (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ??
-                    throw new FlatFileLoadException(
+                    (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ?? throw new FlatFileLoadException(
                         $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
                 toReturn = GetAllData(worksheet, listener);
 
                 //set the table name the file name
-                toReturn.TableName =
-                    QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+                toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
 
                 if (toReturn.Columns.Count == 0)
                     throw new FlatFileLoadException(
@@ -217,8 +115,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     }
 
     /// <summary>
-    ///     Returns all data held in the current <paramref name="worksheet" />.  The first row of data becomes the headers.
-    ///     Throws away fully blank columns/rows.
+    /// Returns all data held in the current <paramref name="worksheet"/>.  The first row of data becomes the headers.  Throws away fully blank columns/rows.
     /// </summary>
     /// <param name="worksheet"></param>
     /// <param name="listener"></param>
@@ -287,15 +184,15 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             }
 
             //if we didn't get any values at all for the row throw it away
-            if (!gotAtLeastOneGoodValue)
+            if(!gotAtLeastOneGoodValue)
                 toReturn.Rows.Remove(r);
         }
-
+            
         return toReturn;
     }
 
     /// <summary>
-    ///     Retruns the C# value that best represents the contents of the cell.
+    /// Retruns the C# value that best represents the contents of the cell.
     /// </summary>
     /// <param name="cell">The cell whose value you want to retrieve</param>
     /// <param name="treatAs">Leave blank, used in recursion for dealing with Formula cells</param>
@@ -310,7 +207,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
         if (treatAs == CellType.Unknown)
             treatAs = cell.CellType;
-
+            
         switch (treatAs)
         {
             case CellType.Unknown:
@@ -326,7 +223,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     if (IsDateWithoutTime(format))
                         return cell.DateCellValue.ToString("yyyy-MM-dd");
 
-                    if (IsDateWithTime(format))
+                    if(IsDateWithTime(format))
                         return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
 
                     if (IsTimeWithoutDate(format))
@@ -364,7 +261,6 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     {
         return formatString.Contains('h') && formatString.Contains('y');
     }
-
     private static bool IsDateWithoutTime(string formatString)
     {
         return formatString.Contains('y') && !formatString.Contains('h');
@@ -383,6 +279,44 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         return formatString.Contains('/') || formatString.Contains('\\') || formatString.Contains(':');
     }
 
+    /*
+
+    private string IntToExcelColumnLetter(int colNumberStartingAtOne)
+    {
+        int dividend = colNumberStartingAtOne;
+        string columnName = String.Empty;
+        int modulo;
+
+        while (dividend > 0)
+        {
+            modulo = (dividend - 1) % 26;
+            columnName = Convert.ToChar(65 + modulo) + columnName;
+            dividend = (int)((dividend - modulo) / 26);
+        }
+
+        return columnName;
+    }
+
+    private object MakeTimeRelatedDecision(double value, Range cells, string type, dynamic cell,int row, int col)
+    {
+        if (type.Contains("/") || type.Contains("\\") || type.Contains(":"))
+        {
+            if (cell != null)
+                return cell.Text;
+
+            return cells[row, col].Text;
+        }
+
+        //timeRelatedDescisions
+        return value;
+    }
+    */
+    private string[] acceptedFileExtensions =
+    {
+        ".xlsx",
+        ".xls"
+    };
+
     private bool IsAcceptableFileExtension()
     {
         return acceptedFileExtensions.Contains(_fileToLoad.File.Extension.ToLower());
@@ -394,5 +328,62 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             return true;
 
         return string.IsNullOrWhiteSpace(o.ToString());
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        if (_fileToLoad != null)
+            if (!IsAcceptableFileExtension())
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs(
+                        $"File extension {_fileToLoad.File} has an invalid extension:{_fileToLoad.File.Extension} (this class only accepts:{string.Join(",", acceptedFileExtensions)})",
+                        CheckResult.Fail));
+            else
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs($"File extension of file {_fileToLoad.File.Name} is acceptable",
+                        CheckResult.Success));
+        else
+            notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    "FlatFileToLoad (Pipeline Requirement) was not met (we weren't initialized with a file)",
+                    CheckResult.Warning));
+    }
+
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+            
+    }
+
+    public void Abort(IDataLoadEventListener listener)
+    {
+            
+    }
+
+    public DataTable TryGetPreview()
+    {
+        var timeoutToken = new CancellationTokenSource();
+        timeoutToken.CancelAfter(10000);
+
+        var token = new GracefulCancellationToken(timeoutToken.Token,timeoutToken.Token );
+
+        DataTable dt;
+        try
+        {
+            dt = GetAllData(new ThrowImmediatelyDataLoadEventListener(),token);
+        }
+        catch (Exception e)
+        {
+            if(timeoutToken.IsCancellationRequested)
+                throw new Exception("Failed to generate preview in 10 seconds or less, giving up trying to load a preview (this doesn't mean that the source is broken, more likely you just have a big file or something)",e);
+
+            throw;
+        }
+
+        return dt;
+    }
+
+    public void PreInitialize(FlatFileToLoad value, IDataLoadEventListener listener)
+    {
+        _fileToLoad = value;
     }
 }

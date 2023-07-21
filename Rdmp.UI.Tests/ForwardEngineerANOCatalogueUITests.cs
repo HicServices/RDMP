@@ -13,22 +13,20 @@ namespace Rdmp.UI.Tests;
 
 internal class ForwardEngineerANOCatalogueUITests : UITests
 {
-    [Test]
-    [UITimeout(50000)]
+    [Test,UITimeout(50000)]
     public void Test_ForwardEngineerANOCatalogueUI_NormalState()
     {
         SetupMEF();
 
         var eiChi = WhenIHaveA<ExtractionInformation>();
         var cata = eiChi.CatalogueItem.Catalogue;
-
+            
         AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
 
         AssertNoErrors(ExpectedErrorType.Any);
     }
 
-    [Test]
-    [UITimeout(50000)]
+    [Test, UITimeout(50000)]
     public void Test_ForwardEngineerANOCatalogueUI_NoColumns()
     {
         SetupMEF();
@@ -36,12 +34,12 @@ internal class ForwardEngineerANOCatalogueUITests : UITests
         var cata = WhenIHaveA<Catalogue>();
 
         //shouldn't be possible to launch the UI
-        AssertCommandIsImpossible(new ExecuteCommandCreateANOVersion(ItemActivator, cata),
-            "does not have any Extractable Columns");
+        AssertCommandIsImpossible(new ExecuteCommandCreateANOVersion(ItemActivator, cata), "does not have any Extractable Columns");
 
         //and if we are depersisting it that should be angry
         AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
 
         AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not generate a valid query for the Catalogue");
     }
+
 }

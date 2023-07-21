@@ -11,14 +11,15 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.ReusableCodeTests;
 
-public class UsefulStuffTests : DatabaseTests
+public class UsefulStuffTests:DatabaseTests
 {
+        
     [Test]
     public void GetRowCountWhenNoIndexes()
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var table = db.ExpectTable("GetRowCountWhenNoIndexes");
-        Assert.AreEqual("GetRowCountWhenNoIndexes", table.GetRuntimeName());
+        Assert.AreEqual("GetRowCountWhenNoIndexes",table.GetRuntimeName());
         var server = table.Database.Server;
 
         using var con = server.GetConnection();
@@ -28,9 +29,9 @@ public class UsefulStuffTests : DatabaseTests
         cmd.ExecuteNonQuery();
 
         var cmdInsert = server.GetCommand($"INSERT INTO {table.GetRuntimeName()} VALUES (1,'Fish')", con);
-        Assert.AreEqual(1, cmdInsert.ExecuteNonQuery());
+        Assert.AreEqual(1,cmdInsert.ExecuteNonQuery());
 
-        Assert.AreEqual(1, table.GetRowCount());
+        Assert.AreEqual(1,table.GetRowCount());
     }
 
     [Test]

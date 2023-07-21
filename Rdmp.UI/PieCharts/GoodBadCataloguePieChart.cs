@@ -21,38 +21,24 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+
 namespace Rdmp.UI.PieCharts;
 
 /// <summary>
-///     Part of OverviewScreen, shows a pie chart showing ow many extractable columns are there which do not yet have
-///     descriptions in the Data Catalogue Database (See CatalogueItemUI)
-///     <para>
-///         Each of these can either be displayed for a single catalogue or as a combined total across all active
-///         catalogues (not deprecated / internal etc)
-///     </para>
+/// Part of OverviewScreen, shows a pie chart showing ow many extractable columns are there which do not yet have descriptions in the Data Catalogue Database (See CatalogueItemUI)
+/// 
+/// <para>Each of these can either be displayed for a single catalogue or as a combined total across all active catalogues (not deprecated / internal etc)</para>
+/// 
 /// </summary>
 public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableControl
 {
-    private bool _bLoading;
-    private GoodBadCataloguePieChartObjectCollection _collection;
-    private DashboardControl _dashboardControlDatabaseRecord;
+    private ToolStripButton btnSingleCatalogue = new("Single",CatalogueIcons.Catalogue.ImageToBitmap()) { Name = "btnSingleCatalogue" };
+    private ToolStripButton btnAllCatalogues = new("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()){Name= "btnAllCatalogues" };
+    private ToolStripButton btnRefresh = new("Refresh",FamFamFamIcons.text_list_bullets.ImageToBitmap()) { Name = "btnRefresh" };
+    private ToolStripLabel toolStripLabel1 = new("Type:"){Name= "toolStripLabel1" };
+    private ToolStripButton btnShowLabels = new("Labels",FamFamFamIcons.text_align_left.ImageToBitmap()) { Name = "btnShowLabels", CheckOnClick = true };
 
-    private readonly List<ToolStripMenuItem> _flagOptions = new();
-
-    private readonly ToolStripButton btnAllCatalogues =
-        new("All", CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()) { Name = "btnAllCatalogues" };
-
-    private readonly ToolStripButton btnRefresh = new("Refresh", FamFamFamIcons.text_list_bullets.ImageToBitmap())
-        { Name = "btnRefresh" };
-
-    private readonly ToolStripButton btnShowLabels = new("Labels", FamFamFamIcons.text_align_left.ImageToBitmap())
-        { Name = "btnShowLabels", CheckOnClick = true };
-
-    private readonly ToolStripButton btnSingleCatalogue = new("Single", CatalogueIcons.Catalogue.ImageToBitmap())
-        { Name = "btnSingleCatalogue" };
-
-    private bool firstTime = true;
-    private readonly ToolStripLabel toolStripLabel1 = new("Type:") { Name = "toolStripLabel1" };
+    private List<ToolStripMenuItem> _flagOptions = new();
 
     public GoodBadCataloguePieChart()
     {
@@ -60,124 +46,45 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
         btnViewDataTable.Image = CatalogueIcons.TableInfo.ImageToBitmap();
 
-        btnAllCatalogues.Click += btnAllCatalogues_Click;
-        btnSingleCatalogue.Click += btnSingleCatalogue_Click;
-        btnShowLabels.CheckStateChanged += btnShowLabels_CheckStateChanged;
-        btnRefresh.Click += btnRefresh_Click;
-
+        btnAllCatalogues.Click += new EventHandler(btnAllCatalogues_Click);
+        btnSingleCatalogue.Click += new EventHandler(btnSingleCatalogue_Click);
+        btnShowLabels.CheckStateChanged += new EventHandler(btnShowLabels_CheckStateChanged);
+        btnRefresh.Click += new EventHandler(btnRefresh_Click);
+            
         //put edit mode on for the designer
         NotifyEditModeChange(false);
     }
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-    {
-    }
-
-    public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
-    {
-        _bLoading = true;
-        SetItemActivator(activator);
-
-        _collection = (GoodBadCataloguePieChartObjectCollection)collection;
-
-        if (firstTime)
-            SetupFlags();
-
-        btnAllCatalogues.Checked = !_collection.IsSingleCatalogueMode;
-        btnSingleCatalogue.Checked = _collection.IsSingleCatalogueMode;
-        btnShowLabels.Checked = _collection.ShowLabels;
-
-        CommonFunctionality.Add(btnAllCatalogues);
-        CommonFunctionality.Add(toolStripLabel1);
-        CommonFunctionality.Add(btnAllCatalogues);
-        CommonFunctionality.Add(btnSingleCatalogue);
-        CommonFunctionality.Add(btnShowLabels);
-        CommonFunctionality.Add(btnRefresh);
-
-        foreach (var mi in _flagOptions)
-            CommonFunctionality.AddToMenu(mi);
-
-        GenerateChart();
-        _bLoading = false;
-    }
-
-    public IPersistableObjectCollection GetCollection()
-    {
-        return _collection;
-    }
-
-    public string GetTabName()
-    {
-        return Text;
-    }
-
-    public string GetTabToolTip()
-    {
-        return null;
-    }
-
-    public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)
-    {
-        _dashboardControlDatabaseRecord = databaseRecord;
-
-        return new GoodBadCataloguePieChartObjectCollection();
-    }
-
-    public void NotifyEditModeChange(bool isEditModeOn)
-    {
-        var l = new Point(Margin.Left, Margin.Right);
-        var s = new Size(Width - Margin.Horizontal, Height - Margin.Vertical);
-
-        CommonFunctionality.ToolStrip.Visible = isEditModeOn;
-
-        if (isEditModeOn)
-        {
-            gbWhatThisIs.Location = l with { Y = l.Y + 25 }; //move it down 25 to allow space for tool bar
-            gbWhatThisIs.Size = s with { Height = s.Height - 25 }; //and adjust height accordingly
-        }
-        else
-        {
-            gbWhatThisIs.Location = l;
-            gbWhatThisIs.Size = s;
-        }
-    }
-
     private void SetupFlags()
     {
-        if (!firstTime)
+        if(!firstTime)
             return;
 
-        AddFlag("Non Extractable Catalogues", c => c.IncludeNonExtractableCatalogues,
-            (c, r) => c.IncludeNonExtractableCatalogues = r);
-        AddFlag("Deprecated Catalogues", c => c.IncludeDeprecatedCatalogues,
-            (c, r) => c.IncludeDeprecatedCatalogues = r);
+        AddFlag("Non Extractable Catalogues", c=> c.IncludeNonExtractableCatalogues, (c,r) => c.IncludeNonExtractableCatalogues= r);
+        AddFlag("Deprecated Catalogues", c => c.IncludeDeprecatedCatalogues, (c, r) => c.IncludeDeprecatedCatalogues = r);
         AddFlag("Internal Catalogues", c => c.IncludeInternalCatalogues, (c, r) => c.IncludeInternalCatalogues = r);
-        AddFlag("Cold Storage Catalogues", c => c.IncludeColdStorageCatalogues,
-            (c, r) => c.IncludeColdStorageCatalogues = r);
-        AddFlag("Project Specific Catalogues", c => c.IncludeProjectSpecificCatalogues,
-            (c, r) => c.IncludeProjectSpecificCatalogues = r);
+        AddFlag("Cold Storage Catalogues", c => c.IncludeColdStorageCatalogues, (c, r) => c.IncludeColdStorageCatalogues = r);
+        AddFlag("Project Specific Catalogues", c => c.IncludeProjectSpecificCatalogues, (c, r) => c.IncludeProjectSpecificCatalogues = r);
 
-        AddFlag("Non Extractable CatalogueItems", c => c.IncludeNonExtractableCatalogueItems,
-            (c, r) => c.IncludeNonExtractableCatalogueItems = r);
-        AddFlag("Internal Catalogue Items", c => c.IncludeInternalCatalogueItems,
-            (c, r) => c.IncludeInternalCatalogueItems = r);
-        AddFlag("Deprecated Catalogue Items", c => c.IncludeDeprecatedCatalogueItems,
-            (c, r) => c.IncludeDeprecatedCatalogueItems = r);
+        AddFlag("Non Extractable CatalogueItems", c => c.IncludeNonExtractableCatalogueItems, (c, r) => c.IncludeNonExtractableCatalogueItems = r);
+        AddFlag("Internal Catalogue Items", c => c.IncludeInternalCatalogueItems, (c, r) => c.IncludeInternalCatalogueItems = r);
+        AddFlag("Deprecated Catalogue Items", c => c.IncludeDeprecatedCatalogueItems, (c, r) => c.IncludeDeprecatedCatalogueItems = r);
         firstTime = false;
     }
 
-    private void AddFlag(string caption, Func<GoodBadCataloguePieChartObjectCollection, bool> getProp,
-        Action<GoodBadCataloguePieChartObjectCollection, bool> setProp)
+    private void AddFlag(string caption, Func<GoodBadCataloguePieChartObjectCollection,bool> getProp, Action<GoodBadCataloguePieChartObjectCollection,bool> setProp)
     {
         var btn = new ToolStripMenuItem(caption)
         {
             Checked = getProp(_collection)
         };
-        btn.CheckedChanged += (sender, e) => { setProp(_collection, ((ToolStripMenuItem)sender).Checked); };
+        btn.CheckedChanged += (sender,e) =>{setProp(_collection,((ToolStripMenuItem)sender).Checked);};
         btn.CheckedChanged += (s, e) => GenerateChart();
         btn.CheckOnClick = true;
         _flagOptions.Add(btn);
     }
+    private DashboardControl _dashboardControlDatabaseRecord;
+    private GoodBadCataloguePieChartObjectCollection _collection;
 
     private void GenerateChart()
     {
@@ -219,8 +126,8 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
             dt.Columns.Add("Count");
             dt.Columns.Add("State");
 
-            dt.Rows.Add(countNotPopulated, $"Missing ({countNotPopulated})");
-            dt.Rows.Add(countPopulated, $"Populated ({countPopulated})");
+            dt.Rows.Add(new object[] { countNotPopulated, $"Missing ({countNotPopulated})" });
+            dt.Rows.Add(new object[] { countPopulated, $"Populated ({countPopulated})" });
 
             chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
             chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;
@@ -240,17 +147,91 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
     {
         if (!_collection.IsSingleCatalogueMode)
         {
-            var catalogues = Activator.CoreChildProvider.AllCatalogues
-                .Where(c => _collection.Include(c, Activator.RepositoryLocator.DataExportRepository)).ToArray();
+            var catalogues = Activator.CoreChildProvider.AllCatalogues.Where(c => _collection.Include(c, Activator.RepositoryLocator.DataExportRepository)).ToArray();
 
             //if there are some
-            return catalogues.Any()
-                ? catalogues.SelectMany(c => c.CatalogueItems).Where(ci => _collection.Include(ci)).ToArray()
-                : //get the extractable columns
+            return catalogues.Any() ? catalogues.SelectMany(c => c.CatalogueItems).Where(ci => _collection.Include(ci)).ToArray() : //get the extractable columns
                 Array.Empty<CatalogueItem>(); //there weren't any so Catalogues so won't be any ExtractionInformationsEither
         }
 
-        return _collection.GetSingleCatalogueModeCatalogue().CatalogueItems;
+        return  _collection.GetSingleCatalogueModeCatalogue().CatalogueItems;
+    }
+
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+            
+    }
+
+    private bool _bLoading;
+    private bool firstTime = true;
+
+    public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
+    {
+        _bLoading = true;
+        SetItemActivator(activator);
+
+        _collection = (GoodBadCataloguePieChartObjectCollection)collection;
+
+        if(firstTime)
+            SetupFlags();
+
+        btnAllCatalogues.Checked = !_collection.IsSingleCatalogueMode;
+        btnSingleCatalogue.Checked = _collection.IsSingleCatalogueMode;
+        btnShowLabels.Checked = _collection.ShowLabels;
+
+        CommonFunctionality.Add(btnAllCatalogues);
+        CommonFunctionality.Add(toolStripLabel1);
+        CommonFunctionality.Add(btnAllCatalogues);
+        CommonFunctionality.Add(btnSingleCatalogue);
+        CommonFunctionality.Add(btnShowLabels);
+        CommonFunctionality.Add(btnRefresh);
+
+        foreach(var mi in _flagOptions)
+            CommonFunctionality.AddToMenu(mi);
+
+        GenerateChart();
+        _bLoading = false;
+    }
+
+    public IPersistableObjectCollection GetCollection()
+    {
+        return _collection;
+    }
+
+    public string GetTabName()
+    {
+        return Text;
+    }
+
+    public string GetTabToolTip()
+    {
+        return null;
+    }
+
+    public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)
+    {
+        _dashboardControlDatabaseRecord = databaseRecord;
+
+        return new GoodBadCataloguePieChartObjectCollection();
+    }
+
+    public void NotifyEditModeChange(bool isEditModeOn)
+    {
+        var l = new Point(Margin.Left,Margin.Right);
+        var s = new Size(Width - Margin.Horizontal, Height - Margin.Vertical);
+
+        CommonFunctionality.ToolStrip.Visible = isEditModeOn;
+
+        if (isEditModeOn)
+        {
+            gbWhatThisIs.Location = l with { Y = l.Y + 25 };//move it down 25 to allow space for tool bar
+            gbWhatThisIs.Size = s with { Height = s.Height - 25 };//and adjust height accordingly
+        }
+        else
+        {
+            gbWhatThisIs.Location = l;
+            gbWhatThisIs.Size = s;
+        }
     }
 
     private void btnAllCatalogues_Click(object sender, EventArgs e)
@@ -264,10 +245,11 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
     private void btnSingleCatalogue_Click(object sender, EventArgs e)
     {
-        if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription = "Which Catalogue should the graph depict?"
-            }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+        if(Activator.SelectObject(new DialogArgs
+           {
+               TaskDescription = "Which Catalogue should the graph depict?"
+
+           }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),out var selected))
         {
             _collection.SetSingleCatalogueMode(selected);
 
@@ -302,11 +284,10 @@ public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableC
 
     private void btnViewDataTable_Click(object sender, EventArgs e)
     {
-        if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
-                    "The following CatalogueItem(s) do not currently have descriptions. Select one to navigate to it"
-            }, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)).ToArray(), out var selected))
+        if(Activator.SelectObject(new DialogArgs
+           {
+               TaskDescription = "The following CatalogueItem(s) do not currently have descriptions. Select one to navigate to it"
+           }, GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)).ToArray(),out var selected))
         {
             var cmd = new ExecuteCommandShow(Activator, selected, 1);
             cmd.Execute();

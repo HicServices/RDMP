@@ -23,21 +23,15 @@ using Rdmp.UI.Refreshing;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-///     Lists all the tables that are in your data repository that the RDMP knows about.  Because it is likely that you
-///     have lots of tables including many temporary tables and legacy
-///     tables you would rather just forget about RDMP only tracks the tables you point it at.  This is done through
-///     TableInfo objects (which each have a collection of ColumnInfos).
-///     These are mostly discovered and synchronised by the RDMP (e.g. through ImportSQLTable).
-///     <para>
-///         The control shows the RDMP's table reference (TableInfo), this is a pointer to the specific
-///         database/tables/credentials used to access the data in the dataset at query
-///         time (e.g. when doing a project extraction).
-///     </para>
-///     <para>
-///         TableInfos are not just cached schema data, they are also the launch point for configuring Lookup relationships
-///         (See LookupConfiguration), Join logic (See JoinConfiguration),
-///         Anonymisation etc.
-///     </para>
+/// Lists all the tables that are in your data repository that the RDMP knows about.  Because it is likely that you have lots of tables including many temporary tables and legacy
+/// tables you would rather just forget about RDMP only tracks the tables you point it at.  This is done through TableInfo objects (which each have a collection of ColumnInfos).
+/// These are mostly discovered and synchronised by the RDMP (e.g. through ImportSQLTable).
+/// 
+/// <para>The control shows the RDMP's table reference (TableInfo), this is a pointer to the specific database/tables/credentials used to access the data in the dataset at query
+/// time (e.g. when doing a project extraction).</para>
+/// 
+/// <para>TableInfos are not just cached schema data, they are also the launch point for configuring Lookup relationships (See LookupConfiguration), Join logic (See JoinConfiguration),
+/// Anonymisation etc.  </para>
 /// </summary>
 public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
@@ -46,24 +40,13 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
     public TableInfoCollectionUI()
     {
         InitializeComponent();
-
+            
         tlvTableInfos.KeyUp += olvTableInfos_KeyUp;
 
         tlvTableInfos.ItemActivate += tlvTableInfos_ItemActivate;
         olvDataType.AspectGetter = tlvTableInfos_DataTypeAspectGetter;
-        olvValue.AspectGetter = s => (s as IArgument)?.Value;
-    }
+        olvValue.AspectGetter = s=> (s as IArgument)?.Value;
 
-    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-    {
-        if (e.Object is DataAccessCredentials)
-            tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
-
-        if (e.Object is Catalogue || e.Object is TableInfo)
-            tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
-
-        if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
-            tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
     }
 
 
@@ -84,7 +67,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
     private void tlvTableInfos_ItemActivate(object sender, EventArgs e)
     {
         var o = tlvTableInfos.SelectedObject;
-
+            
         if (o is DecryptionPrivateKeyNode)
         {
             var c = new PasswordEncryptionKeyLocationUI();
@@ -92,7 +75,7 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             Activator.ShowWindow(c, true);
         }
     }
-
+        
     public void SelectTableInfo(TableInfo toSelect)
     {
         tlvTableInfos.SelectObject(toSelect);
@@ -113,28 +96,28 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         base.SetItemActivator(activator);
 
         CommonTreeFunctionality.SetUp(
-            RDMPCollection.Tables,
+            RDMPCollection.Tables, 
             tlvTableInfos,
             activator,
             olvColumn1,
             olvColumn1
         );
-
-        if (_isFirstTime)
+            
+        if(_isFirstTime)
         {
             CommonTreeFunctionality.SetupColumnTracking(olvDataType, new Guid("c743eab7-1c07-41dd-bb10-68b25a437056"));
             CommonTreeFunctionality.SetupColumnTracking(olvValue, new Guid("157fde35-d084-42f6-97d1-13a00ba4d0c1"));
             CommonTreeFunctionality.SetupColumnTracking(olvColumn1, new Guid("3743e6dd-4166-4f71-b42f-c80ccda1446d"));
             _isFirstTime = false;
         }
+            
 
-
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a=> new IAtomicCommand[]
         {
-            new ExecuteCommandImportTableInfo(a, null, false),
+            new ExecuteCommandImportTableInfo(a,null,false),
             new ExecuteCommandBulkImportTableInfos(a)
         };
-
+            
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
 
@@ -149,8 +132,22 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllConnectionStringKeywordsNode);
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllStandardRegexesNode);
         tlvTableInfos.AddObject(Activator.CoreChildProvider.AllPluginsNode);
+
+
     }
 
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+        if(e.Object is DataAccessCredentials)
+            tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllDataAccessCredentialsNode>());
+            
+        if(e.Object is Catalogue || e.Object is TableInfo) 
+            tlvTableInfos.RefreshObject(tlvTableInfos.Objects.OfType<AllServersNode>());
+
+        if (tlvTableInfos.IndexOf(Activator.CoreChildProvider.AllPipelinesNode) != -1)
+            tlvTableInfos.RefreshObject(Activator.CoreChildProvider.AllPipelinesNode);
+    }
+        
     public static bool IsRootObject(object root)
     {
         return
@@ -161,8 +158,9 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
             root is AllDataAccessCredentialsNode ||
             root is AllANOTablesNode ||
             root is AllServersNode ||
-            root is AllConnectionStringKeywordsNode ||
+            root is AllConnectionStringKeywordsNode || 
             root is AllStandardRegexesNode ||
             root is AllDashboardsNode;
+
     }
 }

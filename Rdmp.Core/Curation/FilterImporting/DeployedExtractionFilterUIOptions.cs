@@ -11,15 +11,14 @@ using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Curation.FilterImporting;
 
-/// <inheritdoc />
+/// <inheritdoc/>
 public class DeployedExtractionFilterUIOptions : FilterUIOptions
 {
-    private readonly IColumn[] _columns;
-    private readonly ISqlParameter[] _globals;
-    private readonly ITableInfo[] _tables;
+    private ISqlParameter[] _globals;
+    private ITableInfo[] _tables;
+    private IColumn[] _columns;
 
-    public DeployedExtractionFilterUIOptions(DeployedExtractionFilter deployedExtractionFilter) : base(
-        deployedExtractionFilter)
+    public DeployedExtractionFilterUIOptions(DeployedExtractionFilter deployedExtractionFilter) : base(deployedExtractionFilter)
     {
         var selectedDataSet = deployedExtractionFilter.GetDataset();
 

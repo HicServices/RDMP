@@ -14,7 +14,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
-public class CatalogueCheckTests : DatabaseTests
+public class CatalogueCheckTests:DatabaseTests
 {
     [Test]
     public void CatalogueCheck_DodgyName()
@@ -25,7 +25,7 @@ public class CatalogueCheckTests : DatabaseTests
             Name = @"c:\bob.txt#"
         };
 
-        var ex = Assert.Throws<Exception>(() => cata.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(()=>cata.Check(new ThrowImmediatelyCheckNotifier()));
         Assert.IsTrue(ex.Message.Contains("The following invalid characters were found:'\\','.','#'"));
 
         cata.DeleteInDatabase();
@@ -41,14 +41,14 @@ public class CatalogueCheckTests : DatabaseTests
         dt.Rows.Add("Peter");
 
         var database = GetCleanedServer(databaseType);
-        var tbl = database.CreateTable("CatalogueCheck_CanReadText", dt);
+        var tbl = database.CreateTable("CatalogueCheck_CanReadText",dt);
 
         var cata = Import(tbl);
 
         //shouldn't be any errors
         var tomemory = new ToMemoryCheckNotifier();
         cata.Check(tomemory);
-        Assert.AreEqual(CheckResult.Success, tomemory.GetWorst());
+        Assert.AreEqual(CheckResult.Success,tomemory.GetWorst());
 
         //delete all the records in the table
         tbl.Truncate();
@@ -64,5 +64,7 @@ public class CatalogueCheckTests : DatabaseTests
 
         //now it should fail checks
         Assert.AreEqual(CheckResult.Fail, tomemory.GetWorst());
+
+
     }
 }

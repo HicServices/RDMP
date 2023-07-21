@@ -21,19 +21,20 @@ public class ComprehensiveQueryPerformanceCounterTests : DatabaseTests
         if (TestDatabaseSettings.UseFileSystemRepo)
             Assert.Inconclusive("No queries are run when using file back repository");
 
-        var pCounter = new ComprehensiveQueryPerformanceCounter();
+        var pCounter =  new ComprehensiveQueryPerformanceCounter();
         //enable performance counting
         DatabaseCommandHelper.PerformanceCounter = pCounter;
         try
         {
+
             //send some queries
-            var cata = new Catalogue(CatalogueRepository, "Fish");
+            var cata =  new Catalogue(CatalogueRepository, "Fish");
 
             Assert.IsTrue(cata.Name.Equals("Fish"));
 
             var commands = pCounter.DictionaryOfQueries.Values.ToArray();
             Assert.IsTrue(commands.Any(c => c.QueryText.Contains("SELECT * FROM [Catalogue] WHERE ID=")));
-
+                
             cata.DeleteInDatabase();
         }
         finally

@@ -16,39 +16,37 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Checks;
 
 /// <summary>
-///     Checks <see cref="ExtractionConfiguration" /> to ensure they are in a valid state for execution (have a cohort,
-///     linkable patient columns etc).  Optionally also checks
-///     each dataset in the configuration with a <see cref="SelectedDataSetsChecker" />
+/// Checks <see cref="ExtractionConfiguration"/> to ensure they are in a valid state for execution (have a cohort, linkable patient columns etc).  Optionally also checks
+/// each dataset in the configuration with a <see cref="SelectedDataSetsChecker"/>
 /// </summary>
-public class ExtractionConfigurationChecker : ICheckable
+public class ExtractionConfigurationChecker:ICheckable
 {
-    private readonly IBasicActivateItems _activator;
-    private readonly IExtractionConfiguration _config;
+    private IExtractionConfiguration _config;
+    private IBasicActivateItems _activator;
 
     /// <summary>
-    ///     Prepares checking of the given <paramref name="config" />
+    /// True to fetch all <see cref="ISelectedDataSets"/> and check with <see cref="SelectedDataSetsChecker"/>
+    /// </summary>
+    public bool CheckDatasets { get; set; }
+
+    /// <summary>
+    /// True to also check all globals with a <see cref="GlobalExtractionChecker"/>
+    /// </summary>
+    public bool CheckGlobals { get; set; }
+
+    /// <summary>
+    /// Prepares checking of the given <paramref name="config"/>
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="config"></param>
-    public ExtractionConfigurationChecker(IBasicActivateItems activator, IExtractionConfiguration config)
+    public ExtractionConfigurationChecker(IBasicActivateItems activator,IExtractionConfiguration config)
     {
         _config = config;
         _activator = activator;
     }
 
     /// <summary>
-    ///     True to fetch all <see cref="ISelectedDataSets" /> and check with <see cref="SelectedDataSetsChecker" />
-    /// </summary>
-    public bool CheckDatasets { get; set; }
-
-    /// <summary>
-    ///     True to also check all globals with a <see cref="GlobalExtractionChecker" />
-    /// </summary>
-    public bool CheckGlobals { get; set; }
-
-    /// <summary>
-    ///     Checks that the configuration is in a valid state.  Supports both released (frozen)
-    ///     <see cref="ExtractionConfiguration" /> and unreleased ones.
+    /// Checks that the configuration is in a valid state.  Supports both released (frozen) <see cref="ExtractionConfiguration"/> and unreleased ones.
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -63,30 +61,27 @@ public class ExtractionConfigurationChecker : ICheckable
     {
         var projectDirectory = new DirectoryInfo(_config.Project.ExtractionDirectory);
 
-        notifier.OnCheckPerformed(new CheckEventArgs($"Found Frozen/Released configuration '{_config}'",
-            CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs($"Found Frozen/Released configuration '{_config}'", CheckResult.Success));
 
         foreach (var directoryInfo in projectDirectory.GetDirectories(
                      $"{ExtractionDirectory.GetExtractionDirectoryPrefix(_config)}*").ToArray())
+        {
             if (DirectoryIsEmpty(directoryInfo, out var firstFileFound))
             {
                 var deleteIt =
                     notifier.OnCheckPerformed(
                         new CheckEventArgs(
-                            $"Found empty folder {directoryInfo.Name} which is left over extracted folder after data release",
-                            CheckResult.Warning, null,
+                            $"Found empty folder {directoryInfo.Name} which is left over extracted folder after data release", CheckResult.Warning, null,
                             "Delete empty folder"));
 
                 if (deleteIt)
                     directoryInfo.Delete(true);
             }
             else
-            {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Found non-empty folder {directoryInfo.Name} which is left over extracted folder after data release (First file found was '{firstFileFound}' but there may be others)",
-                        CheckResult.Fail));
-            }
+                        $"Found non-empty folder {directoryInfo.Name} which is left over extracted folder after data release (First file found was '{firstFileFound}' but there may be others)", CheckResult.Fail));
+        }
     }
 
     private bool DirectoryIsEmpty(DirectoryInfo d, out string firstFileFound)
@@ -137,15 +132,17 @@ public class ExtractionConfigurationChecker : ICheckable
 
         //make sure that its cohort is retrievable
         var cohort = repo.GetObjectByID<ExtractableCohort>((int)_config.Cohort_ID);
-        if (cohort.IsDeprecated)
+        if(cohort.IsDeprecated)
+        {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Cohort '{cohort}' is marked IsDeprecated",
                     CheckResult.Fail));
+        }
 
         if (CheckDatasets)
             foreach (var s in _config.SelectedDataSets)
-                new SelectedDataSetsChecker(_activator, s).Check(notifier);
+                new SelectedDataSetsChecker(_activator,s).Check(notifier);
 
         //globals
         if (CheckGlobals)

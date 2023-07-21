@@ -7,11 +7,11 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Implementations.MicrosoftSQL;
-using Microsoft.Data.SqlClient;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Exceptions;
@@ -20,36 +20,26 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
 /// <summary>
-///     Creates an _Archive table to match a live table and a Database Trigger On Update which moves old versions of
-///     records to the _Archive table when the main table
-///     is UPDATEd.  An _Archive table is an exact match of columns as the live table (which must have primary keys) but
-///     also includes several audit fields (date it
-///     was archived etc).  The _Archive table can be used to view the changes that occured during data loading (See
-///     DiffDatabaseDataFetcher) and/or generate a
-///     'way back machine' view of the data at a given date in the past (See CreateViewOldVersionsTableValuedFunction
-///     method).
-///     <para>
-///         This class is super Microsoft Sql Server specific.  It is not suitable to create backup triggers on tables in
-///         which you expect high volitility (lots of frequent
-///         updates all the time).
-///     </para>
-///     <para>
-///         Also contains methods for confirming that a trigger exists on a given table, that the primary keys still match
-///         when it was created and the _Archive table hasn't
-///         got a different schema to the live table (e.g. if you made a change to the live table this would pick up that
-///         the _Archive wasn't updated).
-///     </para>
+/// Creates an _Archive table to match a live table and a Database Trigger On Update which moves old versions of records to the _Archive table when the main table
+/// is UPDATEd.  An _Archive table is an exact match of columns as the live table (which must have primary keys) but also includes several audit fields (date it 
+/// was archived etc).  The _Archive table can be used to view the changes that occured during data loading (See DiffDatabaseDataFetcher) and/or generate a 
+/// 'way back machine' view of the data at a given date in the past (See CreateViewOldVersionsTableValuedFunction method).
+/// 
+/// <para>This class is super Microsoft Sql Server specific.  It is not suitable to create backup triggers on tables in which you expect high volitility (lots of frequent
+/// updates all the time).</para>
+/// 
+/// <para>Also contains methods for confirming that a trigger exists on a given table, that the primary keys still match when it was created and the _Archive table hasn't
+/// got a different schema to the live table (e.g. if you made a change to the live table this would pick up that the _Archive wasn't updated).</para>
 /// </summary>
-public class MicrosoftSQLTriggerImplementer : TriggerImplementer
+public class MicrosoftSQLTriggerImplementer:TriggerImplementer
 {
-    private readonly string _schema;
-    private readonly string _triggerName;
+    private string _schema;
+    private string _triggerName;
 
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)" />
-    public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
-        createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
+    public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
     {
-        _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo" : _table.Schema;
+        _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo":_table.Schema;
         _triggerName = $"{_schema}.{GetTriggerName()}";
     }
 
@@ -58,12 +48,11 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
         using (var con = _server.GetConnection())
         {
             con.Open();
-
+                
             problemsDroppingTrigger = "";
             thingsThatWorkedDroppingTrigger = "";
 
-            using (var cmdDropTrigger = _server.GetCommand($"DROP TRIGGER {_triggerName}", con))
-            {
+            using(var cmdDropTrigger = _server.GetCommand($"DROP TRIGGER {_triggerName}", con))
                 try
                 {
                     cmdDropTrigger.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
@@ -75,11 +64,9 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
                     //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
                     problemsDroppingTrigger += $"Failed to drop Trigger:{exception.Message}{Environment.NewLine}";
                 }
-            }
 
-            using (var cmdDropArchiveIndex = _server.GetCommand(
-                       $"DROP INDEX PKsIndex ON {_archiveTable.GetRuntimeName()}", con))
-            {
+            using(var cmdDropArchiveIndex = _server.GetCommand(
+                      $"DROP INDEX PKsIndex ON {_archiveTable.GetRuntimeName()}", con))
                 try
                 {
                     cmdDropArchiveIndex.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
@@ -92,11 +79,8 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
                 {
                     problemsDroppingTrigger += $"Failed to drop Archive Index:{exception.Message}{Environment.NewLine}";
                 }
-            }
 
-            using (var cmdDropArchiveLegacyView =
-                   _server.GetCommand($"DROP FUNCTION {_table.GetRuntimeName()}_Legacy", con))
-            {
+            using(var cmdDropArchiveLegacyView = _server.GetCommand($"DROP FUNCTION {_table.GetRuntimeName()}_Legacy", con))
                 try
                 {
                     cmdDropArchiveLegacyView.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
@@ -108,7 +92,6 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
                     problemsDroppingTrigger +=
                         $"Failed to drop Legacy Table View:{exception.Message}{Environment.NewLine}";
                 }
-            }
         }
     }
 
@@ -116,12 +99,12 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
     {
         var createArchiveTableSQL = base.CreateTrigger(notifier);
 
-        using (var con = _server.GetConnection())
+        using(var con = _server.GetConnection())
         {
             con.Open();
 
             var trigger = GetCreateTriggerSQL();
-
+                
             using (var cmdAddTrigger = _server.GetCommand(trigger, con))
             {
                 cmdAddTrigger.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
@@ -140,8 +123,7 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
 
             var createIndexSQL =
                 $@"CREATE NONCLUSTERED INDEX [PKsIndex] ON {_archiveTable.GetFullyQualifiedName()} ({idxCompositeKeyBody})";
-            using (var cmdCreateIndex = _server.GetCommand(createIndexSQL, con))
-            {
+            using(var cmdCreateIndex = _server.GetCommand(createIndexSQL, con))
                 try
                 {
                     cmdCreateIndex.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
@@ -152,12 +134,11 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         "Could not create index on archive table because of timeout, possibly your _Archive table has a lot of data in it",
                         CheckResult.Fail, e));
-
+                                
                     return null;
                 }
-            }
 
-            CreateViewOldVersionsTableValuedFunction(createArchiveTableSQL, con);
+            CreateViewOldVersionsTableValuedFunction( createArchiveTableSQL,con);
         }
 
         return createArchiveTableSQL;
@@ -182,18 +163,18 @@ public class MicrosoftSQLTriggerImplementer : TriggerImplementer
         var InsertedToDeletedJoin = "JOIN inserted i ON ";
         InsertedToDeletedJoin += GetTableToTableEqualsSqlWithPrimaryKeys("i", "d");
 
-        var equalsSqlTableToInserted = GetTableToTableEqualsSqlWithPrimaryKeys(_table.GetRuntimeName(), "inserted");
+        var equalsSqlTableToInserted = GetTableToTableEqualsSqlWithPrimaryKeys(_table.GetRuntimeName(),"inserted");
         var equalsSqlTableToDeleted = GetTableToTableEqualsSqlWithPrimaryKeys(_table.GetRuntimeName(), "deleted");
 
         var columnNames = _columns.Select(c => c.GetRuntimeName()).ToList();
 
-        if (!columnNames.Contains(SpecialFieldNames.DataLoadRunID, StringComparer.CurrentCultureIgnoreCase))
+        if(!columnNames.Contains(SpecialFieldNames.DataLoadRunID,StringComparer.CurrentCultureIgnoreCase))
             columnNames.Add(SpecialFieldNames.DataLoadRunID);
 
-        if (!columnNames.Contains(SpecialFieldNames.ValidFrom, StringComparer.CurrentCultureIgnoreCase))
+        if(!columnNames.Contains(SpecialFieldNames.ValidFrom,StringComparer.CurrentCultureIgnoreCase))
             columnNames.Add(SpecialFieldNames.ValidFrom);
 
-        var colList = string.Join(",", columnNames.Select(c => $"[{c}]"));
+        var colList = string.Join(",",columnNames.Select(c=> $"[{c}]") );
         var dDotColList = string.Join(",", columnNames.Select(c => $"d.[{c}]"));
 
         return
@@ -240,11 +221,11 @@ END
 
         //trim off last AND
         toReturn = toReturn[..^"AND ".Length];
-
+            
         return toReturn;
     }
 
-    private void CreateViewOldVersionsTableValuedFunction(string sqlUsedToCreateArchiveTableSQL, DbConnection con)
+    private void CreateViewOldVersionsTableValuedFunction(string sqlUsedToCreateArchiveTableSQL,DbConnection con)
     {
         var columnsInArchive = "";
 
@@ -260,10 +241,9 @@ END
         columnsInArchive = sqlUsedToCreateArchiveTableSQL[startExtractingColumnsAt..];
 
         //trim off excess crud at the end
-        columnsInArchive = columnsInArchive.Trim(')', '\r', '\n');
+        columnsInArchive = columnsInArchive.Trim(new[] {')', '\r', '\n'});
 
-        var sqlToRun = string.Format("CREATE FUNCTION [" + _schema + "].[{0}_Legacy]",
-            QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()));
+        var sqlToRun = string.Format("CREATE FUNCTION [" + _schema + "].[{0}_Legacy]", QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()));
         sqlToRun += Environment.NewLine;
         sqlToRun += $"({Environment.NewLine}";
         sqlToRun += $"\t@index DATETIME{Environment.NewLine}";
@@ -286,19 +266,16 @@ END
         sqlToRun += $"BEGIN{Environment.NewLine}";
         sqlToRun += Environment.NewLine;
 
-        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new[]
-        {
+        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[] {
             $"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
         }).ToArray();
 
         var archiveCols = $"{string.Join(",", liveCols)},hic_validTo,hic_userID,hic_status";
-        var cDotArchiveCols = string.Join(",", liveCols.Select(s => $"c.{s}"));
+        var cDotArchiveCols = string.Join(",", liveCols.Select(s => $"c.{s}")); 
 
 
         sqlToRun += $"\tINSERT @returntable{Environment.NewLine}";
-        sqlToRun += string.Format(
-            "\tSELECT " + archiveCols + " FROM [{0}] WHERE @index BETWEEN ISNULL(" + SpecialFieldNames.ValidFrom +
-            ", '1899/01/01') AND hic_validTo" + Environment.NewLine, _archiveTable);
+        sqlToRun += string.Format("\tSELECT "+archiveCols+" FROM [{0}] WHERE @index BETWEEN ISNULL(" + SpecialFieldNames.ValidFrom + ", '1899/01/01') AND hic_validTo" + Environment.NewLine, _archiveTable);
         sqlToRun += Environment.NewLine;
 
         sqlToRun += $"\tINSERT @returntable{Environment.NewLine}";
@@ -309,22 +286,21 @@ END
 
         for (var index = 0; index < _primaryKeys.Length; index++)
         {
-            sqlToRun += string.Format("\ta.{0}=c.{0} " + Environment.NewLine,
+            sqlToRun += string.Format("\ta.{0}=c.{0} " + Environment.NewLine, 
                 syntaxHelper.EnsureWrapped(_primaryKeys[index].GetRuntimeName())); //add the primary key joins
 
             if (index + 1 < _primaryKeys.Length)
                 sqlToRun += $"\tAND{Environment.NewLine}"; //add an AND because there are more coming
         }
 
-        sqlToRun += string.Format("\tWHERE a.[{0}] IS NULL -- where archive record doesn't exist" + Environment.NewLine,
-            _primaryKeys.First().GetRuntimeName());
+        sqlToRun += string.Format("\tWHERE a.[{0}] IS NULL -- where archive record doesn't exist" + Environment.NewLine, _primaryKeys.First().GetRuntimeName());
         sqlToRun += $"\tAND @index > ISNULL(c.{SpecialFieldNames.ValidFrom}, '1899/01/01'){Environment.NewLine}";
 
         sqlToRun += Environment.NewLine;
         sqlToRun += $"RETURN{Environment.NewLine}";
         sqlToRun += $"END{Environment.NewLine}";
 
-        using (var cmd = _server.GetCommand(sqlToRun, con))
+        using(var cmd = _server.GetCommand(sqlToRun, con))
         {
             cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
             cmd.ExecuteNonQuery();
@@ -333,11 +309,12 @@ END
 
     public override TriggerStatus GetTriggerStatus()
     {
+
         var updateTriggerName = GetTriggerName();
 
         var queryTriggerIsItDisabledOrMissing =
             $"USE [{_table.Database.GetRuntimeName()}]; \r\nif exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disabled  FROM sys.triggers WHERE name=@triggerName else select -1 is_disabled";
-
+            
         try
         {
             using (var conn = _server.GetConnection())
@@ -346,7 +323,7 @@ END
                 using (var cmd = _server.GetCommand(queryTriggerIsItDisabledOrMissing, conn))
                 {
                     cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                    cmd.Parameters.Add(new SqlParameter("@triggerName", SqlDbType.VarChar));
+                    cmd.Parameters.Add(new SqlParameter("@triggerName",SqlDbType.VarChar));
                     cmd.Parameters["@triggerName"].Value = updateTriggerName;
 
                     var result = Convert.ToInt32(cmd.ExecuteScalar());
@@ -391,12 +368,12 @@ END
                 string result;
 
                 con.Open();
-                using (var cmd = _server.GetCommand(query, con))
+                using(var cmd = _server.GetCommand(query, con))
                 {
                     cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
                     result = cmd.ExecuteScalar() as string;
                 }
-
+                        
 
                 if (string.IsNullOrWhiteSpace(result))
                     throw new TriggerMissingException(
@@ -423,9 +400,11 @@ END
         catch (Exception e)
         {
             throw new Exception(
-                $"Failed to check if trigger {updateTriggerName} is enabled.  See InnerException for details", e);
+                $"Failed to check if trigger {updateTriggerName} is enabled.  See InnerException for details",e);
         }
 
         return true;
     }
+
+        
 }

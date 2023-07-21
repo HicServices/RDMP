@@ -12,8 +12,8 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
 internal class CommandLineParser
 {
-    private StringBuilder buf; // output buffer
     private char[] cmd; // source buffer
+    private StringBuilder buf; // output buffer
     private int i; // current position within the source buffer
 
     public CommandLineParser()
@@ -21,6 +21,7 @@ internal class CommandLineParser
         cmd = null;
         buf = null;
         i = -1;
+        return;
     }
 
     public IEnumerable<string> Parse(string commandLine)
@@ -33,14 +34,11 @@ internal class CommandLineParser
         {
             var ch = cmd[i];
 
-            if (char.IsWhiteSpace(ch)) throw new InvalidOperationException();
+            if (char.IsWhiteSpace(ch)) { throw new InvalidOperationException(); }
 
-            if (ch == '\\')
-                ParseEscapeSequence();
-            else if (ch == '"')
-                ParseQuotedWord();
-            else
-                ParseBareWord();
+            if (ch == '\\') { ParseEscapeSequence(); }
+            else if (ch == '"') { ParseQuotedWord(); }
+            else { ParseBareWord(); }
 
             if (i >= cmd.Length || char.IsWhiteSpace(cmd[i]))
             {
@@ -55,10 +53,11 @@ internal class CommandLineParser
     }
 
     /// <summary>
-    ///     Parse a quoted word
+    /// Parse a quoted word
     /// </summary>
     private void ParseQuotedWord()
     {
+
         // scan over the lead-in quotation mark w/o adding it to the buffer
         ++i;
 
@@ -66,23 +65,20 @@ internal class CommandLineParser
         while (i < cmd.Length && cmd[i] != '"')
         {
             var ch = cmd[i];
-            if (ch == '\\')
-            {
-                ParseEscapeSequence();
-            }
-            else
-            {
-                buf.Append(ch);
-                ++i;
-            }
+            if (ch == '\\') { ParseEscapeSequence(); }
+            else { buf.Append(ch); ++i; }
         }
 
         // scan over the lead-out quotation mark w/o adding it to the buffer
-        if (i < cmd.Length) ++i;
+        if (i < cmd.Length)
+        {
+            ++i;
+        }
+        return;
     }
 
     /// <summary>
-    ///     Parse a bareword
+    /// Parse a bareword
     /// </summary>
     private void ParseBareWord()
     {
@@ -97,10 +93,11 @@ internal class CommandLineParser
 
             ++i;
         }
+        return;
     }
 
     /// <summary>
-    ///     Parse an escape sequence of one or more backslashes followed an an optional trailing quotation mark
+    /// Parse an escape sequence of one or more backslashes followed an an optional trailing quotation mark
     /// </summary>
     private void ParseEscapeSequence()
     {
@@ -150,13 +147,18 @@ internal class CommandLineParser
                 ++i;
             }
         }
+        return;
     }
 
     /// <summary>
-    ///     Consume inter-argument whitespace
+    /// Consume inter-argument whitespace
     /// </summary>
     private void ConsumeWhitespace()
     {
-        while (i < cmd.Length && char.IsWhiteSpace(cmd[i])) ++i;
+        while (i < cmd.Length && char.IsWhiteSpace(cmd[i]))
+        {
+            ++i;
+        }
+        return;
     }
 }

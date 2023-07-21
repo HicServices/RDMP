@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using CommandLine;
 using NLog;
-using NLog.Config;
 using Rdmp.Core.CommandLine;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Gui;
@@ -19,15 +18,14 @@ using Rdmp.Core.Logging.Listeners.NLogListeners;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.Startup.Events;
 
 namespace Rdmp.Core;
 
 internal class Program
 {
     /// <summary>
-    ///     True if the user passed the -q switch at startup to suppress any helpful messages we might
-    ///     show (e.g. maybe they want to pipe the results somewhere)
+    /// True if the user passed the -q switch at startup to suppress any helpful messages we might
+    /// show (e.g. maybe they want to pipe the results somewhere)
     /// </summary>
     public static bool Quiet { get; private set; }
 
@@ -35,21 +33,21 @@ internal class Program
     {
         try
         {
-            var nlog = Path.Combine(AppContext.BaseDirectory, "NLog.config");
+            var nlog = Path.Combine(AppContext.BaseDirectory ,"NLog.config");
 
             if (File.Exists(nlog))
             {
                 LogManager.ThrowConfigExceptions = false;
-                LogManager.Configuration = new XmlLoggingConfiguration(nlog);
+                LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog);
             }
+                    
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             Console.WriteLine($"Could not load NLog.config:{ex.Message}");
         }
-
-        if (args.Any(a => a.Equals("-q")) ||
-            args.Any(a => a.Equals("--quiet", StringComparison.CurrentCultureIgnoreCase)))
+            
+        if(args.Any(a=>a.Equals("-q")) || args.Any(a=>a.Equals("--quiet",StringComparison.CurrentCultureIgnoreCase)))
         {
             Quiet = true;
 
@@ -63,18 +61,20 @@ internal class Program
 
         Startup.Startup.PreStartup();
 
-        return HandleArguments(args, logger);
+        return HandleArguments(args,logger);
     }
 
     /// <summary>
-    ///     Disables all log targets that contain the word 'Console'.  This prevents logging output
-    ///     corrupting the screen during TUI or cli use (e.g. with -q flag).
+    /// Disables all log targets that contain the word 'Console'.  This prevents logging output
+    /// corrupting the screen during TUI or cli use (e.g. with -q flag).
     /// </summary>
     public static void DisableConsoleLogging()
     {
         foreach (var t in LogManager.Configuration.AllTargets.ToArray())
+        {
             if (t.GetType().Name.Contains("Console", StringComparison.CurrentCultureIgnoreCase))
                 LogManager.Configuration.RemoveTarget(t.Name);
+        }
     }
 
     private static int HandleArguments(string[] args, Logger logger)
@@ -112,8 +112,7 @@ internal class Program
                         {
                             if (HasHelpArguments(args))
                                 return returnCode = 0;
-                            return returnCode =
-                                RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
+                            return returnCode = RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
                         });
 
             logger.Info($"Exiting with code {returnCode}");
@@ -142,7 +141,7 @@ internal class Program
         var prefix = opts.Prefix;
 
         Console.WriteLine($"About to create on server '{serverName}' databases with prefix '{prefix}'");
-
+            
         try
         {
             PlatformDatabaseCreation.CreatePlatformDatabases(opts);
@@ -152,39 +151,40 @@ internal class Program
             Console.WriteLine(e);
             return -1;
         }
-
         return 0;
     }
 
-
+        
     private static int Run(PatchDatabaseOptions opts)
     {
         opts.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
 
         var repo = opts.GetRepositoryLocator();
 
-        if (!RdmpCommandLineBootStrapper.CheckRepo(repo)) return RdmpCommandLineBootStrapper.REPO_ERROR;
+        if(!RdmpCommandLineBootStrapper.CheckRepo(repo))
+        {
+            return RdmpCommandLineBootStrapper.REPO_ERROR;
+        }
 
         var checker = new NLogICheckNotifier(true, false);
 
         var start = new Startup.Startup(RdmpCommandLineBootStrapper.GetEnvironmentInfo(), repo);
         var badTimes = false;
 
-        start.DatabaseFound += (s, e) =>
-        {
-            var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
+        start.DatabaseFound += (s,e)=>{
 
+            var db = e.Repository.DiscoveredServer.GetCurrentDatabase();
+                     
             switch (e.Status)
             {
-                case RDMPPlatformDatabaseStatus.RequiresPatching:
+                case Startup.Events.RDMPPlatformDatabaseStatus.RequiresPatching:
                 {
-                    var mds = new MasterDatabaseScriptExecutor(db);
+                        var mds = new MasterDatabaseScriptExecutor(db);
                     mds.PatchDatabase(e.Patcher, checker, p => true, () => opts.BackupDatabase);
                     break;
                 }
-                case <= RDMPPlatformDatabaseStatus.Broken:
-                    checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",
-                        CheckResult.Fail));
+                case <= Startup.Events.RDMPPlatformDatabaseStatus.Broken:
+                    checker.OnCheckPerformed(new CheckEventArgs($"Database {db} had status {e.Status}",CheckResult.Fail));
                     badTimes = true;
                     break;
             }
@@ -192,6 +192,6 @@ internal class Program
 
         start.DoStartup(new IgnoreAllErrorsCheckNotifier());
 
-        return badTimes ? -1 : 0;
+        return badTimes ? -1 :0;
     }
 }

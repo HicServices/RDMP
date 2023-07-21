@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -16,19 +15,14 @@ using Rdmp.UI.SimpleDialogs;
 namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
-///     Text box for entering Sql Server connection strings, includes autocomplete support for keywords (e.g. Database)
+/// Text box for entering Sql Server connection strings, includes autocomplete support for keywords (e.g. Database)
 /// </summary>
-[DesignerCategory("")]
+[System.ComponentModel.DesignerCategory("")]
 public class ConnectionStringTextBox : TextBox
 {
     private DatabaseType _databaseType;
-    private readonly List<string> supportedKeywords = new();
-    private bool suppressAutocomplete;
-
-    public ConnectionStringTextBox()
-    {
-        DatabaseType = DatabaseType.MicrosoftSQLServer;
-    }
+    private List<string> supportedKeywords = new();
+    private bool suppressAutocomplete = false;
 
     public DatabaseType DatabaseType
     {
@@ -62,8 +56,8 @@ public class ConnectionStringTextBox : TextBox
                 supportedKeywords.Add("Addr");
                 supportedKeywords.Add("Network Address");
                 supportedKeywords.Add("Application Name");
-
-
+                    
+                    
                 break;
             case DatabaseType.MySql:
                 throw new NotImplementedException();
@@ -73,12 +67,17 @@ public class ConnectionStringTextBox : TextBox
         }
     }
 
+    public ConnectionStringTextBox()
+    {
+        DatabaseType = DatabaseType.MicrosoftSQLServer;
+    }
+
     protected override void OnTextChanged(EventArgs e)
     {
         try
         {
             base.OnTextChanged(e);
-
+            
             //set text color to black by default
             ForeColor = Color.Black;
 
@@ -113,14 +112,13 @@ public class ConnectionStringTextBox : TextBox
 
             if (string.IsNullOrWhiteSpace(lastBitBeingTyped) //user has not typed anything or has just put in a ;
                 ||
-                lastBitBeingTyped
-                    .Contains('=')) //user has typed Password=bobsca <- i.e. he is midway through typing a value not a key
+                lastBitBeingTyped.Contains('='))//user has typed Password=bobsca <- i.e. he is midway through typing a value not a key
                 return;
 
             //we will suggest Server because user typed se
             var keywordToSuggest = candidates.FirstOrDefault(c => c.ToLower().StartsWith(lastBitBeingTyped.ToLower()));
 
-            if (keywordToSuggest == null) //nothing to suggest, user is typing crazy fool stuff
+            if (keywordToSuggest == null)//nothing to suggest, user is typing crazy fool stuff
             {
                 ForeColor = Color.DarkRed;
                 return;
@@ -138,9 +136,8 @@ public class ConnectionStringTextBox : TextBox
             Text = Text.Insert(whereUserIsCurrently, bitToSuggest);
             SelectionStart = whereUserIsCurrently;
             SelectionLength = TextLength - whereUserIsCurrently;
-            suppressAutocomplete = false; //we are done
-        }
-        catch (Exception ex)
+            suppressAutocomplete = false;//we are done
+        } catch (Exception ex) 
         {
             ExceptionViewer.Show(ex);
         }
@@ -150,16 +147,17 @@ public class ConnectionStringTextBox : TextBox
     {
         base.OnKeyDown(e);
 
-        if (e.Handled) //someone else suppressed it
+        if(e.Handled)//someone else suppressed it
             return;
 
         //if user is doing control c or control v or something
         if (e.Control)
             suppressAutocomplete = true;
-        else if (char.IsLetterOrDigit((char)e.KeyCode) || e.KeyCode == Keys.Space)
+        else
+        if (char.IsLetterOrDigit((char)e.KeyCode) || e.KeyCode == Keys.Space)
             suppressAutocomplete = false;
         else
-            suppressAutocomplete =
-                true; //user is pressing some arrow keys or delete keys or something, don't suggest anything until 
+            suppressAutocomplete = true;//user is pressing some arrow keys or delete keys or something, don't suggest anything until 
     }
+
 }

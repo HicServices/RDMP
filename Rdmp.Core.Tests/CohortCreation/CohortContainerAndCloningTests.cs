@@ -53,12 +53,13 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
     [Test]
     public void CloneChild_NamingCorrectNewObject()
     {
+
         //should not follow naming convention
         aggregate1.Name = "fish";
         Assert.IsFalse(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregate1));
 
         //add a clone using aggregate1 as a template 
-        var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1, null);
+        var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1,null);
         //add the clone
         rootcontainer.AddChild(clone, 0);
 
@@ -73,6 +74,7 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
 
             //clone should have a different ID - also it was created after so should be higher ID
             Assert.Greater(aggregateConfigurations[0].ID, aggregate1.ID);
+
         }
         finally
         {
@@ -85,7 +87,6 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
             clone.DeleteInDatabase();
         }
     }
-
     [Test]
     public void CloneChildWithFilter_IDsDifferent()
     {
@@ -113,7 +114,7 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
         var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1, null);
 
         //since its a cohort aggregate it should be identical to the origin Aggregate except it has a different ID and no count SQL
-        Assert.AreEqual(clone.CountSQL, null);
+        Assert.AreEqual(clone.CountSQL,null);
 
         //get the original sql
         var aggregateSql = aggregate1.GetQueryBuilder().SQL;
@@ -134,20 +135,20 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
             Assert.AreNotEqual(cloneParameter.ID, param.ID);
 
             //it has a different ID and is part of an aggregate filter container (It is presumed to be involved with cohort identification cohortIdentificationConfiguration) which means it will be called cic_X_
-            var cohortAggregateSql = new CohortQueryBuilder(clone, null, null).SQL;
+            var cohortAggregateSql = new CohortQueryBuilder(clone,null,null).SQL;
 
 
 //the basic aggregate has the filter, parameter and group by
             Assert.AreEqual(CollapseWhitespace(
-                    string.Format(
-                        @"DECLARE @sex AS varchar(50);
+                string.Format(
+                    @"DECLARE @sex AS varchar(50);
 SET @sex='M';
 /*cic_{0}_UnitTestAggregate1*/
 SELECT 
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi],
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi],
 count(*)
 FROM 
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 WHERE
 (
 /*MyFilter*/
@@ -155,10 +156,9 @@ sex=@sex
 )
 
 group by 
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 order by 
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]", cohortIdentificationConfiguration.ID)),
-                CollapseWhitespace(aggregateSql));
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]",cohortIdentificationConfiguration.ID)), CollapseWhitespace(aggregateSql));
 
 //the expected differences are
 //1. should not have the count
@@ -199,8 +199,8 @@ sex=@sex
         rootcontainer.AddChild(aggregate1, 5);
 
         rootcontainer.AddChild(container1);
-        container1.AddChild(aggregate2, 1);
-        container1.AddChild(aggregate3, 2);
+        container1.AddChild(aggregate2,1);
+        container1.AddChild(aggregate3,2);
 
 
         //create a filter too
@@ -213,7 +213,7 @@ sex=@sex
         {
             WhereSQL = "sex=@sex"
         };
-        new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
+        new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter,null);
         filter.SaveToDatabase();
 
         //with a parameter too
@@ -232,28 +232,28 @@ sex=@sex
             Assert.AreNotEqual(cohortIdentificationConfiguration.ID, clone.ID);
             Assert.IsTrue(clone.Name.EndsWith("(Clone)"));
 
-            Assert.AreNotEqual(clone.RootCohortAggregateContainer_ID,
-                cohortIdentificationConfiguration.RootCohortAggregateContainer_ID);
+            Assert.AreNotEqual(clone.RootCohortAggregateContainer_ID, cohortIdentificationConfiguration.RootCohortAggregateContainer_ID);
             Assert.IsNotNull(clone.RootCohortAggregateContainer_ID);
 
-            var beforeSQL = new CohortQueryBuilder(cohortIdentificationConfiguration, null).SQL;
-            var cloneSQL = new CohortQueryBuilder(clone, null).SQL;
+            var beforeSQL = new CohortQueryBuilder(cohortIdentificationConfiguration,null).SQL;
+            var cloneSQL = new CohortQueryBuilder(clone,null).SQL;
 
             beforeSQL = Regex.Replace(beforeSQL, "cic_[0-9]+_", "");
             cloneSQL = Regex.Replace(cloneSQL, "cic_[0-9]+_", "");
 
             //the SQL should be the same for them 
-            Assert.AreEqual(beforeSQL, cloneSQL);
+            Assert.AreEqual(beforeSQL,cloneSQL);
 
             var containerClone = clone.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
                 .Where(a => a.RootFilterContainer_ID != null)
                 .Select(ag => ag.RootFilterContainer).Single();
 
             Assert.AreNotEqual(container, containerClone);
-
+                
             //cleanup phase
             clone.DeleteInDatabase();
             containerClone.DeleteInDatabase();
+
         }
         finally
         {
@@ -265,4 +265,5 @@ sex=@sex
             container.DeleteInDatabase();
         }
     }
+
 }

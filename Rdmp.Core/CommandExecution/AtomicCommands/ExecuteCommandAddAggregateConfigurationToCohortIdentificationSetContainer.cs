@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
@@ -13,21 +14,32 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer : BasicCommandExecution
+public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer :BasicCommandExecution
 {
     private readonly AggregateConfigurationCombineable _aggregateConfigurationCombineable;
-    private readonly bool _offerCohortAggregates;
     private readonly CohortAggregateContainer _targetCohortAggregateContainer;
-    private readonly AggregateConfiguration[] _available;
+    private readonly bool _offerCohortAggregates;
+    private AggregateConfiguration[] _available;
+
+    public AggregateConfiguration AggregateCreatedIfAny { get; private set; }
+
+    /// <summary>
+    /// True if the <see cref="AggregateConfigurationCombineable"/> passed to the constructor was a newly created one and does
+    /// not need cloning.
+    /// </summary>
+    public bool DoNotClone { get; set; }
+
+    private void SetCommandWeight()
+    {
+        Weight = _offerCohortAggregates ? 0.14f : 0.13f;
+    }
 
 
-    private ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator,
-        CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+    private ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
     {
         _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
@@ -38,9 +50,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         SetCommandWeight();
     }
 
-    public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator,
-        AggregateConfigurationCombineable aggregateConfigurationCommand,
-        CohortAggregateContainer targetCohortAggregateContainer) : this(activator, targetCohortAggregateContainer)
+    public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator,AggregateConfigurationCombineable aggregateConfigurationCommand, CohortAggregateContainer targetCohortAggregateContainer) : this(activator,targetCohortAggregateContainer)
     {
         _aggregateConfigurationCombineable = aggregateConfigurationCommand;
 
@@ -48,36 +58,36 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator,
-        AggregateConfiguration aggregateConfiguration, CohortAggregateContainer targetCohortAggregateContainer)
+    public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems activator, AggregateConfiguration aggregateConfiguration, CohortAggregateContainer targetCohortAggregateContainer)
         : this(activator, new AggregateConfigurationCombineable(aggregateConfiguration), targetCohortAggregateContainer)
     {
     }
 
     /// <summary>
-    ///     Constructor for selecting one or more aggregates at execute time
+    /// Constructor for selecting one or more aggregates at execute time
     /// </summary>
     /// <param name="basicActivator"></param>
     /// <param name="targetCohortAggregateContainer"></param>
     /// <param name="offerCohortAggregates"></param>
-    public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems basicActivator,
-        CohortAggregateContainer targetCohortAggregateContainer, bool offerCohortAggregates) : this(basicActivator,
-        targetCohortAggregateContainer)
+    public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IBasicActivateItems basicActivator, CohortAggregateContainer targetCohortAggregateContainer, bool offerCohortAggregates) : this(basicActivator, targetCohortAggregateContainer)
     {
-        if (offerCohortAggregates)
+        if(offerCohortAggregates)
         {
-            _available = BasicActivator.CoreChildProvider.AllAggregateConfigurations
-                .Where(c => c.IsCohortIdentificationAggregate && !c.IsJoinablePatientIndexTable()).ToArray();
+            _available = BasicActivator.CoreChildProvider.AllAggregateConfigurations.Where(c =>c.IsCohortIdentificationAggregate && !c.IsJoinablePatientIndexTable()).ToArray();
 
-            if (_available.Length == 0) SetImpossible("You do not currently have any cohort sets");
+            if(_available.Length == 0)
+            {
+                SetImpossible("You do not currently have any cohort sets");
+            }
         }
         else
         {
-            _available = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<AggregateConfiguration>()
-                .Where(c => !c.IsCohortIdentificationAggregate).ToArray();
+            _available = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<AggregateConfiguration>().Where(c => !c.IsCohortIdentificationAggregate).ToArray();
 
             if (_available.Length == 0)
+            {
                 SetImpossible("You do not currently have any non-cohort AggregateConfigurations");
+            }
         }
 
         _offerCohortAggregates = offerCohortAggregates;
@@ -85,25 +95,9 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         SetCommandWeight();
     }
 
-    public AggregateConfiguration AggregateCreatedIfAny { get; private set; }
-
-    /// <summary>
-    ///     True if the <see cref="AggregateConfigurationCombineable" /> passed to the constructor was a newly created one and
-    ///     does
-    ///     not need cloning.
-    /// </summary>
-    public bool DoNotClone { get; set; }
-
-    private void SetCommandWeight()
-    {
-        Weight = _offerCohortAggregates ? 0.14f : 0.13f;
-    }
-
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        return _offerCohortAggregates
-            ? iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Add)
-            : iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
+        return _offerCohortAggregates ? iconProvider.GetImage(RDMPConcept.CohortAggregate,OverlayKind.Add): iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
     }
 
     public override string GetCommandName()
@@ -114,9 +108,9 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
         // if an execute time decision is expected then command name should reflect the kind of available objects the user can add
         if (_available?.Any() ?? false)
-            return _offerCohortAggregates
-                ? "Import (Copy of) Cohort Set into container"
-                : "Add Aggregate(s) into container";
+        {
+            return _offerCohortAggregates ? "Import (Copy of) Cohort Set into container" : "Add Aggregate(s) into container";
+        }
 
         return base.GetCommandName();
     }
@@ -131,7 +125,10 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         {
             // runtime decision is required
 
-            if (available == null || !available.Any()) throw new Exception("There are no available objects to add");
+            if(available == null || !available.Any())
+            {
+                throw new Exception("There are no available objects to add");
+            }
 
             // Are there templates that we can use instead of showing all?
             var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
@@ -141,29 +138,33 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
                 .ToArray();
 
             // yes
-            if (templates.Any())
+            if(templates.Any())
             {
                 // ask user if they want to use a template
-                if (BasicActivator.YesNo(new DialogArgs
-                    {
-                        WindowTitle = "Use Template?",
-                        TaskDescription =
-                            $"You have {templates.Length} AggregateConfiguration templates, do you want to use one of these?"
-                    }, out var useTemplate))
+                if(BasicActivator.YesNo(new DialogArgs
+                   {
+                       WindowTitle = "Use Template?",
+                       TaskDescription = $"You have {templates.Length} AggregateConfiguration templates, do you want to use one of these?"
+                   },out var useTemplate))
+                {
                     available = useTemplate ? templates : available.Except(templates).ToArray();
+                }
                 else
+                {
                     // cancel clicked?
                     return;
+                }
             }
 
-            if (!BasicActivator.SelectObjects(new DialogArgs
-                {
-                    WindowTitle = "Add Aggregate Configuration(s) to Container",
-                    TaskDescription =
-                        $"Choose which AggregateConfiguration(s) to add to the cohort container '{_targetCohortAggregateContainer.Name}'."
-                }, available, out var selected))
+            if(!BasicActivator.SelectObjects(new DialogArgs
+               {
+                   WindowTitle = "Add Aggregate Configuration(s) to Container",
+                   TaskDescription = $"Choose which AggregateConfiguration(s) to add to the cohort container '{_targetCohortAggregateContainer.Name}'."
+               },available,out var selected))
+            {
                 // user cancelled
                 return;
+            }
 
             foreach (var aggregateConfiguration in selected)
             {
@@ -173,7 +174,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         }
         else
         {
-            Execute(_aggregateConfigurationCombineable, true);
+            Execute(_aggregateConfigurationCombineable,true);
         }
 
         if (AggregateCreatedIfAny != null)
@@ -182,12 +183,12 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
 
     private void Execute(AggregateConfigurationCombineable toAdd, bool publish)
     {
+
         var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
 
         var child = DoNotClone
             ? toAdd.Aggregate
-            : cic.ImportAggregateConfigurationAsIdentifierList(toAdd.Aggregate,
-                (a, b) => CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(BasicActivator, a, b));
+            : cic.ImportAggregateConfigurationAsIdentifierList(toAdd.Aggregate, (a, b) => CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(BasicActivator, a, b));
 
         //current contents
         var contents = _targetCohortAggregateContainer.GetOrderedContents().ToArray();
@@ -201,7 +202,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         _targetCohortAggregateContainer.CreateInsertionPointAtOrder(child, minimumOrder, true);
         _targetCohortAggregateContainer.AddChild(child, minimumOrder);
 
-        if (publish)
+        if(publish)
             Publish(_targetCohortAggregateContainer);
 
         AggregateCreatedIfAny = child;

@@ -17,14 +17,13 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
+public class SafePrimaryKeyCollisionResolverMutilationTests:DatabaseTests
 {
-    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
-    [TestCase(DatabaseType.MySql, true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+    [TestCase(DatabaseType.MySql,true)]
     [TestCase(DatabaseType.MicrosoftSQLServer, false)]
     [TestCase(DatabaseType.MySql, false)]
-    public void SafePrimaryKeyCollisionResolverMutilationTests_NoDifference_NoRecordsDeleted(DatabaseType dbType,
-        bool bothNull)
+    public void SafePrimaryKeyCollisionResolverMutilationTests_NoDifference_NoRecordsDeleted(DatabaseType dbType,bool bothNull)
     {
         var db = GetCleanedServer(dbType);
 
@@ -32,15 +31,15 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         dt.Columns.Add("PK");
         dt.Columns.Add("ResolveOn");
         dt.Columns.Add("AnotherCol");
-
-        dt.Rows.Add(1, bothNull ? null : "fish", "cat");
+            
+        dt.Rows.Add(1, bothNull?null:"fish", "cat");
         dt.Rows.Add(1, bothNull ? null : "fish", "flop");
         dt.Rows.Add(2, "fish", "flop");
         dt.Rows.Add(3, "dave", "franl");
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Import(tbl, out var ti, out var cis);
+        Import(tbl,out var ti, out var cis);
 
         var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
         pk.IsPrimaryKey = true;
@@ -58,15 +57,13 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         mutilation.Initialize(db, LoadStage.AdjustRaw);
         mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server)));
 
-        Assert.AreEqual(4, tbl.GetRowCount());
+        Assert.AreEqual(4,tbl.GetRowCount());
     }
-
-    [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-    [TestCase(DatabaseType.MySql, false)]
+    [TestCase(DatabaseType.MicrosoftSQLServer,false)]
+    [TestCase(DatabaseType.MySql,false)]
     [TestCase(DatabaseType.MicrosoftSQLServer, true)]
     [TestCase(DatabaseType.MySql, true)]
-    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferNull_RecordsDeleted(DatabaseType dbType,
-        bool preferNulls)
+    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferNull_RecordsDeleted(DatabaseType dbType,bool preferNulls)
     {
         var db = GetCleanedServer(dbType);
 
@@ -102,18 +99,13 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
 
         Assert.AreEqual(3, tbl.GetRowCount());
         var result = tbl.GetDataTable();
-
+            
         //if you prefer nulls you shouldn't want this one
-        Assert.AreEqual(preferNulls ? 0 : 1,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferNulls? 0:1 ,result.Rows.Cast<DataRow>().Count(r=>(int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop" ));
 
         //if you prefer nulls you should have this one
-        Assert.AreEqual(preferNulls ? 1 : 0,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+        Assert.AreEqual(preferNulls ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
     }
-
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]
     public void SafePrimaryKeyCollisionResolverMutilationTests_WithDatabaseNamer_RecordsDeleted(DatabaseType dbType)
@@ -135,7 +127,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         Import(tbl, out var ti, out var cis);
 
         tbl.Rename("AAAA");
-        var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
+        var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db,"AAAA");
 
         var pk = cis.Single(c => c.GetRuntimeName().Equals("PK"));
         pk.IsPrimaryKey = true;
@@ -151,20 +143,16 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         };
 
         mutilation.Initialize(db, LoadStage.AdjustRaw);
-        mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server, namer), ti));
+        mutilation.Mutilate(new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(db.Server,namer), ti));
 
         Assert.AreEqual(3, tbl.GetRowCount());
         var result = tbl.GetDataTable();
 
         //if you prefer nulls you shouldn't want this one
-        Assert.AreEqual(0,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual( 0 , result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"));
 
         //if you prefer nulls you should have this one
-        Assert.AreEqual(1,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+        Assert.AreEqual(1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
     }
 
 
@@ -172,8 +160,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
     [TestCase(DatabaseType.MySql, false)]
     [TestCase(DatabaseType.MicrosoftSQLServer, true)]
     [TestCase(DatabaseType.MySql, true)]
-    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_RecordsDeleted(DatabaseType dbType,
-        bool preferLarger)
+    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_RecordsDeleted(DatabaseType dbType, bool preferLarger)
     {
         var db = GetCleanedServer(dbType);
 
@@ -212,26 +199,20 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         var result = tbl.GetDataTable();
 
         //if you like larger values (alphabetically) then you want the 'b'
-        Assert.AreEqual(preferLarger ? 1 : 0,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] as string == "b" && r["AnotherCol"] as string == "flop"));
-        Assert.AreEqual(preferLarger ? 0 : 1,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] as string == "a" && r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "b" && r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] as string == "a" && r["AnotherCol"] as string == "flop"));
 
         //either way you shouldn't have the null one
-        Assert.AreEqual(0,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+        Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
     }
+
 
 
     [TestCase(DatabaseType.MicrosoftSQLServer, false)]
     [TestCase(DatabaseType.MySql, false)]
     [TestCase(DatabaseType.MicrosoftSQLServer, true)]
     [TestCase(DatabaseType.MySql, true)]
-    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_Dates_RecordsDeleted(DatabaseType dbType,
-        bool preferLarger)
+    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_Dates_RecordsDeleted(DatabaseType dbType, bool preferLarger)
     {
         var db = GetCleanedServer(dbType);
 
@@ -241,7 +222,7 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         dt.Columns.Add("AnotherCol");
 
         dt.Rows.Add(1, null, "cat");
-        dt.Rows.Add(1, new DateTime(2001, 01, 01), "flop");
+        dt.Rows.Add(1, new DateTime(2001,01,01), "flop");
         dt.Rows.Add(1, new DateTime(2002, 01, 01), "flop");
         dt.Rows.Add(2, null, "flop");
         dt.Rows.Add(3, null, "franl");
@@ -270,27 +251,18 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         var result = tbl.GetDataTable();
 
         //if you like larger values then you want 2002 thats larger than 2001
-        Assert.AreEqual(preferLarger ? 1 : 0,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
-                r["AnotherCol"] as string == "flop"));
-        Assert.AreEqual(preferLarger ? 0 : 1,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
-                r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002,01,01)) && r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2001,01,01))  && r["AnotherCol"] as string == "flop"));
 
         //either way you shouldn't have the null one
-        Assert.AreEqual(0,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
+        Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer, false)]
     [TestCase(DatabaseType.MySql, false)]
     [TestCase(DatabaseType.MicrosoftSQLServer, true)]
     [TestCase(DatabaseType.MySql, true)]
-    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_ComboKey_RecordsDeleted(DatabaseType dbType,
-        bool preferLarger)
+    public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_ComboKey_RecordsDeleted(DatabaseType dbType, bool preferLarger)
     {
         var db = GetCleanedServer(dbType);
 
@@ -300,17 +272,17 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         dt.Columns.Add("ResolveOn");
         dt.Columns.Add("AnotherCol");
 
-        dt.Rows.Add(1, 1, null, "cat");
-        dt.Rows.Add(1, 1, new DateTime(2001, 01, 01), "flop");
-        dt.Rows.Add(1, 1, new DateTime(2002, 01, 01), "flop");
+        dt.Rows.Add(1,1, null, "cat");
+        dt.Rows.Add(1,1, new DateTime(2001, 01, 01), "flop");
+        dt.Rows.Add(1,1, new DateTime(2002, 01, 01), "flop");
 
         dt.Rows.Add(1, 2, null, "cat");
         dt.Rows.Add(1, 2, null, "cat");
         dt.Rows.Add(1, 3, new DateTime(2001, 01, 01), "flop");
         dt.Rows.Add(1, 4, new DateTime(2002, 01, 01), "flop");
 
-        dt.Rows.Add(2, 1, null, "flop");
-        dt.Rows.Add(3, 1, null, "franl");
+        dt.Rows.Add(2,1, null, "flop");
+        dt.Rows.Add(3,1, null, "franl");
 
         var tbl = db.CreateTable("MyTable", dt);
 
@@ -340,19 +312,10 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         var result = tbl.GetDataTable();
 
         //if you like larger values then you want 2002 thats larger than 2001
-        Assert.AreEqual(preferLarger ? 1 : 0,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
-                r["AnotherCol"] as string == "flop"));
-        Assert.AreEqual(preferLarger ? 0 : 1,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
-                r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferLarger ? 1 : 0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) && r["AnotherCol"] as string == "flop"));
+        Assert.AreEqual(preferLarger ? 0 : 1, result.Rows.Cast<DataRow>().Count(r => (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) && r["AnotherCol"] as string == "flop"));
 
         //either way you shouldn't have the null one
-        Assert.AreEqual(0,
-            result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && r["ResolveOn"] == DBNull.Value &&
-                r["AnotherCol"] as string == "cat"));
+        Assert.AreEqual(0, result.Rows.Cast<DataRow>().Count(r => (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"));
     }
 }

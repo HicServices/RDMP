@@ -12,13 +12,13 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
 /// <summary>
-///     See StageArgs
+/// See StageArgs
 /// </summary>
 public interface IStageArgs
 {
-    DiscoveredDatabase DbInfo { get; }
+    DiscoveredDatabase DbInfo { get;}
+    Dictionary<string, object> ToDictionary();
 
     ILoadDirectory RootDir { get; }
-    LoadStage LoadStage { get; }
-    Dictionary<string, object> ToDictionary();
+    LoadStage LoadStage { get;}
 }

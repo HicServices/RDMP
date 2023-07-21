@@ -7,7 +7,7 @@
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-///     Handles high level management of all the loaded <see cref="Plugin" /> in the <see cref="ICatalogueRepository" />
+/// Handles high level management of all the loaded <see cref="Plugin"/> in the <see cref="ICatalogueRepository"/>
 /// </summary>
 public interface IPluginManager
 {

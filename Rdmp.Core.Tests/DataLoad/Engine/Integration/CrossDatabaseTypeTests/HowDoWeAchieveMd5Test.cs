@@ -12,15 +12,16 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests;
 
-internal class HowDoWeAchieveMd5Test : DatabaseTests
+internal class HowDoWeAchieveMd5Test:DatabaseTests
 {
+
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]
     public void TestMd5String(DatabaseType type)
     {
         var dt = new DataTable();
         dt.Columns.Add("F");
-        dt.Rows.Add("Fish");
+        dt.Rows.Add(new[] {"Fish"});
 
         var db = GetCleanedServer(type);
         var tbl = db.CreateTable("MD5Test", dt);
@@ -41,8 +42,9 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
             Console.WriteLine($"Value was:{value}");
 
             Assert.IsNotNull(value);
-            Assert.AreNotEqual("Fish", value);
-            Assert.GreaterOrEqual(value.ToString().Length, 32);
+            Assert.AreNotEqual("Fish",value);
+            Assert.GreaterOrEqual(value.ToString().Length,32);
+                
         }
     }
 
@@ -52,16 +54,15 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
     {
         var dt = new DataTable();
         dt.Columns.Add("F");
-        dt.Rows.Add("2001-01-01");
+        dt.Rows.Add(new[] { "2001-01-01" });
 
         var db = GetCleanedServer(type);
         var tbl = db.CreateTable("MD5Test", dt);
 
         var col = tbl.DiscoverColumn("F");
 
-
-        Assert.AreEqual(typeof(DateTime),
-            tbl.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.DataType.SQLType));
+            
+        Assert.AreEqual(typeof(DateTime),tbl.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.DataType.SQLType));
 
 
         var sql =
@@ -79,6 +80,8 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
 
             Assert.IsNotNull(value);
             Assert.GreaterOrEqual(value.ToString().Length, 32);
+
         }
     }
+
 }

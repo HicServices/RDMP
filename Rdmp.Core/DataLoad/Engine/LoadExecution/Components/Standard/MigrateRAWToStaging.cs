@@ -17,9 +17,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 
 /// <summary>
-///     DLE component resonsible for streaming data off the RAW database and writing it to the STAGING database.  Happens
-///     one table at a time with the actual
-///     implementation of moving data in MigrateRAWTableToStaging (See MigrateRAWTableToStaging).
+/// DLE component resonsible for streaming data off the RAW database and writing it to the STAGING database.  Happens one table at a time with the actual
+/// implementation of moving data in MigrateRAWTableToStaging (See MigrateRAWTableToStaging).
 /// </summary>
 public class MigrateRAWToStaging : DataLoadComponent
 {
@@ -27,9 +26,8 @@ public class MigrateRAWToStaging : DataLoadComponent
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
 
     private readonly Stack<IDisposeAfterDataLoad> _toDispose = new();
-
-    public MigrateRAWToStaging(HICDatabaseConfiguration databaseConfiguration,
-        HICLoadConfigurationFlags loadConfigurationFlags)
+                
+    public MigrateRAWToStaging(HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags)
     {
         _databaseConfiguration = databaseConfiguration;
         _loadConfigurationFlags = loadConfigurationFlags;
@@ -40,20 +38,20 @@ public class MigrateRAWToStaging : DataLoadComponent
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        if (Skip(job))
+        if (Skip(job)) 
             return ExitCodeType.Error;
 
 
         // To be on the safe side, we will create/destroy the staging tables on a per-load basis
         if (_databaseConfiguration.RequiresStagingTableCreation)
             CreateStagingTables(job);
-
+            
         DoMigration(job, cancellationToken);
 
         return ExitCodeType.Success;
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
     {
         while (_toDispose.Any())
             _toDispose.Pop().LoadCompletedSoDispose(exitCode, postLoadEventListener);
@@ -63,14 +61,13 @@ public class MigrateRAWToStaging : DataLoadComponent
     {
         foreach (var regularTableInfo in job.RegularTablesToLoad)
             MigrateRAWTableToStaging(job, regularTableInfo, false, cancellationToken);
-
+            
         foreach (var lookupTableInfo in job.LookupTablesToLoad)
             MigrateRAWTableToStaging(job, lookupTableInfo, true, cancellationToken);
     }
 
 
-    private void MigrateRAWTableToStaging(IDataLoadJob job, ITableInfo tableInfo, bool isLookupTable,
-        GracefulCancellationToken cancellationToken)
+    private void MigrateRAWTableToStaging(IDataLoadJob job, ITableInfo tableInfo, bool isLookupTable, GracefulCancellationToken cancellationToken)
     {
         var component = new MigrateRAWTableToStaging(tableInfo, isLookupTable, _databaseConfiguration);
         component.Run(job, cancellationToken);
@@ -80,5 +77,6 @@ public class MigrateRAWToStaging : DataLoadComponent
     {
         var cloner = new DatabaseCloner(_databaseConfiguration);
         job.CreateTablesInStage(cloner, LoadBubble.Staging);
+         
     }
 }

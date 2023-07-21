@@ -10,45 +10,43 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Reports.DublinCore;
 
 /// <summary>
-///     Handles updating / extracting data from RDMP objects using the interchange object DublinCoreDefinition
+/// Handles updating / extracting data from RDMP objects using the interchange object DublinCoreDefinition
 /// </summary>
 public class DublinCoreTranslater
 {
     /// <summary>
-    ///     Populates the given <paramref name="toFill" /> with the descriptions stored in <paramref name="fillWith" />.   This
-    ///     will overwrite previous values.
-    ///     <para>Not all object types T are supported</para>
+    /// Populates the given <paramref name="toFill"/> with the descriptions stored in <paramref name="fillWith"/>.   This will overwrite previous values. 
+    /// 
+    /// <para>Not all object types T are supported</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="toFill"></param>
     /// <param name="fillWith"></param>
-    public static void Fill<T>(T toFill, DublinCoreDefinition fillWith)
+    public static void Fill<T>(T toFill,DublinCoreDefinition fillWith)
     {
         if (toFill is Catalogue c)
         {
             //only overwritte name if Catalogue has default blank name
-            if (c.Name != null && c.Name.StartsWith("New Catalogue ", StringComparison.CurrentCultureIgnoreCase))
+            if (c.Name != null && c.Name.StartsWith("New Catalogue ",StringComparison.CurrentCultureIgnoreCase))
                 c.Name = fillWith.Title;
 
             c.Description = fillWith.Description;
             c.Search_keywords = fillWith.Subject;
 
             //only change Acronym if it was null before
-            if (string.IsNullOrWhiteSpace(c.Acronym))
+            if(string.IsNullOrWhiteSpace(c.Acronym))
                 c.Acronym = fillWith.Alternative;
         }
         else
-        {
             throw new NotSupportedException(
                 $"Did not know how to hydrate the Type {typeof(T)} from a DublinCoreDefinition");
-        }
     }
 
     /// <summary>
-    ///     Generates a <see cref="DublinCoreDefinition" /> for the provided <paramref name="generateFrom" /> by reading
-    ///     specific fields out of the object
-    ///     and translating them to dublin core metadata fields.
-    ///     <para>Not all object types T are supported</para>
+    /// Generates a <see cref="DublinCoreDefinition"/> for the provided <paramref name="generateFrom"/> by reading specific fields out of the object
+    /// and translating them to dublin core metadata fields.
+    /// 
+    /// <para>Not all object types T are supported</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="generateFrom"></param>
@@ -65,10 +63,8 @@ public class DublinCoreTranslater
             toReturn.Alternative = c.Acronym;
         }
         else
-        {
             throw new NotSupportedException(
                 $"Did not know how to extracta a DublinCoreDefinition from the Type {typeof(T)}");
-        }
 
         return toReturn;
     }

@@ -11,69 +11,51 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ScintillaNET;
+
+
+using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.UI.ScintillaHelper;
 
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-///     One big potential sources of data error in clinical datasets is duplication.  In the worst examples this is exact
-///     100% duplication! for example a data provider loads the same data
-///     twice, a data entry clerk hits the submit button twice in a poorly written piece of clinical software etc.  The
-///     RDMP attempts to eliminate/reduce the potential for duplication by
-///     requiring that data loaded through the Data Load Engine (DLE) require that all tables being loaded have a Primary
-///     Key which comes from the source data (no autonums!).
-///     <para>
-///         Because primary keys cannot contain NULL values you are forced to create sensible primary keys (for example a
-///         Hospital Admissions dataset might have a primary key
-///         'PatientIdentifier' and 'AdmissionDateTime').  By putting a primary key on the dataset we ensure that there
-///         cannot be duplicate data load replication (loading same record twice)
-///         and also ensure that there cannot be unlinkable records in the database (records where no 'Patient Identifier'
-///         exists or when we don't know what date the admission was on).
-///     </para>
-///     <para>
-///         When primary key collisions occur in a data load it becomes necessary to evaluate the cause (Done by evaluating
-///         RAW - see UserManual.md Load Bubbles).  For example we might
-///         determine that the data provider is sending us 2 records for the same patient on the same day, the records are
-///         identical except for a field 'DataAge'.  Rather than adding this
-///         to the primary key it would make sense instead to discard the older record on load.
-///     </para>
-///     <para>
-///         This dialog (in combination with PrimaryKeyCollisionResolverMutilation - See UserManual.md) lets you delete
-///         records out of RAW such that the remaining data matches the datasets
-///         primary key (obviously this is incredibly dangerous!).  This is done by applying a column order (with a
-///         direction for each column).  The dataset is subsetted by primary key with
-///         each set ordered by the resolution order of the columns and the top record taken.
-///     </para>
-///     <para>
-///         In the above example we would put 'DataAge' as the first column in the resolution order and set it to
-///         descending (prefer records with a larger date i.e. newer records).  Direction
-///         is obvious in the case of dates/numbers (ascending = prefer the lowest, descending = prefer the highest) but in
-///         the case of strings the length of the string is used with (DBNull
-///         being 0 length).
-///     </para>
-///     <para>
-///         Only use PrimaryKeyCollisionResolverMutilation (and this dialog) if you are CERTAIN you have the right
-///         primary key for the data/your researchers.
-///     </para>
+/// One big potential sources of data error in clinical datasets is duplication.  In the worst examples this is exact 100% duplication! for example a data provider loads the same data
+/// twice, a data entry clerk hits the submit button twice in a poorly written piece of clinical software etc.  The RDMP attempts to eliminate/reduce the potential for duplication by
+/// requiring that data loaded through the Data Load Engine (DLE) require that all tables being loaded have a Primary Key which comes from the source data (no autonums!).
+/// 
+/// <para>Because primary keys cannot contain NULL values you are forced to create sensible primary keys (for example a Hospital Admissions dataset might have a primary key
+/// 'PatientIdentifier' and 'AdmissionDateTime').  By putting a primary key on the dataset we ensure that there cannot be duplicate data load replication (loading same record twice)
+///   and also ensure that there cannot be unlinkable records in the database (records where no 'Patient Identifier' exists or when we don't know what date the admission was on).</para>
+/// 
+/// <para>When primary key collisions occur in a data load it becomes necessary to evaluate the cause (Done by evaluating RAW - see UserManual.md Load Bubbles).  For example we might
+/// determine that the data provider is sending us 2 records for the same patient on the same day, the records are identical except for a field 'DataAge'.  Rather than adding this
+/// to the primary key it would make sense instead to discard the older record on load.</para>
+/// 
+/// <para>This dialog (in combination with PrimaryKeyCollisionResolverMutilation - See UserManual.md) lets you delete records out of RAW such that the remaining data matches the datasets
+///  primary key (obviously this is incredibly dangerous!).  This is done by applying a column order (with a direction for each column).  The dataset is subsetted by primary key with
+/// each set ordered by the resolution order of the columns and the top record taken.</para>
+/// 
+/// <para>In the above example we would put 'DataAge' as the first column in the resolution order and set it to descending (prefer records with a larger date i.e. newer records).  Direction
+/// is obvious in the case of dates/numbers (ascending = prefer the lowest, descending = prefer the highest) but in the case of strings the length of the string is used with (DBNull
+/// being 0 length).</para>
+/// 
+/// <para>Only use PrimaryKeyCollisionResolverMutilation (and this dialog) if you are CERTAIN you have the right primary key for the data/your researchers.</para>
 /// </summary>
 public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 {
     private readonly TableInfo _table;
 
-    private readonly Scintilla QueryEditor;
+    private ScintillaNET.Scintilla QueryEditor;
 
-    public ConfigurePrimaryKeyCollisionResolverUI(TableInfo table, IActivateItems activator) : base(activator)
+    public ConfigurePrimaryKeyCollisionResolverUI(TableInfo table, IActivateItems activator):base(activator)
     {
         _table = table;
         InitializeComponent();
 
-        if (VisualStudioDesignMode ||
-            table == null) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
+        if (VisualStudioDesignMode || table == null) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
             return;
 
         QueryEditor = new ScintillaTextEditorFactory().Create();
@@ -86,6 +68,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
     private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
+
     }
 
     private void RefreshUIFromDatabase()
@@ -112,7 +95,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
         resolvers.AddRange(_table.PreLoadDiscardedColumns);
 
         //if there is no order yet
-        if (resolvers.All(r => r.DuplicateRecordResolutionOrder == null))
+        if(resolvers.All(r=>r.DuplicateRecordResolutionOrder == null))
             for (var i = 0; i < resolvers.Count; i++)
             {
                 //set one up
@@ -122,6 +105,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
 
         foreach (var resolver in resolvers.OrderBy(o => o.DuplicateRecordResolutionOrder).ToArray())
+        {
             //if it starts with hic_
             if (SpecialFieldNames.IsHicPrefixed(resolver))
             {
@@ -131,6 +115,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 resolver.SaveToDatabase();
                 resolvers.Remove(resolver);
             }
+        }
 
         foreach (var resolver in resolvers.OrderBy(c => c.DuplicateRecordResolutionOrder))
             lbConflictResolutionColumns.Items.Add(resolver);
@@ -139,18 +124,108 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
         try
         {
+
             //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
             var resolver = new PrimaryKeyCollisionResolver(_table);
             QueryEditor.Text = resolver.GenerateSQL();
-            CommonFunctionality.ScintillaGoRed(QueryEditor, false);
+            CommonFunctionality.ScintillaGoRed(QueryEditor,false);
         }
         catch (Exception e)
         {
-            CommonFunctionality.ScintillaGoRed(QueryEditor, e);
+            CommonFunctionality.ScintillaGoRed(QueryEditor,e);
         }
 
         QueryEditor.ReadOnly = true;
+
     }
+
+    #region Drag and Drop reordering
+
+    private void listBox1_MouseDown(object sender, MouseEventArgs e)
+    {
+        if (lbConflictResolutionColumns.SelectedItem == null) return;
+
+        if (e.Button == MouseButtons.Left)
+            lbConflictResolutionColumns.DoDragDrop(lbConflictResolutionColumns.SelectedItem,
+                DragDropEffects.Move);
+
+    }
+
+    private Point draggingOldLeftPoint;
+    private Point draggingOldRightPoint;
+
+    private void listBox1_DragOver(object sender, DragEventArgs e)
+    {
+        e.Effect = DragDropEffects.Move;
+        var idxHoverOver =
+            lbConflictResolutionColumns.IndexFromPoint(lbConflictResolutionColumns.PointToClient(new Point(e.X, e.Y)));
+
+        var g = lbConflictResolutionColumns.CreateGraphics();
+
+        var top = lbConflictResolutionColumns.Font.Height*idxHoverOver;
+
+        top += lbConflictResolutionColumns.AutoScrollOffset.Y;
+
+        //this seems to count up the number of items that have been skipped rather than the pixels... wierdo crazy
+        var barpos = NativeMethods.GetScrollPos(lbConflictResolutionColumns.Handle, Orientation.Vertical);
+        barpos *= lbConflictResolutionColumns.Font.Height;
+        top -= barpos;
+
+
+        //calculate where we should be drawing our horizontal line
+        var left = new Point(0, top);
+        var right = new Point(lbConflictResolutionColumns.Width, top);
+
+        //draw over the old one in the background colour (incase it has moved) - we don't want to leave trails
+        g.DrawLine(new Pen(lbConflictResolutionColumns.BackColor, 2), draggingOldLeftPoint,
+            draggingOldRightPoint);
+        g.DrawLine(new Pen(Color.Black, 2), left, right);
+
+        draggingOldLeftPoint = left;
+        draggingOldRightPoint = right;
+
+    }
+
+    private void listBox1_DragDrop(object sender, DragEventArgs e)
+    {
+        var point = lbConflictResolutionColumns.PointToClient(new Point(e.X, e.Y));
+        var index = lbConflictResolutionColumns.IndexFromPoint(point);
+
+        //if they are dragging it way down the bottom of the list
+        if (index < 0)
+            index = lbConflictResolutionColumns.Items.Count;
+
+        //get the thing they are dragging
+        var data =
+            (IResolveDuplication)
+            (e.Data.GetData(typeof (ColumnInfo)) ?? e.Data.GetData(typeof (PreLoadDiscardedColumn)));
+
+        //find original index because if we are dragging down then we will want to adjust the index so that insert point is correct even after removing the object further up the list
+        var originalIndex = lbConflictResolutionColumns.Items.IndexOf(data);
+
+        lbConflictResolutionColumns.Items.Remove(data);
+
+        lbConflictResolutionColumns.Items.Insert(originalIndex < index ? Math.Max(0, index - 1) : index, data);
+
+        SaveOrderIntoDatabase();
+
+    }
+
+
+    private void SaveOrderIntoDatabase()
+    {
+        for (var i = 0; i < lbConflictResolutionColumns.Items.Count; i++)
+        {
+            var extractionInformation = (IResolveDuplication) lbConflictResolutionColumns.Items[i];
+            extractionInformation.DuplicateRecordResolutionOrder = i;
+            extractionInformation.SaveToDatabase();
+        }
+
+        RefreshUIFromDatabase();
+    }
+
+
+    #endregion
 
     private void btnClose_Click(object sender, EventArgs e)
     {
@@ -168,14 +243,13 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 var RightClickMenu = new ContextMenuStrip();
 
                 var resolver =
-                    (IResolveDuplication)lbConflictResolutionColumns.Items[indexFromPoint];
+                    (IResolveDuplication) lbConflictResolutionColumns.Items[indexFromPoint];
 
                 var target = resolver.DuplicateRecordResolutionIsAscending ? "DESC" : "ASC";
                 var currently = resolver.DuplicateRecordResolutionIsAscending ? "ASC" : "DESC";
 
                 RightClickMenu.Items.Add(
-                    $"Set {resolver.GetRuntimeName()} to {target} (Currently resolution order is {currently})", null,
-                    delegate
+                    $"Set {resolver.GetRuntimeName()} to {target} (Currently resolution order is {currently})", null, delegate
                     {
                         //flip its bit
                         resolver.DuplicateRecordResolutionIsAscending =
@@ -188,6 +262,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
 
                 RightClickMenu.Show(lbConflictResolutionColumns.PointToScreen(e.Location));
             }
+
         }
     }
 
@@ -225,7 +300,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 g.DrawString(toDisplay, new Font(e.Font, FontStyle.Regular), new SolidBrush(Color.Black),
                     new PointF(e.Bounds.X, e.Bounds.Y));
         }
-
         e.DrawFocusRectangle();
     }
 
@@ -236,11 +310,12 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             //this is used only to generate the SQL preview of how to resolve primary key collisions so no username/password is required - hence the null,null
             var resolver = new PrimaryKeyCollisionResolver(_table);
 
-            if (sender == btnCopyPreview)
+            if(sender == btnCopyPreview)
                 Clipboard.SetText(resolver.GeneratePreviewSQL());
 
-            if (sender == btnCopyDetection)
+            if(sender == btnCopyDetection)
                 Clipboard.SetText(resolver.GenerateCollisionDetectionSQL());
+
         }
         catch (Exception exception)
         {
@@ -251,9 +326,7 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
     private void btnSetAllAscending_Click(object sender, EventArgs e)
     {
         if (!AllAreSameDirection())
-            if (!Activator.YesNo(
-                    "Are you sure you want to override the current resolution direction(s) with ASC , You will loose any currently configured column specific directions.",
-                    "Override current directions?"))
+            if(!Activator.YesNo("Are you sure you want to override the current resolution direction(s) with ASC , You will loose any currently configured column specific directions.", "Override current directions?"))
                 return;
 
         foreach (IResolveDuplication item in lbConflictResolutionColumns.Items)
@@ -261,16 +334,12 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             item.DuplicateRecordResolutionIsAscending = true;
             item.SaveToDatabase();
         }
-
         RefreshUIFromDatabase();
     }
-
     private void btnSetAllDescending_Click(object sender, EventArgs e)
     {
         if (!AllAreSameDirection())
-            if (!Activator.YesNo(
-                    "Are you sure you want to override the current resolution direction(s) with DESC, You will loose any currently configured column specific directions.",
-                    "Override current directions?"))
+            if (!Activator.YesNo("Are you sure you want to override the current resolution direction(s) with DESC, You will loose any currently configured column specific directions.", "Override current directions?"))
                 return;
 
         foreach (IResolveDuplication item in lbConflictResolutionColumns.Items)
@@ -278,7 +347,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             item.DuplicateRecordResolutionIsAscending = false;
             item.SaveToDatabase();
         }
-
         RefreshUIFromDatabase();
     }
 
@@ -290,90 +358,9 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
             lbConflictResolutionColumns.Items.Cast<IResolveDuplication>()
                 .Select(resolver => resolver.DuplicateRecordResolutionOrder)
                 .Distinct()
-                .Count() == 1; //if count of distinct directions is 1 then they are all in the same direction
-    }
+                .Count() ==1; //if count of distinct directions is 1 then they are all in the same direction
 
-    #region Drag and Drop reordering
-
-    private void listBox1_MouseDown(object sender, MouseEventArgs e)
-    {
-        if (lbConflictResolutionColumns.SelectedItem == null) return;
-
-        if (e.Button == MouseButtons.Left)
-            lbConflictResolutionColumns.DoDragDrop(lbConflictResolutionColumns.SelectedItem,
-                DragDropEffects.Move);
-    }
-
-    private Point draggingOldLeftPoint;
-    private Point draggingOldRightPoint;
-
-    private void listBox1_DragOver(object sender, DragEventArgs e)
-    {
-        e.Effect = DragDropEffects.Move;
-        var idxHoverOver =
-            lbConflictResolutionColumns.IndexFromPoint(lbConflictResolutionColumns.PointToClient(new Point(e.X, e.Y)));
-
-        var g = lbConflictResolutionColumns.CreateGraphics();
-
-        var top = lbConflictResolutionColumns.Font.Height * idxHoverOver;
-
-        top += lbConflictResolutionColumns.AutoScrollOffset.Y;
-
-        //this seems to count up the number of items that have been skipped rather than the pixels... wierdo crazy
-        var barpos = NativeMethods.GetScrollPos(lbConflictResolutionColumns.Handle, Orientation.Vertical);
-        barpos *= lbConflictResolutionColumns.Font.Height;
-        top -= barpos;
-
-
-        //calculate where we should be drawing our horizontal line
-        var left = new Point(0, top);
-        var right = new Point(lbConflictResolutionColumns.Width, top);
-
-        //draw over the old one in the background colour (incase it has moved) - we don't want to leave trails
-        g.DrawLine(new Pen(lbConflictResolutionColumns.BackColor, 2), draggingOldLeftPoint,
-            draggingOldRightPoint);
-        g.DrawLine(new Pen(Color.Black, 2), left, right);
-
-        draggingOldLeftPoint = left;
-        draggingOldRightPoint = right;
-    }
-
-    private void listBox1_DragDrop(object sender, DragEventArgs e)
-    {
-        var point = lbConflictResolutionColumns.PointToClient(new Point(e.X, e.Y));
-        var index = lbConflictResolutionColumns.IndexFromPoint(point);
-
-        //if they are dragging it way down the bottom of the list
-        if (index < 0)
-            index = lbConflictResolutionColumns.Items.Count;
-
-        //get the thing they are dragging
-        var data =
-            (IResolveDuplication)
-            (e.Data.GetData(typeof(ColumnInfo)) ?? e.Data.GetData(typeof(PreLoadDiscardedColumn)));
-
-        //find original index because if we are dragging down then we will want to adjust the index so that insert point is correct even after removing the object further up the list
-        var originalIndex = lbConflictResolutionColumns.Items.IndexOf(data);
-
-        lbConflictResolutionColumns.Items.Remove(data);
-
-        lbConflictResolutionColumns.Items.Insert(originalIndex < index ? Math.Max(0, index - 1) : index, data);
-
-        SaveOrderIntoDatabase();
     }
 
 
-    private void SaveOrderIntoDatabase()
-    {
-        for (var i = 0; i < lbConflictResolutionColumns.Items.Count; i++)
-        {
-            var extractionInformation = (IResolveDuplication)lbConflictResolutionColumns.Items[i];
-            extractionInformation.DuplicateRecordResolutionOrder = i;
-            extractionInformation.SaveToDatabase();
-        }
-
-        RefreshUIFromDatabase();
-    }
-
-    #endregion
 }

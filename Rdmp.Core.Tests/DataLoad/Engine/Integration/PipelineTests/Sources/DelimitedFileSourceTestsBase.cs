@@ -34,7 +34,7 @@ public abstract class DelimitedFileSourceTestsBase
     {
         var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests_Errors.txt");
 
-        if (!File.Exists(filename))
+        if(!File.Exists(filename))
             Assert.Fail($"No Divert file was generated at expected path {filename}");
 
         var contents = File.ReadAllText(filename);
@@ -42,7 +42,7 @@ public abstract class DelimitedFileSourceTestsBase
     }
 
 
-    protected static DataTable RunGetChunk(FlatFileToLoad file, BadDataHandlingStrategy strategy, bool throwOnEmpty)
+    protected static DataTable RunGetChunk(FlatFileToLoad file,BadDataHandlingStrategy strategy, bool throwOnEmpty)
     {
         return RunGetChunk(file, s =>
         {
@@ -56,7 +56,7 @@ public abstract class DelimitedFileSourceTestsBase
         var source = new DelimitedFlatFileDataFlowSource();
         source.PreInitialize(file, new ThrowImmediatelyDataLoadEventListener());
         source.Separator = ",";
-        source.StronglyTypeInput = true; //makes the source interpret the file types properly
+        source.StronglyTypeInput = true;//makes the source interpret the file types properly
         source.StronglyTypeInputBatchSize = 100;
         source.AttemptToResolveNewLinesInRecords = true; //maximise potential for conflicts
         adjust?.Invoke(source);
@@ -69,5 +69,6 @@ public abstract class DelimitedFileSourceTestsBase
         {
             source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
         }
+
     }
 }

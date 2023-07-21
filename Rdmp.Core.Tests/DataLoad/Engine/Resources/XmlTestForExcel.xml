@@ -1,210 +1,145 @@
 ﻿<?xml version="1.0"?>
 <?mso-application progid="Excel.Sheet"?>
-
 <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
-          xmlns:o="urn:schemas-microsoft-com:office:office"
-          xmlns:x="urn:schemas-microsoft-com:office:excel"
-          xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
-          xmlns:html="http://www.w3.org/TR/REC-html40">
-  <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
-    <Author>Marie Pitkethly</Author>
-    <LastAuthor>Thomas Nind</LastAuthor>
-    <Created>2014-10-15T13:59:26Z</Created>
-    <LastSaved>2014-10-15T13:56:39Z</LastSaved>
-    <Version>14.00</Version>
-  </DocumentProperties>
-  <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
-    <AllowPNG />
-  </OfficeDocumentSettings>
-  <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
-    <WindowHeight>10005</WindowHeight>
-    <WindowWidth>10005</WindowWidth>
-    <WindowTopX>120</WindowTopX>
-    <WindowTopY>135</WindowTopY>
-    <ProtectStructure>False</ProtectStructure>
-    <ProtectWindows>False</ProtectWindows>
-  </ExcelWorkbook>
-  <Styles>
-    <Style ss:ID="Default" ss:Name="Normal">
-      <Alignment ss:Vertical="Bottom" />
-      <Borders />
-      <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#000000" />
-      <Interior />
-      <NumberFormat />
-      <Protection />
-    </Style>
-    <Style ss:ID="s62" ss:Name="Hyperlink">
-      <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#0000FF"
-            ss:Underline="Single" />
-    </Style>
-    <Style ss:ID="s63">
-      <Alignment ss:Vertical="Bottom" />
-      <Font ss:FontName="Tahoma" ss:Color="#000000" />
-    </Style>
-    <Style ss:ID="s64">
-      <Alignment ss:Vertical="Bottom" />
-      <Font ss:FontName="Tahoma" ss:Color="#000000" ss:Bold="1" />
-    </Style>
-    <Style ss:ID="s67">
-      <Alignment ss:Vertical="Bottom" />
-      <Font ss:FontName="Tahoma" x:Family="Swiss" ss:Color="#000000" />
-    </Style>
-    <Style ss:ID="s68" ss:Parent="s62">
-      <Alignment ss:Vertical="Bottom" />
-    </Style>
-  </Styles>
-  <Worksheet ss:Name="Sheet1">
-    <Table ss:ExpandedColumnCount="12" ss:ExpandedRowCount="55" x:FullColumns="1"
-           x:FullRows="1" ss:StyleID="s63" ss:FullColumns="1" ss:FullRows="1">
-      <Column ss:Index="11" ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="125.25" />
-      <Row>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">Node</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">HealthBoard Area</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">Organisation Name</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">PracticeCode</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">Address1</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">Address2</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">Address3</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">Address4</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">PostCode</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">Practice Managers</Data>
-        </Cell>
-        <Cell ss:StyleID="s64">
-          <Data ss:Type="String">Practice Manager Emails</Data>
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <Data ss:Type="String">East</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Fife</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Airlie Medical Practice</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">11111</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">The Health Centre</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Victoria Road</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Leven</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Fife</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">KY8 4ET</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String"> Captain Morgan</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String"> fishsticks@nhs.net</Data>
-        </Cell>
-      </Row>
-      <Row>
-        <Cell>
-          <Data ss:Type="String">East</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Fife</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Anstruther Medical Practice</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">22222</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Skeith Health Centre</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Crail Road, Cellardyke</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String">Anstruther</Data>
-        </Cell>
-        <Cell ss:Index="9">
-          <Data ss:Type="String">KY10 3FF</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String"> Thomas Nind</Data>
-        </Cell>
-        <Cell>
-          <Data ss:Type="String"> t.z.nind@nhs.net</Data>
-        </Cell>
-      </Row>
-      <Row ss:Index="5" ss:AutoFitHeight="0" ss:Height="15">
-        <Cell ss:Index="11" ss:StyleID="s62" />
-      </Row>
-      <Row ss:Index="15" ss:AutoFitHeight="0" ss:Height="15">
-        <Cell ss:Index="11" ss:StyleID="s62" />
-        <Cell ss:StyleID="s67" />
-      </Row>
-      <Row ss:Index="19" ss:AutoFitHeight="0" ss:Height="15">
-        <Cell ss:Index="11" ss:StyleID="s62" />
-        <Cell ss:StyleID="s67" />
-      </Row>
-      <Row ss:Index="38" ss:AutoFitHeight="0" ss:Height="15">
-        <Cell ss:Index="11" ss:StyleID="s68" />
-        <Cell ss:StyleID="s67" />
-      </Row>
-      <Row ss:AutoFitHeight="0" ss:Height="15">
-        <Cell ss:Index="11" ss:StyleID="s68" />
-      </Row>
-      <Row ss:Index="53" ss:AutoFitHeight="0" ss:Height="15">
-        <Cell ss:Index="11" ss:StyleID="s62" />
-        <Cell ss:StyleID="s67" />
-      </Row>
-      <Row ss:Index="55" ss:AutoFitHeight="0" ss:Height="15">
-        <Cell ss:Index="11" ss:StyleID="s68" />
-      </Row>
-    </Table>
-    <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
-      <PageSetup>
-        <Header x:Margin="0.3" />
-        <Footer x:Margin="0.3" />
-        <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75" />
-      </PageSetup>
-      <Print>
-        <ValidPrinterInfo />
-        <HorizontalResolution>600</HorizontalResolution>
-        <VerticalResolution>600</VerticalResolution>
-      </Print>
-      <Selected />
-      <Panes>
-        <Pane>
-          <Number>3</Number>
-          <ActiveCol>1</ActiveCol>
-        </Pane>
-      </Panes>
-      <ProtectObjects>False</ProtectObjects>
-      <ProtectScenarios>False</ProtectScenarios>
-    </WorksheetOptions>
-  </Worksheet>
+ xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:html="http://www.w3.org/TR/REC-html40">
+ <DocumentProperties xmlns="urn:schemas-microsoft-com:office:office">
+  <Author>Marie Pitkethly</Author>
+  <LastAuthor>Thomas Nind</LastAuthor>
+  <Created>2014-10-15T13:59:26Z</Created>
+  <LastSaved>2014-10-15T13:56:39Z</LastSaved>
+  <Version>14.00</Version>
+ </DocumentProperties>
+ <OfficeDocumentSettings xmlns="urn:schemas-microsoft-com:office:office">
+  <AllowPNG/>
+ </OfficeDocumentSettings>
+ <ExcelWorkbook xmlns="urn:schemas-microsoft-com:office:excel">
+  <WindowHeight>10005</WindowHeight>
+  <WindowWidth>10005</WindowWidth>
+  <WindowTopX>120</WindowTopX>
+  <WindowTopY>135</WindowTopY>
+  <ProtectStructure>False</ProtectStructure>
+  <ProtectWindows>False</ProtectWindows>
+ </ExcelWorkbook>
+ <Styles>
+  <Style ss:ID="Default" ss:Name="Normal">
+   <Alignment ss:Vertical="Bottom"/>
+   <Borders/>
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#000000"/>
+   <Interior/>
+   <NumberFormat/>
+   <Protection/>
+  </Style>
+  <Style ss:ID="s62" ss:Name="Hyperlink">
+   <Font ss:FontName="Calibri" x:Family="Swiss" ss:Size="11" ss:Color="#0000FF"
+    ss:Underline="Single"/>
+  </Style>
+  <Style ss:ID="s63">
+   <Alignment ss:Vertical="Bottom"/>
+   <Font ss:FontName="Tahoma" ss:Color="#000000"/>
+  </Style>
+  <Style ss:ID="s64">
+   <Alignment ss:Vertical="Bottom"/>
+   <Font ss:FontName="Tahoma" ss:Color="#000000" ss:Bold="1"/>
+  </Style>
+  <Style ss:ID="s67">
+   <Alignment ss:Vertical="Bottom"/>
+   <Font ss:FontName="Tahoma" x:Family="Swiss" ss:Color="#000000"/>
+  </Style>
+  <Style ss:ID="s68" ss:Parent="s62">
+   <Alignment ss:Vertical="Bottom"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Sheet1">
+  <Table ss:ExpandedColumnCount="12" ss:ExpandedRowCount="55" x:FullColumns="1"
+   x:FullRows="1" ss:StyleID="s63" ss:FullColumns="1" ss:FullRows="1">
+   <Column ss:Index="11" ss:StyleID="s63" ss:AutoFitWidth="0" ss:Width="125.25"/>
+   <Row>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Node</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">HealthBoard Area</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Organisation Name</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">PracticeCode</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Address1</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Address2</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Address3</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Address4</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">PostCode</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Practice Managers</Data></Cell>
+    <Cell ss:StyleID="s64"><Data ss:Type="String">Practice Manager Emails</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">East</Data></Cell>
+    <Cell><Data ss:Type="String">Fife</Data></Cell>
+    <Cell><Data ss:Type="String">Airlie Medical Practice</Data></Cell>
+    <Cell><Data ss:Type="String">11111</Data></Cell>
+    <Cell><Data ss:Type="String">The Health Centre</Data></Cell>
+    <Cell><Data ss:Type="String">Victoria Road</Data></Cell>
+    <Cell><Data ss:Type="String">Leven</Data></Cell>
+    <Cell><Data ss:Type="String">Fife</Data></Cell>
+    <Cell><Data ss:Type="String">KY8 4ET</Data></Cell>
+    <Cell><Data ss:Type="String"> Captain Morgan</Data></Cell>
+    <Cell><Data ss:Type="String"> fishsticks@nhs.net</Data></Cell>
+   </Row>
+   <Row>
+    <Cell><Data ss:Type="String">East</Data></Cell>
+    <Cell><Data ss:Type="String">Fife</Data></Cell>
+    <Cell><Data ss:Type="String">Anstruther Medical Practice</Data></Cell>
+    <Cell><Data ss:Type="String">22222</Data></Cell>
+    <Cell><Data ss:Type="String">Skeith Health Centre</Data></Cell>
+    <Cell><Data ss:Type="String">Crail Road, Cellardyke</Data></Cell>
+    <Cell><Data ss:Type="String">Anstruther</Data></Cell>
+    <Cell ss:Index="9"><Data ss:Type="String">KY10 3FF</Data></Cell>
+    <Cell><Data ss:Type="String"> Thomas Nind</Data></Cell>
+    <Cell><Data ss:Type="String"> t.z.nind@nhs.net</Data></Cell>
+   </Row>
+   <Row ss:Index="5" ss:AutoFitHeight="0" ss:Height="15">
+    <Cell ss:Index="11" ss:StyleID="s62"/>
+   </Row>
+   <Row ss:Index="15" ss:AutoFitHeight="0" ss:Height="15">
+    <Cell ss:Index="11" ss:StyleID="s62"/>
+    <Cell ss:StyleID="s67"/>
+   </Row>
+   <Row ss:Index="19" ss:AutoFitHeight="0" ss:Height="15">
+    <Cell ss:Index="11" ss:StyleID="s62"/>
+    <Cell ss:StyleID="s67"/>
+   </Row>
+   <Row ss:Index="38" ss:AutoFitHeight="0" ss:Height="15">
+    <Cell ss:Index="11" ss:StyleID="s68"/>
+    <Cell ss:StyleID="s67"/>
+   </Row>
+   <Row ss:AutoFitHeight="0" ss:Height="15">
+    <Cell ss:Index="11" ss:StyleID="s68"/>
+   </Row>
+   <Row ss:Index="53" ss:AutoFitHeight="0" ss:Height="15">
+    <Cell ss:Index="11" ss:StyleID="s62"/>
+    <Cell ss:StyleID="s67"/>
+   </Row>
+   <Row ss:Index="55" ss:AutoFitHeight="0" ss:Height="15">
+    <Cell ss:Index="11" ss:StyleID="s68"/>
+   </Row>
+  </Table>
+  <WorksheetOptions xmlns="urn:schemas-microsoft-com:office:excel">
+   <PageSetup>
+    <Header x:Margin="0.3"/>
+    <Footer x:Margin="0.3"/>
+    <PageMargins x:Bottom="0.75" x:Left="0.7" x:Right="0.7" x:Top="0.75"/>
+   </PageSetup>
+   <Print>
+    <ValidPrinterInfo/>
+    <HorizontalResolution>600</HorizontalResolution>
+    <VerticalResolution>600</VerticalResolution>
+   </Print>
+   <Selected/>
+   <Panes>
+    <Pane>
+     <Number>3</Number>
+     <ActiveCol>1</ActiveCol>
+    </Pane>
+   </Panes>
+   <ProtectObjects>False</ProtectObjects>
+   <ProtectScenarios>False</ProtectScenarios>
+  </WorksheetOptions>
+ </Worksheet>
 </Workbook>

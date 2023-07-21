@@ -17,35 +17,24 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-///     Middle component for preparing the Release Folders for the Release Pipeline.
-///     Some destination components will complain if this is not present!
+/// Middle component for preparing the Release Folders for the Release Pipeline.
+/// Some destination components will complain if this is not present!
 /// </summary>
-public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<Project>,
-    IPipelineRequirement<ReleaseData>
+public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
 {
     private Project _project;
     private ReleaseData _releaseData;
     private DirectoryInfo _releaseFolder;
 
-    [DemandsNestedInitialization] public ReleaseFolderSettings FolderSettings { get; set; }
+    [DemandsNestedInitialization]
+    public ReleaseFolderSettings FolderSettings { get; set; }
 
-    public void PreInitialize(Project value, IDataLoadEventListener listener)
-    {
-        _project = value;
-    }
-
-    public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
-    {
-        _releaseData = value;
-    }
-
-    public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         if (releaseAudit == null)
             return null;
 
-        if (_releaseFolder == null)
+        if(_releaseFolder == null)
             PrepareAndCheckReleaseFolder(new FromDataLoadEventListenerToCheckNotifier(listener));
 
         releaseAudit.ReleaseFolder = _releaseFolder;
@@ -67,19 +56,31 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
         PrepareAndCheckReleaseFolder(notifier);
     }
 
+    public void PreInitialize(Project value, IDataLoadEventListener listener)
+    {
+        _project = value;
+    }
+
+    public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
+    {
+        _releaseData = value;
+    }
+
     private void PrepareAndCheckReleaseFolder(ICheckNotifier notifier)
     {
-        if (FolderSettings.CustomReleaseFolder != null &&
-            !string.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
+        if (FolderSettings.CustomReleaseFolder != null && !string.IsNullOrWhiteSpace(FolderSettings.CustomReleaseFolder.FullName))
+        {
             _releaseFolder = FolderSettings.CustomReleaseFolder;
+        }
         else
+        {
             _releaseFolder = GetFromProjectFolder(_project);
+        }
 
         if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
         {
             if (notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Release folder {_releaseFolder.FullName} already exists!", CheckResult.Fail, null,
-                    "Do you want to delete it? You should check the contents first.")))
+                    $"Release folder {_releaseFolder.FullName} already exists!", CheckResult.Fail, null, "Do you want to delete it? You should check the contents first.")))
                 _releaseFolder.Delete(true);
             else
                 return;
@@ -99,8 +100,7 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
 
         var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
         var suffix = string.Empty;
-        if (_releaseData != null && _releaseData.ConfigurationsForRelease != null &&
-            _releaseData.ConfigurationsForRelease.Keys.Any())
+        if (_releaseData != null && _releaseData.ConfigurationsForRelease != null && _releaseData.ConfigurationsForRelease.Keys.Any())
         {
             var releaseTicket = _releaseData.ConfigurationsForRelease.Keys.First().ReleaseTicket;
             if (_releaseData.ConfigurationsForRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
@@ -110,7 +110,9 @@ public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPi
         }
 
         if (string.IsNullOrWhiteSpace(suffix))
+        {
             suffix = string.IsNullOrWhiteSpace(p.MasterTicket) ? $"{p.ID}_{p.Name}" : p.MasterTicket;
+        }
 
         return new DirectoryInfo(Path.Combine(p.ExtractionDirectory, $"{prefix}_{suffix}"));
     }

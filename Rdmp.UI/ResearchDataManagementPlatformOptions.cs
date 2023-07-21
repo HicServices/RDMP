@@ -9,7 +9,7 @@ using Rdmp.Core.CommandLine.Options;
 namespace Rdmp.UI;
 
 /// <summary>
-///     Defines the command line arguments of ResearchDataManagementPlatform.exe when run from the command line / shortcut
+/// Defines the command line arguments of ResearchDataManagementPlatform.exe when run from the command line / shortcut
 /// </summary>
 public class ResearchDataManagementPlatformOptions : RDMPCommandLineOptions
 {

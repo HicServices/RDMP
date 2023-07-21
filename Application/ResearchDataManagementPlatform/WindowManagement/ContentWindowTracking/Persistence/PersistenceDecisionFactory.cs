@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.LoadExecutionUIs;
@@ -18,8 +19,7 @@ using Rdmp.UI.Raceway;
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 
 /// <summary>
-///     Translates persistence strings into DeserializeInstructions for restoring the RDMP main application window layout
-///     after application close/restart.
+/// Translates persistence strings into DeserializeInstructions for restoring the RDMP main application window layout after application close/restart.
 /// </summary>
 public class PersistenceDecisionFactory
 {
@@ -28,7 +28,7 @@ public class PersistenceDecisionFactory
     public PersistenceDecisionFactory()
     {
         //ensure dashboard UI assembly is loaded
-        Assembly.Load(typeof(RacewayRenderAreaUI).Assembly.FullName);
+        Assembly.Load(typeof (RacewayRenderAreaUI).Assembly.FullName);
         //ensure data export UI assembly is loaded
         Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
         //ensure DLE UI assembly is loaded
@@ -36,16 +36,15 @@ public class PersistenceDecisionFactory
     }
 
     /// <summary>
-    ///     If <paramref name="persistString" /> describes the persisted control state
-    ///     as described by the basic <see cref="RDMPSingleControlTab" /> class (rather
-    ///     than a more specialised class like <see cref="RDMPSingleControlTab" />) then
-    ///     we return a new instruction of what Type of control to create
+    /// If <paramref name="persistString"/> describes the persisted control state
+    /// as described by the basic <see cref="RDMPSingleControlTab"/> class (rather
+    /// than a more specialised class like <see cref="RDMPSingleControlTab"/>) then
+    /// we return a new instruction of what Type of control to create
     /// </summary>
     /// <param name="persistString"></param>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public static DeserializeInstruction ShouldCreateBasicControl(string persistString,
-        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static DeserializeInstruction ShouldCreateBasicControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         if (!persistString.StartsWith(RDMPSingleControlTab.BasicPrefix))
             return null;
@@ -70,8 +69,7 @@ public class PersistenceDecisionFactory
         return PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
     }
 
-    public static DeserializeInstruction ShouldCreateSingleObjectControl(string persistString,
-        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static DeserializeInstruction ShouldCreateSingleObjectControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         if (!persistString.StartsWith(PersistableSingleDatabaseObjectDockContent.Prefix))
             return null;
@@ -85,48 +83,45 @@ public class PersistenceDecisionFactory
 
         var controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
         var o = repositoryLocator.GetArbitraryDatabaseObject(tokens[2], tokens[3], int.Parse(tokens[4]));
+            
+        return new DeserializeInstruction(controlType,o);
 
-        return new DeserializeInstruction(controlType, o);
     }
 
-    public static DeserializeInstruction ShouldCreateObjectCollection(string persistString,
-        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    public static DeserializeInstruction ShouldCreateObjectCollection(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         if (!persistString.StartsWith(PersistableObjectCollectionDockContent.Prefix))
             return null;
-
-        if (!persistString.Contains(PersistStringHelper.ExtraText))
+            
+        if(!persistString.Contains(PersistStringHelper.ExtraText))
             throw new PersistenceException($"Persistence string did not contain '{PersistStringHelper.ExtraText}");
 
         //Looks something like this  RDMPObjectCollection:MyCoolControlUI:MyControlUIsBundleOfObjects:[CatalogueRepository:AggregateConfiguration:105,CatalogueRepository:AggregateConfiguration:102,CatalogueRepository:AggregateConfiguration:101]###EXTRA_TEXT###I've got a lovely bunch of coconuts
         var tokens = persistString.Split(PersistStringHelper.Separator);
 
-        var uiType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
-        var collectionType = GetTypeByName(tokens[2], typeof(IPersistableObjectCollection), repositoryLocator);
+        var uiType = GetTypeByName(tokens[1],typeof(Control),repositoryLocator);
+        var collectionType = GetTypeByName(tokens[2], typeof (IPersistableObjectCollection), repositoryLocator);
 
         var objectConstructor = new ObjectConstructor();
         var collectionInstance = (IPersistableObjectCollection)ObjectConstructor.Construct(collectionType);
-
-        if (collectionInstance.DatabaseObjects == null)
+                
+        if(collectionInstance.DatabaseObjects == null)
             throw new PersistenceException(
                 $"Constructor of Type '{collectionType}' did not initialise property DatabaseObjects");
 
         var allObjectsString = PersistStringHelper.MatchCollectionInString(persistString);
 
-        collectionInstance.DatabaseObjects.AddRange(
-            PersistStringHelper.GetObjectCollectionFromPersistString(allObjectsString, repositoryLocator));
+        collectionInstance.DatabaseObjects.AddRange(PersistStringHelper.GetObjectCollectionFromPersistString(allObjectsString,repositoryLocator));
 
         var extraText = PersistStringHelper.GetExtraText(persistString);
         collectionInstance.LoadExtraText(extraText);
 
-        return new DeserializeInstruction(uiType, collectionInstance);
+        return new DeserializeInstruction(uiType,collectionInstance);
     }
 
-    private static Type GetTypeByName(string s, Type expectedBaseClassType,
-        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    private static Type GetTypeByName(string s, Type expectedBaseClassType,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        var toReturn = repositoryLocator.CatalogueRepository.MEF.GetType(s) ??
-                       throw new TypeLoadException($"Could not find Type called '{s}'");
+        var toReturn = repositoryLocator.CatalogueRepository.MEF.GetType(s) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
         if (expectedBaseClassType != null)
             if (!expectedBaseClassType.IsAssignableFrom(toReturn))
                 throw new TypeLoadException(
@@ -134,4 +129,5 @@ public class PersistenceDecisionFactory
 
         return toReturn;
     }
+
 }

@@ -10,8 +10,7 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 
 /// <summary>
-///     Hacky ILoadProgressSelectionStrategy in which only the specific LoadProgress in the constructor to this class is
-///     ever suggested.
+/// Hacky ILoadProgressSelectionStrategy in which only the specific LoadProgress in the constructor to this class is ever suggested.
 /// </summary>
 public class SingleLoadProgressSelectionStrategy : ILoadProgressSelectionStrategy
 {
@@ -19,6 +18,7 @@ public class SingleLoadProgressSelectionStrategy : ILoadProgressSelectionStrateg
 
     public SingleLoadProgressSelectionStrategy(ILoadProgress loadProgress)
     {
+            
         _loadProgress = loadProgress;
     }
 

@@ -8,7 +8,6 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -16,8 +15,9 @@ using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using System.Linq;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -29,39 +29,29 @@ public enum ExecuteExtractionToFlatFileType
 }
 
 /// <summary>
-///     Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g.
-///     CSV).  Also copies SupportingDocuments,
-///     lookups etc into accompanying folders in the ExtractionDirectory.
+/// Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g. CSV).  Also copies SupportingDocuments,
+/// lookups etc into accompanying folders in the ExtractionDirectory.
 /// </summary>
 public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 {
-    /// <summary>
-    ///     If performing a batch resume then this file will be a copy of the flat file
-    ///     before we began appending data to it in case the pipeline execution fails
-    /// </summary>
-    private string _backupFile;
-
-    private bool _fileAlreadyClosed;
     private FileOutputFormat _output;
 
-    public ExecuteDatasetExtractionFlatFileDestination() : base(true)
-    {
-    }
-
-    [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified,
-        ExecuteExtractionToFlatFileType.CSV)]
+    [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified, ExecuteExtractionToFlatFileType.CSV)]
     public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
 
-    [DemandsInitialization(
-        "The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values")]
+    [DemandsInitialization("The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values", DemandType.Unspecified)]
     public int? RoundFloatsTo { get; internal set; }
+
+    public ExecuteDatasetExtractionFlatFileDestination():base(true)
+    {
+
+    }
 
     protected override void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener)
     {
         if (_request is ExtractGlobalsCommand)
         {
-            listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information, "Request is for the extraction of Globals."));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Request is for the extraction of Globals."));
             OutputFile = _request.GetExtractionDirectory().FullName;
             return;
         }
@@ -84,10 +74,9 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             $"Setup data extraction destination as {OutputFile} (will not exist yet)"));
     }
 
-    protected override void Open(DataTable toProcess, IDataLoadEventListener job,
-        GracefulCancellationToken cancellationToken)
+    protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
     {
-        if (_request.IsBatchResume)
+        if(_request.IsBatchResume)
         {
             if (File.Exists(_output.OutputFilename))
             {
@@ -98,19 +87,20 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             }
             else
             {
-                throw new Exception(
-                    $"Batch resume is true but there was no file to append to (expected a file to exist at '{_output.OutputFilename}')");
+                throw new Exception($"Batch resume is true but there was no file to append to (expected a file to exist at '{_output.OutputFilename}')");
             }
         }
 
         _output.Open(_request.IsBatchResume);
 
         // write the headers for the file unless we are resuming
-        if (!_request.IsBatchResume) _output.WriteHeaders(toProcess);
+        if(!_request.IsBatchResume)
+        {
+            _output.WriteHeaders(toProcess);
+        }
     }
 
-    protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job,
-        GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
+    protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
     {
         foreach (DataRow row in toProcess.Rows)
         {
@@ -119,18 +109,12 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             LinesWritten++;
 
             if (LinesWritten % 1000 == 0)
-                job.OnProgress(this,
-                    new ProgressEventArgs($"Write to file {OutputFile}",
-                        new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
+                job.OnProgress(this, new ProgressEventArgs($"Write to file {OutputFile}", new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
         }
+        job.OnProgress(this, new ProgressEventArgs($"Write to file {OutputFile}", new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
 
-        job.OnProgress(this,
-            new ProgressEventArgs($"Write to file {OutputFile}",
-                new ProgressMeasurement(LinesWritten, ProgressType.Records), stopwatch.Elapsed));
     }
-
-    protected override void Flush(IDataLoadEventListener job, GracefulCancellationToken cancellationToken,
-        Stopwatch stopwatch)
+    protected override void Flush(IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
     {
         _output.Flush();
     }
@@ -140,17 +124,17 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         CloseFile(listener, pipelineFailureExceptionIfAny != null);
 
         // if pipeline execution failed and we are doing a batch resume
-        if (pipelineFailureExceptionIfAny != null &&
-            (_request?.IsBatchResume ?? false) && _backupFile != null && _output?.OutputFilename != null)
-            if (File.Exists(_backupFile))
+        if(pipelineFailureExceptionIfAny != null &&
+           (_request?.IsBatchResume ?? false) && _backupFile != null && _output?.OutputFilename != null)
+        {
+            if(File.Exists(_backupFile))
             {
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
-                        $"Pipeline crashed so restoring backup file {_backupFile}"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Pipeline crashed so restoring backup file {_backupFile}"));
                 File.Copy(_backupFile, _output.OutputFilename, true);
             }
+        }
 
-        if (_backupFile != null && File.Exists(_backupFile))
+        if(_backupFile != null && File.Exists(_backupFile))
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Deleting {_backupFile}"));
             File.Delete(_backupFile);
@@ -159,14 +143,22 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 
     public override void Abort(IDataLoadEventListener listener)
     {
-        CloseFile(listener, true);
+        CloseFile(listener,true);
     }
+
+    private bool _fileAlreadyClosed = false;
+
+    /// <summary>
+    /// If performing a batch resume then this file will be a copy of the flat file
+    /// before we began appending data to it in case the pipeline execution fails
+    /// </summary>
+    private string _backupFile;
 
 
     private void CloseFile(IDataLoadEventListener listener, bool failed)
     {
         //we never even started or have already closed
-        if (!haveOpened || _fileAlreadyClosed)
+        if (!haveOpened || _fileAlreadyClosed )
             return;
 
         _fileAlreadyClosed = true;
@@ -177,7 +169,10 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             _output.Close();
             GC.Collect(); //prevents file locks from sticking around
 
-            if (TableLoadInfo == null) return;
+            if(TableLoadInfo == null)
+            {
+                return;
+            }
 
             //close audit object - unless it was prematurely closed e.g. by a failure somewhere
             if (!TableLoadInfo.IsClosed)
@@ -187,12 +182,11 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 
             // also close off the cumulative extraction result
             var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
-            result?.CompleteAudit(GetType(), GetDestinationDescription(), LinesWritten, _request.IsBatchResume, failed);
+            result?.CompleteAudit(GetType(), GetDestinationDescription(), LinesWritten,_request.IsBatchResume, failed);
         }
         catch (Exception e)
         {
-            listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Error, "Error when trying to close csv file", e));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error when trying to close csv file", e));
         }
     }
 
@@ -202,8 +196,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         return OutputFile;
     }
 
-    public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISelectedDataSets selectedDataSet)
+    public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
     {
         return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
     }
@@ -213,9 +206,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         return new FlatFileReleaseSource<ReleaseAudit>();
     }
 
-    public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
-        IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
-        IMapsDirectlyToDatabaseTable globalToCheck)
+    public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
     {
         return new FlatFileGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
     }
@@ -224,12 +215,9 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     {
         if (_request == ExtractDatasetCommand.EmptyCommand)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                "Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out",
-                CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs("Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out",CheckResult.Warning));
             return;
         }
-
         try
         {
             var result = DateTime.Now.ToString(DateFormat);
@@ -238,15 +226,15 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"DateFormat '{DateFormat}' was invalid", CheckResult.Fail,
-                e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"DateFormat '{DateFormat}' was invalid",CheckResult.Fail, e));
         }
 
         if (UseAcronymForFileNaming && _request is ExtractDatasetCommand dsRequest)
-            if (string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
+        {
+            if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but UseAcronymForFileNaming is true",
-                    CheckResult.Fail));
+                    $"Catalogue '{dsRequest.Catalogue}' does not have an Acronym but UseAcronymForFileNaming is true",CheckResult.Fail));
+        }
 
         if (CleanExtractionFolderBeforeExtraction)
         {
@@ -256,8 +244,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             if (contents.Length > 0
                 &&
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Extraction directory '{rootDir.FullName}' contained {contents.Length} files/folders:\r\n {string.Join(Environment.NewLine, contents.Take(100).Select(e => e.Name))}",
-                    CheckResult.Warning, null, "Delete Files"))
+                    $"Extraction directory '{rootDir.FullName}' contained {contents.Length} files/folders:\r\n {string.Join(Environment.NewLine, contents.Take(100).Select(e => e.Name))}", CheckResult.Warning,null,"Delete Files"))
                )
             {
                 rootDir.Delete(true);

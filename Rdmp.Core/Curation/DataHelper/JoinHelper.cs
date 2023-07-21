@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
@@ -11,13 +12,13 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Curation.DataHelper;
 
 /// <summary>
-///     Generates ANSI Sql for joining tables together in the FROM line of an SQL query
+/// Generates ANSI Sql for joining tables together in the FROM line of an SQL query
 /// </summary>
 public class JoinHelper
 {
+        
     /// <summary>
-    ///     Assembles ANSI Sql for the JOIN section of a query including any supplemental join columns (e.g. T1 LEFT JOIN T2 on
-    ///     T1.A = T2.A AND T1.B = T2.B)
+    /// Assembles ANSI Sql for the JOIN section of a query including any supplemental join columns (e.g. T1 LEFT JOIN T2 on T1.A = T2.A AND T1.B = T2.B)
     /// </summary>
     /// <param name="join"></param>
     /// <returns></returns>
@@ -48,38 +49,35 @@ public class JoinHelper
             return SQL;
 
         SQL = AppendSupplementalJoins(SQL, join);
-
+            
         return SQL;
     }
 
-    private static string GetOnSql(IJoin join, string key1Table, string key2Table, string key1, string key2,
-        out bool hasCustomSql)
+    private static string GetOnSql(IJoin join,string key1Table,string key2Table, string key1, string key2,out bool hasCustomSql)
     {
         var custom = join.GetCustomJoinSql();
 
-        if (!string.IsNullOrWhiteSpace(custom))
+        if(!string.IsNullOrWhiteSpace(custom))
         {
             hasCustomSql = true;
             custom = custom.Replace("{0}", key1Table);
             custom = custom.Replace("{1}", key2Table);
 
             // remove newlines in users SQL
-            custom = Regex.Replace(custom, "\r?\n", " ");
+            custom = Regex.Replace(custom,"\r?\n", " ");
 
             return $" ON {custom}";
         }
-
         hasCustomSql = false;
 
         return $" ON {key1} = {key2}";
     }
 
     /// <summary>
-    ///     Returns the first half of the join with an inverted join type
-    ///     <para>
-    ///         Explanation:joins are defined as FK table JOIN_TYPE PK table so if you are requesting a join to the FK table
-    ///         it is assumed you are coming from the pk table therefore the join type is INVERTED i.e. LEFT becomes RIGHT
-    ///     </para>
+    /// Returns the first half of the join with an inverted join type
+    /// 
+    /// <para>Explanation:joins are defined as FK table JOIN_TYPE PK table so if you are requesting a join to the FK table it is assumed you are coming from the pk table therefore the join type is INVERTED i.e. LEFT becomes RIGHT</para>
+    /// 
     /// </summary>
     /// <param name="join"></param>
     /// <returns></returns>
@@ -114,14 +112,13 @@ public class JoinHelper
     }
 
 
+
     /// <summary>
-    ///     Gets the JOIN Sql for the JoinInfo as foreign key JOIN primary key on fk.col1 = pk.col2.  Pass in a number
-    ///     in order to have the primary key table be assigned an alias e.g. 1 to give it t1
-    ///     <para>
-    ///         Because join type refers to FK join PK and you are requesting "X" + " JOIN PK table on x" then the join is
-    ///         inverted e.g. LEFT => RIGHT and RIGHT => LEFT
-    ///         unless it is a lookup join which is always LEFT
-    ///     </para>
+    /// Gets the JOIN Sql for the JoinInfo as foreign key JOIN primary key on fk.col1 = pk.col2.  Pass in a number
+    /// in order to have the primary key table be assigned an alias e.g. 1 to give it t1
+    /// 
+    /// <para>Because join type refers to FK join PK and you are requesting "X" + " JOIN PK table on x" then the join is inverted e.g. LEFT => RIGHT and RIGHT => LEFT
+    /// unless it is a lookup join which is always LEFT</para>
     /// </summary>
     /// <param name="join"></param>
     /// <param name="aliasNumber"></param>
@@ -151,7 +148,8 @@ public class JoinHelper
         {
             toReturn =
                 $" {join.ExtractionJoinType} JOIN {primaryTable}{GetOnSql(join, foreignTable, primaryTable, key1, key2, out hasCustomSql)}";
-        }
+                
+        }   
         else
         {
             var lookupAlias = GetLookupTableAlias(aliasNumber);
@@ -167,18 +165,15 @@ public class JoinHelper
             return toReturn;
 
         toReturn = AppendSupplementalJoins(toReturn, join, aliasNumber);
-
+            
         return toReturn;
     }
 
     /// <summary>
-    ///     Gets the suffix for a given lookup table number
+    /// Gets the suffix for a given lookup table number
     /// </summary>
     /// <param name="aliasNumber">the lookup number e.g. 1 gives lookup_1</param>
-    /// <param name="requirePrefix">
-    ///     pass in true if you require the prefix " AS " (may vary depending on database context in
-    ///     future e.g. perhaps MySql refers to tables by different alias syntax)
-    /// </param>
+    /// <param name="requirePrefix">pass in true if you require the prefix " AS " (may vary depending on database context in future e.g. perhaps MySql refers to tables by different alias syntax)</param>
     /// <returns></returns>
     public static string GetLookupTableAlias(int aliasNumber, bool requirePrefix = false)
     {
@@ -186,12 +181,14 @@ public class JoinHelper
             return $" AS lookup_{aliasNumber}";
 
         return $"lookup_{aliasNumber}";
+
     }
 
 
     [Pure]
     private static string AppendSupplementalJoins(string sql, IJoin join, int aliasNumber = -1)
     {
+
         var supplementalJoins = join.GetSupplementalJoins();
 
         if (supplementalJoins != null)
@@ -209,6 +206,7 @@ public class JoinHelper
                 sql = AppendCollation(sql, supplementalJoin);
             }
 
+        
 
         return sql;
     }

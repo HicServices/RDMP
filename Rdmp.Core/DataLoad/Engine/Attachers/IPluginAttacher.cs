@@ -7,8 +7,9 @@
 namespace Rdmp.Core.DataLoad.Engine.Attachers;
 
 /// <summary>
-///     MEF discoverable version of IAttacher (See Attacher).
+/// MEF discoverable version of IAttacher (See Attacher).
 /// </summary>
 public interface IPluginAttacher : IAttacher
 {
+        
 }

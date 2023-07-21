@@ -11,24 +11,23 @@ using Rdmp.Core.Providers;
 namespace Rdmp.UI.Refreshing;
 
 /// <summary>
-///     EventArgs describing a refresh event being broadcast by a <see cref="RefreshBus" />.  Includes the
-///     <see cref="Object" /> that is in a new state,
-///     whether it still <see cref="Exists" /> etc.
+/// EventArgs describing a refresh event being broadcast by a <see cref="RefreshBus"/>.  Includes the <see cref="Object"/> that is in a new state,
+/// whether it still <see cref="Exists"/> etc.
 /// </summary>
 public class RefreshObjectEventArgs
 {
-    public RefreshObjectEventArgs(DatabaseEntity o)
-    {
-        Object = o;
-
-        if (o == null)
-            throw new ArgumentException("You cannot create a refresh on a null object", nameof(o));
-
-        Exists = Object.Exists();
-    }
-
     public DatabaseEntity Object { get; set; }
     public bool Exists { get; private set; }
 
     public DescendancyList DeletedObjectDescendancy { get; set; }
+
+    public RefreshObjectEventArgs(DatabaseEntity o)
+    {
+        Object = o;
+
+        if(o == null)
+            throw new ArgumentException("You cannot create a refresh on a null object",nameof(o));
+
+        Exists = Object.Exists();
+    }
 }

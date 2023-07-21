@@ -16,4 +16,5 @@ internal class ValidationTests : UnitTests
     {
         SetupMEF();
     }
+
 }

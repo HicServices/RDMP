@@ -4,17 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Clears the <see cref="DataExportChildProvider.ForbidListedSources" /> list and triggers a refresh
-///     which results in all previously broken cohort sources to be re-evaluated for existence
+/// Clears the <see cref="DataExportChildProvider.ForbidListedSources"/> list and triggers a refresh
+/// which results in all previously broken cohort sources to be re-evaluated for existence
 /// </summary>
 public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
 {
@@ -22,9 +22,8 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
 
     [UseWithObjectConstructor]
     public ExecuteCommandRefreshBrokenCohorts(IBasicActivateItems activator,
-        [DemandsInitialization(
-            "The specific ExternalCohortTable to attempt to refresh connections to or null to refresh all ExternalCohortTables")]
-        ExternalCohortTable ect = null) : base(activator)
+        [DemandsInitialization("The specific ExternalCohortTable to attempt to refresh connections to or null to refresh all ExternalCohortTables")]
+        ExternalCohortTable ect = null):base(activator)
     {
         _ect = ect;
 
@@ -35,9 +34,12 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
         }
 
         // if we only want to clear one 
-        if (ect != null)
+        if(ect != null)
         {
-            if (!dx.ForbidListedSources.Contains(ect)) SetImpossible($"'{ect}' is not broken");
+            if(!dx.ForbidListedSources.Contains(ect))
+            {
+                SetImpossible($"'{ect}' is not broken");
+            }
         }
         else
         {
@@ -45,6 +47,7 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
             if (!dx.ForbidListedSources.Any())
             {
                 SetImpossible("There are no broken ExternalCohortTable to clear status on");
+                return;
             }
         }
     }
@@ -61,9 +64,13 @@ public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
             return;
 
         if (_ect != null)
+        {
             dx.ForbidListedSources.Remove(_ect);
+        }
         else
+        {
             dx.ForbidListedSources.Clear();
+        }
 
 
         Publish(toPublish);

@@ -15,23 +15,21 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
-internal class RowDeleter : IPluginDataFlowComponent<DataTable>
+internal class RowDeleter: IPluginDataFlowComponent<DataTable>
 {
-    private int _deleted;
-    private readonly Stopwatch _sw = new();
-
     [DemandsInitialization("Looks for a column with exactly this name", Mandatory = true)]
     public string ColumnNameToFind { get; set; }
 
-    [DemandsInitialization(
-        "Deletes all rows where the values in the specified ColumnNameToFind match the StandardRegex")]
+    [DemandsInitialization("Deletes all rows where the values in the specified ColumnNameToFind match the StandardRegex")]
     public StandardRegex DeleteRowsWhereValuesMatchStandard { get; set; }
 
     [DemandsInitialization("Deletes all rows where the values in the specified ColumnNameToFind match the Regex")]
     public Regex DeleteRowsWhereValuesMatch { get; set; }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    private int _deleted;
+    private Stopwatch _sw = new();
+
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         _sw.Start();
         var outputTable = new DataTable();
@@ -52,9 +50,7 @@ internal class RowDeleter : IPluginDataFlowComponent<DataTable>
                 _deleted++;
         }
 
-        listener.OnProgress(this,
-            new ProgressEventArgs("Deleting Rows", new ProgressMeasurement(_deleted, ProgressType.Records),
-                _sw.Elapsed));
+        listener.OnProgress(this,new ProgressEventArgs("Deleting Rows",new ProgressMeasurement(_deleted,ProgressType.Records),_sw.Elapsed ));
 
         _sw.Stop();
         return outputTable;
@@ -62,13 +58,12 @@ internal class RowDeleter : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        listener.OnNotify(this,
-            new NotifyEventArgs(_deleted > 0 ? ProgressEventType.Warning : ProgressEventType.Information,
-                $"Total RowDeleted operations for ColumnNameToFind '{ColumnNameToFind}' was {_deleted}"));
+        listener.OnNotify(this,new NotifyEventArgs(_deleted > 0 ? ProgressEventType.Warning : ProgressEventType.Information,$"Total RowDeleted operations for ColumnNameToFind '{ColumnNameToFind}' was {_deleted}"));
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
+            
     }
 
     public void Check(ICheckNotifier notifier)

@@ -13,43 +13,29 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+
 namespace Rdmp.UI.LocationsMenu.Ticketing;
 
 /// <summary>
-///     The RDMP recognises that there are a wide array of software systems for tracking time worked, issues,project
-///     requests, bug reports etc.  The RDMP is designed to support gated
-///     interactions with ticketing systems (which can be skipped entirely if you do not want the functionality).  This
-///     window lets you configure which ticketing system you have, the
-///     credentials needed to access it and where it is located.  You will need to make sure you select the appropriate
-///     Type of ticketing system you have.
-///     <para>
-///         Because there are many different ticketing systems and they can often be configured in diverse ways, the RDMP
-///         uses a 'plugin' approach to interacting with ticketing systems.
-///         The scope of functionality includes:
-///     </para>
-///     <para>
-///         1. Validating whether a ticket is valid
-///         2. Navigating to the ticket when the user clicks 'Show' in a TicketingControlUI (See TicketingControlUI)
-///         3. Determining whether a given project extraction can go ahead (This lets you drive ethics/approvals process
-///         through your normal ticketing system but have RDMP prevent
-///         releases of data until the ticketing system says its ok).
-///     </para>
-///     <para>
-///         Ticketing systems are entirely optional and you can ignore them if you don't have one or don't want to
-///         configure it.  If you do not see a Type that corresponds with your
-///         ticketing system you might need to write your own Ticketing dll (See ITicketingSystem interface) and upload it
-///         as a plugin to the Data Catalogue.
-///     </para>
+/// The RDMP recognises that there are a wide array of software systems for tracking time worked, issues,project requests, bug reports etc.  The RDMP is designed to support gated
+/// interactions with ticketing systems (which can be skipped entirely if you do not want the functionality).  This window lets you configure which ticketing system you have, the
+/// credentials needed to access it and where it is located.  You will need to make sure you select the appropriate Type of ticketing system you have.
+/// 
+/// <para>Because there are many different ticketing systems and they can often be configured in diverse ways, the RDMP uses a 'plugin' approach to interacting with ticketing systems.
+/// The scope of functionality includes: </para>
+/// 
+/// <para>1. Validating whether a ticket is valid
+/// 2. Navigating to the ticket when the user clicks 'Show' in a TicketingControlUI (See TicketingControlUI)
+/// 3. Determining whether a given project extraction can go ahead (This lets you drive ethics/approvals process through your normal ticketing system but have RDMP prevent
+/// releases of data until the ticketing system says its ok). </para>
+/// 
+/// <para>Ticketing systems are entirely optional and you can ignore them if you don't have one or don't want to configure it.  If you do not see a Type that corresponds with your
+/// ticketing system you might need to write your own Ticketing dll (See ITicketingSystem interface) and upload it as a plugin to the Data Catalogue.</para>
 /// </summary>
 public partial class TicketingSystemConfigurationUI : RDMPUserControl
 {
-    private const string NoneText = "<<NONE>>";
-
-    private IActivateItems _activator;
-
-    private bool _bLoading = true;
     private TicketingSystemConfiguration _ticketingSystemConfiguration;
-
+    private const string NoneText = "<<NONE>>";
     public TicketingSystemConfigurationUI()
     {
         InitializeComponent();
@@ -59,33 +45,32 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
     {
         base.OnLoad(e);
 
-        if (VisualStudioDesignMode)
+        if(VisualStudioDesignMode)
             return;
 
         RefreshUIFromDatabase();
     }
 
+    private bool _bLoading = true;
+
     private void RefreshUIFromDatabase()
     {
         _bLoading = true;
 
-        var ticketing = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TicketingSystemConfiguration>()
-            .ToArray();
+        var ticketing = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TicketingSystemConfiguration>().ToArray();
 
-        if (ticketing.Length > 1)
-            throw new Exception(
-                "You have multiple TicketingSystemConfiguration configured, open the table TicketingSystemConfiguration and delete one of them");
+        if(ticketing.Length > 1)
+            throw new Exception("You have multiple TicketingSystemConfiguration configured, open the table TicketingSystemConfiguration and delete one of them");
 
         _ticketingSystemConfiguration = ticketing.SingleOrDefault();
         var mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
-
+            
         cbxType.Items.Clear();
-        cbxType.Items.AddRange(mef.GetTypes<ITicketingSystem>().Select(t => t.FullName).ToArray());
+        cbxType.Items.AddRange(mef.GetTypes<ITicketingSystem>().Select(t=>t.FullName).ToArray());
 
         ddCredentials.Items.Clear();
         ddCredentials.Items.Add(NoneText);
-        ddCredentials.Items.AddRange(_activator.RepositoryLocator.CatalogueRepository
-            .GetAllObjects<DataAccessCredentials>().ToArray());
+        ddCredentials.Items.AddRange(_activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>().ToArray());
 
         if (_ticketingSystemConfiguration == null)
         {
@@ -116,7 +101,6 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             btnDelete.Enabled = true;
             btnSave.Enabled = false;
         }
-
         _bLoading = false;
     }
 
@@ -135,9 +119,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
     private void btnDelete_Click(object sender, EventArgs e)
     {
-        if (Activator.YesNo(
-                "Are you sure you want to delete the Ticketing system from this Catalogue database? there can be only one so be sure before you delete it.",
-                "Confirm deleting Ticketing system"))
+        if (Activator.YesNo("Are you sure you want to delete the Ticketing system from this Catalogue database? there can be only one so be sure before you delete it.","Confirm deleting Ticketing system"))
         {
             _ticketingSystemConfiguration.DeleteInDatabase();
             RefreshUIFromDatabase();
@@ -146,8 +128,8 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
     private void btnCheck_Click(object sender, EventArgs e)
     {
-        if (btnSave.Enabled)
-            btnSave_Click(null, null);
+        if(btnSave.Enabled)
+            btnSave_Click(null,null);
 
         ITicketingSystem instance;
         try
@@ -166,13 +148,12 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
                     CheckResult.Fail, exception));
             return;
         }
-
         checksUI1.StartChecking(instance);
     }
 
     private void btnEditCredentials_Click(object sender, EventArgs e)
     {
-        if (ddCredentials.SelectedItem is DataAccessCredentials creds)
+        if(ddCredentials.SelectedItem is DataAccessCredentials creds)
             _activator.CommandExecutionFactory.Activate(creds);
     }
 
@@ -186,11 +167,11 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
     {
         try
         {
-            if (_ticketingSystemConfiguration.DataAccessCredentials_ID != null)
+            if(_ticketingSystemConfiguration.DataAccessCredentials_ID != null)
             {
                 var toDelete = _ticketingSystemConfiguration.DataAccessCredentials;
 
-                if (Activator.YesNo($"Confirm deleting Encrypted Credentials {toDelete.Name}?", "Confirm delete?"))
+                if (Activator.YesNo($"Confirm deleting Encrypted Credentials {toDelete.Name}?","Confirm delete?"))
                     toDelete.DeleteInDatabase();
             }
         }
@@ -198,7 +179,6 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         {
             ExceptionViewer.Show(ex);
         }
-
         RefreshUIFromDatabase();
     }
 
@@ -206,7 +186,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
     {
         if (_bLoading)
             return;
-
+            
         _ticketingSystemConfiguration.Name = tbName.Text;
         _ticketingSystemConfiguration.Url = tbUrl.Text;
         _ticketingSystemConfiguration.Type = cbxType.Text;
@@ -231,6 +211,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         }
     }
 
+    private IActivateItems _activator;
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
@@ -243,6 +224,6 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         {
             _ticketingSystemConfiguration.IsActive = !cbDisabled.Checked;
             _ticketingSystemConfiguration.SaveToDatabase();
-        }
+        }   
     }
 }

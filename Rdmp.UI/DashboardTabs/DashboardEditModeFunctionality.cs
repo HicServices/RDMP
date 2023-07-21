@@ -5,29 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core.Curation.Data.Dashboarding;
+
 
 namespace Rdmp.UI.DashboardTabs;
 
 public class DashboardEditModeFunctionality
 {
-    private const int MinimumControlSize = 50;
     private readonly DashboardLayoutUI _layoutUI;
-
-    private EditModeAction _actionUnderway;
-    private UserControl _actionUnderwayOnControl;
     private bool _editMode;
-
-    private EditModeAction _plannedAction = EditModeAction.None;
-    private UserControl _plannedControl;
-
-    private Point lastKnownScreenCoordinate = Point.Empty;
-
-    public DashboardEditModeFunctionality(DashboardLayoutUI layoutUI)
-    {
-        _layoutUI = layoutUI;
-    }
 
 
     public bool EditMode
@@ -35,9 +24,14 @@ public class DashboardEditModeFunctionality
         get => _editMode;
         set
         {
-            _editMode = value;
+            _editMode = value; 
             EnableChanged();
         }
+    }
+
+    public DashboardEditModeFunctionality(DashboardLayoutUI layoutUI)
+    {
+        _layoutUI = layoutUI;
     }
 
     private void EnableChanged()
@@ -49,6 +43,15 @@ public class DashboardEditModeFunctionality
             foreach (var kvp in _layoutUI.ControlDictionary)
                 UnsubscribeControl(kvp.Value);
     }
+
+    private EditModeAction _plannedAction = EditModeAction.None;
+    private UserControl _plannedControl = null;
+        
+    private EditModeAction _actionUnderway;
+    private UserControl _actionUnderwayOnControl;
+
+    private Point lastKnownScreenCoordinate = Point.Empty;
+    private const int MinimumControlSize = 50;
 
     private void SubscribeControl(DashboardableControlHostPanel control)
     {
@@ -73,27 +76,31 @@ public class DashboardEditModeFunctionality
     private void control_MouseUp(object sender, MouseEventArgs e)
     {
         //if we are changing a control currently
-        if (_actionUnderwayOnControl != null)
+        if(_actionUnderwayOnControl != null)
         {
+                
             _actionUnderwayOnControl.Location = new Point(
                 (int)(Math.Round(_actionUnderwayOnControl.Location.X / 5.0) * 5),
                 (int)(Math.Round(_actionUnderwayOnControl.Location.Y / 5.0) * 5));
-
+                
             _actionUnderwayOnControl.Size = new Size(
                 (int)(Math.Round(_actionUnderwayOnControl.Size.Width / 5.0) * 5),
                 (int)(Math.Round(_actionUnderwayOnControl.Size.Height / 5.0) * 5));
-
-
+                
+                
             //save changes
             foreach (var kvp in _layoutUI.ControlDictionary)
+            {
                 if (kvp.Value == _actionUnderwayOnControl)
                 {
                     kvp.Key.Width = _actionUnderwayOnControl.Width;
                     kvp.Key.Height = _actionUnderwayOnControl.Height;
-                    kvp.Key.X = _actionUnderwayOnControl.Location.X;
-                    kvp.Key.Y = _actionUnderwayOnControl.Location.Y;
+                    kvp.Key.X= _actionUnderwayOnControl.Location.X;
+                    kvp.Key.Y= _actionUnderwayOnControl.Location.Y;
                     kvp.Key.SaveToDatabase();
                 }
+            }
+                
         }
 
         _plannedAction = EditModeAction.Move;
@@ -115,7 +122,7 @@ public class DashboardEditModeFunctionality
     private void control_MouseLeave(object sender, EventArgs e)
     {
         //if there is no action underway
-        if (_actionUnderway == EditModeAction.None)
+        if(_actionUnderway == EditModeAction.None)
         {
             //clear the proposed action
             Cursor.Current = Cursors.Default;
@@ -126,7 +133,8 @@ public class DashboardEditModeFunctionality
 
     private void control_MouseMove(object sender, MouseEventArgs e)
     {
-        var s = (UserControl)sender;
+
+        var s = (UserControl) sender;
 
         var currentScreenCoordinate = s.PointToScreen(e.Location);
 
@@ -137,8 +145,8 @@ public class DashboardEditModeFunctionality
         }
 
 
-        var layoutUIVisibleArea = _layoutUI.GetVisibleArea();
-
+        var layoutUIVisibleArea =  _layoutUI.GetVisibleArea();
+            
 
         if (_actionUnderway != EditModeAction.None)
         {
@@ -147,64 +155,67 @@ public class DashboardEditModeFunctionality
                 currentScreenCoordinate.Y - lastKnownScreenCoordinate.Y);
 
             //move the control
-            if (_actionUnderway == EditModeAction.Move)
+            if(_actionUnderway == EditModeAction.Move)
             {
                 _actionUnderwayOnControl.Location
                     = new Point(
-                        Math.Max(0,
-                            Math.Min(layoutUIVisibleArea.Width - _actionUnderwayOnControl.Width,
-                                _actionUnderwayOnControl.Location.X + vector.X)),
-                        Math.Max(0,
-                            Math.Min(layoutUIVisibleArea.Height - _actionUnderwayOnControl.Height,
-                                _actionUnderwayOnControl.Location.Y + vector.Y))
+                        Math.Max(0, Math.Min(layoutUIVisibleArea.Width - _actionUnderwayOnControl.Width, _actionUnderwayOnControl.Location.X + vector.X)),
+                        Math.Max(0, Math.Min(layoutUIVisibleArea.Height - _actionUnderwayOnControl.Height, _actionUnderwayOnControl.Location.Y + vector.Y))
                     );
                 _actionUnderwayOnControl.Invalidate();
             }
-            else if (_actionUnderway == EditModeAction.Resize)
+            else
+            if (_actionUnderway == EditModeAction.Resize)
             {
+
                 _actionUnderwayOnControl.Size
                     = new Size(
+                            
                         //Do not resize below the minimum size
                         Math.Max(MinimumControlSize,
 
                             //do not allow resizing beyond the right of the control it is hosted in
-                            Math.Min(layoutUIVisibleArea.Width - _actionUnderwayOnControl.Location.X,
+                            Math.Min(layoutUIVisibleArea.Width - _actionUnderwayOnControl.Location.X, 
 
                                 //change width by the length of the vector X
-                                _actionUnderwayOnControl.Width + vector.X))
+                                _actionUnderwayOnControl.Width + (int)vector.X))
+                            
                         ,
-
+                               
                         //Do not resize below the minimum size
                         Math.Max(MinimumControlSize,
 
                             //do not allow resizing beyond the bottom of the control it is hosted in
-                            Math.Min(layoutUIVisibleArea.Height - _actionUnderwayOnControl.Location.Y,
-                                _actionUnderwayOnControl.Height + vector.Y))
+                            Math.Min(layoutUIVisibleArea.Height - _actionUnderwayOnControl.Location.Y, 
+
+                                _actionUnderwayOnControl.Height + (int)vector.Y))
                     );
 
+                    
 
                 _actionUnderwayOnControl.Invalidate();
             }
         }
-
+            
         lastKnownScreenCoordinate = currentScreenCoordinate;
 
-        if (IsResizeLocation((UserControl)sender, e))
+        if(IsResizeLocation((UserControl)sender,e))
         {
             Cursor.Current = Cursors.SizeNWSE;
             _plannedAction = EditModeAction.Resize;
-            _plannedControl = (UserControl)sender;
+            _plannedControl = (UserControl) sender;
         }
         else
         {
+
             Cursor.Current = Cursors.SizeAll;
             _plannedAction = EditModeAction.Move;
-            _plannedControl = (UserControl)sender;
+            _plannedControl = (UserControl) sender;
         }
     }
-
+        
     /// <summary>
-    ///     Returns true if the cursor is within the bottom right 5 pixels of a control
+    /// Returns true if the cursor is within the bottom right 5 pixels of a control
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
@@ -216,7 +227,7 @@ public class DashboardEditModeFunctionality
 
     private enum EditModeAction
     {
-        None = 0,
+        None=0,
         Move,
         Resize
     }

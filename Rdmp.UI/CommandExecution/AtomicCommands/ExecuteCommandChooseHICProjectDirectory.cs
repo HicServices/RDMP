@@ -34,7 +34,7 @@ internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAto
     {
         base.Execute();
 
-        var dialog = new ChooseLoadDirectoryUI(Activator, _loadMetadata);
+        var dialog = new ChooseLoadDirectoryUI(Activator,_loadMetadata);
         if (dialog.ShowDialog() == DialogResult.OK)
         {
             _loadMetadata.LocationOfFlatFiles = dialog.Result;

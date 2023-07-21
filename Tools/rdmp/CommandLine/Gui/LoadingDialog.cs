@@ -8,6 +8,7 @@ namespace Rdmp.Core.CommandLine.Gui;
 
 public partial class LoadingDialog
 {
+
     public LoadingDialog(string message)
     {
         InitializeComponent();

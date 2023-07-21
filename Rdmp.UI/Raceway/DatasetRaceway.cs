@@ -25,55 +25,25 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Raceway;
 
 /// <summary>
-///     Allows you to quickly view the timespan of each of your datasets, which sections of your datasets are failing
-///     validation (e.g. 'Prescribing' 2001-2002 records are all failing
-///     validation but 2003 onwards are fine) and identify any gaps in your record coverage.
-///     <para>
-///         Each dataset appears as a green/red bar along a shared axis (See RacewayRenderAreaUI).  You can switch from
-///         viewing all months for which you have data, only
-///         the last decade, year or last 6 months.
-///     </para>
-///     <para>
-///         By default the row height of each bar in a dataset indicates the proportion of records in that month relative
-///         to the average number of records per month, this allows you to see for
-///         example the gradual increase in volume of records per month in a dataset and identify any periods where it
-///         doubles (may indicate duplication) or a hole appears.  If you tick 'Ignore
-///         Row Counts' then full bars will appear only, this lets you identify which datasets are responsible for sparse
-///         errors (e.g. if 'Biochemistry' has 1,00,000,000 and some records have
-///         dates sprinkled between 1900-01-01 and 2000-01-01 then these will appear on the axis but won't be visible due
-///         to how sparse the number of error records are).
-///     </para>
+/// Allows you to quickly view the timespan of each of your datasets, which sections of your datasets are failing validation (e.g. 'Prescribing' 2001-2002 records are all failing
+/// validation but 2003 onwards are fine) and identify any gaps in your record coverage.
+/// 
+/// <para>Each dataset appears as a green/red bar along a shared axis (See RacewayRenderAreaUI).  You can switch from viewing all months for which you have data, only
+/// the last decade, year or last 6 months.</para>
+/// 
+/// <para>By default the row height of each bar in a dataset indicates the proportion of records in that month relative to the average number of records per month, this allows you to see for
+/// example the gradual increase in volume of records per month in a dataset and identify any periods where it doubles (may indicate duplication) or a hole appears.  If you tick 'Ignore
+/// Row Counts' then full bars will appear only, this lets you identify which datasets are responsible for sparse errors (e.g. if 'Biochemistry' has 1,00,000,000 and some records have
+/// dates sprinkled between 1900-01-01 and 2000-01-01 then these will appear on the axis but won't be visible due to how sparse the number of error records are).</para>
 /// </summary>
 public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 {
-    public enum RacewayShowPeriod
-    {
-        AllTime,
-        LastDecade,
-        LastYear,
-        LastSixMonths
-    }
-
-    private IActivateItems _activator;
-    private DatasetRacewayObjectCollection _collection;
-
-    private DashboardControl _dashboardControlDatabaseRecord;
-    private readonly Bitmap _ignoreRowCounts;
-    private bool _isEditmodeOn;
-    private readonly Bitmap _respectRowCounts;
-    private readonly ToolStripButton btnAddCatalogue = new("Add Catalogue") { Name = "btnAddCatalogue" };
-
-    private readonly ToolStripButton btnAddExtractableDatasetPackage =
-        new("Add Package") { Name = "btnAddExtractableDatasetPackage" };
-
-    private readonly ToolStripButton btnRemoveAll = new("Clear", FamFamFamIcons.delete_multi.ImageToBitmap())
-        { Name = "btnRemoveAll" };
-
-    private readonly ToolStripButton cbIgnoreRowCounts = new() { Name = "cbIgnoreRowCounts" };
-    private readonly ToolStripComboBox ddShowPeriod = new() { Name = "ddShowPeriod", Size = new Size(121, 25) };
-
-    private bool isFirstTime = true;
-    private readonly ToolStripLabel toolStripLabel1 = new("Show Period") { Name = "toolStripLabel1" };
+    private ToolStripButton btnAddCatalogue = new("Add Catalogue"){Name= "btnAddCatalogue" };
+    private ToolStripButton btnRemoveAll = new("Clear",FamFamFamIcons.delete_multi.ImageToBitmap()) { Name = "btnRemoveAll" };
+    private ToolStripButton btnAddExtractableDatasetPackage = new("Add Package") { Name = "btnAddExtractableDatasetPackage" };
+    private ToolStripLabel toolStripLabel1 = new("Show Period") { Name = "toolStripLabel1" };
+    private ToolStripComboBox ddShowPeriod = new() { Name = "ddShowPeriod", Size = new Size(121, 25) };
+    private ToolStripButton cbIgnoreRowCounts = new() { Name = "cbIgnoreRowCounts" };
 
     public DatasetRaceway()
     {
@@ -87,34 +57,123 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         cbIgnoreRowCounts.CheckedChanged += cbIgnoreRowCounts_CheckedChanged;
         btnAddExtractableDatasetPackage.Click += btnAddExtractableDatasetPackage_Click;
 
-        ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof(RacewayShowPeriod));
+        ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
 
         btnRemoveAll.Image = FamFamFamIcons.delete_multi.ImageToBitmap();
         _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore.ImageToBitmap();
         _respectRowCounts = CatalogueIcons.RowCounts_Respect.ImageToBitmap();
     }
 
+    private DashboardControl _dashboardControlDatabaseRecord;
+    private DatasetRacewayObjectCollection _collection;
+    private IActivateItems _activator;
+    private bool _isEditmodeOn;
+
+    private bool isFirstTime = true;
+    private Bitmap _ignoreRowCounts;
+    private Bitmap _respectRowCounts;
+
+    public void GenerateChart()
+    {
+        CommonFunctionality.ResetChecks();
+
+        var allCatalogues = _collection.GetCatalogues();
+
+        var cataloguesToAdd = new Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>>();
+
+        DQERepository dqeRepository;
+
+        try
+        {
+            dqeRepository = new DQERepository(_activator.RepositoryLocator.CatalogueRepository);
+        }
+        catch (NotSupportedException e)
+        {
+            CommonFunctionality.Fatal("Failed to get DQE Repository",e);
+            return;
+        }
+
+        foreach (var cata in allCatalogues.OrderBy(c => c.Name))
+        {
+            var eval = dqeRepository.GetMostRecentEvaluationFor(cata);
+
+            Dictionary<DateTime, ArchivalPeriodicityCount> dictionary = null;
+
+            if (eval != null)
+                dictionary = PeriodicityState.GetPeriodicityCountsForEvaluation(eval,true);
+
+            cataloguesToAdd.Add(cata, dictionary);
+        }
+
+        //every month seen in every dataset ever
+        var buckets = GetBuckets(cataloguesToAdd);
+
+        racewayRenderArea.AddTracks(_activator,cataloguesToAdd, buckets, _collection.IgnoreRows);
+        racewayRenderArea.Refresh();
+
+        Invalidate();
+    }
+
+    private DateTime[] GetBuckets(Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> cataloguesDictionary)
+    {
+        var buckets = new List<DateTime>();
+
+        foreach (var dictionary in cataloguesDictionary.Values)
+            if (dictionary != null)
+                foreach (var dt in dictionary.Keys)
+                {
+                    //if it is before the start or after today
+                    if (dt < GetUserPickedStartDate() || dt.Date > DateTime.Now.Date)
+                        continue;
+
+                    if (!buckets.Contains(dt))
+                        buckets.Add(dt);
+                }
+
+        return buckets.OrderBy(static d => d).ToArray();
+    }
+
+    private DateTime GetUserPickedStartDate()
+    {
+        return _collection.ShowPeriod switch
+        {
+            RacewayShowPeriod.AllTime => DateTime.MinValue,
+            RacewayShowPeriod.LastDecade => DateTime.Now.AddYears(-10),
+            RacewayShowPeriod.LastYear => DateTime.Now.AddYears(-1),
+            RacewayShowPeriod.LastSixMonths => DateTime.Now.AddMonths(-6),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+
+    public enum RacewayShowPeriod
+    {
+        AllTime,
+        LastDecade,
+        LastYear,
+        LastSixMonths
+    }
+
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
+
     }
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
     {
         _activator = activator;
-        _collection = (DatasetRacewayObjectCollection)collection;
+        _collection = (DatasetRacewayObjectCollection) collection;
 
         SetItemActivator(activator);
 
-        btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import)
-            .ImageToBitmap();
-        btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider
-            .GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import).ImageToBitmap();
+        btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import).ImageToBitmap();
+        btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import).ImageToBitmap();
 
         ddShowPeriod.ComboBox.SelectedItem = _collection.ShowPeriod;
         cbIgnoreRowCounts.Checked = _collection.IgnoreRows;
         UpdateIgnoreRowCountCheckBoxIconAndText();
 
-        if (isFirstTime)
+        if(isFirstTime)
         {
             isFirstTime = false;
             racewayRenderArea.RequestDeletion += c =>
@@ -133,6 +192,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         CommonFunctionality.Add(cbIgnoreRowCounts);
 
         GenerateChart();
+
     }
 
     public IPersistableObjectCollection GetCollection()
@@ -166,89 +226,15 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
         CommonFunctionality.ToolStrip.Visible = isEditModeOn;
     }
 
-    public void GenerateChart()
-    {
-        CommonFunctionality.ResetChecks();
-
-        var allCatalogues = _collection.GetCatalogues();
-
-        var cataloguesToAdd = new Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>>();
-
-        DQERepository dqeRepository;
-
-        try
-        {
-            dqeRepository = new DQERepository(_activator.RepositoryLocator.CatalogueRepository);
-        }
-        catch (NotSupportedException e)
-        {
-            CommonFunctionality.Fatal("Failed to get DQE Repository", e);
-            return;
-        }
-
-        foreach (var cata in allCatalogues.OrderBy(c => c.Name))
-        {
-            var eval = dqeRepository.GetMostRecentEvaluationFor(cata);
-
-            Dictionary<DateTime, ArchivalPeriodicityCount> dictionary = null;
-
-            if (eval != null)
-                dictionary = PeriodicityState.GetPeriodicityCountsForEvaluation(eval, true);
-
-            cataloguesToAdd.Add(cata, dictionary);
-        }
-
-        //every month seen in every dataset ever
-        var buckets = GetBuckets(cataloguesToAdd);
-
-        racewayRenderArea.AddTracks(_activator, cataloguesToAdd, buckets, _collection.IgnoreRows);
-        racewayRenderArea.Refresh();
-
-        Invalidate();
-    }
-
-    private DateTime[] GetBuckets(
-        Dictionary<Catalogue, Dictionary<DateTime, ArchivalPeriodicityCount>> cataloguesDictionary)
-    {
-        var buckets = new List<DateTime>();
-
-        foreach (var dictionary in cataloguesDictionary.Values)
-            if (dictionary != null)
-                foreach (var dt in dictionary.Keys)
-                {
-                    //if it is before the start or after today
-                    if (dt < GetUserPickedStartDate() || dt.Date > DateTime.Now.Date)
-                        continue;
-
-                    if (!buckets.Contains(dt))
-                        buckets.Add(dt);
-                }
-
-        return buckets.OrderBy(static d => d).ToArray();
-    }
-
-    private DateTime GetUserPickedStartDate()
-    {
-        return _collection.ShowPeriod switch
-        {
-            RacewayShowPeriod.AllTime => DateTime.MinValue,
-            RacewayShowPeriod.LastDecade => DateTime.Now.AddYears(-10),
-            RacewayShowPeriod.LastYear => DateTime.Now.AddYears(-1),
-            RacewayShowPeriod.LastSixMonths => DateTime.Now.AddMonths(-6),
-            _ => throw new ArgumentOutOfRangeException()
-        };
-    }
-
     private void btnAddCatalogue_Click(object sender, EventArgs e)
     {
-        if (_activator.SelectObjects(new DialogArgs
-                {
-                    TaskDescription = "Choose which new Catalogues should be represented in the diagram."
-                },
-                _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
-                    .Except(_collection.GetCatalogues())
-                    .ToArray(),
-                out var selected))
+        if(_activator.SelectObjects(new DialogArgs {
+                   TaskDescription = "Choose which new Catalogues should be represented in the diagram."
+               },
+               _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
+                   .Except(_collection.GetCatalogues())
+                   .ToArray(),
+               out var selected))
         {
             foreach (var catalogue in selected)
                 AddCatalogue(catalogue);
@@ -273,25 +259,27 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void btnAddExtractableDatasetPackage_Click(object sender, EventArgs e)
     {
-        if (_activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
+        if(_activator.CoreChildProvider is not DataExportChildProvider dataExportChildProvider)
             return;
 
-        if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
-            }, dataExportChildProvider.AllPackages, out var packageToAdd))
+        if(Activator.SelectObject(new DialogArgs
+           {
+               TaskDescription = "Choose a Package.  All Catalogues in the Package will be added to the diagram."
+
+           }, dataExportChildProvider.AllPackages,out var packageToAdd))
         {
-            var contents =
-                _activator.RepositoryLocator.DataExportRepository.GetAllDataSets(packageToAdd,
-                    dataExportChildProvider.ExtractableDataSets);
+            var contents = _activator.RepositoryLocator.DataExportRepository.GetAllDataSets(packageToAdd, dataExportChildProvider.ExtractableDataSets);
 
             foreach (var cata in contents.Select(ds => ds.Catalogue))
-                if (!_collection.GetCatalogues().Contains(cata))
-                    AddCatalogue((Catalogue)cata);
+            {
+                if(!_collection.GetCatalogues().Contains(cata))
+                    AddCatalogue((Catalogue) cata);
+            }
 
             SaveCollectionChanges();
             GenerateChart();
         }
+
     }
 
     private void AddCatalogue(Catalogue cata)
@@ -317,6 +305,7 @@ public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
 
     private void cbIgnoreRowCounts_CheckedChanged(object sender, EventArgs e)
     {
+
         UpdateIgnoreRowCountCheckBoxIconAndText();
         _collection.IgnoreRows = cbIgnoreRowCounts.Checked;
         GenerateChart();

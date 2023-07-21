@@ -7,13 +7,16 @@
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-///     Describes a number of ways in which a standard query built by a <see cref="CohortQueryBuilderHelper" /> can be
-///     modified e.g. to show TopX of the cohort only or
-///     to select all columns instead of just the cohort identifier (e.g. for previewing to the matched patient's records).
+/// Describes a number of ways in which a standard query built by a <see cref="CohortQueryBuilderHelper"/> can be modified e.g. to show TopX of the cohort only or
+/// to select all columns instead of just the cohort identifier (e.g. for previewing to the matched patient's records).
 /// </summary>
 public class QueryBuilderCustomArgs
 {
-    public QueryBuilderCustomArgs(string overrideSelectList, string overrideLimitationSQL, int topX)
+    public string OverrideSelectList { get; set; }
+    public string OverrideLimitationSQL { get; set; }
+    public int TopX { get; set; } = -1;
+
+    public QueryBuilderCustomArgs(string overrideSelectList,string overrideLimitationSQL,int topX)
     {
         OverrideSelectList = overrideSelectList;
         OverrideLimitationSQL = overrideLimitationSQL;
@@ -22,14 +25,11 @@ public class QueryBuilderCustomArgs
 
     public QueryBuilderCustomArgs()
     {
+            
     }
 
-    public string OverrideSelectList { get; set; }
-    public string OverrideLimitationSQL { get; set; }
-    public int TopX { get; set; } = -1;
-
     /// <summary>
-    ///     Populates <paramref name="other" /> with the values stored in this
+    /// Populates <paramref name="other"/> with the values stored in this
     /// </summary>
     /// <param name="other"></param>
     public void Populate(QueryBuilderCustomArgs other)

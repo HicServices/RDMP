@@ -25,77 +25,76 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.ProjectUI;
 
 /// <summary>
-///     Allows you to view/edit a data extraction project including the extraction configurations that make it up (See
-///     ExtractionConfigurationUI).
-///     <para>
-///         First make sure your Project has a nice unique name that lets you rapidly identify it.  Next choose the
-///         'Extraction Directory', this is the location where extracted data will be
-///         generated (See ExecuteExtractionUI).  Make sure that the extraction directory is accessible to every data
-///         analyst who is using the software / working on the project (e.g. it could
-///         be a shared network drive).
-///     </para>
-///     <para>Optionally you can specify a Ticket for logging time/issues against (See TicketingSystemConfigurationUI)</para>
-///     <para>
-///         Add a ProjectNumber, this number must be unique.  This number must match the project number of the cohorts you
-///         intend to use with the project in the Cohort Database (you only need
-///         to worry about a mismatch here if you are manually hacking your cohort database or if you change the project
-///         number halfway through its lifecycle).
-///     </para>
-///     <para>
-///         Right clicking in the datagrid will allow you to create new Extraction Configurations for the project or edit
-///         existing ones.  An extraction configuration is a collection of
-///         datasets linked against a cohort private identifier and released against an anonymous project specific
-///         identifier (See ExtractableCohortUI and ExtractionConfigurationUI).  Once
-///         you have a few Extraction Configurations, they will appear in the datagrid too.
-///     </para>
-///     <para>
-///         Selecting 'Check Project' will check all current and released extraction configurations in the project for
-///         problems (empty result sets, broken extraction SQL etc).
-///     </para>
+/// Allows you to view/edit a data extraction project including the extraction configurations that make it up (See ExtractionConfigurationUI).  
+/// 
+/// <para>First make sure your Project has a nice unique name that lets you rapidly identify it.  Next choose the 'Extraction Directory', this is the location where extracted data will be
+/// generated (See ExecuteExtractionUI).  Make sure that the extraction directory is accessible to every data analyst who is using the software / working on the project (e.g. it could
+/// be a shared network drive).</para>
+/// 
+/// <para>Optionally you can specify a Ticket for logging time/issues against (See TicketingSystemConfigurationUI)</para>
+/// 
+/// <para>Add a ProjectNumber, this number must be unique.  This number must match the project number of the cohorts you intend to use with the project in the Cohort Database (you only need
+/// to worry about a mismatch here if you are manually hacking your cohort database or if you change the project number halfway through its lifecycle).</para>
+///  
+/// <para>Right clicking in the datagrid will allow you to create new Extraction Configurations for the project or edit existing ones.  An extraction configuration is a collection of 
+/// datasets linked against a cohort private identifier and released against an anonymous project specific identifier (See ExtractableCohortUI and ExtractionConfigurationUI).  Once 
+/// you have a few Extraction Configurations, they will appear in the datagrid too.</para>
+/// 
+/// <para>Selecting 'Check Project' will check all current and released extraction configurations in the project for problems (empty result sets, broken extraction SQL etc).</para>
+///  
 /// </summary>
 public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 {
     private Project _project;
+        
+    private void SetCohorts()
+    {
+        if(_project == null || _project.ProjectNumber == null)
+            return;
+
+        if(Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider)
+        {
+            return;
+        }
+
+        var toShow = new List<ExtractableCohort>();
+
+        foreach(var c in dxChildProvider.Cohorts)
+        {
+            if (c.ExternalProjectNumber == _project.ProjectNumber)
+            {
+                toShow.Add(c);
+            }
+        }
+
+        extractableCohortCollection1.SetupFor(toShow.ToArray());
+    }
+
+    //menu item setup
+    private ContextMenuStrip menu = new();
+    private ToolStripMenuItem mi_SetDescription = new("Set Description");
 
     /// <summary>
-    ///     Set when the user right clicks a row, so that we can reference the row in the handlers of the ToolStripMenuItems
+    /// Set when the user right clicks a row, so that we can reference the row in the handlers of the ToolStripMenuItems
     /// </summary>
     private int _rightClickedRowExtractionConfigurationID = -1;
 
-    //menu item setup
-    private readonly ContextMenuStrip menu = new();
-    private readonly ToolStripMenuItem mi_SetDescription = new("Set Description");
-
+        
 
     public ProjectUI()
     {
         InitializeComponent();
 
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
-        mi_SetDescription.Click += mi_SetDescription_Click;
-
+        mi_SetDescription.Click += new EventHandler(mi_SetDescription_Click);
+            
         tcMasterTicket.Title = "Master Ticket";
         tcMasterTicket.TicketTextChanged += tcMasterTicket_TicketTextChanged;
 
         AssociatedCollection = RDMPCollection.DataExport;
     }
 
-    private void SetCohorts()
-    {
-        if (_project == null || _project.ProjectNumber == null)
-            return;
-
-        if (Activator.CoreChildProvider is not DataExportChildProvider dxChildProvider) return;
-
-        var toShow = new List<ExtractableCohort>();
-
-        foreach (var c in dxChildProvider.Cohorts)
-            if (c.ExternalProjectNumber == _project.ProjectNumber)
-                toShow.Add(c);
-
-        extractableCohortCollection1.SetupFor(toShow.ToArray());
-    }
-
+      
 
     public void RefreshLists()
     {
@@ -107,13 +106,13 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID, "Text", "ID", p => p.ID);
+        Bind(tbID, "Text", "ID", p => p.ID); 
         Bind(tbName, "Text", "Name", p => p.Name);
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
     {
-        base.SetDatabaseObject(activator, databaseObject);
+        base.SetDatabaseObject(activator,databaseObject);
         //now load the UI form 
         _project = databaseObject;
 
@@ -195,11 +194,91 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
 
 
             r["Datasets"] =
-                string.Join(",", configuration.GetAllExtractableDataSets().Select(ds => ds.ToString()));
+                string.Join(",",configuration.GetAllExtractableDataSets().Select(ds=>ds.ToString()));
+
         }
 
         return dtToReturn;
     }
+
+    #region Right Click Context Menu
+
+    #region Menu Items
+
+    private void mi_SetDescription_Click(object sender, EventArgs e)
+    {
+        var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+
+        if (toSetDescriptionOn.IsReleased)
+            return;
+
+        var dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", 1000, toSetDescriptionOn.Description);
+
+        dialog.ShowDialog(this);
+
+        if (dialog.DialogResult == DialogResult.OK)
+        {
+            toSetDescriptionOn.Description = dialog.ResultText;
+            toSetDescriptionOn.SaveToDatabase();
+            RefreshLists();
+        }
+    }
+
+    private void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
+    {
+        var toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+
+        if (toSetDescriptionOn.IsReleased)
+            return;
+
+        var dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator",3,toSetDescriptionOn.Separator);
+
+        dialog.ShowDialog(this);
+
+        if (dialog.DialogResult == DialogResult.OK)
+        {
+            toSetDescriptionOn.Separator = dialog.ResultText;
+            toSetDescriptionOn.SaveToDatabase();
+            RefreshLists();
+        }
+    }
+
+    #endregion
+
+
+    #region Menu popup/setup
+
+    private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+    {
+
+        //note that this only deals with clicking cells, to see what happens hwen user clicks in blank area of datagrid see dataGridView1_MouseClick
+        if (e.RowIndex >= 0)
+            if (e.Button == MouseButtons.Right)
+            {
+                    
+                menu.Items.Clear();
+
+                   
+                _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
+
+                var selectedExtractionConfiguration = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+                    
+                menu.Items.Clear();
+                    
+                if (!selectedExtractionConfiguration.IsReleased)
+                    menu.Items.Add(mi_SetDescription);
+
+                menu.Show(Cursor.Position.X, Cursor.Position.Y);
+                    
+            }
+    }
+
+        
+
+    #endregion
+
+
+    #endregion
 
 
     private void btnShowExtractionDirectory_Click(object sender, EventArgs e)
@@ -220,9 +299,7 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         try
         {
             if (!tbExtractionDirectory.Text.StartsWith("\\") && !Directory.Exists(tbExtractionDirectory.Text))
-            {
                 tbExtractionDirectory.ForeColor = Color.Red;
-            }
             else
             {
                 _project.ExtractionDirectory = tbExtractionDirectory.Text;
@@ -231,34 +308,37 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         }
         catch (Exception)
         {
+
             tbExtractionDirectory.ForeColor = Color.Red;
         }
+            
     }
 
     private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
     {
-        if (e.ColumnIndex == -1 || e.RowIndex == -1)
+        if(e.ColumnIndex == -1 || e.RowIndex == -1)
             return;
 
         if (dataGridView1.Columns[e.ColumnIndex].Name == "Description")
         {
             //simulate a right click by setting the ID and calling the handler directly
-            _rightClickedRowExtractionConfigurationID =
-                int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
+            _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
             mi_SetDescription_Click(null, null);
         }
 
         if (dataGridView1.Columns[e.ColumnIndex].Name == "Separator")
         {
             //simulate a right click by setting the ID and calling the handler directly
-            _rightClickedRowExtractionConfigurationID =
-                int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
+            _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
             mi_ChooseFileSeparator_Click(null, null);
         }
+
+
     }
 
     private void tbProjectNumber_TextChanged(object sender, EventArgs e)
     {
+            
         if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
         {
             _project.ProjectNumber = null;
@@ -271,10 +351,11 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
             tbProjectNumber.ForeColor = Color.Black;
             _project.SaveToDatabase();
         }
-        catch (Exception)
+        catch (Exception )
         {
             tbProjectNumber.ForeColor = Color.Red;
         }
+            
     }
 
     private void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)
@@ -296,91 +377,9 @@ public partial class ProjectUI : ProjectUI_Design, ISaveableUI
         if (fdlg.ShowDialog() == DialogResult.OK)
             tbExtractionDirectory.Text = fdlg.SelectedPath;
     }
-
-    #region Right Click Context Menu
-
-    #region Menu Items
-
-    private void mi_SetDescription_Click(object sender, EventArgs e)
-    {
-        var toSetDescriptionOn =
-            Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
-                _rightClickedRowExtractionConfigurationID);
-
-        if (toSetDescriptionOn.IsReleased)
-            return;
-
-        var dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", 1000,
-            toSetDescriptionOn.Description);
-
-        dialog.ShowDialog(this);
-
-        if (dialog.DialogResult == DialogResult.OK)
-        {
-            toSetDescriptionOn.Description = dialog.ResultText;
-            toSetDescriptionOn.SaveToDatabase();
-            RefreshLists();
-        }
-    }
-
-    private void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
-    {
-        var toSetDescriptionOn =
-            Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
-                _rightClickedRowExtractionConfigurationID);
-
-        if (toSetDescriptionOn.IsReleased)
-            return;
-
-        var dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator", 3,
-            toSetDescriptionOn.Separator);
-
-        dialog.ShowDialog(this);
-
-        if (dialog.DialogResult == DialogResult.OK)
-        {
-            toSetDescriptionOn.Separator = dialog.ResultText;
-            toSetDescriptionOn.SaveToDatabase();
-            RefreshLists();
-        }
-    }
-
-    #endregion
-
-
-    #region Menu popup/setup
-
-    private void dataGridView1_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
-    {
-        //note that this only deals with clicking cells, to see what happens hwen user clicks in blank area of datagrid see dataGridView1_MouseClick
-        if (e.RowIndex >= 0)
-            if (e.Button == MouseButtons.Right)
-            {
-                menu.Items.Clear();
-
-
-                _rightClickedRowExtractionConfigurationID =
-                    int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
-
-                var selectedExtractionConfiguration =
-                    Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(
-                        _rightClickedRowExtractionConfigurationID);
-
-                menu.Items.Clear();
-
-                if (!selectedExtractionConfiguration.IsReleased)
-                    menu.Items.Add(mi_SetDescription);
-
-                menu.Show(Cursor.Position.X, Cursor.Position.Y);
-            }
-    }
-
-    #endregion
-
-    #endregion
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ProjectUI_Design, UserControl>))]
-public abstract class ProjectUI_Design : RDMPSingleDatabaseObjectControl<Project>
+public abstract class ProjectUI_Design:RDMPSingleDatabaseObjectControl<Project>
 {
 }

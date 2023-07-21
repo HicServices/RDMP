@@ -9,6 +9,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Startup;
 using Tests.Common;
 
+
 namespace Rdmp.Core.Tests.CommandExecution;
 
 internal class TestStartup : UnitTests
@@ -16,7 +17,8 @@ internal class TestStartup : UnitTests
     [Test]
     public void TestStartupWithMemoryRepository()
     {
-        var s = new Startup.Startup(new EnvironmentInfo(), RepositoryLocator);
-        Assert.DoesNotThrow(() => s.DoStartup(new ThrowImmediatelyCheckNotifier()));
+        var s = new Rdmp.Core.Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
+        Assert.DoesNotThrow(()=>s.DoStartup(new ThrowImmediatelyCheckNotifier()));
     }
+
 }

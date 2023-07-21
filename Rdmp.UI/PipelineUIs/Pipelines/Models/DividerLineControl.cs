@@ -8,18 +8,18 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
+
 namespace Rdmp.UI.PipelineUIs.Pipelines.Models;
 
 /// <summary>
-///     Used in <see cref="PipelineDiagramUI" /> to indicate an area you can drag and drop a 'Middle' flow component into
-///     your Pipeline.  Also allows you to drag and drop 'Middle' flow components that
-///     are already in the pipeline to reorder them.
+/// Used in <see cref="PipelineDiagramUI"/> to indicate an area you can drag and drop a 'Middle' flow component into your Pipeline.  Also allows you to drag and drop 'Middle' flow components that
+/// are already in the pipeline to reorder them.
 /// </summary>
 [TechnicalUI]
 public partial class DividerLineControl : UserControl
 {
     private readonly Func<DragEventArgs, DragDropEffects> _shouldAllowDrop;
-    private readonly Pen _pen;
+    private Pen _pen;
 
     public DividerLineControl(Func<DragEventArgs, DragDropEffects> shouldAllowDrop)
     {
@@ -27,7 +27,7 @@ public partial class DividerLineControl : UserControl
         InitializeComponent();
         _pen = new Pen(new SolidBrush(Color.Black))
         {
-            DashPattern = new[] { 4.0F, 2.0F, 1.0F, 3.0F }
+            DashPattern = new float[] { 4.0F, 2.0F, 1.0F, 3.0F }
         };
 
         pbDividerLine.Visible = false;
@@ -37,11 +37,12 @@ public partial class DividerLineControl : UserControl
     {
         base.OnPaintBackground(e);
 
-        e.Graphics.DrawRectangle(_pen, 2, 2, Width - 4, Height - 4);
+        e.Graphics.DrawRectangle(_pen, 2,2,Width -4,Height -4);
     }
 
     private void DividerLineControl_DragOver(object sender, DragEventArgs e)
     {
+            
     }
 
     private void DividerLineControl_DragLeave(object sender, EventArgs e)
@@ -62,4 +63,5 @@ public partial class DividerLineControl : UserControl
 
         e.Effect = shouldAllow;
     }
+
 }

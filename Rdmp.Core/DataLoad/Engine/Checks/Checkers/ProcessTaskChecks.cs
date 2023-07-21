@@ -15,9 +15,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
 /// <summary>
-///     Checks all ProcessTasks that the user has configured for a given data load (See LoadMetadata).  This involves both
-///     constructing and initializing
-///     the instances (which can fail if Type names don't resolve etc) and calling check on the instantiated ProcessTask.
+/// Checks all ProcessTasks that the user has configured for a given data load (See LoadMetadata).  This involves both constructing and initializing 
+/// the instances (which can fail if Type names don't resolve etc) and calling check on the instantiated ProcessTask.
 /// </summary>
 public class ProcessTaskChecks : ICheckable
 {
@@ -29,19 +28,13 @@ public class ProcessTaskChecks : ICheckable
         _loadMetadata = loadMetadata;
     }
 
-    public void Check(ICheckNotifier notifier)
-    {
-        foreach (ProcessTask processTask in _loadMetadata.ProcessTasks.Where(pt => !pt.IsDisabled))
-            Check(processTask, notifier);
-    }
-
     public void Check(ProcessTask processTask, ICheckNotifier notifier)
     {
         if (dictionary == null)
+        {
             try
             {
-                dictionary =
-                    new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo);
+                dictionary = new LoadArgsDictionary(_loadMetadata, new HICDatabaseConfiguration(_loadMetadata).DeployInfo);
             }
             catch (Exception e)
             {
@@ -50,11 +43,18 @@ public class ProcessTaskChecks : ICheckable
                         CheckResult.Fail, e));
                 return;
             }
+        }
 
 
         var factory = new RuntimeTaskFactory(_loadMetadata.CatalogueRepository);
         var created = factory.Create(processTask, dictionary.LoadArgs[processTask.LoadStage]);
 
         created.Check(notifier);
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        foreach (ProcessTask processTask in _loadMetadata.ProcessTasks.Where(pt=>!pt.IsDisabled))
+            Check(processTask, notifier);
     }
 }

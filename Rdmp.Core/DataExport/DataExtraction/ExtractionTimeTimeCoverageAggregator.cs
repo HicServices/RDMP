@@ -16,23 +16,23 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-///     Counts the number of unique patients / records encountered while executing an ExtractionConfiguration's dataset
-///     (linked to the project cohort).  The input
-///     to this is a DataRow rather than an SQL query because the class is used at extraction time as we are writing
-///     records out to the ExtractionDirectory.
+/// Counts the number of unique patients / records encountered while executing an ExtractionConfiguration's dataset (linked to the project cohort).  The input
+/// to this is a DataRow rather than an SQL query because the class is used at extraction time as we are writing records out to the ExtractionDirectory.
 /// </summary>
 public class ExtractionTimeTimeCoverageAggregator
 {
-    private const ExtractionTimeTimeCoverageAggregatorBucket.BucketSize BucketSize =
-        ExtractionTimeTimeCoverageAggregatorBucket.BucketSize.Month;
+    public int countOfBrokenDates { get; private set; }
+    public int countOfNullsSeen { get; private set; }
+    public Dictionary<DateTime, ExtractionTimeTimeCoverageAggregatorBucket> Buckets { get; private set; }
 
     private readonly ICatalogue _catalogue;
-    private string _expectedExtractionIdentifierInOutputBuffer;
-    private readonly string _expectedTimeFieldInOutputBuffer;
+    private string _expectedTimeFieldInOutputBuffer = null;
+    private string _expectedExtractionIdentifierInOutputBuffer = null;
 
-    private bool firstRow = true;
+    private bool haveCheckedTimeFieldExists=false;
 
-    private bool haveCheckedTimeFieldExists;
+
+    private const ExtractionTimeTimeCoverageAggregatorBucket.BucketSize BucketSize = ExtractionTimeTimeCoverageAggregatorBucket.BucketSize.Month;
 
     public ExtractionTimeTimeCoverageAggregator(ICatalogue catalogue, IExtractableCohort cohort)
     {
@@ -40,7 +40,7 @@ public class ExtractionTimeTimeCoverageAggregator
 
         Buckets = new Dictionary<DateTime, ExtractionTimeTimeCoverageAggregatorBucket>();
 
-        if (!catalogue.TimeCoverage_ExtractionInformation_ID.HasValue)
+        if(!catalogue.TimeCoverage_ExtractionInformation_ID.HasValue)
             return;
         try
         {
@@ -49,22 +49,18 @@ public class ExtractionTimeTimeCoverageAggregator
         catch (Exception e)
         {
             throw new Exception(
-                $"Could not resolve TimeCoverage_ExtractionInformation for Catalogue '{catalogue}',time coverage ExtractionInformationID was:{catalogue.TimeCoverage_ExtractionInformation_ID}",
-                e);
+                $"Could not resolve TimeCoverage_ExtractionInformation for Catalogue '{catalogue}',time coverage ExtractionInformationID was:{catalogue.TimeCoverage_ExtractionInformation_ID}",e);
         }
 
-        _expectedExtractionIdentifierInOutputBuffer =
-            cohort.GetQuerySyntaxHelper().GetRuntimeName(cohort.GetReleaseIdentifier());
+        _expectedExtractionIdentifierInOutputBuffer = cohort.GetQuerySyntaxHelper().GetRuntimeName(cohort.GetReleaseIdentifier());
     }
 
-    public int countOfBrokenDates { get; private set; }
-    public int countOfNullsSeen { get; private set; }
-    public Dictionary<DateTime, ExtractionTimeTimeCoverageAggregatorBucket> Buckets { get; }
+    private bool firstRow = true;
 
     public void ProcessRow(DataRow row)
     {
         //there is no configured time period field for the dataset, we have already thrown so just ignore calls
-        if (string.IsNullOrWhiteSpace(_expectedTimeFieldInOutputBuffer))
+        if(string.IsNullOrWhiteSpace(_expectedTimeFieldInOutputBuffer))
             return;
 
         //check that the listed extraction field that has timeliness information in it is actually included in the column collection
@@ -92,15 +88,19 @@ public class ExtractionTimeTimeCoverageAggregator
             if (_expectedExtractionIdentifierInOutputBuffer != null)
                 identifier = row[_expectedExtractionIdentifierInOutputBuffer];
         }
-        catch (Exception)
+        catch (Exception )
         {
             //could not find the identifier in the output buffer, could be that there are multiple CHI columns e.g. CHI_Baby1, CHI_Baby2 or something
             //only swallow this exception (and abandon counting of distinct release identifiers) if it is the first output row.
-            if (firstRow)
-                _expectedExtractionIdentifierInOutputBuffer =
-                    null; //give up trying to work out the extraction identifier
+            if(firstRow)
+            {
+                _expectedExtractionIdentifierInOutputBuffer = null;//give up trying to work out the extraction identifier
+            }
             else
+            {
                 throw;
+            }
+
         }
 
         firstRow = false;
@@ -109,6 +109,7 @@ public class ExtractionTimeTimeCoverageAggregator
         {
             if (value is string s)
             {
+
                 if (string.IsNullOrWhiteSpace(s))
                 {
                     countOfNullsSeen++;
@@ -118,33 +119,29 @@ public class ExtractionTimeTimeCoverageAggregator
                 var valueAsString = s;
 
                 //trim off times
-                if (Regex.IsMatch(valueAsString, "[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"))
+                if (Regex.IsMatch(valueAsString,"[0-2][0-9]:[0-5][0-9]:[0-5][0-9]"))
                     valueAsString = valueAsString[..^"00:00:00".Length].Trim();
 
                 key = DateTime.ParseExact(valueAsString, "dd/MM/yyyy", null);
             }
             else if (value is DateTime time)
-            {
                 key = time;
-            }
             else
-            {
                 key = Convert.ToDateTime(value);
-            }
         }
-        catch (Exception)
+        catch (Exception )
         {
             countOfBrokenDates++;
             return;
         }
 
         //drop the time part
-        key = ExtractionTimeTimeCoverageAggregatorBucket.RoundDateTimeDownToNearestBucketFloor(key, BucketSize);
+        key = ExtractionTimeTimeCoverageAggregatorBucket.RoundDateTimeDownToNearestBucketFloor(key,BucketSize);
 
         if (!Buckets.Any())
         {
             //no buckets yet, create a bucket here
-            Buckets.Add(key, new ExtractionTimeTimeCoverageAggregatorBucket(key));
+            Buckets.Add(key,new ExtractionTimeTimeCoverageAggregatorBucket(key));
             Buckets[key].SawIdentifier(identifier);
         }
         else
@@ -157,20 +154,18 @@ public class ExtractionTimeTimeCoverageAggregator
     }
 
     /// <summary>
-    ///     we want a consistent line of buckets with difference of BucketSize.  Use this method when you identify a DateTime
-    ///     that is (after
-    ///     rounding to the BucketSize, not in Buckets.  This method will add additional buckets up until the key has been
-    ///     reached (either
-    ///     adding new higher buckets if the key is > than the current maximum or adding additional lower buckets if it is
-    ///     lower.
+    /// we want a consistent line of buckets with difference of BucketSize.  Use this method when you identify a DateTime that is (after
+    /// rounding to the BucketSize, not in Buckets.  This method will add additional buckets up until the key has been reached (either
+    /// adding new higher buckets if the key is > than the current maximum or adding additional lower buckets if it is lower.
     /// </summary>
     /// <param name="key"></param>
     private void ExtendBucketsToEncompas(DateTime key)
     {
+
         var addCount = 0;
         var somethingHasGoneWrongIfAddedThisManyBuckets = 100000;
 
-        if (Buckets.Keys.Max() < key)
+        if(Buckets.Keys.Max() < key)
         {
             //extend upwards
             var toAdd = Buckets.Keys.Max();
@@ -182,7 +177,8 @@ public class ExtractionTimeTimeCoverageAggregator
                 addCount++;
             }
         }
-        else if (Buckets.Keys.Min() > key)
+        else
+        if(Buckets.Keys.Min() >key)
         {
             //extend downwards
             var toAdd = Buckets.Keys.Min();
@@ -190,7 +186,7 @@ public class ExtractionTimeTimeCoverageAggregator
             while (toAdd != key && addCount < somethingHasGoneWrongIfAddedThisManyBuckets)
             {
                 toAdd = ExtractionTimeTimeCoverageAggregatorBucket.DecreaseDateTimeBy(toAdd, BucketSize);
-                Buckets.Add(toAdd, new ExtractionTimeTimeCoverageAggregatorBucket(toAdd));
+                Buckets.Add(toAdd,new ExtractionTimeTimeCoverageAggregatorBucket(toAdd));
                 addCount++;
             }
         }
@@ -200,16 +196,17 @@ public class ExtractionTimeTimeCoverageAggregator
                 $"Could not work out how to extend agregation buckets where dictionary of datetimes had a max of {Buckets.Keys.Max()} and a min of{Buckets.Keys.Min()} which could not be extended in either direction to encompas{key}");
         }
 
-        if (addCount == somethingHasGoneWrongIfAddedThisManyBuckets)
-            throw new Exception($"Added {addCount} buckets without reaching the key... oops");
+        if(addCount == somethingHasGoneWrongIfAddedThisManyBuckets)
+            throw new Exception($"Added {addCount} buckets without reaching the key... oops"); 
     }
 
     public static bool HasColumn(DbDataReader Reader, string ColumnName)
     {
         foreach (DataRow row in Reader.GetSchemaTable().Rows)
+        {
             if (row["ColumnName"].ToString() == ColumnName)
-                return true; //Still here? Column not found.
-
+                return true;
+        } //Still here? Column not found.
         return false;
     }
 }

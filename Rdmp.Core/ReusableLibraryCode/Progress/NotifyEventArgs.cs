@@ -10,12 +10,18 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.ReusableLibraryCode.Progress;
 
 /// <summary>
-///     Event args for IDataLoadEventListener.OnNotify events.  Includes the StackTrace the message was raised from, the
-///     ProgressEventType (Error, Warning etc) and
-///     Any Exception.
+/// Event args for IDataLoadEventListener.OnNotify events.  Includes the StackTrace the message was raised from, the ProgressEventType (Error, Warning etc) and
+/// Any Exception.
 /// </summary>
 public class NotifyEventArgs
 {
+    public ProgressEventType ProgressEventType { get; set; }
+    public string Message { get; set; }
+    public Exception Exception { get; set; }
+    public bool Handled { get; set; }
+
+    public string StackTrace { get; private set; }
+
     public NotifyEventArgs(ProgressEventType progressEventType, string message)
     {
         ProgressEventType = progressEventType;
@@ -31,15 +37,14 @@ public class NotifyEventArgs
         }
     }
 
-    public NotifyEventArgs(ProgressEventType progressEventType, string message, Exception exception)
+    public NotifyEventArgs(ProgressEventType progressEventType, string message,  Exception exception)
     {
         ProgressEventType = progressEventType;
         Message = message;
         Exception = exception;
         Handled = false;
 
-        try
-        {
+        try{
             StackTrace = Environment.StackTrace;
         }
         catch (Exception)
@@ -47,13 +52,6 @@ public class NotifyEventArgs
             //Stack trace not available ah well
         }
     }
-
-    public ProgressEventType ProgressEventType { get; set; }
-    public string Message { get; set; }
-    public Exception Exception { get; set; }
-    public bool Handled { get; set; }
-
-    public string StackTrace { get; private set; }
 
     public CheckEventArgs ToCheckEventArgs()
     {
@@ -76,7 +74,6 @@ public class NotifyEventArgs
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
         return new CheckEventArgs(Message, result, Exception);
     }
 }

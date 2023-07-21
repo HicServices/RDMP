@@ -15,23 +15,21 @@ using System.Windows.Forms.DataVisualization.Charting;
 namespace Rdmp.UI;
 
 /// <summary>
-///     Formats X and Y axis of <see cref="Chart" /> objects in a consistent way (including axis increments etc).
+/// Formats X and Y axis of <see cref="Chart"/> objects in a consistent way (including axis increments etc).
 /// </summary>
 public class ChartLookAndFeelSetter
 {
     /// <summary>
-    ///     Formats the X and Y axis of a <paramref name="chart" /> with sensible axis increments for the DataTable
-    ///     <paramref name="dt" />. The
-    ///     table must have a first column called YearMonth in the format YYYY-MM
+    /// Formats the X and Y axis of a <paramref name="chart"/> with sensible axis increments for the DataTable <paramref name="dt"/>. The 
+    /// table must have a first column called YearMonth in the format YYYY-MM
     /// </summary>
     /// <param name="chart"></param>
     /// <param name="dt"></param>
     /// <param name="yAxisTitle"></param>
     public static void PopulateYearMonthChart(Chart chart, DataTable dt, string yAxisTitle)
     {
-        if (dt.Columns[0].ColumnName != "YearMonth")
-            throw new ArgumentException(
-                "Expected a graph with a first column YearMonth containing values expressed as YYYY-MM");
+        if(dt.Columns[0].ColumnName != "YearMonth")
+            throw new ArgumentException("Expected a graph with a first column YearMonth containing values expressed as YYYY-MM");
 
         chart.DataSource = dt;
         chart.Annotations.Clear();
@@ -108,10 +106,11 @@ public class ChartLookAndFeelSetter
         chart.ChartAreas[0].BackColor = Color.White;
         chart.ChartAreas[0].BackSecondaryColor = Color.FromArgb(255, 230, 230, 230);
         chart.ChartAreas[0].BackGradientStyle = GradientStyle.DiagonalRight;
+
     }
 
     /// <summary>
-    ///     calculates how far offset the month is
+    /// calculates how far offset the month is 
     /// </summary>
     /// <param name="yearMonth"></param>
     /// <returns></returns>
@@ -119,7 +118,7 @@ public class ChartLookAndFeelSetter
     {
         var matchMonthName = Regex.Match(yearMonth, @"\d+-([A-Za-z]+)");
 
-        if (matchMonthName.Success)
+        if(matchMonthName.Success)
         {
             var monthName = matchMonthName.Groups[1].Value;
             return DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;

@@ -11,11 +11,9 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class
-    ProposeExecutionWhenTargetIsPipelineComponentArgument : RDMPCommandExecutionProposal<PipelineComponentArgument>
+internal class ProposeExecutionWhenTargetIsPipelineComponentArgument : RDMPCommandExecutionProposal<PipelineComponentArgument>
 {
-    private readonly IActivateItems _activator;
-
+    private IActivateItems _activator;
     public ProposeExecutionWhenTargetIsPipelineComponentArgument(IActivateItems itemActivator) : base(itemActivator)
     {
         _activator = itemActivator;
@@ -32,8 +30,7 @@ internal class
         setArgumentCommand.Execute();
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PipelineComponentArgument target,
-        InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PipelineComponentArgument target, InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

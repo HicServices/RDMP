@@ -8,36 +8,21 @@ using System;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.ChecksUI;
 
 /// <summary>
-///     Yes/No dialog for handling <see cref="CheckEventArgs.ProposedFix" />.  Describes the fix and prompts the user for a
-///     response.  Includes
-///     support for Yes to All.
+/// Yes/No dialog for handling <see cref="CheckEventArgs.ProposedFix"/>.  Describes the fix and prompts the user for a response.  Includes
+/// support for Yes to All.
 /// </summary>
-public class MakeChangePopup : ICheckNotifier
+public class MakeChangePopup:ICheckNotifier
 {
     private readonly YesNoYesToAllDialog _dialog;
 
     public MakeChangePopup(YesNoYesToAllDialog dialog)
     {
         _dialog = dialog;
-    }
-
-    public bool OnCheckPerformed(CheckEventArgs args)
-    {
-        //if there is a fix suggest it to the user
-        if (args.ProposedFix != null)
-            return ShowYesNoMessageBoxToApplyFix(_dialog, args.Message, args.ProposedFix);
-
-        //else show an Exception
-        if (args.Ex != null)
-            ExceptionViewer.Show(args.Ex);
-        else if (args.Result == CheckResult.Fail)
-            WideMessageBox.Show(args.Message, "", Environment.StackTrace);
-
-        return false;
     }
 
     public static bool ShowYesNoMessageBoxToApplyFix(YesNoYesToAllDialog dialog, string problem, string proposedChange)
@@ -53,5 +38,21 @@ public class MakeChangePopup : ICheckNotifier
             return MessageBox.Show(message, "Apply Fix?", MessageBoxButtons.YesNo) == DialogResult.Yes;
 
         return dialog.ShowDialog(message, "Apply Fix?") == DialogResult.Yes;
+    }
+
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        //if there is a fix suggest it to the user
+        if (args.ProposedFix != null)
+            return ShowYesNoMessageBoxToApplyFix(_dialog,args.Message, args.ProposedFix);
+            
+        //else show an Exception
+        if(args.Ex != null)
+            ExceptionViewer.Show(args.Ex);
+        else
+        if(args.Result == CheckResult.Fail)
+            WideMessageBox.Show(args.Message,"",environmentDotStackTrace: Environment.StackTrace);
+
+        return false;
     }
 }

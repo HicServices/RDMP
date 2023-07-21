@@ -9,13 +9,12 @@ using System;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 
 /// <summary>
-///     Allocates a Guid for each private identifier supplied.  This will not keep track of duplicates (every call results
-///     in a new guid regardless of the input).
+/// Allocates a Guid for each private identifier supplied.  This will not keep track of duplicates (every call results in a new guid regardless of the input).
 /// </summary>
 public class GuidReleaseIdentifierAllocator : IAllocateReleaseIdentifiers
 {
     /// <summary>
-    ///     Generates a new unique identifier as a string (does not do any form of lookup - every call is a new guid)
+    /// Generates a new unique identifier as a string (does not do any form of lookup - every call is a new guid)
     /// </summary>
     /// <param name="privateIdentifier"></param>
     /// <returns></returns>
@@ -25,10 +24,11 @@ public class GuidReleaseIdentifierAllocator : IAllocateReleaseIdentifiers
     }
 
     /// <summary>
-    ///     Does nothing
+    /// Does nothing
     /// </summary>
     /// <param name="request"></param>
     public void Initialize(ICohortCreationRequest request)
     {
+            
     }
 }

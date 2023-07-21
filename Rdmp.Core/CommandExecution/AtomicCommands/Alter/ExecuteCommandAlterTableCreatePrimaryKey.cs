@@ -16,13 +16,13 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
 /// <summary>
-///     Creates a primary key on the live database table based on one or more columns
+/// Creates a primary key on the live database table based on one or more columns
 /// </summary>
 public class ExecuteCommandAlterTableCreatePrimaryKey : AlterTableCommandExecution
 {
-    private readonly ColumnInfo[] _columnInfos;
+    private ColumnInfo[] _columnInfos;
 
-    [UseWithCommandLine(ParameterHelpList = "<TableInfo> <ColumnInfo1> <ColumnInfo2> etc",
+    [UseWithCommandLine( ParameterHelpList = "<TableInfo> <ColumnInfo1> <ColumnInfo2> etc",
         ParameterHelpBreakdown = @"TableInfo    The table you want to create a primary key on e.g. TableInfo:*Biochem*
 ColumnInfos List of columns that should form the primary key (1 for simple primary key, 2+ for composite primary key)")]
     public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, CommandLineObjectPicker picker) :
@@ -33,20 +33,21 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
 
         var pick = new List<ColumnInfo>();
         for (var i = 1; i < picker.Length; i++)
+        {
             pick.Add((ColumnInfo)picker[i].GetValueForParameterOfType(typeof(ColumnInfo)));
+        }
 
         _columnInfos = pick.ToArray();
     }
-
-    public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, TableInfo tableInfo) : base(
-        activator, tableInfo)
+    public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, TableInfo tableInfo):base(activator,tableInfo)
     {
-        if (IsImpossible)
+        if(IsImpossible)
             return;
 
-        if (Table.DiscoverColumns().Any(c => c.IsPrimaryKey))
+        if(Table.DiscoverColumns().Any(c=>c.IsPrimaryKey))
         {
             SetImpossible("Table already has a primary key, try synchronizing the TableInfo");
+            return;
         }
     }
 
@@ -68,12 +69,12 @@ ColumnInfos List of columns that should form the primary key (1 for simple prima
 
         var task = Task.Run(() =>
             Table.CreatePrimaryKey(cols.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()));
+                
+        Wait("Creating Primary Key...",task, cts);
 
-        Wait("Creating Primary Key...", task, cts);
-
-        if (task.IsFaulted)
-            ShowException("Create Primary Key Failed", task.Exception);
-
+        if(task.IsFaulted)
+            ShowException("Create Primary Key Failed",task.Exception);
+            
         Synchronize();
 
         Publish(TableInfo);

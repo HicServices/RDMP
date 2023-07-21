@@ -9,12 +9,12 @@ using System;
 namespace Rdmp.Core.Curation.Data.DataLoad.Extensions;
 
 /// <summary>
-///     Static extensions for <see cref="LoadStage" />
+/// Static extensions for <see cref="LoadStage"/>
 /// </summary>
 public static class LoadStageExtensions
 {
     /// <summary>
-    ///     Converts a <see cref="LoadStage" /> into a <see cref="LoadBubble" />
+    /// Converts a <see cref="LoadStage"/> into a <see cref="LoadBubble"/>
     /// </summary>
     /// <param name="loadStage"></param>
     /// <returns></returns>
@@ -27,7 +27,7 @@ public static class LoadStageExtensions
             LoadStage.AdjustRaw => LoadBubble.Raw,
             LoadStage.AdjustStaging => LoadBubble.Staging,
             LoadStage.PostLoad => LoadBubble.Live,
-            _ => throw new ArgumentOutOfRangeException(nameof(loadStage), $"Unknown value for LoadStage: {loadStage}")
+            _ => throw new ArgumentOutOfRangeException(nameof(loadStage),$"Unknown value for LoadStage: {loadStage}")
         };
     }
 }

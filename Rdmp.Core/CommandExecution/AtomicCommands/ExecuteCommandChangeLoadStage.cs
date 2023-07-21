@@ -15,20 +15,19 @@ public class ExecuteCommandChangeLoadStage : BasicCommandExecution
 {
     private readonly ProcessTask _sourceProcessTask;
     private readonly LoadStageNode _targetStage;
-
+        
     [UseWithObjectConstructor]
     public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTask processTask, LoadStage stage) :
-        this(activator, new ProcessTaskCombineable(processTask), new LoadStageNode(processTask.LoadMetadata, stage))
+        this(activator, new ProcessTaskCombineable(processTask), new LoadStageNode(processTask.LoadMetadata,stage))
     {
-    }
 
-    public ExecuteCommandChangeLoadStage(IBasicActivateItems activator,
-        ProcessTaskCombineable sourceProcessTaskCombineable, LoadStageNode targetStage) : base(activator)
+    }
+    public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, LoadStageNode targetStage) : base(activator)
     {
         _sourceProcessTask = sourceProcessTaskCombineable.ProcessTask;
         _targetStage = targetStage;
 
-        if (sourceProcessTaskCombineable.ProcessTask.LoadMetadata_ID != targetStage.LoadMetadata.ID)
+        if(sourceProcessTaskCombineable.ProcessTask.LoadMetadata_ID != targetStage.LoadMetadata.ID)
             SetImpossible("ProcessTask belongs to a different LoadMetadata");
 
         if (!ProcessTask.IsCompatibleStage(_sourceProcessTask.ProcessTaskType, _targetStage.LoadStage))

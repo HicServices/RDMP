@@ -6,9 +6,9 @@
 
 using System;
 using System.Data;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
-using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -19,48 +19,42 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
 /// <summary>
-///     Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For
-///     example storing all LabNumbers stored in
-///     DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber
-///     and putting in the appropriate
-///     replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored proceedure
-///     SubstitutionStoredprocedure.
+/// Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For example storing all LabNumbers stored in
+/// DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber and putting in the appropriate
+/// replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored proceedure SubstitutionStoredprocedure.
 /// </summary>
 public class ANOTransformer
 {
-    private const string SubstitutionStoredprocedure = "sp_substituteANOIdentifiers";
     private readonly ANOTable _anoTable;
 
     private readonly IDataLoadEventListener _listener;
 
     //the following stored procedures have to exist in the target database;
-    private readonly ExternalDatabaseServer _externalDatabaseServer;
-    private readonly DiscoveredServer _server;
+    private ExternalDatabaseServer _externalDatabaseServer;
+    private DiscoveredServer _server;
 
-    //for some reason this method seems to get sent the same message twice every time
-    private string lastMessage;
+    private const string SubstitutionStoredprocedure = "sp_substituteANOIdentifiers";
 
-    public ANOTransformer(ANOTable anoTable, IDataLoadEventListener listener = null)
+    public ANOTransformer(ANOTable anoTable, IDataLoadEventListener listener= null)
     {
         _externalDatabaseServer = anoTable.Server;
 
         _server = DataAccessPortal.ExpectServer(_externalDatabaseServer, DataAccessContext.DataLoad);
-
+            
         _anoTable = anoTable;
         _listener = listener;
     }
 
     public void Transform(DataTable table, DataColumn srcColumn, DataColumn destColumn, bool previewOnly = false)
     {
-        var tableOfIdentifiersRequiringSubstitution = ColumnToDataTable(srcColumn, true);
+        var tableOfIdentifiersRequiringSubstitution = ColumnToDataTable(srcColumn,true);
 
         if (!destColumn.ColumnName.Equals(ANOTable.ANOPrefix + srcColumn.ColumnName))
             throw new Exception(
                 $"Expected destination column {destColumn.ColumnName} to be {ANOTable.ANOPrefix}{srcColumn.ColumnName}");
 
-        if (tableOfIdentifiersRequiringSubstitution.Columns.Count != 1)
-            throw new Exception(
-                "Expected only a single columns to be dispatched to SubstituteIdentifiersForANOEquivalents");
+        if(tableOfIdentifiersRequiringSubstitution.Columns.Count != 1)
+            throw new Exception("Expected only a single columns to be dispatched to SubstituteIdentifiersForANOEquivalents");
 
         //if there is no data to transform, don't bother
         if (table.Rows.Count == 0 || tableOfIdentifiersRequiringSubstitution.Rows.Count == 0)
@@ -68,18 +62,17 @@ public class ANOTransformer
 
         //translate all values into ANO equivalents
         var substitutionTable = GetSubstitutionsForANOEquivalents(tableOfIdentifiersRequiringSubstitution, previewOnly);
-
+          
         //give the substitution table a primary key to make it faster.
-        substitutionTable.PrimaryKey = new[] { substitutionTable.Columns[0] };
+        substitutionTable.PrimaryKey = new[] {substitutionTable.Columns[0]};
 
-        if (substitutionTable.Columns.Count != 2)
-            throw new Exception(
-                "Expected only a two columns to be returned by SubstituteIdentifiersForANOEquivalents, the original primary key and the substitution identifier");
-
+        if(substitutionTable.Columns.Count != 2)
+            throw new Exception("Expected only a two columns to be returned by SubstituteIdentifiersForANOEquivalents, the original primary key and the substitution identifier");
+            
         if (substitutionTable.Columns[0].ColumnName.StartsWith(ANOTable.ANOPrefix))
             throw new Exception(
                 $"Expected first column returned by SubstituteIdentifiersForANOEquivalents to be a primary key (not start with {ANOTable.ANOPrefix}) but it was:{substitutionTable.Columns[0].ColumnName}");
-
+            
         if (!substitutionTable.Columns[1].ColumnName.StartsWith(ANOTable.ANOPrefix))
             throw new Exception(
                 $"Expected second column returned by SubstituteIdentifiersForANOEquivalents to be an ANO identifier(start with {ANOTable.ANOPrefix}) but it was:{substitutionTable.Columns[1].ColumnName}");
@@ -95,15 +88,15 @@ public class ANOTransformer
 
             //its not null so look up the mapped value
             var substitutionRow = substitutionTable.Rows.Find(valueToReplace) ?? throw new Exception(
-                $"Substitution table returned by {SubstitutionStoredprocedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
-            var substitutionValue = substitutionRow[1]; //substitution value
+                    $"Substitution table returned by {SubstitutionStoredprocedure} did not contain a mapping for identifier {valueToReplace}(Substitution Table had {substitutionTable.Rows.Count} rows)");
+            var substitutionValue = substitutionRow[1];//substitution value
 
             //overwrite the value with the substitution
             destColumn.Table.Rows[i][destColumn.ColumnName] = substitutionValue;
         }
     }
 
-    private static DataTable ColumnToDataTable(DataColumn column, bool discardNulls)
+    private static DataTable ColumnToDataTable(DataColumn column,bool discardNulls)
     {
         var table = new DataTable();
 
@@ -114,10 +107,10 @@ public class ANOTransformer
             var o = r[column.ColumnName];
 
             //if we are discarding nulls we choose to not add them to the return table
-            if (discardNulls && (o == null || o == DBNull.Value))
+            if(discardNulls && (o == null || o == DBNull.Value))
                 continue;
 
-            table.Rows.Add(r[column.ColumnName]);
+            table.Rows.Add(new[] { r[column.ColumnName] });
         }
 
         return table;
@@ -125,9 +118,9 @@ public class ANOTransformer
 
     private DataTable GetSubstitutionsForANOEquivalents(DataTable table, bool previewOnly)
     {
-        using (var con = (SqlConnection)_server.GetConnection())
+        using(var con = (SqlConnection)_server.GetConnection())
         {
-            con.InfoMessage += _con_InfoMessage;
+            con.InfoMessage+=_con_InfoMessage;
 
             if (table.Rows.Count == 0)
                 return table;
@@ -140,8 +133,7 @@ public class ANOTransformer
                     var mustPush = !_anoTable.IsTablePushed();
 
                     con.Open();
-                    transaction =
-                        con.BeginTransaction(); //if it is preview only we will use a transaction which we will then rollback
+                    transaction = con.BeginTransaction();//if it is preview only we will use a transaction which we will then rollback
 
                     if (mustPush)
                     {
@@ -172,21 +164,17 @@ public class ANOTransformer
 
                 cmdSubstituteIdentifiers.Parameters.Add("@batch", SqlDbType.Structured);
                 cmdSubstituteIdentifiers.Parameters.Add("@tableName", SqlDbType.VarChar, 500);
-                cmdSubstituteIdentifiers.Parameters.Add("@numberOfIntegersToUseInAnonymousRepresentation",
-                    SqlDbType.Int);
-                cmdSubstituteIdentifiers.Parameters.Add("@numberOfCharactersToUseInAnonymousRepresentation",
-                    SqlDbType.Int);
-                cmdSubstituteIdentifiers.Parameters.Add("@suffix", SqlDbType.VarChar, 10);
+                cmdSubstituteIdentifiers.Parameters.Add("@numberOfIntegersToUseInAnonymousRepresentation", SqlDbType.Int);
+                cmdSubstituteIdentifiers.Parameters.Add("@numberOfCharactersToUseInAnonymousRepresentation", SqlDbType.Int);
+                cmdSubstituteIdentifiers.Parameters.Add("@suffix", SqlDbType.VarChar,10);
 
                 //table valued parameter
                 cmdSubstituteIdentifiers.Parameters["@batch"].TypeName = "dbo.Batch";
                 cmdSubstituteIdentifiers.Parameters["@batch"].Value = table;
 
                 cmdSubstituteIdentifiers.Parameters["@tableName"].Value = _anoTable.TableName;
-                cmdSubstituteIdentifiers.Parameters["@numberOfIntegersToUseInAnonymousRepresentation"].Value =
-                    _anoTable.NumberOfIntegersToUseInAnonymousRepresentation;
-                cmdSubstituteIdentifiers.Parameters["@numberOfCharactersToUseInAnonymousRepresentation"].Value =
-                    _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
+                cmdSubstituteIdentifiers.Parameters["@numberOfIntegersToUseInAnonymousRepresentation"].Value = _anoTable.NumberOfIntegersToUseInAnonymousRepresentation;
+                cmdSubstituteIdentifiers.Parameters["@numberOfCharactersToUseInAnonymousRepresentation"].Value = _anoTable.NumberOfCharactersToUseInAnonymousRepresentation;
                 cmdSubstituteIdentifiers.Parameters["@suffix"].Value = _anoTable.Suffix;
 
                 var da = new SqlDataAdapter(cmdSubstituteIdentifiers);
@@ -207,18 +195,21 @@ public class ANOTransformer
         }
     }
 
+    //for some reason this method seems to get sent the same message twice every time
+    private string lastMessage;
+
     private void _con_InfoMessage(object sender, SqlInfoMessageEventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(e.Message))
+        if(string.IsNullOrWhiteSpace(e.Message))
             return;
-
+            
         if (e.Message.Equals(lastMessage))
             return;
 
         lastMessage = e.Message;
 
-        if (_listener != null)
-            _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, e.Message));
+        if(_listener != null)
+            _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,e.Message));
         else
             Console.WriteLine(e.Message);
     }
@@ -229,22 +220,22 @@ public class ANOTransformer
     }
 
 
-    public static void ConfirmDependencies(DiscoveredDatabase database, ICheckNotifier notifier)
+    public static void ConfirmDependencies(DiscoveredDatabase database,ICheckNotifier notifier)
     {
         try
         {
+
             if (database.DiscoverStoredprocedures().Any(p => p.Name.Equals(SubstitutionStoredprocedure)))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"successfully found {SubstitutionStoredprocedure} on {database}", CheckResult.Success));
+                    $"successfully found {SubstitutionStoredprocedure} on {database}", CheckResult.Success, null));
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Failed to find {SubstitutionStoredprocedure} on {database}", CheckResult.Fail));
+                    $"Failed to find {SubstitutionStoredprocedure} on {database}", CheckResult.Fail, null));
         }
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Exception occurred when trying to find stored procedure {SubstitutionStoredprocedure} on {database}",
-                CheckResult.Fail, e));
+                $"Exception occurred when trying to find stored procedure {SubstitutionStoredprocedure} on {database}", CheckResult.Fail, e));
         }
     }
 }

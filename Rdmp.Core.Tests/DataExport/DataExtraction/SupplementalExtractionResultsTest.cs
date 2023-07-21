@@ -11,7 +11,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
-internal class SupplementalExtractionResultsTest : DatabaseTests
+internal class SupplementalExtractionResultsTest:DatabaseTests
 {
     [Test]
     public void TestCreating()
@@ -21,14 +21,15 @@ internal class SupplementalExtractionResultsTest : DatabaseTests
         var ec = new ExtractionConfiguration(DataExportRepository, p);
 
         var cata = new Catalogue(CatalogueRepository, "MyCata");
-        var tbl = new SupportingSQLTable(CatalogueRepository, cata, "Some global data");
+        var tbl = new SupportingSQLTable(CatalogueRepository,cata,"Some global data");
 
         var othertbl = new SupportingSQLTable(CatalogueRepository, cata, "Some global data");
 
-        var result = new SupplementalExtractionResults(DataExportRepository, ec, "select * from Globalsglba", tbl);
+        var result = new SupplementalExtractionResults(DataExportRepository,ec,"select * from Globalsglba",tbl);
 
         Assert.IsTrue(result.IsReferenceTo(typeof(SupportingSQLTable)));
         Assert.IsTrue(result.IsReferenceTo(tbl));
         Assert.IsFalse(result.IsReferenceTo(othertbl));
+
     }
 }

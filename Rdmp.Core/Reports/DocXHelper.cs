@@ -5,24 +5,20 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using SixLabors.ImageSharp;
 using System.IO;
 using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.Util;
 using NPOI.XWPF.UserModel;
 using Rdmp.Core.ReusableLibraryCode;
-using SixLabors.ImageSharp;
 
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-///     Base class for all reports which generate Microsoft DocX files.  Note that the DocX library is used to create the
-///     .docx file so it doesn't actually require Microsoft
-///     Office to be installed on the machine using the class but in order to open the resulting files the user will need
-///     something compatible with .docx.
-///     <para>
-///         Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding
-///         paragraphs/pictures/tables.
-///     </para>
+/// Base class for all reports which generate Microsoft DocX files.  Note that the DocX library is used to create the .docx file so it doesn't actually require Microsoft
+/// Office to be installed on the machine using the class but in order to open the resulting files the user will need something compatible with .docx.
+/// 
+/// <para>Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding paragraphs/pictures/tables.</para>
 /// </summary>
 public class DocXHelper
 {
@@ -32,18 +28,20 @@ public class DocXHelper
     private const int H4Size = 11;
 
     /// <summary>
-    ///     <see cref="Units.ToEMU(double)" /> seems to result in word showing images at 133% size.  This constant fixes that
-    ///     problem when using the <see cref="GetPicture(XWPFDocument, Image)" /> methods.
+    /// <see cref="Units.ToEMU(double)"/> seems to result in word showing images at 133% size.  This constant fixes that
+    /// problem when using the <see cref="GetPicture(XWPFDocument, Image)"/> methods.
+    /// 
     /// </summary>
     private const float PICTURE_SCALING = 0.75f;
 
-    public const int PICTURE_TYPE_PNG = 6;
-
     protected static void InsertParagraph(XWPFDocument document, string ptext, int textFontSize = -1)
     {
-        if (string.IsNullOrWhiteSpace(ptext)) return;
+        if(string.IsNullOrWhiteSpace(ptext))
+        {
+            return;
+        }
 
-        foreach (var para in ptext.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+        foreach(var para in ptext.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
         {
             var h = document.CreateParagraph();
             var r0 = h.CreateRun();
@@ -52,6 +50,7 @@ public class DocXHelper
 
             r0.FontSize = textFontSize != -1 ? textFontSize : 10;
         }
+
     }
 
     protected static void InsertHeader(XWPFDocument document, string htext, int headSize = 1)
@@ -61,12 +60,12 @@ public class DocXHelper
         r0.FontSize = GetSize(headSize);
 
         //file data
-        r0.SetText(htext ?? "");
+        r0.SetText(htext??"");
     }
 
     private static int GetSize(int headSize)
     {
-        switch (headSize)
+        switch(headSize)
         {
             case 1: return H1Size;
             case 2: return H2Size;
@@ -78,13 +77,16 @@ public class DocXHelper
 
     protected static void SetTableCell(XWPFTable table, int row, int col, string value, int fontSize = -1)
     {
-        if (string.IsNullOrEmpty(value)) return;
+        if(string.IsNullOrEmpty(value))
+        {
+            return;
+        }
 
         var cell = table.GetRow(row).GetCell(col);
 
         var first = true;
 
-        foreach (var bit in value.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries))
+        foreach(var bit in value.Split(Environment.NewLine,StringSplitOptions.RemoveEmptyEntries))
         {
             var para = first ? cell.Paragraphs[0] : cell.AddParagraph();
             var run = para.CreateRun();
@@ -96,13 +98,14 @@ public class DocXHelper
                 run.FontSize = fontSize;
         }
     }
+    public const int PICTURE_TYPE_PNG =	6;
 
     protected static XWPFPicture GetPicture(XWPFDocument document, Image bmp)
     {
         var para = document.CreateParagraph();
         var run = para.CreateRun();
-
-        return GetPicture(run, bmp);
+            
+        return GetPicture(run,bmp);
     }
 
     protected static XWPFPicture GetPicture(XWPFRun run, Image bmp)
@@ -110,13 +113,12 @@ public class DocXHelper
         using (var ms = new MemoryStream())
         {
             bmp.SaveAsPng(ms);
-
+                
             ms.Seek(0, 0);
 
             // Add an image into the document.
-            var picture = run.AddPicture(ms, PICTURE_TYPE_PNG, "", Units.ToEMU(bmp.Width * PICTURE_SCALING),
-                Units.ToEMU(bmp.Height * PICTURE_SCALING));
-
+            var picture = run.AddPicture(ms,PICTURE_TYPE_PNG,"",Units.ToEMU(bmp.Width * PICTURE_SCALING), Units.ToEMU(bmp.Height *PICTURE_SCALING));
+                
             return picture;
         }
     }
@@ -129,7 +131,10 @@ public class DocXHelper
 
         const int width = 10000;
 
-        for (var i = 0; i < colCount; i++) table1.SetColumnWidth(i, (ulong)(width / colCount));
+        for (var i = 0; i < colCount; i++)
+        {
+            table1.SetColumnWidth(i, (ulong)(width / colCount));
+        }
 
         return table1;
     }
@@ -139,8 +144,7 @@ public class DocXHelper
         var root = GetTempPath();
 
 
-        var f = new FileInfo(Path.Combine(root.FullName,
-            UsefulStuff.RemoveIllegalFilenameCharacters(desiredName) + extension));
+        var f = new FileInfo(Path.Combine(root.FullName,UsefulStuff.RemoveIllegalFilenameCharacters(desiredName) + extension));
         var i = 1;
 
         //file name is taken
@@ -163,27 +167,25 @@ public class DocXHelper
     }
 
     /// <summary>
-    ///     Creates a new document in Work Area (temp) - see <see cref="GetUniqueFilenameInWorkArea(string, string)" />
+    /// Creates a new document in Work Area (temp) - see <see cref="GetUniqueFilenameInWorkArea(string, string)"/>
     /// </summary>
     /// <param name="filename"></param>
     /// <returns></returns>
     protected static XWPFDocumentFile GetNewDocFile(string filename)
     {
         var fi = GetUniqueFilenameInWorkArea(filename);
-        return new XWPFDocumentFile(fi, new FileStream(fi.FullName, FileMode.Create));
+        return new XWPFDocumentFile(fi,new FileStream(fi.FullName,FileMode.Create));
     }
-
     /// <summary>
-    ///     Opens windows explorer to show the file
+    /// Opens windows explorer to show the file
     /// </summary>
     /// <param name="fileInfo"></param>
     protected static void ShowFile(FileInfo fileInfo)
     {
         UsefulStuff.ShowPathInWindowsExplorer(fileInfo);
     }
-
     /// <summary>
-    ///     Opens windows explorer to show the document
+    /// Opens windows explorer to show the document
     /// </summary>
     /// <param name="document"></param>
     protected static void ShowFile(XWPFDocumentFile document)
@@ -191,16 +193,14 @@ public class DocXHelper
         ShowFile(document.FileInfo);
     }
 
-    protected static void AddFooter(XWPFDocument document, string text, int textFontSize)
+    protected static void AddFooter(XWPFDocument document,string text,int textFontSize)
     {
         var secPr = document.Document.body.sectPr;
         var footer = new CT_Ftr();
         var run = footer.AddNewP().AddNewR();
         run.AddNewT().Value = text;
         var relation2 = XWPFRelation.FOOTER;
-        var myFooter =
-            (XWPFFooter)document.CreateRelationship(relation2, XWPFFactory.GetInstance(),
-                document.FooterList.Count + 1);
+        var myFooter = (XWPFFooter)document.CreateRelationship(relation2, XWPFFactory.GetInstance(), document.FooterList.Count + 1);
 
         myFooter.SetHeaderFooter(footer);
         var myFooterRef = secPr.AddNewFooterReference();
@@ -210,43 +210,41 @@ public class DocXHelper
 #pragma warning restore CS0618 // Type or member is obsolete
         myFooter.Paragraphs[0].Runs[0].FontSize = textFontSize != -1 ? textFontSize : 10;
     }
-
     /// <summary>
-    ///     Creates a new document in the location of <paramref name="fileInfo" />
+    /// Creates a new document in the location of <paramref name="fileInfo"/>
     /// </summary>
     /// <param name="fileInfo"></param>
     /// <returns></returns>
     protected static XWPFDocumentFile GetNewDocFile(FileInfo fileInfo)
     {
-        return new XWPFDocumentFile(fileInfo, new FileStream(fileInfo.FullName, FileMode.Create));
+        return new XWPFDocumentFile(fileInfo,new FileStream(fileInfo.FullName,FileMode.Create));
     }
-
+        
     protected static void InsertSectionPageBreak(XWPFDocument document)
     {
         var pageBreak = document.CreateParagraph();
         var pageBreakRun = pageBreak.CreateRun();
         pageBreakRun.AddBreak(BreakType.PAGE);
     }
-
+        
     protected static void SetLandscape(XWPFDocumentFile document)
     {
-        document.Document.body.sectPr = document.Document.body.sectPr ?? new CT_SectPr();
+        document.Document.body.sectPr = document.Document.body.sectPr??new CT_SectPr();
         document.Document.body.sectPr.pgSz = document.Document.body.sectPr.pgSz ?? new CT_PageSz();
-
+            
         document.Document.body.sectPr.pgSz.orient = ST_PageOrientation.landscape;
         document.Document.body.sectPr.pgSz.w = 842 * 20;
         document.Document.body.sectPr.pgSz.h = 595 * 20;
-
+        
 
         //document.PageLayout.Orientation = Orientation.Landscape;
     }
-
     protected static void InsertTableOfContents(XWPFDocumentFile document)
     {
         //todo
         //document.InsertTableOfContents("Contents", new TableOfContentsSwitches());
     }
-
+        
     protected static void AutoFit(XWPFTable table)
     {
         //tables auto fit already with NPOI
@@ -254,15 +252,15 @@ public class DocXHelper
     }
 
     /// <summary>
-    ///     Sets the page margins to <paramref name="marginSize" /> in hundredths of an inch e.g. 20 = 0.20"
+    /// Sets the page margins to <paramref name="marginSize"/> in hundredths of an inch e.g. 20 = 0.20"
     /// </summary>
     /// <param name="document"></param>
     /// <param name="marginSize"></param>
     protected static void SetMargins(XWPFDocumentFile document, int marginSize)
     {
-        document.Document.body.sectPr = document.Document.body.sectPr ?? new CT_SectPr();
-        document.Document.body.sectPr.pgMar.right = (ulong)(marginSize * 14.60);
-        document.Document.body.sectPr.pgMar.left = (ulong)(marginSize * 14.60);
+        document.Document.body.sectPr = document.Document.body.sectPr??new CT_SectPr();
+        document.Document.body.sectPr.pgMar.right = (ulong) (marginSize * 14.60);
+        document.Document.body.sectPr.pgMar.left = (ulong) (marginSize * 14.60);
 
         /*document.MarginLeft = marginSize;
         document.MarginRight= marginSize;
@@ -275,23 +273,20 @@ public class DocXHelper
         return 500;
         //return document.PageWidth;
     }
-
     /// <summary>
-    ///     An <see cref="XWPFDocument" /> pointed at a <see cref="FileStream" /> that implements <see cref="IDisposable" />
-    ///     and
-    ///     disposes of underlying stream when that happens.
+    /// An <see cref="XWPFDocument"/> pointed at a <see cref="FileStream"/> that implements <see cref="IDisposable"/> and
+    /// disposes of underlying stream when that happens.
     /// </summary>
     protected class XWPFDocumentFile : XWPFDocument, IDisposable
     {
+        public FileInfo FileInfo { get; }
         private readonly FileStream _stream;
-
-        public XWPFDocumentFile(FileInfo fileInfo, FileStream stream)
+            
+        public XWPFDocumentFile(FileInfo fileInfo,FileStream stream)
         {
             FileInfo = fileInfo;
             _stream = stream;
         }
-
-        public FileInfo FileInfo { get; }
 
 
         public void Dispose()
@@ -300,6 +295,7 @@ public class DocXHelper
             Write(_stream);
             _stream.Close();
             _stream.Dispose();
+
         }
     }
 }

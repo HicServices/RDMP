@@ -11,7 +11,7 @@ using Rdmp.Core;
 namespace Rdmp.UI.Theme;
 
 /// <summary>
-///     Determines which colour to use for the background on controls relating to this collection concept
+/// Determines which colour to use for the background on controls relating to this collection concept
 /// </summary>
 public static class BackColorProvider
 {
@@ -38,11 +38,9 @@ public static class BackColorProvider
         var bmp = new Bitmap(size.Width, size.Height);
 
         using (var g = Graphics.FromImage(bmp))
-        {
-            g.FillRectangle(new SolidBrush(GetColor(collection)), 2, size.Height - IndicatorBarSuggestedHeight,
-                size.Width - 4, IndicatorBarSuggestedHeight);
-        }
+            g.FillRectangle(new SolidBrush(GetColor(collection)), 2, size.Height - IndicatorBarSuggestedHeight, size.Width - 4, IndicatorBarSuggestedHeight);
 
         return bmp;
     }
+
 }

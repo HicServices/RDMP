@@ -11,7 +11,7 @@ namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 public abstract class SecondaryConstraint : ISecondaryConstraint
 {
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Consequence? Consequence { get; set; }
 
     [Description("Optional, Allows you to record why you have set this rule as a future reminder")]
@@ -21,4 +21,5 @@ public abstract class SecondaryConstraint : ISecondaryConstraint
     public abstract void RenameColumn(string originalName, string newName);
     public abstract string GetHumanReadableDescriptionOfValidation();
     public abstract ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames);
+        
 }

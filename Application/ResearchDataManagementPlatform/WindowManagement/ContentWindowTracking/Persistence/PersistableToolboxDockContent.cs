@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -17,16 +16,13 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 
 /// <summary>
-///     A Document Tab that hosts an RDMPCollection, the control knows how to save itself to the persistence settings file
-///     for the user ensuring that when they next open the
-///     software the Tab can be reloaded and displayed.  Persistance involves storing this Tab type, the Collection Control
-///     type being hosted by the Tab (an RDMPCollection).
-///     Since there can only ever be one RDMPCollection of any Type active at a time this is all that must be stored to
-///     persist the control
+/// A Document Tab that hosts an RDMPCollection, the control knows how to save itself to the persistence settings file for the user ensuring that when they next open the
+/// software the Tab can be reloaded and displayed.  Persistance involves storing this Tab type, the Collection Control type being hosted by the Tab (an RDMPCollection).
+/// Since there can only ever be one RDMPCollection of any Type active at a time this is all that must be stored to persist the control
 /// </summary>
 [TechnicalUI]
-[DesignerCategory("")]
-public class PersistableToolboxDockContent : DockContent
+[System.ComponentModel.DesignerCategory("")]
+public class PersistableToolboxDockContent:DockContent
 {
     public const string Prefix = "Toolbox";
 
@@ -37,9 +33,11 @@ public class PersistableToolboxDockContent : DockContent
     {
         CollectionType = collectionType;
     }
-
     protected override string GetPersistString()
     {
+
+
+
         var args = new Dictionary<string, string>
         {
             { "Toolbox", CollectionType.ToString() }
@@ -48,7 +46,6 @@ public class PersistableToolboxDockContent : DockContent
 
         return Prefix + PersistStringHelper.Separator + PersistStringHelper.SaveDictionaryToString(args);
     }
-
     public RDMPCollectionUI GetCollection()
     {
         return Controls.OfType<RDMPCollectionUI>().SingleOrDefault();

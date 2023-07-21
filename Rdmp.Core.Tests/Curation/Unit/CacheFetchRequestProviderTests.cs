@@ -20,7 +20,7 @@ namespace Rdmp.Core.Tests.Curation.Unit;
 public class CacheFetchRequestProviderTests
 {
     /// <summary>
-    ///     Test that the fetch request created from the failure request by the provider is valid
+    /// Test that the fetch request created from the failure request by the provider is valid
     /// </summary>
     [Test]
     public void TestFailedFetchRequestProvider_CreationOfFetchRequest()
@@ -49,7 +49,7 @@ public class CacheFetchRequestProviderTests
     }
 
     /// <summary>
-    ///     Test that the provider iterates through multiple batches of data retrieved from a repository correctly
+    /// Test that the provider iterates through multiple batches of data retrieved from a repository correctly
     /// </summary>
     [Test]
     public void TestFailedFetchRequestProvider_MultiplePages()
@@ -68,7 +68,7 @@ public class CacheFetchRequestProviderTests
 
         // Stub this so the 'repository' will return the first page, second page then empty page
         var cacheProgress = new Mock<ICacheProgress>();
-        cacheProgress.SetupSequence(c => c.FetchPage(It.IsAny<int>(), It.IsAny<int>()))
+        cacheProgress.SetupSequence<IEnumerable<ICacheFetchFailure>>(c => c.FetchPage(It.IsAny<int>(), It.IsAny<int>()))
             .Returns(failuresPage1)
             .Returns(failuresPage2)
             .Returns(new List<ICacheFetchFailure>())
@@ -85,15 +85,14 @@ public class CacheFetchRequestProviderTests
     }
 
     /// <summary>
-    ///     If we construct the request with a previous failure, then there should be a save operation when the updated failure
-    ///     is persisted to the database
+    /// If we construct the request with a previous failure, then there should be a save operation when the updated failure is persisted to the database
     /// </summary>
     [Test]
     public void FailedCacheFetchRequest_SavesPreviousFailure()
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow == Mock.Of<IPermissionWindow>());
+        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow==Mock.Of<IPermissionWindow>());
 
         var request = new CacheFetchRequest(previousFailure.Object, cacheProgress);
         request.RequestFailed(new Exception());
@@ -102,14 +101,14 @@ public class CacheFetchRequestProviderTests
     }
 
     /// <summary>
-    ///     If we construct the request with a previous failure, then Resolve should be called on it when successful
+    /// If we construct the request with a previous failure, then Resolve should be called on it when successful
     /// </summary>
     [Test]
     public void FailedCacheFetchRequest_ResolveCalled()
     {
         var previousFailure = GetFailureMock();
 
-        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow == Mock.Of<IPermissionWindow>());
+        var cacheProgress = Mock.Of<ICacheProgress>(c => c.PermissionWindow==Mock.Of<IPermissionWindow>());
 
         var request = new CacheFetchRequest(previousFailure.Object, cacheProgress);
         request.RequestSucceeded();
@@ -119,10 +118,10 @@ public class CacheFetchRequestProviderTests
 
     private static Mock<ICacheFetchFailure> GetFailureMock()
     {
-        var failure = Mock.Of<ICacheFetchFailure>(f =>
+        var failure = Mock.Of<ICacheFetchFailure>(f=>
             f.FetchRequestEnd == DateTime.Now &&
             f.FetchRequestStart == DateTime.Now.Subtract(new TimeSpan(1, 0, 0)));
-
+            
         return Mock.Get(failure);
     }
 }

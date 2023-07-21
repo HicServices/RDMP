@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.UI.SimpleDialogs;
@@ -16,24 +16,16 @@ public partial class TaskDescriptionLabel : UserControl
 {
     private Color _backColour;
     private Color _foreColour;
-
     public TaskDescriptionLabel()
     {
         InitializeComponent();
     }
 
-    /// <summary>
-    ///     Returns the width this control would ideally like to take up
-    /// </summary>
-    public int PreferredWidth => Math.Max(tbEntryLabel.Width, tbTaskDescription.Width);
-
-    public int PreferredHeight => Height;
-
     public void SetupFor(DialogArgs args)
     {
         var task = args.TaskDescription;
         var entryLabel = args.EntryLabel;
-
+            
 
         tbTaskDescription.Visible = pnlTaskDescription.Visible = !string.IsNullOrWhiteSpace(task);
         tbTaskDescription.Text = task;
@@ -46,8 +38,8 @@ public partial class TaskDescriptionLabel : UserControl
         // set prompt text. If theres a TaskDescription too then leave a bit of extra space
         tbEntryLabel.Text = entryLabel;
 
-        Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) +
-                 (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
+        Height = (!string.IsNullOrWhiteSpace(entryLabel) ? tbEntryLabel.Height : 0) + 
+                      (!string.IsNullOrWhiteSpace(task) ? tbTaskDescription.Height : 0);
 
         //Switch style based on args.DesciptionSeverity
         switch (args.DesciptionSeverity)
@@ -71,6 +63,12 @@ public partial class TaskDescriptionLabel : UserControl
         tbTaskDescription.BackColor = _backColour;
         tbTaskDescription.ForeColor = _foreColour;
     }
+
+    /// <summary>
+    /// Returns the width this control would ideally like to take up
+    /// </summary>
+    public int PreferredWidth => Math.Max(tbEntryLabel.Width, tbTaskDescription.Width);
+    public int PreferredHeight => Height;
 
     private void textBox1_Resize(object sender, EventArgs e)
     {

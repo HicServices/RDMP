@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
+using System.Linq;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -22,7 +23,7 @@ public class SimpleExampleTests : DatabaseTests
         Assert.IsTrue(cata.Exists());
     }
 
-    [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
+    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
     public void Test2(DatabaseType type)
     {
         var database = GetCleanedServer(type);
@@ -32,7 +33,7 @@ public class SimpleExampleTests : DatabaseTests
         Assert.IsNotNull(database.GetRuntimeName());
     }
 
-    [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
+    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
     public void TestReadDataLowPrivileges(DatabaseType type)
     {
         var database = GetCleanedServer(type);
@@ -41,7 +42,7 @@ public class SimpleExampleTests : DatabaseTests
         var dt = new DataTable();
         dt.Columns.Add("MyCol");
         dt.Rows.Add("Hi");
-        dt.PrimaryKey = new[] { dt.Columns[0] };
+        dt.PrimaryKey = new[] {dt.Columns[0]};
 
         var tbl = database.CreateTable("MyTable", dt);
 
@@ -54,7 +55,7 @@ public class SimpleExampleTests : DatabaseTests
         Import(tbl, out var tableInfo, out var columnInfos);
 
         //setup credentials for the table in RDMP (this will be Inconclusive if you have not enabled it in TestDatabases.txt
-        SetupLowPrivilegeUserRightsFor(tableInfo, TestLowPrivilegePermissions.Reader);
+        SetupLowPrivilegeUserRightsFor(tableInfo,TestLowPrivilegePermissions.Reader);
 
         //request access to the database using DataLoad context
         var newDatabase = DataAccessPortal.ExpectDatabase(tableInfo, DataAccessContext.DataLoad);
@@ -64,14 +65,14 @@ public class SimpleExampleTests : DatabaseTests
 
         //the credentials should be different
         Assert.AreNotEqual(tbl.Database.Server.ExplicitUsernameIfAny, newTbl.Database.Server.ExplicitUsernameIfAny);
-
+            
         //try re-reading the data 
         Assert.AreEqual(1, newTbl.GetRowCount());
         Assert.AreEqual(1, newTbl.DiscoverColumns().Length);
         Assert.IsTrue(newTbl.DiscoverColumn("MyCol").IsPrimaryKey);
 
         //low priority user shouldn't be able to drop tables
-        Assert.That(newTbl.Drop, Throws.Exception);
+        Assert.That(newTbl.Drop,Throws.Exception);
 
         //normal testing user should be able to
         tbl.Drop();

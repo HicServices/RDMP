@@ -7,11 +7,12 @@
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-///     Collection of all ANOTable objects.  These define how column level anonymisation happens in the data load engine
+/// Collection of all ANOTable objects.  These define how column level anonymisation happens in the data load engine
 /// </summary>
-public class AllANOTablesNode : SingletonNode
+public class AllANOTablesNode:SingletonNode
 {
-    public AllANOTablesNode() : base("Anonymisation Tables")
+    public AllANOTablesNode():base("Anonymisation Tables")
     {
+            
     }
 }

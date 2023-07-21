@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
@@ -12,13 +13,12 @@ using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     View/run the extraction SQL for a given <see cref="Catalogue" /> in a given <see cref="ExtractionConfiguration" />
+/// View/run the extraction SQL for a given <see cref="Catalogue"/> in a given <see cref="ExtractionConfiguration"/>
 /// </summary>
 public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtomicCommandWithTarget
 {
@@ -27,10 +27,13 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
 
     [UseWithObjectConstructor]
     public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
+
         [DemandsInitialization("The extraction configuration you want to know about")]
         ExtractionConfiguration ec,
+
         [DemandsInitialization("The dataset for whom you want to see the extraction SQL")]
         Catalogue c,
+
         [DemandsInitialization(ToFileDescription)]
         FileInfo toFile = null) : base(activator, toFile)
     {
@@ -38,7 +41,10 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
 
         _selectedDataSet = ec.SelectedDataSets.FirstOrDefault(sds => sds.GetCatalogue().Equals(c));
 
-        if (_selectedDataSet == null) SetImpossible($"Catalogue '{c}' is not listed as a selected dataset in '{ec}'");
+        if (_selectedDataSet == null)
+        {
+            SetImpossible($"Catalogue '{c}' is not listed as a selected dataset in '{ec}'");
+        }
     }
 
     public ExecuteCommandViewExtractionSql(IBasicActivateItems activator,
@@ -55,15 +61,13 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
         _extractionConfiguration = sds.ExtractionConfiguration;
         _selectedDataSet = sds;
     }
-
     public ExecuteCommandViewExtractionSql(IBasicActivateItems activator) : base(activator, null)
     {
     }
 
     public override string GetCommandHelp()
     {
-        return
-            "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
+        return "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -94,9 +98,7 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
         var sds = _selectedDataSet;
 
         if (sds == null && _extractionConfiguration != null)
-            sds = SelectOne(
-                BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(
-                    _extractionConfiguration));
+            sds = SelectOne(BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<SelectedDataSets>(_extractionConfiguration));
 
         if (_selectedDataSet == null)
             return null;

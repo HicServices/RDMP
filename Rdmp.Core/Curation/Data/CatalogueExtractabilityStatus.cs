@@ -7,16 +7,25 @@
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-///     <para>
-///         Describes whether a Catalogue can be extracted in data export projects and if so, whether it is only
-///         permitted in a single Project.
-///     </para>
-///     <para>See <see cref="Catalogue.GetExtractabilityStatus" /></para>
+/// <para>Describes whether a Catalogue can be extracted in data export projects and if so, whether it is only permitted in a single Project.</para>
+/// 
+/// <para>See <see cref="Catalogue.GetExtractabilityStatus"/></para>
 /// </summary>
 public class CatalogueExtractabilityStatus
 {
     /// <summary>
-    ///     Creates a new confirmed extractability knowledge for a <see cref="Catalogue" />
+    /// The <see cref="Catalogue"/> is extractable as an ExtractableDataSet in data export database
+    /// </summary>
+    public bool IsExtractable { get; private set; }
+
+    /// <summary>
+    /// The <see cref="Catalogue"/> is extractable as an ExtractableDataSet in data export dabase but only for use in a single
+    /// Project.
+    /// </summary>
+    public bool IsProjectSpecific { get; private set; }
+
+    /// <summary>
+    /// Creates a new confirmed extractability knowledge for a <see cref="Catalogue"/>
     /// </summary>
     /// <param name="isExtractable"></param>
     /// <param name="isProjectSpecific"></param>
@@ -25,16 +34,4 @@ public class CatalogueExtractabilityStatus
         IsExtractable = isExtractable;
         IsProjectSpecific = isProjectSpecific;
     }
-
-    /// <summary>
-    ///     The <see cref="Catalogue" /> is extractable as an ExtractableDataSet in data export database
-    /// </summary>
-    public bool IsExtractable { get; private set; }
-
-    /// <summary>
-    ///     The <see cref="Catalogue" /> is extractable as an ExtractableDataSet in data export dabase but only for use in a
-    ///     single
-    ///     Project.
-    /// </summary>
-    public bool IsProjectSpecific { get; private set; }
 }

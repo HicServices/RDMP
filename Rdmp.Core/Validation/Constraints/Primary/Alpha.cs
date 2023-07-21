@@ -9,13 +9,13 @@ using System.Text.RegularExpressions;
 namespace Rdmp.Core.Validation.Constraints.Primary;
 
 /// <summary>
-///     Field can contain only the letters A-Z with no spaces or other symbols.
+/// Field can contain only the letters A-Z with no spaces or other symbols.
 /// </summary>
 public class Alpha : PrimaryConstraint
 {
     public const string RegExp = @"^[A-Za-z]+$";
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override ValidationFailure Validate(object value)
     {
         if (value == null)
@@ -25,17 +25,21 @@ public class Alpha : PrimaryConstraint
         var match = Regex.Match(text, RegExp);
 
         if (!match.Success)
-            return new ValidationFailure($"Value [{value}] contains characters other than alphabetic", this);
+        {
+            return new ValidationFailure($"Value [{value}] contains characters other than alphabetic",this);
+        }
 
         return null;
     }
 
     public override void RenameColumn(string originalName, string newName)
     {
+            
     }
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
         return $"Checks to see if input strings contain nothing but characters by using pattern {RegExp}";
     }
+
 }

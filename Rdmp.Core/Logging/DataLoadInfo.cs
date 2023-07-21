@@ -6,50 +6,76 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using FAnsi.Discovery;
 
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-///     Root object for an ongoing logged activity e.g. 'Loading Biochemistry'.  Includes the package name (exe or class
-///     name that is primarily responsible
-///     for the activity), start time, description etc.  You must call CloseAndMarkComplete once your activity is completed
-///     (whether it has failed or suceeded).
-///     <para>
-///         You should maintain a reference to DataLoadInfo in order to create logs of Progress / Errors / and table load
-///         audits
-///         (TableLoadInfo) (create these via the LogManager).  The ID property can be used if you want to reference this
-///         audit record e.g. when loading a live table
-///         you can store the ID of the load batch it appeared in.
-///     </para>
+/// Root object for an ongoing logged activity e.g. 'Loading Biochemistry'.  Includes the package name (exe or class name that is primarily responsible
+/// for the activity), start time, description etc.  You must call CloseAndMarkComplete once your activity is completed (whether it has failed or suceeded).
+/// 
+/// <para>You should maintain a reference to DataLoadInfo in order to create logs of Progress / Errors / and table load audits
+/// (TableLoadInfo) (create these via the LogManager).  The ID property can be used if you want to reference this audit record e.g. when loading a live table
+/// you can store the ID of the load batch it appeared in. </para>
 /// </summary>
 public class DataLoadInfo : IDataLoadInfo
 {
-    public enum FatalErrorStates
-    {
-        Outstanding = 1,
-        Resolved = 2,
-        Blocked = 3
-    }
-
-    public enum ProgressEventType
-    {
-        OnInformation,
-        OnProgress,
-        OnQueryCancel,
-        OnTaskFailed,
-        OnWarning
-    }
-
-    public static DataLoadInfo Empty = new();
+        
+    private bool _isClosed = false;
+    private readonly string _packageName;
+    private readonly string _userAccount;
+    private readonly DateTime _startTime;
+    private DateTime _endTime;
+    private readonly string _description;
+    private string _suggestedRollbackCommand;
+    private int _id;
+    private bool _isTest;
 
 
-    private readonly object oLock = new();
+
+    private DiscoveredServer _server ;
+
+    public DiscoveredServer DatabaseSettings => _server;
+
+    private object oLock = new();
+        
+        
+    #region Property setup (these throw exceptions if you try to read them after the record is closed)
+
+       
+
+    public string PackageName => _packageName;
+
+
+    public string UserAccount => _userAccount;
+
+
+    public DateTime StartTime => _startTime;
+
+
+    public DateTime EndTime => _endTime;
+
+
+    public string Description => _description;
+
+
+    public string SuggestedRollbackCommand => _suggestedRollbackCommand;
+
+
+    public int ID => _id;
+
+    public bool IsTest => _isTest;
+
+
+    public bool IsClosed => _isClosed;
+
+    #endregion
 
 
     /// <summary>
-    ///     Marks the start of a new data load in the database.  Automatically populates StartTime and UserAccount from
-    ///     Environment.  Also creates a new ID in the database.
+    /// Marks the start of a new data load in the database.  Automatically populates StartTime and UserAccount from
+    /// Environment.  Also creates a new ID in the database.
     /// </summary>
     /// <param name="dataLoadTaskName"></param>
     /// <param name="packageName">The SSIS package or executable that started the data load</param>
@@ -57,55 +83,84 @@ public class DataLoadInfo : IDataLoadInfo
     /// <param name="suggestedRollbackCommand"></param>
     /// <param name="isTest">If true then the database record will be marked as Test=1</param>
     /// <param name="settings"></param>
-    public DataLoadInfo(string dataLoadTaskName, string packageName, string description,
-        string suggestedRollbackCommand, bool isTest, DiscoveredServer settings)
+    public DataLoadInfo(string dataLoadTaskName, string packageName, string description,string suggestedRollbackCommand,bool isTest,DiscoveredServer settings)
     {
-        if (settings != null)
-            DatabaseSettings = settings;
+        if(settings != null)
+            _server = settings;
 
-        PackageName = packageName;
-        UserAccount = Environment.UserName;
-        Description = description;
-        StartTime = DateTime.Now;
-        SuggestedRollbackCommand = suggestedRollbackCommand;
-
-        ID = -1;
-        IsTest = isTest;
+        _packageName = packageName;
+        _userAccount = Environment.UserName;
+        _description = description;
+        _startTime = DateTime.Now;
+        _suggestedRollbackCommand = suggestedRollbackCommand;
+            
+        _id = -1;
+        _isTest = isTest;
 
         RecordNewDataLoadInDatabase(dataLoadTaskName);
     }
 
-    private DataLoadInfo()
+    private void RecordNewDataLoadInDatabase(string dataLoadTaskName)
     {
+        using (var con = _server.GetConnection())
+        {
+            con.Open();
+
+            var cmd = _server.GetCommand("SELECT ID FROM DataLoadTask WHERE name=@name", con);
+            _server.AddParameterWithValueToCommand("@name",cmd, dataLoadTaskName);
+
+
+            var result = cmd.ExecuteScalar();
+
+            if (result == null || result == DBNull.Value)
+                throw new Exception($"Could not find data load task named:{dataLoadTaskName}");
+
+            //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
+            var parentTaskID = int.Parse(result.ToString());
+                                
+            cmd = _server.GetCommand(
+                @"INSERT INTO DataLoadRun (description,startTime,dataLoadTaskID,isTest,packageName,userAccount,suggestedRollbackCommand) VALUES (@description,@startTime,@dataLoadTaskID,@isTest,@packageName,@userAccount,@suggestedRollbackCommand);
+SELECT @@IDENTITY;", con);
+
+            _server.AddParameterWithValueToCommand("@description", cmd, _description);
+            _server.AddParameterWithValueToCommand("@startTime", cmd, _startTime);
+            _server.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
+            _server.AddParameterWithValueToCommand("@isTest",cmd, _isTest);
+            _server.AddParameterWithValueToCommand("@packageName", cmd, _packageName);
+            _server.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount);
+            _server.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand ?? string.Empty);
+
+
+            //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
+            _id = int.Parse(cmd.ExecuteScalar().ToString());
+        }
+
     }
 
-    public Dictionary<int, TableLoadInfo> TableLoads { get; } = new();
-
-    public DiscoveredServer DatabaseSettings { get; }
-
     /// <summary>
-    ///     Marks that the data load ended
+    /// Marks that the data load ended
     /// </summary>
     public void CloseAndMarkComplete()
     {
         lock (oLock)
         {
             //prevent double closing
-            if (IsClosed)
-                return;
+            if (_isClosed)
+                return; 
+            
+            _endTime = DateTime.Now;
 
-            EndTime = DateTime.Now;
-
-            using (var con = DatabaseSettings.BeginNewTransactedConnection())
+            using (var con = _server.BeginNewTransactedConnection())
             {
                 try
                 {
+
                     var cmdUpdateToClosed =
-                        DatabaseSettings.GetCommand("UPDATE DataLoadRun SET endTime=@endTime WHERE ID=@ID",
+                        _server.GetCommand("UPDATE DataLoadRun SET endTime=@endTime WHERE ID=@ID",
                             con);
 
-                    DatabaseSettings.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed, DateTime.Now);
-                    DatabaseSettings.AddParameterWithValueToCommand("@ID", cmdUpdateToClosed, ID);
+                    _server.AddParameterWithValueToCommand("@endTime", cmdUpdateToClosed,DateTime.Now);
+                    _server.AddParameterWithValueToCommand("@ID", cmdUpdateToClosed, ID);
 
                     var rowsAffected = cmdUpdateToClosed.ExecuteNonQuery();
 
@@ -115,7 +170,7 @@ public class DataLoadInfo : IDataLoadInfo
 
                     con.ManagedTransaction.CommitAndCloseConnection();
 
-                    IsClosed = true;
+                    _isClosed = true;
                 }
                 catch (Exception)
                 {
@@ -127,21 +182,48 @@ public class DataLoadInfo : IDataLoadInfo
 
                 //once a record has been committed to the database it is redundant and no further attempts to read/change it should be made by anyone
                 foreach (var t in TableLoads.Values)
+                {
                     //close any table loads that have not yet completed
                     if (!t.IsClosed)
                         t.CloseAndArchive();
+                }
             }
         }
     }
 
-    public ITableLoadInfo CreateTableLoadInfo(string suggestedRollbackCommand, string destinationTable,
-        DataSource[] sources, int expectedInserts)
+
+    private Dictionary<int, TableLoadInfo> _TableLoads = new();
+
+    public Dictionary<int, TableLoadInfo> TableLoads => _TableLoads;
+
+    public ITableLoadInfo CreateTableLoadInfo(string suggestedRollbackCommand, string destinationTable, DataSource[] sources, int expectedInserts)
     {
         return new TableLoadInfo(this, suggestedRollbackCommand, destinationTable, sources, expectedInserts);
     }
 
+    public static DataLoadInfo Empty= new();
+
+    private DataLoadInfo()
+    {
+    }
+
+    public void AddTableLoad(TableLoadInfo tableLoadInfo)
+    {
+        lock (oLock)
+        {
+            TableLoads.Add(tableLoadInfo.ID, tableLoadInfo);
+        }
+    }
+
+    public enum FatalErrorStates
+    {
+        Outstanding = 1,
+        Resolved = 2,
+        Blocked = 3
+    }
+
     /// <summary>
-    ///     Terminates the current DataLoadInfo and records that it resulted in a fatal error
+    /// Terminates the current DataLoadInfo and records that it resulted in a fatal error
     /// </summary>
     /// <param name="errorSource">The component that generated the failure(in SSIS try System::SourceName)</param>
     /// <param name="errorDescription">A description of the error (in SSIS try System::ErrorDescription)</param>
@@ -155,121 +237,53 @@ public class DataLoadInfo : IDataLoadInfo
             var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
 
-            var cmdLookupStatusID =
-                DatabaseSettings.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
-            DatabaseSettings.AddParameterWithValueToCommand("@status", cmdLookupStatusID, initialErrorStatus);
+            var cmdLookupStatusID = _server.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
+            _server.AddParameterWithValueToCommand("@status",cmdLookupStatusID, initialErrorStatus);
 
             var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
-            var cmdRecordFatalError = DatabaseSettings.GetCommand(
-                @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",
-                con);
-            DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
-            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
-            DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
-            DatabaseSettings.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
-            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
+            var cmdRecordFatalError = _server.GetCommand(
+                @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);", con);
+            _server.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
+            _server.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
+            _server.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
+            _server.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
+            _server.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
 
             cmdRecordFatalError.ExecuteNonQuery();
 
             //this might get called multiple times (many errors in rapid succession as the program crashes) but only close the dataLoadInfo once
             if (!IsClosed)
                 CloseAndMarkComplete();
+
         }
+    }
+
+    public enum ProgressEventType
+    {
+        OnInformation,
+        OnProgress,
+        OnQueryCancel,
+        OnTaskFailed,
+        OnWarning
     }
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
         using (var con = DatabaseSettings.GetConnection())
-        using (var cmdRecordProgress = DatabaseSettings.GetCommand("INSERT INTO ProgressLog " +
-                                                                   "(dataLoadRunID,eventType,source,description,time) " +
-                                                                   "VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
-                   con))
+        using (var cmdRecordProgress = _server.GetCommand("INSERT INTO ProgressLog " +
+                                                          "(dataLoadRunID,eventType,source,description,time) " +
+                                                          "VALUES (@dataLoadRunID,@eventType,@source,@description,@time);", con))
         {
             con.Open();
 
-            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordProgress, ID);
-            DatabaseSettings.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, pevent.ToString());
-            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordProgress, Source);
-            DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordProgress, Description);
-            DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordProgress, DateTime.Now);
+            _server.AddParameterWithValueToCommand("@dataLoadRunID",cmdRecordProgress, ID);
+            _server.AddParameterWithValueToCommand("@eventType", cmdRecordProgress, pevent.ToString());
+            _server.AddParameterWithValueToCommand("@source", cmdRecordProgress, Source);
+            _server.AddParameterWithValueToCommand("@description", cmdRecordProgress, Description);
+            _server.AddParameterWithValueToCommand("@time", cmdRecordProgress, DateTime.Now);
 
             cmdRecordProgress.ExecuteNonQuery();
         }
     }
-
-    private void RecordNewDataLoadInDatabase(string dataLoadTaskName)
-    {
-        using (var con = DatabaseSettings.GetConnection())
-        {
-            con.Open();
-
-            var cmd = DatabaseSettings.GetCommand("SELECT ID FROM DataLoadTask WHERE name=@name", con);
-            DatabaseSettings.AddParameterWithValueToCommand("@name", cmd, dataLoadTaskName);
-
-
-            var result = cmd.ExecuteScalar();
-
-            if (result == null || result == DBNull.Value)
-                throw new Exception($"Could not find data load task named:{dataLoadTaskName}");
-
-            //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
-            var parentTaskID = int.Parse(result.ToString());
-
-            cmd = DatabaseSettings.GetCommand(
-                @"INSERT INTO DataLoadRun (description,startTime,dataLoadTaskID,isTest,packageName,userAccount,suggestedRollbackCommand) VALUES (@description,@startTime,@dataLoadTaskID,@isTest,@packageName,@userAccount,@suggestedRollbackCommand);
-SELECT @@IDENTITY;", con);
-
-            DatabaseSettings.AddParameterWithValueToCommand("@description", cmd, Description);
-            DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, StartTime);
-            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
-            DatabaseSettings.AddParameterWithValueToCommand("@isTest", cmd, IsTest);
-            DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, PackageName);
-            DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, UserAccount);
-            DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd,
-                SuggestedRollbackCommand ?? string.Empty);
-
-
-            //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
-            ID = int.Parse(cmd.ExecuteScalar().ToString());
-        }
-    }
-
-    public void AddTableLoad(TableLoadInfo tableLoadInfo)
-    {
-        lock (oLock)
-        {
-            TableLoads.Add(tableLoadInfo.ID, tableLoadInfo);
-        }
-    }
-
-
-    #region Property setup (these throw exceptions if you try to read them after the record is closed)
-
-    public string PackageName { get; }
-
-
-    public string UserAccount { get; }
-
-
-    public DateTime StartTime { get; }
-
-
-    public DateTime EndTime { get; private set; }
-
-
-    public string Description { get; }
-
-
-    public string SuggestedRollbackCommand { get; }
-
-
-    public int ID { get; private set; }
-
-    public bool IsTest { get; }
-
-
-    public bool IsClosed { get; private set; }
-
-    #endregion
 }

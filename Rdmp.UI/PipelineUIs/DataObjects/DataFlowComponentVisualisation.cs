@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
@@ -15,38 +16,41 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
+
 namespace Rdmp.UI.PipelineUIs.DataObjects;
 
 /// <summary>
-///     TECHNICAL: Base class for PipelineComponentVisualisation but can also include empty components (no type selected
-///     yet)
+/// TECHNICAL: Base class for PipelineComponentVisualisation but can also include empty components (no type selected yet)
 /// </summary>
 [TechnicalUI]
 public partial class DataFlowComponentVisualisation : UserControl
 {
+    public object Value { get; set; }
     private readonly PipelineComponentRole _role;
+
+    private ICheckable _checkable;
+    private MandatoryPropertyChecker _mandatoryChecker;
+
+    public bool IsLocked
+    {
+        get => pbPadlock.Visible;
+        set => pbPadlock.Visible = value;
+    }
     private readonly Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> _shouldAllowDrop;
 
-    private readonly ICheckable _checkable;
-    private readonly Pen _emptyPen = new(new SolidBrush(Color.Black));
-    protected Pen _fullPen = new(new SolidBrush(Color.Black));
-
-    protected bool _isEmpty;
-    private readonly MandatoryPropertyChecker _mandatoryChecker;
-
-    private readonly ToolTip _toolTip = new();
-
     public DataFlowComponentVisualisation()
-        : this(PipelineComponentRole.Middle, null, null)
+        : this(PipelineComponentRole.Middle, null,null)
     {
-        if (LicenseManager.UsageMode !=
-            LicenseUsageMode
-                .Designtime) //don't connect to database in design mode unless they passed in a fist full of nulls
+        if (LicenseManager.UsageMode != LicenseUsageMode.Designtime) //don't connect to database in design mode unless they passed in a fist full of nulls
             throw new NotSupportedException("Do not use this constructor, it is for use by Visual Studio Designer");
     }
 
-    public DataFlowComponentVisualisation(PipelineComponentRole role, object value,
-        Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
+    public PipelineComponentRole GetRole()
+    {
+        return _role;
+    }
+
+    public DataFlowComponentVisualisation(PipelineComponentRole role, object value, Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
     {
         Value = value;
         _role = role;
@@ -55,11 +59,11 @@ public partial class DataFlowComponentVisualisation : UserControl
 
         _fullPen.Width = 2;
         _emptyPen.Width = 2;
-        _emptyPen.DashPattern = new[] { 4.0F, 2.0F, 1.0F, 3.0F };
+        _emptyPen.DashPattern = new float[] { 4.0F, 2.0F, 1.0F, 3.0F };
 
         if (value == null)
         {
-            IsLocked = false; //cannot be locked AND empty!
+            IsLocked = false;//cannot be locked AND empty!
             _isEmpty = true;
             lblText.Text = "Empty";
             AllowDrop = _shouldAllowDrop != null;
@@ -68,7 +72,7 @@ public partial class DataFlowComponentVisualisation : UserControl
         {
             _checkable = value as ICheckable;
             _mandatoryChecker = new MandatoryPropertyChecker(value);
-            lblText.Text = value.ToString(); //.GetType().Name;
+            lblText.Text = value.ToString();//.GetType().Name;
             GenerateToolTipBasedOnProperties(value);
         }
 
@@ -88,22 +92,11 @@ public partial class DataFlowComponentVisualisation : UserControl
                 throw new ArgumentOutOfRangeException(nameof(role));
         }
 
-
+            
         Width = lblText.PreferredWidth + 80;
     }
 
-    public object Value { get; set; }
-
-    public bool IsLocked
-    {
-        get => pbPadlock.Visible;
-        set => pbPadlock.Visible = value;
-    }
-
-    public PipelineComponentRole GetRole()
-    {
-        return _role;
-    }
+    private ToolTip _toolTip = new();
 
     private void GenerateToolTipBasedOnProperties(object value)
     {
@@ -126,10 +119,15 @@ public partial class DataFlowComponentVisualisation : UserControl
 
         var result = toolTip.ToString();
 
-        if (!string.IsNullOrWhiteSpace(result))
+        if(!string.IsNullOrWhiteSpace(result))
             _toolTip.SetToolTip(lblText,
                 $"{lblText.Text}{Environment.NewLine}Arguments:{Environment.NewLine}{result}");
     }
+
+    protected bool _isEmpty ;
+    private Pen _emptyPen = new(new SolidBrush(Color.Black));
+    protected Pen _fullPen = new(new SolidBrush(Color.Black));
+
 
 
     protected override void OnPaintBackground(PaintEventArgs e)
@@ -141,10 +139,10 @@ public partial class DataFlowComponentVisualisation : UserControl
 
     private void DataFlowComponentVisualisation_DragEnter(object sender, DragEventArgs e)
     {
-        if (_shouldAllowDrop == null)
+        if(_shouldAllowDrop == null)
             return;
 
-        var shouldAllow = _shouldAllowDrop(e, this);
+        var shouldAllow = _shouldAllowDrop(e,this);
 
         if (shouldAllow != DragDropEffects.None)
             pbInsertHere.Visible = true;
@@ -180,4 +178,5 @@ public partial class DataFlowComponentVisualisation : UserControl
             ragSmiley1.Fatal(e);
         }
     }
+
 }

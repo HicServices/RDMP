@@ -5,28 +5,28 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
+using Microsoft.Data.SqlClient;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Microsoft.Data.SqlClient;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
+
 namespace Rdmp.UI.Menus.MenuItems;
 
 /// <summary>
-///     <see cref="ToolStripMenuItem" /> depicting a single <see cref="IAtomicCommand" />
+/// <see cref="ToolStripMenuItem"/> depicting a single <see cref="IAtomicCommand"/>
 /// </summary>
-[DesignerCategory("")]
+[System.ComponentModel.DesignerCategory("")]
 public class AtomicCommandMenuItem : ToolStripMenuItem
 {
-    private readonly IActivateItems _activator;
     private readonly IAtomicCommand _command;
+    private readonly IActivateItems _activator;
 
-    public AtomicCommandMenuItem(IAtomicCommand command, IActivateItems activator)
+    public AtomicCommandMenuItem(IAtomicCommand command,IActivateItems activator)
     {
         _command = command;
         _activator = activator;
@@ -34,13 +34,11 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
         Text = command.GetCommandName();
         Tag = command;
         Image = command.GetImage(activator.CoreIconProvider)?.ImageToBitmap();
-
+            
         //disable if impossible command
         Enabled = !command.IsImpossible;
 
-        ToolTipText = command.IsImpossible
-            ? command.ReasonCommandImpossible
-            : command.GetCommandHelp() ?? activator.GetDocumentation(command.GetType());
+        ToolTipText = command.IsImpossible ? command.ReasonCommandImpossible : command.GetCommandHelp() ?? activator.GetDocumentation(command.GetType());
     }
 
     protected override void OnClick(EventArgs e)
@@ -70,8 +68,7 @@ public class AtomicCommandMenuItem : ToolStripMenuItem
                     if (helpDict != null && helpDict.ContainsKey(match.Value))
                     {
                         ExceptionViewer.Show(
-                            $"Rule Broken{Environment.NewLine}{helpDict[match.Value]}{Environment.NewLine}({match.Value})",
-                            ex);
+                            $"Rule Broken{Environment.NewLine}{helpDict[match.Value]}{Environment.NewLine}({match.Value})",ex);
                         return;
                     }
                 }

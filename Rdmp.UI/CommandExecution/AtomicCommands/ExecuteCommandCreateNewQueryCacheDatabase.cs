@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -13,20 +14,18 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Versioning;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution,IAtomicCommand
 {
     private readonly CohortIdentificationConfiguration _cic;
-
-    public ExecuteCommandCreateNewQueryCacheDatabase(IActivateItems activator,
-        CohortIdentificationConfiguration configuration) : base(activator)
+        
+    public ExecuteCommandCreateNewQueryCacheDatabase(IActivateItems activator, CohortIdentificationConfiguration configuration):base(activator)
     {
         _cic = configuration;
-        if (_cic.QueryCachingServer_ID != null)
+        if(_cic.QueryCachingServer_ID != null)
             SetImpossible("CohortIdentificationConfiguration already has a Query Cache configured");
     }
 
@@ -42,15 +41,14 @@ public class ExecuteCommandCreateNewQueryCacheDatabase : BasicUICommandExecution
         var db = createPlatform.DatabaseCreatedIfAny;
         if (db != null)
         {
-            var newServer =
-                new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", p);
+            var newServer = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", p);
             newServer.SetProperties(db);
 
             _cic.QueryCachingServer_ID = newServer.ID;
             _cic.SaveToDatabase();
 
-            SetDefaultIfNotExists(newServer, PermissableDefaults.CohortIdentificationQueryCachingServer_ID, true);
-
+            SetDefaultIfNotExists(newServer,PermissableDefaults.CohortIdentificationQueryCachingServer_ID,true);
+                
             Publish(_cic);
         }
     }

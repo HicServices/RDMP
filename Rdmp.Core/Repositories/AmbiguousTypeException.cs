@@ -9,15 +9,18 @@ using System;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-///     Thrown when a given string matches multiple Types
+/// Thrown when a given string matches multiple Types
 /// </summary>
 public class AmbiguousTypeException : Exception
 {
-    public AmbiguousTypeException(string message) : base(message)
+    public AmbiguousTypeException(string message):base(message)
     {
+                
     }
 
-    public AmbiguousTypeException(string message, Exception innerException) : base(message, innerException)
+    public AmbiguousTypeException(string message, Exception innerException): base(message,innerException)
     {
+                
+
     }
 }

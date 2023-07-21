@@ -25,7 +25,7 @@ internal class ExecutableProcessTaskTests
 
         var customArgs = new List<SpontaneouslyInventedArgument>
         {
-            new(new MemoryRepository(), "DatabaseName", db)
+            new SpontaneouslyInventedArgument(new MemoryRepository(), "DatabaseName", db)
         };
 
         var processTask = Mock.Of<IProcessTask>();
@@ -40,7 +40,7 @@ internal class ExecutableProcessTaskTests
     [Test]
     public void TestConstructionFromProcessTask()
     {
-        var processTask = Mock.Of<IProcessTask>(pt => pt.Path == "path");
+        var processTask = Mock.Of<IProcessTask>(pt => pt.Path=="path");
 
         var runtimeTask = new ExecutableRuntimeTask(processTask, null);
         Assert.AreEqual("path", runtimeTask.ExeFilepath);

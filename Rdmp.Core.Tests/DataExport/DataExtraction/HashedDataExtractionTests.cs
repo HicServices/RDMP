@@ -7,6 +7,7 @@
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -37,23 +38,21 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
         Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
         var listener = new ToMemoryDataLoadEventListener(true);
 
-        Execute(out var execute, out var result, listener);
+        Execute(out ExtractionPipelineUseCase execute,out var result,listener);
 
         var messages =
             listener.EventsReceivedBySender.SelectMany(m => m.Value)
-                .Where(m => m.ProgressEventType == ProgressEventType.Information &&
-                            m.Message.Contains("/*Decided on extraction SQL:*/"))
+                .Where(m=>m.ProgressEventType == ProgressEventType.Information && m.Message.Contains("/*Decided on extraction SQL:*/"))
                 .ToArray();
 
-        Assert.AreEqual(1, messages.Length, "Expected a message about what the final extraction SQL was");
-        Assert.IsTrue(messages[0].Message.Contains(" HASH JOIN "),
-            "expected use of hash matching was not reported by ExecuteDatasetExtractionSource in the SQL actually executed");
+        Assert.AreEqual(1,messages.Length,"Expected a message about what the final extraction SQL was");
+        Assert.IsTrue(messages[0].Message.Contains(" HASH JOIN "), "expected use of hash matching was not reported by ExecuteDatasetExtractionSource in the SQL actually executed");
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
         //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
         Assert.AreEqual($@"ReleaseID,Name,DateOfBirth
-{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim());
+{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim()); 
 
         Assert.AreEqual(1, _request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution));
         File.Delete(r.OutputFile);

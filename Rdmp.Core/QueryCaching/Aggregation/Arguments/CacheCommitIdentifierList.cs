@@ -13,19 +13,17 @@ using Rdmp.Core.Curation.Data.Aggregation;
 namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
 
 /// <summary>
-///     Request to cache an AggregateConfiguration that is a cohort identifier list subquery from a
-///     CohortIdentificationConfiguration (it is a query that
-///     identifies patients fitting certain criteria e.g. 'patients with HBA1c biochemistry results > 50').
-///     <para>Serves as an input to CachedAggregateConfigurationResultsManager.</para>
+/// Request to cache an AggregateConfiguration that is a cohort identifier list subquery from a CohortIdentificationConfiguration (it is a query that 
+/// identifies patients fitting certain criteria e.g. 'patients with HBA1c biochemistry results > 50').  
+/// 
+/// <para>Serves as an input to CachedAggregateConfigurationResultsManager.</para>
 /// </summary>
 public class CacheCommitIdentifierList : CacheCommitArguments
 {
-    private readonly DatabaseColumnRequest _identifierColumn;
+    private DatabaseColumnRequest _identifierColumn;
 
-    public CacheCommitIdentifierList(AggregateConfiguration configuration, string sql, DataTable results,
-        DatabaseColumnRequest identifierColumn, int timeout)
-        : base(AggregateOperation.IndexedExtractionIdentifierList, configuration, sql, results, timeout,
-            new[] { identifierColumn })
+    public CacheCommitIdentifierList(AggregateConfiguration configuration, string sql, DataTable results, DatabaseColumnRequest identifierColumn, int timeout)
+        : base(AggregateOperation.IndexedExtractionIdentifierList, configuration, sql, results, timeout, new []{identifierColumn})
     {
         //advise them if they are trying to cache an identifier list but the DataTable has more than 1 column
         if (results.Columns.Count != 1)
@@ -41,7 +39,7 @@ public class CacheCommitIdentifierList : CacheCommitArguments
         foreach (var r in results.Rows.Cast<DataRow>().ToArray())
             if (r[0] == null || r[0] == DBNull.Value)
                 results.Rows.Remove(r);
-
+            
         if (identifierColumn == null)
             throw new Exception("You must specify the data type of the identifier column, identifierColumn was null");
 
@@ -55,7 +53,7 @@ public class CacheCommitIdentifierList : CacheCommitArguments
         //if user has an explicit type to use for the column (probably a good idea to have all extraction idetntifiers of the same data type
         var col = resultingTable.DiscoverColumn(_identifierColumn.ColumnName);
 
-        CreateIndex(resultingTable, col, Configuration.ToString());
+        CreateIndex(resultingTable,col, Configuration.ToString());
     }
 
 

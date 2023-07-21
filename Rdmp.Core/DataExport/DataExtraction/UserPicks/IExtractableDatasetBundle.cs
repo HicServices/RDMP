@@ -12,7 +12,7 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
 /// <summary>
-///     See ExtractableDatasetBundle
+/// See ExtractableDatasetBundle
 /// </summary>
 public interface IExtractableDatasetBundle
 {
@@ -21,7 +21,7 @@ public interface IExtractableDatasetBundle
     List<SupportingSQLTable> SupportingSQL { get; }
     List<IBundledLookupTable> LookupTables { get; }
 
-    Dictionary<object, ExtractCommandState> States { get; }
-
     void DropContent(object toDrop);
+
+    Dictionary<object, ExtractCommandState> States { get; }
 }

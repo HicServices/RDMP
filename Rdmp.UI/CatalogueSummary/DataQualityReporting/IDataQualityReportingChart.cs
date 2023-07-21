@@ -9,17 +9,17 @@ using Rdmp.Core.DataQualityEngine.Data;
 namespace Rdmp.UI.CatalogueSummary.DataQualityReporting;
 
 /// <summary>
-///     Interface for all UI charts that depict DQE results in <see cref="CatalogueDQEResultsUI" />
+/// Interface for all UI charts that depict DQE results in <see cref="CatalogueDQEResultsUI"/>
 /// </summary>
 public interface IDataQualityReportingChart
 {
     /// <summary>
-    ///     Clears the currently shown results in the UI
+    /// Clears the currently shown results in the UI
     /// </summary>
     void ClearGraph();
 
     /// <summary>
-    ///     Updates the currently shown results to depict those gathered during the <paramref name="evaluation" />
+    /// Updates the currently shown results to depict those gathered during the <paramref name="evaluation"/>
     /// </summary>
     /// <param name="evaluation"></param>
     /// <param name="pivotCategoryValue">The pivot value within the results to show or "ALL" for all records gathered</param>

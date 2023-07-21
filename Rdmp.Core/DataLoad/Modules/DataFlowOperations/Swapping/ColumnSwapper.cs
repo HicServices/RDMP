@@ -7,61 +7,42 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using System.Linq;
-using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
-using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
+using TypeGuesser;
+using System.Globalization;
+using TypeGuesser.Deciders;
+using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 
 /// <summary>
-///     Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)
+/// Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)
 /// </summary>
-internal class ColumnSwapper : IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>,
-    IPipelineOptionalRequirement<ICohortCreationRequest>
+internal class ColumnSwapper:IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>, IPipelineOptionalRequirement<ICohortCreationRequest>
 {
-    protected IExtractionConfiguration _configuration;
-
-    private CultureInfo _culture;
-
-    /// <summary>
-    ///     The Type of objects that are stored in the Keys of <see cref="_mappingTable" />.  For use when input types do not
-    ///     match the mapping table types
-    /// </summary>
-    private Type _keyType;
-
-    private Dictionary<object, List<object>> _mappingTable;
-
-
-    protected IProject _project;
-
-    [DemandsInitialization(
-        "The column in your pipeline containing input values you want swapped.  Leave null to use the same name as the MappingFromColumn")]
+    [DemandsInitialization("The column in your pipeline containing input values you want swapped.  Leave null to use the same name as the MappingFromColumn")]
     public string InputFromColumn { get; set; }
 
-    [DemandsInitialization(
-        "Name for the column you want to create in the output stream of this component containing the mapped values.  Leave null to use the same name as the MappingToColumn")]
+    [DemandsInitialization("Name for the column you want to create in the output stream of this component containing the mapped values.  Leave null to use the same name as the MappingToColumn")]
     public string OutputToColumn { get; set; }
 
-    [DemandsInitialization("The column in your database which stores the input values you want mapped",
-        Mandatory = true)]
+    [DemandsInitialization("The column in your database which stores the input values you want mapped", Mandatory = true)]
     public ColumnInfo MappingFromColumn { get; set; }
 
-    [DemandsInitialization("The column in your database which stores the output values you want emitted",
-        Mandatory = true)]
+    [DemandsInitialization("The column in your database which stores the output values you want emitted", Mandatory = true)]
     public ColumnInfo MappingToColumn { get; set; }
 
     [DemandsInitialization(@"Optional text to add when generating the mapping table. Should not start with WHERE.
@@ -76,23 +57,21 @@ If Pipeline execution environment contains an ExtractionConfiguration then the f
     $l - Release Ticket (e.g. 'LINK-1234')", DemandType = DemandType.SQL, ContextText = "WHERE")]
     public virtual string WHERELogic { get; set; }
 
-    [DemandsInitialization("Determines behaviour when the same input value maps to multiple output values",
-        DefaultValue = AliasResolutionStrategy.CrashIfAliasesFound)]
+    [DemandsInitialization("Determines behaviour when the same input value maps to multiple output values", DefaultValue = AliasResolutionStrategy.CrashIfAliasesFound)]
     public AliasResolutionStrategy AliasResolutionStrategy { get; set; }
 
     [DemandsInitialization(@"Determines behaviour when no mapping is found for an input value:
 True - Crash the load
-False - Drop the row from the DataTable (and issue a warning)", DefaultValue = true)]
+False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true)]
     public bool CrashIfNoMappingsFound { get; set; }
 
-    [DemandsInitialization("Timeout to set on fetching the mapping table", DefaultValue = 30)]
+    [DemandsInitialization("Timeout to set on fetching the mapping table",DefaultValue=30)]
     public int Timeout { get; set; }
 
-    [DemandsInitialization(
-        @"Setting this to true will leave the original input column in your DataTable (so your table will have both input and output columns instead of a substitution)",
-        DefaultValue = true)]
+    [DemandsInitialization(@"Setting this to true will leave the original input column in your DataTable (so your table will have both input and output columns instead of a substitution)", DefaultValue = true)]
     public bool KeepInputColumnToo { get; set; }
-
+                
+    private CultureInfo _culture;
     [DemandsInitialization("The culture to use e.g. when Type translations are required")]
     public CultureInfo Culture
     {
@@ -100,44 +79,39 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
         set => _culture = value;
     }
 
-    public void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
-    {
-        _project = value.Project;
-    }
+    private Dictionary<object,List<object>> _mappingTable;
 
-    public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
-    {
-        _project = value.Configuration?.Project;
-        _configuration = value.Configuration;
-    }
+    /// <summary>
+    /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
+    /// </summary>
+    private Type _keyType;
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+
+    protected IProject _project;
+    protected IExtractionConfiguration _configuration;
+
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
-        var fromColumnName = string.IsNullOrWhiteSpace(InputFromColumn)
-            ? MappingFromColumn.GetRuntimeName()
-            : InputFromColumn;
-        var toColumnName = string.IsNullOrWhiteSpace(OutputToColumn)
-            ? MappingToColumn.GetRuntimeName()
-            : OutputToColumn;
+        var fromColumnName = string.IsNullOrWhiteSpace(InputFromColumn) ? MappingFromColumn.GetRuntimeName() : InputFromColumn;
+        var toColumnName = string.IsNullOrWhiteSpace(OutputToColumn) ? MappingToColumn.GetRuntimeName() : OutputToColumn;
 
         var inPlace = string.Equals(fromColumnName, toColumnName);
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to build mapping table"));
+        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to build mapping table"));
 
-        if (!toProcess.Columns.Contains(fromColumnName))
+        if(!toProcess.Columns.Contains(fromColumnName))
             throw new Exception($"DataTable did not contain a field called '{fromColumnName}'");
 
         if (!inPlace && toProcess.Columns.Contains(toColumnName))
             throw new Exception($"DataTable already contained a field '{toColumnName}'");
 
-        if (_mappingTable == null)
+        if(_mappingTable == null)
             BuildMappingTable(listener);
 
-        if (!_mappingTable.Any())
+        if(!_mappingTable.Any())
             throw new Exception("Mapping table was empty");
 
-        if (_keyType == null)
+        if(_keyType == null)
             throw new Exception("Unable to determine key datatype for mapping table");
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -148,7 +122,10 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
             $"Mapping table Key is of Type {_keyType}"));
 
         //add the new column (the output column).  Unless we are just updating the same input column
-        if (!inPlace) toProcess.Columns.Add(toColumnName);
+        if (!inPlace)
+        {
+            toProcess.Columns.Add(toColumnName);
+        }
 
 
         var idxFrom = toProcess.Columns.IndexOf(fromColumnName);
@@ -161,59 +138,59 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
 
         // Flag and anonymous method for converting between input data type and mapping table datatype
         var doTypeConversion = false;
-        Func<object, object> typeConversion = null;
+        Func<object,object> typeConversion=null;
 
         //if there is a difference between the input column datatype and the mapping table datatatype
-        if (toProcess.Columns[idxFrom].DataType != _keyType)
+        if(toProcess.Columns[idxFrom].DataType != _keyType)
         {
             //tell the user
-            listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Warning,
-                    $"Input DataTable column {fromColumnName} is of data type {toProcess.Columns[idxFrom].DataType}, this differs from mapping table which is {_keyType}.  Type conversion will take place between these two Types when performing lookup"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Input DataTable column {fromColumnName} is of data type {toProcess.Columns[idxFrom].DataType}, this differs from mapping table which is {_keyType}.  Type conversion will take place between these two Types when performing lookup"));
             doTypeConversion = true;
 
             //work out a suitable anonymous method for converting between the Types
-            if (_keyType == typeof(string))
-                typeConversion = a => a.ToString();
+            if(_keyType == typeof(string))
+                typeConversion = a=>a.ToString();
             else
+            {
                 try
                 {
                     var deciderFactory = new TypeDeciderFactory(Culture);
                     var decider = deciderFactory.Create(_keyType);
-                    typeConversion = a => decider.Parse(a.ToString());
+                    typeConversion = a=>decider.Parse(a.ToString());
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception(
-                        $"Error building Type convertion decider for the mapping table key type {_keyType}", ex);
-                }
+                    throw new Exception($"Error building Type convertion decider for the mapping table key type {_keyType}",ex);
+                }   
+            }
+                    
         }
-
+                
         foreach (DataRow row in toProcess.Rows)
         {
             var fromValue = row[idxFrom];
-
+                
             //ignore null inputs, pass them straight through
-            if (fromValue == DBNull.Value)
+            if(fromValue == DBNull.Value)
             {
                 row[idxTo] = DBNull.Value;
                 continue;
             }
 
             //if we have to do a Type conversion
-            if (doTypeConversion)
+            if(doTypeConversion)
+            {
                 // convert the input value to the mapping table key Type
                 fromValue = typeConversion(fromValue);
+            }
 
             //if we don't have the key value
-            if (!_mappingTable.ContainsKey(fromValue))
-                if (CrashIfNoMappingsFound)
-                {
+            if(!_mappingTable.ContainsKey(fromValue))
+                if(CrashIfNoMappingsFound)
                     throw new KeyNotFoundException($"Could not find mapping for {fromValue}");
-                }
                 else
                 {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,
                         $"No mapping for '{fromValue}' dropping row"));
                     toDrop.Add(row);
                     continue;
@@ -226,6 +203,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
             if (results.Count == 1)
                 row[idxTo] = results.Single();
             else
+            {
                 //great we have multiple mappings, bob=>Frank and bob=>Jesus.  What does the user want to do about that
                 switch (AliasResolutionStrategy)
                 {
@@ -234,7 +212,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                             $"The value '{fromValue}' maps to mulitple ouptut values:{string.Join(",", results.Select(v => $"'{v}'"))}");
 
                     case AliasResolutionStrategy.MultiplyInputDataRowsByAliases:
-
+                            
                         //substitute for the first alias (bob=>Frank)
                         row[idxTo] = results.First();
 
@@ -256,8 +234,9 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
+            }
         }
-
+            
         //add any alias multiplication rows
         foreach (var newRow in newRows)
             toProcess.Rows.Add(newRow);
@@ -267,40 +246,10 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
             toProcess.Rows.Remove(dropRow);
 
         // drop column unless it is an inplace (no new columns) update or user wants to keep both
-        if (!inPlace && !KeepInputColumnToo)
+        if(!inPlace && !KeepInputColumnToo)
             toProcess.Columns.Remove(fromColumnName);
-
+            
         return toProcess;
-    }
-
-    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-    {
-        //free up memory
-        if (_mappingTable != null)
-        {
-            _mappingTable.Clear();
-            _mappingTable = null;
-        }
-    }
-
-    public void Abort(IDataLoadEventListener listener)
-    {
-    }
-
-    public virtual void Check(ICheckNotifier notifier)
-    {
-        if (!string.IsNullOrWhiteSpace(WHERELogic))
-            if (WHERELogic.StartsWith("WHERE"))
-                throw new Exception("WHERE logic should not start with WHERE");
-
-        if (MappingFromColumn == null || MappingToColumn == null)
-            throw new Exception("Mapping From/To Column missing, these are Mandatory");
-
-        if (MappingFromColumn.TableInfo_ID != MappingToColumn.TableInfo_ID)
-            throw new Exception("MappingFromColumn and MappingToColumn must belong to the same table");
-
-        notifier.OnCheckPerformed(new CheckEventArgs(
-            $"Mapping table SQL is:{Environment.NewLine}{GetMappingTableSql()}", CheckResult.Success));
     }
 
     private void BuildMappingTable(IDataLoadEventListener listener)
@@ -333,17 +282,14 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                     {
                         var keyVal = r[fromColumnName];
 
-                        if (keyVal != DBNull.Value)
+                        if(keyVal != DBNull.Value)
                         {
-                            if (_keyType == null)
-                            {
+                            if(_keyType == null)
                                 _keyType = keyVal.GetType();
-                            }
                             else
                             {
-                                if (_keyType != keyVal.GetType())
-                                    throw new Exception(
-                                        $"Database mapping table Keys were of mixed Types {_keyType} and {keyVal.GetType()}");
+                                if(_keyType != keyVal.GetType())
+                                    throw new Exception($"Database mapping table Keys were of mixed Types {_keyType} and {keyVal.GetType()}");
                             }
                         }
                         else
@@ -352,8 +298,8 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                             continue;
                         }
 
-                        if (!_mappingTable.ContainsKey(keyVal))
-                            _mappingTable.Add(keyVal, new List<object>());
+                        if(!_mappingTable.ContainsKey(keyVal))
+                            _mappingTable.Add(keyVal,new List<object>());
 
                         _mappingTable[keyVal].Add(r[toColumnName]);
                     }
@@ -361,24 +307,22 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
             }
         }
 
-        if (nulls > 0)
-            listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Warning,
-                    $"Discarded {nulls} Null key values read from mapping table"));
+        if(nulls > 0)
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"Discarded {nulls} Null key values read from mapping table"));
     }
 
     protected virtual string GetMappingTableSql()
     {
         var repo = new MemoryCatalogueRepository();
 
-        var qb = new QueryBuilder("DISTINCT", null);
-        qb.AddColumn(new ColumnInfoToIColumn(repo, MappingFromColumn));
-        qb.AddColumn(new ColumnInfoToIColumn(repo, MappingToColumn));
+        var qb = new QueryBuilder("DISTINCT", null, null);
+        qb.AddColumn(new ColumnInfoToIColumn(repo,MappingFromColumn));
+        qb.AddColumn(new ColumnInfoToIColumn(repo,MappingToColumn));
 
         if (!string.IsNullOrWhiteSpace(WHERELogic))
         {
-            var container = new SpontaneouslyInventedFilterContainer(repo, null, null, FilterContainerOperation.AND);
-            var filter = new SpontaneouslyInventedFilter(repo, container, WHERELogic, "WHERELogic", null, null);
+            var container = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
+            var filter = new SpontaneouslyInventedFilter(repo,container, WHERELogic, "WHERELogic", null, null);
             container.AddChild(filter);
 
             qb.RootFilterContainer = container;
@@ -391,55 +335,104 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
     {
         if (mappingTableSql.Contains("$p"))
         {
-            if (_project == null)
+            if(_project == null)
+            {
                 throw new Exception("You cannot use $p in contexts where there is no Project available");
+            }
 
             mappingTableSql = mappingTableSql.Replace("$p",
-                _project.Name ?? throw new Exception("Project didn't have a Project Name"));
+                _project.Name?.ToString() ?? throw new Exception("Project didn't have a Project Name"));
         }
 
         if (mappingTableSql.Contains("$n"))
         {
+
             if (_project == null)
+            {
                 throw new Exception("You cannot use $n in contexts where there is no Project available");
+            }
 
             mappingTableSql = mappingTableSql.Replace("$n",
-                _project.ProjectNumber?.ToString() ??
-                throw new Exception($"Project '{_project.Name}' didn't have a Project Number"));
+                _project.ProjectNumber?.ToString() ?? throw new Exception($"Project '{_project.Name}' didn't have a Project Number"));
         }
 
         if (mappingTableSql.Contains("$t"))
         {
+
             if (_project == null)
+            {
                 throw new Exception("You cannot use $t in contexts where there is no Project available");
+            }
 
             mappingTableSql = mappingTableSql.Replace("$t",
-                _project.MasterTicket ?? throw new Exception($"Project '{_project.Name}' didn't have a Master Ticket"));
+                _project.MasterTicket?.ToString() ?? throw new Exception($"Project '{_project.Name}' didn't have a Master Ticket"));
         }
 
         if (mappingTableSql.Contains("$r"))
         {
+
             if (_configuration == null)
-                throw new Exception(
-                    "You cannot use $r in contexts where there is no ExtractionConfiguration available");
+            {
+                throw new Exception("You cannot use $r in contexts where there is no ExtractionConfiguration available");
+            }
 
             mappingTableSql = mappingTableSql.Replace("$r",
-                _configuration.RequestTicket ??
-                throw new Exception($"Extraction Configuration '{_configuration.Name}' didn't have a Request Ticket"));
+                _configuration.RequestTicket?.ToString() ?? throw new Exception($"Extraction Configuration '{_configuration.Name}' didn't have a Request Ticket"));
         }
 
         if (mappingTableSql.Contains("$l"))
         {
             if (_configuration == null)
-                throw new Exception(
-                    "You cannot use $l in contexts where there is no ExtractionConfiguration available");
+            {
+                throw new Exception("You cannot use $l in contexts where there is no ExtractionConfiguration available");
+            }
 
             mappingTableSql = mappingTableSql.Replace("$l",
-                _configuration.ReleaseTicket ??
-                throw new Exception($"Extraction Configuration '{_configuration.Name}' didn't have a Release Ticket"));
+                _configuration.ReleaseTicket?.ToString() ?? throw new Exception($"Extraction Configuration '{_configuration.Name}' didn't have a Release Ticket"));
         }
-
+            
 
         return mappingTableSql;
+    }
+
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+        //free up memory
+        if (_mappingTable != null)
+        {
+            _mappingTable.Clear();
+            _mappingTable = null;
+        }
+    }
+
+    public void Abort(IDataLoadEventListener listener)
+    {
+    }
+
+    public virtual void Check(ICheckNotifier notifier)
+    {
+        if(!string.IsNullOrWhiteSpace(WHERELogic))
+            if(WHERELogic.StartsWith("WHERE"))
+                throw new Exception("WHERE logic should not start with WHERE");
+
+        if(MappingFromColumn == null || MappingToColumn == null)
+            throw new Exception("Mapping From/To Column missing, these are Mandatory");
+
+        if(MappingFromColumn.TableInfo_ID != MappingToColumn.TableInfo_ID)
+            throw new Exception("MappingFromColumn and MappingToColumn must belong to the same table");
+
+        notifier.OnCheckPerformed(new CheckEventArgs(
+            $"Mapping table SQL is:{Environment.NewLine}{GetMappingTableSql()}",CheckResult.Success));
+    }
+
+    public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+    {
+        _project = value.Configuration?.Project;
+        _configuration = value.Configuration;
+    }
+
+    public void PreInitialize(ICohortCreationRequest value, IDataLoadEventListener listener)
+    {
+        _project = value.Project;
     }
 }

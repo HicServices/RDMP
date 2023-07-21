@@ -13,15 +13,12 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.DataRelease.Potential;
 
 /// <summary>
-///     Determines the releasability of global objects (e.g. <see cref="SupportingDocument" />) that should have been
-///     extracted as
-///     part of a project extraction.  For <see cref="SupportingSQLTable" /> it will confirm that the table exists in the
-///     database
+/// Determines the releasability of global objects (e.g. <see cref="SupportingDocument"/>) that should have been extracted as
+/// part of a project extraction.  For <see cref="SupportingSQLTable"/> it will confirm that the table exists in the database
 /// </summary>
 public class MsSqlGlobalsReleasePotential : GlobalReleasePotential
 {
-    public MsSqlGlobalsReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+    public MsSqlGlobalsReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
         : base(repositoryLocator, globalResult, globalToCheck)
     {
     }
@@ -29,18 +26,16 @@ public class MsSqlGlobalsReleasePotential : GlobalReleasePotential
     protected override void CheckDestination(ICheckNotifier notifier, ISupplementalExtractionResults globalResult)
     {
         var externalServerId = int.Parse(globalResult.DestinationDescription.Split('|')[0]);
-        var externalServer =
-            RepositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
+        var externalServer = RepositoryLocator.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(externalServerId);
         var dbName = globalResult.DestinationDescription.Split('|')[1];
         var tblName = globalResult.DestinationDescription.Split('|')[2];
-        var server = DataAccessPortal.ExpectServer(externalServer, DataAccessContext.DataExport, false);
+        var server = DataAccessPortal.ExpectServer(externalServer, DataAccessContext.DataExport, setInitialDatabase: false);
         var database = server.ExpectDatabase(dbName);
         if (!database.Exists())
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"Database: {database} was not found", CheckResult.Fail));
             Releasability = Releaseability.ExtractFilesMissing;
         }
-
         var foundTable = database.ExpectTable(tblName);
         if (!foundTable.Exists())
         {

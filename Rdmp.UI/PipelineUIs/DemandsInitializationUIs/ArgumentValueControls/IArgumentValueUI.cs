@@ -11,14 +11,12 @@ using Rdmp.UI.ItemActivation;
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
-///     Interface for controls that allow the user to edit a single property of a class (Marked with
-///     <see cref="DemandsInitializationAttribute" />).
-///     Each implementation class should only handle a specific Property Type (e.g. TextBox for string).
-///     <para>
-///         When adding a new implementation make sure the system is aware of it in <see cref="ArgumentValueUIFactory" />
-///     </para>
+/// Interface for controls that allow the user to edit a single property of a class (Marked with <see cref="DemandsInitializationAttribute"/>).
+/// Each implementation class should only handle a specific Property Type (e.g. TextBox for string).
+///
+/// <para>When adding a new implementation make sure the system is aware of it in <see cref="ArgumentValueUIFactory"/></para>
 /// </summary>
 public interface IArgumentValueUI : IContainerControl
 {
-    void SetUp(IActivateItems activator, ArgumentValueUIArgs args);
+    void SetUp(IActivateItems activator,ArgumentValueUIArgs args);
 }

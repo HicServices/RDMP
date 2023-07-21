@@ -18,9 +18,8 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.MainFormUITabs;
 
 /// <summary>
-///     Allows you to set up a <see cref="ConnectionStringKeyword" /> which will be used with all connections made against
-///     databases of the given <see cref="DatabaseType" />.
-///     Take great care when doing this as you can easily render your datasources unreachable by all system users.
+/// Allows you to set up a <see cref="ConnectionStringKeyword"/> which will be used with all connections made against databases of the given <see cref="DatabaseType"/>.
+/// Take great care when doing this as you can easily render your datasources unreachable by all system users.
 /// </summary>
 public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Design, ISaveableUI
 {
@@ -57,14 +56,14 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
         base.SetBindings(rules, databaseObject);
 
         Bind(tbID, "Text", "ID", k => k.ID);
-        Bind(tbName, "Text", "Name", k => k.Name);
+        Bind(tbName,"Text","Name",k=>k.Name);
         Bind(tbValue, "Text", "Value", k => k.Value);
         Bind(ddDatabaseType, "Text", "DatabaseType", k => k.DatabaseType);
     }
 
     private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (_keyword == null)
+        if(_keyword == null)
             return;
 
         var type = (DatabaseType)ddDatabaseType.SelectedValue;
@@ -73,6 +72,6 @@ public partial class ConnectionStringKeywordUI : ConnectionStringKeywordUI_Desig
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ConnectionStringKeywordUI_Design, UserControl>))]
-public abstract class ConnectionStringKeywordUI_Design : RDMPSingleDatabaseObjectControl<ConnectionStringKeyword>
+public abstract class ConnectionStringKeywordUI_Design: RDMPSingleDatabaseObjectControl<ConnectionStringKeyword>
 {
 }

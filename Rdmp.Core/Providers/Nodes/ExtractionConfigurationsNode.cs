@@ -10,21 +10,15 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-///     Collection of all <see cref="ExtractionConfiguration" /> in a given <see cref="Project" />
+/// Collection of all <see cref="ExtractionConfiguration"/> in a given <see cref="Project"/>
 /// </summary>
-public class ExtractionConfigurationsNode : Node, IOrderable
+public class ExtractionConfigurationsNode:Node,IOrderable
 {
+    public Project Project { get; set; }
+
     public ExtractionConfigurationsNode(Project project)
     {
         Project = project;
-    }
-
-    public Project Project { get; set; }
-
-    public int Order
-    {
-        get => 3;
-        set { }
     }
 
     public override string ToString()
@@ -42,11 +36,15 @@ public class ExtractionConfigurationsNode : Node, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ExtractionConfigurationsNode)obj);
+        return Equals((ExtractionConfigurationsNode) obj);
     }
 
     public override int GetHashCode()
     {
         return Project != null ? Project.GetHashCode() : 0;
     }
+
+    public int Order { get => 3;
+        set{} }
+
 }

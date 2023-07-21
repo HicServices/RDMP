@@ -16,12 +16,11 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-///     Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context
-///     X).  For example you might have a DataAccessCredentials
-///     called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then
-///     have a seperate DataAccessCredentials called
-///     'ReadonlyUserAccount' and give tables A,B,C and D permission to use it under DataAccessContext.Any
-///     <para></para>
+/// Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context X).  For example you might have a DataAccessCredentials 
+/// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a seperate DataAccessCredentials called 
+/// 'ReadonlyUserAccount' and give tables A,B,C and D permission to use it under DataAccessContext.Any
+/// 
+/// <para></para>
 /// </summary>
 internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 {
@@ -30,12 +29,11 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     //returns of querying these links are either 
     //          Dictionary<DataAccessContext,DataAccessCredentials> for all links where there is only one access point 1 - M (1 point many credentials)
     //OR        Dictionary<DataAccessContext, List<TableInfo>>      for all links where the query originates with a credentials M-M (credential is used by many users under many different contexts including potentially used by the same user under two+ different contexts)
-
+        
     //Cannot query Find all links between [collection of access points] and [collection of credentials] yet (probably never need to do this)
 
     /// <summary>
-    ///     Creates a new helper class instance for writing/deleting credential usages for <see cref="TableInfo" /> objects in
-    ///     the <paramref name="repository" />
+    /// Creates a new helper class instance for writing/deleting credential usages for <see cref="TableInfo"/> objects in the <paramref name="repository"/>
     /// </summary>
     /// <param name="repository"></param>
     public TableInfoCredentialsManager(CatalogueRepository repository)
@@ -44,8 +42,8 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     }
 
 
-    /// <inheritdoc />
-    public void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+    /// <inheritdoc/>
+    public void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,DataAccessContext context)
     {
         using (var con = _repository.GetConnection())
         {
@@ -68,34 +66,33 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         tableInfo.ClearAllInjections();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
     {
         _repository.Delete(
             "DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid and Context =@context",
             new Dictionary<string, object>
             {
-                { "cid", credentials.ID },
-                { "tid", tableInfo.ID },
-                { "context", context }
+                {"cid", credentials.ID},
+                {"tid", tableInfo.ID},
+                {"context", context}
             });
 
         tableInfo.ClearAllInjections();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
     {
-        _repository.Delete(
-            "DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid",
+        _repository.Delete("DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid",
             new Dictionary<string, object>
             {
-                { "cid", credentials.ID },
-                { "tid", tableInfo.ID }
-            }, false);
+                {"cid", credentials.ID},
+                {"tid", tableInfo.ID}
+            },false);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
     {
         var toReturn = -1;
@@ -103,8 +100,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         using (var con = _repository.GetConnection())
         {
             using (var cmd = DatabaseCommandHelper.GetCommand(
-                       $"SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context={(int)DataAccessContext.Any}) ",
-                       con.Connection, con.Transaction))
+                       $"SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and (Context =@context OR Context={(int)DataAccessContext.Any}) ", con.Connection, con.Transaction))
             {
                 cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
                 cmd.Parameters["@tid"].Value = tableInfo.ID;
@@ -114,28 +110,31 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
                 using (var r = cmd.ExecuteReader())
                 {
                     //gets the first liscenced usage
-                    if (r.Read())
+                    if(r.Read())
                     {
                         //there is one 
                         //get it by its id
                         toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
 
                         //if the first record is liscenced for Any
-                        if (Convert.ToInt32(r["Context"]) == (int)DataAccessContext.Any)
+                        if (Convert.ToInt32(r["Context"]) == (int) DataAccessContext.Any)
+                        {
                             //see if there is a more specific second record (e.g. DataLoad)
-                            if (r.Read())
+                            if(r.Read())
                                 toReturn = Convert.ToInt32(r["DataAccessCredentials_ID"]);
+                        }           
                     }
                 }
             }
+                    
         }
 
-        return toReturn != -1 ? _repository.GetObjectByID<DataAccessCredentials>(toReturn) : null;
+        return toReturn != -1 ?_repository.GetObjectByID<DataAccessCredentials>(toReturn):null;
     }
 
 
-    /// <inheritdoc />
-    public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
+    /// <inheritdoc/>
+    public Dictionary<DataAccessContext,DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
     {
         Dictionary<DataAccessContext, int> toReturn;
 
@@ -148,24 +147,21 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
                 cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
                 cmd.Parameters["@tid"].Value = tableInfo.ID;
 
-                using (var r = cmd.ExecuteReader())
-                {
+                using(var r = cmd.ExecuteReader())
                     toReturn = GetLinksFromReader(r);
-                }
             }
         }
 
         return toReturn.ToDictionary(k => k.Key, v => _repository.GetObjectByID<DataAccessCredentials>(v.Value));
     }
 
-    /// <inheritdoc />
-    public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(
-        DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos)
+    /// <inheritdoc/>
+    public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos)
     {
         var allCredentialsDictionary = allCredentials.ToDictionary(k => k.ID, v => v);
         var allTablesDictionary = allTableInfos.ToDictionary(k => k.ID, v => v);
 
-        var toReturn = new Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>();
+        var toReturn = new Dictionary<ITableInfo,List<DataAccessCredentialUsageNode>>();
 
         using (var con = _repository.GetConnection())
         {
@@ -182,18 +178,19 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 
                         var tid = Convert.ToInt32(r["TableInfo_ID"]);
                         var cid = Convert.ToInt32(r["DataAccessCredentials_ID"]);
-
+                    
                         //async error? someone created a new credential usage between the allCredentials array being fetched and us reaching this methods execution?
                         if (!allTablesDictionary.ContainsKey(tid) || !allCredentialsDictionary.ContainsKey(cid))
-                            continue; //should be super rare never gonna happen
+                            continue;//should be super rare never gonna happen
 
                         var t = allTablesDictionary[tid];
                         var c = allCredentialsDictionary[cid];
 
-                        if (!toReturn.ContainsKey(t))
-                            toReturn.Add(t, new List<DataAccessCredentialUsageNode>());
+                        if(!toReturn.ContainsKey(t))
+                            toReturn.Add(t,new List<DataAccessCredentialUsageNode>());
 
-                        toReturn[t].Add(new DataAccessCredentialUsageNode(c, t, context));
+                        toReturn[t].Add(new DataAccessCredentialUsageNode(c,t,context));
+
                     }
                 }
             }
@@ -202,9 +199,8 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         return toReturn;
     }
 
-    /// <inheritdoc />
-    public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(
-        DataAccessCredentials credentials)
+    /// <inheritdoc/>
+    public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
     {
         var toReturn = new Dictionary<DataAccessContext, List<int>>
         {
@@ -224,55 +220,24 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
                 cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@cid", cmd));
                 cmd.Parameters["@cid"].Value = credentials.ID;
 
-                using (var r = cmd.ExecuteReader())
-                {
+                using(var r = cmd.ExecuteReader())
                     while (r.Read())
                     {
                         //get the context
                         var context = GetContext(r);
-
+                        
                         //add the TableInfo under that context
                         toReturn[context].Add((int)r["TableInfo_ID"]);
                     }
-                }
             }
+                
         }
 
-        return toReturn.ToDictionary(k => k.Key,
-            v => _repository.GetAllObjectsInIDList<TableInfo>(v.Value).Cast<ITableInfo>().ToList());
-    }
-
-    /// <inheritdoc />
-    public DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password)
-    {
-        //see if we already have a record of this user
-        var existingCredentials = _repository.GetAllObjects<DataAccessCredentials>()
-            .Where(c => c.Username.Equals(username)).ToArray();
-
-        //found an existing credential that matched on username
-        if (existingCredentials.Any())
-        {
-            //there is one or more existing credential with this username
-            var matchingOnPassword = existingCredentials.Where(c => c.PasswordIs(password)).ToArray();
-
-            if (matchingOnPassword.Length == 1)
-                return matchingOnPassword.Single();
-
-            if (matchingOnPassword.Length > 1)
-                throw new Exception(
-                    $"Found {matchingOnPassword.Length} DataAccessCredentials that matched the supplied username/password - does your database have massive duplication in it?");
-
-            //there are 0 that match on password
-            return null;
-        }
-
-        //did not find an existing credential that matched on username
-        return null;
+        return toReturn.ToDictionary(k => k.Key, v => _repository.GetAllObjectsInIDList<TableInfo>(v.Value).Cast<ITableInfo>().ToList());
     }
 
     /// <summary>
-    ///     Helper that returns 1-M results (where there is only one originating TableInfo, if there are more than 1 table info
-    ///     in your SQL query you will get key collisions)
+    /// Helper that returns 1-M results (where there is only one originating TableInfo, if there are more than 1 table info in your SQL query you will get key collisions)
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>
@@ -294,12 +259,39 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         return toReturn;
     }
 
+    /// <inheritdoc/>
+    public DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password)
+    {
+        //see if we already have a record of this user
+        var existingCredentials = _repository.GetAllObjects<DataAccessCredentials>().Where(c => c.Username.Equals(username)).ToArray();
+
+        //found an existing credential that matched on username
+        if (existingCredentials.Any())
+        {
+            //there is one or more existing credential with this username
+            var matchingOnPassword = existingCredentials.Where(c => c.PasswordIs(password)).ToArray();
+
+            if (matchingOnPassword.Length == 1)
+                return matchingOnPassword.Single();
+
+            if (matchingOnPassword.Length > 1)
+                throw new Exception(
+                    $"Found {matchingOnPassword.Length} DataAccessCredentials that matched the supplied username/password - does your database have massive duplication in it?");
+
+            //there are 0 that match on password
+            return null;
+        }
+
+        //did not find an existing credential that matched on username
+        return null;
+    }
     private static DataAccessContext GetContext(DbDataReader r)
     {
         //if it's not a valid context something has gone very wrong
-        if (!Enum.TryParse((string)r["Context"], out DataAccessContext context))
+        if (!Enum.TryParse((string) r["Context"], out DataAccessContext context))
             throw new Exception($"Invalid DataAccessContext {r["Context"]}");
 
         return context;
     }
+
 }

@@ -16,10 +16,12 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 public class AllImportantClassesDocumented
 {
     private List<string> _csFilesList;
-    private int commentedCount;
-    private int commentLineCount;
+    private List<string> problems = new();
+    private int commentedCount = 0;
+    private int commentLineCount = 0;
+    private bool strict = false;
 
-    private readonly string[] excusedClassFileNames =
+    private string[] excusedClassFileNames =
     {
         "Class1.cs",
         "Program.cs",
@@ -29,17 +31,15 @@ public class AllImportantClassesDocumented
 
         //todo resolve the following:
         "ReleasePipeline.cs", //needs refactoring
-        "ReleaseUseCase.cs", //needs refactoring
-        "FixedDataReleaseSource.cs", //needs refactoring
+        "ReleaseUseCase.cs",//needs refactoring
+        "FixedDataReleaseSource.cs",//needs refactoring
         "CacheFetchRequestProvider.cs", //why do we need this class?
-
+            
         "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
-        "Relationship.cs", //deprecated by the anonymisation object sharing framework?
-        "RelationshipMap.cs" //deprecated by the anonymisation object sharing framework?
-    };
+        "Relationship.cs",//deprecated by the anonymisation object sharing framework?
+        "RelationshipMap.cs"//deprecated by the anonymisation object sharing framework?
 
-    private readonly List<string> problems = new();
-    private readonly bool strict = false;
+    };
 
     public void FindProblems(List<string> csFilesList)
     {
@@ -47,13 +47,13 @@ public class AllImportantClassesDocumented
 
         foreach (var f in _csFilesList)
         {
-            if (excusedClassFileNames.Contains(Path.GetFileName(f)))
+            if(excusedClassFileNames.Contains(Path.GetFileName(f)))
                 continue;
 
             var text = File.ReadAllText(f);
 
             var startAt = text.IndexOf("public class");
-            if (startAt == -1)
+            if(startAt == -1)
                 startAt = text.IndexOf("public interface");
 
             if (startAt != -1)
@@ -62,8 +62,8 @@ public class AllImportantClassesDocumented
 
                 var mNamespace = Regex.Match(beforeDeclaration, "namespace (.*)");
 
-                if (!mNamespace.Success)
-                    Assert.Fail($"No namespace found in class file {f}"); //no namespace in class!
+                if(!mNamespace.Success)
+                    Assert.Fail($"No namespace found in class file {f}");//no namespace in class!
 
                 var nameSpace = mNamespace.Groups[1].Value;
 
@@ -71,13 +71,13 @@ public class AllImportantClassesDocumented
                 if (nameSpace.Contains("Tests"))
                     continue;
 
-                if (nameSpace.Contains("TestData.Relational")) //this has never been tested / used
+                if (nameSpace.Contains("TestData.Relational"))//this has never been tested / used
                     continue;
 
-                if (nameSpace.Contains("CohortManagerLibrary.FreeText")) //this has never been tested / used
+                if (nameSpace.Contains("CohortManagerLibrary.FreeText"))//this has never been tested / used
                     continue;
 
-                if (nameSpace.Contains("CatalogueWebService")) //this has never been tested / used
+                if (nameSpace.Contains("CatalogueWebService"))//this has never been tested / used
                     continue;
 
                 if (nameSpace.Contains("CommitAssemblyEmptyAssembly"))
@@ -97,7 +97,7 @@ public class AllImportantClassesDocumented
                             continue;
                         if (nameSpace.Contains("CommandExecution"))
                             continue;
-
+                            
                         if (nameSpace.Contains("Copying"))
                             continue;
                         if (nameSpace.Contains("Icons"))
@@ -111,17 +111,16 @@ public class AllImportantClassesDocumented
 
                         if (nameSpace.Contains("MapsDirectlyToDatabaseTableUI"))
                             continue;
-
+                            
                         //Provider specific implementations of stuff that is documented at interface level
-                        if (nameSpace.Contains(".Discovery.Microsoft") || nameSpace.Contains(".Discovery.Oracle") ||
-                            nameSpace.Contains(".Discovery.MySql"))
+                        if (nameSpace.Contains(".Discovery.Microsoft") ||nameSpace.Contains(".Discovery.Oracle") ||nameSpace.Contains(".Discovery.MySql"))
                             continue;
                     }
 
                     var idxLastSlash = f.LastIndexOf("\\");
 
-                    if (idxLastSlash != -1)
-                        problems.Add(string.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})",
+                    if(idxLastSlash != -1)
+                        problems.Add(string.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})", 
                             f[(f.LastIndexOf("\\") + 1)..],
                             f[..idxLastSlash])
                         );
@@ -130,20 +129,19 @@ public class AllImportantClassesDocumented
                 }
                 else
                 {
-                    var lines = match.Groups[1].Value
-                        .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
+                    var lines = match.Groups[1].Value.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
                     commentLineCount += lines;
                     commentedCount++;
                 }
             }
         }
-
+            
         foreach (var fail in problems)
             Console.WriteLine(fail);
 
         Console.WriteLine($"Total Documented Classes:{commentedCount}");
         Console.WriteLine($"Total Lines of Classes Documentation:{commentLineCount}");
-
+            
         Assert.AreEqual(0, problems.Count);
     }
 }

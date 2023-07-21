@@ -9,17 +9,17 @@ using System;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-///     Thrown when the API tries to Execute a command marked IsImpossible
+/// Thrown when the API tries to Execute a command marked IsImpossible
 /// </summary>
 public class ImpossibleCommandException : Exception
 {
+    public ICommandExecution Command { get; private set; }
+    public string ReasonCommandImpossible { get; private set; }
+
     public ImpossibleCommandException(ICommandExecution command, string reasonCommandImpossible)
         : base($"Command is marked as IsImpossible and should not be Executed.  Reason is '{reasonCommandImpossible}'")
     {
         Command = command;
         ReasonCommandImpossible = reasonCommandImpossible;
     }
-
-    public ICommandExecution Command { get; private set; }
-    public string ReasonCommandImpossible { get; private set; }
 }

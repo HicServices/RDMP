@@ -17,12 +17,11 @@ using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Menus.MenuItems;
 
-internal class DQEMenuItem : RDMPToolStripMenuItem
+internal class DQEMenuItem:RDMPToolStripMenuItem
 {
     private readonly Catalogue _catalogue;
     private readonly IExternalDatabaseServer _dqeServer;
-
-    public DQEMenuItem(IActivateItems activator, Catalogue catalogue) : base(activator, "Data Quality Engine...")
+    public DQEMenuItem(IActivateItems activator, Catalogue catalogue): base(activator, "Data Quality Engine...")
     {
         _catalogue = catalogue;
 
@@ -39,8 +38,7 @@ internal class DQEMenuItem : RDMPToolStripMenuItem
 
         if (_dqeServer == null)
         {
-            var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator,
-                new DataQualityEnginePatcher(), PermissableDefaults.DQE);
+            var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new DataQualityEnginePatcher(), PermissableDefaults.DQE);
             cmdCreateDb.Execute();
         }
         else
@@ -50,5 +48,7 @@ internal class DQEMenuItem : RDMPToolStripMenuItem
             else
                 new ExecuteCommandRunDQEOnCatalogue(_activator, _catalogue).Execute();
         }
+
+            
     }
 }

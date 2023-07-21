@@ -9,11 +9,11 @@ using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
+
 namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 
 /// <summary>
-///     Provides access to an IAtomicCommand including showing the command name, help text etc.  When the link label is
-///     clicked the command .Execute is run.
+/// Provides access to an IAtomicCommand including showing the command name, help text etc.  When the link label is clicked the command .Execute is run.
 /// </summary>
 [TechnicalUI]
 public partial class AtomicCommandLinkLabel : UserControl
@@ -29,9 +29,9 @@ public partial class AtomicCommandLinkLabel : UserControl
         var name = command.GetCommandName();
         lblName.Text = name;
 
-        helpIcon1.SetHelpText(_command.GetCommandName(), command.GetCommandHelp());
+        helpIcon1.SetHelpText(_command.GetCommandName(),command.GetCommandHelp());
     }
-
+        
     private void label1_Click(object sender, EventArgs e)
     {
         _command.Execute();

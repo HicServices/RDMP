@@ -17,5 +17,6 @@ internal class NullAllocateReleaseIdentifiers : IAllocateReleaseIdentifiers
 
     public void Initialize(ICohortCreationRequest request)
     {
+            
     }
 }

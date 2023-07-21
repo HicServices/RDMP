@@ -12,10 +12,13 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Providers.Nodes;
 
-public class TableInfoServerNode : Node
+public class TableInfoServerNode:Node
 {
-    public const string NullServerNode = "Null Server";
     public readonly DatabaseType DatabaseType;
+    public string ServerName { get; private set; }
+    public TableInfo[] Tables { get; }
+
+    public const string NullServerNode = "Null Server";
 
     public TableInfoServerNode(string serverName, DatabaseType databaseType, IEnumerable<TableInfo> tables)
     {
@@ -24,9 +27,6 @@ public class TableInfoServerNode : Node
         Tables = tables.ToArray();
     }
 
-    public string ServerName { get; }
-    public TableInfo[] Tables { get; }
-
     public override string ToString()
     {
         return ServerName;
@@ -34,8 +34,7 @@ public class TableInfoServerNode : Node
 
     protected bool Equals(TableInfoServerNode other)
     {
-        return DatabaseType == other.DatabaseType &&
-               string.Equals(ServerName, other.ServerName, StringComparison.CurrentCultureIgnoreCase);
+        return DatabaseType == other.DatabaseType && string.Equals(ServerName, other.ServerName,StringComparison.CurrentCultureIgnoreCase);
     }
 
     public override bool Equals(object obj)
@@ -43,23 +42,24 @@ public class TableInfoServerNode : Node
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((TableInfoServerNode)obj);
+        return Equals((TableInfoServerNode) obj);
     }
 
     public override int GetHashCode()
     {
         unchecked
         {
-            return ((int)DatabaseType * 397) ^
-                   (ServerName != null ? StringComparer.CurrentCultureIgnoreCase.GetHashCode(ServerName) : 0);
+
+            return ((int)DatabaseType * 397) ^ (ServerName != null ? StringComparer.CurrentCultureIgnoreCase.GetHashCode(ServerName) : 0);
         }
     }
 
     public bool IsSameServer(TableInfo tableInfo)
     {
         return
-            ServerName.Equals(tableInfo.Server ?? NullServerNode, StringComparison.CurrentCultureIgnoreCase)
+            ServerName.Equals(tableInfo.Server ?? NullServerNode,StringComparison.CurrentCultureIgnoreCase)
             &&
             DatabaseType == tableInfo.DatabaseType;
+
     }
 }

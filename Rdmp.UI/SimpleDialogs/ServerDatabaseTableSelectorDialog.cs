@@ -14,21 +14,20 @@ using Rdmp.UI.SimpleControls;
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-///     Modal dialog that prompts you to pick a database or table (<see cref="ServerDatabaseTableSelector" />)
+/// Modal dialog that prompts you to pick a database or table (<see cref="ServerDatabaseTableSelector"/>)
 /// </summary>
 public partial class ServerDatabaseTableSelectorDialog : Form
 {
-    public ServerDatabaseTableSelectorDialog(string taskDescription, bool includeTable, bool tableShouldBeNovel,
-        IBasicActivateItems activator)
+    public ServerDatabaseTableSelectorDialog(string taskDescription, bool includeTable, bool tableShouldBeNovel, IBasicActivateItems activator)
     {
         //start at cancel so if they hit the X nothing is selected
         DialogResult = DialogResult.Cancel;
-
+            
         InitializeComponent();
 
         lblTaskDescription.Text = taskDescription;
-
-        if (!includeTable)
+            
+        if(!includeTable)
             serverDatabaseTableSelector1.HideTableComponents();
 
         serverDatabaseTableSelector1.TableShouldBeNovel = tableShouldBeNovel;
@@ -38,9 +37,7 @@ public partial class ServerDatabaseTableSelectorDialog : Form
     public DiscoveredDatabase SelectedDatabase => serverDatabaseTableSelector1.GetDiscoveredDatabase();
     public DiscoveredTable SelectedTable => serverDatabaseTableSelector1.GetDiscoveredTable();
 
-    public bool AllowTableValuedFunctionSelection
-    {
-        get => serverDatabaseTableSelector1.AllowTableValuedFunctionSelection;
+    public bool AllowTableValuedFunctionSelection { get => serverDatabaseTableSelector1.AllowTableValuedFunctionSelection;
         set => serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = value;
     }
 
@@ -62,7 +59,7 @@ public partial class ServerDatabaseTableSelectorDialog : Form
         {
             var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
 
-            if (db == null)
+            if(db == null)
             {
                 MessageBox.Show("You must specify a database name");
                 return;

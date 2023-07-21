@@ -10,20 +10,14 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-///     Data load component for loading flat files into RAW tables (flat files must be delimited by a specific character
-///     (or sequence) e.g. csv)
-///     <para>
-///         Allows you to load zero or more flat files which are delimited by a given character or sequence of characters.
-///         For example comma
-///         separated (use Separator ',') or Tab separated (Use Separator '\t').
-///     </para>
+/// Data load component for loading flat files into RAW tables (flat files must be delimited by a specific character (or sequence) e.g. csv)
+/// 
+/// <para>Allows you to load zero or more flat files which are delimited by a given character or sequence of characters.  For example comma
+///  separated (use Separator ',') or Tab separated (Use Separator '\t').
+/// </para>
 /// </summary>
 public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
 {
-    public AnySeparatorFileAttacher() : base('A')
-    {
-    }
-
     [DemandsInitialization(@"The file separator e.g. , for CSV.  For tabs type \t", Mandatory = true)]
     public string Separator
     {
@@ -31,6 +25,10 @@ public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
         set => _source.Separator = value;
     }
 
+    public AnySeparatorFileAttacher() : base('A')
+    {
+    }
+        
     public override void Check(ICheckNotifier notifier)
     {
         base.Check(notifier);
@@ -41,5 +39,6 @@ public class AnySeparatorFileAttacher : DelimitedFlatFileAttacher
                 new CheckEventArgs(
                     "Separator has not been set yet, this is the character or sequence which seperates cells in your flat file.  For example in the case of a CSV (comma seperated values) file the Separator argument should be set to ','",
                     CheckResult.Fail));
+
     }
 }

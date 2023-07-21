@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
@@ -19,9 +18,9 @@ using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Pers
 namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus;
 
 /// <summary>
-///     Right click menu for the top tab section of a docked tab in RDMP main application.
+/// Right click menu for the top tab section of a docked tab in RDMP main application.
 /// </summary>
-[DesignerCategory("")]
+[System.ComponentModel.DesignerCategory("")]
 public class RDMPSingleControlTabMenu : ContextMenuStrip
 {
     private readonly RDMPSingleControlTab _tab;
@@ -40,23 +39,20 @@ public class RDMPSingleControlTabMenu : ContextMenuStrip
             var uiFactory = new AtomicCommandUIFactory(activator);
             var builder = new GoToCommandFactory(activator);
 
-            var gotoMenu = new ToolStripMenuItem(AtomicCommandFactory.GoTo) { Enabled = false };
+            var gotoMenu = new ToolStripMenuItem(AtomicCommandFactory.GoTo){Enabled = false };
             Items.Add(gotoMenu);
 
-            foreach (var cmd in builder.GetCommands(single.DatabaseObject).OfType<ExecuteCommandShow>())
+            foreach(var cmd in builder.GetCommands(single.DatabaseObject).OfType<ExecuteCommandShow>())
             {
                 gotoMenu.DropDownItems.Add(uiFactory.CreateMenuItem(cmd));
                 gotoMenu.Enabled = true;
             }
-
             RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(gotoMenu);
         }
 
-        Items.Add("Refresh", FamFamFamIcons.arrow_refresh.ImageToBitmap(),
-            (s, e) => _tab.HandleUserRequestingTabRefresh(activator));
+        Items.Add("Refresh", FamFamFamIcons.arrow_refresh.ImageToBitmap(), (s, e) => _tab.HandleUserRequestingTabRefresh(activator));
 
-        var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(),
-            (s, e) => _tab.ShowHelp(activator))
+        var help = new ToolStripMenuItem("Help", FamFamFamIcons.help.ImageToBitmap(), (s, e) => _tab.ShowHelp(activator))
         {
             ShortcutKeys = Keys.F1
         };

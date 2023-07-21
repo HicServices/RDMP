@@ -13,11 +13,13 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
+
 namespace Rdmp.Core.DataViewing;
 
-internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection,
-    IViewSQLAndResultsCollection
+internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
+    public bool UseQueryCache { get; set; }
+
     public ViewCohortIdentificationConfigurationSqlCollection()
     {
     }
@@ -26,11 +28,6 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     {
         DatabaseObjects.Add(config);
     }
-
-    public bool UseQueryCache { get; set; }
-
-    private CohortIdentificationConfiguration CohortIdentificationConfiguration =>
-        DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
 
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {
@@ -42,12 +39,23 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
         }
     }
 
+    private ExternalDatabaseServer GetCacheServer()
+    {
+        if (CohortIdentificationConfiguration != null && CohortIdentificationConfiguration.QueryCachingServer_ID != null)
+            return CohortIdentificationConfiguration.QueryCachingServer;
+
+        return null;
+    }
+
 
     public IDataAccessPoint GetDataAccessPoint()
     {
         var cache = GetCacheServer();
 
-        if (UseQueryCache && cache != null) return cache;
+        if (UseQueryCache && cache != null)
+        {
+            return cache;
+        }
 
         var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
         builder.RegenerateSQL();
@@ -57,10 +65,10 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     public string GetSql()
     {
         var builder = new CohortQueryBuilder(CohortIdentificationConfiguration, null);
-
+            
         if (!UseQueryCache && CohortIdentificationConfiguration.QueryCachingServer_ID.HasValue)
             builder.CacheServer = null;
-
+            
 
         return builder.SQL;
     }
@@ -74,17 +82,10 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     {
     }
 
+    private CohortIdentificationConfiguration CohortIdentificationConfiguration => DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
+
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         return GetDataAccessPoint()?.GetQuerySyntaxHelper();
-    }
-
-    private ExternalDatabaseServer GetCacheServer()
-    {
-        if (CohortIdentificationConfiguration != null &&
-            CohortIdentificationConfiguration.QueryCachingServer_ID != null)
-            return CohortIdentificationConfiguration.QueryCachingServer;
-
-        return null;
     }
 }

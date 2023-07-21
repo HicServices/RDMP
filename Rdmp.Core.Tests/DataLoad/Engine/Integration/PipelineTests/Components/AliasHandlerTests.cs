@@ -6,7 +6,6 @@
 
 using System.Collections.Generic;
 using System.Data;
-using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -19,28 +18,28 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components;
 
-public class AliasHandlerTests : DatabaseTests
+public class AliasHandlerTests  : DatabaseTests
 {
-    private DiscoveredDatabase _database;
-    private AliasHandler _handler;
     private ExternalDatabaseServer _server;
+    private AliasHandler _handler;
+
+    private DiscoveredDatabase _database;
 
     [SetUp]
     protected override void SetUp()
     {
         base.SetUp();
+            
+        _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer",null);
+        _server.SetProperties(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
-        _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer", null);
-        _server.SetProperties(GetCleanedServer(DatabaseType.MicrosoftSQLServer));
-
-        _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var s = _database.Server;
         using (var con = s.GetConnection())
         {
             con.Open();
 
-            s.GetCommand("CREATE TABLE AliasHandlerTests (input varchar(50), alias varchar(50))", con)
-                .ExecuteNonQuery();
+            s.GetCommand("CREATE TABLE AliasHandlerTests (input varchar(50), alias varchar(50))", con).ExecuteNonQuery();
 
             //Two names which are aliases of the same person
             s.GetCommand("INSERT INTO  AliasHandlerTests VALUES ('freddie','craig')", con).ExecuteNonQuery();
@@ -66,20 +65,18 @@ public class AliasHandlerTests : DatabaseTests
         };
     }
 
+        
 
     [Test]
     public void ThrowBecause_ColumnNotInInputDataTable()
     {
         var dt = new DataTable();
-        dt.Columns.Add("cannonballer"); //not the same as the expected input column name
-        dt.Rows.Add("yes");
+        dt.Columns.Add("cannonballer");//not the same as the expected input column name
+        dt.Rows.Add(new object[] { "yes"});
 
-        var ex = Assert.Throws<KeyNotFoundException>(() =>
-            _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-                new GracefulCancellationToken()));
+        var ex = Assert.Throws<KeyNotFoundException>(()=>_handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
 
-        Assert.AreEqual(
-            "You asked to resolve aliases on a column called 'input' but no column by that name appeared in the DataTable being processed.  Columns in that table were:cannonballer",
+        Assert.AreEqual("You asked to resolve aliases on a column called 'input' but no column by that name appeared in the DataTable being processed.  Columns in that table were:cannonballer",
             ex.Message);
     }
 
@@ -95,12 +92,11 @@ public class AliasHandlerTests : DatabaseTests
 
         var dt = new DataTable();
         dt.Columns.Add("input");
-        dt.Rows.Add("candle");
+        dt.Rows.Add(new object[] { "candle" });
 
-        var ex = Assert.Throws<AliasTableFetchException>(() =>
-            _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-                new GracefulCancellationToken()));
+        var ex =  Assert.Throws<AliasTableFetchException>(()=>_handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
         Assert.IsTrue(ex.Message.StartsWith("Alias table SQL should only return aliases not exact matches"));
+
     }
 
     [Test]
@@ -117,12 +113,10 @@ public class AliasHandlerTests : DatabaseTests
         dt.Columns.Add("input");
         dt.Columns.Add("value");
 
-        dt.Rows.Add("dave", 100);
-        dt.Rows.Add("frank", 100);
+        dt.Rows.Add(new object[] { "dave", 100 });
+        dt.Rows.Add(new object[] { "frank", 100 });
 
-        var ex = Assert.Throws<AliasTableFetchException>(() =>
-            _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-                new GracefulCancellationToken()));
+        var ex = Assert.Throws<AliasTableFetchException>(() => _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
 
         Assert.IsTrue(ex.Message.Contains("Alias table SQL resulted in 3 fields being returned"));
     }
@@ -134,13 +128,12 @@ public class AliasHandlerTests : DatabaseTests
         dt.Columns.Add("input");
         dt.Columns.Add("value");
 
-        dt.Rows.Add("dave", 100);
-        dt.Rows.Add("frank", 100);
+        dt.Rows.Add(new object[] {"dave", 100});
+        dt.Rows.Add(new object[] {"frank", 100});
 
-        var result = _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
+        var result = _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-        Assert.AreEqual(2, result.Rows.Count);
+        Assert.AreEqual(2,result.Rows.Count);
     }
 
 
@@ -150,10 +143,8 @@ public class AliasHandlerTests : DatabaseTests
         var dt = new DataTable();
         dt.Columns.Add("input");
 
-        dt.Rows.Add("paul");
-        Assert.Throws<AliasException>(() =>
-            _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-                new GracefulCancellationToken()));
+        dt.Rows.Add(new object[] { "paul"});
+        Assert.Throws<AliasException>(()=> _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
     }
 
 
@@ -163,27 +154,25 @@ public class AliasHandlerTests : DatabaseTests
         _handler.ResolutionStrategy = AliasResolutionStrategy.MultiplyInputDataRowsByAliases;
 
         var dt = new DataTable();
-        dt.Columns.Add("value1", typeof(int));
+        dt.Columns.Add("value1",typeof(int));
         dt.Columns.Add("input");
         dt.Columns.Add("value2", typeof(int));
 
-        dt.Rows.Add(99, "dave", 100);
-        dt.Rows.Add(199, "frank", 200);
-        dt.Rows.Add(299, "freddie", 300); //has a two name alias
+        dt.Rows.Add(new object[] { 99,"dave", 100 });
+        dt.Rows.Add(new object[] { 199,"frank", 200 });
+        dt.Rows.Add(new object[] { 299,"freddie", 300 }); //has a two name alias
 
-        var result = _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
+        var result = _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(4, result.Rows.Count);
-
+            
         Assert.AreEqual(299, result.Rows[2][0]);
-        Assert.AreEqual("freddie", result.Rows[2][1]); //the original input row which had an alias on it
+        Assert.AreEqual("freddie", result.Rows[2][1]);//the original input row which had an alias on it
         Assert.AreEqual(300, result.Rows[2][2]);
 
         Assert.AreEqual(299, result.Rows[3][0]);
-        Assert.AreEqual("craig",
-            result.Rows[3][1]); //The new row that should have appeared to resolve the freddie=craig alias
-        Assert.AreEqual(300, result.Rows[3][2]); //value should match the input array
+        Assert.AreEqual("craig", result.Rows[3][1]);//The new row that should have appeared to resolve the freddie=craig alias
+        Assert.AreEqual(300, result.Rows[3][2]);//value should match the input array
     }
 
     [Test]
@@ -196,29 +185,27 @@ public class AliasHandlerTests : DatabaseTests
         dt.Columns.Add("input");
         dt.Columns.Add("value2", typeof(int));
 
-        dt.Rows.Add(99, "pepey", 100); //has a three name alias
-        dt.Rows.Add(199, "frank", 200);
-        dt.Rows.Add(299, "anderson", 300);
+        dt.Rows.Add(new object[] { 99, "pepey", 100 });//has a three name alias
+        dt.Rows.Add(new object[] { 199, "frank", 200 });
+        dt.Rows.Add(new object[] { 299, "anderson", 300 });
 
-        var result = _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
+        var result = _handler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(5, result.Rows.Count);
 
         Assert.AreEqual(99, result.Rows[0][0]);
-        Assert.AreEqual("pepey", result.Rows[0][1]); //the original input row which had an alias on it
+        Assert.AreEqual("pepey", result.Rows[0][1]);//the original input row which had an alias on it
         Assert.AreEqual(100, result.Rows[0][2]);
 
 
         //new rows are added at the end of the DataTable
         Assert.AreEqual(99, result.Rows[3][0]);
-        Assert.AreEqual("paul",
-            result.Rows[3][1]); //The new row that should have appeared to resolve the pepey=paul=peter alias
-        Assert.AreEqual(100, result.Rows[3][2]); //value should match the input array
+        Assert.AreEqual("paul", result.Rows[3][1]);//The new row that should have appeared to resolve the pepey=paul=peter alias
+        Assert.AreEqual(100, result.Rows[3][2]);//value should match the input array
 
         Assert.AreEqual(99, result.Rows[4][0]);
-        Assert.AreEqual("peter",
-            result.Rows[4][1]); //The new row that should have appeared to resolve the  pepey=paul=peter alias
-        Assert.AreEqual(100, result.Rows[4][2]); //value should match the input array
+        Assert.AreEqual("peter", result.Rows[4][1]);//The new row that should have appeared to resolve the  pepey=paul=peter alias
+        Assert.AreEqual(100, result.Rows[4][2]);//value should match the input array
     }
+
 }

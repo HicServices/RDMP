@@ -5,15 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Globalization;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using FAnsi.Extensions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.SimpleDialogs;
 
-internal class FindAndReplaceNode : IMasqueradeAs
+internal class FindAndReplaceNode:IMasqueradeAs
 {
     private object _currentValue;
+    public IMapsDirectlyToDatabaseTable Instance { get; set; }
+    public PropertyInfo Property { get; set; }
+    public string PropertyName { get; private set; }
 
     public FindAndReplaceNode(IMapsDirectlyToDatabaseTable instance, PropertyInfo property)
     {
@@ -24,18 +30,14 @@ internal class FindAndReplaceNode : IMasqueradeAs
         _currentValue = Property.GetValue(Instance);
     }
 
-    public IMapsDirectlyToDatabaseTable Instance { get; set; }
-    public PropertyInfo Property { get; set; }
-    public string PropertyName { get; private set; }
+    public override string ToString()
+    {
+        return Instance.ToString();
+    }
 
     public object MasqueradingAs()
     {
         return Instance;
-    }
-
-    public override string ToString()
-    {
-        return Instance.ToString();
     }
 
     public object GetCurrentValue()
@@ -45,22 +47,18 @@ internal class FindAndReplaceNode : IMasqueradeAs
 
     public void SetValue(object newValue)
     {
-        Property.SetValue(Instance, newValue);
+        Property.SetValue(Instance,newValue);
         ((ISaveable)Instance).SaveToDatabase();
         _currentValue = newValue;
     }
 
     public void FindAndReplace(string find, string replace, bool ignoreCase)
     {
-        var current = _currentValue.ToString();
-        if (current?.Contains(find,
-                ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture) == true)
-            SetValue(current.Replace(find, replace,
-                ignoreCase ? StringComparison.CurrentCultureIgnoreCase : StringComparison.CurrentCulture));
+        var current =_currentValue.ToString();
+        if(current?.Contains(find,ignoreCase?StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture)==true)
+            SetValue(current.Replace(find, replace,ignoreCase ? StringComparison.CurrentCultureIgnoreCase:StringComparison.CurrentCulture));
     }
-
     #region Equality Members
-
     protected bool Equals(FindAndReplaceNode other)
     {
         return Instance.Equals(other.Instance) && Property.Equals(other.Property);
@@ -71,16 +69,15 @@ internal class FindAndReplaceNode : IMasqueradeAs
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((FindAndReplaceNode)obj);
+        return Equals((FindAndReplaceNode) obj);
     }
 
     public override int GetHashCode()
     {
         unchecked
         {
-            return (Instance.GetHashCode() * 397) ^ Property.GetHashCode();
+            return (Instance.GetHashCode()*397) ^ Property.GetHashCode();
         }
     }
-
     #endregion
 }

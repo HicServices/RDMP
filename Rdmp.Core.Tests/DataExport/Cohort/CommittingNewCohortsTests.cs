@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.DataExport.Cohort;
 public class CommittingNewCohortsTests : TestsRequiringACohort
 {
     private string filename;
-    private readonly string projName = "MyProj";
+    private string projName = "MyProj";
 
     [SetUp]
     protected override void SetUp()
@@ -35,7 +35,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "CommittingNewCohorts.csv");
 
-        var sw = new StreamWriter(filename);
+        var sw = new StreamWriter(filename);    
         sw.WriteLine("PrivateID,ReleaseID,SomeHeader");
         sw.WriteLine("Priv_1111,Pub_1111,Smile buddy");
         sw.WriteLine("Priv_2222,Pub_2222,Your on tv");
@@ -49,13 +49,9 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     {
         var proj = new Project(DataExportRepository, projName);
 
-        var request = new CohortCreationRequest(proj,
-            new CohortDefinition(511, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
-            "fish");
-        var ex = Assert.Throws<Exception>(() => request.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual(
-            "Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?",
-            ex.Message);
+        var request = new CohortCreationRequest(proj, new CohortDefinition(511, "CommittingNewCohorts",1,999,_externalCohortTable), DataExportRepository, "fish");
+        var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?",ex.Message);
     }
 
     [Test]
@@ -63,27 +59,20 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
     {
         var proj = new Project(DataExportRepository, projName);
 
-        var request = new CohortCreationRequest(proj,
-            new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
-            "fish");
-        var ex = Assert.Throws<Exception>(() => request.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual(
-            "Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)",
-            ex.Message);
+        var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
+        var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)",ex.Message);
     }
 
     [Test]
     public void CommittingNewCohortFile_ProjectNumberMismatch()
     {
-        var proj = new Project(DataExportRepository, projName) { ProjectNumber = 321 };
+        var proj = new Project(DataExportRepository, projName) {ProjectNumber = 321};
         proj.SaveToDatabase();
 
-        var request = new CohortCreationRequest(proj,
-            new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
-            "fish");
-        var ex = Assert.Throws<Exception>(() => request.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999",
-            ex.Message);
+        var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
+        var ex = Assert.Throws<Exception>(()=>request.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999",ex.Message);
     }
 
     [Test]
@@ -97,30 +86,26 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         };
         proj.SaveToDatabase();
 
-        var request = new CohortCreationRequest(proj,
-            new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
-            "fish");
+        var request = new CohortCreationRequest(proj, new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository, "fish");
         request.Check(new ThrowImmediatelyCheckNotifier());
 
         var source = new DelimitedFlatFileDataFlowSource();
         var destination = new BasicCohortDestination();
-
+            
         source.Separator = ",";
         source.StronglyTypeInput = true;
 
-        var pipeline = new DataFlowPipelineEngine<DataTable>((DataFlowPipelineContext<DataTable>)request.GetContext(),
-            source, destination, listener);
-        pipeline.Initialize(new FlatFileToLoad(new FileInfo(filename)), request);
+        var pipeline = new DataFlowPipelineEngine<DataTable>((DataFlowPipelineContext<DataTable>) request.GetContext(),source,destination,listener);
+        pipeline.Initialize(new FlatFileToLoad(new FileInfo(filename)),request);
         pipeline.ExecutePipeline(new GracefulCancellationToken());
 
         //there should be a new ExtractableCohort now
         Assert.NotNull(request.NewCohortDefinition.ID);
 
-        var ec = DataExportRepository.GetAllObjects<ExtractableCohort>()
-            .Single(c => c.OriginID == request.NewCohortDefinition.ID);
+        var ec = DataExportRepository.GetAllObjects<ExtractableCohort>().Single(c => c.OriginID == request.NewCohortDefinition.ID);
 
         //with the data in it from the test file
-        Assert.AreEqual(ec.Count, 3);
+        Assert.AreEqual(ec.Count,3);
     }
 
     [TestCase(true)]
@@ -202,7 +187,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         ec1.SaveToDatabase();
 
         // legit user 2
-        var ec2 = new ExtractionConfiguration(DataExportRepository, proj)
+        var ec2 = new ExtractionConfiguration(DataExportRepository,proj)
         {
             IsReleased = false,
             Cohort_ID = cohort998.ID
@@ -210,10 +195,10 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         ec2.SaveToDatabase();
 
         // has no cohort yet defined so should not be migrated
-        var ec3 = new ExtractionConfiguration(DataExportRepository, proj);
+        var ec3 = new ExtractionConfiguration(DataExportRepository,proj);
 
         // is frozen so should not be migrated
-        var ec4 = new ExtractionConfiguration(DataExportRepository, proj)
+        var ec4 = new ExtractionConfiguration(DataExportRepository,proj)
         {
             IsReleased = true,
             Cohort_ID = cohort998.ID
@@ -240,7 +225,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         // should have been updated to use the new cohort
         Assert.AreEqual(ec1.Cohort_ID, migrate ? cohort999.ID : cohort998.ID);
-        Assert.AreEqual(ec2.Cohort_ID, migrate ? cohort999.ID : cohort998.ID);
+        Assert.AreEqual(ec2.Cohort_ID, migrate ? cohort999.ID: cohort998.ID);
 
         // should not have magically gotten a cohort
         Assert.IsNull(ec3.Cohort_ID);

@@ -12,13 +12,12 @@ using System.Reflection;
 namespace Rdmp.Core.ReusableLibraryCode;
 
 /// <summary>
-///     Helper for unwrapping Exception.InnerExceptions and ReflectionTypeLoadExceptions.LoaderExceptions into a single
-///     flat message string of all errors.
+/// Helper for unwrapping Exception.InnerExceptions and ReflectionTypeLoadExceptions.LoaderExceptions into a single flat message string of all errors.
 /// </summary>
 public static class ExceptionHelper
 {
     [Pure]
-    public static string ExceptionToListOfInnerMessages(Exception e, bool includeStackTrace = false)
+    public static string ExceptionToListOfInnerMessages(Exception e, bool includeStackTrace=false)
     {
         var message = e.Message;
         if (includeStackTrace)
@@ -35,20 +34,21 @@ public static class ExceptionHelper
     }
 
     /// <summary>
-    ///     Returns the first base Exception in the AggregateException.InnerExceptions list which is of type T
+    /// Returns the first base Exception in the AggregateException.InnerExceptions list which is of type T
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="e"></param>
     /// <returns></returns>
     [Pure]
-    public static T GetExceptionIfExists<T>(this AggregateException e) where T : Exception
+    public static T GetExceptionIfExists<T>(this AggregateException e) where T:Exception
     {
         return e.Flatten().InnerExceptions.OfType<T>().FirstOrDefault();
     }
 
     /// <summary>
-    ///     Returns the first InnerException of type T in the Exception or null.
-    ///     <para>If e is T then e is returned directly</para>
+    /// Returns the first InnerException of type T in the Exception or null.
+    /// 
+    /// <para>If e is T then e is returned directly</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="e"></param>

@@ -4,21 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 
 public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCommandExecution
 {
-    private readonly TableInfo _tableInfo;
+    private TableInfo _tableInfo;
 
-    public ExecuteCommandCreateNewCatalogueFromTableInfo(IBasicActivateItems activator, TableInfo tableInfo) :
-        base(activator)
+    public ExecuteCommandCreateNewCatalogueFromTableInfo(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
     {
         _tableInfo = tableInfo;
 
@@ -31,9 +30,8 @@ public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCo
     {
         base.Execute();
 
-        var cata = BasicActivator.CreateAndConfigureCatalogue(_tableInfo, null, "Existing Table", ProjectSpecific,
-            TargetFolder);
-
+        var cata = BasicActivator.CreateAndConfigureCatalogue(_tableInfo,null,"Existing Table",ProjectSpecific,TargetFolder);
+            
         if (cata is DatabaseEntity de)
         {
             Publish(de);

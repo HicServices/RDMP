@@ -9,19 +9,19 @@ using Rdmp.Core.Curation.Data.Pipelines;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="Pipeline" />
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="Pipeline"/>
 /// </summary>
 public class PipelineCombineable : ICombineToMakeCommand
 {
+    public Pipeline Pipeline { get; private set; }
+    public bool IsEmpty { get; private set; }
+
     public PipelineCombineable(Pipeline pipeline)
     {
         Pipeline = pipeline;
 
         IsEmpty = Pipeline.PipelineComponents.Count == 0;
     }
-
-    public Pipeline Pipeline { get; }
-    public bool IsEmpty { get; private set; }
 
     public string GetSqlString()
     {

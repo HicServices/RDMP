@@ -20,13 +20,13 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
-public class CoalescerTests : DatabaseTests
+public class CoalescerTests:DatabaseTests
 {
-    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer,true)]
     [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-    [TestCase(DatabaseType.MySql, true)]
+    [TestCase(DatabaseType.MySql,true)]
     [TestCase(DatabaseType.MySql, false)]
-    public void TestCoalescer_RampantNullness(DatabaseType type, bool useCustomNamer)
+    public void TestCoalescer_RampantNullness(DatabaseType type,bool useCustomNamer)
     {
         var db = GetCleanedServer(type, "TestCoalescer");
 
@@ -46,34 +46,34 @@ public class CoalescerTests : DatabaseTests
             var randInt = r.Next(250);
             var randCompleteness = r.Next(4);
 
-            dt.Rows.Add(randInt, randInt, randInt, randInt, randInt);
-            dt.Rows.Add(randInt, DBNull.Value, DBNull.Value, DBNull.Value, randInt);
-            dt.Rows.Add(randInt, DBNull.Value, DBNull.Value, randInt, DBNull.Value);
-            dt.Rows.Add(randInt, DBNull.Value, DBNull.Value, randInt, randInt);
+            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
+            dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, DBNull.Value, randInt });
+            dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, randInt, DBNull.Value });
+            dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, randInt, randInt });
 
-            if (randCompleteness >= 1)
+            if (randCompleteness >=1)
             {
-                dt.Rows.Add(randInt, DBNull.Value, randInt, DBNull.Value, DBNull.Value);
-                dt.Rows.Add(randInt, DBNull.Value, randInt, DBNull.Value, randInt);
-                dt.Rows.Add(randInt, DBNull.Value, randInt, randInt, DBNull.Value);
-                dt.Rows.Add(randInt, DBNull.Value, randInt, randInt, randInt);
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, DBNull.Value, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, DBNull.Value, randInt });
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, randInt });
+            }
+                 
+            if(randCompleteness >=2)
+            {
+                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, DBNull.Value, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, DBNull.Value, randInt });
+                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, randInt, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, randInt, randInt });
             }
 
-            if (randCompleteness >= 2)
-            {
-                dt.Rows.Add(randInt, randInt, DBNull.Value, DBNull.Value, DBNull.Value);
-                dt.Rows.Add(randInt, randInt, DBNull.Value, DBNull.Value, randInt);
-                dt.Rows.Add(randInt, randInt, DBNull.Value, randInt, DBNull.Value);
-                dt.Rows.Add(randInt, randInt, DBNull.Value, randInt, randInt);
-            }
 
-
-            if (randCompleteness >= 3)
+            if(randCompleteness >= 3)
             {
-                dt.Rows.Add(randInt, randInt, randInt, DBNull.Value, DBNull.Value);
-                dt.Rows.Add(randInt, randInt, randInt, DBNull.Value, randInt);
-                dt.Rows.Add(randInt, randInt, randInt, randInt, DBNull.Value);
-                dt.Rows.Add(randInt, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value);
+                dt.Rows.Add(new object[] { randInt, randInt, randInt, DBNull.Value, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, randInt, randInt, DBNull.Value, randInt });
+                dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value });
             }
         }
 
@@ -95,14 +95,14 @@ public class CoalescerTests : DatabaseTests
             namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
         }
 
-        var configuration = new HICDatabaseConfiguration(db.Server, namer);
+        var configuration = new HICDatabaseConfiguration(db.Server,namer);
 
         var coalescer = new Coalescer
         {
             TableRegexPattern = new Regex(".*"),
             CreateIndex = true
         };
-        coalescer.Initialize(db, LoadStage.AdjustRaw);
+        coalescer.Initialize(db,LoadStage.AdjustRaw);
 
 
         var job = new ThrowImmediatelyDataLoadJob(configuration, tableInfo);
@@ -112,7 +112,7 @@ public class CoalescerTests : DatabaseTests
 
         foreach (DataRow row in dt2.Rows)
         {
-            Assert.AreNotEqual(DBNull.Value, row["f1"]);
+            Assert.AreNotEqual(DBNull.Value,row["f1"]);
             Assert.AreNotEqual(DBNull.Value, row["f2"]);
             Assert.AreNotEqual(DBNull.Value, row["f3"]);
             Assert.AreNotEqual(DBNull.Value, row["f4"]);
@@ -120,4 +120,5 @@ public class CoalescerTests : DatabaseTests
 
         db.Drop();
     }
+
 }

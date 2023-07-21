@@ -12,17 +12,15 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.DataRelease.Potential;
 
 /// <summary>
-///     Release Potential class to be used when nothing has ever been extracted
+/// Release Potential class to be used when nothing has ever been extracted
 /// </summary>
 public class NoReleasePotential : ReleasePotential
 {
-    public NoReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISelectedDataSets selectedDataSet) : base(repositoryLocator, selectedDataSet)
+    public NoReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet): base(repositoryLocator, selectedDataSet)
     {
     }
 
-    protected override Releaseability GetSupplementalSpecificAssessment(
-        IExtractionResults supplementalExtractionResults)
+    protected override Releaseability GetSupplementalSpecificAssessment(IExtractionResults supplementalExtractionResults)
     {
         return Releaseability.NeverBeenSuccessfullyExecuted;
     }

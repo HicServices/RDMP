@@ -11,7 +11,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsANOTable : RDMPCommandExecutionProposal<ANOTable>
+internal class ProposeExecutionWhenTargetIsANOTable:RDMPCommandExecutionProposal<ANOTable>
 {
     public ProposeExecutionWhenTargetIsANOTable(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -27,8 +27,7 @@ internal class ProposeExecutionWhenTargetIsANOTable : RDMPCommandExecutionPropos
         ItemActivator.Activate<ANOTableUI, ANOTable>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ANOTable target,
-        InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ANOTable target, InsertOption insertOption = InsertOption.Default)
     {
         //no drag and drop support
         return null;

@@ -4,27 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Pipelines;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Providers;
 
-public abstract class ProblemProvider : IProblemProvider
+public abstract class ProblemProvider:IProblemProvider
 {
-    public static HashSet<Type> IgnoreBadNamesFor = new(new[]
-    {
+    public static HashSet<Type> IgnoreBadNamesFor = new(new[] { 
         typeof(TableInfo),
         typeof(ColumnInfo),
         typeof(IFilter),
-        typeof(Pipeline)
-    });
-
-    /// <inheritdoc />
+        typeof(Pipeline)});
+        
+    /// <inheritdoc/>
     public bool HasProblem(object o)
     {
         return DescribeProblem(o) != null;
@@ -32,13 +30,13 @@ public abstract class ProblemProvider : IProblemProvider
 
     public string DescribeProblem(object o)
     {
-        if (o is INamed n && !IgnoreBadNamesFor.Any(t => t.IsInstanceOfType(o)) && UsefulStuff.IsBadName(n.Name))
+        if(o is INamed n && !IgnoreBadNamesFor.Any(t=>t.IsInstanceOfType(o)) && UsefulStuff.IsBadName(n.Name))
             return "Name contains illegal characters";
 
         return DescribeProblemImpl(o);
     }
 
-    public abstract void RefreshProblems(ICoreChildProvider childProvider);
-
     protected abstract string DescribeProblemImpl(object o);
+
+    public abstract void RefreshProblems(ICoreChildProvider childProvider);
 }

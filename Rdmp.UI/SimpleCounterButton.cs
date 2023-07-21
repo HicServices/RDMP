@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
@@ -12,26 +11,26 @@ using System.Windows.Forms;
 namespace Rdmp.UI;
 
 /// <summary>
-///     ToolStripButton with a public Property Count on it which displays a number up to 99 (after which it displays 99+)
+/// ToolStripButton with a public Property Count on it which displays a number up to 99 (after which it displays 99+) 
 /// </summary>
 [TechnicalUI]
-[DesignerCategory("")]
+[System.ComponentModel.DesignerCategory("")]
 public class SimpleCounterButton : ToolStripButton
 {
     private int? _count;
-
-    public float EmSize = 6f;
-    public int LabelPadding = 2;
 
     public int? Count
     {
         get => _count;
         set
         {
-            _count = value;
+            _count = value; 
             Invalidate();
         }
     }
+
+    public float EmSize = 6f;
+    public int LabelPadding = 2;
 
     protected override void OnPaint(PaintEventArgs e)
     {
@@ -50,14 +49,17 @@ public class SimpleCounterButton : ToolStripButton
 
             var labelSize = e.Graphics.MeasureString(label, labelFont);
 
-            var labelXStart = (Width - labelSize.Width) / 2;
+            var labelXStart = (Width - labelSize.Width)/2;
 
-            var labelRect = new RectangleF(new PointF(labelXStart, Height - (labelSize.Height + LabelPadding)),
-                labelSize);
-
-            e.Graphics.FillRectangle(Brushes.White, labelRect);
-            e.Graphics.DrawRectangle(Pens.Gray, Rectangle.Round(labelRect));
-            e.Graphics.DrawString(label, labelFont, Brushes.Black, labelRect);
+            var labelRect = new RectangleF(new PointF(labelXStart,Height - (labelSize.Height + LabelPadding)), labelSize);
+                
+            e.Graphics.FillRectangle(Brushes.White,labelRect);
+            e.Graphics.DrawRectangle(Pens.Gray,Rectangle.Round(labelRect));
+            e.Graphics.DrawString(label,labelFont,Brushes.Black,labelRect);
+    
         }
+            
     }
+
+        
 }

@@ -14,28 +14,21 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+
 namespace Rdmp.UI.LocationsMenu;
 
 /// <summary>
-///     RDMP supports both Integrated Security (Windows User Account Security) and SQL Authentication.  The later requires
-///     the storing of usernames and passwords for sending at query time
-///     to the destination server.  In order to do this in a secure way RDMP encrypts them using 4096-bit RSA
-///     public/private key encryption.  By default this will use a PrivateKey that is
-///     part of the RDMP codebase but it is recommended that you create your own Private Key.  Without your own private key
-///     someone could decompile this software and decrypt the passwords
-///     stored in your RDMP database if it ever became compromised.
-///     <para>
-///         This control lets you create a custom 4096 bit RSA Private Key file.  The location of this file is stored in
-///         the RDMP database but the file itself should be held under access
-///         control (see UserManual.md).  This ensures that passwords are only compromised if both the RDMP database and
-///         the Windows user account file system (where the private key is held)
-///         are both compromised.
-///     </para>
-///     <para>
-///         It is only possible to have one key at any one time and once you generate a new one all your previously created
-///         passwords will be irretrievable so it is advisable to set this up
-///         on day one otherwise you will have to reset all the passwords stored in the RDMP database.
-///     </para>
+/// RDMP supports both Integrated Security (Windows User Account Security) and SQL Authentication.  The later requires the storing of usernames and passwords for sending at query time
+/// to the destination server.  In order to do this in a secure way RDMP encrypts them using 4096-bit RSA public/private key encryption.  By default this will use a PrivateKey that is
+/// part of the RDMP codebase but it is recommended that you create your own Private Key.  Without your own private key someone could decompile this software and decrypt the passwords
+/// stored in your RDMP database if it ever became compromised.
+/// 
+/// <para>This control lets you create a custom 4096 bit RSA Private Key file.  The location of this file is stored in the RDMP database but the file itself should be held under access 
+/// control (see UserManual.md).  This ensures that passwords are only compromised if both the RDMP database and the Windows user account file system (where the private key is held)
+/// are both compromised.</para>
+/// 
+/// <para>It is only possible to have one key at any one time and once you generate a new one all your previously created passwords will be irretrievable so it is advisable to set this up
+/// on day one otherwise you will have to reset all the passwords stored in the RDMP database.</para>
 /// </summary>
 public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
 {
@@ -54,8 +47,7 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
         if (VisualStudioDesignMode) //don't go looking up the key if you are visual studio in designer mode!
             return;
 
-        _location = new PasswordEncryptionKeyLocation(
-            (CatalogueRepository)Activator.RepositoryLocator.CatalogueRepository);
+        _location = new PasswordEncryptionKeyLocation((CatalogueRepository) Activator.RepositoryLocator.CatalogueRepository);
 
         SetEnabledness();
     }
@@ -68,6 +60,7 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
         btnShowDirectory.Enabled = keyLocation != null;
         btnDeleteKeyLocation.Enabled = keyLocation != null;
         btnCreateKeyFile.Enabled = keyLocation == null;
+
     }
 
     private void tbCertificate_TextChanged(object sender, EventArgs e)
@@ -125,10 +118,9 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
     {
         try
         {
-            if (MessageBox.Show(
-                    "You are about to delete the RDMPs record of where the key file is to decrypt passwords, if you do this all currently configured password will become inaccessible (EVEN IF YOU CREATE A NEW KEY, YOU WILL NOT BE ABLE TO GET THE CURRENT PASSWORDS BACK), are you sure you want to do this?",
-                    "Confirm deleting location of decryption key file", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) ==
-                DialogResult.Yes)
+            if(MessageBox.Show(
+                   "You are about to delete the RDMPs record of where the key file is to decrypt passwords, if you do this all currently configured password will become inaccessible (EVEN IF YOU CREATE A NEW KEY, YOU WILL NOT BE ABLE TO GET THE CURRENT PASSWORDS BACK), are you sure you want to do this?",
+                   "Confirm deleting location of decryption key file", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
                 _location.DeleteKey();
 
             SetEnabledness();
@@ -137,5 +129,10 @@ public partial class PasswordEncryptionKeyLocationUI : RDMPUserControl
         {
             ExceptionViewer.Show(exception);
         }
+
+            
+
     }
+
+        
 }

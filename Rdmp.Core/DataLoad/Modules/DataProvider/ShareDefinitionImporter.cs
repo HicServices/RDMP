@@ -17,20 +17,23 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataProvider;
 
 /// <summary>
-///     Data Provider Process Task for DLE which will look for *.sd files and import them into RDMP
+/// Data Provider Process Task for DLE which will look for *.sd files and import them into RDMP
 /// </summary>
-public class ShareDefinitionImporter : IPluginDataProvider
+public class ShareDefinitionImporter: IPluginDataProvider
 {
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
+            
     }
 
     public void Check(ICheckNotifier notifier)
     {
+            
     }
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
+            
     }
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -42,12 +45,10 @@ public class ShareDefinitionImporter : IPluginDataProvider
 
             foreach (var shareDefinitionFile in job.LoadDirectory.ForLoading.EnumerateFiles("*.sd"))
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
                     $"Found '{shareDefinitionFile.Name}'"));
                 using (var stream = File.Open(shareDefinitionFile.FullName, FileMode.Open))
-                {
                     shareManager.ImportSharedObject(stream);
-                }
 
                 imported++;
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -56,12 +57,10 @@ public class ShareDefinitionImporter : IPluginDataProvider
         }
         catch (SharingException ex)
         {
-            job.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Warning, "Error occured importing ShareDefinitions", ex));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Error occured importing ShareDefinitions",ex));
         }
 
-        job.OnNotify(this, new NotifyEventArgs(
-            imported == 0 ? ProgressEventType.Warning : ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(imported == 0 ? ProgressEventType.Warning : ProgressEventType.Information,
             $"Imported {imported} ShareDefinition files"));
 
         return ExitCodeType.Success;

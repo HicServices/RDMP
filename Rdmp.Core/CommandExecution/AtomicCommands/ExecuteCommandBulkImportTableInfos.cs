@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -18,18 +19,16 @@ using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Import references to many tables at once from a database as <see cref="TableInfo" />.  Optionally importing
-///     descriptive metadata for them from <see cref="ShareDefinition" /> files
+/// Import references to many tables at once from a database as <see cref="TableInfo"/>.  Optionally importing descriptive metadata for them from <see cref="ShareDefinition"/> files
 /// </summary>
 public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomicCommand
 {
-    private readonly IExternalDatabaseServer _loggingServer;
+    private IExternalDatabaseServer _loggingServer;
 
     public ExecuteCommandBulkImportTableInfos(IBasicActivateItems activator) : base(activator)
     {
@@ -60,9 +59,9 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
 
         if (YesNo("Would you also like to import ShareDefinitions (metadata)?", "Import Metadata From File(s)"))
         {
-            var chosen = BasicActivator.SelectFiles("Share Definition Files", "Share Definitions", "*.sd");
+            var chosen = BasicActivator.SelectFiles("Share Definition Files","Share Definitions","*.sd");
 
-            if (chosen != null)
+            if(chosen != null)
                 foreach (var f in chosen)
                     using (var stream = File.Open(f.FullName, FileMode.Open))
                     {
@@ -71,14 +70,14 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
                         if (newObjects != null)
                             catalogues.AddRange(newObjects.OfType<ICatalogue>());
                     }
+
         }
 
         var generateCatalogues = false;
 
         if (YesNo("Would you like to try to guess non-matching Catalogues by Name?", "Guess by name"))
             catalogues.AddRange(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
-        else if (YesNo("Would you like to generate empty Catalogues for non-matching tables instead?",
-                     "Generate New Catalogues"))
+        else if (YesNo("Would you like to generate empty Catalogues for non-matching tables instead?", "Generate New Catalogues"))
             generateCatalogues = true;
 
         var married = new Dictionary<CatalogueItem, ColumnInfo>();
@@ -87,13 +86,19 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
 
         var novel = new List<DiscoveredTable>();
 
-        foreach (var discoveredTable in db.DiscoverTables(false))
+        foreach (var discoveredTable in db.DiscoverTables(includeViews: false))
         {
             var collide = existing.FirstOrDefault(t => t.Is(discoveredTable));
-            if (collide == null) novel.Add(discoveredTable);
+            if (collide == null)
+            {
+                novel.Add(discoveredTable);
+            }
         }
 
-        if (!BasicActivator.SelectObjects("Import", novel.ToArray(), out var selected)) return;
+        if(!BasicActivator.SelectObjects("Import", novel.ToArray(), out var selected))
+        {
+            return;
+        }
 
         foreach (var discoveredTable in selected)
         {
@@ -105,8 +110,7 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
             anyNewTable ??= ti;
 
             //find a Catalogue of the same name (possibly imported from Share Definition)
-            var matchingCatalogues = catalogues
-                .Where(c => c.Name.Equals(ti.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase)).ToArray();
+            var matchingCatalogues = catalogues.Where(c => c.Name.Equals(ti.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             //if there's 1 Catalogue with the same name
             if (matchingCatalogues.Length == 1)
@@ -118,7 +122,7 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
                 foreach (var cataItem in matchingCatalogues[0].CatalogueItems)
                     if (cataItem.ColumnInfo_ID == null)
                     {
-                        var matches = cataItem.GuessAssociatedColumn(cis, false).ToArray();
+                        var matches = cataItem.GuessAssociatedColumn(cis, allowPartial: false).ToArray();
 
                         if (matches.Length == 1)
                         {
@@ -131,28 +135,28 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
                 //is anyone unmarried? i.e. new ColumnInfos that don't have CatalogueItems with the same name
                 foreach (var columnInfo in unmatched)
                 {
-                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository,
-                        (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName())
-                    {
-                        ColumnInfo_ID = columnInfo.ID
-                    };
+                    var cataItem = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, (Catalogue)matchingCatalogues[0], columnInfo.GetRuntimeName())
+                        {
+                            ColumnInfo_ID = columnInfo.ID
+                        };
                     cataItem.SaveToDatabase();
                     married.Add(cataItem, columnInfo);
                 }
             }
             else if (generateCatalogues)
-            {
                 new ForwardEngineerCatalogue(ti, cis).ExecuteForwardEngineering();
-            }
         }
 
         if (married.Any() && YesNo($"Found {married.Count} columns, make them all extractable?", "Make Extractable"))
             foreach (var kvp in married)
+            {
                 // don't mark it extractable twice
-                if (kvp.Key.ExtractionInformation == null)
+                if(kvp.Key.ExtractionInformation == null)
+                {
                     //yup thats how we roll, the database is main memory!
-                    new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value,
-                        kvp.Value.Name);
+                    new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, kvp.Key, kvp.Value, kvp.Value.Name);
+                }
+            }
 
         if (anyNewTable != null)
         {
@@ -161,19 +165,18 @@ public class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomic
         }
     }
 
-
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-    {
-        return iconProvider.GetImage(RDMPConcept.Database, OverlayKind.Import);
-    }
-
-    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute,
-        ShareDefinition sharedefinition)
+    private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
     {
         if (property.Name.EndsWith("LoggingServer_ID"))
             return _loggingServer.ID;
 
 
         throw new SharingException($"Could not figure out a sensible value to assign to Property {property}");
+    }
+
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Database, OverlayKind.Import);
     }
 }

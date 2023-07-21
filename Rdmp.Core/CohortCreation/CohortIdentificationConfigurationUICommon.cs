@@ -4,10 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.CommandExecution;
@@ -15,44 +11,45 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryCaching.Aggregation;
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.CohortCreation;
 
 /// <summary>
-///     Common methods used by Cohort Builder UI implementations.  Eliminates
-///     code duplication and makes it possible to add new UI formats later
-///     e.g. web/console etc
+/// Common methods used by Cohort Builder UI implementations.  Eliminates
+/// code duplication and makes it possible to add new UI formats later
+/// e.g. web/console etc
 /// </summary>
 public class CohortIdentificationConfigurationUICommon
 {
-    private CancellationTokenSource _cancelGlobalOperations;
-    private ISqlParameter[] _globals;
-    private CohortAggregateContainer _root;
-
-    /// <summary>
-    ///     User interface layer for modal dialogs, showing Exceptions etc
-    /// </summary>
-    public IBasicActivateItems Activator;
-
     public CohortIdentificationConfiguration Configuration;
 
     public ExternalDatabaseServer QueryCachingServer;
+    private CohortAggregateContainer _root;
+    private CancellationTokenSource _cancelGlobalOperations;
+    private ISqlParameter[] _globals;
     public CohortCompilerRunner Runner;
 
     /// <summary>
-    ///     Duration in seconds to allow tasks to run for before cancelling
+    /// User interface layer for modal dialogs, showing Exceptions etc
+    /// </summary>
+    public IBasicActivateItems Activator;
+
+    /// <summary>
+    /// Duration in seconds to allow tasks to run for before cancelling
     /// </summary>
     public int Timeout = 3000;
 
+    public CohortCompiler Compiler { get; }
     public CohortIdentificationConfigurationUICommon()
     {
         Compiler = new CohortCompiler(null);
     }
-
-    public CohortCompiler Compiler { get; }
-
     public object Working_AspectGetter(object rowobject)
     {
         return GetKey(rowobject)?.State;
@@ -74,6 +71,7 @@ public class CohortIdentificationConfigurationUICommon
         {
             return
                 Compiler?.Tasks?.Keys.FirstOrDefault(k =>
+
                     (rowobject is AggregateConfiguration ac && k.Child is JoinableCohortAggregateConfiguration j
                                                             && j.AggregateConfiguration_ID == ac.ID)
                     || k.Child.Equals(rowobject));
@@ -99,7 +97,6 @@ public class CohortIdentificationConfigurationUICommon
 
         return null;
     }
-
     public static object Catalogue_AspectGetter(object rowobject)
     {
         return
@@ -137,13 +134,10 @@ public class CohortIdentificationConfigurationUICommon
             return task.State;
         }
     }
-
     public bool IsExecutingGlobalOperations()
     {
-        return Runner != null && Runner.ExecutionPhase != CohortCompilerRunner.Phase.None &&
-               Runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
+        return Runner != null && Runner.ExecutionPhase != CohortCompilerRunner.Phase.None && Runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
     }
-
     private static Operation GetNextOperation(CompilationState currentState)
     {
         return currentState switch
@@ -159,7 +153,7 @@ public class CohortIdentificationConfigurationUICommon
     }
 
     /// <summary>
-    ///     Rebuilds the CohortCompiler diagram which shows all the currently configured tasks
+    /// Rebuilds the CohortCompiler diagram which shows all the currently configured tasks
     /// </summary>
     /// <param name="cancelTasks"></param>
     public void RecreateAllTasks(bool cancelTasks = true)
@@ -175,6 +169,7 @@ public class CohortIdentificationConfigurationUICommon
         //Could have configured/unconfigured a joinable state
         foreach (var j in Compiler.Tasks.Keys.OfType<JoinableTask>())
             j.RefreshIsUsedState();
+
     }
 
     public void SetShowCumulativeTotals(bool show)
@@ -211,7 +206,6 @@ public class CohortIdentificationConfigurationUICommon
             Activator.ShowException("Task failed to build", task.CrashMessage);
             return;
         }
-
         //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
         Compiler.CancelTask(task, true);
 
@@ -245,9 +239,15 @@ public class CohortIdentificationConfigurationUICommon
         {
             var kvps = Compiler.Tasks.Where(t => t.Key.Child.Equals(o)).ToArray();
 
-            if (kvps.Length == 0) return null;
+            if (kvps.Length == 0)
+            {
+                return null;
+            }
 
-            if (kvps.Length == 1) return kvps[0].Key;
+            if (kvps.Length == 1)
+            {
+                return kvps[0].Key;
+            }
 
             var running = kvps.FirstOrDefault(k => k.Value != null).Key;
 
@@ -296,15 +296,38 @@ public class CohortIdentificationConfigurationUICommon
         RecreateAllTasks();
     }
 
+
+    #region Job control
+    public enum Operation
+    {
+        Execute,
+        Cancel,
+        Clear,
+        None
+    }
+
+    public Operation PlanGlobalOperation()
+    {
+        var allTasks = GetAllTasks();
+
+        //if any are still executing or scheduled for execution
+        if (allTasks.Any(t => t.State == CompilationState.Executing || t.State == CompilationState.Building || t.State == CompilationState.Scheduled))
+            return Operation.Cancel;
+
+        //if all are complete
+        return Operation.Execute;
+    }
+    #endregion
+
     public ICompileable[] GetAllTasks()
     {
         return Compiler.Tasks.Keys.ToArray();
     }
 
     /// <summary>
-    ///     Considers the state of <see cref="Compiler" /> to check for still running
-    ///     processes.  Returns true to cancel closing (also informs user that closing
-    ///     cannot happen right now).
+    /// Considers the state of <see cref="Compiler"/> to check for still running
+    /// processes.  Returns true to cancel closing (also informs user that closing
+    /// cannot happen right now).
     /// </summary>
     /// <returns></returns>
     public bool ConsultAboutClosing()
@@ -316,7 +339,7 @@ public class CohortIdentificationConfigurationUICommon
             {
                 Activator.Show("Confirm Close",
                     $"There are {aliveCount} Tasks currently executing, you must cancel them before closing");
-
+                
                 return true;
             }
 
@@ -327,9 +350,9 @@ public class CohortIdentificationConfigurationUICommon
     }
 
     /// <summary>
-    ///     Inspects the state of the object and either starts its execution or
-    ///     cancels it.  See <see cref="ExecuteAspectGetter(object)" /> to display
-    ///     the appropriate message to the user
+    /// Inspects the state of the object and either starts its execution or
+    /// cancels it.  See <see cref="ExecuteAspectGetter(object)"/> to display
+    /// the appropriate message to the user
     /// </summary>
     /// <param name="o"></param>
     public void ExecuteOrCancel(object o)
@@ -345,14 +368,16 @@ public class CohortIdentificationConfigurationUICommon
                 else
                     OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
             }
-
             if (o is CohortAggregateContainer container)
+            {
                 OrderActivity(GetNextOperation(GetState(container)), container);
+            }
         });
     }
 
-    public void StartAll(Action afterDelegate, EventHandler onRunnerPhaseChanged)
+    public void StartAll(Action afterDelegate,EventHandler onRunnerPhaseChanged)
     {
+
         //only allow starting all if we are not mid execution already
         if (IsExecutingGlobalOperations())
             return;
@@ -370,35 +395,11 @@ public class CohortIdentificationConfigurationUICommon
             }
             catch (Exception e)
             {
-                Activator.ShowException("Runer crashed", e);
+                Activator.ShowException("Runer crashed",e);
             }
-        }).ContinueWith((s, e) => { afterDelegate(); }, TaskScheduler.FromCurrentSynchronizationContext());
+
+        }).ContinueWith((s, e) => {
+            afterDelegate();
+        }, TaskScheduler.FromCurrentSynchronizationContext());
     }
-
-
-    #region Job control
-
-    public enum Operation
-    {
-        Execute,
-        Cancel,
-        Clear,
-        None
-    }
-
-    public Operation PlanGlobalOperation()
-    {
-        var allTasks = GetAllTasks();
-
-        //if any are still executing or scheduled for execution
-        if (allTasks.Any(t =>
-                t.State == CompilationState.Executing || t.State == CompilationState.Building ||
-                t.State == CompilationState.Scheduled))
-            return Operation.Cancel;
-
-        //if all are complete
-        return Operation.Execute;
-    }
-
-    #endregion
 }

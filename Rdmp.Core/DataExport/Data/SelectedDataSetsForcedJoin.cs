@@ -14,83 +14,9 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="ISelectedDataSetsForcedJoin" />
+/// <inheritdoc cref="ISelectedDataSetsForcedJoin"/>
 public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForcedJoin, IInjectKnown<TableInfo>
 {
-    public SelectedDataSetsForcedJoin()
-    {
-        ClearAllInjections();
-    }
-
-    /// <summary>
-    ///     Creates a new declaration in the <paramref name="repository" /> database that the given
-    ///     <paramref name="tableInfo" /> should
-    ///     always be joined against when extract the <paramref name="sds" />.
-    /// </summary>
-    /// <param name="repository"></param>
-    /// <param name="sds"></param>
-    /// <param name="tableInfo"></param>
-    public SelectedDataSetsForcedJoin(IDataExportRepository repository, SelectedDataSets sds, ITableInfo tableInfo)
-    {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "SelectedDataSets_ID", sds.ID },
-            { "TableInfo_ID", tableInfo.ID }
-        });
-
-        if (ID == 0 || Repository != repository)
-            throw new ArgumentException("Repository failed to properly hydrate this class");
-
-        ClearAllInjections();
-    }
-
-    internal SelectedDataSetsForcedJoin(IRepository repository, DbDataReader r) : base(repository, r)
-    {
-        SelectedDataSets_ID = Convert.ToInt32(r["SelectedDataSets_ID"]);
-        TableInfo_ID = Convert.ToInt32(r["TableInfo_ID"]);
-
-        ClearAllInjections();
-    }
-
-    /// <inheritdoc />
-    public void InjectKnown(TableInfo instance)
-    {
-        _knownTableInfo = new Lazy<TableInfo>(instance);
-    }
-
-    /// <inheritdoc />
-    public void ClearAllInjections()
-    {
-        _knownTableInfo = new Lazy<TableInfo>(FetchTableInfo);
-    }
-
-    /// <inheritdoc />
-    public int SelectedDataSets_ID
-    {
-        get => _selectedDataSets_ID;
-        set => SetField(ref _selectedDataSets_ID, value);
-    }
-
-    /// <inheritdoc />
-    public int TableInfo_ID
-    {
-        get => _tableInfo_ID;
-        set => SetField(ref _tableInfo_ID, value);
-    }
-
-    #region Relationships
-
-    /// <inheritdoc cref="TableInfo_ID" />
-    [NoMappingToDatabase]
-    public TableInfo TableInfo => _knownTableInfo.Value;
-
-    #endregion
-
-    private TableInfo FetchTableInfo()
-    {
-        return ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<TableInfo>(TableInfo_ID);
-    }
-
     #region Database Properties
 
     private int _selectedDataSets_ID;
@@ -98,4 +24,75 @@ public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForce
     private Lazy<TableInfo> _knownTableInfo;
 
     #endregion
+
+    /// <inheritdoc/>
+    public int SelectedDataSets_ID
+    {
+        get => _selectedDataSets_ID;
+        set => SetField(ref _selectedDataSets_ID, value);
+    }
+
+    /// <inheritdoc/>
+    public int TableInfo_ID
+    {
+        get => _tableInfo_ID;
+        set => SetField(ref _tableInfo_ID, value);
+    }
+
+    #region Relationships
+    /// <inheritdoc cref="TableInfo_ID"/>
+    [NoMappingToDatabase]
+    public TableInfo TableInfo => _knownTableInfo.Value;
+
+    #endregion
+
+
+    public SelectedDataSetsForcedJoin()
+    {
+        ClearAllInjections();
+    }
+
+    /// <summary>
+    /// Creates a new declaration in the <paramref name="repository"/> database that the given <paramref name="tableInfo"/> should
+    /// always be joined against when extract the <paramref name="sds"/>.
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="sds"></param>
+    /// <param name="tableInfo"></param>
+    public SelectedDataSetsForcedJoin(IDataExportRepository repository,SelectedDataSets sds, ITableInfo tableInfo)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        {
+            {"SelectedDataSets_ID",sds.ID},
+            {"TableInfo_ID",tableInfo.ID}
+        });
+
+        if (ID == 0 || Repository != repository)
+            throw new ArgumentException("Repository failed to properly hydrate this class");
+
+        ClearAllInjections();
+    }
+    internal SelectedDataSetsForcedJoin(IRepository repository, DbDataReader r): base(repository, r)
+    {
+        SelectedDataSets_ID = Convert.ToInt32(r["SelectedDataSets_ID"]);
+        TableInfo_ID = Convert.ToInt32(r["TableInfo_ID"]);
+
+        ClearAllInjections();
+    }
+
+    /// <inheritdoc/>
+    public void InjectKnown(TableInfo instance)
+    {
+        _knownTableInfo = new Lazy<TableInfo>(instance);
+    }
+    /// <inheritdoc/>
+    public void ClearAllInjections()
+    {
+        _knownTableInfo = new Lazy<TableInfo>(FetchTableInfo);
+    }
+
+    private TableInfo FetchTableInfo()
+    {
+        return ((IDataExportRepository) Repository).CatalogueRepository.GetObjectByID<TableInfo>(TableInfo_ID);
+    }
 }

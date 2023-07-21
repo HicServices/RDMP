@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
+using System;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -18,24 +18,22 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Checks and updates TableInfo RDMP objects to reflect the latest state in the referenced database e.g. adding new
-///     columns, removing old ones, updating datatype changes etc.
+/// Checks and updates TableInfo RDMP objects to reflect the latest state in the referenced database e.g. adding new columns, removing old ones, updating datatype changes etc.
 /// </summary>
 public class ExecuteCommandSyncTableInfo : BasicCommandExecution
 {
+    private readonly ITableInfo _tableInfo;
     private readonly bool _alsoSyncAno;
     private readonly bool _autoYes;
-    private readonly ITableInfo _tableInfo;
 
     [UseWithObjectConstructor]
     public ExecuteCommandSyncTableInfo(IBasicActivateItems activator,
         [DemandsInitialization("The RDMP metadata object to synchronize with the underlying database state")]
         ITableInfo table,
-        [DemandsInitialization(
-            "True to also synchronize any ANOTables (anonymisation tables) associated with the TableInfo")]
+        [DemandsInitialization("True to also synchronize any ANOTables (anonymisation tables) associated with the TableInfo")]
         bool alsoSyncAno,
         [DemandsInitialization("True to accept all changes without prompting")]
-        bool autoYes) : base(activator)
+        bool autoYes):base(activator)
     {
         _tableInfo = table;
         _alsoSyncAno = alsoSyncAno;
@@ -57,9 +55,7 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
         base.Execute();
 
         var syncher = new TableInfoSynchronizer(_tableInfo);
-        var listener = _autoYes
-            ? new AcceptAllCheckNotifier()
-            : (ICheckNotifier)new FromActivateItemsToCheckNotifier(BasicActivator);
+        var listener = _autoYes ? new AcceptAllCheckNotifier() :(ICheckNotifier) new FromActivateItemsToCheckNotifier(BasicActivator);
 
         try
         {
@@ -71,10 +67,10 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
         }
         catch (Exception exception)
         {
-            BasicActivator.ShowException("Failed to sync", exception);
+            BasicActivator.ShowException("Failed to sync",exception);
         }
 
-        if (_alsoSyncAno)
+        if(_alsoSyncAno)
         {
             var ANOSynchronizer = new ANOTableInfoSynchronizer(_tableInfo);
 
@@ -86,12 +82,11 @@ public class ExecuteCommandSyncTableInfo : BasicCommandExecution
             }
             catch (ANOConfigurationException e)
             {
-                BasicActivator.ShowException("Anonymisation configuration error", e);
+                BasicActivator.ShowException("Anonymisation configuration error",e);
             }
             catch (Exception exception)
             {
-                BasicActivator.ShowException($"Fatal error while attempting to synchronize ({exception.Message})",
-                    exception);
+                BasicActivator.ShowException($"Fatal error while attempting to synchronize ({exception.Message})", exception);
             }
         }
 

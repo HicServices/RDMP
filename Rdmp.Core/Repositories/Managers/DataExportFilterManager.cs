@@ -29,7 +29,7 @@ internal class DataExportFilterManager : IFilterManager
     }
 
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public virtual IContainer[] GetSubContainers(IContainer parent)
     {
         var subcontainers = _dataExportRepository.SelectAll<FilterContainer>(
@@ -39,40 +39,34 @@ internal class DataExportFilterManager : IFilterManager
         return subcontainers.Cast<IContainer>().ToArray();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public virtual IFilter[] GetFilters(IContainer container)
     {
-        var filters =
-            _dataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("FilterContainer_ID", container.ID);
+        var filters = _dataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("FilterContainer_ID" , container.ID);
         return filters.Cast<IFilter>().ToArray();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void AddSubContainer(IContainer parent, IContainer child)
     {
         if (child is not FilterContainer)
             throw new NotSupportedException();
 
-        _dataExportRepository.Insert(
-            "INSERT INTO FilterContainerSubcontainers(FilterContainer_ParentID,FilterContainerChildID) VALUES (@FilterContainer_ParentID, @FilterContainerChildID)",
-            new Dictionary<string, object>
-            {
-                { "FilterContainer_ParentID", parent.ID },
-                { "FilterContainerChildID", child.ID }
-            });
+        _dataExportRepository.Insert("INSERT INTO FilterContainerSubcontainers(FilterContainer_ParentID,FilterContainerChildID) VALUES (@FilterContainer_ParentID, @FilterContainerChildID)", new Dictionary<string, object>
+        {
+            {"FilterContainer_ParentID", parent.ID},
+            {"FilterContainerChildID", child.ID}
+        });
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void MakeIntoAnOrphan(IContainer container)
     {
-        _dataExportRepository.Delete(
-            "DELETE FROM FilterContainerSubcontainers where FilterContainerChildID = @FilterContainerChildID",
-            new Dictionary<string, object>
-            {
-                { "FilterContainerChildID", container.ID }
-            }, false);
+        _dataExportRepository.Delete("DELETE FROM FilterContainerSubcontainers where FilterContainerChildID = @FilterContainerChildID", new Dictionary<string, object>
+        {
+            {"FilterContainerChildID", container.ID}
+        },false);
     }
-
     public void AddChild(IContainer container, IFilter filter)
     {
         filter.FilterContainer_ID = container.ID;

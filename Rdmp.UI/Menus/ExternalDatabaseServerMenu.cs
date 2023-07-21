@@ -28,34 +28,25 @@ internal class ExternalDatabaseServerMenu : RDMPContextMenuStrip
 
         if (server.WasCreatedBy(new LoggingDatabasePatcher()))
         {
-            var viewLogs = new ToolStripMenuItem("View Logs", CatalogueIcons.Logging.ImageToBitmap());
-            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadTask)), Keys.None,
-                viewLogs);
-            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadRun)), Keys.None,
-                viewLogs);
-            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.FatalError)), Keys.None,
-                viewLogs);
-            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.TableLoadRun)), Keys.None,
-                viewLogs);
-            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataSource)), Keys.None,
-                viewLogs);
-            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.ProgressLog)), Keys.None,
-                viewLogs);
+            var viewLogs = new ToolStripMenuItem("View Logs",CatalogueIcons.Logging.ImageToBitmap());
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadTask)), Keys.None,viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadRun)), Keys.None, viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.FatalError)), Keys.None, viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.TableLoadRun)), Keys.None, viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataSource)), Keys.None, viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.ProgressLog)), Keys.None, viewLogs);
 
             viewLogs.DropDownItems.Add(new ToolStripSeparator());
 
-            viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL.ImageToBitmap(),
-                ExecuteSqlOnLoggingDatabase));
-
+            viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL.ImageToBitmap(), ExecuteSqlOnLoggingDatabase));
+                
             Items.Add(viewLogs);
         }
     }
 
     private void ExecuteSqlOnLoggingDatabase(object sender, EventArgs e)
     {
-        var collection =
-            new ArbitraryTableExtractionUICollection(_server.Discover(DataAccessContext.Logging)
-                .ExpectTable("DataLoadTask"));
+        var collection = new ArbitraryTableExtractionUICollection(_server.Discover(DataAccessContext.Logging).ExpectTable("DataLoadTask"));
         _activator.Activate<ViewSQLAndResultsWithDataGridUI>(collection);
     }
 }

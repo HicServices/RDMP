@@ -15,13 +15,13 @@ namespace Rdmp.Core.ReusableLibraryCode.Extensions;
 public static class DataTableExtensions
 {
     /// <summary>
-    ///     Formats the data in the <paramref name="dt" /> to CSV format to the given <paramref name="stream" />
+    /// Formats the data in the <paramref name="dt"/> to CSV format to the given <paramref name="stream"/>
     /// </summary>
     /// <param name="dt"></param>
     /// <param name="stream"></param>
-    public static void SaveAsCsv(this DataTable dt, StreamWriter stream)
+    public static void SaveAsCsv(this DataTable dt,StreamWriter stream)
     {
-        using var csvWriter = new CsvWriter(stream, CultureInfo.CurrentCulture);
+        using var csvWriter = new CsvWriter(stream,CultureInfo.CurrentCulture);
         foreach (DataColumn column in dt.Columns)
             csvWriter.WriteField(column.ColumnName);
 
@@ -38,7 +38,7 @@ public static class DataTableExtensions
 
     public static void SaveAsCsv(this DataTable dt, string path)
     {
-        using var stream = new StreamWriter(path, false, Encoding.UTF8, 1 << 20);
+        using var stream = new StreamWriter(path,false,Encoding.UTF8, 1<<20);
         dt.SaveAsCsv(stream);
     }
 }

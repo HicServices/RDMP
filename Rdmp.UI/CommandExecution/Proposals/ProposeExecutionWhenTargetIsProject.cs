@@ -14,7 +14,7 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProject : RDMPCommandExecutionProposal<Project>
+internal class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
 {
     public ProposeExecutionWhenTargetIsProject(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -30,25 +30,20 @@ internal class ProposeExecutionWhenTargetIsProject : RDMPCommandExecutionProposa
         ItemActivator.Activate<ProjectUI.ProjectUI, Project>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project,
-        InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
     {
         //drop a cic on a Project to associate it with that project
-        if (cmd is CohortIdentificationConfigurationCommand cicCommand)
-            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator)
-                .SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
+        if(cmd is CohortIdentificationConfigurationCommand cicCommand)
+            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
 
         if (cmd is CatalogueCombineable cataCommand)
-            return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue)
-                .SetTarget(project);
+            return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
 
-        if (cmd is FileCollectionCombineable file && file.Files.Length == 1)
-            return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator, file.Files[0])
-                .SetTarget(project);
+        if(cmd is FileCollectionCombineable file && file.Files.Length == 1)
+            return new ExecuteCommandCreateNewCatalogueByImportingFileUI(ItemActivator,file.Files[0]).SetTarget(project);
 
-        if (cmd is AggregateConfigurationCombineable aggCommand)
-            return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,
-                aggCommand.Aggregate).SetTarget(project);
+        if(cmd is AggregateConfigurationCombineable aggCommand)
+            return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator,aggCommand.Aggregate).SetTarget(project);
 
 
         return null;

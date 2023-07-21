@@ -4,8 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
+using System;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests;
@@ -16,14 +17,17 @@ internal class IHasSummaryTests : UnitTests
     public void AllObjects_SupportSummary()
     {
         foreach (var obj in WhenIHaveAll())
+        {
             try
             {
                 var text = obj.GetSummary(true, true);
                 Assert.IsNotNull(text);
+
             }
             catch (Exception ex)
             {
                 throw new Exception($"GetSummary is broken for {obj.GetType().Name}", ex);
             }
+        }
     }
 }

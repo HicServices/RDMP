@@ -12,45 +12,44 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-///     Constructs IFilters etc for data extraction via SelectedDataSets (See IFilterFactory).  Each SelectedDataSets in an
-///     ExtractionConfiguration has (optionally)
-///     its own root container IFilters, subcontainers etc.
+///  Constructs IFilters etc for data extraction via SelectedDataSets (See IFilterFactory).  Each SelectedDataSets in an ExtractionConfiguration has (optionally)
+///  its own root container IFilters, subcontainers etc.
 /// </summary>
 public class DeployedExtractionFilterFactory : IFilterFactory
 {
     private readonly IDataExportRepository _repository;
 
     /// <summary>
-    ///     Prepares to create extraction filters for project datasets int eh provided <paramref name="repository" />
+    /// Prepares to create extraction filters for project datasets int eh provided <paramref name="repository"/>
     /// </summary>
     /// <param name="repository"></param>
     public DeployedExtractionFilterFactory(IDataExportRepository repository)
     {
         _repository = repository;
     }
-
-    /// <inheritdoc />
+    
+    /// <inheritdoc/>
     public IFilter CreateNewFilter(string name)
     {
-        return new DeployedExtractionFilter(_repository, name, null);
+        return new DeployedExtractionFilter(_repository,name,null);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
     {
-        return new DeployedExtractionFilterParameter(_repository, parameterSQL, filter);
+        return new DeployedExtractionFilterParameter(_repository,parameterSQL,filter);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Type GetRootOwnerType()
     {
-        return typeof(SelectedDataSets);
+        return typeof (SelectedDataSets);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Type GetIContainerTypeIfAny()
     {
-        return typeof(FilterContainer);
+        return typeof (FilterContainer);
     }
 
     public IContainer CreateNewContainer()

@@ -10,22 +10,20 @@ using System.Collections.Generic;
 namespace Rdmp.Core.Curation.Data.EntityNaming;
 
 /// <summary>
-///     Determines how to translate a TABLE (not database!) name based on the load stage of a DLE RAW=>STAGING=>LIVE
-///     migration.  E.g. Raw tables
-///     already have the same name as Live tables (they are in a RAW database) but Staging tables and Archive tables have
-///     the suffixes specified
+/// Determines how to translate a TABLE (not database!) name based on the load stage of a DLE RAW=>STAGING=>LIVE migration.  E.g. Raw tables
+/// already have the same name as Live tables (they are in a RAW database) but Staging tables and Archive tables have the suffixes specified
 /// </summary>
 public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
 {
     protected static readonly Dictionary<LoadBubble, string> Suffixes = new()
     {
-        { LoadBubble.Raw, "" },
-        { LoadBubble.Staging, "_STAGING" },
-        { LoadBubble.Live, "" },
-        { LoadBubble.Archive, "_Archive" }
+        {LoadBubble.Raw, ""},
+        {LoadBubble.Staging, "_STAGING"},
+        {LoadBubble.Live, ""},
+        {LoadBubble.Archive, "_Archive"}
     };
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public virtual string GetDatabaseName(string rootDatabaseName, LoadBubble stage)
     {
         return stage switch
@@ -37,12 +35,13 @@ public class SuffixBasedNamer : INameDatabasesAndTablesDuringLoads
         };
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public virtual string GetName(string tableName, LoadBubble convention)
     {
-        if (!Suffixes.TryGetValue(convention, out var suffix))
+        if (!Suffixes.TryGetValue(convention,out var suffix))
             throw new ArgumentException($"Do not have a suffix for convention: {convention}");
 
         return $"{tableName}{suffix}";
     }
+        
 }

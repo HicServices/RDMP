@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
@@ -11,29 +12,27 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.DataQualityUIs;
 using Rdmp.UI.ItemActivation;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandRunDQEOnCatalogue : BasicUICommandExecution, IAtomicCommandWithTarget
+public class ExecuteCommandRunDQEOnCatalogue:BasicUICommandExecution,IAtomicCommandWithTarget
 {
     private Catalogue _catalogue;
-
+        
     [UseWithObjectConstructor]
-    public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator, Catalogue catalogue) : base(activator)
+    public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator,Catalogue catalogue): base(activator)
     {
         _catalogue = catalogue;
     }
 
-    public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator) : base(activator)
+    public ExecuteCommandRunDQEOnCatalogue(IActivateItems activator):base(activator)
     {
     }
 
     public override string GetCommandHelp()
     {
-        return
-            "Runs the data quality engine on the dataset using the currently configured validation rules and stores the results in the default DQE results database";
+        return "Runs the data quality engine on the dataset using the currently configured validation rules and stores the results in the default DQE results database";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -43,7 +42,7 @@ public class ExecuteCommandRunDQEOnCatalogue : BasicUICommandExecution, IAtomicC
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _catalogue = (Catalogue)target;
+        _catalogue = (Catalogue) target;
         return this;
     }
 
@@ -53,7 +52,7 @@ public class ExecuteCommandRunDQEOnCatalogue : BasicUICommandExecution, IAtomicC
 
         var c = _catalogue ?? SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-        if (c == null)
+        if(c == null)
             return;
 
         Activator.Activate<DQEExecutionControlUI, Catalogue>(c);

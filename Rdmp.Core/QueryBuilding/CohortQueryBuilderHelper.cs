@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Naming;
+using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Spontaneous;
@@ -17,29 +18,22 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-///     Helper for CohortQueryBuilder which contains code for building individual cohort identification subqueries.
-///     Subqueries are actually built by
-///     AggregateBuilder but this class handles tab indentation, parameter renaming (where there are other subqueries with
-///     conflicting sql parameter names),
-///     injecting globals etc.
+/// Helper for CohortQueryBuilder which contains code for building individual cohort identification subqueries.  Subqueries are actually built by 
+/// AggregateBuilder but this class handles tab indentation, parameter renaming (where there are other subqueries with conflicting sql parameter names), 
+/// injecting globals etc.
 /// </summary>
 public class CohortQueryBuilderHelper
 {
     /// <summary>
-    ///     Returns the SQL you need to include in your nested query (in UNION / EXCEPT / INTERSECT).  This does not include
-    ///     parameter declarations (which
-    ///     would appear at the very top) and includes rename operations dependant on what has been written out before by
-    ///     (tracked by <see cref="ParameterManager" />).
-    ///     <para>
-    ///         Use <paramref name="args" /> for the original un renamed / including parameter declarations e.g. to test for
-    ///         cache hits
-    ///     </para>
+    /// Returns the SQL you need to include in your nested query (in UNION / EXCEPT / INTERSECT).  This does not include parameter declarations (which
+    /// would appear at the very top) and includes rename operations dependant on what has been written out before by (tracked by <see cref="ParameterManager"/>).
+    ///
+    /// <para>Use <paramref name="args"/> for the original un renamed / including parameter declarations e.g. to test for cache hits</para>
     /// </summary>
     /// <param name="aggregate"></param>
     /// <param name="args"></param>
     /// <returns></returns>
-    public static CohortQueryBuilderDependencySql GetSQLForAggregate(AggregateConfiguration aggregate,
-        QueryBuilderArgs args)
+    public static CohortQueryBuilderDependencySql GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
     {
         var isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
 
@@ -61,17 +55,12 @@ public class CohortQueryBuilderHelper
             string selectList;
 
             if (!isJoinAggregate)
-                selectList = extractionIdentifier.SelectSQL + (extractionIdentifier.Alias != null
-                    ? $" {extractionIdentifier.Alias}"
+                selectList = extractionIdentifier.SelectSQL +  (extractionIdentifier.Alias != null ? $" {extractionIdentifier.Alias}"
                     : "");
             else
                 //unless we are also including other columns because this is a patient index joinable inception query
                 selectList = string.Join($",{Environment.NewLine}",
-                    aggregate.AggregateDimensions.Select(e =>
-                        e.SelectSQL +
-                        (e.Alias != null
-                            ? $" {e.Alias}"
-                            : ""))); //joinable patient index tables have patientIdentifier + 1 or more other columns
+                    aggregate.AggregateDimensions.Select(e => e.SelectSQL + (e.Alias != null ? $" {e.Alias}" : ""))); //joinable patient index tables have patientIdentifier + 1 or more other columns
 
             if (args.OverrideSelectList != null)
                 selectList = args.OverrideSelectList;
@@ -82,7 +71,7 @@ public class CohortQueryBuilderHelper
             builder = new AggregateBuilder(limitationSQL, selectList, aggregate, aggregate.ForcedJoins);
 
             //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select 
-            if (!isJoinAggregate)
+            if(!isJoinAggregate)
                 builder.AddColumn(extractionIdentifier, false);
             else
                 builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(), false);
@@ -90,8 +79,7 @@ public class CohortQueryBuilderHelper
         else
         {
             if (args.OverrideSelectList != null)
-                throw new NotSupportedException(
-                    "Cannot override Select list on aggregates that have HAVING / Count SQL configured in them");
+                throw new NotSupportedException("Cannot override Select list on aggregates that have HAVING / Count SQL configured in them");
 
             builder = new AggregateBuilder("distinct", aggregate.CountSQL, aggregate, aggregate.ForcedJoins);
 
@@ -99,24 +87,22 @@ public class CohortQueryBuilderHelper
             if (!isJoinAggregate)
                 builder.AddColumn(extractionIdentifier, true);
             else
-                builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(),
-                    true); //it's a joinable inception query (See JoinableCohortAggregateConfiguration) - these are allowed additional columns
+                builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(), true);//it's a joinable inception query (See JoinableCohortAggregateConfiguration) - these are allowed additional columns
 
             builder.DoNotWriteOutOrderBy = true;
         }
 
         if (args.TopX != -1)
-            builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(new MemoryRepository(), args.TopX,
-                AggregateTopXOrderByDirection.Descending, null);
+            builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(new MemoryRepository(), args.TopX, AggregateTopXOrderByDirection.Descending, null);
 
         //make sure builder has globals
-        foreach (var global in args.Globals)
+        foreach(var global in args.Globals)
             builder.ParameterManager.AddGlobalParameter(global);
 
         //Add the inception join
         if (args.JoinIfAny != null)
-            AddJoinToBuilder(aggregate, extractionIdentifier, builder, args);
-
+            AddJoinToBuilder(aggregate,extractionIdentifier,builder, args);
+            
         //set the where container
         builder.RootFilterContainer = aggregate.RootFilterContainer;
 
@@ -127,17 +113,19 @@ public class CohortQueryBuilderHelper
         //get the SQL from the builder (for the current configuration) - without parameters
         var currentBlock = builderSqlWithoutParameters;
 
-        var toReturn = new CohortQueryBuilderDependencySql(currentBlock, builder.ParameterManager);
+        var toReturn = new CohortQueryBuilderDependencySql(currentBlock,builder.ParameterManager);
 
-        if (args.JoinSql != null) toReturn.ParametersUsed.MergeWithoutRename(args.JoinSql.ParametersUsed);
+        if (args.JoinSql != null)
+        {
+            toReturn.ParametersUsed.MergeWithoutRename(args.JoinSql.ParametersUsed);
+        }
 
         //we need to generate the full SQL with parameters (and no rename operations) so we can do cache hit tests
         //renaming is deferred to later
         return toReturn;
     }
 
-    public static void AddJoinToBuilder(AggregateConfiguration user, IColumn usersExtractionIdentifier,
-        AggregateBuilder builder, QueryBuilderArgs args)
+    public static void AddJoinToBuilder(AggregateConfiguration user,IColumn usersExtractionIdentifier,AggregateBuilder builder, QueryBuilderArgs args)
     {
         var joinableTableAlias = args.JoinIfAny.GetJoinTableAlias();
         var joinDirection = args.JoinIfAny.GetJoinDirectionSQL();
@@ -146,9 +134,10 @@ public class CohortQueryBuilderHelper
 
         if (args.JoinedTo.Catalogue.IsApiCall(out var plugin))
         {
-            if (plugin == null)
-                throw new Exception(
-                    $"No IPluginCohortCompiler was found that supports API cohort set '{args.JoinedTo}'");
+            if(plugin == null)
+            {
+                throw new Exception($"No IPluginCohortCompiler was found that supports API cohort set '{args.JoinedTo}'");
+            }
 
             joinOn = plugin.GetJoinColumnForPatientIndexTable(args.JoinedTo);
         }
@@ -165,10 +154,9 @@ public class CohortQueryBuilderHelper
         // LEFT Join (***INCEPTION QUERY***)ix51 on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[patientIdentifier] = ix51.patientIdentifier
 
         builder.AddCustomLine(
-            $" {joinDirection} Join ({Environment.NewLine}{TabIn(args.JoinSql.Sql, 1)}{Environment.NewLine}){joinableTableAlias}{Environment.NewLine}on {usersExtractionIdentifier.SelectSQL} = {joinableTableAlias}.{joinOn.GetRuntimeName()}",
-            QueryComponent.JoinInfoJoin);
+            $" {joinDirection} Join ({Environment.NewLine}{TabIn(args.JoinSql.Sql, 1)}{Environment.NewLine}){joinableTableAlias}{Environment.NewLine}on {usersExtractionIdentifier.SelectSQL} = {joinableTableAlias}.{joinOn.GetRuntimeName()}",QueryComponent.JoinInfoJoin);
     }
-
+        
     public static string TabIn(string str, int numberOfTabs)
     {
         if (string.IsNullOrWhiteSpace(str))
@@ -177,4 +165,5 @@ public class CohortQueryBuilderHelper
         var tabs = new string('\t', numberOfTabs);
         return tabs + str.Replace(Environment.NewLine, Environment.NewLine + tabs);
     }
+
 }

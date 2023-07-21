@@ -12,16 +12,14 @@ using Rdmp.Core.Providers.Nodes.UsedByNodes;
 namespace Rdmp.Core.Providers.Nodes.CohortNodes;
 
 /// <summary>
-///     Indicates that a <see cref="CohortIdentificationConfiguration" /> has a database in which to store temporary tables
-///     in that reflect the reuslts of subcomponents
-///     of the full query.  This improves query performance and allows cross server / database type cohort generation.
-///     <para>Cache invalidation automatically occurs when subcomponents are changed</para>
+/// Indicates that a <see cref="CohortIdentificationConfiguration"/> has a database in which to store temporary tables in that reflect the reuslts of subcomponents 
+/// of the full query.  This improves query performance and allows cross server / database type cohort generation.  
+/// 
+/// <para>Cache invalidation automatically occurs when subcomponents are changed</para>
 /// </summary>
-internal class QueryCacheUsedByCohortIdentificationNode :
-    ObjectUsedByOtherObjectNode<CohortIdentificationConfiguration, ExternalDatabaseServer>, IDeletableWithCustomMessage
+internal class QueryCacheUsedByCohortIdentificationNode : ObjectUsedByOtherObjectNode<CohortIdentificationConfiguration, ExternalDatabaseServer>, IDeletableWithCustomMessage
 {
-    public QueryCacheUsedByCohortIdentificationNode(CohortIdentificationConfiguration cic,
-        ExternalDatabaseServer cacheServer)
+    public QueryCacheUsedByCohortIdentificationNode(CohortIdentificationConfiguration cic, ExternalDatabaseServer cacheServer)
         : base(cic, cacheServer)
     {
     }
@@ -32,13 +30,13 @@ internal class QueryCacheUsedByCohortIdentificationNode :
         User.SaveToDatabase();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public string GetDeleteMessage()
     {
         return "remove cache database use";
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public string GetDeleteVerb()
     {
         return "Remove";

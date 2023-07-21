@@ -9,13 +9,14 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.UI.Refreshing;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 
 /// <summary>
-///     Builds a query to fetch data that matches a given <see cref="IFilter" />
+/// Builds a query to fetch data that matches a given <see cref="IFilter"/>
 /// </summary>
 public class FilterGraphObjectCollection : PersistableObjectCollection
 {
@@ -23,7 +24,7 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
     {
     }
 
-    public FilterGraphObjectCollection(AggregateConfiguration graph, ConcreteFilter filter) : this()
+    public FilterGraphObjectCollection(AggregateConfiguration graph, ConcreteFilter filter):this()
     {
         if (graph.IsCohortIdentificationAggregate)
             throw new ArgumentException(
@@ -34,9 +35,8 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
 
     public AggregateConfiguration GetGraph()
     {
-        return (AggregateConfiguration)DatabaseObjects.Single(o => o is AggregateConfiguration);
+        return (AggregateConfiguration) DatabaseObjects.Single(o => o is AggregateConfiguration);
     }
-
     public IFilter GetFilter()
     {
         return (IFilter)DatabaseObjects.Single(o => o is IFilter);
@@ -46,6 +46,6 @@ public class FilterGraphObjectCollection : PersistableObjectCollection
     {
         foreach (var o in DatabaseObjects)
             if (o.Equals(e.Object))
-                ((IRevertable)o).RevertToDatabaseState();
+                ((IRevertable) o).RevertToDatabaseState();
     }
 }

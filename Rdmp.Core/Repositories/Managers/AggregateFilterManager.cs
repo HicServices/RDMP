@@ -22,7 +22,7 @@ internal class AggregateFilterManager : IFilterManager
 
     public virtual IContainer[] GetSubContainers(IContainer container)
     {
-        return
+        return 
             _catalogueRepository.SelectAll<AggregateFilterContainer>(
                 $"SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID={container.ID}",
                 "AggregateFilterContainer_ChildID").ToArray();
@@ -30,12 +30,10 @@ internal class AggregateFilterManager : IFilterManager
 
     public void MakeIntoAnOrphan(IContainer container)
     {
-        _catalogueRepository.Delete(
-            "DELETE FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID = @AggregateFilterContainer_ChildID",
-            new Dictionary<string, object>
-            {
-                { "AggregateFilterContainer_ChildID", container.ID }
-            }, false);
+        _catalogueRepository.Delete("DELETE FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID = @AggregateFilterContainer_ChildID", new Dictionary<string, object>
+        {
+            {"AggregateFilterContainer_ChildID", container.ID}
+        },false);
     }
 
     public IContainer GetParentContainerIfAny(IContainer container)
@@ -56,11 +54,11 @@ internal class AggregateFilterManager : IFilterManager
             "INSERT INTO AggregateFilterSubContainer(AggregateFilterContainer_ParentID,AggregateFilterContainer_ChildID) VALUES (@AggregateFilterContainer_ParentID,@AggregateFilterContainer_ChildID)",
             new Dictionary<string, object>
             {
-                { "AggregateFilterContainer_ParentID", parent.ID },
-                { "AggregateFilterContainer_ChildID", child.ID }
+                {"AggregateFilterContainer_ParentID", parent.ID},
+                {"AggregateFilterContainer_ChildID", child.ID}
             });
     }
-
+        
     public void AddChild(IContainer container, IFilter filter)
     {
         filter.FilterContainer_ID = container.ID;

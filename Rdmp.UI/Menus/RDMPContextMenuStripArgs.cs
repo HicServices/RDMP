@@ -15,22 +15,11 @@ using Rdmp.UI.ItemActivation;
 namespace Rdmp.UI.Menus;
 
 /// <summary>
-///     Constructor arguments for <see cref="RDMPContextMenuStrip" />
+/// Constructor arguments for <see cref="RDMPContextMenuStrip"/>
 /// </summary>
 public class RDMPContextMenuStripArgs
 {
-    private readonly HashSet<Type> _skipCommands = new();
-
-    public RDMPContextMenuStripArgs(IActivateItems itemActivator)
-    {
-        ItemActivator = itemActivator;
-    }
-
-    public RDMPContextMenuStripArgs(IActivateItems itemActivator, TreeListView tree, object model) : this(itemActivator)
-    {
-        Tree = tree;
-        Model = model;
-    }
+    private HashSet<Type> _skipCommands = new();
 
     public IActivateItems ItemActivator { get; set; }
     public IMasqueradeAs Masquerader { get; set; }
@@ -38,18 +27,28 @@ public class RDMPContextMenuStripArgs
     public TreeListView Tree { get; set; }
     public object Model { get; set; }
 
+    public RDMPContextMenuStripArgs(IActivateItems itemActivator)
+    {
+        ItemActivator = itemActivator;
+    }
+
+    public RDMPContextMenuStripArgs(IActivateItems itemActivator, TreeListView tree, object model):this(itemActivator)
+    {
+        Tree = tree;
+        Model = model;
+    }
+
     /// <summary>
-    ///     Notifies the menu builder that we do not want to show a given Type of command for this menu e.g. because we have a
-    ///     better UI we plan to make available instead
+    /// Notifies the menu builder that we do not want to show a given Type of command for this menu e.g. because we have a better UI we plan to make available instead
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public void SkipCommand<T>() where T : IAtomicCommand
+    public void SkipCommand<T>() where T:IAtomicCommand
     {
         _skipCommands.Add(typeof(T));
     }
 
     /// <summary>
-    ///     Returns true if <see cref="SkipCommand{T}" /> has been called for this command type
+    /// Returns true if <see cref="SkipCommand{T}"/> has been called for this command type
     /// </summary>
     /// <param name="cmd"></param>
     /// <returns></returns>
@@ -59,9 +58,9 @@ public class RDMPContextMenuStripArgs
     }
 
     /// <summary>
-    ///     Returns the first Parent control of <see cref="Tree" /> in the Windows Forms Controls Parent hierarchy which is
-    ///     Type T
-    ///     <para>returns null if no Parent is found of the supplied Type </para>
+    /// Returns the first Parent control of <see cref="Tree"/> in the Windows Forms Controls Parent hierarchy which is Type T
+    /// 
+    /// <para>returns null if no Parent is found of the supplied Type </para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>

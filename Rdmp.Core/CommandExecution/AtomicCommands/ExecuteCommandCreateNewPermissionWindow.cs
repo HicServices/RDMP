@@ -4,12 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -19,6 +20,7 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
 
     public ExecuteCommandCreateNewPermissionWindow(IBasicActivateItems activator) : base(activator)
     {
+
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -41,8 +43,7 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
     {
         base.Execute();
 
-        if (TypeText("Permission Window Name", "Enter name for the PermissionWindow e.g. 'Nightly Loads'", 1000, null,
-                out var name))
+        if (TypeText("Permission Window Name", "Enter name for the PermissionWindow e.g. 'Nightly Loads'", 1000,null,out var name))
         {
             var newWindow = new PermissionWindow(BasicActivator.RepositoryLocator.CatalogueRepository)
             {
@@ -51,8 +52,7 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
             newWindow.SaveToDatabase();
 
             if (_cacheProgressToSetOnIfAny != null)
-                new ExecuteCommandSetPermissionWindow(BasicActivator, _cacheProgressToSetOnIfAny).SetTarget(newWindow)
-                    .Execute();
+                new ExecuteCommandSetPermissionWindow(BasicActivator, _cacheProgressToSetOnIfAny).SetTarget(newWindow).Execute();
 
             Publish(newWindow);
             Activate(newWindow);

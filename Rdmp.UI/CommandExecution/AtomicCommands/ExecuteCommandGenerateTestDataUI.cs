@@ -19,7 +19,7 @@ public class ExecuteCommandGenerateTestDataUI : BasicUICommandExecution
     {
         base.Execute();
 
-        var dialog = new GenerateTestDataUI(Activator, this);
+        var dialog = new GenerateTestDataUI(Activator,this);
         dialog.Show();
     }
 }

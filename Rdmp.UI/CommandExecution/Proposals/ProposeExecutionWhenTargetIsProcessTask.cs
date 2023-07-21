@@ -11,10 +11,11 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class ProposeExecutionWhenTargetIsProcessTask : RDMPCommandExecutionProposal<ProcessTask>
+internal class ProposeExecutionWhenTargetIsProcessTask:RDMPCommandExecutionProposal<ProcessTask>
 {
     public ProposeExecutionWhenTargetIsProcessTask(IActivateItems itemActivator) : base(itemActivator)
     {
+
     }
 
     public override bool CanActivate(ProcessTask target)
@@ -24,6 +25,7 @@ internal class ProposeExecutionWhenTargetIsProcessTask : RDMPCommandExecutionPro
 
     public override void Activate(ProcessTask processTask)
     {
+
         if (processTask.IsPluginType())
             ItemActivator.Activate<PluginProcessTaskUI, ProcessTask>(processTask);
 
@@ -34,8 +36,7 @@ internal class ProposeExecutionWhenTargetIsProcessTask : RDMPCommandExecutionPro
             ItemActivator.Activate<SqlProcessTaskUI, ProcessTask>(processTask);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTask target,
-        InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTask target, InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

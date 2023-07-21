@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using SixLabors.ImageSharp;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -17,44 +18,54 @@ using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
-using Rdmp.UI.SimpleControls;
 using ScintillaNET;
-using SixLabors.ImageSharp;
+using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
+using Point = System.Drawing.Point;
 using SixLabors.ImageSharp.PixelFormats;
 using Color = System.Drawing.Color;
-using Point = System.Drawing.Point;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 public class RDMPControlCommonFunctionality
 {
     /// <summary>
-    ///     All keywords added via <see cref="AddHelp" />
+    /// This is the strip of buttons and labels for all controls commonly used for interacting with the content of the tab.  The
+    /// bar should start with <see cref="_menuDropDown"/>.
     /// </summary>
-    private readonly HashSet<Control> _helpAdded = new();
+    public ToolStrip ToolStrip { get; private set; }
+
+    /// <summary>
+    /// Occurs before checking the <see cref="ICheckable"/> (see  <see cref="StartChecking"/>
+    /// </summary>
+    public event EventHandler BeforeChecking;
+
+    /// <summary>
+    /// Occurs when a call to <see cref="Fatal"/> is made.  This will result in the form showing an error
+    /// icon (but not closing itself).
+    /// </summary>
+    public event EventHandler<CheckEventArgs> OnFatal;
+
+    /// <summary>
+    /// Event occurs when the <see cref="ToolStrip"/> is added to the hosting Control
+    /// </summary>
+    public event EventHandler ToolStripAddedToHost;
 
     private readonly IRDMPControl _hostControl;
 
     /// <summary>
-    ///     This is the button with 3 horizontal lines which exposes all menu options which are seldom pressed or navigate you
-    ///     somewhere
+    /// This is the button with 3 horizontal lines which exposes all menu options which are seldom pressed or navigate you somewhere
     /// </summary>
     private readonly ToolStripMenuItem _menuDropDown;
 
-    private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
-
-    private readonly ToolStripButton _runChecksToolStripButton =
-        new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
-
-    private IActivateItems _activator;
-    private readonly Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new();
-    private ICheckable _checkable;
-
-    private readonly Dictionary<string, ToolStripDropDownButton> _dropDownButtons = new();
-
-    private readonly Dictionary<Scintilla, Color> _oldColours = new();
-
     private AtomicCommandUIFactory atomicCommandUIFactory;
+
+    private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
+    private readonly ToolStripButton _runChecksToolStripButton = new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+    private ICheckable _checkable;
+    private IActivateItems _activator;
+
+    private Dictionary<string,ToolStripDropDownButton> _dropDownButtons = new();
+    private Dictionary<string, ToolStripMenuItem> _addToMenuSubmenus = new();
 
 
     public RDMPControlCommonFunctionality(IRDMPControl hostControl)
@@ -73,7 +84,7 @@ public class RDMPControlCommonFunctionality
             Visible = false
         };
         ToolStrip.Items.Add(_menuDropDown);
-
+                        
         _ragSmileyToolStrip = new RAGSmileyToolStrip((Control)_hostControl);
         ToolStrip.Items.Add(_ragSmileyToolStrip);
 
@@ -86,29 +97,6 @@ public class RDMPControlCommonFunctionality
         _runChecksToolStripButton.Visible = false;
     }
 
-    /// <summary>
-    ///     This is the strip of buttons and labels for all controls commonly used for interacting with the content of the tab.
-    ///     The
-    ///     bar should start with <see cref="_menuDropDown" />.
-    /// </summary>
-    public ToolStrip ToolStrip { get; }
-
-    /// <summary>
-    ///     Occurs before checking the <see cref="ICheckable" /> (see  <see cref="StartChecking" />
-    /// </summary>
-    public event EventHandler BeforeChecking;
-
-    /// <summary>
-    ///     Occurs when a call to <see cref="Fatal" /> is made.  This will result in the form showing an error
-    ///     icon (but not closing itself).
-    /// </summary>
-    public event EventHandler<CheckEventArgs> OnFatal;
-
-    /// <summary>
-    ///     Event occurs when the <see cref="ToolStrip" /> is added to the hosting Control
-    /// </summary>
-    public event EventHandler ToolStripAddedToHost;
-
     public void SetItemActivator(IActivateItems activator)
     {
         _activator = activator;
@@ -118,18 +106,14 @@ public class RDMPControlCommonFunctionality
 
 
     /// <summary>
-    ///     Adds the given <paramref name="cmd" /> to the top bar at the top of the control.  This will be always
-    ///     visible at the top of the form
+    /// Adds the given <paramref name="cmd"/> to the top bar at the top of the control.  This will be always
+    /// visible at the top of the form
     /// </summary>
     /// <param name="cmd"></param>
     /// <param name="overrideCommandName"></param>
     /// <param name="overrideImage"></param>
-    /// <param name="underMenu">
-    ///     If the command should appear under a submenu dropdown then this should be the name of that root
-    ///     button
-    /// </param>
-    public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null,
-        string underMenu = null)
+    /// <param name="underMenu">If the command should appear under a submenu dropdown then this should be the name of that root button</param>
+    public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null, string underMenu = null)
     {
         var p = _hostControl.GetTopmostRDMPUserControl();
         if (p != _hostControl)
@@ -140,27 +124,22 @@ public class RDMPControlCommonFunctionality
 
         InitializeToolStrip();
 
-        var button = string.IsNullOrWhiteSpace(underMenu)
-            ? atomicCommandUIFactory.CreateToolStripItem(cmd)
-            : atomicCommandUIFactory.CreateMenuItem(cmd);
+        var button = string.IsNullOrWhiteSpace(underMenu)? atomicCommandUIFactory.CreateToolStripItem(cmd) : atomicCommandUIFactory.CreateMenuItem(cmd);
         if (!string.IsNullOrWhiteSpace(overrideCommandName))
             button.Text = overrideCommandName;
 
         if (overrideImage != null)
             button.Image = overrideImage.ImageToBitmap();
 
-        Add(button, underMenu);
+        Add(button,underMenu);
     }
 
     /// <summary>
-    ///     Adds the given <paramref name="item" /> to the top bar at the top of the control.  This will be always
-    ///     visible at the top of the form
+    /// Adds the given <paramref name="item"/> to the top bar at the top of the control.  This will be always
+    /// visible at the top of the form
     /// </summary>
     /// <param name="item"></param>
-    /// <param name="underMenu">
-    ///     If the command should appear under a submenu dropdown then this should be the name of that root
-    ///     button
-    /// </param>
+    /// <param name="underMenu">If the command should appear under a submenu dropdown then this should be the name of that root button</param>
     public void Add(ToolStripItem item, string underMenu = null)
     {
         var p = _hostControl.GetTopmostRDMPUserControl();
@@ -175,21 +154,17 @@ public class RDMPControlCommonFunctionality
         if (!string.IsNullOrWhiteSpace(underMenu))
         {
             if (!_dropDownButtons.ContainsKey(underMenu))
-                _dropDownButtons.Add(underMenu,
-                    new ToolStripDropDownButton { Text = underMenu, DisplayStyle = ToolStripItemDisplayStyle.Text });
+                _dropDownButtons.Add(underMenu,new ToolStripDropDownButton {Text = underMenu,DisplayStyle = ToolStripItemDisplayStyle.Text});
 
             _dropDownButtons[underMenu].DropDownItems.Add(item);
             ToolStrip.Items.Add(_dropDownButtons[underMenu]);
         }
         else
-        {
             ToolStrip.Items.Add(item);
-        }
     }
 
     /// <summary>
-    ///     Adds check buttons to the tool strip and sets up <see cref="StartChecking" /> to target
-    ///     <paramref name="checkable" />.
+    /// Adds check buttons to the tool strip and sets up <see cref="StartChecking"/> to target <paramref name="checkable"/>.
     /// </summary>
     /// <param name="checkable"></param>
     public void AddChecks(ICheckable checkable)
@@ -202,13 +177,10 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    ///     Adds check buttons to the tool strip and sets up <see cref="StartChecking" /> to target the return value of
-    ///     <paramref name="checkableFunc" />.  If the method throws the
-    ///     Exception will be exposed in the checking system.
-    ///     <para>
-    ///         Only use this method if there is a reasonable chance the <paramref name="checkableFunc" /> will crash
-    ///         otherwise use the normal overload
-    ///     </para>
+    /// Adds check buttons to the tool strip and sets up <see cref="StartChecking"/> to target the return value of <paramref name="checkableFunc"/>.  If the method throws the
+    /// Exception will be exposed in the checking system.
+    /// 
+    /// <para>Only use this method if there is a reasonable chance the <paramref name="checkableFunc"/> will crash otherwise use the normal overload</para>
     /// </summary>
     /// <param name="checkableFunc"></param>
     public void AddChecks(Func<ICheckable> checkableFunc)
@@ -228,9 +200,8 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    ///     Runs checks on the last variable passed in <see cref="AddChecks(ICheckable)" />.  Do not call this method unless
-    ///     you have first
-    ///     called <see cref="AddChecks(ICheckable)" />.
+    /// Runs checks on the last variable passed in <see cref="AddChecks(ICheckable)"/>.  Do not call this method unless you have first
+    /// called <see cref="AddChecks(ICheckable)"/>.
     /// </summary>
     public void StartChecking()
     {
@@ -242,9 +213,9 @@ public class RDMPControlCommonFunctionality
             _ragSmileyToolStrip.Enabled = true;
 
             var e = new BeforeCheckingEventArgs(_ragSmileyToolStrip, _checkable);
-            BeforeChecking(this, e);
+            BeforeChecking(this,e);
 
-            if (e.Cancel)
+            if(e.Cancel)
                 return;
         }
 
@@ -252,9 +223,8 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    ///     Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks
-    ///     becomming
-    ///     visible if it was not visible before.
+    /// Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks becomming
+    /// visible if it was not visible before.
     /// </summary>
     /// <param name="s"></param>
     /// <param name="exception"></param>
@@ -268,7 +238,12 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    ///     Adds a <see cref="HelpIcon" /> to the task bar at the top of the control
+    /// All keywords added via <see cref="AddHelp"/>
+    /// </summary>
+    private readonly HashSet<Control> _helpAdded = new();
+
+    /// <summary>
+    /// Adds a <see cref="HelpIcon"/> to the task bar at the top of the control
     /// </summary>
     /// <param name="title"></param>
     /// <param name="body"></param>
@@ -281,24 +256,20 @@ public class RDMPControlCommonFunctionality
 
 
     /// <summary>
-    ///     Adds a <see cref="HelpIcon" /> on the right of the control with documentation for the listed property
+    /// Adds a <see cref="HelpIcon"/> on the right of the control with documentation for the listed property
     /// </summary>
     /// <param name="c">The control you want the help to appear beside</param>
     /// <param name="propertyName">The xml-doc property you want e.g. "ICatalogue.Name"</param>
     /// <param name="title"></param>
-    /// <param name="anchor">
-    ///     Explicit anchor style to apply to help icon.  If you pass None (default) then anchor will
-    ///     be chosen based on the control <paramref name="c" />
-    /// </param>
+    /// <param name="anchor">Explicit anchor style to apply to help icon.  If you pass None (default) then anchor will
+    ///  be chosen based on the control <paramref name="c"/></param>
     public void AddHelp(Control c, string propertyName, string title = null, AnchorStyles anchor = AnchorStyles.None)
     {
         if (_activator == null)
-            throw new Exception(
-                "Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
+            throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
 
         if (c.Parent == null)
-            throw new NotSupportedException(
-                "Control is not in a container.  HelpIcon cannot be added to top level controls");
+            throw new NotSupportedException("Control is not in a container.  HelpIcon cannot be added to top level controls");
 
         title ??= propertyName;
         var body = _activator.CommentStore.GetDocumentationIfExists(propertyName, false, true);
@@ -310,15 +281,13 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    ///     Adds a <see cref="HelpIcon" /> on the right of the control with the pvorided help text
+    /// Adds a <see cref="HelpIcon"/> on the right of the control with the pvorided help text
     /// </summary>
     /// <param name="c">The control you want the help to appear beside</param>
     /// <param name="title">The textual header you want shown</param>
     /// <param name="body">The text you want displayed on hover (under the title)</param>
-    /// <param name="anchor">
-    ///     Explicit anchor style to apply to help icon.  If you pass None (default) then anchor will
-    ///     be chosen based on the control <paramref name="c" />
-    /// </param>
+    /// <param name="anchor">Explicit anchor style to apply to help icon.  If you pass None (default) then anchor will
+    ///  be chosen based on the control <paramref name="c"/></param>
     public void AddHelpString(Control c, string title, string body, AnchorStyles anchor = AnchorStyles.None)
     {
         //don't add help to the control more than once
@@ -340,9 +309,7 @@ public class RDMPControlCommonFunctionality
                 help.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
         }
         else
-        {
             help.Anchor = anchor;
-        }
 
         c.Parent.Controls.Add(help);
     }
@@ -359,7 +326,7 @@ public class RDMPControlCommonFunctionality
 
         _menuDropDown.DropDownItems.Clear();
         _menuDropDown.Visible = false;
-
+            
         _addToMenuSubmenus.Clear();
 
         ToolStrip.Items.Add(_menuDropDown);
@@ -370,15 +337,14 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    ///     Adds the given <paramref name="cmd" /> to the drop down menu button bar at the top of the control.  This
-    ///     will be visible only when you click on the menu button.
+    /// Adds the given <paramref name="cmd"/> to the drop down menu button bar at the top of the control.  This
+    /// will be visible only when you click on the menu button.
     /// </summary>
     /// <param name="cmd"></param>
     /// <param name="overrideCommandName"></param>
     /// <param name="overrideImage"></param>
     /// <param name="underMenu"></param>
-    public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null,
-        string underMenu = null)
+    public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image<Rgba32> overrideImage = null,string underMenu = null)
     {
         var p = _hostControl.GetTopmostRDMPUserControl();
         if (p != _hostControl)
@@ -396,12 +362,12 @@ public class RDMPControlCommonFunctionality
         if (overrideImage != null)
             menuItem.Image = overrideImage.ImageToBitmap();
 
-        AddToMenu(menuItem, underMenu);
+        AddToMenu(menuItem,underMenu);
     }
 
     /// <summary>
-    ///     Adds the given <paramref name="menuItem" /> to the drop down menu button bar at the top of the control.  This
-    ///     will be visible only when you click on the menu button.
+    /// Adds the given <paramref name="menuItem"/> to the drop down menu button bar at the top of the control.  This
+    /// will be visible only when you click on the menu button.
     /// </summary>
     public void AddToMenu(ToolStripItem menuItem, string underMenu = null)
     {
@@ -430,17 +396,14 @@ public class RDMPControlCommonFunctionality
             _menuDropDown.DropDownItems.Add(_addToMenuSubmenus[underMenu]);
         }
         else
-        {
             _menuDropDown.DropDownItems.Add(menuItem);
-        }
-
+    
         _menuDropDown.Visible = true;
     }
 
 
     /// <summary>
-    ///     Adds a new ToolStripLabel with the supplied <paramref name="label" /> text to the menu bar at the top of the
-    ///     control
+    /// Adds a new ToolStripLabel with the supplied <paramref name="label"/> text to the menu bar at the top of the control
     /// </summary>
     /// <param name="label"></param>
     /// <param name="showIcon">True to add the text icon next to the text</param>
@@ -450,14 +413,13 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    ///     Adds the given <paramref name="cmd" /> to the menu bar at the top of the control
+    /// Adds the given <paramref name="cmd"/> to the menu bar at the top of the control
     /// </summary>
     /// <param name="cmd"></param>
     /// <param name="overrideCommandName"></param>
     /// <param name="overrideImage"></param>
     /// <param name="overlayKind"></param>
-    protected void Add(IAtomicCommand cmd, string overrideCommandName, RDMPConcept overrideImage,
-        OverlayKind overlayKind = OverlayKind.None)
+    protected void Add(IAtomicCommand cmd, string overrideCommandName, RDMPConcept overrideImage, OverlayKind overlayKind = OverlayKind.None)
     {
         Add(cmd, overrideCommandName, _activator.CoreIconProvider.GetImage(overrideImage, overlayKind));
     }
@@ -465,16 +427,15 @@ public class RDMPControlCommonFunctionality
     protected virtual void InitializeToolStrip()
     {
         if (_activator == null)
-            throw new Exception(
-                "Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
+            throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
 
         ((Control)_hostControl).Controls.Add(ToolStrip);
 
-        ToolStripAddedToHost?.Invoke(this, EventArgs.Empty);
+        ToolStripAddedToHost?.Invoke(this,EventArgs.Empty);
     }
 
     /// <summary>
-    ///     Resets the RAG checker (smiley) if there is one to empty
+    /// Resets the RAG checker (smiley) if there is one to empty
     /// </summary>
     public void ResetChecks()
     {
@@ -483,8 +444,8 @@ public class RDMPControlCommonFunctionality
     }
 
     /// <summary>
-    ///     Performs the given <paramref name="action" />.  If an Exception is thrown then
-    ///     the <paramref name="tb" /> will be turned Red (otherwise it will be set to Black).
+    /// Performs the given <paramref name="action"/>.  If an Exception is thrown then
+    /// the <paramref name="tb"/> will be turned Red (otherwise it will be set to Black).
     /// </summary>
     /// <param name="tb"></param>
     /// <param name="action"></param>
@@ -501,9 +462,9 @@ public class RDMPControlCommonFunctionality
         }
     }
 
+    private Dictionary<Scintilla,Color> _oldColours = new();
     /// <summary>
-    ///     Sets the text color in the <paramref name="queryEditor" /> to red (or back to normal if <paramref name="red" /> is
-    ///     false).
+    /// Sets the text color in the <paramref name="queryEditor"/> to red (or back to normal if <paramref name="red"/> is false).
     /// </summary>
     /// <param name="queryEditor"></param>
     /// <param name="red"></param>
@@ -536,15 +497,15 @@ public class RDMPControlCommonFunctionality
 Technical Detail:
 Type:{exception.GetType()}
 Stack Trace:{exception.StackTrace}";
-
+            
         queryEditor.ReadOnly = true;
 
         //go red after you have set the text
-        ScintillaGoRed(queryEditor, true);
+        ScintillaGoRed(queryEditor,true);
     }
 
     /// <summary>
-    ///     Disables mouse wheel scrolling on the given <paramref name="cb" />
+    /// Disables mouse wheel scrolling on the given <paramref name="cb"/>
     /// </summary>
     /// <param name="cb"></param>
     public static void DisableMouseWheel(ComboBox cb)

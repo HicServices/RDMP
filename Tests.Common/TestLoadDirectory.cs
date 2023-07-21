@@ -9,15 +9,15 @@ using Rdmp.Core.Curation;
 
 namespace Tests.Common;
 
-public class TestLoadDirectory : ILoadDirectory
-{
+public class TestLoadDirectory :ILoadDirectory{
+
     /// <summary>
-    ///     Creates a new blank/null implementation of <see cref="ILoadDirectory" />
+    /// Creates a new blank/null implementation of <see cref="ILoadDirectory"/>
     /// </summary>
     public TestLoadDirectory()
     {
-    }
 
+    }
     public DirectoryInfo ForLoading { get; set; }
     public DirectoryInfo ForArchiving { get; set; }
     public DirectoryInfo Cache { get; set; }

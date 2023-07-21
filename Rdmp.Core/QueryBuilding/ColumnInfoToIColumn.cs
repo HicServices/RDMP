@@ -15,23 +15,20 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-///     Allows you to convert a ColumnInfo into an IColumn (the column concept in query building).  IColumn has Alias and
-///     Order which do not exist in ColumnInfo
-///     (which is a reference to an existing column on your database only).  The alias will be null and the Order will be
-///     -1 meaning that ColumnInfoToIColumn will
-///     by default appear above other IColumns in order.
+/// Allows you to convert a ColumnInfo into an IColumn (the column concept in query building).  IColumn has Alias and Order which do not exist in ColumnInfo 
+/// (which is a reference to an existing column on your database only).  The alias will be null and the Order will be -1 meaning that ColumnInfoToIColumn will
+/// by default appear above other IColumns in order.
 /// </summary>
-public class ColumnInfoToIColumn : SpontaneousObject, IColumn
+public class ColumnInfoToIColumn :SpontaneousObject, IColumn
 {
     private static Random r = new();
 
     /// <summary>
-    ///     Allows the given <see cref="ColumnInfo" /> to act as an <see cref="IColumn" /> giving it an Order and setting
-    ///     extraction flags (e.g. <see cref="HashOnDataRelease" />)to sensible defaults.
+    /// Allows the given <see cref="ColumnInfo"/> to act as an <see cref="IColumn"/> giving it an Order and setting extraction flags (e.g. <see cref="HashOnDataRelease"/>)to sensible defaults.
     /// </summary>
     /// <param name="repo"></param>
     /// <param name="column"></param>
-    public ColumnInfoToIColumn(MemoryRepository repo, ColumnInfo column) : base(repo)
+    public ColumnInfoToIColumn(MemoryRepository repo, ColumnInfo column):base(repo)
     {
         ColumnInfo = column;
         Order = -1;
@@ -41,37 +38,34 @@ public class ColumnInfoToIColumn : SpontaneousObject, IColumn
         IsExtractionIdentifier = false;
         IsPrimaryKey = false;
     }
-
-    /// <inheritdoc />
+        
+    /// <inheritdoc/>
     public string GetRuntimeName()
     {
         return ColumnInfo.GetRuntimeName();
     }
+        
+    /// <inheritdoc/>
+    public ColumnInfo ColumnInfo { get; private set; }
 
-    /// <inheritdoc />
-    public ColumnInfo ColumnInfo { get; }
-
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public int Order { get; set; }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     [Sql]
     public string SelectSQL { get; set; }
-
-    /// <inheritdoc />
+        
+    /// <inheritdoc/>
     public string Alias { get; set; }
-
-    /// <inheritdoc />
-    public bool HashOnDataRelease { get; }
-
-    /// <inheritdoc />
-    public bool IsExtractionIdentifier { get; }
-
-    /// <inheritdoc />
-    public bool IsPrimaryKey { get; }
-
+    /// <inheritdoc/>
+    public bool HashOnDataRelease { get; private set; }
+    /// <inheritdoc/>
+    public bool IsExtractionIdentifier { get; private set; }
+    /// <inheritdoc/>
+    public bool IsPrimaryKey { get; private set; }
+        
     /// <summary>
-    ///     Checks the syntax of the column
+    /// Checks the syntax of the column
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)

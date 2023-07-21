@@ -13,31 +13,28 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.UI.ChecksUI;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
-using Rdmp.UI.SimpleControls;
-using Rdmp.UI.SimpleDialogs;
+using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
+using RAGSmiley = Rdmp.UI.ChecksUI.RAGSmiley;
+using ViewSourceCodeDialog = Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 
 /// <summary>
-///     Allows you to specify values for any IArgumentHost class.  This control is used by the user at 'design time' (e.g.
-///     when they are building a data load configuration) and the values
-///     are then populated into instantiated runtime instances (not that this control cares about how that happens).  You
-///     will see a list of all properties marked with [DemandsInitialization]
-///     on the argument host class.  Selecting the Argument will display the help text associated with the argument (user
-///     friendly message telling them what they are supposed to put in for that
-///     property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a
-///     string property will show a text box - See ArgumentUI).
+/// Allows you to specify values for any IArgumentHost class.  This control is used by the user at 'design time' (e.g. when they are building a data load configuration) and the values
+/// are then populated into instantiated runtime instances (not that this control cares about how that happens).  You will see a list of all properties marked with [DemandsInitialization]
+/// on the argument host class.  Selecting the Argument will display the help text associated with the argument (user friendly message telling them what they are supposed to put in for that
+/// property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a string property will show a text box - See ArgumentUI).
 /// </summary>
 public partial class ArgumentCollectionUI : UserControl
 {
-    private IActivateItems _activator;
+    public Dictionary<IArgument, RequiredPropertyInfo> DemandDictionary;
     private Type _argumentsAreFor;
     private IArgumentHost _parent;
     private ArgumentValueUIFactory _valueUisFactory;
-    public Dictionary<IArgument, RequiredPropertyInfo> DemandDictionary;
+
+    private IActivateItems _activator;
 
     public ArgumentCollectionUI()
     {
@@ -45,21 +42,16 @@ public partial class ArgumentCollectionUI : UserControl
     }
 
     /// <summary>
-    ///     Reconfigures this UI (can be called multiple times throughout controls lifetime) to facilitate the population of
-    ///     DemandsInitialization
-    ///     properties on an underlying type (e.g. if your collection is ProcessTask and your argument type is
-    ///     ProcessTaskArgument then your underlying type could
-    ///     be AnySeparatorFileAttacher or MDFAttacher).  Note that while T is IArgumentHost, it also should be tied to one or
-    ///     more interfaces (e.g. IAttacher) and able to host
-    ///     any child of that interface of which argumentsAreForUnderlyingType is the currently configured concrete class (e.g.
-    ///     AnySeparatorFileAttacher).
+    /// Reconfigures this UI (can be called multiple times throughout controls lifetime) to facilitate the population of DemandsInitialization
+    /// properties on an underlying type (e.g. if your collection is ProcessTask and your argument type is ProcessTaskArgument then your underlying type could
+    /// be AnySeparatorFileAttacher or MDFAttacher).  Note that while T is IArgumentHost, it also should be tied to one or more interfaces (e.g. IAttacher) and able to host
+    /// any child of that interface of which argumentsAreForUnderlyingType is the currently configured concrete class (e.g. AnySeparatorFileAttacher).
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="parent"></param>
     /// <param name="argumentsAreForUnderlyingType"></param>
     /// <param name="catalogueRepository"></param>
-    public void Setup(IActivateItems activator, IArgumentHost parent, Type argumentsAreForUnderlyingType,
-        ICatalogueRepository catalogueRepository)
+    public void Setup(IActivateItems activator,IArgumentHost parent, Type argumentsAreForUnderlyingType, ICatalogueRepository catalogueRepository)
     {
         _parent = parent;
         _argumentsAreFor = argumentsAreForUnderlyingType;
@@ -93,6 +85,7 @@ public partial class ArgumentCollectionUI : UserControl
 
             RefreshArgumentList();
         }
+
     }
 
     private void RefreshArgumentList()
@@ -111,7 +104,7 @@ public partial class ArgumentCollectionUI : UserControl
 
         float maxArgNameWidth = 0;
 
-        if (DemandDictionary.Any())
+        if(DemandDictionary.Any())
         {
             var g = CreateGraphics();
             maxArgNameWidth = DemandDictionary.Select(a =>
@@ -142,14 +135,13 @@ public partial class ArgumentCollectionUI : UserControl
         return label;
     }
 
-    private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required,
-        float maxArgNameWidth)
+    private void CreateLine(IArgumentHost parent, IArgument argument, RequiredPropertyInfo required, float maxArgNameWidth)
     {
+
         var name = new Label();
 
         var helpIcon = new HelpIcon();
-        helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType()) ?? $"Unrecognised Type:{argument.Type}",
-            required.Demand.Description);
+        helpIcon.SetHelpText(GetSystemTypeName(argument.GetSystemType())?? $"Unrecognised Type:{argument.Type}", required.Demand.Description);
         helpIcon.Dock = DockStyle.Right;
 
         var spaceSeparatedArgumentName = UsefulStuff.PascalCaseStringToHumanReadable(argument.Name);
@@ -157,7 +149,7 @@ public partial class ArgumentCollectionUI : UserControl
         name.Text = spaceSeparatedArgumentName;
         name.TextAlign = ContentAlignment.MiddleLeft;
         name.Dock = DockStyle.Left;
-        name.Width = (int)maxArgNameWidth + 3 /*padding*/;
+        name.Width = (int)maxArgNameWidth+3 /*padding*/;
 
         var ragSmiley = new RAGSmiley();
 
@@ -173,6 +165,7 @@ public partial class ArgumentCollectionUI : UserControl
 
         try
         {
+
             args.InitialValue = argument.GetValueAsSystemType();
         }
         catch (Exception e)
@@ -197,12 +190,12 @@ public partial class ArgumentCollectionUI : UserControl
 
                 argument.GetValueAsSystemType();
 
-                if (required.Demand.Mandatory && (v == null || string.IsNullOrWhiteSpace(v.ToString())))
+                if(required.Demand.Mandatory && (v == null  || string.IsNullOrWhiteSpace(v.ToString())))
                     ragSmiley.Fatal(new Exception($"Property {argument.Name} is Mandatory"));
             }
             catch (Exception ex)
             {
-                ragSmiley.OnCheckPerformed(new CheckEventArgs("Failed to set property properly", CheckResult.Fail, ex));
+                ragSmiley.OnCheckPerformed(new CheckEventArgs("Failed to set property properly",CheckResult.Fail,ex));
             }
         };
         args.Fatal = ragSmiley.Fatal;
@@ -216,7 +209,7 @@ public partial class ArgumentCollectionUI : UserControl
             Dock = DockStyle.Top
         };
 
-        name.Location = new Point(0, 0);
+        name.Location = new Point(0,0);
         p.Controls.Add(name);
 
         helpIcon.Left = name.Right;

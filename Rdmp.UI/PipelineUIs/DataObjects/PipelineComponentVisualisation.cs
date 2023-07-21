@@ -11,40 +11,60 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.PipelineUIs.Pipelines;
 
+
 namespace Rdmp.UI.PipelineUIs.DataObjects;
 
 /// <summary>
-///     Shows the state of a single pipeline component within a data flow pipeline (See 'Pipelines' in UserManual.md).
-///     This includes the Type of the pipeline
-///     component, whether the software was able to create an instance of the type and whether it passed checking.
-///     Components can be either a Source, Middle (of which there can be any
-///     number) or Destination.  Objects (usually DataTables) flow through the pipeline and are processed by each component
-///     in turn.
-///     <para>
-///         But first the pipeline must be constructed, this component is used as part of <see cref="PipelineDiagramUI" />
-///         to let you adjust the order / add new components etc into your pipeline.  The pipeline
-///         itself is stored as a reusable resource in the Catalogue Database.
-///     </para>
+/// Shows the state of a single pipeline component within a data flow pipeline (See 'Pipelines' in UserManual.md).  This includes the Type of the pipeline
+/// component, whether the software was able to create an instance of the type and whether it passed checking.  Components can be either a Source, Middle (of which there can be any 
+/// number) or Destination.  Objects (usually DataTables) flow through the pipeline and are processed by each component in turn.
+/// 
+/// <para>But first the pipeline must be constructed, this component is used as part of <see cref="PipelineDiagramUI"/> to let you adjust the order / add new components etc into your pipeline.  The pipeline
+/// itself is stored as a reusable resource in the Catalogue Database. </para>
 /// </summary>
 [TechnicalUI]
-internal class PipelineComponentVisualisation : DataFlowComponentVisualisation
+internal class PipelineComponentVisualisation:DataFlowComponentVisualisation
 {
-    private Exception _exInitialization;
     private bool _isSelected;
 
-    private readonly Pen _origFullPen;
+    private Pen _origFullPen;
+    private Exception _exInitialization;
+
+    public bool AllowDrag { get; set; }
+    public bool AllowSelection { get; set; }
+    public IPipelineComponent PipelineComponent { get; set; }
+
+    public bool IsSelected
+    {
+        get => _isSelected;
+        set
+        {
+            _isSelected = value;
+            _fullPen = value ? new Pen(new SolidBrush(Color.FromArgb(0,99,177)), 7.0f) : _origFullPen;
+            Invalidate(true);
+        }
+    }
+
+    public Exception ExInitialization
+    {
+        get => _exInitialization;
+        set
+        {
+            _exInitialization = value;
+
+            if (value != null)
+                ragSmiley1.OnCheckPerformed(new CheckEventArgs("Could not initialize object", CheckResult.Fail,_exInitialization));
+        }
+    }
 
 
-    public PipelineComponentVisualisation(IPipelineComponent component, PipelineComponentRole role,
-        object valueOrNullIfBroken, Exception constructionExceptionIfAny,
-        Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
+    public PipelineComponentVisualisation(IPipelineComponent component, PipelineComponentRole role, object valueOrNullIfBroken, Exception constructionExceptionIfAny, Func<DragEventArgs, DataFlowComponentVisualisation, DragDropEffects> shouldAllowDrop)
         : base(role, valueOrNullIfBroken, shouldAllowDrop)
     {
         PipelineComponent = component;
 
         if (constructionExceptionIfAny != null)
-            ragSmiley1.OnCheckPerformed(new CheckEventArgs("Failed to construct component", CheckResult.Fail,
-                constructionExceptionIfAny));
+            ragSmiley1.OnCheckPerformed(new CheckEventArgs("Failed to construct component", CheckResult.Fail,constructionExceptionIfAny));
 
         _origFullPen = _fullPen;
 
@@ -52,7 +72,7 @@ internal class PipelineComponentVisualisation : DataFlowComponentVisualisation
             return;
 
         lblText.Text = component.GetClassNameLastPart();
-
+            
         if (valueOrNullIfBroken == null)
             ragSmiley1.OnCheckPerformed(new CheckEventArgs("Could not construct object", CheckResult.Fail));
 
@@ -69,40 +89,12 @@ internal class PipelineComponentVisualisation : DataFlowComponentVisualisation
         pComponent.MouseDown += Anywhere_MouseDown;
     }
 
-    public bool AllowDrag { get; set; }
-    public bool AllowSelection { get; set; }
-    public IPipelineComponent PipelineComponent { get; set; }
-
-    public bool IsSelected
-    {
-        get => _isSelected;
-        set
-        {
-            _isSelected = value;
-            _fullPen = value ? new Pen(new SolidBrush(Color.FromArgb(0, 99, 177)), 7.0f) : _origFullPen;
-            Invalidate(true);
-        }
-    }
-
-    public Exception ExInitialization
-    {
-        get => _exInitialization;
-        set
-        {
-            _exInitialization = value;
-
-            if (value != null)
-                ragSmiley1.OnCheckPerformed(new CheckEventArgs("Could not initialize object", CheckResult.Fail,
-                    _exInitialization));
-        }
-    }
-
 
     public event PipelineComponentSelectedHandler ComponentSelected;
-
+        
     private void Anywhere_MouseDown(object sender, MouseEventArgs e)
     {
-        if (e.Button != MouseButtons.Left)
+        if(e.Button != MouseButtons.Left)
             return;
 
         if (AllowSelection)
@@ -111,6 +103,10 @@ internal class PipelineComponentVisualisation : DataFlowComponentVisualisation
             ComponentSelected(this, PipelineComponent);
         }
 
-        if (AllowDrag) DoDragDrop(this, DragDropEffects.Move);
+        if (AllowDrag)
+        {
+            DoDragDrop(this, DragDropEffects.Move);
+        }
     }
+
 }

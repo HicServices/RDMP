@@ -19,82 +19,75 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
-///     Allows saving of any DatabaseEntity.  When public properties are changed on the object the control automatically
-///     lights up and tracks the changes.  Clicking
-///     the Undo button will reset the DatabaseEntity to the state before the changes were made / when it was last saved.
-///     Undo is a toggle from last saved state to
-///     current user edit state and back again (i.e. not a tracked history).  In order to use an object saver button you
-///     should add it to an RDMPSingleDatabaseObjectControl
-///     and call SetupFor on the DatabaseObject.  You should also mark your control as ISaveableUI and implement the single
-///     method on that interface so that shortcuts
-///     are correctly routed to this control.
+/// Allows saving of any DatabaseEntity.  When public properties are changed on the object the control automatically lights up and tracks the changes.  Clicking
+/// the Undo button will reset the DatabaseEntity to the state before the changes were made / when it was last saved.  Undo is a toggle from last saved state to
+/// current user edit state and back again (i.e. not a tracked history).  In order to use an object saver button you should add it to an RDMPSingleDatabaseObjectControl
+/// and call SetupFor on the DatabaseObject.  You should also mark your control as ISaveableUI and implement the single method on that interface so that shortcuts
+/// are correctly routed to this control.
 /// </summary>
-public class ObjectSaverButton
+public partial class ObjectSaverButton
 {
-    private IActivateItems _activator;
+    private Bitmap _undoImage;
+    private Bitmap _redoImage;
 
-    private bool _isEnabled;
-
-    private DatabaseEntity _o;
-    private IRDMPControl _parent;
-    private readonly Bitmap _redoImage;
-    private bool _undo = true;
-    private readonly Bitmap _undoImage;
+    private ToolStripButton btnSave  = new("Save",FamFamFamIcons.disk.ImageToBitmap());
+    private ToolStripButton btnUndoRedo = new("Undo", FamFamFamIcons.Undo.ImageToBitmap());
 
     private RevertableObjectReport _undoneChanges;
-
-    private readonly ToolStripButton btnSave = new("Save", FamFamFamIcons.disk.ImageToBitmap());
-    private readonly ToolStripButton btnUndoRedo = new("Undo", FamFamFamIcons.Undo.ImageToBitmap());
+    private IRDMPControl _parent;
+    private IActivateItems _activator;
 
     public ObjectSaverButton()
     {
-        btnSave.Click += btnSave_Click;
-        btnUndoRedo.Click += btnUndoRedo_Click;
-
+        btnSave.Click += new EventHandler(btnSave_Click);
+        btnUndoRedo.Click += new EventHandler(btnUndoRedo_Click);
+            
         _undoImage = FamFamFamIcons.Undo.ImageToBitmap();
         _redoImage = FamFamFamIcons.Redo.ImageToBitmap();
 
         btnUndoRedo.Image = _undoImage;
     }
 
+    private DatabaseEntity _o;
+
     public event Action AfterSave;
 
     /// <summary>
-    ///     Function to carry out some kind of proceedure before the object is saved.  Return true if you want the save to
-    ///     carry on and be applied or false to abandon the save attempt.
+    /// Function to carry out some kind of proceedure before the object is saved.  Return true if you want the save to carry on and be applied or false to abandon the save attempt.
     /// </summary>
-    public event Func<DatabaseEntity, bool> BeforeSave;
+    public event Func<DatabaseEntity,bool> BeforeSave;
+
+    private bool _isEnabled;
+    private bool _undo = true;
 
     public void SetupFor(IRDMPControl control, DatabaseEntity o, IActivateItems activator)
     {
         control.CommonFunctionality.Add(btnSave);
         control.CommonFunctionality.Add(btnUndoRedo);
 
-        var f = (control as Form ?? ((Control)control).FindForm()) ??
-                throw new NotSupportedException(
-                    "Cannot call SetupFor before the control has been added to its parent form");
+        var f = (control as Form ?? ((Control)control).FindForm()) ?? throw new NotSupportedException("Cannot call SetupFor before the control has been added to its parent form");
         _parent = control;
 
         Enable(false);
 
         //if it is a fresh instance
-        if (!ReferenceEquals(_o, o))
+        if(!ReferenceEquals(_o,o))
         {
             //subscribe to property change events
-            if (_o != null)
+            if(_o != null)
                 _o.PropertyChanged -= PropertyChanged;
             _o = o;
             _o.PropertyChanged += PropertyChanged;
         }
-
+            
         //already set up before
         if (_activator != null)
             return;
-
+            
         _activator = activator;
 
         f.Enter += ParentForm_Enter;
-
+            
         //the first time it is set up it could still be out of date!
         CheckForOutOfDateObjectAndOfferToFix();
     }
@@ -119,7 +112,7 @@ public class ObjectSaverButton
         }
 
         _parent.SetUnSavedChanges(b);
-
+            
         btnSave.Enabled = b;
         btnUndoRedo.Enabled = b;
 
@@ -129,16 +122,15 @@ public class ObjectSaverButton
 
     public void Save()
     {
-        if (_o == null)
-            throw new Exception(
-                "Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
-
-        if (BeforeSave != null)
+        if(_o == null)
+            throw new Exception("Cannot Save because ObjectSaverButton has not been set up yet, call SetupFor first (e.g. in your SetDatabaseObject method) ");
+            
+        if(BeforeSave != null)
             if (!BeforeSave(_o))
                 return;
 
         _o.SaveToDatabase();
-        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+        _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_o));
         Enable(false);
 
         SetReadyToUndo();
@@ -150,6 +142,7 @@ public class ObjectSaverButton
     {
         Save();
     }
+
 
 
     private void btnUndoRedo_Click(object sender, EventArgs e)
@@ -195,13 +188,12 @@ public class ObjectSaverButton
     private void SetReadyToRedo(RevertableObjectReport changes)
     {
         //record the changes prior to the revert
-        _undoneChanges = changes;
+        _undoneChanges = changes; 
 
         _undo = false;
         btnUndoRedo.Image = _redoImage;
         btnUndoRedo.Text = "Redo";
     }
-
     private void SetReadyToUndo()
     {
         _undo = true;
@@ -213,7 +205,7 @@ public class ObjectSaverButton
     public void CheckForOutOfDateObjectAndOfferToFix()
     {
         if (IsDifferent())
-            if (
+            if(
                 //if we didn't think there were changes
                 !_isEnabled &&
 
@@ -246,11 +238,12 @@ public class ObjectSaverButton
         // If there is no object or it does not exist don't try to save it
         if (_o == null || !_o.Exists())
             return;
-
+            
         if (_isEnabled)
             if (_activator.YesNo($"Save Changes To '{_o}'?", "Save Changes"))
                 Save();
             else
                 _o.RevertToDatabaseState();
     }
+
 }

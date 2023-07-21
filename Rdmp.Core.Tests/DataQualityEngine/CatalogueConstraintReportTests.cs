@@ -26,79 +26,15 @@ namespace Rdmp.Core.Tests.DataQualityEngine;
 
 public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfiguration
 {
-    private readonly string bulkTestDataValidation = @"<?xml version=""1.0"" encoding=""utf-16""?>
-<Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-  <ItemValidators>
-    <ItemValidator>
-      <TargetProperty>current_gp_accept_date</TargetProperty>
-      <SecondaryConstraints>
-        <SecondaryConstraint xsi:type=""BoundDate"">
-          <Name>bounddate</Name>
-          <Consequence>Wrong</Consequence>
-          <Rationale>Patient cannot be seen by a GP before they are born!</Rationale>
-          <LowerFieldName>date_of_birth</LowerFieldName>
-          <UpperFieldName>date_of_death</UpperFieldName>
-          <Inclusive>true</Inclusive>
-          <Lower xsi:nil=""true"" />
-          <Upper xsi:nil=""true"" />
-        </SecondaryConstraint>
-      </SecondaryConstraints>
-    </ItemValidator>
-    <ItemValidator>
-      <TargetProperty>date_of_death</TargetProperty>
-      <SecondaryConstraints />
-    </ItemValidator>
-  </ItemValidators>
-</Validator>";
-
-
-    private readonly string dodgyColumnXML = @"<?xml version=""1.0"" encoding=""utf-16""?>
-<Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-  <ItemValidators>
-    <ItemValidator>
-      <PrimaryConstraint xsi:type=""Chi"">
-        <Name>chi</Name>
-        <Consequence>InvalidatesRow</Consequence>
-      </PrimaryConstraint>
-      <TargetProperty>chi</TargetProperty>
-      <SecondaryConstraints>
-        <SecondaryConstraint xsi:type=""NotNull"">
-          <Name>not null</Name>
-          <Consequence>Wrong</Consequence>
-        </SecondaryConstraint>
-      </SecondaryConstraints>
-    </ItemValidator>
-    <ItemValidator>
-      <TargetProperty>hb_extract</TargetProperty>
-      <SecondaryConstraints />
-    </ItemValidator>
-  </ItemValidators>
-</Validator>";
-
-    private readonly string validColumnXML = @"<?xml version=""1.0"" encoding=""utf-16""?>
-<Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-  <ItemValidators>
-    <ItemValidator>
-      <TargetProperty>Name</TargetProperty>
-      <SecondaryConstraints>
-        <SecondaryConstraint xsi:type=""NotNull"">
-          <Name>not null</Name>
-          <Consequence>Wrong</Consequence>
-        </SecondaryConstraint>
-      </SecondaryConstraints>
-    </ItemValidator>
-  </ItemValidators>
-</Validator>";
-
     private DQERepository GetDqeRepository(DatabaseType dbType)
     {
-        var db = GetCleanedServer(dbType, "DQETempTestDb");
+        var db = GetCleanedServer(dbType,"DQETempTestDb");
         var patcher = new DataQualityEnginePatcher();
 
         var mds = new MasterDatabaseScriptExecutor(db);
         mds.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
 
-        return new DQERepository(CatalogueRepository, db);
+        return new DQERepository(CatalogueRepository,db);
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypesWithBoolFlags))]
@@ -107,8 +43,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var numberOfRecordsToGenerate = 10000;
         var startTime = DateTime.Now;
 
-        var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(DatabaseType.MicrosoftSQLServer),
-            numberOfRecordsToGenerate);
+        var testData = new BulkTestsData(CatalogueRepository,GetCleanedServer(DatabaseType.MicrosoftSQLServer),numberOfRecordsToGenerate); 
         testData.SetupTestData();
         testData.ImportAsCatalogue();
 
@@ -121,8 +56,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         testData.catalogue.ValidatorXML = bulkTestDataValidation;
 
         //set the time periodicity field
-        var toBeTimePeriodicityCol = testData.catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .Single(e => e.GetRuntimeName().Equals("dtCreated"));
+        var toBeTimePeriodicityCol = testData.catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
         testData.catalogue.TimeCoverage_ExtractionInformation_ID = toBeTimePeriodicityCol.ID;
 
         //do the validation
@@ -141,18 +75,16 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var listener = new ToMemoryDataLoadEventListener(false);
         report.GenerateReport(testData.catalogue, listener, source.Token);
 
-        if (testCancellingValidationEarly)
+        if(testCancellingValidationEarly)
         {
-            Assert.IsTrue(
-                listener.EventsReceivedBySender[report].Count(m => m.Exception is OperationCanceledException) == 1);
+            Assert.IsTrue(listener.EventsReceivedBySender[report].Count(m=>m.Exception is OperationCanceledException) == 1);
             testData.DeleteCatalogue();
             return;
         }
-
+            
         Assert.IsTrue(listener.EventsReceivedBySender[report].All(m => m.Exception == null),
             string.Join(Environment.NewLine,
-                listener.EventsReceivedBySender[report].Where(m => m.Exception != null)
-                    .Select(m => m.Exception))); //all messages must have null exceptions
+                listener.EventsReceivedBySender[report].Where(m => m.Exception != null).Select(m=>m.Exception)));//all messages must have null exceptions
 
 
         //get the results now
@@ -161,27 +93,30 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         Assert.IsNotNull(results);
 
         //the sum of all consequences across all data load run ids should be the record count
-        Assert.AreEqual(10000, results.RowStates.Sum(r => r.Missing + r.Invalid + r.Wrong + r.Correct));
+        Assert.AreEqual(10000,results.RowStates.Sum(r=>r.Missing + r.Invalid + r.Wrong + r.Correct));
 
         //there should be at least 5 data load run ids (should be around 12 actually - see BulkTestData but theoretically everyone could magically - all 10,000 into 5 decades - or even less but those statistics must be astronomical)
-        Assert.GreaterOrEqual(results.RowStates.Length, 5);
+        Assert.GreaterOrEqual(results.RowStates.Length,5);
 
         //there should be lots of column results too
-        Assert.GreaterOrEqual(results.ColumnStates.Length, 5);
+        Assert.GreaterOrEqual(results.ColumnStates.Length,5);
 
         //Did it log?
         var logManager = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         var log = logManager.GetArchivalDataLoadInfos("DQE").FirstOrDefault();
         Assert.IsNotNull(log);
         Assert.GreaterOrEqual(log.StartTime, startTime);
-        Assert.AreEqual(0, log.Errors.Count);
-        Assert.AreEqual(numberOfRecordsToGenerate, log.TableLoadInfos.Single().Inserts);
-
+        Assert.AreEqual(0,log.Errors.Count);
+        Assert.AreEqual(numberOfRecordsToGenerate,log.TableLoadInfos.Single().Inserts);
+                        
         testData.DeleteCatalogue();
+
     }
 
 
+
     #region Checkability
+
 
     [Test]
     public void SupportsValidation_NoLoggingServer()
@@ -222,12 +157,12 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
 
         //clear the default value
         defaults.ClearDefault(PermissableDefaults.DQE);
-
+            
         try
         {
             var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
-            var e = Assert.Throws<Exception>(() => report.Check(new ThrowImmediatelyCheckNotifier()));
+            var e = Assert.Throws<Exception>(()=> report.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.IsTrue(
                 e.Message.StartsWith(
                     "Failed to create DQE Repository, possibly there is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager")
@@ -243,14 +178,15 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
     [Test]
     public void SupportsValidation_NoValidatorXML()
     {
+
         var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
         _catalogue.ValidatorXML = null;
 
         //it has no validator XML currently 
         Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
-        var ex = Assert.Throws<Exception>(() => report.Check(new ThrowImmediatelyCheckNotifier()));
-        StringAssert.Contains("There is no ValidatorXML specified for the Catalogue TestTable", ex.Message);
+        var ex = Assert.Throws<Exception>(()=>report.Check(new ThrowImmediatelyCheckNotifier()));
+        StringAssert.Contains("There is no ValidatorXML specified for the Catalogue TestTable",ex.Message);
     }
 
     [Test]
@@ -262,23 +198,22 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         //it has no validator XML currently 
         Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
-        var ex = Assert.Throws<Exception>(() => report.Check(new ThrowImmediatelyCheckNotifier()));
-        StringAssert.Contains("ValidatorXML for Catalogue TestTable could not be deserialized into a Validator",
-            ex.Message);
+        var ex = Assert.Throws<Exception>(()=>report.Check(new ThrowImmediatelyCheckNotifier()));
+        StringAssert.Contains("ValidatorXML for Catalogue TestTable could not be deserialized into a Validator",ex.Message);
     }
 
     [Test]
     public void SupportsValidation_MadeUpColumnName()
     {
+
         var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
         _catalogue.ValidatorXML = dodgyColumnXML;
         //it has no validator XML currently 
         Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
 
-        var ex = Assert.Throws<Exception>(() => report.Check(new ThrowImmediatelyCheckNotifier()));
-        Assert.AreEqual("Could not find a column in the extraction SQL that would match TargetProperty chi",
-            ex.Message);
+        var ex = Assert.Throws<Exception>(()=>report.Check(new ThrowImmediatelyCheckNotifier()));
+        Assert.AreEqual("Could not find a column in the extraction SQL that would match TargetProperty chi",ex.Message);
     }
 
     [Test]
@@ -289,24 +224,84 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         _catalogue.ValidatorXML = validColumnXML;
 
         //set the time periodicity field
-        var toBeTimePeriodicityCol = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .Single(e => e.GetRuntimeName().Equals("PrivateID"));
+        var toBeTimePeriodicityCol = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("PrivateID"));
         _catalogue.TimeCoverage_ExtractionInformation_ID = toBeTimePeriodicityCol.ID;
 
         var notifier = new ToMemoryCheckNotifier();
         report.Check(notifier);
 
         Assert.AreEqual(CheckResult.Warning, notifier.GetWorst());
-        Assert.Contains("Found column in query builder columns which matches TargetProperty Name",
-            notifier.Messages.Select(m => m.Message).ToArray());
-
+        Assert.Contains("Found column in query builder columns which matches TargetProperty Name",notifier.Messages.Select(m=>m.Message).ToArray());
+            
         Assert.IsTrue(report.CatalogueSupportsReport(_catalogue));
 
-        var ex = Assert.Throws<Exception>(() =>
-            report.Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
-        Assert.IsTrue(ex.Message ==
-                      "Did not find ExtractionInformation for a column called hic_dataLoadRunID, this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)");
+        var ex = Assert.Throws<Exception>(() => report.Check(new ThrowImmediatelyCheckNotifier {ThrowOnWarning = true}));
+        Assert.IsTrue(ex.Message == "Did not find ExtractionInformation for a column called hic_dataLoadRunID, this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)");
     }
-
     #endregion
+
+
+    private string bulkTestDataValidation = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+  <ItemValidators>
+    <ItemValidator>
+      <TargetProperty>current_gp_accept_date</TargetProperty>
+      <SecondaryConstraints>
+        <SecondaryConstraint xsi:type=""BoundDate"">
+          <Name>bounddate</Name>
+          <Consequence>Wrong</Consequence>
+          <Rationale>Patient cannot be seen by a GP before they are born!</Rationale>
+          <LowerFieldName>date_of_birth</LowerFieldName>
+          <UpperFieldName>date_of_death</UpperFieldName>
+          <Inclusive>true</Inclusive>
+          <Lower xsi:nil=""true"" />
+          <Upper xsi:nil=""true"" />
+        </SecondaryConstraint>
+      </SecondaryConstraints>
+    </ItemValidator>
+    <ItemValidator>
+      <TargetProperty>date_of_death</TargetProperty>
+      <SecondaryConstraints />
+    </ItemValidator>
+  </ItemValidators>
+</Validator>";
+
+    private string validColumnXML = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+  <ItemValidators>
+    <ItemValidator>
+      <TargetProperty>Name</TargetProperty>
+      <SecondaryConstraints>
+        <SecondaryConstraint xsi:type=""NotNull"">
+          <Name>not null</Name>
+          <Consequence>Wrong</Consequence>
+        </SecondaryConstraint>
+      </SecondaryConstraints>
+    </ItemValidator>
+  </ItemValidators>
+</Validator>";
+
+
+    private string dodgyColumnXML = @"<?xml version=""1.0"" encoding=""utf-16""?>
+<Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+  <ItemValidators>
+    <ItemValidator>
+      <PrimaryConstraint xsi:type=""Chi"">
+        <Name>chi</Name>
+        <Consequence>InvalidatesRow</Consequence>
+      </PrimaryConstraint>
+      <TargetProperty>chi</TargetProperty>
+      <SecondaryConstraints>
+        <SecondaryConstraint xsi:type=""NotNull"">
+          <Name>not null</Name>
+          <Consequence>Wrong</Consequence>
+        </SecondaryConstraint>
+      </SecondaryConstraints>
+    </ItemValidator>
+    <ItemValidator>
+      <TargetProperty>hb_extract</TargetProperty>
+      <SecondaryConstraints />
+    </ItemValidator>
+  </ItemValidators>
+</Validator>";
 }

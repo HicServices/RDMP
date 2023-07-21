@@ -14,15 +14,8 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
 
-public class ArgumentTypeTests : UnitTests
+public class ArgumentTypeTests:UnitTests
 {
-    private readonly object[] _expectedAnswers =
-    {
-        5,
-        new CultureInfo("en-us"),
-        CultureInfo.CurrentCulture
-    };
-
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
     {
@@ -30,16 +23,22 @@ public class ArgumentTypeTests : UnitTests
         SetupMEF();
     }
 
-    [TestCase(typeof(int), "5", 0)]
-    [TestCase(typeof(CultureInfo), "en-us", 1)]
+    private object[] _expectedAnswers = {
+        5,
+        new CultureInfo("en-us"),
+        CultureInfo.CurrentCulture
+    };
+               
+    [TestCase(typeof(int),"5",0)]
+    [TestCase(typeof(CultureInfo),"en-us",1)]
     public void Test_Type_WithStringValue(Type t, string val, int expectedAnswerIdx)
     {
         var arg = WhenIHaveA<ProcessTaskArgument>();
-
+            
         arg.SetType(t);
         arg.Value = val;
 
-        Assert.AreEqual(_expectedAnswers[expectedAnswerIdx], arg.GetValueAsSystemType());
+        Assert.AreEqual(_expectedAnswers[expectedAnswerIdx],arg.GetValueAsSystemType());
     }
 
     [Test]
@@ -47,13 +46,14 @@ public class ArgumentTypeTests : UnitTests
     {
         var args = WhenIHaveA<ProcessTask>().CreateArgumentsForClassIfNotExists<TestClassDemandingDouble>();
 
-        Assert.AreEqual(1.0, args.Single().GetValueAsSystemType());
-        Assert.AreEqual("1", args.Single().Value);
+        Assert.AreEqual(1.0,args.Single().GetValueAsSystemType());
+        Assert.AreEqual("1",args.Single().Value);
+
     }
 
     private class TestClassDemandingDouble
     {
-        [DemandsInitialization("some field", defaultValue: 1)]
+        [DemandsInitialization("some field",defaultValue:1)]
         public double MyVar { get; set; }
     }
 }

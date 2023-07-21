@@ -13,19 +13,24 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
 /// <summary>
-///     The dataset and all additional content related to that dataset within an ExtractionConfiguration which is about to
-///     be extracted.  This includes
-///     SupportingDocuments, Lookup tables etc).  This is a mutable class and allows you to 'DropContent' if you do not
-///     want to extract given parts (e.g. skip
-///     the lookups).
+/// The dataset and all additional content related to that dataset within an ExtractionConfiguration which is about to be extracted.  This includes
+/// SupportingDocuments, Lookup tables etc).  This is a mutable class and allows you to 'DropContent' if you do not want to extract given parts (e.g. skip
+/// the lookups).
 /// </summary>
 public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
 {
-    public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents,
-        SupportingSQLTable[] supportingSQL, ITableInfo[] lookupTables) :
+    //The main dataset being extracted
+    public IExtractableDataSet DataSet { get; private set; }
+
+    //all the rest of the stuff that goes with the dataset
+    public List<SupportingDocument> Documents { get; private set; }
+    public List<SupportingSQLTable> SupportingSQL { get; private set; }
+    public List<IBundledLookupTable> LookupTables { get; private set; }
+        
+
+    public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents, SupportingSQLTable[] supportingSQL, ITableInfo[] lookupTables) : 
         base(
-            new[] { (object)dataSet }.Union(documents).Union(supportingSQL).Union(lookupTables)
-                .ToArray() //pass all the objects to the base class so it can allocate initial States
+            new [] {(object)dataSet}.Union(documents).Union(supportingSQL).Union(lookupTables).ToArray() //pass all the objects to the base class so it can allocate initial States
         )
     {
         DataSet = dataSet;
@@ -38,15 +43,7 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
         : this(dataSet, Array.Empty<SupportingDocument>(), Array.Empty<SupportingSQLTable>(), Array.Empty<TableInfo>())
     {
     }
-
-    //The main dataset being extracted
-    public IExtractableDataSet DataSet { get; }
-
-    //all the rest of the stuff that goes with the dataset
-    public List<SupportingDocument> Documents { get; }
-    public List<SupportingSQLTable> SupportingSQL { get; }
-    public List<IBundledLookupTable> LookupTables { get; }
-
+        
     public override string ToString()
     {
         return $"{DataSet} Bundle";
@@ -54,7 +51,7 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
 
     protected override void OnDropContent(object toDrop)
     {
-        if (toDrop is ExtractableDataSet)
+        if(toDrop is ExtractableDataSet)
             throw new NotSupportedException(
                 $"Cannot drop {toDrop} from Bundle {this}, you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
 

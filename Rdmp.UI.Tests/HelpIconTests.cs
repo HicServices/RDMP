@@ -5,7 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-using Rdmp.UI.SimpleControls;
+
+using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
 
 namespace Rdmp.UI.Tests;
 
@@ -15,8 +16,8 @@ internal class HelpIconTests
     public void TestNullInputs_HelpIcon()
     {
         var hi = new HelpIcon();
-        hi.SetHelpText(null, null);
-        hi.SetHelpText("", "");
+        hi.SetHelpText(null,null);
+        hi.SetHelpText("","");
         Assert.IsNull(hi.HoverText);
     }
 
@@ -26,9 +27,8 @@ internal class HelpIconTests
         var hi = new HelpIcon();
 
         //length is over 150 characters
-        var testLongString =
-            "kdsfldsfjsdafdfjsdafldsafadsfksdafjdfjdsfasdjfdsjfsdfldsjfkdsfkdsfksdafjdfsdaf;sdafsdafadsflsdafksdfjadslfjdsflsdjfldsfksadkfadkfasdfadsjfasdsdfladsfjsdjfkdflsdfksdfkadsfladsfj";
-        hi.SetHelpText(null, testLongString);
-        Assert.AreEqual(HelpIcon.MaxHoverTextLength, hi.HoverText.Length);
+        var testLongString = "kdsfldsfjsdafdfjsdafldsafadsfksdafjdfjdsfasdjfdsjfsdfldsjfkdsfkdsfksdafjdfsdaf;sdafsdafadsflsdafksdfjadslfjdsflsdjfldsfksadkfadkfasdfadsjfasdsdfladsfjsdjfkdflsdfksdfkadsfladsfj";
+        hi.SetHelpText(null,testLongString);
+        Assert.AreEqual(HelpIcon.MaxHoverTextLength,hi.HoverText.Length);
     }
 }

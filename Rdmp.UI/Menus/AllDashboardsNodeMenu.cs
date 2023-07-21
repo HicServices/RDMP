@@ -11,6 +11,7 @@ namespace Rdmp.UI.Menus;
 
 internal class AllDashboardsNodeMenu : RDMPContextMenuStrip
 {
+
     public AllDashboardsNodeMenu(RDMPContextMenuStripArgs args, AllDashboardsNode node)
         : base(args, node)
     {

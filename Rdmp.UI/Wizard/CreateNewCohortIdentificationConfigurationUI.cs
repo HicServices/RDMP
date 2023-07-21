@@ -16,26 +16,25 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Wizard;
 
 /// <summary>
-///     Provides streamlined/simplified access to the cohort creation functionality of RDMP.  The UI lets you pick from
-///     existing datasets and existing filters created by your Data Manager for
-///     interacting with those datasets including specifying values for arguments e.g. TestCode = 'CRE'.
-///     <para>
-///         Initially you are limited to 2 inclusion criteria and 2 exclsuion criteria (datasets).  Upon completing the
-///         wizard you will be taken to the execution screen of the Cohort Identification
-///         Configuration created.  There you can test/refine your configuration as well as add more datasets and deeper
-///         nesting of set operations as required.
-///     </para>
+/// Provides streamlined/simplified access to the cohort creation functionality of RDMP.  The UI lets you pick from existing datasets and existing filters created by your Data Manager for
+/// interacting with those datasets including specifying values for arguments e.g. TestCode = 'CRE'.
+/// 
+/// <para>Initially you are limited to 2 inclusion criteria and 2 exclsuion criteria (datasets).  Upon completing the wizard you will be taken to the execution screen of the Cohort Identification
+/// Configuration created.  There you can test/refine your configuration as well as add more datasets and deeper nesting of set operations as required.</para>
+/// 
 /// </summary>
 public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 {
-    private readonly Size _bigSize = new(1368, 876);
-    private readonly Size _smallSize = new(755, 140);
+    private Size _smallSize = new(755, 140);
+    private Size _bigSize = new(1368, 876);
 
-    public CreateNewCohortIdentificationConfigurationUI(IActivateItems activator) : base(activator)
+    public CohortIdentificationConfiguration CohortIdentificationCriteriaCreatedIfAny { get;private set; }
+
+    public CreateNewCohortIdentificationConfigurationUI(IActivateItems activator):base(activator)
     {
         InitializeComponent();
-
-        if (VisualStudioDesignMode)
+            
+        if(VisualStudioDesignMode)
             return;
 
         inclusionCriteria1.SetupFor(Activator);
@@ -45,8 +44,6 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 
         Size = _smallSize;
     }
-
-    public CohortIdentificationConfiguration CohortIdentificationCriteriaCreatedIfAny { get; private set; }
 
     private void CheckBoxChanged(object sender, EventArgs e)
     {
@@ -63,10 +60,8 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
                 cb.Checked = false;
                 return;
             }
-
             target = exclusionCriteria2;
         }
-
         if (sender == cbInclusion2)
         {
             if (inclusionCriteria1.Catalogue == null && cb.Checked)
@@ -74,14 +69,13 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
                 cb.Checked = false;
                 return;
             }
-
             target = inclusionCriteria2;
         }
 
-        if (target == null)
+        if(target == null)
             throw new ArgumentException("sender");
 
-        if (cb.Checked)
+        if(cb.Checked)
         {
             target.SetupFor(Activator);
             target.Enabled = true;
@@ -94,6 +88,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 
         setOperationInclude.Enabled = cbInclusion2.Checked;
         setOperationExclude.Enabled = cbExclusion1.Checked && cbExclusion2.Checked;
+
     }
 
     private void btnGo_Click(object sender, EventArgs e)
@@ -103,11 +98,8 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
             MessageBox.Show("Enter a name for your Cohort Identification Criteria");
             return;
         }
-
-        if (cbUseWizard.Checked &&
-            !Activator.YesNo(
-                "Are you sure you are happy with your configuration, this wizard will close after creating?",
-                "Confirm"))
+            
+        if(cbUseWizard.Checked && !Activator.YesNo("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm"))
             return;
 
         var cic = CreateCohortIdentificationConfiguration();
@@ -129,7 +121,7 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
         root.Name = ExecuteCommandCreateNewCohortIdentificationConfiguration.RootContainerName;
 
         //If we're not using the wizard then just return an empty CIC
-        if (!cbUseWizard.Checked)
+        if(!cbUseWizard.Checked)
         {
             root.Operation = SetOperation.UNION;
             root.SaveToDatabase();
@@ -171,7 +163,10 @@ public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
 
     private void tbName_KeyDown(object sender, KeyEventArgs e)
     {
-        if (e.KeyCode == Keys.Enter) btnGo_Click(this, EventArgs.Empty);
+        if (e.KeyCode == Keys.Enter)
+        {
+            btnGo_Click(this, EventArgs.Empty);
+        }
     }
 
     private void cbUseWizard_CheckedChanged(object sender, EventArgs e)

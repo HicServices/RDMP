@@ -17,69 +17,16 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.DataExport.DataRelease.Audit;
 
 /// <summary>
-///     Records the fact that a given extracted dataset has been released.  It audits the user performing the release, the
-///     environmental release potential,
-///     destination directory etc.
-///     <para>
-///         This is done by linking the CumulativeExtractionResult with a record in the ReleaseLog.  Each SelectedDataSet
-///         in an ExtractionConfiguration
-///         can only have 1 CumulativeExtractionResult at a time (it is a record of the last extracted SQL etc - See
-///         CumulativeExtractionResult) and there can be
-///         only 1 ReleaseLog entry per CumulativeExtractionResult.  This means that once a dataset has been released it
-///         cannot be extracted/released again (this
-///         is intended behaviour).  If you want to re run a released ExtractionConfiguration then you should clone it.
-///     </para>
+/// Records the fact that a given extracted dataset has been released.  It audits the user performing the release, the environmental release potential,
+/// destination directory etc.
+/// 
+/// <para>This is done by linking the CumulativeExtractionResult with a record in the ReleaseLog.  Each SelectedDataSet in an ExtractionConfiguration
+/// can only have 1 CumulativeExtractionResult at a time (it is a record of the last extracted SQL etc - See CumulativeExtractionResult) and there can be 
+/// only 1 ReleaseLog entry per CumulativeExtractionResult.  This means that once a dataset has been released it cannot be extracted/released again (this
+/// is intended behaviour).  If you want to re run a released ExtractionConfiguration then you should clone it.</para>
 /// </summary>
-public class ReleaseLog : DatabaseEntity, IReleaseLog
+public class ReleaseLog : DatabaseEntity,IReleaseLog
 {
-    private int _cumulativeExtractionResultsID;
-
-    private string _datasetName;
-    private string _datasetState;
-    private DateTime _dateOfRelease;
-    private string _environmentState;
-    private bool _isPatch;
-    private string _md5OfDatasetFile;
-    private string _releaseFolder;
-    private string _username;
-
-    public ReleaseLog()
-    {
-    }
-
-    public ReleaseLog(IDataExportRepository repository, ReleasePotential dataset,
-        ReleaseEnvironmentPotential environment, bool isPatch, DirectoryInfo releaseDirectory,
-        FileInfo datasetFileBeingReleased)
-    {
-        repository.InsertAndHydrate(this,
-            new Dictionary<string, object>
-            {
-                { "CumulativeExtractionResults_ID", dataset.DatasetExtractionResult.ID },
-                { "Username", Environment.UserName },
-                { "DateOfRelease", DateTime.Now },
-                {
-                    "MD5OfDatasetFile",
-                    datasetFileBeingReleased == null ? "X" : UsefulStuff.HashFile(datasetFileBeingReleased.FullName)
-                },
-                { "DatasetState", dataset.DatasetExtractionResult.ToString() },
-                { "EnvironmentState", environment.Assesment.ToString() },
-                { "IsPatch", isPatch },
-                { "ReleaseFolder", releaseDirectory.FullName }
-            });
-    }
-
-    public ReleaseLog(IDataExportRepository repository, DbDataReader r) : base(repository, r)
-    {
-        CumulativeExtractionResults_ID = Convert.ToInt32(r["CumulativeExtractionResults_ID"]);
-        Username = r["Username"].ToString();
-        MD5OfDatasetFile = r["MD5OfDatasetFile"].ToString();
-        DatasetState = r["DatasetState"].ToString();
-        EnvironmentState = r["EnvironmentState"].ToString();
-        DateOfRelease = Convert.ToDateTime(r["DateOfRelease"]);
-        IsPatch = Convert.ToBoolean(r["IsPatch"]);
-        ReleaseFolder = r["ReleaseFolder"].ToString();
-    }
-
     public int CumulativeExtractionResults_ID
     {
         get => _cumulativeExtractionResultsID;
@@ -89,19 +36,19 @@ public class ReleaseLog : DatabaseEntity, IReleaseLog
     public string Username
     {
         get => _username;
-        set => SetField(ref _username, value);
+        set => SetField(ref _username , value);
     }
 
     public DateTime DateOfRelease
     {
         get => _dateOfRelease;
-        set => SetField(ref _dateOfRelease, value);
+        set => SetField(ref  _dateOfRelease, value);
     }
 
     public string MD5OfDatasetFile
     {
         get => _md5OfDatasetFile;
-        set => SetField(ref _md5OfDatasetFile, value);
+        set => SetField(ref  _md5OfDatasetFile, value);
     }
 
     public string DatasetState
@@ -125,18 +72,27 @@ public class ReleaseLog : DatabaseEntity, IReleaseLog
     public string ReleaseFolder
     {
         get => _releaseFolder;
-        set => SetField(ref _releaseFolder, value);
+        set => SetField(ref _releaseFolder , value);
     }
 
+
+    private int _cumulativeExtractionResultsID;
+    private string _username;
+    private DateTime _dateOfRelease;
+    private string _md5OfDatasetFile;
+    private string _datasetState;
+    private string _environmentState;
+    private bool _isPatch;
+    private string _releaseFolder;
+
+    private string _datasetName;
     public override string ToString()
     {
         if (_datasetName == null)
             try
             {
-                ICumulativeExtractionResults cumulativeExtractionResults =
-                    Repository.GetObjectByID<CumulativeExtractionResults>(CumulativeExtractionResults_ID);
-                IExtractableDataSet ds =
-                    Repository.GetObjectByID<ExtractableDataSet>(cumulativeExtractionResults.ExtractableDataSet_ID);
+                ICumulativeExtractionResults cumulativeExtractionResults = Repository.GetObjectByID<CumulativeExtractionResults>(CumulativeExtractionResults_ID);
+                IExtractableDataSet ds = Repository.GetObjectByID<ExtractableDataSet>(cumulativeExtractionResults.ExtractableDataSet_ID);
                 _datasetName = ds.ToString();
             }
             catch (Exception e)
@@ -152,5 +108,36 @@ public class ReleaseLog : DatabaseEntity, IReleaseLog
                 _datasetName,
                 DateOfRelease,
                 Username);
+    }
+    public ReleaseLog()
+    {
+
+    }
+    public ReleaseLog(IDataExportRepository repository,ReleasePotential dataset, ReleaseEnvironmentPotential environment,bool isPatch,DirectoryInfo releaseDirectory,FileInfo datasetFileBeingReleased)
+    {
+        repository.InsertAndHydrate(this,
+            new Dictionary<string, object>
+            {
+                {"CumulativeExtractionResults_ID", dataset.DatasetExtractionResult.ID},
+                {"Username", Environment.UserName},
+                {"DateOfRelease", DateTime.Now},
+                {"MD5OfDatasetFile", datasetFileBeingReleased == null ? "X" : UsefulStuff.HashFile(datasetFileBeingReleased.FullName)},
+                {"DatasetState", dataset.DatasetExtractionResult.ToString()},
+                {"EnvironmentState", environment.Assesment.ToString()},
+                {"IsPatch", isPatch},
+                {"ReleaseFolder", releaseDirectory.FullName}
+            });
+    }
+
+    public ReleaseLog(IDataExportRepository repository, DbDataReader r):base(repository,r)
+    {
+        CumulativeExtractionResults_ID = Convert.ToInt32(r["CumulativeExtractionResults_ID"]);
+        Username = r["Username"].ToString();
+        MD5OfDatasetFile = r["MD5OfDatasetFile"].ToString();
+        DatasetState = r["DatasetState"].ToString();
+        EnvironmentState = r["EnvironmentState"].ToString();
+        DateOfRelease = Convert.ToDateTime(r["DateOfRelease"]);
+        IsPatch = Convert.ToBoolean(r["IsPatch"]);
+        ReleaseFolder = r["ReleaseFolder"].ToString();
     }
 }

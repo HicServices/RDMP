@@ -20,9 +20,9 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 
 public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
 {
-    protected DatabaseColumnRequest _chiColumnSpecification = new("chi", "varchar(10)");
-    protected ExternalDatabaseServer externalDatabaseServer;
     protected DiscoveredDatabase queryCacheDatabase;
+    protected ExternalDatabaseServer externalDatabaseServer;
+    protected DatabaseColumnRequest _chiColumnSpecification = new("chi","varchar(10)");
 
     [OneTimeSetUp]
     protected override void OneTimeSetUp()
@@ -39,24 +39,25 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
 
         var p = new QueryCachingPatcher();
         executor.CreateAndPatchDatabase(p, new AcceptAllCheckNotifier());
-
-        externalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, "QueryCacheForUnitTests", p);
+            
+        externalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, "QueryCacheForUnitTests",p);
         externalDatabaseServer.SetProperties(queryCacheDatabase);
     }
-
+                
     [Test]
     public void TestGettingAggregateJustFromConfig_DistinctCHISelect()
     {
-        var manager = new CachedAggregateConfigurationResultsManager(externalDatabaseServer);
 
+        var manager = new CachedAggregateConfigurationResultsManager( externalDatabaseServer);
+            
         cohortIdentificationConfiguration.QueryCachingServer_ID = externalDatabaseServer.ID;
         cohortIdentificationConfiguration.SaveToDatabase();
-
+            
 
         cohortIdentificationConfiguration.CreateRootContainerIfNotExists();
-        cohortIdentificationConfiguration.RootCohortAggregateContainer.AddChild(aggregate1, 0);
+        cohortIdentificationConfiguration.RootCohortAggregateContainer.AddChild(aggregate1,0);
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
         try
         {
             Assert.AreEqual(
@@ -67,15 +68,15 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
+	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 )
-", cohortIdentificationConfiguration.ID)),
+",cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builder.SQL));
 
             var server = queryCacheDatabase.Server;
-            using (var con = server.GetConnection())
+            using(var con = server.GetConnection())
             {
                 con.Open();
 
@@ -87,14 +88,13 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
                     string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 SELECT
 distinct
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
+[" +TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]", cohortIdentificationConfiguration.ID), dt,
-                    _chiColumnSpecification, 30));
+[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]", cohortIdentificationConfiguration.ID), dt, _chiColumnSpecification, 30));
             }
 
 
-            var builderCached = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
+            var builderCached = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
             Assert.AreEqual(
                 CollapseWhitespace(
@@ -102,16 +102,18 @@ FROM
                         @"
 (
 	/*Cached:cic_{0}_UnitTestAggregate1*/
-	select * from [" + queryCacheDatabase.GetRuntimeName() +
-                        "]..[IndexedExtractionIdentifierList_AggregateConfiguration" + aggregate1.ID + @"]
+	select * from [" + queryCacheDatabase.GetRuntimeName() + "]..[IndexedExtractionIdentifierList_AggregateConfiguration" + aggregate1.ID + @"]
 
 )
-", cohortIdentificationConfiguration.ID)),
+",cohortIdentificationConfiguration.ID)),
                 CollapseWhitespace(builderCached.SQL));
+
         }
         finally
         {
             cohortIdentificationConfiguration.RootCohortAggregateContainer.RemoveChild(aggregate1);
+                
         }
+
     }
 }

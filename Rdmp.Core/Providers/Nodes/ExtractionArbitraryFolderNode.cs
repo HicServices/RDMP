@@ -9,13 +9,14 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-///     An <see cref="ArbitraryFolderNode" /> that exists beneath a known <see cref="ExtractionConfiguration" />
+/// An <see cref="ArbitraryFolderNode"/> that exists beneath a known <see cref="ExtractionConfiguration"/>
 /// </summary>
 public class ExtractionArbitraryFolderNode : ArbitraryFolderNode
 {
-    public ExtractionArbitraryFolderNode(string caption, int order) : base(caption, order)
-    {
-    }
-
     public ExtractionConfiguration Configuration { get; set; }
+
+    public ExtractionArbitraryFolderNode(string caption, int order) : base(caption,order)
+    {
+
+    }
 }

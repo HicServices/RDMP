@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.IO;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using System.IO;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.Data;
@@ -46,7 +46,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
 
         Assert.IsNotNull(cic2);
         Assert.IsInstanceOf<CohortIdentificationConfiguration>(cic2);
-        Assert.AreEqual(cic, cic2);
+        Assert.AreEqual(cic,cic2);
     }
 
     [Test]
@@ -72,7 +72,6 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == null);
         Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
     }
-
     [Test]
     public void AuditLogReFetch_WhenAuditLogIsRubbish()
     {
@@ -90,10 +89,10 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         var desc = ExtractableCohortAuditLogBuilder.GetDescription(ei);
 
         var moqCohort = Mock.Of<IExtractableCohort>(e => e.AuditLog == desc);
-
+            
         // delete the source
         ei.DeleteInDatabase();
-
+            
         // should now return null
         Assert.IsNull(builder.GetObjectIfAny(moqCohort, RepositoryLocator));
     }

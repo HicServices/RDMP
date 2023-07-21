@@ -19,26 +19,33 @@ using ScintillaNET;
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-///     Allows you to view a class file from the RDMP codebase.  See ExceptionViewerStackTraceWithHyperlinks for the
-///     mechanics of how this works (or UserManual.md).  A green line will
-///     highlight the line on which the message or error occurred.
+/// Allows you to view a class file from the RDMP codebase.  See ExceptionViewerStackTraceWithHyperlinks for the mechanics of how this works (or UserManual.md).  A green line will
+/// highlight the line on which the message or error occurred.
 /// </summary>
 [TechnicalUI]
 public partial class ViewSourceCodeDialog : Form
 {
+    private Scintilla QueryEditor;
+
+    private static HashSet<FileInfo> SupplementalSourceZipFiles = new();
+    private static object oSupplementalSourceZipFilesLock = new();
     private const string MainSourceCodeRepo = "SourceCodeForSelfAwareness.zip";
 
-    private static readonly HashSet<FileInfo> SupplementalSourceZipFiles = new();
-    private static readonly object oSupplementalSourceZipFilesLock = new();
-    private readonly Scintilla QueryEditor;
+    public static void AddSupplementalSourceZipFile(FileInfo f)
+    {
+        lock (oSupplementalSourceZipFilesLock)
+        {
+            SupplementalSourceZipFiles.Add(f);
+        }
+    }
 
     public ViewSourceCodeDialog(string filename, int lineNumber, Color highlightColor)
     {
         var toFind = Path.GetFileName(filename);
-
+            
         InitializeComponent();
 
-        if (filename == null)
+        if(filename == null)
             return;
 
         var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
@@ -50,23 +57,11 @@ public partial class ViewSourceCodeDialog : Form
 
         panel1.Controls.Add(QueryEditor);
 
-        LoadSourceCode(toFind, lineNumber, highlightColor);
+        LoadSourceCode(toFind,lineNumber,highlightColor);
 
         var worker = new BackgroundWorker();
         worker.DoWork += WorkerOnDoWork;
         worker.RunWorkerAsync();
-    }
-
-    public ViewSourceCodeDialog(string filename) : this(filename, -1, Color.White)
-    {
-    }
-
-    public static void AddSupplementalSourceZipFile(FileInfo f)
-    {
-        lock (oSupplementalSourceZipFilesLock)
-        {
-            SupplementalSourceZipFiles.Add(f);
-        }
     }
 
     private void LoadSourceCode(string toFind, int lineNumber, Color highlightColor)
@@ -87,9 +82,7 @@ public partial class ViewSourceCodeDialog : Form
                 }
             }
             else
-            {
                 throw new FileNotFoundException($"Could not find file called '{toFind}' in any of the zip archives");
-            }
         }
 
         Text = toFind;
@@ -101,17 +94,20 @@ public partial class ViewSourceCodeDialog : Form
 
         var zipArchive = new FileInfo(MainSourceCodeRepo);
         foreach (var zipFile in new[] { zipArchive }.Union(SupplementalSourceZipFiles))
+        {
             //if the zip exists
             if (zipFile.Exists)
                 //read the entry (if it is there)
                 using (var z = ZipFile.OpenRead(zipFile.FullName))
-                {
                     foreach (var entry in z.Entries)
                         entries.Add(entry.Name);
-                }
+        }
 
 
         olvSourceFiles.AddObjects(entries.ToArray());
+    }
+    public ViewSourceCodeDialog(string filename):this(filename,-1,Color.White)
+    {
     }
 
     public static string GetSourceForFile(string toFind)
@@ -122,8 +118,10 @@ public partial class ViewSourceCodeDialog : Form
 
             //for each zip file (starting with the main archive)
             foreach (var zipFile in new[] { zipArchive }.Union(SupplementalSourceZipFiles))
+            {
                 //if the zip exists
                 if (zipFile.Exists)
+                {
                     //read the entry (if it is there)
                     using (var z = ZipFile.OpenRead(zipFile.FullName))
                     {
@@ -132,12 +130,13 @@ public partial class ViewSourceCodeDialog : Form
                         if (readToEnd != null) //the entry was found and read
                             return readToEnd;
                     }
+                }
+            }
         }
         catch (Exception)
         {
             return null;
         }
-
         //couldn't find any text
         return null;
     }
@@ -153,8 +152,7 @@ public partial class ViewSourceCodeDialog : Form
             return false;
         }
     }
-
-    private static string GetEntryFromZipFile(ZipArchive z, string toFind)
+    private static string GetEntryFromZipFile(ZipArchive z,string toFind)
     {
         var entry = z.Entries.FirstOrDefault(e => e.Name == toFind);
 
@@ -167,8 +165,7 @@ public partial class ViewSourceCodeDialog : Form
     private void textBox1_TextChanged(object sender, EventArgs e)
     {
         olvSourceFiles.UseFiltering = true;
-        olvSourceFiles.ModelFilter =
-            new TextMatchFilter(olvSourceFiles, textBox1.Text, StringComparison.CurrentCultureIgnoreCase);
+        olvSourceFiles.ModelFilter = new TextMatchFilter(olvSourceFiles,textBox1.Text,StringComparison.CurrentCultureIgnoreCase);
     }
 
     private void olvSourceFiles_ItemActivate(object sender, EventArgs e)
@@ -176,4 +173,5 @@ public partial class ViewSourceCodeDialog : Form
         if (olvSourceFiles.SelectedObject is string str)
             LoadSourceCode(str, -1, Color.White);
     }
+
 }

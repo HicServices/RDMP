@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation;
@@ -15,31 +16,56 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicCommand
 {
+    private IFilterFactory _factory;
+    private IContainer _container;
+    private IRootFilterContainerHost _host;
     private const float DEFAULT_WEIGHT = 0.1f;
-    private readonly IContainer _container;
-    private readonly IFilterFactory _factory;
-    private readonly IRootFilterContainerHost _host;
+
+    public IFilter BasedOn { get; set; }
+    public ExtractionFilterParameterSet ParameterSet { get; set; }
+    public string Name { get; }
+    public string WhereSQL { get; }
 
     private IFilter[] _offerFilters;
     private bool offerCatalogueFilters;
+        
+    public bool OfferCatalogueFilters
+    {
+        get => offerCatalogueFilters;
+        set
+        {
+            if(value)
+            {
+                var c = GetCatalogue();
+                _offerFilters = c?.GetAllFilters();
+
+                if (_offerFilters ==null || !_offerFilters.Any())
+                    SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL" }'");
+
+            }
+
+            
+
+            offerCatalogueFilters = value;
+        }
+    }
 
 
     private ExecuteCommandCreateNewFilter(IBasicActivateItems activator) : base(activator)
     {
+
         Weight = DEFAULT_WEIGHT;
     }
 
     [UseWithCommandLine(
         ParameterHelpList = "<into> <basedOn> <name> <where>",
-        ParameterHelpBreakdown =
-            @"into	A WHERE filter container or IRootFilterContainerHost (e.g. AggregateConfiguration)
+        ParameterHelpBreakdown = @"into	A WHERE filter container or IRootFilterContainerHost (e.g. AggregateConfiguration)
 basedOn    Optional ExtractionFilter to copy or ExtractionFilterParameterSet
 name    Optional name to set for the new filter
 where    Optional SQL to set for the filter.  If <basedOn> is not null this will overwrite it")]
@@ -47,8 +73,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         CommandLineObjectPicker picker) : this(activator)
     {
         if (picker.Length == 0)
-            throw new ArgumentException(
-                "You must supply at least one argument to this command (where you want to create the filter)");
+            throw new ArgumentException("You must supply at least one argument to this command (where you want to create the filter)");
 
         if (picker.Length > 0)
         {
@@ -58,23 +83,23 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
                 var ei = (ExtractionInformation)picker[0].GetValueForParameterOfType(typeof(ExtractionInformation));
                 _factory = new ExtractionFilterFactory(ei);
             }
-            else if (picker[0].HasValueOfType(typeof(IContainer)))
+            else
+            if (picker[0].HasValueOfType(typeof(IContainer)))
             {
                 // create a filter in this container
                 _container = (IContainer)picker[0].GetValueForParameterOfType(typeof(IContainer));
                 SetImpossibleIfReadonly(_container);
             }
-            else if (picker[0].HasValueOfType(typeof(IRootFilterContainerHost)))
+            else
+            if (picker[0].HasValueOfType(typeof(IRootFilterContainerHost)))
             {
                 // create a container (if none) then add filter to root container of the object
-                _host = (IRootFilterContainerHost)picker[0]
-                    .GetValueForParameterOfType(typeof(IRootFilterContainerHost));
+                _host = (IRootFilterContainerHost)picker[0].GetValueForParameterOfType(typeof(IRootFilterContainerHost));
                 SetImpossibleIfReadonly(_host);
             }
             else
             {
-                throw new ArgumentException(
-                    $"First argument must be {nameof(IContainer)} or  {nameof(IRootFilterContainerHost)} but it was '{picker[0].RawValue}'");
+                throw new ArgumentException($"First argument must be {nameof(IContainer)} or  {nameof(IRootFilterContainerHost)} but it was '{picker[0].RawValue}'");
             }
 
 
@@ -82,6 +107,7 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
 
             if (_factory == null)
                 throw new Exception("It was not possible to work out a FilterFactory from the container/host");
+
         }
 
         // the index that string arguments begin at (Name and WhereSql)
@@ -93,21 +119,34 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
                 return;
 
             if (picker[1].HasValueOfType(typeof(IFilter)))
+            {
                 BasedOn = (IFilter)picker[1].GetValueForParameterOfType(typeof(IFilter));
-            else if (picker[1].HasValueOfType(typeof(ExtractionFilterParameterSet)))
-                ParameterSet =
-                    (ExtractionFilterParameterSet)picker[1]
-                        .GetValueForParameterOfType(typeof(ExtractionFilterParameterSet));
-            else if (!picker[1].ExplicitNull) stringArgsStartAt = 1;
+            }
+            else
+            if (picker[1].HasValueOfType(typeof(ExtractionFilterParameterSet)))
+            {
+                ParameterSet = (ExtractionFilterParameterSet)picker[1].GetValueForParameterOfType(typeof(ExtractionFilterParameterSet));
+            }
+            else if (!picker[1].ExplicitNull)
+            {
+                stringArgsStartAt = 1;
+            }
         }
 
-        if (picker.Length > stringArgsStartAt) Name = picker[stringArgsStartAt].RawValue;
-        if (picker.Length > stringArgsStartAt + 1) WhereSQL = picker[stringArgsStartAt + 1].RawValue;
+        if (picker.Length > stringArgsStartAt)
+        {
+            Name = picker[stringArgsStartAt].RawValue;
+        }
+        if (picker.Length > stringArgsStartAt+1)
+        {
+            WhereSQL = picker[stringArgsStartAt+1].RawValue;
+        }
     }
 
 
     public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IRootFilterContainerHost host) : this(activator)
     {
+
         _factory = host.GetFilterFactory();
         _container = host.RootFilterContainer;
         _host = host;
@@ -127,28 +166,25 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
 
     public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, CatalogueItem ci) : this(activator)
     {
+
         if (ci.ExtractionInformation == null)
         {
-            SetImpossible(
-                "CatalogueItem is not extractable so cannot have filters. Make this CatalogueItem extractable to add filters.");
+            SetImpossible("CatalogueItem is not extractable so cannot have filters. Make this CatalogueItem extractable to add filters.");
             return;
         }
 
         _factory = new ExtractionFilterFactory(ci.ExtractionInformation);
     }
-
-    public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory,
-        IContainer container = null)
+    public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IFilterFactory factory, IContainer container = null)
         : this(activator)
     {
+
         _factory = factory;
         _container = container;
 
         SetImpossibleIfReadonly(container);
     }
-
-    public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IContainer container, IFilter basedOn) :
-        this(activator)
+    public ExecuteCommandCreateNewFilter(IBasicActivateItems activator, IContainer container, IFilter basedOn) : this(activator)
     {
         _container = container;
         BasedOn = basedOn;
@@ -156,35 +192,17 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         SetImpossibleIfReadonly(container);
     }
 
-    public IFilter BasedOn { get; set; }
-    public ExtractionFilterParameterSet ParameterSet { get; set; }
-    public string Name { get; }
-    public string WhereSQL { get; }
 
-    public bool OfferCatalogueFilters
+    private ICatalogue GetCatalogue()
     {
-        get => offerCatalogueFilters;
-        set
-        {
-            if (value)
-            {
-                var c = GetCatalogue();
-                _offerFilters = c?.GetAllFilters();
-
-                if (_offerFilters == null || !_offerFilters.Any())
-                    SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
-            }
-
-
-            offerCatalogueFilters = value;
-        }
+        return _host?.GetCatalogue() ?? _container?.GetCatalogueIfAny();
     }
-
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        return OfferCatalogueFilters
-            ? iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Import)
-            : iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add);
+            
+        return OfferCatalogueFilters ?
+            iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Import):
+            iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add);
     }
 
     public override void Execute()
@@ -221,8 +239,14 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
 
         container?.AddChild(f);
 
-        if (!string.IsNullOrWhiteSpace(Name)) f.Name = Name;
-        if (!string.IsNullOrWhiteSpace(WhereSQL)) f.WhereSQL = WhereSQL;
+        if (!string.IsNullOrWhiteSpace(Name))
+        {
+            f.Name = Name;
+        }
+        if (!string.IsNullOrWhiteSpace(WhereSQL))
+        {
+            f.WhereSQL = WhereSQL;
+        }
 
         f.SaveToDatabase();
 
@@ -235,19 +259,17 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
         Activate((DatabaseEntity)f);
     }
 
-
-    private ICatalogue GetCatalogue()
-    {
-        return _host?.GetCatalogue() ?? _container?.GetCatalogueIfAny();
-    }
-
     private void ImportExistingFilter(IContainer container)
     {
+
         var wizard = new FilterImportWizard(BasicActivator);
 
         var import = wizard.ImportManyFromSelection(container, _offerFilters).ToArray();
 
-        foreach (var f in import) container.AddChild(f);
+        foreach (var f in import)
+        {
+            container.AddChild(f);
+        }
 
         if (import.Length > 0)
         {

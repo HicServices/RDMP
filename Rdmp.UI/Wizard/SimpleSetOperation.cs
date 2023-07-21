@@ -12,29 +12,25 @@ using Rdmp.UI.ItemActivation;
 namespace Rdmp.UI.Wizard;
 
 /// <summary>
-///     Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to determine how the datasets in the
-///     CohortIdentificationConfiguration are combined to identify patients.  The options
-///     are 'Match All patients regardless of which dataset they appear in' and 'Match only patients who are in both
-///     datasets'.  If it is an Exclusion criteria then the result is what is subtracted
-///     from the matching cohorts (Inclusion criteria).  For example you could have Inclusion Criteria 'Anyone currently
-///     Resident in Tayside' and exclude 'Anyone who is dead' and 'Anyone who has
-///     ever been prescribed Aspirin', in this case the exclusion criteria would be 'Match All patients regardless of which
-///     dataset they appear in' since you want to throw out patients in either
-///     dataset.
+/// Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to determine how the datasets in the CohortIdentificationConfiguration are combined to identify patients.  The options
+/// are 'Match All patients regardless of which dataset they appear in' and 'Match only patients who are in both datasets'.  If it is an Exclusion criteria then the result is what is subtracted
+/// from the matching cohorts (Inclusion criteria).  For example you could have Inclusion Criteria 'Anyone currently Resident in Tayside' and exclude 'Anyone who is dead' and 'Anyone who has
+/// ever been prescribed Aspirin', in this case the exclusion criteria would be 'Match All patients regardless of which dataset they appear in' since you want to throw out patients in either
+/// dataset.
 /// </summary>
 public partial class SimpleSetOperation : UserControl
 {
     private IActivateItems _activator;
+    private string _unionText ;
     private string _intersectText = "Records Must Appear In BOTH Datasets To Match ";
     private bool _isInclusionCriteria;
-    private string _unionText;
 
     public SimpleSetOperation()
     {
         InitializeComponent();
     }
 
-    public void SetupFor(IActivateItems activator, bool isInclusionCriteria)
+    public void SetupFor(IActivateItems activator,bool isInclusionCriteria)
     {
         _activator = activator;
         _isInclusionCriteria = isInclusionCriteria;
@@ -57,13 +53,15 @@ public partial class SimpleSetOperation : UserControl
 
     private void ddSetOperation_SelectedIndexChanged(object sender, EventArgs e)
     {
+
         var op = GetSetOperation();
         pbSetOperation.Image = _activator.CoreIconProvider.GetImage(op).ImageToBitmap();
+
     }
 
     private SetOperation GetSetOperation()
     {
-        if ((string)ddSetOperation.SelectedItem == _intersectText)
+        if((string) ddSetOperation.SelectedItem == _intersectText)
             return SetOperation.INTERSECT;
 
         return SetOperation.UNION;
@@ -86,7 +84,7 @@ public partial class SimpleSetOperation : UserControl
         else
         {
             container.Order = 2;
-            container.Name = "Exclusion Criteria";
+            container.Name = "Exclusion Criteria";    
         }
 
         container.SaveToDatabase();

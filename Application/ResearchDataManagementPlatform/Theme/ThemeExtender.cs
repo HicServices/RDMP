@@ -14,33 +14,31 @@ namespace ResearchDataManagementPlatform.Theme;
 
 internal class ThemeExtender
 {
+    private XDocument _xml;
     private const string Env = "Environment";
-    private readonly XDocument _xml;
+
+    public Color TextBoxBackground { get; set; }
+        
+    public Color ComboBoxBackground { get; set; }
+    public Color ComboBoxText { get; set; }
 
 
     public ThemeExtender(byte[] bytes)
     {
         _xml = XDocument.Load(new StreamReader(new MemoryStream(bytes)));
         TextBoxBackground = ColorTranslatorFromHtml("CommonControls", "TextBoxBackground");
-
+            
         ComboBoxBackground = ColorTranslatorFromHtml(Env, "ComboBoxBackground");
         ComboBoxText = ColorTranslatorFromHtml(Env, "ComboBoxText");
     }
-
-    public Color TextBoxBackground { get; set; }
-
-    public Color ComboBoxBackground { get; set; }
-    public Color ComboBoxText { get; set; }
 
     private Color ColorTranslatorFromHtml(string category, string name, bool foreground = false)
     {
         string color = null;
 
-        var environmentElement = _xml.Root.Element("Theme").Elements("Category")
-            .FirstOrDefault(item => item.Attribute("Name").Value == category);
+        var environmentElement = _xml.Root.Element("Theme").Elements("Category").FirstOrDefault(item => item.Attribute("Name").Value == category);
 
-        var colourElement = environmentElement?.Elements("Color")
-            .FirstOrDefault(item => item.Attribute("Name").Value == name);
+        var colourElement = environmentElement?.Elements("Color").FirstOrDefault(item => item.Attribute("Name").Value == name);
 
         if (colourElement != null)
             color = colourElement.Element(foreground ? "Foreground" : "Background").Attribute("Source").Value;

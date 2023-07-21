@@ -12,45 +12,20 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-///     Collection of all datasets in a given <see cref="Package" />.  This lets you define template sets of datasets which
-///     all get extracted together
-///     e.g. 'Core Datasets'.
+/// Collection of all datasets in a given <see cref="Package"/>.  This lets you define template sets of datasets which all get extracted together
+/// e.g. 'Core Datasets'.
 /// </summary>
-public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasqueradeAs
+public class PackageContentNode:Node,IDeletableWithCustomMessage, IMasqueradeAs
 {
     private readonly IExtractableDataSetPackageManager _contents;
+    public IExtractableDataSetPackage Package { get; set; }
+    public IExtractableDataSet DataSet { get; set; }
 
-    public PackageContentNode(IExtractableDataSetPackage package, IExtractableDataSet dataSet,
-        IExtractableDataSetPackageManager contents)
+    public PackageContentNode(IExtractableDataSetPackage package, IExtractableDataSet dataSet, IExtractableDataSetPackageManager contents)
     {
         _contents = contents;
         Package = package;
         DataSet = dataSet;
-    }
-
-    public IExtractableDataSetPackage Package { get; set; }
-    public IExtractableDataSet DataSet { get; set; }
-
-    public void DeleteInDatabase()
-    {
-        _contents.RemoveDataSetFromPackage(Package, DataSet);
-    }
-
-    /// <inheritdoc />
-    public string GetDeleteMessage()
-    {
-        return $"remove '{DataSet}' from Pacakge";
-    }
-
-    /// <inheritdoc />
-    public string GetDeleteVerb()
-    {
-        return "Remove";
-    }
-
-    public object MasqueradingAs()
-    {
-        return DataSet;
     }
 
     public override string ToString()
@@ -68,15 +43,36 @@ public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasquerade
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PackageContentNode)obj);
+        return Equals((PackageContentNode) obj);
     }
 
     public override int GetHashCode()
     {
         unchecked
         {
-            return ((Package != null ? Package.GetHashCode() : 0) * 397) ^
-                   (DataSet != null ? DataSet.GetHashCode() : 0);
+            return ((Package != null ? Package.GetHashCode() : 0)*397) ^ (DataSet != null ? DataSet.GetHashCode() : 0);
         }
+    }
+
+    public void DeleteInDatabase()
+    {
+        _contents.RemoveDataSetFromPackage(Package, DataSet);
+    }
+
+    public object MasqueradingAs()
+    {
+        return DataSet;
+    }
+
+    /// <inheritdoc/>
+    public string GetDeleteMessage()
+    {
+        return $"remove '{DataSet}' from Pacakge";
+    }
+
+    /// <inheritdoc/>
+    public string GetDeleteVerb()
+    {
+        return "Remove";
     }
 }

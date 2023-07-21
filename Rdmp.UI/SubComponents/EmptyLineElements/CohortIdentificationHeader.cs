@@ -11,13 +11,12 @@ namespace Rdmp.UI.SubComponents.EmptyLineElements;
 
 internal class CohortIdentificationHeader
 {
-    public static IMapsDirectlyToDatabaseTable Child => null;
-    public int? CumulativeRowCount { set; get; }
-
     public static string GetCatalogueName()
     {
         return "";
     }
+
+    public static IMapsDirectlyToDatabaseTable Child => null;
 
     public static IDataAccessPoint[] GetDataAccessPoints()
     {
@@ -33,6 +32,7 @@ internal class CohortIdentificationHeader
     {
         return "";
     }
+    public int? CumulativeRowCount { set; get; }
 
     public static string GetStateDescription()
     {
@@ -43,7 +43,7 @@ internal class CohortIdentificationHeader
     {
         return "";
     }
-
+        
     public static string GetCachedQueryUseCount()
     {
         return "";

@@ -7,22 +7,22 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.Options;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Curation.FilterImporting;
 
-/// <inheritdoc />
+/// <inheritdoc/>
 public class AggregateFilterUIOptions : FilterUIOptions
 {
-    private readonly IColumn[] _columns;
-    private readonly ISqlParameter[] _globals;
-    private readonly ITableInfo[] _tables;
+    private ISqlParameter[] _globals;
+    private ITableInfo[] _tables;
+    private IColumn[] _columns;
 
     public AggregateFilterUIOptions(AggregateFilter aggregateFilter) : base(aggregateFilter)
     {
         var aggregateConfiguration = aggregateFilter.GetAggregate() ?? throw new Exception(
-            $"AggregateFilter '{aggregateFilter}' (ID={aggregateFilter.ID}) does not belong to any AggregateConfiguration, is it somehow an orphan?");
+                $"AggregateFilter '{aggregateFilter}' (ID={aggregateFilter.ID}) does not belong to any AggregateConfiguration, is it somehow an orphan?");
 
         //it part of an AggregateConfiguration so get the same factory that is used by AggregateEditorUI to tell us about the globals and the columns
         var options = AggregateBuilderOptionsFactory.Create(aggregateConfiguration);

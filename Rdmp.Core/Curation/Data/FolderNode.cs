@@ -4,46 +4,37 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.Curation.Data.Cohort;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-///     A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T" /> e.g.
-///     Catalogue folders.  <see cref="FolderNode{T}" /> objects are typically created through
-///     <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})" />
-///     dynamically based on the current <see cref="IHasFolder.Folder" /> strings.
+/// A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T"/> e.g.
+/// Catalogue folders.  <see cref="FolderNode{T}"/> objects are typically created through <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
+/// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class
-    FolderNode<T> : IFolderNode,
-        IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/
-    where T : class, IHasFolder
+public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/
+    where T: class, IHasFolder
 {
+    public string Name { get; set; }
+    public List<T> ChildObjects { get; set; } = new List<T>();
+    public List<FolderNode<T>> ChildFolders { get; set; } = new List<FolderNode<T>>();
+
+    public FolderNode<T> Parent { get; set; }
+
+    public string FullName => GetFullName();
+
+    int IOrderable.Order { get => -1; set => throw new NotSupportedException(); }
+
     public FolderNode(string name, FolderNode<T> parent = null)
     {
         Name = name;
         Parent = parent;
-    }
-
-    public List<T> ChildObjects { get; set; } = new();
-    public List<FolderNode<T>> ChildFolders { get; set; } = new();
-
-    public FolderNode<T> Parent { get; set; }
-
-    public FolderNode<T> this[string key] => GetChild(key);
-    public string Name { get; set; }
-
-    public string FullName => GetFullName();
-
-    int IOrderable.Order
-    {
-        get => -1;
-        set => throw new NotSupportedException();
     }
 
     private string GetFullName()
@@ -54,7 +45,7 @@ public class
 
         var p = Parent;
 
-        while (p != null)
+        while(p != null)
         {
             sb.Insert(0, p.Name.Equals(FolderHelper.Root) ? p.Name : $"{p.Name}\\");
 
@@ -63,6 +54,8 @@ public class
 
         return sb.ToString();
     }
+
+    public FolderNode<T> this[string key] => GetChild(key);
 
     private FolderNode<T> GetChild(string key)
     {

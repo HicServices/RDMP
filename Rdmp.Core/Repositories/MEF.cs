@@ -17,25 +17,21 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-///     Provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the
-///     <see cref="SafeDirectoryCatalog" />.  It also includes methods for creating instances of the exported Types.
-///     <para>
-///         The class name MEF is a misnomer because historically we used the Managed Extensibility Framework (but now we
-///         just grab everything with reflection)
-///     </para>
+/// Provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the
+/// <see cref="SafeDirectoryCatalog"/>.  It also includes methods for creating instances of the exported Types.
+/// 
+/// <para>The class name MEF is a misnomer because historically we used the Managed Extensibility Framework (but now we
+/// just grab everything with reflection)</para>
 /// </summary>
 public class MEF
 {
-    private readonly string _localPath;
-    private readonly ObjectConstructor o = new();
-    private readonly Dictionary<Type, Type[]> _cachedImplementations = new();
-
-    private readonly object _cachedImplementationsLock = new();
+    public DirectoryInfo DownloadDirectory { get; private set; }
 
     public bool HaveDownloadedAllAssemblies;
     public SafeDirectoryCatalog SafeDirectoryCatalog;
+    private readonly ObjectConstructor o = new();
 
-    private readonly HashSet<string> TypeNotKnown = new();
+    private readonly string _localPath = null;
 
     public MEF()
     {
@@ -46,122 +42,114 @@ public class MEF
 
         try
         {
-            _MEFPathAsString =
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MEF");
+            _MEFPathAsString = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MEF");
         }
-        catch (Exception) //couldn't get the AppData/MEF directory so instead go to .\MEF\
+        catch (Exception)//couldn't get the AppData/MEF directory so instead go to .\MEF\
         {
             if (_localPath == null)
-                throw new Exception(
-                    "ApplicationData was not available to download MEF and neither apparently was Assembly.GetExecutingAssembly().GetName().CodeBase");
+                throw new Exception("ApplicationData was not available to download MEF and neither apparently was Assembly.GetExecutingAssembly().GetName().CodeBase");
 
             _MEFPathAsString = Path.Combine(_localPath, "MEF");
         }
-
         DownloadDirectory = new DirectoryInfo(_MEFPathAsString);
     }
 
-    public DirectoryInfo DownloadDirectory { get; }
+    private HashSet<string> TypeNotKnown = new();
 
     /// <summary>
-    ///     Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup" />).  Returns null
-    ///     if the Type is not found.
-    ///     <para>
-    ///         This method supports both fully qualified Type names and Name only (although this is slower).  Answers
-    ///         are cached.
-    ///     </para>
+    /// Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup"/>).  Returns null
+    /// if the Type is not found.
+    /// 
+    /// <para>This method supports both fully qualified Type names and Name only (although this is slower).  Answers
+    /// are cached.</para>
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
     public Type GetType(string type)
-    {
-        if (string.IsNullOrWhiteSpace(type))
+    {            
+        if(string.IsNullOrWhiteSpace(type))
             throw new ArgumentNullException(nameof(type));
 
-        if (TypeNotKnown.Contains(type))
+        if(TypeNotKnown.Contains(type))
             return null;
 
         if (SafeDirectoryCatalog.TypesByName.TryGetValue(type, out var type1)) return type1;
         var toReturn = Type.GetType(type);
-
+                
         //If they are looking for the Type name without the namespace that's bad
-        if (toReturn == null)
-            if (!type.Contains('.'))
+        if(toReturn == null)
+            if(!type.Contains('.'))
             {
                 //can we find one in Core with that name e.g. "Plugin" or "plugin"
                 toReturn =
-                    typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t => t.Name.Equals(type))
-                    ?? typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t =>
-                        t.Name.Equals(type, StringComparison.InvariantCultureIgnoreCase));
+                    typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(type))
+                    ??typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(type,StringComparison.InvariantCultureIgnoreCase));
 
                 //no, anyone else got one?
-                if (toReturn == null)
+                if(toReturn == null)
                 {
-                    var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t => t.Name.Equals(type)).ToArray();
+                    var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(type)).ToArray();
 
                     //try caseless
-                    if (matches.Length == 0)
-                        matches = SafeDirectoryCatalog.TypesByName.Values.Where(t =>
-                            t.Name.Equals(type, StringComparison.InvariantCultureIgnoreCase)).ToArray();
+                    if(matches.Length == 0)
+                        matches = SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(type,StringComparison.InvariantCultureIgnoreCase)).ToArray();
 
                     //great there's only one
-                    if (matches.Length == 1)
+                    if(matches.Length == 1)
                         toReturn = matches[0];
-                    else if (matches.Length > 1) //nope looks like everyone has a class called MyClass
+                    else if(matches.Length > 1) //nope looks like everyone has a class called MyClass
                         throw new AmbiguousTypeException($"Found {matches.Length} Types called '{type}'");
                 }
             }
             else
             {
                 //ok they are lying about the Type.  It's not MyLib.Myclass but maybe we still have a Myclass in Rdmp.Core?
-                var name = type[(type.LastIndexOf('.') + 1)..];
+                var name = type[(type.LastIndexOf('.')+1)..];
                 toReturn =
-                    typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t => t.Name.Equals(name))
-                    ?? typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t =>
-                        t.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase));
+                    typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(name))
+                    ?? typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase));
 
                 //no, anyone else got one?
-                if (toReturn == null)
+                if(toReturn == null)
                 {
-                    var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t => t.Name.Equals(name)).ToArray();
+                    var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(name)).ToArray();
 
                     //try caseless
-                    if (matches.Length == 0)
-                        matches = SafeDirectoryCatalog.TypesByName.Values.Where(t =>
-                            t.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)).ToArray();
+                    if(matches.Length == 0)
+                        matches =  SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(name,StringComparison.InvariantCultureIgnoreCase)).ToArray();
 
                     //great there's only one
-                    if (matches.Length == 1)
+                    if(matches.Length == 1)
                         toReturn = matches[0];
-                    else if (matches.Length > 1) //nope looks like everyone has a class called MyClass
+                    else if(matches.Length > 1) //nope looks like everyone has a class called MyClass
                         throw new AmbiguousTypeException($"Found {matches.Length} Types called '{type}'");
                 }
             }
 
-        if (toReturn == null)
+        if(toReturn == null)
         {
             TypeNotKnown.Add(type);
             return null;
         }
-
+                
         //we know about it now!
         SafeDirectoryCatalog.AddType(toReturn, type);
 
         return toReturn;
-    }
 
+
+    }
     public Type GetType(string type, Type expectedBaseClass)
     {
         var t = GetType(type);
 
-        if (!expectedBaseClass.IsAssignableFrom(t))
+        if(!expectedBaseClass.IsAssignableFrom(t))
             throw new Exception(
                 $"Found Type '{type}' did not implement expected base class/interface '{expectedBaseClass}'");
 
 
         return t;
     }
-
     public void Setup(SafeDirectoryCatalog result)
     {
         SafeDirectoryCatalog = result;
@@ -175,8 +163,8 @@ public class MEF
     }
 
     /// <summary>
-    ///     Makes the given Type appear as a MEF exported class.  Can be used to test your types without
-    ///     building and committing an actual <see cref="Plugin" />
+    /// Makes the given Type appear as a MEF exported class.  Can be used to test your types without
+    /// building and committing an actual <see cref="Plugin"/>
     /// </summary>
     /// <param name="type"></param>
     public void AddTypeToCatalogForTesting(Type type)
@@ -194,13 +182,12 @@ public class MEF
     }
 
     /// <summary>
-    ///     Turns the legit C# name:
-    ///     DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0,
-    ///     Culture=neutral, PublicKeyToken=b77a5c561934e089]]
-    ///     <para>
-    ///         Into a freaky MEF name:
-    ///         DataLoadEngine.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)
-    ///     </para>
+    /// Turns the legit C# name:
+    /// DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]
+    /// 
+    /// <para>Into a freaky MEF name:
+    /// DataLoadEngine.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)</para>
+    /// 
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
@@ -208,8 +195,7 @@ public class MEF
     {
         if (!t.IsGenericType) return t.FullName;
         if (t.GenericTypeArguments.Length != 1)
-            throw new NotSupportedException(
-                "Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
+            throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
         var genericTypeName = t.GetGenericTypeDefinition().FullName;
 
         Debug.Assert(genericTypeName.EndsWith("`1"));
@@ -217,18 +203,16 @@ public class MEF
 
         var underlyingType = t.GenericTypeArguments.Single().FullName;
         return $"{genericTypeName}({underlyingType})";
+
     }
 
     /// <summary>
-    ///     <para>
-    ///         Turns the legit C# name:
-    ///         DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0,
-    ///         Culture=neutral, PublicKeyToken=b77a5c561934e089]]
-    ///     </para>
-    ///     <para>
-    ///         Into a proper C# code:
-    ///         IDataFlowSource&lt;DataTable&gt;
-    ///     </para>
+    /// 
+    /// <para>Turns the legit C# name:
+    /// DataLoadEngine.DataFlowPipeline.IDataFlowSource`1[[System.Data.DataTable, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]</para>
+    /// 
+    /// <para>Into a proper C# code:
+    /// IDataFlowSource&lt;DataTable&gt;</para>
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
@@ -236,8 +220,7 @@ public class MEF
     {
         if (!t.IsGenericType) return t.Name;
         if (t.GenericTypeArguments.Length != 1)
-            throw new NotSupportedException(
-                "Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
+            throw new NotSupportedException("Generic type has more than 1 token (e.g. T1,T2) so no idea what MEF would call it");
         var genericTypeName = t.GetGenericTypeDefinition().Name;
 
         Debug.Assert(genericTypeName.EndsWith("`1"));
@@ -245,6 +228,7 @@ public class MEF
 
         var underlyingType = t.GenericTypeArguments.Single().Name;
         return $"{genericTypeName}<{underlyingType}>";
+
     }
 
     public void CheckForVersionMismatches(ICheckNotifier notifier)
@@ -266,10 +250,9 @@ public class MEF
             if (!md5Bin.Equals(md5Mef))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Different versions of the dll exist in MEF and BIN directory:{Environment.NewLine}{dllInBinFolder.FullName} (MD5={md5Bin}){Environment.NewLine}Version:{FileVersionInfo.GetVersionInfo(dllInBinFolder.FullName).FileVersion}{Environment.NewLine}and{Environment.NewLine}{dllInMEFFolder.FullName} (MD5={md5Mef}){Environment.NewLine}Version:{FileVersionInfo.GetVersionInfo(dllInMEFFolder.FullName).FileVersion}{Environment.NewLine}"
-                    , CheckResult.Warning));
+                    , CheckResult.Warning, null));
         }
     }
-
     public IEnumerable<Type> GetTypes<T>()
     {
         SetupMEFIfRequired();
@@ -277,9 +260,12 @@ public class MEF
         return GetTypes(typeof(T));
     }
 
+    private object _cachedImplementationsLock = new();
+    private Dictionary<Type,Type[]> _cachedImplementations = new();
+
     /// <summary>
-    ///     Returns MEF exported Types which inherit or implement <paramref name="type" />.  E.g. pass IAttacher to see
-    ///     all exported implementers
+    /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see
+    /// all exported implementers
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -287,20 +273,19 @@ public class MEF
     {
         SetupMEFIfRequired();
 
-        lock (_cachedImplementationsLock)
+        lock(_cachedImplementationsLock)
         {
-            if (_cachedImplementations.TryGetValue(type, out var types))
+            if(_cachedImplementations.TryGetValue(type, out var types))
                 return types;
 
-            var results = SafeDirectoryCatalog.GetAllTypes()
-                .Where(t => type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
-            _cachedImplementations.Add(type, results);
+            var results = SafeDirectoryCatalog.GetAllTypes().Where(t=>type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+            _cachedImplementations.Add(type,results);
             return results;
         }
     }
 
     /// <summary>
-    ///     Returns all MEF exported classes decorated with the specified generic export e.g.
+    /// Returns all MEF exported classes decorated with the specified generic export e.g.
     /// </summary>
     /// <param name="genericType"></param>
     /// <param name="typeOfT"></param>
@@ -318,11 +303,9 @@ public class MEF
     }
 
     /// <summary>
-    ///     Creates an instance of the named class with the provided constructor args
-    ///     <para>
-    ///         IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an
-    ///         explicitly labled Export of a LoadModuleAssembly
-    ///     </para>
+    /// Creates an instance of the named class with the provided constructor args
+    /// 
+    /// <para>IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an explicitly labled Export of a LoadModuleAssembly</para>
     /// </summary>
     /// <typeparam name="T">The base/interface of the Type you want to create e.g. IAttacher</typeparam>
     /// <returns></returns>
@@ -335,9 +318,9 @@ public class MEF
             throw new Exception(
                 $"Requested typeToCreate '{typeToCreate}' was not assignable to the required Type '{typeof(T).Name}'");
 
-        var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType, args) ??
-                       throw new ObjectLacksCompatibleConstructorException(
-                           $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
+        var instance = (T)ObjectConstructor.ConstructIfPossible(typeToCreateAsType,args) ?? throw new ObjectLacksCompatibleConstructorException(
+                $"Could not construct a {typeof(T)} using the {args.Length} constructor arguments");
         return instance;
     }
+
 }

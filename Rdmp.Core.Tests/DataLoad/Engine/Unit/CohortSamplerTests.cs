@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
-using System.Linq;
-using System.Threading;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
+using System;
+using System.Data;
+using System.Linq;
+using System.Threading;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -29,12 +29,8 @@ internal class CohortSamplerTests : UnitTests
         dt.Columns.Add("ff");
         dt.Rows.Add("1");
 
-        var ex = Assert.Throws<Exception>(() =>
-            sampler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-                new GracefulCancellationToken()));
-        Assert.AreEqual(
-            "CohortSampler was unable to find a column called 'priv' in the data passed in.  This is the expected private identifier column name of the cohort you are committing.",
-            ex.Message);
+        var ex = Assert.Throws<Exception>(()=>sampler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+        Assert.AreEqual("CohortSampler was unable to find a column called 'priv' in the data passed in.  This is the expected private identifier column name of the cohort you are committing.", ex.Message);
     }
 
     [Test]
@@ -47,14 +43,9 @@ internal class CohortSamplerTests : UnitTests
         dt.Columns.Add("ff");
         dt.Rows.Add("1");
 
-        var ex = Assert.Throws<Exception>(() =>
-            sampler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-                new GracefulCancellationToken()));
-        Assert.AreEqual(
-            "CohortSampler was unable to find a column called 'ddd' in the data passed in.  This is the expected private identifier column name of the cohort you are committing.",
-            ex.Message);
+        var ex = Assert.Throws<Exception>(() => sampler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+        Assert.AreEqual("CohortSampler was unable to find a column called 'ddd' in the data passed in.  This is the expected private identifier column name of the cohort you are committing.", ex.Message);
     }
-
     [Test]
     public void TestCohortSampler_NotEnoughIdentifiersInBatch()
     {
@@ -65,14 +56,9 @@ internal class CohortSamplerTests : UnitTests
         dt.Columns.Add("priv");
         dt.Rows.Add("1");
 
-        var ex = Assert.Throws<Exception>(() =>
-            sampler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-                new GracefulCancellationToken()));
-        Assert.AreEqual(
-            "Cohort only contains 1 unique identifiers.  This is less than the requested sample size of 100 and FailIfNotEnoughIdentifiers is true",
-            ex.Message);
+        var ex = Assert.Throws<Exception>(() => sampler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+        Assert.AreEqual("Cohort only contains 1 unique identifiers.  This is less than the requested sample size of 100 and FailIfNotEnoughIdentifiers is true", ex.Message);
     }
-
     [Test]
     public void TestCohortSampler_NotEnoughIdentifiersInBatch_ButThatsOk()
     {
@@ -85,8 +71,7 @@ internal class CohortSamplerTests : UnitTests
         dt.Columns.Add("priv");
         dt.Rows.Add("1");
 
-        var result = sampler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
+        var result = sampler.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
         Assert.AreEqual(1, result.Rows.Count);
     }
 
@@ -116,14 +101,12 @@ internal class CohortSamplerTests : UnitTests
         dt.Rows.Add("62323616");
         dt.Rows.Add("2362361");
 
-        var result1 = sampler1.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
-
+        var result1 = sampler1.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            
         // just to be sure
         Thread.Sleep(100);
 
-        var result2 = sampler2.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
+        var result2 = sampler2.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(5, result1.Rows.Count);
         Assert.AreEqual(5, result2.Rows.Count);
@@ -160,14 +143,12 @@ internal class CohortSamplerTests : UnitTests
         dt2.Rows.Add("32213");
         dt2.Rows.Add("2123");
 
-        var result1 = sampler1.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
+        var result1 = sampler1.ProcessPipelineData(dt1, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         // just to be sure
         Thread.Sleep(100);
 
-        var result2 = sampler2.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
+        var result2 = sampler2.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
         Assert.AreEqual(2, result1.Rows.Count);
         Assert.AreEqual(2, result2.Rows.Count);

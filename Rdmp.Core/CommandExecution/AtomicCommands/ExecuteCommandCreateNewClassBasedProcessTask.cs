@@ -19,20 +19,19 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
 {
     private readonly LoadMetadata _loadMetadata;
     private readonly LoadStage _loadStage;
-    private ProcessTaskType _processTaskType;
     private Type _type;
+    private ProcessTaskType _processTaskType;
 
-    public ExecuteCommandCreateNewClassBasedProcessTask(IBasicActivateItems activator, LoadMetadata loadMetadata,
-        LoadStage loadStage,
-        [DemandsInitialization("Class to execute, must be an attacher, mutilater etc",
-            TypeOf = typeof(IDisposeAfterDataLoad))]
+    public ExecuteCommandCreateNewClassBasedProcessTask(IBasicActivateItems activator, LoadMetadata loadMetadata, LoadStage loadStage, 
+        [DemandsInitialization("Class to execute, must be an attacher, mutilater etc", TypeOf = typeof(IDisposeAfterDataLoad))]
         Type type) : base(activator)
     {
         _loadMetadata = loadMetadata;
         _loadStage = loadStage;
 
-        if (type != null)
+        if(type != null)
             SetType(type);
+
     }
 
     private void SetType(Type type)
@@ -41,44 +40,50 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
 
         if (typeof(IAttacher).IsAssignableFrom(_type))
             _processTaskType = ProcessTaskType.Attacher;
-        else if (typeof(IDataProvider).IsAssignableFrom(_type))
+        else
+        if (typeof(IDataProvider).IsAssignableFrom(_type))
             _processTaskType = ProcessTaskType.DataProvider;
-        else if (typeof(IMutilateDataTables).IsAssignableFrom(_type))
+        else
+        if (typeof(IMutilateDataTables).IsAssignableFrom(_type))
             _processTaskType = ProcessTaskType.MutilateDataTable;
         else
-            SetImpossible(
-                $"Type '{_type}' was not a compatible one e.g. IAttacher, IDataProvider or IMutilateDataTables");
+        {
+            SetImpossible($"Type '{_type}' was not a compatible one e.g. IAttacher, IDataProvider or IMutilateDataTables");
+        }
     }
-
     private Type[] GetProcessTaskTypes()
     {
-        return BasicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(t =>
-            // must not be interface or abstract
-            !(t.IsInterface || t.IsAbstract) &&
-            (
-                // must implement one of these interfaces
-                typeof(IAttacher).IsAssignableFrom(t) ||
-                typeof(IDataProvider).IsAssignableFrom(t) ||
-                typeof(IMutilateDataTables).IsAssignableFrom(t)
-            )).ToArray();
+        return BasicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().
+            Where(t=>
+                // must not be interface or abstract
+                !(t.IsInterface || t.IsAbstract) &&
+                (
+                    // must implement one of these interfaces
+                    typeof(IAttacher).IsAssignableFrom(t) ||
+                    typeof(IDataProvider).IsAssignableFrom(t) ||
+                    typeof(IMutilateDataTables).IsAssignableFrom(t)
+                )).ToArray();
     }
 
     public override void Execute()
     {
-        if (_type == null)
+        if(_type == null)
         {
-            if (BasicActivator.SelectType("Process Type", GetProcessTaskTypes(), out var chosen))
+                
+            if(BasicActivator.SelectType("Process Type",GetProcessTaskTypes(),out var chosen))
+            {
                 SetType(chosen);
+            }
             else
                 return;
         }
 
-        var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueRepository, _loadMetadata, _loadStage)
-        {
-            Path = _type.FullName,
-            ProcessTaskType = _processTaskType,
-            Name = _type.Name
-        };
+        var newTask = new ProcessTask(BasicActivator.RepositoryLocator.CatalogueRepository,_loadMetadata, _loadStage)
+            {
+                Path = _type.FullName,
+                ProcessTaskType = _processTaskType,
+                Name = _type.Name
+            };
         newTask.SaveToDatabase();
 
         newTask.CreateArgumentsForClassIfNotExists(_type);
@@ -86,4 +91,5 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
         Publish(_loadMetadata);
         Activate(newTask);
     }
+
 }

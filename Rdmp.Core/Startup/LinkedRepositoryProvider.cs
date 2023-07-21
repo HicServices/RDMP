@@ -18,15 +18,14 @@ using Rdmp.Core.Validation.Dependency;
 namespace Rdmp.Core.Startup;
 
 /// <summary>
-///     Records the location of the Catalogue and DataExport databases in which RDMP stores all configuration information
-///     (what datasets there are, what extraction
-///     projects there are, what IFilters are available etc - literally everything, just look at who inherits from
-///     IMapsDirectlyToDatabaseTable!).
-///     <para>See also UserSettingsRepositoryFinder</para>
+/// Records the location of the Catalogue and DataExport databases in which RDMP stores all configuration information (what datasets there are, what extraction
+/// projects there are, what IFilters are available etc - literally everything, just look at who inherits from IMapsDirectlyToDatabaseTable!).
+/// 
+/// <para>See also UserSettingsRepositoryFinder</para>
 /// </summary>
 public class LinkedRepositoryProvider : RepositoryProvider
 {
-    private List<IPluginRepositoryFinder> _pluginRepositoryFinders;
+    private List<IPluginRepositoryFinder> _pluginRepositoryFinders = null;
 
 
     public LinkedRepositoryProvider(string catalogueConnectionString, string dataExportConnectionString)
@@ -39,15 +38,13 @@ public class LinkedRepositoryProvider : RepositoryProvider
         }
         catch (SourceCodeNotFoundException ex)
         {
+
             throw new Exception("There was a problem with the Catalogue connection string", ex);
         }
 
         try
         {
-            DataExportRepository = string.IsNullOrWhiteSpace(dataExportConnectionString)
-                ? null
-                : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString),
-                    CatalogueRepository);
+            DataExportRepository =  string.IsNullOrWhiteSpace(dataExportConnectionString) ? null : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString), CatalogueRepository);
         }
         catch (Exception)
         {
@@ -60,9 +57,8 @@ public class LinkedRepositoryProvider : RepositoryProvider
     }
 
     /// <summary>
-    ///     Call once if the <see cref="CatalogueRepository" /> and <see cref="DataExportRepository" /> are new (not existing
-    ///     already).  This will populate the
-    ///     <see cref="TableRepository.ObscureDependencyFinder" /> with appropriate cross database runtime constraints.
+    /// Call once if the <see cref="CatalogueRepository"/> and <see cref="DataExportRepository"/> are new (not existing already).  This will populate the
+    /// <see cref="TableRepository.ObscureDependencyFinder"/> with appropriate cross database runtime constraints.
     /// </summary>
     private void ConfigureObscureDependencies()
     {
@@ -78,9 +74,9 @@ public class LinkedRepositoryProvider : RepositoryProvider
 
         if (DataExportRepository.ObscureDependencyFinder == null)
             DataExportRepository.ObscureDependencyFinder = new ObjectSharingObscureDependencyFinder(this);
-        else if (DataExportRepository.ObscureDependencyFinder is not ObjectSharingObscureDependencyFinder)
-            throw new Exception(
-                "Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
+        else
+        if (DataExportRepository.ObscureDependencyFinder is not ObjectSharingObscureDependencyFinder)
+            throw new Exception("Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
     }
 
     protected override IRepository GetRepository(string s)
@@ -88,14 +84,16 @@ public class LinkedRepositoryProvider : RepositoryProvider
         LoadPluginRepositoryFindersIfNotLoaded();
 
         foreach (var repoFinder in _pluginRepositoryFinders)
+        {
             if (repoFinder.GetRepositoryType().FullName.Equals(s))
             {
                 var toReturn = repoFinder.GetRepositoryIfAny() ?? throw new NotSupportedException(
-                    $"IPluginRepositoryFinder '{repoFinder}' said that it was the correct repository finder for repository of type '{s}' but it was unable to find an existing repository instance (GetRepositoryIfAny returned null)");
+                        $"IPluginRepositoryFinder '{repoFinder}' said that it was the correct repository finder for repository of type '{s}' but it was unable to find an existing repository instance (GetRepositoryIfAny returned null)");
                 return toReturn;
             }
+        }
 
-
+            
         return base.GetRepository(s);
     }
 
@@ -118,10 +116,10 @@ public class LinkedRepositoryProvider : RepositoryProvider
 
         yield return CatalogueRepository;
 
-        if (DataExportRepository != null)
+        if(DataExportRepository != null)
             yield return DataExportRepository;
 
-        foreach (var p in _pluginRepositoryFinders)
+        foreach(var p in _pluginRepositoryFinders)
         {
             var r = p.GetRepositoryIfAny();
             if (r != null)

@@ -11,12 +11,50 @@ using Rdmp.UI.ItemActivation;
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-///     Initialization arguments for <see cref="RDMPCollectionCommonFunctionality" />.  Use this class to control what
-///     system default behaviours
-///     are exhibited by a given <see cref="RDMPCollectionUI" /> (tree view) e.g. whether the user can pin objects.
+/// Initialization arguments for <see cref="RDMPCollectionCommonFunctionality"/>.  Use this class to control what system default behaviours
+/// are exhibited by a given <see cref="RDMPCollectionUI"/> (tree view) e.g. whether the user can pin objects.
 /// </summary>
 public class RDMPCollectionCommonFunctionalitySettings
 {
+    /// <summary>
+    /// True to add an extra column to the tree view which shows if / allows changing the favourite objects status of objects.
+    ///  <para>Defaults to true</para>
+    /// </summary>
+    public bool AddFavouriteColumn { get; set; }
+
+    /// <summary>
+    /// True to add an extra column (not visible by default) to the tree view which the ID property of objects that are
+    ///  <see cref="IMapsDirectlyToDatabaseTable"/>
+    ///  <para>Defaults to true</para>
+    /// </summary>
+    public bool AddIDColumn { get; set; }
+
+    /// <summary>
+    /// False to automatically set up tree hierarchy children based on the <see cref="ICoreChildProvider"/> in the
+    /// <see cref="IActivateItems"/> at construction time.  True if you plan to handle object children yourself
+    ///  <para>Defaults to false</para>
+    /// </summary>
+    public bool SuppressChildrenAdder { get; set; }
+
+    /// <summary>
+    /// False to perform the default object activation behaviour on double click.  True if you plan to handle it yourself with a custom action.
+    /// 
+    /// <para>Defaults to false</para>
+    /// </summary>
+    public bool SuppressActivate { get; set; }
+
+    /// <summary>
+    /// True to add an extra column (Checks) to the tree which lets the user run checks on ICheckable things
+    /// </summary>
+    public bool AddCheckColumn { get; set; }
+
+    /// <summary>
+    /// False to prevent the user sorting columns (including any new columns created by <see cref="RDMPCollectionCommonFunctionality"/>)
+    /// 
+    /// <para>Defaults to true</para>
+    /// </summary>
+    public bool AllowSorting { get; set; }
+
     public RDMPCollectionCommonFunctionalitySettings()
     {
         AddFavouriteColumn = true;
@@ -26,44 +64,4 @@ public class RDMPCollectionCommonFunctionalitySettings
         AddCheckColumn = true;
         AllowSorting = true;
     }
-
-    /// <summary>
-    ///     True to add an extra column to the tree view which shows if / allows changing the favourite objects status of
-    ///     objects.
-    ///     <para>Defaults to true</para>
-    /// </summary>
-    public bool AddFavouriteColumn { get; set; }
-
-    /// <summary>
-    ///     True to add an extra column (not visible by default) to the tree view which the ID property of objects that are
-    ///     <see cref="IMapsDirectlyToDatabaseTable" />
-    ///     <para>Defaults to true</para>
-    /// </summary>
-    public bool AddIDColumn { get; set; }
-
-    /// <summary>
-    ///     False to automatically set up tree hierarchy children based on the <see cref="ICoreChildProvider" /> in the
-    ///     <see cref="IActivateItems" /> at construction time.  True if you plan to handle object children yourself
-    ///     <para>Defaults to false</para>
-    /// </summary>
-    public bool SuppressChildrenAdder { get; set; }
-
-    /// <summary>
-    ///     False to perform the default object activation behaviour on double click.  True if you plan to handle it yourself
-    ///     with a custom action.
-    ///     <para>Defaults to false</para>
-    /// </summary>
-    public bool SuppressActivate { get; set; }
-
-    /// <summary>
-    ///     True to add an extra column (Checks) to the tree which lets the user run checks on ICheckable things
-    /// </summary>
-    public bool AddCheckColumn { get; set; }
-
-    /// <summary>
-    ///     False to prevent the user sorting columns (including any new columns created by
-    ///     <see cref="RDMPCollectionCommonFunctionality" />)
-    ///     <para>Defaults to true</para>
-    /// </summary>
-    public bool AllowSorting { get; set; }
 }

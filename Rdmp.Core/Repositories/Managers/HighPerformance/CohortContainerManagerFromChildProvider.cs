@@ -14,28 +14,23 @@ using Rdmp.Core.Providers;
 namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 
 /// <summary>
-///     Performance class that builds the hierarchy of CohortIdentificationConfiguration children.  This includes
-///     containers (CohortAggregateContainer) and subcontainers
-///     and thier contained cohort sets ( AggregateConfiguration).  This is done in memory by fetching all the relevant
-///     relationship records with two queries and then
-///     sorting out the already fetched objects in CatalogueChildProvider into the relevant hierarchy.
-///     <para>
-///         This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the
-///         method on IContainer directly (which goes back to the database).
-///     </para>
+/// Performance class that builds the hierarchy of CohortIdentificationConfiguration children.  This includes containers (CohortAggregateContainer) and subcontainers
+/// and thier contained cohort sets ( AggregateConfiguration).  This is done in memory by fetching all the relevant relationship records with two queries and then
+/// sorting out the already fetched objects in CatalogueChildProvider into the relevant hierarchy.
+/// 
+/// <para>This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the method on IContainer directly (which goes back to the database).</para>
 /// </summary>
-internal class CohortContainerManagerFromChildProvider : CohortContainerManager
+internal class CohortContainerManagerFromChildProvider:CohortContainerManager
 {
     private readonly Dictionary<int, List<IOrderable>> _contents = new();
 
-    public CohortContainerManagerFromChildProvider(CatalogueRepository repository, CatalogueChildProvider childProvider)
-        : base(repository)
+    public CohortContainerManagerFromChildProvider(CatalogueRepository repository,CatalogueChildProvider childProvider):base(repository)
     {
         FetchAllRelationships(childProvider);
     }
 
     /// <summary>
-    ///     Returns cached answers without running database queries
+    /// Returns cached answers without running database queries 
     /// </summary>
     /// <param name="parent"></param>
     /// <returns></returns>
@@ -51,11 +46,9 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
     {
         using (var con = CatalogueRepository.GetConnection())
         {
+
             //find all the cohort SET operation subcontainers e.g. UNION Ag1,Ag2,(Agg3 INTERSECT Agg4) would have 2 CohortAggregateContainers (the UNION and the INTERSECT) in which the INTERSECT was the child container of the UNION
-            var r = CatalogueRepository.DiscoveredServer
-                .GetCommand(
-                    "SELECT [CohortAggregateContainer_ParentID],[CohortAggregateContainer_ChildID] FROM [CohortAggregateSubContainer] ORDER BY CohortAggregateContainer_ParentID",
-                    con).ExecuteReader();
+            var r = CatalogueRepository.DiscoveredServer.GetCommand("SELECT [CohortAggregateContainer_ParentID],[CohortAggregateContainer_ChildID] FROM [CohortAggregateSubContainer] ORDER BY CohortAggregateContainer_ParentID", con).ExecuteReader();
 
             while (r.Read())
             {
@@ -65,17 +58,12 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
                 if (!_contents.ContainsKey(currentParentId))
                     _contents.Add(currentParentId, new List<IOrderable>());
 
-                _contents[currentParentId]
-                    .Add(childProvider.AllCohortAggregateContainers.Single(c => c.ID == currentChildId));
+                _contents[currentParentId].Add(childProvider.AllCohortAggregateContainers.Single(c => c.ID == currentChildId));
             }
-
             r.Close();
 
             //now find all the Agg configurations within the containers too, (in the above example we will find Agg1 in the UNION container at order 1 and Agg2 at order 2 and then we find Agg3 and Agg4 in the INTERSECT container)
-            r = CatalogueRepository.DiscoveredServer
-                .GetCommand(
-                    @"SELECT [CohortAggregateContainer_ID], [AggregateConfiguration_ID],[Order] FROM [CohortAggregateContainer_AggregateConfiguration] ORDER BY CohortAggregateContainer_ID",
-                    con).ExecuteReader();
+            r = CatalogueRepository.DiscoveredServer.GetCommand(@"SELECT [CohortAggregateContainer_ID], [AggregateConfiguration_ID],[Order] FROM [CohortAggregateContainer_AggregateConfiguration] ORDER BY CohortAggregateContainer_ID", con).ExecuteReader();
 
             while (r.Read())
             {
@@ -101,8 +89,8 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
                 config.SetKnownOrder(currentOrder);
 
                 _contents[currentParentId].Add(config);
-            }
 
+            }
             r.Close();
         }
     }

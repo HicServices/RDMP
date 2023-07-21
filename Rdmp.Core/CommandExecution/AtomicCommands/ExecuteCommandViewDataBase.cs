@@ -4,34 +4,34 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.IO;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
+using System.IO;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Abstract base class for all 'view data' style CLI compatible commands
+/// Abstract base class for all 'view data' style CLI compatible commands
 /// </summary>
 public abstract class ExecuteCommandViewDataBase : BasicCommandExecution
 {
     public const string ToFileDescription = "Optional file to output the results of the query to.  Or null";
+
+    public FileInfo ToFile { get; private set; }
+
+    /// <summary>
+    /// Set to true to prompt user to pick a <see cref="ToFile"/> at command execution time.
+    /// </summary>
+    public bool AskForFile { get; set; }
 
     public ExecuteCommandViewDataBase(IBasicActivateItems activator, FileInfo toFile) : base(activator)
     {
         ToFile = toFile;
     }
 
-    public FileInfo ToFile { get; }
-
     /// <summary>
-    ///     Set to true to prompt user to pick a <see cref="ToFile" /> at command execution time.
-    /// </summary>
-    public bool AskForFile { get; set; }
-
-    /// <summary>
-    ///     Get the SQL query to run and where to run it.  Return null to cancel
-    ///     data fetching.
+    /// Get the SQL query to run and where to run it.  Return null to cancel
+    /// data fetching.
     /// </summary>
     /// <returns></returns>
     protected abstract IViewSQLAndResultsCollection GetCollection();
@@ -53,13 +53,19 @@ public abstract class ExecuteCommandViewDataBase : BasicCommandExecution
         {
             toFile = BasicActivator.SelectFile("Save as", "Comma Separated Values", "*.csv");
             if (toFile == null)
+            {
                 // user cancelled selecting a file
                 return;
+            }
         }
 
         if (toFile != null)
+        {
             ExtractTableVerbatim.ExtractDataToFile(collection, toFile);
+        }
         else
+        {
             BasicActivator.ShowData(collection);
+        }
     }
 }

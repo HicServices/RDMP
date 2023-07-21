@@ -12,10 +12,30 @@ using Rdmp.Core.Validation.Constraints;
 namespace Rdmp.Core.Validation;
 
 /// <summary>
-///     Storage class for recording the number of rows failing validation with each Consequence subdivided by Column.
+/// Storage class for recording the number of rows failing validation with each Consequence subdivided by Column.
 /// </summary>
 public class VerboseValidationResults
 {
+    /// <summary>
+    /// Dictionary of column names (Key), Value is a Dictionary of each of the potential consequences
+    /// and a count of the number of cells that failed validation with that Consequence (for that Column - Key)
+    /// 
+    /// <para>e.g. DictionaryOfFailure["Forename"][Consequence.Missing] is a count of the number of cells which are missing
+    /// (not there where they were expected) in column Forename</para>
+    /// 
+    /// </summary>
+    public Dictionary<string, Dictionary<Consequence, int>> DictionaryOfFailure { get; private set; }
+
+    /// <summary>
+    /// Every time a row is Invalidated (this List get's the reason for Invalidation added to it)
+    /// </summary>
+    public List<string> ReasonsRowsInvalidated { get; set; }
+
+    /// <summary>
+    /// A count of the rows Invalidated due to dodgy data - failed Validations with Consequence.InvalidatesRow
+    /// </summary>
+    public int CountOfRowsInvalidated {get; set; }
+
     public VerboseValidationResults(ItemValidator[] validators)
     {
         CountOfRowsInvalidated = 0;
@@ -24,7 +44,7 @@ public class VerboseValidationResults
 
         foreach (var iv in validators)
         {
-            DictionaryOfFailure.Add(iv.TargetProperty, null);
+            DictionaryOfFailure.Add(iv.TargetProperty,null);
             DictionaryOfFailure[iv.TargetProperty] = new Dictionary<Consequence, int>
             {
                 { Consequence.Missing, 0 },
@@ -33,26 +53,6 @@ public class VerboseValidationResults
             };
         }
     }
-
-    /// <summary>
-    ///     Dictionary of column names (Key), Value is a Dictionary of each of the potential consequences
-    ///     and a count of the number of cells that failed validation with that Consequence (for that Column - Key)
-    ///     <para>
-    ///         e.g. DictionaryOfFailure["Forename"][Consequence.Missing] is a count of the number of cells which are missing
-    ///         (not there where they were expected) in column Forename
-    ///     </para>
-    /// </summary>
-    public Dictionary<string, Dictionary<Consequence, int>> DictionaryOfFailure { get; }
-
-    /// <summary>
-    ///     Every time a row is Invalidated (this List get's the reason for Invalidation added to it)
-    /// </summary>
-    public List<string> ReasonsRowsInvalidated { get; set; }
-
-    /// <summary>
-    ///     A count of the rows Invalidated due to dodgy data - failed Validations with Consequence.InvalidatesRow
-    /// </summary>
-    public int CountOfRowsInvalidated { get; set; }
 
 
     public Consequence ProcessException(ValidationFailure rootValidationFailure)
@@ -76,7 +76,7 @@ public class VerboseValidationResults
                         ReasonsRowsInvalidated.Add(
                             $"{subException.SourceItemValidator.TargetProperty}|{subException.SourceConstraint.GetType().Name}");
 
-                if (worstConsequences.TryGetValue(subException.SourceItemValidator, out var oldConsequence))
+                if (worstConsequences.TryGetValue(subException.SourceItemValidator,out var oldConsequence))
                 {
                     //see if situation got worse
                     var newConsequence = subException.SourceConstraint.Consequence.Value;
@@ -87,19 +87,18 @@ public class VerboseValidationResults
                 else
                 {
                     //new validation error for this column
-                    worstConsequences.Add(subException.SourceItemValidator,
-                        (Consequence)subException.SourceConstraint.Consequence);
+                    worstConsequences.Add(subException.SourceItemValidator, (Consequence)subException.SourceConstraint.Consequence);
                 }
             }
 
             //now record the worst case event
             if (worstConsequences.ContainsValue(Consequence.InvalidatesRow))
                 CountOfRowsInvalidated++;
-
+                
             foreach (var itemValidator in worstConsequences.Keys)
             {
                 var columnName = itemValidator.TargetProperty;
-
+                    
                 //increment the most damaging consequence count for this cell
                 DictionaryOfFailure[columnName][worstConsequences[itemValidator]]++;
             }
@@ -121,8 +120,7 @@ public class VerboseValidationResults
 
         foreach (var validationException in v.GetExceptionList())
         {
-            if (validationException.SourceItemValidator == null ||
-                validationException.SourceItemValidator.TargetProperty == null)
+            if (validationException.SourceItemValidator == null || validationException.SourceItemValidator.TargetProperty == null)
                 throw new NullReferenceException(
                     $"Column name referenced in ValidationException was null!, message in the exception was:{validationException.Message}");
 

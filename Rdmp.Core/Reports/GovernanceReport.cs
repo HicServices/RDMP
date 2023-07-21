@@ -17,21 +17,19 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-///     Processes all GovernancePeriod and Catalogues into a CSV report about which datasets are covered by which
-///     governance periods, which periods have expired (and there
-///     is no corresponding follow on GovernancePeriod) and which Catalogues are not covered by any governance.
+/// Processes all GovernancePeriod and Catalogues into a CSV report about which datasets are covered by which governance periods, which periods have expired (and there
+/// is no corresponding follow on GovernancePeriod) and which Catalogues are not covered by any governance.
 /// </summary>
-public class GovernanceReport : DocXHelper
+public class GovernanceReport:DocXHelper
 {
+    private readonly IDetermineDatasetTimespan _timespanCalculator;
+    private readonly ICatalogueRepository _repository;
+
     private readonly CsvConfiguration _csvConfig = new(CultureInfo.CurrentCulture)
     {
         Delimiter = ","
     };
-
-    private readonly ICatalogueRepository _repository;
-    private readonly IDetermineDatasetTimespan _timespanCalculator;
-
-    public GovernanceReport(IDetermineDatasetTimespan timespanCalculator, ICatalogueRepository repository)
+    public GovernanceReport(IDetermineDatasetTimespan timespanCalculator,ICatalogueRepository repository)
     {
         _timespanCalculator = timespanCalculator;
         _repository = repository;
@@ -47,7 +45,7 @@ public class GovernanceReport : DocXHelper
             {
                 writer.WriteField("Extractable Datasets");
                 writer.NextRecord();
-
+                        
                 writer.WriteField("Folder");
                 writer.WriteField("Catalogue");
                 writer.WriteField("Current Governance");
@@ -56,26 +54,23 @@ public class GovernanceReport : DocXHelper
                 writer.NextRecord();
 
 
-                var govs = _repository.GetAllObjects<GovernancePeriod>()
-                    .ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
-
+                var govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
+            
                 foreach (var catalogue in _repository.GetAllObjects<Catalogue>()
-                             .Where(c => c.CatalogueItems.Any(ci => ci.ExtractionInformation != null))
-                             .OrderBy(c => c.Name))
+                             .Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null))
+                             .OrderBy(c=>c.Name))
                 {
                     if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)
                         continue;
 
                     //get active governances
-                    var activeGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && !kvp.Key.IsExpired())
-                        .Select(g => g.Key).ToArray();
-                    var expiredGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && kvp.Key.IsExpired())
-                        .Select(g => g.Key).ToArray();
+                    var activeGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && !kvp.Key.IsExpired()).Select(g=>g.Key).ToArray();
+                    var expiredGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && kvp.Key.IsExpired()).Select(g => g.Key).ToArray();
 
                     string relevantGovernance = null;
 
                     if (activeGovs.Any())
-                        relevantGovernance = string.Join(",", activeGovs.Select(gov => gov.Name));
+                        relevantGovernance = string.Join("," , activeGovs.Select(gov => gov.Name));
                     else if (expiredGovs.Any())
                         relevantGovernance =
                             $"No Current Governance (Expired Governances: {string.Join(",", expiredGovs.Select(gov => gov.Name))})";
@@ -87,7 +82,7 @@ public class GovernanceReport : DocXHelper
                     writer.WriteField(catalogue.Folder);
                     writer.WriteField(catalogue.Name);
                     writer.WriteField(relevantGovernance);
-                    writer.WriteField(_timespanCalculator.GetHumanReadableTimespanIfKnownOf(catalogue, true, out _));
+                    writer.WriteField(_timespanCalculator.GetHumanReadableTimespanIfKnownOf(catalogue,true, out _));
                     writer.WriteField(ShortenDescription(catalogue.Description));
 
                     writer.NextRecord();
@@ -98,13 +93,13 @@ public class GovernanceReport : DocXHelper
                 // next section header
                 writer.WriteField("Active Governance");
 
-                OutputGovernanceList(govs, writer, false);
+                OutputGovernanceList(govs,writer, false);
 
                 writer.NextRecord();
                 // next section header
                 writer.WriteField("Expired Governance");
 
-                OutputGovernanceList(govs, writer, true);
+                OutputGovernanceList(govs,writer, true);
             }
         }
 
@@ -116,8 +111,8 @@ public class GovernanceReport : DocXHelper
         if (string.IsNullOrWhiteSpace(description))
             return description;
 
-        description = description.Replace("\r\n", " ");
-        description = description.Replace("\n", " ");
+        description = description.Replace("\r\n"," ");
+        description = description.Replace("\n"," ");
 
         if (description.Length >= 100)
             return $"{description[..100]}...";
@@ -125,13 +120,12 @@ public class GovernanceReport : DocXHelper
     }
 
     /// <summary>
-    ///     Pass false for active or true for expired
+    /// Pass false for active or true for expired
     /// </summary>
     /// <param name="govs"></param>
     /// <param name="writer"></param>
     /// <param name="expired"></param>
-    private static void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer,
-        bool expired)
+    private static void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer, bool expired)
     {
         //headers for this section
         writer.WriteField("Governance");
@@ -141,7 +135,7 @@ public class GovernanceReport : DocXHelper
         writer.WriteField("Approval End");
         writer.WriteField("Documents");
         writer.NextRecord();
-
+            
         foreach (var kvp in govs)
         {
             //if governance period does not have any Catalogues associated with it skip it

@@ -15,11 +15,25 @@ public partial class DatabaseTypeUI : UserControl
 {
     private readonly DatabaseTypeIconProvider _databaseIconProvider;
     private DatabaseType _databaseType;
+    public event EventHandler DatabaseTypeChanged;
 
-    private readonly bool bLoading = true;
+    public DatabaseType DatabaseType
+    {
+        get => _databaseType;
+        set
+        {
+            _databaseType = value;
 
-    private bool changing;
+            if(bLoading)
+                return;
 
+            ddDatabaseType.SelectedItem = value;
+            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(value).ImageToBitmap();
+                
+        }
+    }
+
+    private bool bLoading = true;
     public DatabaseTypeUI()
     {
         InitializeComponent();
@@ -29,24 +43,8 @@ public partial class DatabaseTypeUI : UserControl
         pbDatabaseProvider.Image = _databaseIconProvider.GetImage(DatabaseType.MicrosoftSQLServer).ImageToBitmap();
 
         bLoading = false;
+
     }
-
-    public DatabaseType DatabaseType
-    {
-        get => _databaseType;
-        set
-        {
-            _databaseType = value;
-
-            if (bLoading)
-                return;
-
-            ddDatabaseType.SelectedItem = value;
-            pbDatabaseProvider.Image = _databaseIconProvider.GetImage(value).ImageToBitmap();
-        }
-    }
-
-    public event EventHandler DatabaseTypeChanged;
 
     public void LockDatabaseType(DatabaseType databaseType)
     {
@@ -54,16 +52,17 @@ public partial class DatabaseTypeUI : UserControl
         ddDatabaseType.Enabled = false;
     }
 
+    private bool changing = false;
     private void ddDatabaseType_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (changing)
+        if(changing )
             return;
 
         changing = true;
 
         DatabaseType = (DatabaseType)ddDatabaseType.SelectedItem;
 
-        DatabaseTypeChanged?.Invoke(this, EventArgs.Empty);
+        DatabaseTypeChanged?.Invoke(this,EventArgs.Empty);
 
         changing = false;
     }

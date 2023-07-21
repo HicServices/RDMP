@@ -6,6 +6,7 @@
 
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Windows.Forms;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -13,14 +14,14 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-///     Allows you to view the results of a query sent by the RDMP.  This is a reusable component.
+/// Allows you to view the results of a query sent by the RDMP.  This is a reusable component.
 /// </summary>
 public partial class DataTableViewerUI : UserControl
 {
     public DataTableViewerUI(DataTable source, string caption)
     {
         InitializeComponent();
-
+            
         Text = caption;
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
         dataGridView1.DataSource = source;
@@ -36,7 +37,7 @@ public partial class DataTableViewerUI : UserControl
             {
                 con.Open();
 
-                using (var cmd = DatabaseCommandHelper.GetCommand(sql, con))
+                using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
                 using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
                 {
                     var dt = new DataTable();
@@ -47,10 +48,10 @@ public partial class DataTableViewerUI : UserControl
         }
         catch (Exception e)
         {
-            ExceptionViewer.Show($"Failed to connect to source {source} and execute SQL: {Environment.NewLine}{sql}",
-                e);
+            ExceptionViewer.Show($"Failed to connect to source {source} and execute SQL: {Environment.NewLine}{sql}",e);
         }
 
         Text = caption;
     }
+
 }

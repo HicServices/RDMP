@@ -15,8 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Tests.Common.Scenarios;
 
 /// <summary>
-///     For any test that requires both the ANOStore and the IdentifierDump and anything else we come up with in terms of
-///     anonymisation
+/// For any test that requires both the ANOStore and the IdentifierDump and anything else we come up with in terms of anonymisation
 /// </summary>
 public class TestsRequiringFullAnonymisationSuite : TestsRequiringANOStore
 {
@@ -29,8 +28,7 @@ public class TestsRequiringFullAnonymisationSuite : TestsRequiringANOStore
     {
         base.OneTimeSetUp();
 
-        IdentifierDump_Database =
-            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(IdentifierDump_DatabaseName);
+        IdentifierDump_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(IdentifierDump_DatabaseName);
 
         if (IdentifierDump_Database.Exists())
             IdentifierDump_Database.Drop();
@@ -40,11 +38,11 @@ public class TestsRequiringFullAnonymisationSuite : TestsRequiringANOStore
         scriptCreate.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
 
         //now create a new reference!
-        IdentifierDump_ExternalDatabaseServer =
-            new ExternalDatabaseServer(CatalogueRepository, IdentifierDump_DatabaseName, p);
+        IdentifierDump_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,IdentifierDump_DatabaseName,p);
         IdentifierDump_ExternalDatabaseServer.SetProperties(IdentifierDump_Database);
 
-        CatalogueRepository.SetDefault(PermissableDefaults.IdentifierDumpServer_ID,
-            IdentifierDump_ExternalDatabaseServer);
+        CatalogueRepository.SetDefault(PermissableDefaults.IdentifierDumpServer_ID, IdentifierDump_ExternalDatabaseServer);
+
     }
+
 }

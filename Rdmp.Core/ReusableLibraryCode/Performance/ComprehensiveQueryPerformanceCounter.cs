@@ -10,26 +10,26 @@ using System.Data.Common;
 namespace Rdmp.Core.ReusableLibraryCode.Performance;
 
 /// <summary>
-///     Stores the location (Stack Trace) of all calls to the database (DbCommands constructed).  This does not include how
-///     long they took to run or even the
-///     final state of the command (which could have parameters or have its command text modified after construction).
-///     Mostly it is useful for detecting
-///     lines of code that are sending hundreds/thousands of duplicate queries.
-///     <para>
-///         You can install a ComprehensiveQueryPerformanceCounter by using DatabaseCommandHelper.PerformanceCounter =
-///         new ComprehensiveQueryPerformanceCounter()
-///     </para>
-///     <para>
-///         You can view the results of a ComprehensiveQueryPerformanceCounter by using a
-///         PerformanceCounterUI/PerformanceCounterResultsUI.
-///     </para>
+/// Stores the location (Stack Trace) of all calls to the database (DbCommands constructed).  This does not include how long they took to run or even the 
+/// final state of the command (which could have parameters or have its command text modified after construction).  Mostly it is useful for detecting
+/// lines of code that are sending hundreds/thousands of duplicate queries.
+/// 
+/// <para>You can install a ComprehensiveQueryPerformanceCounter by using DatabaseCommandHelper.PerformanceCounter = new ComprehensiveQueryPerformanceCounter()</para>
+/// 
+/// <para>You can view the results of a ComprehensiveQueryPerformanceCounter by using a PerformanceCounterUI/PerformanceCounterResultsUI.</para>
 /// </summary>
 public class ComprehensiveQueryPerformanceCounter
 {
-    public Dictionary<string, QueryPerformed> DictionaryOfQueries = new();
+    public Dictionary<string,QueryPerformed> DictionaryOfQueries = new();
+        
+    public ComprehensiveQueryPerformanceCounter()
+    {
+            
+    }
 
     public void AddAudit(DbCommand cmd, string environmentDotStackTrace)
     {
+            
         //is it a novel origin
         if (!DictionaryOfQueries.ContainsKey(environmentDotStackTrace))
             DictionaryOfQueries.Add(environmentDotStackTrace, new QueryPerformed(cmd.CommandText));

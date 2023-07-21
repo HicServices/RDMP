@@ -14,31 +14,30 @@ namespace Rdmp.UI.Tests.CommandExecution;
 
 internal class ExecuteCommandImportDublinCoreFormatTests
 {
+
     /// <summary>
-    ///     This test also appears in the Rdmp.Tests project since it behaves differently in different runtime.
+    /// This test also appears in the Rdmp.Tests project since it behaves differently in different runtime. 
     /// </summary>
     [Test]
     public void Test_DublinCore_WriteReadFile_Net461()
     {
         var def1 = new DublinCoreDefinition
         {
-            Title = "ssssshh",
-            Alternative = "O'Rly",
+            Title =  "ssssshh",
+            Alternative =  "O'Rly",
             Description = "Description of stuff",
             Format = "text/html",
             Identifier = new Uri("http://foo.com"),
             Publisher = "University of Dundee",
             IsPartOf = new Uri("http://foo2.com"),
-            Modified = new DateTime(2001, 1, 1),
+            Modified = new DateTime(2001,1,1),
             Subject = "Interesting, PayAttention, HighPriority, Omg"
         };
 
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "dublin.xml"));
 
-        using (var outStream = fi.OpenWrite())
-        {
+        using(var outStream = fi.OpenWrite())
             def1.WriteXml(outStream);
-        }
 
         using (var inStream = fi.OpenRead())
         {

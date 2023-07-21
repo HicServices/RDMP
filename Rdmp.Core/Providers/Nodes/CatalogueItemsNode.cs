@@ -4,19 +4,28 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-///     Collection of all the virtual columns (<see cref="CatalogueItem" />) in a dataset (
-///     <see cref="Curation.Data.Catalogue" />)
+/// Collection of all the virtual columns (<see cref="CatalogueItem"/>) in a dataset (<see cref="Curation.Data.Catalogue"/>)
 /// </summary>
 public class CatalogueItemsNode : Node, IOrderable
 {
+    public Catalogue Catalogue { get; }
+    public CatalogueItem[] CatalogueItems { get; }
+
+    public ExtractionCategory? Category { get; }
+    public int Order
+    {
+        get => Category.HasValue ? (int)Category +1: 20;
+        set { } // no setter, we are orderable to enforce specific order in tree
+    }
+
     public CatalogueItemsNode(Catalogue catalogue, IEnumerable<CatalogueItem> cis, ExtractionCategory? category)
     {
         Catalogue = catalogue;
@@ -24,20 +33,9 @@ public class CatalogueItemsNode : Node, IOrderable
         Category = category;
     }
 
-    public Catalogue Catalogue { get; }
-    public CatalogueItem[] CatalogueItems { get; }
-
-    public ExtractionCategory? Category { get; }
-
-    public int Order
-    {
-        get => Category.HasValue ? (int)Category + 1 : 20;
-        set { } // no setter, we are orderable to enforce specific order in tree
-    }
-
     public override string ToString()
     {
-        if (Category == null)
+        if(Category == null)
             return "Non Extractable";
 
         return Category switch
@@ -53,15 +51,15 @@ public class CatalogueItemsNode : Node, IOrderable
 
     protected bool Equals(CatalogueItemsNode other)
     {
-        return Catalogue.Equals(other.Catalogue) && Equals(Category, other.Category);
+        return Catalogue.Equals(other.Catalogue) && Equals(Category,other.Category);
     }
 
     public override bool Equals(object obj)
     {
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != typeof(CatalogueItemsNode)) return false;
-        return Equals((CatalogueItemsNode)obj);
+        if (obj.GetType() != typeof (CatalogueItemsNode)) return false;
+        return Equals((CatalogueItemsNode) obj);
     }
 
     public override int GetHashCode()

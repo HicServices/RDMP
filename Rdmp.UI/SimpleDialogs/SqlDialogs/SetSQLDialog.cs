@@ -14,19 +14,20 @@ using ScintillaNET;
 namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 /// <summary>
-///     Allows the user to view and edit some SQL they have written.  Basically the same as ShowSQL but this window expects
-///     you to have populated some meaningful SQL that the
-///     caller will store/use somehow.
+/// Allows the user to view and edit some SQL they have written.  Basically the same as ShowSQL but this window expects you to have populated some meaningful SQL that the
+/// caller will store/use somehow.
 /// </summary>
 public partial class SetSQLDialog : Form
-{
-    private readonly bool _designMode;
+{   
     public Scintilla QueryEditor;
+    private bool _designMode;
+
+    public string Result => QueryEditor.Text;
 
     public SetSQLDialog(string originalSQL, ICombineableFactory commandFactory)
     {
         InitializeComponent();
-
+            
         _designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
         if (_designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
@@ -34,14 +35,14 @@ public partial class SetSQLDialog : Form
 
         QueryEditor = new ScintillaTextEditorFactory().Create(commandFactory);
         QueryEditor.Text = originalSQL;
-
+            
         panel1.Controls.Add(QueryEditor);
+        
     }
-
-    public string Result => QueryEditor.Text;
 
     private void button1_Click(object sender, EventArgs e)
     {
+
         DialogResult = DialogResult.OK;
         Close();
     }

@@ -5,25 +5,24 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.Curation.Data.Cohort;
 using SixLabors.ImageSharp;
+using Rdmp.Core.Curation.Data.Cohort;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 
 public class CohortAggregateContainerStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    private readonly Image<Rgba32> _except;
-    private readonly Image<Rgba32> _intersect;
     private readonly Image<Rgba32> _union;
+    private readonly Image<Rgba32> _intersect;
+    private readonly Image<Rgba32> _except;
 
     public CohortAggregateContainerStateBasedIconProvider()
     {
         _union = Image.Load<Rgba32>(CatalogueIcons.UNION);
         _intersect = Image.Load<Rgba32>(CatalogueIcons.INTERSECT);
-        _except = Image.Load<Rgba32>(CatalogueIcons.EXCEPT);
+        _except = Image.Load<Rgba32>(CatalogueIcons.EXCEPT);            
     }
-
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         return o switch

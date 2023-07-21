@@ -15,26 +15,24 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams;
 
 /// <summary>
-///     Allows you to visualise how much data has been loaded for a given LoadProgress based DLE job (LoadMetadata).  The
-///     top graph shows row counts over time
-///     according to the last DQE run on the dataset (a stack graph with a seperate track for each Catalogue in the load -
-///     for when you load multiple datasets
-///     from the same cached data source).  The bottom graph shows counts of cache fetch failures (periods of dataset time
-///     where no data could be fetched from
-///     the origin because of data corruption or the data simply not being available for that period) and cache directory
-///     file counts (number of files sat in
-///     Cache by date awaiting loading by DLE).
+/// Allows you to visualise how much data has been loaded for a given LoadProgress based DLE job (LoadMetadata).  The top graph shows row counts over time
+/// according to the last DQE run on the dataset (a stack graph with a seperate track for each Catalogue in the load - for when you load multiple datasets
+/// from the same cached data source).  The bottom graph shows counts of cache fetch failures (periods of dataset time where no data could be fetched from 
+/// the origin because of data corruption or the data simply not being available for that period) and cache directory file counts (number of files sat in 
+/// Cache by date awaiting loading by DLE).
 /// </summary>
 public partial class LoadProgressDiagramUI : RDMPUserControl
 {
     private LoadProgressAnnotation _annotations;
-
-    private ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
     private LoadProgress _loadProgress;
     private LoadProgressSummaryReport _report;
+    public event Action LoadProgressChanged;
+
+    private ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
 
 
     public LoadProgressDiagramUI()
@@ -46,19 +44,18 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         olvExecute.IsButton = true;
         olvExecute.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
         olvDQERuns.ButtonClick += olvDQERuns_ButtonClick;
+            
     }
-
-    public event Action LoadProgressChanged;
 
     private void olvDQERuns_ButtonClick(object sender, CellClickEventArgs e)
     {
-        var c = (Catalogue)e.Model;
+        var c = (Catalogue) e.Model;
         new ExecuteCommandRunDQEOnCatalogue(Activator).SetTarget(c).Execute();
     }
 
     private object AspectGetterLastDQERun(object rowObject)
     {
-        var c = (Catalogue)rowObject;
+        var c = (Catalogue) rowObject;
 
         if (!_report.CataloguesWithDQERuns.ContainsKey(c))
             return "Never";
@@ -72,9 +69,9 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         _loadProgress = lp;
         RefreshUIFromDatabase();
 
-        DoTransparencyProperly.ThisHoversOver(pathLinkLabel1, cacheState);
+        DoTransparencyProperly.ThisHoversOver(pathLinkLabel1,cacheState);
     }
-
+        
     private void RefreshUIFromDatabase()
     {
         ragSmiley1.Reset();
@@ -113,7 +110,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         btnRefresh.Top = olvDQERuns.Top;
         ragSmiley1.Top = olvDQERuns.Top;
         cataloguesRowCountChart.Height = splitContainer1.Panel1.Height - olvDQERuns.Height;
-
+            
 
         if (_report.CataloguesPeriodictiyData == null)
         {
@@ -128,23 +125,24 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         cataloguesRowCountChart.Palette = ChartColorPalette.None;
         cataloguesRowCountChart.PaletteCustomColors = new[]
         {
-            Color.FromArgb(160, 0, 65),
-            Color.FromArgb(246, 110, 60),
-            Color.FromArgb(255, 175, 89),
-            Color.FromArgb(255, 225, 133),
-            Color.FromArgb(255, 255, 188),
-            Color.FromArgb(230, 246, 147),
-            Color.FromArgb(170, 222, 162),
-            Color.FromArgb(98, 195, 165),
-            Color.FromArgb(44, 135, 191),
-            Color.FromArgb(94, 76, 164)
+            Color.FromArgb(160,0,65),
+            Color.FromArgb(246,110,60),
+            Color.FromArgb(255,175,89),
+            Color.FromArgb(255,225,133),
+            Color.FromArgb(255,255,188),
+            Color.FromArgb(230,246,147),
+            Color.FromArgb(170,222,162),
+            Color.FromArgb(98,195,165),
+            Color.FromArgb(44,135,191),
+            Color.FromArgb(94,76,164)
+
+
         };
         try
         {
             //Catalogue periodicity chart
-            ChartLookAndFeelSetter.PopulateYearMonthChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData,
-                "Count of records");
-
+            ChartLookAndFeelSetter.PopulateYearMonthChart(cataloguesRowCountChart, _report.CataloguesPeriodictiyData, "Count of records");
+            
             //Annotations
             _annotations = new LoadProgressAnnotation(_loadProgress, _report.CataloguesPeriodictiyData,
                 cataloguesRowCountChart);
@@ -152,7 +150,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
             cataloguesRowCountChart.Annotations.Add(_annotations.TextAnnotationOrigin);
             cataloguesRowCountChart.Annotations.Add(_annotations.LineAnnotationFillProgress);
             cataloguesRowCountChart.Annotations.Add(_annotations.TextAnnotationFillProgress);
-
+            
             //Cache annotation (still on the Catalogue periodicity chart)
             if (_annotations.LineAnnotationCacheProgress != null)
             {
@@ -162,17 +160,14 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
 
             //Now onto the cache diagram which shows what files are in the cache directory and the failure states of old loads
             if (_report.CachePeriodictiyData == null)
-            {
                 splitContainer1.Panel2Collapsed = true;
-            }
             else
             {
                 pathLinkLabel1.Text = _report.ResolvedCachePath.FullName;
 
                 cacheState.Palette = ChartColorPalette.None;
-                cacheState.PaletteCustomColors = new[] { Color.Red, Color.Green };
-                ChartLookAndFeelSetter.PopulateYearMonthChart(cacheState, _report.CachePeriodictiyData,
-                    "Fetch Failure/Success");
+                cacheState.PaletteCustomColors = new[] { Color.Red,Color.Green };
+                ChartLookAndFeelSetter.PopulateYearMonthChart(cacheState, _report.CachePeriodictiyData, "Fetch Failure/Success");
                 splitContainer1.Panel2Collapsed = false;
 
                 cacheState.Series[0].ChartType = SeriesChartType.Column;
@@ -180,6 +175,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
 
                 cacheState.Series[1].ChartType = SeriesChartType.Column;
                 cacheState.Series[1]["DrawingStyle"] = "Cylinder";
+
             }
         }
         catch (Exception e)
@@ -188,6 +184,7 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         }
     }
 
+        
 
     private void cataloguesRowCountChart_AnnotationPositionChanged(object sender, EventArgs e)
     {

@@ -14,10 +14,10 @@ namespace Rdmp.Core.Tests.Validation;
 /*
  * Unit-tests for the ItemValidator.
  * Using CHI in this case.
- *
+ * 
  * Note: Normally the Host Validator instance would set the TargetProprty of its ItemValidator(s).
  * Here, we do it explicitly in the SetUp() method.
- *
+ * 
  */
 
 [Category("Unit")]
@@ -37,16 +37,16 @@ public class ItemValidatorTest
     [Test]
     public void ValidateAll_IsTypeIncompatible_ThrowsException()
     {
-        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong);
+        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
         _v.ExpectedType = typeof(int);
 
-        Assert.NotNull(_v.ValidateAll(DateTime.Now, Array.Empty<object>(), Array.Empty<string>()));
+        Assert.NotNull(_v.ValidateAll(DateTime.Now,  Array.Empty<object>(), Array.Empty<string>()));
     }
 
     [Test]
     public void ValidateAll_IsTypeIncompatible_GivesReason()
     {
-        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong);
+        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
         _v.ExpectedType = typeof(DateTime);
 
         var result = _v.ValidateAll(DateTime.Now, Array.Empty<object>(), Array.Empty<string>());
@@ -54,6 +54,7 @@ public class ItemValidatorTest
         Assert.IsNotNull(result);
         Assert.IsTrue(result.Message.StartsWith("Incompatible type"));
         Assert.IsTrue(result.Message.Contains(nameof(DateTime)));
+
     }
 
     [Test]
@@ -67,19 +68,22 @@ public class ItemValidatorTest
     [Test]
     public void ValidateAll_InvalidData_ThrowsException()
     {
-        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong);
+        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
 
-        Assert.NotNull(
-            _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, Array.Empty<object>(), Array.Empty<string>()));
+        Assert.NotNull(_v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, Array.Empty<object>(), Array.Empty<string>()));
     }
 
     [Test]
     public void ValidateAll_InvalidData_GivesReason()
     {
-        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong);
+        _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
 
         var result = _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, Array.Empty<object>(), Array.Empty<string>());
 
         Assert.AreEqual("CHI check digit did not match", result.Message);
+
     }
+
+
+
 }

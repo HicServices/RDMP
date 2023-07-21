@@ -22,53 +22,49 @@ using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.ImportTests;
 
-public class GatherAndShareTests : DatabaseTests
+public class GatherAndShareTests:DatabaseTests
 {
     [Test]
     public void Test_SerializeObject_ShareAttribute()
     {
-        var d = new Dictionary<RelationshipAttribute, Guid>();
+        var d = new Dictionary<RelationshipAttribute,Guid>();
 
-        var json = JsonConvertExtensions.SerializeObject(d, RepositoryLocator);
-        var obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json,
-            typeof(Dictionary<RelationshipAttribute, Guid>), RepositoryLocator);
+        var json = JsonConvertExtensions.SerializeObject(d,RepositoryLocator);
+        var obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json, typeof(Dictionary<RelationshipAttribute, Guid>),RepositoryLocator);
 
-        Assert.AreEqual(0, obj.Count);
+        Assert.AreEqual(0,obj.Count);
 
         //now add a key
-        d.Add(new RelationshipAttribute(typeof(string), RelationshipType.SharedObject, "fff"), Guid.Empty);
+        d.Add(new RelationshipAttribute(typeof(string),RelationshipType.SharedObject,"fff"),Guid.Empty);
+                 
+        json = JsonConvertExtensions.SerializeObject(d,RepositoryLocator);
+        obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json, typeof(Dictionary<RelationshipAttribute, Guid>),RepositoryLocator);
 
-        json = JsonConvertExtensions.SerializeObject(d, RepositoryLocator);
-        obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json,
-            typeof(Dictionary<RelationshipAttribute, Guid>), RepositoryLocator);
-
-        Assert.AreEqual(1, obj.Count);
+        Assert.AreEqual(1,obj.Count);
     }
 
     [TestCase(true)]
     [TestCase(false)]
     public void GatherAndShare_ANOTable_Test(bool goViaJson)
     {
-        var anoserver =
-            new ExternalDatabaseServer(CatalogueRepository, "MyGatherAndShareTestANOServer", new ANOStorePatcher());
+        var anoserver = new ExternalDatabaseServer(CatalogueRepository, "MyGatherAndShareTestANOServer", new ANOStorePatcher());
         var anoTable = new ANOTable(CatalogueRepository, anoserver, "ANOMagad", "N");
 
-        Assert.AreEqual(anoTable.Server_ID, anoserver.ID);
+        Assert.AreEqual(anoTable.Server_ID,anoserver.ID);
 
         var g = new Gatherer(RepositoryLocator);
         Assert.IsTrue(g.CanGatherDependencies(anoTable));
 
         var gObj = Gatherer.GatherDependencies(anoTable);
-
+            
         //root should be the server
-        Assert.AreEqual(gObj.Object, anoserver);
+        Assert.AreEqual(gObj.Object,anoserver);
         Assert.AreEqual(gObj.Children.Single().Object, anoTable);
 
         //get the sharing definitions
         var shareManager = new ShareManager(RepositoryLocator);
-        var defParent = gObj.ToShareDefinition(shareManager, new List<ShareDefinition>());
-        var defChild = gObj.Children.Single()
-            .ToShareDefinition(shareManager, new List<ShareDefinition>(new[] { defParent }));
+        var defParent = gObj.ToShareDefinition(shareManager,new List<ShareDefinition>());
+        var defChild = gObj.Children.Single().ToShareDefinition(shareManager, new List<ShareDefinition>(new []{defParent}));
 
         //make it look like we never had it in the first place
         shareManager.GetNewOrExistingExportFor(anoserver).DeleteInDatabase();
@@ -76,19 +72,17 @@ public class GatherAndShareTests : DatabaseTests
         anoTable.DeleteInDatabase();
         anoserver.DeleteInDatabase();
 
-        if (goViaJson)
+        if(goViaJson)
         {
-            var sParent = JsonConvertExtensions.SerializeObject(defParent, RepositoryLocator);
+            var sParent = JsonConvertExtensions.SerializeObject(defParent,RepositoryLocator);
             var sChild = JsonConvertExtensions.SerializeObject(defChild, RepositoryLocator);
 
-            defParent = (ShareDefinition)JsonConvertExtensions.DeserializeObject(sParent, typeof(ShareDefinition),
-                RepositoryLocator);
-            defChild = (ShareDefinition)JsonConvertExtensions.DeserializeObject(sChild, typeof(ShareDefinition),
-                RepositoryLocator);
+            defParent = (ShareDefinition)JsonConvertExtensions.DeserializeObject(sParent, typeof(ShareDefinition),RepositoryLocator);
+            defChild = (ShareDefinition)JsonConvertExtensions.DeserializeObject(sChild, typeof(ShareDefinition), RepositoryLocator);
         }
 
         var anoserverAfter = new ExternalDatabaseServer(shareManager, defParent);
-
+            
         Assert.IsTrue(anoserverAfter.Exists());
 
         //new instance
@@ -109,8 +103,7 @@ public class GatherAndShareTests : DatabaseTests
         Assert.AreNotEqual(anoTableAfter.Server_ID, anoTable.Server_ID);
 
         //same properties
-        Assert.AreEqual(anoTableAfter.NumberOfCharactersToUseInAnonymousRepresentation,
-            anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
+        Assert.AreEqual(anoTableAfter.NumberOfCharactersToUseInAnonymousRepresentation, anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
         Assert.AreEqual(anoTableAfter.Suffix, anoTable.Suffix);
 
         //change a property and save it
@@ -123,7 +116,7 @@ public class GatherAndShareTests : DatabaseTests
 
         Assert.AreEqual(anoTableAfter.ID, anoTableAfter2.ID);
         Assert.AreEqual("N", anoTableAfter2.Suffix);
-
+            
         anoTableAfter.DeleteInDatabase();
         anoserverAfter.DeleteInDatabase();
 
@@ -136,11 +129,11 @@ public class GatherAndShareTests : DatabaseTests
     {
         var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
             $"Imaginary1{PackPluginRunner.PluginPackageSuffix}"));
-        File.WriteAllBytes(f1.FullName, new byte[] { 0x1, 0x2 });
+        File.WriteAllBytes(f1.FullName,new byte[]{0x1,0x2});
 
-        var plugin = new Core.Curation.Data.Plugin(CatalogueRepository, new FileInfo(
-            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"), new Version(1, 1, 1), new Version(1, 1, 1));
-        var lma1 = new LoadModuleAssembly(CatalogueRepository, f1, plugin);
+        var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo(
+            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"),new Version(1,1,1),new Version(1,1,1));
+        var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
 
         Assert.AreEqual(lma1.Plugin_ID, plugin.ID);
 
@@ -151,7 +144,7 @@ public class GatherAndShareTests : DatabaseTests
 
         //root should be the server
         Assert.AreEqual(gObj.Object, plugin);
-        Assert.IsTrue(gObj.Children.Any(d => d.Object.Equals(lma1)));
+        Assert.IsTrue(gObj.Children.Any(d=>d.Object.Equals(lma1)));
     }
 
 
@@ -203,7 +196,7 @@ public class GatherAndShareTests : DatabaseTests
                 shareDefinition.Select(s => JsonConvertExtensions.SerializeObject(s, RepositoryLocator)).ToList();
             shareDefinition =
                 json.Select(
-                        j => JsonConvertExtensions.DeserializeObject(j, typeof(ShareDefinition), RepositoryLocator))
+                        j => JsonConvertExtensions.DeserializeObject(j, typeof (ShareDefinition), RepositoryLocator))
                     .Cast<ShareDefinition>()
                     .ToList();
         }
@@ -214,7 +207,7 @@ public class GatherAndShareTests : DatabaseTests
         cata.LoadMetadata_ID = null;
         cata.Periodicity = Catalogue.CataloguePeriodicity.Unknown;
         cata.SaveToDatabase();
-
+            
         lmd.DeleteInDatabase();
 
         //import the saved copy
@@ -236,11 +229,11 @@ public class GatherAndShareTests : DatabaseTests
         cata.SaveToDatabase();
 
         //test importing the Catalogue properties only
-        ShareManager.ImportPropertiesOnly(cata, shareDefinition[0]);
-
+        ShareManager.ImportPropertiesOnly(cata,shareDefinition[0]);
+            
         //import the defined properties but not name
-        Assert.AreEqual("fishfish", cata.Name);
-        Assert.AreEqual(Catalogue.CataloguePeriodicity.BiMonthly, cata.Periodicity); //reset this though
+        Assert.AreEqual("fishfish",cata.Name);
+        Assert.AreEqual(Catalogue.CataloguePeriodicity.BiMonthly,cata.Periodicity); //reset this though
         Assert.IsNull(cata.LoadMetadata_ID);
         cata.SaveToDatabase();
 
@@ -254,9 +247,9 @@ public class GatherAndShareTests : DatabaseTests
         //import the saved copy
         var newObjects = shareManager.ImportSharedObject(shareDefinition).ToArray();
 
-        Assert.AreEqual("Cata", ((Catalogue)newObjects[0]).Name);
-        Assert.AreEqual("Ci1", ((CatalogueItem)newObjects[1]).Name);
-        Assert.AreEqual("Ci2", ((CatalogueItem)newObjects[2]).Name);
+        Assert.AreEqual("Cata", ((Catalogue) newObjects[0]).Name);
+        Assert.AreEqual("Ci1", ((CatalogueItem) newObjects[1]).Name);
+        Assert.AreEqual("Ci2", ((CatalogueItem) newObjects[2]).Name);
     }
 
     [Test]
@@ -287,27 +280,26 @@ public class GatherAndShareTests : DatabaseTests
         };
 
         //Give the filter a parameter @a just to make things interesting
-        var declaration = filter.GetQuerySyntaxHelper()
-            .GetParameterDeclaration("@a", new DatabaseTypeRequest(typeof(string), 1));
+        var declaration = filter.GetQuerySyntaxHelper().GetParameterDeclaration("@a", new DatabaseTypeRequest(typeof (string), 1));
         var param = filter.GetFilterFactory().CreateNewParameter(filter, declaration);
 
         //Also create a 'known good value' set i.e. recommended value for the parameter to achive some goal (you can have multiple of these - this will not be shared)
         var set = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Fife");
-        var val = new ExtractionFilterParameterSetValue(CatalogueRepository, set, (ExtractionFilterParameter)param)
-        {
-            Value = "'FISH'"
-        };
+        var val = new ExtractionFilterParameterSetValue(CatalogueRepository, set, (ExtractionFilterParameter) param)
+            {
+                Value = "'FISH'"
+            };
 
         //Gather the dependencies (this is what we are testing)
         var gatherer = new Gatherer(RepositoryLocator);
-
+            
         Assert.IsTrue(gatherer.CanGatherDependencies(filter));
         var gathered = Gatherer.GatherDependencies(filter);
 
         //gatherer should have gathered the filter and the parameter (but not the ExtractionFilterParameterSet sets)
-        Assert.AreEqual(1, gathered.Children.Count);
-        Assert.AreEqual(param, gathered.Children[0].Object);
-
+        Assert.AreEqual(1,gathered.Children.Count);
+        Assert.AreEqual(param,gathered.Children[0].Object);
+             
         //Cleanup
         val.DeleteInDatabase();
         set.DeleteInDatabase();

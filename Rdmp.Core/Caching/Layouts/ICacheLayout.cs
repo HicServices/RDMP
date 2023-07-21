@@ -14,10 +14,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Layouts;
 
 /// <summary>
-///     'static' information about the cache layout, as opposed to the resolver which will give information for specific
-///     cache configurations
-///     Cache layout is effectively based on date with load schedule-specific sub directories with dataset-specific layout
-///     information provided through the Resolver
+///'static' information about the cache layout, as opposed to the resolver which will give information for specific cache configurations
+/// Cache layout is effectively based on date with load schedule-specific sub directories with dataset-specific layout information provided through the Resolver
 /// </summary>
 public interface ICacheLayout
 {
@@ -25,13 +23,13 @@ public interface ICacheLayout
     string DateFormat { get; }
     CacheArchiveType ArchiveType { get; }
     CacheFileGranularity CacheFileGranularity { get; }
-
+        
     //Consider taking these as parameters to your constructor - see CacheLayout abstract class for how you should probably implement this interface
-    ILoadCachePathResolver Resolver { get; }
+    ILoadCachePathResolver Resolver {  get; }
     DirectoryInfo RootDirectory { get; }
-
+        
     // some interface for looking up filename
-    DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener);
+    DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener); 
     DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener);
     void CreateIfNotExists(IDataLoadEventListener listener);
     bool CheckExists(DateTime archiveDate, IDataLoadEventListener listener);
@@ -41,4 +39,5 @@ public interface ICacheLayout
     // requested by DLE
     Queue<DateTime> GetSortedDateQueue(IDataLoadEventListener listener);
     bool CheckCacheFilesAvailability(IDataLoadEventListener listener);
+        
 }

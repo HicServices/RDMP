@@ -10,21 +10,22 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
+using YamlDotNet.Core;
+using Parser = CommandLine.Parser;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 
 public abstract class AutomationCommandExecution : BasicCommandExecution
 {
-    public readonly string AutomationServiceExecutable = EnvironmentInfo.IsLinux ? "rdmp" : "rdmp.exe";
     protected readonly Func<RDMPCommandLineOptions> CommandGetter;
+    public readonly string AutomationServiceExecutable = EnvironmentInfo.IsLinux ? "rdmp" : "rdmp.exe";
 
-    private readonly TableRepository _cataTableRepo;
-    private readonly TableRepository _dataExportTableRepo;
-    private readonly YamlRepository _yamlRepository;
+    private TableRepository _cataTableRepo;
+    private TableRepository _dataExportTableRepo;
+    private YamlRepository _yamlRepository;
 
 
-    protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) :
-        base(activator)
+    protected AutomationCommandExecution(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator)
     {
         CommandGetter = commandGetter;
 
@@ -33,13 +34,14 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
         _cataTableRepo = activator.RepositoryLocator.CatalogueRepository as TableRepository;
         _yamlRepository = activator.RepositoryLocator.CatalogueRepository as YamlRepository;
         _dataExportTableRepo = activator.RepositoryLocator.DataExportRepository as TableRepository;
-
+            
         if (_yamlRepository == null && (_cataTableRepo == null || _dataExportTableRepo == null))
             SetImpossible("Current repository is not not TableRepository/YamlRepository");
+            
     }
 
     /// <summary>
-    ///     Generates command line arguments for the current engine
+    /// Generates command line arguments for the current engine
     /// </summary>
     /// <param name="argsOnly"></param>
     /// <returns></returns>
@@ -61,13 +63,13 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
             return;
 
         // if backing database uses a directory
-        if (_yamlRepository != null)
+        if(_yamlRepository != null)
         {
             // assemble CLI args that also say to use a directory
             options.Dir = _yamlRepository.Directory.FullName;
             return;
         }
-
+                
         // if backing database uses a specific connection string
         // then use the same connection string for CLI args
         if (string.IsNullOrWhiteSpace(options.CatalogueConnectionString))

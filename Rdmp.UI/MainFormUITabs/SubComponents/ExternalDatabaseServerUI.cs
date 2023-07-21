@@ -20,16 +20,12 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.MainFormUITabs.SubComponents;
 
 /// <summary>
-///     Allows you to change the connection strings of a known ExternalDatabaseServer.
-///     <para>
-///         ExternalDatabaseServers are references to existing servers.  They have a logistical name (what you want to call
-///         it) and servername.  Optionally you can
-///         specify a database (required in the case of references to specific databases e.g. Logging Database), if you
-///         omit it then the 'master' database will be used.
-///         If you do not specify a username/password then Integrated Security will be used when connecting (the preferred
-///         method).  Usernames and passwords are stored
-///         in encrypted form (See PasswordEncryptionKeyLocationUI).
-///     </para>
+/// Allows you to change the connection strings of a known ExternalDatabaseServer.
+/// 
+/// <para>ExternalDatabaseServers are references to existing servers.  They have a logistical name (what you want to call it) and servername.  Optionally you can
+/// specify a database (required in the case of references to specific databases e.g. Logging Database), if you omit it then the 'master' database will be used.
+/// If you do not specify a username/password then Integrated Security will be used when connecting (the preferred method).  Usernames and passwords are stored
+/// in encrypted form (See PasswordEncryptionKeyLocationUI).</para>
 /// </summary>
 public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design, ISaveableUI
 {
@@ -50,7 +46,7 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
         _server = databaseObject;
 
         bloading = true;
-
+            
         try
         {
             SetupDropdownItems();
@@ -73,8 +69,8 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID, "Text", "ID", s => s.ID);
-        Bind(tbName, "Text", "Name", s => s.Name);
+        Bind(tbID,"Text","ID",s=>s.ID);
+        Bind(tbName,"Text","Name",s=>s.Name);
         Bind(tbServerName, "Text", "Server", s => s.Server);
         Bind(tbMappedDataPath, "Text", "MappedDataPath", s => s.MappedDataPath);
         Bind(tbDatabaseName, "Text", "Database", s => s.Database);
@@ -87,19 +83,19 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
         ddSetKnownType.Items.Clear();
 
         var manager = new PatcherManager();
-
+            
         ddSetKnownType.Items.AddRange(manager
             .GetAllPatchers(Activator.RepositoryLocator.CatalogueRepository.MEF)
             .Select(p => p.Name)
             .ToArray());
     }
-
+        
     private void tbPassword_TextChanged(object sender, EventArgs e)
     {
-        if (!bloading)
+        if(!bloading)
             _server.Password = tbPassword.Text;
     }
-
+        
     private void btnClearKnownType_Click(object sender, EventArgs e)
     {
         _server.CreatedByAssembly = null;
@@ -119,6 +115,6 @@ public partial class ExternalDatabaseServerUI : ExternalDatabaseServerUI_Design,
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExternalDatabaseServerUI_Design, UserControl>))]
-public abstract class ExternalDatabaseServerUI_Design : RDMPSingleDatabaseObjectControl<ExternalDatabaseServer>
+public abstract class ExternalDatabaseServerUI_Design:RDMPSingleDatabaseObjectControl<ExternalDatabaseServer>
 {
 }

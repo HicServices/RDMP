@@ -4,19 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Command for double clicking objects.
+/// Command for double clicking objects.
 /// </summary>
 public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
 {
     private readonly object _o;
+
+    /// <summary>
+    /// Set to true to also emphasise the object being activated
+    /// </summary>
+    public bool AlsoShow { get; set; }
 
     public ExecuteCommandActivate(IBasicActivateItems activator, object o) : base(activator)
     {
@@ -31,11 +36,6 @@ public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
 
         Weight = -99.99999f;
     }
-
-    /// <summary>
-    ///     Set to true to also emphasise the object being activated
-    /// </summary>
-    public bool AlsoShow { get; set; }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {

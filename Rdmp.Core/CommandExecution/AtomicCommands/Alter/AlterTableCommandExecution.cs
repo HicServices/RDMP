@@ -4,22 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using System;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
 /// <summary>
-///     Abstract base command for all commands which change a tables schema (on the live database)
+/// Abstract base command for all commands which change a tables schema (on the live database)
 /// </summary>
-public abstract class AlterTableCommandExecution : BasicCommandExecution
+public abstract class AlterTableCommandExecution :BasicCommandExecution
 {
-    protected DiscoveredTable Table;
     protected ITableInfo TableInfo;
+    protected DiscoveredTable Table;
 
     protected AlterTableCommandExecution(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator)
     {
@@ -28,25 +28,26 @@ public abstract class AlterTableCommandExecution : BasicCommandExecution
         {
             Table = TableInfo.Discover(DataAccessContext.InternalDataProcessing);
         }
-        catch (Exception)
+        catch(Exception)
         {
             SetImpossible("Could not resolve Server/Table connection details");
             return;
         }
-
-
+            
+                        
         if (!Table.Exists())
         {
             SetImpossible("Table does not exist");
             return;
         }
 
-        if (Table.TableType != TableType.Table)
+        if(Table.TableType != TableType.Table)
         {
             SetImpossible($"Table is a {Table.TableType}");
+            return;
         }
     }
-
+        
     protected bool Synchronize()
     {
         var sync = new TableInfoSynchronizer(TableInfo);

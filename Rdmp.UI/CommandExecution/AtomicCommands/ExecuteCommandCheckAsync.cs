@@ -17,23 +17,21 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandCheckAsync : BasicUICommandExecution, IAtomicCommand
+internal class ExecuteCommandCheckAsync : BasicUICommandExecution,IAtomicCommand
 {
     private readonly ICheckable _checkable;
     private readonly Action<ICheckable, CheckResult> _reportWorstTo;
 
-    public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable) : base(activator)
+    public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable): base(activator)
     {
         _checkable = checkable as ICheckable;
 
-        if (_checkable == null)
+        if(_checkable == null)
             SetImpossible("Object is not checkable");
 
         Weight = 100.3f;
     }
-
-    public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable,
-        Action<ICheckable, CheckResult> reportWorst) : this(activator, checkable)
+    public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable,Action<ICheckable,CheckResult> reportWorst): this(activator,checkable)
     {
         _reportWorstTo = reportWorst;
 
@@ -42,7 +40,10 @@ internal class ExecuteCommandCheckAsync : BasicUICommandExecution, IAtomicComman
 
     public override string GetCommandName()
     {
-        if (_checkable == null) return "Check";
+        if(_checkable == null)
+        {
+            return "Check";
+        }
         return $"Check '{_checkable}'";
     }
 
@@ -57,8 +58,8 @@ internal class ExecuteCommandCheckAsync : BasicUICommandExecution, IAtomicComman
 
         var popupChecksUI = new PopupChecksUI($"Checking {_checkable}", false);
 
-        if (_reportWorstTo != null)
-            popupChecksUI.AllChecksComplete += (s, a) => _reportWorstTo(_checkable, a.CheckResults.GetWorst());
+        if(_reportWorstTo != null)
+            popupChecksUI.AllChecksComplete += (s,a)=>_reportWorstTo(_checkable,a.CheckResults.GetWorst());
 
         popupChecksUI.StartChecking(_checkable);
     }

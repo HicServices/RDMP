@@ -14,24 +14,21 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources;
 
 /// <summary>
-///     Cache source component which does nothing.  Can be used by user to build a caching pipeline even when there is
-///     nothing to do.  Use this source only if
-///     you have some bespoke process for populating / updating the cache progress and you only want a caching pipeline to
-///     exist for validation reasons not to
-///     actually run it.
+/// Cache source component which does nothing.  Can be used by user to build a caching pipeline even when there is nothing to do.  Use this source only if
+/// you have some bespoke process for populating / updating the cache progress and you only want a caching pipeline to exist for validation reasons not to
+/// actually run it.
 /// </summary>
-public class DoNothingCacheSource : CacheSource<ICacheChunk>
+public class DoNothingCacheSource:CacheSource<ICacheChunk>
 {
     private int runs;
 
-    public override ICacheChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    public override ICacheChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         //Data is never available for download
         if (runs < 10)
         {
             runs++;
-
+                
             return new DoNothingCacheChunk(CatalogueRepository)
             {
                 RunIteration = runs
@@ -43,10 +40,12 @@ public class DoNothingCacheSource : CacheSource<ICacheChunk>
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
+            
     }
 
     public override void Abort(IDataLoadEventListener listener)
     {
+            
     }
 
     public override ICacheChunk TryGetPreview()

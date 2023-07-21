@@ -10,11 +10,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.UI.ChecksUI;
 
 /// <summary>
-///     Reusable component that indicates the success / warning / failure of a task in a nice user friendly way.  Green
-///     indicates success, yellow
-///     indicates a warning and red indicates failure.  If there is an exception associated with a failure then clicking on
-///     the red face will show
-///     the Exception.
+/// Reusable component that indicates the success / warning / failure of a task in a nice user friendly way.  Green indicates success, yellow
+/// indicates a warning and red indicates failure.  If there is an exception associated with a failure then clicking on the red face will show
+/// the Exception.
 /// </summary>
 public interface IRAGSmiley : ICheckNotifier
 {

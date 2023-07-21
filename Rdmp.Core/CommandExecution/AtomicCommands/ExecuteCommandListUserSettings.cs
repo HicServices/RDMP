@@ -13,22 +13,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandListUserSettings : BasicCommandExecution
 {
-    public ExecuteCommandListUserSettings(IBasicActivateItems activator) : base(activator)
+    public ExecuteCommandListUserSettings(IBasicActivateItems activator):base(activator)
     {
-    }
 
+    }
     public override void Execute()
     {
         base.Execute();
 
         var sb = new StringBuilder();
 
-        foreach (var prop in
-                 typeof(UserSettings)
-                     .GetProperties(BindingFlags.Public | BindingFlags.Static)
-                     .OrderBy(p => p.Name))
+        foreach(var prop in 
+                typeof(UserSettings)
+                    .GetProperties(BindingFlags.Public | BindingFlags.Static)
+                    .OrderBy(p=>p.Name))
+        {
             sb.AppendLine($"{prop.Name}:{prop.GetValue(null)}");
+        }
 
         BasicActivator.Show(sb.ToString());
     }
+
 }

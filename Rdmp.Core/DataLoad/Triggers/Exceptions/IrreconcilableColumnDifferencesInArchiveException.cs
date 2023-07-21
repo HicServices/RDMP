@@ -7,11 +7,12 @@
 namespace Rdmp.Core.DataLoad.Triggers.Exceptions;
 
 /// <summary>
-///     Thrown when an _Archive table does not match the live table (See TriggerImplementer)
+/// Thrown when an _Archive table does not match the live table (See TriggerImplementer)
 /// </summary>
 public class IrreconcilableColumnDifferencesInArchiveException : TriggerException
 {
-    public IrreconcilableColumnDifferencesInArchiveException(string s) : base(s)
+    public IrreconcilableColumnDifferencesInArchiveException(string s):base(s)
     {
+            
     }
 }

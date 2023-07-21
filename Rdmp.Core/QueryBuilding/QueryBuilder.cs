@@ -17,37 +17,132 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-///     This class maintains a list of user defined ExtractionInformation objects.  It can produce SQL which will try to
-///     extract this set of ExtractionInformation objects only from the database.  This includes determining which
-///     ExtractionInformation
-///     are Lookups, which tables the various objects come from, figuring out whether they can be joined by using JoinInfo
-///     in the catalogue
-///     <para>
-///         It will throw when query SQL if it is not possible to join all the underlying tables or there are any other
-///         problems.
-///     </para>
-///     <para>You can ask it what is on line X or ask what line number has ExtractionInformation Y on it</para>
-///     <para>
-///         ExtractionInformation is sorted by column order prior to generating the SQL (i.e. not the order you add them
-///         to the query builder)
-///     </para>
+/// This class maintains a list of user defined ExtractionInformation objects.  It can produce SQL which will try to 
+/// extract this set of ExtractionInformation objects only from the database.  This includes determining which ExtractionInformation
+/// are Lookups, which tables the various objects come from, figuring out whether they can be joined by using JoinInfo in the catalogue
+/// 
+/// <para>It will throw when query SQL if it is not possible to join all the underlying tables or there are any other problems.</para>
+/// 
+/// <para>You can ask it what is on line X or ask what line number has ExtractionInformation Y on it</para>
+/// 
+/// <para>ExtractionInformation is sorted by column order prior to generating the SQL (i.e. not the order you add them to the query builder)</para>
 /// </summary>
 public class QueryBuilder : ISqlQueryBuilder
 {
     private readonly ITableInfo[] _forceJoinsToTheseTables;
-    private readonly string _hashingAlgorithm;
+    private object oSQLLock = new();
 
-    private IContainer _rootFilterContainer;
+    /// <inheritdoc/>
+    public string SQL
+    {
+        get {
 
+            lock (oSQLLock)
+            {
+                if (SQLOutOfDate)
+                    RegenerateSQL();
+                return _sql;
+            }
+        }
+    }
 
-    private string _salt;
+    /// <inheritdoc/>
+    public string LimitationSQL { get; private set; }
+    /// <inheritdoc/>
+    public List<QueryTimeColumn> SelectColumns { get; private set; }
+    /// <inheritdoc/>
+    public List<ITableInfo> TablesUsedInQuery { get; private set; }
+    /// <inheritdoc/>
+    public List<JoinInfo> JoinsUsedInQuery { get; private set; }
+    /// <inheritdoc/>
+    public List<CustomLine> CustomLines { get; private set; }
 
-    private string _sql;
-    private int _topX;
-    private readonly object oSQLLock = new();
+    /// <inheritdoc/>
+    public CustomLine TopXCustomLine { get; set; }
+        
+    /// <inheritdoc/>
+    public ParameterManager ParameterManager { get; private set; }
+        
+    /// <summary>
+    /// Optional field, this specifies where to start gargantuan joins such as when there are 3+ joins and multiple primary key tables e.g. in a star schema.
+    /// If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the Exception 
+    /// </summary>
+    public ITableInfo PrimaryExtractionTable { get; set; }
 
     /// <summary>
-    ///     Used to build extraction queries based on ExtractionInformation sets
+    /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your 
+    /// own container tree at runtime rather than referencing a database entity)
+    /// </summary>
+    public IContainer RootFilterContainer
+    {
+        get => _rootFilterContainer;
+        set {
+            _rootFilterContainer = value;
+            SQLOutOfDate = true;
+        }
+    }
+        
+    /// <inheritdoc/>
+    public bool CheckSyntax { get; set; }
+
+
+    private string _salt = null;
+
+    /// <summary>
+    /// Only use this if you want IColumns which are marked as requiring Hashing to be hashed.  Once you set this on a QueryEditor all fields so marked will be hashed using the
+    /// specified salt
+    /// </summary>
+    /// <param name="salt">A 3 letter string indicating the desired SALT</param>
+    public void SetSalt(string salt)
+    {
+        if(string.IsNullOrWhiteSpace(salt))
+            throw new NullReferenceException("Salt cannot be blank");
+
+        _salt = salt;
+    }
+
+    public void SetLimitationSQL(string limitationSQL)
+    {
+        if(limitationSQL != null && limitationSQL.Contains("top"))
+            throw new Exception("Use TopX property instead of limitation SQL to acheive this");
+
+        LimitationSQL = limitationSQL;
+        SQLOutOfDate = true;
+    }
+
+    /// <inheritdoc/>
+    public List<IFilter> Filters { get; private set; }
+
+    /// <summary>
+    /// Limits the number of returned rows to the supplied maximum or -1 if there is no maximum 
+    /// </summary>
+    public int TopX
+    {
+        get => _topX;
+        set
+        {
+            //it already has that value
+            if(_topX == value)
+                return;
+
+            _topX = value;
+            SQLOutOfDate = true;
+        }
+    }
+
+    private string _sql;
+
+    /// <inheritdoc/>
+    public bool SQLOutOfDate { get; set; }
+
+    private IContainer _rootFilterContainer;
+    private string _hashingAlgorithm;
+    private int _topX;
+        
+    public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
+
+    /// <summary>
+    /// Used to build extraction queries based on ExtractionInformation sets
     /// </summary>
     /// <param name="limitationSQL">Any text you want after SELECT to limit the results e.g. "DISTINCT" or "TOP 10"</param>
     /// <param name="hashingAlgorithm"></param>
@@ -67,103 +162,17 @@ public class QueryBuilder : ISqlQueryBuilder
         TopX = -1;
     }
 
-    /// <summary>
-    ///     Limits the number of returned rows to the supplied maximum or -1 if there is no maximum
-    /// </summary>
-    public int TopX
-    {
-        get => _topX;
-        set
-        {
-            //it already has that value
-            if (_topX == value)
-                return;
-
-            _topX = value;
-            SQLOutOfDate = true;
-        }
-    }
-
-    /// <inheritdoc />
-    public string SQL
-    {
-        get
-        {
-            lock (oSQLLock)
-            {
-                if (SQLOutOfDate)
-                    RegenerateSQL();
-                return _sql;
-            }
-        }
-    }
-
-    /// <inheritdoc />
-    public string LimitationSQL { get; private set; }
-
-    /// <inheritdoc />
-    public List<QueryTimeColumn> SelectColumns { get; }
-
-    /// <inheritdoc />
-    public List<ITableInfo> TablesUsedInQuery { get; private set; }
-
-    /// <inheritdoc />
-    public List<JoinInfo> JoinsUsedInQuery { get; private set; }
-
-    /// <inheritdoc />
-    public List<CustomLine> CustomLines { get; }
-
-    /// <inheritdoc />
-    public CustomLine TopXCustomLine { get; set; }
-
-    /// <inheritdoc />
-    public ParameterManager ParameterManager { get; }
-
-    /// <summary>
-    ///     Optional field, this specifies where to start gargantuan joins such as when there are 3+ joins and multiple primary
-    ///     key tables e.g. in a star schema.
-    ///     If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the
-    ///     Exception
-    /// </summary>
-    public ITableInfo PrimaryExtractionTable { get; set; }
-
-    /// <summary>
-    ///     A container that contains all the subcontainers and filters to be assembled during the query (use a
-    ///     SpontaneouslyInventedFilterContainer if you want to inject your
-    ///     own container tree at runtime rather than referencing a database entity)
-    /// </summary>
-    public IContainer RootFilterContainer
-    {
-        get => _rootFilterContainer;
-        set
-        {
-            _rootFilterContainer = value;
-            SQLOutOfDate = true;
-        }
-    }
-
-    /// <inheritdoc />
-    public bool CheckSyntax { get; set; }
-
-    /// <inheritdoc />
-    public List<IFilter> Filters { get; private set; }
-
-    /// <inheritdoc />
-    public bool SQLOutOfDate { get; set; }
-
-    public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
-
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void AddColumnRange(IColumn[] columnsToAdd)
     {
         //add the new ones to the list
         foreach (var col in columnsToAdd)
             AddColumn(col);
-
+                
         SQLOutOfDate = true;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void AddColumn(IColumn col)
     {
         var toAdd = new QueryTimeColumn(col);
@@ -173,38 +182,36 @@ public class QueryBuilder : ISqlQueryBuilder
         {
             SelectColumns.Add(toAdd);
             SQLOutOfDate = true;
-        }
+        }   
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public CustomLine AddCustomLine(string text, QueryComponent positionToInsert)
     {
         SQLOutOfDate = true;
         return SqlQueryBuilderHelper.AddCustomLine(this, text, positionToInsert);
     }
-
+        
     /// <summary>
-    ///     Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to
-    ///     manually call it.
+    /// Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to manually call it. 
     /// </summary>
     public void RegenerateSQL()
     {
         var checkNotifier = new ThrowImmediatelyCheckNotifier();
 
         _sql = "";
-
+            
         //reset the Parameter knowledge
         ParameterManager.ClearNonGlobals();
 
         #region Setup to output the query, where we figure out all the joins etc
-
         //reset everything
-
+            
         SelectColumns.Sort();
-
+            
         //work out all the filters 
         Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
-
+           
         TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out var primary, _forceJoinsToTheseTables);
 
         //force join to any TableInfos that would not be normally joined to but the user wants to anyway e.g. if there's WHERE sql that references them but no columns
@@ -214,7 +221,7 @@ public class QueryBuilder : ISqlQueryBuilder
                     TablesUsedInQuery.Add(force);
 
         PrimaryExtractionTable = primary;
-
+            
         SqlQueryBuilderHelper.FindLookups(this);
 
         JoinsUsedInQuery = SqlQueryBuilderHelper.FindRequiredJoins(this);
@@ -239,7 +246,6 @@ public class QueryBuilder : ISqlQueryBuilder
         /////////////////////////////////////////////Assemble Query///////////////////////////////
 
         #region Preamble (including variable declarations/initializations)
-
         //assemble the query - never use Environment.Newline, use TakeNewLine() so that QueryBuilder knows what line its got up to
         var toReturn = "";
 
@@ -249,7 +255,7 @@ public class QueryBuilder : ISqlQueryBuilder
             var needsToldTheSyntaxHelper = parameter as IInjectKnown<IQuerySyntaxHelper>;
             needsToldTheSyntaxHelper?.InjectKnown(QuerySyntaxHelper);
 
-            if (CheckSyntax)
+            if(CheckSyntax)
                 parameter.Check(checkNotifier);
 
             toReturn += GetParameterDeclarationSQL(parameter);
@@ -261,7 +267,6 @@ public class QueryBuilder : ISqlQueryBuilder
         #endregion
 
         #region Select (including all IColumns)
-
         toReturn += Environment.NewLine;
         toReturn += $"SELECT {LimitationSQL}{Environment.NewLine}";
 
@@ -269,8 +274,8 @@ public class QueryBuilder : ISqlQueryBuilder
         toReturn += Environment.NewLine;
 
         toReturn = AppendCustomLines(toReturn, QueryComponent.QueryTimeColumn);
-
-        for (var i = 0; i < SelectColumns.Count; i++)
+            
+        for (var i = 0; i < SelectColumns.Count;i++ )
         {
             //output each of the ExtractionInformations that the user requested and record the line number for posterity
             var columnAsSql = SelectColumns[i].GetSelectSQL(_hashingAlgorithm, _salt, QuerySyntaxHelper);
@@ -289,47 +294,18 @@ public class QueryBuilder : ISqlQueryBuilder
 
         //add user custom JOIN lines
         toReturn = AppendCustomLines(toReturn, QueryComponent.JoinInfoJoin);
-
+            
         #region Filters (WHERE)
 
         toReturn += SqlQueryBuilderHelper.GetWHERESQL(this);
-
+            
         toReturn = AppendCustomLines(toReturn, QueryComponent.WHERE);
         toReturn = AppendCustomLines(toReturn, QueryComponent.Postfix);
-
+            
         _sql = toReturn;
         SQLOutOfDate = false;
 
         #endregion
-    }
-
-    /// <inheritdoc />
-    public IEnumerable<Lookup> GetDistinctRequiredLookups()
-    {
-        return SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
-    }
-
-    /// <summary>
-    ///     Only use this if you want IColumns which are marked as requiring Hashing to be hashed.  Once you set this on a
-    ///     QueryEditor all fields so marked will be hashed using the
-    ///     specified salt
-    /// </summary>
-    /// <param name="salt">A 3 letter string indicating the desired SALT</param>
-    public void SetSalt(string salt)
-    {
-        if (string.IsNullOrWhiteSpace(salt))
-            throw new NullReferenceException("Salt cannot be blank");
-
-        _salt = salt;
-    }
-
-    public void SetLimitationSQL(string limitationSQL)
-    {
-        if (limitationSQL != null && limitationSQL.Contains("top"))
-            throw new Exception("Use TopX property instead of limitation SQL to acheive this");
-
-        LimitationSQL = limitationSQL;
-        SQLOutOfDate = true;
     }
 
     private string AppendCustomLines(string toReturn, QueryComponent stage)
@@ -344,8 +320,14 @@ public class QueryBuilder : ISqlQueryBuilder
         return toReturn;
     }
 
+    /// <inheritdoc/>
+    public IEnumerable<Lookup> GetDistinctRequiredLookups()
+    {
+        return SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
+    }
+        
     /// <summary>
-    ///     Generates Sql to comment, declare and set the initial value for the supplied <see cref="ISqlParameter" />.
+    /// Generates Sql to comment, declare and set the initial value for the supplied <see cref="ISqlParameter"/>.
     /// </summary>
     /// <param name="sqlParameter"></param>
     /// <returns></returns>
@@ -355,17 +337,15 @@ public class QueryBuilder : ISqlQueryBuilder
 
         if (!string.IsNullOrWhiteSpace(sqlParameter.Comment))
             toReturn += $"/*{sqlParameter.Comment}*/{Environment.NewLine}";
-
+            
         toReturn += sqlParameter.ParameterSQL + Environment.NewLine;
 
         //it's a table valued parameter! advanced
-        if (!string.IsNullOrEmpty(sqlParameter.Value) &&
-            Regex.IsMatch(sqlParameter.Value, @"\binsert\s+into\b", RegexOptions.IgnoreCase))
+        if (!string.IsNullOrEmpty(sqlParameter.Value) && Regex.IsMatch(sqlParameter.Value, @"\binsert\s+into\b",RegexOptions.IgnoreCase))
             toReturn += $"{sqlParameter.Value};{Environment.NewLine}";
         else
-            toReturn +=
-                $"SET {sqlParameter.ParameterName}={sqlParameter.Value};{Environment.NewLine}"; //its a regular value
-
+            toReturn += $"SET {sqlParameter.ParameterName}={sqlParameter.Value};{Environment.NewLine}";//its a regular value
+            
         return toReturn;
     }
 

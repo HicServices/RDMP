@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using CsvHelper;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using FAnsi.Extensions;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
@@ -20,52 +21,43 @@ using TypeGuesser.Deciders;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 
 /// <summary>
-///     This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource" />, it is responsible for adding rows
-///     read from the CSV file to
-///     the DataTable built by <see cref="FlatFileColumnCollection" />.
+/// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for adding rows read from the CSV file to
+/// the DataTable built by <see cref="FlatFileColumnCollection"/>.
 /// </summary>
 public class FlatFileToDataTablePusher
 {
+    private readonly FlatFileToLoad _fileToLoad;
+    private readonly FlatFileColumnCollection _headers;
+    private readonly Func<string, object> _hackValuesFunc;
     private readonly bool _attemptToResolveNewlinesInRecords;
     private readonly CultureInfo _culture;
     private readonly string _explicitDateTimeFormat;
-    private readonly FlatFileToLoad _fileToLoad;
-    private readonly Func<string, object> _hackValuesFunc;
-    private readonly FlatFileColumnCollection _headers;
+    private TypeDeciderFactory typeDeciderFactory;
 
     /// <summary>
-    ///     This is incremented when too many values are read from the file to match the header count BUT the values read were
-    ///     null/empty
+    /// Used in the event of reading too few cells for the current line.  The pusher will peek at the next lines to see if they
+    /// make up a coherent row e.g. if a free text field is splitting up the document with newlines.  If the peeked lines do not
+    /// resolve the problem then the line will be marked as BadData and the peeked records must be reprocessed by <see cref="DelimitedFlatFileDataFlowSource"/>
     /// </summary>
-    private long _bufferOverrunsWhereColumnValueWasBlank;
+    public FlatFileLine PeekedRecord;
 
     /// <summary>
-    ///     We only complain once about headers not matching the number of cell values
-    /// </summary>
-    private bool _haveComplainedAboutColumnMismatch;
-
-    /// <summary>
-    ///     All line numbers of the source file being read that could not be processed.  Allows BadDataFound etc to be called
-    ///     multiple times without skipping
-    ///     records by accident.
+    /// All line numbers of the source file being read that could not be processed.  Allows BadDataFound etc to be called multiple times without skipping
+    /// records by accident.
     /// </summary>
     public HashSet<int> BadLines = new();
 
     /// <summary>
-    ///     Used in the event of reading too few cells for the current line.  The pusher will peek at the next lines to see if
-    ///     they
-    ///     make up a coherent row e.g. if a free text field is splitting up the document with newlines.  If the peeked lines
-    ///     do not
-    ///     resolve the problem then the line will be marked as BadData and the peeked records must be reprocessed by
-    ///     <see cref="DelimitedFlatFileDataFlowSource" />
+    /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty
     /// </summary>
-    public FlatFileLine PeekedRecord;
+    private long _bufferOverrunsWhereColumnValueWasBlank = 0;
 
-    private readonly TypeDeciderFactory typeDeciderFactory;
+    /// <summary>
+    /// We only complain once about headers not matching the number of cell values
+    /// </summary>
+    private bool _haveComplainedAboutColumnMismatch;
 
-    public FlatFileToDataTablePusher(FlatFileToLoad fileToLoad, FlatFileColumnCollection headers,
-        Func<string, object> hackValuesFunc, bool attemptToResolveNewlinesInRecords, CultureInfo culture,
-        string explicitDateTimeFormat)
+    public FlatFileToDataTablePusher(FlatFileToLoad fileToLoad, FlatFileColumnCollection headers, Func<string, object> hackValuesFunc, bool attemptToResolveNewlinesInRecords,CultureInfo culture, string explicitDateTimeFormat)
     {
         _fileToLoad = fileToLoad;
         _headers = headers;
@@ -74,20 +66,19 @@ public class FlatFileToDataTablePusher
         _culture = culture ?? CultureInfo.CurrentCulture;
         _explicitDateTimeFormat = explicitDateTimeFormat;
         typeDeciderFactory = new TypeDeciderFactory(_culture);
-
-        if (!string.IsNullOrWhiteSpace(explicitDateTimeFormat))
-            typeDeciderFactory.Settings.ExplicitDateFormats = new[] { explicitDateTimeFormat };
+            
+        if(!string.IsNullOrWhiteSpace(explicitDateTimeFormat))
+            typeDeciderFactory.Settings.ExplicitDateFormats = new []{ explicitDateTimeFormat};
     }
 
-    public int PushCurrentLine(CsvReader reader, FlatFileLine lineToPush, DataTable dt, IDataLoadEventListener listener,
-        FlatFileEventHandlers eventHandlers)
+    public int PushCurrentLine(CsvReader reader,FlatFileLine lineToPush, DataTable dt,IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
     {
         //skip the blank lines
         if (lineToPush.Cells.Length == 0 || lineToPush.Cells.All(h => h.IsBasicallyNull()))
             return 0;
 
         var headerCount = _headers.CountNotNull;
-
+            
         //if the number of not empty headers doesn't match the headers in the data table
         if (dt.Columns.Count != headerCount)
             if (!_haveComplainedAboutColumnMismatch)
@@ -122,8 +113,7 @@ public class FlatFileToDataTablePusher
                 }
                 else
                 {
-                    var errorMessage = string.Format(
-                        "Column mismatch on line {0} of file '{1}', it has too many columns (expected {2} columns but line had  {3})",
+                    var errorMessage = string.Format("Column mismatch on line {0} of file '{1}', it has too many columns (expected {2} columns but line had  {3})",
                         reader.Context.Parser.RawRow,
                         dt.TableName,
                         _headers.Length,
@@ -139,7 +129,7 @@ public class FlatFileToDataTablePusher
                 }
 
             //if we are ignoring this header
-            if (_headers.IgnoreColumnsList.Contains(_headers[i]))
+            if(_headers.IgnoreColumnsList.Contains(_headers[i]))
                 continue;
 
             //its an empty header, don't bother populating it
@@ -152,9 +142,7 @@ public class FlatFileToDataTablePusher
 
             //sometimes flat files have ,NULL,NULL,"bob" in instead of ,,"bob"
             if (lineToPush[i].IsBasicallyNull())
-            {
                 rowValues.Add(_headers[i], DBNull.Value);
-            }
             else
             {
                 var hackedValue = _hackValuesFunc(lineToPush[i]);
@@ -164,8 +152,7 @@ public class FlatFileToDataTablePusher
 
                 try
                 {
-                    if (hackedValue is string s &&
-                        typeDeciderFactory.Dictionary.TryGetValue(dt.Columns[_headers[i]].DataType, out var decider))
+                    if (hackedValue is string s && typeDeciderFactory.Dictionary.TryGetValue(dt.Columns[_headers[i]].DataType,out var decider))
                         hackedValue = decider.Parse(s);
 
                     rowValues.Add(_headers[i], hackedValue);
@@ -173,13 +160,12 @@ public class FlatFileToDataTablePusher
                 catch (Exception e)
                 {
                     throw new FileLoadException(
-                        $"Error reading file '{dt.TableName}'.  Problem loading value {lineToPush[i]} into data table (on Line number {reader.Context.Parser.RawRow}) the header we were trying to populate was {_headers[i]} and was of datatype {dt.Columns[_headers[i]].DataType}",
-                        e);
+                        $"Error reading file '{dt.TableName}'.  Problem loading value {lineToPush[i]} into data table (on Line number {reader.Context.Parser.RawRow}) the header we were trying to populate was {_headers[i]} and was of datatype {dt.Columns[_headers[i]].DataType}", e);
                 }
             }
         }
 
-        if (!BadLines.Contains(reader.Context.Parser.RawRow))
+        if(!BadLines.Contains(reader.Context.Parser.RawRow))
         {
             var currentRow = dt.Rows.Add();
             foreach (var kvp in rowValues)
@@ -191,10 +177,9 @@ public class FlatFileToDataTablePusher
         return 0;
     }
 
-    private bool DealWithTooFewCellsOnCurrentLine(CsvReader reader, FlatFileLine lineToPush,
-        IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
+    private bool DealWithTooFewCellsOnCurrentLine(CsvReader reader, FlatFileLine lineToPush, IDataLoadEventListener listener,FlatFileEventHandlers eventHandlers)
     {
-        if (!_attemptToResolveNewlinesInRecords)
+        if(!_attemptToResolveNewlinesInRecords)
         {
             //we read too little cell count but we don't want to solve the problem
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -229,7 +214,7 @@ public class FlatFileToDataTablePusher
                     PeekedRecord = peekedLine;
 
                     //and mark everything else as bad
-                    AllBad(lineToPush, allPeekedLines, eventHandlers);
+                    AllBad(lineToPush, allPeekedLines,eventHandlers);
                     return false;
                 }
 
@@ -239,7 +224,7 @@ public class FlatFileToDataTablePusher
             else
             {
                 //Ran out of space in the file without fixing the problem so it's all bad
-                AllBad(lineToPush, allPeekedLines, eventHandlers);
+                AllBad(lineToPush, allPeekedLines,eventHandlers);
 
                 //couldn't fix the problem
                 return false;
@@ -254,13 +239,14 @@ public class FlatFileToDataTablePusher
 
             //add any further cells on after that
             newCells.AddRange(peekedLine.Cells.Skip(1));
+
         } while (newCells.Count < _headers.Length);
 
 
         //if we read too much or reached the end of the file
         if (newCells.Count > _headers.Length)
         {
-            AllBadExceptLastSoRequeueThatOne(lineToPush, allPeekedLines, eventHandlers);
+            AllBadExceptLastSoRequeueThatOne(lineToPush,allPeekedLines,eventHandlers);
             return false;
         }
 
@@ -275,13 +261,14 @@ public class FlatFileToDataTablePusher
     }
 
 
+
     public DataTable StronglyTypeTable(DataTable workingTable, ExplicitTypingCollection explicitTypingCollection)
     {
         var deciders = new Dictionary<int, IDecideTypesForStrings>();
         var factory = new TypeDeciderFactory(_culture);
-
-        if (!string.IsNullOrWhiteSpace(_explicitDateTimeFormat))
-            factory.Settings.ExplicitDateFormats = new[] { _explicitDateTimeFormat };
+            
+        if(!string.IsNullOrWhiteSpace(_explicitDateTimeFormat))
+            factory.Settings.ExplicitDateFormats = new []{ _explicitDateTimeFormat};
 
         var dtCloned = workingTable.Clone();
 
@@ -290,8 +277,7 @@ public class FlatFileToDataTablePusher
         foreach (DataColumn col in workingTable.Columns)
         {
             //if we have already handled it
-            if (explicitTypingCollection != null &&
-                explicitTypingCollection.ExplicitTypesCSharp.ContainsKey(col.ColumnName))
+            if (explicitTypingCollection != null && explicitTypingCollection.ExplicitTypesCSharp.ContainsKey(col.ColumnName))
                 continue;
 
             //let's make a decision about the data type to use based on the contents
@@ -304,9 +290,8 @@ public class FlatFileToDataTablePusher
                 dtCloned.Columns[col.ColumnName].DataType = computedType.Guess.CSharpType;
 
                 //if we have a type decider to parse this data type
-                if (factory.IsSupported(computedType.Guess.CSharpType))
-                    deciders.Add(col.Ordinal,
-                        factory.Create(computedType.Guess.CSharpType)); //record column index and parser
+                if(factory.IsSupported(computedType.Guess.CSharpType))
+                    deciders.Add(col.Ordinal,factory.Create(computedType.Guess.CSharpType)); //record column index and parser
 
                 typeChangeNeeded = true;
             }
@@ -315,17 +300,19 @@ public class FlatFileToDataTablePusher
         if (typeChangeNeeded)
         {
             foreach (DataRow row in workingTable.Rows)
-                dtCloned.Rows.Add(row.ItemArray.Select((v, idx) =>
-                    deciders.TryGetValue(idx, out var decider) && v is string s ? decider.Parse(s) : v).ToArray());
+                dtCloned.Rows.Add(row.ItemArray.Select((v,idx)=>
+
+                    deciders.TryGetValue(idx,out var decider) && v is string s?
+                        decider.Parse(s) :
+                        v).ToArray());
 
             return dtCloned;
         }
 
-        return workingTable;
+        return workingTable;            
     }
 
-    private void AllBadExceptLastSoRequeueThatOne(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines,
-        FlatFileEventHandlers eventHandlers)
+    private void AllBadExceptLastSoRequeueThatOne(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)
     {
         //the current line is bad
         eventHandlers.BadDataFound(lineToPush);
@@ -338,8 +325,7 @@ public class FlatFileToDataTablePusher
             eventHandlers.BadDataFound(line);
     }
 
-    private static void AllBad(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines,
-        FlatFileEventHandlers eventHandlers)
+    private static void AllBad(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)
     {
         //the current line is bad
         eventHandlers.BadDataFound(lineToPush);

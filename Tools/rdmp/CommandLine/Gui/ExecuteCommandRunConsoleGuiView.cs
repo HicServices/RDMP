@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using Rdmp.Core.CommandExecution;
+using System;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
@@ -15,12 +15,11 @@ internal class ExecuteCommandRunConsoleGuiView : BasicCommandExecution
     private readonly Func<Window> windowConstructor;
 
     /// <summary>
-    ///     Command for running a console gui UI.
+    /// Command for running a console gui UI.
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="windowConstructor">Called only when/if the command is executed</param>
-    public ExecuteCommandRunConsoleGuiView(IBasicActivateItems activator, Func<Window> windowConstructor) :
-        base(activator)
+    public ExecuteCommandRunConsoleGuiView(IBasicActivateItems activator, Func<Window> windowConstructor):base(activator)
     {
         this.windowConstructor = windowConstructor;
     }

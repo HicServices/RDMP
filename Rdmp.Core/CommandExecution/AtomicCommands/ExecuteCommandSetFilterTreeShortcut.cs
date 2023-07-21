@@ -4,59 +4,58 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Repositories.Construction;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Creates a reference in one <see cref="AggregateConfiguration" /> pointing to another informing it to use the WHERE
-///     filter logic of the other.  This allows you to maintain a single master copy of a given configuration and reference
-///     it from several places without creating duplicates.
+/// Creates a reference in one <see cref="AggregateConfiguration"/> pointing to another informing it to use the WHERE filter logic of the other.  This allows you to maintain a single master copy of a given configuration and reference it from several places without creating duplicates.
 /// </summary>
 internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
 {
-    private readonly bool _promptChoice;
+    private AggregateConfiguration _setOn { get; }
+
+    private bool _promptChoice;
+
+    private AggregateConfiguration _pointTo { get; }
 
     /// <summary>
-    ///     Constructor for interactive mode (ask what they want to set it to when the command is run)
+    /// Constructor for interactive mode (ask what they want to set it to when the command is run)
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="setOn"></param>
-    public ExecuteCommandSetFilterTreeShortcut(IBasicActivateItems activator, AggregateConfiguration setOn) :
-        base(activator)
+    public ExecuteCommandSetFilterTreeShortcut(IBasicActivateItems activator, AggregateConfiguration setOn): base(activator)
     {
         _setOn = setOn;
         _promptChoice = true;
 
-        if (_setOn.RootFilterContainer_ID != null)
-            SetImpossible("Aggregate already has a root filter container");
+        if(_setOn.RootFilterContainer_ID != null)
+            SetImpossible($"Aggregate already has a root filter container");
 
         if (_setOn.Catalogue.IsApiCall())
             SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);
     }
 
     /// <summary>
-    ///     Constructor for setting a specific shortcut
+    /// Constructor for setting a specific shortcut
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="setOn"></param>
     /// <param name="pointTo"></param>
     [UseWithObjectConstructor]
-    public ExecuteCommandSetFilterTreeShortcut(IBasicActivateItems activator,
-        [DemandsInitialization(
-            "An aggregate for whom you want to set the WHERE logic on (must not have any current filters/containers)")]
-        AggregateConfiguration setOn,
-        [DemandsInitialization(
-            "The destination aggregate which contains a WHERE logic tree (containers and filters) that you want to copy.  Pass Null to clear")]
+    public ExecuteCommandSetFilterTreeShortcut(IBasicActivateItems activator, 
+        [DemandsInitialization("An aggregate for whom you want to set the WHERE logic on (must not have any current filters/containers)")]
+        AggregateConfiguration setOn, 
+        [DemandsInitialization("The destination aggregate which contains a WHERE logic tree (containers and filters) that you want to copy.  Pass Null to clear")]
         AggregateConfiguration pointTo) : base(activator)
     {
         _setOn = setOn;
         _pointTo = pointTo;
 
-        if (_setOn.RootFilterContainer_ID != null)
+        if(_setOn.RootFilterContainer_ID != null)
             SetImpossible($"{_setOn} already has a root filter container");
 
         if (_setOn.Catalogue.IsApiCall())
@@ -65,21 +64,16 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
         if (_pointTo != null && _pointTo.RootFilterContainer_ID == null)
             SetImpossible($"{_pointTo} does not have a filter container tree to link to");
 
-        if (_pointTo == null && setOn.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID == null)
+        if(_pointTo == null && setOn.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID == null)
             SetImpossible($"{_pointTo} does not have a shortcut to clear");
     }
-
-    private AggregateConfiguration _setOn { get; }
-
-    private AggregateConfiguration _pointTo { get; }
-
     public override void Execute()
     {
         base.Execute();
 
         var pointTo = _pointTo;
 
-        if (_promptChoice && pointTo == null)
+        if(_promptChoice && pointTo == null)
         {
             var available = _setOn.Repository.GetAllObjects<AggregateConfiguration>().Where(a =>
                     //which are not themselves already shortcuts!
@@ -91,16 +85,16 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
                 .Except(new[] { _setOn }).ToArray();
 
 
-            if (!available.Any())
+            if(!available.Any())
             {
                 BasicActivator.Show("There are no other AggregateConfigurations with filter trees you could reference");
                 return;
             }
 
-            pointTo = (AggregateConfiguration)BasicActivator.SelectOne("Target", available);
-
+            pointTo = (AggregateConfiguration)BasicActivator.SelectOne("Target",available,null,false);
+                
             // Looks like they didn't make a choice
-            if (pointTo == null)
+            if(pointTo == null)
                 return;
         }
 

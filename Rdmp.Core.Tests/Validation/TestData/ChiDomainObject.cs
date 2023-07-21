@@ -8,10 +8,11 @@ namespace Rdmp.Core.Tests.Validation.TestData;
 
 public class ChiDomainObject
 {
+    public string chi { get; set; }
+
     public ChiDomainObject(string chi)
     {
         this.chi = chi;
     }
 
-    public string chi { get; set; }
 }

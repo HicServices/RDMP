@@ -13,21 +13,19 @@ namespace Rdmp.UI.Menus;
 
 internal class PipelineMenu : RDMPContextMenuStrip
 {
-    public PipelineMenu(RDMPContextMenuStripArgs args, PipelineCompatibleWithUseCaseNode node) : base(args, node)
+    public PipelineMenu(RDMPContextMenuStripArgs args, PipelineCompatibleWithUseCaseNode node): base(args,node)
     {
         // alternate create new that uses a windows UI form
         args.SkipCommand<ExecuteCommandNewObject>();
         Add(new ExecuteCommandCreateNewPipeline(_activator, node.UseCase));
     }
-
-    public PipelineMenu(RDMPContextMenuStripArgs args, StandardPipelineUseCaseNode node) : base(args, node)
+    public PipelineMenu(RDMPContextMenuStripArgs args, StandardPipelineUseCaseNode node): base(args, node)
     {
         // alternate create new that uses a windows UI form
         args.SkipCommand<ExecuteCommandNewObject>();
         Add(new ExecuteCommandCreateNewPipeline(_activator, node.UseCase));
     }
-
-    public PipelineMenu(RDMPContextMenuStripArgs args, Pipeline pipeline) : base(args, pipeline)
+    public PipelineMenu(RDMPContextMenuStripArgs args, Pipeline pipeline): base(args, pipeline)
     {
         // alternate create new that uses a windows UI form
         args.SkipCommand<ExecuteCommandNewObject>();

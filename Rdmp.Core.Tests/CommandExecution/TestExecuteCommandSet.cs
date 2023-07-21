@@ -19,13 +19,12 @@ internal class TestExecuteCommandSet : CommandCliTests
     {
         var cata = new Catalogue(Repository.CatalogueRepository, "Bob");
 
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet), new CommandLineObjectPicker(new[]
-        {
-            $"Catalogue:{cata.ID}", "Description", "Some long description"
-        }, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{
+            $"Catalogue:{cata.ID}","Description","Some long description"}, GetActivator()));
 
         cata.RevertToDatabaseState();
-        Assert.AreEqual("Some long description", cata.Description);
+        Assert.AreEqual("Some long description",cata.Description);
+
     }
 
     [Test]
@@ -37,13 +36,12 @@ internal class TestExecuteCommandSet : CommandCliTests
         };
         cata.SaveToDatabase();
 
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet), new CommandLineObjectPicker(new[]
-        {
-            $"Catalogue:{cata.ID}", "Description", "NULL"
-        }, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{
+            $"Catalogue:{cata.ID}","Description","NULL"}, GetActivator()));
 
         cata.RevertToDatabaseState();
         Assert.IsNull(cata.Description);
+
     }
 
     [Test]
@@ -64,14 +62,13 @@ internal class TestExecuteCommandSet : CommandCliTests
         Assert.IsNull(pta.Value);
         Assert.IsNull(pta.GetValueAsSystemType());
 
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),
-            new CommandLineObjectPicker(new[] { "ProcessTaskArgument:TablesToIsolate", "Value", ids }, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),new CommandLineObjectPicker(new []{"ProcessTaskArgument:TablesToIsolate" ,"Value",ids}, GetActivator()));
 
-        Assert.AreEqual(ids, pta.Value);
+        Assert.AreEqual(ids,pta.Value);
 
-        Assert.Contains(t1, (TableInfo[])pta.GetValueAsSystemType());
-        Assert.Contains(t2, (TableInfo[])pta.GetValueAsSystemType());
-        Assert.Contains(t3, (TableInfo[])pta.GetValueAsSystemType());
-        Assert.Contains(t4, (TableInfo[])pta.GetValueAsSystemType());
+        Assert.Contains(t1,(TableInfo[])pta.GetValueAsSystemType());
+        Assert.Contains(t2,(TableInfo[])pta.GetValueAsSystemType());
+        Assert.Contains(t3,(TableInfo[])pta.GetValueAsSystemType());
+        Assert.Contains(t4,(TableInfo[])pta.GetValueAsSystemType());
     }
 }

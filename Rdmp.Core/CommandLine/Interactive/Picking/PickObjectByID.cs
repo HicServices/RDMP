@@ -4,40 +4,34 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
 /// <summary>
-///     Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity" />
-///     matching based on ID (e.g. "Catalogue:23")
+/// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on ID (e.g. "Catalogue:23")
 /// </summary>
-public class PickObjectByID : PickObjectBase
+public class PickObjectByID :PickObjectBase
 {
-    public PickObjectByID(IBasicActivateItems activator)
-        : base(activator,
-            new Regex("^([A-Za-z]+):([0-9,]+)$", RegexOptions.IgnoreCase))
-    {
-    }
-
     /*
         Console.WriteLine("Format \"\" e.g. \"Catalogue:*mysql*\" or \"Catalogue:12,23,34\"");
 
         */
     public override string Format => "{Type}:{ID}[,{ID2},{ID3}...]";
-
-    public override string Help =>
+    public override string Help => 
         @"Type: must be an RDMP object type e.g. Catalogue, Project etc.
 ID: must reference an object that exists
 ID2+: (optional) only allowed if you are being prompted for multiple objects, allows you to specify multiple objects of the same Type using comma separator";
-
-    public override IEnumerable<string> Examples => new[]
+        
+    public override IEnumerable<string> Examples => new []
     {
-        "Catalogue:1",
+        "Catalogue:1", 
         "Catalogue:1,2,3"
     };
 
@@ -49,6 +43,13 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
         return baseMatch && IsDatabaseObjectType(Regex.Match(arg).Groups[1].Value, out _);
     }
 
+    public PickObjectByID(IBasicActivateItems activator)
+        :base(activator,
+            new Regex("^([A-Za-z]+):([0-9,]+)$",RegexOptions.IgnoreCase))
+    {
+                
+    }
+        
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
     {
         var objByID = MatchOrThrow(arg, idx);
@@ -58,8 +59,8 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
 
         var dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
 
-        var objs = objectId.Split(',').Select(id => GetObjectByID(dbObjectType, int.Parse(id))).Distinct();
-
-        return new CommandLineObjectPickerArgumentValue(arg, idx, objs.ToArray());
+        var objs = objectId.Split(',').Select(id=>GetObjectByID(dbObjectType,int.Parse(id))).Distinct();
+                
+        return new CommandLineObjectPickerArgumentValue(arg,idx,objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
     }
 }

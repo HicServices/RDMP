@@ -10,27 +10,26 @@ using System.ComponentModel;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-///     Values (if present) in a column must be within a certain range of numeric values.  This can include referencing
-///     another column.  For example you could
-///     specify that the column 'AverageResult' must have an Inclusive Upper bound of the column 'MaxResult'.
+/// Values (if present) in a column must be within a certain range of numeric values.  This can include referencing another column.  For example you could
+/// specify that the column 'AverageResult' must have an Inclusive Upper bound of the column 'MaxResult'.
 /// </summary>
-public class BoundDouble : Bound
+public class BoundDouble :  Bound
 {
-    public BoundDouble()
-    {
-        Inclusive = true;
-    }
-
     [Description("Optional, Requires the value being validated to be HIGHER than this number")]
     public double? Lower { get; set; }
 
     [Description("Optional, Requires the value being validated to be LOWER than this number")]
     public double? Upper { get; set; }
 
+    public BoundDouble()
+    {
+        Inclusive = true;
+    }
+
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {
         //nulls are fine
-        if (value == null)
+        if(value == null)
             return null;
 
         //nulls are also fine if we are passed blanks
@@ -45,13 +44,13 @@ public class BoundDouble : Bound
         }
         catch (FormatException)
         {
-            return new ValidationFailure("Invalid format for double ", this);
+            return new ValidationFailure("Invalid format for double ",this);
         }
 
 
         if (Lower.HasValue || Upper.HasValue)
             if (value != null && !IsWithinRange(v))
-                return new ValidationFailure(CreateViolationReportUsingValues(v), this);
+                return new ValidationFailure(CreateViolationReportUsingValues(v),this);
 
         if (value != null && !IsWithinRange(v, otherColumns, otherColumnNames))
             return new ValidationFailure(CreateViolationReportUsingFieldNames(v), this);

@@ -10,14 +10,12 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class
-    ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode : RDMPCommandExecutionProposal<
-        ExtractionArbitraryFolderNode>
+internal class ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode : RDMPCommandExecutionProposal<ExtractionArbitraryFolderNode>
 {
-    public ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode(IActivateItems activator) : base(activator)
+    public ProposeExecutionWhenTargetIsExtractionArbitraryFolderNode(IActivateItems activator):base(activator)
     {
-    }
 
+    }
     public override void Activate(ExtractionArbitraryFolderNode target)
     {
     }
@@ -27,10 +25,12 @@ internal class
         return false;
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionArbitraryFolderNode target,
-        InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionArbitraryFolderNode target, InsertOption insertOption = InsertOption.Default)
     {
-        if (target.Configuration == null) return null;
+        if (target.Configuration == null)
+        {
+            return null;
+        }
 
         // for drag and drop onto this node the options are whatever they would be for dropping
         // onto the ExtractionConfiguration itself

@@ -4,29 +4,28 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SubComponents.Graphs;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandViewCohortAggregateGraph : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandViewCohortAggregateGraph:BasicUICommandExecution,IAtomicCommand
 {
     private readonly CohortSummaryAggregateGraphObjectCollection _collection;
-    private readonly float DEFAULT_WEIGHT = 2.6f;
+    private float DEFAULT_WEIGHT = 2.6f;
 
-    public ExecuteCommandViewCohortAggregateGraph(IActivateItems activator,
-        CohortSummaryAggregateGraphObjectCollection collection) : base(activator)
+    public ExecuteCommandViewCohortAggregateGraph(IActivateItems activator, CohortSummaryAggregateGraphObjectCollection collection) : base(activator)
     {
         Weight = DEFAULT_WEIGHT;
 
         _collection = collection;
 
-        if (collection.CohortIfAny != null && collection.CohortIfAny.IsJoinablePatientIndexTable())
+        if(collection.CohortIfAny != null && collection.CohortIfAny.IsJoinablePatientIndexTable())
             SetImpossible("Graphs cannot be generated for Patient Index tables");
     }
 

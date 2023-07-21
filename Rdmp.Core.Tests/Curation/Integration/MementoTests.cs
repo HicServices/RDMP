@@ -16,12 +16,12 @@ public class MementoTests : DatabaseTests
     [Test]
     public void FakeMemento_Catalogue_Modify()
     {
-        var c = new Catalogue(CatalogueRepository, "Hey");
+        var c = new Catalogue(CatalogueRepository,"Hey");
 
         var g = Guid.NewGuid();
         var commit = new Commit(CatalogueRepository, g, "Breaking stuff!");
 
-        var mem = new Memento(CatalogueRepository, commit, MementoType.Modify, c, "yar", "blerg");
+        var mem = new Memento(CatalogueRepository,commit,MementoType.Modify,c,"yar","blerg");
         mem.SaveToDatabase();
 
         mem.BeforeYaml = "haha";
@@ -36,7 +36,7 @@ public class MementoTests : DatabaseTests
         Assert.AreEqual("yar", mem2.BeforeYaml);
         Assert.AreEqual(MementoType.Modify, mem2.Type);
         Assert.AreEqual(Environment.UserName, mem2.Commit.Username);
-        Assert.AreEqual(c, mem2.GetReferencedObject(RepositoryLocator));
+        Assert.AreEqual(c, mem2.GetReferencedObject(RepositoryLocator)); 
     }
 
 
@@ -51,7 +51,7 @@ public class MementoTests : DatabaseTests
         var mem = new Memento(CatalogueRepository, commit, MementoType.Add, c, null, "blerg");
         mem.SaveToDatabase();
 
-        foreach (var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
+        foreach(var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
         {
             Assert.IsNull(check.BeforeYaml);
             Assert.AreEqual(g, new Guid(check.Commit.Transaction));

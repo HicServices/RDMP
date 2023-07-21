@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -23,43 +24,31 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 
 /// <summary>
-///     Executes a Cohort Identification Configuration query and releases the identifiers read into the pipeline as a
-///     single column DataTable.
+/// Executes a Cohort Identification Configuration query and releases the identifiers read into the pipeline as a single column DataTable.
 /// </summary>
-public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<DataTable>,
-    IPipelineRequirement<CohortIdentificationConfiguration>
+public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<CohortIdentificationConfiguration>
 {
-    private readonly CancellationTokenSource _cancelGlobalOperations = new();
     private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
 
-    private bool haveSentData;
-
-    [DemandsInitialization(
-        "The length of time (in seconds) to wait before timing out the SQL command to execute the CohortIdentificationConfiguration, if you find it is taking exceptionally long for a CohortIdentificationConfiguration to execute then consider caching some of the subqueries",
-        DemandType.Unspecified, 10000)]
+    [DemandsInitialization("The length of time (in seconds) to wait before timing out the SQL command to execute the CohortIdentificationConfiguration, if you find it is taking exceptionally long for a CohortIdentificationConfiguration to execute then consider caching some of the subqueries",DemandType.Unspecified,10000)]
     public int Timeout { get; set; }
 
-    [DemandsInitialization(
-        "If ticked, will Freeze the CohortIdentificationConfiguration if the import pipeline terminates successfully")]
+    [DemandsInitialization("If ticked, will Freeze the CohortIdentificationConfiguration if the import pipeline terminates successfully")]
     public bool FreezeAfterSuccessfulImport { get; set; }
 
+    private bool haveSentData = false;
+    private CancellationTokenSource _cancelGlobalOperations = new();
+
     /// <summary>
-    ///     If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear
-    ///     out the cache.  This will mean that
-    ///     when run you will get a view of the live tables (which might be recached as part of building the cic) rather than
-    ///     the (potentially stale) current cache
+    /// If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear out the cache.  This will mean that
+    /// when run you will get a view of the live tables (which might be recached as part of building the cic) rather than the (potentially stale) current cache
     /// </summary>
     public bool ClearCohortIdentificationConfigurationCacheBeforeRunning { get; set; }
 
-
-    public void PreInitialize(CohortIdentificationConfiguration value, IDataLoadEventListener listener)
-    {
-        _cohortIdentificationConfiguration = value;
-    }
-
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        if (haveSentData)
+
+        if(haveSentData)
             return null;
 
         haveSentData = true;
@@ -70,11 +59,10 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
         //if it didn't crash
-        if (pipelineFailureExceptionIfAny == null)
-            if (FreezeAfterSuccessfulImport)
+        if(pipelineFailureExceptionIfAny == null)
+            if(FreezeAfterSuccessfulImport)
             {
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information, "Freezing CohortIdentificationConfiguration"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Freezing CohortIdentificationConfiguration"));
                 _cohortIdentificationConfiguration.Freeze();
             }
     }
@@ -90,50 +78,6 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         return GetDataTable(new ThrowImmediatelyDataLoadEventListener());
     }
 
-    public void Check(ICheckNotifier notifier)
-    {
-        var container = _cohortIdentificationConfiguration.RootCohortAggregateContainer;
-        if (container != null)
-        {
-            if (container.IsDisabled)
-                notifier.OnCheckPerformed(new CheckEventArgs("Root container is disabled", CheckResult.Fail));
-
-            foreach (var sub in container.GetAllSubContainersRecursively())
-            {
-                if (sub.IsDisabled)
-                    notifier.OnCheckPerformed(new CheckEventArgs($"Query includes disabled container '{sub}'",
-                        CheckResult.Warning));
-
-                foreach (var configuration in sub.GetAggregateConfigurations())
-                    if (configuration.IsDisabled)
-                        notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"Query includes disabled aggregate '{configuration}'", CheckResult.Warning));
-            }
-        }
-
-        try
-        {
-            if (_cohortIdentificationConfiguration.Frozen)
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        $"CohortIdentificationConfiguration {_cohortIdentificationConfiguration} is Frozen (By {_cohortIdentificationConfiguration.FrozenBy} on {_cohortIdentificationConfiguration.FrozenDate}).  It might have already been imported once before.",
-                        CheckResult.Warning));
-
-            if (!UserSettings.SkipCohortBuilderValidationOnCommit)
-            {
-                var result = TryGetPreview();
-
-                if (result.Rows.Count == 0)
-                    throw new Exception("No Identifiers were returned by the cohort query");
-            }
-        }
-        catch (Exception e)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Could not build extraction SQL for {_cohortIdentificationConfiguration}", CheckResult.Fail, e));
-        }
-    }
-
     private DataTable GetDataTable(IDataLoadEventListener listener)
     {
         listener ??= new ThrowImmediatelyDataLoadEventListener();
@@ -141,7 +85,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to lookup which server to interrogate for CohortIdentificationConfiguration {_cohortIdentificationConfiguration}"));
 
-        if (_cohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
+        if(_cohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
                 $"CohortIdentificationConfiguration '{_cohortIdentificationConfiguration}' has no RootCohortAggregateContainer_ID, is it empty?"));
 
@@ -150,35 +94,31 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         var rootContainerTask =
             //no caching set up so no point in running CohortCompilerRunner
             _cohortIdentificationConfiguration.QueryCachingServer_ID == null
-                ? RunRootContainerOnlyNoCaching(cohortCompiler)
-                : RunAllTasksWithRunner(cohortCompiler, listener);
+            ? RunRootContainerOnlyNoCaching(cohortCompiler)
+            : RunAllTasksWithRunner(cohortCompiler, listener);
 
-        if (rootContainerTask.State == CompilationState.Executing)
+        if(rootContainerTask.State == CompilationState.Executing)
         {
-            listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Warning,
-                    "Root container task was unexpectedly still executing... let's give it a little longer to run"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Root container task was unexpectedly still executing... let's give it a little longer to run"));
 
-            var countdown = Math.Max(5000, Timeout * 1000);
-            while (rootContainerTask.State == CompilationState.Executing && countdown > 0)
+            var countdown = Math.Max(5000,Timeout*1000);
+            while(rootContainerTask.State == CompilationState.Executing && countdown>0)
             {
                 Thread.Sleep(100);
-                countdown -= 100;
+                countdown -=100;
             }
         }
 
         if (rootContainerTask.State != CompilationState.Finished)
-            throw new Exception($"CohortIdentificationCriteria execution resulted in state '{rootContainerTask.State}'",
-                rootContainerTask.CrashMessage);
+            throw new Exception($"CohortIdentificationCriteria execution resulted in state '{rootContainerTask.State}'", rootContainerTask.CrashMessage);
 
-        if (rootContainerTask == null)
+        if(rootContainerTask == null)
             throw new Exception("Root container task was null, was the execution cancelled? / crashed");
 
         var execution = cohortCompiler.Tasks[rootContainerTask];
 
         if (execution.Identifiers == null || execution.Identifiers.Rows.Count == 0)
-            throw new Exception(
-                "CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
+            throw new Exception("CohortIdentificationCriteria execution resulted in an empty dataset (there were no cohorts matched by the query?)");
 
         var dt = execution.Identifiers;
 
@@ -192,21 +132,19 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
     private ICompileable RunRootContainerOnlyNoCaching(CohortCompiler cohortCompiler)
     {
         //add root container task
-        var task = cohortCompiler.AddTask(_cohortIdentificationConfiguration.RootCohortAggregateContainer,
-            _cohortIdentificationConfiguration.GetAllParameters());
+        var task = cohortCompiler.AddTask(_cohortIdentificationConfiguration.RootCohortAggregateContainer, _cohortIdentificationConfiguration.GetAllParameters());
 
-        cohortCompiler.LaunchSingleTask(task, Timeout, false);
+        cohortCompiler.LaunchSingleTask(task, Timeout,false);
 
         //timeout is in seconds
-        var countDown = Math.Max(5000, Timeout * 1000);
+        var countDown = Math.Max(5000,Timeout * 1000);
 
         while (
             //hasn't timed out
             countDown > 0 &&
             (
                 //state isn't a final state
-                task.State == CompilationState.Executing || task.State == CompilationState.NotScheduled ||
-                task.State == CompilationState.Scheduled)
+                task.State == CompilationState.Executing || task.State == CompilationState.NotScheduled || task.State == CompilationState.Scheduled)
         )
         {
             Task.Delay(100).Wait();
@@ -232,11 +170,9 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
     {
         if (ClearCohortIdentificationConfigurationCacheBeforeRunning)
         {
-            listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information, "Clearing Cohort Identifier Cache"));
+            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Clearing Cohort Identifier Cache"));
 
-            var cacheManager =
-                new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
+            var cacheManager = new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
 
             cohortCompiler.AddAllTasks(false);
             foreach (var cacheable in cohortCompiler.Tasks.Keys.OfType<ICacheableTask>())
@@ -247,8 +183,57 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         {
             RunSubcontainers = false
         };
-        runner.PhaseChanged += (s, e) => listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        runner.PhaseChanged += (s,e)=> listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"CohortCompilerRunner entered Phase '{runner.ExecutionPhase}'"));
         return runner.Run(_cancelGlobalOperations.Token);
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        var container = _cohortIdentificationConfiguration.RootCohortAggregateContainer;
+        if (container != null)
+        {
+            if (container.IsDisabled)
+                notifier.OnCheckPerformed(new CheckEventArgs("Root container is disabled", CheckResult.Fail));
+
+            foreach (var sub in container.GetAllSubContainersRecursively())
+            {
+                if(sub.IsDisabled)
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Query includes disabled container '{sub}'",CheckResult.Warning));
+
+                foreach (var configuration in sub.GetAggregateConfigurations())
+                    if(configuration.IsDisabled)
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            $"Query includes disabled aggregate '{configuration}'",CheckResult.Warning));
+            }
+        }
+
+        try
+        {
+            if (_cohortIdentificationConfiguration.Frozen)
+                notifier.OnCheckPerformed(
+                    new CheckEventArgs(
+                        $"CohortIdentificationConfiguration {_cohortIdentificationConfiguration} is Frozen (By {_cohortIdentificationConfiguration.FrozenBy} on {_cohortIdentificationConfiguration.FrozenDate}).  It might have already been imported once before.", CheckResult.Warning));
+
+            if (!UserSettings.SkipCohortBuilderValidationOnCommit)
+            {
+                var result = TryGetPreview();
+
+                if (result.Rows.Count == 0)
+                    throw new Exception("No Identifiers were returned by the cohort query");
+            }
+        }
+        catch (Exception e)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Could not build extraction SQL for {_cohortIdentificationConfiguration}", CheckResult.Fail,e));
+        }
+
+    }
+
+
+    public void PreInitialize(CohortIdentificationConfiguration value, IDataLoadEventListener listener)
+    {
+        _cohortIdentificationConfiguration = value;
     }
 }

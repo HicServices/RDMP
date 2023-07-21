@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution;
 using System;
 using System.Windows.Forms;
-using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.UI.Performance;
 
@@ -21,7 +21,7 @@ public partial class LastCommandUI : Form
 
     private void btnCopyToClipboard_Click(object sender, EventArgs e)
     {
-        Clipboard.SetText(label1.Text);
+        Clipboard.SetText(label1.Text);                
     }
 
     private void timer1_Tick(object sender, EventArgs e)

@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -17,20 +17,22 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandExportPlugins : BasicCommandExecution
 {
     private DirectoryInfo _outDir;
-    private readonly Curation.Data.Plugin[] _plugins;
+    private Curation.Data.Plugin[] _plugins;
 
-    public ExecuteCommandExportPlugins(IBasicActivateItems activator) : this(activator, null)
+    public ExecuteCommandExportPlugins(IBasicActivateItems activator): this(activator,null)
     {
+            
     }
-
+        
     [UseWithObjectConstructor]
-    public ExecuteCommandExportPlugins(IBasicActivateItems activator, DirectoryInfo outputDirectory) : base(activator)
+    public ExecuteCommandExportPlugins(IBasicActivateItems activator, DirectoryInfo outputDirectory):base(activator)
     {
         _outDir = outputDirectory;
         _plugins = BasicActivator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins();
 
-        if (!_plugins.Any())
+        if(!_plugins.Any())
             SetImpossible("There are no compatible plugins (for the version of RDMP you are running)");
+
     }
 
 

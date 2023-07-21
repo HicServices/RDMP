@@ -19,30 +19,24 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-///     Pointer to the Data Qualilty Engine Repository database in which all DatabaseEntities related to Data Quality
-///     Engine runs are stored (e.g. Evaluation).  Every
-///     DatabaseEntity class must exist in a Microsoft Sql Server Database (See DatabaseEntity) and each object is
-///     compatible only with a specific type of TableRepository
-///     (i.e. the database that contains the table matching their name).
-///     <para>
-///         This class allows you to fetch objects and should be passed into constructors of classes you want to
-///         construct in the Data Quality database.
-///     </para>
-///     <para>
-///         Data Qualilty Engine databases are only valid when you have a CatalogueRepository database too and are always
-///         paired to a specific CatalogueRepository database (i.e.
-///         there are IDs in the dqe database that specifically map to objects in the Catalogue database).  You can use the
-///         CatalogueRepository property to fetch/create objects
-///         in the paired Catalogue database.
-///     </para>
+/// Pointer to the Data Qualilty Engine Repository database in which all DatabaseEntities related to Data Quality Engine runs are stored (e.g. Evaluation).  Every
+/// DatabaseEntity class must exist in a Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of TableRepository
+///	(i.e. the database that contains the table matching their name).
+/// 
+/// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Quality database.</para>
+/// 
+/// <para>Data Qualilty Engine databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e.
+/// there are IDs in the dqe database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
+/// in the paired Catalogue database.</para>
 /// </summary>
 public class DQERepository : TableRepository, IDQERepository
 {
-    private readonly ObjectConstructor _constructor = new();
+    /// <inheritdoc/>
+    public ICatalogueRepository CatalogueRepository { get; private set; }
 
     /// <summary>
-    ///     Creates a new DQERepository storing/reading data from the default
-    ///     DQE server configured in <paramref name="catalogueRepository" />
+    /// Creates a new DQERepository storing/reading data from the default
+    /// DQE server configured in <paramref name="catalogueRepository"/>
     /// </summary>
     /// <param name="catalogueRepository"></param>
     /// <exception cref="NotSupportedException">If there is no default DQE database configured</exception>
@@ -50,17 +44,16 @@ public class DQERepository : TableRepository, IDQERepository
     {
         CatalogueRepository = catalogueRepository;
 
-        var server = CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE) ?? throw new NotSupportedException(
-            "There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");
+        var server = CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE) ?? throw new NotSupportedException("There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");
         DiscoveredServer = DataAccessPortal.ExpectServer(server, DataAccessContext.InternalDataProcessing);
         _connectionStringBuilder = DiscoveredServer.Builder;
     }
 
     /// <summary>
-    ///     Creates a new DQERepository storing/reading data from <paramref name="db" /> instead of the default
-    ///     (if any) listed in the <paramref name="catalogueRepository" />.  Use this constructor if you do not
-    ///     want to use <see cref="IServerDefaults.GetDefaultFor(PermissableDefaults)" /> to find the DQE but instead want to
-    ///     use an explicit database (<paramref name="db" />)
+    /// Creates a new DQERepository storing/reading data from <paramref name="db"/> instead of the default
+    /// (if any) listed in the <paramref name="catalogueRepository"/>.  Use this constructor if you do not
+    /// want to use <see cref="IServerDefaults.GetDefaultFor(PermissableDefaults)"/> to find the DQE but instead want to
+    /// use an explicit database (<paramref name="db"/>)
     /// </summary>
     /// <param name="catalogueRepository"></param>
     /// <param name="db"></param>
@@ -71,29 +64,27 @@ public class DQERepository : TableRepository, IDQERepository
         _connectionStringBuilder = DiscoveredServer.Builder;
     }
 
-    /// <inheritdoc />
-    public ICatalogueRepository CatalogueRepository { get; }
-
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Evaluation GetMostRecentEvaluationFor(ICatalogue c)
     {
         return GetAllEvaluationsFor(c).OrderByDescending(e => e.DateOfEvaluation).FirstOrDefault();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IEnumerable<Evaluation> GetAllEvaluationsFor(ICatalogue catalogue)
     {
-        return GetAllObjects<Evaluation>($"where CatalogueID = {catalogue.ID}").OrderBy(e => e.DateOfEvaluation);
+        return GetAllObjects<Evaluation>($"where CatalogueID = {catalogue.ID }").OrderBy(e => e.DateOfEvaluation);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool HasEvaluations(ICatalogue catalogue)
     {
         return GetAllEvaluationsFor(catalogue).Any();
     }
 
+    private readonly ObjectConstructor _constructor = new();
     protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
     {
-        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject(t, this, reader);
+        return ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject(t,this, reader);
     }
 }

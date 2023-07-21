@@ -12,9 +12,8 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-///     Handles creation, discovery and deletion of JoinInfos.  JoinInfos are not IMapsDirectlyToDatabaseTable classes
-///     because they are mostly just a m-m relationship
-///     table between ColumnInfos (with join direction / collation).
+/// Handles creation, discovery and deletion of JoinInfos.  JoinInfos are not IMapsDirectlyToDatabaseTable classes because they are mostly just a m-m relationship
+/// table between ColumnInfos (with join direction / collation).
 /// </summary>
 public class JoinManager : IJoinManager
 {
@@ -44,21 +43,19 @@ public class JoinManager : IJoinManager
                     (idSet1.Contains(j.PrimaryKey_ID) && idSet2.Contains(j.ForeignKey_ID)))
                 .ToArray();
     }
-
     public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2)
     {
         return GetAllJoinInfosBetweenColumnInfoSets(_repository.GetAllObjects<JoinInfo>(), set1, set2);
     }
 
-    public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo, JoinInfoType type)
+    public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo,JoinInfoType type)
     {
         var ids = new HashSet<int>(tableInfo.ColumnInfos.Select(c => c.ID));
 
         switch (type)
         {
             case JoinInfoType.AnyKey:
-                return _repository.GetAllObjects<JoinInfo>()
-                    .Where(j => ids.Contains(j.ForeignKey_ID) || ids.Contains(j.PrimaryKey_ID)).ToArray();
+                return _repository.GetAllObjects<JoinInfo>().Where(j => ids.Contains(j.ForeignKey_ID) || ids.Contains(j.PrimaryKey_ID)).ToArray();
             case JoinInfoType.ForeignKey:
                 return _repository.GetAllObjects<JoinInfo>().Where(j => ids.Contains(j.ForeignKey_ID)).ToArray();
             case JoinInfoType.PrimaryKey:
@@ -67,4 +64,5 @@ public class JoinManager : IJoinManager
                 throw new ArgumentOutOfRangeException(nameof(type));
         }
     }
+        
 }

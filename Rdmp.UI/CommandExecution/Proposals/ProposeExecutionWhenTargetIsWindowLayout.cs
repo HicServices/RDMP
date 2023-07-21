@@ -27,8 +27,7 @@ internal class ProposeExecutionWhenTargetIsWindowLayout : RDMPCommandExecutionPr
         ItemActivator.WindowArranger.Setup(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, WindowLayout target,
-        InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, WindowLayout target, InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

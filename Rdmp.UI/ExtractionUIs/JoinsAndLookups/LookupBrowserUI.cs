@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
@@ -22,18 +21,17 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 
 public partial class LookupBrowserUI : LookupBrowserUI_Design
 {
-    private ColumnInfo _descriptionColumn;
-
-    private ColumnInfo _keyColumn;
-    private Scintilla _scintilla;
-    private TableInfo _tableInfo;
-
     public LookupBrowserUI()
     {
         InitializeComponent();
 
         dataGridView1.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
     }
+
+    private ColumnInfo _keyColumn;
+    private ColumnInfo _descriptionColumn;
+    private TableInfo _tableInfo;
+    private Scintilla _scintilla;
 
     public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)
     {
@@ -55,9 +53,9 @@ public partial class LookupBrowserUI : LookupBrowserUI_Design
         {
             SendQuery();
         }
-        catch (Exception ex)
+        catch (System.Exception ex)
         {
-            CommonFunctionality.Fatal("Could not connect to database", ex);
+            CommonFunctionality.Fatal("Could not connect to database",ex);
         }
     }
 
@@ -66,34 +64,33 @@ public partial class LookupBrowserUI : LookupBrowserUI_Design
         var repo = new MemoryCatalogueRepository();
 
         var qb = new QueryBuilder("distinct", null);
-        qb.AddColumn(new ColumnInfoToIColumn(repo, _keyColumn) { Order = 0 });
-        qb.AddColumn(new ColumnInfoToIColumn(repo, _descriptionColumn) { Order = 1 });
+        qb.AddColumn(new ColumnInfoToIColumn(repo,_keyColumn) { Order = 0 });
+        qb.AddColumn(new ColumnInfoToIColumn(repo,_descriptionColumn) { Order = 1 });
         qb.TopX = 100;
 
 
-        var container = new SpontaneouslyInventedFilterContainer(repo, null, null, FilterContainerOperation.AND);
+        var container = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
 
-        if (!string.IsNullOrWhiteSpace(tbCode.Text))
+        if(!string.IsNullOrWhiteSpace(tbCode.Text))
         {
-            var codeFilter = new SpontaneouslyInventedFilter(repo, container,
+            var codeFilter = new SpontaneouslyInventedFilter(repo,container,
                 $"{_keyColumn.GetFullyQualifiedName()} LIKE '{tbCode.Text}%'", "Key Starts", "", null);
             container.AddChild(codeFilter);
         }
-
-        if (!string.IsNullOrWhiteSpace(tbDescription.Text))
+            
+        if(!string.IsNullOrWhiteSpace(tbDescription.Text))
         {
-            var codeFilter = new SpontaneouslyInventedFilter(repo, container,
-                $"{_descriptionColumn.GetFullyQualifiedName()} LIKE '%{tbDescription.Text}%'", "Description Contains",
-                "", null);
+            var codeFilter = new SpontaneouslyInventedFilter(repo,container,
+                $"{_descriptionColumn.GetFullyQualifiedName()} LIKE '%{tbDescription.Text}%'", "Description Contains", "", null);
             container.AddChild(codeFilter);
         }
-
+            
         qb.RootFilterContainer = container;
 
         return qb.SQL;
     }
 
-    private void tb_TextChanged(object sender, EventArgs e)
+    private void tb_TextChanged(object sender, System.EventArgs e)
     {
         SendQuery();
     }
@@ -127,6 +124,6 @@ public partial class LookupBrowserUI : LookupBrowserUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LookupBrowserUI_Design, UserControl>))]
-public abstract class LookupBrowserUI_Design : RDMPSingleDatabaseObjectControl<Lookup>
+public abstract class LookupBrowserUI_Design: RDMPSingleDatabaseObjectControl<Lookup>
 {
 }

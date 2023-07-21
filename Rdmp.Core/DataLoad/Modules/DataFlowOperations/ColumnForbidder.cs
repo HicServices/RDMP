@@ -16,36 +16,31 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
-///     Pipeline component designed to prevent unwanted data existing within DataTables passing through the pipeline.  The
-///     component will crash the entire pipeline
-///     if it sees columns which match the forbidlist.  Use cases for this include when the user wants to prevent private
-///     identifiers being accidentally released
-///     due to system misconfiguration e.g. you might forbidlist all columns containing the strings starting "Patient" on
-///     the grounds that they are likely to be
-///     identifiable (PatientName, PatientDob etc).
-///     <para>Crashes the pipeline if any column matches the regex e.g. '^(mCHI)|(chi)$'</para>
+/// Pipeline component designed to prevent unwanted data existing within DataTables passing through the pipeline.  The component will crash the entire pipeline
+/// if it sees columns which match the forbidlist.  Use cases for this include when the user wants to prevent private identifiers being accidentally released
+/// due to system misconfiguration e.g. you might forbidlist all columns containing the strings starting "Patient" on the grounds that they are likely to be
+/// identifiable (PatientName, PatientDob etc).
+/// 
+/// <para>Crashes the pipeline if any column matches the regex e.g. '^(mCHI)|(chi)$'</para>
 /// </summary>
 public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
 {
     [DemandsInitialization("Crashes the load if any column name matches this regex")]
     public Regex CrashIfAnyColumnMatches { get; set; }
 
-    [DemandsInitialization(
-        "Alternative to specifying a Regex pattern in CrashIfAnyColumnMatches.  Select an existing StandardRegex.  This has the advantage of centralising the concept.  See StandardRegexUI for configuring StandardRegexes")]
+    [DemandsInitialization("Alternative to specifying a Regex pattern in CrashIfAnyColumnMatches.  Select an existing StandardRegex.  This has the advantage of centralising the concept.  See StandardRegexUI for configuring StandardRegexes")]
     public StandardRegex StandardRegex { get; set; }
-
-    [DemandsInitialization(
-        "Crash message (if any) to explain why columns matching the Regex are a problem e.g. 'Patient telephone numbers should never be extracted!'")]
+        
+    [DemandsInitialization("Crash message (if any) to explain why columns matching the Regex are a problem e.g. 'Patient telephone numbers should never be extracted!'")]
     public string Rationale { get; set; }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         var checkPattern = new Regex(GetPattern(), RegexOptions.IgnoreCase);
 
         foreach (var c in toProcess.Columns.Cast<DataColumn>().Select(c => c.ColumnName))
             if (checkPattern.IsMatch(c))
-                if (string.IsNullOrWhiteSpace(Rationale))
+                if(string.IsNullOrWhiteSpace(Rationale))
                     throw new Exception($"Column {c} matches forbidlist regex");
                 else
                     throw new Exception(
@@ -56,10 +51,12 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
+            
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
+            
     }
 
     public void Check(ICheckNotifier notifier)
@@ -71,8 +68,7 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Problem occurred getting Regex pattern for forbidlist",
-                CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs("Problem occurred getting Regex pattern for forbidlist",CheckResult.Fail, e));
         }
     }
 
@@ -87,8 +83,7 @@ public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
 
 
         if (string.IsNullOrWhiteSpace(pattern))
-            throw new Exception(
-                "You must specify either a pattern in CrashIfAnyColumnMatches or pick an existing StandardRegex with a pattern to match on");
+            throw new Exception("You must specify either a pattern in CrashIfAnyColumnMatches or pick an existing StandardRegex with a pattern to match on");
 
         return pattern;
     }

@@ -6,30 +6,32 @@
 
 using System;
 using System.Diagnostics;
+using SixLabors.ImageSharp;
 using System.IO;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 
 public class ExecuteCommandRunDetached : AutomationCommandExecution, IAtomicCommand
 {
-    private readonly string _rdmpBinaryPath;
+    private string _rdmpBinaryPath;
 
     public ExecuteCommandRunDetached(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
         : base(activator, commandGetter)
     {
-        _rdmpBinaryPath =
-            Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "cli", AutomationServiceExecutable);
+        _rdmpBinaryPath = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName, "cli", AutomationServiceExecutable);
 
         if (!File.Exists(_rdmpBinaryPath))
             SetImpossible($"{_rdmpBinaryPath} did not exist");
 
-        if (!BasicActivator.IsAbleToLaunchSubprocesses) SetImpossible("Client does not support launching subprocesses");
+        if (!BasicActivator.IsAbleToLaunchSubprocesses)
+        {
+            SetImpossible($"Client does not support launching subprocesses");
+        }
     }
 
     public override string GetCommandHelp()

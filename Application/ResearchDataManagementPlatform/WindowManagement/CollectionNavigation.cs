@@ -4,45 +4,45 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
+using System.Collections.Generic;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace ResearchDataManagementPlatform.WindowManagement;
 
 /// <summary>
-///     Records the fact that the user visited a specific object in a tree collection
+/// Records the fact that the user visited a specific object in a tree collection
 /// </summary>
-public class CollectionNavigation : INavigation
+public class CollectionNavigation: INavigation
 {
-    public CollectionNavigation(IMapsDirectlyToDatabaseTable Object)
-    {
-        this.Object = Object;
-    }
-
     public IMapsDirectlyToDatabaseTable Object { get; }
 
     public bool IsAlive
     {
         get
         {
-            if (Object is IMightNotExist o)
+            if(Object is IMightNotExist o)
                 return o.Exists();
 
             return true;
         }
+    } 
+
+    public CollectionNavigation(IMapsDirectlyToDatabaseTable Object)
+    {
+        this.Object = Object;
     }
 
     public void Activate(ActivateItems activateItems)
     {
-        activateItems.RequestItemEmphasis(this, new EmphasiseRequest(Object));
+        activateItems.RequestItemEmphasis(this,new EmphasiseRequest(Object,0));
     }
 
     public void Close()
     {
+            
     }
-
     public override string ToString()
     {
         return Object.ToString();

@@ -17,22 +17,20 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-///     Runner for Cohort Creation Tasks.
+/// Runner for Cohort Creation Tasks.
 /// </summary>
 public class CohortCreationRunner : Runner
 {
     private readonly CohortCreationOptions _options;
-    private readonly ExtractionConfiguration _configuration;
+    private ExtractionConfiguration _configuration;
 
     public CohortCreationRunner(CohortCreationOptions options)
     {
         _options = options;
-        _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(_options.GetRepositoryLocator(),
-            _options.ExtractionConfiguration);
+        _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(_options.GetRepositoryLocator(),_options.ExtractionConfiguration);
     }
 
-    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
         if (HasConfigurationPreviouslyBeenReleased())
             throw new Exception("Extraction Configuration has already been released");

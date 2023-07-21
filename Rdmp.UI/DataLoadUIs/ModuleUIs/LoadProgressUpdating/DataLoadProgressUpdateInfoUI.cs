@@ -16,53 +16,39 @@ using ScintillaNET;
 namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating;
 
 /// <summary>
-///     A LoadProgress object can be used as part of a LoadMetadata to record how far through a longitudinal loading task a
-///     load is (See LoadProgressUI).  This dialog lets you specify
-///     how to update that LoadProgress after a succesful data load.  By default the data load engine will identify a
-///     window of days it wants to load (always in the past) e.g. 2001-01-01 to
-///     2001-01-29 and the load will execute with that window available to load components.  However sometimes a load
-///     component will only find part of that date range is available e.g. the
-///     dataset fetched only contains data up until 2001-01-15.  In this case the component needs to update the progress
-///     (on success of data load) to the 2001-01-15 date instead.  This
-///     dialog lets you do that by specifying one of 4 update strategies:
-///     <para>
-///         UseMaxRequestedDay - uses the upper limit of the load window i.e. 2001-01-29
-///         ExecuteScalarSQLInRAW - allows you to execute an SQL query in RAW bubble to determine the max date e.g. 'Select
-///         MAX(dtCreated) from MyTable'.  In the above example this would be 2001-01-15
-///         ExecuteScalarSQLInLIVE - same as above except the SQL query is executed against the LIVE dataset post load
-///         (this is the super set of all existing dataset records + the records loaded in the data load)
-///         DoNothing - The load progress is not updated, use this only if you have multiple components that share the same
-///         LoadProgress and you only want the last one to register for the progress update
-///     </para>
+/// A LoadProgress object can be used as part of a LoadMetadata to record how far through a longitudinal loading task a load is (See LoadProgressUI).  This dialog lets you specify 
+/// how to update that LoadProgress after a succesful data load.  By default the data load engine will identify a window of days it wants to load (always in the past) e.g. 2001-01-01 to 
+/// 2001-01-29 and the load will execute with that window available to load components.  However sometimes a load component will only find part of that date range is available e.g. the
+/// dataset fetched only contains data up until 2001-01-15.  In this case the component needs to update the progress (on success of data load) to the 2001-01-15 date instead.  This 
+/// dialog lets you do that by specifying one of 4 update strategies:
+/// 
+/// <para> UseMaxRequestedDay - uses the upper limit of the load window i.e. 2001-01-29 
+///  ExecuteScalarSQLInRAW - allows you to execute an SQL query in RAW bubble to determine the max date e.g. 'Select MAX(dtCreated) from MyTable'.  In the above example this would be 2001-01-15
+///  ExecuteScalarSQLInLIVE - same as above except the SQL query is executed against the LIVE dataset post load (this is the super set of all existing dataset records + the records loaded in the data load)
+///  DoNothing - The load progress is not updated, use this only if you have multiple components that share the same LoadProgress and you only want the last one to register for the progress update</para>
 /// </summary>
 public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProgressUpdateInfo>
 {
-    private const string WarningLIVE =
-        "(Must return a single date value.  IMPORTANT: Since you are targetting LIVE, you MUST fully specify all table names with the correct database e.g. [MyDatabase]..[MyTable])";
 
-    private const string WarningRAW =
-        "(Must return a single date value.  IMPORTANT: Since you are targetting RAW, you MUST only specify table names, do not add a database qualifier e.g. [MyTable] NOT [MyLIVEDb]..[MyTable])";
-
-    private bool _programaticClose;
-
-    private int _timeout;
-
+    private const string WarningLIVE = "(Must return a single date value.  IMPORTANT: Since you are targetting LIVE, you MUST fully specify all table names with the correct database e.g. [MyDatabase]..[MyTable])";
+    private const string WarningRAW = "(Must return a single date value.  IMPORTANT: Since you are targetting RAW, you MUST only specify table names, do not add a database qualifier e.g. [MyTable] NOT [MyLIVEDb]..[MyTable])";
+        
+    public Scintilla QueryEditor { get; set; }
+        
     public DataLoadProgressUpdateInfoUI()
     {
         InitializeComponent();
-
-        QueryEditor = new ScintillaTextEditorFactory().Create();
+            
+        QueryEditor = new ScintillaTextEditorFactory().Create(null);
 
         pSQL.Controls.Add(QueryEditor);
         QueryEditor.TextChanged += QueryEditor_TextChanged;
 
         ddStrategy.DataSource = Enum.GetValues(typeof(DataLoadProgressUpdateStrategy));
+
     }
 
-    public Scintilla QueryEditor { get; set; }
-
     public ICatalogueRepository CatalogueRepository { get; set; }
-
     public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value)
     {
         SetUnderlyingObjectTo((DataLoadProgressUpdateInfo)value);
@@ -73,9 +59,10 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         if (value == null)
             return;
 
-        QueryEditor.Text = value.ExecuteScalarSQL;
+        QueryEditor.Text  = value.ExecuteScalarSQL;
         tbTimeout.Text = value.Timeout.ToString();
         ddStrategy.SelectedItem = value.Strategy;
+
     }
 
     public ICustomUIDrivenClass GetFinalStateOfUnderlyingObject()
@@ -84,7 +71,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         {
             ExecuteScalarSQL = QueryEditor.Text,
             Timeout = _timeout,
-            Strategy = (DataLoadProgressUpdateStrategy)ddStrategy.SelectedItem
+            Strategy = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem
         };
 
         return toReturn;
@@ -92,10 +79,9 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
 
     private void ddStrategy_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var selected = (DataLoadProgressUpdateStrategy)ddStrategy.SelectedItem;
+        var selected = (DataLoadProgressUpdateStrategy) ddStrategy.SelectedItem;
 
-        var setVisible = selected is DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE
-            or DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
+        var setVisible = selected is DataLoadProgressUpdateStrategy.ExecuteScalarSQLInLIVE or DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
         pSQL.Visible = setVisible;
         tbTimeout.Visible = setVisible;
         lblTimeout.Visible = setVisible;
@@ -111,6 +97,8 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
 
         CheckObject();
     }
+        
+    private bool _programaticClose;
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
@@ -125,7 +113,6 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         DialogResult = DialogResult.OK;
         Close();
     }
-
     private void DataLoadProgressUpdateInfoUI_FormClosing(object sender, FormClosingEventArgs e)
     {
         //use pressed Ok or Cancel 
@@ -162,6 +149,7 @@ public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProg
         ragSmiley1.StartChecking(obj);
     }
 
+    private int _timeout;
     private void tbTimeout_TextChanged(object sender, EventArgs e)
     {
         try

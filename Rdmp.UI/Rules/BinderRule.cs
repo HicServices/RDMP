@@ -15,18 +15,16 @@ namespace Rdmp.UI.Rules;
 internal abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDatabaseTable
 {
     protected readonly IActivateItems Activator;
-    protected readonly Control Control;
+    protected readonly T ToTest;
+    public ErrorProvider ErrorProvider { get; private set; }
     protected readonly Func<T, object> PropertyToCheck;
+    protected readonly Control Control;
 
     /// <summary>
-    ///     The member on <see cref="ToTest" /> that
+    /// The member on <see cref="ToTest"/> that
     /// </summary>
     protected readonly string PropertyToCheckName;
-
-    protected readonly T ToTest;
-
-    protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control,
-        string propertyToCheckName)
+    protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control, string propertyToCheckName)
     {
         ErrorProvider = new ErrorProvider();
         Activator = activator;
@@ -40,12 +38,13 @@ internal abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDat
         toTest.PropertyChanged += ToTest_PropertyChanged;
     }
 
-    public ErrorProvider ErrorProvider { get; }
-
     private void ToTest_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         // the property being changed is not ours
-        if (!string.Equals(e.PropertyName, PropertyToCheckName)) return;
+        if (!string.Equals(e.PropertyName, PropertyToCheckName))
+        {
+            return;
+        }
 
         var currentValue = PropertyToCheck(ToTest);
         var typeToTest = ToTest.GetType();
@@ -59,8 +58,8 @@ internal abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDat
     }
 
     /// <summary>
-    ///     Return null if the <paramref name="currentValue" /> is valid or a message describing the problem
-    ///     if it is not.
+    /// Return null if the <paramref name="currentValue"/> is valid or a message describing the problem
+    /// if it is not.
     /// </summary>
     /// <param name="currentValue"></param>
     /// <param name="typeToTest"></param>

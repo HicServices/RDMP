@@ -4,37 +4,38 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.IO;
-using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataViewing;
+using Rdmp.Core.Repositories.Construction;
+using System;
+using System.IO;
+using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
-using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Runs a query on a one of the RDMP platform databases and returns the results
+/// Runs a query on a one of the RDMP platform databases and returns the results
 /// </summary>
 public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
 {
+    private string _query;
     private readonly FileInfo _toFile;
-    private readonly string _query;
     private DiscoveredTable _table;
 
     [UseWithObjectConstructor]
     public ExecuteCommandQueryPlatformDatabase(IBasicActivateItems activator,
-        [DemandsInitialization(
-            "Database type e.g. DataExport, Catalogue, QueryCaching, LoggingDatabase etc (See all IPatcher implementations)")]
+
+        [DemandsInitialization("Database type e.g. DataExport, Catalogue, QueryCaching, LoggingDatabase etc (See all IPatcher implementations)")]
         string databaseType,
-        [DemandsInitialization(
-            "Optional SQL query to execute on the database.  Or null to query the first table in the db.")]
+
+        [DemandsInitialization("Optional SQL query to execute on the database.  Or null to query the first table in the db.")]
         string query = null,
+
         [DemandsInitialization(ToFileDescription)]
         FileInfo toFile = null) : base(activator, toFile)
     {
@@ -71,17 +72,18 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
             _table = db?.ExpectTable("Catalogue");
             return;
         }
-
         var eds = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>();
 
         var patcher = (IPatcher)Activator.CreateInstance(patcherType);
         db = GetDatabase(eds.Where(e => e.WasCreatedBy(patcher)).ToArray());
 
-        if (db == null) return;
+        if (db == null)
+        {
+            return;
+        }
 
         SetTargetDatabase(db);
     }
-
     public ExecuteCommandQueryPlatformDatabase(IBasicActivateItems activator,
         ExternalDatabaseServer eds) : base(activator, null)
     {
@@ -103,7 +105,10 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
 
     private DiscoveredDatabase GetDatabase(IRepository repository)
     {
-        if (repository is TableRepository tableRepo) return tableRepo.DiscoveredServer?.GetCurrentDatabase();
+        if (repository is TableRepository tableRepo)
+        {
+            return tableRepo.DiscoveredServer?.GetCurrentDatabase();
+        }
 
         SetImpossible("Repository was not a database repo");
         return null;
@@ -131,7 +136,10 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
     {
         _table = database.DiscoverTables(false).FirstOrDefault();
 
-        if (_table == null) SetImpossible("Database was empty");
+        if (_table == null)
+        {
+            SetImpossible("Database was empty");
+        }
     }
 
 

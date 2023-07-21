@@ -9,10 +9,10 @@ using System;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 
 /// <summary>
-///     Used to indicate when a property should be displayed with its own column when visualising it in collection views
-///     e.g. SelectIMapsDirectlyToDatabaseTableDialog
+/// Used to indicate when a property should be displayed with its own column when visualising it in collection views
+///  e.g. SelectIMapsDirectlyToDatabaseTableDialog
 /// </summary>
-[AttributeUsage(AttributeTargets.Property)]
+[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 public class UsefulPropertyAttribute : Attribute
 {
     public string DisplayName { get; set; }

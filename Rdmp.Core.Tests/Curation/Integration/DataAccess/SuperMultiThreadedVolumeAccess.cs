@@ -19,8 +19,9 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration.DataAccess;
 
-public class SuperMultiThreadedVolumeAccess : DatabaseTests
+public class SuperMultiThreadedVolumeAccess:DatabaseTests
 {
+
     [OneTimeSetUp]
     protected override void SetUp()
     {
@@ -35,7 +36,7 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
                 .Where(c => c.Name.StartsWith("SuperMultiThreadedTestCatalogue")))
             catalogue.DeleteInDatabase();
 
-        DatabaseCommandHelper.GlobalTimeout = timeoutBefore;
+        DatabaseCommandHelper.GlobalTimeout=timeoutBefore;
     }
 
     [OneTimeTearDown]
@@ -54,7 +55,7 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
     [TestCase(false)]
     public void SingleThreadedBulkCatalogueCreation(bool useTransactions)
     {
-        IManagedConnection c = null;
+        IManagedConnection c= null;
 
 
         if (CatalogueRepository is not TableRepository && useTransactions)
@@ -84,6 +85,9 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
             if (useTransactions)
                 CatalogueTableRepository.EndTransactedConnection(false);
         }
+            
+            
+
     }
 
     [Test]
@@ -135,10 +139,10 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
         for (var i = 0; i < numberToFire; i++)
         {
             var i1 = i;
-            ts.Add(new Thread(() =>
-            {
+            ts.Add(new Thread(() => {
                 try
                 {
+
                     method(useTransactions && i1 == 0);
                 }
                 catch (Exception ex)
@@ -150,10 +154,10 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
 
         foreach (var thread in ts)
             thread.Start();
-
-        while (ts.Any(t => t.IsAlive))
-            ts.FirstOrDefault(t => t.IsAlive)?.Join(100);
-
+            
+        while(ts.Any(t=>t.IsAlive))
+            ts.FirstOrDefault(t=>t.IsAlive)?.Join(100);
+            
         Assert.IsEmpty(exes);
     }
 }

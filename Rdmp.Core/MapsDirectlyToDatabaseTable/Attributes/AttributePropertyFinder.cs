@@ -12,35 +12,38 @@ using System.Reflection;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 
 /// <summary>
-///     Implementation of <see cref="IAttributePropertyFinder" /> in which a specific Attribute only is looked for.  The
-///     Attribute is specified by the generic T
+/// Implementation of <see cref="IAttributePropertyFinder"/> in which a specific Attribute only is looked for.  The
+/// Attribute is specified by the generic T
 /// </summary>
 /// <typeparam name="T">The specific attribute you are looking for e.g. SqlAttribute</typeparam>
 public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Attribute
 {
     private readonly Dictionary<Type, HashSet<PropertyInfo>> _properties = new();
 
-    public AttributePropertyFinder(IEnumerable<IMapsDirectlyToDatabaseTable> objects)
+    public AttributePropertyFinder(IEnumerable<IMapsDirectlyToDatabaseTable> objects) 
     {
         foreach (var type in objects.Select(o => o.GetType()).Distinct())
         {
             var propertyInfos = type.GetProperties();
 
             foreach (var property in propertyInfos)
+            {
                 //if property has sql flag
                 if (property.GetCustomAttributes(typeof(T), true).Any())
                 {
-                    if (!_properties.ContainsKey(type))
+                    if(!_properties.ContainsKey(type))
                         _properties.Add(type, new HashSet<PropertyInfo>());
 
-                    if (!_properties[type].Contains(property))
+                    if(!_properties[type].Contains(property))
                         _properties[type].Add(property);
                 }
+            }
         }
     }
 
-    public AttributePropertyFinder(IMapsDirectlyToDatabaseTable o) : this(new[] { o })
+    public AttributePropertyFinder(IMapsDirectlyToDatabaseTable o): this(new[] { o})
     {
+            
     }
 
     public IEnumerable<PropertyInfo> GetProperties(IMapsDirectlyToDatabaseTable o)
@@ -54,7 +57,7 @@ public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Att
     }
 
     /// <summary>
-    ///     Returns true if the provided object has a property that matches the expected attribute
+    /// Returns true if the provided object has a property that matches the expected attribute
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
@@ -65,6 +68,6 @@ public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Att
 
     public T GetAttribute(PropertyInfo property)
     {
-        return (T)property.GetCustomAttributes(typeof(T), true).SingleOrDefault();
+        return (T) property.GetCustomAttributes(typeof (T), true).SingleOrDefault();
     }
 }

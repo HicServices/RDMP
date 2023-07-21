@@ -15,6 +15,7 @@ internal class RunDataQualityEngineWindow : RunEngineWindow<DqeOptions>
     public RunDataQualityEngineWindow(IBasicActivateItems activator, Catalogue c)
         : base(activator, () => GetCommand(c))
     {
+
     }
 
     private static DqeOptions GetCommand(Catalogue c)

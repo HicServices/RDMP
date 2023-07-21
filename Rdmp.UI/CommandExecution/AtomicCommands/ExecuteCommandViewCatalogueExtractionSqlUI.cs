@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -12,17 +13,16 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ExtractionUIs;
 using Rdmp.UI.ItemActivation;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecution, IAtomicCommandWithTarget
+public class ExecuteCommandViewCatalogueExtractionSqlUI:BasicUICommandExecution,IAtomicCommandWithTarget
 {
     private Catalogue _catalogue;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator, Catalogue catalogue) : this(activator)
+    public ExecuteCommandViewCatalogueExtractionSqlUI(IActivateItems activator,Catalogue catalogue): this(activator)
     {
         _catalogue = catalogue;
     }
@@ -33,8 +33,7 @@ public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecutio
 
     public override string GetCommandHelp()
     {
-        return
-            "View the query that would be executed during extraction of the dataset with the current extractable columns/transforms";
+        return "View the query that would be executed during extraction of the dataset with the current extractable columns/transforms";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -44,10 +43,10 @@ public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecutio
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _catalogue = (Catalogue)target;
-
+        _catalogue = (Catalogue) target;
+            
         //if the catalogue has no extractable columns
-        if (!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
+        if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
             SetImpossible("Catalogue has no ExtractionInformations");
 
         return this;

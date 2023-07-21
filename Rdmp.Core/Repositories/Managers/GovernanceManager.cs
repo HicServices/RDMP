@@ -33,11 +33,10 @@ internal class GovernanceManager : IGovernanceManager
             return;
 
         _catalogueRepository.Insert(
-            $@"INSERT INTO GovernancePeriod_Catalogue (Catalogue_ID,GovernancePeriod_ID) VALUES ({catalogue.ID},{governancePeriod.ID})",
-            null);
+            $@"INSERT INTO GovernancePeriod_Catalogue (Catalogue_ID,GovernancePeriod_ID) VALUES ({catalogue.ID},{governancePeriod.ID})", null);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public Dictionary<int, HashSet<int>> GetAllGovernedCataloguesForAllGovernancePeriods()
     {
         var toReturn = new Dictionary<int, HashSet<int>>();
@@ -63,6 +62,7 @@ internal class GovernanceManager : IGovernanceManager
                     }
                 }
             }
+
         }
 
         return toReturn;
@@ -71,7 +71,6 @@ internal class GovernanceManager : IGovernanceManager
     public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod)
     {
         return _catalogueRepository.SelectAll<Catalogue>(
-            $@"SELECT Catalogue_ID FROM GovernancePeriod_Catalogue where GovernancePeriod_ID={governancePeriod.ID}",
-            "Catalogue_ID");
+            $@"SELECT Catalogue_ID FROM GovernancePeriod_Catalogue where GovernancePeriod_ID={governancePeriod.ID}","Catalogue_ID");
     }
 }

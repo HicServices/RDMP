@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.ANOEngineeringUIs;
 
@@ -12,8 +13,7 @@ namespace Rdmp.UI.Tests;
 
 internal class ANOTableUITests : UITests
 {
-    [Test]
-    [UITimeout(50000)]
+    [Test, UITimeout(50000)]
     public void Test_ANOTableUI_NormalState()
     {
         var anoTable = WhenIHaveA<ANOTable>();
@@ -29,8 +29,7 @@ internal class ANOTableUITests : UITests
         anoTable.DeleteInDatabase();
     }
 
-    [Test]
-    [UITimeout(50000)]
+    [Test, UITimeout(50000)]
     public void Test_ANOTableUI_ServerWrongType()
     {
         var anoTable = WhenIHaveA<ANOTable>(Repository, out var srv);
@@ -38,14 +37,16 @@ internal class ANOTableUITests : UITests
         srv.SaveToDatabase();
 
         var ui = AndLaunch<ANOTableUI>(anoTable);
-
+            
         //should be an error on the server showing that it is misconfigured
-        AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Server is not an ANO server");
+        AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Server is not an ANO server");
         AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not reach ANO Server");
-
+            
         //but form was not killed
         AssertNoErrors(ExpectedErrorType.KilledForm);
 
         anoTable.DeleteInDatabase();
     }
+
+        
 }

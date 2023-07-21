@@ -11,8 +11,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
-///     Constructor arguments for <see cref="IArgumentValueUI" /> implementations.  Records what property the control
-///     should allow editing (See <see cref="RequiredPropertyInfo" />) and on what <see cref="IArgumentHost" />.
+/// Constructor arguments for <see cref="IArgumentValueUI"/> implementations.  Records what property the control
+/// should allow editing (See <see cref="RequiredPropertyInfo"/>) and on what <see cref="IArgumentHost"/>.
 /// </summary>
 public class ArgumentValueUIArgs
 {
@@ -25,12 +25,12 @@ public class ArgumentValueUIArgs
     public ICatalogueRepository CatalogueRepository { get; set; }
 
     /// <summary>
-    ///     Call this when the value populated in the user interface is changed
+    /// Call this when the value populated in the user interface is changed
     /// </summary>
     public Action<object> Setter { get; set; }
 
     /// <summary>
-    ///     Call this when the value populated in the user interface is illegal
+    /// Call this when the value populated in the user interface is illegal
     /// </summary>
     public Action<Exception> Fatal { get; set; }
 

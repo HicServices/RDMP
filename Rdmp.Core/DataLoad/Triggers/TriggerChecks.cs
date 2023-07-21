@@ -14,26 +14,25 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Triggers;
 
 /// <summary>
-///     Checks that the specified table has a backup trigger <see cref="ITriggerImplementer" /> on it.  Also inspects the
-///     _Archive table schema and compares it
-///     to the live schema to make sure they are compatible.
+/// Checks that the specified table has a backup trigger <see cref="ITriggerImplementer"/> on it.  Also inspects the _Archive table schema and compares it
+/// to the live schema to make sure they are compatible.
 /// </summary>
 public class TriggerChecks : ICheckable
 {
-    private readonly DiscoveredTable _archiveTable;
-    private readonly DiscoveredServer _server;
-    private readonly DiscoveredTable _table;
+    private DiscoveredTable _table;
+    private DiscoveredTable _archiveTable;
+    private DiscoveredServer _server;
+
+    public bool TriggerCreated { get; private set; }
 
     public TriggerChecks(DiscoveredTable table)
     {
         _server = table.Database.Server;
         _table = table;
-        _archiveTable = table.Database.ExpectTable($"{_table.GetRuntimeName()}_Archive", _table.Schema);
+        _archiveTable = table.Database.ExpectTable($"{_table.GetRuntimeName()}_Archive",_table.Schema);
     }
 
-    public bool TriggerCreated { get; private set; }
-
-    /// <inheritdoc />
+    ///<inheritdoc/>
     public void Check(ICheckNotifier notifier)
     {
         if (_table.Exists() && _archiveTable.Exists())
@@ -43,7 +42,7 @@ public class TriggerChecks : ICheckable
 
             var passed = CheckColumnOrderInTablesAndArchiveMatch(liveCols, archiveCols, notifier);
 
-            if (!passed)
+            if(!passed)
                 return;
         }
 
@@ -67,6 +66,7 @@ public class TriggerChecks : ICheckable
                 present = false;
             }
         else
+        {
             try
             {
                 //we do know the primary keys
@@ -76,8 +76,7 @@ public class TriggerChecks : ICheckable
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Archive table for table {_table} is corrupt, see inner Exception for specific errors",
-                        CheckResult.Fail, e));
+                        $"Archive table for table {_table} is corrupt, see inner Exception for specific errors", CheckResult.Fail, e));
                 return;
             }
             catch (Exception e)
@@ -85,23 +84,25 @@ public class TriggerChecks : ICheckable
                 NotifyFail(e, notifier, implementer);
                 return;
             }
+        }
 
-        if (present)
+        if(present)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Trigger presence/intactness for table {_table} matched expected presence", CheckResult.Success));
+                $"Trigger presence/intactness for table {_table} matched expected presence",CheckResult.Success, null));
         else
             NotifyFail(null, notifier, implementer); //try creating it
+            
     }
 
 
-    private bool CheckColumnOrderInTablesAndArchiveMatch(string[] liveCols, string[] archiveCols,
-        ICheckNotifier notifier)
+    private bool CheckColumnOrderInTablesAndArchiveMatch(string[] liveCols, string[] archiveCols, ICheckNotifier notifier)
     {
         var passed = true;
 
         foreach (var requiredArchiveColumns in new[] { "hic_validTo", "hic_userID", "hic_status" })
-            if (!archiveCols.Any(c => c.Equals(requiredArchiveColumns, StringComparison.CurrentCultureIgnoreCase)))
+            if (!archiveCols.Any(c=>c.Equals(requiredArchiveColumns,StringComparison.CurrentCultureIgnoreCase)))
             {
+
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Column {requiredArchiveColumns} was not found in {_archiveTable}",
@@ -112,16 +113,17 @@ public class TriggerChecks : ICheckable
 
         foreach (var missingColumn in liveCols.Except(archiveCols))
         {
+
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Column {missingColumn} in table {_table} was not found in the  _Archive table",
-                CheckResult.Fail));
+                CheckResult.Fail, null));
             passed = false;
         }
 
         return passed;
     }
 
-    private void NotifyFail(Exception e, ICheckNotifier notifier, ITriggerImplementer microsoftSQLTrigger)
+    private void NotifyFail(Exception e, ICheckNotifier notifier,ITriggerImplementer microsoftSQLTrigger)
     {
         var shouldCreate = notifier.OnCheckPerformed(new CheckEventArgs(
             $"Trigger error encountered when checking integrity of table {_table}",
@@ -132,10 +134,10 @@ public class TriggerChecks : ICheckable
             microsoftSQLTrigger.DropTrigger(out var problemsDroppingTrigger, out var thingsThatWorkedDroppingTrigger);
 
             if (!string.IsNullOrWhiteSpace(thingsThatWorkedDroppingTrigger))
-                notifier.OnCheckPerformed(new CheckEventArgs(thingsThatWorkedDroppingTrigger, CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs(thingsThatWorkedDroppingTrigger, CheckResult.Success, null));
 
             if (!string.IsNullOrWhiteSpace(problemsDroppingTrigger))
-                notifier.OnCheckPerformed(new CheckEventArgs(problemsDroppingTrigger, CheckResult.Warning));
+                notifier.OnCheckPerformed(new CheckEventArgs(problemsDroppingTrigger, CheckResult.Warning, null));
 
             microsoftSQLTrigger.CreateTrigger(notifier);
             TriggerCreated = true;

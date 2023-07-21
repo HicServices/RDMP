@@ -14,39 +14,36 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-///     Sometimes you need to limit which records are extracted as part of an ExtractionConfiguration (See
-///     DeployedExtractionFilter).  In order to assemble valid WHERE SQL for this use
-///     case each DeployedExtractionFilter must be in either an AND or an OR container.  These FilterContainers ensure that
-///     each subcontainer / filter beyond the first is seperated by
-///     the appropriate operator (AND or OR) and brackets/tab indents where appropriate.
+/// Sometimes you need to limit which records are extracted as part of an ExtractionConfiguration (See DeployedExtractionFilter).  In order to assemble valid WHERE SQL for this use
+/// case each DeployedExtractionFilter must be in either an AND or an OR container.  These FilterContainers ensure that each subcontainer / filter beyond the first is seperated by
+/// the appropriate operator (AND or OR) and brackets/tab indents where appropriate.
 /// </summary>
 public class FilterContainer : ConcreteContainer, IContainer
 {
+
     public FilterContainer()
     {
-    }
 
+    }
     /// <summary>
-    ///     Creates a new instance with the given <paramref name="operation" />
+    /// Creates a new instance with the given <paramref name="operation"/>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="operation"></param>
-    public FilterContainer(IDataExportRepository repository,
-        FilterContainerOperation operation = FilterContainerOperation.AND) : base(repository.FilterManager)
+    public FilterContainer(IDataExportRepository repository, FilterContainerOperation operation = FilterContainerOperation.AND):base(repository.FilterManager)
     {
         Repository = repository;
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "Operation", operation.ToString() }
+            {"Operation", operation.ToString()}
         });
     }
 
-    internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository.FilterManager,
-        repository, r)
+    internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository.FilterManager,repository, r)
     {
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override Catalogue GetCatalogueIfAny()
     {
         var sel = GetSelectedDataSetIfAny();
@@ -66,17 +63,26 @@ public class FilterContainer : ConcreteContainer, IContainer
         return ec.ShouldBeReadOnly(out reason);
     }
 
+    /// <summary>
+    /// Returns the <see cref="ConcreteContainer.Operation"/> "AND" or "OR"
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
+    {
+        return Operation.ToString();
+    }
+
 
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
     {
         //clone ourselves
         var clonedFilterContainer = ShallowClone();
-
+            
         //clone our filters
         foreach (var deployedExtractionFilter in GetFilters())
         {
             //clone it
-            var cloneFilter = ((DeployedExtractionFilter)deployedExtractionFilter).ShallowClone(clonedFilterContainer);
+            var cloneFilter = ((DeployedExtractionFilter) deployedExtractionFilter).ShallowClone(clonedFilterContainer);
 
             //clone parameters
             foreach (DeployedExtractionFilterParameter parameter in deployedExtractionFilter.GetAllParameters())
@@ -101,32 +107,6 @@ public class FilterContainer : ConcreteContainer, IContainer
         return clonedFilterContainer;
     }
 
-    public override IFilterFactory GetFilterFactory()
-    {
-        return new DeployedExtractionFilterFactory(DataExportRepository);
-    }
-
-    public override void DeleteInDatabase()
-    {
-        base.DeleteInDatabase();
-
-        foreach (var sds in Repository.GetAllObjectsWhere<SelectedDataSets>(
-                     nameof(SelectedDataSets.RootFilterContainer_ID), ID))
-        {
-            sds.RootFilterContainer_ID = null;
-            sds.SaveToDatabase();
-        }
-    }
-
-    /// <summary>
-    ///     Returns the <see cref="ConcreteContainer.Operation" /> "AND" or "OR"
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString()
-    {
-        return Operation.ToString();
-    }
-
     private FilterContainer ShallowClone()
     {
         var clone = new FilterContainer(DataExportRepository, Operation);
@@ -135,9 +115,8 @@ public class FilterContainer : ConcreteContainer, IContainer
     }
 
     /// <summary>
-    ///     If this container is a top level root container (as opposed to a subcontainer) this will return which
-    ///     <see cref="SelectedDataSets" /> (which dataset in which configuration)
-    ///     in which it applies.
+    /// If this container is a top level root container (as opposed to a subcontainer) this will return which <see cref="SelectedDataSets"/> (which dataset in which configuration)
+    /// in which it applies.
     /// </summary>
     /// <returns></returns>
     public SelectedDataSets GetSelectedDataSetIfAny()
@@ -152,13 +131,11 @@ public class FilterContainer : ConcreteContainer, IContainer
 
 
     /// <summary>
-    ///     ///
-    ///     <summary>
-    ///         Return which <see cref="SelectedDataSets" /> (which dataset in which configuration) this container resides in
-    ///         (or null if it is an orphan).  This
-    ///         involves multiple database queries as the container hierarchy is recursively traversed up.
-    ///     </summary>
-    ///     <returns></returns>
+    /// /// <summary>
+    /// Return which <see cref="SelectedDataSets"/> (which dataset in which configuration) this container resides in (or null if it is an orphan).  This
+    /// involves multiple database queries as the container hierarchy is recursively traversed up.
+    /// </summary>
+    /// <returns></returns>
     /// </summary>
     /// <returns></returns>
     public SelectedDataSets GetSelectedDataSetsRecursively()
@@ -177,5 +154,22 @@ public class FilterContainer : ConcreteContainer, IContainer
 
         //our parent must be the root container maybe? recursive
         return parent?.GetSelectedDataSetsRecursively();
+
+    }
+
+    public override IFilterFactory GetFilterFactory()
+    {
+        return new DeployedExtractionFilterFactory(DataExportRepository);
+    }
+
+    public override void DeleteInDatabase()
+    {
+        base.DeleteInDatabase();
+
+        foreach (var sds in Repository.GetAllObjectsWhere<SelectedDataSets>(nameof(SelectedDataSets.RootFilterContainer_ID), ID))
+        {
+            sds.RootFilterContainer_ID = null;
+            sds.SaveToDatabase();
+        }
     }
 }

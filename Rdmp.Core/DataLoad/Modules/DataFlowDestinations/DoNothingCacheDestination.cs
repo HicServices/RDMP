@@ -16,32 +16,29 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowDestinations;
 
 /// <summary>
-///     Cache destination component which creates 10 files, one per minute, in the CacheDirectory. It can use a
-///     DoNothingCacheChunk if told to run multiple runs.
-///     It will respect Stop and Abort commands. Can be used by user to build a caching pipeline even when there is nothing
-///     to do.  Basically wraps
-///     BasicCacheLayout so that you can read from the cache even though you have no valid pipeline for writing to it.  Use
-///     this destination only if you have
-///     some bespoke process for populating / updating the cache progress and you only want a caching pipeline to exist for
-///     validation reasons not to actually
-///     run it.
+/// Cache destination component which creates 10 files, one per minute, in the CacheDirectory. It can use a DoNothingCacheChunk if told to run multiple runs.
+/// It will respect Stop and Abort commands. Can be used by user to build a caching pipeline even when there is nothing to do.  Basically wraps
+/// BasicCacheLayout so that you can read from the cache even though you have no valid pipeline for writing to it.  Use this destination only if you have
+/// some bespoke process for populating / updating the cache progress and you only want a caching pipeline to exist for validation reasons not to actually
+/// run it.
 /// </summary>
 public class DoNothingCacheDestination : CacheFilesystemDestination
 {
-    public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
     {
         //if(toProcess != null)
         //    throw new NotSupportedException("Expected only to be passed null chunks or never to get called, this destination is not valid for use when sources are actually sending/reading data");
 
 
         var run = 0;
-        if (toProcess is DoNothingCacheChunk chunk) run = chunk.RunIteration;
+        if (toProcess is DoNothingCacheChunk chunk)
+        {
+            run = chunk.RunIteration;
+        }
 
         for (var i = 0; i < 10; i++)
         {
-            File.WriteAllText(Path.Combine(CacheDirectory.FullName, $"run {run} - loop {i}.txt"),
-                DateTime.Now.ToString("O"));
+            File.WriteAllText(Path.Combine(CacheDirectory.FullName, $"run {run} - loop {i}.txt"), DateTime.Now.ToString("O"));
             if (cancellationToken.IsCancellationRequested)
                 return null;
 
@@ -58,5 +55,6 @@ public class DoNothingCacheDestination : CacheFilesystemDestination
 
     public override void Abort(IDataLoadEventListener listener)
     {
+            
     }
 }

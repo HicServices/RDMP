@@ -16,13 +16,76 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="ISelectedDataSets" />
-public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>,
-    IInjectKnown<IExtractionConfiguration>, IInjectKnown<ISelectedDataSetsForcedJoin[]>, IDeletableWithCustomMessage
+/// <inheritdoc cref="ISelectedDataSets"/>
+public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<IExtractableDataSet>, IInjectKnown<IExtractionConfiguration>, IInjectKnown<ISelectedDataSetsForcedJoin[]>,IDeletableWithCustomMessage
 {
+    #region Database Properties
+        
+    private int _extractionConfiguration_ID;
+    private int _extractableDataSet_ID;
+    private int? _rootFilterContainer_ID;
+
+    private Lazy<IExtractableDataSet> _extractableDataSet;
+    private Lazy<IExtractionConfiguration> _extractionConfiguration;
+    private Lazy<ISelectedDataSetsForcedJoin[]> _selectedDatasetsForcedJoins;
+
+    /// <inheritdoc/>
+    public int ExtractionConfiguration_ID
+    {
+        get => _extractionConfiguration_ID;
+        set => SetField(ref _extractionConfiguration_ID, value);
+    }
+    /// <inheritdoc/>
+    public int ExtractableDataSet_ID
+    {
+        get => _extractableDataSet_ID;
+        set
+        {
+            ClearAllInjections();
+            SetField(ref _extractableDataSet_ID, value);
+        }
+    }
+    /// <inheritdoc/>
+    public int? RootFilterContainer_ID
+    {
+        get => _rootFilterContainer_ID;
+        set => SetField(ref _rootFilterContainer_ID, value);
+    }
+
+
+    #endregion
+
+    #region Relationships
+
+    /// <inheritdoc cref="RootFilterContainer_ID"/>
+    [NoMappingToDatabase]
+    public IContainer RootFilterContainer =>
+        RootFilterContainer_ID == null
+            ? null
+            : Repository.GetObjectByID<FilterContainer>(RootFilterContainer_ID.Value);
+
+    /// <inheritdoc cref="ExtractionConfiguration_ID"/>
+    [NoMappingToDatabase]
+    public IExtractionConfiguration ExtractionConfiguration => _extractionConfiguration.Value;
+
+    /// <inheritdoc cref="ExtractableDataSet_ID"/>
+    [NoMappingToDatabase]
+    public IExtractableDataSet ExtractableDataSet => _extractableDataSet.Value;
+
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins => _selectedDatasetsForcedJoins.Value;
+
+
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public IExtractionProgress ExtractionProgressIfAny => DataExportRepository.GetAllObjectsWithParent<ExtractionProgress>(this).SingleOrDefault();
+
+    #endregion
+
     public SelectedDataSets()
     {
-        ClearAllInjections();
+        ClearAllInjections(); 
     }
 
     internal SelectedDataSets(IDataExportRepository repository, DbDataReader r)
@@ -34,70 +97,32 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     }
 
     /// <summary>
-    ///     Declares in the <paramref name="repository" /> database that the given <paramref name="dataSet" /> should be
-    ///     extracted as part of the given <paramref name="configuration" />.
+    /// Declares in the <paramref name="repository"/> database that the given <paramref name="dataSet"/> should be extracted as part of the given <paramref name="configuration"/>.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="configuration"></param>
     /// <param name="dataSet"></param>
-    /// <param name="rootContainerIfAny">
-    ///     Adds the restriction that the extraction SQL should include the WHERE logic in this
-    ///     container
-    /// </param>
-    public SelectedDataSets(IDataExportRepository repository, ExtractionConfiguration configuration,
-        IExtractableDataSet dataSet, FilterContainer rootContainerIfAny)
+    /// <param name="rootContainerIfAny">Adds the restriction that the extraction SQL should include the WHERE logic in this container</param>
+    public SelectedDataSets(IDataExportRepository repository, ExtractionConfiguration configuration, IExtractableDataSet dataSet, FilterContainer rootContainerIfAny)
     {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
-            { "ExtractionConfiguration_ID", configuration.ID },
-            { "ExtractableDataSet_ID", dataSet.ID },
-            { "RootFilterContainer_ID", rootContainerIfAny != null ? rootContainerIfAny.ID : DBNull.Value }
+            {"ExtractionConfiguration_ID",configuration.ID},
+            {"ExtractableDataSet_ID",dataSet.ID},
+            {"RootFilterContainer_ID",rootContainerIfAny != null?(object) rootContainerIfAny.ID:DBNull.Value}
         });
-
+            
         ClearAllInjections();
         InjectKnown(dataSet);
     }
-
-    /// <inheritdoc />
-    public string GetDeleteVerb()
+        
+    /// <summary>
+    /// Returns the <see cref="ExtractableDataSet"/> name
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
     {
-        return "Remove";
-    }
-
-    /// <inheritdoc />
-    public string GetDeleteMessage()
-    {
-        return $"remove '{ExtractableDataSet}' from ExtractionConfiguration '{ExtractionConfiguration}'";
-    }
-
-    /// <inheritdoc />
-    public void InjectKnown(IExtractableDataSet instance)
-    {
-        if (instance.ID != ExtractableDataSet_ID)
-            throw new ArgumentException($"That is not our dataset, our dataset has ID {ExtractableDataSet_ID}",
-                nameof(instance));
-
-        _extractableDataSet = new Lazy<IExtractableDataSet>(instance);
-    }
-
-    /// <inheritdoc />
-    public void ClearAllInjections()
-    {
-        _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(FetchForcedJoins);
-        _extractionConfiguration = new Lazy<IExtractionConfiguration>(FetchExtractionConfiguration);
-        _extractableDataSet = new Lazy<IExtractableDataSet>(FetchExtractableDataset);
-    }
-
-    /// <inheritdoc />
-    public void InjectKnown(IExtractionConfiguration instance)
-    {
-        _extractionConfiguration = new Lazy<IExtractionConfiguration>(FetchExtractionConfiguration);
-    }
-
-    /// <inheritdoc />
-    public void InjectKnown(ISelectedDataSetsForcedJoin[] instances)
-    {
-        _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(instances);
+        return ExtractableDataSet.ToString();
     }
 
     public bool ShouldBeReadOnly(out string reason)
@@ -105,12 +130,66 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
         return ExtractionConfiguration.ShouldBeReadOnly(out reason);
     }
 
+    /// <inheritdoc/>
+    public string GetDeleteVerb()
+    {
+        return "Remove";
+    }
+
+    /// <inheritdoc/>
+    public string GetDeleteMessage()
+    {
+        return $"remove '{ExtractableDataSet}' from ExtractionConfiguration '{ExtractionConfiguration}'";
+    }
+
+    /// <inheritdoc/>
+    public void InjectKnown(IExtractableDataSet instance)
+    {
+        if(instance.ID != ExtractableDataSet_ID)
+            throw new ArgumentException($"That is not our dataset, our dataset has ID {ExtractableDataSet_ID}",nameof(instance));
+
+        _extractableDataSet = new Lazy<IExtractableDataSet>(instance);
+    }
+
+    /// <inheritdoc/>
+    public void InjectKnown(IExtractionConfiguration instance)
+    {
+        _extractionConfiguration = new Lazy<IExtractionConfiguration>(FetchExtractionConfiguration);
+    }
+
+    private IExtractionConfiguration FetchExtractionConfiguration()
+    {
+        return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
+    }
+    /// <inheritdoc/>
+    public void InjectKnown(ISelectedDataSetsForcedJoin[] instances)
+    {
+        _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(instances);
+    }
+    /// <inheritdoc/>
+    public void ClearAllInjections()
+    {
+        _selectedDatasetsForcedJoins = new Lazy<ISelectedDataSetsForcedJoin[]>(FetchForcedJoins);
+        _extractionConfiguration = new Lazy<IExtractionConfiguration>(FetchExtractionConfiguration);
+        _extractableDataSet = new Lazy<IExtractableDataSet>(FetchExtractableDataset);
+    }
+
+    private ISelectedDataSetsForcedJoin[] FetchForcedJoins()
+    {
+        return Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(this).ToArray();
+    }
+
     public ICatalogue GetCatalogue()
     {
         return ExtractableDataSet.Catalogue;
     }
 
-    /// <inheritdoc />
+    private IExtractableDataSet FetchExtractableDataset()
+    {
+        return Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
+    }
+
+    /// <inheritdoc/>
     public ICumulativeExtractionResults GetCumulativeExtractionResultsIfAny()
     {
         return ExtractionConfiguration.CumulativeExtractionResults.SingleOrDefault(ec => ec.IsFor(this));
@@ -119,7 +198,7 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
     public void CreateRootContainerIfNotExists()
     {
         if (RootFilterContainer_ID != null) return;
-        var container = new FilterContainer(DataExportRepository);
+        var container = new FilterContainer(DataExportRepository, FilterContainerOperation.AND);
         RootFilterContainer_ID = container.ID;
         SaveToDatabase();
     }
@@ -135,99 +214,13 @@ public class SelectedDataSets : DatabaseEntity, ISelectedDataSets, IInjectKnown<
 
         ExtractionProgressIfAny?.DeleteInDatabase();
         base.DeleteInDatabase();
-
-        foreach (var col in cols)
-            if (col.Exists())
-                col.DeleteInDatabase();
-    }
-
-    /// <summary>
-    ///     Returns the <see cref="ExtractableDataSet" /> name
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString()
-    {
-        return ExtractableDataSet.ToString();
-    }
-
-    private IExtractionConfiguration FetchExtractionConfiguration()
-    {
-        return Repository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
-    }
-
-    private ISelectedDataSetsForcedJoin[] FetchForcedJoins()
-    {
-        return Repository.GetAllObjectsWithParent<SelectedDataSetsForcedJoin>(this).ToArray();
-    }
-
-    private IExtractableDataSet FetchExtractableDataset()
-    {
-        return Repository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
-    }
-
-    #region Database Properties
-
-    private int _extractionConfiguration_ID;
-    private int _extractableDataSet_ID;
-    private int? _rootFilterContainer_ID;
-
-    private Lazy<IExtractableDataSet> _extractableDataSet;
-    private Lazy<IExtractionConfiguration> _extractionConfiguration;
-    private Lazy<ISelectedDataSetsForcedJoin[]> _selectedDatasetsForcedJoins;
-
-    /// <inheritdoc />
-    public int ExtractionConfiguration_ID
-    {
-        get => _extractionConfiguration_ID;
-        set => SetField(ref _extractionConfiguration_ID, value);
-    }
-
-    /// <inheritdoc />
-    public int ExtractableDataSet_ID
-    {
-        get => _extractableDataSet_ID;
-        set
+            
+        foreach(var col in cols)
         {
-            ClearAllInjections();
-            SetField(ref _extractableDataSet_ID, value);
+            if(col.Exists())
+            {
+                col.DeleteInDatabase();
+            }
         }
     }
-
-    /// <inheritdoc />
-    public int? RootFilterContainer_ID
-    {
-        get => _rootFilterContainer_ID;
-        set => SetField(ref _rootFilterContainer_ID, value);
-    }
-
-    #endregion
-
-    #region Relationships
-
-    /// <inheritdoc cref="RootFilterContainer_ID" />
-    [NoMappingToDatabase]
-    public IContainer RootFilterContainer =>
-        RootFilterContainer_ID == null
-            ? null
-            : Repository.GetObjectByID<FilterContainer>(RootFilterContainer_ID.Value);
-
-    /// <inheritdoc cref="ExtractionConfiguration_ID" />
-    [NoMappingToDatabase]
-    public IExtractionConfiguration ExtractionConfiguration => _extractionConfiguration.Value;
-
-    /// <inheritdoc cref="ExtractableDataSet_ID" />
-    [NoMappingToDatabase]
-    public IExtractableDataSet ExtractableDataSet => _extractableDataSet.Value;
-
-    /// <inheritdoc />
-    [NoMappingToDatabase]
-    public ISelectedDataSetsForcedJoin[] SelectedDataSetsForcedJoins => _selectedDatasetsForcedJoins.Value;
-
-
-    /// <inheritdoc />
-    [NoMappingToDatabase]
-    public IExtractionProgress ExtractionProgressIfAny =>
-        DataExportRepository.GetAllObjectsWithParent<ExtractionProgress>(this).SingleOrDefault();
-
-    #endregion
 }

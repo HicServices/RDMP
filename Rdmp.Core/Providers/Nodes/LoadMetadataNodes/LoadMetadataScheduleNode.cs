@@ -9,19 +9,13 @@ using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class LoadMetadataScheduleNode : Node, IOrderable
+public class LoadMetadataScheduleNode : Node,IOrderable
 {
+    public LoadMetadata LoadMetadata { get; private set; }
+
     public LoadMetadataScheduleNode(LoadMetadata loadMetadata)
     {
         LoadMetadata = loadMetadata;
-    }
-
-    public LoadMetadata LoadMetadata { get; }
-
-    public int Order
-    {
-        get => 0;
-        set { }
     }
 
     public override string ToString()
@@ -39,11 +33,14 @@ public class LoadMetadataScheduleNode : Node, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((LoadMetadataScheduleNode)obj);
+        return Equals((LoadMetadataScheduleNode) obj);
     }
 
     public override int GetHashCode()
     {
         return LoadMetadata != null ? LoadMetadata.GetHashCode() : 0;
     }
+
+    public int Order { get => 0;
+        set{} }
 }

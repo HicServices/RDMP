@@ -9,18 +9,18 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-///     Collection node for all <see cref="Lookup" /> that exist under a <see cref="Catalogue" />
+/// Collection node for all <see cref="Lookup"/> that exist under a <see cref="Catalogue"/>
 /// </summary>
-public class CatalogueLookupsNode : Node
+public class CatalogueLookupsNode:Node
 {
+    public Catalogue Catalogue { get; set; }
+    public Lookup[] Lookups { get; set; }
+
     public CatalogueLookupsNode(Catalogue catalogue, Lookup[] lookups)
     {
         Catalogue = catalogue;
         Lookups = lookups;
     }
-
-    public Catalogue Catalogue { get; set; }
-    public Lookup[] Lookups { get; set; }
 
     public override string ToString()
     {

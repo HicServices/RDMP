@@ -43,57 +43,35 @@ namespace Rdmp.Core.CommandExecution;
 public abstract class BasicActivateItems : IBasicActivateItems
 {
     /// <summary>
-    ///     The maximum number of characters (exclusive) at which text input UI
-    ///     controls should assume single line only (i.e. no newlines allowed).
+    /// The maximum number of characters (exclusive) at which text input UI
+    /// controls should assume single line only (i.e. no newlines allowed).
     /// </summary>
     public const int MultiLineLengthThreshold = 1000;
 
-    public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ICheckNotifier globalErrorCheckNotifier)
-    {
-        RepositoryLocator = repositoryLocator;
-        GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
-        ServerDefaults = RepositoryLocator.CatalogueRepository;
+    /// <inheritdoc/>
+    public bool IsWinForms {get; protected set;}
 
-        //Shouldn't ever change externally to your session so doesn't need constantly refreshed
-        FavouritesProvider = new FavouritesProvider(this);
-
-        // This has to happen before we create the child providers
-        ConstructPluginChildProviders();
-
-        // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
-        CoreChildProvider = GetChildProvider();
-
-        //handle custom icons from plugin user interfaces in which
-        CoreIconProvider = new DataExportIconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
-    }
-
-
-    /// <inheritdoc />
-    public bool IsWinForms { get; protected set; }
-
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public virtual bool IsInteractive => true;
 
-    /// <inheritdoc />
-    public bool InteractiveDeletes { get; set; }
+    /// <inheritdoc/>
+    public bool InteractiveDeletes {get;set;}
 
-    /// <inheritdoc />
-    public ICoreChildProvider CoreChildProvider { get; protected set; }
+    /// <inheritdoc/>
+    public ICoreChildProvider CoreChildProvider { get; protected set;}
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IServerDefaults ServerDefaults { get; }
 
-    /// <inheritdoc />
-    public FavouritesProvider FavouritesProvider { get; }
-
-    public ICoreIconProvider CoreIconProvider { get; }
+    /// <inheritdoc/>
+    public FavouritesProvider FavouritesProvider { get; private set; }
+    public ICoreIconProvider CoreIconProvider { get; private set; }
 
     public CommentStore CommentStore => RepositoryLocator.CatalogueRepository.CommentStore;
 
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool YesNo(string text, string caption, out bool chosen)
     {
         return YesNo(new DialogArgs
@@ -105,7 +83,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public abstract bool YesNo(DialogArgs args, out bool chosen);
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool YesNo(string text, string caption)
     {
         return YesNo(new DialogArgs
@@ -114,7 +92,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
             TaskDescription = text
         });
     }
-
     public bool YesNo(DialogArgs args)
     {
         return YesNo(args, out var chosen) && chosen;
@@ -129,7 +106,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         });
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool Confirm(DialogArgs args)
     {
         // auto confirm if not in user interactive mode
@@ -139,36 +116,114 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return YesNo(args);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public event EmphasiseItemHandler Emphasise;
 
-    /// <inheritdoc />
-    public List<IPluginUserInterface> PluginUserInterfaces { get; private set; } = new();
+    /// <inheritdoc/>
+    public List<IPluginUserInterface> PluginUserInterfaces { get; private set; } = new List<IPluginUserInterface>();
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool HardRefresh { get; set; }
 
     public bool IsAbleToLaunchSubprocesses { get; protected set; }
 
-    /// <inheritdoc />
+    public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
+    {
+        RepositoryLocator = repositoryLocator;
+        GlobalErrorCheckNotifier = globalErrorCheckNotifier;
+
+        ServerDefaults = RepositoryLocator.CatalogueRepository;
+            
+        //Shouldn't ever change externally to your session so doesn't need constantly refreshed
+        FavouritesProvider = new FavouritesProvider(this);
+
+        // This has to happen before we create the child providers
+        ConstructPluginChildProviders();
+
+        // Note that this is virtual so can return null e.g. if other stuff has to happen with the activator before a valid child provider can be built (e.g. loading plugin user interfaces)
+        CoreChildProvider = GetChildProvider();
+
+        //handle custom icons from plugin user interfaces in which
+        CoreIconProvider = new DataExportIconProvider(repositoryLocator, PluginUserInterfaces.ToArray());
+    }
+
+    protected virtual ICoreChildProvider GetChildProvider()
+    {
+        // Build new CoreChildProvider in a temp then update to it to avoid stale references
+        ICoreChildProvider temp = null;
+
+        //prefer a linked repository with both
+        if (RepositoryLocator.DataExportRepository != null)
+            try
+            {
+                temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider);
+            }
+            catch (Exception e)
+            {
+                ShowException("Error constructing DataExportChildProvider",e);
+            }
+
+        //there was an error generating a data export repository or there was no repository specified
+
+        //so just create a catalogue one
+        temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(), GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
+
+        // first time
+        if (CoreChildProvider == null)
+            CoreChildProvider = temp;
+        else
+            CoreChildProvider.UpdateTo(temp);
+
+        return CoreChildProvider;
+    }
+
+    private void ConstructPluginChildProviders()
+    {
+        // if startup has not taken place then we won't have any plugins
+        if (RepositoryLocator.CatalogueRepository.MEF == null)
+            return;
+
+        PluginUserInterfaces = new List<IPluginUserInterface>();
+
+        var constructor = new ObjectConstructor();
+
+        foreach (var pluginType in RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginUserInterface>())
+        {
+            try
+            {
+                PluginUserInterfaces.Add((IPluginUserInterface)ObjectConstructor.Construct(pluginType, this, false));
+            }
+            catch (Exception e)
+            {
+                GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Problem occurred trying to load Plugin '{pluginType.Name}'", CheckResult.Fail, e));
+            }
+        }
+    }
+
+    protected void OnEmphasise(object sender, EmphasiseEventArgs args)
+    {
+        Emphasise?.Invoke(sender,args);
+    }
+    /// <inheritdoc/>
     public virtual IEnumerable<Type> GetIgnoredCommands()
     {
         return Type.EmptyTypes;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public virtual void Wait(string title, Task task, CancellationTokenSource cts)
     {
         task.Wait(cts.Token);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public virtual void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest)
     {
         AdjustEmphasiseRequest(emphasiseRequest);
@@ -177,9 +232,38 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
 
     /// <summary>
-    ///     Returns the root tree object which hosts the supplied object.  If the supplied object has no known descendancy it
-    ///     is assumed
-    ///     to be the root object itself so it is returned
+    /// Changes what object should be emphasised based on system state for specific types
+    /// of objects.  For example if a request is to emphasise an <see cref="ExtractableCohort"/>
+    /// then we might instead emphasise it under a <see cref="Project"/> (if it is only
+    /// associated with a single Project).
+    /// </summary>
+    /// <param name="emphasiseRequest"></param>
+    protected void AdjustEmphasiseRequest(EmphasiseRequest emphasiseRequest)
+    {
+        if(emphasiseRequest.ObjectToEmphasise is ExtractableCohort ec)
+        {
+            if(CoreChildProvider is DataExportChildProvider dx)
+            {
+                var projects = dx.Projects.Where(p => p.ProjectNumber == ec.ExternalProjectNumber).ToArray();
+
+                // If there is only one Project with the number of this cohort
+                if(projects.Length == 1)
+                {
+                    // we can emphasise the cohort under that Project
+                    var usage = dx.GetAllCohortProjectUsageNodesFor(projects[0])
+                        .SelectMany(s=>s.CohortsUsed)
+                        .FirstOrDefault(k => k.ObjectBeingUsed.Equals(ec));
+
+                    if(usage != null)
+                        emphasiseRequest.ObjectToEmphasise = usage;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Returns the root tree object which hosts the supplied object.  If the supplied object has no known descendancy it is assumed
+    /// to be the root object itself so it is returned
     /// </summary>
     /// <param name="objectToEmphasise"></param>
     /// <returns></returns>
@@ -188,7 +272,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return CoreChildProvider?.GetRootObjectOrSelf(objectToEmphasise) ?? objectToEmphasise;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public bool SelectEnum(string prompt, Type enumType, out Enum chosen)
     {
         return SelectEnum(new DialogArgs
@@ -205,7 +289,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return SelectType(new DialogArgs
         {
             WindowTitle = prompt
-        }, baseTypeIfAny, out chosen);
+        },baseTypeIfAny,out chosen);
     }
 
     public bool SelectType(DialogArgs args, Type baseTypeIfAny, out Type chosen)
@@ -213,16 +297,14 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return SelectType(args, baseTypeIfAny, false, false, out chosen);
     }
 
-    public bool SelectType(string prompt, Type baseTypeIfAny, bool allowAbstract, bool allowInterfaces, out Type chosen)
+    public bool SelectType(string prompt, Type baseTypeIfAny,bool allowAbstract,bool allowInterfaces, out Type chosen)
     {
         return SelectType(new DialogArgs
         {
             WindowTitle = prompt
-        }, baseTypeIfAny, allowAbstract, allowInterfaces, out chosen);
+        },baseTypeIfAny,allowAbstract,allowInterfaces,out chosen);
     }
-
-    public bool SelectType(DialogArgs args, Type baseTypeIfAny, bool allowAbstract, bool allowInterfaces,
-        out Type chosen)
+    public bool SelectType(DialogArgs args, Type baseTypeIfAny, bool allowAbstract, bool allowInterfaces, out Type chosen)
     {
         var available =
             RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
@@ -252,42 +334,55 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     public void Activate(object o)
     {
-        if (o is IMapsDirectlyToDatabaseTable m)
+        if(o is IMapsDirectlyToDatabaseTable m)
+        {
             // if a plugin user interface exists to handle editing this then let them handle it instead of launching the
             // normal UI
             foreach (var pluginInterface in PluginUserInterfaces)
+            {
                 if (pluginInterface.CustomActivate(m))
+                {
                     return;
+                }
+            }
+        }
 
         ActivateImpl(o);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// override to provide custom activation logic.  Note that this will be called after
+    /// first consulting plugins about new behaviours
+    /// </summary>
+    /// <param name="o"></param>
+    protected virtual void ActivateImpl(object o)
+    {
+            
+    }
+    /// <inheritdoc/>
     public virtual IEnumerable<T> GetAll<T>()
     {
         return CoreChildProvider.GetAllSearchables()
             .Keys.OfType<T>();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public virtual IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
     {
         return CoreChildProvider.GetAllSearchables()
             .Keys.Where(t.IsInstanceOfType);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public abstract void ShowException(string errorText, Exception exception);
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void PublishNearest(object publish)
     {
         if (publish != null)
         {
             if (publish is DatabaseEntity d)
-            {
                 Publish(d);
-            }
             else
             {
                 var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(publish);
@@ -300,14 +395,17 @@ public abstract class BasicActivateItems : IBasicActivateItems
         }
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public virtual bool DeleteWithConfirmation(IDeleteable deleteable)
     {
         if (IsInteractive && InteractiveDeletes)
         {
             var didDelete = InteractiveDelete(deleteable);
 
-            if (didDelete) PublishNearest(deleteable);
+            if (didDelete)
+            {
+                PublishNearest(deleteable);
+            }
 
             return didDelete;
         }
@@ -318,424 +416,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return true;
     }
 
-    public bool SelectValueType(string prompt, Type paramType, object initialValue, out object chosen)
-    {
-        return SelectValueType(
-            new DialogArgs
-            {
-                WindowTitle = $"Enter value for {prompt}",
-                EntryLabel = prompt
-            }, paramType, initialValue, out chosen);
-    }
-
-    /// <inheritdoc />
-    public bool SelectValueType(DialogArgs args, Type paramType, object initialValue, out object chosen)
-    {
-        var underlying = Nullable.GetUnderlyingType(paramType);
-        if ((underlying ?? paramType).IsEnum)
-        {
-            var ok = SelectEnum(args, underlying ?? paramType, out var enumChosen);
-            chosen = enumChosen;
-            return ok;
-        }
-
-        if (paramType == typeof(bool) || paramType == typeof(bool?))
-        {
-            var ok = YesNo(args, out var boolChosen);
-            chosen = boolChosen;
-            return ok;
-        }
-
-        if (paramType == typeof(string))
-        {
-            var ok = TypeText(args, int.MaxValue, initialValue?.ToString(), out var stringChosen, false);
-            chosen = stringChosen;
-            return ok;
-        }
-
-        return SelectValueTypeImpl(args, paramType, initialValue, out chosen);
-    }
-
-    /// <inheritdoc />
-    public virtual void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
-    {
-        if (!HardRefresh && UserSettings.SelectiveRefresh && CoreChildProvider.SelectiveRefresh(databaseEntity)) return;
-
-        var fresh = GetChildProvider();
-        CoreChildProvider.UpdateTo(fresh);
-        HardRefresh = false;
-    }
-
-    /// <inheritdoc />
-    public void Show(string message)
-    {
-        Show("Message", message);
-    }
-
-    public abstract void Show(string title, string message);
-
-    /// <inheritdoc />
-    public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
-        bool requireSaneHeaderText)
-    {
-        return TypeText(new DialogArgs
-        {
-            WindowTitle = header,
-            EntryLabel = prompt
-        }, maxLength, initialText, out text, requireSaneHeaderText);
-    }
-
-    public abstract bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
-        bool requireSaneHeaderText);
-
-    /// <inheritdoc />
-    public abstract DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription);
-
-
-    /// <inheritdoc />
-    public abstract DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
-
-    /// <inheritdoc />
-    public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
-        IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null)
-    {
-        return SelectMany(new DialogArgs
-        {
-            WindowTitle = prompt,
-            InitialSearchText = initialSearchText
-        }, arrayElementType, availableObjects);
-    }
-
-    /// <inheritdoc />
-    public abstract IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
-        IMapsDirectlyToDatabaseTable[] availableObjects);
-
-    /// <inheritdoc />
-    public virtual IMapsDirectlyToDatabaseTable SelectOne(string prompt,
-        IMapsDirectlyToDatabaseTable[] availableObjects,
-        string initialSearchText = null, bool allowAutoSelect = false)
-    {
-        return SelectOne(new DialogArgs
-        {
-            WindowTitle = prompt,
-            AllowAutoSelect = allowAutoSelect,
-            InitialSearchText = initialSearchText
-        }, availableObjects);
-    }
-
-    /// <inheritdoc />
-    public abstract IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args,
-        IMapsDirectlyToDatabaseTable[] availableObjects);
-
-    /// <inheritdoc />
-    public bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null,
-        bool allowAutoSelect = false) where T : class
-    {
-        return SelectObject(new DialogArgs
-        {
-            WindowTitle = prompt,
-            InitialSearchText = initialSearchText,
-            AllowAutoSelect = allowAutoSelect
-        }, available, out selected);
-    }
-
-    public abstract bool SelectObject<T>(DialogArgs args, T[] available, out T selected) where T : class;
-
-    /// <inheritdoc />
-    public bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null)
-        where T : class
-    {
-        return SelectObjects(new DialogArgs
-        {
-            WindowTitle = prompt,
-            InitialSearchText = initialSearchText
-        }, available, out selected);
-    }
-
-    public abstract bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected) where T : class;
-
-    /// <inheritdoc />
-    public abstract DirectoryInfo SelectDirectory(string prompt);
-
-    /// <inheritdoc />
-    public abstract FileInfo SelectFile(string prompt);
-
-    /// <inheritdoc />
-    public abstract FileInfo SelectFile(string prompt, string patternDescription, string pattern);
-
-    /// <inheritdoc />
-    public abstract FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern);
-
-    /// <inheritdoc />
-    public virtual List<CommandInvokerDelegate> GetDelegates()
-    {
-        return new List<CommandInvokerDelegate>();
-    }
-
-    /// <inheritdoc />
-    public virtual IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
-    {
-        return new PipelineRunner(useCase, pipeline);
-    }
-
-    /// <inheritdoc />
-    public virtual CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable,
-        IProject project, string cohortInitialDescription)
-    {
-        int version;
-        var projectNumber = project?.ProjectNumber;
-
-        if (!TypeText("Name", "Enter name for cohort", 255, null, out var name, false))
-            throw new Exception("User chose not to enter a name for the cohortand none was provided");
-
-
-        if (projectNumber == null)
-            if (SelectValueType("enter project number", typeof(int), 0, out var chosen))
-                projectNumber = (int)chosen;
-            else
-                throw new Exception("User chose not to enter a Project number and none was provided");
-
-
-        if (SelectValueType("enter version number for cohort", typeof(int), 0, out var chosenVersion))
-            version = (int)chosenVersion;
-        else
-            throw new Exception("User chose not to enter a version number and none was provided");
-
-
-        return new CohortCreationRequest(project,
-            new CohortDefinition(null, name, version, projectNumber.Value, externalCohortTable),
-            RepositoryLocator.DataExportRepository, cohortInitialDescription);
-    }
-
-    /// <inheritdoc />
-    public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,
-        ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific,
-        string catalogueFolder)
-    {
-        // Create a new Catalogue based on the table info
-        var engineer = new ForwardEngineerCatalogue(tableInfo, tableInfo.ColumnInfos);
-        engineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
-
-        // if we know the linkable private identifier column(s)
-        if (extractionIdentifierColumns != null && extractionIdentifierColumns.Any())
-        {
-            // Make the Catalogue extractable
-            var eds = new ExtractableDataSet(RepositoryLocator.DataExportRepository, cata);
-
-            // Mark the columns specified IsExtractionIdentifier
-            foreach (var col in extractionIdentifierColumns)
-            {
-                var match = eis.FirstOrDefault(ei => ei.ColumnInfo?.ID == col.ID) ??
-                            throw new ArgumentException(
-                                $"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
-                match.IsExtractionIdentifier = true;
-                match.SaveToDatabase();
-            }
-
-            // Catalogue must be extractable to be project specific
-            if (projectSpecific != null)
-            {
-                eds.Project_ID = projectSpecific.ID;
-                eds.SaveToDatabase();
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(catalogueFolder))
-        {
-            cata.Folder = catalogueFolder;
-            cata.SaveToDatabase();
-        }
-
-        return cata;
-    }
-
-    public virtual ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository,
-        PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
-    {
-        if (db == null && IsInteractive) db = SelectDatabase(true, "Select database");
-
-        if (db == null)
-            throw new ArgumentException(
-                $"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",
-                nameof(db));
-
-        var executor = new MasterDatabaseScriptExecutor(db);
-        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier { WriteToConsole = true });
-
-        var eds = new ExternalDatabaseServer(catalogueRepository,
-            $"New {(defaultToSet == PermissableDefaults.None ? "" : defaultToSet.ToString())}Server", patcher);
-        eds.SetProperties(db);
-
-        if (defaultToSet != PermissableDefaults.None)
-            catalogueRepository.SetDefault(defaultToSet, eds);
-
-        return eds;
-    }
-
-    public virtual bool ShowCohortWizard(out CohortIdentificationConfiguration cic)
-    {
-        cic = null;
-        return false;
-    }
-
-    public void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
-    {
-        SelectAnythingThen(new DialogArgs { WindowTitle = prompt }, callback);
-    }
-
-    public virtual void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
-    {
-        var selected = SelectOne(args, CoreChildProvider.GetAllSearchables().Keys.ToArray());
-
-        if (selected != null)
-            callback(selected);
-    }
-
-    public abstract void ShowData(IViewSQLAndResultsCollection collection);
-    public abstract void ShowData(DataTable collection);
-
-    /// <summary>
-    ///     Presents user with log info about <paramref name="rootObject" />.  Inheritors may wish to use
-    ///     <see cref="GetLogs(ILoggedActivityRootObject)" />.
-    /// </summary>
-    /// <param name="rootObject"></param>
-    public abstract void ShowLogs(ILoggedActivityRootObject rootObject);
-
-    /// <summary>
-    ///     Presents user with top down view of logged activity across all objects
-    /// </summary>
-    /// <param name="loggingServer"></param>
-    /// <param name="filter"></param>
-    public virtual void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
-    {
-        ShowData(new ViewLogsCollection(loggingServer, filter));
-    }
-
-    /// <inheritdoc />
-    public abstract void ShowGraph(AggregateConfiguration aggregate);
-
-    /// <inheritdoc />
-    public IRepository GetRepositoryFor(Type type)
-    {
-        foreach (var repo in RepositoryLocator.GetAllRepositories())
-            if (repo.SupportsObjectType(type))
-                return repo;
-
-        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{type}'");
-    }
-
-    public abstract void LaunchSubprocess(ProcessStartInfo startInfo);
-
-
-    /// <inheritdoc />
-    public bool UseCommits()
-    {
-        var repo = RepositoryLocator?.CatalogueRepository;
-
-        // system is in a very bad state
-        if (repo == null)
-            return false;
-
-        // does user want to do commits? and we have a db repo
-        return UserSettings.EnableCommits && repo.SupportsCommits;
-    }
-
-    protected virtual ICoreChildProvider GetChildProvider()
-    {
-        // Build new CoreChildProvider in a temp then update to it to avoid stale references
-        ICoreChildProvider temp = null;
-
-        //prefer a linked repository with both
-        if (RepositoryLocator.DataExportRepository != null)
-            try
-            {
-                temp = new DataExportChildProvider(RepositoryLocator, PluginUserInterfaces.ToArray(),
-                    GlobalErrorCheckNotifier, CoreChildProvider as DataExportChildProvider);
-            }
-            catch (Exception e)
-            {
-                ShowException("Error constructing DataExportChildProvider", e);
-            }
-
-        //there was an error generating a data export repository or there was no repository specified
-
-        //so just create a catalogue one
-        temp ??= new CatalogueChildProvider(RepositoryLocator.CatalogueRepository, PluginUserInterfaces.ToArray(),
-            GlobalErrorCheckNotifier, CoreChildProvider as CatalogueChildProvider);
-
-        // first time
-        if (CoreChildProvider == null)
-            CoreChildProvider = temp;
-        else
-            CoreChildProvider.UpdateTo(temp);
-
-        return CoreChildProvider;
-    }
-
-    private void ConstructPluginChildProviders()
-    {
-        // if startup has not taken place then we won't have any plugins
-        if (RepositoryLocator.CatalogueRepository.MEF == null)
-            return;
-
-        PluginUserInterfaces = new List<IPluginUserInterface>();
-
-        var constructor = new ObjectConstructor();
-
-        foreach (var pluginType in RepositoryLocator.CatalogueRepository.MEF.GetTypes<IPluginUserInterface>())
-            try
-            {
-                PluginUserInterfaces.Add((IPluginUserInterface)ObjectConstructor.Construct(pluginType, this, false));
-            }
-            catch (Exception e)
-            {
-                GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Problem occurred trying to load Plugin '{pluginType.Name}'", CheckResult.Fail, e));
-            }
-    }
-
-    protected void OnEmphasise(object sender, EmphasiseEventArgs args)
-    {
-        Emphasise?.Invoke(sender, args);
-    }
-
-    /// <summary>
-    ///     Changes what object should be emphasised based on system state for specific types
-    ///     of objects.  For example if a request is to emphasise an <see cref="ExtractableCohort" />
-    ///     then we might instead emphasise it under a <see cref="Project" /> (if it is only
-    ///     associated with a single Project).
-    /// </summary>
-    /// <param name="emphasiseRequest"></param>
-    protected void AdjustEmphasiseRequest(EmphasiseRequest emphasiseRequest)
-    {
-        if (emphasiseRequest.ObjectToEmphasise is ExtractableCohort ec)
-            if (CoreChildProvider is DataExportChildProvider dx)
-            {
-                var projects = dx.Projects.Where(p => p.ProjectNumber == ec.ExternalProjectNumber).ToArray();
-
-                // If there is only one Project with the number of this cohort
-                if (projects.Length == 1)
-                {
-                    // we can emphasise the cohort under that Project
-                    var usage = dx.GetAllCohortProjectUsageNodesFor(projects[0])
-                        .SelectMany(s => s.CohortsUsed)
-                        .FirstOrDefault(k => k.ObjectBeingUsed.Equals(ec));
-
-                    if (usage != null)
-                        emphasiseRequest.ObjectToEmphasise = usage;
-                }
-            }
-    }
-
-    /// <summary>
-    ///     override to provide custom activation logic.  Note that this will be called after
-    ///     first consulting plugins about new behaviours
-    /// </summary>
-    /// <param name="o"></param>
-    protected virtual void ActivateImpl(object o)
-    {
-    }
-
     protected virtual bool InteractiveDelete(IDeleteable deleteable)
     {
         var databaseObject = deleteable as DatabaseEntity;
@@ -743,20 +423,18 @@ public abstract class BasicActivateItems : IBasicActivateItems
         //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
 
         if (databaseObject is Catalogue c)
+        {
             if (c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
             {
-                if (YesNo(
-                        "Catalogue must first be made non extractable before it can be deleted, mark non extractable?",
-                        "Make Non Extractable"))
+                if (YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?", "Make Non Extractable"))
                 {
                     var cmd = new ExecuteCommandChangeExtractability(this, c);
                     cmd.Execute();
                 }
                 else
-                {
                     return false;
-                }
             }
+        }
 
         if (databaseObject is ExtractionFilter f)
         {
@@ -769,7 +447,10 @@ public abstract class BasicActivateItems : IBasicActivateItems
                         "Delete"))
                     return false;
 
-                foreach (var child in children) child.DeleteInDatabase();
+                foreach (var child in children)
+                {
+                    child.DeleteInDatabase();
+                }
 
                 f.ClearAllInjections();
 
@@ -778,16 +459,15 @@ public abstract class BasicActivateItems : IBasicActivateItems
             }
         }
 
-        if (databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
+        if( databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
         {
-            var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u => u.AggregateConfiguration);
-            if (users != null)
+            var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u=>u.AggregateConfiguration);
+            if(users != null)
             {
                 users = users.ToArray();
-                if (users.Any())
+                if(users.Any())
                 {
-                    Show(
-                        $"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine, users)}");
+                    Show($"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
                     return false;
                 }
             }
@@ -810,19 +490,19 @@ public abstract class BasicActivateItems : IBasicActivateItems
         if (databaseObject != null)
         {
             var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
-            if (exports.Any(e => e.Exists()))
-                if (YesNo(
-                        "This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?",
-                        "Delete ObjectExport"))
-                    foreach (var e in exports)
+            if(exports.Any(e=>e.Exists()))
+                if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
+                {
+                    foreach(var e in exports)
                         e.DeleteInDatabase();
+                }
                 else
                     return false;
         }
-
+                        
         if (
             YesNo(
-                overrideConfirmationText ??
+                overrideConfirmationText??
                 $"{"Are you sure you want to delete '" + deleteable + "'?"}{Environment.NewLine}({deleteable.GetType().Name}{idText})",
                 $"Delete {deleteable.GetType().Name}"))
         {
@@ -831,7 +511,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
             if (databaseObject == null)
             {
                 var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(deleteable);
-                if (descendancy != null)
+                if(descendancy != null)
                     databaseObject = descendancy.Parents.OfType<DatabaseEntity>().LastOrDefault();
             }
 
@@ -847,11 +527,297 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return false;
     }
 
-    protected abstract bool
-        SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen);
+    public bool SelectValueType(string prompt, Type paramType, object initialValue, out object chosen)
+    {
+        return SelectValueType(
+            new DialogArgs
+            {
+                WindowTitle = $"Enter value for {prompt}",
+                EntryLabel = prompt
+            },paramType,initialValue,out chosen);
+    }
+
+    /// <inheritdoc/>
+    public bool SelectValueType(DialogArgs args, Type paramType, object initialValue, out object chosen)
+    {
+        var underlying = Nullable.GetUnderlyingType(paramType);
+        if ((underlying ?? paramType).IsEnum)
+        {
+            var ok = SelectEnum(args, underlying?? paramType, out var enumChosen);
+            chosen = enumChosen;
+            return ok;
+        }
+
+        if (paramType == typeof(bool) || paramType == typeof(bool?))
+        {
+            var ok = YesNo(args, out var boolChosen);
+            chosen = boolChosen;
+            return ok;
+        }
+
+        if (paramType == typeof(string))
+        {
+            var ok = TypeText(args, int.MaxValue, initialValue?.ToString(),out var stringChosen,false);
+            chosen = stringChosen;
+            return ok;
+
+        }
+
+        return SelectValueTypeImpl(args, paramType, initialValue, out chosen);
+    }
+
+    protected abstract bool SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen);
+
+    /// <inheritdoc/>
+    public virtual void Publish(IMapsDirectlyToDatabaseTable databaseEntity)
+    {
+        if(!HardRefresh && UserSettings.SelectiveRefresh && CoreChildProvider.SelectiveRefresh(databaseEntity))
+        {
+            return;
+        }
+
+        var fresh = GetChildProvider();
+        CoreChildProvider.UpdateTo(fresh);
+        HardRefresh = false;
+    }
+
+    /// <inheritdoc/>
+    public void Show(string message)
+    {
+        Show("Message",message);
+    }
+
+    public abstract void Show(string title, string message);
+
+    /// <inheritdoc/>
+    public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
+        bool requireSaneHeaderText)
+    {
+        return TypeText(new DialogArgs
+        {
+            WindowTitle = header,
+            EntryLabel = prompt
+        },maxLength,initialText,out text,requireSaneHeaderText);
+    }
+    public abstract bool TypeText(DialogArgs args, int maxLength, string initialText, out string text,
+        bool requireSaneHeaderText);
+
+    /// <inheritdoc/>
+    public abstract DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription);
+
+
+    /// <inheritdoc/>
+    public abstract DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
+
+    /// <inheritdoc/>
+    public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+        IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null)
+    {
+        return SelectMany(new DialogArgs
+        {
+            WindowTitle = prompt,
+            InitialSearchText = initialSearchText
+        },arrayElementType,availableObjects);
+    }
+
+    /// <inheritdoc/>
+    public abstract IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
+        IMapsDirectlyToDatabaseTable[] availableObjects);
+
+    /// <inheritdoc/>
+    public virtual IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+        string initialSearchText = null, bool allowAutoSelect = false)
+    {
+        return SelectOne(new DialogArgs
+        {
+            WindowTitle = prompt,
+            AllowAutoSelect = allowAutoSelect,
+            InitialSearchText = initialSearchText
+        }, availableObjects);
+    }
+
+    /// <inheritdoc/>
+    public abstract IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args, IMapsDirectlyToDatabaseTable[] availableObjects);
+
+    /// <inheritdoc/>
+    public bool SelectObject<T>(string prompt, T[] available, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : class
+    {
+        return SelectObject<T>(new DialogArgs
+        {
+            WindowTitle = prompt,
+            InitialSearchText = initialSearchText,
+            AllowAutoSelect = allowAutoSelect
+        }, available, out selected);
+    }
+
+    public abstract bool SelectObject<T>(DialogArgs args, T[] available, out T selected) where T : class;
+
+    /// <inheritdoc/>
+    public bool SelectObjects<T>(string prompt, T[] available, out T[] selected, string initialSearchText = null) where T : class
+    {
+        return SelectObjects<T>(new DialogArgs
+        {
+            WindowTitle = prompt,
+            InitialSearchText = initialSearchText
+        }, available, out selected);
+    }
+    public abstract bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected) where T : class;
+
+    /// <inheritdoc/>
+    public abstract DirectoryInfo SelectDirectory(string prompt);
+
+    /// <inheritdoc/>
+    public abstract FileInfo SelectFile(string prompt);
+
+    /// <inheritdoc/>
+    public abstract FileInfo SelectFile(string prompt, string patternDescription, string pattern);
+
+    /// <inheritdoc/>
+    public abstract FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern);
+
+    /// <inheritdoc/>
+    public virtual List<CommandInvokerDelegate> GetDelegates()
+    {
+        return new List<CommandInvokerDelegate>();
+    }
+
+    /// <inheritdoc/>
+    public virtual IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
+    {
+        return new PipelineRunner(useCase,pipeline);
+    }
+
+    /// <inheritdoc/>
+    public virtual CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
+    {
+        int version;
+        var projectNumber = project?.ProjectNumber;
+
+        if(!TypeText("Name","Enter name for cohort",255,null,out var name,false))
+            throw new Exception("User chose not to enter a name for the cohortand none was provided");
+
+
+        if(projectNumber == null)
+            if(SelectValueType("enter project number",typeof(int),0,out var chosen))
+            {
+                projectNumber = (int)chosen;
+            }
+            else
+                throw new Exception("User chose not to enter a Project number and none was provided");
+
+            
+        if(SelectValueType("enter version number for cohort",typeof(int),0,out var chosenVersion))
+        {
+            version = (int)chosenVersion;
+        }
+        else
+            throw new Exception("User chose not to enter a version number and none was provided");
+
+
+        return new CohortCreationRequest(project,new CohortDefinition(null,name,version,projectNumber.Value,externalCohortTable),RepositoryLocator.DataExportRepository,cohortInitialDescription);
+    }
+
+    /// <inheritdoc/>
+    public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo, ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string catalogueFolder)
+    {
+        // Create a new Catalogue based on the table info
+        var engineer = new ForwardEngineerCatalogue(tableInfo,tableInfo.ColumnInfos);
+        engineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
+
+        // if we know the linkable private identifier column(s)
+        if(extractionIdentifierColumns != null && extractionIdentifierColumns.Any())
+        {
+            // Make the Catalogue extractable
+            var eds = new ExtractableDataSet(RepositoryLocator.DataExportRepository,cata);
+
+            // Mark the columns specified IsExtractionIdentifier
+            foreach(var col in extractionIdentifierColumns)
+            {
+                var match = eis.FirstOrDefault(ei=>ei.ColumnInfo?.ID == col.ID) ?? throw new ArgumentException($"Supplied ColumnInfo {col.GetRuntimeName()} was not found amongst the columns created");
+                match.IsExtractionIdentifier = true;
+                match.SaveToDatabase();
+            }
+
+            // Catalogue must be extractable to be project specific
+            if(projectSpecific != null)
+            {
+                eds.Project_ID = projectSpecific.ID;
+                eds.SaveToDatabase();
+            }
+        }
+
+        if(!string.IsNullOrWhiteSpace(catalogueFolder))
+        {
+            cata.Folder = catalogueFolder;
+            cata.SaveToDatabase();
+        }
+
+        return cata;
+    }
+
+    public virtual ExternalDatabaseServer CreateNewPlatformDatabase(ICatalogueRepository catalogueRepository, PermissableDefaults defaultToSet, IPatcher patcher, DiscoveredDatabase db)
+    {
+
+        if (db == null && IsInteractive)
+        {
+            db = SelectDatabase(true, "Select database");
+        }
+
+        if (db == null)
+            throw new ArgumentException($"Database must be picked before calling {nameof(CreateNewPlatformDatabase)} when using {nameof(BasicActivateItems)}",nameof(db));
+
+        var executor = new MasterDatabaseScriptExecutor(db);
+        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier { WriteToConsole = true});
+
+        var eds = new ExternalDatabaseServer(catalogueRepository,
+            $"New {(defaultToSet == PermissableDefaults.None ? "" : defaultToSet.ToString())}Server",patcher);
+        eds.SetProperties(db);
+
+        if (defaultToSet != PermissableDefaults.None)
+            catalogueRepository.SetDefault(defaultToSet, eds);
+
+        return eds;
+    }
+
+    public virtual bool ShowCohortWizard(out CohortIdentificationConfiguration cic)
+    {
+        cic = null;
+        return false;
+    }
+
+    public void SelectAnythingThen(string prompt, Action<IMapsDirectlyToDatabaseTable> callback)
+    {
+        SelectAnythingThen(new DialogArgs { WindowTitle = prompt}, callback);
+    }
+    public virtual void SelectAnythingThen(DialogArgs args, Action<IMapsDirectlyToDatabaseTable> callback)
+    {
+        var selected = SelectOne(args, CoreChildProvider.GetAllSearchables().Keys.ToArray());
+
+        if (selected != null)
+            callback(selected);
+    }
+
+    public abstract void ShowData(IViewSQLAndResultsCollection collection);
+    public abstract void ShowData(DataTable collection);
 
     /// <summary>
-    ///     Returns all logged activities for <paramref name="rootObject" />
+    /// Presents user with log info about <paramref name="rootObject"/>.  Inheritors may wish to use <see cref="GetLogs(ILoggedActivityRootObject)"/>.
+    /// </summary>
+    /// <param name="rootObject"></param>
+    public abstract void ShowLogs(ILoggedActivityRootObject rootObject);
+
+    /// <summary>
+    /// Presents user with top down view of logged activity across all objects
+    /// </summary>
+    /// <param name="loggingServer"></param>
+    /// <param name="filter"></param>
+    public virtual void ShowLogs(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
+    {
+        ShowData(new ViewLogsCollection(loggingServer,filter));
+    }
+
+    /// <summary>
+    /// Returns all logged activities for <paramref name="rootObject"/>
     /// </summary>
     /// <param name="rootObject"></param>
     /// <returns></returns>
@@ -862,5 +828,38 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         var lm = new LogManager(db);
         return rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task));
+    }
+
+    /// <inheritdoc/>
+    public abstract void ShowGraph(AggregateConfiguration aggregate);
+
+    /// <inheritdoc/>
+    public IRepository GetRepositoryFor(Type type)
+    {
+        foreach(var repo in RepositoryLocator.GetAllRepositories())
+        {
+            if(repo.SupportsObjectType(type))
+            {
+                return repo;
+            }
+        }
+
+        throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{type}'");
+    }
+
+    public abstract void LaunchSubprocess(ProcessStartInfo startInfo);
+
+
+    /// <inheritdoc/>
+    public bool UseCommits()
+    {
+        var repo = RepositoryLocator?.CatalogueRepository;
+
+        // system is in a very bad state
+        if (repo == null)
+            return false;
+
+        // does user want to do commits? and we have a db repo
+        return UserSettings.EnableCommits && repo.SupportsCommits;
     }
 }

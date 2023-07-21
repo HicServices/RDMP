@@ -11,19 +11,18 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Import all CatalogueItem descriptions from one <see cref="Catalogue" /> into another
+/// Import all CatalogueItem descriptions from one <see cref="Catalogue"/> into another
 /// </summary>
 public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecution, IAtomicCommand
 {
-    public ExecuteCommandImportCatalogueItemDescriptions(IBasicActivateItems activator, Catalogue toPopulate,
-        Catalogue other) : base(activator)
+    public Catalogue ToPopulate { get; }
+    public Catalogue Other { get; set; }
+
+    public ExecuteCommandImportCatalogueItemDescriptions(IBasicActivateItems activator, Catalogue toPopulate,Catalogue other) :base(activator)
     {
         ToPopulate = toPopulate;
         Other = other;
     }
-
-    public Catalogue ToPopulate { get; }
-    public Catalogue Other { get; set; }
 
     public override void Execute()
     {
@@ -31,20 +30,23 @@ public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecuti
 
         var other = Other;
 
-        if (other == null)
+        if(other == null)
             if (!SelectOne(BasicActivator.CoreChildProvider.AllCatalogues, out other))
                 return;
 
         foreach (var ci in ToPopulate.CatalogueItems)
         {
+
             var match = other.CatalogueItems.FirstOrDefault(o =>
                 o.Name.Equals(ci.Name, StringComparison.CurrentCultureIgnoreCase) &&
                 !string.IsNullOrWhiteSpace(o.Description));
 
-            if (match != null)
+            if (match != null) 
                 ExecuteCommandImportCatalogueItemDescription.CopyNonIDValuesAcross(match, ci, true);
-        }
 
+        }
+            
         Publish(ToPopulate);
+            
     }
 }

@@ -4,36 +4,33 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using System.Collections.Generic;
 
 namespace Rdmp.UI.Collections;
 
 /// <summary>
-///     Collection of objects grouped into a session.  This is the persistence data object for
-///     <see cref="SessionCollectionUI" /> which tracks which objects are included in the session e.g. between RDMP GUI
-///     restarts
+/// Collection of objects grouped into a session.  This is the persistence data object for <see cref="SessionCollectionUI"/> which tracks which objects are included in the session e.g. between RDMP GUI restarts
 /// </summary>
-public class SessionCollection : PersistableObjectCollection
+public class SessionCollection :PersistableObjectCollection
 {
+    public string SessionName { get; private set; }
+
     /// <summary>
-    ///     for persistence, do not use
+    /// for persistence, do not use
     /// </summary>
     public SessionCollection()
     {
     }
 
-    public SessionCollection(string name) : this()
+    public SessionCollection(string name): this()
     {
         SessionName = name;
     }
 
-    public string SessionName { get; private set; }
-
     public override string SaveExtraText()
     {
-        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
-            { { nameof(SessionName), SessionName } });
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> {{nameof(SessionName), SessionName}});
     }
 
     public override void LoadExtraText(string s)

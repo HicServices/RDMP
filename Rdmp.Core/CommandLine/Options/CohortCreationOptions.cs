@@ -9,7 +9,7 @@ using CommandLine;
 namespace Rdmp.Core.CommandLine.Options;
 
 /// <summary>
-///     Command line options for the Cohort Creation Pipelines
+/// Command line options for the Cohort Creation Pipelines
 /// </summary>
 [Verb("cohort", HelpText = "Runs the Cohort Creation")]
 public class CohortCreationOptions : RDMPCommandLineOptions
@@ -21,16 +21,17 @@ public class CohortCreationOptions : RDMPCommandLineOptions
     // Other Options:
     /*
      * External Cohort Table
-     *
+     * 
      * Project (only existing?)
-     *
+     * 
      * New Cohort / Revision?
-     *
+     * 
      * Name (or existing cohort name/id?)
-     *
+     * 
      * Pipeline
-     *
+     * 
      * Description
-     *
+     * 
      */
+
 }

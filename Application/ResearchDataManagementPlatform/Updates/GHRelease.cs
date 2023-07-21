@@ -9,7 +9,7 @@ using System;
 namespace ResearchDataManagementPlatform.Updates;
 
 /// <summary>
-///     Github Json class
+/// Github Json class
 /// </summary>
 public class GHRelease
 {

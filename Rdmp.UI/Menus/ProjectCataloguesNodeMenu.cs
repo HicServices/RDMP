@@ -18,7 +18,6 @@ internal class ProjectCataloguesNodeMenu : RDMPContextMenuStrip
         args.SkipCommand<ExecuteCommandCreateNewCatalogueByImportingFile>();
 
         //use our fabulous UI
-        Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator)
-            { OverrideCommandName = "Add New Catalogue From File", Weight = -9.5f }.SetTarget(node.Project));
+        Add(new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator) { OverrideCommandName = "Add New Catalogue From File", Weight = -9.5f }.SetTarget(node.Project));
     }
 }

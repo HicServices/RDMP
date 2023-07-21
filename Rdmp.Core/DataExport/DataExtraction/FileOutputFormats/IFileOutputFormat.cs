@@ -10,9 +10,9 @@ namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 
 internal interface IFileOutputFormat
 {
-    string OutputFilename { get; }
 
     string GetFileExtension();
+    string OutputFilename { get; }
     void Open();
     void WriteHeaders(DataTable t);
     void Append(DataRow r);

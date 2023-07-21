@@ -4,22 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ExtractionUIs;
 using Rdmp.UI.ItemActivation;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandReOrderColumns : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandReOrderColumns:BasicUICommandExecution,IAtomicCommand
 {
     private readonly Catalogue _catalogue;
 
-    public ExecuteCommandReOrderColumns(IActivateItems activator, Catalogue catalogue) : base(activator)
+    public ExecuteCommandReOrderColumns(IActivateItems activator, Catalogue catalogue): base(activator)
     {
         _catalogue = catalogue;
     }

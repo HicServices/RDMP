@@ -13,10 +13,10 @@ namespace Rdmp.UI.Menus;
 
 internal class FilterMenu : RDMPContextMenuStrip
 {
-    public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter) : base(args, (DatabaseEntity)filter)
+    public FilterMenu(RDMPContextMenuStripArgs args, IFilter filter): base(args, (DatabaseEntity)filter)
     {
         Add(new ExecuteCommandViewFilterMatchGraph(_activator, filter));
-        Add(new ExecuteCommandExportObjectsToFile(_activator, new[] { filter }));
+        Add(new ExecuteCommandExportObjectsToFile(_activator, new[] {filter}));
         Add(new ExecuteCommandImportFilterDescriptionsFromShare(_activator, filter));
     }
 }

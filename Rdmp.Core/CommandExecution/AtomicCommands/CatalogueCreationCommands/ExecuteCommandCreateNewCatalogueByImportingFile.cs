@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
@@ -19,23 +20,33 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 
 /// <summary>
-///     Import a file (e.g. CSV, excel etc) into a relational database as a new table using a given <see cref="Pipeline" />
-///     and create a reference to it in RDMP.
+/// Import a file (e.g. CSV, excel etc) into a relational database as a new table using a given <see cref="Pipeline"/> and create a reference to it in RDMP.
 /// </summary>
 public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreationCommandExecution
 {
-    private string _extractionIdentifier;
+    private DiscoveredDatabase _targetDatabase;
     private IPipeline _pipeline;
-    private readonly DiscoveredDatabase _targetDatabase;
 
-    public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator, FileInfo file = null) : this(
-        activator, file, null, null, null, null)
+    public FileInfo File { get; private set; }
+
+    private string _extractionIdentifier;
+
+
+    private void CheckFile()
+    {
+        if (File == null)
+            return;
+
+        if (!File.Exists)
+            SetImpossible("File does not exist");
+    }
+
+    public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator, FileInfo file = null) : this(activator, file, null, null, null, null)
     {
     }
 
@@ -43,16 +54,14 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
     public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator,
         [DemandsInitialization("The file to load into the database")]
         FileInfo file,
-        [DemandsInitialization(
-            "Name of a column in the file to be the IsExtractionIdentifier column or Null if it doesn't have one")]
+        [DemandsInitialization("Name of a column in the file to be the IsExtractionIdentifier column or Null if it doesn't have one")]
         string extractionIdentifier,
         [DemandsInitialization("The database to upload the data into")]
         DiscoveredDatabase targetDatabase,
-        [DemandsInitialization(
-            "Pipeline for reading the source file, applying any transforms and writing to the database")]
+        [DemandsInitialization("Pipeline for reading the source file, applying any transforms and writing to the database")]
         Pipeline pipeline,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
-        Project projectSpecific) : base(activator, projectSpecific, null)
+        Project projectSpecific) : base(activator,projectSpecific,null)
     {
         File = file;
         _extractionIdentifier = extractionIdentifier;
@@ -63,8 +72,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
     }
 
 
-    public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator,
-        FileCollectionCombineable file) : base(activator)
+    public ExecuteCommandCreateNewCatalogueByImportingFile(IBasicActivateItems activator, FileCollectionCombineable file) : base(activator)
     {
         if (file.Files.Length != 1)
         {
@@ -77,24 +85,12 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         CheckFile();
     }
 
-    public FileInfo File { get; private set; }
-
-
-    private void CheckFile()
-    {
-        if (File == null)
-            return;
-
-        if (!File.Exists)
-            SetImpossible("File does not exist");
-    }
-
 
     public override void Execute()
     {
         base.Execute();
 
-        if (_pipeline == null)
+        if(_pipeline == null)
         {
             var pipelines = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
 
@@ -106,23 +102,23 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
                 throw new Exception("No pipeline selected for upload");
         }
 
-        var db = _targetDatabase ?? BasicActivator.SelectDatabase(true, "Target database");
+        var db  = _targetDatabase ?? BasicActivator.SelectDatabase(true,"Target database");
 
-        if (db == null)
+        if(db == null)
             return;
 
         File ??= BasicActivator.SelectFile("File to upload");
-
-        if (File == null)
+            
+        if(File == null)
             return;
 
-        var useCase = new UploadFileUseCase(File, db, BasicActivator);
+        var useCase = new UploadFileUseCase(File, db,BasicActivator);
 
         var runner = BasicActivator.GetPipelineRunner(
             GetCreateCatalogueFromFileDialogArgs()
-            , useCase, _pipeline);
+            ,useCase,_pipeline);
         runner.PipelineExecutionFinishedsuccessfully += (s, e) => OnPipelineCompleted(s, e, db);
-        runner.Run(BasicActivator.RepositoryLocator, null, null, null);
+        runner.Run(BasicActivator.RepositoryLocator,null,null,null);
     }
 
     public static DialogArgs GetCreateCatalogueFromFileDialogArgs()
@@ -130,8 +126,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         return new DialogArgs
         {
             WindowTitle = "Create Catalogue from File",
-            TaskDescription =
-                "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes succesfully a new Catalogue will be created referencing the new table created in your database."
+            TaskDescription = "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes succesfully a new Catalogue will be created referencing the new table created in your database."
         };
     }
 
@@ -140,27 +135,23 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         var engine = args.PipelineEngine;
 
         //todo figure out what it created
-        if (engine.DestinationObject is not DataTableUploadDestination dest)
-            throw new Exception(
-                $"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
-
-        if (string.IsNullOrWhiteSpace(dest.TargetTableName))
+        if(engine.DestinationObject is not DataTableUploadDestination dest)
+            throw new Exception($"Destination of engine was unexpectedly not a DataTableUploadDestination despite use case {nameof(UploadFileUseCase)}");
+                        
+        if(string.IsNullOrWhiteSpace(dest.TargetTableName))
             throw new Exception($"Destination of engine failed to populate {dest.TargetTableName}");
 
         var tbl = db.ExpectTable(dest.TargetTableName);
 
-        if (!tbl.Exists())
-            throw new Exception(
-                $"Destination of engine claimed to have created {tbl.GetFullyQualifiedName()} but it did not exist");
+        if(!tbl.Exists())
+            throw new Exception($"Destination of engine claimed to have created {tbl.GetFullyQualifiedName()} but it did not exist");
 
-        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
-        importer.DoImport(out var ti, out _);
+        var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository,tbl);
+        importer.DoImport(out var ti,out _);
 
-        var cata = BasicActivator.CreateAndConfigureCatalogue(ti, null,
-            $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
-            TargetFolder);
-
-        if (cata != null)
+        var cata = BasicActivator.CreateAndConfigureCatalogue(ti,null,$"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}",ProjectSpecific,TargetFolder);
+            
+        if(cata != null)
         {
             Publish(cata);
             Emphasise(cata);
@@ -169,9 +160,9 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        return ProjectSpecific != null
-            ? iconProvider.GetImage(RDMPConcept.ProjectCatalogue, OverlayKind.Add)
-            : iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+        return ProjectSpecific != null ?
+            iconProvider.GetImage(RDMPConcept.ProjectCatalogue, OverlayKind.Add) :
+            iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
     }
 
 

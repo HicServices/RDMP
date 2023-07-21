@@ -16,42 +16,38 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 
 /// <summary>
-///     Let's you configure the settings of a LoadProgress (see LoadProgress) including how many days to ideally load in
-///     each data load, what date has currently been loaded up to etc.
-///     <para>
-///         Each LoadProgress can be tied to a Cache progress.  If you are using a LoadProgress without a cache then it is
-///         up to your load implementation to respect the time period being loaded
-///         (e.g. when using RemoteTableAttacher you should make use of the @startDate and @endDate parameters are in your
-///         fetch query).  See CacheProgressUI for a description of caching and
-///         permission windows.
-///     </para>
+/// Let's you configure the settings of a LoadProgress (see LoadProgress) including how many days to ideally load in each data load, what date has currently been loaded up to etc.
+/// 
+/// <para>Each LoadProgress can be tied to a Cache progress.  If you are using a LoadProgress without a cache then it is up to your load implementation to respect the time period being loaded 
+/// (e.g. when using RemoteTableAttacher you should make use of the @startDate and @endDate parameters are in your fetch query).  See CacheProgressUI for a description of caching and 
+/// permission windows.</para>
 /// </summary>
 public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
 {
     private LoadProgress _loadProgress;
-
+        
     public LoadProgressUI()
     {
         InitializeComponent();
         loadProgressDiagram1.LoadProgressChanged += ReloadUIFromDatabase;
         AssociatedCollection = RDMPCollection.DataLoad;
     }
-
+        
     private void ReloadUIFromDatabase()
     {
         loadProgressDiagram1.SetLoadProgress(_loadProgress, Activator);
         loadProgressDiagram1.Visible = true;
 
         tbDataLoadProgress.ReadOnly = true;
-
-        if (_loadProgress.OriginDate != null)
+                
+        if(_loadProgress.OriginDate != null)
             tbOriginDate.Text = _loadProgress.OriginDate.ToString();
-
-        tbDataLoadProgress.Text =
-            _loadProgress.DataLoadProgress != null ? _loadProgress.DataLoadProgress.ToString() : "";
+                
+        tbDataLoadProgress.Text = _loadProgress.DataLoadProgress != null ? _loadProgress.DataLoadProgress.ToString() : "";
     }
 
     private void btnEditLoadProgress_Click(object sender, EventArgs e)
@@ -97,16 +93,14 @@ public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
     {
         base.SetDatabaseObject(activator, databaseObject);
         _loadProgress = databaseObject;
-
+            
         loadProgressDiagram1.SetItemActivator(activator);
 
         ReloadUIFromDatabase();
 
-        CommonFunctionality.AddHelp(nDefaultNumberOfDaysToLoadEachTime,
-            "ILoadProgress.DefaultNumberOfDaysToLoadEachTime");
+        CommonFunctionality.AddHelp(nDefaultNumberOfDaysToLoadEachTime, "ILoadProgress.DefaultNumberOfDaysToLoadEachTime");
 
-        CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject.LoadMetadata),
-            "Execute Load");
+        CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject.LoadMetadata), "Execute Load");
     }
 
 
@@ -114,14 +108,13 @@ public partial class LoadProgressUI : LoadProgressUI_Design, ISaveableUI
     {
         base.SetBindings(rules, databaseObject);
 
-        Bind(tbID, "Text", "ID", l => l.ID);
+        Bind(tbID,"Text","ID",l=>l.ID);
         Bind(tbName, "Text", "Name", l => l.Name);
-        Bind(nDefaultNumberOfDaysToLoadEachTime, "Value", "DefaultNumberOfDaysToLoadEachTime",
-            l => l.DefaultNumberOfDaysToLoadEachTime);
+        Bind(nDefaultNumberOfDaysToLoadEachTime, "Value", "DefaultNumberOfDaysToLoadEachTime", l => l.DefaultNumberOfDaysToLoadEachTime);
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<LoadProgressUI_Design, UserControl>))]
-public abstract class LoadProgressUI_Design : RDMPSingleDatabaseObjectControl<LoadProgress>
+public abstract class LoadProgressUI_Design:RDMPSingleDatabaseObjectControl<LoadProgress>
 {
 }

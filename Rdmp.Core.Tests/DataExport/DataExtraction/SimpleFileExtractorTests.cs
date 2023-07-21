@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.IO;
-using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataFlowPipeline;
+using System;
+using System.IO;
+using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -19,21 +19,22 @@ internal class SimpleFileExtractorTests
 {
     private SimpleFileExtractor _extractor;
     private DirectoryInfo _inDir;
+    private DirectoryInfo _outDir;
     private DirectoryInfo _inDirSub1;
     private DirectoryInfo _inDirSub2;
-    private DirectoryInfo _outDir;
 
     [SetUp]
     public void SetUp()
     {
+            
         _extractor = new SimpleFileExtractor();
 
-        _inDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "In"));
-        _outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Out"));
+        _inDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"In"));
+        _outDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Out"));
 
-        if (_inDir.Exists)
+        if(_inDir.Exists)
             _inDir.Delete(true);
-        if (_outDir.Exists)
+        if(_outDir.Exists)
             _outDir.Delete(true);
 
         _inDir.Create();
@@ -41,15 +42,15 @@ internal class SimpleFileExtractorTests
 
         _extractor.LocationOfFiles = _inDir;
 
-        File.WriteAllText(Path.Combine(_inDir.FullName, "blah.txt"), "fff");
-        File.WriteAllText(Path.Combine(_inDir.FullName, "blah2.txt"), "fff");
-        File.WriteAllText(Path.Combine(_inDir.FullName, "Pat1.txt"), "fff");
+        File.WriteAllText(Path.Combine(_inDir.FullName,"blah.txt"),"fff");
+        File.WriteAllText(Path.Combine(_inDir.FullName,"blah2.txt"),"fff");
+        File.WriteAllText(Path.Combine(_inDir.FullName,"Pat1.txt"),"fff");
 
         _inDirSub1 = _inDir.CreateSubdirectory("Sub1");
         _inDirSub2 = _inDir.CreateSubdirectory("Sub2");
 
-        File.WriteAllText(Path.Combine(_inDirSub1.FullName, "subBlah.txt"), "fff");
-        File.WriteAllText(Path.Combine(_inDirSub2.FullName, "subBlah2.txt"), "fff");
+        File.WriteAllText(Path.Combine(_inDirSub1.FullName,"subBlah.txt"),"fff");
+        File.WriteAllText(Path.Combine(_inDirSub2.FullName,"subBlah2.txt"),"fff");
     }
 
     [Test]
@@ -60,15 +61,14 @@ internal class SimpleFileExtractorTests
         _extractor.OutputDirectoryName = _outDir.FullName;
         _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MoveAll(_outDir, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        _extractor.MoveAll(_outDir,new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
 
-        FileAssert.Exists(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.Exists(Path.Combine(_outDir.FullName, "blah2.txt"));
+        FileAssert.Exists(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.Exists(Path.Combine(_outDir.FullName,"blah2.txt"));
     }
-
     [Test]
     public void OneFile()
     {
@@ -77,17 +77,16 @@ internal class SimpleFileExtractorTests
         _extractor.OutputDirectoryName = _outDir.FullName;
         _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MoveAll(_outDir, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        _extractor.MoveAll(_outDir,new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
 
-        FileAssert.Exists(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
-        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName, "Sub1"));
-        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName, "Sub2"));
+        FileAssert.Exists(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
+        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName,"Sub1"));
+        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName,"Sub2"));
     }
-
     [Test]
     public void AllDirs()
     {
@@ -96,17 +95,16 @@ internal class SimpleFileExtractorTests
         _extractor.OutputDirectoryName = _outDir.FullName;
         _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MoveAll(_outDir, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        _extractor.MoveAll(_outDir,new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
-        DirectoryAssert.Exists(Path.Combine(_outDir.FullName, "Sub1"));
-        DirectoryAssert.Exists(Path.Combine(_outDir.FullName, "Sub2"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
+        DirectoryAssert.Exists(Path.Combine(_outDir.FullName,"Sub1"));
+        DirectoryAssert.Exists(Path.Combine(_outDir.FullName,"Sub2"));
     }
-
     [Test]
     public void OneDir()
     {
@@ -115,17 +113,16 @@ internal class SimpleFileExtractorTests
         _extractor.OutputDirectoryName = _outDir.FullName;
         _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MoveAll(_outDir, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        _extractor.MoveAll(_outDir,new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
-        DirectoryAssert.Exists(Path.Combine(_outDir.FullName, "Sub1"));
-        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName, "Sub2"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
+        DirectoryAssert.Exists(Path.Combine(_outDir.FullName,"Sub1"));
+        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName,"Sub2"));
     }
-
     [Test]
     public void PatientFiles()
     {
@@ -135,17 +132,15 @@ internal class SimpleFileExtractorTests
         _extractor.OutputDirectoryName = _outDir.FullName;
         _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MovePatient("Pat1", "Rel1", _outDir,
-            new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true }, new GracefulCancellationToken());
-
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
-        FileAssert.Exists(Path.Combine(_outDir.FullName, "Rel1.txt"));
+        _extractor.MovePatient("Pat1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true},new GracefulCancellationToken());
+            
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
+        FileAssert.Exists(Path.Combine(_outDir.FullName,"Rel1.txt"));
     }
-
     [Test]
     public void PatientFileMissingOne()
     {
@@ -155,24 +150,22 @@ internal class SimpleFileExtractorTests
         _extractor.OutputDirectoryName = _outDir.FullName;
         _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
         var mem = new ToMemoryDataLoadEventListener(true);
+            
+        _extractor.MovePatient("Pat1","Rel1",_outDir,mem,new GracefulCancellationToken());
+        _extractor.MovePatient("Pat2","Rel2",_outDir,mem,new GracefulCancellationToken());
+            
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
+        FileAssert.Exists(Path.Combine(_outDir.FullName,"Rel1.txt"));
 
-        _extractor.MovePatient("Pat1", "Rel1", _outDir, mem, new GracefulCancellationToken());
-        _extractor.MovePatient("Pat2", "Rel2", _outDir, mem, new GracefulCancellationToken());
-
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
-        FileAssert.Exists(Path.Combine(_outDir.FullName, "Rel1.txt"));
-
-        Assert.AreEqual(ProgressEventType.Warning, mem.GetWorst());
-
-        StringAssert.StartsWith("No Files were found matching Pattern Pat2.txt in ",
-            mem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Single().Message);
+        Assert.AreEqual(ProgressEventType.Warning,mem.GetWorst());
+            
+        StringAssert.StartsWith("No Files were found matching Pattern Pat2.txt in ",mem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Single().Message);
     }
-
     [Test]
     public void PatientDirs()
     {
@@ -182,20 +175,18 @@ internal class SimpleFileExtractorTests
         _extractor.OutputDirectoryName = _outDir.FullName;
         _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MovePatient("Sub1", "Rel1", _outDir,
-            new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true }, new GracefulCancellationToken());
-
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
-        DirectoryAssert.Exists(Path.Combine(_outDir.FullName, "Rel1"));
-        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName, "Rel2"));
-        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName, "Sub1"));
-        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName, "Sub2"));
+        _extractor.MovePatient("Sub1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true},new GracefulCancellationToken());
+            
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
+        DirectoryAssert.Exists(Path.Combine(_outDir.FullName,"Rel1"));
+        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName,"Rel2"));
+        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName,"Sub1"));
+        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName,"Sub2"));
     }
-
     [Test]
     public void PatientBothDirs()
     {
@@ -205,30 +196,24 @@ internal class SimpleFileExtractorTests
         _extractor.OutputDirectoryName = _outDir.FullName;
         _extractor.Check(new ThrowImmediatelyCheckNotifier());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
 
-        _extractor.MovePatient("Sub1", "Rel1", _outDir,
-            new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true }, new GracefulCancellationToken());
-        _extractor.MovePatient("Sub2", "Rel2", _outDir,
-            new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true }, new GracefulCancellationToken());
+        _extractor.MovePatient("Sub1","Rel1",_outDir,new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true},new GracefulCancellationToken());
+        _extractor.MovePatient("Sub2","Rel2",_outDir,new ThrowImmediatelyDataLoadEventListener {ThrowOnWarning=true},new GracefulCancellationToken());
 
         // does not exist
-        var ex = Assert.Throws<Exception>(() => _extractor.MovePatient("Sub3", "Rel3", _outDir,
-            new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true }, new GracefulCancellationToken()));
-        Assert.AreEqual(
-            $"No Directories were found matching Pattern Sub3 in {_inDir.FullName}.  For private identifier 'Sub3'",
-            ex.Message);
-
+        var ex = Assert.Throws<Exception>(()=>_extractor.MovePatient("Sub3", "Rel3", _outDir, new ThrowImmediatelyDataLoadEventListener { ThrowOnWarning = true }, new GracefulCancellationToken()));
+        Assert.AreEqual($"No Directories were found matching Pattern Sub3 in {_inDir.FullName}.  For private identifier 'Sub3'", ex.Message);
+            
         // if not throwing on warnings then a missing sub just passes through and is ignored
-        _extractor.MovePatient("Sub3", "Rel3", _outDir, new ThrowImmediatelyDataLoadEventListener(),
-            new GracefulCancellationToken());
+        _extractor.MovePatient("Sub3", "Rel3", _outDir, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
 
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah.txt"));
-        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
-        DirectoryAssert.Exists(Path.Combine(_outDir.FullName, "Rel1"));
-        DirectoryAssert.Exists(Path.Combine(_outDir.FullName, "Rel2"));
-        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName, "Sub1"));
-        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName, "Sub2"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah.txt"));
+        FileAssert.DoesNotExist(Path.Combine(_outDir.FullName,"blah2.txt"));
+        DirectoryAssert.Exists(Path.Combine(_outDir.FullName,"Rel1"));
+        DirectoryAssert.Exists(Path.Combine(_outDir.FullName,"Rel2"));
+        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName,"Sub1"));
+        DirectoryAssert.DoesNotExist(Path.Combine(_outDir.FullName,"Sub2"));
     }
 }

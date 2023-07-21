@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -12,7 +13,7 @@ using ScintillaNET;
 namespace Rdmp.UI.ScintillaHelper;
 
 /// <summary>
-///     Syntax highlighter for <see cref="Scintilla" />
+/// Syntax highlighter for <see cref="Scintilla"/>
 /// </summary>
 public partial class CSharpLexer
 {
@@ -27,14 +28,7 @@ public partial class CSharpLexer
     private const int STATE_NUMBER = 2;
     private const int STATE_STRING = 3;
 
-    private readonly HashSet<string> keywords;
-
-    public CSharpLexer(string keywords)
-    {
-        // Put keywords in a HashSet
-        var list = Spaces().Split(keywords ?? string.Empty).Where(l => !string.IsNullOrEmpty(l));
-        this.keywords = new HashSet<string>(list);
-    }
+    private HashSet<string> keywords;
 
     public void Style(Scintilla scintilla, int startPos, int endPos)
     {
@@ -76,7 +70,6 @@ public partial class CSharpLexer
                         // Everything else
                         scintilla.SetStyling(1, StyleDefault);
                     }
-
                     break;
 
                 case STATE_STRING:
@@ -91,11 +84,10 @@ public partial class CSharpLexer
                     {
                         length++;
                     }
-
                     break;
 
                 case STATE_NUMBER:
-                    if (char.IsDigit(c) || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F') || c == 'x')
+                    if (char.IsDigit(c) || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F' || c == 'x')
                     {
                         length++;
                     }
@@ -106,7 +98,6 @@ public partial class CSharpLexer
                         state = STATE_UNKNOWN;
                         goto REPROCESS;
                     }
-
                     break;
 
                 case STATE_IDENTIFIER:
@@ -126,7 +117,6 @@ public partial class CSharpLexer
                         state = STATE_UNKNOWN;
                         goto REPROCESS;
                     }
-
                     break;
             }
 
@@ -134,6 +124,13 @@ public partial class CSharpLexer
         }
     }
 
-    [GeneratedRegex("\\s+", RegexOptions.CultureInvariant)]
+    public CSharpLexer(string keywords)
+    {
+        // Put keywords in a HashSet
+        var list = Spaces().Split(keywords ?? string.Empty).Where(l => !string.IsNullOrEmpty(l));
+        this.keywords = new HashSet<string>(list);
+    }
+
+    [GeneratedRegex("\\s+",RegexOptions.CultureInvariant)]
     private static partial Regex Spaces();
 }

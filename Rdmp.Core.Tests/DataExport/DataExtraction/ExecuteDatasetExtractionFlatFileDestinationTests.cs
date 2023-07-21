@@ -4,14 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
-using System.IO;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging;
+using System;
+using System.Data;
+using System.IO;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 
@@ -33,10 +33,12 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
         var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
         lm.CreateNewLoggingTaskIfNotExists("ExtractionDestination_FloatRounding");
 
-        var dli = lm.CreateDataLoadInfo("ExtractionDestination_FloatRounding",
-            nameof(ExecuteDatasetExtractionFlatFileDestinationTests), "test", "", true);
+        var dli = lm.CreateDataLoadInfo("ExtractionDestination_FloatRounding", nameof(ExecuteDatasetExtractionFlatFileDestinationTests), "test", "", true);
 
-        if (_request.QueryBuilder == null) _request.GenerateQueryBuilder();
+        if(_request.QueryBuilder == null)
+        {
+            _request.GenerateQueryBuilder();
+        }
         dest.RoundFloatsTo = lotsOfDecimalPlaces ? 10 : 2;
 
         dest.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
@@ -44,7 +46,7 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
         dest.PreInitialize((DataLoadInfo)dli, new ThrowImmediatelyDataLoadEventListener());
 
         dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-        dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+        dest.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
 
         Assert.IsNotNull(dest.OutputFile);
         FileAssert.Exists(dest.OutputFile);

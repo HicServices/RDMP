@@ -11,21 +11,20 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.DataRelease;
 
 /// <summary>
-///     Options for configuring ReleaseEngine behaviour (To change where files are released to etc)
+/// Options for configuring ReleaseEngine behaviour (To change where files are released to etc)
 /// </summary>
-public class ReleaseFolderSettings : ICheckable
+public class ReleaseFolderSettings:ICheckable
 {
+    [DemandsInitialization("Specify a custom Release folder, will use the Project Extraction Folder if left empty")]
+    public DirectoryInfo CustomReleaseFolder { get; set; }
+
+    [DemandsInitialization("If unchecked, it will report an error if the destination folder does not exists", DefaultValue = true)]
+    public bool CreateReleaseDirectoryIfNotFound { get; set; }
+
     public ReleaseFolderSettings()
     {
         CreateReleaseDirectoryIfNotFound = true;
     }
-
-    [DemandsInitialization("Specify a custom Release folder, will use the Project Extraction Folder if left empty")]
-    public DirectoryInfo CustomReleaseFolder { get; set; }
-
-    [DemandsInitialization("If unchecked, it will report an error if the destination folder does not exists",
-        DefaultValue = true)]
-    public bool CreateReleaseDirectoryIfNotFound { get; set; }
 
     public void Check(ICheckNotifier notifier)
     {

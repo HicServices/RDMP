@@ -10,29 +10,26 @@ using Rdmp.Core.Curation.Data.Governance;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddCatalogueToGovernancePeriod : BasicCommandExecution
+public class ExecuteCommandAddCatalogueToGovernancePeriod:BasicCommandExecution
 {
-    private readonly ICatalogue[] _catalogues;
-    private readonly GovernancePeriod _governancePeriod;
+    private GovernancePeriod _governancePeriod;
+    private ICatalogue[] _catalogues;
 
-    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator,
-        GovernancePeriod governancePeriod, ICatalogue c) : base(activator)
+    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator, GovernancePeriod governancePeriod, ICatalogue c):base(activator)
     {
         _governancePeriod = governancePeriod;
-        _catalogues = new[] { c };
+        _catalogues = new []{c};
 
-        if (_governancePeriod.GovernedCatalogues.Contains(c))
+        if(_governancePeriod.GovernedCatalogues.Contains(c))
             SetImpossible("Catalogue is already governed by that period");
     }
-
-    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator,
-        GovernancePeriod governancePeriod, ICatalogue[] catalogues) : base(activator)
+    public ExecuteCommandAddCatalogueToGovernancePeriod(IBasicActivateItems activator, GovernancePeriod governancePeriod, ICatalogue[] catalogues):base(activator)
     {
         _governancePeriod = governancePeriod;
         _catalogues = catalogues;
         _catalogues = catalogues.Except(_governancePeriod.GovernedCatalogues).ToArray();
-
-        if (!_catalogues.Any())
+            
+        if(!_catalogues.Any())
             SetImpossible("All Catalogues are already in the Governance Period");
     }
 
@@ -40,8 +37,8 @@ public class ExecuteCommandAddCatalogueToGovernancePeriod : BasicCommandExecutio
     {
         base.Execute();
 
-        foreach (var catalogue in _catalogues)
-            BasicActivator.RepositoryLocator.CatalogueRepository.GovernanceManager.Link(_governancePeriod, catalogue);
+        foreach(var catalogue in _catalogues)
+            BasicActivator.RepositoryLocator.CatalogueRepository.GovernanceManager.Link(_governancePeriod,catalogue);
 
         Publish(_governancePeriod);
     }

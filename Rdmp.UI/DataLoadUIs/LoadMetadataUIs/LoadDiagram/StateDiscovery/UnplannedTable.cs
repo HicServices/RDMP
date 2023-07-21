@@ -9,13 +9,14 @@ using FAnsi.Discovery;
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 
 /// <summary>
-///     Depicts a table which was found in the loading tables of a DLE load.  These tables are unexpected (i.e. not created
-///     by RDMP).  They may be
-///     temporary tables created as part of load scripts or they may reflect other ongoing/crashed loads (if in STAGING).
+/// Depicts a table which was found in the loading tables of a DLE load.  These tables are unexpected (i.e. not created by RDMP).  They may be
+/// temporary tables created as part of load scripts or they may reflect other ongoing/crashed loads (if in STAGING).
 /// </summary>
-public class UnplannedTable : IHasLoadDiagramState
+public class UnplannedTable:IHasLoadDiagramState
 {
+    public DiscoveredTable Table { get; private set; }
     public readonly DiscoveredColumn[] Columns;
+    public LoadDiagramState State => LoadDiagramState.New;
 
     public UnplannedTable(DiscoveredTable table)
     {
@@ -23,11 +24,9 @@ public class UnplannedTable : IHasLoadDiagramState
         Columns = table.DiscoverColumns();
     }
 
-    public DiscoveredTable Table { get; }
-    public LoadDiagramState State => LoadDiagramState.New;
-
     public override string ToString()
     {
         return Table.GetRuntimeName();
     }
+
 }

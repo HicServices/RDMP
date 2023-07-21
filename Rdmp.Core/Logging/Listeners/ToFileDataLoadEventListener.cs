@@ -12,8 +12,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Logging.Listeners;
 
 /// <summary>
-///     Writes log messages to file, mainly used by Automation Service to log progress to file.
-///     It will log "OnProgress" calls as "Trace", which may make the log file very large!
+/// Writes log messages to file, mainly used by Automation Service to log progress to file.
+/// It will log "OnProgress" calls as "Trace", which may make the log file very large!
 /// </summary>
 public class ToFileDataLoadEventListener : IDataLoadEventListener
 {
@@ -24,16 +24,14 @@ public class ToFileDataLoadEventListener : IDataLoadEventListener
         _logger = NLog.LogManager.GetLogger(logger);
     }
 
-    public ToFileDataLoadEventListener(Type logger)
+    public ToFileDataLoadEventListener(Type logger) 
         : this(logger.FullName)
-    {
-    }
+    { }
 
     public ToFileDataLoadEventListener(object logger)
         : this(logger.GetType())
-    {
-    }
-
+    { }
+        
     public void OnNotify(object sender, NotifyEventArgs e)
     {
         _logger = NLog.LogManager.GetLogger(sender.GetType().FullName);
@@ -43,5 +41,6 @@ public class ToFileDataLoadEventListener : IDataLoadEventListener
     public void OnProgress(object sender, ProgressEventArgs e)
     {
         _logger = NLog.LogManager.GetLogger(sender.GetType().FullName);
+            
     }
 }

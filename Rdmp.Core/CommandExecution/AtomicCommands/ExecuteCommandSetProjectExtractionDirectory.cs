@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution,IAtomicCommand
 {
     private readonly Project _project;
 
@@ -23,8 +23,7 @@ public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution
 
     public override string GetCommandHelp()
     {
-        return
-            "Change the location on disk where extracted artifacts are put when you run extraction configurations of this project";
+        return "Change the location on disk where extracted artifacts are put when you run extraction configurations of this project";
     }
 
     public override void Execute()
@@ -43,6 +42,6 @@ public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        return iconProvider.GetImage(RDMPConcept.ExtractionDirectoryNode, OverlayKind.Edit);
+        return iconProvider.GetImage(RDMPConcept.ExtractionDirectoryNode,OverlayKind.Edit);
     }
 }

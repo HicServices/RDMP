@@ -10,10 +10,9 @@ using Rdmp.UI.DataRelease;
 
 namespace Rdmp.UI.Tests.DataRelease;
 
-public class DataReleaseUITests : UITests
+public class DataReleaseUITests :UITests
 {
-    [Test]
-    [UITimeout(20000)]
+    [Test,UITimeout(20000)]
     public void Test_DataReleaseUI_Constructor()
     {
         var o = WhenIHaveA<Project>();

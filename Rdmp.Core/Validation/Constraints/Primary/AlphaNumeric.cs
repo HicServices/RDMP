@@ -9,12 +9,12 @@ using System.Text.RegularExpressions;
 namespace Rdmp.Core.Validation.Constraints.Primary;
 
 /// <summary>
-///     Field can contain only letters and numbers (but no spaces or symbols)
+/// Field can contain only letters and numbers (but no spaces or symbols)
 /// </summary>
 public class AlphaNumeric : PrimaryConstraint
 {
     public const string RegExp = @"^[A-Za-z0-9]([A-Za-z0-9]*)$";
-
+        
     public override ValidationFailure Validate(object value)
     {
         if (value == null)
@@ -24,13 +24,14 @@ public class AlphaNumeric : PrimaryConstraint
         var match = Regex.Match(text, RegExp);
 
         if (!match.Success)
-            return new ValidationFailure($"Value [{value}] contains characters other than alphanumeric", this);
+            return new ValidationFailure($"Value [{value}] contains characters other than alphanumeric",this);
 
         return null;
     }
-
+        
     public override void RenameColumn(string originalName, string newName)
     {
+            
     }
 
     public override string GetHumanReadableDescriptionOfValidation()

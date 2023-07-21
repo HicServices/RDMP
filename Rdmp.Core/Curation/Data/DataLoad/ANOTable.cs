@@ -24,35 +24,94 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <summary>
-///     Defines an anonymisation method for a group of related columns of the same datatype.  For example 'ANOGPCode' could
-///     be an instance/record that defines input of type
-///     varchar(5) and anonymises into 3 digits and 2 characters with a suffix of _G.  This product would then be used by
-///     all ColumnInfos that contain GP codes (current GP
-///     previous GP, Prescriber code etc).  Anonymisation occurs at  ColumnInfo level after being loaded from a RAW data
-///     load bubble as is pushed to the STAGING bubble.
-///     <para>
-///         Each ANOTable describes a corresponding table on an ANO server (see the Server_ID property - we refer to this
-///         as an ANOStore) including details of the
-///         transformation and a UNIQUE name/suffix.  This let's you quickly identify what data has be annonymised by what
-///         ANOTable.
-///     </para>
-///     <para>
-///         It is very important to curate your ANOTables properly or you could end up with irrecoverable data, for example
-///         sticking to a single ANO server, taking regular backups
-///         NEVER deleting ANOTables that reference existing data  (in the ANOStore database).
-///     </para>
+/// Defines an anonymisation method for a group of related columns of the same datatype.  For example 'ANOGPCode' could be an instance/record that defines input of type
+/// varchar(5) and anonymises into 3 digits and 2 characters with a suffix of _G.  This product would then be used by all ColumnInfos that contain GP codes (current GP
+/// previous GP, Prescriber code etc).  Anonymisation occurs at  ColumnInfo level after being loaded from a RAW data load bubble as is pushed to the STAGING bubble.
+/// 
+/// <para>Each ANOTable describes a corresponding table on an ANO server (see the Server_ID property - we refer to this as an ANOStore) including details of the
+/// transformation and a UNIQUE name/suffix.  This let's you quickly identify what data has be annonymised by what ANOTable.</para>
+///  
+/// <para>It is very important to curate your ANOTables properly or you could end up with irrecoverable data, for example sticking to a single ANO server, taking regular backups
+/// NEVER deleting ANOTables that reference existing data  (in the ANOStore database).</para>
+/// 
 /// </summary>
-public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRevertable, IHasDependencies
+public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRevertable, IHasDependencies
 {
     /// <summary>
-    ///     Prefix to put on anonymous columns
+    /// Prefix to put on anonymous columns
     /// </summary>
     public const string ANOPrefix = "ANO";
 
+    private string _identifiableDataType;
     private string _anonymousDataType;
 
-    private string _identifiableDataType;
+    #region Database Properties
 
+    private string _tableName;
+    private int _numberOfIntegersToUseInAnonymousRepresentation;
+    private int _numberOfCharactersToUseInAnonymousRepresentation;
+    private string _suffix;
+    private int _serverID;
+
+    /// <summary>
+    /// The name of the table in the ANO database that stores swapped identifiers
+    /// </summary>
+    public string TableName
+    {
+        get => _tableName;
+        set => SetField(ref  _tableName, value);
+    }
+
+    /// <summary>
+    /// The number of decimal characters to use when creating ANO mapping identifiers.  This will directly impact the number of possible values that can be generated and therefore
+    /// the number of unique input values before anonymising fails (due to collisions).
+    /// </summary>
+    public int NumberOfIntegersToUseInAnonymousRepresentation
+    {
+        get => _numberOfIntegersToUseInAnonymousRepresentation;
+        set => SetField(ref  _numberOfIntegersToUseInAnonymousRepresentation, value);
+    }
+
+    /// <summary>
+    /// The number of alphabetic characters to use when creating ANO mapping identifiers.  This will directly impact the number of possible values that can be generated and therefore
+    /// the number of unique input values before anonymising fails (due to collisions).
+    /// </summary>
+    public int NumberOfCharactersToUseInAnonymousRepresentation
+    {
+        get => _numberOfCharactersToUseInAnonymousRepresentation;
+        set => SetField(ref  _numberOfCharactersToUseInAnonymousRepresentation, value);
+    }
+
+    /// <summary>
+    /// The ID of the ExternalDatabaseServer which stores the anonymous identifier substitutions (e.g. chi=>ANOchi).  This should have been created by the
+    /// <see cref="ANOStorePatcher"/>
+    /// </summary>
+    [Relationship(typeof(ExternalDatabaseServer),RelationshipType.SharedObject)]
+    public int Server_ID
+    {
+        get => _serverID;
+        set => SetField(ref  _serverID, value);
+    }
+
+    /// <summary>
+    /// The letter that appears on the end of all anonymous identifiers generated e.g. AAB11_GP would have the suffix "GP"
+    /// 
+    /// <para>Once you have started using the <see cref="ANOTable"/> to anonymise identifiers you should not change the Suffix</para>
+    /// </summary>
+    public string Suffix
+    {
+        get => _suffix;
+        set => SetField(ref _suffix, value);
+    }
+    #endregion
+
+    #region Relationships
+
+    /// <inheritdoc cref="Server_ID"/>
+    [NoMappingToDatabase]
+    public ExternalDatabaseServer Server => Repository.GetObjectByID<ExternalDatabaseServer>(Server_ID);
+
+    #endregion
     public ANOTable()
     {
         // Defaults
@@ -61,17 +120,14 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    ///     Declares that a new ANOTable (anonymous mapping table) should exist in the referenced database.  You can call this
-    ///     constructor without first creating the table.  If you do
-    ///     you should set <see cref="NumberOfIntegersToUseInAnonymousRepresentation" /> and
-    ///     <see cref="NumberOfCharactersToUseInAnonymousRepresentation" /> then <see cref="PushToANOServerAsNewTable" />
+    /// Declares that a new ANOTable (anonymous mapping table) should exist in the referenced database.  You can call this constructor without first creating the table.  If you do
+    /// you should set <see cref="NumberOfIntegersToUseInAnonymousRepresentation"/> and <see cref="NumberOfCharactersToUseInAnonymousRepresentation"/> then <see cref="PushToANOServerAsNewTable"/>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="externalDatabaseServer"></param>
     /// <param name="tableName"></param>
     /// <param name="suffix"></param>
-    public ANOTable(ICatalogueRepository repository, ExternalDatabaseServer externalDatabaseServer, string tableName,
-        string suffix)
+    public ANOTable(ICatalogueRepository repository, ExternalDatabaseServer externalDatabaseServer, string tableName, string suffix)
     {
         if (string.IsNullOrWhiteSpace(tableName))
             throw new NullReferenceException("ANOTable must have a name");
@@ -83,11 +139,11 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
         if (repository.GetAllObjects<ANOTable>().Any(a => string.Equals(a.Suffix, suffix)))
             throw new Exception($"There is already another {nameof(ANOTable)} with the suffix '{suffix}'");
 
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
         {
-            { "TableName", tableName },
-            { "Suffix", suffix },
-            { "Server_ID", externalDatabaseServer.ID }
+            {"TableName", tableName},
+            {"Suffix", suffix},
+            {"Server_ID", externalDatabaseServer.ID}
         });
     }
 
@@ -97,29 +153,43 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
         Server_ID = Convert.ToInt32(r["Server_ID"]);
         TableName = r["TableName"].ToString();
 
-        NumberOfIntegersToUseInAnonymousRepresentation =
-            Convert.ToInt32(r["NumberOfIntegersToUseInAnonymousRepresentation"].ToString());
-        NumberOfCharactersToUseInAnonymousRepresentation =
-            Convert.ToInt32(r["NumberOfCharactersToUseInAnonymousRepresentation"].ToString());
+        NumberOfIntegersToUseInAnonymousRepresentation = Convert.ToInt32(r["NumberOfIntegersToUseInAnonymousRepresentation"].ToString());
+        NumberOfCharactersToUseInAnonymousRepresentation = Convert.ToInt32(r["NumberOfCharactersToUseInAnonymousRepresentation"].ToString());
         Suffix = r["Suffix"].ToString();
     }
 
     internal ANOTable(ShareManager shareManager, ShareDefinition shareDefinition)
     {
-        shareManager.UpsertAndHydrate(this, shareDefinition);
+        shareManager.UpsertAndHydrate(this,shareDefinition);
     }
 
-    #region Relationships
-
-    /// <inheritdoc cref="Server_ID" />
-    [NoMappingToDatabase]
-    public ExternalDatabaseServer Server => Repository.GetObjectByID<ExternalDatabaseServer>(Server_ID);
-
-    #endregion
+    /// <summary>
+    /// Saves the current state to the database if the <see cref="ANOTable"/> is in a valid state according to <see cref="Check"/> otherwise throws an Exception
+    /// </summary>
+    public override void SaveToDatabase()
+    {
+        Check(new ThrowImmediatelyCheckNotifier());
+        Repository.SaveToDatabase(this);
+    }
 
     /// <summary>
-    ///     Checks that the remote mapping table referenced by this object exists and checks <see cref="ANOTable" /> settings (
-    ///     <see cref="Suffix" /> etc).
+    /// Attempts to delete the remote mapping table (only works if it is empty) if the <see cref="ANOTable.IsTablePushed"/> then deletes the <see cref="ANOTable"/> reference
+    /// object (this) from the RDMP platform database.
+    /// </summary>
+    public override void DeleteInDatabase()
+    {
+        DeleteANOTableInANOStore();
+        Repository.DeleteFromDatabase(this);
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return TableName;
+    }
+
+    /// <summary>
+    /// Checks that the remote mapping table referenced by this object exists and checks <see cref="ANOTable"/> settings (<see cref="Suffix"/> etc).
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -129,80 +199,32 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                 new CheckEventArgs(
                     "You must choose a suffix for your ANO identifiers so that they can be distinguished from regular identifiers",
                     CheckResult.Fail));
-        else if (Suffix.StartsWith("_"))
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                "Suffix will automatically include an underscore, there is no need to add it", CheckResult.Fail));
-
+        else
+        if (Suffix.StartsWith("_"))
+            notifier.OnCheckPerformed(new CheckEventArgs("Suffix will automatically include an underscore, there is no need to add it",CheckResult.Fail));
+            
         if (NumberOfIntegersToUseInAnonymousRepresentation < 0)
-            notifier.OnCheckPerformed(
-                new CheckEventArgs("NumberOfIntegersToUseInAnonymousRepresentation cannot be negative",
-                    CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("NumberOfIntegersToUseInAnonymousRepresentation cannot be negative", CheckResult.Fail));
 
         if (NumberOfCharactersToUseInAnonymousRepresentation < 0)
-            notifier.OnCheckPerformed(
-                new CheckEventArgs("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative",
-                    CheckResult.Fail));
-
+            notifier.OnCheckPerformed(new CheckEventArgs("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative", CheckResult.Fail));
+            
         if (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation == 0)
-            notifier.OnCheckPerformed(
-                new CheckEventArgs("Anonymous representations must have at least 1 integer or character",
-                    CheckResult.Fail));
-
+            notifier.OnCheckPerformed(new CheckEventArgs("Anonymous representations must have at least 1 integer or character", CheckResult.Fail));
+            
         try
         {
             if (!IsTablePushed())
-                notifier.OnCheckPerformed(new CheckEventArgs($"Could not find table {TableName} on server {Server}",
-                    CheckResult.Warning));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not find table {TableName} on server {Server}",CheckResult.Warning));
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to get list of tables on server {Server}",
-                CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Failed to get list of tables on server {Server}",CheckResult.Fail, e));
         }
     }
 
     /// <summary>
-    ///     Attempts to delete the remote mapping table (only works if it is empty) if the
-    ///     <see cref="ANOTable.IsTablePushed" /> then deletes the <see cref="ANOTable" /> reference
-    ///     object (this) from the RDMP platform database.
-    /// </summary>
-    public override void DeleteInDatabase()
-    {
-        DeleteANOTableInANOStore();
-        Repository.DeleteFromDatabase(this);
-    }
-
-    /// <inheritdoc />
-    public IHasDependencies[] GetObjectsThisDependsOn()
-    {
-        return Array.Empty<IHasDependencies>();
-    }
-
-    /// <inheritdoc />
-    public IHasDependencies[] GetObjectsDependingOnThis()
-    {
-        return Repository.GetAllObjectsWithParent<ColumnInfo>(this);
-    }
-
-    /// <summary>
-    ///     Saves the current state to the database if the <see cref="ANOTable" /> is in a valid state according to
-    ///     <see cref="Check" /> otherwise throws an Exception
-    /// </summary>
-    public override void SaveToDatabase()
-    {
-        Check(new ThrowImmediatelyCheckNotifier());
-        Repository.SaveToDatabase(this);
-    }
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return TableName;
-    }
-
-    /// <summary>
-    ///     Returns true if the anonymous mapping table (<see cref="TableName" /> exists in the referenced mapping database (
-    ///     <see cref="Server" />)
+    /// Returns true if the anonymous mapping table (<see cref="TableName"/> exists in the referenced mapping database (<see cref="Server"/>)
     /// </summary>
     /// <returns></returns>
     public bool IsTablePushed()
@@ -211,8 +233,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    ///     Connects to <see cref="Server" /> and returns a <see cref="DiscoveredTable" /> that contains the anonymous
-    ///     identifier mappings
+    /// Connects to <see cref="Server"/> and returns a <see cref="DiscoveredTable"/> that contains the anonymous identifier mappings
     /// </summary>
     /// <returns></returns>
     public DiscoveredTable GetPushedTable()
@@ -228,23 +249,21 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    ///     Attempts to delete the anonymous mapping table referenced by <see cref="TableName" /> on the mapping
-    ///     <see cref="Server" />.  This is safer than just dropping
-    ///     from <see cref="GetPushedTable" /> since it will check the table exists, is empty etc.
+    /// Attempts to delete the anonymous mapping table referenced by <see cref="TableName"/> on the mapping <see cref="Server"/>.  This is safer than just dropping
+    /// from <see cref="GetPushedTable"/> since it will check the table exists, is empty etc.
     /// </summary>
     public void DeleteANOTableInANOStore()
     {
         RevertToDatabaseState();
 
         var s = Server;
-        if (string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(s.Database) ||
-            string.IsNullOrWhiteSpace(TableName))
+        if(string.IsNullOrWhiteSpace(s.Name) || string.IsNullOrWhiteSpace(s.Database) || string.IsNullOrWhiteSpace(TableName))
             return;
 
         var tbl = GetPushedTable();
 
         if (tbl != null && tbl.Exists())
-            if (!tbl.IsEmpty())
+            if(!tbl.IsEmpty())
                 throw new Exception(
                     $"Cannot delete ANOTable because it references {TableName} which is a table on server {Server} which contains rows, deleting this reference would leave that table as an orphan, we can only delete when there are 0 rows in the table");
             else
@@ -252,19 +271,18 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    ///     Connects to the remote ANO Server and creates a swap table of Identifier to ANOIdentifier
+    /// Connects to the remote ANO Server and creates a swap table of Identifier to ANOIdentifier
     /// </summary>
     /// <param name="identifiableDatatype">The datatype of the identifiable data table</param>
     /// <param name="notifier"></param>
     /// <param name="forceConnection"></param>
     /// <param name="forceTransaction"></param>
-    public void PushToANOServerAsNewTable(string identifiableDatatype, ICheckNotifier notifier,
-        DbConnection forceConnection = null, DbTransaction forceTransaction = null)
+    public void PushToANOServerAsNewTable(string identifiableDatatype, ICheckNotifier notifier, DbConnection forceConnection=null,DbTransaction forceTransaction = null)
     {
         var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
 
         //matches varchar(100) and has capture group 100
-        var regexGetLengthOfCharType = new Regex(@".*char.*\((\d*)\)");
+        var regexGetLengthOfCharType =new Regex(@".*char.*\((\d*)\)");
         var match = regexGetLengthOfCharType.Match(identifiableDatatype);
 
         //if user supplies varchar(100) and says he wants 3 ints and 3 chars in his anonymous identifiers he will soon run out of combinations
@@ -277,21 +295,19 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                 NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation})",
-                        CheckResult.Warning));
+                        $"You asked to create a table with a datatype of length {length}({identifiableDatatype}) but you did not allocate an equal or greater number of anonymous identifier types (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation={NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation})", CheckResult.Warning));
         }
 
-        var con = forceConnection ?? server.GetConnection(); //use the forced connection or open a new one
+        var con = forceConnection ?? server.GetConnection();//use the forced connection or open a new one
 
         try
         {
-            if (forceConnection == null)
+            if(forceConnection == null)
                 con.Open();
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to ano server {Server}", CheckResult.Fail,
-                e));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Could not connect to ano server {Server}",CheckResult.Fail,e));
             return;
         }
 
@@ -319,58 +335,50 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         {
             cmd.Transaction = forceTransaction;
 
-            notifier.OnCheckPerformed(new CheckEventArgs($"Decided appropriate create statement is:{cmd.CommandText}",
-                CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Decided appropriate create statement is:{cmd.CommandText}", CheckResult.Success));
             try
             {
                 cmd.ExecuteNonQuery();
 
-                if (forceConnection == null) //if we opened this ourselves
-                    con.Close(); //shut it
+                if(forceConnection == null)//if we opened this ourselves
+                    con.Close();//shut it
             }
             catch (Exception e)
             {
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        $"Failed to successfully create the anonymous/identifier mapping Table in the ANO database on server {Server}",
-                        CheckResult.Fail, e));
+                        $"Failed to successfully create the anonymous/identifier mapping Table in the ANO database on server {Server}", CheckResult.Fail, e));
                 return;
             }
         }
 
         try
         {
-            if (forceTransaction ==
-                null) //if there was no transaction then this has hit the LIVE ANO database and is for real, so save the ANOTable such that it is synchronized with reality
+            if(forceTransaction == null)//if there was no transaction then this has hit the LIVE ANO database and is for real, so save the ANOTable such that it is synchronized with reality
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Saving state because table has been pushed",
-                    CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs("Saving state because table has been pushed",CheckResult.Success));
                 SaveToDatabase();
             }
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                "Failed to save state after table was successfully? pushed to ANO server", CheckResult.Fail, e));
+            notifier.OnCheckPerformed(new CheckEventArgs("Failed to save state after table was successfully? pushed to ANO server", CheckResult.Fail,e));
         }
     }
 
 
     /// <summary>
-    ///     Anonymisation with an <see cref="ANOTable" /> happens during data load.  This means that the column goes from
-    ///     identifiable in RAW to anonymous in STAGING/LIVE.  This means
-    ///     that the datatype of the column changes depending on the <see cref="LoadStage" />.
-    ///     <para>
-    ///         Returns the appropriate datatype for the <see cref="LoadStage" />.  This is done by connecting to the mapping
-    ///         table and retrieving the mapping table types
-    ///     </para>
+    /// Anonymisation with an <see cref="ANOTable"/> happens during data load.  This means that the column goes from identifiable in RAW to anonymous in STAGING/LIVE.  This means
+    /// that the datatype of the column changes depending on the <see cref="LoadStage"/>.
+    /// 
+    /// <para>Returns the appropriate datatype for the <see cref="LoadStage"/>.  This is done by connecting to the mapping table and retrieving the mapping table types</para>
     /// </summary>
     /// <param name="loadStage"></param>
     /// <returns></returns>
     public string GetRuntimeDataType(LoadStage loadStage)
     {
         //cache answers
-        if (_identifiableDataType == null)
+        if(_identifiableDataType == null)
         {
             var server = DataAccessPortal.ExpectServer(Server, DataAccessContext.DataLoad);
 
@@ -379,10 +387,9 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
             var expectedIdentifiableName = TableName["ANO".Length..];
 
             var anonymous = columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(TableName));
-            var identifiable =
-                columnsFoundInANO.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedIdentifiableName));
+            var identifiable = columnsFoundInANO.SingleOrDefault(c=>c.GetRuntimeName().Equals(expectedIdentifiableName));
 
-            if (anonymous == null)
+            if(anonymous == null)
                 throw new Exception(
                     $"Could not find a column called {TableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray())})");
 
@@ -406,69 +413,15 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         };
     }
 
-    #region Database Properties
-
-    private string _tableName;
-    private int _numberOfIntegersToUseInAnonymousRepresentation;
-    private int _numberOfCharactersToUseInAnonymousRepresentation;
-    private string _suffix;
-    private int _serverID;
-
-    /// <summary>
-    ///     The name of the table in the ANO database that stores swapped identifiers
-    /// </summary>
-    public string TableName
+    /// <inheritdoc/>
+    public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        get => _tableName;
-        set => SetField(ref _tableName, value);
+        return Array.Empty<IHasDependencies>();
     }
 
-    /// <summary>
-    ///     The number of decimal characters to use when creating ANO mapping identifiers.  This will directly impact the
-    ///     number of possible values that can be generated and therefore
-    ///     the number of unique input values before anonymising fails (due to collisions).
-    /// </summary>
-    public int NumberOfIntegersToUseInAnonymousRepresentation
+    /// <inheritdoc/>
+    public IHasDependencies[] GetObjectsDependingOnThis()
     {
-        get => _numberOfIntegersToUseInAnonymousRepresentation;
-        set => SetField(ref _numberOfIntegersToUseInAnonymousRepresentation, value);
+        return Repository.GetAllObjectsWithParent<ColumnInfo>(this);
     }
-
-    /// <summary>
-    ///     The number of alphabetic characters to use when creating ANO mapping identifiers.  This will directly impact the
-    ///     number of possible values that can be generated and therefore
-    ///     the number of unique input values before anonymising fails (due to collisions).
-    /// </summary>
-    public int NumberOfCharactersToUseInAnonymousRepresentation
-    {
-        get => _numberOfCharactersToUseInAnonymousRepresentation;
-        set => SetField(ref _numberOfCharactersToUseInAnonymousRepresentation, value);
-    }
-
-    /// <summary>
-    ///     The ID of the ExternalDatabaseServer which stores the anonymous identifier substitutions (e.g. chi=>ANOchi).  This
-    ///     should have been created by the
-    ///     <see cref="ANOStorePatcher" />
-    /// </summary>
-    [Relationship(typeof(ExternalDatabaseServer), RelationshipType.SharedObject)]
-    public int Server_ID
-    {
-        get => _serverID;
-        set => SetField(ref _serverID, value);
-    }
-
-    /// <summary>
-    ///     The letter that appears on the end of all anonymous identifiers generated e.g. AAB11_GP would have the suffix "GP"
-    ///     <para>
-    ///         Once you have started using the <see cref="ANOTable" /> to anonymise identifiers you should not change the
-    ///         Suffix
-    ///     </para>
-    /// </summary>
-    public string Suffix
-    {
-        get => _suffix;
-        set => SetField(ref _suffix, value);
-    }
-
-    #endregion
 }

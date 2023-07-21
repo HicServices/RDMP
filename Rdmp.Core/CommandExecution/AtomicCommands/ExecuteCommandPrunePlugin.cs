@@ -5,24 +5,24 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using NLog;
+using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.Startup;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text.RegularExpressions;
-using NLog;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode;
-using Rdmp.Core.Startup;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Deletes duplicate dlls within the given plugin.  RDMP will not load 2 copies of the same
-///     dll at runtime and so these dlls will just bloat your plugin.  Use this command to prune out
-///     those files.
+/// Deletes duplicate dlls within the given plugin.  RDMP will not load 2 copies of the same
+/// dll at runtime and so these dlls will just bloat your plugin.  Use this command to prune out
+/// those files.
 /// </summary>
 public class ExecuteCommandPrunePlugin : BasicCommandExecution
 {
@@ -30,18 +30,20 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
 
 
     [UseWithObjectConstructor]
-    public ExecuteCommandPrunePlugin(string file)
+    public ExecuteCommandPrunePlugin(string file) : base()
     {
         this.file = file;
     }
 
     /// <summary>
-    ///     Interactive constructor
+    /// Interactive constructor
     /// </summary>
     /// <param name="activator"></param>
     public ExecuteCommandPrunePlugin(IBasicActivateItems activator) : base(activator)
     {
+
     }
+
 
 
     public override void Execute()
@@ -49,10 +51,15 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
         base.Execute();
 
         // make runtime decision about the file to run on
-        if (file == null && BasicActivator != null)
+        if(file == null && BasicActivator != null)
+        {
             file = BasicActivator.SelectFile("Select plugin to prune")?.FullName;
+        }
 
-        if (file == null) return;
+        if(file == null)
+        {
+            return;
+        }
 
         var logger = LogManager.GetCurrentClassLogger();
 
@@ -77,8 +84,7 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
                 if (!e.Name.EndsWith(".dll", StringComparison.InvariantCultureIgnoreCase))
                     continue;
                 Assembly assembly;
-                if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) ||
-                    rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
+                if (SafeDirectoryCatalog.Ignore.Contains(e.Name.ToLowerInvariant()) || rdmpCoreFiles.Any(f => f.Name.Equals(e.Name)))
                 {
                     logger.Info($"Deleting '{e.FullName}' (static)");
                     e.Delete();
@@ -104,8 +110,13 @@ public class ExecuteCommandPrunePlugin : BasicCommandExecution
                 }
 
                 if (main.IsMatch(e.FullName))
+                {
                     inMain.Add(e);
-                else if (windows.IsMatch(e.FullName)) inWindows.Add(e);
+                }
+                else if (windows.IsMatch(e.FullName))
+                {
+                    inWindows.Add(e);
+                }
             }
 
             foreach (var dup in inWindows.Where(e => inMain.Any(o => o.Name.Equals(e.Name))).ToArray())

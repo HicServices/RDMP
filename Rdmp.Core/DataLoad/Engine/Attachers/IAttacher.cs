@@ -13,12 +13,13 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.Attachers;
 
 /// <summary>
-///     See Attacher
+/// See Attacher
 /// </summary>
-public interface IAttacher : IDisposeAfterDataLoad, ICheckable
+public interface IAttacher: IDisposeAfterDataLoad, ICheckable
 {
-    ILoadDirectory LoadDirectory { get; set; }
-    bool RequestsExternalDatabaseCreation { get; }
     ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
     void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
+        
+    ILoadDirectory LoadDirectory { get; set; }
+    bool RequestsExternalDatabaseCreation { get; }
 }

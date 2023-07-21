@@ -10,8 +10,16 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Validation.ValidationPluginTests;
 
-public class LegacySerializationTest : DatabaseTests
+public class LegacySerializationTest:DatabaseTests
 {
+    [Test]
+    public void TestLegacyDeserialization()
+    {
+        Validator.LocatorForXMLDeserialization = RepositoryLocator;
+        var v = Validator.LoadFromXml(LegacyXML);
+        Assert.IsNotNull(v);
+    }
+
     private const string LegacyXML = @"<?xml version=""1.0"" encoding=""utf-16""?>
 <Validator xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
   <ItemValidators>
@@ -129,12 +137,4 @@ public class LegacySerializationTest : DatabaseTests
     </ItemValidator>
   </ItemValidators>
 </Validator>";
-
-    [Test]
-    public void TestLegacyDeserialization()
-    {
-        Validator.LocatorForXMLDeserialization = RepositoryLocator;
-        var v = Validator.LoadFromXml(LegacyXML);
-        Assert.IsNotNull(v);
-    }
 }

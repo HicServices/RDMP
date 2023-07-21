@@ -16,11 +16,11 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandBrowseLookup : BasicUICommandExecution, IAtomicCommand
+internal class ExecuteCommandBrowseLookup : BasicUICommandExecution,IAtomicCommand
 {
-    private readonly Lookup _lookup;
+    private Lookup _lookup;
 
-    public ExecuteCommandBrowseLookup(IActivateItems activator, Lookup lookup) : base(activator)
+    public ExecuteCommandBrowseLookup(IActivateItems activator, Lookup lookup):base(activator)
     {
         _lookup = lookup;
     }
@@ -30,7 +30,7 @@ internal class ExecuteCommandBrowseLookup : BasicUICommandExecution, IAtomicComm
         var colInfo = filter.GetColumnInfoIfExists();
 
         if (colInfo != null)
-            _lookup =
+            _lookup = 
                 colInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey).FirstOrDefault() ??
                 colInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description).FirstOrDefault();
 
@@ -40,13 +40,13 @@ internal class ExecuteCommandBrowseLookup : BasicUICommandExecution, IAtomicComm
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        return iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Shortcut);
+        return iconProvider.GetImage(RDMPConcept.Lookup,OverlayKind.Shortcut);
     }
 
     public override void Execute()
     {
         base.Execute();
-
+            
         Activator.Activate<LookupBrowserUI, Lookup>(_lookup);
     }
 }

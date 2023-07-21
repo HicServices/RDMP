@@ -18,19 +18,18 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-///     A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query
-///     like 'select distinct patientId from
-///     TableX where ...'.  The  query result table can/will be committed as a CacheCommitIdentifierList to  the
-///     CachedAggregateConfigurationResultsManager.
+/// A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query like 'select distinct patientId from 
+/// TableX where ...'.  The  query result table can/will be committed as a CacheCommitIdentifierList to  the CachedAggregateConfigurationResultsManager.
 /// </summary>
-public class AggregationTask : CacheableTask
+public class AggregationTask:CacheableTask
 {
-    private readonly List<CohortAggregateContainer> _allParentContainers;
+    public AggregateConfiguration Aggregate { get; private set; }
 
-    private readonly string _catalogueName;
-    private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private string _catalogueName;
+    private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private List<CohortAggregateContainer> _allParentContainers;
 
-    public AggregationTask(AggregateConfiguration aggregate, CohortCompiler compiler) : base(compiler)
+    public AggregationTask(AggregateConfiguration aggregate, CohortCompiler compiler): base(compiler)
     {
         Aggregate = aggregate;
         _catalogueName = aggregate.Catalogue.Name;
@@ -38,22 +37,20 @@ public class AggregationTask : CacheableTask
 
         var container = aggregate.GetCohortAggregateContainerIfAny();
 
-        if (container != null)
+        if(container != null)
         {
             _allParentContainers = container.GetAllParentContainers().ToList();
             _allParentContainers.Add(container);
         }
     }
 
-    public AggregateConfiguration Aggregate { get; }
-
-    public override IMapsDirectlyToDatabaseTable Child => Aggregate;
-
 
     public override string GetCatalogueName()
     {
         return _catalogueName;
     }
+
+    public override IMapsDirectlyToDatabaseTable Child => Aggregate;
 
 
     public override string ToString()
@@ -76,7 +73,7 @@ public class AggregationTask : CacheableTask
     public override bool IsEnabled()
     {
         //aggregate is not disabled and none of the parent containers are disabled either
-        return !Aggregate.IsDisabled && !_allParentContainers.Any(c => c.IsDisabled);
+        return !Aggregate.IsDisabled && !_allParentContainers.Any(c=>c.IsDisabled);
     }
 
     public override AggregateConfiguration GetAggregateConfiguration()
@@ -84,8 +81,7 @@ public class AggregationTask : CacheableTask
         return Aggregate;
     }
 
-    public override CacheCommitArguments GetCacheArguments(string sql, DataTable results,
-        DatabaseColumnRequest[] explicitTypes)
+    public override CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes)
     {
         return new CacheCommitIdentifierList(Aggregate, sql, results, explicitTypes.Single(), Timeout);
     }

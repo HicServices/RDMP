@@ -16,8 +16,7 @@ namespace Rdmp.Core.ReusableLibraryCode;
 
 public static class Rfc4180Writer
 {
-    public static void WriteDataTable(DataTable sourceTable, TextWriter writer, bool includeHeaders,
-        QuerySyntaxHelper escaper = null)
+    public static void WriteDataTable(DataTable sourceTable, TextWriter writer, bool includeHeaders, QuerySyntaxHelper escaper = null)
     {
         if (includeHeaders)
         {
@@ -31,14 +30,13 @@ public static class Rfc4180Writer
         var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new Guesser());
         foreach (var kvp in typeDictionary)
             kvp.Value.AdjustToCompensateForValues(kvp.Key);
-
+            
         foreach (DataRow row in sourceTable.Rows)
         {
             var line = new List<string>();
 
             foreach (DataColumn col in sourceTable.Columns)
-                line.Add(QuoteValue(GetStringRepresentation(row[col],
-                    typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
+                line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
 
             writer.WriteLine(string.Join(",", line));
         }
@@ -52,8 +50,10 @@ public static class Rfc4180Writer
             return null;
 
         if (o is string s && allowDates)
+        {
             if (DateTime.TryParse(s, out var dt))
                 return GetStringRepresentation(dt);
+        }
 
         if (o is DateTime time)
             return GetStringRepresentation(time);
@@ -79,5 +79,6 @@ public static class Rfc4180Writer
             return "NULL";
 
         return $"\"{value}\"";
+
     }
 }

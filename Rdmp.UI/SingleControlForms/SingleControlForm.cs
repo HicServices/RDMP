@@ -4,32 +4,30 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace Rdmp.UI.SingleControlForms;
 
 /// <summary>
-///     TECHNICAL: Helper class that turns a Control into a Form by mounting it.  Also wires up IConsultableBeforeClosing
-///     to the Form Closing event if the hosted Control implements it.
+/// TECHNICAL: Helper class that turns a Control into a Form by mounting it.  Also wires up IConsultableBeforeClosing to the Form Closing event if the hosted Control implements it.
 /// </summary>
 [TechnicalUI]
-[DesignerCategory("")]
-public class SingleControlForm : Form
+[System.ComponentModel.DesignerCategory("")]
+public class SingleControlForm:Form
 {
     public SingleControlForm(Control control, bool showOkButton = false)
     {
         SetClientSizeCore(control.Width, control.Height);
-        Text = !string.IsNullOrWhiteSpace(control.Text) ? control.Text : control.Name;
+        Text = !string.IsNullOrWhiteSpace(control.Text)?control.Text:control.Name;
 
         Controls.Add(control);
-        control.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
+        control.Anchor = AnchorStyles.Top | AnchorStyles.Left| AnchorStyles.Right | AnchorStyles.Bottom;
 
         if (control is IConsultableBeforeClosing consult)
             FormClosing += consult.ConsultAboutClosing;
 
-        if (showOkButton)
+        if(showOkButton)
         {
             var okButton = new Button
             {
@@ -54,8 +52,8 @@ public class SingleControlForm : Form
         }
     }
 
-    public static DialogResult ShowDialog(Control control, bool showOkButton = false)
+    public static DialogResult ShowDialog(Control control,bool showOkButton = false)
     {
-        return new SingleControlForm(control, showOkButton).ShowDialog();
+        return new SingleControlForm(control,showOkButton).ShowDialog();
     }
 }

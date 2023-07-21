@@ -16,35 +16,26 @@ using Rdmp.Core.DataLoad.Triggers;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-///     The RDMP data load engine is designed to prevent duplicate data entering your live database.  This is achieved by
-///     requiring a primary key defined by the source
-///     data (i.e. not an autonum).  However it is expected that semantically correct primary keys will not be perfectly
-///     supplied in all cases by data providers, for example
-///     if 'TestLabCode' is the primary key on biochemistry but duplicates appear with unique values in 'DataAge' it would
-///     be reasonable to assume that newer 'DataAge' records
-///     replace older ones.  Therefore we might decide to keep the primary key as 'TestLabCode' and then discard duplicate
-///     records based on preserving the latest 'DataAge'.
-///     <para>
-///         This class handles creating the query that deletes duplicates based on the column preference order supplied
-///         (See ConfigurePrimaryKeyCollisionResolution).
-///     </para>
+/// The RDMP data load engine is designed to prevent duplicate data entering your live database.  This is achieved by requiring a primary key defined by the source
+/// data (i.e. not an autonum).  However it is expected that semantically correct primary keys will not be perfectly supplied in all cases by data providers, for example
+/// if 'TestLabCode' is the primary key on biochemistry but duplicates appear with unique values in 'DataAge' it would be reasonable to assume that newer 'DataAge' records
+/// replace older ones.  Therefore we might decide to keep the primary key as 'TestLabCode' and then discard duplicate records based on preserving the latest 'DataAge'.
+/// 
+/// <para>This class handles creating the query that deletes duplicates based on the column preference order supplied (See ConfigurePrimaryKeyCollisionResolution). </para>
 /// </summary>
 public class PrimaryKeyCollisionResolver
 {
+    private readonly ITableInfo _tableInfo;
+    private readonly IQuerySyntaxHelper _querySyntaxHelper;
     private const string WithCTE = "WITH CTE (DuplicateCount)";
     private const string SelectRownum = "\t SELECT ROW_NUMBER()";
-
     private const string DeleteBit =
         @"DELETE 
 FROM CTE 
 WHERE DuplicateCount > 1";
 
-    private readonly IQuerySyntaxHelper _querySyntaxHelper;
-    private readonly ITableInfo _tableInfo;
-
     /// <summary>
-    ///     Creates a new collision resolver using the primary keys and resolution order of the supplied
-    ///     <see cref="TableInfo" />
+    /// Creates a new collision resolver using the primary keys and resolution order of the supplied <see cref="TableInfo"/>
     /// </summary>
     /// <param name="tableInfo"></param>
     public PrimaryKeyCollisionResolver(ITableInfo tableInfo)
@@ -54,12 +45,13 @@ WHERE DuplicateCount > 1";
     }
 
     /// <summary>
-    ///     Get the SQL to run to delete records colliding on primary key
+    /// Get the SQL to run to delete records colliding on primary key
     /// </summary>
     /// <returns></returns>
     public string GenerateSQL()
     {
-        return GenerateSQL(out var pks, out var resolvers);
+
+        return GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers);
     }
 
     private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
@@ -69,7 +61,7 @@ WHERE DuplicateCount > 1";
         var cols = _tableInfo.ColumnInfos.ToArray();
         pks = cols.Where(col => col.IsPrimaryKey).ToArray();
 
-        if (!pks.Any())
+        if(!pks.Any())
             throw new Exception(
                 $"TableInfo {_tableInfo.GetRuntimeName()} does not have any primary keys defined so cannot resolve primary key collisions");
 
@@ -93,7 +85,7 @@ WHERE DuplicateCount > 1";
         //order by the priority of columns
         foreach (var column in resolvers.OrderBy(col => col.DuplicateRecordResolutionOrder))
         {
-            if (column is ColumnInfo { IsPrimaryKey: true })
+            if(column is ColumnInfo { IsPrimaryKey: true })
                 throw new Exception(
                     $"Column {column.GetRuntimeName()} is flagged as primary key when it also has a DuplicateRecordResolutionOrder, primary keys cannot be used to resolve duplication since they are the hash!  Resolve this in the CatalogueManager by right clicking the offending TableInfo {_tableInfo.GetRuntimeName()} and editing the resolution order");
 
@@ -125,17 +117,19 @@ WHERE DuplicateCount > 1";
         var valueType = GetDataType(col.Data_type);
 
         if (valueType == ValueType.CharacterString)
+        {
             //character strings are compared first by LENGTH (to prefer longer data)
             //then by alphabetical comparison to prefer things towards the start of the alphabet (because this makes sense?!)
             return
                 $"{sql}LEN(ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)})){direction},{Environment.NewLine}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)}){direction},{Environment.NewLine}";
+        }
 
         return
             $"{sql}ISNULL({colname},{GetNullSubstituteForComparisonsWithDataType(col.Data_type, true)}){direction},{Environment.NewLine}";
     }
 
     /// <summary>
-    ///     Generates the SQL that will be run to determine whether there are any record collisions on primary key (in RAW)
+    /// Generates the SQL that will be run to determine whether there are any record collisions on primary key (in RAW)
     /// </summary>
     /// <returns></returns>
     public string GenerateCollisionDetectionSQL()
@@ -149,7 +143,7 @@ WHERE DuplicateCount > 1";
         sql += tableNameInRAW + Environment.NewLine;
         sql +=
             $"group by {pks.Aggregate("", (s, n) => $"{s}{_querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw))},")}{Environment.NewLine}";
-        sql = sql.TrimEnd(',', '\r', '\n') + Environment.NewLine;
+        sql = sql.TrimEnd(new[] {',','\r','\n'}) + Environment.NewLine;
         sql += $"having count(*) > 1{Environment.NewLine}";
         sql += $") then 1 else 0 end{Environment.NewLine}";
 
@@ -157,19 +151,16 @@ WHERE DuplicateCount > 1";
     }
 
     /// <summary>
-    ///     Generates SQL to show which records would be deleted by primary key collision resolution.  This should be run
-    ///     manually by the data analyst if he is unsure about the
-    ///     resolution order / current primary keys
+    /// Generates SQL to show which records would be deleted by primary key collision resolution.  This should be run manually by the data analyst if he is unsure about the
+    /// resolution order / current primary keys
     /// </summary>
     /// <returns></returns>
     public string GeneratePreviewSQL()
     {
         var basicSQL = GenerateSQL(out var pks, out var resolvers);
 
-        var commaSeparatedPKs = string.Join(",",
-            pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
-        var commaSeparatedCols = string.Join(",",
-            resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedPKs = string.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+        var commaSeparatedCols = string.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
 
         //add all the columns to the WITH CTE bit
         basicSQL = basicSQL.Replace(WithCTE, $"WITH CTE ({commaSeparatedPKs},{commaSeparatedCols},DuplicateCount)");
@@ -189,13 +180,10 @@ WHERE DuplicateCount > 1";
         basicSQL += $"\twhere{Environment.NewLine}";
 
         //add the child.pk1 = CTE.pk1 bit to restrict preview only to rows that are going to get compared for nukage
-        basicSQL += string.Join("\r\n\t\tand",
-            pks.Select(pk =>
-                "\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." +
-                _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
+        basicSQL += string.Join("\r\n\t\tand",pks.Select(pk =>  "\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
 
         basicSQL += $"\tgroup by{Environment.NewLine}";
-        basicSQL += string.Join(",\r\n", pks.Select(pk =>
+        basicSQL += string.Join(",\r\n", pks.Select( pk =>
             $"\t\t{_querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))}"));
 
         basicSQL += $"\t\t{Environment.NewLine}";
@@ -250,17 +238,15 @@ WHERE DuplicateCount > 1";
             return ValueType.Freaky;
 
         throw new Exception($"Could not figure out the ValueType of SQL Type \"{dataType}\"");
+
+
     }
 
     /// <summary>
-    ///     When using ORDER BY to resolve primary key collisions this will specify what substitution to use for null values
-    ///     (such that the ORDER BY works correctly).
+    /// When using ORDER BY to resolve primary key collisions this will specify what substitution to use for null values (such that the ORDER BY works correctly).
     /// </summary>
     /// <param name="datatype">The Sql Server column datatype for the column you are substituting</param>
-    /// <param name="min">
-    ///     true to substitute null values for the minimum value of the <paramref name="datatype" />, false to
-    ///     substitute for the maximum
-    /// </param>
+    /// <param name="min">true to substitute null values for the minimum value of the <paramref name="datatype"/>, false to substitute for the maximum</param>
     /// <returns></returns>
     public static string GetNullSubstituteForComparisonsWithDataType(string datatype, bool min)
     {
@@ -333,15 +319,13 @@ WHERE DuplicateCount > 1";
             if (min)
                 return "''";
             else
-                throw new NotSupportedException(
-                    "Cannot think what the maxmimum character string would be, maybe use min = true instead?");
+                throw new NotSupportedException("Cannot think what the maxmimum character string would be, maybe use min = true instead?");
 
         if (valueType == ValueType.DateTime)
             if (min)
                 return "'1753-1-1'";
             else
-                throw new NotSupportedException(
-                    "Cannot think what the maxmimum date would be, maybe use min = true instead?");
+                throw new NotSupportedException("Cannot think what the maxmimum date would be, maybe use min = true instead?");
 
         if (valueType == ValueType.Time)
             if (min)
@@ -359,6 +343,7 @@ WHERE DuplicateCount > 1";
 
 
         throw new NotSupportedException($"Didn't know what minimum value type to use for {datatype}");
+
     }
 
     private enum ValueType

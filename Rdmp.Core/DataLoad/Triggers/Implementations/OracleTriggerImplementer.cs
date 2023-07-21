@@ -13,12 +13,11 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
-/// <inheritdoc />
-internal class OracleTriggerImplementer : MySqlTriggerImplementer
+/// <inheritdoc/>
+internal class OracleTriggerImplementer:MySqlTriggerImplementer
 {
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)" />
-    public OracleTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
-        createDataLoadRunIDAlso)
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
+    public OracleTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
     {
     }
 
@@ -36,7 +35,7 @@ internal class OracleTriggerImplementer : MySqlTriggerImplementer
                 var r = cmd.ExecuteReader();
 
                 while (r.Read())
-                    return (string)r["trigger_body"];
+                    return (string) r["trigger_body"];
             }
         }
 
@@ -45,8 +44,7 @@ internal class OracleTriggerImplementer : MySqlTriggerImplementer
 
     protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper)
     {
-        _table.AddColumn(SpecialFieldNames.ValidFrom, " DATE DEFAULT CURRENT_TIMESTAMP", true,
-            UserSettings.ArchiveTriggerTimeout);
+        _table.AddColumn(SpecialFieldNames.ValidFrom, " DATE DEFAULT CURRENT_TIMESTAMP", true, UserSettings.ArchiveTriggerTimeout);
     }
 
     protected override string CreateTriggerBody()
@@ -67,8 +65,7 @@ internal class OracleTriggerImplementer : MySqlTriggerImplementer
         sqlNow ??= "";
         sqlThen ??= "";
 
-        if (!sqlNow.Trim(';', ' ', '\t').Equals(sqlThen.Trim(';', ' ', '\t')))
-            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql", sqlThen,
-                sqlNow);
+        if(!sqlNow.Trim(';',' ','\t').Equals(sqlThen.Trim(';',' ','\t')))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlThen,sqlNow);
     }
 }

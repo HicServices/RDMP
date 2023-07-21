@@ -14,12 +14,11 @@ namespace Rdmp.UI.Tests;
 
 public class LoadDiagramUITests : UITests
 {
-    [Test]
-    [UITimeout(50000)]
+    [Test, UITimeout(50000)]
     public void Test_LoadDiagramUITests_NormalState()
     {
         var lmd = WhenIHaveA<LoadMetadata>();
-
+            
         SetupMEF();
 
         var ui = AndLaunch<LoadDiagramUI>(lmd);
@@ -28,26 +27,26 @@ public class LoadDiagramUITests : UITests
         AssertCommandIsPossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd));
 
         AssertNoErrors(ExpectedErrorType.Any);
+
     }
 
-    [Test]
-    [UITimeout(50000)]
+    [Test, UITimeout(50000)]
     public void Test_LoadDiagramUITests_NoCatalogues()
     {
         var lmd = WhenIHaveA<LoadMetadata>();
-
+            
         //delete the Catalogue so the load is an orphan
         lmd.GetAllCatalogues().Single().DeleteInDatabase();
-
+            
         SetupMEF();
 
         var ui = AndLaunch<LoadDiagramUI>(lmd);
 
         //cant launch the command
-        AssertCommandIsImpossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd),
-            "does not have any associated Catalogues");
+        AssertCommandIsImpossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd), "does not have any associated Catalogues");
 
         //and ui should be showing big problems
-        AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not fetch data");
+        AssertErrorWasShown(ExpectedErrorType.Fatal,"Could not fetch data");
+
     }
 }

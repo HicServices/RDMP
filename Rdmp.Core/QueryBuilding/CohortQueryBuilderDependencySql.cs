@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.QueryBuilding.Parameters;
@@ -12,57 +13,49 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-///     Describes a block of sql built using a <see cref="AggregateBuilder" /> which may need to be slotted into a larger
-///     query e.g.
-///     as a subsection of a large <see cref="CohortIdentificationConfiguration" />.  The <see cref="Sql" /> is built
-///     without considering
-///     parameters that exist in any larger query.  Use method <see cref="Use" /> to deploy the <see cref="Sql" /> into a
-///     larger query
-///     or use it on its own for cache hit checking / running in isolation.
+/// Describes a block of sql built using a <see cref="AggregateBuilder"/> which may need to be slotted into a larger query e.g.
+/// as a subsection of a large <see cref="CohortIdentificationConfiguration"/>.  The <see cref="Sql"/> is built without considering
+/// parameters that exist in any larger query.  Use method <see cref="Use"/> to deploy the <see cref="Sql"/> into a larger query
+/// or use it on its own for cache hit checking / running in isolation.
 /// </summary>
 public class CohortQueryBuilderDependencySql
 {
-    private bool _hasBeenUsed;
+    public string Sql { get; private set; }
+
+    /// <summary>
+    /// New parameters needed by the <see cref="Sql"/>
+    /// </summary>
+    public ParameterManager ParametersUsed { get; }
+
+    private bool _hasBeenUsed = false;
 
     public CohortQueryBuilderDependencySql(string sql, ParameterManager parameterManager)
     {
         Sql = sql;
         ParametersUsed = parameterManager;
+
     }
-
-    public string Sql { get; private set; }
-
     /// <summary>
-    ///     New parameters needed by the <see cref="Sql" />
-    /// </summary>
-    public ParameterManager ParametersUsed { get; }
-
-    /// <summary>
-    ///     Can only be called once, updates the <see cref="Sql" /> to resolve parameter naming collisions with the larger
-    ///     query
-    ///     (see <paramref name="compositeLevelParameterManager" />.  Returns the updated <see cref="Sql" /> (for convenience)
+    /// Can only be called once, updates the <see cref="Sql"/> to resolve parameter naming collisions with the larger query
+    /// (see <paramref name="compositeLevelParameterManager"/>.  Returns the updated <see cref="Sql"/> (for convenience)
     /// </summary>
     /// <param name="compositeLevelParameterManager">
-    ///     <see cref="ParameterManager" /> that reflects this aggregates location within a larger composite query (e.g. with
-    ///     UNION / INTERSECT / EXCEPT)
-    ///     containers.  This manager may include non global parameters that have been used to satisfy previously written SQL
-    ///     and new parameters
-    ///     discovered may be subject to rename operations (which can break caching).
-    /// </param>
+    /// <see cref="ParameterManager"/> that reflects this aggregates location within a larger composite query (e.g. with UNION / INTERSECT / EXCEPT)
+    /// containers.  This manager may include non global parameters that have been used to satisfy previously written SQL and new parameters
+    /// discovered may be subject to rename operations (which can break caching).</param>
     /// <returns></returns>
     public string Use(ParameterManager compositeLevelParameterManager)
     {
-        if (_hasBeenUsed)
+        if(_hasBeenUsed)
             throw new InvalidOperationException("Block can only be used once");
 
         //import parameters unless caching was used
-        compositeLevelParameterManager.ImportAndElevateResolvedParametersFromSubquery(ParametersUsed,
-            out var renameOperations);
+        compositeLevelParameterManager.ImportAndElevateResolvedParametersFromSubquery(ParametersUsed, out var renameOperations);
 
         //rename in the SQL too!
         foreach (var kvp in renameOperations)
             Sql = ParameterCreator.RenameParameterInSQL(Sql, kvp.Key, kvp.Value);
-
+            
         _hasBeenUsed = true;
 
         return Sql;

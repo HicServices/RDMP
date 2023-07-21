@@ -8,18 +8,16 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.ScintillaHelper;
-using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 /// <summary>
-///     Shows you some SQL the system is about to execute with a description of what it is trying to achieve.  You can
-///     choose either 'Ok' to execute the SQL and carry on with the rest
-///     of the ongoing procedure or Cancel (the SQL will not run and the procedure will be abandoned).
+/// Shows you some SQL the system is about to execute with a description of what it is trying to achieve.  You can choose either 'Ok' to execute the SQL and carry on with the rest
+/// of the ongoing procedure or Cancel (the SQL will not run and the procedure will be abandoned).
 /// </summary>
 public partial class SQLPreviewWindow : Form
 {
-    private readonly Scintilla QueryEditor;
+    private ScintillaNET.Scintilla QueryEditor;
 
     public SQLPreviewWindow(string title, string msg, string sql)
     {
@@ -54,13 +52,13 @@ public partial class SQLPreviewWindow : Form
 
     private void btnCancel_Click(object sender, EventArgs e)
     {
-        DialogResult = DialogResult.Cancel;
+        DialogResult=DialogResult.Cancel;
         Close();
     }
 
-    public static DialogResult Show(string title, string message, string sql)
+    public static DialogResult Show(string title,string message, string sql)
     {
-        var dialog = new SQLPreviewWindow(title, message, sql);
+        var dialog = new SQLPreviewWindow(title,message, sql);
         dialog.ShowDialog();
 
         return dialog.DialogResult;

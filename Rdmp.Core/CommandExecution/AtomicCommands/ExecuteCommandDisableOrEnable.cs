@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicCommand
 {
-    private readonly IDisableable[] _targets;
+    private IDisableable[] _targets;
 
     public ExecuteCommandDisableOrEnable(IBasicActivateItems itemActivator, IDisableable target) : base(itemActivator)
     {
@@ -24,7 +24,7 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
         Weight = 50.1f;
     }
 
-    public ExecuteCommandDisableOrEnable(IBasicActivateItems activator, IDisableable[] disableables) : base(activator)
+    public ExecuteCommandDisableOrEnable(IBasicActivateItems  activator, IDisableable[] disableables) : base(activator)
     {
         _targets = disableables;
 
@@ -35,12 +35,33 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
         }
 
         if (disableables.All(d => d.IsDisabled) || disableables.All(d => !d.IsDisabled))
+        {
             foreach (var d in _targets)
                 UpdateViabilityForTarget(d);
+        }
         else
+        {
             SetImpossible("All objects must be in the same disabled/enabled state");
+        }
 
         Weight = 50.1f;
+    }
+    private void UpdateViabilityForTarget(IDisableable target)
+    {
+        //don't let them disable the root container
+        if (target is CohortAggregateContainer container && container.IsRootContainer() && !container.IsDisabled)
+            SetImpossible("You cannot disable the root container of a cic");
+
+        if (target is AggregateConfiguration aggregateConfiguration)
+            if (!aggregateConfiguration.IsCohortIdentificationAggregate)
+                SetImpossible("Only cohort identification aggregates can be disabled");
+            else
+            if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
+                SetImpossible("Joinable Patient Index Tables cannot be disabled");
+
+        if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
+            SetImpossible(reason);
+
     }
 
     public override void Execute()
@@ -68,21 +89,5 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
             return _targets.All(d => d.IsDisabled) ? "Enable All" : "Disable All";
 
         return "Enable All";
-    }
-
-    private void UpdateViabilityForTarget(IDisableable target)
-    {
-        //don't let them disable the root container
-        if (target is CohortAggregateContainer container && container.IsRootContainer() && !container.IsDisabled)
-            SetImpossible("You cannot disable the root container of a cic");
-
-        if (target is AggregateConfiguration aggregateConfiguration)
-            if (!aggregateConfiguration.IsCohortIdentificationAggregate)
-                SetImpossible("Only cohort identification aggregates can be disabled");
-            else if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
-                SetImpossible("Joinable Patient Index Tables cannot be disabled");
-
-        if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))
-            SetImpossible(reason);
     }
 }

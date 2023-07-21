@@ -16,70 +16,23 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-///     Each Catalogue database can have 0 or 1 TicketingSystemConfiguration, this is a pointer to a plugin that handles
-///     communicating with a ticketing/issue system
-///     such as JIRA.  This ticketing system is used to record ticket numbers of a variety of objects (e.g.
-///     SupportingDocuments, extraction projects etc) and allows them
-///     to accrue man hours without compromising your current workflow.
-///     <para>
-///         In addition to tying objects to your ticketing system, the ticketing system will also be consulted about wheter
-///         data extraction projects are good to go or should
-///         not be released (e.g. do not release project X until it has been paid for / signed off by the governancer).
-///         The exact implementation of this is mostly left to the
-///         ticketing class you write.
-///     </para>
-///     <para>
-///         The Type field refers to a class that implements PluginTicketingSystem (see LoadModuleAssembly for how to write
-///         your own handler or use one of the compatible existing ones).
-///         this class will handle all communication with the ticketing system/server.
-///     </para>
-///     <para>
-///         There is also a reference to DataAccessCredentials record which stores optional username and encrypted
-///         password to use in the plugin for communicating with the ticketing system.
-///     </para>
+/// Each Catalogue database can have 0 or 1 TicketingSystemConfiguration, this is a pointer to a plugin that handles communicating with a ticketing/issue system
+/// such as JIRA.  This ticketing system is used to record ticket numbers of a variety of objects (e.g. SupportingDocuments, extraction projects etc) and allows them
+/// to accrue man hours without compromising your current workflow.
+/// 
+/// <para>In addition to tying objects to your ticketing system, the ticketing system will also be consulted about wheter data extraction projects are good to go or should
+/// not be released (e.g. do not release project X until it has been paid for / signed off by the governancer).  The exact implementation of this is mostly left to the
+/// ticketing class you write.</para>
+/// 
+/// <para>The Type field refers to a class that implements PluginTicketingSystem (see LoadModuleAssembly for how to write your own handler or use one of the compatible existing ones).  
+/// this class will handle all communication with the ticketing system/server.</para>
+///
+/// <para>There is also a reference to DataAccessCredentials record which stores optional username and encrypted password to use in the plugin for communicating with the ticketing system.</para>
+/// 
 /// </summary>
 public class TicketingSystemConfiguration : DatabaseEntity, INamed
 {
-    public TicketingSystemConfiguration()
-    {
-    }
-
-    /// <inheritdoc />
-    public TicketingSystemConfiguration(ICatalogueRepository repository, string name)
-    {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name != null ? name : DBNull.Value },
-            { "IsActive", true }
-        });
-    }
-
-    /// <inheritdoc />
-    internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
-    {
-        IsActive = (bool)r["IsActive"];
-        Url = r["Url"] as string;
-        Type = r["Type"] as string;
-        Name = r["Name"] as string;
-        DataAccessCredentials_ID = ObjectToNullableInt(r["DataAccessCredentials_ID"]);
-    }
-
-    #region Relationships
-
-    /// <summary>
-    ///     Fetches the credentials to use when connecting to the ticketing service.  Returns null if no credentials have been
-    ///     configured.
-    /// </summary>
-    [NoMappingToDatabase]
-    public DataAccessCredentials DataAccessCredentials =>
-        DataAccessCredentials_ID == null
-            ? null
-            : Repository.GetObjectByID<DataAccessCredentials>((int)DataAccessCredentials_ID);
-
-    #endregion
-
     #region Database Properties
-
     private bool _isActive;
     private string _url;
     private string _type;
@@ -87,11 +40,10 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     private int? _dataAccessCredentials_ID;
 
     /// <summary>
-    ///     True if the ticketing system should be used/consulted.  Set to false if you want to temporarily disable the
-    ///     ticketing system link to RDMP
-    ///     without actually deleting the object.
-    ///     <para>See:</para>
-    ///     <see cref="CatalogueRepository.GetTicketingSystem" />
+    /// True if the ticketing system should be used/consulted.  Set to false if you want to temporarily disable the ticketing system link to RDMP
+    /// without actually deleting the object. 
+    /// 
+    /// <para>See:</para><see cref="CatalogueRepository.GetTicketingSystem"/>
     /// </summary>
     public bool IsActive
     {
@@ -100,7 +52,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     }
 
     /// <summary>
-    ///     The Url for communicating with the <see cref="ITicketingSystem" />
+    /// The Url for communicating with the <see cref="ITicketingSystem"/>
     /// </summary>
     public string Url
     {
@@ -109,8 +61,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     }
 
     /// <summary>
-    ///     The C# System.Type of the <see cref="ITicketingSystem" /> which should be used to interact with the ticketing
-    ///     service
+    /// The C# System.Type of the <see cref="ITicketingSystem"/> which should be used to interact with the ticketing service
     /// </summary>
     public string Type
     {
@@ -118,7 +69,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
         set => SetField(ref _type, value);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     [NotNull]
     [Unique]
     public string Name
@@ -128,7 +79,7 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     }
 
     /// <summary>
-    ///     The credentials to use to connect to the ticketing service (username/password)
+    /// The credentials to use to connect to the ticketing service (username/password)
     /// </summary>
     public int? DataAccessCredentials_ID
     {
@@ -137,4 +88,43 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
     }
 
     #endregion
+
+    #region Relationships
+
+    /// <summary>
+    /// Fetches the credentials to use when connecting to the ticketing service.  Returns null if no credentials have been
+    /// configured.
+    /// </summary>
+    [NoMappingToDatabase]
+    public DataAccessCredentials DataAccessCredentials =>
+        DataAccessCredentials_ID == null
+            ? null
+            : Repository.GetObjectByID<DataAccessCredentials>((int) DataAccessCredentials_ID);
+
+    #endregion
+
+    public TicketingSystemConfiguration()
+    {
+
+    }
+
+    /// <inheritdoc/>
+    public TicketingSystemConfiguration(ICatalogueRepository repository, string name):base()
+    {
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        {
+            {"Name", name != null ? (object) name : DBNull.Value},
+            {"IsActive", true}
+        });
+    }
+
+    /// <inheritdoc/>
+    internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+    {
+        IsActive = (bool) r["IsActive"];
+        Url = r["Url"] as string;
+        Type = r["Type"] as string;
+        Name = r["Name"] as string;
+        DataAccessCredentials_ID = ObjectToNullableInt(r["DataAccessCredentials_ID"]);
+    }
 }

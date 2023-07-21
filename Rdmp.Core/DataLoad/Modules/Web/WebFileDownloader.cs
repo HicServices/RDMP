@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
+using CsvHelper;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -18,72 +20,55 @@ using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using MissingFieldException = System.MissingFieldException;
 
 namespace Rdmp.Core.DataLoad.Modules.Web;
 
 /// <summary>
-///     Data load component which downloads a file from a remote URL (e.g. http) into the ForLoading directory of the load.
+/// Data load component which downloads a file from a remote URL (e.g. http) into the ForLoading directory of the load.
 /// </summary>
 public class WebFileDownloader : IPluginDataProvider
 {
-    [DemandsInitialization(
-        "The full URI to a file that will be downloaded into project ForLoading directory, must be a valid Uri",
-        Mandatory = true)]
-    public Uri UriToFile { get; set; }
 
-    [DemandsInitialization(
-        "Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
+    [DemandsInitialization("The full URI to a file that will be downloaded into project ForLoading directory, must be a valid Uri", Mandatory = true)]
+    public Uri UriToFile { get; set; }
+        
+    [DemandsInitialization("Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
     public DataAccessCredentials WebsenseCredentials { get; set; }
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
+            
     }
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         var t = Stopwatch.StartNew();
-        var destinationFile =
-            new FileInfo(Path.Combine(job.LoadDirectory.ForLoading.FullName, Path.GetFileName(UriToFile.LocalPath)));
-        DownloadFileWhilstPretendingToBeFirefox(destinationFile, job);
-        job.OnProgress(this,
-            new ProgressEventArgs(destinationFile.FullName,
-                new ProgressMeasurement((int)(destinationFile.Length / 1000), ProgressType.Kilobytes), t.Elapsed));
+        var destinationFile = new FileInfo(Path.Combine(job.LoadDirectory.ForLoading.FullName, Path.GetFileName(UriToFile.LocalPath)));
+        DownloadFileWhilstPretendingToBeFirefox(destinationFile,job);
+        job.OnProgress(this,new ProgressEventArgs(destinationFile.FullName, new ProgressMeasurement((int)(destinationFile.Length / 1000),ProgressType.Kilobytes), t.Elapsed));
         return ExitCodeType.Success;
+
     }
 
-
-    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-    {
-    }
-
-
-    public void Check(ICheckNotifier notifier)
-    {
-        notifier.OnCheckPerformed(UriToFile == null
-            ? new CheckEventArgs("No URI has been specified", CheckResult.Fail)
-            : new CheckEventArgs($"URI is:{UriToFile}", CheckResult.Success));
-    }
-
-    private void DownloadFileWhilstPretendingToBeFirefox(FileInfo destinationFile, IDataLoadJob job)
+    private void DownloadFileWhilstPretendingToBeFirefox(FileInfo destinationFile,IDataLoadJob job)
     {
         NetworkCredential credentials;
         try
         {
-            credentials =
-                new NetworkCredential(WebsenseCredentials.Username, WebsenseCredentials.GetDecryptedPassword());
+            credentials = new NetworkCredential(WebsenseCredentials.Username, WebsenseCredentials.GetDecryptedPassword());
         }
         catch (Exception)
         {
             credentials = null;
         }
-
-        using var response = CreateNewRequest(UriToFile.AbsoluteUri, credentials);
+        using var response = CreateNewRequest(UriToFile.AbsoluteUri,credentials);
         using var writer = File.Create(destinationFile.FullName);
         //download the file 
-        response.CopyTo(writer, 1 << 20);
+        response.CopyTo(writer,1<<20);
     }
 
-    private static Stream CreateNewRequest(string url, ICredentials credentials = null, bool useCredentials = false)
+    private static Stream CreateNewRequest(string url,ICredentials credentials=null,bool useCredentials=false)
     {
         using var httpClientHandler = new HttpClientHandler();
         if (useCredentials && credentials is not null)
@@ -92,15 +77,14 @@ public class WebFileDownloader : IPluginDataProvider
         {
             Timeout = TimeSpan.FromSeconds(5)
         };
-        httpClient.DefaultRequestHeaders.Add("User-Agent",
-            "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36");
+        httpClient.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36");
         using var response = httpClient.GetAsync(url).Result;
         if (response.IsSuccessStatusCode)
             return response.Content.ReadAsStreamAsync().Result;
-        if (!useCredentials && response.Headers.WwwAuthenticate.Any(h =>
-                h.Scheme.Equals("basic", StringComparison.OrdinalIgnoreCase) &&
-                h.Parameter?.Equals("realm=\"Websense\"", StringComparison.OrdinalIgnoreCase) == true))
+        if (!useCredentials && response.Headers.WwwAuthenticate.Any(h => h.Scheme.Equals("basic", StringComparison.OrdinalIgnoreCase) && h.Parameter?.Equals("realm=\"Websense\"",StringComparison.OrdinalIgnoreCase)==true))
+        {
             return CreateNewRequest(response.Headers.Location?.AbsoluteUri, credentials, true);
+        }
         throw new Exception($"Could not get response from {url} - {response.StatusCode} - {response.ReasonPhrase}");
     }
 
@@ -117,8 +101,22 @@ public class WebFileDownloader : IPluginDataProvider
     public bool Validate(ILoadDirectory _)
     {
         if (string.IsNullOrWhiteSpace(UriToFile?.PathAndQuery))
-            throw new MissingFieldException(
-                "PathToFile is null or white space - should be populated externally as a parameter");
+            throw new MissingFieldException("PathToFile is null or white space - should be populated externally as a parameter");
         return true;
     }
+
+        
+
+    public void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    {
+    }
+
+        
+    public void Check(ICheckNotifier notifier)
+    {
+        notifier.OnCheckPerformed(UriToFile == null
+            ? new CheckEventArgs("No URI has been specified", CheckResult.Fail)
+            : new CheckEventArgs($"URI is:{UriToFile}", CheckResult.Success));
+    }
+
 }

@@ -29,7 +29,8 @@ internal class CommentStoreTests
 
         Assert.AreEqual(
             @"Does some stuff"
-            , store["WindowFactory"]);
+            ,store["WindowFactory"]);
+
     }
 
     [Test]
@@ -51,7 +52,8 @@ internal class CommentStoreTests
 
         Assert.AreEqual(
             @"Does some stuff"
-            , store["WindowFactory"]);
+            ,store["WindowFactory"]);
+
     }
 
     [Test]
@@ -77,7 +79,8 @@ internal class CommentStoreTests
             @"Does some stuff This is still one para
 
 this is next para"
-            , store["WindowFactory"]);
+            ,store["WindowFactory"]);
+
     }
 
 
@@ -96,7 +99,7 @@ this is next para"
         store.AddXmlDoc(null);
         //also shouldn't bomb but should be 0
         store.AddXmlDoc(doc.FirstChild.FirstChild);
-
+            
         Assert.IsEmpty(store);
 
         store.AddXmlDoc(doc.FirstChild);
@@ -110,7 +113,7 @@ this is next para"
         store.AddXmlDoc(doc.FirstChild);
         Assert.IsEmpty(store);
 
-
+            
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary> a </summary>
@@ -146,7 +149,8 @@ this is next para"
             @"Does some stuff This is still one para
 
 this is next para"
-            , store["WindowFactory"]);
+            ,store["WindowFactory"]);
+
     }
 
 
@@ -176,6 +180,7 @@ got it?
             @"Does some stuff And some more stuff IObjectCollectionControl (for RDMPCollectionUI see WindowManager ).
 
 paragraph 2 got it?"
-            , store["WindowFactory"]);
+            ,store["WindowFactory"]);
+
     }
 }

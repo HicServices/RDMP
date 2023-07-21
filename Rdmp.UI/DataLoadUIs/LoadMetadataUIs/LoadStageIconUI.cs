@@ -11,7 +11,7 @@ using Rdmp.Core.Icons.IconProvision;
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
 
 /// <summary>
-///     Icon for describing something relates to a given data LoadStage (e.g. AdjustRaw, AdjustStaging etc)
+/// Icon for describing something relates to a given data LoadStage (e.g. AdjustRaw, AdjustStaging etc)
 /// </summary>
 [TechnicalUI]
 public partial class LoadStageIconUI : UserControl
@@ -21,7 +21,7 @@ public partial class LoadStageIconUI : UserControl
         InitializeComponent();
     }
 
-    public void Setup(ICoreIconProvider iconProvider, LoadStage stage)
+    public void Setup(ICoreIconProvider iconProvider,LoadStage stage)
     {
         pictureBox1.Image = iconProvider.GetImage(stage).ImageToBitmap();
         lblLoadStage.Text = stage.ToString();

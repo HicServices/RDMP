@@ -10,8 +10,7 @@ using System.Runtime.Serialization;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Thrown when <see cref="ExecuteCommandConfirmLogs" /> identifies that the expected logged activities are not present
-///     or indicate failure
+/// Thrown when <see cref="ExecuteCommandConfirmLogs"/> identifies that the expected logged activities are not present or indicate failure
 /// </summary>
 [Serializable]
 public class LogsNotConfirmedException : Exception

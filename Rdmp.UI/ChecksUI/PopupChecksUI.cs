@@ -11,13 +11,11 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.UI.ChecksUI;
 
 /// <summary>
-///     Popup dialog version of ChecksUI, See ChecksUI for description of functionality.
+/// Popup dialog version of ChecksUI, See ChecksUI for description of functionality.
 /// </summary>
-public partial class PopupChecksUI : Form, ICheckNotifier
+public partial class PopupChecksUI : Form,ICheckNotifier
 {
-    private CheckResult _worstSeen = CheckResult.Success;
-
-    private bool haveDemandedVisibility;
+    public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
 
     public PopupChecksUI(string task, bool showOnlyWhenError)
     {
@@ -30,29 +28,10 @@ public partial class PopupChecksUI : Form, ICheckNotifier
             haveDemandedVisibility = true;
         }
         else
-        {
             CreateHandle(); //let windows get a handle on the situation ;)
-        }
 
         KeyPreview = true;
     }
-
-    public bool OnCheckPerformed(CheckEventArgs args)
-    {
-        if (_worstSeen < args.Result)
-            _worstSeen = args.Result;
-
-        if (args.Result == CheckResult.Fail || args.Result == CheckResult.Warning)
-            if (!haveDemandedVisibility)
-            {
-                haveDemandedVisibility = true;
-                Invoke(new MethodInvoker(Show));
-            }
-
-        return checksUI1.OnCheckPerformed(args);
-    }
-
-    public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
 
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
@@ -63,6 +42,24 @@ public partial class PopupChecksUI : Form, ICheckNotifier
         }
 
         return base.ProcessCmdKey(ref msg, keyData);
+    }
+
+    private bool haveDemandedVisibility = false;
+    private CheckResult _worstSeen = CheckResult.Success;
+
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        if (_worstSeen < args.Result)
+            _worstSeen = args.Result;
+
+        if(args.Result == CheckResult.Fail || args.Result == CheckResult.Warning)
+            if(!haveDemandedVisibility)
+            {
+                haveDemandedVisibility = true;
+                Invoke(new MethodInvoker(Show));
+            }
+
+        return checksUI1.OnCheckPerformed(args);
     }
 
     protected override void OnClosed(EventArgs e)

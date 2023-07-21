@@ -16,16 +16,17 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandViewLoadDiagram : BasicUICommandExecution, IAtomicCommand
+internal class ExecuteCommandViewLoadDiagram :BasicUICommandExecution, IAtomicCommand
 {
     private readonly LoadMetadata _loadMetadata;
 
     public ExecuteCommandViewLoadDiagram(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
     {
         _loadMetadata = loadMetadata;
-
-        if (!_loadMetadata.GetAllCatalogues().Any())
+            
+        if(!_loadMetadata.GetAllCatalogues().Any())
             SetImpossible("Load does not have any associated Catalogues (no tables are loaded by the load)");
+
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)

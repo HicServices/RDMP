@@ -4,28 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.Repositories.Construction;
+using System;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Adds a new <see cref="AggregateDimension" /> to a <see cref="AggregateConfiguration" /> based on one of the
-///     associated <see cref="Catalogue" /> <see cref="ExtractionInformation" />
+/// Adds a new <see cref="AggregateDimension"/> to a <see cref="AggregateConfiguration"/> based on one of the associated <see cref="Catalogue"/> <see cref="ExtractionInformation"/>
 /// </summary>
 public class ExecuteCommandAddDimension : BasicCommandExecution
 {
     private readonly AggregateConfiguration aggregate;
-    private readonly bool askAtRuntime;
     private readonly string column;
-    private readonly float DEFAULT_WEIGHT = 2.4f;
+    private readonly bool askAtRuntime;
+    private float DEFAULT_WEIGHT = 2.4f;
 
-    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(
-        basicActivator)
+    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate) : base(basicActivator)
     {
         Weight = DEFAULT_WEIGHT;
         this.aggregate = aggregate;
@@ -34,8 +32,7 @@ public class ExecuteCommandAddDimension : BasicCommandExecution
     }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate,
-        string column) : base(basicActivator)
+    public ExecuteCommandAddDimension(IBasicActivateItems basicActivator, AggregateConfiguration aggregate, string column) : base(basicActivator)
     {
         Weight = DEFAULT_WEIGHT;
         this.aggregate = aggregate;
@@ -46,8 +43,7 @@ public class ExecuteCommandAddDimension : BasicCommandExecution
             // don't let them try to set a pivot on a cohort aggregate configuration but do let them clear it if it somehow ended up with one
             if (aggregate.IsCohortIdentificationAggregate)
             {
-                SetImpossible(
-                    $"AggregateConfiguration {aggregate} is a cohort identification aggregate and so cannot have a pivot");
+                SetImpossible($"AggregateConfiguration {aggregate} is a cohort identification aggregate and so cannot have a pivot");
                 return;
             }
         }
@@ -65,12 +61,18 @@ public class ExecuteCommandAddDimension : BasicCommandExecution
 
     private void ValidateCanAdd(AggregateConfiguration aggregate)
     {
-        if (aggregate.Catalogue.IsApiCall()) SetImpossible("API calls cannot have AggregateDimensions");
+        if(aggregate.Catalogue.IsApiCall())
+        {
+            SetImpossible("API calls cannot have AggregateDimensions");
+        }
 
         if (aggregate.IsCohortIdentificationAggregate && !aggregate.IsJoinablePatientIndexTable())
+        {
             if (aggregate.AggregateDimensions.Any())
-                SetImpossible(
-                    "Cohort aggregates can only have a single dimension. Remove existing dimension to select another.");
+            {
+                SetImpossible("Cohort aggregates can only have a single dimension. Remove existing dimension to select another.");
+            }
+        }
     }
 
     public override void Execute()
@@ -85,19 +87,24 @@ public class ExecuteCommandAddDimension : BasicCommandExecution
         if (askAtRuntime)
         {
             if (!possible.Any())
-                throw new Exception(
-                    $"There are no ExtractionInformation that can be added as new dimensions to {aggregate}");
+            {
+                throw new Exception($"There are no ExtractionInformation that can be added as new dimensions to {aggregate}");
+            }
 
             match = (ExtractionInformation)BasicActivator.SelectOne("Choose dimension to add", possible);
 
-            if (match == null) return;
+            if (match == null)
+            {
+                return;
+            }
         }
         else
         {
             match = possible.FirstOrDefault(a => string.Equals(column, a.ToString()));
             if (match == null)
-                throw new Exception(
-                    $"Could not find ExtractionInformation {column} in as an addable column to {aggregate}");
+            {
+                throw new Exception($"Could not find ExtractionInformation {column} in as an addable column to {aggregate}");
+            }
         }
 
         var dim = new AggregateDimension(BasicActivator.RepositoryLocator.CatalogueRepository, match, aggregate);

@@ -7,24 +7,27 @@
 using System;
 using System.IO;
 using System.Linq;
-using NPOI.XWPF.UserModel;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
+using NPOI.XWPF.UserModel;
 
 namespace Rdmp.Core.Reports.ExtractionTime;
 
 /// <summary>
-///     Generates a Microsoft Word DocX file containing information about all the datasets extracted (and released) as part
-///     of a Data Release.  This includes
-///     row counts and unique patient counts as well as the number of patients in the original cohort (not all patients
-///     will appear in all datasets).  Also
-///     included are the tickets for the project, the cohort ID number etc
+/// Generates a Microsoft Word DocX file containing information about all the datasets extracted (and released) as part of a Data Release.  This includes
+/// row counts and unique patient counts as well as the number of patients in the original cohort (not all patients will appear in all datasets).  Also
+/// included are the tickets for the project, the cohort ID number etc
 /// </summary>
 public class WordDataReleaseFileGenerator : DocXHelper
 {
-    private const int CohortCountTimeoutInSeconds = 600; // 10 minutes
     private readonly IDataExportRepository _repository;
+    public IExtractionConfiguration Configuration { get; set; }
+    protected ICumulativeExtractionResults[] ExtractionResults { get; set; }
+    protected IExtractableCohort Cohort { get; set; }
+    protected IProject Project { get; set; }
+
+    private const int CohortCountTimeoutInSeconds = 600; // 10 minutes
 
     public WordDataReleaseFileGenerator(IExtractionConfiguration configuration, IDataExportRepository repository)
     {
@@ -35,7 +38,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         if (Configuration.Cohort_ID == null)
             throw new NullReferenceException("Configuration has no Cohort");
 
-        Cohort = _repository.GetObjectByID<ExtractableCohort>((int)Configuration.Cohort_ID);
+        Cohort = _repository.GetObjectByID<ExtractableCohort>((int) Configuration.Cohort_ID);
 
         ExtractionResults =
             Configuration.CumulativeExtractionResults
@@ -44,33 +47,27 @@ public class WordDataReleaseFileGenerator : DocXHelper
                 ).ToArray();
     }
 
-    public IExtractionConfiguration Configuration { get; set; }
-    protected ICumulativeExtractionResults[] ExtractionResults { get; set; }
-    protected IExtractableCohort Cohort { get; set; }
-    protected IProject Project { get; set; }
-
     public void GenerateWordFile(string saveAsFilename)
     {
+
         FileInfo f;
 
-        f = string.IsNullOrWhiteSpace(saveAsFilename)
-            ? GetUniqueFilenameInWorkArea("ReleaseDocument")
-            : new FileInfo(saveAsFilename);
+        f = string.IsNullOrWhiteSpace(saveAsFilename) ? GetUniqueFilenameInWorkArea("ReleaseDocument") : new FileInfo(saveAsFilename);
 
         // Create an instance of Word  and make it visible.=
         using (var document = GetNewDocFile(f))
         {
+
             //actually changes it to landscape :)
             SetLandscape(document);
 
-            InsertHeader(document, $"Project:{Project.Name}");
-            InsertHeader(document, Configuration.Name, 2);
+            InsertHeader(document, $"Project:{Project.Name}",1);
+            InsertHeader(document, Configuration.Name,2);
 
-            var disclaimer =
-                _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
+            var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
-            if (disclaimer != null)
-                InsertParagraph(document, disclaimer);
+            if(disclaimer != null)
+                InsertParagraph(document,disclaimer);
 
             CreateTopTable1(document);
 
@@ -78,7 +75,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
             CreateCohortDetailsTable(document);
 
-            InsertParagraph(document, Environment.NewLine);
+            InsertParagraph(document,Environment.NewLine);
 
             CreateFileSummary(document);
 
@@ -86,6 +83,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             if (string.IsNullOrWhiteSpace(saveAsFilename))
                 ShowFile(f);
         }
+
     }
 
     private void CreateTopTable1(XWPFDocument document)
@@ -103,26 +101,26 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         var table = InsertTable(document, requiredRows, 2);
 
-        if (hasTicket)
+        if(hasTicket)
         {
             SetTableCell(table, currentRow, 0, "Master Issue");
             SetTableCell(table, currentRow, 1, Project.MasterTicket);
             currentRow++;
         }
 
-        SetTableCell(table, currentRow, 0, "ReleaseIdentifier");
-        SetTableCell(table, currentRow, 1, Cohort.GetReleaseIdentifier(true));
+        SetTableCell(table,currentRow, 0, "ReleaseIdentifier");
+        SetTableCell(table,currentRow, 1, Cohort.GetReleaseIdentifier(true));
         currentRow++;
 
         if (hasProchi)
         {
-            SetTableCell(table, currentRow, 0, "Prefix");
+            SetTableCell(table,currentRow, 0,"Prefix");
             SetTableCell(table, currentRow, 1, GetFirstProCHIPrefix());
         }
     }
 
     /// <summary>
-    ///     Returns the first 3 digits of the first release identifier in the cohort (this is very hic specific).
+    /// Returns the first 3 digits of the first release identifier in the cohort (this is very hic specific).
     /// </summary>
     /// <returns></returns>
     private string GetFirstProCHIPrefix()
@@ -137,7 +135,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
             var sql =
                 $"SELECT  TOP 1 LEFT({Cohort.GetReleaseIdentifier()},3) FROM {ect.TableName} WHERE {Cohort.WhereSQL()}";
 
-            using (var cmd = db.Server.GetCommand(sql, con))
+            using(var cmd = db.Server.GetCommand(sql, con))
             {
                 cmd.CommandTimeout = CohortCountTimeoutInSeconds;
                 return (string)cmd.ExecuteScalar();
@@ -151,23 +149,18 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         var tableLine = 0;
 
-        SetTableCell(table, tableLine, 0, "Version");
-        SetTableCell(table, tableLine, 1, "Description");
-        SetTableCell(table, tableLine, 2, "Date Extracted");
-        SetTableCell(table, tableLine, 3, "Unique Individuals");
+        SetTableCell(table,tableLine, 0, "Version");
+        SetTableCell(table,tableLine, 1, "Description");
+        SetTableCell(table,tableLine, 2, "Date Extracted");
+        SetTableCell(table,tableLine, 3, "Unique Individuals");
         tableLine++;
 
-        SetTableCell(table, tableLine, 0,
-            Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
-        SetTableCell(table, tableLine, 1,
-            $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})"); //description fetched from remote table
+        SetTableCell(table,tableLine, 0, Cohort.GetExternalData(CohortCountTimeoutInSeconds).ExternalVersion.ToString());
+        SetTableCell(table,tableLine, 1, $"{Cohort} (ID={Cohort.ID}, OriginID={Cohort.OriginID})");//description fetched from remote table
 
-        var lastExtracted = ExtractionResults.Any()
-            ? ExtractionResults.Max(r => r.DateOfExtraction).ToString()
-            : "Never";
-        SetTableCell(table, tableLine, 2, lastExtracted);
-        SetTableCell(table, tableLine, 3,
-            Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
+        var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString() : "Never";
+        SetTableCell(table,tableLine, 2, lastExtracted);
+        SetTableCell(table,tableLine, 3, Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
     }
 
     private void CreateFileSummary(XWPFDocument document)
@@ -176,25 +169,25 @@ public class WordDataReleaseFileGenerator : DocXHelper
 
         var tableLine = 0;
 
-        SetTableCell(table, tableLine, 0, "Data Requirement");
-        SetTableCell(table, tableLine, 1, "Notes");
-        SetTableCell(table, tableLine, 2, "Filename");
-        SetTableCell(table, tableLine, 3, "Records");
-        SetTableCell(table, tableLine, 4, "Unique Individuals");
+        SetTableCell(table,tableLine, 0, "Data Requirement");
+        SetTableCell(table,tableLine, 1, "Notes");
+        SetTableCell(table,tableLine, 2, "Filename");
+        SetTableCell(table,tableLine, 3, "Records");
+        SetTableCell(table,tableLine, 4, "Unique Individuals");
         tableLine++;
 
         foreach (var result in ExtractionResults)
         {
             var filename = GetFileName(result);
 
-            SetTableCell(table, tableLine, 0,
-                _repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
-            SetTableCell(table, tableLine, 1, result.FiltersUsed);
-            SetTableCell(table, tableLine, 2, filename);
-            SetTableCell(table, tableLine, 3, result.RecordsExtracted.ToString("N0"));
-            SetTableCell(table, tableLine, 4, result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
+            SetTableCell(table,tableLine, 0,_repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
+            SetTableCell(table,tableLine, 1,result.FiltersUsed);
+            SetTableCell(table,tableLine, 2,filename);
+            SetTableCell(table,tableLine, 3,result.RecordsExtracted.ToString("N0"));
+            SetTableCell(table,tableLine, 4,result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
             tableLine++;
         }
+
     }
 
     private string GetFileName(ICumulativeExtractionResults result)

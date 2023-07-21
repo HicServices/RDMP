@@ -9,16 +9,16 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="DataAccessCredentials" />
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="DataAccessCredentials"/>
 /// </summary>
 public class DataAccessCredentialsCombineable : ICombineToMakeCommand
 {
+    public DataAccessCredentials DataAccessCredentials { get; private set; }
+         
     public DataAccessCredentialsCombineable(DataAccessCredentials dataAccessCredentials)
     {
-        DataAccessCredentials = dataAccessCredentials;
+        DataAccessCredentials = dataAccessCredentials; 
     }
-
-    public DataAccessCredentials DataAccessCredentials { get; private set; }
 
     public string GetSqlString()
     {

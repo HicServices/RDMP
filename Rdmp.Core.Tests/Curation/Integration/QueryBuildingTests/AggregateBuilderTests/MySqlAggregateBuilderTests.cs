@@ -30,8 +30,8 @@ public class MySqlAggregateBuilderTests : AggregateBuilderTestsBase
         topx.SaveToDatabase();
 
         builder.AggregateTopX = topx;
-
-
+            
+            
         Assert.AreEqual(CollapseWhitespace(@"/**/
 SELECT 
 Col1,
@@ -47,7 +47,6 @@ LIMIT 32"), CollapseWhitespace(builder.SQL.Trim()));
 
         topx.DeleteInDatabase();
     }
-
     [TestCase(true)]
     [TestCase(false)]
     public void Test_AggregateBuilder_MySql_Top31OrderByCountAsc(bool useAliasForGroupBy)

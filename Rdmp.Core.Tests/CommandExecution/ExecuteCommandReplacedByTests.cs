@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using System.Linq;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
@@ -19,10 +19,10 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
         var c1 = WhenIHaveA<Catalogue>();
         var c2 = WhenIHaveA<Catalogue>();
 
-        var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object, c1, c2);
-
+        var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object,c1,c2);
+            
         Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.Contains("is not marked IsDeprecated", cmd.ReasonCommandImpossible);
+        StringAssert.Contains("is not marked IsDeprecated",cmd.ReasonCommandImpossible);
     }
 
     [Test]
@@ -30,36 +30,35 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
     {
         var c1 = WhenIHaveA<Catalogue>();
         var ci1 = WhenIHaveA<CatalogueItem>();
-
+            
         c1.IsDeprecated = true;
         c1.SaveToDatabase();
 
-        var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object, c1, ci1);
-
+        var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object,c1,ci1);
+            
         Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.Contains("because it is a different object Type", cmd.ReasonCommandImpossible);
+        StringAssert.Contains("because it is a different object Type",cmd.ReasonCommandImpossible);
     }
-
     [Test]
     public void CommandImpossible_Allowed()
     {
         var c1 = WhenIHaveA<Catalogue>();
         var c2 = WhenIHaveA<Catalogue>();
-
+            
         c1.IsDeprecated = true;
         c1.SaveToDatabase();
 
-        var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object, c1, c2);
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        var cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object,c1,c2);
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
 
         cmd.Execute();
 
         var replacement = RepositoryLocator.CatalogueRepository
-            .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
-            .Single(r => r.IsReferenceTo(c1));
+            .GetAllObjectsWhere<ExtendedProperty>("Name",ExtendedProperty.ReplacedBy)
+            .Single(r=>r.IsReferenceTo(c1));
 
         Assert.IsTrue(replacement.IsReferenceTo(c1));
-        Assert.AreEqual(c2.ID.ToString(), replacement.Value);
+        Assert.AreEqual(c2.ID.ToString(),replacement.Value);
 
         // running command multiple times shouldn't result in duplicate objects
         cmd.Execute();
@@ -67,15 +66,16 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
         cmd.Execute();
         cmd.Execute();
 
-        Assert.AreEqual(1, RepositoryLocator.CatalogueRepository
+        Assert.AreEqual(1,RepositoryLocator.CatalogueRepository
             .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
-            .Count(r => r.IsReferenceTo(c1)));
+            .Count(r=>r.IsReferenceTo(c1)));
 
-        cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object, c1, null);
+        cmd = new ExecuteCommandReplacedBy(GetMockActivator().Object,c1,null);
         cmd.Execute();
 
         Assert.IsEmpty(RepositoryLocator.CatalogueRepository
             .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
-            .Where(r => r.IsReferenceTo(c1)));
+            .Where(r=>r.IsReferenceTo(c1)));
+           
     }
 }

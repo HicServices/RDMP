@@ -4,24 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.ComponentModel;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus;
 
-[DesignerCategory("")]
+[System.ComponentModel.DesignerCategory("")]
 internal class PreLoadDiscardedColumnsNodeMenu : RDMPContextMenuStrip
 {
-    public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args, PreLoadDiscardedColumnsNode discardNode) :
-        base(args, discardNode)
+    public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args, PreLoadDiscardedColumnsNode discardNode): base(args, discardNode)
     {
         Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, discardNode.TableInfo));
     }
 
-    public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args,
-        IdentifierDumpServerUsageNode discardUsageNode) : base(args, discardUsageNode)
+    public PreLoadDiscardedColumnsNodeMenu(RDMPContextMenuStripArgs args, IdentifierDumpServerUsageNode discardUsageNode): base(args, discardUsageNode)
     {
         Add(new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, discardUsageNode.TableInfo));
     }
+        
 }

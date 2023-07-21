@@ -18,12 +18,14 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-///     Builds a query to fetch data from a <see cref="TableInfo" />
+/// Builds a query to fetch data from a <see cref="TableInfo"/>
 /// </summary>
 public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
+    public ViewType ViewType { get; private set; }
+
     /// <summary>
-    ///     for persistence, do not use
+    /// for persistence, do not use
     /// </summary>
     public ViewTableInfoExtractUICollection()
     {
@@ -39,14 +41,9 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         ViewType = viewType;
     }
 
-    public ViewType ViewType { get; private set; }
-
-    public TableInfo TableInfo => DatabaseObjects.OfType<TableInfo>().SingleOrDefault();
-
     public override string SaveExtraText()
     {
-        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
-            { { "ViewType", ViewType.ToString() } });
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string> { { "ViewType", ViewType.ToString() } });
     }
 
     public override void LoadExtraText(string s)
@@ -55,6 +52,15 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
     }
 
+    public object GetDataObject()
+    {
+        return DatabaseObjects.Single(o => o is ColumnInfo || o is TableInfo);
+    }
+
+    public IFilter GetFilterIfAny()
+    {
+        return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
+    }
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {
         if (GetFilterIfAny() is ConcreteFilter filter)
@@ -79,8 +85,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
 
         var filter = GetFilterIfAny();
         if (filter != null)
-            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null, new[] { filter },
-                FilterContainerOperation.AND);
+            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null, new[] { filter }, FilterContainerOperation.AND);
 
         var sql = qb.SQL;
 
@@ -88,6 +93,7 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
             throw new NotSupportedException("ViewType.Aggregate can only be applied to ColumnInfos not TableInfos");
 
         return sql;
+
     }
 
     public string GetTabName()
@@ -100,19 +106,11 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         autoComplete.Add(TableInfo);
     }
 
+    public TableInfo TableInfo => DatabaseObjects.OfType<TableInfo>().SingleOrDefault();
+
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var t = TableInfo;
         return t?.GetQuerySyntaxHelper();
-    }
-
-    public object GetDataObject()
-    {
-        return DatabaseObjects.Single(o => o is ColumnInfo || o is TableInfo);
-    }
-
-    public IFilter GetFilterIfAny()
-    {
-        return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
     }
 }

@@ -4,12 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Data;
-using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
+using System.Data;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 
@@ -23,18 +22,16 @@ internal class TableInfoCloneOperationTests : DatabaseTests
         var dt = new DataTable();
         dt.Columns.Add("FF");
 
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        var tbl = db.CreateTable("MyTable", dt);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var tbl = db.CreateTable("MyTable",dt);
 
-        Import(tbl, out var ti, out _);
+        Import(tbl,out var ti, out _);
 
         var config = new HICDatabaseConfiguration(tbl.Database.Server);
 
         //create a RAW table schema called TableName_Isolation
-        var cloner = new TableInfoCloneOperation(config, (TableInfo)ti, LoadBubble.Live,
-            new ThrowImmediatelyDataLoadEventListener());
-        cloner.CloneTable(tbl.Database, tbl.Database, tbl, $"{tbl.GetRuntimeName()}_copy", true, true, true,
-            ti.PreLoadDiscardedColumns);
+        var cloner = new TableInfoCloneOperation(config,(TableInfo)ti,LoadBubble.Live,new ThrowImmediatelyDataLoadEventListener());
+        cloner.CloneTable(tbl.Database, tbl.Database,tbl, $"{tbl.GetRuntimeName()}_copy", true, true, true, ti.PreLoadDiscardedColumns);
 
         var tbl2 = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_copy");
 

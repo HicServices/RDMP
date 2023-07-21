@@ -39,9 +39,9 @@ public class TestImportingAnObject : DatabaseTests
 
         var p = new Plugin(CatalogueRepository, fi);
         var lma = new LoadModuleAssembly(CatalogueRepository, fi, p);
-
+        
         var n = new SharedPluginImporter(p);
-
+        
         //reject the reuse of an existing one
         var p2 = n.Import(RepositoryLocator, new ThrowImmediatelyCheckNotifier());
 
@@ -76,7 +76,7 @@ public class TestImportingAnObject : DatabaseTests
         newDll.Add("SoftwareVersion", "2.5.0.1");
 
         var n = new SharedPluginImporter(new ShareDefinition<Plugin>(p), new[] { new ShareDefinition<LoadModuleAssembly>(newDll) });
-
+        
         //accept that it is an update
         var p2 = n.Import(RepositoryLocator, new AcceptAllCheckNotifier());
 
@@ -111,9 +111,9 @@ public class TestImportingAnObject : DatabaseTests
 
         //edit the binary data to represent a new version of the dll that should be imported
         lmaStateless.Properties["Dll"] =  new byte[] { 0, 1, 0, 1 };
-
+        
         var n = new SharedPluginImporter(pStateless,new []{lmaStateless});
-
+        
         //accept that it is an update
         var p2 = n.Import(RepositoryLocator, new AcceptAllCheckNotifier());
 

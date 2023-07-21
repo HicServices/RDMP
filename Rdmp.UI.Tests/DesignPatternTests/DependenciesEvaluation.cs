@@ -17,14 +17,14 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 
 public class DependenciesEvaluation
 {
-    private readonly string[] _nuspecFiles =
+    private string[] _nuspecFiles =
     {
         "Plugin/Plugin.Test/Plugin.Test.nuspec",
         "Plugin/Plugin/Plugin.nuspec",
         "Plugin/Plugin.UI/Plugin.UI.nuspec"
-    };
 
-    private readonly Dictionary<string, string> Dependencies = new();
+    };
+    private Dictionary<string, string> Dependencies = new();
 
     public void FindProblems(VisualStudioSolutionFile sln)
     {
@@ -46,9 +46,7 @@ public class DependenciesEvaluation
                 var version = match.Groups[2].Value;
 
                 if (!Dependencies.ContainsKey(assembly))
-                {
                     Dependencies.Add(assembly, version);
-                }
                 else
                 {
                     if (!Equals(Dependencies[assembly], version))
@@ -66,10 +64,10 @@ public class DependenciesEvaluation
             if (fappConfig.Exists)
                 ProcessAppConfig(fappConfig, problems);
 
-            var fExeConfig = new FileInfo(Path.Combine(csproj.Directory.FullName, "RDMPAutomationService.exe.config"));
+            var fExeConfig = new FileInfo(Path.Combine(csproj.Directory.FullName,"RDMPAutomationService.exe.config"));
 
             if (fExeConfig.Exists)
-                ProcessAppConfig(fExeConfig, problems);
+                ProcessAppConfig(fExeConfig,problems);
 
             var fappPackages = new FileInfo(Path.Combine(csproj.Directory.FullName, "packages.config"));
             if (fappPackages.Exists)
@@ -96,7 +94,9 @@ public class DependenciesEvaluation
                         problems.Add(
                             $"In package {fappPackages.FullName} you reference {assembly}  (version {version}) but no corresponding dependency listed in any of your nuspec files.");
                     }
+
                 }
+
             }
 
             var csprojFileContents = File.ReadAllText(csproj.FullName);
@@ -122,6 +122,7 @@ public class DependenciesEvaluation
             Console.WriteLine(problem);
 
         Assert.AreEqual(0, problems.Count);
+
     }
 
     private void ProcessAppConfig(FileInfo fappConfig, List<string> problems)
@@ -162,13 +163,10 @@ public class DependenciesEvaluation
     }
 
     /// <summary>
-    ///     Returns true if the assemblies are likely to be compatible
+    /// Returns true if the assemblies are likely to be compatible
     /// </summary>
     /// <param name="availableVersion">The version available</param>
-    /// <param name="requiredVersion">
-    ///     The version required, can include 0 elements for wildcards e.g. 11.0.0.0 would be
-    ///     compatible with 11.2.0.0
-    /// </param>
+    /// <param name="requiredVersion">The version required, can include 0 elements for wildcards e.g. 11.0.0.0 would be compatible with 11.2.0.0</param>
     /// <returns></returns>
     private static bool AreProbablyCompatibleVersions(string availableVersion, string requiredVersion)
     {
@@ -177,8 +175,8 @@ public class DependenciesEvaluation
 
         //must be equal on first 3 numbers (Revision is allowed to differ)
         return
-            v1.Major == v2.Major &&
-            (v1.Minor == v2.Minor || v2.Minor == 0 || v2.Minor == -1) &&
+            v1.Major == v2.Major&&
+            (v1.Minor == v2.Minor || v2.Minor == 0 || v2.Minor == -1)&&
             (v1.Build == v2.Build || v2.Build == 0 || v2.Build == -1) &&
             (v1.Revision == v2.Revision || v2.Revision == 0 || v2.Revision == -1);
     }

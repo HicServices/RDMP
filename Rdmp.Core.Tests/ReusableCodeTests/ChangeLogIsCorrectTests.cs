@@ -24,8 +24,7 @@ internal class ChangeLogIsCorrectTests
             dir = dir.Parent;
             log = dir.GetFiles("changelog.md", opts).SingleOrDefault();
         }
-
-        Assert.IsNotNull(log, "CHANGELOG.md not found");
+        Assert.IsNotNull(log,"CHANGELOG.md not found");
 
         var assemblyInfo = Path.Combine(log.Directory.FullName, "SharedAssemblyInfo.cs");
 

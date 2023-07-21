@@ -15,16 +15,17 @@ namespace Tests.Common;
 
 public class TestableTableValuedFunction
 {
-    public ICatalogue Cata;
-    public CatalogueItem[] CataItems;
+    public ITableInfo TableInfoCreated;
     public ColumnInfo[] ColumnInfosCreated;
     public string CreateFunctionSQL;
+    public ICatalogue Cata;
+    public CatalogueItem[] CataItems;
     public ExtractionInformation[] ExtractionInformations;
-    public ITableInfo TableInfoCreated;
 
 
     public void Create(DiscoveredDatabase databaseICanCreateRandomTablesIn, ICatalogueRepository catalogueRepository)
     {
+
         CreateFunctionSQL = @"
 if exists (select 1 from sys.objects where name = 'MyAwesomeFunction')
     drop function MyAwesomeFunction
@@ -64,7 +65,6 @@ END
             con.Open();
             UsefulStuff.ExecuteBatchNonQuery(CreateFunctionSQL, con);
         }
-
         var tbl = databaseICanCreateRandomTablesIn.ExpectTableValuedFunction("MyAwesomeFunction");
         var importer = new TableValuedFunctionImporter(catalogueRepository, tbl);
         importer.DoImport(out TableInfoCreated, out ColumnInfosCreated);
@@ -85,8 +85,7 @@ END
 
     public void Destroy()
     {
-        var credentials =
-            (DataAccessCredentials)TableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+        var credentials = (DataAccessCredentials)TableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
 
         TableInfoCreated.DeleteInDatabase();
 

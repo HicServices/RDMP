@@ -17,15 +17,12 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateANOVersion : BasicUICommandExecution, IAtomicCommandWithTarget
+public class ExecuteCommandCreateANOVersion:BasicUICommandExecution,IAtomicCommandWithTarget
 {
     private Catalogue _catalogue;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandCreateANOVersion(IActivateItems activator, Catalogue catalogue) : this(activator)
-    {
-        SetTarget(catalogue);
-    }
+    public ExecuteCommandCreateANOVersion(IActivateItems activator, Catalogue catalogue) : this(activator) => SetTarget(catalogue);
 
     public ExecuteCommandCreateANOVersion(IActivateItems activator) : base(activator)
     {
@@ -39,9 +36,9 @@ public class ExecuteCommandCreateANOVersion : BasicUICommandExecution, IAtomicCo
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _catalogue = (Catalogue)target;
+        _catalogue = (Catalogue) target;
 
-        if (!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
+        if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
             SetImpossible("Catalogue does not have any Extractable Columns");
 
         return this;
@@ -49,18 +46,17 @@ public class ExecuteCommandCreateANOVersion : BasicUICommandExecution, IAtomicCo
 
     public override string GetCommandHelp()
     {
-        return
-            "Create an anonymous version of the dataset.  This will be an initially empty anonymous schema and a load configuration for migrating the data.";
+        return "Create an anonymous version of the dataset.  This will be an initially empty anonymous schema and a load configuration for migrating the data.";
     }
 
     public override void Execute()
     {
         if (_catalogue == null)
-            SetTarget(SelectOne(Activator.CoreChildProvider.AllCatalogues));
+            SetTarget(SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues));
 
-        if (_catalogue == null)
+        if(_catalogue == null)
             return;
-
+            
         base.Execute();
 
         Activator.Activate<ForwardEngineerANOCatalogueUI, Catalogue>(_catalogue);

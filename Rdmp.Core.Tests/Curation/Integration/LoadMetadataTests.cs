@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
@@ -25,6 +24,7 @@ public class LoadMetadataTests : DatabaseTests
 
         try
         {
+                
             loadMetadata.LocationOfFlatFiles = TestContext.CurrentContext.TestDirectory;
             loadMetadata.SaveToDatabase();
 
@@ -49,13 +49,13 @@ public class LoadMetadataTests : DatabaseTests
             loadMetadata.SaveToDatabase();
             Assert.IsFalse(loadMetadata.IgnoreTrigger);
             loadMetadata.SaveToDatabase();
-
+                
             loadMetadata.IgnoreTrigger = true;
             Assert.IsTrue(loadMetadata.IgnoreTrigger);
             loadMetadata.RevertToDatabaseState();
             Assert.IsFalse(loadMetadata.IgnoreTrigger);
 
-
+                
             loadMetadata.IgnoreTrigger = true;
             Assert.IsTrue(loadMetadata.IgnoreTrigger);
             loadMetadata.SaveToDatabase();
@@ -71,24 +71,23 @@ public class LoadMetadataTests : DatabaseTests
     [Test]
     public void TestPreExecutionChecker_TablesDontExist()
     {
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var tbl = db.ExpectTable("Imaginary");
 
         Assert.IsFalse(tbl.Exists());
 
         var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl);
         var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(db.Server));
-        var ex = Assert.Throws<Exception>(() => checker.Check(new ThrowImmediatelyCheckNotifier()));
+        var ex = Assert.Throws<Exception>(()=>checker.Check(new ThrowImmediatelyCheckNotifier()));
 
         StringAssert.IsMatch("Table '.*Imaginary.*' does not exist", ex.Message);
     }
-
     [Test]
     public void TestPreExecutionChecker_TableIsTableValuedFunction()
     {
-        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var f = new TestableTableValuedFunction();
-        f.Create(db, CatalogueRepository);
+        f.Create(db,CatalogueRepository);
 
         var tbl = f.TableInfoCreated.Discover(DataAccessContext.DataLoad);
         Assert.IsTrue(tbl.Exists());

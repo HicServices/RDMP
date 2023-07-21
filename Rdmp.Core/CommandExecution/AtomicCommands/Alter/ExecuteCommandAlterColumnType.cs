@@ -11,22 +11,26 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
 /// <summary>
-///     Changes the datatype of the database column in the live database
+/// Changes the datatype of the database column in the live database
 /// </summary>
 public class ExecuteCommandAlterColumnType : BasicCommandExecution
 {
-    private readonly string _datatype;
-    private readonly ColumnInfo columnInfo;
+    private ColumnInfo columnInfo;
+    private string _datatype;
 
-    public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo, string datatype = null) :
-        base(activator)
+    public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo, string datatype = null) : base(activator)
     {
         this.columnInfo = columnInfo;
         _datatype = datatype;
 
-        if (columnInfo.TableInfo.IsView) SetImpossible("Column is part of a view so cannot be altered");
+        if (columnInfo.TableInfo.IsView)
+        {
+            SetImpossible("Column is part of a view so cannot be altered");
+        }
         if (columnInfo.TableInfo.IsTableValuedFunction)
+        {
             SetImpossible("Column is part of a table valued function so cannot be altered");
+        }
     }
 
     public override void Execute()
@@ -38,11 +42,18 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         var oldSqlType = fansiType.SQLType;
         var newSqlType = _datatype;
 
-        if (newSqlType == null)
-            if (!TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType))
+        if(newSqlType == null)
+        {
+            if (!TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
+            {
                 return;
+            }
+        }
 
-        if (string.IsNullOrWhiteSpace(newSqlType)) return;
+        if (string.IsNullOrWhiteSpace(newSqlType))
+        {
+            return;
+        }
 
         try
         {
@@ -60,10 +71,12 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         var archive = col.Table.Database.ExpectTable($"{col.Table}_Archive");
 
         if (archive.Exists())
+        {
             try
             {
                 var archiveCol = archive.DiscoverColumn(col.GetRuntimeName());
                 if (archiveCol.DataType.SQLType.Equals(oldSqlType))
+                {
                     try
                     {
                         archiveCol.DataType.AlterTypeTo(newSqlType);
@@ -73,14 +86,17 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
                         ShowException($"Failed to Alter Archive Column '{archiveCol.GetFullyQualifiedName()}'", ex);
                         return;
                     }
+                }
             }
             catch (Exception)
             {
                 //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
                 return;
             }
-
+        }
+            
 
         Publish(columnInfo.TableInfo);
     }
+
 }

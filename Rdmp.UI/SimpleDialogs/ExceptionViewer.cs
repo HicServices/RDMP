@@ -11,18 +11,15 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-///     Used by the RDMP to tell you about something that went wrong.  You can select bits of the message text and copy
-///     them with Ctrl+C or select 'Copy to Clipboard' to copy all the
-///     message text in one go.  Clicking 'View Exception' will launch a ExceptionViewerStackTraceWithHyperlinks for
-///     viewing the location of the error in the codebase (including viewing
-///     the source code at the point of the error).
+/// Used by the RDMP to tell you about something that went wrong.  You can select bits of the message text and copy them with Ctrl+C or select 'Copy to Clipboard' to copy all the
+/// message text in one go.  Clicking 'View Exception' will launch a ExceptionViewerStackTraceWithHyperlinks for viewing the location of the error in the codebase (including viewing
+/// the source code at the point of the error).
 /// </summary>
 public class ExceptionViewer : WideMessageBox
 {
     private readonly Exception _exception;
 
-    public ExceptionViewer(string title, string message, Exception exception) : base(new WideMessageBoxArgs(title,
-        message, GetStackTrace(exception, Environment.StackTrace), null, WideMessageBoxTheme.Exception))
+    public ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,GetStackTrace(exception,Environment.StackTrace),null,WideMessageBoxTheme.Exception))
     {
         _exception = exception;
 
@@ -30,15 +27,14 @@ public class ExceptionViewer : WideMessageBox
         {
             _exception = aggregateException.Flatten();
 
-            if (aggregateException.InnerExceptions.Count == 1)
+            if(aggregateException.InnerExceptions.Count == 1)
                 _exception = aggregateException.InnerExceptions[0];
         }
     }
 
     /// <summary>
-    ///     Returns the first stack trace from the <paramref name="exception" /> (including examining inner exceptions where
-    ///     stack trace is missing).
-    ///     Otherwise returns <paramref name="ifNotFound" />.
+    /// Returns the first stack trace from the <paramref name="exception"/> (including examining inner exceptions where stack trace is missing).
+    /// Otherwise returns <paramref name="ifNotFound"/>.
     /// </summary>
     /// <param name="exception"></param>
     /// <param name="ifNotFound"></param>
@@ -60,8 +56,8 @@ public class ExceptionViewer : WideMessageBox
     {
         var longMessage = "";
 
-        if (exception.InnerException != null)
-            longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception.InnerException);
+        if(exception.InnerException != null)
+            longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception.InnerException );
 
         var ev = longMessage == ""
             ? new ExceptionViewer(exception.GetType().Name, exception.Message, exception)
@@ -72,7 +68,6 @@ public class ExceptionViewer : WideMessageBox
         else
             ev.Show();
     }
-
     public static void Show(string message, Exception exception, bool isModalDialog = true)
     {
         var longMessage = "";
@@ -84,17 +79,14 @@ public class ExceptionViewer : WideMessageBox
                 longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception.InnerException);
         }
         else
-        {
             longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception);
-        }
 
         if (message.Trim().Contains('\n'))
         {
             var split = message.Trim().Split('\n');
             message = split[0];
 
-            longMessage = string.Join(Environment.NewLine, split.Skip(1)) + Environment.NewLine + Environment.NewLine +
-                          longMessage;
+            longMessage = string.Join(Environment.NewLine,split.Skip(1)) + Environment.NewLine + Environment.NewLine + longMessage;
         }
 
         //if there's still no body to the error make the title the body and put a generic title in
@@ -104,9 +96,9 @@ public class ExceptionViewer : WideMessageBox
             message = "Error";
         }
 
-        var ev = new ExceptionViewer(message, longMessage, exception);
+        var ev = new ExceptionViewer(message,longMessage,exception);
 
-        if (isModalDialog)
+        if(isModalDialog)
             ev.ShowDialog();
         else
             ev.Show();

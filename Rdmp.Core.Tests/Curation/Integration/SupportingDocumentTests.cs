@@ -16,9 +16,9 @@ public class SupportingDocumentTests : DatabaseTests
     public void test_SupportingDocument_CreateAndDestroy()
     {
         var cata = new Catalogue(CatalogueRepository, "deleteme");
-        var doc = new SupportingDocument(CatalogueRepository, cata, "davesFile");
+        var doc = new SupportingDocument(CatalogueRepository, cata,"davesFile");
 
-        Assert.AreEqual(doc.Name, "davesFile");
+        Assert.AreEqual(doc.Name ,"davesFile");
 
         doc.DeleteInDatabase();
         cata.DeleteInDatabase();
@@ -39,7 +39,7 @@ public class SupportingDocumentTests : DatabaseTests
 
         var docAfterCommit = CatalogueRepository.GetObjectByID<SupportingDocument>(doc.ID);
 
-        Assert.AreEqual(docAfterCommit.Description, doc.Description);
+        Assert.AreEqual(docAfterCommit.Description,doc.Description);
 
         doc.DeleteInDatabase();
         cata.DeleteInDatabase();

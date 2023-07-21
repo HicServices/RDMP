@@ -16,46 +16,32 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.DataExport.DataRelease;
 
 /// <summary>
-///     Evaluates things that are not within the control area of the DataExportManager but which might prevent a release
-///     e.g. ticketing system is not available
-///     / tickets in wrong status / safehaven down for maintencence etc.
+/// Evaluates things that are not within the control area of the DataExportManager but which might prevent a release e.g. ticketing system is not available
+///  / tickets in wrong status / safehaven down for maintencence etc.
 /// </summary>
 public class ReleaseEnvironmentPotential : ICheckable
 {
     private readonly IDataExportRepository _repository;
+    public IExtractionConfiguration Configuration { get; private set; }
+    public IProject Project { get; private set; }
 
+    public Exception Exception { get; private set; }
+    public TicketingReleaseabilityEvaluation Assesment { get; private set; }
+    public string Reason { get; private set; }
 
+        
     public ReleaseEnvironmentPotential(IExtractionConfiguration configuration)
     {
         _repository = configuration.DataExportRepository;
         Configuration = configuration;
         Project = configuration.Project;
     }
-
-    public IExtractionConfiguration Configuration { get; }
-    public IProject Project { get; }
-
-    public Exception Exception { get; private set; }
-    public TicketingReleaseabilityEvaluation Assesment { get; private set; }
-    public string Reason { get; private set; }
-
-    public void Check(ICheckNotifier notifier)
-    {
-        MakeAssessment();
-
-        var message = $"Environment Releasability is {Assesment}";
-        if (!string.IsNullOrWhiteSpace(Reason))
-            message += $" - {Reason}";
-
-        notifier.OnCheckPerformed(new CheckEventArgs(message, GetCheckResultFor(Assesment), Exception));
-    }
-
+        
     private void MakeAssessment()
     {
         Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly;
 
-        var configuration = _repository.CatalogueRepository
-            .GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive", 1).SingleOrDefault();
+        var configuration = _repository.CatalogueRepository.GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive",1).SingleOrDefault();
         if (configuration == null) return;
 
         var factory = new TicketingSystemFactory(_repository.CatalogueRepository);
@@ -72,8 +58,8 @@ public class ReleaseEnvironmentPotential : ICheckable
             Exception = e;
             return;
         }
-
-        if (ticketingSystem == null)
+            
+        if (ticketingSystem == null) 
             return;
 
         try
@@ -91,6 +77,17 @@ public class ReleaseEnvironmentPotential : ICheckable
             Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryCrashed;
             Exception = e;
         }
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        MakeAssessment();
+
+        var message = $"Environment Releasability is {Assesment}";
+        if (!string.IsNullOrWhiteSpace(Reason))
+            message += $" - {Reason}";
+
+        notifier.OnCheckPerformed(new CheckEventArgs(message, GetCheckResultFor(Assesment), Exception));
     }
 
     private static CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)

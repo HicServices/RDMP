@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
@@ -11,7 +12,6 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -21,27 +21,25 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
     private CohortIdentificationConfiguration _cic;
     private Project _project;
 
+    /// <summary>
+    /// The clone that was created this command or null if it has not been executed/failed
+    /// </summary>
+    public CohortIdentificationConfiguration CloneCreatedIfAny { get; private set; }
+
     [UseWithObjectConstructor]
-    public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,
-        CohortIdentificationConfiguration cic)
+    public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,CohortIdentificationConfiguration cic)
         : base(activator)
     {
         _cic = cic;
     }
 
-    public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
-    {
-    }
-
-    /// <summary>
-    ///     The clone that was created this command or null if it has not been executed/failed
-    /// </summary>
-    public CohortIdentificationConfiguration CloneCreatedIfAny { get; private set; }
-
     public override string GetCommandHelp()
     {
-        return
-            "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
+        return "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
+    }
+
+    public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
+    {
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -66,15 +64,15 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
         _cic ??= SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-        if (_cic == null)
+        if(_cic == null)
             return;
 
         // Confirm creating yes/no (assuming activator is interactive)
-        if (!BasicActivator.IsInteractive || YesNo(
-                "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, " +
-                "filters, parameters and set operations. Are you sure this is what you want?",
+        if (!BasicActivator.IsInteractive || YesNo("This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, " +
+                                                   "filters, parameters and set operations. Are you sure this is what you want?",
                 "Confirm Cloning"))
         {
+
             CloneCreatedIfAny = _cic.CreateClone(new ThrowImmediatelyCheckNotifier());
 
             if (_project != null) // clone the association

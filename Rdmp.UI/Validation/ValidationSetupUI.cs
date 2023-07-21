@@ -23,35 +23,46 @@ using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+
+
 namespace Rdmp.UI.Validation;
 
 /// <summary>
-///     Validation is an essential part of hosting research data.  If one month all the new records come in with values in
-///     gender of 'Male' and 'Female'  when previously they were 'M' or
-///     'F' then you want to know about it (because it will affect filters and end users of the data who now have to
-///     include 2 different values in their WHERE statements).  In such a
-///     trivial situation the first step would be to confirm if it is a mistake with the data provider, if not then a
-///     decision should be made whether to standardise on the old/new
-///     categories and adjust the data load accordingly.
-///     <para>
-///         But for this to happen at all you need to be able to recognise when such problems occur.  The RDMP handles this
-///         by allowing you to specify validation rules on each of the
-///         extractable columns / transforms you make available to researchers.  On the left of this form you can see all
-///         the columns/transforms.  By selecting one you can view/edit its'
-///         collection of Secondary Constraints (see SecondaryConstraintUI) and choose a Primary Constraint (Validates the
-///         datatype, only use a primary constraint if you have an insane
-///         schema such as using varchar(max) to store 'dates' and have dirty data that includes values like 'last friday'
-///         mixed in with legit values).
-///     </para>
+/// Validation is an essential part of hosting research data.  If one month all the new records come in with values in gender of 'Male' and 'Female'  when previously they were 'M' or
+/// 'F' then you want to know about it (because it will affect filters and end users of the data who now have to include 2 different values in their WHERE statements).  In such a
+/// trivial situation the first step would be to confirm if it is a mistake with the data provider, if not then a decision should be made whether to standardise on the old/new
+/// categories and adjust the data load accordingly.
+/// 
+/// <para>But for this to happen at all you need to be able to recognise when such problems occur.  The RDMP handles this by allowing you to specify validation rules on each of the
+/// extractable columns / transforms you make available to researchers.  On the left of this form you can see all the columns/transforms.  By selecting one you can view/edit its'
+/// collection of Secondary Constraints (see SecondaryConstraintUI) and choose a Primary Constraint (Validates the datatype, only use a primary constraint if you have an insane
+/// schema such as using varchar(max) to store 'dates' and have dirty data that includes values like 'last friday' mixed in with legit values).</para>
 /// </summary>
 public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 {
+    private string _noPrimaryConstraintText = "No Primary Constraint Defined";
+
+    public Validator Validator { get; private set; }
+
+    private bool bSuppressChangeEvents = false;
     private Catalogue _catalogue;
-    private readonly string _noPrimaryConstraintText = "No Primary Constraint Defined";
 
-    private bool bSuppressChangeEvents;
+    private string ClearSelection = "<<Clear Selection>>";
 
-    private readonly string ClearSelection = "<<Clear Selection>>";
+    private ItemValidator SelectedColumnItemValidator {get
+    {
+        //The user has not selected a column
+        if (olvColumns.SelectedObject is not ExtractionInformation ei)
+            return null;
+
+        var c = ei.GetRuntimeName();
+
+        //The validator can contains all the columns in the Catalogue (Dataset) but columns which don't have any validation on them yet might not be in its ItemValidators collection
+        if (!Validator.ItemValidators.Any(iv => iv.TargetProperty.Equals(c)))
+            Validator.ItemValidators.Add(new ItemValidator(c));//It's a novel column, so create an empty ItemValidator for the column name so the user can configure new validation
+
+        return Validator.GetItemValidator(c);
+    }}
 
     public ValidationSetupUI()
     {
@@ -60,7 +71,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         SetupAvailableOperations();
 
         olvColumns.RowHeight = 19;
-        ddConsequence.DataSource = Enum.GetValues(typeof(Consequence));
+        ddConsequence.DataSource = Enum.GetValues(typeof (Consequence));
 
         var vertScrollWidth = SystemInformation.VerticalScrollBarWidth;
         tableLayoutPanel1.Padding = new Padding(0, 0, vertScrollWidth, 0);
@@ -72,44 +83,20 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         olvName.ImageGetter = o => Activator.CoreIconProvider.GetImage(o).ImageToBitmap();
     }
 
-    public Validator Validator { get; private set; }
-
-    private ItemValidator SelectedColumnItemValidator
-    {
-        get
-        {
-            //The user has not selected a column
-            if (olvColumns.SelectedObject is not ExtractionInformation ei)
-                return null;
-
-            var c = ei.GetRuntimeName();
-
-            //The validator can contains all the columns in the Catalogue (Dataset) but columns which don't have any validation on them yet might not be in its ItemValidators collection
-            if (!Validator.ItemValidators.Any(iv => iv.TargetProperty.Equals(c)))
-                Validator.ItemValidators.Add(
-                    new ItemValidator(
-                        c)); //It's a novel column, so create an empty ItemValidator for the column name so the user can configure new validation
-
-            return Validator.GetItemValidator(c);
-        }
-    }
-
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
 
         CommonFunctionality.AddToMenu(new ExecuteCommandRunDQEOnCatalogue(activator).SetTarget(databaseObject));
         CommonFunctionality.AddToMenu(new ExecuteCommandViewDQEResultsForCatalogue(activator)
-            { OverrideCommandName = "View Results..." }.SetTarget(databaseObject));
+            {OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
 
         _catalogue = databaseObject;
 
         SetupComboBoxes(databaseObject);
 
         //get the validation XML
-        Validator = string.IsNullOrWhiteSpace(databaseObject.ValidatorXML)
-            ? new Validator()
-            : Validator.LoadFromXml(databaseObject.ValidatorXML);
+        Validator = string.IsNullOrWhiteSpace(databaseObject.ValidatorXML) ? new Validator() : Validator.LoadFromXml(databaseObject.ValidatorXML);
 
         var extractionInformations = databaseObject.GetAllExtractionInformation(ExtractionCategory.Any).ToArray();
         Array.Sort(extractionInformations);
@@ -146,13 +133,11 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     private void ValidateConfiguration()
     {
         //if there are any item validators that do not map to an existing column in the dataset then we must show the resolve missing references dialog.
-        if (ResolveMissingTargetPropertiesUI
-            .GetMissingReferences(Validator, olvColumns.Objects.Cast<ExtractionInformation>()).Any())
+        if (ResolveMissingTargetPropertiesUI.GetMissingReferences(Validator,olvColumns.Objects.Cast<ExtractionInformation>()).Any())
         {
-            var dialog = new ResolveMissingTargetPropertiesUI(Validator,
-                olvColumns.Objects.Cast<ExtractionInformation>().ToArray());
+            var dialog = new ResolveMissingTargetPropertiesUI(Validator,olvColumns.Objects.Cast<ExtractionInformation>().ToArray());
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if(dialog.ShowDialog() == DialogResult.OK)
                 Validator = dialog.AdjustedValidator;
         }
     }
@@ -182,7 +167,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void PopulateFormForSelectedColumn()
     {
-        if (IsDisposed)
+        if(IsDisposed)
             return;
 
         bSuppressChangeEvents = true;
@@ -195,8 +180,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         else
         {
             ddPrimaryConstraints.Text = SelectedColumnItemValidator.PrimaryConstraint.GetType().Name;
-            ddConsequence.SelectedItem =
-                SelectedColumnItemValidator.PrimaryConstraint.Consequence ?? Consequence.Missing;
+            ddConsequence.SelectedItem = SelectedColumnItemValidator.PrimaryConstraint.Consequence ?? Consequence.Missing;
         }
 
         //Make consequence selection only possible if there is a primary constraint selected
@@ -215,7 +199,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void ddPrimaryConstraints_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (bSuppressChangeEvents)
+        if(bSuppressChangeEvents)
             return;
 
         if (SelectedColumnItemValidator == null)
@@ -229,18 +213,15 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
             ddConsequence.SelectedItem = Consequence.Missing;
         }
         else
-        {
             try
             {
                 SelectedColumnItemValidator.PrimaryConstraint =
-                    Validator.CreateConstraint(ddPrimaryConstraints.Text, (Consequence)ddConsequence.SelectedValue) as
-                        PrimaryConstraint;
+                    Validator.CreateConstraint(ddPrimaryConstraints.Text,(Consequence)ddConsequence.SelectedValue) as PrimaryConstraint;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                ExceptionViewer.Show($"Failed to create PrimaryConstraint '{ddPrimaryConstraints.Text}'", ex);
+                ExceptionViewer.Show($"Failed to create PrimaryConstraint '{ddPrimaryConstraints.Text}'",ex);
             }
-        }
 
         //Make consequence selection only possible if there is a priary constraint selected
         ddConsequence.Enabled = ddPrimaryConstraints.Text != _noPrimaryConstraintText;
@@ -261,7 +242,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
         if (ddSecondaryConstraints.SelectedItem != null)
         {
             var secondaryConstriant =
-                Validator.CreateConstraint(ddSecondaryConstraints.Text, Consequence.Missing) as SecondaryConstraint;
+                Validator.CreateConstraint(ddSecondaryConstraints.Text,Consequence.Missing) as SecondaryConstraint;
 
             SelectedColumnItemValidator.SecondaryConstraints.Add(secondaryConstriant);
             AddSecondaryConstraintControl(secondaryConstriant);
@@ -282,14 +263,13 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         tableLayoutPanel1.RowCount++;
 
-        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository, secondaryConstriant,
-            olvColumns.Objects.Cast<ExtractionInformation>().Select(c => c.GetRuntimeName()).ToArray())
+        var toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository, secondaryConstriant, olvColumns.Objects.Cast<ExtractionInformation>().Select(c => c.GetRuntimeName()).ToArray())
         {
             Width = splitContainer1.Panel2.Width,
             Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top
         };
         toAdd.RequestDeletion += SecondaryConstraintRequestDelete;
-        tableLayoutPanel1.Controls.Add(toAdd, tableLayoutPanel1.RowCount - 1, 0);
+        tableLayoutPanel1.Controls.Add(toAdd, tableLayoutPanel1.RowCount - 1,0);
 
         //this array always seems to be 1 element long..
         tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
@@ -298,13 +278,13 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void ddConsequence_SelectedIndexChanged(object sender, EventArgs e)
     {
-        if (bSuppressChangeEvents)
+        if(bSuppressChangeEvents)
             return;
 
         if (SelectedColumnItemValidator != null)
             if (SelectedColumnItemValidator.PrimaryConstraint != null)
             {
-                SelectedColumnItemValidator.PrimaryConstraint.Consequence = (Consequence)ddConsequence.SelectedValue;
+                SelectedColumnItemValidator.PrimaryConstraint.Consequence = (Consequence) ddConsequence.SelectedValue;
                 ObjectSaverButton1.Enable(true);
             }
             else
@@ -320,16 +300,14 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
         olvColumns.UseFiltering = true;
-        olvColumns.ModelFilter =
-            new TextMatchFilter(olvColumns, tbFilter.Text, StringComparison.CurrentCultureIgnoreCase);
+        olvColumns.ModelFilter = new TextMatchFilter(olvColumns,tbFilter.Text,StringComparison.CurrentCultureIgnoreCase);
     }
 
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
-        if (HasChanges())
+        if(HasChanges())
         {
-            var dr = MessageBox.Show($"Save Validation rule changes for Catalogue '{_catalogue}'?", "Save Changes",
-                MessageBoxButtons.YesNoCancel);
+            var dr = MessageBox.Show($"Save Validation rule changes for Catalogue '{_catalogue}'?", "Save Changes",MessageBoxButtons.YesNoCancel);
 
             switch (dr)
             {
@@ -389,7 +367,6 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         SetPivot(cbxPivotColumn.SelectedItem as ExtractionInformation);
     }
-
     private void SetTimePeriod(ExtractionInformation selected)
     {
         _catalogue.TimeCoverage_ExtractionInformation_ID = selected?.ID;
@@ -402,12 +379,10 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 
     private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)
     {
-        if (Activator.SelectObject(new DialogArgs
-            {
-                TaskDescription =
-                    "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
-                AllowSelectingNull = true
-            }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
+        if(Activator.SelectObject(new DialogArgs {
+               TaskDescription = "Which date column in the Catalogue should provide the time element of the data when generating graphs, DQE etc?",
+               AllowSelectingNull = true
+           }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any),out var selected))
         {
             cbxTimePeriodColumn.SelectedItem = selected;
             SetTimePeriod(selected);
@@ -418,8 +393,7 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
     {
         if (Activator.SelectObject(new DialogArgs
             {
-                TaskDescription =
-                    "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
+                TaskDescription = "Which column in the Catalogue provides the most useful subdivision of the data when viewing in DQE? The column should have a relatively small number of unique values e.g. healthboard.",
                 AllowSelectingNull = true
             }, _catalogue.GetAllExtractionInformation(ExtractionCategory.Any), out var selected))
         {
@@ -430,6 +404,6 @@ public partial class ValidationSetupUI : ValidationSetupForm_Design, ISaveableUI
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ValidationSetupForm_Design, UserControl>))]
-public abstract class ValidationSetupForm_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+public abstract class ValidationSetupForm_Design:RDMPSingleDatabaseObjectControl<Catalogue>
 {
 }

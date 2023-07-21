@@ -12,9 +12,11 @@ namespace Rdmp.Core.Tests.Curation.Integration;
 
 internal class CatalogueItemTests : DatabaseTests
 {
+
     [Test]
     public void constructor_newTestCatalogueItem_pass()
     {
+
         var parent = new Catalogue(CatalogueRepository, "GROG");
 
         var child1 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM1");
@@ -24,7 +26,7 @@ internal class CatalogueItemTests : DatabaseTests
         Assert.IsTrue(child2.Catalogue_ID == parent.ID);
 
         Assert.IsTrue(child1.ID != child2.ID);
-
+            
         child1.DeleteInDatabase();
         child2.DeleteInDatabase();
         parent.DeleteInDatabase();
@@ -34,11 +36,12 @@ internal class CatalogueItemTests : DatabaseTests
     [Test]
     public void TestSettingColumnInfoToNull()
     {
+
         var parent = new Catalogue(CatalogueRepository, "GROG");
 
         var child1 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM1");
         child1.SetColumnInfo(null);
-
+            
         Assert.IsNull(child1.ColumnInfo_ID);
         child1.DeleteInDatabase();
         parent.DeleteInDatabase();
@@ -54,7 +57,7 @@ internal class CatalogueItemTests : DatabaseTests
 
         var children = parent.CatalogueItems;
 
-        Assert.AreEqual(children.Length, 2);
+        Assert.AreEqual(children.Length,2);
         Assert.IsTrue(children[0].ID == child1.ID || children[1].ID == child1.ID);
         Assert.IsTrue(children[0].ID == child2.ID || children[1].ID == child2.ID);
         Assert.IsTrue(children[0].ID != children[1].ID);
@@ -103,7 +106,7 @@ internal class CatalogueItemTests : DatabaseTests
     [Test]
     public void clone_CloneCatalogueItemWithIDIntoCatalogue_passes()
     {
-        var parent = new Catalogue(CatalogueRepository, "KONGOR");
+        var parent = new Catalogue(CatalogueRepository,"KONGOR");
         var parent2 = new Catalogue(CatalogueRepository, "KONGOR2");
 
         var child = new CatalogueItem(CatalogueRepository, parent, "KONGOR_SUPERKING")
@@ -139,13 +142,14 @@ internal class CatalogueItemTests : DatabaseTests
             Assert.AreEqual(cloneChild.Statistical_cons, child.Statistical_cons);
             Assert.AreEqual(cloneChild.Topic, child.Topic);
         }
-        finally
+        finally 
         {
             cloneChild?.DeleteInDatabase();
 
             child.DeleteInDatabase();
             parent.DeleteInDatabase();
             parent2.DeleteInDatabase();
+                
         }
     }
 
@@ -153,15 +157,18 @@ internal class CatalogueItemTests : DatabaseTests
     [TestCase(false)]
     public void TestDeleting_CascadesToExtractionInformations(bool makeOrphanFirst)
     {
-        var c = new Catalogue(CatalogueRepository, "My new cata");
+        var c = new Catalogue(CatalogueRepository,"My new cata");
         var ci = new CatalogueItem(CatalogueRepository, c, "myci");
 
         var t = new TableInfo(CatalogueRepository, "myt");
         var col = new ColumnInfo(CatalogueRepository, "mycol", "varchar(10)", t);
 
-        var ei = new ExtractionInformation(CatalogueRepository, ci, col, "fff");
+        var ei = new ExtractionInformation(CatalogueRepository, ci, col,"fff");
 
-        if (makeOrphanFirst) col.DeleteInDatabase();
+        if(makeOrphanFirst)
+        {
+            col.DeleteInDatabase();
+        }
 
         c.DeleteInDatabase();
 
@@ -170,6 +177,7 @@ internal class CatalogueItemTests : DatabaseTests
         Assert.IsFalse(ei.Exists());
 
         Assert.IsTrue(t.Exists());
-        Assert.AreEqual(!makeOrphanFirst, col.Exists());
+        Assert.AreEqual(!makeOrphanFirst,col.Exists());
+
     }
 }

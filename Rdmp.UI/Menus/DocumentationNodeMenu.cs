@@ -11,14 +11,13 @@ namespace Rdmp.UI.Menus;
 
 internal class DocumentationNodeMenu : RDMPContextMenuStrip
 {
-    public DocumentationNodeMenu(RDMPContextMenuStripArgs args, DocumentationNode documentationNode) : base(args,
-        documentationNode)
+    public DocumentationNode DocumentationNode { get; set; }
+
+    public DocumentationNodeMenu(RDMPContextMenuStripArgs args, DocumentationNode documentationNode): base(args, documentationNode)
     {
         DocumentationNode = documentationNode;
 
         Add(new ExecuteCommandAddNewSupportingDocument(_activator, DocumentationNode.Catalogue));
         Add(new ExecuteCommandAddNewSupportingSqlTable(_activator, DocumentationNode.Catalogue));
     }
-
-    public DocumentationNode DocumentationNode { get; set; }
 }

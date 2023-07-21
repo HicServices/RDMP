@@ -23,7 +23,7 @@ public class ExplicitDatabaseNameChecker
         {
             "ExplicitDatabaseNameChecker.cs", //us obviously since we do contain that text!
             "DatabaseCreationProgramOptions.cs", //allowed because it is the usage text for the program.
-            "AutomationServiceOptions.cs", //allowed because it is the usage text for the program.
+            "AutomationServiceOptions.cs",//allowed because it is the usage text for the program.
             "DatabaseTests.cs", //allowed because it is telling user about how you can setup database tests support
             "ChoosePlatformDatabasesUI.Designer.cs", //allowed because it is a suggestion to user about what prefix to use
             "PluginPackagerProgramOptions.cs", //allwed because it's a suggestion to the user about command line arguments
@@ -33,7 +33,7 @@ public class ExplicitDatabaseNameChecker
 
 
         ignoreList.AddRange(
-            new[]
+            new string[]
             {
                 "DleOptions.cs",
                 "CacheOptions.cs",
@@ -42,6 +42,9 @@ public class ExplicitDatabaseNameChecker
                 "PlatformDatabaseCreationOptions.cs",
                 "PackOptions.cs",
                 "PasswordEncryptionKeyLocation.cs"
+
+
+
             }); //allowed because it's default arguments for CLI
 
         prohibitedStrings.Add("TEST_");
@@ -49,7 +52,7 @@ public class ExplicitDatabaseNameChecker
 
         foreach (var file in csFilesFound)
         {
-            if (ignoreList.Any(str => str.Equals(Path.GetFileName(file))))
+            if (ignoreList.Any(str=>str.Equals(Path.GetFileName(file))))
                 continue;
 
             var contents = File.ReadAllText(file);
@@ -66,6 +69,6 @@ public class ExplicitDatabaseNameChecker
             Console.WriteLine(
                 $"FAIL: File '{kvp.Key}' contains a reference to an explicitly prohibited database name string ('{kvp.Value}')");
 
-        Assert.AreEqual(0, problemFiles.Count);
+        Assert.AreEqual(0,problemFiles.Count);
     }
 }

@@ -4,9 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -15,20 +12,23 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
 internal class ConsoleGuiContextMenuFactory
 {
-    private readonly IBasicActivateItems activator;
+    private IBasicActivateItems activator;
 
     public ConsoleGuiContextMenuFactory(IBasicActivateItems activator)
     {
         this.activator = activator;
     }
 
-    public ContextMenu Create(object[] many, object single)
+    public  ContextMenu Create(object[] many, object single)
     {
         var commands = GetCommands(activator, many, single).ToArray();
 
@@ -55,9 +55,13 @@ internal class ConsoleGuiContextMenuFactory
             order.Add(item, cmd.Weight);
 
             if (cmd.SuggestedCategory != null)
+            {
                 miCategories[cmd.SuggestedCategory].Add(item);
+            }
             else
+            {
                 items.Add(item);
+            }
         }
 
         foreach (var kvp in miCategories)
@@ -106,7 +110,7 @@ internal class ConsoleGuiContextMenuFactory
         return withSpacers.ToArray();
     }
 
-    private void ExecuteWithCatch(IAtomicCommand cmd)
+    private  void ExecuteWithCatch(IAtomicCommand cmd)
     {
         try
         {
@@ -114,6 +118,7 @@ internal class ConsoleGuiContextMenuFactory
         }
         catch (Exception ex)
         {
+
             activator.ShowException($"Error running command '{cmd.GetCommandName()}'", ex);
         }
     }
@@ -122,31 +127,38 @@ internal class ConsoleGuiContextMenuFactory
     {
         var factory = new AtomicCommandFactory(activator);
 
-        if (many.Length > 1) return factory.CreateManyObjectCommands(many).ToArray();
+        if (many.Length > 1)
+        {
+            return factory.CreateManyObjectCommands(many).ToArray();
+        }
 
         var o = single;
 
         if (ReferenceEquals(o, ConsoleMainWindow.Catalogues))
-            return new IAtomicCommand[]
-            {
+        {
+            return new IAtomicCommand[] {
                 new ExecuteCommandCreateNewCatalogueByImportingFile(activator),
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator)
             };
+        }
         if (ReferenceEquals(o, ConsoleMainWindow.Loads))
-            return new IAtomicCommand[]
-            {
+        {
+            return new IAtomicCommand[] {
                 new ExecuteCommandCreateNewLoadMetadata(activator)
             };
+        }
         if (ReferenceEquals(o, ConsoleMainWindow.Projects))
-            return new IAtomicCommand[]
-            {
-                new ExecuteCommandNewObject(activator, typeof(Project)) { OverrideCommandName = "New Project" }
+        {
+            return new IAtomicCommand[] {
+                new ExecuteCommandNewObject(activator,typeof(Project)){OverrideCommandName = "New Project" }
             };
+        }
         if (ReferenceEquals(o, ConsoleMainWindow.CohortConfigs))
-            return new IAtomicCommand[]
-            {
+        {
+            return new IAtomicCommand[] {
                 new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)
             };
+        }
 
         if (o == null)
             return Array.Empty<IAtomicCommand>();
@@ -161,14 +173,18 @@ internal class ConsoleGuiContextMenuFactory
     private static IEnumerable<IAtomicCommand> GetExtraCommands(IBasicActivateItems activator, object o)
     {
         if (CommandFactoryBase.Is(o, out LoadMetadata lmd))
+        {
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunDleWindow(activator, lmd))
                 { OverrideCommandName = "Execute Load..." };
+        }
 
         if (CommandFactoryBase.Is(o, out Project p))
+        {
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunReleaseWindow(activator, p))
                 { OverrideCommandName = "Release..." };
+        }
         if (CommandFactoryBase.Is(o, out ExtractionConfiguration ec))
         {
             yield return new ExecuteCommandRunConsoleGuiView(activator,
@@ -181,13 +197,18 @@ internal class ConsoleGuiContextMenuFactory
         }
 
         if (CommandFactoryBase.Is(o, out CacheProgress cp))
+        {
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunCacheWindow(activator, cp))
                 { OverrideCommandName = "Run Cache..." };
+        }
 
         if (CommandFactoryBase.Is(o, out Catalogue c) && !c.IsApiCall())
+        {
             yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunDataQualityEngineWindow(activator, c))
                 { OverrideCommandName = "Run DQE..." };
+        }
     }
+
 }

@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
@@ -16,9 +16,9 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
 public class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
 {
     private readonly Image<Rgba32> _basic;
+    private readonly Image<Rgba32> _projectSpecific;
     private readonly IDataExportRepository _dataExportRepository;
     private readonly IconOverlayProvider _overlayProvider;
-    private readonly Image<Rgba32> _projectSpecific;
 
 
     public CatalogueStateBasedIconProvider(IDataExportRepository dataExportRepository,
@@ -44,10 +44,10 @@ public class CatalogueStateBasedIconProvider : IObjectStateBasedIconProvider
 
         if (c.IsDeprecated)
             img = _overlayProvider.GetOverlay(img, OverlayKind.Deprecated);
-
+            
         if (c.IsInternalDataset)
             img = _overlayProvider.GetOverlay(img, OverlayKind.Internal);
-
+            
         if (status != null && status.IsExtractable)
             img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
 

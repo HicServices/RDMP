@@ -12,6 +12,7 @@ namespace Rdmp.Core.Tests.Curation.Unit;
 [Category("Unit")]
 public class CatalogueNamingTests
 {
+
     [Test]
     [TestCase("###")]
     [TestCase("Bob\\bob")]
@@ -21,7 +22,6 @@ public class CatalogueNamingTests
     {
         Assert.IsFalse(Catalogue.IsAcceptableName(name));
     }
-
     [Test]
     [TestCase("Hi")]
     [TestCase("MyhExchiting dAtaset")]

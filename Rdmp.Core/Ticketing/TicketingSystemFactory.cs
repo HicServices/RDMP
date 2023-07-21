@@ -13,9 +13,8 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Ticketing;
 
 /// <summary>
-///     RDMP can have a single ITicketingSystem configured (optional).  This factory creates the ITicketingSystem instance
-///     based on the
-///     TicketingSystemConfiguration the uer has set up
+/// RDMP can have a single ITicketingSystem configured (optional).  This factory creates the ITicketingSystem instance based on the 
+/// TicketingSystemConfiguration the uer has set up
 /// </summary>
 public class TicketingSystemFactory
 {
@@ -34,11 +33,10 @@ public class TicketingSystemFactory
     //public ITicketingSystem Create(string )
     public ITicketingSystem Create(string typeName, string url, IDataAccessCredentials credentials)
     {
-        if (string.IsNullOrWhiteSpace(typeName))
+        if(string.IsNullOrWhiteSpace(typeName))
             throw new NullReferenceException("Type name was blank, cannot create ITicketingSystem");
 
-        return _repository.MEF.CreateA<ITicketingSystem>(typeName,
-            new TicketingSystemConstructorParameters(url, credentials));
+        return _repository.MEF.CreateA<ITicketingSystem>(typeName, new TicketingSystemConstructorParameters(url, credentials));
     }
 
     public ITicketingSystem CreateIfExists(TicketingSystemConfiguration ticketingSystemConfiguration)
@@ -52,12 +50,11 @@ public class TicketingSystemFactory
             return null;
 
         IDataAccessCredentials creds = null;
-
+            
         //if there are credentials create with those (otherwise create with null credentials)
-        if (ticketingSystemConfiguration.DataAccessCredentials_ID != null)
-            creds = _repository.GetObjectByID<DataAccessCredentials>((int)ticketingSystemConfiguration
-                .DataAccessCredentials_ID);
-
+        if(ticketingSystemConfiguration.DataAccessCredentials_ID != null)
+            creds = _repository.GetObjectByID<DataAccessCredentials>((int)ticketingSystemConfiguration.DataAccessCredentials_ID);
+            
         return Create(ticketingSystemConfiguration.Type, ticketingSystemConfiguration.Url, creds);
     }
 }

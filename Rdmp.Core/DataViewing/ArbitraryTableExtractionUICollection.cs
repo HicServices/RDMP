@@ -16,24 +16,35 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-///     <see cref="IViewSQLAndResultsCollection" /> for querying samples of arbitrary tables / columns
+/// <see cref="IViewSQLAndResultsCollection"/> for querying samples of arbitrary tables / columns
 /// </summary>
-public class ArbitraryTableExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection,
-    IDataAccessPoint, IDataAccessCredentials
+public class ArbitraryTableExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
 {
+    private DiscoveredTable _table;
+
+    public DatabaseType DatabaseType { get; set; }
+
+    private Dictionary<string, string> _arguments = new();
     private const string DatabaseKey = "Database";
     private const string ServerKey = "Server";
     private const string TableKey = "Table";
     private const string DatabaseTypeKey = "DatabaseType";
 
-    private Dictionary<string, string> _arguments = new();
-    private DiscoveredTable _table;
+    public string Username { get; set; }
+    public string Password { get; set; }
+    public string GetDecryptedPassword()
+    {
+        return Password ?? "";
+    }
+
+    public string OverrideSql { get; set; }
 
     /// <summary>
-    ///     Needed for deserialization
+    /// Needed for deserialization
     /// </summary>
     public ArbitraryTableExtractionUICollection()
     {
+
     }
 
     public ArbitraryTableExtractionUICollection(DiscoveredTable table) : this()
@@ -50,51 +61,7 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         Username = table.Database.Server.ExplicitUsernameIfAny;
         Password = table.Database.Server.ExplicitPasswordIfAny;
     }
-
-    public string OverrideSql { get; set; }
-
-    public string Username { get; set; }
-    public string Password { get; set; }
-
-    public string GetDecryptedPassword()
-    {
-        return Password ?? "";
-    }
-
-    public DatabaseType DatabaseType { get; set; }
-
-    public string Server
-    {
-        get => _arguments[ServerKey];
-        set => _arguments[ServerKey] = value;
-    }
-
-    public string Database
-    {
-        get => _arguments[DatabaseKey];
-        set => _arguments[DatabaseKey] = value;
-    }
-
-
-    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-    {
-        //we have our own credentials if we do
-        return string.IsNullOrWhiteSpace(Username) ? null : this;
-    }
-
-    public bool DiscoverExistence(DataAccessContext context, out string reason)
-    {
-        if (_table.Exists())
-        {
-            reason = null;
-            return true;
-        }
-
-        reason = $"Table {_table} did not exist";
-        return false;
-    }
-
-    /// <nheritdoc />
+    /// <nheritdoc/>
     public override string SaveExtraText()
     {
         return PersistStringHelper.SaveDictionaryToString(_arguments);
@@ -150,8 +117,40 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         autoComplete.Add(_table);
     }
 
+    public string Server
+    {
+        get => _arguments[ServerKey];
+        set => _arguments[ServerKey] = value;
+    }
+    public string Database
+    {
+        get => _arguments[DatabaseKey];
+        set => _arguments[DatabaseKey] = value;
+    }
+
+
+
+    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
+    {
+        //we have our own credentials if we do
+        return string.IsNullOrWhiteSpace(Username) ? null : this;
+    }
+
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         return _table.GetQuerySyntaxHelper();
+    }
+
+    public bool DiscoverExistence(DataAccessContext context, out string reason)
+    {
+        if (_table.Exists())
+        {
+            reason = null;
+            return true;
+        }
+
+        reason = $"Table {_table} did not exist";
+        return false;
+
     }
 }

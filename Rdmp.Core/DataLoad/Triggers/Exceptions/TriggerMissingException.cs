@@ -7,13 +7,13 @@
 namespace Rdmp.Core.DataLoad.Triggers.Exceptions;
 
 /// <summary>
-///     Exception thrown when the DLE live table does not have the expected backup trigger that moves old (overwritten)
-///     records into the
-///     archive table
+/// Exception thrown when the DLE live table does not have the expected backup trigger that moves old (overwritten) records into the
+/// archive table
 /// </summary>
 public class TriggerMissingException : TriggerException
 {
-    public TriggerMissingException(string s) : base(s)
+    public TriggerMissingException(string s):base(s)
     {
+            
     }
 }

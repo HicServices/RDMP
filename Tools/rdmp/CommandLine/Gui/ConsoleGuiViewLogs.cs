@@ -4,14 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using NStack;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Terminal.Gui;
 using Terminal.Gui.Trees;
 
@@ -19,12 +18,12 @@ namespace Rdmp.Core.CommandLine.Gui;
 
 internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 {
-    private readonly IBasicActivateItems _activator;
+    private IBasicActivateItems _activator;
     private ArchivalDataLoadInfo[] _archivalDataLoadInfos = Array.Empty<ArchivalDataLoadInfo>();
-    private readonly ILoggedActivityRootObject _rootObject;
-    private readonly TextField _tbcontains;
-    private readonly TextField _tbToFetch;
-    private readonly TreeView<object> _treeView;
+    private TreeView<object> _treeView;
+    private TextField _tbToFetch;
+    private ILoggedActivityRootObject _rootObject;
+    private TextField _tbcontains;
 
     public ConsoleGuiViewLogs(IBasicActivateItems activator, ILoggedActivityRootObject rootObject)
     {
@@ -135,33 +134,7 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
         FetchLogs();
     }
 
-    public bool SupportsCanExpand => true;
-
-    public bool CanExpand(object model)
-    {
-        return model is ArchivalDataLoadInfo || (model is Category c && c.GetChildren().Any()) ||
-               model is ArchivalTableLoadInfo;
-    }
-
-    public IEnumerable<object> GetChildren(object model)
-    {
-        if (model is ArchivalDataLoadInfo dli)
-        {
-            yield return new Category(dli, LoggingTables.TableLoadRun);
-            yield return new Category(dli, LoggingTables.FatalError);
-            yield return new Category(dli, LoggingTables.ProgressLog);
-        }
-
-        if (model is Category c)
-            foreach (var child in c.GetChildren())
-                yield return child;
-
-        if (model is ArchivalTableLoadInfo ti)
-            foreach (var source in ti.DataSources)
-                yield return source;
-    }
-
-    private void Tbcontains_TextChanged(ustring obj)
+    private void Tbcontains_TextChanged(NStack.ustring obj)
     {
         _treeView.ClearObjects();
 
@@ -175,26 +148,29 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
     private void FetchLogs()
     {
-        if (!int.TryParse(_tbToFetch.Text.ToString(), out var fetch)) fetch = 1000;
+        if (!int.TryParse(_tbToFetch.Text.ToString(), out var fetch))
+        {
+            fetch = 1000;
+        }
 
         // no negative sized batches!
         fetch = Math.Max(0, fetch);
 
         try
         {
+
             var db = _rootObject.GetDistinctLoggingDatabase();
             var task = _rootObject.GetDistinctLoggingTask();
 
             var lm = new LogManager(db);
-            _archivalDataLoadInfos =
-                _rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task, null, null, fetch)).ToArray();
+            _archivalDataLoadInfos = _rootObject.FilterRuns(lm.GetArchivalDataLoadInfos(task, null, null, fetch)).ToArray();
 
             _treeView.ClearObjects();
             _treeView.AddObjects(_archivalDataLoadInfos);
         }
         catch (Exception ex)
         {
-            _activator.ShowException("Failed to fetch logs", ex);
+            _activator.ShowException("Failed to fetch logs",ex);
         }
     }
 
@@ -221,6 +197,33 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
         _treeView.AddObjects(_archivalDataLoadInfos);
     }
 
+    public bool SupportsCanExpand => true;
+
+    public bool CanExpand(object model)
+    {
+        return model is ArchivalDataLoadInfo || (model is Category c && c.GetChildren().Any()) || model is ArchivalTableLoadInfo;
+    }
+
+    public IEnumerable<object> GetChildren(object model)
+    {
+        if (model is ArchivalDataLoadInfo dli)
+        {
+            yield return new Category(dli, LoggingTables.TableLoadRun);
+            yield return new Category(dli, LoggingTables.FatalError);
+            yield return new Category(dli, LoggingTables.ProgressLog);
+        }
+
+        if (model is Category c)
+        {
+            foreach (var child in c.GetChildren())
+                yield return child;
+        }
+
+        if (model is ArchivalTableLoadInfo ti)
+            foreach (var source in ti.DataSources)
+                yield return source;
+    }
+
     private void Quit()
     {
         Application.RequestStop();
@@ -228,15 +231,14 @@ internal class ConsoleGuiViewLogs : Window, ITreeBuilder<object>
 
     private class Category
     {
-        private readonly ArchivalDataLoadInfo _dli;
         private readonly LoggingTables _type;
+        private readonly ArchivalDataLoadInfo _dli;
 
         public Category(ArchivalDataLoadInfo dli, LoggingTables type)
         {
             _dli = dli;
             _type = type;
         }
-
         public override string ToString()
         {
             return _type switch

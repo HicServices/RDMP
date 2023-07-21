@@ -15,6 +15,7 @@ public class DelimitedFileSourceTests_AutomaticallyResolved : DelimitedFileSourc
     [Test]
     public void Test_ValuesSpradAcrossMultipleRows()
     {
+
         var file = CreateTestFile(
             "A,B,C,D",
             "1,17,Beginning of a long,37.00",
@@ -23,7 +24,7 @@ public class DelimitedFileSourceTests_AutomaticallyResolved : DelimitedFileSourc
         );
 
         var dt = RunGetChunk(file);
-        Assert.AreEqual(3, dt.Rows.Count);
+        Assert.AreEqual(3,dt.Rows.Count);
         Assert.AreEqual(true, dt.Rows[0]["A"]);
         Assert.AreEqual(17, dt.Rows[0]["B"]);
         Assert.AreEqual("Beginning of a long", dt.Rows[0]["C"]);
@@ -53,7 +54,7 @@ public class DelimitedFileSourceTests_AutomaticallyResolved : DelimitedFileSourc
         );
 
         var dt = RunGetChunk(file);
-        Assert.AreEqual(2, dt.Rows.Count);
+        Assert.AreEqual(2,dt.Rows.Count);
         Assert.AreEqual("Frank", dt.Rows[0]["Name"]);
         Assert.AreEqual("Herbert", dt.Rows[1]["Name"]);
     }
@@ -70,12 +71,13 @@ Herbert,2002-01-01,Hey"
         );
 
         var dt = RunGetChunk(file);
-        Assert.AreEqual(2, dt.Rows.Count);
+        Assert.AreEqual(2,dt.Rows.Count);
         Assert.AreEqual("Frank", dt.Rows[0]["Name"]);
         Assert.AreEqual(@"Frank is
 
 the best ever", dt.Rows[0]["Description"]);
         Assert.AreEqual("Herbert", dt.Rows[1]["Name"]);
+        
     }
 
     [TestCase("")]
@@ -117,7 +119,6 @@ the best ever", dt.Rows[0]["Description"]);
         Assert.AreEqual(4, dt.Rows.Count);
         Assert.AreEqual(3, dt.Columns.Count);
     }
-
     [Test]
     public void TrailingNulls_InHeader()
     {
@@ -145,17 +146,16 @@ the best ever", dt.Rows[0]["Description"]);
         var file = CreateTestFile(
             "CHI ,,StudyID,Date,,",
             //Row has trailing null headers, these get ignored but the one in the middle must be maintained to prevent cell read errors/mismatch
+
             "0101010101,,5,2001-01-05",
             "0101010101,,5,2001-01-05",
             "0101010101,,5,2001-01-05",
             "0101010101,,5,2001-01-05"); //note that if you put any values in these empty column it is BadData
 
-
+            
         DataTable dt;
         if (forceHeaders)
-            dt = RunGetChunk(file, s =>
-            {
-                s.ForceHeaders = "CHI ,,StudyID,Date,,";
+            dt = RunGetChunk(file,s=> { s.ForceHeaders = "CHI ,,StudyID,Date,,";
                 s.ForceHeadersReplacesFirstLineInFile = true;
             });
         else

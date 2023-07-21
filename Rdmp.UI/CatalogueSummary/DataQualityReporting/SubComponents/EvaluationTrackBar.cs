@@ -14,20 +14,16 @@ using Rdmp.Core.DataQualityEngine.Data;
 namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 
 /// <summary>
-///     The Data Quality Engine stores all validation results in a relational database.  This includes the time the DQE was
-///     run.  This allows us to 'rewind' and look at previous results
-///     e.g. to compare the quality of the dataset before and after a data load.
-///     <para>
-///         If this control is not enabled then it means you have only ever done one DQE evaluation or have never
-///         evaluated the dataset by using the DQE.
-///     </para>
-///     <para>Dragging the slider will adjust a IDataQualityReportingChart to show the results of the DQE on that day.</para>
+/// The Data Quality Engine stores all validation results in a relational database.  This includes the time the DQE was run.  This allows us to 'rewind' and look at previous results
+/// e.g. to compare the quality of the dataset before and after a data load.
+/// 
+/// <para>If this control is not enabled then it means you have only ever done one DQE evaluation or have never evaluated the dataset by using the DQE.</para>
+/// 
+/// <para>Dragging the slider will adjust a IDataQualityReportingChart to show the results of the DQE on that day.</para>
 /// </summary>
 public partial class EvaluationTrackBar : UserControl
 {
     private Evaluation[] _evaluations;
-
-    private readonly List<Label> labels = new();
 
     public EvaluationTrackBar()
     {
@@ -45,6 +41,7 @@ public partial class EvaluationTrackBar : UserControl
         }
     }
 
+    private List<Label> labels = new();
     public event EvaluationSelectedHandler EvaluationSelected;
 
     private void RefreshUI()
@@ -62,18 +59,15 @@ public partial class EvaluationTrackBar : UserControl
             EvaluationSelected(this, Evaluations.Single());
         }
         else
-        {
-            Enabled = true; //let user drag around the trackbar if he wants
-        }
+            Enabled = true;//let user drag around the trackbar if he wants
 
         foreach (var label in labels)
         {
             Controls.Remove(label);
             label.Dispose();
         }
-
         labels.Clear();
-
+            
         //if there is at least 2 evaluations done then we need to have a track bar of evaluations
         tbEvaluation.Minimum = 0;
         tbEvaluation.Maximum = Evaluations.Length - 1;
@@ -83,10 +77,10 @@ public partial class EvaluationTrackBar : UserControl
 
         for (var i = 0; i < Evaluations.Length; i++)
         {
-            var ratio = (double)i / (Evaluations.Length - 1);
+            var ratio = (double)i/(Evaluations.Length-1);
 
 
-            var x = tbEvaluation.Left + (int)(ratio * tbEvaluation.Width);
+            var x = tbEvaluation.Left + (int) (ratio * tbEvaluation.Width);
             var y = tbEvaluation.Bottom - 10;
 
             var l = new Label
@@ -99,8 +93,9 @@ public partial class EvaluationTrackBar : UserControl
             l.BringToFront();
 
             labels.Add(l);
-        }
 
+        }
+            
         tbEvaluation.Value = tbEvaluation.Maximum;
         EvaluationSelected(this, Evaluations[tbEvaluation.Value]);
     }
@@ -108,7 +103,7 @@ public partial class EvaluationTrackBar : UserControl
     private void tbEvaluation_ValueChanged(object sender, EventArgs e)
     {
         if (tbEvaluation.Value >= 0)
-            EvaluationSelected(this, Evaluations[tbEvaluation.Value]);
+            EvaluationSelected(this,Evaluations[tbEvaluation.Value]);
     }
 }
 

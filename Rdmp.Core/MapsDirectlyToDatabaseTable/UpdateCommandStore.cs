@@ -8,29 +8,27 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using FAnsi.Implementation;
 using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-///     Stores DbCommands for saving IMapsDirectlyToDatabaseTable objects to the database.
-///     <para>
-///         Each time a novel IMapsDirectlyToDatabaseTable object Type is encountered an UPDATE sql command (DbCommand) is
-///         created for saving the object back to
-///         the database (using DbCommandBuilder).  Since this operation (figuring out the UPDATE command) is slow and we
-///         might be saving lots of objects we cache
-///         the command so that we can apply it to all objects of that Type as they are saved.
-///     </para>
+/// Stores DbCommands for saving IMapsDirectlyToDatabaseTable objects to the database.
+/// 
+/// <para>Each time a novel IMapsDirectlyToDatabaseTable object Type is encountered an UPDATE sql command (DbCommand) is created for saving the object back to
+/// the database (using DbCommandBuilder).  Since this operation (figuring out the UPDATE command) is slow and we might be saving lots of objects we cache
+/// the command so that we can apply it to all objects of that Type as they are saved.</para>
 /// </summary>
 public class UpdateCommandStore
 {
+    public Dictionary<Type, DbCommand> UpdateCommands { get; private set; }
+
     public UpdateCommandStore()
     {
         UpdateCommands = new Dictionary<Type, DbCommand>();
     }
-
-    public Dictionary<Type, DbCommand> UpdateCommands { get; }
 
     public DbCommand this[IMapsDirectlyToDatabaseTable o] => UpdateCommands[o.GetType()];
 
@@ -40,18 +38,15 @@ public class UpdateCommandStore
     {
         var syntax = ImplementationManager.GetImplementation(builder).GetQuerySyntaxHelper();
 
-        var command = DatabaseCommandHelper.GetCommand($"UPDATE {syntax.EnsureWrapped(o.Name)} SET {{0}} WHERE ID=@ID;",
-            connection, transaction);
+        var command = DatabaseCommandHelper.GetCommand($"UPDATE {syntax.EnsureWrapped(o.Name)} SET {{0}} WHERE ID=@ID;", connection, transaction);
 
         var props = TableRepository.GetPropertyInfos(o);
 
-        foreach (var p in props)
-            command.Parameters.Add(DatabaseCommandHelper.GetParameter($"@{p.Name}", command));
+        foreach(var p in props)
+            command.Parameters.Add(DatabaseCommandHelper.GetParameter($"@{p.Name}",command));
 
-        command.CommandText = string.Format(command.CommandText,
-            string.Join(",",
-                props.Where(p => p.Name != "ID").Select(p => $"{syntax.EnsureWrapped(p.Name)}=@{p.Name}")));
-
+        command.CommandText = string.Format(command.CommandText,string.Join(",",props.Where(p=>p.Name != "ID").Select(p=> $"{syntax.EnsureWrapped(p.Name)}=@{p.Name}")));
+            
         UpdateCommands.Add(o, command);
     }
 
@@ -59,7 +54,6 @@ public class UpdateCommandStore
     {
         return UpdateCommands.ContainsKey(toCreate.GetType());
     }
-
     public bool ContainsKey(Type toCreate)
     {
         return UpdateCommands.ContainsKey(toCreate);

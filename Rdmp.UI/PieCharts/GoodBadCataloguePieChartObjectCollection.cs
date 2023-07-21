@@ -14,15 +14,14 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.UI.PieCharts;
 
 /// <summary>
-///     Input object for <see cref="GoodBadCataloguePieChart" /> Records whether it is showing all/single
-///     <see cref="Catalogue" /> and which is being shown.
+/// Input object for <see cref="GoodBadCataloguePieChart"/> Records whether it is showing all/single <see cref="Catalogue"/> and which is being shown.
 /// </summary>
 public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollection
 {
     public bool ShowLabels { get; set; }
 
     //Catalogue filters
-    public bool IncludeNonExtractableCatalogues { get; set; }
+    public bool IncludeNonExtractableCatalogues { get;set;}
     public bool IncludeDeprecatedCatalogues { get; set; }
     public bool IncludeInternalCatalogues { get; set; }
     public bool IncludeColdStorageCatalogues { get; set; }
@@ -40,8 +39,8 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
 
 
     /// <summary>
-    ///     Returns true if the Catalogue <paramref name="c" /> should be included in the good/bad counts
-    ///     based on the flags e.g. <see cref="IncludeDeprecatedCatalogues" />
+    /// Returns true if the Catalogue <paramref name="c"/> should be included in the good/bad counts
+    /// based on the flags e.g. <see cref="IncludeDeprecatedCatalogues"/>
     /// </summary>
     /// <param name="c"></param>
     /// <param name="repo"></param>
@@ -52,19 +51,19 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
 
         var status = c.GetExtractabilityStatus(repo);
 
-        if (!status.IsExtractable)
+        if(!status.IsExtractable)
             returnValue &= IncludeNonExtractableCatalogues;
 
-        if (status.IsProjectSpecific)
+        if(status.IsProjectSpecific)
             returnValue &= IncludeProjectSpecificCatalogues;
 
-        if (c.IsColdStorageDataset)
+        if(c.IsColdStorageDataset)
             returnValue &= IncludeColdStorageCatalogues;
 
-        if (c.IsDeprecated)
+        if(c.IsDeprecated)
             returnValue &= IncludeDeprecatedCatalogues;
 
-        if (c.IsInternalDataset)
+        if(c.IsInternalDataset)
             returnValue &= IncludeInternalCatalogueItems;
 
 
@@ -72,8 +71,8 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     }
 
     /// <summary>
-    ///     Returns true if the <see cref="CatalogueItem" /> <paramref name="ci" /> should be included in the good/bad
-    ///     counts based on the flags e.g. <see cref="IncludeDeprecatedCatalogueItems" />
+    /// Returns true if the <see cref="CatalogueItem"/> <paramref name="ci"/> should be included in the good/bad
+    /// counts based on the flags e.g. <see cref="IncludeDeprecatedCatalogueItems"/>
     /// </summary>
     /// <param name="ci"></param>
     /// <returns></returns>
@@ -81,7 +80,7 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
     {
         var ei = ci.ExtractionInformation;
 
-        if (ei == null)
+        if(ei == null)
             return IncludeNonExtractableCatalogueItems;
 
         return ei.ExtractionCategory switch
@@ -94,24 +93,25 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
 
     public Catalogue GetSingleCatalogueModeCatalogue()
     {
-        return (Catalogue)DatabaseObjects.SingleOrDefault();
+        return (Catalogue) DatabaseObjects.SingleOrDefault();
     }
 
     public override string SaveExtraText()
     {
         return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
         {
-            { nameof(ShowLabels), ShowLabels.ToString() },
+            {nameof(ShowLabels), ShowLabels.ToString()},
 
-            { nameof(IncludeNonExtractableCatalogues), IncludeNonExtractableCatalogues.ToString() },
-            { nameof(IncludeDeprecatedCatalogues), IncludeDeprecatedCatalogues.ToString() },
-            { nameof(IncludeInternalCatalogues), IncludeInternalCatalogues.ToString() },
-            { nameof(IncludeColdStorageCatalogues), IncludeColdStorageCatalogues.ToString() },
-            { nameof(IncludeProjectSpecificCatalogues), IncludeProjectSpecificCatalogues.ToString() },
+            {nameof(IncludeNonExtractableCatalogues), IncludeNonExtractableCatalogues.ToString()},
+            {nameof(IncludeDeprecatedCatalogues), IncludeDeprecatedCatalogues.ToString()},
+            {nameof(IncludeInternalCatalogues), IncludeInternalCatalogues.ToString()},
+            {nameof(IncludeColdStorageCatalogues), IncludeColdStorageCatalogues.ToString()},
+            {nameof(IncludeProjectSpecificCatalogues), IncludeProjectSpecificCatalogues.ToString()},
 
-            { nameof(IncludeNonExtractableCatalogueItems), IncludeNonExtractableCatalogueItems.ToString() },
-            { nameof(IncludeInternalCatalogueItems), IncludeInternalCatalogueItems.ToString() },
-            { nameof(IncludeDeprecatedCatalogueItems), IncludeDeprecatedCatalogueItems.ToString() }
+            {nameof(IncludeNonExtractableCatalogueItems), IncludeNonExtractableCatalogueItems.ToString()},
+            {nameof(IncludeInternalCatalogueItems), IncludeInternalCatalogueItems.ToString()},
+            {nameof(IncludeDeprecatedCatalogueItems), IncludeDeprecatedCatalogueItems.ToString()}
+
         });
     }
 
@@ -120,24 +120,20 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
         var dict = PersistStringHelper.LoadDictionaryFromString(s);
 
         //if it's empty we just use the default values we are set up for
-        if (dict == null || !dict.Any())
+        if(dict == null || !dict.Any())
             return;
 
-        ShowLabels = PersistStringHelper.GetBool(dict, nameof(ShowLabels), true);
+        ShowLabels = PersistStringHelper.GetBool(dict,nameof(ShowLabels),true);
 
-        IncludeNonExtractableCatalogues =
-            PersistStringHelper.GetBool(dict, nameof(IncludeNonExtractableCatalogues), true);
+        IncludeNonExtractableCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeNonExtractableCatalogues), true);
         IncludeDeprecatedCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeDeprecatedCatalogues), true);
         IncludeInternalCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeInternalCatalogues), true);
         IncludeColdStorageCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeColdStorageCatalogues), true);
-        IncludeProjectSpecificCatalogues =
-            PersistStringHelper.GetBool(dict, nameof(IncludeProjectSpecificCatalogues), true);
+        IncludeProjectSpecificCatalogues = PersistStringHelper.GetBool(dict, nameof(IncludeProjectSpecificCatalogues), true);
 
-        IncludeNonExtractableCatalogueItems =
-            PersistStringHelper.GetBool(dict, nameof(IncludeNonExtractableCatalogueItems), true);
+        IncludeNonExtractableCatalogueItems = PersistStringHelper.GetBool(dict, nameof(IncludeNonExtractableCatalogueItems), true);
         IncludeInternalCatalogueItems = PersistStringHelper.GetBool(dict, nameof(IncludeInternalCatalogueItems), true);
-        IncludeDeprecatedCatalogueItems =
-            PersistStringHelper.GetBool(dict, nameof(IncludeDeprecatedCatalogueItems), true);
+        IncludeDeprecatedCatalogueItems = PersistStringHelper.GetBool(dict, nameof(IncludeDeprecatedCatalogueItems), true);
     }
 
     public void SetAllCataloguesMode()
@@ -147,9 +143,8 @@ public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollect
 
     public void SetSingleCatalogueMode(Catalogue catalogue)
     {
-        if (catalogue == null)
-            throw new ArgumentException("Catalogue must not be null to turn on SingleCatalogue mode",
-                nameof(catalogue));
+        if(catalogue == null)
+            throw new ArgumentException("Catalogue must not be null to turn on SingleCatalogue mode",nameof(catalogue));
 
         DatabaseObjects.Clear();
         DatabaseObjects.Add(catalogue);

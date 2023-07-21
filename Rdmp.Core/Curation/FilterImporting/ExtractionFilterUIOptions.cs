@@ -9,22 +9,22 @@ using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Curation.FilterImporting;
 
-/// <inheritdoc />
+/// <inheritdoc/>
 public class ExtractionFilterUIOptions : FilterUIOptions
 {
-    private readonly IColumn[] _columns;
-    private readonly ISqlParameter[] _globals;
-    private readonly ITableInfo[] _tables;
+    private ISqlParameter[] _globals;
+    private ITableInfo[] _tables;
+    private IColumn[] _columns;
 
     public ExtractionFilterUIOptions(ExtractionFilter masterCatalogueFilter) : base(masterCatalogueFilter)
     {
         var c = masterCatalogueFilter.ExtractionInformation.CatalogueItem.Catalogue;
 
-        var colInfo = masterCatalogueFilter.GetColumnInfoIfExists() ??
-                      throw new MissingColumnInfoException($"No ColumnInfo found for filter '{masterCatalogueFilter}'");
+        var colInfo = masterCatalogueFilter.GetColumnInfoIfExists() ?? throw new MissingColumnInfoException($"No ColumnInfo found for filter '{masterCatalogueFilter}'");
         _globals = colInfo.TableInfo.GetAllParameters();
         _tables = c.GetTableInfoList(false);
         _columns = c.GetAllExtractionInformation(ExtractionCategory.Any);
+
     }
 
     public override ITableInfo[] GetTableInfos()

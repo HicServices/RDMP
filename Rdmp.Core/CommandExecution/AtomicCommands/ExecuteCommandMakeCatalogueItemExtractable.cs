@@ -4,27 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution,IAtomicCommand
 {
     private readonly CatalogueItem _catalogueItem;
 
-    public ExecuteCommandMakeCatalogueItemExtractable(IBasicActivateItems activator, CatalogueItem catalogueItem) :
-        base(activator)
+    public ExecuteCommandMakeCatalogueItemExtractable(IBasicActivateItems activator, CatalogueItem catalogueItem) : base(activator)
     {
         _catalogueItem = catalogueItem;
 
-        if (_catalogueItem.ColumnInfo_ID == null)
+        if(_catalogueItem.ColumnInfo_ID == null)
             SetImpossible("There is no underlying ColumnInfo");
 
-        if (_catalogueItem.ExtractionInformation != null)
+        if(_catalogueItem.ExtractionInformation != null)
             SetImpossible("CatalougeItem is already extractable");
     }
 
@@ -38,11 +37,10 @@ public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution,
         base.Execute();
 
         //Create a new ExtractionInformation (contains the transform sql / column name)
-        var newExtractionInformation = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository,
-            _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
+        var newExtractionInformation = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
 
         //it will be Core but if the Catalogue is ProjectSpecific then instead we should make our new ExtractionInformation ExtractionCategory.ProjectSpecific
-        if (_catalogueItem.Catalogue.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository))
+        if(_catalogueItem.Catalogue.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository))
         {
             newExtractionInformation.ExtractionCategory = ExtractionCategory.ProjectSpecific;
             newExtractionInformation.SaveToDatabase();

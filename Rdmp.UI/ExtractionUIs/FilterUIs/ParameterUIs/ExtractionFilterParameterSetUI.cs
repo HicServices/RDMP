@@ -13,25 +13,20 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 
 /// <summary>
-///     Extraction Filter Parameter Sets are 'known good values' of 1 or more parameters of an extraction filter.  For
-///     example you might have a filter 'Hospitalised with conditions'
-///     with a parameter @listOfConditionCodes, then you can have multiple ExtractionFilterParameterSets 'Dementia
-///     Conditions', 'High Blood Pressure', 'Coronary Heart Disease' which
-///     are currated lists of codes that are effectively just a 'good value' for the main filter.
-///     <para>This user interface lets you edit one of these.</para>
+/// Extraction Filter Parameter Sets are 'known good values' of 1 or more parameters of an extraction filter.  For example you might have a filter 'Hospitalised with conditions'
+/// with a parameter @listOfConditionCodes, then you can have multiple ExtractionFilterParameterSets 'Dementia Conditions', 'High Blood Pressure', 'Coronary Heart Disease' which
+/// are currated lists of codes that are effectively just a 'good value' for the main filter.
+/// 
+/// <para>This user interface lets you edit one of these.</para>
 /// </summary>
 public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterSetUI_Design, ISaveableUI
 {
     private ExtractionFilterParameterSet _extractionFilterParameterSet;
-
-    public ExtractionFilterParameterSetUI()
-    {
-        InitializeComponent();
-    }
-
+        
     public ExtractionFilterParameterSet ExtractionFilterParameterSet
     {
         get => _extractionFilterParameterSet;
@@ -50,11 +45,17 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
 
         var factory = new ParameterCollectionUIOptionsFactory();
         var options = ParameterCollectionUIOptionsFactory.Create(ExtractionFilterParameterSet);
-        parameterCollectionUI1.SetUp(options, Activator);
+        parameterCollectionUI1.SetUp(options,Activator);
+    }
+
+    public ExtractionFilterParameterSetUI()
+    {
+        InitializeComponent();
     }
 
     private void ExtractionFilterParameterSetUI_Load(object sender, EventArgs e)
     {
+
     }
 
     private void tbName_TextChanged(object sender, EventArgs e)
@@ -75,14 +76,12 @@ public partial class ExtractionFilterParameterSetUI : ExtractionFilterParameterS
 
     public override void SetDatabaseObject(IActivateItems activator, ExtractionFilterParameterSet databaseObject)
     {
-        base.SetDatabaseObject(activator, databaseObject);
+        base.SetDatabaseObject(activator,databaseObject);
         ExtractionFilterParameterSet = databaseObject;
     }
 }
 
-[TypeDescriptionProvider(
-    typeof(AbstractControlDescriptionProvider<ExtractionFilterParameterSetUI_Design, UserControl>))]
-public abstract class
-    ExtractionFilterParameterSetUI_Design : RDMPSingleDatabaseObjectControl<ExtractionFilterParameterSet>
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExtractionFilterParameterSetUI_Design, UserControl>))]
+public abstract class ExtractionFilterParameterSetUI_Design : RDMPSingleDatabaseObjectControl<ExtractionFilterParameterSet>
 {
 }

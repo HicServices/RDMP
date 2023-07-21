@@ -9,15 +9,14 @@ using System;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 
 /// <summary>
-///     Used to indicate a property that contains sql e.g. Where logic, Select logic etc.  Using this property makes the
-///     Attribute
-///     'find and replaceable' through the FindAndReplaceUI
+/// Used to indicate a property that contains sql e.g. Where logic, Select logic etc.  Using this property makes the Attribute
+/// 'find and replaceable' through the FindAndReplaceUI
 /// </summary>
-[AttributeUsage(AttributeTargets.Property)]
+[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 public class SqlAttribute : Attribute
 {
     /// <summary>
-    ///     True to skip the component when executing (but still show it at design time).
+    /// True to skip the component when executing (but still show it at design time).
     /// </summary>
     private bool IsDisabled { get; set; }
 }

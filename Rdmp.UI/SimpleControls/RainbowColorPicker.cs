@@ -12,10 +12,11 @@ using System.Linq;
 namespace Rdmp.UI.SimpleControls;
 
 /// <summary>
-///     Generates colours on the visual spectrum between blue and red using interoplation.
+/// Generates colours on the visual spectrum between blue and red using interoplation.
 /// </summary>
 public class RainbowColorPicker
 {
+    public List<Color> Colors { get; private set; }
     public RainbowColorPicker(int numberOfColors)
     {
         Colors = new List<Color>();
@@ -28,7 +29,7 @@ public class RainbowColorPicker
             Color.Yellow,
             Color.Orange,
             Color.Red
-        }; // create a color list
+        };  // create a color list
         Colors = interpolateColors(baseColors, numberOfColors);
     }
 
@@ -40,11 +41,9 @@ public class RainbowColorPicker
         {
             color1,
             color2
-        }; // create a color list
+        };  // create a color list
         Colors = interpolateColors(baseColors, numberOfColors);
     }
-
-    public List<Color> Colors { get; private set; }
 
     private static List<Color> interpolateColors(List<Color> stopColors, int count)
     {
@@ -71,7 +70,6 @@ public class RainbowColorPicker
             for (var i = 0; i < count; i++) ColorList.Add(bmp.GetPixel(i, 0));
             br.Dispose();
         }
-
         return ColorList;
     }
 }

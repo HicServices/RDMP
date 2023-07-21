@@ -16,28 +16,6 @@ namespace Rdmp.Core.Tests.Validation;
 [Category("Unit")]
 internal class PredictionValidationTest
 {
-    private static Validator CreateInitialisedValidator(SecondaryConstraint prediction)
-    {
-        var i = new ItemValidator
-        {
-            PrimaryConstraint = new Chi()
-        };
-        i.SecondaryConstraints.Add(prediction);
-
-        var v = new Validator();
-        v.AddItemValidator(i, "chi", typeof(string));
-        return v;
-    }
-
-    private static Validator CreateInitialisedValidatorWithNoPrimaryConstraint(SecondaryConstraint prediction)
-    {
-        var i = new ItemValidator();
-        i.SecondaryConstraints.Add(prediction);
-
-        var v = new Validator();
-        v.AddItemValidator(i, "chi", typeof(string));
-        return v;
-    }
 
     #region Test arguments
 
@@ -48,15 +26,15 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), targetField);
         var v = CreateInitialisedValidator(prediction);
 
-        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        var ex = Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
         Assert.IsInstanceOf<MissingFieldException>(ex?.InnerException);
     }
 
     [Test]
     public void Validate_NullRule_GeneratesException()
     {
-        var ex = Assert.Throws<ArgumentException>(() => _ = new Prediction(null, "gender"));
-        StringAssert.Contains("You must specify a PredictionRule to follow", ex?.Message);
+        var ex = Assert.Throws<ArgumentException>(()=>_=new Prediction(null, "gender"));
+        StringAssert.Contains("You must specify a PredictionRule to follow",ex?.Message);
     }
 
     [Test]
@@ -65,7 +43,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction();
         var v = CreateInitialisedValidator(prediction);
 
-        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        var ex = Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
     }
 
     [Test]
@@ -76,7 +54,7 @@ internal class PredictionValidationTest
             Rule = new ChiSexPredictor()
         };
         var v = CreateInitialisedValidator(prediction);
-        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        var ex = Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
         Assert.IsInstanceOf<InvalidOperationException>(ex?.InnerException);
     }
 
@@ -88,9 +66,8 @@ internal class PredictionValidationTest
             TargetColumn = "chi"
         };
         var v = CreateInitialisedValidator(prediction);
-        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        var ex = Assert.Throws<InvalidOperationException>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
     }
-
     #endregion
 
     #region Test CHI - with primary constraint & secondary constraint
@@ -103,7 +80,7 @@ internal class PredictionValidationTest
 
         Assert.IsNull(v.Validate(TestConstants.ValidChiAndConsistentSex));
     }
-
+        
     [Test]
     public void Validate_ChiIsNull_Valid()
     {
@@ -172,8 +149,7 @@ internal class PredictionValidationTest
     }
 
     [Test]
-    public void
-        Validate_NoPrimaryConstraintChiIsInvalid_ValidBecauseWhoCaresIfChiIsInvalid_IfYouDoCareUseAChiPrimaryConstraintInstead()
+    public void Validate_NoPrimaryConstraintChiIsInvalid_ValidBecauseWhoCaresIfChiIsInvalid_IfYouDoCareUseAChiPrimaryConstraintInstead()
     {
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
@@ -182,4 +158,27 @@ internal class PredictionValidationTest
     }
 
     #endregion
+        
+    private static Validator CreateInitialisedValidator(SecondaryConstraint prediction)
+    {
+        var i = new ItemValidator
+        {
+            PrimaryConstraint = new Chi()
+        };
+        i.SecondaryConstraints.Add(prediction);
+
+        var v = new Validator();
+        v.AddItemValidator(i, "chi", typeof(string));
+        return v;
+    }
+
+    private static Validator CreateInitialisedValidatorWithNoPrimaryConstraint(SecondaryConstraint prediction)
+    {
+        var i = new ItemValidator();
+        i.SecondaryConstraints.Add(prediction);
+
+        var v = new Validator();
+        v.AddItemValidator(i, "chi", typeof(string));
+        return v;
+    }
 }

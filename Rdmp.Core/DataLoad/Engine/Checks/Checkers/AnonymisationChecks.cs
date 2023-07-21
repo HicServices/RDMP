@@ -12,8 +12,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
 /// <summary>
-///     Wrapper class for checking Anonymisation configurations (if any) of a TableInfo.  The wrapped classes are
-///     ANOTableInfoSynchronizer and IdentifierDumper.
+/// Wrapper class for checking Anonymisation configurations (if any) of a TableInfo.  The wrapped classes are ANOTableInfoSynchronizer and IdentifierDumper.
 /// </summary>
 public class AnonymisationChecks : ICheckable
 {
@@ -27,8 +26,7 @@ public class AnonymisationChecks : ICheckable
     public void Check(ICheckNotifier notifier)
     {
         //check ANO stuff is synchronized
-        notifier.OnCheckPerformed(new CheckEventArgs("Preparing to synchronize ANO configuration",
-            CheckResult.Success));
+        notifier.OnCheckPerformed(new CheckEventArgs("Preparing to synchronize ANO configuration", CheckResult.Success, null));
 
         var synchronizer = new ANOTableInfoSynchronizer(_tableInfo);
 
@@ -39,11 +37,10 @@ public class AnonymisationChecks : ICheckable
         catch (Exception e)
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Synchronization of Anonymsiation configurations of table {_tableInfo.GetRuntimeName()} failed with Exception",
-                CheckResult.Fail, e));
+                $"Synchronization of Anonymsiation configurations of table {_tableInfo.GetRuntimeName()} failed with Exception", CheckResult.Fail, e, null));
         }
 
-        if (_tableInfo.IdentifierDumpServer_ID != null)
+        if(_tableInfo.IdentifierDumpServer_ID != null)
         {
             var identifierDumper = new IdentifierDumper(_tableInfo);
             identifierDumper.Check(notifier);

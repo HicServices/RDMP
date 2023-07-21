@@ -38,45 +38,38 @@ using Rdmp.UI.TransparentHelpSystem.ProgressTracking;
 namespace Rdmp.UI.ProjectUI;
 
 /// <summary>
-///     Allows you to execute an extraction of a project configuration (Generate anonymous project data extractions for
-///     researchers).  You should make sure that you have already selected
-///     the correct datasets, filters, transforms etc to meet the researchers project requirements (and governance
-///     approvals) - See ExtractionConfigurationUI and ConfigureDatasetUI.
-///     <para>
-///         Start by selecting which datasets you want to execute (this can be an iterative process - you can extract half
-///         of them overnight and then come back and extract the other half the
-///         next night).
-///     </para>
-///     <para>
-///         Next you should select/create a new extraction pipeline (See 'Pipelines' in UserManual.md).  This will
-///         determine the format of the extracted data
-///         (e.g. .CSV or .MDB database file or any other file for which you have a plugin implemented for).
-///     </para>
+/// Allows you to execute an extraction of a project configuration (Generate anonymous project data extractions for researchers).  You should make sure that you have already selected
+/// the correct datasets, filters, transforms etc to meet the researchers project requirements (and governance approvals) - See ExtractionConfigurationUI and ConfigureDatasetUI.
+/// 
+/// <para>Start by selecting which datasets you want to execute (this can be an iterative process - you can extract half of them overnight and then come back and extract the other half the
+/// next night).</para>
+/// 
+/// <para>Next you should select/create a new extraction pipeline (See 'Pipelines' in UserManual.md).  This will determine the format of the extracted data
+/// (e.g. .CSV or .MDB database file or any other file for which you have a plugin implemented for).</para>
 /// </summary>
 public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 {
-    private const string CoreDatasets = "Core";
-    private const string ProjectSpecificDatasets = "Project Specific";
-    private HashSet<ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>> _bundledStuff;
-
-    private readonly RDMPCollectionCommonFunctionality _commonFunctionality = new();
-
-    private readonly ExtractionArbitraryFolderNode _coreDatasetsFolder = new(CoreDatasets, 1);
-    private ISelectedDataSets[] _datasets;
+    private IPipelineSelectionUI _pipelineSelectionUI1;
 
     private ExtractionConfiguration _extractionConfiguration;
 
     private IMapsDirectlyToDatabaseTable[] _globals;
-    private readonly ArbitraryFolderNode _globalsFolder = new(ExtractionDirectory.GLOBALS_DATA_NAME, 0);
+    private ISelectedDataSets[] _datasets;
+    private HashSet<ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>> _bundledStuff;
 
-    private bool _isFirstTime = true;
+    private RDMPCollectionCommonFunctionality _commonFunctionality = new();
+
+    private const string CoreDatasets = "Core";
+    private const string ProjectSpecificDatasets = "Project Specific";
+
+    private ExtractionArbitraryFolderNode _coreDatasetsFolder = new(CoreDatasets,1);
+    private ExtractionArbitraryFolderNode _projectSpecificDatasetsFolder = new(ProjectSpecificDatasets,2);
+    private ArbitraryFolderNode _globalsFolder = new(ExtractionDirectory.GLOBALS_DATA_NAME,0);
 
     private ToolStripControlHost _pipelinePanel;
-    private IPipelineSelectionUI _pipelineSelectionUI1;
-    private readonly ExtractionArbitraryFolderNode _projectSpecificDatasetsFolder = new(ProjectSpecificDatasets, 2);
 
-    private readonly ToolStripLabel lblMaxConcurrent = new("Concurrent:");
-    private readonly ToolStripTextBox tbMaxConcurrent = new() { Text = "3" };
+    private ToolStripLabel lblMaxConcurrent = new("Concurrent:");
+    private ToolStripTextBox tbMaxConcurrent = new() { Text="3"};
 
     public ExecuteExtractionUI()
     {
@@ -86,7 +79,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         checkAndExecuteUI1.CommandGetter = CommandGetter;
         checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
         checkAndExecuteUI1.GroupBySender();
-
+            
         olvState.ImageGetter = State_ImageGetter;
         olvState.AspectGetter = State_AspectGetter;
 
@@ -94,7 +87,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         tlvDatasets.CanExpandGetter = CanExpandGetter;
         tlvDatasets.HierarchicalCheckboxes = true;
         tlvDatasets.ItemActivate += TlvDatasets_ItemActivate;
-
+            
         checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
 
         tlvDatasets.CellClick += tlvDatasets_CellClick;
@@ -102,14 +95,12 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         _coreDatasetsFolder.CommandGetter = () =>
             new IAtomicCommand[]
             {
-                new ExecuteCommandAddDatasetsToConfiguration(Activator, _extractionConfiguration),
-                new ExecuteCommandAddPackageToConfiguration(Activator, _extractionConfiguration)
+                new ExecuteCommandAddDatasetsToConfiguration(Activator,_extractionConfiguration),
+                new ExecuteCommandAddPackageToConfiguration(Activator,_extractionConfiguration)
             };
-
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvName,
-            new Guid("57c60bc1-9935-49b2-bb32-58e4c20ad666"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvState,
-            new Guid("22642c7d-342b-4a6c-b2c4-7ca581877cb2"));
+            
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvName, new Guid("57c60bc1-9935-49b2-bb32-58e4c20ad666"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvDatasets, olvState, new Guid("22642c7d-342b-4a6c-b2c4-7ca581877cb2"));
     }
 
     private void TlvDatasets_ItemActivate(object sender, EventArgs e)
@@ -124,7 +115,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         {
             var notifier = GetCheckNotifier(e.Model);
 
-            if (notifier == null)
+            if(notifier == null)
                 return;
 
             var popup = new PopupChecksUI(e.Model.ToString(), false);
@@ -134,19 +125,20 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
     private HelpWorkflow BuildHelpFlow()
     {
-        var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(Activator),
-            new NullHelpWorkflowProgressProvider());
+        var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(Activator), new NullHelpWorkflowProgressProvider());
 
         //////Normal work flow
         var root = new HelpStage(tlvDatasets, "Choose the datasets and Globals you want to extract here.\r\n" +
                                               "\r\n" +
                                               "Click on the red icon to disable this help.");
         var stage2 = new HelpStage(_pipelinePanel.Control, "Select the pipeline to run for extracting the data.\r\n");
-
+            
         root.SetOption(">>", stage2);
         stage2.SetOption(">>", checkAndExecuteUI1.HelpStages.First());
         for (var i = 0; i < checkAndExecuteUI1.HelpStages.Count - 1; i++)
-            checkAndExecuteUI1.HelpStages[i].SetOption(">>", checkAndExecuteUI1.HelpStages[i + 1]);
+        {
+            checkAndExecuteUI1.HelpStages[i].SetOption(">>", checkAndExecuteUI1.HelpStages[i+1]);
+        }
 
         checkAndExecuteUI1.HelpStages.Last().SetOption("|<<", root);
 
@@ -162,7 +154,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     private bool CanExpandGetter(object model)
     {
         var e = ChildrenGetter(model);
-        return e != null && e.Cast<object>().Any();
+        return  e != null && e.Cast<object>().Any();
     }
 
     private IEnumerable ChildrenGetter(object model)
@@ -203,7 +195,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
         if (extractionRunner != null && rowObject is SelectedDataSets sds)
             return extractionRunner.GetState(sds.ExtractableDataSet);
-
+            
         return null;
     }
 
@@ -216,17 +208,18 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
         if (extractionRunner != null && rowObject is SelectedDataSets sds)
             return extractionRunner.GetCheckNotifier(sds.ExtractableDataSet);
-
+            
         return null;
     }
-
     private object State_AspectGetter(object rowobject)
     {
         var state = GetState(rowobject);
 
-        if (state is ExtractCommandState ecs)
-            if (ecs == ExtractCommandState.WaitingForSQLServer)
+        if(state is ExtractCommandState ecs)
+        {
+            if(ecs == ExtractCommandState.WaitingForSQLServer)
                 return "WaitingForDatabase";
+        }
 
         return state?.ToString();
     }
@@ -244,15 +237,13 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
             MaxConcurrentExtractions = max,
             ExtractionConfiguration = _extractionConfiguration.ID.ToString(),
-            Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
-            Datasets = _datasets.All(tlvDatasets.IsChecked)
-                ? ""
-                : string.Join(",",
-                    _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID.ToString())
-                        .ToArray())
+            Pipeline = _pipelineSelectionUI1.Pipeline == null? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
+            Datasets = _datasets.All(tlvDatasets.IsChecked) ? "" :
+                string.Join(",",_datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID.ToString()).ToArray())
         };
     }
 
+    private bool _isFirstTime = true;
     public override void SetDatabaseObject(IActivateItems activator, ExtractionConfiguration databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
@@ -264,14 +255,13 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
 
         if (!_commonFunctionality.IsSetup)
-            _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets, activator, olvName, null,
-                new RDMPCollectionCommonFunctionalitySettings
-                {
-                    AddFavouriteColumn = false,
-                    SuppressChildrenAdder = true,
-                    SuppressActivate = true,
-                    AddCheckColumn = false
-                });
+            _commonFunctionality.SetUp(RDMPCollection.None, tlvDatasets,activator,olvName,null,new RDMPCollectionCommonFunctionalitySettings
+            {
+                AddFavouriteColumn = false,
+                SuppressChildrenAdder=true,
+                SuppressActivate = true,
+                AddCheckColumn = false
+            });
 
         var checkedBefore = tlvDatasets.CheckedObjects;
 
@@ -302,10 +292,9 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
         {
             //create a new selection UI (pick an extraction pipeliene UI)
             var useCase = ExtractionPipelineUseCase.DesignTime();
-            var factory =
-                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, useCase);
+            var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
-            _pipelineSelectionUI1 = factory.Create(activator, "Extraction Pipeline", DockStyle.Fill);
+            _pipelineSelectionUI1 = factory.Create(activator,"Extraction Pipeline", DockStyle.Fill);
             _pipelineSelectionUI1.CollapseToSingleLineMode();
 
             //if the configuration has a default then use that pipeline
@@ -314,40 +303,36 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
             _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
 
-            _pipelinePanel = new ToolStripControlHost((Control)_pipelineSelectionUI1);
+            _pipelinePanel = new ToolStripControlHost((Control) _pipelineSelectionUI1);
 
-            helpIcon1.SetHelpText("Extraction",
-                "It is a wise idea to click here if you don't know what this screen can do for you...",
-                BuildHelpFlow());
+            helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
         }
 
         CommonFunctionality.Add(new ToolStripLabel("Extraction Pipeline:"));
         CommonFunctionality.Add(_pipelinePanel);
-        CommonFunctionality.AddHelpStringToToolStrip("Extraction Pipeline",
-            "The sequence of components that will be executed in order to enable the datasets to be extracted. This will start with a source component that performs the linkage against the cohort followed by subsequent components (if any) and then a destination component that writes the final records (e.g. to database / csv file etc).");
+        CommonFunctionality.AddHelpStringToToolStrip("Extraction Pipeline","The sequence of components that will be executed in order to enable the datasets to be extracted. This will start with a source component that performs the linkage against the cohort followed by subsequent components (if any) and then a destination component that writes the final records (e.g. to database / csv file etc).");
 
         CommonFunctionality.AddToMenu(new ExecuteCommandRelease(activator).SetTarget(_extractionConfiguration));
 
         CommonFunctionality.Add(lblMaxConcurrent);
         CommonFunctionality.Add(tbMaxConcurrent);
-        CommonFunctionality.AddHelpStringToToolStrip("Concurrent",
-            "The maximum number of datasets to extract at once.  Once this number is reached the remainder will be queued and only started when one of the other extracting datasets completes.");
+        CommonFunctionality.AddHelpStringToToolStrip("Concurrent", "The maximum number of datasets to extract at once.  Once this number is reached the remainder will be queued and only started when one of the other extracting datasets completes.");
 
         checkAndExecuteUI1.SetItemActivator(activator);
 
-        foreach (var o in new[] { _globalsFolder, _coreDatasetsFolder, _projectSpecificDatasetsFolder })
+        foreach(var o in new[] { _globalsFolder, _coreDatasetsFolder, _projectSpecificDatasetsFolder})
             tlvDatasets.Expand(o);
 
         if (_isFirstTime)
         {
             tlvDatasets.CheckAll();
             foreach (var disabledObject in tlvDatasets.DisabledObjects.OfType<ArbitraryFolderNode>())
+            {
                 tlvDatasets.UncheckObject(disabledObject);
+            }
         }
         else if (checkedBefore.Count > 0)
-        {
             tlvDatasets.CheckObjects(checkedBefore);
-        }
 
         _isFirstTime = false;
     }
@@ -360,7 +345,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
-        tlvDatasets.ModelFilter = new TextMatchFilter(tlvDatasets, tbFilter.Text);
+        tlvDatasets.ModelFilter = new TextMatchFilter(tlvDatasets,tbFilter.Text);
         tlvDatasets.UseFiltering = true;
     }
 
@@ -373,18 +358,13 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             var eds = sds.ExtractableDataSet;
 
             foreach (var document in eds.Catalogue.GetAllSupportingDocuments(FetchOptions.ExtractableLocals))
-                _bundledStuff.Add(
-                    new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds, document));
+                _bundledStuff.Add( new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds,document));
 
-            foreach (var supportingSQLTable in eds.Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions
-                         .ExtractableLocals))
-                _bundledStuff.Add(
-                    new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds,
-                        supportingSQLTable));
+            foreach (var supportingSQLTable in eds.Catalogue.GetAllSupportingSQLTablesForCatalogue(FetchOptions.ExtractableLocals))
+                _bundledStuff.Add(new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds, supportingSQLTable));
 
             foreach (var lookup in eds.Catalogue.GetLookupTableInfoList())
-                _bundledStuff.Add(
-                    new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds, lookup));
+                _bundledStuff.Add(new ObjectUsedByOtherObjectNode<ISelectedDataSets, IMapsDirectlyToDatabaseTable>(sds, lookup));
         }
     }
 
@@ -409,7 +389,6 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
     {
         return $"{_extractionConfiguration.GetProjectHint(true)} {base.GetTabName()}";
     }
-
     public override string GetTabToolTip()
     {
         return $"'{base.GetTabName()}' - {_extractionConfiguration.GetProjectHint(false)}";
@@ -417,6 +396,6 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExecuteExtractionUI_Design, UserControl>))]
-public abstract class ExecuteExtractionUI_Design : RDMPSingleDatabaseObjectControl<ExtractionConfiguration>
+public abstract class ExecuteExtractionUI_Design:RDMPSingleDatabaseObjectControl<ExtractionConfiguration>
 {
 }

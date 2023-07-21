@@ -4,13 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using System.IO;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -20,8 +20,7 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
     private readonly AggregateConfiguration _aggregate;
     private readonly FileInfo _toFile;
 
-    public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, AggregateConfiguration aggregate,
-        FileInfo toFile = null) : base(activator)
+    public ExecuteCommandExecuteAggregateGraph(IBasicActivateItems activator, AggregateConfiguration aggregate, FileInfo toFile=null) : base(activator)
     {
         _aggregate = aggregate;
         _toFile = toFile;
@@ -42,16 +41,16 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
     {
         base.Execute();
 
-        if (_toFile != null)
+        if(_toFile != null)
         {
             var collection = new ViewAggregateExtractUICollection(_aggregate);
-            ExtractTableVerbatim.ExtractDataToFile(collection, _toFile);
+            ExtractTableVerbatim.ExtractDataToFile(collection,_toFile);
         }
         else
         {
             BasicActivator.ShowGraph(_aggregate);
         }
-    }
+    }        
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {

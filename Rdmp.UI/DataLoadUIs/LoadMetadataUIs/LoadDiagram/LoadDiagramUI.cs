@@ -29,52 +29,40 @@ using Rdmp.UI.DataViewing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 
 /// <summary>
-///     This control functions in two ways.
-///     <para>
-///         Firstly it allows you to visualise both the anticipated tables that will be created during a data load (See
-///         LoadMetadataUI) including columns which vary by stage e.g. hic_validFrom which
-///         is computed and only in LIVE and primary keys which are unconstrained (nullable) in RAW.
-///     </para>
-///     <para>
-///         Secondly it allows you to (on demand) view the actual state of the tables as they exist now.  This is done by
-///         clicking 'Fetch State'. Note that RAW and STAGING will likely not
-///         exist at the time you are viewing this control (design time) as they are created during the load as part of
-///         normal execution and dropped at the end.  The diagram also shows the LIVE
-///         database and tables that are associated with the load.
-///     </para>
-///     <para>
-///         You can click check the state at any time even during a load or after a failed load (Where bubbles RAW and
-///         STAGING will be left for you to debug).  Double clicking a Table will allow you
-///         to see what is in the table and let you run diagnostic SQL you type to run on it (this lets you debug what went
-///         wrong with your load / the data you were supplied with).
-///     </para>
-///     <para>
-///         The way that tables/databases are determined is via UNIONing all the TableInfos of all the Catalogues that are
-///         associated with the load (including any linked lookup tables).  See
-///         LoadMetadataCollectionUI for changing this.
-///     </para>
+///  This control functions in two ways.
+/// 
+/// <para>Firstly it allows you to visualise both the anticipated tables that will be created during a data load (See LoadMetadataUI) including columns which vary by stage e.g. hic_validFrom which
+/// is computed and only in LIVE and primary keys which are unconstrained (nullable) in RAW.</para>
+/// 
+/// <para>Secondly it allows you to (on demand) view the actual state of the tables as they exist now.  This is done by clicking 'Fetch State'. Note that RAW and STAGING will likely not
+/// exist at the time you are viewing this control (design time) as they are created during the load as part of normal execution and dropped at the end.  The diagram also shows the LIVE
+/// database and tables that are associated with the load.</para>
+/// 
+/// <para>You can click check the state at any time even during a load or after a failed load (Where bubbles RAW and STAGING will be left for you to debug).  Double clicking a Table will allow you
+/// to see what is in the table and let you run diagnostic SQL you type to run on it (this lets you debug what went wrong with your load / the data you were supplied with).</para>
+/// 
+/// <para>The way that tables/databases are determined is via UNIONing all the TableInfos of all the Catalogues that are associated with the load (including any linked lookup tables).  See
+/// LoadMetadataCollectionUI for changing this.</para>
 /// </summary>
 public partial class LoadDiagramUI : LoadDiagram_Design
 {
-    private readonly ToolStripButton _btnFetchData = new("Fetch State", CatalogueIcons.DatabaseRefresh.ImageToBitmap())
+    private LoadMetadata _loadMetadata;
+    private DragDropProvider _dragDropProvider;
+    private LoadDiagramServerNode _raw;
+    private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
+    private readonly ToolStripButton _btnFetchData = new("Fetch State",CatalogueIcons.DatabaseRefresh.ImageToBitmap())
     {
         DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
     };
 
-    private readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new();
-    private DragDropProvider _dragDropProvider;
-    private LoadMetadata _loadMetadata;
-    private LoadDiagramServerNode _raw;
-
-    private Task taskDiscoverState;
-
     public LoadDiagramUI()
     {
         InitializeComponent();
-
+            
         tlvLoadedTables.CanExpandGetter += CanExpandGetter;
         tlvLoadedTables.ChildrenGetter += ChildrenGetter;
         olvName.ImageGetter += ImageGetter;
@@ -91,12 +79,9 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
         _btnFetchData.Click += btnFetch_Click;
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvName,
-            new Guid("d9fa87d8-537b-4d5c-8135-203b5790d8e5"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvState,
-            new Guid("9bc71a44-5a59-4a6c-8a97-efc512dc23bf"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvDataType,
-            new Guid("4cd3b1c5-c705-433c-a6b4-5ffd3a9b3ede"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvName, new Guid("d9fa87d8-537b-4d5c-8135-203b5790d8e5"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvState, new Guid("9bc71a44-5a59-4a6c-8a97-efc512dc23bf"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLoadedTables, olvDataType, new Guid("4cd3b1c5-c705-433c-a6b4-5ffd3a9b3ede"));
     }
 
     private void tlvLoadedTables_ItemActivate(object sender, EventArgs e)
@@ -110,26 +95,25 @@ public partial class LoadDiagramUI : LoadDiagram_Design
             if (tableNode.Bubble == LoadBubble.Live)
             {
                 //for live just use the TableInfo!
-                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(
-                    new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
+                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
                 return;
             }
             else
-            {
-                table = tableNode
-                    .Table; //otherwise it's a non Live bubble table or an unplanned table somewhere so use Arbitrary table Data Viewing
-            }
-
-        if (table != null)
+                table = tableNode.Table; //otherwise it's a non Live bubble table or an unplanned table somewhere so use Arbitrary table Data Viewing
+            
+        if(table != null)
             Activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ArbitraryTableExtractionUICollection(table));
     }
 
     private void tlvLoadedTables_FormatCell(object sender, FormatCellEventArgs e)
     {
         if (e.Column == olvDataType && e.Model is LoadDiagramColumnNode { State: LoadDiagramState.Different })
+        {
             e.SubItem.ForeColor = Color.Red;
+        }
 
         if (e.Column == olvState && e.CellValue is LoadDiagramState state)
+        {
             e.SubItem.ForeColor = state switch
             {
                 LoadDiagramState.Anticipated => Color.LightGray,
@@ -141,6 +125,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                 LoadDiagramState.New => Color.Red,
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
     }
 
     private object olvState_AspectGetter(object rowobject)
@@ -217,7 +202,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     {
         tlvLoadedTables.ClearObjects();
 
-        if (_loadMetadata == null)
+        if(_loadMetadata == null)
             return;
 
         TableInfo[] allTables;
@@ -225,25 +210,22 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
         try
         {
-            if (!_loadMetadata.GetAllCatalogues().Any())
-                throw new Exception(
-                    "There are no Catalogues (Datasets) associated with this LoadMetadata, choose one or more Catalogues by clicking 'Edit..' in LoadMetadataUI ");
+            if(!_loadMetadata.GetAllCatalogues().Any())
+                throw new Exception("There are no Catalogues (Datasets) associated with this LoadMetadata, choose one or more Catalogues by clicking 'Edit..' in LoadMetadataUI ");
 
             allTables = _loadMetadata.GetDistinctTableInfoList(true).ToArray();
             config = new HICDatabaseConfiguration(_loadMetadata);
         }
         catch (Exception e)
         {
-            CommonFunctionality.Fatal("Could not fetch data", e);
+            CommonFunctionality.Fatal("Could not fetch data",e);
             tlvLoadedTables.Visible = false;
             return;
         }
-
         tlvLoadedTables.Visible = true;
 
-        _raw = new LoadDiagramServerNode(LoadBubble.Raw, config.DeployInfo[LoadBubble.Raw], allTables, config);
-        var staging = new LoadDiagramServerNode(LoadBubble.Staging, config.DeployInfo[LoadBubble.Staging], allTables,
-            config);
+        _raw = new LoadDiagramServerNode(LoadBubble.Raw,config.DeployInfo[LoadBubble.Raw],allTables,config);
+        var staging = new LoadDiagramServerNode(LoadBubble.Staging, config.DeployInfo[LoadBubble.Staging], allTables,config);
         var live = new LoadDiagramServerNode(LoadBubble.Live, config.DeployInfo[LoadBubble.Live], allTables, config);
 
         tlvLoadedTables.AddObject(_raw);
@@ -259,13 +241,13 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void ExpandToDepth(int expansionDepth, object currentObject)
     {
-        if (expansionDepth == 0)
+        if(expansionDepth == 0)
             return;
 
         tlvLoadedTables.Expand(currentObject);
 
         foreach (var o in ChildrenGetter(currentObject))
-            ExpandToDepth(expansionDepth - 1, o);
+            ExpandToDepth(expansionDepth -1,o);
     }
 
     private void cbOnlyShowDynamicColumns_CheckedChanged(object sender, EventArgs e)
@@ -278,19 +260,17 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         base.SetDatabaseObject(activator, databaseObject);
 
         if (!_collectionCommonFunctionality.IsSetup)
-            _collectionCommonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables, activator, null, null,
-                new RDMPCollectionCommonFunctionalitySettings
-                {
-                    AddFavouriteColumn = false,
-                    AddIDColumn = false,
-                    SuppressChildrenAdder = true,
-                    SuppressActivate = true,
-                    AddCheckColumn = false
-                });
+            _collectionCommonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables,activator,null,null,new RDMPCollectionCommonFunctionalitySettings
+            {
+                AddFavouriteColumn = false,
+                AddIDColumn = false,
+                SuppressChildrenAdder = true,
+                SuppressActivate = true,
+                AddCheckColumn = false
+            });
 
-        _dragDropProvider ??= new DragDropProvider(new RDMPCombineableFactory(),
-            new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
-
+        _dragDropProvider ??= new DragDropProvider(new RDMPCombineableFactory(), new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
+            
         _loadMetadata = databaseObject;
         RefreshUIFromDatabase();
 
@@ -302,17 +282,17 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         return $"Load Diagram ({_loadMetadata})";
     }
 
+    private Task taskDiscoverState;
     private void btnFetch_Click(object sender, EventArgs e)
     {
         //execution is already underway
-        if (taskDiscoverState != null && !taskDiscoverState.IsCompleted)
+        if(taskDiscoverState != null && !taskDiscoverState.IsCompleted)
             return;
 
         CommonFunctionality.ResetChecks();
         _btnFetchData.Enabled = false;
         pbLoading.Visible = true;
-        taskDiscoverState = Task.Run(() => DiscoverStates())
-            .ContinueWith(UpdateStatesUI, TaskScheduler.FromCurrentSynchronizationContext());
+        taskDiscoverState = Task.Run(() => DiscoverStates()).ContinueWith(UpdateStatesUI,TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     private void UpdateStatesUI(Task task)
@@ -337,19 +317,20 @@ public partial class LoadDiagramUI : LoadDiagram_Design
         }
         catch (Exception exception)
         {
-            CommonFunctionality.Fatal("Failed to fetch status of load tables", exception);
+            CommonFunctionality.Fatal("Failed to fetch status of load tables",exception);
         }
         finally
         {
             pbLoading.Visible = false;
             _btnFetchData.Enabled = true;
         }
+
     }
 
     private void DiscoverStates()
     {
         if (tlvLoadedTables.Objects == null || !tlvLoadedTables.Objects.Cast<object>().Any())
-            CommonFunctionality.Fatal("There are no tables loaded by the load", null);
+            CommonFunctionality.Fatal("There are no tables loaded by the load",null);
 
 
         //update the states of the objects (do UI code happens here)
@@ -360,8 +341,7 @@ public partial class LoadDiagramUI : LoadDiagram_Design
     private void tbFilter_TextChanged(object sender, EventArgs e)
     {
         tlvLoadedTables.UseFiltering = true;
-        tlvLoadedTables.ModelFilter =
-            new TextMatchFilter(tlvLoadedTables, tbFilter.Text, StringComparison.CurrentCultureIgnoreCase);
+        tlvLoadedTables.ModelFilter = new TextMatchFilter(tlvLoadedTables,tbFilter.Text,StringComparison.CurrentCultureIgnoreCase);
     }
 }
 

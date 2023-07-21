@@ -69,6 +69,7 @@ internal class TableInfoTests : DatabaseTests
     }
 
 
+
     [Test]
     [TestCase("[TestDB]..[TestTableName]", "[TestDB]..[TestTableName].[ANOMyCol]")]
     [TestCase("TestDB..TestTableName", "TestDB..TestTableName.ANOMyCol")]
@@ -87,7 +88,7 @@ internal class TableInfoTests : DatabaseTests
 
         try
         {
-            Assert.AreEqual("ANOMyCol", c.GetRuntimeName());
+            Assert.AreEqual("ANOMyCol",c.GetRuntimeName());
             Assert.AreEqual("MyCol", c.GetRuntimeName(LoadStage.AdjustRaw));
             Assert.AreEqual("ANOMyCol", c.GetRuntimeName(LoadStage.PostLoad));
 
@@ -96,12 +97,12 @@ internal class TableInfoTests : DatabaseTests
             Assert.AreEqual("TestDB_TestTableName_STAGING", table.GetRuntimeName(LoadBubble.Staging));
 
             Assert.AreEqual("TestTableName_STAGING", table.GetRuntimeName(LoadBubble.Staging, new SuffixBasedNamer()));
-            Assert.AreEqual("TestDB_TestTableName_STAGING",
-                table.GetRuntimeName(LoadBubble.Staging, new FixedStagingDatabaseNamer("TestDB")));
+            Assert.AreEqual("TestDB_TestTableName_STAGING", table.GetRuntimeName(LoadBubble.Staging, new FixedStagingDatabaseNamer("TestDB")));
 
             Assert.AreEqual("TestTableName", table.GetRuntimeName(LoadBubble.Live));
+
         }
-        finally
+        finally 
         {
             c.DeleteInDatabase();
             table.DeleteInDatabase();
@@ -119,20 +120,19 @@ internal class TableInfoTests : DatabaseTests
 
             db.Server.GetCommand("CREATE SCHEMA Omg", con).ExecuteNonQuery();
 
-            var tbl = db.CreateTable("Fish",
-                new[] { new DatabaseColumnRequest("MyCol", "int") { IsPrimaryKey = true } }, "Omg");
+            var tbl = db.CreateTable("Fish", new [] {new DatabaseColumnRequest("MyCol", "int"){IsPrimaryKey = true}},schema: "Omg");
 
             Assert.AreEqual("Fish", tbl.GetRuntimeName());
-            Assert.AreEqual("Omg", tbl.Schema);
+            Assert.AreEqual( "Omg", tbl.Schema);
             Assert.IsTrue(tbl.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
 
             Assert.IsTrue(tbl.Exists());
 
-            Import(tbl, out var ti, out var cols);
+            Import(tbl,out var ti, out var cols);
 
-            Assert.AreEqual("Omg", ti.Schema);
+            Assert.AreEqual("Omg",ti.Schema);
             var tbl2 = ti.Discover(DataAccessContext.InternalDataProcessing);
-            Assert.AreEqual("Omg", tbl2.Schema);
+            Assert.AreEqual("Omg",tbl2.Schema);
             Assert.IsTrue(tbl2.Exists());
 
             Assert.IsTrue(ti.Name.EndsWith("[Omg].[Fish]"));
@@ -141,45 +141,44 @@ internal class TableInfoTests : DatabaseTests
 
             var c = cols.Single();
 
-            Assert.AreEqual("MyCol", c.GetRuntimeName());
-            StringAssert.Contains("[Omg].[Fish]", c.GetFullyQualifiedName());
+            Assert.AreEqual("MyCol",c.GetRuntimeName());
+            StringAssert.Contains("[Omg].[Fish]",c.GetFullyQualifiedName());
 
             //should be primary key
             Assert.IsTrue(c.IsPrimaryKey);
 
             var triggerFactory = new TriggerImplementerFactory(DatabaseType.MicrosoftSQLServer);
             var impl = triggerFactory.Create(tbl);
-
-            Assert.AreEqual(TriggerStatus.Missing, impl.GetTriggerStatus());
+                
+            Assert.AreEqual(TriggerStatus.Missing,impl.GetTriggerStatus());
 
             impl.CreateTrigger(new ThrowImmediatelyCheckNotifier());
 
             Assert.AreEqual(TriggerStatus.Enabled, impl.GetTriggerStatus());
 
-            Assert.IsTrue(impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+            Assert.IsTrue( impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
 
             //should be synced
             var sync = new TableInfoSynchronizer(ti);
             sync.Synchronize(new AcceptAllCheckNotifier());
 
             //Test importing the _Legacy table valued function that should be created in the Omg schema and test synching that too.
-            var tvf = ti.Discover(DataAccessContext.InternalDataProcessing).Database
-                .ExpectTableValuedFunction("Fish_Legacy", "Omg");
+            var tvf = ti.Discover(DataAccessContext.InternalDataProcessing).Database.ExpectTableValuedFunction("Fish_Legacy", "Omg");
             Assert.IsTrue(tvf.Exists());
 
             var importerTvf = new TableValuedFunctionImporter(CatalogueRepository, tvf);
             importerTvf.DoImport(out var tvfTi, out var tvfCols);
 
-            Assert.AreEqual("Omg", tvfTi.Schema);
+            Assert.AreEqual("Omg",tvfTi.Schema);
 
             var syncTvf = new TableInfoSynchronizer(tvfTi);
             syncTvf.Synchronize(new ThrowImmediatelyCheckNotifier());
 
-            StringAssert.EndsWith("[Omg].Fish_Legacy(@index) AS Fish_Legacy", tvfTi.Name);
+            StringAssert.EndsWith("[Omg].Fish_Legacy(@index) AS Fish_Legacy",tvfTi.Name);
         }
     }
 
-    [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
+    [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
     public void TestView(DatabaseType dbType)
     {
         var db = GetCleanedServer(dbType);
@@ -188,18 +187,18 @@ internal class TableInfoTests : DatabaseTests
         var dt = new DataTable();
         dt.Columns.Add("FF");
 
-        var tbl = db.CreateTable("MyTable", dt);
-        Import(tbl, out var tblInfo, out _);
-
+        var tbl = db.CreateTable("MyTable",dt);
+        Import(tbl,out var tblInfo,out _);
+            
         Assert.IsTrue(tblInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
-        Assert.AreEqual(TableType.Table, tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
+        Assert.AreEqual(TableType.Table,tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
 
         var viewName = "MyView";
 
         //oracle likes to create stuff under your user account not the database your actually using!
-        if (dbType == DatabaseType.Oracle)
+        if(dbType == DatabaseType.Oracle)
             viewName = syntax.EnsureFullyQualified(tbl.Database.GetRuntimeName(), null, "MyView");
-
+            
         //postgres hates upper case tables (unless they are wrapped)
         if (dbType == DatabaseType.PostgreSql)
             viewName = syntax.EnsureWrapped(viewName);
@@ -211,24 +210,25 @@ FROM {1}",
             tbl.GetFullyQualifiedName(),
             syntax.EnsureWrapped("FF"));
 
-        using (var con = tbl.Database.Server.GetConnection())
+        using(var con = tbl.Database.Server.GetConnection())
         {
             con.Open();
 
-            var cmd = tbl.GetCommand(sql, con);
+            var cmd = tbl.GetCommand(sql,con);
             cmd.ExecuteNonQuery();
         }
 
-        var view = tbl.Database.ExpectTable("MyView", null, TableType.View);
-        Import(view, out var viewInfo, out _);
+        var view = tbl.Database.ExpectTable("MyView",null,TableType.View);
+        Import(view,out var viewInfo,out _);
 
         var sync = new TableInfoSynchronizer(viewInfo);
         sync.Synchronize(new ThrowImmediatelyCheckNotifier());
-
+            
         Assert.IsTrue(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
-        Assert.AreEqual(TableType.View, viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
+        Assert.AreEqual(TableType.View,viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
 
         view.Drop();
         Assert.IsFalse(view.Exists());
+            
     }
 }

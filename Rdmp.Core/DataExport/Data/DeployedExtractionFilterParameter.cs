@@ -18,16 +18,68 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-///     Stores parameter values for a DeployedExtractionFilter e.g. @healthboard = 'T'
+/// Stores parameter values for a DeployedExtractionFilter e.g. @healthboard = 'T'
 /// </summary>
-public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
+public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
 {
+    #region Database Properties
+    private int _extractionFilter_ID;
+    private string _parameterSQL;
+    private string _value;
+    private string _comment;
+
+    /// <summary>
+    /// The <see cref="ExtractionFilter"/> against which the parameter is declared.  The WHERE Sql of the filter should
+    /// reference this parameter (e.g. "[mydb]..[mytbl].[hb_extract] = @healthboard").
+    /// </summary>
+    [Relationship(typeof(DeployedExtractionFilter),RelationshipType.SharedObject)]
+    public int ExtractionFilter_ID
+    {
+        get => _extractionFilter_ID;
+        set => SetField(ref _extractionFilter_ID, value);
+    }
+
+    /// <inheritdoc/>
+    [Sql]
+    public string ParameterSQL
+    {
+        get => _parameterSQL;
+        set => SetField(ref _parameterSQL, value);
+    }
+
+    /// <inheritdoc/>
+    [Sql]
+    public string Value
+    {
+        get => _value;
+        set => SetField(ref _value, value);
+    }
+
+    /// <inheritdoc/>
+    public string Comment
+    {
+        get => _comment;
+        set => SetField(ref _comment, value);
+    }
+    #endregion
+        
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
+
+    #region Relationships
+    [NoMappingToDatabase]
+    public DeployedExtractionFilter ExtractionFilter => Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
+
+    #endregion
+
     public DeployedExtractionFilterParameter()
     {
+
     }
 
     /// <summary>
-    ///     Creates a new parameter in the metadata database.
+    /// Creates a new parameter in the metadata database.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parameterSQL">Declaration SQL for the parameter e.g. "DECLARE @bob as varchar(10)"</param>
@@ -38,17 +90,17 @@ public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
 
         Repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "ParameterSQL", parameterSQL },
-            { "ExtractionFilter_ID", parent.ID }
+            {"ParameterSQL", parameterSQL},
+            {"ExtractionFilter_ID", parent.ID}
         });
     }
 
     /// <summary>
-    ///     Reads an existing parameter out of the database
+    /// Reads an existing parameter out of the database
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
-    internal DeployedExtractionFilterParameter(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+    internal DeployedExtractionFilterParameter(IDataExportRepository repository, DbDataReader r): base(repository, r)
     {
         ExtractionFilter_ID = int.Parse(r["ExtractionFilter_ID"].ToString());
         ParameterSQL = r["ParameterSQL"] as string;
@@ -56,20 +108,17 @@ public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
         Comment = r["Comment"] as string;
     }
 
-    #region Relationships
-
-    [NoMappingToDatabase]
-    public DeployedExtractionFilter ExtractionFilter =>
-        Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
-
-    #endregion
-
-    /// <inheritdoc />
-    [NoMappingToDatabase]
-    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
+    /// <summary>
+    /// returns the <see cref="ParameterName"/>
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
+    {
+        return $"{ParameterName} = {Value}";
+    }
 
     /// <summary>
-    ///     Checks the parameter syntax (See <see cref="ParameterSyntaxChecker" />)
+    /// Checks the parameter syntax (See <see cref="ParameterSyntaxChecker"/>)
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -77,25 +126,16 @@ public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
         new ParameterSyntaxChecker(this).Check(notifier);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        return ((DeployedExtractionFilter)GetOwnerIfAny()).GetQuerySyntaxHelper();
+        return ((DeployedExtractionFilter) GetOwnerIfAny()).GetQuerySyntaxHelper();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
     {
         return Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
-    }
-
-    /// <summary>
-    ///     returns the <see cref="ParameterName" />
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString()
-    {
-        return $"{ParameterName} = {Value}";
     }
 
     public DeployedExtractionFilterParameter ShallowClone(DeployedExtractionFilter into)
@@ -104,47 +144,4 @@ public class DeployedExtractionFilterParameter : DatabaseEntity, ISqlParameter
         CopyShallowValuesTo(clone);
         return clone;
     }
-
-    #region Database Properties
-
-    private int _extractionFilter_ID;
-    private string _parameterSQL;
-    private string _value;
-    private string _comment;
-
-    /// <summary>
-    ///     The <see cref="ExtractionFilter" /> against which the parameter is declared.  The WHERE Sql of the filter should
-    ///     reference this parameter (e.g. "[mydb]..[mytbl].[hb_extract] = @healthboard").
-    /// </summary>
-    [Relationship(typeof(DeployedExtractionFilter), RelationshipType.SharedObject)]
-    public int ExtractionFilter_ID
-    {
-        get => _extractionFilter_ID;
-        set => SetField(ref _extractionFilter_ID, value);
-    }
-
-    /// <inheritdoc />
-    [Sql]
-    public string ParameterSQL
-    {
-        get => _parameterSQL;
-        set => SetField(ref _parameterSQL, value);
-    }
-
-    /// <inheritdoc />
-    [Sql]
-    public string Value
-    {
-        get => _value;
-        set => SetField(ref _value, value);
-    }
-
-    /// <inheritdoc />
-    public string Comment
-    {
-        get => _comment;
-        set => SetField(ref _comment, value);
-    }
-
-    #endregion
 }

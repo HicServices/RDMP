@@ -4,43 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-public class PermissionWindowUsedByCacheProgressNode : Node, IDeletableWithCustomMessage
+public class PermissionWindowUsedByCacheProgressNode: Node,IDeletableWithCustomMessage
 {
-    public PermissionWindowUsedByCacheProgressNode(CacheProgress cacheProgress, PermissionWindow permissionWindow,
-        bool directionIsCacheToPermissionWindow)
+    public CacheProgress CacheProgress { get; set; }
+    public PermissionWindow PermissionWindow { get; private set; }
+    public bool DirectionIsCacheToPermissionWindow { get; set; }
+
+    public PermissionWindowUsedByCacheProgressNode(CacheProgress cacheProgress, PermissionWindow permissionWindow, bool directionIsCacheToPermissionWindow)
     {
         CacheProgress = cacheProgress;
         PermissionWindow = permissionWindow;
         DirectionIsCacheToPermissionWindow = directionIsCacheToPermissionWindow;
-    }
-
-    public CacheProgress CacheProgress { get; set; }
-    public PermissionWindow PermissionWindow { get; }
-    public bool DirectionIsCacheToPermissionWindow { get; set; }
-
-    public void DeleteInDatabase()
-    {
-        CacheProgress.PermissionWindow_ID = null;
-        CacheProgress.SaveToDatabase();
-    }
-
-    /// <inheritdoc />
-    public string GetDeleteMessage()
-    {
-        return "remove PermissionWindow from CacheProgress";
-    }
-
-    /// <inheritdoc />
-    public string GetDeleteVerb()
-    {
-        return "Remove";
     }
 
     public override string ToString()
@@ -48,17 +28,27 @@ public class PermissionWindowUsedByCacheProgressNode : Node, IDeletableWithCusto
         return DirectionIsCacheToPermissionWindow ? PermissionWindow.Name : CacheProgress.ToString();
     }
 
-    public object GetImageObject()
+    public void DeleteInDatabase()
     {
-        return DirectionIsCacheToPermissionWindow ? PermissionWindow : CacheProgress;
+        CacheProgress.PermissionWindow_ID = null;
+        CacheProgress.SaveToDatabase();
+    }
+
+    /// <inheritdoc/>
+    public string GetDeleteMessage()
+    {
+        return "remove PermissionWindow from CacheProgress";
+    }
+    /// <inheritdoc/>
+    public string GetDeleteVerb()
+    {
+        return "Remove";
     }
 
     #region Equality Members
-
     protected bool Equals(PermissionWindowUsedByCacheProgressNode other)
     {
-        return CacheProgress.Equals(other.CacheProgress) && PermissionWindow.Equals(other.PermissionWindow) &&
-               DirectionIsCacheToPermissionWindow.Equals(other.DirectionIsCacheToPermissionWindow);
+        return CacheProgress.Equals(other.CacheProgress) && PermissionWindow.Equals(other.PermissionWindow) && DirectionIsCacheToPermissionWindow.Equals(other.DirectionIsCacheToPermissionWindow);
     }
 
     public override bool Equals(object obj)
@@ -66,13 +56,17 @@ public class PermissionWindowUsedByCacheProgressNode : Node, IDeletableWithCusto
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((PermissionWindowUsedByCacheProgressNode)obj);
+        return Equals((PermissionWindowUsedByCacheProgressNode) obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(CacheProgress, PermissionWindow, DirectionIsCacheToPermissionWindow);
+        return System.HashCode.Combine(CacheProgress, PermissionWindow, DirectionIsCacheToPermissionWindow);
     }
-
     #endregion
+
+    public object GetImageObject()
+    {
+        return DirectionIsCacheToPermissionWindow ? PermissionWindow : (object)CacheProgress;
+    }
 }

@@ -19,14 +19,28 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.UI.Collections.Providers;
 
 /// <summary>
-///     Tracks user access of objects over time and stores in local persistence file
-///     <see cref="UserSettings.RecentHistory" />
+/// Tracks user access of objects over time and stores in local persistence file <see cref="UserSettings.RecentHistory"/>
 /// </summary>
 public class HistoryProvider
 {
     /// <summary>
-    ///     Creates a new history provider and loads the users history from the persistence file (
-    ///     <see cref="UserSettings.RecentHistory" />)
+    /// Collection of objects and when they were accessed, use <see cref="HistoryProvider.Add"/> instead of modifying this list directly
+    /// </summary>
+    public List<HistoryEntry> History { get; set; } = new List<HistoryEntry>();
+
+    /// <summary>
+    /// What Types to track in <see cref="Add"/>
+    /// </summary>
+    public Type[] TrackTypes { get; set; } = {
+        typeof(Catalogue),
+        typeof(Project),
+        typeof(ExtractionConfiguration),
+        typeof(CohortIdentificationConfiguration),
+        typeof(LoadMetadata)
+    };
+        
+    /// <summary>
+    /// Creates a new history provider and loads the users history from the persistence file (<see cref="UserSettings.RecentHistory"/>)
     /// </summary>
     /// <param name="locator"></param>
     public HistoryProvider(IRDMPPlatformRepositoryServiceLocator locator)
@@ -34,46 +48,30 @@ public class HistoryProvider
         try
         {
             var history = UserSettings.RecentHistory;
-
+            
             if (string.IsNullOrWhiteSpace(history))
                 return;
 
-            foreach (var s in history.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+            foreach (var s in history.Split(new []{Environment.NewLine},StringSplitOptions.RemoveEmptyEntries))
             {
                 var entry = HistoryEntry.Deserialize(s, locator);
-
-                if (entry != null)
+                
+                if(entry != null)
                     History.Add(entry);
             }
+
         }
-        catch (Exception)
+        catch (Exception )
         {
             //error reading persisted history, maybe history file is corrupt or something
+            return;
         }
     }
 
     /// <summary>
-    ///     Collection of objects and when they were accessed, use <see cref="HistoryProvider.Add" /> instead of modifying this
-    ///     list directly
+    /// Saves into user settings the supplied number of <see cref="HistoryEntry"/> (per Type)
     /// </summary>
-    public List<HistoryEntry> History { get; set; } = new();
-
-    /// <summary>
-    ///     What Types to track in <see cref="Add" />
-    /// </summary>
-    public Type[] TrackTypes { get; set; } =
-    {
-        typeof(Catalogue),
-        typeof(Project),
-        typeof(ExtractionConfiguration),
-        typeof(CohortIdentificationConfiguration),
-        typeof(LoadMetadata)
-    };
-
-    /// <summary>
-    ///     Saves into user settings the supplied number of <see cref="HistoryEntry" /> (per Type)
-    /// </summary>
-    /// <param name="numberOfEntries">Maximum number of objects of any given <see cref="System.Type" /> to store</param>
+    /// <param name="numberOfEntries">Maximum number of objects of any given <see cref="System.Type"/> to store</param>
     public void Save(int numberOfEntries = 20)
     {
         var newHistory = new List<HistoryEntry>();
@@ -81,11 +79,12 @@ public class HistoryProvider
 
         foreach (var group in History.GroupBy(o => o.Object.GetType()))
         {
-            var recentsOfType = group.ToList().OrderByDescending(e => e.Date).Take(numberOfEntries).ToList();
-
+            var recentsOfType = group.ToList().OrderByDescending(e=>e.Date).Take(numberOfEntries).ToList();
+                
             //save x of each Type
-            sb.AppendLine(string.Join(Environment.NewLine, recentsOfType.Select(h => h.Serialize())));
+            sb.AppendLine(string.Join(Environment.NewLine,recentsOfType.Select(h=>h.Serialize())));
             newHistory.AddRange(recentsOfType);
+                
         }
 
         History = newHistory;
@@ -94,16 +93,15 @@ public class HistoryProvider
     }
 
     /// <summary>
-    ///     Adds the <paramref name="o" /> to the history (assuming it is one of the <see cref="TrackTypes" />).  New entry
-    ///     replaces any previous entries for <paramref name="o" />.  This method causes implicit <see cref="Save" />
+    /// Adds the <paramref name="o"/> to the history (assuming it is one of the <see cref="TrackTypes"/>).  New entry replaces any previous entries for <paramref name="o"/>.  This method causes implicit <see cref="Save"/>
     /// </summary>
     /// <param name="o"></param>
     public void Add(IMapsDirectlyToDatabaseTable o)
     {
-        if (o == null)
+        if(o == null)
             return;
 
-        if (!TrackTypes.Contains(o.GetType()))
+        if(!TrackTypes.Contains(o.GetType()))
             return;
 
         var newEntry = new HistoryEntry(o, DateTime.Now);
@@ -118,8 +116,7 @@ public class HistoryProvider
     }
 
     /// <summary>
-    ///     Clears the users recent history of objects accessed including in the persistence file (
-    ///     <see cref="UserSettings.RecentHistory" />)
+    /// Clears the users recent history of objects accessed including in the persistence file (<see cref="UserSettings.RecentHistory"/>)
     /// </summary>
     public void Clear()
     {
@@ -129,7 +126,7 @@ public class HistoryProvider
 
     public void Remove(IMapsDirectlyToDatabaseTable o)
     {
-        if (o == null)
+        if(o == null)
             return;
 
         foreach (var historyEntry in History.Where(h => h.Object.Equals(o)).ToArray())

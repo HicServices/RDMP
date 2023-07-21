@@ -11,9 +11,7 @@ namespace Rdmp.UI.CommandExecution.Proposals;
 public interface ICommandExecutionProposal
 {
     bool IsCompatibleTarget(object target);
-
-    ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, object target,
-        InsertOption insertOption = InsertOption.Default);
+    ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, object target, InsertOption insertOption = InsertOption.Default);
 
     bool CanActivate(object target);
     void Activate(object target);

@@ -10,10 +10,10 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution;
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess;
 
 /// <summary>
-///     See DataLoadProcess
+/// See DataLoadProcess
 /// </summary>
-public interface IDataLoadProcess
+public interface IDataLoadProcess 
 {
-    IDataLoadExecution LoadExecution { get; }
     ExitCodeType Run(GracefulCancellationToken loadCancellationToken, object payload = null);
+    IDataLoadExecution LoadExecution { get; }
 }

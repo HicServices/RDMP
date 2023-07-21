@@ -10,19 +10,17 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Creates a new private key for encrypting credentials in RDMP.  Old passwords will not decrypt using the new key and
-///     will be lost (unless you have the original key)
+/// Creates a new private key for encrypting credentials in RDMP.  Old passwords will not decrypt using the new key and will be lost (unless you have the original key)
 /// </summary>
 public class ExecuteCommandCreatePrivateKey : BasicCommandExecution
 {
     private readonly FileInfo _keyFileToCreate;
-    private readonly PasswordEncryptionKeyLocation _encryption;
+    private PasswordEncryptionKeyLocation _encryption;
 
     public ExecuteCommandCreatePrivateKey(IBasicActivateItems activator, FileInfo keyFileToCreate) : base(activator)
     {
         _keyFileToCreate = keyFileToCreate;
-        _encryption =
-            activator.RepositoryLocator.CatalogueRepository.EncryptionManager as PasswordEncryptionKeyLocation;
+        _encryption = activator.RepositoryLocator.CatalogueRepository.EncryptionManager as PasswordEncryptionKeyLocation;
 
         if (_encryption == null)
         {
@@ -31,7 +29,7 @@ public class ExecuteCommandCreatePrivateKey : BasicCommandExecution
         }
 
         var existing = _encryption.GetKeyFileLocation();
-        if (existing != null)
+        if (existing != null) 
             SetImpossible($"There is already a key file at '{existing}'");
     }
 

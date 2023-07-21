@@ -16,35 +16,35 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 
+
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 
 /// <summary>
-///     Allows you to persist user interfaces which are built on more than one RDMP database object (if you only require
-///     one object you should use RDMPSingleDatabaseObjectControl instead
+/// Allows you to persist user interfaces which are built on more than one RDMP database object (if you only require one object you should use RDMPSingleDatabaseObjectControl instead
 /// </summary>
 [DesignerCategory("")]
 [TechnicalUI]
 public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
 {
-    public const string Prefix = "RDMPObjectCollection";
     private readonly IObjectCollectionControl _control;
+
+    public const string Prefix = "RDMPObjectCollection";
 
     private PersistStringHelper persistStringHelper = new();
 
-    public PersistableObjectCollectionDockContent(IActivateItems activator, IObjectCollectionControl control,
-        IPersistableObjectCollection collection) : base(activator.RefreshBus)
+    public IPersistableObjectCollection Collection => _control.GetCollection();
+
+    public PersistableObjectCollectionDockContent(IActivateItems activator, IObjectCollectionControl control, IPersistableObjectCollection collection):base(activator.RefreshBus)
     {
         _control = control;
         Control = (Control)control;
 
         //tell the control what its collection is
         control.SetCollection(activator, collection);
-
+            
         //ask the control what it wants its name to be
         TabText = _control.GetTabName();
     }
-
-    public IPersistableObjectCollection Collection => _control.GetCollection();
 
     protected override string GetPersistString()
     {
@@ -55,7 +55,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         var sb = new StringBuilder();
 
         //Output <Prefix>:<The Control Type>:<The Type name of the Collection - must be new()>:
-        sb.Append(Prefix + s + _control.GetType().FullName + s + collection.GetType().Name + s);
+        sb.Append(Prefix + s + _control.GetType().FullName + s  + collection.GetType().Name + s);
 
         sb.Append(PersistStringHelper.GetObjectCollectionPersistString(collection.DatabaseObjects.ToArray()));
 
@@ -69,6 +69,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
     }
 
 
+
     public override void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
         var newTabName = _control.GetTabName();
@@ -79,7 +80,8 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
         TabText = newTabName;
 
         //pass the info on to the control
-        _control.RefreshBus_RefreshObject(sender, e);
+        _control.RefreshBus_RefreshObject(sender,e);
+
     }
 
     public override void HandleUserRequestingTabRefresh(IActivateItems activator)
@@ -92,7 +94,7 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
             revertable?.RevertToDatabaseState();
         }
 
-        _control.SetCollection(activator, collection);
+        _control.SetCollection(activator,collection);
     }
 
 
@@ -100,12 +102,12 @@ public class PersistableObjectCollectionDockContent : RDMPSingleControlTab
     {
         var collection = _control.GetCollection();
 
-        if (collection != null)
+        if(collection != null)
             if (collection.DatabaseObjects.Count >= 1)
             {
-                var o = activator.SelectOne("Show", collection.DatabaseObjects.ToArray(), null, true);
+                var o = activator.SelectOne("Show", collection.DatabaseObjects.ToArray(),null,true);
 
-                if (o != null)
+                if(o != null)
                     activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
             }
     }

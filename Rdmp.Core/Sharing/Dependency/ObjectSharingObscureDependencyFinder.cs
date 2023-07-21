@@ -12,15 +12,13 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Sharing.Dependency;
 
 /// <summary>
-///     Handles preventing deletion of shareable references to existing classes e.g. if a Catalogue is shared (has an entry
-///     in ObjectExport table) then you
-///     cannot delete it.  Also handles cascading deletes of imported classes e.g. if a Catalogue was imported from
-///     somewhere else (has an entry in ObjectImport) and
-///     then you delete it the ObjectImport reference will also be deleted.
+/// Handles preventing deletion of shareable references to existing classes e.g. if a Catalogue is shared (has an entry in ObjectExport table) then you
+/// cannot delete it.  Also handles cascading deletes of imported classes e.g. if a Catalogue was imported from somewhere else (has an entry in ObjectImport) and
+/// then you delete it the ObjectImport reference will also be deleted.
 /// </summary>
 public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
 {
-    private readonly ShareManager _shareManager;
+    private ShareManager _shareManager;
 
     public ObjectSharingObscureDependencyFinder(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
@@ -36,10 +34,11 @@ public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
 
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
-        if (_shareManager.RepositoryLocator.CatalogueRepository.MEF == null)
+        if(_shareManager.RepositoryLocator.CatalogueRepository.MEF == null)
             return;
 
-        if (oTableWrapperObject.GetType() != typeof(ObjectImport))
+        if (oTableWrapperObject.GetType() != typeof (ObjectImport))
             _shareManager.DeleteAllOrphanImportDefinitions();
     }
+
 }

@@ -18,10 +18,8 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 
 /// <summary>
-///     Shows a given Aggregate Graph with an additional IFilter applied.  This can be used for checking that a filter SQL
-///     is working how you intend by giving you a view you are already
-///     familiar with (the graph you created) but with the addition of the filter.  You can also launch the graph normally
-///     (See AggregateGraph) to see a side by side comparison
+/// Shows a given Aggregate Graph with an additional IFilter applied.  This can be used for checking that a filter SQL is working how you intend by giving you a view you are already 
+/// familiar with (the graph you created) but with the addition of the filter.  You can also launch the graph normally (See AggregateGraph) to see a side by side comparison
 /// </summary>
 public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
 {
@@ -30,6 +28,22 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
     public FilterGraphUI()
     {
         InitializeComponent();
+    }
+        
+    protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration)
+    {
+        var basicQueryBuilder =  base.GetQueryBuilder(aggregateConfiguration);
+
+        var rootContainer = basicQueryBuilder.RootFilterContainer;
+
+        //stick our IFilter into the root container (actually create a new root container with our filter in it and move the old root if any into it)
+        rootContainer =
+            new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(),rootContainer == null ? null : new[] { rootContainer },
+                new[] {_collection.GetFilter()}, FilterContainerOperation.AND);
+
+        basicQueryBuilder.RootFilterContainer = rootContainer;
+
+        return basicQueryBuilder;
     }
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -41,10 +55,10 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
     {
         _collection = (FilterGraphObjectCollection)collection;
         SetItemActivator(activator);
-
+            
         BuildMenu(activator);
 
-        SetAggregate(Activator, _collection.GetGraph());
+        SetAggregate(Activator,_collection.GetGraph());
         LoadGraphAsync();
     }
 
@@ -52,26 +66,8 @@ public partial class FilterGraphUI : AggregateGraphUI, IObjectCollectionControl
     {
         return _collection;
     }
-
     public override string GetTabName()
     {
         return $"Filter Graph '{_collection.GetFilter()}'";
-    }
-
-    protected override AggregateBuilder GetQueryBuilder(AggregateConfiguration aggregateConfiguration)
-    {
-        var basicQueryBuilder = base.GetQueryBuilder(aggregateConfiguration);
-
-        var rootContainer = basicQueryBuilder.RootFilterContainer;
-
-        //stick our IFilter into the root container (actually create a new root container with our filter in it and move the old root if any into it)
-        rootContainer =
-            new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(),
-                rootContainer == null ? null : new[] { rootContainer },
-                new[] { _collection.GetFilter() }, FilterContainerOperation.AND);
-
-        basicQueryBuilder.RootFilterContainer = rootContainer;
-
-        return basicQueryBuilder;
     }
 }

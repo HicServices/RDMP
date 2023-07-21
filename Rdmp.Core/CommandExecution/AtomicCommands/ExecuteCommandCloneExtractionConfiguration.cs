@@ -4,33 +4,31 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,IAtomicCommand
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
 
-    public ExecuteCommandCloneExtractionConfiguration(IBasicActivateItems activator,
-        ExtractionConfiguration extractionConfiguration) : base(activator)
+    public ExecuteCommandCloneExtractionConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
     {
         _extractionConfiguration = extractionConfiguration;
 
-        if (!_extractionConfiguration.SelectedDataSets.Any())
+        if(!_extractionConfiguration.SelectedDataSets.Any())
             SetImpossible("ExtractionConfiguration does not have any selected datasets");
     }
 
     public override string GetCommandHelp()
     {
-        return
-            "Creates an exact copy of the Extraction Configuration including the cohort selection, all selected datasets, parameters, filter containers, filters etc";
+        return "Creates an exact copy of the Extraction Configuration including the cohort selection, all selected datasets, parameters, filter containers, filters etc";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
@@ -43,7 +41,7 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
         base.Execute();
 
         var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-
+            
         Publish((DatabaseEntity)clone.Project);
         Emphasise(clone);
     }

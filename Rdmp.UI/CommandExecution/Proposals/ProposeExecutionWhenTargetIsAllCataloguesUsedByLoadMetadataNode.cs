@@ -13,12 +13,9 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class
-    ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<
-        AllCataloguesUsedByLoadMetadataNode>
+internal class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<AllCataloguesUsedByLoadMetadataNode>
 {
-    public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(
-        itemActivator)
+    public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
@@ -32,20 +29,15 @@ internal class
         throw new NotSupportedException();
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
-        AllCataloguesUsedByLoadMetadataNode target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
     {
         ICommandExecution cmdExecution = null;
 
         if (cmd is CatalogueCombineable cata)
-            cmdExecution =
-                new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator, target.LoadMetadata).SetTarget(new[]
-                    { cata.Catalogue });
+            cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,target.LoadMetadata).SetTarget(new[]{cata.Catalogue});
 
-        if (cmd is ManyCataloguesCombineable manyCata)
-            cmdExecution =
-                new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator, target.LoadMetadata).SetTarget(
-                    manyCata.Catalogues);
+        if(cmd is ManyCataloguesCombineable manyCata)
+            cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator, target.LoadMetadata).SetTarget(manyCata.Catalogues);
 
 
         return cmdExecution;

@@ -14,23 +14,19 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataQualityEngine;
 
 /// <summary>
-///     Calculates the date range of data held in a dataset (Catalogue).  Optionally you can 'discardOutliers' this
-///     includes any dates in which there are
-///     1000 times less records than the non zero average month.  For example if you have 3 records in 01/01/2090 then they
-///     would be discarded if you had
-///     an average of 3000+ records per month (after ignoring months where there are no records).
-///     <para>
-///         IMPORTANT: You must have run the DQE on the dataset before this class can be used and the results are based on
-///         the last DQE run on the dataset not
-///         the live table
-///     </para>
+/// Calculates the date range of data held in a dataset (Catalogue).  Optionally you can 'discardOutliers' this includes any dates in which there are
+/// 1000 times less records than the non zero average month.  For example if you have 3 records in 01/01/2090 then they would be discarded if you had
+///  an average of 3000+ records per month (after ignoring months where there are no records).  
+/// 
+/// <para>IMPORTANT: You must have run the DQE on the dataset before this class can be used and the results are based on the last DQE run on the dataset not 
+/// the live table</para>
 /// </summary>
 public class DatasetTimespanCalculator : IDetermineDatasetTimespan
 {
-    /// <inheritdoc />
-    public string GetHumanReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers,
-        out DateTime? accurateAsOf)
+    /// <inheritdoc/>
+    public string GetHumanReadableTimespanIfKnownOf(Catalogue catalogue,bool discardOutliers, out DateTime? accurateAsOf)
     {
+
         var result = GetMachineReadableTimespanIfKnownOf(catalogue, discardOutliers, out accurateAsOf);
 
         if (result.Item1 == null || result.Item2 == null)
@@ -39,8 +35,42 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         return $"{result.Item1.Value:yyyy-MMM} To {result.Item2.Value:yyyy-MMM}";
     }
 
-    public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers,
-        out DateTime? accurateAsOf)
+    public static Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation, bool discardOutliers)
+    {
+        var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(evaluation, "ALL", false);
+
+        if (dt == null || dt.Rows.Count < 2)
+            return Unknown();
+
+        var discardThreshold = discardOutliers ? GetDiscardThreshold(dt) : -1;
+
+        DateTime? minMonth = null;
+        for (var i = 0; i < dt.Rows.Count; i++)
+        {
+            if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
+            {
+                minMonth = DateTime.Parse(dt.Rows[i][1].ToString());
+                break;
+            }
+        }
+
+        DateTime? maxMonth = null;
+        for (var i = dt.Rows.Count - 1; i >= 0; i--)
+        {
+            if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
+            {
+                maxMonth = DateTime.Parse(dt.Rows[i][1].ToString());
+                break;
+            }
+        }
+
+        if (maxMonth == null || minMonth == null)
+            return Unknown();
+
+        return Tuple.Create(minMonth, maxMonth);
+    }
+
+    public Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf)
     {
         accurateAsOf = null;
         Evaluation mostRecentEvaluation;
@@ -63,38 +93,6 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         return GetMachineReadableTimespanIfKnownOf(mostRecentEvaluation, discardOutliers);
     }
 
-    public static Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Evaluation evaluation,
-        bool discardOutliers)
-    {
-        var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(evaluation, "ALL", false);
-
-        if (dt == null || dt.Rows.Count < 2)
-            return Unknown();
-
-        var discardThreshold = discardOutliers ? GetDiscardThreshold(dt) : -1;
-
-        DateTime? minMonth = null;
-        for (var i = 0; i < dt.Rows.Count; i++)
-            if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
-            {
-                minMonth = DateTime.Parse(dt.Rows[i][1].ToString());
-                break;
-            }
-
-        DateTime? maxMonth = null;
-        for (var i = dt.Rows.Count - 1; i >= 0; i--)
-            if (Convert.ToInt32(dt.Rows[i]["CountOfRecords"]) > discardThreshold)
-            {
-                maxMonth = DateTime.Parse(dt.Rows[i][1].ToString());
-                break;
-            }
-
-        if (maxMonth == null || minMonth == null)
-            return Unknown();
-
-        return Tuple.Create(minMonth, maxMonth);
-    }
-
     private static Tuple<DateTime?, DateTime?> Unknown()
     {
         return Tuple.Create<DateTime?, DateTime?>(null, null);
@@ -108,16 +106,16 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         foreach (DataRow row in dt.Rows)
         {
             var currentValue = Convert.ToInt32(row["CountOfRecords"]);
-
-            if (currentValue == 0)
+                
+            if(currentValue == 0)
                 continue;
 
             total += currentValue;
             counted++;
         }
 
-        var nonZeroAverage = total / (double)counted;
+        var nonZeroAverage = total/(double)counted;
 
-        return (int)(nonZeroAverage / 1000);
+        return (int)(nonZeroAverage/1000);
     }
 }

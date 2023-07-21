@@ -37,25 +37,25 @@ internal class SetNullTests
 
             var listener = new ToMemoryDataLoadEventListener(true);
 
-            var result = operation.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
+            var result = operation.ProcessPipelineData(dt,listener , new GracefulCancellationToken());
 
-            Assert.AreEqual(3, result.Rows.Count);
+            Assert.AreEqual(3,result.Rows.Count);
 
-            Assert.AreEqual("cat", result.Rows[0]["a"]);
-            Assert.AreEqual(DBNull.Value, result.Rows[0]["b"]);
+            Assert.AreEqual("cat",result.Rows[0]["a"]);
+            Assert.AreEqual(DBNull.Value,result.Rows[0]["b"]);
 
-            Assert.AreEqual("dog", result.Rows[1]["a"]);
-            Assert.AreEqual("dog", result.Rows[1]["b"]);
+            Assert.AreEqual("dog",result.Rows[1]["a"]);
+            Assert.AreEqual("dog",result.Rows[1]["b"]);
 
-            Assert.AreEqual("cat", result.Rows[2]["a"]);
-            Assert.AreEqual("dog", result.Rows[2]["b"]);
+            Assert.AreEqual("cat",result.Rows[2]["a"]);
+            Assert.AreEqual("dog",result.Rows[2]["b"]);
 
-            operation.Dispose(listener, null);
+            operation.Dispose(listener,null);
 
             var msg = listener.EventsReceivedBySender[operation].Single();
 
-            Assert.AreEqual(ProgressEventType.Warning, msg.ProgressEventType);
-            Assert.AreEqual("Total SetNull operations for ColumnNameToFind 'b' was 1", msg.Message);
+            Assert.AreEqual(ProgressEventType.Warning,msg.ProgressEventType);
+            Assert.AreEqual("Total SetNull operations for ColumnNameToFind 'b' was 1",msg.Message);
         }
     }
 }

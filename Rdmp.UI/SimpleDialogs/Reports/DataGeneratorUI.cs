@@ -14,18 +14,12 @@ using BadMedicine.Datasets;
 namespace Rdmp.UI.SimpleDialogs.Reports;
 
 /// <summary>
-///     Part of GenerateTestDataUI  (See GenerateTestDataUI).  This control lets you decide how many records in the dataset
-///     to create.  This data is fictional although it is designed to look
-///     semi real and exhibit peculiarities common to medical records.  The slider is exponential so if you drag it all the
-///     way to the top expect to wait for a weekend for it to generate
-///     all the data.
+/// Part of GenerateTestDataUI  (See GenerateTestDataUI).  This control lets you decide how many records in the dataset to create.  This data is fictional although it is designed to look
+/// semi real and exhibit peculiarities common to medical records.  The slider is exponential so if you drag it all the way to the top expect to wait for a weekend for it to generate
+/// all the data.
 /// </summary>
 public partial class DataGeneratorUI : UserControl
 {
-    private IDataGenerator _generator;
-
-    private int sizeAtBeginGeneration = -1;
-    public Thread Thread;
 
     public DataGeneratorUI()
     {
@@ -41,31 +35,28 @@ public partial class DataGeneratorUI : UserControl
         {
             _generator = value;
 
-            if (value != null)
+            if(value != null)
                 value.RowsGenerated += ValueOnRowsGenerated;
 
-            cbGenerate.Text = value != null ? value.GetType().Name : "";
+            cbGenerate.Text = value != null ? value.GetType().Name:"";
         }
     }
-
-    public bool Generate
-    {
-        get => cbGenerate.Checked;
-        set => cbGenerate.Checked = value;
-    }
-
+        
     public int GetSize()
     {
-        return 10 * (int)Math.Pow(10, trackBar1.Value);
+        return 10* (int)Math.Pow(10, trackBar1.Value);
     }
 
+    private int sizeAtBeginGeneration = -1;
+    public Thread Thread;
+    private IDataGenerator _generator;
     public event Action TrackBarMouseUp;
     public event Action Completed;
 
     public void BeginGeneration(IPersonCollection cohort, DirectoryInfo target)
     {
         //already running
-        if (sizeAtBeginGeneration != -1)
+        if(sizeAtBeginGeneration != -1)
             return;
 
         sizeAtBeginGeneration = GetSize();
@@ -74,8 +65,9 @@ public partial class DataGeneratorUI : UserControl
 
         Thread = new Thread(() => Generator.GenerateTestDataFile(cohort, fi, sizeAtBeginGeneration));
         Thread.Start();
-    }
 
+    }
+        
     private void ValueOnRowsGenerated(object sender, RowsGeneratedEventArgs e)
     {
         if (InvokeRequired)
@@ -84,15 +76,22 @@ public partial class DataGeneratorUI : UserControl
             return;
         }
 
-        var percentProgress = e.RowsWritten / (double)sizeAtBeginGeneration * 100.0;
+        var percentProgress = e.RowsWritten/(double)sizeAtBeginGeneration * 100.0;
         progressBar1.Value = (int)percentProgress;
 
-        if (e.IsFinished) Completed?.Invoke();
+        if (e.IsFinished)
+        {
+            Completed?.Invoke();
+        }
     }
 
     private void trackBar1_MouseUp(object sender, MouseEventArgs e)
     {
         TrackBarMouseUp?.Invoke();
+    }
+
+    public bool Generate { get => cbGenerate.Checked;
+        set => cbGenerate.Checked = value;
     }
 
     private void CbGenerate_CheckedChanged(object sender, EventArgs e)

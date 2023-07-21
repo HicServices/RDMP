@@ -10,19 +10,15 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 namespace Rdmp.Core.Startup.Events;
 
 /// <summary>
-///     EventArgs for finding <see cref="PluginPatcher" />s during <see cref="Startup" />.
-///     <para>
-///         <see cref="IPatcher" /> identify databases that are managed RDMP and are patched/updated when the
-///         <see cref="IPatcher" /> host assembly is updated.  For
-///         plugins this is done by declaring a <see cref="PluginPatcher" /> but there can be Type loading errors or other
-///         Exceptions around locating databases that must
-///         be patched, this event system supports reporting those.
-///     </para>
+/// EventArgs for finding <see cref="PluginPatcher"/>s during <see cref="Startup"/>.
+/// 
+/// <para><see cref="IPatcher"/> identify databases that are managed RDMP and are patched/updated when the <see cref="IPatcher"/> host assembly is updated.  For
+/// plugins this is done by declaring a <see cref="PluginPatcher"/> but there can be Type loading errors or other Exceptions around locating databases that must
+/// be patched, this event system supports reporting those.</para>
 /// </summary>
 public class PluginPatcherFoundEventArgs
 {
-    public PluginPatcherFoundEventArgs(Type type, IPatcher instance, PluginPatcherStatus status,
-        Exception exception = null)
+    public PluginPatcherFoundEventArgs(Type type, IPatcher instance, PluginPatcherStatus status, Exception exception=null)
     {
         Type = type;
         Instance = instance;
@@ -31,7 +27,7 @@ public class PluginPatcherFoundEventArgs
     }
 
     public Type Type { get; set; }
-    public IPatcher Instance { get; set; }
-    public PluginPatcherStatus Status { get; set; }
+    public IPatcher Instance { get; set; } 
+    public PluginPatcherStatus Status {get;set;}
     public Exception Exception { get; set; }
 }

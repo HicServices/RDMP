@@ -4,36 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
+using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-///     Collection for generating SQL around the extractable columns of a catalogue
+/// Collection for generating SQL around the extractable columns of a catalogue
 /// </summary>
 public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     private QueryBuilder builder;
-
-    public ViewCatalogueDataCollection(Catalogue catalogue)
-    {
-        DatabaseObjects.Add(catalogue);
-    }
-
-    /// <summary>
-    ///     Persistence constructor
-    /// </summary>
-    public ViewCatalogueDataCollection()
-    {
-    }
 
     public Catalogue Catalogue => DatabaseObjects.OfType<Catalogue>().FirstOrDefault();
 
@@ -42,15 +30,60 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
     public ExtractionInformation[] ExtractionInformations => DatabaseObjects.OfType<ExtractionInformation>().ToArray();
 
     /// <summary>
-    ///     The number of records to fetch (or null to fetch all records)
+    /// The number of records to fetch (or null to fetch all records)
     /// </summary>
     public int? TopX { get; set; }
+
+    public ViewCatalogueDataCollection(Catalogue catalogue)
+    {
+        DatabaseObjects.Add(catalogue);
+    }
+
+    /// <summary>
+    /// Persistence constructor
+    /// </summary>
+    public ViewCatalogueDataCollection()
+    {
+
+    }
+
+    private void BuildBuilder()
+    {
+        if(builder != null)
+            return;
+
+        builder = new QueryBuilder(null,null);
+            
+        if(TopX.HasValue)
+            builder.TopX = TopX.Value;
+
+        var cols = ExtractionInformations;
+
+        // if there are no explicit columns use all
+        if (!cols.Any())
+        {
+            cols =
+                Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
+                    .Union(Catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
+                    .ToArray();
+        }
+
+        builder.AddColumnRange(cols);
+
+        var filters = new List<ExtractionFilter>();
+
+        foreach (ExtractionFilter f in Filters)
+            filters.Add(f);
+
+        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,filters.ToArray(),FilterContainerOperation.AND);
+        builder.RegenerateSQL();
+    }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
         BuildBuilder();
 
-        foreach (var t in builder.TablesUsedInQuery)
+        foreach(var t in builder.TablesUsedInQuery)
             autoComplete.Add(t);
     }
 
@@ -80,36 +113,5 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {
         yield return Catalogue;
-    }
-
-    private void BuildBuilder()
-    {
-        if (builder != null)
-            return;
-
-        builder = new QueryBuilder(null, null);
-
-        if (TopX.HasValue)
-            builder.TopX = TopX.Value;
-
-        var cols = ExtractionInformations;
-
-        // if there are no explicit columns use all
-        if (!cols.Any())
-            cols =
-                Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
-                    .Union(Catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
-                    .ToArray();
-
-        builder.AddColumnRange(cols);
-
-        var filters = new List<ExtractionFilter>();
-
-        foreach (ExtractionFilter f in Filters)
-            filters.Add(f);
-
-        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
-            filters.ToArray(), FilterContainerOperation.AND);
-        builder.RegenerateSQL();
     }
 }

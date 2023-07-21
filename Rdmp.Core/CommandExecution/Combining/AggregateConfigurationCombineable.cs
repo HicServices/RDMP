@@ -15,13 +15,54 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="AggregateConfiguration" />
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="AggregateConfiguration"/>
 /// </summary>
 public class AggregateConfigurationCombineable : ICombineToMakeCommand
 {
     /// <summary>
-    ///     Creates a new instance, populates <see cref="Aggregate" /> and discovers all other state cached fields (e.g.
-    ///     <see cref="JoinableDeclarationIfAny" /> etc).
+    /// The object selected for combining
+    /// </summary>
+    public AggregateConfiguration Aggregate { get; private set; }
+
+    /// <summary>
+    /// The <see cref="CohortIdentificationConfiguration"/> that the <see cref="Aggregate"/> belongs to if it is part of cohort building
+    /// </summary>
+    public CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny { get; private set; }
+
+    /// <summary>
+    /// The SET container (EXCEPT / UNION / INTERSECT) that the <see cref="Aggregate"/> is in if it is part of a <see cref="CohortIdentificationConfiguration"/>
+    /// </summary>
+    public CohortAggregateContainer ContainerIfAny { get; set; }
+
+    /// <summary>
+    /// Comprehensive list of all <see cref="CohortAggregateContainer"/> in the tree hierarchy of the  <see cref="Aggregate"/> <see cref="CohortIdentificationConfigurationIfAny"/>
+    /// </summary>
+    public List<CohortAggregateContainer> AllContainersInTreeIfPartOfOne { get; private set; }
+        
+    /// <summary>
+    /// True if the <see cref="Aggregate"/> is <see cref="AggregateConfiguration.IsJoinablePatientIndexTable"/>
+    /// </summary>
+    public bool IsPatientIndexTable { get; set; }
+
+    /// <summary>
+    /// If the <see cref="Aggregate"/> is <see cref="IsPatientIndexTable"/> then this is the <see cref="JoinableCohortAggregateConfiguration"/>
+    /// declaration which makes it one (and links to the users of the patient index table - if any)
+    /// </summary>
+    public JoinableCohortAggregateConfiguration JoinableDeclarationIfAny { get; set; }
+
+    /// <summary>
+    /// If the <see cref="Aggregate"/> is <see cref="IsPatientIndexTable"/> then this is all the users that join to it
+    /// </summary>
+    public AggregateConfiguration[] JoinableUsersIfAny { get; set; }
+
+    /// <summary>
+    /// True if the <see cref="Aggregate"/> has an <see cref="ExtendedProperty"/> declaring it as a reusable template
+    /// </summary>
+    public bool IsTemplate { get; set; }
+
+    /// <summary>
+    /// Creates a new instance, populates <see cref="Aggregate"/> and discovers all other state cached fields (e.g.
+    /// <see cref="JoinableDeclarationIfAny"/> etc).
     /// </summary>
     /// <param name="aggregate"></param>
     public AggregateConfigurationCombineable(AggregateConfiguration aggregate)
@@ -29,26 +70,25 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
         Aggregate = aggregate;
 
         IsPatientIndexTable = Aggregate.IsJoinablePatientIndexTable();
-
-        IsTemplate = aggregate.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate, aggregate)
-            .Any(p => Equals(p.Value, "true"));
+            
+        IsTemplate = aggregate.CatalogueRepository.GetExtendedProperties(ExtendedProperty.IsTemplate,aggregate).Any(p=> Equals(p.Value, "true"));
 
         //is the aggregate part of cohort identification
         CohortIdentificationConfigurationIfAny = Aggregate.GetCohortIdentificationConfigurationIfAny();
-
+            
         //assume no join users
         JoinableUsersIfAny = Array.Empty<AggregateConfiguration>();
 
         //unless there's a cic
-        if (CohortIdentificationConfigurationIfAny != null)
+        if(CohortIdentificationConfigurationIfAny != null)
         {
             //with this aggregate as a joinable
-            JoinableDeclarationIfAny = CohortIdentificationConfigurationIfAny.GetAllJoinables()
-                .SingleOrDefault(j => j.AggregateConfiguration_ID == Aggregate.ID);
+            JoinableDeclarationIfAny = CohortIdentificationConfigurationIfAny.GetAllJoinables().SingleOrDefault(j=>j.AggregateConfiguration_ID == Aggregate.ID);
 
             //then get the joinable users if any and use that array
             if (JoinableDeclarationIfAny != null)
                 JoinableUsersIfAny = JoinableDeclarationIfAny.Users.Select(u => u.AggregateConfiguration).ToArray();
+
         }
 
         //if so we should find out all the containers in the tree (Containers are INTERSECT\EXCEPT\UNION)
@@ -62,54 +102,9 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
             AllContainersInTreeIfPartOfOne.Add(root);
             AllContainersInTreeIfPartOfOne.AddRange(root.GetAllSubContainersRecursively());
         }
-
+            
         ContainerIfAny = Aggregate.GetCohortAggregateContainerIfAny();
     }
-
-    /// <summary>
-    ///     The object selected for combining
-    /// </summary>
-    public AggregateConfiguration Aggregate { get; }
-
-    /// <summary>
-    ///     The <see cref="CohortIdentificationConfiguration" /> that the <see cref="Aggregate" /> belongs to if it is part of
-    ///     cohort building
-    /// </summary>
-    public CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny { get; }
-
-    /// <summary>
-    ///     The SET container (EXCEPT / UNION / INTERSECT) that the <see cref="Aggregate" /> is in if it is part of a
-    ///     <see cref="CohortIdentificationConfiguration" />
-    /// </summary>
-    public CohortAggregateContainer ContainerIfAny { get; set; }
-
-    /// <summary>
-    ///     Comprehensive list of all <see cref="CohortAggregateContainer" /> in the tree hierarchy of the
-    ///     <see cref="Aggregate" /> <see cref="CohortIdentificationConfigurationIfAny" />
-    /// </summary>
-    public List<CohortAggregateContainer> AllContainersInTreeIfPartOfOne { get; }
-
-    /// <summary>
-    ///     True if the <see cref="Aggregate" /> is <see cref="AggregateConfiguration.IsJoinablePatientIndexTable" />
-    /// </summary>
-    public bool IsPatientIndexTable { get; set; }
-
-    /// <summary>
-    ///     If the <see cref="Aggregate" /> is <see cref="IsPatientIndexTable" /> then this is the
-    ///     <see cref="JoinableCohortAggregateConfiguration" />
-    ///     declaration which makes it one (and links to the users of the patient index table - if any)
-    /// </summary>
-    public JoinableCohortAggregateConfiguration JoinableDeclarationIfAny { get; set; }
-
-    /// <summary>
-    ///     If the <see cref="Aggregate" /> is <see cref="IsPatientIndexTable" /> then this is all the users that join to it
-    /// </summary>
-    public AggregateConfiguration[] JoinableUsersIfAny { get; set; }
-
-    /// <summary>
-    ///     True if the <see cref="Aggregate" /> has an <see cref="ExtendedProperty" /> declaring it as a reusable template
-    /// </summary>
-    public bool IsTemplate { get; set; }
 
     public string GetSqlString()
     {

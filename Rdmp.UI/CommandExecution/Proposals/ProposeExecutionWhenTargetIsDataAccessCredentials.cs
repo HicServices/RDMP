@@ -28,8 +28,7 @@ internal class ProposeExecutionWhenTargetIsDataAccessCredentials : RDMPCommandEx
         ItemActivator.Activate<DataAccessCredentialsUI, DataAccessCredentials>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DataAccessCredentials target,
-        InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DataAccessCredentials target, InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

@@ -17,12 +17,18 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-///     Builds a query based on a <see cref="AggregateConfiguration" /> (either a sample of data in a graph or matching a
-///     cohort
-///     (<see cref="Curation.Data.Aggregation.AggregateConfiguration.IsCohortIdentificationAggregate" />)
+/// Builds a query based on a <see cref="AggregateConfiguration"/> (either a sample of data in a graph or matching a cohort
+/// (<see cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>)
 /// </summary>
 public class ViewAggregateExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
+    public bool UseQueryCache { get; set; }
+
+    /// <summary>
+    /// How big should the sample be
+    /// </summary>
+    public int? TopX { get; set; } = 100;
+
     public ViewAggregateExtractUICollection()
     {
     }
@@ -32,22 +38,18 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
         DatabaseObjects.Add(config);
     }
 
-    public bool UseQueryCache { get; set; }
-
-    /// <summary>
-    ///     How big should the sample be
-    /// </summary>
-    public int? TopX { get; set; } = 100;
-
-    private AggregateConfiguration AggregateConfiguration =>
-        DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
-
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {
         if (!UseQueryCache) yield break;
         var cache = GetCacheServer();
         if (cache != null)
             yield return cache;
+    }
+
+    private ExternalDatabaseServer GetCacheServer()
+    {
+        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
+        return cic is { QueryCachingServer_ID: not null } ? cic.QueryCachingServer : null;
     }
 
     public IDataAccessPoint GetDataAccessPoint()
@@ -57,15 +59,19 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
         //the aggregate has no dimensions
         if (dim != null) return dim.ColumnInfo.TableInfo;
         var table = AggregateConfiguration.ForcedJoins.FirstOrDefault() ?? throw new Exception(
-            $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
+                $"AggregateConfiguration '{AggregateConfiguration}' has no AggregateDimensions and no TableInfo forced joins, we do not know where/what table to run the query on");
         return table;
+
     }
 
     public string GetSql()
     {
         var ac = AggregateConfiguration;
 
-        if (!ac.IsCohortIdentificationAggregate) return ac.GetQueryBuilder().SQL;
+        if (!ac.IsCohortIdentificationAggregate)
+        {
+            return ac.GetQueryBuilder().SQL;
+        }
 
         var cic = ac.GetCohortIdentificationConfigurationIfAny();
         var globals = cic.GetAllParameters();
@@ -89,14 +95,10 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
             autoComplete.Add(AggregateConfiguration);
     }
 
+    private AggregateConfiguration AggregateConfiguration => DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
+
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         return AggregateConfiguration?.GetQuerySyntaxHelper();
-    }
-
-    private ExternalDatabaseServer GetCacheServer()
-    {
-        var cic = AggregateConfiguration.GetCohortIdentificationConfigurationIfAny();
-        return cic is { QueryCachingServer_ID: not null } ? cic.QueryCachingServer : null;
     }
 }

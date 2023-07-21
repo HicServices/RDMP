@@ -10,23 +10,29 @@ using System.Windows.Forms;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleControls;
 
+
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 /// <summary>
-///     TECHNICAL: Base class for all Forms in all RDMP applications which require to know where the DataCatalogue
-///     Repository and/or DataExportManager Repository databases are stored.
-///     IMPORTANT: You MUST set RepositoryLocator = X after calling the constructor on any RDMPForm before showing it (see
-///     RDMPFormInitializationTests) this will ensure that OnLoad is
-///     able to propagate the locator to all child controls (RDMPUserControl).
+/// TECHNICAL: Base class for all Forms in all RDMP applications which require to know where the DataCatalogue Repository and/or DataExportManager Repository databases are stored.
+/// IMPORTANT: You MUST set RepositoryLocator = X after calling the constructor on any RDMPForm before showing it (see RDMPFormInitializationTests) this will ensure that OnLoad is 
+/// able to propagate the locator to all child controls (RDMPUserControl).  
 /// </summary>
 [TechnicalUI]
 public class RDMPForm : Form, IRDMPControl
 {
+    /// <summary>
+    /// Whether escape keystrokes should trigger form closing (defaults to true).
+    /// </summary>
+    public bool CloseOnEscape { get; set; }
+        
     protected readonly bool VisualStudioDesignMode;
+    public IActivateItems Activator { get; private set; }
+
+    public RDMPControlCommonFunctionality CommonFunctionality { get; private set; }
 
     /// <summary>
-    ///     Constructs the form without initializing the activator.  If you use this method you must call SetItemActivator
-    ///     manually later
+    /// Constructs the form without initializing the activator.  If you use this method you must call SetItemActivator manually later
     /// </summary>
     public RDMPForm()
     {
@@ -38,44 +44,19 @@ public class RDMPForm : Form, IRDMPControl
     }
 
     /// <summary>
-    ///     Constructs the form and initializes the activator
+    /// Constructs the form and initializes the activator
     /// </summary>
     /// <param name="activator"></param>
-    public RDMPForm(IActivateItems activator) : this()
+    public RDMPForm(IActivateItems activator):this()
     {
         SetItemActivator(activator);
     }
-
-    /// <summary>
-    ///     Whether escape keystrokes should trigger form closing (defaults to true).
-    /// </summary>
-    public bool CloseOnEscape { get; set; }
-
-    public IActivateItems Activator { get; private set; }
-
-    public RDMPControlCommonFunctionality CommonFunctionality { get; }
 
     public void SetItemActivator(IActivateItems activator)
     {
         Activator = activator;
     }
-
-    /// <summary>
-    ///     Returns this since RDMPForm is a Form and therefore a top level control
-    /// </summary>
-    /// <returns></returns>
-    public IRDMPControl GetTopmostRDMPUserControl()
-    {
-        return this;
-    }
-
-    public event EventHandler<bool> UnSavedChanges;
-
-    public void SetUnSavedChanges(bool b)
-    {
-        UnSavedChanges?.Invoke(this, b);
-    }
-
+        
     private void RDMPForm_KeyDown(object sender, KeyEventArgs e)
     {
         if (((e.KeyCode == Keys.W && e.Control) || e.KeyCode == Keys.Escape) && CloseOnEscape)
@@ -87,5 +68,21 @@ public class RDMPForm : Form, IRDMPControl
 
             saveable?.GetObjectSaverButton().Save();
         }
+    }
+
+    /// <summary>
+    /// Returns this since RDMPForm is a Form and therefore a top level control
+    /// </summary>
+    /// <returns></returns>
+    public IRDMPControl GetTopmostRDMPUserControl()
+    {
+        return this;
+    }
+
+    public event EventHandler<bool> UnSavedChanges;
+
+    public void SetUnSavedChanges(bool b)
+    {
+        UnSavedChanges?.Invoke(this,b);
     }
 }

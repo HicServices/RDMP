@@ -7,8 +7,9 @@
 namespace Rdmp.Core.DataLoad.Engine.DataProvider;
 
 /// <summary>
-///     MEF discoverable (Plugin) version of IDataProvider
+/// MEF discoverable (Plugin) version of IDataProvider
 /// </summary>
 public interface IPluginDataProvider : IDataProvider
 {
+
 }

@@ -15,18 +15,16 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport;
 
 /// <summary>
-///     Prevents deleting objects in Catalogue database which are referenced by objects in Data Export database (between
-///     databases referential integrity).  Also
-///     handles cascading deletes between databases e.g. Deleting Project Associations when a Cohort Identification
-///     Configuration is deleted (despite records being
-///     in different databases).
+/// Prevents deleting objects in Catalogue database which are referenced by objects in Data Export database (between databases referential integrity).  Also
+/// handles cascading deletes between databases e.g. Deleting Project Associations when a Cohort Identification Configuration is deleted (despite records being
+/// in different databases).
 /// </summary>
 public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDependencyFinder
 {
     private readonly IDataExportRepositoryServiceLocator _serviceLocator;
 
     /// <summary>
-    ///     Sets up class to fobid deleting <see cref="Catalogue" /> that are in project extractions etc.
+    /// Sets up class to fobid deleting <see cref="Catalogue"/> that are in project extractions etc.
     /// </summary>
     /// <param name="serviceLocator"></param>
     public BetweenCatalogueAndDataExportObscureDependencyFinder(IDataExportRepositoryServiceLocator serviceLocator)
@@ -34,7 +32,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
         _serviceLocator = serviceLocator;
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         //if there isn't a data export database then we don't care, delete away
@@ -45,17 +43,16 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinder : IObscureDepe
         if (oTableWrapperObject is Catalogue cata)
         {
             //they are deleting a catalogue! see if it has an ExtractableDataSet associated with it
-            var dependencies = _serviceLocator.DataExportRepository
-                .GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", cata.ID).ToArray();
-
+            var dependencies = _serviceLocator.DataExportRepository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID" , cata.ID).ToArray();
+            
             //we have any dependant catalogues?
-            if (dependencies.Any())
+            if(dependencies.Any())
                 throw new Exception(
                     $"Cannot delete Catalogue {cata} because there are ExtractableDataSets which depend on them (IDs={string.Join(",", dependencies.Select(ds => ds.ID.ToString()))})");
         }
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         //if the object being deleted is a CohortIdentificationConfiguration (in Catalogue database) then delete the associations it has to Projects in Data Export database

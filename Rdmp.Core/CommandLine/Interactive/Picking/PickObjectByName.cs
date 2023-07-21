@@ -15,30 +15,27 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
 /// <summary>
-///     Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity" />
-///     matching based on name (e.g. "Catalogue:my*cata")
+/// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on name (e.g. "Catalogue:my*cata")
 /// </summary>
-public class PickObjectByName : PickObjectBase
+public class PickObjectByName: PickObjectBase
 {
-    public PickObjectByName(IBasicActivateItems activator) :
-        base(activator,
-            new Regex(@"^([A-Za-z]+):([^:]+)$", RegexOptions.IgnoreCase))
-    {
-    }
-
     public override string Format => "{Type}:{NamePattern}[,{NamePattern2},{NamePattern3}...]";
-
-    public override string Help =>
+    public override string Help => 
         @"Type: must be an RDMP object type e.g. Catalogue, Project etc.
 NamePattern: must be a string that matches 1 (or more if selecting multiple objects) object based on its name (ToString).  Can include the wild card '*'.  Cannot include the ':' character.
 NamePattern2+: (optional) only allowed if you are being prompted for multiple objects, allows you to specify multiple objects of the same Type using comma separator";
-
-    public override IEnumerable<string> Examples => new[]
+        
+    public override IEnumerable<string> Examples => new []
     {
-        "Catalogue:mycata*",
+        "Catalogue:mycata*", 
         "Catalogue:mycata1,mycata2"
     };
 
+    public PickObjectByName(IBasicActivateItems activator) :
+        base(activator,
+            new Regex(@"^([A-Za-z]+):([^:]+)$",RegexOptions.IgnoreCase))
+    {
+    }
     public override bool IsMatch(string arg, int idx)
     {
         var baseMatch = base.IsMatch(arg, idx);
@@ -48,13 +45,15 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
                 return true;
 
         //only considered  match if the first letter is an Rdmp Type e.g. "Catalogue:fish" but not "C:\fish"
-        return baseMatch && IsDatabaseObjectType(Regex.Match(arg).Groups[1].Value, out _);
+        return baseMatch && IsDatabaseObjectType(Regex.Match(arg).Groups[1].Value,out _);        
     }
 
     public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
     {
         if (IsDatabaseObjectType(arg, out var t))
-            return new CommandLineObjectPickerArgumentValue(arg, idx, GetAllObjects(t).ToArray());
+        {
+            return new CommandLineObjectPickerArgumentValue(arg,idx,GetAllObjects(t).ToArray());
+        }
 
         var objByToString = MatchOrThrow(arg, idx);
 
@@ -63,8 +62,8 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
 
         var dbObjectType = ParseDatabaseEntityType(objectType, arg, idx);
 
-        var objs = objectToString.Split(',').SelectMany(str => GetObjectByToString(dbObjectType, str)).Distinct();
-        return new CommandLineObjectPickerArgumentValue(arg, idx, objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+        var objs = objectToString.Split(',').SelectMany(str=>GetObjectByToString(dbObjectType,str)).Distinct();
+        return new CommandLineObjectPickerArgumentValue(arg,idx,objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
     }
 
     private IEnumerable<object> GetObjectByToString(Type dbObjectType, string str)

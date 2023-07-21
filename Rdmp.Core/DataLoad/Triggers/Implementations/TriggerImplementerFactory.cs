@@ -11,8 +11,7 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
 /// <summary>
-///     Handles the creation of the appropriate <see cref="ITriggerImplementer" /> for any given
-///     <see cref="DatabaseType" />
+/// Handles the creation of the appropriate <see cref="ITriggerImplementer"/> for any given <see cref="DatabaseType"/>
 /// </summary>
 public class TriggerImplementerFactory
 {

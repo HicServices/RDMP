@@ -18,11 +18,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicCommand
 {
     private readonly IFilter _filter;
-    private readonly ExtractionInformation[] _allExtractionInformations;
     private Catalogue _catalogue;
+    private ExtractionInformation[] _allExtractionInformations;
 
-    public ExecuteCommandPublishFilter(IActivateItems activator, IFilter filter, Catalogue targetCatalogue) :
-        base(activator)
+    public ExecuteCommandPublishFilter(IActivateItems activator, IFilter filter,Catalogue targetCatalogue):base(activator)
     {
         _filter = filter;
         _catalogue = targetCatalogue;
@@ -56,14 +55,11 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
 
         _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
 
-        var toAddTo = SelectOne(new DialogArgs
-        {
+        var toAddTo = SelectOne(new DialogArgs { 
             WindowTitle = "Associated Column",
-            TaskDescription =
-                "All filters must be associated with a single column.  Pick which column to associate this filter with."
-        }, _allExtractionInformations);
+            TaskDescription = "All filters must be associated with a single column.  Pick which column to associate this filter with."},_allExtractionInformations);
 
-        if (toAddTo != null)
+        if(toAddTo != null)
         {
             //see if there is one with the same name that for some reason we are not known to be a child of already
             var duplicate = toAddTo.ExtractionFilters.FirstOrDefault(f => f.Name.Equals(_filter.Name));
@@ -77,10 +73,9 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
                     _filter.ClonedFromExtractionFilter_ID = duplicate.ID;
                     _filter.SaveToDatabase();
                 }
-
                 return;
             }
-
+                
             new FilterImporter(new ExtractionFilterFactory(toAddTo), null).ImportFilter(null, _filter, null);
             MessageBox.Show("Publish successful");
         }

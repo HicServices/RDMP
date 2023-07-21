@@ -28,8 +28,7 @@ internal class ProposeExecutionWhenTargetIsSupportingDocument : RDMPCommandExecu
         ItemActivator.Activate<SupportingDocumentUI, SupportingDocument>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SupportingDocument target,
-        InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SupportingDocument target, InsertOption insertOption = InsertOption.Default)
     {
         return null;
     }

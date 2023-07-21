@@ -88,8 +88,7 @@ internal class CustomMetadataReportTests : UnitTests
             @"| Name | Desc|
 | $Name | $Description |");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata },
-            outDir, template, "$Name.md", oneFile, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata }, outDir, template, "$Name.md", oneFile, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -121,8 +120,7 @@ internal class CustomMetadataReportTests : UnitTests
             @"| Name | Desc| Range |
 | $Name | $Description | $DQE_StartDate$DQE_EndDate$DQE_DateRange |");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata },
-            outDir, template, "$Name.md", false, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata }, outDir, template, "$Name.md", false, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -182,8 +180,7 @@ internal class CustomMetadataReportTests : UnitTests
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(
-            @"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range | TimeField |
+        StringAssert.AreEqualIgnoringCase(@"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range | TimeField |
 | ffff |  | 2001 | 2002 | 02 | 04 | 01 | 03 | 2001-2002 | mydate |", resultText.TrimEnd());
     }
 
@@ -217,8 +214,7 @@ internal class CustomMetadataReportTests : UnitTests
 </DataSet>");
 
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator),
-            new[] { cata, cata2 }, outDir, template,
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata, cata2 }, outDir, template,
             oneFile ? "results.xml" : "$Name.xml", oneFile, null);
         cmd.Execute();
 
@@ -265,7 +261,9 @@ internal class CustomMetadataReportTests : UnitTests
 <Desc>trollolol</Desc>
 <Email></Email>
 </DataSet>".Trim(), resultText2.Trim());
+
         }
+
     }
 
     [TestCase(true)]
@@ -306,8 +304,8 @@ $foreach CatalogueItem
 $end");
 
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata },
-            outDir, template, "$Name.md", oneFile, null);
+
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata }, outDir, template, "$Name.md", oneFile, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -344,8 +342,7 @@ $foreach CatalogueItem
 | $Name | $Description |
 $end");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -391,8 +388,7 @@ $Description
 $foreach CatalogueItem
 | $Name | $Description |");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata },
-            outDir, template, "$Name.md", false, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata }, outDir, template, "$Name.md", false, null);
         var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
 
         Assert.AreEqual(4, ex.LineNumber);
@@ -426,8 +422,7 @@ $foreach CatalogueItem
 $end
 $end");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata },
-            outDir, template, "$Name.md", false, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata }, outDir, template, "$Name.md", false, null);
         var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
 
         Assert.AreEqual(6, ex.LineNumber);
@@ -451,6 +446,7 @@ $end");
 
         Assert.AreEqual("aa<br/>bb", report.ReplaceNewlines("aa\r\nbb"));
         Assert.AreEqual("aa<br/>bb", report.ReplaceNewlines("aa\nbb"));
+
     }
 
     [Test]
@@ -491,8 +487,7 @@ $foreach CatalogueItem
 | $Name | $Description |
 $end");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata },
-            outDir, template, "$Name.md", false, "<br/>");
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata }, outDir, template, "$Name.md", false, "<br/>");
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -529,8 +524,7 @@ A cool<br/>dataset with interesting stuff
 Server: $Server
 Description: $Description");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata },
-            outDir, template, "$Name.md", false, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata }, outDir, template, "$Name.md", false, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -570,8 +564,7 @@ Description: A cool dataset with interesting stuff", resultText);
 Server: $Server
 Description: $Description");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata },
-            outDir, template, "$Name.md", false, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { cata }, outDir, template, "$Name.md", false, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "ffff.md");
@@ -612,8 +605,7 @@ $foreach CatalogueItem
 $end
 $end");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -676,9 +668,7 @@ $foreach CatalogueItem
 $end
 $end");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator),
-            new[] { ei1.CatalogueItem.Catalogue, ei2.CatalogueItem.Catalogue }, outDir, template, "Datasets.md", true,
-            null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { ei1.CatalogueItem.Catalogue, ei2.CatalogueItem.Catalogue }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -701,6 +691,8 @@ Price: $30
 | Column | Description | Datatype |
 | MyCataItem |  | datetime2 |", resultText.TrimEnd());
     }
+
+
 
 
     [Test]
@@ -739,9 +731,7 @@ $foreach CatalogueItem
 $end
 $end");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator),
-            new[] { ei1.CatalogueItem.Catalogue, ei2.CatalogueItem.Catalogue }, outDir, template, "Datasets.md", true,
-            null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { ei1.CatalogueItem.Catalogue, ei2.CatalogueItem.Catalogue }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -815,24 +805,23 @@ $end");
         var eval1_col1 = Mock.Of<ColumnState>();
         eval1_col1.TargetProperty = "Cata1Col1";
         eval1_col1.CountCorrect = 9;
-        eval1_col1.CountDBNull =
-            3; // note that this is seperate from the other counts.  A value can be both null and correct.
-        eval1.ColumnStates = new[] { eval1_col1 };
+        eval1_col1.CountDBNull = 3; // note that this is seperate from the other counts.  A value can be both null and correct.
+        eval1.ColumnStates = new ColumnState[] { eval1_col1 };
 
         var eval2 = Mock.Of<Evaluation>();
         var eval2_col1 = Mock.Of<ColumnState>();
         eval2_col1.TargetProperty = "Cata2Col1";
         eval2_col1.CountCorrect = 1;
-        eval2_col1.CountMissing = 2;
+        eval2_col1.CountMissing= 2;
         eval2_col1.CountWrong = 3;
         eval2_col1.CountInvalidatesRow = 4;
         eval2_col1.CountDBNull = 5;
-        eval2.ColumnStates = new[] { eval2_col1 };
+        eval2.ColumnStates = new ColumnState[] { eval2_col1 };
 
         reporter.EvaluationCache.Add(cata1, eval1);
         reporter.EvaluationCache.Add(cata2, eval2);
 
-        reporter.GenerateReport(new[] { cata1, cata2 }, outDir, template, "Datasets.md", true);
+        reporter.GenerateReport(new[] {cata1,cata2}, outDir, template, "Datasets.md", true);
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
 
@@ -886,8 +875,7 @@ $end
 
 Get in touch with us at noreply@nobody.com");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -911,7 +899,6 @@ Price: $30
 
 Get in touch with us at noreply@nobody.com", resultText.TrimEnd());
     }
-
     [Test]
     public void TestCustomMetadataReport_LoopCataloguesPrefixAndSuffix()
     {
@@ -942,8 +929,7 @@ $end
 
 Get in touch with us at noreply@nobody.com");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -1012,8 +998,7 @@ $end
 
 Get in touch with us at noreply@nobody.com");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -1072,14 +1057,12 @@ $foreach Catalogue
 some more text
 ");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
         Assert.AreEqual("Unexpected '$foreach Catalogue' before the end of the last one on line 4", ex.Message);
         Assert.AreEqual(4, ex.LineNumber);
     }
-
     [Test]
     public void TestCustomMetadataReport_ErrorCondition_UnexpectedEndBlock()
     {
@@ -1102,8 +1085,7 @@ $foreach Catalogue
 some more text
 ");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
         Assert.AreEqual("Error, encountered '$end' on line 3 while not in a $foreach Catalogue block", ex.Message);
@@ -1134,14 +1116,12 @@ $end
 some more text
 ");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
         Assert.AreEqual("Error, encountered '$end' on line 5 while not in a $foreach Catalogue block", ex.Message);
         Assert.AreEqual(5, ex.LineNumber);
     }
-
     [Test]
     public void TestCustomMetadataReport_ErrorCondition_MixingTopLevelBlocks()
     {
@@ -1166,16 +1146,12 @@ $end
 some more text
 ");
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.AreEqual(
-            "Error, Unexpected '$foreach CatalogueItem' on line 3.  Current section is plain text, '$foreach CatalogueItem' can only appear within a '$foreach Catalogue' block (you cannot mix and match top level loop elements)",
-            ex.Message);
+        Assert.AreEqual("Error, Unexpected '$foreach CatalogueItem' on line 3.  Current section is plain text, '$foreach CatalogueItem' can only appear within a '$foreach Catalogue' block (you cannot mix and match top level loop elements)", ex.Message);
         Assert.AreEqual(3, ex.LineNumber);
     }
-
     [Test]
     public void Test_CustomMetadataElementSeperator_ThrowsWhenNotInForEach()
     {
@@ -1194,8 +1170,7 @@ $Comma";
 
         File.WriteAllText(template.FullName, templateCode);
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
         Assert.AreEqual("Unexpected use of $Comma outside of an iteration ($foreach) block", ex.Message);
@@ -1231,8 +1206,7 @@ $end
 
         File.WriteAllText(template.FullName, templateCode);
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -1299,8 +1273,7 @@ $end
 
         File.WriteAllText(template.FullName, templateCode);
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null, ";");
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null,";");
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -1399,7 +1372,7 @@ $DQE_StartDate
 $DQE_StartDay          
 $DQE_StartMonth        
 $DQE_StartYear";
-
+            
 
         Setup2Catalogues(out var c1, out var c2);
 
@@ -1413,8 +1386,7 @@ $DQE_StartYear";
 
         File.WriteAllText(template.FullName, templateCode);
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");
@@ -1476,8 +1448,7 @@ $end";
 
         File.WriteAllText(template.FullName, templateCode);
 
-        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 },
-            outDir, template, "Datasets.md", true, null);
+        var cmd = new ExecuteCommandExtractMetadata(new ThrowImmediatelyActivator(RepositoryLocator), new[] { c1, c2 }, outDir, template, "Datasets.md", true, null);
         cmd.Execute();
 
         var outFile = Path.Combine(outDir.FullName, "Datasets.md");

@@ -12,11 +12,15 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Logging.PastEvents;
 
 /// <summary>
-///     Readonly audit of a historical logged event which was noteworthy during the logged activity (See
-///     ArchivalDataLoadInfo)
+/// Readonly audit of a historical logged event which was noteworthy during the logged activity (See ArchivalDataLoadInfo)
 /// </summary>
 public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
 {
+    public int ID { get; internal set; }
+    public DateTime Date { get; internal set; }
+    public string EventType { get; internal set; }
+    public string Description { get; internal set; }
+
     public ArchivalProgressLog(DbDataReader r)
     {
         ID = (int)r["ID"];
@@ -27,11 +31,10 @@ public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparabl
         EventType = r["eventType"] as string;
         Description = r["description"] as string;
     }
-
-    public DateTime Date { get; internal set; }
-    public string EventType { get; internal set; }
-    public string Description { get; internal set; }
-    public int ID { get; internal set; }
+    public override string ToString()
+    {
+        return $"{Date} - {Description}";
+    }
 
     public int CompareTo(object obj)
     {
@@ -44,16 +47,11 @@ public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparabl
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
 
-    public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
+    public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)
     {
-        level = EventType == "OnWarning" ? CheckResult.Warning : CheckResult.Success;
+        level = EventType == "OnWarning"? CheckResult.Warning : CheckResult.Success;
         title = Date.ToString();
         body = Description;
         stackTrace = null;
-    }
-
-    public override string ToString()
-    {
-        return $"{Date} - {Description}";
     }
 }

@@ -14,15 +14,15 @@ using ScintillaNET;
 namespace Rdmp.UI.AutoComplete;
 
 /// <summary>
-///     Provides autocomplete handling and event hooking for <see cref="Scintilla" /> control
+/// Provides autocomplete handling and event hooking for <see cref="Scintilla"/> control
 /// </summary>
 public class AutoCompleteProviderWin : AutoCompleteProvider
 {
-    private readonly char Separator = ';';
-
     public AutoCompleteProviderWin(IQuerySyntaxHelper helper) : base(helper)
     {
     }
+
+    private char Separator = ';';
 
     public void RegisterForEvents(Scintilla queryEditor)
     {
@@ -34,29 +34,32 @@ public class AutoCompleteProviderWin : AutoCompleteProvider
                 ShowAutocomplete(queryEditor, true);
             }
         };
-
+            
         queryEditor.AutoCSeparator = Separator;
         queryEditor.CharAdded += scintilla_CharAdded;
         queryEditor.AutoCIgnoreCase = true;
         queryEditor.AutoCOrder = Order.Custom;
         queryEditor.AutoCAutoHide = false;
 
-        for (var i = 0; i < Images.Length; i++) queryEditor.RegisterRgbaImage(i, Images[i].ImageToBitmap());
+        for (var i = 0; i < Images.Length; i++)
+        {
+            queryEditor.RegisterRgbaImage(i, Images[i].ImageToBitmap());
+        }
     }
 
     private void scintilla_CharAdded(object sender, CharAddedEventArgs e)
     {
         if (sender is not Scintilla scintilla)
             return;
-
-        ShowAutocomplete(scintilla, false);
+            
+        ShowAutocomplete(scintilla,false);
     }
 
-    private void ShowAutocomplete(Scintilla scintilla, bool all)
+    private void ShowAutocomplete(Scintilla scintilla,bool all)
     {
         // Find the word start
         var word = scintilla.GetWordFromPosition(scintilla.CurrentPosition)?.Trim();
-
+            
         if (string.IsNullOrWhiteSpace(word) && !all)
         {
             scintilla.AutoCCancel();
@@ -64,10 +67,10 @@ public class AutoCompleteProviderWin : AutoCompleteProvider
         }
 
         var list = Items.Distinct()
-            .Where(s => !string.IsNullOrWhiteSpace(s) && s.Contains(word, StringComparison.CurrentCultureIgnoreCase))
+            .Where(s => !string.IsNullOrWhiteSpace(s) && s.Contains(word,StringComparison.CurrentCultureIgnoreCase))
             .OrderBy(a => a);
 
-        if (!list.Any())
+        if(!list.Any())
         {
             scintilla.AutoCCancel();
             return;
@@ -79,7 +82,10 @@ public class AutoCompleteProviderWin : AutoCompleteProvider
 
     private string FormatForAutocomplete(string word)
     {
-        if (ItemsWithImages.TryGetValue(word, out var image)) return $"{word}?{image}";
+        if(ItemsWithImages.TryGetValue(word, out var image))
+        {
+            return $"{word}?{image}";
+        }
 
         return word;
     }

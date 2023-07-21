@@ -4,27 +4,28 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Serialization;
 
 namespace Rdmp.Core.Curation.Data.Serialization;
 
 /// <summary>
-///     JSON Contract Resolver which serializes <see cref="IDictionary" /> as two arrays (keys and values).  This
-///     allows serialization of keys which are complex types (by default json only supports string keys).
+/// JSON Contract Resolver which serializes <see cref="IDictionary"/> as two arrays (keys and values).  This
+/// allows serialization of keys which are complex types (by default json only supports string keys).
 /// </summary>
 public class DictionaryAsArrayResolver : DefaultContractResolver
 {
     protected override JsonContract CreateContract(Type objectType)
     {
-        if (objectType.GetInterfaces().Any(i => i == typeof(IDictionary) ||
-                                                (i.IsGenericType && i.GetGenericTypeDefinition() ==
-                                                    typeof(IDictionary<,>))))
+        if (objectType.GetInterfaces().Any(i => i == typeof(IDictionary) || 
+                                                (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))))
+        {
             return base.CreateArrayContract(objectType);
-
+        }
+        
         return base.CreateContract(objectType);
     }
 }

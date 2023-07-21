@@ -10,24 +10,18 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 
 /// <summary>
-///     Collection of all <see cref="CohortIdentificationConfiguration" /> (queries for identifying patient lists) which
-///     are associated
-///     with a <see cref="Project" />.
-///     <para>A <see cref="CohortIdentificationConfiguration" /> can be associated with multiple Projects</para>
+/// Collection of all <see cref="CohortIdentificationConfiguration"/> (queries for identifying patient lists) which are associated
+/// with a <see cref="Project"/>.
+/// 
+/// <para>A <see cref="CohortIdentificationConfiguration"/> can be associated with multiple Projects</para>
 /// </summary>
-public class ProjectCohortIdentificationConfigurationAssociationsNode : Node, IOrderable
+public class ProjectCohortIdentificationConfigurationAssociationsNode:Node,IOrderable
 {
+    public Project Project { get; set; }
+
     public ProjectCohortIdentificationConfigurationAssociationsNode(Project project)
     {
         Project = project;
-    }
-
-    public Project Project { get; set; }
-
-    public int Order
-    {
-        get => 1;
-        set { }
     }
 
     public override string ToString()
@@ -45,11 +39,14 @@ public class ProjectCohortIdentificationConfigurationAssociationsNode : Node, IO
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((ProjectCohortIdentificationConfigurationAssociationsNode)obj);
+        return Equals((ProjectCohortIdentificationConfigurationAssociationsNode) obj);
     }
 
     public override int GetHashCode()
     {
         return Project != null ? Project.GetHashCode() : 0;
     }
+
+    public int Order { get => 1;
+        set{} }
 }

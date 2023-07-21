@@ -7,8 +7,7 @@
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-///     Object which can be converted into an <see cref="ICombineToMakeCommand" /> e.g. by starting a dragg operation on
-///     it.
+/// Object which can be converted into an <see cref="ICombineToMakeCommand"/> e.g. by starting a dragg operation on it.
 /// </summary>
 public interface ICombineableSource
 {

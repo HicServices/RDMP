@@ -6,10 +6,10 @@
 
 using System;
 using System.Data;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -36,8 +36,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         JoinableCohortAggregateConfiguration joinable = null;
         try
         {
-            joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate1);
+            joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1);
 
             Assert.AreEqual(joinable.CohortIdentificationConfiguration_ID, cohortIdentificationConfiguration.ID);
             Assert.AreEqual(joinable.AggregateConfiguration_ID, aggregate1.ID);
@@ -51,14 +50,10 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
     [Test]
     public void CreateJoinable_IsAlreadyInAContainer()
     {
-        cohortIdentificationConfiguration.RootCohortAggregateContainer.AddChild(aggregate1, 1);
+        cohortIdentificationConfiguration.RootCohortAggregateContainer.AddChild(aggregate1,1);
 
-        var ex = Assert.Throws<NotSupportedException>(() =>
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate1));
-        Assert.AreEqual(
-            "Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it is already in a CohortAggregateContainer",
-            ex.Message);
+        var ex = Assert.Throws<NotSupportedException>(() => new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1));
+        Assert.AreEqual("Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it is already in a CohortAggregateContainer", ex.Message);
         cohortIdentificationConfiguration.RootCohortAggregateContainer.RemoveChild(aggregate1);
     }
 
@@ -69,27 +64,20 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         aggregate1.AggregateDimensions.First().DeleteInDatabase();
         aggregate1.ClearAllInjections();
 
-        var ex = Assert.Throws<NotSupportedException>(() =>
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate1));
-        Assert.AreEqual(
-            "Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it has 0 columns marked IsExtractionIdentifier",
-            ex.Message);
+        var ex = Assert.Throws<NotSupportedException>(()=>new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1));
+        Assert.AreEqual("Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it has 0 columns marked IsExtractionIdentifier", ex.Message);
     }
 
     [Test]
     public void CreateJoinable_AddTwice()
     {
         //delete the first dimension (chi)
-        var join1 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-            aggregate1);
+        var join1 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1);
         try
         {
-            if (CatalogueRepository is TableRepository)
+            if(CatalogueRepository is TableRepository)
             {
-                var ex = Assert.Throws<SqlException>(() =>
-                    new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                        aggregate1));
+                var ex = Assert.Throws<SqlException>(() => new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1));
                 Assert.IsTrue(ex.Message.Contains("ix_eachAggregateCanOnlyBeJoinableOnOneProject"));
             }
         }
@@ -102,15 +90,14 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
     [Test]
     public void CreateUsers()
     {
-        JoinableCohortAggregateConfiguration joinable = null;
+        JoinableCohortAggregateConfiguration joinable = null; 
         try
         {
-            joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate1);
+            joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1);
             joinable.AddUser(aggregate2);
 
             Assert.IsTrue(joinable.Users.Length == 1);
-            Assert.AreEqual(aggregate2, joinable.Users[0].AggregateConfiguration);
+            Assert.AreEqual(aggregate2,joinable.Users[0].AggregateConfiguration);
         }
         finally
         {
@@ -121,16 +108,12 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
     [Test]
     public void CreateUsers_DuplicateUser()
     {
-        var joinable =
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate1);
+        var joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1);
         try
         {
             joinable.AddUser(aggregate2);
-            var ex = Assert.Throws<Exception>(() => joinable.AddUser(aggregate2));
-            Assert.AreEqual(
-                $"AggregateConfiguration 'UnitTestAggregate2' already uses 'Patient Index Table:cic_{cohortIdentificationConfiguration.ID}_UnitTestAggregate1'. Only one patient index table join is permitted.",
-                ex.Message);
+            var ex = Assert.Throws<Exception>(()=>joinable.AddUser(aggregate2));
+            Assert.AreEqual($"AggregateConfiguration 'UnitTestAggregate2' already uses 'Patient Index Table:cic_{cohortIdentificationConfiguration.ID}_UnitTestAggregate1'. Only one patient index table join is permitted.", ex.Message);
         }
         finally
         {
@@ -141,14 +124,11 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
     [Test]
     public void CreateUsers_SelfReferrential()
     {
-        var joinable =
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate1);
+        var joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1);
         try
         {
-            var ex = Assert.Throws<NotSupportedException>(() => joinable.AddUser(aggregate1));
-            Assert.AreEqual("Cannot configure AggregateConfiguration UnitTestAggregate1 as a Join user to itself!",
-                ex.Message);
+            var ex = Assert.Throws<NotSupportedException>(()=>joinable.AddUser(aggregate1));
+            Assert.AreEqual("Cannot configure AggregateConfiguration UnitTestAggregate1 as a Join user to itself!", ex.Message);
         }
         finally
         {
@@ -159,18 +139,12 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
     [Test]
     public void CreateUsers_ToAnyOtherJoinable()
     {
-        var joinable =
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate1);
-        var joinable2 =
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate2);
+        var joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1);
+        var joinable2 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate2);
         try
         {
             var ex = Assert.Throws<NotSupportedException>(() => joinable.AddUser(aggregate2));
-            Assert.AreEqual(
-                "Cannot add user UnitTestAggregate2 because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration",
-                ex.Message);
+            Assert.AreEqual("Cannot add user UnitTestAggregate2 because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration", ex.Message);
         }
         finally
         {
@@ -178,13 +152,10 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
             joinable2.DeleteInDatabase();
         }
     }
-
     [Test]
     public void CreateUsers_ToNoExtractionIdentifierTable()
     {
-        var joinable =
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate1);
+        var joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1);
 
         aggregate2.AggregateDimensions.First().DeleteInDatabase();
         aggregate2.ClearAllInjections();
@@ -192,9 +163,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         try
         {
             var ex = Assert.Throws<NotSupportedException>(() => joinable.AddUser(aggregate2));
-            Assert.AreEqual(
-                "Cannot configure AggregateConfiguration UnitTestAggregate2 as join user because it does not contain exactly 1 IsExtractionIdentifier dimension",
-                ex.Message);
+            Assert.AreEqual("Cannot configure AggregateConfiguration UnitTestAggregate2 as join user because it does not contain exactly 1 IsExtractionIdentifier dimension", ex.Message);
         }
         finally
         {
@@ -206,21 +175,20 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
     public void QueryBuilderTest()
     {
         //make aggregate 2 a joinable
-        var joinable2 =
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate2);
+        var joinable2 = new JoinableCohortAggregateConfiguration(CatalogueRepository,cohortIdentificationConfiguration, aggregate2);
         joinable2.AddUser(aggregate1);
 
-        var builder = new CohortQueryBuilder(aggregate1, null, null);
+        var builder = new CohortQueryBuilder(aggregate1, null,null);
         Console.WriteLine(builder.SQL);
         try
         {
+                
             using (var con = (SqlConnection)Database.Server.GetConnection())
             {
                 con.Open();
 
                 using var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
-
+                    
                 //can read at least one row
                 Assert.IsTrue(dbReader.Read());
             }
@@ -233,19 +201,19 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
                     @"/*cic_{1}_UnitTestAggregate1*/
 SELECT
 distinct
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
+["+TestDatabaseNames.Prefix+ @"ScratchArea].[dbo].[BulkData]
 LEFT Join (
 	/*cic_{1}_UnitTestAggregate2*/
 	SELECT
 	distinct
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 	FROM 
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
+	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 ){0}
-on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi", expectedTableAlias,
-                    cohortIdentificationConfiguration.ID), builder.SQL);
+on ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi",expectedTableAlias,cohortIdentificationConfiguration.ID), builder.SQL);
+
         }
         finally
         {
@@ -257,14 +225,11 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
     [Test]
     public void QueryBuilderTest_AdditionalColumn()
     {
-        var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .Single(e => e.GetRuntimeName().Equals("dtCreated"));
+        var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
         aggregate2.AddDimension(anotherCol);
 
         //make aggregate 2 a joinable
-        var joinable2 =
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate2);
+        var joinable2 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate2);
         joinable2.AddUser(aggregate1);
 
         var expectedTableAlias = $"ix{joinable2.ID}";
@@ -275,10 +240,7 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
         var filter1 = new AggregateFilter(CatalogueRepository, "Within 1 year of event", filterContainer1);
         var filter2 = new AggregateFilter(CatalogueRepository, "DateAfter2001", filterContainer2);
 
-        filter1.WhereSQL =
-            string.Format(
-                "ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix +
-                @"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1", expectedTableAlias);
+        filter1.WhereSQL = string.Format("ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1",expectedTableAlias);
         filter1.SaveToDatabase();
 
         filter2.WhereSQL = "dtCreated > '2001-01-01'";
@@ -290,12 +252,12 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
         aggregate2.RootFilterContainer_ID = filterContainer2.ID;
         aggregate2.SaveToDatabase();
 
-        var builder = new CohortQueryBuilder(aggregate1, null, null);
+        var builder = new CohortQueryBuilder(aggregate1, null,null);
 
 
         Console.WriteLine(builder.SQL);
 
-
+            
         try
         {
             using (var con = (SqlConnection)Database.Server.GetConnection())
@@ -316,29 +278,29 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
                         @"/*cic_{1}_UnitTestAggregate1*/
 SELECT
 distinct
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
+["+TestDatabaseNames.Prefix+ @"ScratchArea].[dbo].[BulkData]
 LEFT Join (
 	/*cic_{1}_UnitTestAggregate2*/
 	SELECT distinct
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi], [" + TestDatabaseNames.Prefix +
-                        @"ScratchArea].[dbo].[BulkData].[dtCreated]
+	[" + TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi], ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[dtCreated]
 	FROM 
-	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
+	["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 	WHERE
 	(
 	/*DateAfter2001*/
 	dtCreated > '2001-01-01'
 	)
 ){0}
-on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi
+on ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi
 
 WHERE
 (
 /*Within 1 year of event*/
-ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1
-)", expectedTableAlias, cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
+ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1
+)", expectedTableAlias,cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
+
         }
         finally
         {
@@ -348,7 +310,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
             filterContainer1.DeleteInDatabase();
 
             filterContainer2.DeleteInDatabase();
-
+                
             joinable2.Users[0].DeleteInDatabase();
             joinable2.DeleteInDatabase();
         }
@@ -357,14 +319,11 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
     [Test]
     public void QueryBuilderTest_JoinableCloning()
     {
-        var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .Single(e => e.GetRuntimeName().Equals("dtCreated"));
+        var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
         aggregate2.AddDimension(anotherCol);
 
         //make aggregate 2 a joinable
-        var joinable2 =
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate2);
+        var joinable2 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate2);
         joinable2.AddUser(aggregate1);
 
         var expectedTableAlias = $"ix{joinable2.ID}";
@@ -375,10 +334,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
         var filter1 = new AggregateFilter(CatalogueRepository, "Within 1 year of event", filterContainer1);
         var filter2 = new AggregateFilter(CatalogueRepository, "DateAfter2001", filterContainer2);
 
-        filter1.WhereSQL =
-            string.Format(
-                "ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix +
-                @"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1", expectedTableAlias);
+        filter1.WhereSQL = string.Format("ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1", expectedTableAlias);
         filter1.SaveToDatabase();
 
         filter2.WhereSQL = "dtCreated > '2001-01-01'";
@@ -391,55 +347,48 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
         aggregate2.SaveToDatabase();
 
         //add the first aggregate to the configuration
-        rootcontainer.AddChild(aggregate1, 1);
+        rootcontainer.AddChild(aggregate1,1);
 
-        var globalParameter = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,
-            "DECLARE @fish varchar(50)")
-        {
-            Comment = "Comments for the crazies",
-            Value = "'fishes'"
-        };
+        var globalParameter = new AnyTableSqlParameter(CatalogueRepository, cohortIdentificationConfiguration,"DECLARE @fish varchar(50)")
+            {
+                Comment = "Comments for the crazies",
+                Value = "'fishes'"
+            };
         globalParameter.SaveToDatabase();
 
-        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
+        var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
         try
         {
             var clone = cohortIdentificationConfiguration.CreateClone(new ThrowImmediatelyCheckNotifier());
 
-            var cloneBuilder = new CohortQueryBuilder(clone, null);
+            var cloneBuilder = new CohortQueryBuilder(clone,null);
 
             var origSql = builder.SQL;
             var cloneOrigSql = cloneBuilder.SQL;
 
-            Console.WriteLine(
-                "//////////////////////////////////////////////VERBATIM//////////////////////////////////////////////");
+            Console.WriteLine("//////////////////////////////////////////////VERBATIM//////////////////////////////////////////////");
             Console.WriteLine(origSql);
             Console.WriteLine(cloneOrigSql);
-            Console.WriteLine(
-                "//////////////////////////////////////////////END VERBATIM//////////////////////////////////////////////");
+            Console.WriteLine("//////////////////////////////////////////////END VERBATIM//////////////////////////////////////////////");
 
             var builderSql = Regex.Replace(Regex.Replace(origSql, "cic_[0-9]+_", ""), "ix[0-9]+", "ix");
-            var cloneBuilderSql = Regex.Replace(Regex.Replace(cloneOrigSql, "cic_[0-9]+_", ""), "ix[0-9]+", "ix")
-                .Replace("(Clone)", ""); //get rid of explicit ix53 etc for the comparison
+            var cloneBuilderSql = Regex.Replace(Regex.Replace(cloneOrigSql, "cic_[0-9]+_", ""), "ix[0-9]+", "ix").Replace("(Clone)", "");//get rid of explicit ix53 etc for the comparison
 
-            Console.WriteLine(
-                "//////////////////////////////////////////////TEST COMPARISON IS//////////////////////////////////////////////");
+            Console.WriteLine("//////////////////////////////////////////////TEST COMPARISON IS//////////////////////////////////////////////");
             Console.WriteLine(builderSql);
             Console.WriteLine(cloneBuilderSql);
-            Console.WriteLine(
-                "//////////////////////////////////////////////END COMPARISON//////////////////////////////////////////////");
+            Console.WriteLine("//////////////////////////////////////////////END COMPARISON//////////////////////////////////////////////");
 
             Assert.AreEqual(builderSql, cloneBuilderSql);
 
 
             ////////////////Cleanup Database//////////////////////////////
             //find the WHERE logic too
-            var containerClone = clone.RootCohortAggregateContainer
-                .GetAllAggregateConfigurationsRecursively() //get all the aggregates
-                .Union(clone.GetAllJoinables().Select(j => j.AggregateConfiguration)) //including the joinables
-                .Where(a => a.RootFilterContainer_ID != null) //that have WHERE sql
-                .Select(ag => ag.RootFilterContainer); //grab their containers so we can clean them SetUp
+            var containerClone = clone.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()//get all the aggregates
+                .Union(clone.GetAllJoinables().Select(j=>j.AggregateConfiguration))//including the joinables
+                .Where(a => a.RootFilterContainer_ID != null)//that have WHERE sql
+                .Select(ag => ag.RootFilterContainer);//grab their containers so we can clean them SetUp
 
             ((IDeleteable)clone.GetAllParameters()[0]).DeleteInDatabase();
             clone.DeleteInDatabase();
@@ -474,27 +423,24 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
         _queryCachingDatabase = To;
 
         //make aggregate 2 a joinable
-        var joinable2 =
-            new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
-                aggregate2);
+        var joinable2 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate2);
         joinable2.AddUser(aggregate1);
 
         //make aggregate 2 have an additional column (dtCreated)
-        var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .Single(e => e.GetRuntimeName().Equals("dtCreated"));
+        var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
         aggregate2.AddDimension(anotherCol);
 
         //create a caching server
         var scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
         scripter.CreateAndPatchDatabase(new QueryCachingPatcher(), new AcceptAllCheckNotifier());
 
-        var queryCachingDatabaseServer =
-            new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName, null);
+        var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName,null);
         queryCachingDatabaseServer.SetProperties(_queryCachingDatabase);
-
+            
         try
         {
-            var builderForCaching = new CohortQueryBuilder(aggregate2, null, null);
+
+            var builderForCaching = new CohortQueryBuilder(aggregate2, null,null);
 
             var cacheDt = new DataTable();
             using (var con = (SqlConnection)Database.Server.GetConnection())
@@ -505,12 +451,11 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
             }
 
             var cacheManager = new CachedAggregateConfigurationResultsManager(queryCachingDatabaseServer);
-            cacheManager.CommitResults(
-                new CacheCommitJoinableInceptionQuery(aggregate2, builderForCaching.SQL, cacheDt, null, 30));
+            cacheManager.CommitResults(new CacheCommitJoinableInceptionQuery(aggregate2, builderForCaching.SQL, cacheDt, null,30));
 
             try
             {
-                var builder = new CohortQueryBuilder(aggregate1, null, null)
+                var builder = new CohortQueryBuilder(aggregate1, null,null)
                 {
                     //make the builder use the query cache we just set SetUp
                     CacheServer = queryCachingDatabaseServer
@@ -537,20 +482,21 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
                             @"/*cic_{2}_UnitTestAggregate1*/
 SELECT
 distinct
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
+["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
 LEFT Join (
 	/*Cached:cic_{2}_UnitTestAggregate2*/
 	select * from [{3}]..[JoinableInceptionQuery_AggregateConfiguration{1}]
 
 ){0}
 on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi",
-                            expectedTableAlias, //{0}
+                            expectedTableAlias,  //{0}
                             aggregate2.ID, //{1}
-                            cohortIdentificationConfiguration.ID, //{2}
+                            cohortIdentificationConfiguration.ID,//{2}
                             queryCachingDatabaseName) //{3}
                     ), CollapseWhitespace(builder.SQL));
+
             }
             finally
             {
@@ -558,10 +504,16 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
                 joinable2.DeleteInDatabase();
             }
         }
-        finally
+        finally 
         {
+
             queryCachingDatabaseServer.DeleteInDatabase();
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName).Drop();
+                
         }
+            
+            
+
+           
     }
 }

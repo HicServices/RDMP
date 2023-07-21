@@ -4,22 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using System;
 
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-///     Defines an alternative name for <see cref="IAtomicCommand" /> that can be used
-///     e.g. "ls" instead of "List"
+/// Defines an alternative name for <see cref="IAtomicCommand"/> that can be used
+/// e.g. "ls" instead of "List"
 /// </summary>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+[AttributeUsage(AttributeTargets.Class,AllowMultiple = true)]
 public class AliasAttribute : Attribute
 {
+
+    public string Name { get; }
     public AliasAttribute(string name)
     {
         Name = name;
     }
-
-    public string Name { get; }
 }

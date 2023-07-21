@@ -15,11 +15,11 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandBulkProcessCatalogueItems : BasicUICommandExecution, IAtomicCommand
+internal class ExecuteCommandBulkProcessCatalogueItems : BasicUICommandExecution,IAtomicCommand
 {
     private readonly Catalogue _catalogue;
 
-    public ExecuteCommandBulkProcessCatalogueItems(IActivateItems activator, Catalogue catalogue) : base(activator)
+    public ExecuteCommandBulkProcessCatalogueItems(IActivateItems activator, Catalogue catalogue):base(activator)
     {
         _catalogue = catalogue;
     }

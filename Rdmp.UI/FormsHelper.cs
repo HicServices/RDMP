@@ -10,14 +10,14 @@ using System.Windows.Forms;
 namespace Rdmp.UI;
 
 /// <summary>
-///     Helper Extension Methods for Control
+/// Helper Extension Methods for Control
 /// </summary>
 public static class FormsHelper
 {
     /// <summary>
-    ///     Returns the visible portion of the control in client coordinates of c.  For example if you
-    ///     have a control in a scrollable container then this method will return the client rectangle
-    ///     that is visible with the current scroll viewport.
+    /// Returns the visible portion of the control in client coordinates of c.  For example if you
+    /// have a control in a scrollable container then this method will return the client rectangle
+    /// that is visible with the current scroll viewport.
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
@@ -30,8 +30,9 @@ public static class FormsHelper
             rect = Rectangle.Intersect(rect, c.RectangleToScreen(c.ClientRectangle));
             c = c.Parent;
         }
-
         rect = originalControl.RectangleToClient(rect);
         return rect;
     }
+        
+        
 }

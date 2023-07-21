@@ -11,17 +11,17 @@ namespace Rdmp.Core.CohortCreation.Execution;
 
 internal class PluginCohortCompilerTask : AggregationTask
 {
-    public PluginCohortCompilerTask(AggregateConfiguration ac, CohortCompiler mainCompiler,
-        IPluginCohortCompiler pluginCompiler) : base(ac, mainCompiler)
+    public IPluginCohortCompiler PluginCompiler { get; }
+
+    public PluginCohortCompilerTask(AggregateConfiguration ac,CohortCompiler mainCompiler, IPluginCohortCompiler pluginCompiler):base(ac,mainCompiler)
     {
         PluginCompiler = pluginCompiler;
     }
-
-    public IPluginCohortCompiler PluginCompiler { get; }
 
     public override IDataAccessPoint[] GetDataAccessPoints()
     {
         // for this task always go direct to the query cache
         return new[] { Aggregate.GetCohortIdentificationConfigurationIfAny().QueryCachingServer };
     }
+
 }

@@ -16,31 +16,30 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Tests.Common.Scenarios;
 
 /// <summary>
-///     Base class for all tests that need a lot of objects created for them (e.g. a <see cref="Catalogue" /> with a
-///     <see cref="LoadMetadata" />
+/// Base class for all tests that need a lot of objects created for them (e.g. a <see cref="Catalogue"/> with a <see cref="LoadMetadata"/>
 /// </summary>
 public abstract class TestsRequiringA : FromToDatabaseTests, IDatabaseColumnRequestAdjuster
 {
     public void AdjustColumns(List<DatabaseColumnRequest> columns)
     {
         //create string columns as varchar(500) to avoid load errors  when creating new csv files you want to load into the database
-        foreach (var c in columns)
-            if (c.TypeRequested.CSharpType == typeof(string) && c.TypeRequested.Width.HasValue)
-                c.TypeRequested.Width = Math.Max(500, c.TypeRequested.Width.Value);
+        foreach(var c in columns)
+        {
+            if(c.TypeRequested.CSharpType == typeof(string) && c.TypeRequested.Width.HasValue)
+                c.TypeRequested.Width = Math.Max(500,c.TypeRequested.Width.Value);
+
+        }
     }
 
-    protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, int people, int rows, Random r,
-        out PersonCollection peopleGenerated) where T : IDataGenerator
+    protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db,int people, int rows,Random r, out PersonCollection peopleGenerated) where T:IDataGenerator
     {
         peopleGenerated = new PersonCollection();
         peopleGenerated.GeneratePeople(people, r);
-        return CreateDataset<T>(db, peopleGenerated, rows, r);
+        return CreateDataset<T>(db, peopleGenerated, rows,r);
     }
-
-    protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, int people, int rows, Random r)
-        where T : IDataGenerator
+    protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, int people, int rows,Random r) where T:IDataGenerator
     {
-        return CreateDataset<T>(db, people, rows, r, out _);
+        return CreateDataset<T>(db,people,rows,r,out _);
     }
 
     protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, PersonCollection people, int rows, Random r)

@@ -11,6 +11,8 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Tests.Common.Scenarios;
 
@@ -33,9 +35,8 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         try
         {
-            _request = new ExtractDatasetCommand(_configuration,
-                new ExtractableDatasetBundle(CustomExtractableDataSet));
-            Execute(out var useCase, out var results);
+            _request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
+            Execute(out ExtractionPipelineUseCase useCase, out var results);
 
             var customDataCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("custTable99.csv"));
 
@@ -43,9 +44,10 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
             var lines = File.ReadAllLines(customDataCsv.FullName);
 
-            Assert.AreEqual("SuperSecretThing,ReleaseID", lines[0]);
-            Assert.AreEqual("monkeys can all secretly fly,Pub_54321", lines[1]);
-            Assert.AreEqual("the wizard of OZ was a man behind a machine,Pub_11ftw", lines[2]);
+            Assert.AreEqual("SuperSecretThing,ReleaseID",lines[0]);
+            Assert.AreEqual("monkeys can all secretly fly,Pub_54321",lines[1]);
+            Assert.AreEqual("the wizard of OZ was a man behind a machine,Pub_11ftw",lines[2]);
+
         }
         finally
         {
@@ -55,8 +57,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
 
     /// <summary>
-    ///     Tests that you can add a custom cohort column on the end of an existing dataset as an append.  Requires you
-    ///     configure a JoinInfo
+    /// Tests that you can add a custom cohort column on the end of an existing dataset as an append.  Requires you configure a JoinInfo
     /// </summary>
     [Test]
     public void Extract_ProjectSpecificCatalogue_AppendedColumn()
@@ -69,41 +70,37 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         pipe.Name = "Extract_ProjectSpecificCatalogue_AppendedColumn Pipe";
         pipe.SaveToDatabase();
 
-        var extraColumn = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific)
-            .Single(e => e.GetRuntimeName().Equals("SuperSecretThing"));
-        var asExtractable = new ExtractableColumn(DataExportRepository, _extractableDataSet, _configuration,
-            extraColumn, 10, extraColumn.SelectSQL);
+        var extraColumn = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("SuperSecretThing"));
+        var asExtractable = new ExtractableColumn(DataExportRepository, _extractableDataSet, _configuration, extraColumn, 10,extraColumn.SelectSQL);
 
         //get rid of any lingering joins
         foreach (var j in CatalogueRepository.GetAllObjects<JoinInfo>())
             j.DeleteInDatabase();
 
         //add the ability to join the two tables in the query
-        var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
-            .Single(c => c.IsExtractionIdentifier).ColumnInfo;
-        var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific)
-            .Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
-        new JoinInfo(CatalogueRepository, idCol, otherIdCol, ExtractionJoinType.Left, null);
+        var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core).Single(c => c.IsExtractionIdentifier).ColumnInfo;
+        var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
+        new JoinInfo(CatalogueRepository,idCol, otherIdCol,ExtractionJoinType.Left,null);
 
         //generate a new request (this will include the newly created column)
-        _request = new ExtractDatasetCommand(_configuration, new ExtractableDatasetBundle(_extractableDataSet));
+        _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
 
         var tbl = Database.ExpectTable("TestTable");
         tbl.Truncate();
 
-        using (var blk = tbl.BeginBulkInsert())
+        using(var blk = tbl.BeginBulkInsert())
         {
             var dt = new DataTable();
             dt.Columns.Add("PrivateID");
             dt.Columns.Add("Name");
             dt.Columns.Add("DateOfBirth");
 
-            dt.Rows.Add("Priv_12345", "Bob", "2001-01-01");
-            dt.Rows.Add("Priv_wtf11", "Frank", "2001-10-29");
+            dt.Rows.Add(new object[] {"Priv_12345", "Bob","2001-01-01"});
+            dt.Rows.Add(new object[] {"Priv_wtf11", "Frank","2001-10-29"});
             blk.Upload(dt);
         }
 
-        Execute(out var useCase, out var results);
+        Execute(out ExtractionPipelineUseCase useCase, out var results);
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
@@ -124,8 +121,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
     }
 
     /// <summary>
-    ///     Tests that you can reference a custom cohort column in the WHERE Sql of a core dataset in extraction.  Requires you
-    ///     configure a <see cref="JoinInfo" /> and specify a <see cref="SelectedDataSetsForcedJoin" />
+    /// Tests that you can reference a custom cohort column in the WHERE Sql of a core dataset in extraction.  Requires you configure a <see cref="JoinInfo"/> and specify a <see cref="SelectedDataSetsForcedJoin"/>
     /// </summary>
     [Test]
     public void Extract_ProjectSpecificCatalogue_FilterReference()
@@ -143,9 +139,9 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         _selectedDataSet.SaveToDatabase();
 
         var filter = new DeployedExtractionFilter(DataExportRepository, "monkeys only", rootContainer)
-        {
-            WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'"
-        };
+ {
+     WhereSQL = "SuperSecretThing = 'monkeys can all secretly fly'"
+ };
         filter.SaveToDatabase();
         rootContainer.AddChild(filter);
 
@@ -154,16 +150,14 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             j.DeleteInDatabase();
 
         //add the ability to join the two tables in the query
-        var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
-            .Single(c => c.IsExtractionIdentifier).ColumnInfo;
-        var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific)
-            .Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
-        new JoinInfo(CatalogueRepository, idCol, otherIdCol, ExtractionJoinType.Left, null);
+        var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core).Single(c => c.IsExtractionIdentifier).ColumnInfo;
+        var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
+        new JoinInfo(CatalogueRepository,idCol, otherIdCol, ExtractionJoinType.Left, null);
 
         new SelectedDataSetsForcedJoin(DataExportRepository, _selectedDataSet, CustomTableInfo);
 
         //generate a new request (this will include the newly created column)
-        _request = new ExtractDatasetCommand(_configuration, new ExtractableDatasetBundle(_extractableDataSet));
+        _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
 
         var tbl = Database.ExpectTable("TestTable");
         tbl.Truncate();
@@ -175,12 +169,12 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
             dt.Columns.Add("Name");
             dt.Columns.Add("DateOfBirth");
 
-            dt.Rows.Add("Priv_12345", "Bob", "2001-01-01");
-            dt.Rows.Add("Priv_wtf11", "Frank", "2001-10-29");
+            dt.Rows.Add(new object[] { "Priv_12345", "Bob", "2001-01-01" });
+            dt.Rows.Add(new object[] { "Priv_wtf11", "Frank", "2001-10-29" });
             blk.Upload(dt);
         }
 
-        Execute(out var useCase, out var results);
+        Execute(out ExtractionPipelineUseCase useCase, out var results);
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
@@ -190,13 +184,16 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         Assert.AreEqual("ReleaseID,Name,DateOfBirth", lines[0]);
         Assert.AreEqual("Pub_54321,Bob,2001-01-01", lines[1]);
-        Assert.AreEqual(2, lines.Length);
+        Assert.AreEqual(2,lines.Length);
+
+            
     }
+
 
 
     /*
     private List<string> _customTablesToCleanup = new List<string>();
-
+        
     [Test]
     public void CSVImportPipeline()
     {
@@ -208,7 +205,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         engine.ExecutePipeline(new GracefulCancellationToken());
 
         var customTableNames = _extractableCohort.GetCustomTableNames().ToArray();
-
+        
         Console.WriteLine("Found the following custom tables:");
         foreach (string tableName in customTableNames)
             Console.WriteLine(tableName);
@@ -237,7 +234,7 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         var engine = GetEnginePointedAtFile("fish.txt");
 
         ToMemoryDataLoadEventListener listener = new ToMemoryDataLoadEventListener(true);
-
+        
         Random r = new Random();
         var token = new GracefulCancellationTokenSource();
 
@@ -258,9 +255,9 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         engine.Source.Dispose(new ThrowImmediatelyDataLoadEventListener(),null );
         engine.Destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
 
-        //batches are 1 record each so
+        //batches are 1 record each so 
         Assert.AreEqual(numberOfBatches, listener.LastProgressRecieivedByTaskName["Comitting rows to cohort 99_unitTestDataForCohort_V1fish"].Progress.Value);
-
+        
         var customTableNames = _extractableCohort.GetCustomTableNames().ToArray();
         Console.WriteLine("Found the following custom tables:");
         foreach (string tableName in customTableNames)

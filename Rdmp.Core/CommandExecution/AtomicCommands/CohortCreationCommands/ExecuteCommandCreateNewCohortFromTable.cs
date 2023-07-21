@@ -4,33 +4,32 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
+using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 /// <summary>
-///     Generates and runs an SQL query to fetch all private identifiers contained in a table
-///     and commits them as a new cohort using the specified <see cref="Pipeline" />.  Note that
-///     this command will query an entire table, use
-///     <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration" />
-///     if you want to generate a proper query (e.g. joining multiple tables or only fetching a subset of the table)
+/// Generates and runs an SQL query to fetch all private identifiers contained in a table
+/// and commits them as a new cohort using the specified <see cref="Pipeline"/>.  Note that
+/// this command will query an entire table, use <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration"/> 
+/// if you want to generate a proper query (e.g. joining multiple tables or only fetching a subset of the table)
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecution
 {
     /// <summary>
-    ///     Prompts user at runtime to pick a table and column which are then imported as a new cohort
+    /// Prompts user at runtime to pick a table and column which are then imported as a new cohort
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="externalCohortTable"></param>
-    public ExecuteCommandCreateNewCohortFromTable(IBasicActivateItems activator,
-        ExternalCohortTable externalCohortTable) : base(activator)
+    public ExecuteCommandCreateNewCohortFromTable(IBasicActivateItems activator, ExternalCohortTable externalCohortTable) : base(activator)
     {
         UseTripleDotSuffix = true;
         ExternalCohortTable = externalCohortTable;
@@ -40,25 +39,28 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
     {
         return "Creates a cohort using ALL of the patient identifiers in the referenced table";
     }
-
+        
 
     public override void Execute()
     {
         var tbl = BasicActivator.SelectTable(false, "Pick a table to import cohorts from");
 
         if (tbl == null)
+        {
             // user cancelled selecting a table
             return;
+        }
 
         if (!BasicActivator.SelectObject(new DialogArgs
             {
                 EntryLabel = "Patient Identifier Column",
-                TaskDescription =
-                    $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
+                TaskDescription = $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
                 AllowAutoSelect = true
             }, tbl.DiscoverColumns(), out var col))
+        {
             // user cancelled selecting a column
             return;
+        }
 
         base.Execute();
 

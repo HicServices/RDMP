@@ -16,13 +16,20 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Validation;
 
 /// <summary>
-///     An ItemValidator is created for each item in the target object (row) you want to validate.
-///     Each ItemValidator has a single PrimaryConstraint and zero or more SecondaryConstraint(s).
+/// An ItemValidator is created for each item in the target object (row) you want to validate.
+/// Each ItemValidator has a single PrimaryConstraint and zero or more SecondaryConstraint(s).
 /// </summary>
 public class ItemValidator
 {
-    //This is static because creating new ones with the Type[] causes memory leaks in unmanaged memory   https://blogs.msdn.microsoft.com/tess/2006/02/15/net-memory-leak-xmlserializing-your-way-to-a-memory-leak/
-    private static XmlSerializer _serializer;
+    public PrimaryConstraint PrimaryConstraint { get; set; }
+    public string TargetProperty { get; set; }
+
+    [XmlIgnore]
+    public Type ExpectedType { get; set; }
+
+    [XmlArray]
+    [XmlArrayItem("SecondaryConstraint", typeof(SecondaryConstraint))]
+    public List<SecondaryConstraint> SecondaryConstraints { get; set; }
 
     public ItemValidator()
     {
@@ -35,20 +42,12 @@ public class ItemValidator
         TargetProperty = targetProperty;
         PrimaryConstraint = null;
         SecondaryConstraints = new List<SecondaryConstraint>();
+
     }
-
-    public PrimaryConstraint PrimaryConstraint { get; set; }
-    public string TargetProperty { get; set; }
-
-    [XmlIgnore] public Type ExpectedType { get; set; }
-
-    [XmlArray]
-    [XmlArrayItem("SecondaryConstraint", typeof(SecondaryConstraint))]
-    public List<SecondaryConstraint> SecondaryConstraints { get; set; }
 
     public ValidationFailure ValidateAll(object columnValue, object[] otherColumns, string[] otherColumnNames)
     {
-        if (otherColumns == null)
+        if(otherColumns == null)
             throw new Exception("we were not passed any otherColumns");
 
         if (otherColumns.Length != otherColumnNames.Length)
@@ -73,16 +72,15 @@ public class ItemValidator
         }
         catch (Exception ex)
         {
-            throw new Exception(
-                $"Error processing PrimaryConstraint validator of Type {PrimaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",
-                ex);
+            throw new Exception($"Error processing PrimaryConstraint validator of Type {PrimaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
         }
     }
 
-    private ValidationFailure ValidateSecondayConstraints(object columnValue, object[] otherColumns,
-        string[] otherColumnNames)
+    private ValidationFailure ValidateSecondayConstraints(object columnValue, object[] otherColumns, string[] otherColumnNames)
     {
         foreach (ISecondaryConstraint secondaryConstraint in SecondaryConstraints)
+        {
+                
             try
             {
                 var result = secondaryConstraint.Validate(columnValue, otherColumns, otherColumnNames);
@@ -92,10 +90,9 @@ public class ItemValidator
             }
             catch (Exception ex)
             {
-                throw new InvalidOperationException(
-                    $"Error processing Secondary Constraint validator of Type {secondaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",
-                    ex);
+                throw new InvalidOperationException($"Error processing Secondary Constraint validator of Type {secondaryConstraint.GetType().Name} on column {TargetProperty}.  Value being validated was '{columnValue}'",ex);
             }
+        }
 
         return null;
     }
@@ -110,29 +107,11 @@ public class ItemValidator
         return TargetProperty;
     }
 
-    /// <summary>
-    ///     Persist the current ItemValidator instance to a string containing XML.
-    /// </summary>
-    /// <returns>a String</returns>
-    public string SaveToXml(bool indent = true)
-    {
-        _serializer ??= new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes());
-
-        var sb = new StringBuilder();
-
-        using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = indent }))
-        {
-            _serializer.Serialize(sw, this);
-        }
-
-        return sb.ToString();
-    }
-
     #region Fluent API experiment
 
     public void As(string constraintType)
     {
-        PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType, Consequence.Wrong);
+        PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint(constraintType,Consequence.Wrong);
     }
 
     public ItemValidator OfType(Type type)
@@ -143,17 +122,17 @@ public class ItemValidator
 
     public void OccursAfter(string comparatorFieldName)
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
         b.Inclusive = false;
         b.LowerFieldName = comparatorFieldName;
         b.Upper = DateTime.MaxValue;
 
         AddSecondaryConstraint(b);
     }
-
+        
     public void OccursBefore(string comparatorFieldName)
     {
-        var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
+        var b = (BoundDate)Validator.CreateConstraint("bounddate",Consequence.Wrong);
         b.Lower = DateTime.MinValue;
         b.UpperFieldName = comparatorFieldName;
 
@@ -162,7 +141,7 @@ public class ItemValidator
 
     public ItemValidator IsLessThan(string comparatorFieldName)
     {
-        var b = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
+        var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
         b.UpperFieldName = comparatorFieldName;
         b.Lower = double.MinValue;
         AddSecondaryConstraint(b);
@@ -172,7 +151,7 @@ public class ItemValidator
 
     public ItemValidator IsGreaterThan(string comparatorFieldName)
     {
-        var b = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
+        var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
         b.LowerFieldName = comparatorFieldName;
         b.Upper = double.MaxValue;
         AddSecondaryConstraint(b);
@@ -182,7 +161,7 @@ public class ItemValidator
 
     public BoundDouble IsBetween(int lower)
     {
-        var b = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
+        var b = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
         b.Lower = lower;
         AddSecondaryConstraint(b);
 
@@ -195,4 +174,24 @@ public class ItemValidator
     }
 
     #endregion
+
+    //This is static because creating new ones with the Type[] causes memory leaks in unmanaged memory   https://blogs.msdn.microsoft.com/tess/2006/02/15/net-memory-leak-xmlserializing-your-way-to-a-memory-leak/
+    private static XmlSerializer _serializer;
+
+    /// <summary>
+    /// Persist the current ItemValidator instance to a string containing XML.
+    /// </summary>
+    /// <returns>a String</returns>
+    public string SaveToXml(bool indent = true)
+    {
+        _serializer ??= new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes());
+
+        var sb = new StringBuilder();
+
+        using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = indent }))
+            _serializer.Serialize(sw, this);
+
+        return sb.ToString();
+        
+    }
 }

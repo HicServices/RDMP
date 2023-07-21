@@ -11,20 +11,19 @@ using System.Linq;
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
-///     Describes an IDataFlowComponent which may or may not be compatible with a specific DataFlowPipelineContext.  It
-///     describes how/if its requirements conflict with the context
-///     e.g. a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context
-///     where that object is not available.
+/// Describes an IDataFlowComponent which may or may not be compatible with a specific DataFlowPipelineContext.  It describes how/if its requirements conflict with the context
+/// e.g. a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is not available.
 /// </summary>
 public class AdvertisedPipelineComponentTypeUnderContext
 {
+    private bool _allowableUnderContext;
+    private string _allowableReason;
+
     private readonly PipelineComponentRole _role;
-    private readonly string _allowableReason;
-    private readonly bool _allowableUnderContext;
-    private readonly Type _componentType;
+    private Type _componentType;
 
 
-    private readonly List<Type> unmetRequirements = new();
+    private List<Type> unmetRequirements = new();
 
     public AdvertisedPipelineComponentTypeUnderContext(Type componentType, IPipelineUseCase useCase)
     {
@@ -48,8 +47,7 @@ public class AdvertisedPipelineComponentTypeUnderContext
 
         foreach (var requiredInputType in context.GetIPipelineRequirementsForType(componentType))
             //if there are no initialization objects that are instances of an IPipelineRequirement<T> then we cannot satisfy the components pipeline requirements (e.g. a component  DelimitedFlatFileDataFlowSource requires a FlatFileToLoad but pipeline is trying to load from a database reference)
-            if (!initializationTypes.Any(available =>
-                    requiredInputType == available || requiredInputType.IsAssignableFrom(available)))
+            if (!initializationTypes.Any(available => requiredInputType == available || requiredInputType.IsAssignableFrom(available)))
                 unmetRequirements.Add(requiredInputType);
     }
 
@@ -72,7 +70,6 @@ public class AdvertisedPipelineComponentTypeUnderContext
     {
         return _role;
     }
-
     public string UIDescribeCompatible()
     {
         return _allowableUnderContext && !unmetRequirements.Any() ? "Yes" : "No";
@@ -96,6 +93,7 @@ public class AdvertisedPipelineComponentTypeUnderContext
 
             toReturn +=
                 $" following types are required by the component but not available as input objects to the pipeline {string.Join(",", unmetRequirements)}";
+
         }
 
         return toReturn;

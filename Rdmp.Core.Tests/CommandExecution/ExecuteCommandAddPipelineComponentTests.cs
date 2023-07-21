@@ -4,13 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using System;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
@@ -27,8 +27,8 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource));
 
-        Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(CleanStrings), "2");
-        Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ColumnSwapper), "1");
+        Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(CleanStrings),"2");
+        Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ColumnSwapper),"1");
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql));
 
@@ -49,6 +49,8 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
         Assert.IsNotNull(p.Destination);
         Assert.AreEqual(typeof(ExecuteFullExtractionToDatabaseMSSql), p.Destination.GetClassAsSystemType());
         Assert.IsNotEmpty(p.Destination.GetAllArguments());
+
+
     }
 
     [Test]
@@ -59,12 +61,10 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
         Assert.IsNull(p.Source);
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource));
-        var ex = Assert.Throws<Exception>(() =>
-            Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource)));
+        var ex = Assert.Throws<Exception>(()=>Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource)));
 
-        Assert.AreEqual("Pipeline 'My Pipeline' already has a source", ex.Message);
+        Assert.AreEqual("Pipeline 'My Pipeline' already has a source",ex.Message);
     }
-
     [Test]
     public void TestCreatePipeline_TooManyDestinations()
     {
@@ -73,8 +73,7 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
         Assert.IsNull(p.Source);
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql));
-        var ex = Assert.Throws<Exception>(() =>
-            Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql)));
+        var ex = Assert.Throws<Exception>(() => Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql)));
 
         Assert.AreEqual("Pipeline 'My Pipeline' already has a destination", ex.Message);
     }

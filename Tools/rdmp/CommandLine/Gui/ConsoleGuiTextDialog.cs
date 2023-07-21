@@ -28,8 +28,7 @@ internal class ConsoleGuiTextDialog
     {
         var okClicked = false;
 
-        var win = new Window(_args.WindowTitle)
-        {
+        var win = new Window(_args.WindowTitle) {
             X = 0,
             Y = 0,
 
@@ -69,7 +68,7 @@ internal class ConsoleGuiTextDialog
 
         win.Add(textField);
 
-        var btnOk = new Button("Ok", true)
+        var btnOk = new Button("Ok",true)
         {
             X = 0,
             Y = Pos.Bottom(textField),
@@ -84,7 +83,7 @@ internal class ConsoleGuiTextDialog
             Application.RequestStop();
         };
 
-        var btnCancel = new Button("Cancel", true)
+        var btnCancel = new Button("Cancel",true)
         {
             X = Pos.Right(btnOk),
             Y = Pos.Bottom(textField),
@@ -106,7 +105,10 @@ internal class ConsoleGuiTextDialog
             Height = 1,
             IsDefault = false
         };
-        btnClear.Clicked += () => { textField.Text = ""; };
+        btnClear.Clicked += () =>
+        {
+            textField.Text = "";
+        };
 
         win.Add(btnOk);
         win.Add(btnCancel);

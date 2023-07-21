@@ -14,21 +14,20 @@ using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.UI.SimpleDialogs;
 
+
+
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 /// <summary>
-///     Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization]
-///     decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
-///     <para>
-///         This Control is for setting Properties that are Pipeline, (Requires the class to implement
-///         <see cref="IDemandToUseAPipeline" />).
-///     </para>
+/// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
+/// 
+/// <para>This Control is for setting Properties that are Pipeline, (Requires the class to implement <see cref="IDemandToUseAPipeline"/>).</para>
 /// </summary>
 [TechnicalUI]
 public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
 {
     private IPipelineSelectionUI _pipelineSelectionUIInstance;
-    private readonly Type _typeOfUnderlyingClass;
+    private Type _typeOfUnderlyingClass;
 
 
     public ArgumentValuePipelineUI(ICatalogueRepository catalogueRepository, IArgumentHost parent, Type argumentType)
@@ -41,14 +40,14 @@ public partial class ArgumentValuePipelineUI : UserControl, IArgumentValueUI
 
         if (_typeOfUnderlyingClass == null)
             throw new Exception($"Could not identify a Type called {typeName} in any loaded assemblies");
-    }
 
+    }
+        
     public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
     {
         var instanceOfParentType = Activator.CreateInstance(_typeOfUnderlyingClass);
 
-        var factory =
-            new PipelineSelectionUIFactory(args.CatalogueRepository, args.Required, args, instanceOfParentType);
+        var factory = new PipelineSelectionUIFactory(args.CatalogueRepository,args.Required,args, instanceOfParentType);
         _pipelineSelectionUIInstance = factory.Create(activator);
         _pipelineSelectionUIInstance.CollapseToSingleLineMode();
 

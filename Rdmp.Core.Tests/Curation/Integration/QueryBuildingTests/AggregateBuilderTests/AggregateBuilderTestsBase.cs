@@ -16,14 +16,14 @@ public class AggregateBuilderTestsBase : DatabaseTests
     protected Catalogue _c;
     protected CatalogueItem _cataItem1;
     protected CatalogueItem _cataItem2;
+    protected TableInfo _ti;
     protected ColumnInfo _columnInfo1;
     protected ColumnInfo _columnInfo2;
+    protected ExtractionInformation _ei1;
+    protected ExtractionInformation _ei2;
     protected AggregateConfiguration _configuration;
     protected AggregateDimension _dimension1;
     protected AggregateDimension _dimension2;
-    protected ExtractionInformation _ei1;
-    protected ExtractionInformation _ei2;
-    protected TableInfo _ti;
 
     [SetUp]
     protected override void SetUp()
@@ -51,4 +51,5 @@ public class AggregateBuilderTestsBase : DatabaseTests
         _dimension2.Order = 2;
         _dimension2.SaveToDatabase();
     }
+
 }

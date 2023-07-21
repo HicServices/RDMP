@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -14,22 +15,21 @@ using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SubComponents.Graphs;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution, IAtomicCommand
+internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution,IAtomicCommand
 {
     private readonly IFilter _filter;
-    private readonly AggregateConfiguration[] _compatibleGraphs;
+    private AggregateConfiguration[] _compatibleGraphs;
 
-    public ExecuteCommandViewFilterMatchGraph(IActivateItems activator, IFilter filter) : base(activator)
+    public ExecuteCommandViewFilterMatchGraph(IActivateItems activator, IFilter filter):base(activator)
     {
         _filter = filter;
         var cata = filter.GetCatalogue();
 
-        if (cata == null)
+        if(cata == null)
         {
             SetImpossible("No Catalogue found for filter");
             return;
@@ -58,10 +58,10 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution, IAt
         base.Execute();
 
         var selected = SelectOne(_compatibleGraphs);
-
-        if (selected == null)
+            
+        if(selected == null)
             return;
-
+            
         //if it's a cohort set
         if (_filter is AggregateFilter aggFilter && aggFilter.GetAggregate().IsCohortIdentificationAggregate)
         {
@@ -73,7 +73,7 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution, IAt
                     selected,
                     CohortSummaryAdjustment.WhereRecordsIn,
                     aggFilter));
-
+                    
             cmd.Execute();
         }
         else
@@ -81,5 +81,6 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution, IAt
             var collection = new FilterGraphObjectCollection(selected, (ConcreteFilter)_filter);
             Activator.Activate<FilterGraphUI>(collection);
         }
+                
     }
 }

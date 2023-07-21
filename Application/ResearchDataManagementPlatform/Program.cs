@@ -23,31 +23,31 @@ internal static class Program
     [DllImport("kernel32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool AttachConsole([MarshalAs(UnmanagedType.U4)] int dwProcessId);
-
-    /// <summary>
-    ///     The main entry point for the application.
-    /// </summary>
-    [STAThread]
+  
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
     private static void Main(string[] args)
-    {
-        // if user has the command line built and runnable from the windows
-        // client then don't load the dlls (or we end up with 2 copies!).
-        SafeDirectoryCatalog.IgnoreDll = f => Path.GetFileName(f.DirectoryName)?.Equals("cli") == true;
-
-        try
         {
-            AttachConsole(-1);
-        }
-        catch (Exception)
-        {
-            Console.WriteLine("Couldn't redirect console. Never mind");
-        }
+            // if user has the command line built and runnable from the windows
+            // client then don't load the dlls (or we end up with 2 copies!).
+            SafeDirectoryCatalog.IgnoreDll = f => Path.GetFileName(f.DirectoryName)?.Equals("cli")==true;
 
-        Startup.PreStartup();
+            try
+            {
+                AttachConsole(-1);
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("Couldn't redirect console. Never mind");
+            }
 
-        UsefulStuff.GetParser()
-            .ParseArguments<ResearchDataManagementPlatformOptions>(args)
-            .MapResult(RunApp, err => -1);
+            Startup.PreStartup();
+
+            UsefulStuff.GetParser()
+                .ParseArguments<ResearchDataManagementPlatformOptions>(args)
+                .MapResult(RunApp, err => -1);
     }
 
     private static object RunApp(ResearchDataManagementPlatformOptions arg)
@@ -56,7 +56,7 @@ internal static class Program
         {
             arg.PopulateConnectionStringsFromYamlIfMissing(new ThrowImmediatelyCheckNotifier());
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             ExceptionViewer.Show(ex);
             return -500;

@@ -5,35 +5,27 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
 using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+using Color = System.Drawing.Color;
+
 namespace Rdmp.UI.LocationsMenu.Ticketing;
 
 /// <summary>
-///     This control lets you reference a ticket in your ticketing system (e.g. JIRA, fogbugz etc).  The control has a
-///     location for you to record the ticket identifier (e.g. LINK-123).
-///     If you don't yet have a ticketing system configured (and you have a plugin that supports the ticketing system) then
-///     you can set up the ticketing system configuration by launching
-///     TicketingSystemConfigurationUI (from Catalogue Manager main menu).
-///     <para>
-///         Assuming your ticketing system plugin is working correctly and correctly configured in RDMP then clicking
-///         'Show' should take you directly to your ticketing system (e.g. launch a
-///         new browser window at the website page of the ticket).
-///     </para>
+/// This control lets you reference a ticket in your ticketing system (e.g. JIRA, fogbugz etc).  The control has a location for you to record the ticket identifier (e.g. LINK-123).
+/// If you don't yet have a ticketing system configured (and you have a plugin that supports the ticketing system) then you can set up the ticketing system configuration by launching
+/// TicketingSystemConfigurationUI (from Catalogue Manager main menu).
+/// 
+/// <para>Assuming your ticketing system plugin is working correctly and correctly configured in RDMP then clicking 'Show' should take you directly to your ticketing system (e.g. launch a
+/// new browser window at the website page of the ticket).</para>
 /// </summary>
 public partial class TicketingControlUI : RDMPUserControl
 {
     private ITicketingSystem _ticketingSystemConfiguration;
-
-    public TicketingControlUI()
-    {
-        InitializeComponent();
-    }
-
+    public event EventHandler TicketTextChanged;
     public bool IsValidTicketName { get; private set; }
 
     public string TicketText
@@ -47,7 +39,10 @@ public partial class TicketingControlUI : RDMPUserControl
         set => gbTicketing.Text = value;
     }
 
-    public event EventHandler TicketTextChanged;
+    public TicketingControlUI()
+    {
+        InitializeComponent();
+    }
 
     public override void SetItemActivator(IActivateItems activator)
     {
@@ -59,7 +54,7 @@ public partial class TicketingControlUI : RDMPUserControl
     public void ReCheckTicketingSystemInCatalogue()
     {
         ragSmiley1.SetVisible(false);
-
+            
         try
         {
             if (VisualStudioDesignMode)

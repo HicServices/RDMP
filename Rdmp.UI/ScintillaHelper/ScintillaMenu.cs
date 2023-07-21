@@ -7,41 +7,42 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using WeCantSpell.Hunspell;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using ScintillaNET;
-using WeCantSpell.Hunspell;
 
 namespace Rdmp.UI.ScintillaHelper;
 
 [DesignerCategory("")]
-internal class ScintillaMenu : ContextMenuStrip
+internal class ScintillaMenu:ContextMenuStrip
 {
-    private readonly Scintilla _scintilla;
-    private ToolStripMenuItem _miCheckSpelling;
-    private ToolStripMenuItem _miCopy;
-    private ToolStripMenuItem _miCut;
-    private ToolStripMenuItem _miDelete;
-    private ToolStripMenuItem _miRedo;
-    private ToolStripMenuItem _miSelectAll;
-    private ToolStripMenuItem _miSpelling;
-    private ToolStripMenuItem _miUndo;
-    private ToolStripMenuItem _miWordwrap;
 
-    public ScintillaMenu(Scintilla scintilla, bool spellCheck)
+    private readonly Scintilla _scintilla;
+    private ToolStripMenuItem _miUndo;
+    private ToolStripMenuItem _miRedo;
+    private ToolStripMenuItem _miCut;
+    private ToolStripMenuItem _miCopy;
+    private ToolStripMenuItem _miDelete;
+    private ToolStripMenuItem _miSelectAll;
+    private ToolStripMenuItem _miWordwrap;
+    private ToolStripMenuItem _miCheckSpelling;
+    private ToolStripMenuItem _miSpelling;
+
+    /// <summary>
+    /// Spell checker for the hosted control.  If set then right clicks will spell check the word
+    /// under the caret and show suggestions
+    /// </summary>
+    public WordList Hunspell { get; set; }
+
+    public ScintillaMenu(Scintilla scintilla, bool spellCheck) : base()
     {
         _scintilla = scintilla;
         InitContextMenu(spellCheck);
     }
 
-    /// <summary>
-    ///     Spell checker for the hosted control.  If set then right clicks will spell check the word
-    ///     under the caret and show suggestions
-    /// </summary>
-    public WordList Hunspell { get; set; }
-
     private void InitContextMenu(bool spellCheck)
     {
-        _miUndo = new ToolStripMenuItem("Undo", null, (s, ea) => _scintilla.Undo());
+        _miUndo = new ToolStripMenuItem("Undo",null, (s, ea) => _scintilla.Undo());
         Items.Add(_miUndo);
         _miRedo = new ToolStripMenuItem("Redo", null, (s, ea) => _scintilla.Redo());
 
@@ -56,7 +57,7 @@ internal class ScintillaMenu : ContextMenuStrip
             };
 
             Items.Add(_miCheckSpelling);
-        }
+        }         
 
         Items.Add(new ToolStripSeparator());
 
@@ -93,8 +94,8 @@ internal class ScintillaMenu : ContextMenuStrip
 
     private void SetWordWrapMode(object sender, EventArgs e)
     {
-        var mode = (WrapMode)((ToolStripMenuItem)sender).Tag;
-        UserSettings.WrapMode = (int)mode;
+        var mode = (WrapMode) ((ToolStripMenuItem) sender).Tag;
+        UserSettings.WrapMode = (int) mode;
         _scintilla.WrapMode = mode;
     }
 
@@ -113,7 +114,7 @@ internal class ScintillaMenu : ContextMenuStrip
 
         //check the current wrap mode and uncheck the rest
         foreach (ToolStripMenuItem item in _miWordwrap.DropDownItems)
-            item.Checked = (WrapMode)item.Tag == _scintilla.WrapMode;
+            item.Checked = (WrapMode) item.Tag == _scintilla.WrapMode;
 
         _miSpelling.DropDown.Items.Clear();
         _miSpelling.Enabled = false;
@@ -124,9 +125,9 @@ internal class ScintillaMenu : ContextMenuStrip
         var word = GetCurrentWord();
 
         if (string.IsNullOrWhiteSpace(word) || Hunspell.Check(word)) return;
-        foreach (var suggested in Hunspell.Suggest(word))
+        foreach(var suggested in Hunspell.Suggest(word))
         {
-            var mi = new ToolStripMenuItem(suggested, null, (s, ev) => { SetWord(word, suggested); });
+            var mi = new ToolStripMenuItem(suggested, null, (s, ev) => { SetWord( word, suggested);});
             _miSpelling.DropDownItems.Add(mi);
             _miSpelling.Enabled = true;
         }
@@ -145,14 +146,15 @@ internal class ScintillaMenu : ContextMenuStrip
     {
         //make sure the current word matches the old word we are replacing
         //(I guess somehow an async something could have changed the text while the menu was open)
-        if (!string.Equals(GetCurrentWord(), oldWord))
+        if(!string.Equals(GetCurrentWord(),oldWord))
             return;
 
         var pos = _scintilla.CurrentPosition;
         var wordStart = _scintilla.WordStartPosition(pos, true);
         var wordEnd = _scintilla.WordEndPosition(pos, true);
 
-        _scintilla.DeleteRange(wordStart, wordEnd - wordStart);
-        _scintilla.InsertText(wordStart, newWord);
+        _scintilla.DeleteRange(wordStart,wordEnd-wordStart);
+        _scintilla.InsertText(wordStart,newWord);
+
     }
 }

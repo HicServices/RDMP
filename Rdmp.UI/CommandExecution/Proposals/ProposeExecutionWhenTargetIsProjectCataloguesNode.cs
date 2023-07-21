@@ -13,7 +13,7 @@ namespace Rdmp.UI.CommandExecution.Proposals;
 
 internal class ProposeExecutionWhenTargetIsProjectCataloguesNode : RDMPCommandExecutionProposal<ProjectCataloguesNode>
 {
-    private readonly ProposeExecutionWhenTargetIsProject _projectFunctionality;
+    private ProposeExecutionWhenTargetIsProject _projectFunctionality;
 
     public ProposeExecutionWhenTargetIsProjectCataloguesNode(IActivateItems itemActivator) : base(itemActivator)
     {
@@ -27,17 +27,17 @@ internal class ProposeExecutionWhenTargetIsProjectCataloguesNode : RDMPCommandEx
 
     public override void Activate(ProjectCataloguesNode target)
     {
+            
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCataloguesNode target,
-        InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCataloguesNode target, InsertOption insertOption = InsertOption.Default)
     {
         //use the same drop options as Project except for this one
 
         if (cmd is CohortIdentificationConfigurationCommand)
             return null;
 
-
+            
         return _projectFunctionality.ProposeExecution(cmd, target.Project, insertOption);
     }
 }

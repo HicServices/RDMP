@@ -12,19 +12,14 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 
 public abstract class DataLoadComponent : IDataLoadComponent
 {
+    public bool SkipComponent { get; set; }
+    public string Description { get; set; }
+        
+    public abstract ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken);
+
     protected DataLoadComponent()
     {
         SkipComponent = false;
-    }
-
-    public bool SkipComponent { get; set; }
-    public string Description { get; set; }
-
-    public abstract ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken);
-
-
-    public virtual void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-    {
     }
 
     protected bool Skip(IDataLoadJob job)
@@ -33,5 +28,10 @@ public abstract class DataLoadComponent : IDataLoadComponent
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Skipped load component: {Description}"));
         return true;
+    }
+
+
+    public virtual void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+    {
     }
 }

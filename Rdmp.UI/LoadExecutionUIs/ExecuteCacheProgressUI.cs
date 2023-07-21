@@ -14,20 +14,18 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
+
 namespace Rdmp.UI.LoadExecutionUIs;
 
 /// <summary>
-///     Allows you to execute a Caching pipeline for a series of days.  For example this might download files from a web
-///     service by date and store them in a cache directory
-///     for later loading.  Caching is independent of data loading and only required if you have a long running fetch
-///     process which is time based and not suitable for
-///     execution as part of the load (due to the length of time it takes or the volatility of the load or just because you
-///     want to decouple the two processes).
+/// Allows you to execute a Caching pipeline for a series of days.  For example this might download files from a web service by date and store them in a cache directory
+/// for later loading.  Caching is independent of data loading and only required if you have a long running fetch process which is time based and not suitable for
+/// execution as part of the load (due to the length of time it takes or the volatility of the load or just because you want to decouple the two processes).
 /// </summary>
 public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
 {
     private ICacheProgress _cacheProgress;
-
+        
     public ExecuteCacheProgressUI()
     {
         InitializeComponent();
@@ -52,15 +50,13 @@ public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
         _cacheProgress = databaseObject;
 
         CommonFunctionality.AddToMenu(new ExecuteCommandEditCacheProgress(activator, databaseObject), "Edit");
-        CommonFunctionality.AddToMenu(new ExecuteCommandShowCacheFetchFailures(activator, databaseObject),
-            "View Cache Failures");
+        CommonFunctionality.AddToMenu(new ExecuteCommandShowCacheFetchFailures(activator, databaseObject), "View Cache Failures");
 
         var failures = _cacheProgress.CacheFetchFailures.Any(f => f.ResolvedOn == null);
         cbFailures.Enabled = failures;
-
+            
         checkAndExecuteUI1.SetItemActivator(activator);
     }
-
     public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
         base.ConsultAboutClosing(sender, e);
@@ -71,4 +67,5 @@ public partial class ExecuteCacheProgressUI : CachingEngineUI_Design
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CachingEngineUI_Design, UserControl>))]
 public abstract class CachingEngineUI_Design : RDMPSingleDatabaseObjectControl<CacheProgress>
 {
+        
 }

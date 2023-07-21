@@ -12,8 +12,7 @@ using Rdmp.UI.SingleControlForms;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-public interface IRDMPSingleDatabaseObjectControl : IContainerControl, INamedTab, IConsultableBeforeClosing,
-    IRDMPControl
+public interface IRDMPSingleDatabaseObjectControl : IContainerControl, INamedTab, IConsultableBeforeClosing,IRDMPControl
 {
     DatabaseEntity DatabaseObject { get; }
 

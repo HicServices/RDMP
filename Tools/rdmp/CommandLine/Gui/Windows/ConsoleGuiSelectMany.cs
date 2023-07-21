@@ -4,27 +4,38 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NStack;
-using Rdmp.Core.CommandExecution;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows;
 
 /// <summary>
-///     Allows the user to select one or more objects in a modal console dialog
+/// Allows the user to select one or more objects in a modal console dialog
 /// </summary>
 public class ConsoleGuiSelectMany : Window
 {
+    private ListView lv;
     private readonly IBasicActivateItems _activator;
-    private object[] _available;
-    private readonly IReadOnlyCollection<object> _original;
-    private readonly TextField _tbSearch;
-    private readonly ListView lv;
 
-    public ConsoleGuiSelectMany(IBasicActivateItems activator, string prompt, object[] available)
+    /// <summary>
+    /// The final object selection made.  Note that you should
+    /// also check <see cref="ResultOk"/> in case of user cancellation
+    /// </summary>
+    public object[] Result { get { return _available.Where((e, idx) => lv.Source.IsMarked(idx)).ToArray(); } }
+
+    /// <summary>
+    /// True if the user made a final selection or False if they exited without
+    /// making a choice e.g. Hit Ctrl+Q
+    /// </summary>
+    public bool ResultOk { get; internal set; }
+    private object[] _available;
+    private IReadOnlyCollection<object> _original;
+    private TextField _tbSearch;
+
+    public ConsoleGuiSelectMany(IBasicActivateItems activator,string prompt, object[] available)
     {
         _available = available;
         _original = available.ToList().AsReadOnly();
@@ -63,26 +74,11 @@ public class ConsoleGuiSelectMany : Window
         Add(_tbSearch);
 
         Title = prompt;
-
+            
         _activator = activator;
     }
 
-    /// <summary>
-    ///     The final object selection made.  Note that you should
-    ///     also check <see cref="ResultOk" /> in case of user cancellation
-    /// </summary>
-    public object[] Result
-    {
-        get { return _available.Where((e, idx) => lv.Source.IsMarked(idx)).ToArray(); }
-    }
-
-    /// <summary>
-    ///     True if the user made a final selection or False if they exited without
-    ///     making a choice e.g. Hit Ctrl+Q
-    /// </summary>
-    public bool ResultOk { get; internal set; }
-
-    private void TbSearch_TextChanged(ustring obj)
+    private void TbSearch_TextChanged(NStack.ustring obj)
     {
         // everything they have ticked so far
         var ticked = Result;
@@ -90,8 +86,7 @@ public class ConsoleGuiSelectMany : Window
 
         // plus everything else that matches on search text
         var matchingFilter = _original.Except(ticked)
-            .Where(o => string.IsNullOrWhiteSpace(search) ||
-                        o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
+            .Where(o => string.IsNullOrWhiteSpace(search) || o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
             .ToArray();
 
         // make a list of all marked followed by unmarked but matching filter
@@ -103,23 +98,28 @@ public class ConsoleGuiSelectMany : Window
         lv.SetSource(all);
 
         // since we changed the source we need to remark the originally ticked ones
-        for (var i = 0; i < ticked.Length; i++) lv.Source.SetMark(i, true);
+        for(var i =0;i<ticked.Length;i++)
+        {
+            lv.Source.SetMark(i, true);
+        }
         SetNeedsDisplay();
     }
 
     private void Lv_KeyPress(KeyEventEventArgs obj)
     {
-        if (obj.KeyEvent.Key == Key.Enter)
+        if(obj.KeyEvent.Key == Key.Enter)
         {
             // if there are no selected objects (user hits space to select many)
             // then they probably want a single object selection
-            if (Result.Length == 0) lv.MarkUnmarkRow();
+            if(Result.Length == 0)
+            {
+                lv.MarkUnmarkRow();
+            }
 
             obj.Handled = true;
             ResultOk = true;
             Application.RequestStop();
         }
-
         SetNeedsDisplay();
     }
 }

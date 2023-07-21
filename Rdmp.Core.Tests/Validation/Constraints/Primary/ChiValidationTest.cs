@@ -16,6 +16,7 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
 [Category("Unit")]
 internal class ChiValidationTest : ValidationTests
 {
+
     [Test]
     public void validation_scenario_CHI()
     {
@@ -54,7 +55,7 @@ internal class ChiValidationTest : ValidationTests
         {
             // 3. Set the ItemValidator's PrimaryConstraint (must be valid CHI)
             // (using Validator's CreateConstraint() method to create a Primary Constraint (CHI))
-            PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong)
+            PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong)
         };
 
         // 4. Add the ItemValidator to our Validator, specifying the item it should validate against
@@ -64,10 +65,10 @@ internal class ChiValidationTest : ValidationTests
         var age = new ItemValidator();
 
         // 6. No PrimaryConstraint. In this case we ADD a SecondaryConstraint (age)
-        var ageConstraint = (BoundDouble)Validator.CreateConstraint("bounddouble", Consequence.Wrong);
+        var ageConstraint = (BoundDouble)Validator.CreateConstraint("bounddouble",Consequence.Wrong);
         ageConstraint.Lower = 0;
         ageConstraint.Upper = 30;
-
+            
         age.AddSecondaryConstraint(ageConstraint);
 
         // 7. Add the ItemValidator to our Validator, specifying the item it should validate against
@@ -83,4 +84,5 @@ internal class ChiValidationTest : ValidationTests
         // 9. Validate, passing in the target object to be validated against
         Assert.IsNull(validator.Validate(domainObject));
     }
+
 }

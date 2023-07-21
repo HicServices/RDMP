@@ -10,20 +10,20 @@ using Rdmp.Core.Curation.Data.Aggregation;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-///     Collection of all <see cref="AggregateConfiguration" /> graphs for visualising data in the
-///     <see cref="Curation.Data.Catalogue" />.
+/// Collection of all <see cref="AggregateConfiguration"/> graphs for visualising data in the <see cref="Curation.Data.Catalogue"/>.
 /// </summary>
-public class AggregatesNode : Node
+public class AggregatesNode:Node
 {
+
+    /// <summary>
+    /// The <see cref="Curation.Data.Catalogue"/> to which all the <see cref="AggregateConfiguration"/> belong
+    /// </summary>
+    public Catalogue Catalogue { get; set; }
+
     public AggregatesNode(Catalogue c, AggregateConfiguration[] regularAggregates)
     {
         Catalogue = c;
     }
-
-    /// <summary>
-    ///     The <see cref="Curation.Data.Catalogue" /> to which all the <see cref="AggregateConfiguration" /> belong
-    /// </summary>
-    public Catalogue Catalogue { get; set; }
 
     public override string ToString()
     {
@@ -40,7 +40,7 @@ public class AggregatesNode : Node
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((AggregatesNode)obj);
+        return Equals((AggregatesNode) obj);
     }
 
     public override int GetHashCode()

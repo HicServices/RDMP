@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using NUnit.Framework;
 using Rdmp.Core.Logging.PastEvents;
+using System;
 
 namespace Rdmp.Core.Tests.Logging;
 
@@ -17,8 +17,8 @@ internal class ArchivalDataLoadInfoTests
     {
         var adi = new ArchivalDataLoadInfo
         {
-            StartTime = new DateTime(2010, 1, 1, 12, 0, 0),
-            EndTime = new DateTime(2010, 1, 3, 13, 20, 23)
+            StartTime = new DateTime(2010, 1, 1,12,0,0),
+            EndTime = new DateTime(2010, 1, 3,13,20,23)
         };
 
         // This dle took 2 days, 1 hour, 20 mins and 23 seconds

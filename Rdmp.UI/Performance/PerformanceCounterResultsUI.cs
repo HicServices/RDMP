@@ -15,27 +15,19 @@ using BrightIdeasSoftware;
 using Rdmp.Core.ReusableLibraryCode.Performance;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Performance.StackTraceProcessing;
-using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Performance;
 
 /// <summary>
-///     Displays detailed breakdown of database queries sent by the RDMP during Performance Logging (See
-///     PerformanceCounterUI).  The colour of the row indicates the number of times a database
-///     query was sent from that point in the call stack.  Note that this is the number of calls not the time taken to
-///     execute the call so you could see poor performance in UI interaction and
-///     see lots of red calls but the actual slow query might only be called once.
+/// Displays detailed breakdown of database queries sent by the RDMP during Performance Logging (See PerformanceCounterUI).  The colour of the row indicates the number of times a database
+/// query was sent from that point in the call stack.  Note that this is the number of calls not the time taken to execute the call so you could see poor performance in UI interaction and
+/// see lots of red calls but the actual slow query might only be called once. 
+/// 
 /// </summary>
 public partial class PerformanceCounterResultsUI : UserControl
 {
-    private static readonly Color Heavy = Color.Red;
-    private static readonly Color Light = Color.LawnGreen;
-    private ComprehensiveQueryPerformanceCounter _performanceCounter;
-
-    private int _worstOffenderCount;
-    private readonly bool collapseToMethod = false;
-
-    private List<StackFramesTree> Roots;
+    private static Color Heavy = Color.Red;
+    private static Color Light = Color.LawnGreen;
 
     public PerformanceCounterResultsUI()
     {
@@ -45,24 +37,22 @@ public partial class PerformanceCounterResultsUI : UserControl
         tlvLocations.ChildrenGetter += ChildrenGetter;
         tlvLocations.RowFormatter += RowFormatter;
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLocations, olvQueryCount,
-            new Guid("576c87c7-a324-45bb-a4bc-4757044f7c43"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLocations, olvQueryCount,
-            new Guid("905e5565-0428-4734-8582-9734546d55a3"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLocations, olvStackFrame,
-            new Guid("865f84a1-f0c4-48d9-8983-10d35cf4a513"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLocations, olvQueryCount, new Guid("576c87c7-a324-45bb-a4bc-4757044f7c43"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLocations, olvQueryCount, new Guid("905e5565-0428-4734-8582-9734546d55a3"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(tlvLocations, olvStackFrame, new Guid("865f84a1-f0c4-48d9-8983-10d35cf4a513"));
     }
 
     private void RowFormatter(OLVListItem olvItem)
     {
         var o = (StackFramesTree)olvItem.RowObject;
-
+            
         //bold the endpoints - where there are no children or they are all in database assemblies
-        if (!o.Children.Any() || o.Children.Values.All(c => c.IsInDatabaseAccessAssembly))
-            olvItem.Font = new Font(olvItem.Font, FontStyle.Bold);
+        if (!o.Children.Any() ||o.Children.Values.All(c => c.IsInDatabaseAccessAssembly))
+            olvItem.Font = new Font(olvItem.Font,FontStyle.Bold);
 
-        var fraction = (double)o.QueryCount / _worstOffenderCount;
+        var fraction = (double) o.QueryCount/_worstOffenderCount;
         olvItem.BackColor = GetHeat(fraction);
+
     }
 
     private IEnumerable ChildrenGetter(object model)
@@ -72,7 +62,7 @@ public partial class PerformanceCounterResultsUI : UserControl
         if (!treeNode.Children.Any())
             return null;
 
-        return treeNode.Children.Values.Where(c => !c.IsInDatabaseAccessAssembly);
+        return treeNode.Children.Values.Where(c=>!c.IsInDatabaseAccessAssembly);
     }
 
     private bool CanExpandGetter(object model)
@@ -82,8 +72,14 @@ public partial class PerformanceCounterResultsUI : UserControl
         if (!treeNode.Children.Any())
             return false;
 
-        return treeNode.Children.Values.Any(c => !c.IsInDatabaseAccessAssembly);
+        return treeNode.Children.Values.Any(c=>!c.IsInDatabaseAccessAssembly);
     }
+
+    private List<StackFramesTree> Roots;
+    private bool collapseToMethod = false;
+    private ComprehensiveQueryPerformanceCounter _performanceCounter;
+        
+    private int _worstOffenderCount;
 
     public static Color GetHeat(double fraction)
     {
@@ -110,27 +106,27 @@ public partial class PerformanceCounterResultsUI : UserControl
             var query = performanceCounter.DictionaryOfQueries[stackTrace];
 
             //get the stack trace split by line reversed so the root is at the top
-            var lines = stackTrace.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Reverse()
-                .ToArray();
-
-            lines = lines.Where(l => !isSystemCall.IsMatch(l)).ToArray();
-
-            if (lines.Length == 0)
+            var lines = stackTrace.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Reverse().ToArray();
+                   
+            lines = lines.Where(l=>!isSystemCall.IsMatch(l)).ToArray();
+                
+            if(lines.Length == 0)
                 continue;
-
-            if (collapseToMethod)
+                
+            if(collapseToMethod)
             {
+
                 var uniqueMethodLines = new List<string>();
 
                 var lastMethodName = StackFramesTree.GetMethodName(lines[0]);
                 uniqueMethodLines.Add(lines[0]);
-
+                    
                 for (var i = 1; i < lines.Length; i++)
                 {
                     var currentMethodName = StackFramesTree.GetMethodName(lines[i]);
-
+                        
                     //if there is no method name or it is not new
-                    if (currentMethodName == null || lastMethodName.Equals(currentMethodName))
+                    if(currentMethodName == null || lastMethodName.Equals(currentMethodName))
                         continue;
 
                     lastMethodName = currentMethodName;
@@ -150,17 +146,15 @@ public partial class PerformanceCounterResultsUI : UserControl
             if (currentRoot == null)
             {
                 //add a new root level entrypoint
-                currentRoot = new StackFramesTree(lines, query, false);
+                currentRoot = new StackFramesTree(lines, query,false);
                 Roots.Add(currentRoot);
             }
             else
-            {
                 currentRoot.AddSubframes(lines, query);
-            }
         }
-
+            
         //if there is one root node
-        if (Roots.Count == 1)
+        if(Roots.Count == 1)
         {
             //find the first point at which it splits
             var firstBranch = Roots.Single();
@@ -170,11 +164,11 @@ public partial class PerformanceCounterResultsUI : UserControl
                 firstBranch = firstBranch.Children.Values.Single();
 
             //if it did split
-            if (firstBranch.Children.Count > 1)
-                Roots = new List<StackFramesTree>(new[] { firstBranch });
+            if(firstBranch.Children.Count > 1)
+                Roots = new List<StackFramesTree>(new []{firstBranch});
         }
 
-
+            
         tlvLocations.ClearObjects();
         tlvLocations.AddObjects(Roots);
         tlvLocations.ExpandAll();
@@ -183,11 +177,14 @@ public partial class PerformanceCounterResultsUI : UserControl
     private void tlvLocations_ItemActivate(object sender, EventArgs e)
     {
         if (tlvLocations.SelectedObject is StackFramesTree model)
-            if (model.HasSourceCode)
+        {
+            if(model.HasSourceCode)
             {
-                var dialog = new ViewSourceCodeDialog(model.Filename, model.LineNumber, Color.GreenYellow);
+                var dialog = new SimpleDialogs.ViewSourceCodeDialog(model.Filename,model.LineNumber, Color.GreenYellow);
                 dialog.Show();
             }
+        }
+            
     }
 
     private void tbFilter_TextChanged(object sender, EventArgs e)
@@ -199,7 +196,7 @@ public partial class PerformanceCounterResultsUI : UserControl
         }
         else
         {
-            tlvLocations.ModelFilter = new TextMatchFilter(tlvLocations, tbFilter.Text);
+            tlvLocations.ModelFilter = new TextMatchFilter(tlvLocations,tbFilter.Text);
             tlvLocations.UseFiltering = true;
         }
     }

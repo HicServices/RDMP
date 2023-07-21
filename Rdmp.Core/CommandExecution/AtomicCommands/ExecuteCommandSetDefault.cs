@@ -10,17 +10,16 @@ using Rdmp.Core.Curation.Data.Defaults;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Changes the default server for a given role (e.g. Logging) to a new server (which must
-///     already exist and have the correct schema).  Use <see cref="ExecuteCommandCreateNewExternalDatabaseServer" />
-///     if you want to create a new server from scratch.
+/// Changes the default server for a given role (e.g. Logging) to a new server (which must
+/// already exist and have the correct schema).  Use <see cref="ExecuteCommandCreateNewExternalDatabaseServer"/>
+/// if you want to create a new server from scratch.
 /// </summary>
 public class ExecuteCommandSetDefault : BasicCommandExecution
 {
-    private readonly ExternalDatabaseServer _server;
     private readonly PermissableDefaults _toSet;
+    private readonly ExternalDatabaseServer _server;
 
-    public ExecuteCommandSetDefault(IBasicActivateItems basicActivator, PermissableDefaults toSet,
-        ExternalDatabaseServer server) : base(basicActivator)
+    public ExecuteCommandSetDefault(IBasicActivateItems basicActivator, PermissableDefaults toSet, ExternalDatabaseServer server):base(basicActivator)
     {
         _toSet = toSet;
         _server = server;

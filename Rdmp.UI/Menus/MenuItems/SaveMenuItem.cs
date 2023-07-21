@@ -5,31 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.Menus.MenuItems;
 
 /// <summary>
-///     Provides a shortcut to save the currently selected ISaveableUI.  This class requires that you track and regularly
-///     update the Saveable property to match
-///     the currently selected saveable tab
+/// Provides a shortcut to save the currently selected ISaveableUI.  This class requires that you track and regularly update the Saveable property to match
+/// the currently selected saveable tab
 /// </summary>
-[DesignerCategory("")]
+[System.ComponentModel.DesignerCategory("")]
 public class SaveMenuItem : ToolStripMenuItem
 {
     private ISaveableUI _saveable;
-
-    public SaveMenuItem() : base("Save")
-    {
-        ShortcutKeys = Keys.Control | Keys.S;
-    }
-
-    public SaveMenuItem(ISaveableUI saveable) : this()
-    {
-        Saveable = saveable;
-    }
 
     public ISaveableUI Saveable
     {
@@ -39,6 +27,15 @@ public class SaveMenuItem : ToolStripMenuItem
             _saveable = value;
             Enabled = value != null;
         }
+    }
+
+    public SaveMenuItem() : base("Save")
+    {
+        ShortcutKeys = Keys.Control | Keys.S;
+    }
+    public SaveMenuItem(ISaveableUI saveable) : this()
+    {
+        Saveable = saveable;
     }
 
     protected override void OnClick(EventArgs e)

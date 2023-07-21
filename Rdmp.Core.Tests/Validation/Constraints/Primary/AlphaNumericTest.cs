@@ -50,8 +50,10 @@ internal class AlphaNumericTest : ValidationTests
     public void Validate_Invalid_ExceptionContainsRequiredInfo()
     {
         var result = _alphanum.Validate(" ");
-
+            
         Assert.NotNull(result.SourceConstraint);
         Assert.AreEqual(typeof(AlphaNumeric), result.SourceConstraint.GetType());
+            
     }
+
 }

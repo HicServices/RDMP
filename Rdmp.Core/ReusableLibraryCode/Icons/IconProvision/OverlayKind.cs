@@ -7,12 +7,11 @@
 namespace Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
 /// <summary>
-///     Describes a small overlay image that appears on top of the main icon to indicate something about it (e.g. that
-///     there is a problem with it).
+/// Describes a small overlay image that appears on top of the main icon to indicate something about it (e.g. that there is a problem with it).
 /// </summary>
 public enum OverlayKind
 {
-    None = 0,
+    None =0,
     Add,
     Problem,
     Link,

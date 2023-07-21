@@ -14,18 +14,12 @@ using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 namespace Rdmp.UI.CatalogueSummary.DataQualityReporting;
 
 /// <summary>
-///     Only visible after running the data quality engine on a dataset (Catalogue).   Shows each extractable column in the
-///     dataset with a horizontal bar indicating what proportion
-///     of the values in the dataset that are in that column are passing validation.  By comparing this chart with the
-///     TimePeriodicityChart you can if validation problems in the
-///     dataset are attributable to specific columns or whether the quality of the entire dataset is bad.  For example if
-///     the entire TimePeriodicityChart is red (failing validation)
-///     but only one column in the ColumnStatesChart is showing red then you know that the scope of the problem is limited
-///     only to that column.
-///     <para>
-///         Also included in each column bar (underneath the main colour) is a black/grey bar which shows what proportion
-///         of the values in the column were null.
-///     </para>
+/// Only visible after running the data quality engine on a dataset (Catalogue).   Shows each extractable column in the dataset with a horizontal bar indicating what proportion
+/// of the values in the dataset that are in that column are passing validation.  By comparing this chart with the TimePeriodicityChart you can if validation problems in the
+/// dataset are attributable to specific columns or whether the quality of the entire dataset is bad.  For example if the entire TimePeriodicityChart is red (failing validation)
+/// but only one column in the ColumnStatesChart is showing red then you know that the scope of the problem is limited only to that column.
+/// 
+/// <para>Also included in each column bar (underneath the main colour) is a black/grey bar which shows what proportion of the values in the column were null.</para>
 /// </summary>
 public partial class ColumnStatesChart : UserControl, IDataQualityReportingChart
 {
@@ -34,13 +28,13 @@ public partial class ColumnStatesChart : UserControl, IDataQualityReportingChart
         InitializeComponent();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void ClearGraph()
     {
         panel1.Controls.Clear();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void SelectEvaluation(Evaluation evaluation, string pivotCategoryValue)
     {
         GenerateChart(evaluation, pivotCategoryValue);
@@ -52,21 +46,16 @@ public partial class ColumnStatesChart : UserControl, IDataQualityReportingChart
 
         var row = 0;
 
-        foreach (var property in evaluation.ColumnStates.Select(static c => c.TargetProperty).Distinct())
+        foreach (var property in evaluation.ColumnStates.Select(static c=>c.TargetProperty).Distinct())
         {
             var bar = new ConsequenceBar
             {
                 Label = property,
-                Correct = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property))
-                    .Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountCorrect : 0),
-                Invalid = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s =>
-                    s.PivotCategory.Equals(pivotCategoryValue) ? s.CountInvalidatesRow : 0),
-                Missing = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property))
-                    .Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountMissing : 0),
-                Wrong = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property))
-                    .Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountWrong : 0),
-                DBNull = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property))
-                    .Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountDBNull : 0),
+                Correct = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountCorrect : 0),
+                Invalid = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountInvalidatesRow : 0),
+                Missing = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountMissing : 0),
+                Wrong = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountWrong : 0),
+                DBNull = evaluation.ColumnStates.Where(c => c.TargetProperty.Equals(property)).Sum(s => s.PivotCategory.Equals(pivotCategoryValue) ? s.CountDBNull : 0),
 
                 Width = panel1.Width,
                 Location = new Point(0, 23 * row++),

@@ -13,10 +13,10 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 
-public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTests
+public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
 {
-    private readonly TestableTableValuedFunction _function = new();
-
+    private TestableTableValuedFunction _function = new();
+        
     public void CreateFunction()
     {
         _function.Create(GetCleanedServer(DatabaseType.MicrosoftSQLServer), CatalogueRepository);
@@ -28,23 +28,20 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTes
         CreateFunction();
 
         //In this example we have 2 configurations which both target the same table valued function but which must have different parameter values
-        var config1 = new AggregateConfiguration(CatalogueRepository, _function.Cata,
-            "CohortGenerationDifferingTableValuedParametersTest_1")
-        {
-            CountSQL = null
-        };
+        var config1 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_1")
+            {
+                CountSQL = null
+            };
         config1.SaveToDatabase();
 
-        var config2 = new AggregateConfiguration(CatalogueRepository, _function.Cata,
-            "CohortGenerationDifferingTableValuedParametersTest_2")
-        {
-            CountSQL = null
-        };
+        var config2 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_2")
+            {
+                CountSQL = null
+            };
         config2.SaveToDatabase();
 
-        var cic = new CohortIdentificationConfiguration(CatalogueRepository,
-            "CohortGenerationDifferingTableValuedParametersTest");
-
+        var cic = new CohortIdentificationConfiguration(CatalogueRepository,"CohortGenerationDifferingTableValuedParametersTest");
+            
         cic.EnsureNamingConvention(config1);
         cic.EnsureNamingConvention(config2);
 
@@ -53,15 +50,15 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTes
             //make the string column the extraction identifier
             _function.ExtractionInformations[1].IsExtractionIdentifier = true;
             _function.ExtractionInformations[1].SaveToDatabase();
-
+                
             //add the extraction identtifier as the only dimension one ach of the aggregate configurations that we will use for the cohort identification query
-            new AggregateDimension(CatalogueRepository, _function.ExtractionInformations[1], config1);
-            new AggregateDimension(CatalogueRepository, _function.ExtractionInformations[1], config2);
+            new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config1);
+            new AggregateDimension(CatalogueRepository,_function.ExtractionInformations[1], config2);
 
             Assert.IsNull(cic.RootCohortAggregateContainer_ID);
 
             //create a root container for it
-            var container = new CohortAggregateContainer(CatalogueRepository, SetOperation.INTERSECT);
+            var container = new CohortAggregateContainer(CatalogueRepository,SetOperation.INTERSECT);
 
             //set the container as the root container for the cohort identification task object
             cic.RootCohortAggregateContainer_ID = container.ID;
@@ -71,7 +68,7 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTes
             container.AddChild(config1, 0);
             container.AddChild(config2, 1);
 
-            var builder = new CohortQueryBuilder(cic, null);
+            var builder = new CohortQueryBuilder(cic,null);
             Assert.AreEqual(
                 CollapseWhitespace(
                     string.Format(
@@ -88,8 +85,7 @@ SET @name='fish';
 	distinct
 	MyAwesomeFunction.[Name]
 	FROM 
-	[" + TestDatabaseNames.Prefix +
-                        @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
+	[" + TestDatabaseNames.Prefix+ @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 
 	INTERSECT
 
@@ -98,26 +94,25 @@ SET @name='fish';
 	distinct
 	MyAwesomeFunction.[Name]
 	FROM 
-	[" + TestDatabaseNames.Prefix +
-                        @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
+	[" + TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 )
-", cic.ID)),
+",cic.ID)),
                 CollapseWhitespace(builder.SQL));
 
             //now override JUST @name
-            var param1 = new AnyTableSqlParameter(CatalogueRepository, config1, "DECLARE @name AS varchar(50);")
-            {
-                Value = "'lobster'"
-            };
+            var param1 = new AnyTableSqlParameter(CatalogueRepository,config1, "DECLARE @name AS varchar(50);")
+ {
+     Value = "'lobster'"
+ };
             param1.SaveToDatabase();
 
-            var param2 = new AnyTableSqlParameter(CatalogueRepository, config2, "DECLARE @name AS varchar(50);")
-            {
-                Value = "'monkey'"
-            };
+            var param2 = new AnyTableSqlParameter(CatalogueRepository,config2, "DECLARE @name AS varchar(50);")
+ {
+     Value = "'monkey'"
+ };
             param2.SaveToDatabase();
 
-            var builder2 = new CohortQueryBuilder(cic, null);
+            var builder2 = new CohortQueryBuilder(cic,null);
 
             Assert.AreEqual(
                 CollapseWhitespace(
@@ -137,8 +132,7 @@ SET @name_2='monkey';
 	distinct
 	MyAwesomeFunction.[Name]
 	FROM 
-	[" + TestDatabaseNames.Prefix +
-                        @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
+	[" + TestDatabaseNames.Prefix+ @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 
 	INTERSECT
 
@@ -147,10 +141,9 @@ SET @name_2='monkey';
 	distinct
 	MyAwesomeFunction.[Name]
 	FROM 
-	[" + TestDatabaseNames.Prefix +
-                        @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name_2) AS MyAwesomeFunction
+	[" + TestDatabaseNames.Prefix+@"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name_2) AS MyAwesomeFunction
 )
-", cic.ID)),
+",cic.ID)),
                 CollapseWhitespace(builder2.SQL));
         }
         finally
@@ -158,6 +151,7 @@ SET @name_2='monkey';
             cic.DeleteInDatabase();
             config1.DeleteInDatabase();
             config2.DeleteInDatabase();
+                
         }
     }
 }

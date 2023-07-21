@@ -12,12 +12,9 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
-internal class
-    ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<
-        ProjectCohortIdentificationConfigurationAssociationsNode>
+internal class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<ProjectCohortIdentificationConfigurationAssociationsNode>
 {
-    public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(
-        IActivateItems itemActivator) : base(itemActivator)
+    public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(IActivateItems itemActivator) : base(itemActivator)
     {
     }
 
@@ -28,15 +25,16 @@ internal class
 
     public override void Activate(ProjectCohortIdentificationConfigurationAssociationsNode target)
     {
+            
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
-        ProjectCohortIdentificationConfigurationAssociationsNode target,
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCohortIdentificationConfigurationAssociationsNode target,
         InsertOption insertOption = InsertOption.Default)
     {
         if (cmd is CohortIdentificationConfigurationCommand cicCommand)
-            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator)
-                .SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
+        {
+            return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
+        }
 
         return null;
     }

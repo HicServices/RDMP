@@ -14,12 +14,12 @@ using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.UI.Tests.CohortBuilding;
 
-internal class CohortIdentificationConfigurationUnitTests : UITests
+internal class CohortIdentificationConfigurationUnitTests:UITests
 {
     private void GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic)
     {
         cic = WhenIHaveA<CohortIdentificationConfiguration>();
-
+             
         cic.CreateRootContainerIfNotExists();
 
         //clear anything old
@@ -35,8 +35,7 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         cata = ei.CatalogueItem.Catalogue;
     }
 
-    [Test]
-    [UITimeout(50000)]
+    [Test, UITimeout(50000)]
     public void Test_AggregateConfigurationOrder_TwoAggregates()
     {
         DeleteOldAggregates();
@@ -44,18 +43,16 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         GetObjects(out var cata, out var cic);
 
         //we should be able to add it
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
-            new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
         AssertCommandIsPossible(cmd);
 
         cmd.Execute();
 
         var ac1 = (AggregateConfiguration)cic.RootCohortAggregateContainer.GetOrderedContents().First();
-        Assert.AreEqual(0, ac1.Order);
+        Assert.AreEqual(0,ac1.Order);
 
         //add another one
-        var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
-            new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
+        var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
         AssertCommandIsPossible(cmd2);
         cmd2.Execute();
 
@@ -64,23 +61,20 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         ac1 = (AggregateConfiguration)all[0];
         var ac2 = (AggregateConfiguration)all[1];
 
-        Assert.AreEqual(0, ac1.Order);
-        Assert.AreEqual(1, ac2.Order);
+        Assert.AreEqual(0,ac1.Order);
+        Assert.AreEqual(1,ac2.Order);
 
-        Assert.AreEqual(2, Repository.GetAllObjects<AggregateConfiguration>().Length,
-            "Expected you to create 2 AggregateConfiguration only");
+        Assert.AreEqual(2, Repository.GetAllObjects<AggregateConfiguration>().Length, "Expected you to create 2 AggregateConfiguration only");
     }
 
 
-    [Test]
-    [UITimeout(50000)]
+    [Test, UITimeout(50000)]
     public void Test_AggregateConfigurationOrder_MovingAggregatesBetweenContainers()
     {
         GetObjects(out var cata, out var cic);
 
         //we should be able to add it to root container
-        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
-            new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
         cmd.Execute();
 
 
@@ -89,8 +83,7 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         cic.RootCohortAggregateContainer.AddChild(subcontainer);
 
         //add the second ac to the subcontainer 
-        var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
-            new CatalogueCombineable(cata), subcontainer);
+        var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),subcontainer);
         cmd2.Execute();
 
         //should now look like this:
@@ -102,17 +95,16 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
 
         var all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
 
-        var ac1 = (AggregateConfiguration)all[1];
+        var ac1 = (AggregateConfiguration) all[1];
         var ac2 = (AggregateConfiguration)subcontainer.GetOrderedContents().Single();
-        var intersect = (CohortAggregateContainer)all[0];
+        var intersect = (CohortAggregateContainer) all[0];
 
-        Assert.AreEqual(0, intersect.Order);
-        Assert.AreEqual(1, ac1.Order);
-        Assert.AreEqual(0, ac2.Order);
+        Assert.AreEqual(0,intersect.Order);
+        Assert.AreEqual(1,ac1.Order);
+        Assert.AreEqual(0,ac2.Order);
 
         //now move the Ac2 to Root (problematic since both Ac 2 and the INTERSECT have Order 0 - in their own separate containers)
-        var cmd3 = new ExecuteCommandMoveAggregateIntoContainer(ItemActivator,
-            new AggregateConfigurationCombineable(ac2), cic.RootCohortAggregateContainer);
+        var cmd3 = new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, new AggregateConfigurationCombineable(ac2),cic.RootCohortAggregateContainer);
         cmd3.Execute();
 
         all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
@@ -123,13 +115,13 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         //  INTERSECT (empty)
         //  Ac 1
 
-        ac2 = (AggregateConfiguration)all[0];
-        intersect = (CohortAggregateContainer)all[1];
+        ac2 = (AggregateConfiguration) all[0];
+        intersect = (CohortAggregateContainer) all[1];
         ac1 = (AggregateConfiguration)all[2];
 
-        Assert.AreEqual(0, ac2.Order);
-        Assert.AreEqual(1, intersect.Order);
-        Assert.AreEqual(2, ac1.Order);
+        Assert.AreEqual(0,ac2.Order);
+        Assert.AreEqual(1,intersect.Order);
+        Assert.AreEqual(2,ac1.Order);
     }
 
     private void DeleteOldAggregates()
@@ -138,7 +130,7 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         foreach (var ac in Repository.GetAllObjects<AggregateConfiguration>())
             ac.DeleteInDatabase();
 
-        Assert.AreEqual(0, Repository.GetAllObjects<AggregateConfiguration>().Length,
-            "We just deleted the AggregateConfigurations why were there suddenly some in the db!?");
+        Assert.AreEqual(0, Repository.GetAllObjects<AggregateConfiguration>().Length, "We just deleted the AggregateConfigurations why were there suddenly some in the db!?");
     }
+
 }

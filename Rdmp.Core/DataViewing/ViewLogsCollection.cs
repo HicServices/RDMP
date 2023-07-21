@@ -4,22 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Logging;
+using System.Collections.Generic;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-///     Collection that builds SQL for querying the logging database tables
+/// Collection that builds SQL for querying the logging database tables
 /// </summary>
 public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    private readonly LogViewerFilter _filter;
-    private readonly ExternalDatabaseServer _loggingServer;
+    private ExternalDatabaseServer _loggingServer;
+    private LogViewerFilter _filter;
 
     public ViewLogsCollection(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
     {
@@ -29,6 +29,7 @@ public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResult
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
+
     }
 
     public IDataAccessPoint GetDataAccessPoint()
@@ -43,9 +44,9 @@ public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResult
 
     public string GetSql()
     {
-        return $@"Select * from {_filter.LoggingTable}
+        return $@"Select * from {_filter.LoggingTable }
 
-{_filter.GetWhereSql()}";
+{_filter.GetWhereSql() }";
     }
 
     public string GetTabName()

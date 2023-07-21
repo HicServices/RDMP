@@ -26,14 +26,13 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 
 /// <summary>
-///     Lets you view/edit an Executable file load task.  This exe will be run at the appropriate time in the data load
-///     (with the arguments displayed in the black box).
+/// Lets you view/edit an Executable file load task.  This exe will be run at the appropriate time in the data load (with the arguments displayed in the black box).
 /// </summary>
 public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 {
     private ProcessTask _processTask;
-    private Task _runTask;
     private ExecutableRuntimeTask _runtimeTask;
+    private Task _runTask;
 
     public ExeProcessTaskUI()
     {
@@ -64,7 +63,7 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 
         lblID.Left = btnBrowse.Right;
         tbID.Left = lblID.Right;
-
+            
         tbID.Text = _processTask.ID.ToString();
 
         loadStageIconUI1.Setup(Activator.CoreIconProvider, _processTask.LoadStage);
@@ -77,10 +76,9 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
 
         var lmd = _processTask.LoadMetadata;
         var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
-
+            
         //populate the UI with the args
-        _runtimeTask =
-            (ExecutableRuntimeTask)factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
+        _runtimeTask = (ExecutableRuntimeTask)factory.Create(_processTask, argsDictionary.LoadArgs[_processTask.LoadStage]);
         tbExeCommand.Text = $"{_runtimeTask.ExeFilepath} {_runtimeTask.CreateArgString()}";
 
         return _runtimeTask;
@@ -93,8 +91,8 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
             MessageBox.Show("Exe is still running");
             return;
         }
-
-        if (_runtimeTask == null)
+            
+        if(_runtimeTask == null)
         {
             MessageBox.Show("Command could not be built,see Checks");
             return;
@@ -105,9 +103,7 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
         {
             try
             {
-                _runtimeTask.Run(
-                    new ThrowImmediatelyDataLoadJob(new FromCheckNotifierToDataLoadEventListener(checksUI1)),
-                    new GracefulCancellationToken());
+                _runtimeTask.Run(new ThrowImmediatelyDataLoadJob(new FromCheckNotifierToDataLoadEventListener(checksUI1)), new GracefulCancellationToken());
             }
             catch (Exception ex)
             {
@@ -141,13 +137,13 @@ public partial class ExeProcessTaskUI : ExeProcessTaskUI_Design
         {
             _processTask.Path = dialog.FileName;
             _processTask.SaveToDatabase();
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_processTask));
+            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_processTask));
             SetupForFile();
         }
     }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ExeProcessTaskUI_Design, UserControl>))]
-public abstract class ExeProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
+public abstract class ExeProcessTaskUI_Design:RDMPSingleDatabaseObjectControl<ProcessTask>
 {
 }

@@ -12,15 +12,15 @@ using Rdmp.Core.CommandLine.Runners;
 namespace Rdmp.Core.CommandLine.Options;
 
 /// <summary>
-///     Command line arguments for uploading plugins
+/// Command line arguments for uploading plugins
 /// </summary>
-[Verb("pack", HelpText = "Uploads a new RDMP plugin into the database")]
-public class PackOptions : RDMPCommandLineOptions
+[Verb("pack",HelpText = "Uploads a new RDMP plugin into the database")]
+public class PackOptions:RDMPCommandLineOptions
 {
-    [Option('f', "file", Required = true, HelpText = $"The {PackPluginRunner.PluginPackageSuffix} plugin file to add")]
+    [Option('f',"file",Required = true, HelpText = $"The {PackPluginRunner.PluginPackageSuffix} plugin file to add")]
     public string File { get; set; }
 
-    [Option('p', "prune", HelpText =
+    [Option('p',"prune", HelpText =
         $"Modifies the {PackPluginRunner.PluginPackageSuffix} plugin file by removing duplicate dlls or those already contained in RDMP core before uploading to database")]
     public bool Prune { get; set; }
 

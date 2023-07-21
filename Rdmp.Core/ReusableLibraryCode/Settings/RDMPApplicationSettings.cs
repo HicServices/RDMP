@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Globalization;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Linq;
@@ -15,8 +14,8 @@ namespace Rdmp.Core.ReusableLibraryCode.Settings;
 
 internal class RDMPApplicationSettings : ISettings
 {
-    private readonly object locker = new();
     private readonly IsolatedStorageFile store;
+    private readonly object locker = new();
 
     public RDMPApplicationSettings()
     {
@@ -31,54 +30,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    ///     Remove key
-    /// </summary>
-    /// <param name="key">Key to remove</param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
-    public void Remove(string key, string fileName = null)
-    {
-        if (store.FileExists(key))
-            store.DeleteFile(key);
-    }
-
-    /// <summary>
-    ///     Clear all keys from settings
-    /// </summary>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
-    public void Clear(string fileName = null)
-    {
-        try
-        {
-            foreach (var file in store.GetFileNames()) store.DeleteFile(file);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unable to clear all defaults. Message: {ex.Message}");
-        }
-    }
-
-    /// <summary>
-    ///     Checks to see if the key has been added.
-    /// </summary>
-    /// <param name="key">Key to check</param>
-    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
-    /// <returns>True if contains key, else false</returns>
-    public bool Contains(string key, string fileName = null)
-    {
-        return store.FileExists(key);
-    }
-
-    /// <summary>
-    ///     Attempts to open the app settings page.
-    /// </summary>
-    /// <returns>true if success, else false and not supported</returns>
-    public bool OpenAppSettings()
-    {
-        return false;
-    }
-
-    /// <summary>
-    ///     Add or Upate
+    /// Add or Upate
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
@@ -97,7 +49,9 @@ internal class RDMPApplicationSettings : ISettings
         var type = value.GetType();
 
         if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+        {
             type = type.GenericTypeArguments.FirstOrDefault();
+        }
 
 
         if (type == typeof(string) ||
@@ -110,21 +64,27 @@ internal class RDMPApplicationSettings : ISettings
             type == typeof(int) ||
             type == typeof(long) ||
             type == typeof(byte))
+        {
             lock (locker)
             {
                 if (value is decimal)
+                {
                     return AddOrUpdateValue(key,
-                        Convert.ToString(Convert.ToDecimal(value), CultureInfo.InvariantCulture));
+                        Convert.ToString(Convert.ToDecimal(value), System.Globalization.CultureInfo.InvariantCulture));
+                }
 
                 if (value is DateTime)
+                {
                     return AddOrUpdateValue(key,
                         Convert.ToString(-Convert.ToDateTime(value).ToUniversalTime().Ticks,
-                            CultureInfo.InvariantCulture));
-                var str = Convert.ToString(value, CultureInfo.InvariantCulture);
+                            System.Globalization.CultureInfo.InvariantCulture));
+                }
+                var str = Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture);
 
                 string oldValue = null;
 
                 if (store.FileExists(key))
+                {
                     using (var stream = store.OpenFile(key, FileMode.Open))
                     {
                         using (var sr = new StreamReader(stream))
@@ -132,6 +92,7 @@ internal class RDMPApplicationSettings : ISettings
                             oldValue = sr.ReadToEnd();
                         }
                     }
+                }
 
                 using (var stream = store.OpenFile(key, FileMode.Create, FileAccess.Write))
                 {
@@ -143,12 +104,13 @@ internal class RDMPApplicationSettings : ISettings
 
                 return oldValue != str;
             }
+        }
 
         throw new ArgumentException($"Value of type {type.Name} is not supported.");
     }
 
     /// <summary>
-    ///     Get Value
+    /// Get Value
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="key"></param>
@@ -166,6 +128,7 @@ internal class RDMPApplicationSettings : ISettings
 
                 // If the key exists, retrieve the value.
                 if (store.FileExists(key))
+                {
                     using (var stream = store.OpenFile(key, FileMode.Open))
                     {
                         using (var sr = new StreamReader(stream))
@@ -173,6 +136,7 @@ internal class RDMPApplicationSettings : ISettings
                             str = sr.ReadToEnd();
                         }
                     }
+                }
 
                 if (str == null)
                     return defaultValue;
@@ -180,40 +144,41 @@ internal class RDMPApplicationSettings : ISettings
                 var type = typeof(T);
 
                 if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+                {
                     type = type.GenericTypeArguments.FirstOrDefault();
+                }
 
                 if (type == typeof(string))
-                {
                     value = str;
-                }
 
                 else if (type == typeof(decimal))
                 {
+
                     var savedDecimal = Convert.ToString(str);
 
 
-                    value = Convert.ToDecimal(savedDecimal, CultureInfo.InvariantCulture);
+                    value = Convert.ToDecimal(savedDecimal, System.Globalization.CultureInfo.InvariantCulture);
 
                     return null != value ? (T)value : defaultValue;
+
                 }
 
                 else if (type == typeof(double))
                 {
-                    value = Convert.ToDouble(str, CultureInfo.InvariantCulture);
+                    value = Convert.ToDouble(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 else if (type == typeof(float))
                 {
-                    value = Convert.ToSingle(str, CultureInfo.InvariantCulture);
+                    value = Convert.ToSingle(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 else if (type == typeof(DateTime))
                 {
-                    var ticks = Convert.ToInt64(str, CultureInfo.InvariantCulture);
+
+                    var ticks = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
                     //Old value, stored before update to UTC values
-                    value = ticks >= 0
-                        ? new DateTime(ticks)
-                        :
+                    value = ticks >= 0 ? new DateTime(ticks) :
                         //New value, UTC
                         new DateTime(-ticks, DateTimeKind.Utc);
 
@@ -223,28 +188,28 @@ internal class RDMPApplicationSettings : ISettings
 
                 else if (type == typeof(Guid))
                 {
-                    if (Guid.TryParse(str, out var guid))
+                    if (Guid.TryParse(str, out Guid guid))
                         value = guid;
                 }
 
                 else if (type == typeof(bool))
                 {
-                    value = Convert.ToBoolean(str, CultureInfo.InvariantCulture);
+                    value = Convert.ToBoolean(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 else if (type == typeof(int))
                 {
-                    value = Convert.ToInt32(str, CultureInfo.InvariantCulture);
+                    value = Convert.ToInt32(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 else if (type == typeof(long))
                 {
-                    value = Convert.ToInt64(str, CultureInfo.InvariantCulture);
+                    value = Convert.ToInt64(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 else if (type == typeof(byte))
                 {
-                    value = Convert.ToByte(str, CultureInfo.InvariantCulture);
+                    value = Convert.ToByte(str, System.Globalization.CultureInfo.InvariantCulture);
                 }
 
                 else
@@ -256,15 +221,57 @@ internal class RDMPApplicationSettings : ISettings
             {
                 return defaultValue;
             }
+
         }
 
-        return null != value ? (T)value : defaultValue;
+        return null != value ? (T) value : defaultValue;
+    }
+
+    /// <summary>
+    /// Remove key
+    /// </summary>
+    /// <param name="key">Key to remove</param>
+    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
+    public void Remove(string key, string fileName = null)
+    {
+        if (store.FileExists(key))
+            store.DeleteFile(key);
+    }
+
+    /// <summary>
+    /// Clear all keys from settings
+    /// </summary>
+    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
+    public void Clear(string fileName = null)
+    {
+        try
+        {
+            foreach (var file in store.GetFileNames())
+            {
+                store.DeleteFile(file);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unable to clear all defaults. Message: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// Checks to see if the key has been added.
+    /// </summary>
+    /// <param name="key">Key to check</param>
+    /// <param name="fileName">Name of file for settings to be stored and retrieved </param>
+    /// <returns>True if contains key, else false</returns>
+    public bool Contains(string key, string fileName = null)
+    {
+        return store.FileExists(key);
     }
 
     #region GetValueOrDefault
 
     /// <summary>
-    ///     Gets the current value or the default that you specify.
+    /// Gets the current value or the default that you specify.
     /// </summary>
     /// <param name="key">Key for settings</param>
     /// <param name="defaultValue">default value if not set</param>
@@ -277,7 +284,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    ///     Gets the current value or the default that you specify.
+    /// Gets the current value or the default that you specify.
     /// </summary>
     /// <param name="key">Key for settings</param>
     /// <param name="defaultValue">default value if not set</param>
@@ -290,7 +297,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    ///     Gets the current value or the default that you specify.
+    /// Gets the current value or the default that you specify.
     /// </summary>
     /// <param name="key">Key for settings</param>
     /// <param name="defaultValue">default value if not set</param>
@@ -303,7 +310,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    ///     Gets the current value or the default that you specify.
+    /// Gets the current value or the default that you specify.
     /// </summary>
     /// <param name="key">Key for settings</param>
     /// <param name="defaultValue">default value if not set</param>
@@ -313,10 +320,11 @@ internal class RDMPApplicationSettings : ISettings
     {
         return
             GetValueOrDefaultInternal(key, defaultValue, fileName);
+
     }
 
     /// <summary>
-    ///     Gets the current value or the default that you specify.
+    /// Gets the current value or the default that you specify.
     /// </summary>
     /// <param name="key">Key for settings</param>
     /// <param name="defaultValue">default value if not set</param>
@@ -326,10 +334,11 @@ internal class RDMPApplicationSettings : ISettings
     {
         return
             GetValueOrDefaultInternal(key, defaultValue, fileName);
+
     }
 
     /// <summary>
-    ///     Gets the current value or the default that you specify.
+    /// Gets the current value or the default that you specify.
     /// </summary>
     /// <param name="key">Key for settings</param>
     /// <param name="defaultValue">default value if not set</param>
@@ -339,10 +348,11 @@ internal class RDMPApplicationSettings : ISettings
     {
         return
             GetValueOrDefaultInternal(key, defaultValue, fileName);
+
     }
 
     /// <summary>
-    ///     Gets the current value or the default that you specify.
+    /// Gets the current value or the default that you specify.
     /// </summary>
     /// <param name="key">Key for settings</param>
     /// <param name="defaultValue">default value if not set</param>
@@ -352,10 +362,11 @@ internal class RDMPApplicationSettings : ISettings
     {
         return
             GetValueOrDefaultInternal(key, defaultValue, fileName);
+
     }
 
     /// <summary>
-    ///     Gets the current value or the default that you specify.
+    /// Gets the current value or the default that you specify.
     /// </summary>
     /// <param name="key">Key for settings</param>
     /// <param name="defaultValue">default value if not set</param>
@@ -365,10 +376,11 @@ internal class RDMPApplicationSettings : ISettings
     {
         return
             GetValueOrDefaultInternal(key, defaultValue, fileName);
+
     }
 
     /// <summary>
-    ///     Gets the current value or the default that you specify.
+    /// Gets the current value or the default that you specify.
     /// </summary>
     /// <param name="key">Key for settings</param>
     /// <param name="defaultValue">default value if not set</param>
@@ -385,7 +397,7 @@ internal class RDMPApplicationSettings : ISettings
     #region AddOrUpdateValue
 
     /// <summary>
-    ///     Adds or updates the value
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -395,10 +407,11 @@ internal class RDMPApplicationSettings : ISettings
     {
         return
             AddOrUpdateValueInternal(key, value, fileName);
+
     }
 
     /// <summary>
-    ///     Adds or updates the value
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -408,10 +421,11 @@ internal class RDMPApplicationSettings : ISettings
     {
         return
             AddOrUpdateValueInternal(key, value, fileName);
+
     }
 
     /// <summary>
-    ///     Adds or updates the value
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -423,7 +437,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    ///     Adds or updates the value
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -433,10 +447,11 @@ internal class RDMPApplicationSettings : ISettings
     {
         return
             AddOrUpdateValueInternal(key, value, fileName);
+
     }
 
     /// <summary>
-    ///     Adds or updates the value
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -448,7 +463,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    ///     Adds or updates the value
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -460,7 +475,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    ///     Adds or updates the value
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -472,7 +487,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    ///     Adds or updates the value
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -484,7 +499,7 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     /// <summary>
-    ///     Adds or updates the value
+    /// Adds or updates the value
     /// </summary>
     /// <param name="key">Key for settting</param>
     /// <param name="value">Value to set</param>
@@ -496,4 +511,13 @@ internal class RDMPApplicationSettings : ISettings
     }
 
     #endregion
+
+    /// <summary>
+    /// Attempts to open the app settings page.
+    /// </summary>
+    /// <returns>true if success, else false and not supported</returns>
+    public bool OpenAppSettings()
+    {
+        return false;
+    }
 }

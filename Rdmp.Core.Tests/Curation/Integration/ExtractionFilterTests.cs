@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using System;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
@@ -17,9 +17,8 @@ public class ExtractionFilterTests : DatabaseTests
     public void TestExtractionFilterDeleting_WhenItHas_ExtractionFilterParameterSet_DirectlyFails()
     {
         var filter = GetFilterWithParameterSet();
-        var ex = Assert.Throws<Exception>(() => filter.DeleteInDatabase());
-        Assert.AreEqual("Cannot delete 'Age' because there are one or more ExtractionFilterParameterSet declared on it",
-            ex.Message);
+        var ex = Assert.Throws<Exception>(()=>filter.DeleteInDatabase());
+        Assert.AreEqual("Cannot delete 'Age' because there are one or more ExtractionFilterParameterSet declared on it", ex.Message);
     }
 
     private ExtractionFilter GetFilterWithParameterSet()
@@ -39,7 +38,7 @@ public class ExtractionFilterTests : DatabaseTests
 
         var paramSet = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Old");
         paramSet.CreateNewValueEntries();
-
+            
         return filter;
     }
 }

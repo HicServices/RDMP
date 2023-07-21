@@ -8,12 +8,13 @@ using System;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
+
 using Version = System.Version;
 
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-///     Reads/Writes <see cref="System.Version" /> as a simple string value
+/// Reads/Writes <see cref="Version"/> as a simple string value
 /// </summary>
 internal class VersionYamlTypeConverter : IYamlTypeConverter
 {

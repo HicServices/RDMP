@@ -21,9 +21,6 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests.FictionalCache.Reading
 
 public class TestDataCacheReader : ICachedDataProvider
 {
-    public CacheArchiveType CacheArchiveType { get; set; }
-    public string CacheDateFormat { get; set; }
-    public Type CacheLayoutType { get; set; }
     public ILoadProgress LoadProgress { get; set; }
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
@@ -46,8 +43,12 @@ public class TestDataCacheReader : ICachedDataProvider
         throw new NotImplementedException();
     }
 
+    public CacheArchiveType CacheArchiveType { get; set; }
+    public string CacheDateFormat { get; set; }
+    public Type CacheLayoutType { get; set; }
     public ILoadCachePathResolver CreateResolver(ILoadProgress loadProgress)
     {
         throw new NotImplementedException();
     }
+
 }

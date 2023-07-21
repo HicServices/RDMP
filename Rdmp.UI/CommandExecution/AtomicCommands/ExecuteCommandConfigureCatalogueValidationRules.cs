@@ -15,18 +15,18 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExecution, IAtomicCommandWithTarget
+public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExecution,IAtomicCommandWithTarget
 {
     private Catalogue _catalogue;
 
     public ExecuteCommandConfigureCatalogueValidationRules(IActivateItems activator) : base(activator)
     {
+            
     }
 
     public override string GetCommandHelp()
     {
-        return
-            "Allows you to specify validation rules for columns in the dataset and pick the time coverage/pivot fields";
+        return "Allows you to specify validation rules for columns in the dataset and pick the time coverage/pivot fields";
     }
 
     public override string GetCommandName()
@@ -41,7 +41,7 @@ public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExe
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
-        _catalogue = (Catalogue)target;
+        _catalogue = (Catalogue) target;
         return this;
     }
 
@@ -51,7 +51,7 @@ public class ExecuteCommandConfigureCatalogueValidationRules : BasicUICommandExe
 
         _catalogue ??= SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository);
 
-        if (_catalogue == null)
+        if(_catalogue == null)
             return;
 
         Activator.Activate<ValidationSetupUI, Catalogue>(_catalogue);

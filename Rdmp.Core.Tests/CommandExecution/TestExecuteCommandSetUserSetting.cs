@@ -19,15 +19,14 @@ internal class TestExecuteCommandSetUserSetting : CommandCliTests
     {
         UserSettings.Wait5SecondsAfterStartupUI = false;
 
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),
-            new CommandLineObjectPicker(new[] { "Wait5SecondsAfterStartupUI", "true" }, GetActivator()));
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "true"}, GetActivator()));
 
         Assert.IsTrue(UserSettings.Wait5SecondsAfterStartupUI);
 
-        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),
-            new CommandLineObjectPicker(new[] { "Wait5SecondsAfterStartupUI", "false" }, GetActivator()));
-
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),new CommandLineObjectPicker(new []{ "Wait5SecondsAfterStartupUI", "false"}, GetActivator()));
+            
         Assert.IsFalse(UserSettings.Wait5SecondsAfterStartupUI);
+
     }
 
     [Test]
@@ -35,8 +34,7 @@ internal class TestExecuteCommandSetUserSetting : CommandCliTests
     {
         var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "foo");
         Assert.IsTrue(cmd.IsImpossible);
-        Assert.AreEqual(cmd.ReasonCommandImpossible,
-            "Invalid enum value.  When setting an error code you must supply a value of one of :Success,Warning,Fail");
+        Assert.AreEqual(cmd.ReasonCommandImpossible, "Invalid enum value.  When setting an error code you must supply a value of one of :Success,Warning,Fail");
     }
 
     [Test]
@@ -47,13 +45,13 @@ internal class TestExecuteCommandSetUserSetting : CommandCliTests
         Assert.AreNotEqual(CheckResult.Success, before);
 
         var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "Success");
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
         cmd.Execute();
 
         var after = UserSettings.GetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase);
         Assert.AreEqual(CheckResult.Success, after);
 
         //reset the original state of the system (the default)
-        UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase, before);
+        UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase,before);
     }
 }

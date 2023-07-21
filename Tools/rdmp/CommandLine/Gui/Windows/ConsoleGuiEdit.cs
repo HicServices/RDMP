@@ -20,7 +20,9 @@ internal class ConsoleGuiEdit : Window
 {
     private readonly IBasicActivateItems _activator;
     private List<PropertyInListView> collection;
-    private readonly ListView list;
+    private ListView list;
+
+    public IRevertable DatabaseObject { get; }
 
     public ConsoleGuiEdit(IBasicActivateItems activator, IRevertable databaseObject)
     {
@@ -29,6 +31,7 @@ internal class ConsoleGuiEdit : Window
 
         ColorScheme = ConsoleMainWindow.ColorScheme;
         collection =
+
             TableRepository.GetPropertyInfos(DatabaseObject.GetType())
                 .Select(p => new PropertyInListView(p, DatabaseObject)).ToList();
 
@@ -46,33 +49,34 @@ internal class ConsoleGuiEdit : Window
             X = 0,
             Y = Pos.Bottom(list),
             IsDefault = true
-        };
+        };            
 
-        btnSet.Clicked += () => { SetProperty(false); };
+        btnSet.Clicked += () =>
+        {
+            SetProperty(false);
+        };
 
         var btnClose = new Button("Close")
         {
-            X = Pos.Right(btnSet),
+            X =  Pos.Right(btnSet),
             Y = Pos.Bottom(list)
         };
-        btnClose.Clicked += () => Application.RequestStop();
-
+        btnClose.Clicked += ()=>Application.RequestStop();
+            
         Add(list);
         Add(btnSet);
         Add(btnClose);
     }
 
-    public IRevertable DatabaseObject { get; }
-
     private void SetProperty(bool setNull)
     {
         if (list.SelectedItem != -1)
+        {
             try
             {
                 var p = collection[list.SelectedItem];
 
-                var cmd = setNull
-                    ? new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo.Name, "null")
+                var cmd = setNull ? new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo.Name, "null")
                     : new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo);
 
                 if (cmd.IsImpossible)
@@ -85,6 +89,7 @@ internal class ConsoleGuiEdit : Window
 
                 if (cmd.Success)
                 {
+
                     //redraws the list and re selects the current item
                     DatabaseObject.RevertToDatabaseState();
                     p.UpdateValue();
@@ -94,19 +99,21 @@ internal class ConsoleGuiEdit : Window
                     list.SelectedItem = oldSelected;
                     list.EnsureSelectedItemVisible();
                 }
+
             }
             catch (Exception e)
             {
                 _activator.ShowException("Failed to set Property", e);
             }
+        }
     }
 
     private void List_KeyPress(KeyEventEventArgs obj)
     {
-        if (obj.KeyEvent.Key == Key.DeleteChar)
+        if(obj.KeyEvent.Key == Key.DeleteChar)
         {
             var rly = MessageBox.Query("Clear", "Clear Property Value?", "Yes", "Cancel");
-            if (rly == 0)
+            if(rly == 0)
             {
                 obj.Handled = true;
                 SetProperty(true);
@@ -115,20 +122,21 @@ internal class ConsoleGuiEdit : Window
     }
 
     /// <summary>
-    ///     A list view entry with the value of the field and
+    /// A list view entry with the value of the field and 
     /// </summary>
     private class PropertyInListView
     {
+        public PropertyInfo PropertyInfo;
         public string DisplayMember;
-
-        public readonly IMapsDirectlyToDatabaseTable Object;
-        public readonly PropertyInfo PropertyInfo;
+            
+        public IMapsDirectlyToDatabaseTable Object;
 
         public PropertyInListView(PropertyInfo p, IMapsDirectlyToDatabaseTable o)
         {
             PropertyInfo = p;
             Object = o;
             UpdateValue();
+
         }
 
         public override string ToString()
@@ -137,7 +145,7 @@ internal class ConsoleGuiEdit : Window
         }
 
         /// <summary>
-        ///     Updates the <see cref="DisplayMember" /> to indicate the new value
+        /// Updates the <see cref="DisplayMember"/> to indicate the new value
         /// </summary>
         /// <param name="newValue"></param>
         public void UpdateValue()
@@ -145,11 +153,15 @@ internal class ConsoleGuiEdit : Window
             var val = PropertyInfo.GetValue(Object) ?? string.Empty;
 
             // If it is a password property
-            if (PropertyInfo.Name.Contains("Password", StringComparison.InvariantCultureIgnoreCase))
+            if(PropertyInfo.Name.Contains("Password",StringComparison.InvariantCultureIgnoreCase))
+            {
                 // With a non null value
-                if (!string.IsNullOrWhiteSpace(val.ToString()))
+                if(!string.IsNullOrWhiteSpace(val.ToString()))
+                {
                     val = "****";
-
+                }
+            }
+                
             DisplayMember = $"{PropertyInfo.Name}:{val}";
         }
     }
@@ -160,8 +172,12 @@ public static class ListViewExtensions
     public static void EnsureSelectedItemVisible(this ListView list)
     {
         if (list.SelectedItem < list.TopItem)
+        {
             list.TopItem = list.SelectedItem;
+        }
         else if (list.Frame.Height > 0 && list.SelectedItem >= list.TopItem + list.Frame.Height)
+        {
             list.TopItem = Math.Max(list.SelectedItem - list.Frame.Height + 2, 0);
+        }
     }
 }

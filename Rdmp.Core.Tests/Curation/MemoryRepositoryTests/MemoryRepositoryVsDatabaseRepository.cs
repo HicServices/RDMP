@@ -14,11 +14,12 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests;
 
-internal class MemoryRepositoryVsDatabaseRepository : DatabaseTests
+internal class MemoryRepositoryVsDatabaseRepository:DatabaseTests
 {
     [Test]
     public void TestMemoryVsDatabaseRepository_CatalogueConstructor()
@@ -26,9 +27,9 @@ internal class MemoryRepositoryVsDatabaseRepository : DatabaseTests
         var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
 
         var memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
-        var dbCatalogue = new Catalogue(CatalogueRepository, "My New Catalogue");
-
-        UnitTests.AssertAreEqual(memCatalogue, dbCatalogue);
+        var dbCatalogue = new Catalogue(CatalogueRepository,"My New Catalogue");
+            
+        UnitTests.AssertAreEqual(memCatalogue,dbCatalogue);
     }
 
     [Test]
@@ -43,7 +44,7 @@ internal class MemoryRepositoryVsDatabaseRepository : DatabaseTests
 
         var memPt = new ProcessTask(memoryRepository, memLmd, LoadStage.AdjustRaw) { Name = "MyPt" };
         var dbPt = new ProcessTask(CatalogueRepository, dbLmd, LoadStage.AdjustRaw) { Name = "MyPt" };
-
+            
         UnitTests.AssertAreEqual(memPt, dbPt);
     }
 
@@ -61,17 +62,17 @@ internal class MemoryRepositoryVsDatabaseRepository : DatabaseTests
 
         UnitTests.AssertAreEqual(memAggregate, dbAggregate);
     }
-
+        
     [Test]
     public void TestMemoryRepository_LiveLogging()
     {
         var memoryRepository = new MemoryCatalogueRepository();
 
-        var loggingServer = new ExternalDatabaseServer(memoryRepository, "My Logging Server", null);
+        var loggingServer = new ExternalDatabaseServer(memoryRepository, "My Logging Server",null);
         memoryRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID, loggingServer);
 
         var memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
-        Assert.AreEqual(memCatalogue.LiveLoggingServer_ID, loggingServer.ID);
+        Assert.AreEqual(memCatalogue.LiveLoggingServer_ID,loggingServer.ID);
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -86,33 +87,34 @@ internal class MemoryRepositoryVsDatabaseRepository : DatabaseTests
         dt.Columns.Add("So");
 
         var db = GetCleanedServer(dbType);
-        var tbl = db.CreateTable("OmgTables", dt);
+        var tbl = db.CreateTable("OmgTables",dt);
 
         var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository);
 
-        var importer1 = new TableInfoImporter(memoryRepository, tbl);
+        var importer1 = new TableInfoImporter(memoryRepository, tbl, DataAccessContext.Any);
 
         importer1.DoImport(out var memTableInfo, out var memColumnInfos);
         var forwardEngineer1 = new ForwardEngineerCatalogue(memTableInfo, memColumnInfos);
-        forwardEngineer1.ExecuteForwardEngineering(out var memCatalogue, out var memCatalogueItems,
-            out var memExtractionInformations);
+        forwardEngineer1.ExecuteForwardEngineering(out var memCatalogue, out var memCatalogueItems, out var memExtractionInformations);
 
 
-        var importerdb = new TableInfoImporter(CatalogueRepository, tbl);
+        var importerdb = new TableInfoImporter(CatalogueRepository, tbl, DataAccessContext.Any);
         importerdb.DoImport(out var dbTableInfo, out var dbColumnInfos);
         var forwardEngineer2 = new ForwardEngineerCatalogue(dbTableInfo, dbColumnInfos);
-        forwardEngineer2.ExecuteForwardEngineering(out var dbCatalogue, out var dbCatalogueItems,
-            out var dbExtractionInformations);
+        forwardEngineer2.ExecuteForwardEngineering(out var dbCatalogue, out var dbCatalogueItems, out var dbExtractionInformations);
 
 
-        UnitTests.AssertAreEqual(memCatalogue, dbCatalogue);
-        UnitTests.AssertAreEqual(memTableInfo, dbTableInfo);
+        UnitTests.AssertAreEqual(memCatalogue,dbCatalogue);
+        UnitTests.AssertAreEqual(memTableInfo,dbTableInfo);
 
-        UnitTests.AssertAreEqual(memCatalogue.CatalogueItems, dbCatalogue.CatalogueItems);
-        UnitTests.AssertAreEqual(memCatalogue.GetAllExtractionInformation(ExtractionCategory.Any),
-            dbCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+        UnitTests.AssertAreEqual(memCatalogue.CatalogueItems,dbCatalogue.CatalogueItems);
+        UnitTests.AssertAreEqual(memCatalogue.GetAllExtractionInformation(ExtractionCategory.Any), dbCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
-        UnitTests.AssertAreEqual(memCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo),
-            dbCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo));
+        UnitTests.AssertAreEqual(memCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo), dbCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo));
+
     }
+
+        
+
+        
 }

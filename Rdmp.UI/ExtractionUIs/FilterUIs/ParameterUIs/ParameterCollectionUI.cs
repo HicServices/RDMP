@@ -19,55 +19,43 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Enum = System.Enum;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 
 /// <summary>
-///     Filters, Aggregates, Extractions etc can all make use of SQL parameters (e.g. @drugName).  This dialog appears any
-///     time you are viewing/editing the parameters associated with a
-///     given parameter use case.  If you do not understand what SQL parameters (aka variables) are then you should read up
-///     on this before using this control.
-///     <para>
-///         The following help instructions will relate to the context of editing a Filter and configuring some parameters
-///         but is equally applicable to configuring global parameters on an
-///         extraction or in a cohort identification configuration etc.
-///     </para>
-///     <para>
-///         The first time you use a parameter in your filter (e.g. @drugName), a template SQL Parameter will be created
-///         (probably as a varchar(50)).  You should adjust the Declare SQL such
-///         that it is the correct data type for your filter and give it a default value which illustrates how it should be
-///         used when deployed as part of cohort identification or data extraction.
-///         Finally provide a description of what the parameter is supposed to do in the Comment section.
-///     </para>
-///     <para>
-///         Parameters exist at multiple levels within the system and it is possible that you are editing parameters that
-///         are not at the top level.  For example, you are configuring an extract
-///         in which the global parameter @drugCodesOfInterest is declared for all datasets in the project and you have
-///         just opened a Filter.  In this context you will see some greyed out
-///         'Overriding' parameters, these are available for use at lower levels but cannot be changed (because the new
-///         Value would be applied to all users of the global i.e. all datasets in the
-///         extraction, not just the one you are editing).
-///     </para>
-///     <para>
-///         So to return to the above example, if you create a filter 'Prescriptions collected after date X' with the SQL
-///         'dateCollected > @dateOfCollection'.  When you save the Filter the
-///         parameter @dateOfCollection will be created (unless there is already a global with the same name/type).
-///     </para>
-///     <para>
-///         Sometimes the Globals are explicit fixed value parameters for example the @ProjectNumber in a data
-///         extraction, in this case the Parameter cannot be modified period.
-///     </para>
+/// Filters, Aggregates, Extractions etc can all make use of SQL parameters (e.g. @drugName).  This dialog appears any time you are viewing/editing the parameters associated with a
+/// given parameter use case.  If you do not understand what SQL parameters (aka variables) are then you should read up on this before using this control.
+/// 
+/// <para>The following help instructions will relate to the context of editing a Filter and configuring some parameters but is equally applicable to configuring global parameters on an
+/// extraction or in a cohort identification configuration etc.</para>
+/// 
+/// <para>The first time you use a parameter in your filter (e.g. @drugName), a template SQL Parameter will be created (probably as a varchar(50)).  You should adjust the Declare SQL such
+/// that it is the correct data type for your filter and give it a default value which illustrates how it should be used when deployed as part of cohort identification or data extraction.
+/// Finally provide a description of what the parameter is supposed to do in the Comment section.  </para>
+/// 
+/// <para>Parameters exist at multiple levels within the system and it is possible that you are editing parameters that are not at the top level.  For example, you are configuring an extract
+/// in which the global parameter @drugCodesOfInterest is declared for all datasets in the project and you have just opened a Filter.  In this context you will see some greyed out
+/// 'Overriding' parameters, these are available for use at lower levels but cannot be changed (because the new Value would be applied to all users of the global i.e. all datasets in the
+/// extraction, not just the one you are editing).</para>
+/// 
+/// <para>So to return to the above example, if you create a filter 'Prescriptions collected after date X' with the SQL 'dateCollected > @dateOfCollection'.  When you save the Filter the
+/// parameter @dateOfCollection will be created (unless there is already a global with the same name/type).</para>
+/// 
+/// <para>Sometimes the Globals are explicit fixed value parameters for example the @ProjectNumber in a data extraction, in this case the Parameter cannot be modified period.</para>
 /// </summary>
 public partial class ParameterCollectionUI : RDMPUserControl
 {
-    private readonly ToolStripMenuItem miAddNewParameter = new("New Parameter...");
-    private readonly ToolStripMenuItem miOverrideParameter = new("Override Parameter");
+    public ParameterCollectionUIOptions Options { get; private set; }
+
+    private ToolStripMenuItem miAddNewParameter = new("New Parameter...");
+    private ToolStripMenuItem miOverrideParameter = new("Override Parameter");
 
     public ParameterCollectionUI()
     {
         InitializeComponent();
         olvParameterName.GroupKeyGetter += GroupKeyGetter;
-        olvParameters.AboutToCreateGroups += olvParameters_AboutToCreateGroups;
+        olvParameters.AboutToCreateGroups +=olvParameters_AboutToCreateGroups;
         olvParameters.AddDecoration(new EditingCellBorderDecoration { UseLightbox = true });
 
         olvParameterName.ImageGetter += ImageGetter;
@@ -87,19 +75,12 @@ public partial class ParameterCollectionUI : RDMPUserControl
         miAddNewParameter.Click += miAddParameter_Click;
         miOverrideParameter.Click += miOverride_Click;
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvComment,
-            new Guid("8058e9c5-236e-443a-8586-6a21bf1a4562"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvOwner,
-            new Guid("e2097029-e35f-4d56-a000-e8cca717b9ad"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvValue,
-            new Guid("cfbab41b-8af1-480c-a7a0-0bbf42ee8cb9"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterName,
-            new Guid("eadfd8e8-db88-4632-badc-0c6dbec2f877"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterSQL,
-            new Guid("a9216170-621d-45c6-9d32-9046a054fc0f"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvComment, new Guid("8058e9c5-236e-443a-8586-6a21bf1a4562"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvOwner, new Guid("e2097029-e35f-4d56-a000-e8cca717b9ad"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvValue, new Guid("cfbab41b-8af1-480c-a7a0-0bbf42ee8cb9"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterName, new Guid("eadfd8e8-db88-4632-badc-0c6dbec2f877"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvParameters, olvParameterSQL, new Guid("a9216170-621d-45c6-9d32-9046a054fc0f"));
     }
-
-    public ParameterCollectionUIOptions Options { get; private set; }
 
     private object ParameterName_AspectGetter(object rowObject)
     {
@@ -119,12 +100,13 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void olvParameters_AboutToCreateGroups(object sender, CreateGroupsEventArgs e)
     {
+
         var order = new Dictionary<string, int>
         {
-            { ParameterLevel.Global.ToString(), 0 },
-            { ParameterLevel.CompositeQueryLevel.ToString(), 1 },
-            { ParameterLevel.QueryLevel.ToString(), 2 },
-            { ParameterLevel.TableInfo.ToString(), 3 }
+            {ParameterLevel.Global.ToString(),0},
+            {ParameterLevel.CompositeQueryLevel.ToString(),1},
+            {ParameterLevel.QueryLevel.ToString(),2},
+            {ParameterLevel.TableInfo.ToString(),3}
         };
 
         foreach (var g in e.Groups)
@@ -135,6 +117,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
             currentGroup.Header = $"{currentGroup.Header} (current)";
 
         e.Groups = e.Groups.OrderBy(g => g.SortValue).ToList();
+
     }
 
     public void Clear()
@@ -149,7 +132,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         olvParameters.ClearObjects();
 
         //add all parameters from all levels
-        foreach (ParameterLevel level in Enum.GetValues(typeof(ParameterLevel)))
+        foreach (ParameterLevel level in Enum.GetValues(typeof (ParameterLevel)))
         {
             var parametersFoundAtThisLevel = Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[level];
 
@@ -162,26 +145,28 @@ public partial class ParameterCollectionUI : RDMPUserControl
         parameterEditorScintillaControl1.RegenerateSQL();
 
         UpdateTabVisibility();
+
     }
 
     private void UpdateTabVisibility()
     {
         if (parameterEditorScintillaControl1.IsBroken)
             tabControl1.TabPages.Remove(tpSql);
-        else if (!tabControl1.TabPages.Contains(tpSql))
+        else
+        if (!tabControl1.TabPages.Contains(tpSql))
             tabControl1.TabPages.Add(tpSql);
     }
 
     private void DisableRelevantObjects()
     {
-        if (olvParameters.Objects == null) //there are no parameters
+        if(olvParameters.Objects == null)//there are no parameters
             return;
 
         var parameters = olvParameters.Objects.Cast<ISqlParameter>().ToArray();
         var toDisable = parameters.Where(Options.ShouldBeDisabled);
 
         //These parameters are super special and in fact only have a Value (other properties are inherited from a parent ExtractionFilterParameter) so only let the user edit the Value textbox if there are any of these in the UI
-        if (parameters.Any(p => p is ExtractionFilterParameterSetValue))
+        if(parameters.Any(p=>p is ExtractionFilterParameterSetValue))
         {
             olvComment.IsEditable = false;
             olvParameterSQL.IsEditable = false;
@@ -207,7 +192,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
     }
 
 
-    public static Form ShowAsDialog(IActivateItems activator, ParameterCollectionUIOptions options, bool modal = false)
+    public static Form ShowAsDialog(IActivateItems activator,ParameterCollectionUIOptions options, bool modal = false)
     {
         var f = new Form
         {
@@ -217,7 +202,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         f.Width = ui.Width;
         f.Height = ui.Height;
 
-        ui.SetUp(options, activator);
+        ui.SetUp(options,activator);
         ui.Dock = DockStyle.Fill;
         f.Controls.Add(ui);
 
@@ -229,13 +214,13 @@ public partial class ParameterCollectionUI : RDMPUserControl
         return f;
     }
 
-    public void SetUp(ParameterCollectionUIOptions options, IActivateItems activator)
+    public void SetUp(ParameterCollectionUIOptions options,IActivateItems activator)
     {
         Options = options;
 
         SetItemActivator(activator);
 
-        hiParameters.SetHelpText("Use Case", options.UseCase);
+        hiParameters.SetHelpText("Use Case",options.UseCase);
 
         parameterEditorScintillaControl1.Options = options;
         RefreshParametersFromDatabase();
@@ -246,7 +231,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         var r = new Random();
 
 #pragma warning disable SCS0005 // Weak random generator: This is only used to create an initial value for a parameter.
-        var dialog = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, $"@MyParam{r.Next()}");
+        var dialog  = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, $"@MyParam{r.Next()}");
 #pragma warning restore SCS0005 // Weak random generator
         if (dialog.ShowDialog() == DialogResult.OK)
         {
@@ -280,7 +265,6 @@ public partial class ParameterCollectionUI : RDMPUserControl
             olvParameters.RemoveObject(d);
             Options.ParameterManager.RemoveParameter((ISqlParameter)d);
         }
-
         // Rebuild once after deleting all objects, instead of after each deletion
         DisableRelevantObjects();
         parameterEditorScintillaControl1.RegenerateSQL();
@@ -294,6 +278,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         string newParameterName = null;
 
         if (parameter != null)
+        {
             try
             {
                 oldParameterName = parameter.ParameterName;
@@ -303,11 +288,11 @@ public partial class ParameterCollectionUI : RDMPUserControl
                 oldParameterName = null;
             }
 
-        if (e.Column.Index == olvParameterSQL.Index)
-            if (!string.IsNullOrWhiteSpace((string)e.NewValue))
-                e.NewValue =
-                    e.NewValue.ToString()
-                        .TrimEnd(';'); //auto trim semicolons we automatically put those in ourselves we don't need user slapping them in too thanks
+        }
+
+        if(e.Column.Index == olvParameterSQL.Index)
+            if (!string.IsNullOrWhiteSpace((string) e.NewValue))
+                e.NewValue = e.NewValue.ToString().TrimEnd(';');//auto trim semicolons we automatically put those in ourselves we don't need user slapping them in too thanks
 
         e.Column.PutAspectByName(e.RowObject, e.NewValue);
 
@@ -358,7 +343,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private void RefreshProblemObjects()
     {
-        olvParameters.RefreshObjects(parameterEditorScintillaControl1.ProblemObjects.Select(kvp => kvp.Key).ToList());
+        olvParameters.RefreshObjects(parameterEditorScintillaControl1.ProblemObjects.Select(kvp=>kvp.Key).ToList());
     }
 
     private void olvParameters_CellToolTipShowing(object sender, ToolTipShowingEventArgs e)
@@ -382,8 +367,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (Options.IsOverridden(sqlParameter))
         {
             e.Title = "Parameter is overridden by a higher level";
-            e.Text =
-                "You have defined a higher level parameter with the same name/datatype which will override this parameters value during query generation";
+            e.Text = "You have defined a higher level parameter with the same name/datatype which will override this parameters value during query generation";
             return;
         }
 
@@ -393,13 +377,14 @@ public partial class ParameterCollectionUI : RDMPUserControl
             e.Title = "Parameter is declared at a higher level";
             e.Text =
                 $"This parameter is declared at {Options.ParameterManager.GetLevelForParameter(sqlParameter)} level which is higher than the level you are editing ({Options.CurrentLevel}).  You cannot change higher level parameters from here, look at the 'Owner' column to see which object the global belongs to";
+            return;
         }
     }
-
     private string ImageGetter(object rowObject)
     {
         try
         {
+
             var sqlParameter = (ISqlParameter)rowObject;
 
             if (parameterEditorScintillaControl1.ProblemObjects.ContainsKey(sqlParameter))
@@ -408,20 +393,19 @@ public partial class ParameterCollectionUI : RDMPUserControl
             if (Options.IsOverridden(sqlParameter))
                 return "Overridden.png";
 
-            if (Options.IsHigherLevel(sqlParameter))
+            if(Options.IsHigherLevel(sqlParameter))
                 return "Locked.png";
         }
         catch (Exception)
         {
             return "Warning.png"; //if it crashed trying to get an image then ... bad times return warning
         }
-
         return null;
     }
 
     private static object OwnerAspectGetter(object rowobject)
     {
-        var parameter = (ISqlParameter)rowobject;
+        var parameter = (ISqlParameter) rowobject;
         var owner = parameter.GetOwnerIfAny();
 
         if (owner == null)
@@ -439,7 +423,7 @@ public partial class ParameterCollectionUI : RDMPUserControl
 
     private bool CanOverride(ISqlParameter sqlParameter)
     {
-        if (sqlParameter != null)
+        if(sqlParameter != null)
             //if it is not already overridden
             if (!Options.IsOverridden(sqlParameter) &&
                 //and it exists at a lower level
@@ -473,4 +457,5 @@ public partial class ParameterCollectionUI : RDMPUserControl
         if (e.RowObject is ISqlParameter p && Options.ShouldBeReadOnly(p))
             e.Cancel = true;
     }
+
 }

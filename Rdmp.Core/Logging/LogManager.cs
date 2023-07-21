@@ -11,6 +11,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Logging.PastEvents;
@@ -20,50 +21,43 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-///     Entry point for the RDMP relational logging database.  This class requires to be pointed at an existing logging
-///     database with the correct schema (Defined
-///     in HIC.Logging.Database - See DatabaseCreation.exe for how to do this). See Logging.cd for the full hierarchy of
-///     concepts.
-///     <para>
-///         You can both create new logging records and fetch old ones.  New logging objects are generally maintained for
-///         future use e.g. when you want to record
-///         that a new table is being loaded during a given load (DataLoadInfo) you must pass the load log object
-///         (DataLoadInfo).  Live logging objects generally
-///         must be closed to indicate that they are completed (succesfully or otherwise), if you do not close a logging
-///         object then the EndTime will be left
-///         blank and it will be unclear if a process blue screened or if it all went fine (other than the ongoing
-///         accumulation of log events, errors etc).
-///     </para>
-///     <para>
-///         Fetching old records is done based on ID, Task Name etc and is also handled by this class. The objects returned
-///         will be ArchivalDataLoadInfo objects
-///         which are immutable and include the full hierarchy of sub concepts (errors, progress messages, which tables
-///         were loaded with how many records etc -
-///         See Logging.cd).
-///     </para>
+/// Entry point for the RDMP relational logging database.  This class requires to be pointed at an existing logging database with the correct schema (Defined
+/// in HIC.Logging.Database - See DatabaseCreation.exe for how to do this). See Logging.cd for the full hierarchy of concepts.
+/// 
+/// <para>You can both create new logging records and fetch old ones.  New logging objects are generally maintained for future use e.g. when you want to record
+/// that a new table is being loaded during a given load (DataLoadInfo) you must pass the load log object (DataLoadInfo).  Live logging objects generally
+/// must be closed to indicate that they are completed (succesfully or otherwise), if you do not close a logging object then the EndTime will be left
+/// blank and it will be unclear if a process blue screened or if it all went fine (other than the ongoing accumulation of log events, errors etc).</para>
+/// 
+/// <para>Fetching old records is done based on ID, Task Name etc and is also handled by this class. The objects returned will be ArchivalDataLoadInfo objects
+/// which are immutable and include the full hierarchy of sub concepts (errors, progress messages, which tables were loaded with how many records etc -
+/// See Logging.cd).</para>
 /// </summary>
 public class LogManager : ILogManager
 {
+    public DiscoveredServer Server { get; private set; }
+
+    /// <summary>
+    /// If the Server was set from a persistent database reference this property will store it e.g. a logging ExternalDatabaseServer
+    /// </summary>
+    public IDataAccessPoint DataAccessPointIfAny { get; private set; }
+
+    /// <summary>
+    /// Event triggered every time a new <see cref="IDataLoadInfo"/> is created.
+    /// </summary>
+    public event DataLoadInfoHandler DataLoadInfoCreated;
+
     public LogManager(DiscoveredServer server)
     {
         Server = server;
     }
 
-    public LogManager(IDataAccessPoint loggingServer) : this(
-        DataAccessPortal.ExpectServer(loggingServer, DataAccessContext.Logging))
+    public LogManager(IDataAccessPoint loggingServer) : this(DataAccessPortal.ExpectServer(loggingServer, DataAccessContext.Logging))
     {
         DataAccessPointIfAny = loggingServer;
     }
 
-    public DiscoveredServer Server { get; }
-
-    /// <summary>
-    ///     If the Server was set from a persistent database reference this property will store it e.g. a logging
-    ///     ExternalDatabaseServer
-    /// </summary>
-    public IDataAccessPoint DataAccessPointIfAny { get; private set; }
-
-    public string[] ListDataTasks(bool hideTests = false)
+    public string[] ListDataTasks(bool hideTests=false)
     {
         var tasks = new List<string>();
 
@@ -72,48 +66,26 @@ public class LogManager : ILogManager
             con.Open();
             using (var cmd = Server.GetCommand("SELECT * FROM DataLoadTask", con))
             {
-                using (var r = cmd.ExecuteReader())
-                {
+                using(var r = cmd.ExecuteReader())
                     while (r.Read())
+                    {
                         if (hideTests)
                         {
-                            if (!(bool)r["isTest"])
+                            if(!(bool)r["isTest"])
                                 tasks.Add(r["name"].ToString());
                             //else it is a test, and we are hidding them
                         }
                         else
-                        {
                             tasks.Add(r["name"].ToString()); //we are not hiding tests
-                        }
-                }
+                    }
             }
 
             return tasks.ToArray();
         }
     }
 
-
-    public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description,
-        string suggestedRollbackCommand, bool isTest)
-    {
-        var task = ListDataTasks()
-                       .FirstOrDefault(t => t.Equals(dataLoadTaskName, StringComparison.CurrentCultureIgnoreCase)) ??
-                   throw new KeyNotFoundException(
-                       $"DataLoadTask called '{dataLoadTaskName}' was not found in the logging database {Server}");
-        var toReturn = new DataLoadInfo(task, packageName, description, suggestedRollbackCommand, isTest, Server);
-
-        DataLoadInfoCreated?.Invoke(this, toReturn);
-
-        return toReturn;
-    }
-
     /// <summary>
-    ///     Event triggered every time a new <see cref="IDataLoadInfo" /> is created.
-    /// </summary>
-    public event DataLoadInfoHandler DataLoadInfoCreated;
-
-    /// <summary>
-    ///     Returns logging data for the given <paramref name="filter" />
+    /// Returns logging data for the given <paramref name="filter"/>
     /// </summary>
     /// <param name="filter"></param>
     /// <param name="topX"></param>
@@ -122,29 +94,25 @@ public class LogManager : ILogManager
     public DataTable GetTable(LogViewerFilter filter, int? topX, bool sortDesc)
     {
         var prefix = "";
-        var where = filter == null ? "" : filter.GetWhereSql();
+        var where = filter == null ? "": filter.GetWhereSql();
 
         if (topX.HasValue)
             prefix = $"TOP {topX.Value}";
-
-        return GetAsTable(string.Format(
-            "SELECT {0} * FROM " + filter.LoggingTable + " {1} ORDER BY ID " + (sortDesc ? "Desc" : "Asc"), prefix,
-            where));
+            
+        return GetAsTable(string.Format("SELECT {0} * FROM " + filter.LoggingTable + " {1} ORDER BY ID " + (sortDesc? "Desc":"Asc"), prefix, where));
     }
 
     private DataTable GetAsTable(string sql)
     {
         var dt = new DataTable();
-
+            
         using (var con = Server.GetConnection())
         {
             con.Open();
 
-            using (var cmd = Server.GetCommand(sql, con))
-            using (var da = Server.GetDataAdapter(cmd))
-            {
+            using(var cmd = Server.GetCommand(sql, con))
+            using(var da = Server.GetDataAdapter(cmd))
                 da.Fill(dt);
-            }
 
             return dt;
         }
@@ -158,44 +126,39 @@ public class LogManager : ILogManager
         {
             con.Open();
 
-            using (var cmd = Server.GetCommand("SELECT * FROM DataSet", con))
-            using (var r = cmd.ExecuteReader())
-            {
+            using(var cmd = Server.GetCommand("SELECT * FROM DataSet", con))
+            using(var r = cmd.ExecuteReader())
                 while (r.Read())
                     tasks.Add(r["dataSetID"].ToString());
-            }
 
             return tasks.ToArray();
         }
     }
 
     /// <summary>
-    ///     Returns data load audit objects which describe runs of over arching task <paramref name="dataTask" />
+    /// Returns data load audit objects which describe runs of over arching task <paramref name="dataTask"/>
     /// </summary>
     /// <param name="dataTask"></param>
     /// <param name="token"></param>
     /// <param name="specificDataLoadRunIDOnly"></param>
     /// <param name="topX"></param>
     /// <returns></returns>
-    public IEnumerable<ArchivalDataLoadInfo> GetArchivalDataLoadInfos(string dataTask, CancellationToken? token = null,
-        int? specificDataLoadRunIDOnly = null, int? topX = null)
+    public IEnumerable<ArchivalDataLoadInfo> GetArchivalDataLoadInfos(string dataTask, CancellationToken? token = null, int? specificDataLoadRunIDOnly = null, int? topX = null)
     {
         var db = Server.GetCurrentDatabase();
         var run = db.ExpectTable("DataLoadRun");
-
+            
         using (var con = Server.GetConnection())
         {
             con.Open();
 
-            var dataTaskId = GetDataTaskId(dataTask, Server, con);
+            var dataTaskId = GetDataTaskId(dataTask,Server, con);
 
             using (var cmd = Server.GetCommand("", con))
             {
                 var where = "";
                 if (specificDataLoadRunIDOnly != null)
-                {
                     where = $"WHERE ID={specificDataLoadRunIDOnly.Value}";
-                }
                 else
                 {
                     where = "WHERE dataLoadTaskID = @dataTaskId";
@@ -215,31 +178,33 @@ public class LogManager : ILogManager
 
                 sb.Append("SELECT ");
 
-                if (top?.Location == QueryComponent.SELECT) sb.AppendLine(top.SQL);
+                if(top?.Location == QueryComponent.SELECT)
+                {
+                    sb.AppendLine(top.SQL);
+                }
 
                 sb.Append(" *");
 
 
                 sb.AppendLine($" FROM {run.GetFullyQualifiedName()}  {where} ORDER BY ID desc");
 
-                if (top?.Location == QueryComponent.Postfix) sb.AppendLine(top.SQL);
+                if(top?.Location == QueryComponent.Postfix)
+                {
+                    sb.AppendLine(top.SQL);
+                }
 
                 cmd.CommandText = sb.ToString();
 
                 DbDataReader r;
                 if (token == null)
-                {
                     r = cmd.ExecuteReader();
-                }
                 else
                 {
                     var rTask = cmd.ExecuteReaderAsync(token.Value);
                     rTask.Wait(token.Value);
 
                     if (rTask.IsCompleted)
-                    {
                         r = rTask.Result;
-                    }
                     else
                     {
                         cmd.Cancel();
@@ -251,11 +216,9 @@ public class LogManager : ILogManager
                     }
                 }
 
-                using (r)
-                {
+                using(r)
                     while (r.Read())
                         yield return new ArchivalDataLoadInfo(r, db);
-                }
             }
         }
     }
@@ -273,9 +236,22 @@ public class LogManager : ILogManager
         }
     }
 
+
+
+    public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description, string suggestedRollbackCommand, bool isTest)
+    {
+        var task = ListDataTasks().FirstOrDefault(t=>t.Equals(dataLoadTaskName,StringComparison.CurrentCultureIgnoreCase)) ?? throw new KeyNotFoundException(
+                $"DataLoadTask called '{dataLoadTaskName}' was not found in the logging database {Server}");
+        var toReturn = new DataLoadInfo(task, packageName, description, suggestedRollbackCommand, isTest, Server);
+
+        DataLoadInfoCreated?.Invoke(this,toReturn);
+
+        return toReturn;
+
+    }
+
     /// <summary>
-    ///     Creates a new data load task for the given dataset (datasetID which is the name of the dataset).  The loading task
-    ///     will be called the same as the dataset is called.
+    /// Creates a new data load task for the given dataset (datasetID which is the name of the dataset).  The loading task will be called the same as the dataset is called.
     /// </summary>
     /// <param name="id"></param>
     /// <param name="dataSetID"></param>
@@ -290,9 +266,9 @@ public class LogManager : ILogManager
 
                 using (var cmd = Server.GetCommand(sql, conn))
                 {
-                    Server.AddParameterWithValueToCommand("@date", cmd, DateTime.Now);
-                    Server.AddParameterWithValueToCommand("@dataSetID", cmd, dataSetID);
-                    Server.AddParameterWithValueToCommand("@username", cmd, Environment.UserName);
+                    Server.AddParameterWithValueToCommand("@date", cmd,DateTime.Now);
+                    Server.AddParameterWithValueToCommand("@dataSetID",cmd,dataSetID);
+                    Server.AddParameterWithValueToCommand("@username",cmd,Environment.UserName);
 
                     cmd.ExecuteNonQuery();
                 }
@@ -313,7 +289,7 @@ public class LogManager : ILogManager
 
                 using (var cmd = Server.GetCommand(sql, conn))
                 {
-                    Server.AddParameterWithValueToCommand("@datasetName", cmd, datasetName);
+                    Server.AddParameterWithValueToCommand("@datasetName",cmd,datasetName);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -321,13 +297,14 @@ public class LogManager : ILogManager
     }
 
 
+
     public void CreateNewLoggingTaskIfNotExists(string toCreate)
     {
-        if (!ListDataSets().Contains(toCreate, StringComparer.CurrentCultureIgnoreCase))
+        if(!ListDataSets().Contains(toCreate,StringComparer.CurrentCultureIgnoreCase))
             CreateNewDataSet(toCreate);
 
-        if (!ListDataTasks().Contains(toCreate, StringComparer.CurrentCultureIgnoreCase))
-            CreateNewLoggingTask(GetMaxTaskID() + 1, toCreate);
+        if(!ListDataTasks().Contains(toCreate,StringComparer.CurrentCultureIgnoreCase))
+            CreateNewLoggingTask(GetMaxTaskID()+1,toCreate);
     }
 
     private int GetMaxTaskID()
@@ -369,10 +346,11 @@ public class LogManager : ILogManager
                     affectedRows = cmd.ExecuteNonQuery();
                 }
 
-                if (affectedRows != ids.Length)
+                if(affectedRows != ids.Length)
                     throw new Exception(
                         $"Query {sql} resulted in {affectedRows}, we were expecting there to be {ids.Length} updates because that is how many FatalError IDs that were passed to this method");
             }
         }
     }
+
 }

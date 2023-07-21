@@ -11,11 +11,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job;
 
 /// <summary>
-///     Creates the DataLoadJob which will run in a given DataLoadProcess (either one off load or an iterative load of a
-///     specific range of dates - See LoadProgress).
+/// Creates the DataLoadJob which will run in a given DataLoadProcess (either one off load or an iterative load of a specific range of dates - See LoadProgress).
 /// </summary>
 public interface IJobFactory
 {
-    IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        HICDatabaseConfiguration configuration);
+    IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IDataLoadEventListener listener,HICDatabaseConfiguration configuration);
 }

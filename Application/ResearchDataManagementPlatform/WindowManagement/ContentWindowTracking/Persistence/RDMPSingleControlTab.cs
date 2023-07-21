@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
 using System.Text;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -13,17 +12,23 @@ using Rdmp.UI;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
+
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 
 /// <summary>
-///     TECHNICAL: Base class for all dockable tabs that host a single control
+/// TECHNICAL: Base class for all dockable tabs that host a single control
 /// </summary>
-[DesignerCategory("")]
+[System.ComponentModel.DesignerCategory("")]
 [TechnicalUI]
-public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
+public class RDMPSingleControlTab:DockContent,IRefreshBusSubscriber
 {
+    /// <summary>
+    /// The control hosted on this tab
+    /// </summary>
+    public Control Control { get; protected set; }
     public const string BasicPrefix = "BASIC";
 
     protected RDMPSingleControlTab(RefreshBus refreshBus)
@@ -33,8 +38,8 @@ public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
     }
 
     /// <summary>
-    ///     Creates instance and sets <see cref="Control" /> to <paramref name="c" />.  You
-    ///     will still need to add and Dock the control etc yourself
+    /// Creates instance and sets <see cref="Control"/> to <paramref name="c"/>.  You
+    /// will still need to add and Dock the control etc yourself
     /// </summary>
     /// <param name="refreshBus"></param>
     /// <param name="c"></param>
@@ -45,23 +50,19 @@ public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
         Control = c;
     }
 
-    /// <summary>
-    ///     The control hosted on this tab
-    /// </summary>
-    public Control Control { get; protected set; }
-
     public virtual void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-    }
 
+    }
     public virtual void HandleUserRequestingTabRefresh(IActivateItems activator)
     {
+
     }
 
     public virtual void HandleUserRequestingEmphasis(IActivateItems activator)
     {
-    }
 
+    }
     protected override string GetPersistString()
     {
         const char s = PersistStringHelper.Separator;
@@ -81,12 +82,11 @@ public class RDMPSingleControlTab : DockContent, IRefreshBusSubscriber
             {
                 firstMatch ??= c.GetType().Name;
 
-                sb.AppendLine(typeDocs.GetDocumentationIfExists(c.GetType().Name, false, true));
+                sb.AppendLine(typeDocs.GetDocumentationIfExists(c.GetType().Name,false,true));
                 sb.AppendLine();
             }
 
         if (sb.Length > 0)
-            WideMessageBox.Show(firstMatch, sb.ToString(), Environment.StackTrace, true, firstMatch,
-                WideMessageBoxTheme.Help);
+            WideMessageBox.Show(firstMatch, sb.ToString(),Environment.StackTrace,  true,  firstMatch,WideMessageBoxTheme.Help);
     }
 }

@@ -10,22 +10,15 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-///     Collection of all previously extracted (and now readonly) <see cref="ExtractionConfiguration" />s in a given
-///     <see cref="Project" />
+/// Collection of all previously extracted (and now readonly) <see cref="ExtractionConfiguration"/>s in a given <see cref="Project"/>
 /// </summary>
-internal class FrozenExtractionConfigurationsNode : Node, IOrderable
+internal class FrozenExtractionConfigurationsNode:Node , IOrderable
 {
+    public Project Project { get; set; }
+
     public FrozenExtractionConfigurationsNode(Project project)
     {
         Project = project;
-    }
-
-    public Project Project { get; set; }
-
-    public int Order
-    {
-        get => 6000;
-        set { }
     }
 
     public override string ToString()
@@ -43,11 +36,14 @@ internal class FrozenExtractionConfigurationsNode : Node, IOrderable
         if (obj is null) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((FrozenExtractionConfigurationsNode)obj);
+        return Equals((FrozenExtractionConfigurationsNode) obj);
     }
 
     public override int GetHashCode()
     {
         return Project != null ? Project.GetHashCode() : 0;
     }
+
+    public int Order { get => 6000;
+        set{} }
 }

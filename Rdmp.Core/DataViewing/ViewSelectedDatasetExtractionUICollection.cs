@@ -4,15 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataViewing;
@@ -20,6 +20,8 @@ namespace Rdmp.Core.DataViewing;
 internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     private ExtractDatasetCommand _request;
+
+    private ISelectedDataSets SelectedDataset => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();
 
     public ViewSelectedDatasetExtractionUICollection()
     {
@@ -30,14 +32,28 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
         DatabaseObjects.Add(dataset);
     }
 
-    private ISelectedDataSets SelectedDataset => DatabaseObjects.OfType<ISelectedDataSets>().FirstOrDefault();
-
     public string GetSql()
     {
         BuildRequest();
 
         //get the SQL from the query builder
         return _request.QueryBuilder.SQL;
+    }
+
+    private void BuildRequest()
+    {
+        if(_request != null)
+            return;
+
+        var ec = SelectedDataset.ExtractionConfiguration;
+
+        if(ec.Cohort_ID == null)
+            throw new Exception("No cohort has been defined for this ExtractionConfiguration");
+
+        //We are generating what the extraction SQL will be like, that only requires the dataset so empty bundle is fine
+        _request = new ExtractDatasetCommand(ec,new ExtractableDatasetBundle(SelectedDataset.ExtractableDataSet));
+        _request.GenerateQueryBuilder();
+        _request.QueryBuilder.RegenerateSQL();
     }
 
     public IDataAccessPoint GetDataAccessPoint()
@@ -59,6 +75,7 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
+            
     }
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
@@ -66,21 +83,5 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
         BuildRequest();
 
         return _request.QueryBuilder.QuerySyntaxHelper;
-    }
-
-    private void BuildRequest()
-    {
-        if (_request != null)
-            return;
-
-        var ec = SelectedDataset.ExtractionConfiguration;
-
-        if (ec.Cohort_ID == null)
-            throw new Exception("No cohort has been defined for this ExtractionConfiguration");
-
-        //We are generating what the extraction SQL will be like, that only requires the dataset so empty bundle is fine
-        _request = new ExtractDatasetCommand(ec, new ExtractableDatasetBundle(SelectedDataset.ExtractableDataSet));
-        _request.GenerateQueryBuilder();
-        _request.QueryBuilder.RegenerateSQL();
     }
 }

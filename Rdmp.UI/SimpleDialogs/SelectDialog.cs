@@ -4,15 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
@@ -22,98 +13,142 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Providers;
-using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.SimpleDialogs;
 // IMPORTANT: To edit this in Designer rename 'SelectDialog`1.resx' to 'SelectDialog.resx'
 
 public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : class
 {
-    private const int MaxMatches = 500;
-    private readonly DialogArgs _args;
     private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
     private readonly AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
-    private readonly IActivateItems _activator;
 
-    /// <summary>
-    ///     All the objects when T is not an IMapsDirectlyToDatabaseTable.
-    /// </summary>
-    private readonly T[] _allObjects;
+    private const int MaxMatches = 500;
+    private object oMatches = new();
 
-    private readonly bool _allowDeleting;
-    private Type _alwaysFilterOn;
-
-    private bool _isClosed;
+    private Task _lastFetchTask = null;
     private CancellationTokenSource _lastCancellationToken;
-
-    private Task _lastFetchTask;
-    private ToolStripTextBox _lblId;
-    private List<IMapsDirectlyToDatabaseTable> _matches;
-    private List<T> _objectsToDisplay = new();
     private int _runCount;
-    private List<IMapsDirectlyToDatabaseTable> _tempMatches;
-    private HashSet<string> _typeNames;
 
     private Type[] _types;
-
-    /// <summary>
-    ///     Object types that appear in the task bar as filterable types
-    /// </summary>
-    private readonly Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new()
-    {
-        { typeof(Catalogue), RDMPCollection.Catalogue },
-        { typeof(CatalogueItem), RDMPCollection.Catalogue },
-        { typeof(SupportingDocument), RDMPCollection.Catalogue },
-        { typeof(Project), RDMPCollection.DataExport },
-        { typeof(ExtractionConfiguration), RDMPCollection.DataExport },
-        { typeof(ExtractableCohort), RDMPCollection.SavedCohorts },
-        { typeof(CohortIdentificationConfiguration), RDMPCollection.Cohort },
-        { typeof(TableInfo), RDMPCollection.Tables },
-        { typeof(ColumnInfo), RDMPCollection.Tables },
-        { typeof(LoadMetadata), RDMPCollection.DataLoad }
-    };
-
-    private readonly object oMatches = new();
-
-    private readonly IconOverlayProvider provider = new();
-    private readonly RecentHistoryOfControls recentHistoryOfSearches;
-
-    /// <summary>
-    ///     The users final selection when not using mutli select mode
-    /// </summary>
-    public T Selected;
+    private HashSet<string> _typeNames;
 
     private List<Type> showOnlyTypes = new();
+    private Type _alwaysFilterOn;
+    private ToolStripTextBox _lblId;
+    private readonly DialogArgs _args;
+    private IActivateItems _activator;
+    private bool _allowDeleting;
+
+    /// <summary>
+    /// All the objects when T is not an IMapsDirectlyToDatabaseTable.
+    /// </summary>
+    private T[] _allObjects;
+    private List<T> _objectsToDisplay = new();
+    private List<IMapsDirectlyToDatabaseTable> _tempMatches;
+    private List<IMapsDirectlyToDatabaseTable> _matches;
+    private bool stateChanged = true;
+
+    private bool _isClosed;
+    private RecentHistoryOfControls recentHistoryOfSearches;
+
+    /// <summary>
+    /// The users final selection when not using mutli select mode
+    /// </summary>
+    public T Selected;
+    public HashSet<T> MultiSelected { get; private set; }
+
+    /// <summary>
+    /// Hides the Type selection toggle buttons and forces results to only appear matching the given Type
+    /// </summary>
+    public Type AlwaysFilterOn
+    {
+        get => _alwaysFilterOn;
+        set
+        {
+            if (value != null)
+                Controls.Remove(toolStrip1);
+            else
+                Controls.Add(toolStrip1);
+
+            _alwaysFilterOn = value;
+            tbFilter_TextChanged(this, null);
+        }
+    }
+    public bool AllowMultiSelect
+    {
+        get => olv.MultiSelect;
+        set
+        {
+            olv.MultiSelect = value;
+            if (value)
+            {
+                if (!olv.AllColumns.Contains(olvSelected))
+                {
+                    olv.AllColumns.Add(olvSelected);
+                }
+            }
+            else
+            {
+                olv.AllColumns.Remove(olvSelected);
+            }
+
+            olv.RebuildColumns();
+            olvSelected.DisplayIndex = 0;
+        }
+    }
+
+    /// <summary>
+    /// Object types that appear in the task bar as filterable types
+    /// </summary>
+    private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new()
+    {
+        {typeof (Catalogue),RDMPCollection.Catalogue},
+        {typeof (CatalogueItem),RDMPCollection.Catalogue},
+        {typeof (SupportingDocument),RDMPCollection.Catalogue},
+        {typeof (Project),RDMPCollection.DataExport},
+        {typeof (ExtractionConfiguration),RDMPCollection.DataExport},
+        {typeof (ExtractableCohort),RDMPCollection.SavedCohorts},
+        {typeof (CohortIdentificationConfiguration),RDMPCollection.Cohort},
+        {typeof (TableInfo),RDMPCollection.Tables},
+        {typeof (ColumnInfo),RDMPCollection.Tables},
+        {typeof (LoadMetadata),RDMPCollection.DataLoad}
+    };
 
 
     /// <summary>
-    ///     Identifies which Types are checked by default when the dialog is shown when the given RDMPCollection has focus
+    /// Identifies which Types are checked by default when the dialog is shown when the given RDMPCollection has focus
     /// </summary>
     public Dictionary<RDMPCollection, Type[]> StartingEasyFilters
         = new()
         {
-            { RDMPCollection.Catalogue, new[] { typeof(Catalogue) } },
-            { RDMPCollection.Cohort, new[] { typeof(CohortIdentificationConfiguration) } },
-            { RDMPCollection.DataExport, new[] { typeof(Project), typeof(ExtractionConfiguration) } },
-            { RDMPCollection.DataLoad, new[] { typeof(LoadMetadata) } },
-            { RDMPCollection.SavedCohorts, new[] { typeof(ExtractableCohort) } },
-            { RDMPCollection.Tables, new[] { typeof(TableInfo) } },
-            {
-                RDMPCollection.None, new[] { typeof(SupportingDocument), typeof(CatalogueItem) }
-            } //Add all other Type checkboxes here so that they are recognised as Typenames
+            {RDMPCollection.Catalogue, new[] {typeof (Catalogue)}},
+            {RDMPCollection.Cohort, new[] {typeof (CohortIdentificationConfiguration)}},
+            {RDMPCollection.DataExport, new[] {typeof (Project), typeof (ExtractionConfiguration)}},
+            {RDMPCollection.DataLoad, new[] {typeof (LoadMetadata)}},
+            {RDMPCollection.SavedCohorts, new[] {typeof (ExtractableCohort)}},
+            {RDMPCollection.Tables, new[] {typeof (TableInfo)}},
+            {RDMPCollection.None,new []{typeof(SupportingDocument),typeof(CatalogueItem)}} //Add all other Type checkboxes here so that they are recognised as Typenames
         };
 
-    private bool stateChanged = true;
 
-
-    public SelectDialog(DialogArgs args, IActivateItems activator, IEnumerable<T> toSelectFrom, bool allowDeleting,
-        RDMPCollection focusedCollection = RDMPCollection.None)
+    public SelectDialog(DialogArgs args, IActivateItems activator, IEnumerable<T> toSelectFrom, bool allowDeleting, RDMPCollection focusedCollection = RDMPCollection.None)
     {
         _args = args;
         _activator = activator;
@@ -121,11 +156,10 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         InitializeComponent();
 
-        if (IsDatabaseObjects())
+        if(IsDatabaseObjects())
         {
             _allObjects = toSelectFrom.ToArray();
-            _searchables = _allObjects.Cast<IMapsDirectlyToDatabaseTable>()
-                .ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
+            _searchables = _allObjects.Cast<IMapsDirectlyToDatabaseTable>().ToDictionary(k => k, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
             _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
 
             AddUsefulPropertiesIfHomogeneousTypes(_allObjects);
@@ -145,7 +179,10 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         Text = args.WindowTitle;
         label1.Text = args.IsFind ? "Find:" : "Filter:";
 
-        if (args.IsFind) pFilter.Dock = DockStyle.Top;
+        if(args.IsFind)
+        {
+            pFilter.Dock = DockStyle.Top;
+        }
 
         tbFilter.Text = args.InitialSearchText;
         tbFilter.KeyPress += (s, e) =>
@@ -163,7 +200,10 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         olvID.AspectGetter = m => (m as IMapsDirectlyToDatabaseTable)?.ID ?? null;
 
         // don't add the ID column if we aren't talking about database objects
-        if (!IsDatabaseObjects()) olv.AllColumns.Remove(olvID);
+        if (!IsDatabaseObjects())
+        {
+            olv.AllColumns.Remove(olvID);
+        }
 
         olvName.AspectGetter = m => m?.ToString();
         olvHierarchy.AspectGetter = GetHierarchy;
@@ -176,8 +216,10 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         olv.RowHeight = 19;
 
         if (!args.AllowSelectingNull)
+        {
             //disable the option to select NULL
             btnSelectNULL.Visible = false;
+        }
 
         //default to not allowing multi selection
         olv.MultiSelect = false;
@@ -193,12 +235,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         MultiSelected = new HashSet<T>();
 
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvName,
-            new Guid("298cda00-5ec8-423c-9230-71d78bec6bc4"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvID,
-            new Guid("bb0fe2f0-1e73-4b00-a5b7-4b6ce3510bab"));
-        RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvHierarchy,
-            new Guid("9393c6f0-b2c5-4bf8-8675-3a0117a2c850"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvName, new Guid("298cda00-5ec8-423c-9230-71d78bec6bc4"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvID, new Guid("bb0fe2f0-1e73-4b00-a5b7-4b6ce3510bab"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, olvHierarchy, new Guid("9393c6f0-b2c5-4bf8-8675-3a0117a2c850"));
 
         btnCancel.KeyPress += BtnKeypress;
         btnSelect.KeyPress += BtnKeypress;
@@ -212,7 +251,10 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 e.Handled = true;
         };
 
-        if (args.InitialObjectSelection != null) SetInitialSelection(args.InitialObjectSelection.Cast<T>());
+        if(args.InitialObjectSelection != null)
+        {
+            SetInitialSelection(args.InitialObjectSelection.Cast<T>());
+        }
 
 
         if (args.InitialSearchTextGuid != null)
@@ -221,7 +263,10 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             RecentHistoryOfControls.SetValueToMostRecentlySavedValue(tbFilter);
         }
 
-        if (IsDatabaseObjects()) tbFilter_TextChanged(null, null);
+        if (IsDatabaseObjects())
+        {
+            tbFilter_TextChanged(null,null);
+        }
 
         olv.VirtualListDataSource = this;
 
@@ -236,136 +281,13 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         tbFilter.TextChanged += tbFilter_TextChanged;
 
-        if (IsDatabaseObjects())
+        if(IsDatabaseObjects())
         {
             olv.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
             olv.CellToolTipShowing += (s, e) => RDMPCollectionCommonFunctionality.Tree_CellToolTipShowing(activator, e);
         }
 
         pbLoading.Visible = IsDatabaseObjects();
-    }
-
-    public HashSet<T> MultiSelected { get; private set; }
-
-    /// <summary>
-    ///     Hides the Type selection toggle buttons and forces results to only appear matching the given Type
-    /// </summary>
-    public Type AlwaysFilterOn
-    {
-        get => _alwaysFilterOn;
-        set
-        {
-            if (value != null)
-                Controls.Remove(toolStrip1);
-            else
-                Controls.Add(toolStrip1);
-
-            _alwaysFilterOn = value;
-            tbFilter_TextChanged(this, null);
-        }
-    }
-
-    public bool AllowMultiSelect
-    {
-        get => olv.MultiSelect;
-        set
-        {
-            olv.MultiSelect = value;
-            if (value)
-            {
-                if (!olv.AllColumns.Contains(olvSelected)) olv.AllColumns.Add(olvSelected);
-            }
-            else
-            {
-                olv.AllColumns.Remove(olvSelected);
-            }
-
-            olv.RebuildColumns();
-            olvSelected.DisplayIndex = 0;
-        }
-    }
-
-    public void AddObjects(ICollection modelObjects)
-    {
-    }
-
-    public object GetNthObject(int n)
-    {
-        lock (oMatches)
-        {
-            return n >= _objectsToDisplay.Count ? null : _objectsToDisplay[n];
-        }
-    }
-
-
-    public int GetObjectCount()
-    {
-        lock (oMatches)
-        {
-            // regenerate the _toDisplayList because the state has changed
-            if (stateChanged)
-            {
-                if (IsDatabaseObjects())
-                {
-                    if (_matches == null)
-                        return 0;
-
-                    // when returning search results always put checked items first
-                    var toDisplay =
-                        new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
-
-                    toDisplay.AddRange(_matches.Except(toDisplay));
-                    _objectsToDisplay = toDisplay.Cast<T>().ToList();
-                }
-                else
-                {
-                    var searchText = tbFilter.Text;
-
-                    _objectsToDisplay = string.IsNullOrWhiteSpace(searchText)
-                        ? _allObjects.ToList()
-                        : _allObjects.Where(o => IsSimpleTextMatch(o, searchText)).ToList();
-                }
-
-                stateChanged = false;
-            }
-
-            return Math.Min(_objectsToDisplay.Count, MaxMatches);
-        }
-    }
-
-    public int GetObjectIndex(object model)
-    {
-        return _objectsToDisplay.IndexOf((T)model);
-    }
-
-    public void InsertObjects(int index, ICollection modelObjects)
-    {
-    }
-
-    public void PrepareCache(int first, int last)
-    {
-    }
-
-    public void RemoveObjects(ICollection modelObjects)
-    {
-    }
-
-    public int SearchText(string value, int first, int last, OLVColumn column)
-    {
-        // TODO: figure this out
-        return 0;
-    }
-
-    public void SetObjects(IEnumerable collection)
-    {
-    }
-
-    public void Sort(OLVColumn column, SortOrder order)
-    {
-    }
-
-    public void UpdateObject(int index, object modelObject)
-    {
     }
 
     private void AddUsefulPropertiesIfHomogeneousTypes(T[] mapsDirectlyToDatabaseTables)
@@ -396,6 +318,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
             }
         }
+
     }
 
     protected override void OnShown(EventArgs e)
@@ -405,11 +328,15 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         tbFilter.SelectAll();
         tbFilter.Focus();
     }
-
     private void Olv_FormatCell(object sender, FormatCellEventArgs e)
     {
-        if (e.Column == olvHierarchy) e.SubItem.ForeColor = Color.Gray;
+        if(e.Column == olvHierarchy)
+        {
+            e.SubItem.ForeColor = Color.Gray;
+        }
     }
+
+    private IconOverlayProvider provider = new();
 
     private Bitmap GetHierarchyImage(object rowObject)
     {
@@ -440,15 +367,15 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (rowObject is not IMapsDirectlyToDatabaseTable m)
             return null;
 
-        lock (oMatches)
+        lock(oMatches)
         {
             if (_searchables == null)
                 return null;
 
             if (_searchables.TryGetValue(m, out var searchable))
-                return searchable != null
-                    ? Regex.Replace(string.Join('\\', searchable.GetUsefulParents()), "\\\\+", "\\").Trim('\\')
-                    : null;
+            {
+                return searchable != null ? Regex.Replace(string.Join('\\', searchable.GetUsefulParents()), "\\\\+", "\\").Trim('\\') : null;
+            }
         }
 
         return null;
@@ -460,16 +387,18 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         _typeNames = new HashSet<string>(_types.Select(t => t.Name));
 
         foreach (var t in StartingEasyFilters.SelectMany(v => v.Value))
+        {
             if (!_typeNames.Contains(t.Name))
                 _typeNames.Add(t.Name);
+        }
         Type[] startingFilters = null;
 
-        if (focusedCollection != RDMPCollection.None &&
-            StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
+        if (focusedCollection != RDMPCollection.None && StartingEasyFilters.TryGetValue(focusedCollection, out var filter))
             startingFilters = filter;
 
         // if there are at least 2 Types of object let them filter
-        if (_types.Length > 1)
+        if(_types.Length > 1)
+        {
             foreach (var t in EasyFilterTypesAndAssociatedCollections.Keys)
             {
                 var shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp => kvp.Value == t).Key;
@@ -483,14 +412,16 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                     Text = $"{t.Name} ({shortCode})"
                 };
 
-                b.BackgroundImage =
-                    BackColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
+                b.BackgroundImage = BackColorProvider.GetBackgroundImage(b.Size, EasyFilterTypesAndAssociatedCollections[t]);
                 b.CheckedChanged += CollectionCheckedChanged;
 
                 toolStrip1.Items.Add(b);
             }
+        }
         else
+        {
             toolStripLabel1.Visible = false;
+        }
 
         toolStrip1.Items.Add(new ToolStripLabel("ID:"));
         toolStrip1.Items.Add(_lblId = new ToolStripTextBox());
@@ -498,16 +429,11 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         if (UserSettings.AdvancedFindFilters)
         {
-            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues,
-                v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
-            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues,
-                v => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
-            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues,
-                v => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
-            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues,
-                v => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
-            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues,
-                v => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
+            AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues, v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
+            AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues, v => UserSettings.ShowDeprecatedCatalogues = v, "D", "Include Deprecated");
+            AddUserSettingCheckbox(() => UserSettings.ShowColdStorageCatalogues, v => UserSettings.ShowColdStorageCatalogues = v, "C", "Include Cold Storage");
+            AddUserSettingCheckbox(() => UserSettings.ShowProjectSpecificCatalogues, v => UserSettings.ShowProjectSpecificCatalogues = v, "P", "Include Project Specific");
+            AddUserSettingCheckbox(() => UserSettings.ShowNonExtractableCatalogues, v => UserSettings.ShowNonExtractableCatalogues = v, "E", "Include Extractable");
         }
     }
 
@@ -521,7 +447,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             tbFilter.Focus();
         }
     }
-
     private void tbFilter_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down)
@@ -572,8 +497,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         _isClosed = true;
         recentHistoryOfSearches?.AddResult(tbFilter.Text);
-    }
 
+    }
     private void UpdateButtonEnabledness()
     {
         if (AllowMultiSelect)
@@ -603,9 +528,15 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             BumpMatches = _activator.HistoryProvider.History.Select(h => h.Object).ToList()
         };
 
-        if (_lblId != null && int.TryParse(_lblId.Text, out var requireId)) scorer.ID = requireId;
+        if (_lblId != null && int.TryParse(_lblId.Text, out var requireId))
+        {
+            scorer.ID = requireId;
+        }
 
-        if (AlwaysFilterOn != null) showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
+        if (AlwaysFilterOn != null)
+        {
+            showOnlyTypes = new List<Type>(new[] { AlwaysFilterOn });
+        }
 
         var scores = scorer.ScoreMatches(_searchables, text, cancellationToken, showOnlyTypes);
 
@@ -645,12 +576,12 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             Close();
         }
     }
-
     private void listBox1_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Delete && _allowDeleting && olv.SelectedObject is IDeleteable deletable)
-            if (MessageBox.Show($"Confirm deleting {deletable}", "Really delete?", MessageBoxButtons.YesNoCancel) ==
-                DialogResult.Yes)
+        {
+            if (MessageBox.Show($"Confirm deleting {deletable}", "Really delete?", MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+            {
                 try
                 {
                     deletable.DeleteInDatabase();
@@ -660,6 +591,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                 {
                     ExceptionViewer.Show(exception);
                 }
+            }
+        }
 
         if (e.KeyCode == Keys.Enter && olv.SelectedObject != null)
         {
@@ -667,7 +600,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             Selected = olv.SelectedObject as T ?? default;
 
             // if there are some multi selected items already
-            if (AllowMultiSelect && MultiSelected.Any())
+            if(AllowMultiSelect && MultiSelected.Any())
             {
                 // select only those
                 Close();
@@ -685,12 +618,15 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         if (e.KeyCode == Keys.Space && AllowMultiSelect && olv.SelectedObjects != null)
         {
             foreach (T o in olv.SelectedObjects)
+            {
                 if (MultiSelected.Contains(o))
                     MultiSelected.Remove(o);
                 else
                     MultiSelected.Add(o);
+            }
 
             UpdateButtonEnabledness();
+
         }
     }
 
@@ -740,7 +676,11 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             .ContinueWith(
                 s =>
                 {
-                    if (Interlocked.Decrement(ref _runCount) == 0) pbLoading.Visible = false;
+
+                    if(Interlocked.Decrement(ref _runCount) == 0)
+                    {
+                        pbLoading.Visible = false;
+                    }
 
                     if (_isClosed)
                         return;
@@ -753,26 +693,114 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                         if (_isClosed)
                             return;
 
-                        if (s.IsCompleted)
+                        if(s.IsCompleted)
+                        {
                             lock (oMatches)
                             {
                                 // updates the list
                                 _matches = _tempMatches;
                                 StateChanged();
                             }
+                        }
                     }
                     catch (ObjectDisposedException)
                     {
+
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
+
+    }
+
+    public void AddObjects(ICollection modelObjects)
+    {
+
+    }
+
+    public object GetNthObject(int n)
+    {
+        lock (oMatches)
+        {
+            return n >= _objectsToDisplay.Count ? null : _objectsToDisplay[n];
+        }
+    }
+
+
+    public int GetObjectCount()
+    {
+        lock (oMatches)
+        {
+            // regenerate the _toDisplayList because the state has changed
+            if (stateChanged)
+            {
+                if (IsDatabaseObjects())
+                {
+                    if (_matches == null)
+                        return 0;
+
+                    // when returning search results always put checked items first
+                    var toDisplay = new List<IMapsDirectlyToDatabaseTable>(MultiSelected.Cast<IMapsDirectlyToDatabaseTable>());
+
+                    toDisplay.AddRange(_matches.Cast<IMapsDirectlyToDatabaseTable>().Except(toDisplay));
+                    _objectsToDisplay = toDisplay.Cast<T>().ToList();
+                }
+                else
+                {
+                    var searchText = tbFilter.Text;
+
+                    _objectsToDisplay = string.IsNullOrWhiteSpace(searchText) ?
+                        _allObjects.ToList() :
+                        _allObjects.Where(o=> IsSimpleTextMatch(o, searchText)).ToList();
+                }
+
+                stateChanged = false;
+            }
+
+            return Math.Min(_objectsToDisplay.Count,MaxMatches);
+        }
     }
 
     private static bool IsSimpleTextMatch(T arg, string searchText)
     {
-        var terms = searchText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return terms.All(t => arg.ToString().Contains(t, StringComparison.CurrentCultureIgnoreCase));
+        var terms = searchText.Split(' ',StringSplitOptions.RemoveEmptyEntries);
+        return terms.All(t=>arg.ToString().Contains(t,StringComparison.CurrentCultureIgnoreCase));
     }
 
+    public int GetObjectIndex(object model)
+    {
+        return _objectsToDisplay.IndexOf((T)model);
+    }
+
+    public void InsertObjects(int index, ICollection modelObjects)
+    {
+
+    }
+
+    public void PrepareCache(int first, int last)
+    {
+    }
+
+    public void RemoveObjects(ICollection modelObjects)
+    {
+    }
+
+    public int SearchText(string value, int first, int last, OLVColumn column)
+    {
+        // TODO: figure this out
+        return 0;
+    }
+
+    public void SetObjects(IEnumerable collection)
+    {
+    }
+
+    public void Sort(OLVColumn column, SortOrder order)
+    {
+    }
+
+    public void UpdateObject(int index, object modelObject)
+    {
+
+    }
     private void AddUserSettingCheckbox(Func<bool> getter, Action<bool> setter, string name, string toolTip)
     {
         var b = new ToolStripButton(name)
@@ -792,7 +820,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
         toolStrip1.Items.Add(b);
     }
-
     private void btnSelect_Click(object sender, EventArgs e)
     {
         if (!AllowMultiSelect)
@@ -817,10 +844,9 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         DialogResult = DialogResult.Cancel;
         Close();
     }
-
     public void SetInitialSelection(IEnumerable<T> toSelect)
     {
         MultiSelected = new HashSet<T>(toSelect);
-        tbFilter_TextChanged(null, null);
+        tbFilter_TextChanged(null,null);
     }
 }

@@ -18,21 +18,19 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 internal class SetNull : IPluginDataFlowComponent<DataTable>
 {
-    private int _changes;
-    private readonly Stopwatch _sw = new();
-
     [DemandsInitialization("Looks for a column with exactly this name", Mandatory = true)]
     public string ColumnNameToFind { get; set; }
 
-    [DemandsInitialization(
-        "Deletes all rows where the values in the specified ColumnNameToFind match the StandardRegex")]
+    [DemandsInitialization("Deletes all rows where the values in the specified ColumnNameToFind match the StandardRegex")]
     public StandardRegex NullCellsWhereValuesMatchStandard { get; set; }
 
     [DemandsInitialization("Deletes all rows where the values in the specified ColumnNameToFind match the Regex")]
     public Regex NullCellsWhereValuesMatch { get; set; }
 
-    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken)
+    private int _changes;
+    private Stopwatch _sw = new();
+
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         _sw.Start();
 
@@ -48,11 +46,10 @@ internal class SetNull : IPluginDataFlowComponent<DataTable>
                 row[ColumnNameToFind] = DBNull.Value;
                 _changes++;
             }
+                
         }
 
-        listener.OnProgress(this,
-            new ProgressEventArgs("SetNull Rows", new ProgressMeasurement(_changes, ProgressType.Records),
-                _sw.Elapsed));
+        listener.OnProgress(this,new ProgressEventArgs("SetNull Rows",new ProgressMeasurement(_changes,ProgressType.Records),_sw.Elapsed ));
 
         _sw.Stop();
         return toProcess;
@@ -60,19 +57,18 @@ internal class SetNull : IPluginDataFlowComponent<DataTable>
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        listener.OnNotify(this,
-            new NotifyEventArgs(_changes > 0 ? ProgressEventType.Warning : ProgressEventType.Information,
-                $"Total SetNull operations for ColumnNameToFind '{ColumnNameToFind}' was {_changes}"));
+
+        listener.OnNotify(this,new NotifyEventArgs(_changes > 0 ? ProgressEventType.Warning : ProgressEventType.Information,$"Total SetNull operations for ColumnNameToFind '{ColumnNameToFind}' was {_changes}"));
     }
 
     public void Abort(IDataLoadEventListener listener)
     {
+            
     }
 
     public void Check(ICheckNotifier notifier)
     {
         if (NullCellsWhereValuesMatch == null && NullCellsWhereValuesMatchStandard == null)
-            notifier.OnCheckPerformed(new CheckEventArgs("You must specify a Regex for value selection",
-                CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("You must specify a Regex for value selection", CheckResult.Fail));
     }
 }

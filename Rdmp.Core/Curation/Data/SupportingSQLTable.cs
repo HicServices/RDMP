@@ -18,91 +18,24 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-///     Describes an SQL query that can be run to generate useful information for the understanding of a given Catalogue
-///     (dataset).  If it is marked as
-///     Extractable then it will be bundled along with the Catalogue every time it is extracted.  This can be used as an
-///     alternative to definining Lookups
-///     through the Lookup class or to extract other useful administrative data etc to be provided to researchers
-///     <para>
-///         It is VITAL that you do not use this as a method of extracting sensitive/patient data as this data is run as is
-///         and is not joined against a cohort
-///         or anonymised in anyway.
-///     </para>
-///     <para>
-///         If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of
-///         what datasets they have asked for in
-///         an extraction, this is useful for large lookups like ICD / SNOMED CT which are likely to be used by many
-///         datasets.
-///     </para>
+/// Describes an SQL query that can be run to generate useful information for the understanding of a given Catalogue (dataset).  If it is marked as 
+/// Extractable then it will be bundled along with the Catalogue every time it is extracted.  This can be used as an alternative to definining Lookups
+/// through the Lookup class or to extract other useful administrative data etc to be provided to researchers
+/// 
+/// <para>It is VITAL that you do not use this as a method of extracting sensitive/patient data as this data is run as is and is not joined against a cohort
+/// or anonymised in anyway.</para>
+/// 
+/// <para>If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of what datasets they have asked for in 
+/// an extraction, this is useful for large lookups like ICD / SNOMED CT which are likely to be used by many datasets. </para>
 /// </summary>
-public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
+public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
 {
     /// <summary>
-    ///     The subfolder of extractions in which to put <see cref="Extractable" /> <see cref="SupportingSQLTable" /> when
-    ///     doing project extractions
+    /// The subfolder of extractions in which to put <see cref="Extractable"/> <see cref="SupportingSQLTable"/> when doing project extractions
     /// </summary>
     public const string ExtractionFolderName = "SupportingDataTables";
 
-    public SupportingSQLTable()
-    {
-    }
-
-    /// <summary>
-    ///     Defines a new table that helps in understanding the given dataset <paramref name="parent" />
-    /// </summary>
-    /// <param name="repository"></param>
-    /// <param name="parent"></param>
-    /// <param name="name"></param>
-    public SupportingSQLTable(ICatalogueRepository repository, ICatalogue parent, string name)
-    {
-        repository.InsertAndHydrate(this, new Dictionary<string, object>
-        {
-            { "Name", name },
-            { "Catalogue_ID", parent.ID }
-        });
-    }
-
-    internal SupportingSQLTable(ICatalogueRepository repository, DbDataReader r)
-        : base(repository, r)
-    {
-        Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString());
-        Description = r["Description"] as string;
-        Name = r["Name"] as string;
-        Extractable = (bool)r["Extractable"];
-        IsGlobal = (bool)r["IsGlobal"];
-        SQL = r["SQL"] as string;
-
-        if (r["ExternalDatabaseServer_ID"] == null || r["ExternalDatabaseServer_ID"] == DBNull.Value)
-            ExternalDatabaseServer_ID = null;
-        else
-            ExternalDatabaseServer_ID = Convert.ToInt32(r["ExternalDatabaseServer_ID"]);
-
-        Ticket = r["Ticket"] as string;
-    }
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return Name;
-    }
-
-    /// <summary>
-    ///     Returns the decrypted connection string you can use to access the data (fetched from ExternalDatabaseServer_ID -
-    ///     which can be null).  If there is no
-    ///     ExternalDatabaseServer_ID associated with the SupportingSQLTable then a NotSupportedException will be thrown
-    /// </summary>
-    /// <returns></returns>
-    public DiscoveredServer GetServer()
-    {
-        if (ExternalDatabaseServer_ID == null)
-            throw new NotSupportedException(
-                $"No external database server has been selected for SupportingSQL table called :{ToString()} (ID={ID}).  The SupportingSQLTable currently belongs to Catalogue {Catalogue.Name}");
-
-        return ExternalDatabaseServer.Discover(DataAccessContext.DataExport).Server;
-    }
-
     #region Database Properties
-
     private int _catalogue_ID;
     private string _description;
     private string _name;
@@ -113,7 +46,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     private bool _isGlobal;
 
     /// <summary>
-    ///     The dataset the <see cref="SupportingSQLTable" /> helps you to understand
+    /// The dataset the <see cref="SupportingSQLTable"/> helps you to understand
     /// </summary>
     public int Catalogue_ID
     {
@@ -122,7 +55,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    ///     Human readable description of what the table referenced by <see cref="SQL" /> contains
+    /// Human readable description of what the table referenced by <see cref="SQL"/> contains
     /// </summary>
     public string Description
     {
@@ -130,7 +63,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
         set => SetField(ref _description, value);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     [NotNull]
     [Unique]
     public string Name
@@ -140,8 +73,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    ///     Sql to execute on the server to return the supplemental table that helps with understanding/interpreting
-    ///     <see cref="Catalogue_ID" />
+    /// Sql to execute on the server to return the supplemental table that helps with understanding/interpreting <see cref="Catalogue_ID"/>
     /// </summary>
     public string SQL
     {
@@ -150,13 +82,10 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    ///     If true then the query will be executed and the resulting table will be copied to the output directory of project
-    ///     extractions that include the <see cref="Catalogue_ID" />.
-    ///     <para>
-    ///         This will fail if the query contains mulitple select statements.  Ensure that there is no identifiable data
-    ///         returned by the query since it will not be linked
-    ///         against the project cohort / anonymised in any way.
-    ///     </para>
+    /// If true then the query will be executed and the resulting table will be copied to the output directory of project extractions that include the <see cref="Catalogue_ID"/>.
+    /// 
+    /// <para>This will fail if the query contains mulitple select statements.  Ensure that there is no identifiable data returned by the query since it will not be linked 
+    /// against the project cohort / anonymised in any way.</para>
     /// </summary>
     public bool Extractable
     {
@@ -165,7 +94,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    ///     The server on which the <see cref="SQL" /> should be executed on
+    /// The server on which the <see cref="SQL"/> should be executed on
     /// </summary>
     public int? ExternalDatabaseServer_ID
     {
@@ -174,7 +103,7 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    ///     <see cref="ITicketingSystem" /> identifier of a ticket for logging time curating / updating etc the table
+    /// <see cref="ITicketingSystem"/> identifier of a ticket for logging time curating / updating etc the table
     /// </summary>
     public string Ticket
     {
@@ -183,9 +112,8 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    ///     If <see cref="Extractable" />  and <see cref="IsGlobal" /> then the table will be copied to the ouptut directory of
-    ///     all project extractions
-    ///     regardless of whether or not the <see cref="Catalogue_ID" /> dataset is included in the extraction
+    /// If <see cref="Extractable"/>  and <see cref="IsGlobal"/> then the table will be copied to the ouptut directory of all project extractions
+    /// regardless of whether or not the <see cref="Catalogue_ID"/> dataset is included in the extraction
     /// </summary>
     public bool IsGlobal
     {
@@ -196,52 +124,107 @@ public class SupportingSQLTable : DatabaseEntity, INamed, ISupportingObject
     #endregion
 
     #region Relationships
-
-    /// <inheritdoc cref="Catalogue_ID" />
+    /// <inheritdoc cref="Catalogue_ID"/>
     [NoMappingToDatabase]
     public Catalogue Catalogue => Repository.GetObjectByID<Catalogue>(Catalogue_ID);
 
-    /// <inheritdoc cref="ExternalDatabaseServer_ID" />
+    /// <inheritdoc cref="ExternalDatabaseServer_ID"/>
     [NoMappingToDatabase]
-    public ExternalDatabaseServer ExternalDatabaseServer => ExternalDatabaseServer_ID == null
-        ? null
-        : Repository.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID);
+    public ExternalDatabaseServer ExternalDatabaseServer => ExternalDatabaseServer_ID == null ? null : Repository.GetObjectByID<ExternalDatabaseServer>((int)ExternalDatabaseServer_ID);
 
     #endregion
+
+    public SupportingSQLTable()
+    {
+
+    }
+
+    /// <summary>
+    /// Defines a new table that helps in understanding the given dataset <paramref name="parent"/>
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="parent"></param>
+    /// <param name="name"></param>
+    public SupportingSQLTable(ICatalogueRepository repository, ICatalogue parent, string name)
+    {
+        repository.InsertAndHydrate(this,new Dictionary<string, object>
+        {
+            {"Name", name},
+            {"Catalogue_ID", parent.ID}
+        });
+    }
+
+    internal SupportingSQLTable(ICatalogueRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        Catalogue_ID = int.Parse(r["Catalogue_ID"].ToString());
+        Description = r["Description"] as string;
+        Name = r["Name"] as string;
+        Extractable = (bool) r["Extractable"];
+        IsGlobal = (bool) r["IsGlobal"];
+        SQL = r["SQL"] as string;
+
+        if(r["ExternalDatabaseServer_ID"] == null || r["ExternalDatabaseServer_ID"] == DBNull.Value)
+            ExternalDatabaseServer_ID = null; 
+        else
+            ExternalDatabaseServer_ID = Convert.ToInt32(r["ExternalDatabaseServer_ID"]); 
+
+        Ticket = r["Ticket"] as string;
+    }
+
+    /// <inheritdoc/>
+    public override string ToString()
+    {
+        return Name;
+    }
+        
+    /// <summary>
+    /// Returns the decrypted connection string you can use to access the data (fetched from ExternalDatabaseServer_ID - which can be null).  If there is no 
+    /// ExternalDatabaseServer_ID associated with the SupportingSQLTable then a NotSupportedException will be thrown
+    /// </summary>
+    /// <returns></returns>
+    public DiscoveredServer GetServer()
+    {
+        if (ExternalDatabaseServer_ID == null)
+            throw new NotSupportedException(
+                $"No external database server has been selected for SupportingSQL table called :{ToString()} (ID={ID}).  The SupportingSQLTable currently belongs to Catalogue {Catalogue.Name}");
+
+        return ExternalDatabaseServer.Discover(DataAccessContext.DataExport).Server;
+    }
 }
 
 /// <summary>
-///     Identifies which collection of extractable resources should be returned from the database
+/// Identifies which collection of extractable resources should be returned from the database
 /// </summary>
 public enum FetchOptions
 {
     /// <summary>
-    ///     All resources
+    /// All resources
     /// </summary>
     AllGlobalsAndAllLocals,
 
     /// <summary>
-    ///     Global resources only
+    /// Global resources only
     /// </summary>
     AllGlobals,
 
     /// <summary>
-    ///     Non Global resources only
+    /// Non Global resources only
     /// </summary>
     AllLocals,
 
     /// <summary>
-    ///     Global resources only AND only if they are marked Extractable
+    /// Global resources only AND only if they are marked Extractable
     /// </summary>
     ExtractableGlobals,
 
     /// <summary>
-    ///     Non Global resources only AND only if they are marked Extractable
+    /// Non Global resources only AND only if they are marked Extractable
     /// </summary>
     ExtractableLocals,
 
     /// <summary>
-    ///     All resources that are marked Extractable
+    /// All resources that are marked Extractable
     /// </summary>
     ExtractableGlobalsAndLocals
 }

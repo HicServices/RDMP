@@ -15,17 +15,17 @@ namespace Rdmp.UI.Tests.DesignPatternTests;
 
 internal class CsProjFileTidy
 {
-    private readonly string _expectedRootNamespace;
-    private readonly DirectoryInfo _root;
-    public List<string> csFilesFound = new();
+    public List<string>  csFilesFound = new();
+
+    public List<string> UntidyMessages { get; set; }
+
+    private string _expectedRootNamespace;
+    private DirectoryInfo _root;
 
     //these class files are excused from having 2+ class files in them or 0
-    private readonly string[] Ignorelist =
-    {
-        "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs", "ICustomUI.cs",
-        "MapsDirectlyToDatabaseTableStatelessDefinition.cs",
-        "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs", "TableView.cs", "TreeView.cs",
-        "MemoryCatalogueRepository.cs"
+    private string[] Ignorelist = {
+        "Attributes.cs", "AssemblyInfo.cs", "Annotations.cs", "StageArgs.cs" ,"ICustomUI.cs","MapsDirectlyToDatabaseTableStatelessDefinition.cs",
+        "IObjectUsedByOtherObjectNode.cs", "IInjectKnown.cs", "Themes.cs","TableView.cs","TreeView.cs", "MemoryCatalogueRepository.cs"
     };
 
     public CsProjFileTidy(FileInfo csProjFile)
@@ -33,7 +33,7 @@ internal class CsProjFileTidy
         UntidyMessages = new List<string>();
 
         _root = csProjFile.Directory;
-        _expectedRootNamespace = csProjFile.Name.Replace(".csproj", "");
+        _expectedRootNamespace = csProjFile.Name.Replace(".csproj","");
 
         //e.g. <Compile Include="Overview\OverviewScreen.Designer.cs"
         var allText = File.ReadAllText(csProjFile.FullName);
@@ -45,30 +45,28 @@ internal class CsProjFileTidy
         doc.LoadXml(allText);
 
         //var compilables = doc.GetElementsByTagName("Compile");
-
+            
 
         RecursivelyProcessSubfolders(csProjFile.Directory);
     }
-
-    public List<string> UntidyMessages { get; set; }
 
     private void RecursivelyProcessSubfolders(DirectoryInfo directory)
     {
         foreach (var enumerateFile in directory.EnumerateFiles("*.cs"))
             ConfirmClassNameAndNamespaces(enumerateFile);
-
+            
         foreach (var dir in directory.EnumerateDirectories())
         {
-            if (dir.Name.Equals("bin") || dir.Name.Equals("obj"))
+            if(dir.Name.Equals("bin") || dir.Name.Equals("obj"))
                 continue;
 
             RecursivelyProcessSubfolders(dir);
         }
     }
-
+        
     private void ConfirmClassNameAndNamespaces(FileInfo csFile)
     {
-        if (Ignorelist.Contains(csFile.Name))
+        if(Ignorelist.Contains(csFile.Name))
             return;
 
         csFilesFound.Add(csFile.FullName);
@@ -81,14 +79,10 @@ internal class CsProjFileTidy
         var classes = rPublicClasses.Matches(contents);
         var namespaces = rNamespace.Matches(contents);
 
-        if (namespaces.Count == 0)
-        {
+        if(namespaces.Count == 0)
             UntidyMessages.Add($"FAIL: .cs file does not have any namespaces listed in it:{csFile.FullName}");
-        }
         else if (namespaces.Count > 1)
-        {
             UntidyMessages.Add($"FAIL: .cs file has more than 1 namespaces listed in it!:{csFile.FullName}");
-        }
         else
         {
             var subspace = GetSubspace(csFile);
@@ -99,24 +93,25 @@ internal class CsProjFileTidy
 
             var actualNamespace = namespaces[0].Groups[1].Value;
 
-            if (!actualNamespace.Equals(expectedNamespace))
+            if(!actualNamespace.Equals(expectedNamespace))
                 UntidyMessages.Add(
                     $"Expected file {csFile.FullName} to have namespace {expectedNamespace} but its listed namespace is {actualNamespace}");
-        }
 
+        }
+            
 
         //it's probably a enum or interface or delegates file
-        if (classes.Count == 0)
+        if(classes.Count ==0)
             return;
 
         //we are ok with Microsoft doing whatever it wants in these files
-        if (csFile.Name.Contains(".Designer.cs"))
+        if(csFile.Name.Contains(".Designer.cs"))
             return;
 
-        if (csFile.Name.Equals("MarkdownCodeBlockTests.cs"))
+        if(csFile.Name.Equals("MarkdownCodeBlockTests.cs"))
             return;
 
-        if (classes.Count > 1)
+        if(classes.Count > 1)
         {
             //The only files allowed 2+ class files in them are tests and factories
             if (csFile.Name.Contains("Test") || csFile.Name.Contains("Factory"))
@@ -126,15 +121,17 @@ internal class CsProjFileTidy
         }
         else
         {
+
             var firstClassNameInFile = classes[0].Groups[2].Value;
 
             if (firstClassNameInFile.Contains("_Design"))
                 return;
 
-            if (!csFile.Name.Equals($"{firstClassNameInFile}.cs", StringComparison.CurrentCultureIgnoreCase))
+            if (!csFile.Name.Equals($"{firstClassNameInFile}.cs",StringComparison.CurrentCultureIgnoreCase))
                 UntidyMessages.Add(
                     $"File {csFile.FullName} contains a class is called {firstClassNameInFile} (does not match file name of file)");
         }
+
     }
 
     private string GetSubspace(FileInfo csFile)

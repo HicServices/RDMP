@@ -15,7 +15,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
 public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 {
-    private readonly List<string> _fails = new();
+    private List<string> _fails = new();
 
     public void FindProblems(List<string> csFilesFound)
     {
@@ -29,15 +29,14 @@ public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 
             var contents = File.ReadAllText(file);
 
-            if (!contents.Contains("[DemandsInitialization(\"") &&
-                !contents.Contains("[DemandsNestedInitialization(\""))
+            if (!contents.Contains("[DemandsInitialization(\"") && !contents.Contains("[DemandsNestedInitialization(\""))
                 continue;
 
             Console.WriteLine($"Found Demander:{file}");
 
             var index = contents.IndexOf(checkMethodSignature);
 
-            if (index == -1)
+            if(index == -1)
             {
                 _fails.Add(
                     $"FAIL:File {file} does not have a Check method implementation but contains the text [DemandsInitialization");

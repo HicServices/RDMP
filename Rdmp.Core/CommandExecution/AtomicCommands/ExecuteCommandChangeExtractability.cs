@@ -4,38 +4,35 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandChangeExtractability : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandChangeExtractability:BasicCommandExecution,IAtomicCommand
 {
     private readonly Catalogue _catalogue;
-    private readonly bool _markExtractable;
+    private bool _markExtractable;
 
-    public ExecuteCommandChangeExtractability(IBasicActivateItems activator, Catalogue catalogue,
-        bool? explicitExtractability = null) : base(activator)
+    public ExecuteCommandChangeExtractability(IBasicActivateItems activator, Catalogue catalogue, bool? explicitExtractability = null) : base(activator)
     {
         _catalogue = catalogue;
         var status = catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
         if (status == null)
         {
-            SetImpossible(
-                "We don't know whether Catalogue is extractable or not (possibly no Data Export database is available)");
+            SetImpossible("We don't know whether Catalogue is extractable or not (possibly no Data Export database is available)");
             return;
         }
 
-        if (status.IsProjectSpecific)
+        if(status.IsProjectSpecific)
         {
-            SetImpossible(
-                "Cannot change the extractability because it is configured as a 'Project Specific Catalogue'");
+            SetImpossible("Cannot change the extractability because it is configured as a 'Project Specific Catalogue'");
             return;
         }
 
@@ -50,18 +47,16 @@ public class ExecuteCommandChangeExtractability : BasicCommandExecution, IAtomic
 
     public override string GetCommandHelp()
     {
-        if (!_markExtractable)
-            return
-                "Prevent dataset from being released in Project extracts.  This fails if it is already part of any ExtractionConfigurations";
 
-        return
-            @"Enable dataset linkage\extraction in Project extracts.  This requires that at least one column be marked IsExtractionIdentifier";
+        if (!_markExtractable)
+            return "Prevent dataset from being released in Project extracts.  This fails if it is already part of any ExtractionConfigurations";
+            
+        return @"Enable dataset linkage\extraction in Project extracts.  This requires that at least one column be marked IsExtractionIdentifier";
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {
-        return iconProvider.GetImage(RDMPConcept.ExtractableDataSet,
-            _markExtractable ? OverlayKind.Add : OverlayKind.Delete);
+        return iconProvider.GetImage(RDMPConcept.ExtractableDataSet, _markExtractable?OverlayKind.Add: OverlayKind.Delete);
     }
 
     public override void Execute()
@@ -70,9 +65,7 @@ public class ExecuteCommandChangeExtractability : BasicCommandExecution, IAtomic
 
         if (_markExtractable)
         {
-            if (!_catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository)
-                    .IsExtractable)
-            {
+            if (!_catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository).IsExtractable) {
                 new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
             }
             else
@@ -80,15 +73,13 @@ public class ExecuteCommandChangeExtractability : BasicCommandExecution, IAtomic
                 Show($"{_catalogue} is already extractable");
                 return;
             }
-
+                    
             Publish(_catalogue);
         }
         else
         {
-            var extractabilityRecord =
-                ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.SingleOrDefault(ds =>
-                    ds.Catalogue_ID == _catalogue.ID);
-            if (extractabilityRecord != null)
+            var extractabilityRecord = ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.SingleOrDefault(ds => ds.Catalogue_ID == _catalogue.ID);
+            if(extractabilityRecord != null)
             {
                 extractabilityRecord.DeleteInDatabase();
             }

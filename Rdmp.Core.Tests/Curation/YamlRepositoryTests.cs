@@ -4,12 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -19,7 +13,12 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
-using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation;
@@ -31,7 +30,7 @@ internal class YamlRepositoryTests
     {
         var sb = new StringBuilder();
 
-        foreach (var t in new YamlRepository(GetUniqueDirectory()).GetCompatibleTypes())
+        foreach(var t in new YamlRepository(GetUniqueDirectory()).GetCompatibleTypes())
         {
             var blankConstructor = t.GetConstructor(Type.EmptyTypes);
 
@@ -39,9 +38,10 @@ internal class YamlRepositoryTests
                 sb.AppendLine(t.Name);
         }
 
-        if (sb.Length > 0)
-            Assert.Fail(
-                $"All data classes must have a blank constructor.  The following did not:{Environment.NewLine}{sb}");
+        if(sb.Length > 0)
+        {
+            Assert.Fail($"All data classes must have a blank constructor.  The following did not:{Environment.NewLine}{sb}");
+        }
     }
 
     [Test]
@@ -50,7 +50,7 @@ internal class YamlRepositoryTests
         var dir = GetUniqueDirectory();
 
         var repo1 = new YamlRepository(dir);
-        var eds = new ExternalDatabaseServer(repo1, "myServer", null);
+        var eds = new ExternalDatabaseServer(repo1,"myServer",null);
         repo1.SetDefault(PermissableDefaults.LiveLoggingServer_ID, eds);
 
         var repo2 = new YamlRepository(dir);
@@ -83,7 +83,7 @@ internal class YamlRepositoryTests
         var dir = GetUniqueDirectory();
 
         var repo1 = new YamlRepository(dir);
-        repo1.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, "yarg");
+        repo1.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern,"yarg");
 
         // A fresh repo loaded from the same directory should have persisted object relationships
         var repo2 = new YamlRepository(dir);
@@ -122,7 +122,7 @@ internal class YamlRepositoryTests
 
         Assert.IsEmpty(ac.ForcedJoins);
         Assert.IsEmpty(repo1.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
-        repo1.AggregateForcedJoinManager.CreateLinkBetween(ac, t);
+        repo1.AggregateForcedJoinManager.CreateLinkBetween(ac,t);
         Assert.IsNotEmpty(ac.ForcedJoins);
         Assert.IsNotEmpty(repo1.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
 
@@ -141,17 +141,17 @@ internal class YamlRepositoryTests
         var repo1 = new YamlRepository(dir);
 
         var root = UnitTests.WhenIHaveA<CohortAggregateContainer>(repo1);
-        var sub1 = new CohortAggregateContainer(repo1, SetOperation.INTERSECT);
+        var sub1 = new CohortAggregateContainer(repo1,SetOperation.INTERSECT);
         var ac = UnitTests.WhenIHaveA<AggregateConfiguration>(repo1);
-
+            
         sub1.Order = 2;
         sub1.SaveToDatabase();
 
-        root.AddChild(sub1);
+        root.AddChild(sub1); 
         root.AddChild(ac, 0);
 
         Assert.IsNotEmpty(root.GetOrderedContents());
-        Assert.AreEqual(ac, root.GetOrderedContents().ToArray()[0]);
+        Assert.AreEqual(ac,root.GetOrderedContents().ToArray()[0]);
         Assert.AreEqual(sub1, root.GetOrderedContents().ToArray()[1]);
 
         // A fresh repo loaded from the same directory should have persisted object relationships
@@ -175,10 +175,10 @@ internal class YamlRepositoryTests
 
         var f = new AggregateFilter(repo1, "my filter");
         ac.RootFilterContainer.AddChild(f);
-        var sub = new AggregateFilterContainer(repo1, FilterContainerOperation.AND);
+        var sub = new AggregateFilterContainer(repo1,FilterContainerOperation.AND);
         ac.RootFilterContainer.AddChild(sub);
 
-        Assert.AreEqual(sub, ac.RootFilterContainer.GetSubContainers().Single());
+        Assert.AreEqual(sub,ac.RootFilterContainer.GetSubContainers().Single());
         Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
 
         // A fresh repo loaded from the same directory should have persisted object relationships
@@ -202,10 +202,10 @@ internal class YamlRepositoryTests
 
         var f = new AggregateFilter(repo1, "my filter");
         ac.RootFilterContainer.AddChild(f);
-        var sub = new AggregateFilterContainer(repo1, FilterContainerOperation.AND);
+        var sub = new AggregateFilterContainer(repo1,FilterContainerOperation.AND);
         ac.RootFilterContainer.AddChild(sub);
 
-        Assert.AreEqual(sub, ac.RootFilterContainer.GetSubContainers().Single());
+        Assert.AreEqual(sub,ac.RootFilterContainer.GetSubContainers().Single());
         Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
 
         // A fresh repo loaded from the same directory should have persisted object relationships
@@ -218,8 +218,7 @@ internal class YamlRepositoryTests
         // Make an orphan container by deleting the root
 
         // don't check before deleting stuff
-        ((CatalogueObscureDependencyFinder)ac.CatalogueRepository.ObscureDependencyFinder).OtherDependencyFinders
-            .Clear();
+        ((CatalogueObscureDependencyFinder)ac.CatalogueRepository.ObscureDependencyFinder).OtherDependencyFinders.Clear();
 
         // delete the root filter
         ac.RootFilterContainer.DeleteInDatabase();
@@ -231,6 +230,7 @@ internal class YamlRepositoryTests
         Assert.IsFalse(repo3.StillExists(sub));
         Assert.IsFalse(repo3.StillExists(root));
         Assert.IsFalse(repo3.StillExists(f));
+
     }
 
     [Test]
@@ -243,15 +243,15 @@ internal class YamlRepositoryTests
         var creds = UnitTests.WhenIHaveA<DataAccessCredentials>(repo1);
         var t = UnitTests.WhenIHaveA<TableInfo>(repo1);
 
-        Assert.IsEmpty(creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value));
-        Assert.IsNull(t.GetCredentialsIfExists(DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing));
+        Assert.IsEmpty(creds.GetAllTableInfosThatUseThis().SelectMany(v=>v.Value));
+        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
-        repo1.TableInfoCredentialsManager.CreateLinkBetween(creds, t, DataAccessContext.DataLoad);
+        repo1.TableInfoCredentialsManager.CreateLinkBetween(creds,t, ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad);
 
-        Assert.AreEqual(t, creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
-        Assert.AreEqual(creds, t.GetCredentialsIfExists(DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing));
+        Assert.AreEqual(t,creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
+        Assert.AreEqual(creds,t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
 
 
         // A fresh repo loaded from the same directory should have persisted object relationships
@@ -259,9 +259,12 @@ internal class YamlRepositoryTests
         t = repo2.GetObjectByID<TableInfo>(t.ID);
 
         Assert.AreEqual(t, creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
-        Assert.AreEqual(creds, t.GetCredentialsIfExists(DataAccessContext.DataLoad));
-        Assert.IsNull(t.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing));
+        Assert.AreEqual(creds, t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
+        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+
+
     }
+
 
 
     [Test]
@@ -286,8 +289,8 @@ internal class YamlRepositoryTests
         lma1.SaveToDatabase();
 
         lma2.Plugin.Name = "MyPlugin1.1.1.2.nupkg";
-        lma2.Plugin.RdmpVersion = new Version(version); //the version of Rdmp.Core targetted (same as above)
-        lma2.Plugin.PluginVersion = new Version(1, 1, 1, 2); //the version of the plugin (higher)
+        lma2.Plugin.RdmpVersion = new Version(version);//the version of Rdmp.Core targetted (same as above)
+        lma2.Plugin.PluginVersion = new Version(1, 1, 1, 2);//the version of the plugin (higher)
         lma2.Plugin.SaveToDatabase();
         lma2.SaveToDatabase();
 

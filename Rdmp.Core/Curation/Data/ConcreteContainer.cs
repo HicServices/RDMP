@@ -14,22 +14,32 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-///     Common abstract base class for IContainer (AND/OR Where logic) classes that are persisted in the database as a
-///     <see cref="DatabaseEntity" />
+/// Common abstract base class for IContainer (AND/OR Where logic) classes that are persisted in the database as a <see cref="DatabaseEntity"/>
 /// </summary>
-public abstract class ConcreteContainer : DatabaseEntity, IContainer
+public abstract class ConcreteContainer:DatabaseEntity, IContainer
 {
     private IFilterManager _manager;
     private FilterContainerOperation _operation;
+    /// <inheritdoc/>
+    public FilterContainerOperation Operation
+    {
+        get => _operation;
+        set => SetField(ref  _operation, value);
+    }
 
     public ConcreteContainer()
     {
+
     }
 
-    protected ConcreteContainer(IFilterManager manager, IRepository repository, DbDataReader r) : base(repository, r)
+    public void SetManager(IFilterManager manager)
     {
         _manager = manager;
-        Operation = (FilterContainerOperation)Enum.Parse(typeof(FilterContainerOperation), r["Operation"].ToString());
+    }
+    protected ConcreteContainer(IFilterManager manager,IRepository repository, DbDataReader r):base(repository,r)
+    {
+        _manager = manager;
+        Operation = (FilterContainerOperation) Enum.Parse(typeof(FilterContainerOperation), r["Operation"].ToString());
     }
 
     protected ConcreteContainer(IFilterManager manager)
@@ -37,38 +47,31 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
         _manager = manager;
     }
 
-    /// <inheritdoc />
-    public FilterContainerOperation Operation
-    {
-        get => _operation;
-        set => SetField(ref _operation, value);
-    }
-
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IContainer GetParentContainerIfAny()
     {
         return _manager.GetParentContainerIfAny(this);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IContainer[] GetSubContainers()
     {
         return _manager.GetSubContainers(this);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IFilter[] GetFilters()
     {
         return _manager.GetFilters(this);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void AddChild(IContainer child)
     {
-        _manager.AddSubContainer(this, child);
+        _manager.AddSubContainer(this,child);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void AddChild(IFilter filter)
     {
         if (filter.FilterContainer_ID.HasValue)
@@ -81,20 +84,20 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
         _manager.AddChild(this, filter);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public void MakeIntoAnOrphan()
     {
         _manager.MakeIntoAnOrphan(this);
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public override void DeleteInDatabase()
     {
         var children = GetAllFiltersIncludingInSubContainersRecursively();
 
         //then delete any children it has itself
         foreach (var subContainer in GetAllSubContainersRecursively())
-            if (subContainer.Exists())
+            if(subContainer.Exists())
                 subContainer.DeleteInDatabase();
 
         //clean up the orphans that will be created by killing ourselves
@@ -109,36 +112,10 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
         MakeIntoAnOrphan();
     }
 
-    /// <inheritdoc />
+    /// <inheritdoc/>
     public IContainer GetRootContainerOrSelf()
     {
         return GetRootContainerOrSelf(this);
-    }
-
-    /// <inheritdoc />
-    public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
-    {
-        return GetAllFiltersIncludingInSubContainersRecursively(this);
-    }
-
-    public abstract Catalogue GetCatalogueIfAny();
-
-    /// <inheritdoc />
-    public List<IContainer> GetAllSubContainersRecursively()
-    {
-        return GetAllSubContainersRecursively(this);
-    }
-
-    /// <inheritdoc />
-    public abstract bool ShouldBeReadOnly(out string reason);
-
-    public abstract IContainer DeepCloneEntireTreeRecursivelyIncludingFilters();
-
-    public abstract IFilterFactory GetFilterFactory();
-
-    public void SetManager(IFilterManager manager)
-    {
-        _manager = manager;
     }
 
     private IContainer GetRootContainerOrSelf(IContainer container)
@@ -150,6 +127,12 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
         return container;
     }
 
+    /// <inheritdoc/>
+    public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
+    {
+        return GetAllFiltersIncludingInSubContainersRecursively(this);
+    }
+        
     private List<IFilter> GetAllFiltersIncludingInSubContainersRecursively(IContainer container)
     {
         var toReturn = new List<IFilter>();
@@ -165,6 +148,14 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
         return toReturn;
     }
 
+    public abstract Catalogue GetCatalogueIfAny();
+
+    /// <inheritdoc/>
+    public List<IContainer> GetAllSubContainersRecursively()
+    {
+        return GetAllSubContainersRecursively(this);
+    }
+
     private List<IContainer> GetAllSubContainersRecursively(IContainer current)
     {
         var toReturn = new List<IContainer>();
@@ -177,4 +168,11 @@ public abstract class ConcreteContainer : DatabaseEntity, IContainer
 
         return toReturn;
     }
+
+    /// <inheritdoc />
+    public abstract bool ShouldBeReadOnly(out string reason);
+
+    public abstract IContainer DeepCloneEntireTreeRecursivelyIncludingFilters();
+
+    public abstract IFilterFactory GetFilterFactory();
 }
